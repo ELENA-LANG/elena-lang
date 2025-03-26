@@ -13,5 +13,6 @@ public program()
     Console.printLine(b);
     Console.printLine(c);
     Console.printLine(d);
+    Console.printLine(-1.0.power(i) / b * 4);
     Console.printLine(-1.0.power(i) / (i*2+1) * 4);
 }
