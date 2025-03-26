@@ -21,10 +21,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
-  BUILD_TAG: 6.6.1
-
-permissions:
-  contents: read
+permissions: write-all
 
 jobs:
   build:
@@ -46,6 +43,11 @@ jobs:
 
     - name: Restore nuget packages
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+ 
+    - name: Set version
+      run: |
+        VER=$(cat VERSION)
+        echo "BUILD_TAG=$VER" >> $GITHUB_ENV
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
