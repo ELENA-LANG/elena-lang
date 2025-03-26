@@ -1024,7 +1024,7 @@ inline %071h
 
 end
 
-// ; fmul
+// ; fimul
 inline %072h
 
   lfd     f18, 0(r3) 
@@ -1035,13 +1035,13 @@ inline %072h
 
 end
 
-// ; fdiv
+// ; fidiv
 inline %073h
 
   lfd     f18, 0(r3) 
   fcfid   f18, f18
   lfd     f17, 0(r15)
-  fdiv    f17, f18, f17
+  fdiv    f17, f17, f18
   stfd    f17, 0(r15)
 
 end
