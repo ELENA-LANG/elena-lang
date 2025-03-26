@@ -37,7 +37,11 @@ In development:
       - x86-64 : mta - test net examples for mta   
       - test all x86-64 examples (net)
   --------------------------------------
-  - vs #2 : elena.tmLanguage.json  
+  - review internal identifiers / messages, sub project must share them with root project, internal messages must be
+    resolved fully in JITLinker, share the internal namespaces, to speed up
+  - modify package scripts, copy all examples with a single command
+  - place all examples into single project collection
+  - prjcol : support sub folders 
   - #658 :  connect with ldbg from VSCode        
   - #184 : linux - select tab
   - arrange action for i386 / amd64 linux release
@@ -58,6 +62,8 @@ In development:
   maint:
   port:
       - pi samples for aarch64 
+  tools:
+      - vs #2 : elena.tmLanguage.json  
   prom: bi-posting weekly
   --------------------------------------
   --------------------------------------
