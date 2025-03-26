@@ -9,34 +9,18 @@ In development:
   --------------------------------------
   dev: 
       - upndown (connector - interaction)
-      - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
-      - implement ExtensionMessage.equal
       - raise an error if an async extension is declared (until the feature is not implemented)
       - alt operation inside async operation is not allowed
       - yield inside try operator is not allowed
-      - unit tests for try-catch / try-catch-finally / try-finally
   ide:
-      - ide : windows
-      - syntax highlighting
       - page up - must be reduced by 2 lines
-      - async method - auto watch : self and some variables are not displayed
-  gen:
-      - lpad / elt : declare an extension, parse it and apply to the input
   api:
       - functionality in run-time to print the library version info
-      - include net / thread examples in build
   maint:
-      - test all x86-64 examples
-      - unit tests : bt optimization 
-      - api : add descriptions 
       - github actions : `set-output` command is deprecated 
-  port:
-      - x86-64 : httpget, threading samples
-      - rosetta code : moving to 6.6 (test, use Console)
-      - x86-64 : mta - test net examples for mta   
-      - test all x86-64 examples (net)
   --------------------------------------
+  - #722 : [IDE] Scrolling experience 
   - review internal identifiers / messages, sub project must share them with root project, internal messages must be
     resolved fully in JITLinker, share the internal namespaces, to speed up
   - modify package scripts, copy all examples with a single command
@@ -52,16 +36,31 @@ In development:
   === Iteration 39 ===
   --------------------------------------
   dev: 
-      - api refactoring : main program entry to be called - Program
       - #34 : https get (https://github.com/yhirose/cpp-httplib), 
+      - MTA support for Linux  
       - #496
       - #622
+      - unit tests for try-catch / try-catch-finally / try-finally
   gen:
+      - lpad / elt : declare an extension, parse it and apply to the input
   ide:
+      - ide : windows
+      - syntax highlighting
       - #184 : linux - save, close      
+      - async method - auto watch : self and some variables are not displayed
   maint:
+      - test all x86-64 examples
+      - unit tests : bt optimization 
+  api:
+      - implement ExtensionMessage.equal
+      - api : add descriptions 
+      - api refactoring : main program entry to be called - Program
   port:
       - pi samples for aarch64 
+      - x86-64 : httpget, threading samples
+      - rosetta code : moving to 6.6 (test, use Console)
+      - x86-64 : mta - test net examples for mta   
+      - test all x86-64 examples (net)
   tools:
       - vs #2 : elena.tmLanguage.json  
   prom: bi-posting weekly
