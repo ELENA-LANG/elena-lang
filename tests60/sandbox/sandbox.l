@@ -10,5 +10,5 @@ public program()
     //Console.printLine(b);
     //Console.printLine(c);
     //Console.printLine(d);
-    Console.printLine(a / (i*2+1) * 4);
+    Console.printLine(a / (i*2/*+1*/) * 4);
 }
