@@ -28,9 +28,8 @@ In development:
   - prjcol : support sub folders 
   - #658 :  connect with ldbg from VSCode        
   - #184 : linux - select tab
-  - arrange action for i386 / amd64 linux release
   --------------------------------------  
-  - pi samples for ppc64
+  - arrange action for i386 / amd64 linux release
   --------------------------------------
 
   === Iteration 39 ===
