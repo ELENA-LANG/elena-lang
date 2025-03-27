@@ -22,9 +22,10 @@ In development:
   - #722 : [IDE] Scrolling experience  / page up - must be reduced by 2 lines
   - review internal identifiers / messages, sub project must share them with root project, internal messages must be
     resolved fully in JITLinker, share the internal namespaces, to speed up
-  - #658 :  connect with ldbg from VSCode : launch program
   - modify package scripts, copy all examples with a single command
   - place all examples into single project collection
+  - place all linux examples into single project collection
+  - place all rosetta examples into single project collection
   --------------------------------------  
   - place all examples into single project collection
   --------------------------------------
@@ -37,7 +38,7 @@ In development:
       - MTA support for Linux  
       - #496
       - #622
-      - unit tests for try-catch / try-catch-finally / try-finally
+      - unit tests for try-catch / try-catch-finally / try-finally      
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   ide:
@@ -60,7 +61,7 @@ In development:
       - test all x86-64 examples (net)
   tools:
       - vs #2 : elena.tmLanguage.json  
-      - #658 :  connect with ldbg from VSCode : implement built-in debugger
+      - #658 :  connect with ldbg from VSCode : launch exe, implement built-in debugger
   prom: bi-posting weekly
   --------------------------------------
   --------------------------------------
