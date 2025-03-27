@@ -157,21 +157,7 @@ fi
  mkdir -p ./$RELEASE/usr/bin/
  mkdir -p ./$RELEASE/usr/elena-lang
 
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/helloworld/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/sum/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/console/words/
-
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/accumulator/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/ackermann/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/addfield/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/anonymrec/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/aplusb/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/applycallback/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arithmeticint/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arithmeval/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arithmmean/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arrayconcat/
- mkdir -p ./$RELEASE/usr/elena-lang/examples60/rosetta/arraymode/
+ mkdir -p ./$RELEASE/usr/elena-lang/examples60/
 
  echo copying configuration
 

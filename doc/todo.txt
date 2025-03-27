@@ -13,21 +13,13 @@ In development:
       - raise an error if an async extension is declared (until the feature is not implemented)
       - alt operation inside async operation is not allowed
       - yield inside try operator is not allowed
-  api:
-      - functionality in run-time to print the library version info
   maint:
       - github actions : `set-output` command is deprecated 
   --------------------------------------
   - arrange action for i386 / amd64 linux release
-  - #722 : [IDE] Scrolling experience  / page up - must be reduced by 2 lines
-  - review internal identifiers / messages, sub project must share them with root project, internal messages must be
-    resolved fully in JITLinker, share the internal namespaces, to speed up
-  - modify package scripts, copy all examples with a single command
-  - place all examples into single project collection
-  - place all linux examples into single project collection
-  - place all rosetta examples into single project collection
+  - #722 : [IDE] Scrolling experience  / 
   --------------------------------------  
-  - place all examples into single project collection
+  - api : functionality in run-time to print the library version info
   --------------------------------------
 
   === Iteration 39 ===

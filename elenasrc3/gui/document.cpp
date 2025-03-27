@@ -642,9 +642,9 @@ void DocumentView :: movePageDown(DocumentChangeStatus& changeStatus, bool selec
       setCaret(_caret.column(), _text->getRowCount() - 1, selecting, changeStatus);
    }
    else {
-      vscroll(changeStatus, _size.y);
+      vscroll(changeStatus, _size.y - 1);
       if (changeStatus.frameChanged)
-         setCaret(_caret.column(), _caret.row() + _size.y, selecting, changeStatus);
+         setCaret(_caret.column(), _caret.row() + _size.y - 1, selecting, changeStatus);
    }
 }
 
@@ -657,9 +657,9 @@ void DocumentView :: movePageUp(DocumentChangeStatus& changeStatus, bool selecti
       setCaret(_caret.column(), 0, selecting, changeStatus);
    }
    else {
-      vscroll(changeStatus, -_size.y);
+      vscroll(changeStatus, -_size.y + 1);
       if (changeStatus.frameChanged)
-         setCaret(_caret.column(), _caret.row() - _size.y, selecting, changeStatus);
+         setCaret(_caret.column(), _caret.row() - _size.y + 1, selecting, changeStatus);
    }
 }
 
