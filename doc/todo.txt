@@ -25,9 +25,8 @@ In development:
   - modify package scripts, copy all examples with a single command
   - place all examples into single project collection
   - prjcol : support sub folders 
-  - #658 :  connect with ldbg from VSCode        
   --------------------------------------  
-  - #184 : linux - select tab
+  - #658 :  connect with ldbg from VSCode : start communicate
   --------------------------------------
 
   === Iteration 39 ===
@@ -61,6 +60,7 @@ In development:
       - test all x86-64 examples (net)
   tools:
       - vs #2 : elena.tmLanguage.json  
+      - #658 :  connect with ldbg from VSCode
   prom: bi-posting weekly
   --------------------------------------
   --------------------------------------
