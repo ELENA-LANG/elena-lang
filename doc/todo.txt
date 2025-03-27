@@ -26,7 +26,7 @@ In development:
   - modify package scripts, copy all examples with a single command
   - place all examples into single project collection
   --------------------------------------  
-  - prjcol : support sub folders 
+  - place all examples into single project collection
   --------------------------------------
 
   === Iteration 39 ===

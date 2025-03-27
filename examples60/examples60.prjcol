@@ -1,0 +1,10 @@
+<configuration>
+  <collections>
+    <collection name="console">
+      <project>console\helloworld\helloworld.prj</project>
+    </collection>
+    <collection name="files">
+      <project>files\textdb\textdb.l</project>
+    </collection>
+  </collections>
+</configuration>
