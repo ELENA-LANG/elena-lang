@@ -22,11 +22,11 @@ In development:
   - #722 : [IDE] Scrolling experience  / page up - must be reduced by 2 lines
   - review internal identifiers / messages, sub project must share them with root project, internal messages must be
     resolved fully in JITLinker, share the internal namespaces, to speed up
+  - #658 :  connect with ldbg from VSCode : launch program
   - modify package scripts, copy all examples with a single command
   - place all examples into single project collection
-  - prjcol : support sub folders 
   --------------------------------------  
-  - #658 :  connect with ldbg from VSCode : start communicate
+  - prjcol : support sub folders 
   --------------------------------------
 
   === Iteration 39 ===
@@ -60,7 +60,7 @@ In development:
       - test all x86-64 examples (net)
   tools:
       - vs #2 : elena.tmLanguage.json  
-      - #658 :  connect with ldbg from VSCode
+      - #658 :  connect with ldbg from VSCode : implement built-in debugger
   prom: bi-posting weekly
   --------------------------------------
   --------------------------------------
