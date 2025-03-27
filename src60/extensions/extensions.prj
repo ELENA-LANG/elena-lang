@@ -58,6 +58,7 @@
      </module>
      <module name="runtime">
        <include>runtime\systemmonitor.l</include>
+       <include>runtime\package.l</include>
      </module>
   </files>
 </configuration>
