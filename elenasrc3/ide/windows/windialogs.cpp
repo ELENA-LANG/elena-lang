@@ -496,8 +496,14 @@ void EditorSettings :: onOK()
       _model->setHighlightMode(value);
 
    _model->lineNumbersVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
-   _model->settings.tabSize = getIntText(IDC_EDITOR_TABSIZE);
-   _model->scrollOffset = getIntText(IDC_EDITOR_SCROLLOFFSET);
+
+   int intValue = getIntText(IDC_EDITOR_TABSIZE);
+   if (intValue > 0 && intValue < 100)
+      _model->settings.tabSize = intValue;
+
+   intValue = getIntText(IDC_EDITOR_SCROLLOFFSET);
+   if (intValue > 0 && intValue < 100)
+      _model->scrollOffset = intValue;
 
    _model->refreshSettings();
 }

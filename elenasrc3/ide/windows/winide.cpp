@@ -1043,9 +1043,9 @@ void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
 
    ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
 
-   menu->enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection);
-   menu->enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection);
-   menu->enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
+   enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection, true);
+   enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection, true);
+   enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable(), true);
 
    menu->show(_handle, p);
 }
@@ -1349,8 +1349,8 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 
       bool isSelected = docInfo ? docInfo->hasSelection() : false;
 
-      menu->enableMenuItemById(IDM_EDIT_COPY, isSelected);
-      menu->enableMenuItemById(IDM_EDIT_CUT, isSelected);
+      enableMenuItemById(IDM_EDIT_COPY, isSelected, true);
+      enableMenuItemById(IDM_EDIT_CUT, isSelected, true);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_DELETE, isSelected);

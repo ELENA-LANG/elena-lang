@@ -17,9 +17,8 @@ In development:
       - github actions : `set-output` command is deprecated 
   --------------------------------------
   - arrange action for i386 / amd64 linux release
-  - #725 : [IDE] Can you add the option to have the toolbar larger?
   --------------------------------------  
-  - #722 : [IDE] Scrolling experience
+  - #725 : [IDE] Can you add the option to have the toolbar larger?
   --------------------------------------
 
   === Iteration 39 ===

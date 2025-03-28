@@ -38,6 +38,24 @@
 #define	IDR_GOTO                      216
 #define  IDR_FILETREE                  217
 
+#define	IDR_FILENEW_L                 218
+#define	IDR_FILEOPEN_L                219
+#define	IDR_FILESAVE_L                220
+#define	IDR_SAVEALL_L                 221
+#define	IDR_CLOSEFILE_L               222
+#define	IDR_CLOSEALL_L                223
+#define	IDR_CUT_L                     224
+#define	IDR_COPY_L                    225
+#define	IDR_PASTE_L                   226
+#define	IDR_UNDO_L                    227
+#define	IDR_REDO_L                    228
+#define	IDR_RUN_L                     229
+#define	IDR_STOP_L                    230
+#define	IDR_STEPINTO_L					   231
+#define	IDR_STEPOVER_L                232
+#define	IDR_GOTO_L                    233
+#define  IDR_FILETREE_L                234
+
 #define IDM_FILE_NEW                   401
 #define IDM_FILE_OPEN                  402
 #define IDM_FILE_EXIT                  403

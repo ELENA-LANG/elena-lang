@@ -153,6 +153,29 @@ ToolBarButton AppToolBarButtons[] =
    {IDM_DEBUG_GOTOSOURCE, IDR_GOTO},
 };
 
+ToolBarButton AppToolBarButtonsLarge[] =
+{
+   {IDM_FILE_NEW, IDR_FILENEW_L},
+   {IDM_FILE_OPEN, IDR_FILEOPEN_L},
+   {IDM_FILE_SAVE, IDR_FILESAVE_L},
+   {IDM_FILE_SAVEALL, IDR_SAVEALL_L},
+   {IDM_FILE_CLOSE, IDR_CLOSEFILE_L},
+   {IDM_PROJECT_CLOSE, IDR_CLOSEALL_L},
+   {0, IDR_SEPARATOR},
+   {IDM_EDIT_CUT, IDR_CUT},
+   {IDM_EDIT_COPY, IDR_COPY_L},
+   {IDM_EDIT_PASTE, IDR_PASTE_L},
+   {0, IDR_SEPARATOR},
+   {IDM_EDIT_UNDO, IDR_UNDO_L},
+   {IDM_EDIT_REDO, IDR_REDO_L},
+   {0, IDR_SEPARATOR},
+   {IDM_DEBUG_RUN, IDR_RUN_L},
+   {IDM_DEBUG_STEPINTO, IDR_STEPINTO_L},
+   {IDM_DEBUG_STEPOVER, IDR_STEPOVER_L},
+   {IDM_DEBUG_STOP, IDR_STOP_L},
+   {IDM_DEBUG_GOTOSOURCE, IDR_GOTO_L},
+};
+
 inline void canonicalize(PathString& path)
 {
    wchar_t p[MAX_PATH];
@@ -409,11 +432,11 @@ GUIControlBase* IDEFactory :: createEditorContextMenu(ControlBase* owner)
    return menu;
 }
 
-GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner)
+GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner, bool largeMode)
 {
-   ToolBar* toolBar = new ToolBar(16);
+   ToolBar* toolBar = new ToolBar(largeMode ? 32 : 16);
 
-   toolBar->createControl(_instance, owner, AppToolBarButtons, AppToolBarButtonNumber);
+   toolBar->createControl(_instance, owner, largeMode ? AppToolBarButtonsLarge : AppToolBarButtons, AppToolBarButtonNumber);
    toolBar->show();
 
    return toolBar;
@@ -500,7 +523,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
-   children[toolBarControl] = createToolbar(sdi);
+   children[toolBarControl] = createToolbar(sdi, true);
    children[contextEditor] = createEditorContextMenu(sdi);
    children[editIndex] = textCtrls.value2;
 
