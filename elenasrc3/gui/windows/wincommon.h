@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINCOMMON_H
@@ -174,7 +174,7 @@ namespace elena_lang
       virtual void onSelChanged() {}
       virtual void onDoubleClick(NMHDR* hdr) {}
 
-      virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner);
+      virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner, int dwExStyles);
 
       virtual wchar_t* getValue() { return nullptr; }
       virtual void clearValue() {}

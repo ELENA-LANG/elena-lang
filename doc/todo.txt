@@ -5,44 +5,63 @@ In development:
 [development]
   ### EPIC: elena 6.7 ###
 
-  === Iteration 38 (05.04) ===
+  === Iteration 39 (18.4) ===
   --------------------------------------
   dev: 
-      - upndown (connector - interaction)
+      - support fladd, flsub, fldiv, flmul (throu special prefix??)
+      - #34 : https get (Mbed TLS - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_client1.c), 
+      - MTA support for Linux  
       - #496
       - #622
-      - #34 : http client (http get, https get (https://github.com/HISONA/https_client), post, put, patch, delete, head, options, trace), web api
-      - MTA support for Linux  
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
-      - implement ExtensionMessage.equal
-  ide:
-      - linux - select tab, save, close
-      - fix syntax highlighting (see system'net:win_common.l)
-      - ide : windows
+      - unit tests for try-catch / try-catch-finally / try-finally      
+      - upndown (connector - interaction)
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
+  ide:
+      - ide : windows
+      - syntax highlighting
+      - #184 : linux - save, close, ...
+      - async method - auto watch : self and some variables are not displayed
   maint:
-      - pi samples for ppc64, aarch64
+      - github actions : `set-output` command is deprecated 
       - test all x86-64 examples
       - unit tests : bt optimization 
-      - warn if typecasting method returns itself, it leads to infinite call
-      - test binary file reader / writer
+      - arrange action for i386 / amd64 linux release  
+  api:
+      - implement ExtensionMessage.equal
       - api : add descriptions 
-      - api refactoring : all symbols must start with a capital letter (e.g. printingLn)
+      - api refactoring : main program entry to be called - Program
   port:
-      - chat sample
-      - rosetta code : moving to 6.5
+      - pi samples for aarch64 
+      - x86-64 : httpget, threading samples
+      - rosetta code : moving to 6.6 (test, use Console)
       - x86-64 : mta - test net examples for mta   
       - test all x86-64 examples (net)
-      - pi samples for ppc64, aarch64
-  tools: 
-      - #658 : connect with ldbg from VSCode  
+  tools:
+      - vs #2 : elena.tmLanguage.json  
+      - #658 :  connect with ldbg from VSCode : launch exe, implement built-in debugger
   prom: bi-posting weekly
   --------------------------------------
   --------------------------------------
   --------------------------------------
 
-  === Iteration 39 ===
+  === Iteration 40 ===
+  --------------------------------------
+  dev: 
+  - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
+  gen:
+  maint:
+  port:
+      - chat sample
+  prom:
+  --------------------------------------
+  --------------------------------------
+  --------------------------------------
+
+  ### EPIC: elena 6.8 ###
+
+  === Iteration 41 ===
   --------------------------------------
   dev: 
   gen:
@@ -54,20 +73,7 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  ### EPIC: elena 6.8 ###
-
-  === Iteration 40 ===
-  --------------------------------------
-  dev: 
-  gen:
-  maint:
-  port:
-  prom:
-  --------------------------------------
-  --------------------------------------
-  --------------------------------------
-
-  === Iteration 41 ===
+  === Iteration 42 ===
   --------------------------------------
   dev: 
   gen:

@@ -9,6 +9,6 @@ public program()
 {
     new int[]{5,50,9000}.forEach::(n)
     {
-        console.printLine(n.toString(2))
+        Console.printLine(n.toString(2))
     }
 }

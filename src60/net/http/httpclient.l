@@ -6,7 +6,7 @@ public class HttpClient
    HttpHeaders _headers;
    Socket      _socket;
 
-   constructor new()
+   constructor()
    {
       _headers := new HttpHeaders();
    }
@@ -14,31 +14,36 @@ public class HttpClient
    HttpHeaders Headers
       = _headers;
 
+   Task<HttpResponse> getAsync(string url)
+      = getAsync(Uri.parse(url));
+
+   private Task<Socket> openAsync(Uri uri)
+      = ::Task<Socket>.run({ ^ Socket.connect(uri.Host, uri.Port) });
+
    async Task<HttpResponse> getAsync(Uri uri)
    {
-      /* Create TCP socket */
-      _socket := new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-      /* Set remote->sin_addr.s_addr */
-      SOCKADDR_IN remote := default;   
-
-      remote.Ip_address := uri.IP;
-      remote.Port := uri.Port;
-
       /* Connect */
-      _socket.open(remote);
+       _socket := :await openAsync(uri);
 
       /* Send headers to server */
       NetworkStream stream := new NetworkStream(_socket);
 
-      :await stream.writeAsync(_headers.Value);
+      string host := uri.Host;
+      string headers := _headers.Value;
+      string request := $"GET / HTTP/1.1"$13$10"Host:{host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
 
-      ^ HttpResponse.assign(stream);
-      
+      :await stream.writeAsync(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      :await response.readHeader();
+
+      ^ response;
    }
 
    close()
    {
-      _socket.close()
+      if:not:nil(_socket)
+         _socket.close()
    }
 }

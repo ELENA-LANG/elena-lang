@@ -40,7 +40,7 @@ namespace elena_lang
 
       EventInvoker _layoutEventInvoker;
 
-      HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner) override;
+      HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner, int dwExStyles = 0) override;
 
       bool visible() override;
 

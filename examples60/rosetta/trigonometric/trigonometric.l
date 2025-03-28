@@ -3,22 +3,22 @@ import extensions;
  
 public program()
 {
-    console.printLine("Radians:");
-    console.printLine("sin(π/3) = ",(Pi_value/3).sin());
-    console.printLine("cos(π/3) = ",(Pi_value/3).cos());
-    console.printLine("tan(π/3) = ",(Pi_value/3).tan());
-    console.printLine("arcsin(1/2) = ",0.5r.arcsin());
-    console.printLine("arccos(1/2) = ",0.5r.arccos());
-    console.printLine("arctan(1/2) = ",0.5r.arctan());
-    console.printLine();
+    Console.printLine("Radians:");
+    Console.printLine("sin(π/3) = ",(Pi_value/3).sin());
+    Console.printLine("cos(π/3) = ",(Pi_value/3).cos());
+    Console.printLine("tan(π/3) = ",(Pi_value/3).tan());
+    Console.printLine("arcsin(1/2) = ",0.5r.arcsin());
+    Console.printLine("arccos(1/2) = ",0.5r.arccos());
+    Console.printLine("arctan(1/2) = ",0.5r.arctan());
+    Console.printLine();
  
-    console.printLine("Degrees:");
-    console.printLine("sin(60º) = ",60.0r.Radian.sin());
-    console.printLine("cos(60º) = ",60.0r.Radian.cos());
-    console.printLine("tan(60º) = ",60.0r.Radian.tan());
-    console.printLine("arcsin(1/2) = ",0.5r.arcsin().Degree,"º");
-    console.printLine("arccos(1/2) = ",0.5r.arccos().Degree,"º");
-    console.printLine("arctan(1/2) = ",0.5r.arctan().Degree,"º");
+    Console.printLine("Degrees:");
+    Console.printLine("sin(60º) = ",60.0r.Radian.sin());
+    Console.printLine("cos(60º) = ",60.0r.Radian.cos());
+    Console.printLine("tan(60º) = ",60.0r.Radian.tan());
+    Console.printLine("arcsin(1/2) = ",0.5r.arcsin().Degree,"º");
+    Console.printLine("arccos(1/2) = ",0.5r.arccos().Degree,"º");
+    Console.printLine("arctan(1/2) = ",0.5r.arctan().Degree,"º");
  
-    console.readChar()
+    Console.readChar()
 }

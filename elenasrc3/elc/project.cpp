@@ -153,6 +153,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
       for (auto m_it = modules.start(); !m_it.eof(); ++m_it) {
+
          ConfigFile::Node moduleNode = *m_it;
 
          if (!moduleNode.readAttribute("name", subNs)) {
@@ -497,6 +498,18 @@ void Project :: loadProfileList(ConfigFile& config)
 
 // --- ProjectCollection ---
 
+inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& modules, XmlProjectBase::Paths& paths)
+{
+   DynamicString<char> pathStr;
+   for (auto it = modules.start(); !it.eof(); ++it) {
+      ConfigFile::Node node = *it;
+      node.readContent(pathStr);
+
+      PathString fullPath(collectionPath, pathStr.str());
+      paths.add((*fullPath).clone());
+   }
+}
+
 bool ProjectCollection :: load(path_t path)
 {
    PathString collectionPath;
@@ -504,18 +517,22 @@ bool ProjectCollection :: load(path_t path)
 
    ConfigFile config;
    if (config.load(path, _encoding)) {
-      DynamicString<char> pathStr;
-
       ConfigFile::Collection modules;
       if (config.select(COLLECTION_CATEGORY, modules)) {
-         for (auto it = modules.start(); !it.eof(); ++it) {
-            ConfigFile::Node node = *it;
-            node.readContent(pathStr);
-
-            PathString fullPath(*collectionPath, pathStr.str());
-            paths.add((*fullPath).clone());
+         loadModuleCollection(*collectionPath, modules, paths);
+      }
+      else {
+         ConfigFile::Collection collections;
+         if (config.select(COLLECTIONS_CATEGORY, collections)) {
+            for (auto it = collections.start(); !it.eof(); ++it) {
+               ConfigFile::Collection subModules;
+               if (config.select(*it, "*", subModules)) {
+                  loadModuleCollection(*collectionPath, subModules, paths);
+               }
+            }
          }
       }
+
       return true;
    }
    return false;

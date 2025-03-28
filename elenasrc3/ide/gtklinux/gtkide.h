@@ -272,6 +272,7 @@ protected:
 
 public:
    void on_text_model_change(TextViewModelEvent event);
+   void on_textframe_change(SelectionEvent event);
 
    GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model);
 };

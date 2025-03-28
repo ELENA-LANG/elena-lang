@@ -920,6 +920,10 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_PRIVATE:
          attrs.privateOne = true;
          break;
+      case V_AUTO:
+         attrs.typeInfo = { V_AUTO };
+         attrs.isAuto = true;
+         break;
       default:
          return false;
    }

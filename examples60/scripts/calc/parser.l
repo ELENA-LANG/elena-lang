@@ -342,7 +342,7 @@ extension parserOp
       }
       catch(Exception e)
       {
-         console.printLine(e);
+         Console.printLine(e);
             
          stateMachine.invalidate()
       };

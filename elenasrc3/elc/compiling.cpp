@@ -234,6 +234,10 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
    }
    name.replaceAll('\'', '@', 0);
 
+   // !! temporal
+   if ((*name).findStr("Task#1&system@Int") != NOTFOUND_POS)
+      alreadyDeclared |= false;
+
    return moduleScope.mapTemplateIdentifier(*name, visibility, alreadyDeclared, false);
 }
 
@@ -524,6 +528,8 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    if (savingMode) {
       // saving a module
       _presenter->print(ELC_SAVING_MODULE, moduleScope.module->name());
+
+      moduleScope.flush();
 
       _libraryProvider.saveModule(moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
@@ -817,6 +823,9 @@ int CompilingProcess :: build(Project& project,
    {
       configurateParser(project.getSyntaxVersion());
       configurate(project);
+
+      if (project.Namespace().empty())
+         throw InternalError(errMissingNamespace);
 
       PlatformType targetType = project.TargetType();
 

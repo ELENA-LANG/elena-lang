@@ -3,7 +3,7 @@
 //
 //		This file contains implematioon of the DebugController class and
 //    its helpers
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -499,7 +499,7 @@ DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierStri
 
 DebugController :: DebugController(DebugProcessBase* process, ProjectModel* model,
    SourceViewModel* sourceModel, DebugSourceController* sourceController)
-   : _provider(model)
+   : _provider(model), _startUpSettings({})
 {
    _started = false;
    _process = process;
@@ -508,12 +508,11 @@ DebugController :: DebugController(DebugProcessBase* process, ProjectModel* mode
    _model = model;
    _currentPath = nullptr;
    _sourceController = sourceController;
-   _witExplicitConsole = false;
 }
 
 void DebugController :: debugThread()
 {
-   if (!_process->startProgram(_debuggee.str(), _arguments.str(), _witExplicitConsole)) {
+   if (!_process->startProgram(_debuggee.str(), _arguments.str(), *_model->paths.appPath, _startUpSettings)) {
       //HOTFIX : to inform the listening thread
       _process->resetEvent(DEBUG_ACTIVE);
 
@@ -843,12 +842,12 @@ void DebugController :: clearBreakpoints()
 
 }
 
-bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode, bool witExplicitConsole)
+bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode, StartUpSettings startUpSettings)
 {
    _currentModule.clear();
    _debuggee.copy(programPath);
    _arguments.copy(arguments);
-   _witExplicitConsole = witExplicitConsole;
+   _startUpSettings = startUpSettings;
 
    if (debugMode) {
       addr_t entryPoint = _process->findEntryPoint(programPath);
@@ -1110,6 +1109,17 @@ void* DebugController :: readByteLocal(ContextBrowserBase* watch, void* parent, 
    else return nullptr;
 }
 
+void* DebugController :: readShortLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
+{
+   if (level > 0) {
+      unsigned int value = _process->getWORD(address);
+
+      WatchContext context = { parent, address };
+      return watch->addOrUpdateDWORD(&context, name, value);
+   }
+   else return nullptr;
+}
+
 void* DebugController :: readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
@@ -1155,6 +1165,9 @@ void* DebugController :: readFieldValue(ContextBrowserBase* watch, void* parent,
    if (level > 0) {
       if (size == 4) {
          return readUIntLocal(watch, parent, address, name, level);
+      }
+      else if (size == 2) {
+         return readShortLocal(watch, parent, address, name, level);
       }
       else if (size == 1) {
          return readByteLocal(watch, parent, address, name, level);

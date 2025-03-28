@@ -436,6 +436,7 @@ namespace elena_lang
    constexpr auto errFatalError       = -1;
    constexpr auto errFatalLinker      = -2;
    constexpr auto errCorruptedVMT     = -4;
+   constexpr auto errMissingNamespace = -5;
 
    // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;
@@ -744,6 +745,7 @@ namespace elena_lang
    constexpr auto PLATFORM_CATEGORY             = "configuration/platform";
 
    constexpr auto COLLECTION_CATEGORY           = "configuration/collection/*";
+   constexpr auto COLLECTIONS_CATEGORY          = "configuration/collections/*";
 
    constexpr auto TEMPLATE_CATEGORY             = "templates/*";
    constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";

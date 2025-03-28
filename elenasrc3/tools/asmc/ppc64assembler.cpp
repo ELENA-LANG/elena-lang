@@ -1352,6 +1352,22 @@ void PPC64Assembler :: compileLFD(ScriptToken& tokenInfo, MemoryWriter& writer)
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
+void PPC64Assembler :: compileLFIWAX(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand frt = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   int d = 0;
+   PPCOperand rb = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   if (frt.isFPR() && rb.isGPR()) {
+      writer.writeDWord(PPCHelper::makeXCommand(31, frt.type, PPCOperandType::None, rb.type, 855, 0));
+   }
+   else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+}
+
+
 void PPC64Assembler :: compileLHZ(ScriptToken& tokenInfo, MemoryWriter& writer)
 {
    PPCOperand rs = readRegister(tokenInfo, ASM_INVALID_SOURCE);
@@ -2127,6 +2143,9 @@ bool PPC64Assembler :: compileLOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    }
    else if (tokenInfo.compare("lfd")) {
       compileLFD(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("lfiwax")) {
+      compileLFIWAX(tokenInfo, writer);
    }
    else if (tokenInfo.compare("lha")) {
       compileLHA(tokenInfo, writer);

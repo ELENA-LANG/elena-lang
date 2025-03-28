@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECONTROLLER_H
@@ -27,8 +27,8 @@ namespace elena_lang
 
       void saveSource(TextViewModelBase* model, ustr_t name);
 
-      SourceViewController(TextViewSettings& settings)
-         : TextViewController(settings)
+      SourceViewController()
+         : TextViewController()
       {
       }
    };
@@ -191,8 +191,8 @@ namespace elena_lang
 
       void loadSystemConfig(IDEModel* model, path_t configPath, ustr_t typeXPath, ustr_t platformXPath);
 
-      bool loadConfig(IDEModel* model, path_t configPath);
-      void saveConfig(IDEModel* model, path_t configPath);
+      bool loadConfig(IDEModel* model, path_t configPath, GUISettinngs& guiSettings);
+      void saveConfig(IDEModel* model, path_t configPath, GUISettinngs& guiSettings);
 
       void setNotifier(NotifierBase* notifier)
       {
@@ -248,6 +248,7 @@ namespace elena_lang
       void doIndent(IDEModel* model);
       void doOutdent(IDEModel* model);
 
+      void doConfigureFontSettings(FontDialogBase& editorDialog, IDEModel* model);
       void doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model);
       void doConfigureIDESettings(IDESettingsBase& editorDialog, IDEModel* model);
       void doConfigureDebuggerSettings(DebuggerSettingsBase& editorDialog, IDEModel* model);
@@ -272,7 +273,7 @@ namespace elena_lang
       void onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model);
       void onDocSelection(IDEModel* model, int index);
 
-      void onIDEStop(IDEModel* model);
+      void onIDEStop(IDEModel* model, GUISettinngs& guiSettings);
 
       void doInclude(IDEModel* model);
       void doExclude(IDEModel* model);
@@ -286,9 +287,9 @@ namespace elena_lang
       void autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
-         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer
+         IDEModel* model, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer
       ) :
-         sourceController(textViewSettings),
+         sourceController(),
          projectController(outputProcess, vmConsoleProcess, process, &model->projectModel, &model->sourceViewModel,
             this, platform, pathHelper, comparer)
       {

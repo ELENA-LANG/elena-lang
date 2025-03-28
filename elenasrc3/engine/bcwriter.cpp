@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -3071,51 +3071,70 @@ void ByteCodeWriter :: saveLoop(CommandTape& tape, BuildNode node, TapeScope& ta
    tape.releaseLabel();
 }
 
-void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
-   ReferenceMap& paths, bool tapeOptMode)
+void ByteCodeWriter :: openTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool virtualMode)
 {
-   int retLabel = tape.newLabel();                 // declare ret-end-label
-   tape.newLabel();                                // declare end-label
-   tape.newLabel();                                // declare alternative-label
+   if (!virtualMode) {
+      tryInfo.retLabel = tape.newLabel();             // declare ret-end-label
+      tryInfo.endLabel = tape.newLabel();             // declare end-label
+      tryInfo.altLabel = tape.newLabel();             // declare alternative-label
+   }
+   else {
+      tryInfo.retLabel = tape.renewLabel(tryInfo.retLabel); // declare ret-end-label
+      tryInfo.endLabel = tape.renewLabel(tryInfo.endLabel); // declare end-label
+      tryInfo.altLabel = tape.renewLabel(tryInfo.altLabel); // declare alternative-label
+   }
 
-   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
+   tape.write(ByteCode::XHookDPR, tryInfo.ptr, tryInfo.altLabel, mskLabelRef);
 
-   retLabel = tape.exchangeFirstsLabel(retLabel);
+   tryInfo.retLabel = tape.exchangeFirstsLabel(tryInfo.retLabel);
+}
 
-   BuildNode tryNode = node.findChild(BuildKey::Tape);
-   BuildNode catchNode = tryNode.nextNode(BuildKey::Tape);
-   BuildNode finallyNode = catchNode.nextNode(BuildKey::Tape);
-   BuildNode index = node.findChild(BuildKey::Index);
-   saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
+// NOTE : closing is true for the actual try-catch end, and false - for try_exclude
+void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool virtualMode,
+   TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   BuildNode finallyNode = tryInfo.catchMode ? tryInfo.catchNode.nextNode(BuildKey::Tape) : tryInfo.catchNode;
 
    // unhook
    tape.write(ByteCode::Unhook);
 
+   if (!tryInfo.catchMode) {
+      // for try-finally statement, the finnaly code must be called here
+      if (!virtualMode && finallyNode != BuildKey::None) {
+         tape.write(ByteCode::StoreFI, tryInfo.index);
+         saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+         tape.write(ByteCode::PeekFI, tryInfo.index);
+      }
+   }
+
    // jump
-   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
+   tape.write(ByteCode::Jump, tryInfo.endLabel);
 
    // === exit redirect block ===
    // restore the original ret label and return the overridden one
-   retLabel = tape.exchangeFirstsLabel(retLabel);
+   tryInfo.retLabel = tape.exchangeFirstsLabel(tryInfo.retLabel);
 
    // ret-end-label:
-   tape.setPredefinedLabel(retLabel);
+   tape.setPredefinedLabel(tryInfo.retLabel);
 
    // unhook
    tape.write(ByteCode::Unhook);
 
    // finally-block
-   if (finallyNode != BuildKey::None) {
-      tape.write(ByteCode::StoreFI, index.arg.value);
+   if (finallyNode != BuildKey::None) {      
+      tape.write(ByteCode::StoreFI, tryInfo.index);
       saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
-      tape.write(ByteCode::PeekFI, index.arg.value);
+      tape.write(ByteCode::PeekFI, tryInfo.index);
    }
 
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    // ===========================
 
    // catchLabel:
-   tape.setLabel();
+   if (virtualMode) {
+      tape.setPredefinedLabel(tryInfo.altLabel);
+   }
+   else tape.setLabel();
 
    // tstflg elMessage
    // jeq labSkip
@@ -3133,106 +3152,143 @@ void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope
    tape.setLabel();
    tape.write(ByteCode::Unhook);
 
-   saveTape(tape, catchNode, tapeScope, paths, tapeOptMode, false);
+   if (tryInfo.catchMode) {
+      saveTape(tape, tryInfo.catchNode, tapeScope, paths, tapeOptMode, false);
 
-   // eos:
-   tape.setLabel();
-   tape.releaseLabel(); // release ret-end-label
+      // eos:
+      if (virtualMode) {
+         tape.setPredefinedLabel(tryInfo.endLabel);
+      }
+      else {
+         tape.setLabel();
+         tape.releaseLabel(); // release ret-end-label
+      }
 
-   // finally-block
-   if (finallyNode != BuildKey::None) {
-      tape.write(ByteCode::StoreFI, index.arg.value);
-      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
-      tape.write(ByteCode::PeekFI, index.arg.value);
+      // finally-block
+      if (finallyNode != BuildKey::None) {
+         tape.write(ByteCode::StoreFI, tryInfo.index);
+         saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+         tape.write(ByteCode::PeekFI, tryInfo.index);
+      }
+
+      if (virtualMode)
+         tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    }
+   else {
+      // finally-block
+      if (finallyNode != BuildKey::None) {
+         // store fp:index
+         // <finally>
+         // peek fp:index
+
+         tape.write(ByteCode::StoreFI, tryInfo.index);
+         saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
+         tape.write(ByteCode::PeekFI, tryInfo.index);
+      }
+
+      // throw
+      tape.write(ByteCode::Throw);
+
+      // eos:
+      if (virtualMode) {
+         tape.setPredefinedLabel(tryInfo.endLabel);
+      }
+      else {
+         tape.setLabel();
+         tape.releaseLabel(); // release ret-end-label
+      }
+   }
+}
+
+void ByteCodeWriter::includeTryBlocks(CommandTape& tape, TapeScope& tapeScope)
+{
+   if (tapeScope.tryContexts.count() == 1) {
+      auto info = tapeScope.tryContexts.pop();
+
+      openTryBlock(tape, info, true);
+
+      tapeScope.tryContexts.push(info);
+   }
+   else if (tapeScope.tryContexts.count() > 1) {
+      TryContexts temp({ });
+      while (tapeScope.tryContexts.count() > 0) {
+         temp.push(tapeScope.tryContexts.pop());
+      }
+      while (temp.count() > 0) {
+         auto info = temp.pop();
+
+         openTryBlock(tape, info, true);
+
+         tapeScope.tryContexts.push(info);
+      }
+   }
+}
+
+void ByteCodeWriter :: excludeTryBlocks(CommandTape& tape,
+   TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
+{
+   if (tapeScope.tryContexts.count() == 1) {
+      auto info = tapeScope.tryContexts.pop();
+
+      closeTryBlock(tape, info, true, tapeScope, paths, tapeOptMode);
+
+      tapeScope.tryContexts.push(info);
+   }
+   else if (tapeScope.tryContexts.count() > 1) {
+      TryContexts temp({});
+      while (temp.count() > 0) {
+         auto info = tapeScope.tryContexts.pop();
+
+         closeTryBlock(tape, info, true, tapeScope, paths, tapeOptMode);
+
+         temp.push(info);
+      }
+      while (temp.count() > 0) {
+         tapeScope.tryContexts.push(temp.pop());
+      }
+   }
+}
+
+void ByteCodeWriter :: saveCatching(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
+   ReferenceMap& paths, bool tapeOptMode)
+{
+   BuildNode tryNode = node.findChild(BuildKey::Tape);
+
+   TryContextInfo blockInfo = { true };
+   blockInfo.catchNode = tryNode.nextNode(BuildKey::Tape);   
+   blockInfo.index = node.findChild(BuildKey::Index).arg.value;
+   blockInfo.ptr = node.arg.value;
+
+   openTryBlock(tape, blockInfo, false);
+
+   tapeScope.tryContexts.push(blockInfo);
+
+   saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
+
+   blockInfo = tapeScope.tryContexts.pop();
+
+   closeTryBlock(tape, blockInfo, false, tapeScope, paths, tapeOptMode);
 }
 
 void ByteCodeWriter :: saveFinally(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
    ReferenceMap& paths, bool tapeOptMode)
 {
-   int retLabel = tape.newLabel();                 // declare ret-end-label
-   tape.newLabel();                                // declare end-label
-   tape.newLabel();                                // declare alternative-label
-
-   tape.write(ByteCode::XHookDPR, node.arg.value, PseudoArg::CurrentLabel, mskLabelRef);
-
-   retLabel = tape.exchangeFirstsLabel(retLabel);
-
    BuildNode tryNode = node.findChild(BuildKey::Tape);
-   BuildNode finallyNode = tryNode.nextNode(BuildKey::Tape);
-   BuildNode index = node.findChild(BuildKey::Index);
+
+   TryContextInfo blockInfo = { false };
+   blockInfo.catchNode = tryNode.nextNode(BuildKey::Tape);
+   blockInfo.index = node.findChild(BuildKey::Index).arg.value;
+   blockInfo.ptr = node.arg.value;
+
+   openTryBlock(tape, blockInfo, false);
+
+   tapeScope.tryContexts.push(blockInfo);
 
    saveTape(tape, tryNode, tapeScope, paths, tapeOptMode, false);
 
-   // unhook
-   tape.write(ByteCode::Unhook);
+   blockInfo = tapeScope.tryContexts.pop();
 
-   if (finallyNode != BuildKey::None) {
-      tape.write(ByteCode::StoreFI, index.arg.value);
-      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
-      tape.write(ByteCode::PeekFI, index.arg.value);
-   }
-
-   // jump
-   tape.write(ByteCode::Jump, PseudoArg::PreviousLabel);
-
-   // === exit redirect block ===
-   // restore the original ret label and return the overridden one
-   retLabel = tape.exchangeFirstsLabel(retLabel);
-
-   // ret-end-label:
-   tape.setPredefinedLabel(retLabel);
-
-   // unhook
-   tape.write(ByteCode::Unhook);
-
-   // finally-block
-   if (finallyNode != BuildKey::None) {
-      tape.write(ByteCode::StoreFI, index.arg.value);
-      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
-      tape.write(ByteCode::PeekFI, index.arg.value);
-   }
-
-   tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
-   // ===========================
-
-   // catchLabel:
-   tape.setLabel();
-
-   // tstflg elMessage
-   // jeq labSkip
-   // load
-   // peeksi 0
-   // callvi 0
-   // labSkip:
-   // unhook
-
-   tape.newLabel();
-   tape.write(ByteCode::TstFlag, elMessage);
-   tape.write(ByteCode::Jeq, PseudoArg::CurrentLabel);
-   tape.write(ByteCode::Load);
-   tape.write(ByteCode::PeekSI);
-   tape.write(ByteCode::CallVI);
-   tape.setLabel();
-   tape.write(ByteCode::Unhook);
-
-   // finally-block
-   if (finallyNode != BuildKey::None) {
-      // store fp:index
-      // <finally>
-      // peek fp:index
-
-      tape.write(ByteCode::StoreFI, index.arg.value);
-      saveTape(tape, finallyNode, tapeScope, paths, tapeOptMode, false);
-      tape.write(ByteCode::PeekFI, index.arg.value);
-   }
-
-   // throw
-   tape.write(ByteCode::Throw);
-
-   // eos:
-   tape.setLabel();
-   tape.releaseLabel(); // release ret-end-label
+   closeTryBlock(tape, blockInfo, false, tapeScope, paths, tapeOptMode);
 }
 
 void ByteCodeWriter :: saveSwitchOption(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
@@ -3573,6 +3629,12 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::TernaryOp:
             saveTernaryOp(tape, current, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::ExcludeTry:
+            excludeTryBlocks(tape, tapeScope, paths, tapeOptMode);
+            break;
+         case BuildKey::IncludeTry:
+            includeTryBlocks(tape, tapeScope);
             break;
          case BuildKey::Path:
          case BuildKey::InplaceCall:

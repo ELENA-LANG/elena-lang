@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugController class and its helpers header
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DEBUGCONTROLLER_H
@@ -224,7 +224,7 @@ namespace elena_lang
       bool                    _running;
       PathString              _debuggee;
       PathString              _arguments;
-      bool                    _witExplicitConsole;
+      StartUpSettings         _startUpSettings;
 
       DebugProcessBase*       _process;
       DebugInfoProvider       _provider;
@@ -257,6 +257,7 @@ namespace elena_lang
       void* readObject(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, ustr_t className = nullptr, addr_t vmtAddress = 0);
       void* readFieldValue(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level, int size, ustr_t className = nullptr);
       void* readByteLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
+      void* readShortLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readUIntLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
       void* readLongLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level);
@@ -274,7 +275,7 @@ namespace elena_lang
          return _started;
       }
 
-      bool start(path_t programPath, path_t arguments, bool debugMode, bool witExplicitConsole);
+      bool start(path_t programPath, path_t arguments, bool debugMode, StartUpSettings startUpSettings);
 
       void clearBreakpoints();
 

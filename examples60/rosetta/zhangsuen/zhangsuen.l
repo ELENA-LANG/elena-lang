@@ -136,12 +136,12 @@ extension zhangsuenOp : Matrix<CharValue>
     {
         var it := self.enumerator();
  
-        it.forEach::(ch){ console.print(ch," ") };
+        it.forEach::(ch){ Console.print(ch," ") };
         while (it.next())
         {
-            console.writeLine();
+            Console.writeLine();
 
-            it.forEach::(ch){ console.print(ch," ") }
+            it.forEach::(ch){ Console.print(ch," ") }
         }
     }
 }
@@ -162,5 +162,5 @@ public program()
  
     grid.print();
  
-    console.readChar()
+    Console.readChar()
 }

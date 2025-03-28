@@ -1,35 +1,35 @@
 <configuration>
   <platform key="Linux_I386">
      <project>
-        <executable>intsum</executable>
+        <executable>datetime</executable>
      </project>
   </platform>
   <platform key="Linux_AMD64">
      <project>
-        <executable>intsum64</executable>
+        <executable>datetime64</executable>
      </project>
   </platform>
   <platform key="Linux_PPC64le">
      <project>
-        <executable>intsum64</executable>
+        <executable>datetime64</executable>
      </project>
   </platform>
   <platform key="Linux_ARM64">
      <project>
-        <executable>intsum64</executable>
+        <executable>datetime64</executable>
      </project>
   </platform>
   <project>
-     <namespace>sum</namespace>
+     <namespace>datetime</namespace>
      <template>console</template>
   </project>
   <files>
      <module>
-        <include>sum.l</include>
+        <include>control.l</include>
      </module>
   </files>
   <forwards>
-     <forward key="prompt">sum'IntSamplePrompt</forward>
-     <forward key="number">extensions'Integer</forward>
+     <forward key="program">extensions'ProgramLoop</forward>
+     <forward key="program'control">datetime'Control</forward>
   </forwards>
 </configuration>

@@ -2,7 +2,7 @@
 
 import system'routines;
 
-PrintSecondPower(n){ console.writeLine(n * n) }
+PrintSecondPower(n){ Console.writeLine(n * n) }
 
 public program()
 {

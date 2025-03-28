@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger class and its helpers header
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WIN32DEBUGPROCESS_H
@@ -135,7 +135,8 @@ namespace elena_lang
 
       Win32DebugProcessException exception;
 
-      bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine, bool withPersistentConsole);
+      bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine, const wchar_t* appPath,
+         StartUpSettings& startUpSettings);
 
       void continueProcess();
       void processEvent(DWORD timeout);
@@ -194,7 +195,7 @@ namespace elena_lang
 
       bool findSignature(StreamReader& reader, char* signature, pos_t length) override;
 
-      bool startProgram(path_t exePath, path_t cmdLine, bool withPersistentConsole) override;
+      bool startProgram(path_t exePath, path_t cmdLine, path_t appPath, StartUpSettings& startUpSettings) override;
 
       bool proceed(int timeout) override;
       void run() override;

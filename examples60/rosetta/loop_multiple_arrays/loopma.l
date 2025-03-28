@@ -11,10 +11,10 @@ public programUsingFor()
     
     for(int i := 0; i < a1.Length; i += 1)
     {
-        console.printLine(a1[i], a2[i], a3[i])
+        Console.printLine(a1[i], a2[i], a3[i])
     };
     
-    console.readChar()
+    Console.readChar()
 }
 
 public programUsingZip()
@@ -26,9 +26,9 @@ public programUsingZip()
                        .zipBy(a3, (first,second => first + second.toString() ));
     
     zipped.forEach::(e)
-        { console.writeLine(e) };
+        { Console.writeLine(e) };
     
-    console.readChar()
+    Console.readChar()
 }
 
 // To build the program to use 'programUsingZip' symbol, just change

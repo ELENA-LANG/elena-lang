@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      DocumentView class header
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DOCUMENT_H
@@ -161,6 +161,8 @@ namespace elena_lang
    class DocumentView : public TextWatcherBase
    {
    public:
+      static int VerticalScrollOffset;
+
       struct LexicalReader : ReaderInfo
       {
          Rectangle     region;
@@ -338,10 +340,10 @@ namespace elena_lang
       void moveEnd(DocumentChangeStatus& changeStatus, bool selecting);
       void moveLast(DocumentChangeStatus& changeStatus, bool selecting);
 
-      void moveFrameDown(DocumentChangeStatus& changeStatus);
+      void moveFrameDown(DocumentChangeStatus& changeStatus, int frameOffset);
       void moveDown(DocumentChangeStatus& changeStatus, bool selecting);
 
-      void moveFrameUp(DocumentChangeStatus& changeStatus);
+      void moveFrameUp(DocumentChangeStatus& changeStatus, int frameOffset);
       void moveUp(DocumentChangeStatus& changeStatus, bool selecting);
 
       void moveLeftToken(DocumentChangeStatus& changeStatus, bool selecting);

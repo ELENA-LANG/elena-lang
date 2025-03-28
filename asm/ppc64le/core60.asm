@@ -1005,7 +1005,7 @@ end
 // ; fiadd
 inline %070h
 
-  lfd     f18, 0(r3) 
+  lfiwax  f18, r3
   fcfid   f18, f18
   lfd     f17, 0(r15)
   fadd    f17, f17, f18  
@@ -1016,7 +1016,7 @@ end
 // ; fsub
 inline %071h
 
-  lfd     f18, 0(r3) 
+  lfiwax  f18, r3
   fcfid   f18, f18
   lfd     f17, 0(r15)
   fsub    f17, f18, f17
@@ -1024,10 +1024,10 @@ inline %071h
 
 end
 
-// ; fmul
+// ; fimul
 inline %072h
 
-  lfd     f18, 0(r3) 
+  lfiwax  f18, r3
   fcfid   f18, f18
   lfd     f17, 0(r15)
   fmul    f17, f17, f18  
@@ -1035,13 +1035,13 @@ inline %072h
 
 end
 
-// ; fdiv
+// ; fidiv
 inline %073h
 
-  lfd     f18, 0(r3) 
+  lfiwax  f18, r3
   fcfid   f18, f18
   lfd     f17, 0(r15)
-  fdiv    f17, f18, f17
+  fdiv    f17, f17, f18
   stfd    f17, 0(r15)
 
 end

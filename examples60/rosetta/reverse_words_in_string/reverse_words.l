@@ -18,8 +18,8 @@ public program()
     {
         line.splitBy(" ").sequenceReverse().forEach::(word)
         {
-            console.print(word," ")
+            Console.print(word," ")
         };
-        console.writeLine()
+        Console.writeLine()
     }
 }

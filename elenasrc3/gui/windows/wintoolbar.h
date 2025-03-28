@@ -21,7 +21,8 @@ struct ToolBarButton
 
 class ToolBar : public ControlBase
 {
-   int            _iconSize;
+   int        _iconSize;
+   HIMAGELIST _hImageList;
 
 public:
    HWND createControl(HINSTANCE instance, ControlBase* owner,
@@ -30,6 +31,7 @@ public:
    void enableItemById(int id, bool doEnable);
 
    ToolBar(int iconSize);
+   virtual ~ToolBar();
 };
 
 }

@@ -251,6 +251,11 @@ void GTKIDEWindow :: on_text_model_change(TextViewModelEvent event)
 //   }
 }
 
+void GTKIDEWindow :: on_textframe_change(SelectionEvent event)
+{
+   _controller->onDocSelection(_model, event.Index());
+}
+
 void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
 {
 }

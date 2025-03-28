@@ -9,18 +9,18 @@ public program()
     
     if(s.startingWith("hel"))
     {
-        console.printLine(s," starts with hel")
+        Console.printLine(s," starts with hel")
     };
     
     if(s.endingWith("llo"))
     {
-        console.printLine(s," ends with llo")
+        Console.printLine(s," ends with llo")
     };
 
     if(s.containing("el"))
     {
-        console.printLine(s," contains el")
+        Console.printLine(s," contains el")
     };
     
-    console.readChar()
+    Console.readChar()
 }

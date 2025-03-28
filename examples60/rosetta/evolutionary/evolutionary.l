@@ -67,10 +67,10 @@ public program()
     var attempt := new Integer();
     EvoAlgorithm.new(Target,C).forEach::(current)
     {
-        console 
+        Console 
             .printPaddingLeft(10,"#",attempt.append(1))
             .printLine(" ",current," fitness: ",current.fitnessOf(Target))
     };
     
-    console.readChar()
+    Console.readChar()
 }

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger class and its helpers implementation
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -346,8 +346,19 @@ Win32DebugProcess :: Win32DebugProcess()
    needToFreeConsole = false;
 }
 
-bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine, bool withExplicitConsole)
+inline bool isIncluded(path_t paths, path_t path)
 {
+   pos_t length = path.length_pos();
+   pos_t index = paths.findStr(path);
+
+   return (index != NOTFOUND_POS && (paths[index + length] == ';' || paths[index + length] == 0 || paths[index + length] == '\\'));
+}
+
+bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cmdLine, const wchar_t* appPath,
+   StartUpSettings& startUpSettings)
+{
+   DynamicString<path_c> pathsEnv;
+
    PROCESS_INFORMATION pi = { nullptr, nullptr, 0, 0 };
    STARTUPINFO         si;
    PathString          currentPath;
@@ -360,15 +371,32 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
    si.dwFlags = STARTF_USESHOWWINDOW;
    si.wShowWindow = SW_SHOWNORMAL;
 
-   if (withExplicitConsole) {
+   if (startUpSettings.withExplicitConsole) {
       AllocConsole();
 
       needToFreeConsole = true;
    }
    else flags |= CREATE_NEW_CONSOLE;
 
+   pos_t trimPos = INVALID_POS;
+   if (startUpSettings.includeAppPath2Paths) {
+      flags |= CREATE_UNICODE_ENVIRONMENT;
 
-   if (!CreateProcess(
+      pathsEnv.allocate(4096);
+
+      int dwRet = GetEnvironmentVariable(_T("PATH"), (LPWSTR)pathsEnv.str(), 4096);
+      if (dwRet && !isIncluded(pathsEnv.str(), appPath)) {
+         trimPos = pathsEnv.length_pos();
+
+         if (!pathsEnv.empty() && pathsEnv[pathsEnv.length() - 1] != ';')
+            pathsEnv.append(';');
+         pathsEnv.append(appPath);
+
+         SetEnvironmentVariable(_T("PATH"), pathsEnv.str());
+      }
+   }
+
+   bool retVal = CreateProcess(
       exePath,
       (wchar_t*)cmdLine,
       nullptr,
@@ -376,8 +404,16 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
       FALSE,
       flags,
       nullptr,
-      currentPath.str(), &si, &pi))
-   {
+      currentPath.str(), &si, &pi);
+
+   if (trimPos != NOTFOUND_POS) {
+      // rolling back changes to ENVIRONENT if required
+      pathsEnv.trim(trimPos);
+
+      SetEnvironmentVariable(_T("PATH"), pathsEnv.str());
+   }
+
+   if (!retVal) {
       return false;
    }
 
@@ -396,9 +432,9 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
    return true;
 }
 
-bool Win32DebugProcess :: startProgram(path_t exePath, path_t cmdLine, bool withPersistentConsole)
+bool Win32DebugProcess :: startProgram(path_t exePath, path_t cmdLine, path_t appPath, StartUpSettings& startUpSettings)
 {
-   if (startProcess(exePath.str(), cmdLine.str(), withPersistentConsole)) {
+   if (startProcess(exePath.str(), cmdLine.str(), appPath, startUpSettings)) {
       processEvent(INFINITE);
 
       return true;

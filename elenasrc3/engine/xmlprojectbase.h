@@ -23,7 +23,6 @@ namespace elena_lang
       typedef Tree<ProjectOption, ProjectOption::None>                        ProjectTree;
       typedef Tree<ProjectOption, ProjectOption::None>::Node                  ProjectNode;
       typedef List<path_t, freepath>                                          Paths;
-      typedef MemoryMap<ustr_t, ustr_t, Map_StoreUStr, Map_GetUStr, freeUStr> Forwards;
 
       class ModuleIterator;
 

@@ -349,15 +349,15 @@ public program()
    var text := new StringWriter();
    var parser := new Parser();
 
-   while (console.readLine().writeTo(text).Length > 0)
+   while (Console.readLine().writeTo(text).Length > 0)
    {
       try
       {
-         console.printLine("=",parser.run(text))
+         Console.printLine("=",parser.run(text))
       }
       catch(Exception e)
       {
-         console.writeLine("Invalid Expression")
+         Console.writeLine("Invalid Expression")
       };
         
       text.clear()

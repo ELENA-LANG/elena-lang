@@ -27,7 +27,7 @@ extension op
 public program()
 {
    var array := new int[]{1, 2, 3, 4, 5, 6, 7, 8};
-   console.printLine(
+   Console.printLine(
       "Arithmetic mean of {",array.asEnumerable(),"} is ",
       array.average()).readChar()
 }

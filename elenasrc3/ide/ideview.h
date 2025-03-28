@@ -76,8 +76,8 @@ public:
 
    void changeStatus(IDEStatus status);
 
-   IDEModel()
-      : projectModel(&status)
+   IDEModel(TextViewSettings settings)
+      : sourceViewModel(settings), projectModel(&status)
    {
       status = IDEStatus::Empty;
       running = false;

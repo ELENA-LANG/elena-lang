@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of the base class implementing
 //      ELENA JIT Loader.
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LIBMAN_H
@@ -25,6 +25,7 @@ namespace elena_lang
 
       PathMap           _binaryPaths, _packagePaths;
       ModuleMap         _binaries, _modules, _debugModules;
+      Forwards          _templates;
 
       Listeners         _listeners;
 
@@ -40,7 +41,8 @@ namespace elena_lang
 
       ModuleBase* resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode, bool debugModule);
       ModuleBase* resolveWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
-      ModuleBase* resolveIndirectWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
+
+      void loadTemplateForwards(ModuleBase* module, ref_t reference);
 
    public:
       enum class ModuleRequestResult

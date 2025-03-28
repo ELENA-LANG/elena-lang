@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINTEXTVIEW_H
@@ -159,7 +159,7 @@ namespace elena_lang
 
       static void registerTextViewWindow(HINSTANCE hInstance, wstr_t className);
 
-      HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner) override;
+      HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner, int dwExStyles) override;
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 

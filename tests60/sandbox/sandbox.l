@@ -2,10 +2,13 @@ import extensions;
 
 public program()
 {
-   real r := 1.0;
+    int i := 1;
 
-   real z := r.exp();
-   console.printLine(z);
+    real a :=  -1.0/*.power(i)*/;
 
-   console.printLine(z.ln());
+    //Console.printLine(a);
+    //Console.printLine(b);
+    //Console.printLine(c);
+    //Console.printLine(d);
+    Console.printLine(a / (i*2/*+1*/) /** 4*/);
 }

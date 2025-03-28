@@ -79,6 +79,9 @@ void IDEBroadcaster :: sendMessage(EventBase* event)
       case EVENT_TEXTVIEW_MODEL_CHANGED:
          textview_changed.emit(*(TextViewModelEvent*)event);
          break;
+      case EVENT_TEXTFRAME_SELECTION_CHANGED:
+         textframe_changed.emit(*(SelectionEvent*)event);
+         break;
       default:
          break;
    }
@@ -107,16 +110,16 @@ Gtk::Widget* IDEFactory :: createTextControl()
 
    // update font size
    for (int j = 0; j < STYLE_MAX; j++) {
-      defaultStyles[j].size = viewModel->fontSize;
-      classicStyles[j].size = viewModel->fontSize;
-      darkStyles[j].size = viewModel->fontSize;
+      defaultStyles[j].size = viewModel->fontInfo.size;
+      classicStyles[j].size = viewModel->fontInfo.size;
+      darkStyles[j].size = viewModel->fontInfo.size;
    }
 
    // initialize view styles
    reloadStyles(viewModel);
 
    //TextViewWindow* view = new TextViewWindow(/*_model->viewModel(), &_styles*//*, &_controller->sourceController*/);
-   IDETextViewFrame* frame = new IDETextViewFrame(_model->viewModel(), &_controller->sourceController, &_styles);
+   IDETextViewFrame* frame = new IDETextViewFrame(_model->viewModel(), &_controller->sourceController, &_styles, &_broadcaster);
 
    _broadcaster.textview_changed.connect(sigc::mem_fun(*frame, &IDETextViewFrame::on_text_model_change));
 
@@ -138,7 +141,19 @@ Gtk::Widget* IDEFactory :: createTextControl()
 
 void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
 {
-   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
+   // update font size
+   for (int j = 0; j <= STYLE_MAX; j++) {
+      defaultStyles[j].size = viewModel->fontInfo.size;
+      defaultStyles[j].faceName = *viewModel->fontInfo.name;
+
+      classicStyles[j].size = viewModel->fontInfo.size;
+      classicStyles[j].faceName = *viewModel->fontInfo.name;
+
+      darkStyles[j].size = viewModel->fontInfo.size;
+      darkStyles[j].faceName = *viewModel->fontInfo.name;
+   }
+
+   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontInfo.size + 5, 20, &_fontFactory);
 }
 
 void IDEFactory :: styleControl(GUIControlBase* control)
@@ -160,6 +175,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    ideWindow->setLayout(textIndex, -1, -1, -1, -1);
 
    _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
+   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
 
    return new WindowWrapper(ideWindow);
 }

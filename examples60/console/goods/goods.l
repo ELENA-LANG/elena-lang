@@ -88,7 +88,7 @@ public program()
         }
     };
 
-    list.forEach(printingLn);
+    list.forEach(PrintingLn);
 
     Console.readChar()
 }

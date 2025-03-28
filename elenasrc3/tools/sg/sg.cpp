@@ -1,14 +1,13 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "sgconst.h"
 #include "elena.h"
 #include "scriptreader.h"
 #include "parsertable.h"
-#include "tree.h"
 
 using namespace elena_lang;
 
@@ -24,7 +23,6 @@ constexpr auto DEFAULT_ENCODING = FileEncoding::UTF8;
 
 #endif
 
-typedef Tree<parse_key_t, 0> SyntaxTempTree;
 typedef Map<ustr_t, int, allocUStr, freeUStr> Coordinates;
 
 parse_key_t lastKey = 0;

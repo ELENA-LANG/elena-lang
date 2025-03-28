@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     SourceViewModel header File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef EDITFRAME_H
@@ -26,7 +26,7 @@ namespace elena_lang
 
       void clearDocumentView() override;
 
-      SourceViewModel();
+      SourceViewModel(TextViewSettings settings);
    };
 }
 

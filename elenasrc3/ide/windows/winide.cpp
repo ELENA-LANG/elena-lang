@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Implementation File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -264,6 +264,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    _recentProjectList(controller, model, IDM_FILE_PROJECTS),
    aboutDialog(instance, this),
    editorSettingsDialog(instance, this, model->viewModel()),
+   fontSettingsDialog(instance, this),
    ideSettingsDialog(instance, this, model),
    debuggerSettingsDialog(instance, this, &model->projectModel),
    _docViewListener(nullptr)
@@ -934,6 +935,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_EDITOR_OPTIONS:
          _controller->doConfigureEditorSettings(editorSettingsDialog, _model);
          break;
+      case IDM_EDITOR_FONT_OPTIONS:
+         _controller->doConfigureFontSettings(fontSettingsDialog, _model);
+         break;
       case IDM_IDE_OPTIONS:
          _controller->doConfigureIDESettings(ideSettingsDialog, _model);
          break;
@@ -1039,9 +1043,9 @@ void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
 
    ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
 
-   menu->enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection);
-   menu->enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection);
-   menu->enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable());
+   enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection, true);
+   enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection, true);
+   enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable(), true);
 
    menu->show(_handle, p);
 }
@@ -1131,6 +1135,7 @@ void IDEWindow :: onTextModelChange(TextViewModelNMHDR* rec)
 {
    if (test(rec->status, STATUS_COLORSCHEME_CHANGED)) {
       onColorSchemeChange();
+      rec->docStatus.frameChanged = true;
    }
 
    onDocumentUpdate(rec->docStatus);
@@ -1344,8 +1349,8 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 
       bool isSelected = docInfo ? docInfo->hasSelection() : false;
 
-      menu->enableMenuItemById(IDM_EDIT_COPY, isSelected);
-      menu->enableMenuItemById(IDM_EDIT_CUT, isSelected);
+      enableMenuItemById(IDM_EDIT_COPY, isSelected, true);
+      enableMenuItemById(IDM_EDIT_CUT, isSelected, true);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_DELETE, isSelected);
@@ -1353,8 +1358,8 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
    if (changeStatus.textChanged) {
       MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
 
-      menu->enableMenuItemById(IDM_EDIT_UNDO, docInfo ? docInfo->canUndo() : false);
-      menu->enableMenuItemById(IDM_EDIT_REDO, docInfo ? docInfo->canRedo() : false);
+      enableMenuItemById(IDM_EDIT_UNDO, docInfo ? docInfo->canUndo() : false, true);
+      enableMenuItemById(IDM_EDIT_REDO, docInfo ? docInfo->canRedo() : false, true);
    }
 
    if (docInfo) {
@@ -1458,4 +1463,25 @@ void IDEWindow :: onColorSchemeChange()
    _viewFactory->styleControl(this);
 
    refresh();
+}
+
+void IDEWindow :: onDropFiles(HDROP hDrop)
+{
+   TCHAR szName[MAX_PATH];
+
+   int count = DragQueryFile(hDrop, 0xFFFFFFFF, szName, MAX_PATH);
+   for (int i = 0; i < count; i++)
+   {
+      DragQueryFile(hDrop, i, szName, MAX_PATH);
+
+      if(PathUtil::checkExtension(path_t(szName), "l")) {
+         _controller->doOpenFile(_model, path_t(szName));
+      }
+      else if (PathUtil::checkExtension(path_t(szName), "prj")) {
+         _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model, path_t(szName));
+         break;
+      }
+   }
+
+   DragFinish(hDrop);
 }

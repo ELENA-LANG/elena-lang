@@ -20,6 +20,6 @@ public program()
 {
    for(int n := 0; n <= 14; n += 1)
    {
-      console.printLine(A(n,{ ^1 },{ ^-1 },{ ^-1 },{ ^1 },{ ^0 }))
+      Console.printLine(A(n,{ ^1 },{ ^-1 },{ ^-1 },{ ^1 },{ ^0 }))
    }
 }

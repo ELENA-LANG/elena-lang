@@ -70,9 +70,11 @@ public extension fileExOp : File
         = f.run(ReaderEnumerator.new(self));
 }
 
-// --- printingLn ---
+// --- PrintingLn ---
 
-public symbol printingLn = (line){ console.printLine(line) };
+public symbol PrintingLn = (line){ Console.printLine(line) };
+
+public symbol printingLn = PrintingLn; // !! for backword compatibility
 
 // --- func1Op ---
 

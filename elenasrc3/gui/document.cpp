@@ -252,6 +252,8 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 
 // --- DocumentView ---
 
+int DocumentView::VerticalScrollOffset = 1;
+
 DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter) :
    _undoBuffer(UNDO_BUFFER_SIZE),
    _formatter(text, formatter, &_markers),
@@ -398,7 +400,7 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
       frame.y = caret.y;
    }
    else if (frame.y + _size.y - 1 <= caret.y) {
-      frame.y = caret.y - _size.y + 3;
+      frame.y = caret.y - _size.y + 2 + VerticalScrollOffset;
    }
 
    if (_frame.getCaret() != frame) {
@@ -590,9 +592,9 @@ void DocumentView :: moveRightToken(DocumentChangeStatus& changeStatus, bool sel
    setCaret(_caret.getCaret(), selecting, changeStatus);
 }
 
-void DocumentView :: moveFrameUp(DocumentChangeStatus& changeStatus)
+void DocumentView :: moveFrameUp(DocumentChangeStatus& changeStatus, int frameOffset)
 {
-   vscroll(changeStatus, -1);
+   vscroll(changeStatus, -frameOffset);
    if (changeStatus.frameChanged) {
       if (_frame.row() + _size.y - 2 <= _caret.row()) {
          setCaret(_caret.column(), _frame.row() + _size.y - 3, false, changeStatus);
@@ -600,9 +602,9 @@ void DocumentView :: moveFrameUp(DocumentChangeStatus& changeStatus)
    }
 }
 
-void DocumentView :: moveFrameDown(DocumentChangeStatus& changeStatus)
+void DocumentView :: moveFrameDown(DocumentChangeStatus& changeStatus, int frameOffset)
 {
-   vscroll(changeStatus, 1);
+   vscroll(changeStatus, frameOffset);
    if (changeStatus.frameChanged) {
       if (_caret.row() < _frame.row()) {
          setCaret(_caret.column(), _frame.row(), false, changeStatus);
@@ -642,9 +644,9 @@ void DocumentView :: movePageDown(DocumentChangeStatus& changeStatus, bool selec
       setCaret(_caret.column(), _text->getRowCount() - 1, selecting, changeStatus);
    }
    else {
-      vscroll(changeStatus, _size.y);
+      vscroll(changeStatus, _size.y - 1);
       if (changeStatus.frameChanged)
-         setCaret(_caret.column(), _caret.row() + _size.y, selecting, changeStatus);
+         setCaret(_caret.column(), _caret.row() + _size.y - 1, selecting, changeStatus);
    }
 }
 
@@ -657,9 +659,9 @@ void DocumentView :: movePageUp(DocumentChangeStatus& changeStatus, bool selecti
       setCaret(_caret.column(), 0, selecting, changeStatus);
    }
    else {
-      vscroll(changeStatus, -_size.y);
+      vscroll(changeStatus, -_size.y + 1);
       if (changeStatus.frameChanged)
-         setCaret(_caret.column(), _caret.row() - _size.y, selecting, changeStatus);
+         setCaret(_caret.column(), _caret.row() - _size.y + 1, selecting, changeStatus);
    }
 }
 

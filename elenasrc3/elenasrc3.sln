@@ -34,8 +34,6 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elt", "tools\elt\vs\elt.vcx
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "elena-tests", "elena-tests\elena-tests.vcxproj", "{89A68A7E-1CB6-45CB-9B02-8183FF59284A}"
 EndProject
-Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ldbg", "ldbg\vs\ldbg.vcxproj", "{60FE12CF-0DA9-4266-9C0F-F544DB115020}"
-EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|x64 = Debug|x64

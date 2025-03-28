@@ -1,7 +1,8 @@
-## ELENA 6.6.0
+## ELENA 6.7.0
 
 - ELENA
   - [ADDED] user defined type alias
+  - [ADDED] supporting auto field
 
 - ELC
   - [ADDED] new option "-xj" to turn on jump alignment
@@ -23,6 +24,18 @@
   - [FIXED] #704 : Porting to FreeBSD/PowerPC64
   - [FIXED] aarch64 extopen / extclose opcode
   - [FIXED] #283 : unboxing duplicate object
+  - [ADDED] CORE_MATH_TABLE core table
+  - [ADDED] ppc64le : fexp
+  - [ADDED] aarch64 : fexp
+  - [ADDED] ppc64le : fln
+  - [ADDED] aarch64 : fln
+  - [FIXED] #283 : unboxing duplicate object
+  - [FIXED] default built-in variable inside the constructor
+  - [FIXED] GC routine in MTA
+  - [FIXED] using inside using in async / yield method
+  - [FIXED] string interpolation with character codes
+  - [FIXED] ppc64le : fiadd, fisub, fimul, fidiv opcodes
+  - [ADDED] project collection : support sub folders 
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri
@@ -30,12 +43,35 @@
   - [ADDED] system'net'NetworkStream
   - [ADDED] system'net'Socket : poll<Timespan,SelectMode>[3]
   - [ADDED] net'TcpListener : prop:Pending
+  - [ADDED] forms'Combobox
+  - [ADDED] net'HttpClient
+  - [FIXED] system'threading'Task - raise an exception if the task was completed before
+  - [FIXED] BlockingQueue<T> implementation
+
+- SM
+  - [ADDED] supporting $regex rules
+
+- Scripts
+  - [ADDED] xforms : supporting RadioButton, Panel, Edit, Combobox
 
 - SAMPLES
   - [ADDED] console regex sample
+  - [ADDED] net : httpget sample
+  - [FIXED] ppc64le : pi sample
 
 - IDE
   - [FIXED]debugger : step over multi-select statement
+  - [ADDED] Linux - open a file 
+  - [FIXED] #716 : applying highlight setting changes immediately
+  - [FIXED] #716 : highlight setting os on by default
+  - [FIXED] fix syntax highlighting with character constants
+  - [FIXED] #717 : The setting to change code editor font size doesn't work 
+  - [FIXED] #715 : There is no options available to change the code editor font
+  - [FIXED] displaying short struct field
+  - [ADDED] #721 : Dragging files into the IDE to open doesn't work
+  - [ADDED] #723 : include path to approot temporally inside IDE
+  - [ADDED] #722 : [IDE] Scrolling experience
+  - [ADDED] #725 : [IDE] large toolbar buttons
 
 - Tools
   - [ADDED][LDOC] static methods are in the separate category

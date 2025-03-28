@@ -15,7 +15,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.5.0</version>
+    <version>6.6.1</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -58,6 +58,7 @@
      </module>
      <module name="runtime">
        <include>runtime\systemmonitor.l</include>
+       <include>runtime\package.l</include>
      </module>
   </files>
 </configuration>

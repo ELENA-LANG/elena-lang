@@ -3,7 +3,7 @@ public program()
     var s := "Hello";
     var s2 := s + " literal";
  
-    console.writeLine(s);
-    console.writeLine(s2);
-    console.readChar()
+    Console.writeLine(s);
+    Console.writeLine(s2);
+    Console.readChar()
 }

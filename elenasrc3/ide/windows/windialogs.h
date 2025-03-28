@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //		Win32: Static dialogs header
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINDIALOGS_H
@@ -45,6 +45,20 @@ namespace elena_lang
 
       FileDialog(HINSTANCE instance, WindowBase* owner, const wchar_t* filter, const wchar_t* caption,
          const wchar_t* initialDir = nullptr);
+   };
+
+   // --- FontDialog ---
+   class FontDialog : public FontDialogBase
+   {
+      WindowBase* _owner;
+
+      CHOOSEFONT  _cf;
+      LOGFONT     _lf;
+
+   public:
+      bool selectFont(FontInfo& fontInfo) override;
+
+      FontDialog(HINSTANCE instance, WindowBase* owner);
    };
 
    class MessageDialog : public MessageDialogBase
@@ -148,6 +162,8 @@ namespace elena_lang
 
       void onCreate() override;
       void onOK() override;
+
+      void loadFontList();
 
    public:
       bool showModal() override;

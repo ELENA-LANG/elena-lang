@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FACTORY_H
@@ -47,7 +47,7 @@ namespace elena_lang
       GUIControlBase* createMenu(ControlBase* owner);
       GUIControlBase* createDebugContextMenu(ControlBase* owner);
       GUIControlBase* createEditorContextMenu(ControlBase* owner);
-      GUIControlBase* createToolbar(ControlBase* owner);
+      GUIControlBase* createToolbar(ControlBase* owner, bool largeMode);
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
          int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, 

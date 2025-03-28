@@ -109,7 +109,7 @@ public program()
     };
     
     // print the list
-    db.forEach(printingLn);
+    db.forEach(PrintingLn);
 
     Console.readChar()
 }

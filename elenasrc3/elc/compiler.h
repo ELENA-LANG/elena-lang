@@ -135,6 +135,13 @@ namespace elena_lang
       Illegal = 2
    };
 
+   enum class CodeFlowMode
+   {
+      Normal   = 0,
+      TryCatch = 1,
+      Alt      = 2
+   };
+
    struct ObjectInfo
    {
       ObjectKind kind;
@@ -467,6 +474,14 @@ namespace elena_lang
             else return false;
          }
 
+         virtual bool checkFlowMode(CodeFlowMode mode)
+         {
+            if (parent) {
+               return parent->checkFlowMode(mode);
+            }
+            else return false;
+         }
+
          template<class T> static T* getScope(Scope& scope, ScopeLevel level)
          {
             T* targetScope = (T*)scope.getScope(level);
@@ -699,6 +714,8 @@ namespace elena_lang
             return test(info.header.flags, elAbstract);
          }
 
+         bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo, int size, int extra) override;
+
          ObjectInfo mapMember(ustr_t identifier) override;
 
          virtual ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr);
@@ -858,6 +875,11 @@ namespace elena_lang
             else return Scope::resolveAutoOutput(typeInfo);
          }
 
+         bool checkFlowMode(CodeFlowMode) override
+         {
+            return false;
+         }
+
          MethodScope(ClassScope* classScope);
       };
 
@@ -873,6 +895,8 @@ namespace elena_lang
          pos_t    allocated2, reserved2;       // defines unmanaged frame size
 
          bool     withRetStatement;
+
+         CodeFlowMode flowMode;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -971,6 +995,14 @@ namespace elena_lang
             locals.add(local, Parameter(level, typeInfo, size, unassigned));
          }
 
+         bool checkFlowMode(CodeFlowMode mode) override
+         {
+            if (flowMode == mode) {
+               return true;
+            }
+            else return Scope::checkFlowMode(mode);
+         }
+
          void syncStack(MethodScope* methodScope);
          void syncStack(CodeScope* parentScope);
 
@@ -1059,6 +1091,8 @@ namespace elena_lang
          }
 
          void syncStack();
+         void commitTempStack(int& prevAllocated1, int& prevAllocated2);
+         void freeTempStack(int prevAllocated1, int prevAllocated2);
 
          ExprScope(SourceScope* parent);
          ExprScope(CodeScope* parent);
@@ -1082,9 +1116,9 @@ namespace elena_lang
 
          ref_t expectedRef;
 
-         Outer mapParent();
-         Outer mapOwner();
-         Outer mapSelf();
+         virtual Outer mapParent();
+         virtual Outer mapOwner();
+         virtual Outer mapSelf();
 
          ObjectInfo mapMember(ustr_t identifier) override;
 
@@ -1100,15 +1134,24 @@ namespace elena_lang
 
          bool markAsPresaved(ObjectInfo object);
 
+         bool checkFlowMode(CodeFlowMode) override
+         {
+            return false;
+         }
+
          InlineClassScope(ExprScope* owner, ref_t reference);
       };
 
       struct StatemachineClassScope : InlineClassScope
       {
+         typedef Map<int, int> LocalFieldMapping;
+
          pos_t contextSize;
          ref_t typeRef;
          ref_t resultRef;
          bool  asyncMode;
+
+         LocalFieldMapping localMappings;
 
          ObjectInfo mapContextField()
          {
@@ -1121,7 +1164,17 @@ namespace elena_lang
             if (level == ScopeLevel::Statemachine) {
                return this;
             }
-            else return Scope::getScope(level);
+            else return InlineClassScope::getScope(level);
+         }
+
+         Outer mapParent() override
+         {
+            return mapSelf();
+         }
+
+         Outer mapOwner() override
+         {
+            return mapSelf();
          }
 
          StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode);
@@ -1636,6 +1689,8 @@ namespace elena_lang
       bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
 
+      void injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, ClassScope* classScope, CodeScope& codeScope);
+
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 
       static int allocateLocalAddress(Scope& scope, int size, bool binaryArray);
@@ -1707,7 +1762,8 @@ namespace elena_lang
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate);
-      bool declareYieldVariable(Scope& scope, ustr_t name, TypeInfo typeInfo);
+
+      void markYieldVariable(Scope& scope, ref_t localOffset);
 
       void declareClassParent(ref_t parentRef, ClassScope& scope, SyntaxNode node);
 

@@ -139,6 +139,10 @@ namespace elena_lang
 
       Visibility retrieveVisibility(ref_t reference) override;
 
+      void flush() override
+      {
+      }
+
       TestModuleScope(bool tapeOptMode);
    };
 

@@ -3,14 +3,14 @@
 //
 //		This file contains the base class implementing ELENA LibraryManager.
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // -------------------------------------------------------
 #include "libman.h"
 
-#include <utility>
+//#include <utility>
 
 #include "module.h"
 #include "langcommon.h"
@@ -43,6 +43,7 @@ LibraryProvider :: LibraryProvider()
       _binaries(nullptr),
       _modules(nullptr),
       _debugModules(nullptr),
+      _templates(nullptr),
       _listeners(nullptr)
 {
 }
@@ -110,6 +111,11 @@ ModuleBase* LibraryProvider :: loadModule(ustr_t name, LoadResult& result, bool 
          return nullptr;
       }
       else _modules.add(name, module);
+
+      // load resolved template mapping if available
+      ref_t mappingRef = module->mapReference(TEMPLATE_MAPPING, true);
+      if (mappingRef)
+         loadTemplateForwards(module, mappingRef);
 
       onModuleLoad(module);
    }
@@ -249,57 +255,19 @@ ModuleBase* LibraryProvider :: resolveWeakModule(ustr_t weakName, ref_t& referen
    return nullptr;
 }
 
-ModuleBase* LibraryProvider :: resolveIndirectWeakModule(ustr_t weakName, ref_t& reference, bool silentMode)
+void LibraryProvider :: loadTemplateForwards(ModuleBase* module, ref_t reference)
 {
-   IdentifierString relativeName(TEMPLATE_PREFIX_NS, weakName);
+   IdentifierString forward;
+   IdentifierString resolved;
 
-   for (auto it = _modules.start(); !it.eof(); ++it) {
-      // try to resolve it once again
-      IdentifierString properName("'", weakName);
+   MemoryReader reader(module->mapSection(reference | mskMetaInfo, true), 0);
+   while (!reader.eof()) {
+      reader.readString(forward);
+      reader.readString(resolved);
 
-      reference = (*it)->mapReference(*properName, true);
-      if (reference)
-         return *it;
-
-      // if not - load imported modules
-      if ((*it)->mapReference(*relativeName, true)) {
-         // get list of nested namespaces
-         IdentifierString nsSectionName("'", NAMESPACES_SECTION);
-         auto nsSection = (*it)->mapSection((*it)->mapReference(*nsSectionName, true) | mskLiteralListRef, true);
-         if (nsSection) {
-            MemoryReader nsReader(nsSection);
-            while (!nsReader.eof()) {
-               IdentifierString nsProperName("'");
-               nsReader.appendString(nsProperName);
-               nsProperName.append("'");
-               nsProperName.append(weakName.str());
-
-               reference = (*it)->mapReference(*nsProperName, true);
-               if (reference) {
-                  assert(false); // NOTE : the template must be declared in the root namespace
-
-                  return *it;
-               }                  
-            }
-         }
-
-         // get list of imported modules
-         IdentifierString importSectionName("'", IMPORTS_SECTION);
-         auto importSection = (*it)->mapSection((*it)->mapReference(*importSectionName, true) | mskLiteralListRef, true);
-         if (importSection) {
-            MemoryReader importReader(importSection);
-            while (!importReader.eof()) {
-               IdentifierString moduleName;
-               importReader.readString(moduleName);
-
-               LoadResult tempResult;
-               loadModule(*moduleName, tempResult, true);
-            }
-         }
-      }
+      if (!_templates.exist(*forward))
+         _templates.add(*forward, (*resolved).clone());
    }
-
-   return nullptr;
 }
 
 void LibraryProvider :: addCorePath(path_t path)
@@ -342,11 +310,12 @@ ModuleInfo LibraryProvider :: getWeakModule(ustr_t weakReferenceName, bool silen
 {
    ModuleInfo retVal;
 
-   retVal.module = resolveWeakModule(weakReferenceName, retVal.reference, true);
-   if (retVal.module == nullptr) {
-      // Bad luck : try to resolve it indirectly
-      retVal.module = resolveIndirectWeakModule(weakReferenceName, retVal.reference, silentMode);
+   ustr_t resolved = _templates.get(weakReferenceName);
+   if (!resolved.empty()) {
+      return getModule({ resolved }, silentMode);
    }
+
+   retVal.module = resolveWeakModule(weakReferenceName, retVal.reference, true);
 
    return retVal;
 }
@@ -498,6 +467,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ustr_t referenceName, For
 
 ModuleBase* LibraryProvider :: createModule(ustr_t name)
 {
+   assert(!name.empty());
    assert(!_modules.exist(name));
 
    auto module = new Module(name);

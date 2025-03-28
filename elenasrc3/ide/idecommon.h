@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE common classes header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECOMMON_H
@@ -251,12 +251,18 @@ namespace elena_lang
       addr_t address;
    };
 
+   struct StartUpSettings
+   {
+      bool withExplicitConsole;
+      bool includeAppPath2Paths;  // applicable only for Windows
+   };
+
    // --- DebugProcessBase ---
    class DebugProcessBase
    {
    public:
       virtual bool startThread(DebugControllerBase* controller) = 0;
-      virtual bool startProgram(path_t exePath, path_t cmdLine, bool withExplicitConsole) = 0;
+      virtual bool startProgram(path_t exePath, path_t cmdLine, path_t appPath, StartUpSettings& startUpSettings) = 0;
 
       virtual void activate() = 0;
       virtual void run() = 0;
@@ -342,6 +348,7 @@ namespace elena_lang
    struct GUISettinngs
    {
       bool withTabAboverscore;
+      bool withLargeToolbar;
    };
 
    // --- GUIFactory ---

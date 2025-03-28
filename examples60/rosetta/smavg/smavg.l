@@ -43,14 +43,14 @@ public program()
     var SMA5 := SMA.new(5);
 
     for (int i := 1; i <= 5; i += 1) {
-        console.printPaddingRight(30, "sma3 + ", i, " = ", SMA3.append(i));
-        console.printLine("sma5 + ", i, " = ", SMA5.append(i))
+        Console.printPaddingRight(30, "sma3 + ", i, " = ", SMA3.append(i));
+        Console.printLine("sma5 + ", i, " = ", SMA5.append(i))
     };
 
     for (int i := 5; i >= 1; i -= 1) {
-        console.printPaddingRight(30, "sma3 + ", i, " = ", SMA3.append(i));
-        console.printLine("sma5 + ", i, " = ", SMA5.append(i))
+        Console.printPaddingRight(30, "sma3 + ", i, " = ", SMA3.append(i));
+        Console.printLine("sma5 + ", i, " = ", SMA5.append(i))
     };
     
-    console.readChar()
+    Console.readChar()
 }

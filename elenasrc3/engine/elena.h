@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENA_H
@@ -121,15 +121,16 @@ namespace elena_lang
    typedef Pair<ref_t, mssg_t>   ExtensionInfo;
 
    // --- Maps ---
-   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>          ReferenceMap;
-   typedef Map<ref64_t, ref_t>                              ActionMap;
-   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>         AddressMap;
-   typedef Map<mssg_t, ExtensionInfo>                       ExtensionMap;
-   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>  ExtensionTemplateMap;
-   typedef Map<ref_t, ref_t>                                ResolvedMap;
-   typedef Map<int, addr_t>                                 FieldAddressMap;
+   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>                         ReferenceMap;
+   typedef Map<ref64_t, ref_t>                                             ActionMap;
+   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>                        AddressMap;
+   typedef Map<mssg_t, ExtensionInfo>                                      ExtensionMap;
+   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>                 ExtensionTemplateMap;
+   typedef Map<ref_t, ref_t>                                               ResolvedMap;
+   typedef Map<int, addr_t>                                                FieldAddressMap;
+   typedef MemoryMap<ustr_t, ustr_t, Map_StoreUStr, Map_GetUStr, freeUStr> Forwards;
 
-   // --- Maps ---
+   // --- Lists ---
    typedef List<ustr_t, freeUStr>                           IdentifierList;
 
    // --- Tuples ---

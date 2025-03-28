@@ -14,8 +14,25 @@ namespace elena_lang
    // --- TabBar ---
    class TabBar : public Gtk::Notebook
    {
+   protected:
+      void on_switch_page(Widget* page, guint page_num) override
+      {
+         Gtk::Notebook::on_switch_page(page, page_num);
+
+         onTabChange(page_num);
+      }
+
    public:
+      virtual void onTabChange(int page_num);
+
       void addTab(const char* name, Gtk::Widget* control);
+
+      void selectTab(int index);
+
+      int getCurrentTabIndex()
+      {
+         return get_current_page();
+      }
 
       Gtk::Widget* getCurrentControl();
 

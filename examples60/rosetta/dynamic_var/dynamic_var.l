@@ -16,10 +16,10 @@ class TestClass
     
     function()
     {
-        auto prop := new MessageName(console.write("Enter the variable name:").readLine());
+        auto prop := new MessageName(Console.write("Enter the variable name:").readLine());
         (prop.setPropertyMessage())(variables,42);
         
-        console.printLine(prop.toPrintable(),"=",(prop.getPropertyMessage())(variables)).readChar()     
+        Console.printLine(prop.toPrintable(),"=",(prop.getPropertyMessage())(variables)).readChar()     
     }
 }
 

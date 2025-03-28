@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE View class header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef VIEW_H
@@ -115,7 +115,7 @@ namespace elena_lang
          }
       }
 
-      TextViewModel();
+      TextViewModel(TextViewSettings settings);
       virtual ~TextViewModel() = default;
    };
 

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Byte code Build Tree classes
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BUILDTREE_H
@@ -190,6 +190,8 @@ namespace elena_lang
       YieldDispatch        = 0x00A4,
       TernaryOp            = 0x00A5,
       NilRefBranchOp       = 0x00A6,
+      ExcludeTry           = 0x00A7,
+      IncludeTry           = 0x00A8,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,
@@ -322,6 +324,23 @@ namespace elena_lang
 
          if (includingNode)
             writer.closeNode();
+      }
+
+      static void injectChildren(Tree<BuildKey, BuildKey::None>::Writer& writer, Tree<BuildKey, BuildKey::None>::Node node)
+      {
+         auto current = node.firstChild();
+         while (current != BuildKey::None) {
+            if (current.arg.strArgPosition != INVALID_POS) {
+               writer.inject(current.key, current.identifier());
+            }
+            else writer.inject(current.key, current.arg.reference);
+
+            copyNode(writer, current);
+
+            writer.closeNode();
+
+            current = current.nextNode();
+         }
       }
 
       static void loadBuildKeyMap(BuildKeyMap& map)
