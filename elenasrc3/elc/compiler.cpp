@@ -12369,6 +12369,9 @@ void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
    if (!methodScope->isYieldable())
       scope.raiseError(errInvalidOperation, node);
 
+   if (scope.checkFlowMode(CodeFlowMode::TryCatch))
+      scope.raiseError(errIllegalOperation, node);
+
    ObjectInfo contextField = smScope->mapContextField();
    ObjectInfo currentField = smScope->mapCurrentField();
 
