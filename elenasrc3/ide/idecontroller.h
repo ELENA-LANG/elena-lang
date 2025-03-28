@@ -191,7 +191,7 @@ namespace elena_lang
 
       void loadSystemConfig(IDEModel* model, path_t configPath, ustr_t typeXPath, ustr_t platformXPath);
 
-      bool loadConfig(IDEModel* model, path_t configPath);
+      bool loadConfig(IDEModel* model, path_t configPath, GUISettinngs& guiSettings);
       void saveConfig(IDEModel* model, path_t configPath);
 
       void setNotifier(NotifierBase* notifier)

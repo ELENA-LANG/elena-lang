@@ -15,9 +15,7 @@ In development:
       - github actions : `set-output` command is deprecated 
   --------------------------------------
   - arrange action for i386 / amd64 linux release
-  - #725 : [IDE] fix an issue with displaying disabled buttons; use an alternative icons
   - raise an error if an async extension is declared (until the feature is not implemented)
-  - #725 : [IDE] use an alternative icon set - set transparent color
   --------------------------------------  
   - yield inside try operator is not allowed
   --------------------------------------

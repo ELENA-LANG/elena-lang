@@ -348,6 +348,7 @@ namespace elena_lang
    struct GUISettinngs
    {
       bool withTabAboverscore;
+      bool withLargeToolbar;
    };
 
    // --- GUIFactory ---

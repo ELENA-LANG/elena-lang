@@ -41,6 +41,9 @@ namespace elena_lang
    constexpr auto AUTO_RECOMPILE_SETTING        = "configuration/settings/autocomp";
    constexpr auto AUTO_SAVE_SETTING             = "configuration/settings/autosave";
 
+   constexpr auto LARGETOOLBAR_SETTINGS         = "configuration/startup/largetoolbar";
+   constexpr auto TABABOVESCORE_SETTINGS        = "configuration/startup/tababovescore";
+
    constexpr auto RECENTFILES_SETTINGS          = "configuration/recent_files/*";
    constexpr auto RECENTFILE_SETTINGS           = "configuration/recent_files/path";
    constexpr auto RECENTPROJECTS_SETTINGS       = "configuration/recent_projects/path";

@@ -523,7 +523,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
-   children[toolBarControl] = createToolbar(sdi, true);
+   children[toolBarControl] = createToolbar(sdi, _settings.withLargeToolbar);
    children[contextEditor] = createEditorContextMenu(sdi);
    children[editIndex] = textCtrls.value2;
 

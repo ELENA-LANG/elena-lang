@@ -1044,7 +1044,7 @@ void IDEController :: loadSystemConfig(IDEModel* model, path_t path, ustr_t type
    }
 }
 
-bool IDEController :: loadConfig(IDEModel* model, path_t path)
+bool IDEController :: loadConfig(IDEModel* model, path_t path, GUISettinngs& guiSettings)
 {
    model->projectModel.paths.configPath.copy(path);
 
@@ -1064,6 +1064,9 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->sourceViewModel.settings.tabSize = loadSetting(config, TABSIZE_SETTINGS, 3);
       model->projectModel.autoRecompile = loadSetting(config, AUTO_RECOMPILE_SETTING, -1) != 0;
       model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;      
+
+      guiSettings.withLargeToolbar = loadSetting(config, LARGETOOLBAR_SETTINGS, -1) != 0;
+      guiSettings.withTabAboverscore = loadSetting(config, TABABOVESCORE_SETTINGS, -1) != 0;
 
       // load font size
       int fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);

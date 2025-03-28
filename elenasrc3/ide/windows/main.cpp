@@ -76,7 +76,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    PathHelper       pathHelper;
 
-   GUISettinngs     guiSettings = { true };
+   GUISettinngs     guiSettings = { true, true };
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
    IDEModel          ideModel(textViewSettings);
@@ -91,7 +91,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    PathString configPath(ideModel.projectModel.paths.appPath);
    configPath.combine(_T("ide60.cfg"));
-   ideController.loadConfig(&ideModel, *configPath);
+   ideController.loadConfig(&ideModel, *configPath, guiSettings);
 
    PathString sysConfigPath(ideModel.projectModel.paths.appPath);
    sysConfigPath.combine(_T("elc60.cfg"));
