@@ -1358,8 +1358,8 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
    if (changeStatus.textChanged) {
       MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
 
-      menu->enableMenuItemById(IDM_EDIT_UNDO, docInfo ? docInfo->canUndo() : false);
-      menu->enableMenuItemById(IDM_EDIT_REDO, docInfo ? docInfo->canRedo() : false);
+      enableMenuItemById(IDM_EDIT_UNDO, docInfo ? docInfo->canUndo() : false, true);
+      enableMenuItemById(IDM_EDIT_REDO, docInfo ? docInfo->canRedo() : false, true);
    }
 
    if (docInfo) {

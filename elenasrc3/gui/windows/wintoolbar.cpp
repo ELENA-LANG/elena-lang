@@ -41,7 +41,7 @@ HWND ToolBar :: createControl(HINSTANCE instance, ControlBase* owner,
       ILC_COLOR24 | ILC_MASK,   // Ensures transparent background.
       2, 0);
 
-   //COLORREF crMask = RGB(255, 0, 255);
+   COLORREF crMask = RGB(255, 0, 255);
 
    TBBUTTON* tbButtons = new TBBUTTON[counter];
    int       imageListId = 0;
@@ -57,8 +57,8 @@ HWND ToolBar :: createControl(HINSTANCE instance, ControlBase* owner,
 
          HBITMAP hBitmap = (HBITMAP)LoadImage(instance, MAKEINTRESOURCE(buttons[i].iconId), IMAGE_BITMAP, _iconSize, _iconSize, NULL);
 
-         ImageList_Add(_hImageList, hBitmap, NULL);
-         //ImageList_AddMasked(_hImageList, hBitmap, crMask);
+         //ImageList_Add(_hImageList, hBitmap, NULL);
+         ImageList_AddMasked(_hImageList, hBitmap, crMask);
       }
       else {
          tbButtons[i].iBitmap = 0;
