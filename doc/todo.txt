@@ -12,20 +12,22 @@ In development:
       - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
       - raise an error if an async extension is declared (until the feature is not implemented)
       - alt operation inside async operation is not allowed
+      - yield inside try operator is not allowed
   maint:
       - github actions : `set-output` command is deprecated 
   --------------------------------------
   - arrange action for i386 / amd64 linux release
-  - #722 : [IDE] Scrolling experience  / 
+  - #722 : [IDE] Scrolling experience
+  - #725 : [IDE] Can you add the option to have the toolbar larger?
   --------------------------------------  
-      - yield inside try operator is not allowed
+  * display package info - the information is empty now
   --------------------------------------
 
   === Iteration 39 ===
   --------------------------------------
   dev: 
       - support fladd, flsub, fldiv, flmul (throu special prefix??)
-      - #34 : https get (https://github.com/yhirose/cpp-httplib), 
+      - #34 : https get (Mbed TLS - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_client1.c), 
       - MTA support for Linux  
       - #496
       - #622
