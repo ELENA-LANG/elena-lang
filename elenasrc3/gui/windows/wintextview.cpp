@@ -496,7 +496,7 @@ void TextViewWindow :: onMouseWheel(short wheelDelta, bool kbCtrl)
    DocumentChangeStatus status = {};
    auto docView = _model->DocView();
 
-   int offset = (wheelDelta > 0) ? -1 : 1;
+   int offset = (wheelDelta > 0) ? -_model->scrollOffset : _model->scrollOffset;
    if (kbCtrl) {
       offset *= docView->getSize().y;
    }

@@ -90,6 +90,14 @@ namespace elena_lang
       }
    };
 
+   // --- TextViewSettings ---
+   struct TextViewSettings
+   {
+      EOLMode  eolMode;
+      bool     tabUsing;
+      int      tabSize;
+   };
+
    // --- TextViewBase ---
    class TextViewModelBase
    {
@@ -97,11 +105,14 @@ namespace elena_lang
       DocumentView* _currentView;
 
    public:
-      bool          lineNumbersVisible;
-      bool          highlightSyntax;
-      bool          empty;
-      FontInfo      fontInfo;
-      int           schemeIndex;
+      TextViewSettings  settings;
+
+      bool              lineNumbersVisible;
+      bool              highlightSyntax;
+      bool              empty;
+      FontInfo          fontInfo;
+      int               schemeIndex;
+      int               scrollOffset;
 
       DocumentView* DocView()
       {
@@ -140,14 +151,21 @@ namespace elena_lang
             _currentView->refresh(changeStatus);
       }
 
-      TextViewModelBase()
-         : fontInfo(10)
+      void refreshSettings()
+      {
+         DocumentView::VerticalScrollOffset = scrollOffset;
+         Text::TabSize = settings.tabSize;
+      }
+
+      TextViewModelBase(TextViewSettings settings)
+         : fontInfo(10), settings(settings)
       {
          this->_currentView = nullptr;
          this->lineNumbersVisible = true; // !! temporal hard-coded
          this->empty = true;
          this->schemeIndex = 0;
          this->highlightSyntax = true;
+         this->scrollOffset = 1;
       }
    };
 

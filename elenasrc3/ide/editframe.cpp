@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     SourceViewModel implementation File
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "editframe.h"
@@ -10,8 +10,8 @@ using namespace elena_lang;
 
 // --- SourceViewModel ---
 
-SourceViewModel :: SourceViewModel()
-   : TextViewModel()
+SourceViewModel :: SourceViewModel(TextViewSettings settings)
+   : TextViewModel(settings)
 {
 }
 

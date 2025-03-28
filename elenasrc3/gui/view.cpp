@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE View class body File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "view.h"
@@ -13,8 +13,8 @@ using namespace elena_lang;
 
 // --- TextViewModel ---
 
-TextViewModel :: TextViewModel() :
-   TextViewModelBase(),
+TextViewModel :: TextViewModel(TextViewSettings settings) :
+   TextViewModelBase(settings),
    _documents(nullptr),
    _listeners(nullptr),
    _docListeners(nullptr)

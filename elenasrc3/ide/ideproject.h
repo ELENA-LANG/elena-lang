@@ -32,6 +32,8 @@ namespace elena_lang
    constexpr auto SCHEME_SETTINGS               = "configuration/settings/scheme";
    constexpr auto HIGHLIGHTSYNTAX_SETTINGS      = "configuration/settings/highlight";
    constexpr auto PERSISTENT_CONSOLE_SETTINGS   = "configuration/settings/persist_output";
+   constexpr auto VSCROLL_SETTINGS              = "configuration/settings/vscroll";
+   constexpr auto TABSIZE_SETTINGS              = "configuration/settings/tabsize";
 #ifdef _MSC_VER
    constexpr auto INCLIDE_PATH2ENV_SETTINGS     = "configuration/settings/include_path_2_env";
 #endif

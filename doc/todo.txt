@@ -17,10 +17,9 @@ In development:
       - github actions : `set-output` command is deprecated 
   --------------------------------------
   - arrange action for i386 / amd64 linux release
-  - #722 : [IDE] Scrolling experience
   - #725 : [IDE] Can you add the option to have the toolbar larger?
   --------------------------------------  
-  * display package info - the information is empty now
+  - #722 : [IDE] Scrolling experience
   --------------------------------------
 
   === Iteration 39 ===

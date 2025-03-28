@@ -27,8 +27,8 @@ namespace elena_lang
 
       void saveSource(TextViewModelBase* model, ustr_t name);
 
-      SourceViewController(TextViewSettings& settings)
-         : TextViewController(settings)
+      SourceViewController()
+         : TextViewController()
       {
       }
    };
@@ -287,9 +287,9 @@ namespace elena_lang
       void autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
-         IDEModel* model, TextViewSettings& textViewSettings, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer
+         IDEModel* model, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer
       ) :
-         sourceController(textViewSettings),
+         sourceController(),
          projectController(outputProcess, vmConsoleProcess, process, &model->projectModel, &model->sourceViewModel,
             this, platform, pathHelper, comparer)
       {

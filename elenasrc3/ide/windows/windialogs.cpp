@@ -480,6 +480,9 @@ void EditorSettings::onCreate()
 
    setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
    setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumbersVisible);
+
+   setIntText(IDC_EDITOR_TABSIZE, _model->settings.tabSize);
+   setIntText(IDC_EDITOR_SCROLLOFFSET, _model->scrollOffset);
 }
 
 void EditorSettings :: onOK()
@@ -493,6 +496,10 @@ void EditorSettings :: onOK()
       _model->setHighlightMode(value);
 
    _model->lineNumbersVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
+   _model->settings.tabSize = getIntText(IDC_EDITOR_TABSIZE);
+   _model->scrollOffset = getIntText(IDC_EDITOR_SCROLLOFFSET);
+
+   _model->refreshSettings();
 }
 
 bool EditorSettings :: showModal()

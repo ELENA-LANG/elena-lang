@@ -1060,8 +1060,10 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
       model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
       model->sourceViewModel.highlightSyntax = loadSetting(config, HIGHLIGHTSYNTAX_SETTINGS, -1) != 0;
       model->sourceViewModel.lineNumbersVisible = loadSetting(config, LINENUMBERS_SETTINGS, -1) != 0;
+      model->sourceViewModel.scrollOffset = loadSetting(config, VSCROLL_SETTINGS, 1);
+      model->sourceViewModel.settings.tabSize = loadSetting(config, TABSIZE_SETTINGS, 3);
       model->projectModel.autoRecompile = loadSetting(config, AUTO_RECOMPILE_SETTING, -1) != 0;
-      model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;
+      model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;      
 
       // load font size
       int fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
@@ -1075,6 +1077,8 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
       loadRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
+
+      model->sourceViewModel.refreshSettings();
 
       return true;
    }
@@ -1097,6 +1101,9 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    saveSetting(config, LASTPROJECT_SETTINGS, model->rememberLastProject);
    saveSetting(config, HIGHLIGHTSYNTAX_SETTINGS, model->sourceViewModel.highlightSyntax);
    saveSetting(config, LINENUMBERS_SETTINGS, model->sourceViewModel.lineNumbersVisible);
+   saveSetting(config, VSCROLL_SETTINGS, model->sourceViewModel.scrollOffset);
+   saveSetting(config, TABSIZE_SETTINGS, model->sourceViewModel.settings.tabSize);
+
    saveSetting(config, AUTO_RECOMPILE_SETTING, model->projectModel.autoRecompile);
    saveSetting(config, AUTO_SAVE_SETTING, model->autoSave);
 

@@ -95,19 +95,10 @@ namespace elena_lang
       virtual SelectResult selectWindow() = 0;
    };
 
-   // --- TextViewSettings ---
-   struct TextViewSettings
-   {
-      EOLMode  eolMode;
-      bool     tabUsing;
-      int      tabSize;
-   };
-
    // --- TextViewController ---
    class TextViewController : public TextViewControllerBase
    {
-   protected:
-      TextViewSettings _settings;
+   protected:      
       NotifierBase*    _notifier;
 
       //void onTextChanged(TextViewModelBase* model, DocumentView* view);
@@ -177,9 +168,8 @@ namespace elena_lang
 
       void goToLine(TextViewModelBase* model, int row);
 
-      TextViewController(TextViewSettings& settings)
+      TextViewController()
       {
-         _settings = settings;
          _notifier = nullptr;
       }
    };

@@ -13,7 +13,7 @@ using namespace elena_lang;
 
 void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name, bool included)
 {
-   Text* text = new Text(_settings.eolMode);
+   Text* text = new Text(model->settings.eolMode);
    text->create();
 
    model->addDocumentView(name, text, nullptr, included);
@@ -22,7 +22,7 @@ void TextViewController :: newDocument(TextViewModelBase* model, ustr_t name, bo
 bool TextViewController :: openDocument(TextViewModelBase* model, ustr_t name, path_t path,
    FileEncoding encoding, bool included)
 {
-   Text* text = new Text(_settings.eolMode);
+   Text* text = new Text(model->settings.eolMode);
    if (!text->load(path, encoding, false))
       return false;
 
@@ -69,15 +69,15 @@ void TextViewController :: indent(TextViewModelBase* model)
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
 
-   if (_settings.tabUsing) {
+   if (model->settings.tabUsing) {
       docView->tabbing(status, '\t', 1, true);
    }
    else {
       if (!docView->hasSelection()) {
-         int shift = calcTabShift(docView->getCaret().x, _settings.tabSize);
+         int shift = calcTabShift(docView->getCaret().x, model->settings.tabSize);
          docView->insertChar(status, ' ', shift);
       }
-      else docView->tabbing(status, ' ', _settings.tabSize, true);
+      else docView->tabbing(status, ' ', model->settings.tabSize, true);
    }
 
    notifyTextModelChange(model, status);
@@ -88,11 +88,11 @@ void TextViewController :: outdent(TextViewModelBase* model)
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
 
-   if (_settings.tabUsing) {
+   if (model->settings.tabUsing) {
       docView->tabbing(status, '\t', 1, false);
    }
    else {
-      docView->tabbing(status, ' ', _settings.tabSize, false);
+      docView->tabbing(status, ' ', model->settings.tabSize, false);
    }
 
    notifyTextModelChange(model, status);
@@ -324,7 +324,7 @@ void TextViewController :: moveCaretDown(TextViewModelBase* model, bool kbShift,
    auto docView = model->DocView();
 
    if (kbCtrl) {
-      docView->moveFrameDown(status);
+      docView->moveFrameDown(status, model->scrollOffset);
    }
    else docView->moveDown(status, kbShift);
 
@@ -403,7 +403,7 @@ void TextViewController :: moveCaretUp(TextViewModelBase* model, bool kbShift, b
    if (!kbCtrl) {
       docView->moveUp(status, kbShift);
    }
-   else docView->moveFrameUp(status);
+   else docView->moveFrameUp(status, model->scrollOffset);
 
    notifyTextModelChange(model, status);
 }
