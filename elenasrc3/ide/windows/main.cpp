@@ -105,7 +105,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    StartUpEvent startUpEvent(STATUS_NONE);
    int retVal = app->run(ideWindow, ideModel.appMaximized, &startUpEvent);
 
-   ideController.onIDEStop(&ideModel);
+   ideController.onIDEStop(&ideModel, guiSettings);
 
    delete app;
 

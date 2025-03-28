@@ -192,7 +192,7 @@ namespace elena_lang
       void loadSystemConfig(IDEModel* model, path_t configPath, ustr_t typeXPath, ustr_t platformXPath);
 
       bool loadConfig(IDEModel* model, path_t configPath, GUISettinngs& guiSettings);
-      void saveConfig(IDEModel* model, path_t configPath);
+      void saveConfig(IDEModel* model, path_t configPath, GUISettinngs& guiSettings);
 
       void setNotifier(NotifierBase* notifier)
       {
@@ -273,7 +273,7 @@ namespace elena_lang
       void onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model);
       void onDocSelection(IDEModel* model, int index);
 
-      void onIDEStop(IDEModel* model);
+      void onIDEStop(IDEModel* model, GUISettinngs& guiSettings);
 
       void doInclude(IDEModel* model);
       void doExclude(IDEModel* model);

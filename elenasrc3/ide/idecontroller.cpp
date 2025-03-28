@@ -1090,7 +1090,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path, GUISettinngs& gui
    }
 }
 
-void IDEController :: saveConfig(IDEModel* model, path_t configPath)
+void IDEController :: saveConfig(IDEModel* model, path_t configPath, GUISettinngs& guiSettings)
 {
    ConfigFile config(ROOT_NODE);
 
@@ -1113,6 +1113,9 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath)
    saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontInfo.size);
    IdentifierString fontName(model->sourceViewModel.fontInfo.name.str());
    saveSetting(config, FONTNAME_SETTINGS, *fontName);
+
+   saveSetting(config, LARGETOOLBAR_SETTINGS, guiSettings.withLargeToolbar);
+   saveSetting(config, TABABOVESCORE_SETTINGS, guiSettings.withTabAboverscore);
 
    saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
    saveRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -1879,11 +1882,11 @@ void IDEController :: onDebuggerStep(IDEModel* model)
    model->running = false;
 }
 
-void IDEController :: onIDEStop(IDEModel* model)
+void IDEController :: onIDEStop(IDEModel* model, GUISettinngs& guiSettings)
 {
    PathString path(*model->projectModel.paths.configPath);
 
-   saveConfig(model, *path);
+   saveConfig(model, *path, guiSettings);
 }
 
 void IDEController :: toggleBreakpoint(IDEModel* model, int row)
