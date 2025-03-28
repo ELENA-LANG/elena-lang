@@ -10,16 +10,16 @@ public extension packageOp
       auto output := new StringBuilder();
 
       if ((package.Namespace ?? string.MinValue).Length != 0)
-         output.printLine("Namespace: ", self.Namespace);
+         output.printLine("Namespace: ", package.Namespace);
 
       if ((package.Name ?? string.MinValue).Length != 0)
-         output.printLine("Name: ", self.Name);
+         output.printLine("Name: ", package.Name);
 
       if ((package.Version ?? string.MinValue).Length != 0)
-         output.printLine("Name: ", self.Version);
+         output.printLine("Name: ", package.Version);
 
       if ((package.Author ?? string.MinValue).Length != 0)
-         output.printLine("Author: ", self.Author);   
+         output.printLine("Author: ", package.Author);   
 
       ^ output.Value
    }
