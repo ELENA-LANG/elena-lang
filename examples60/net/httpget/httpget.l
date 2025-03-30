@@ -52,5 +52,6 @@ singleton Tester
 
 public program()
 {
-   Tester.browse().Result;
+   //Tester.browse().Result;
+   test()
 }
