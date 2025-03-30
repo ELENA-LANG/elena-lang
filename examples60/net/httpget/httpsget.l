@@ -1,3 +1,8 @@
+struct mbedtls_net_context
+{
+   int fd;
+}
+
 struct mbedtls_entropy_source_state
 {  
    pointer f_source;
@@ -26,24 +31,24 @@ public test()
 {
 /*
    int ret = 0;
-
-   mbedtls_net_context server_fd;*/
-   mbedtls_entropy_context entropy;
-/*   mbedtls_ctr_drbg_context ctr_drbg;
+*/
+   mbedtls_net_context server_fd := default;
+/*   mbedtls_entropy_context entropy;
+   mbedtls_ctr_drbg_context ctr_drbg;
    mbedtls_ssl_context ssl;
    mbedtls_ssl_config conf;
    mbedtls_x509_crt cacert;
-
-   mbedtls_net_init(&server_fd);
-   mbedtls_ssl_init(&ssl);
+*/
+   extern mbedtls.mbedtls_net_init(server_fd);
+/*   mbedtls_ssl_init(&ssl);
    mbedtls_ssl_config_init(&conf);
    mbedtls_x509_crt_init(&cacert);
    mbedtls_ctr_drbg_init(&ctr_drbg);
 
    const char* pers = DRBG_PERSONALIZED_STR;
-*/
+
    extern mbedtls.mbedtls_entropy_init(entropy);
-/*
+
    if ((ret = mbedtls_ctr_drbg_seed(&ctr_drbg, mbedtls_entropy_func, &entropy,
       reinterpret_cast<const unsigned char*>(DRBG_PERSONALIZED_STR),
       strlen(DRBG_PERSONALIZED_STR) + 1)) != 0)
