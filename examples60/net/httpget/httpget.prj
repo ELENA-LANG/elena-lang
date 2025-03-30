@@ -2,6 +2,7 @@
     <files>
         <module>
             <file>httpget.l</file>
+            <file>httpsget.l</file>
         </module>
     </files>
     <project>

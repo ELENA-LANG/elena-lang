@@ -85,7 +85,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    DebugProcess      debugProcess;
    IDEController     ideController(&outputProcess, &vmConsoleProcess, &debugProcess, &ideModel,
                         CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);
-   IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
 
    ideModel.sourceViewModel.refreshSettings();
 
@@ -96,6 +95,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    PathString sysConfigPath(ideModel.projectModel.paths.appPath);
    sysConfigPath.combine(_T("elc60.cfg"));
    ideController.loadSystemConfig(&ideModel, *sysConfigPath, TEMPLATE_XPATH, TARGET_XPATH);
+
+   IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
    GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess, &vmConsoleProcess);

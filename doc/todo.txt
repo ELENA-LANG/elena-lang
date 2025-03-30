@@ -9,7 +9,6 @@ In development:
   --------------------------------------
   dev: 
       - support fladd, flsub, fldiv, flmul (throu special prefix??)
-      - #34 : https get (Mbed TLS - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_client1.c), 
       - MTA support for Linux  
       - #496
       - #622
@@ -32,18 +31,24 @@ In development:
       - implement ExtensionMessage.equal
       - api : add descriptions 
       - api refactoring : main program entry to be called - Program
-  port:
-      - pi samples for aarch64 
+  port:      
       - x86-64 : httpget, threading samples
       - rosetta code : moving to 6.6 (test, use Console)
       - x86-64 : mta - test net examples for mta   
       - test all x86-64 examples (net)
   tools:
       - vs #2 : elena.tmLanguage.json  
-      - #658 :  connect with ldbg from VSCode : launch exe, implement built-in debugger
+      - #658 :  debug elena program in VSCode
   prom: bi-posting weekly
   --------------------------------------
+  - #658 :  debug elena program in VSCode : launch exe
+  - MTA support for Linux : TLS in ELF
+  - #708 : look into executable format
+  - pi samples for aarch64 
+  - #34 : https get (Mbed TLS - https://github.com/ARMmbed/mbed-os-example-tls/blob/master/tls-client/HelloHttpsClient.cpp), 
+  * refactor net'httpclient -> move socket code into the wrapper class implementing an interface INetSocket; create a factory to create INetSocket 
   --------------------------------------
+  * implementing sync draft version of https operation
   --------------------------------------
 
   === Iteration 40 ===
