@@ -235,6 +235,7 @@ public test()
 */
 
    int size := $size conf;
+   int size3 := $size ssl;
 
    extern wrpmbedtls.net_init(server_fd);
    extern wrpmbedtls.ssl_init(ssl);

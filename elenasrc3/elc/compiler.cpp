@@ -3458,7 +3458,11 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
 
          // padding
          if (!test(flags, elPacked)) {
-            scope.info.size += _logic->definePadding(*scope.moduleScope, scope.info.size, attrs.fieldArray ? sizeInfo.size / attrs.size : sizeInfo.size);
+            if (!sizeInfo.numeric) {
+               // HOTFIX : align the complex structure as 4/8 alignment (depending on the platform)
+               scope.info.size += _logic->definePadding(*scope.moduleScope, scope.info.size, scope.moduleScope->ptrSize);
+            }
+            else scope.info.size += _logic->definePadding(*scope.moduleScope, scope.info.size, attrs.fieldArray ? sizeInfo.size / attrs.size : sizeInfo.size);
          }
 
          offset = scope.info.size;

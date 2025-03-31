@@ -1360,6 +1360,13 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
       && !test(info.header.flags, elDynamicRole);
 }
 
+bool CompilerLogic :: isNumericData(ClassInfo& info)
+{
+   int dataMask = info.header.flags & elDebugMask;
+
+   return dataMask == elDebugDWORD || dataMask == elDebugQWORD || dataMask == elDebugFLOAT64;
+}
+
 bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
    if (typeInfo.nillable)
@@ -1884,10 +1891,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
 
 SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 {
-   SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole) };
+   SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole), false };
 
    if (isEmbeddableStruct(info)) {
       sizeInfo.size = info.size;
+      sizeInfo.numeric = isNumericData(info);
 
       return sizeInfo;
    }
@@ -3143,28 +3151,15 @@ void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, Module
 
 pos_t CompilerLogic :: definePadding(ModuleScopeBase& scope, pos_t offset, pos_t size)
 {
-   if (scope.ptrSize == 4) {
-      switch (size) {
-         case 1:
-            return 0;
-         case 2:
-         case 4:
-            return align(offset, size) - offset;
-         default:
-            return align(offset, scope.ptrSize) - offset;
-      }
-   }
-   else {
-      switch (size) {
-         case 1:
-            return 0;
-         case 2:
-         case 4:
-         case 8:
-            return align(offset, size) - offset;
-         default:
-            return align(offset, scope.ptrSize) - offset;
-      }
+   switch (size) {
+      case 1:
+         return 0;
+      case 2:
+      case 4:
+      case 8:
+         return align(offset, size) - offset;
+      default:
+         return align(offset, scope.ptrSize) - offset;
    }
 }
 

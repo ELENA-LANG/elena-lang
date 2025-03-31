@@ -266,6 +266,7 @@ struct SizeInfo
 {
    int  size;
    bool readOnly;
+   bool numeric;
 };
 
 // --- ExternalType ---
