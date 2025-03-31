@@ -1,3 +1,82 @@
+struct mbedtls_ssl_context
+{
+   pointer                      conf;
+   int                          state;
+   int                          renego_status;
+   int                          renego_records_seen;
+   int                          tls_version; 
+   int                          badmac_seen;
+   pointer                      v_vrfy;
+   pointer                      p_vrfy;
+   pointer                      f_send;
+   pointer                      f_recv;
+   pointer                      f_recv_timeout;
+   pointer                      p_bio;
+   pointer                      session_in;
+   pointer                      session_out;
+   pointer                      session;
+   pointer                      session_negotiate;
+   pointer                      handshake;
+   pointer                      transform_in;
+   pointer                      transform_out;
+   pointer                      transform;
+   pointer                      transform_negotiate;
+   pointer                      p_timer;
+   pointer                      f_set_timer;
+   pointer                      f_get_timer;
+   pointer                      in_buf;
+   pointer                      in_ctr;
+   pointer                      in_hdr;
+   pointer                      in_cid;
+   pointer                      in_len;
+   pointer                      in_iv;
+   pointer                      in_msg;
+   pointer                      in_offt;
+   int                          in_msgtype;
+   pointer                      in_msglen; // size_t
+   pointer                      in_left;   // size_t
+   short                        in_epoch;
+   pointer                      next_record_offset; // size_t
+   long                         in_window_top;
+   long                         in_window;
+   pointer                      in_hslen;  // size_t
+   int                          nb_zero;
+   int                          keep_current_message;
+   byte                         send_alert;
+   byte                         alert_type;
+   int                          alert_reason;
+   byte                         disable_datagram_packing;
+
+   pointer                      out_buf;
+   pointer                      out_ctr;
+   pointer                      out_hdr;
+   pointer                      out_cid;
+   pointer                      out_len;
+   pointer                      out_iv;
+   pointer                      out_iv;
+
+   int                          out_msgtype;
+   pointer                      out_msglen; // size_t
+   pointer                      out_left;   // size_t
+
+   byte                         cur_out_ctr[8];
+   short                        mtu;
+   pointer                      hostname;
+   pointer                      alpn_chosen;
+   pointer                      cli_id;
+   pointer                      cli_id_len; // size_t
+   int                          secure_renegotiation;
+   pointer                      verify_data_len; // size_t    
+   byte                         own_verify_data[12]; 
+   byte                         peer_verify_data[12]; 
+   byte                         own_cid[32]; 
+   byte                         own_cid_len;
+   byte                         negotiate_cid;
+   pointer                      f_export_keys;
+   pointer                      p_export_keys;
+   pointer                      user_data;
+}
+
 struct mbedtls_net_context
 {
    int fd;
@@ -34,14 +113,17 @@ public test()
 */
    mbedtls_net_context server_fd := default;
 /*   mbedtls_entropy_context entropy;
-   mbedtls_ctr_drbg_context ctr_drbg;
+   mbedtls_ctr_drbg_context ctr_drbg;*/
    mbedtls_ssl_context ssl;
-   mbedtls_ssl_config conf;
+/*   mbedtls_ssl_config conf;
    mbedtls_x509_crt cacert;
 */
-   extern mbedtls.mbedtls_net_init(server_fd);
-/*   mbedtls_ssl_init(&ssl);
-   mbedtls_ssl_config_init(&conf);
+
+   int size := :sizeof ssl;
+
+   extern wrpmbedtls.net_init(server_fd);
+   extern wrpmbedtls.ssl_init(ssl);
+/*   mbedtls_ssl_config_init(&conf);
    mbedtls_x509_crt_init(&cacert);
    mbedtls_ctr_drbg_init(&ctr_drbg);
 
@@ -181,6 +263,6 @@ public test()
    mbedtls_net_free(&server_fd);
    mbedtls_ssl_free(&ssl);
    mbedtls_ssl_config_free(&conf);
-   mbedtls_ctr_drbg_free(&ctr_drbg);*/
-   mbedtls_entropy_free(&entropy);
+   mbedtls_ctr_drbg_free(&ctr_drbg);
+   mbedtls_entropy_free(&entropy);*/
 }
