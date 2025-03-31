@@ -427,6 +427,7 @@ namespace elena_lang
    constexpr auto infoTargetClass            = 707;
    constexpr auto infoScopeMethod            = 708;
    constexpr auto infoExptectedType          = 709;
+   constexpr auto infoInternalDefConstructor = 710;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;

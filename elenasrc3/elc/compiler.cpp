@@ -3975,9 +3975,12 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          unnamedMessage = false;
          flags |= FUNCTION_MESSAGE;
 
-         if (MethodInfo::checkVisibility(scope.info, MethodHint::Internal))
+         if (MethodInfo::checkVisibility(scope.info, MethodHint::Internal)) {
+            if (_verbose) {
+               _errorProcessor->info(infoInternalDefConstructor, *actionStr);
+            }
             scope.raiseError(errIllegalConstructor, node);
-
+         }
       }
       else if (scope.checkHint(MethodHint::Generic) && scope.checkHint(MethodHint::Generic)) {
          if (signatureLen > 0 || !unnamedMessage || scope.checkHint(MethodHint::Function))

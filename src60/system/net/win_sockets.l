@@ -207,13 +207,13 @@ public const struct SelectMode : enum<int>(SelectRead ::= 1, SelectWrite ::= 2, 
 
 // --- Socket ---
 
-public sealed const struct Socket
+public sealed const struct NativeSocket
 {
    handle _handle;
    
-   static Socket connect(string host, short port)
+   static NativeSocket connect(string host, short port)
    {
-      Socket socket := default;   
+      NativeSocket socket := default;   
 
       //resolve server address and port
       AddrInfo addrinfo := default;
@@ -234,7 +234,7 @@ public sealed const struct Socket
          int     ai_addrlen := addrinfo.ai_addrlen;
          pointer ai_addrptr := addrinfo.ai_addr;
 
-         socket := new Socket(ai_family, ai_socktype, ai_protocol);
+         socket := new NativeSocket(ai_family, ai_socktype, ai_protocol);
 
          if (socket.tryOpen(ai_addrptr, ai_addrlen))
          {
@@ -350,7 +350,7 @@ public sealed const struct Socket
       ^ retVal
    }
 
-   Socket accept()
+   NativeSocket accept()
    {
       handle socket := extern WS2_32.accept(_handle, 0, 0);
             

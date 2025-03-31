@@ -7,14 +7,14 @@ import extensions;
 
 public sealed class TcpClient
 {
-   Socket        _socket;
+   NativeSocket        _socket;
    NetworkStream _stream;
 
    constructor()
    {
    }
 
-   internal constructor new(Socket socket)
+   internal constructor new(NativeSocket socket)
    {
       _socket := socket
    }
@@ -40,7 +40,7 @@ public sealed class TcpClient
          int     ai_addrlen := addrinfo.ai_addrlen;
          pointer ai_addrptr := addrinfo.ai_addr;
 
-         _socket := new Socket(ai_family, ai_socktype, ai_protocol);
+         _socket := new NativeSocket(ai_family, ai_socktype, ai_protocol);
 
          if (_socket.tryOpen(ai_addrptr, ai_addrlen))
          {
@@ -84,8 +84,8 @@ public sealed class TcpClient
          { closeInternal() }
    }
 
-   NetworkStream stream()
-       = _stream ?? _stream := NetworkStream.assign(_socket, true);
+//   NetworkStream stream()
+//       = _stream ?? _stream := NetworkStream.assign(_socket, true);
 }
 
 //public sealed class TcpClient

@@ -116,6 +116,7 @@ namespace elena_lang
       {wrnReturningNillable, wrnMssgReturningNillable},
       {errFailedMemoryAllocation, errMssgFailedMemoryAllocation},
       {errMissingNamespace , errMsgMissingNamespace },
+      { infoInternalDefConstructor , infoMsgInternalDefConstructor },
    };
 
 }

@@ -5,18 +5,18 @@ import system'threading;
 
 public class NetworkStream : Stream
 {
-   Socket _socket;
-   bool   _ownStream;
-   byte[] _buffer; 
+   INetSocket  _socket;
+   bool        _ownStream;
+   byte[]      _buffer; 
 
-   constructor(Socket socket)
+   constructor(INetSocket socket)
    {
       _socket := socket;
       _ownStream := false;
       _buffer := new byte[](512);
    }
 
-   constructor assign(Socket socket, bool socketStream)
+   constructor assign(INetSocket socket, bool socketStream)
    {
       _socket := socket;
       _ownStream := socketStream;
@@ -48,23 +48,23 @@ public class NetworkStream : Stream
    }
 
    int read(byte[] dump, int length)
-      = _socket.receive(dump, length, 0);
+      = _socket.read(dump, length);
      
    int write(byte[] dump, int length)
    {
-      int retVal := _socket.send(dump, length, 0);
+      int retVal := _socket.write(dump, length);
 
       ^ retVal
    }
      
    indexed internal Task<int> readAsync(byte[] dump, int length)
-      = ::Task<int>.run({ ^ _socket.receive(dump, length, 0) });
+      = _socket.readAsync(dump, length);
      
    indexed internal Task<int> writeAsync(byte[] dump, int length)
-      = ::Task<int>.run({ ^ _socket.send(dump, length, 0) });
+      = _socket.writeAsync(dump, length);
      
    indexed internal bool isDataAvailable
-      = _socket.available() != 0;
+      = _socket.AvailableToRead;
 
    indexed async internal Task<int> readAsync(MemoryBuffer buffer, int length)
    {
@@ -149,41 +149,6 @@ public extension AsyncStreamExtension : NetworkStream
 
    Task<int> readAsync(MemoryBuffer buffer, int length)
       = self.readAsync(buffer, length);
-
-//   async Task writeAsync(string s)
-//   {
-//      byte tmp[1024];
-//      int len := s.Length;
-//      int index := 0;
-//      while (len > 0) {
-//         int sublen := 1024;
-//         if (len < sublen) {
-//            sublen := len;
-//         };
-//
-//         int converted := UTF8Encoder.toByteArray(s, index, ref sublen, tmp, 0, 1024);
-//         
-//         converted := :await self.writeAsync(tmp, converted);
-//
-//         index += converted;
-//         len -= converted;
-//      };
-//   }
-
-//   async Task<string> readAsStringAsync()
-//   {
-//      MemoryBuffer buffer := MemoryBuffer.allocate();
-//
-//      byte tmp[1024];
-//      int read := :await self.readAsync(tmp, 1024);
-//      while (read > 0) {
-//         buffer.write(0, read, tmp);
-//
-//         read := :await self.readAsync(tmp, 1024);
-//      };
-//
-//      ^ UTF8Encoding.toString(0, buffer.Length, buffer.Value);
-//   }
 
    bool isDataAvailable
       = self.isDataAvailable;

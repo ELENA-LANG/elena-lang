@@ -37,21 +37,22 @@ singleton Tester
 {
    async Task browse()
    {
-      using(HttpClient client := new HttpClient())
-      {
+      HttpClient client := :await HttpClient.openAsync("http://www.google.com");
+      //using(HttpClient client := new HttpClient())
+      //{
          client.Headers.add("User-agent", "MyUserAgent");
 
-         HttpResponse response := :await client.getAsync("http://www.google.com");
+         HttpResponse response := :await client.getAsync();
 
          string content := :await response.readAsStringAsync();
 
          Console.writeLine(content);
-      };
+      //};
    }
 }
 
 public program()
 {
-   //Tester.browse().Result;
-   test()
+   Tester.browse().Result;
+   //test()
 }
