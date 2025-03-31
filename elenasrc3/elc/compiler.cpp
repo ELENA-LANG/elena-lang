@@ -3458,7 +3458,7 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
 
          // padding
          if (!test(flags, elPacked)) {
-            scope.info.size += _logic->definePadding(*scope.moduleScope, scope.info.size, sizeInfo.size);
+            scope.info.size += _logic->definePadding(*scope.moduleScope, scope.info.size, attrs.fieldArray ? sizeInfo.size / attrs.size : sizeInfo.size);
          }
 
          offset = scope.info.size;

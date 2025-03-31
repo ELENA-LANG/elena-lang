@@ -6,7 +6,7 @@ struct mbedtls_ssl_context
    int                          renego_records_seen;
    int                          tls_version; 
    int                          badmac_seen;
-   pointer                      v_vrfy;
+   pointer                      f_vrfy;
    pointer                      p_vrfy;
    pointer                      f_send;
    pointer                      f_recv;
@@ -53,7 +53,7 @@ struct mbedtls_ssl_context
    pointer                      out_cid;
    pointer                      out_len;
    pointer                      out_iv;
-   pointer                      out_iv;
+   pointer                      out_msg;
 
    int                          out_msgtype;
    pointer                      out_msglen; // size_t
@@ -119,7 +119,7 @@ public test()
    mbedtls_x509_crt cacert;
 */
 
-   int size := :sizeof ssl;
+   int size := $size ssl;
 
    extern wrpmbedtls.net_init(server_fd);
    extern wrpmbedtls.ssl_init(ssl);
