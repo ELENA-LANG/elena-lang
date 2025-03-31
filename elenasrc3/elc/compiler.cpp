@@ -3458,7 +3458,7 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
 
          // padding
          if (!test(flags, elPacked)) {
-            if (!sizeInfo.numeric) {
+            if (sizeInfo.size == 8 && !sizeInfo.numeric) {
                // HOTFIX : align the complex structure as 4/8 alignment (depending on the platform)
                scope.info.size += _logic->definePadding(*scope.moduleScope, scope.info.size, scope.moduleScope->ptrSize);
             }
