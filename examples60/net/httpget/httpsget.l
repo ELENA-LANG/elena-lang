@@ -5,6 +5,44 @@ struct mbedtls_mpi
    short                       n; 
 }
 
+
+
+
+
+
+
+
+
+struct tmp_t
+{
+
+
+//   pointer                      group_list;
+   mbedtls_mpi                  dhm_P; 
+   mbedtls_mpi                  dhm_G;
+   pointer                      psk;
+   pointer                      psk_len; // size_t
+   pointer                      psk_identity;
+   pointer                      psk_identity_len; // size_t
+   pointer                      alpn_list;
+   int                          read_timeout;
+   int                          hs_timeout_min;
+   int                          hs_timeout_max;
+   int                          renego_max_records;
+   byte                         renego_period[8];
+   int                          badmac_limit;
+   int                          dhm_min_bitlen;
+   pointer                      user_data;
+   pointer                      f_cert_cb;
+   pointer                      dn_hints; 
+}
+
+
+
+
+
+
+
 struct mbedtls_ssl_config
 {
    int                          max_tls_version;
@@ -65,7 +103,7 @@ struct mbedtls_ssl_config
    byte                         renego_period[8];
    int                          badmac_limit;
    int                          dhm_min_bitlen;
-   poniter                      user_data;
+   pointer                      user_data;
    pointer                      f_cert_cb;
    pointer                      dn_hints; 
 }
@@ -182,6 +220,9 @@ struct mbedtls_entropy_context
 
 public test()
 {
+   tmp_t tmp;
+   int size2 := $size tmp;
+
 /*
    int ret = 0;
 */

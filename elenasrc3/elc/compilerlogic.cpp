@@ -3143,15 +3143,28 @@ void CompilerLogic :: importClassInfo(ClassInfo& copy, ClassInfo& target, Module
 
 pos_t CompilerLogic :: definePadding(ModuleScopeBase& scope, pos_t offset, pos_t size)
 {
-   switch (size) {
-      case 1:
-         return 0;
-      case 2:
-      case 4:
-      case 8:
-         return align(offset, size) - offset;
-      default:
-         return align(offset, scope.ptrSize) - offset;
+   if (scope.ptrSize == 4) {
+      switch (size) {
+         case 1:
+            return 0;
+         case 2:
+         case 4:
+            return align(offset, size) - offset;
+         default:
+            return align(offset, scope.ptrSize) - offset;
+      }
+   }
+   else {
+      switch (size) {
+         case 1:
+            return 0;
+         case 2:
+         case 4:
+         case 8:
+            return align(offset, size) - offset;
+         default:
+            return align(offset, scope.ptrSize) - offset;
+      }
    }
 }
 
