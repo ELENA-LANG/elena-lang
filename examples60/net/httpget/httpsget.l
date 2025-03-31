@@ -1,3 +1,75 @@
+struct mbedtls_mpi
+{
+   pointer                     p;
+   short                       s;
+   short                       n; 
+}
+
+struct mbedtls_ssl_config
+{
+   int                          max_tls_version;
+   int                          min_tls_version;
+   byte                         endpoint;
+   byte                         transport;
+   byte                         authmode;
+   byte                         allow_legacy_renegotiation;
+   byte                         mfl_code;
+   byte                         encrypt_then_mac;
+   byte                         extended_ms;
+   byte                         anti_replay;
+   byte                         disable_renegotiation;
+   byte                         session_tickets;
+   byte                         cert_req_ca_list;
+   byte                         respect_cli_pref;
+   byte                         ignore_unexpected_cid;
+   pointer                      ciphersuite_list;
+   pointer                      f_dbg;
+   pointer                      p_dbg;
+   pointer                      f_rng;
+   pointer                      p_rng;
+   pointer                      f_get_cache;
+   pointer                      f_set_cache;
+   pointer                      p_cache;
+   pointer                      f_sni;
+   pointer                      p_sni;
+   pointer                      f_vrfy;
+   pointer                      p_vrfy;
+   pointer                      f_psk;
+   pointer                      p_psk;
+   pointer                      f_cookie_write;
+   pointer                      f_cookie_check;
+   pointer                      p_cookie;
+   pointer                      f_ticket_write;
+   pointer                      f_ticket_parse;
+   pointer                      p_ticket;
+   pointer                      cid_len;  // size_t
+   pointer                      cert_profile;
+   pointer                      key_cert;
+   pointer                      ca_chain;
+   pointer                      ca_crl;
+   pointer                      sig_hashes;
+   pointer                      sig_algs;
+   pointer                      curve_list;
+   pointer                      group_list;
+   mbedtls_mpi                  dhm_P; 
+   mbedtls_mpi                  dhm_G;
+   pointer                      psk;
+   pointer                      psk_len; // size_t
+   pointer                      psk_identity;
+   pointer                      psk_identity_len; // size_t
+   pointer                      alpn_list;
+   int                          read_timeout;
+   int                          hs_timeout_min;
+   int                          hs_timeout_max;
+   int                          renego_max_records;
+   byte                         renego_period[8];
+   int                          badmac_limit;
+   int                          dhm_min_bitlen;
+   poniter                      user_data;
+   pointer                      f_cert_cb;
+   pointer                      dn_hints; 
+}
+
 struct mbedtls_ssl_context
 {
    pointer                      conf;
@@ -117,16 +189,16 @@ public test()
 /*   mbedtls_entropy_context entropy;
    mbedtls_ctr_drbg_context ctr_drbg;*/
    mbedtls_ssl_context ssl;
-/*   mbedtls_ssl_config conf;
-   mbedtls_x509_crt cacert;
+   mbedtls_ssl_config conf;
+/*   mbedtls_x509_crt cacert;
 */
 
-   int size := $size ssl;
+   int size := $size conf;
 
    extern wrpmbedtls.net_init(server_fd);
    extern wrpmbedtls.ssl_init(ssl);
-/*   mbedtls_ssl_config_init(&conf);
-   mbedtls_x509_crt_init(&cacert);
+   extern wrpmbedtls.ssl_config_init(conf);
+/*   mbedtls_x509_crt_init(&cacert);
    mbedtls_ctr_drbg_init(&ctr_drbg);
 
    const char* pers = DRBG_PERSONALIZED_STR;
