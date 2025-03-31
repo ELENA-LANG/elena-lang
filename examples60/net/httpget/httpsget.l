@@ -1,11 +1,3 @@
-struct xx
-{
-   pointer                      out_left;   // size_t       // 0
-   byte                         cur_out_ctr[8];             // 4
-   short                        mtu;                        // 12
-   pointer                      hostname;                   // 16
-}
-
 struct mbedtls_ssl_context
 {
    pointer                      conf;
@@ -83,6 +75,8 @@ struct mbedtls_ssl_context
    pointer                      f_export_keys;
    pointer                      p_export_keys;
    pointer                      user_data;
+
+   int                          struct_padding; // !! to align the struct size with required
 }
 
 struct mbedtls_net_context
@@ -116,11 +110,6 @@ struct mbedtls_entropy_context
 
 public test()
 {
-   xx tmp;
-   int size2 := $size tmp;
-
-
-
 /*
    int ret = 0;
 */
