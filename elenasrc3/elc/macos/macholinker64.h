@@ -13,10 +13,11 @@
 
 namespace elena_lang
 {
-   // --- ElfLinker ---
+   // --- MachOLinker64 ---
    class MachOLinker64 : public MachOLinker
    {
    protected:
+      void writeMachOHeader() override;
 
    public:
       MachOLinker64(ErrorProcessorBase* errorProcessor/*, ImageFormatter* imageFormatter*/)

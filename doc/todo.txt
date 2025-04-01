@@ -19,7 +19,6 @@ In development:
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   ide:
-      - ide : windows
       - syntax highlighting
       - #184 : linux - save, close, ...
       - async method - auto watch : self and some variables are not displayed
@@ -35,25 +34,21 @@ In development:
       - api refactoring : main program entry to be called - Program
   port:      
       - x86-64 : httpget, threading samples
-      - rosetta code : moving to 6.6 (test, use Console)
       - x86-64 : mta - test net examples for mta   
       - test all x86-64 examples (net)
+      - rosetta code : moving to 6.6 (test, use Console)
   tools:
       - vs #2 : elena.tmLanguage.json  
       - #658 :  debug elena program in VSCode
   prom: bi-posting weekly
   --------------------------------------
+  - rosetta code : Concurrent computing
   - #658 :  debug elena program in VSCode : launch exe
   - MTA support for Linux : TLS in ELF
-  - #708 : look into executable format
-  - pi samples for aarch64 
-  - #34 : https get (Mbed TLS - https://github.com/ARMmbed/mbed-os-example-tls/blob/master/tls-client/HelloHttpsClient.cpp), 
-  * rosetta code example - https
-  * review mbedtls : look which of config structs must be initialized only once; the references must be permanent, so
-    they must be allocated in PERM (they must be reused in this case)
-  * test httpget with https
+  - #708 : Linker
+  * #708 : working on Mach-O Linker
   --------------------------------------
-  * create an array in perm
+  - pi samples for aarch64 
   --------------------------------------
 
   === Iteration 40 ===

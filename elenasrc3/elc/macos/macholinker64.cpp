@@ -9,3 +9,10 @@
 #include "macholinker64.h"
 
 using namespace elena_lang;
+
+// --- MachOLinker64 ---
+
+void MachOLinker64 :: writeMachOHeader()
+{
+
+}

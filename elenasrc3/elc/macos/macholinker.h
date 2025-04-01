@@ -17,6 +17,9 @@ namespace elena_lang
    class MachOLinker : public LinkerBase
    {
    protected:
+      virtual void writeMachOHeader() = 0;
+
+      bool createExecutable(ElfExecutableImage& image, path_t exePath);
 
    public:
       LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType uiType,
