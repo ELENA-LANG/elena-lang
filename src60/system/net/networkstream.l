@@ -88,6 +88,28 @@ public class NetworkStream : Stream
       ^ total_received;
    }
 
+   indexed internal int readToBuffer(MemoryBuffer buffer, int length)
+   {
+      int total_received := 0;
+      int total := length;
+      while (total > 0) {
+         int size := 512;
+         if (size > length)
+            size := length;
+
+         int received := read(_buffer, size);
+         if (received > 0) {
+            total_received += received;
+            total -= received;
+
+            buffer.write(0, received, _buffer);
+         }
+         else :break;
+      };
+
+      ^ total_received;
+   }
+
    indexed async internal Task writeAsync(string s)
    {
       byte tmp[1024];
@@ -149,6 +171,9 @@ public extension AsyncStreamExtension : NetworkStream
 
    Task<int> readAsync(MemoryBuffer buffer, int length)
       = self.readAsync(buffer, length);
+
+   int readToBuffer(MemoryBuffer buffer, int length)
+      = self.readToBuffer(buffer, length);
 
    bool isDataAvailable
       = self.isDataAvailable;

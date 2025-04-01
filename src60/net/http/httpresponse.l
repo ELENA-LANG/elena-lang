@@ -124,13 +124,8 @@ public class HttpResponse
       }
    }
 
-   async Task<string> readAsStringAsync()
+   private string returnContentAsString()
    {
-      int received := :await _stream.readAsync(_buffer, 512);
-      while (received > 0) {
-         received := :await _stream.readAsync(_buffer, 512);
-      };
-
       byte[] buffer := _buffer.Content;
       int length := _buffer.Length;
       int eoh := seekHeaderEnd();
@@ -157,7 +152,26 @@ public class HttpResponse
       }
       else {
          ^ UTF8Encoding.toString(eoh, length - eoh, _buffer.Content);
-      }
-      
+      }      
+   }
+
+   async Task<string> readAsStringAsync()
+   {
+      int received := :await _stream.readAsync(_buffer, 512);
+      while (received > 0) {
+         received := :await _stream.readAsync(_buffer, 512);
+      };
+
+      ^ returnContentAsString();
+   }
+
+   string readAsString()
+   {
+      int received := _stream.readToBuffer(_buffer, 512);
+      while (received > 0) {
+         received := _stream.readToBuffer(_buffer, 512);
+      };
+
+      ^ returnContentAsString();
    }
 }
