@@ -11,14 +11,20 @@ import system'net;
 
 public class MbedTlsSocket : INetSocket
 {
-   mbedtls_net_context        server_fd;
-   mbedtls_entropy_context    entropy;
-   mbedtls_ctr_drbg_context   ctr_drbg;
-   mbedtls_ssl_context        ssl;
-   mbedtls_ssl_config         conf;
+   mbedtls_net_context        _server_fd;
+   mbedtls_entropy_context    _entropy;
+   mbedtls_ctr_drbg_context   _ctr_drbg;
+   mbedtls_ssl_context        _ssl;
+   mbedtls_ssl_config         _conf;
 
    private prepare(string host, string port)
    {
+      mbedtls_net_context        server_fd := default;
+      mbedtls_entropy_context    entropy := default;
+      mbedtls_ctr_drbg_context   ctr_drbg := default;
+      mbedtls_ssl_context        ssl := default;
+      mbedtls_ssl_config         conf := default;
+
       extern wrpmbedtls.net_init(server_fd);
       extern wrpmbedtls.ssl_init(ssl);
       extern wrpmbedtls.ssl_config_init(conf);
@@ -59,19 +65,25 @@ public class MbedTlsSocket : INetSocket
       {
          MbedTlsException.raise($"Failed. mbedtls_ssl_setup returned {ret}");
       };
-   }
 
-   constructor open(string host, short port)
-   {
-      prepare(host, port.toPrintable());
-
-      int ret := extern wrpmbedtls.ssl_set_hostname(ssl, host);
+      ret := extern wrpmbedtls.ssl_set_hostname(ssl, host);
       if (ret != 0)
       {
          MbedTlsException.raise($"Failed. mbedtls_ssl_set_hostname returned {ret}");
       };
    
       extern wrpmbedtls.ssl_set_bio_def(ssl, server_fd);      
+
+      _server_fd := server_fd;
+      _entropy := entropy;
+      _ctr_drbg := ctr_drbg;
+      _ssl := ssl;
+      _conf := conf;
+   }
+
+   constructor open(string host, short port)
+   {
+      prepare(host, port.toPrintable());
    }
 
    int read(byte[] buffer, int length)
@@ -80,7 +92,7 @@ public class MbedTlsSocket : INetSocket
 
       while (true) {
          extern {
-            retVal := extern wrpmbedtls.ssl_read(ssl,
+            retVal := extern wrpmbedtls.ssl_read(_ssl,
                           buffer, length);
          };
 
@@ -100,7 +112,7 @@ public class MbedTlsSocket : INetSocket
    {
       int retVal := 0;
       while (true) {
-         retVal := extern wrpmbedtls.ssl_write(ssl, buffer, length);
+         retVal := extern wrpmbedtls.ssl_write(_ssl, buffer, length);
    
          if (retVal < 0) {
             if (retVal == MBEDTLS_ERR_SSL_WANT_WRITE || retVal == MBEDTLS_ERR_SSL_WANT_READ) {
@@ -151,5 +163,10 @@ public class MbedTlsSocket : INetSocket
 
    close()
    {
+      extern wrpmbedtls.net_free(_server_fd);
+      extern wrpmbedtls.ssl_free(_ssl);
+      extern wrpmbedtls.ssl_config_free(_conf);
+      extern wrpmbedtls.ctr_drbg_free(_ctr_drbg);
+      extern wrpmbedtls.entropy_free(_entropy);
    }
 }
