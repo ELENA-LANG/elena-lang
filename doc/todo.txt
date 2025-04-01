@@ -49,10 +49,11 @@ In development:
   - pi samples for aarch64 
   - #34 : https get (Mbed TLS - https://github.com/ARMmbed/mbed-os-example-tls/blob/master/tls-client/HelloHttpsClient.cpp), 
   * rosetta code example - https
-  * fix an issue with profile & path
+  * review mbedtls : look which of config structs must be initialized only once; the references must be permanent, so
+    they must be allocated in PERM (they must be reused in this case)
   * test httpget with https
   --------------------------------------
-  * httpget example : support two profile default (http) and ssl (https)
+  * create an array in perm
   --------------------------------------
 
   === Iteration 40 ===

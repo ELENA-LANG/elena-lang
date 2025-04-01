@@ -9,7 +9,7 @@
     <profile key="ssl">
       <files>
         <module>
-            <file>httpgets.l</file>
+            <file>httpsget.l</file>
         </module>
       </files>
     </profile>

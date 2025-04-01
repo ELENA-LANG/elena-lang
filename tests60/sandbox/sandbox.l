@@ -1,14 +1,13 @@
-import extensions;
+import net'http;
 
 public program()
 {
-    int i := 1;
+   using(HttpClient client := HttpClient.open("http://www.google.com"))
+   {
+      HttpResponse response := client.get();
 
-    real a :=  -1.0/*.power(i)*/;
+      string content := response.readAsString();
 
-    //Console.printLine(a);
-    //Console.printLine(b);
-    //Console.printLine(c);
-    //Console.printLine(d);
-    Console.printLine(a / (i*2/*+1*/) /** 4*/);
+      Console.writeLine(content);
+   };
 }

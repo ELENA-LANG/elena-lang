@@ -72,7 +72,6 @@ public sealed class Uri
       }
       else { 
          _host := url.Substring(index, end - index);
-         _port := "80"
       };
 
       index := end + 1;
