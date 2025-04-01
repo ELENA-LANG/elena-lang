@@ -24,6 +24,7 @@ In development:
       - #184 : linux - save, close, ...
       - async method - auto watch : self and some variables are not displayed
   maint:
+      - exception handling in rosetta code sample http
       - github actions : `set-output` command is deprecated 
       - test all x86-64 examples
       - unit tests : bt optimization 

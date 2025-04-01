@@ -79,18 +79,8 @@ public class HttpResponse
       _headers := new HttpHeaders();
    }
 
-   async internal Task readHeader()
+   private parseHeaders(int eoh)
    {
-      int eoh := 0;
-      int received := :await _stream.readAsync(_buffer, 512);
-      while (received > 0) {
-         eoh := seekHeaderEnd();
-         if (eoh > 0)
-            :break;
-
-         received := :await _stream.readAsync(_buffer, 512);
-      };
-
       byte[] buffer := _buffer.Content;
       int length := _buffer.Length;
 
@@ -122,6 +112,36 @@ public class HttpResponse
 
          index := next;
       }
+   }
+
+   async internal Task readHeaderAsync()
+   {
+      int eoh := 0;
+      int received := :await _stream.readAsync(_buffer, 512);
+      while (received > 0) {
+         eoh := seekHeaderEnd();
+         if (eoh > 0)
+            :break;
+
+         received := :await _stream.readAsync(_buffer, 512);
+      };
+
+      parseHeaders(eoh)
+   }
+
+   internal readHeader()
+   {
+      int eoh := 0;
+      int received := _stream.readToBuffer(_buffer, 512);
+      while (received > 0) {
+         eoh := seekHeaderEnd();
+         if (eoh > 0)
+            :break;
+
+         received := _stream.readToBuffer(_buffer, 512);
+      };
+
+      parseHeaders(eoh)
    }
 
    private string returnContentAsString()

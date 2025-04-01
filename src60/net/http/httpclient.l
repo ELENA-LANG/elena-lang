@@ -102,7 +102,27 @@ public class HttpClient
 
       HttpResponse response := HttpResponse.assign(stream);
 
-      :await response.readHeader();
+      :await response.readHeaderAsync();
+
+      ^ response;
+   }
+
+   HttpResponse get()
+      <= get("/");
+
+   HttpResponse get(string path)
+   {
+      /* Send headers to server */
+      NetworkStream stream := new NetworkStream(_socket);
+
+      string headers := _headers.Value;
+      string request := $"GET {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
+
+      stream.write(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      response.readHeader();
 
       ^ response;
    }

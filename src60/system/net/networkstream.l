@@ -130,6 +130,26 @@ public class NetworkStream : Stream
       };
    }
 
+   indexed internal writeString(string s)
+   {
+      byte tmp[1024];
+      int len := s.Length;
+      int index := 0;
+      while (len > 0) {
+         int sublen := 1024;
+         if (len < sublen) {
+            sublen := len;
+         };
+
+         int converted := UTF8Encoder.toByteArray(s, index, ref sublen, tmp, 0, 1024);
+         
+         converted := self.write(tmp, converted);
+
+         index += converted;
+         len -= converted;
+      };
+   }
+
    indexed async internal Task<string> readAsStringAsync()
    {
       MemoryBuffer buffer := MemoryBuffer.allocate();
@@ -165,6 +185,9 @@ public extension AsyncStreamExtension : NetworkStream
 
    Task writeAsync(string s)
       = self.writeAsync(s);
+
+   write(string s)
+      = self.writeString(s);
 
    Task<string> readAsStringAsync()
       = self.readAsStringAsync();
