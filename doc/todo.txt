@@ -47,10 +47,10 @@ In development:
   - #708 : look into executable format
   - pi samples for aarch64 
   - #34 : https get (Mbed TLS - https://github.com/ARMmbed/mbed-os-example-tls/blob/master/tls-client/HelloHttpsClient.cpp), 
-  * test both http / https example
-  * refactor create a factory to create INetSocket 
+  * rosetta code example
+  * test httpget with https
   --------------------------------------
-  * refactor net'httpclient -> move socket code into the wrapper class implementing an interface INetSocket 
+  * httpget example : support two profile default (http) and ssl (https)
   --------------------------------------
 
   === Iteration 40 ===

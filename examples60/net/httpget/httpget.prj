@@ -1,10 +1,18 @@
 <configuration>
-    <files>
+    <profile key="default">
+      <files>
         <module>
             <file>httpget.l</file>
-            <file>httpsget.l</file>
         </module>
-    </files>
+      </files>
+    </profile>
+    <profile key="ssl">
+      <files>
+        <module>
+            <file>httpgets.l</file>
+        </module>
+      </files>
+    </profile>
     <project>
         <executable>httpget</executable>
         <options></options>

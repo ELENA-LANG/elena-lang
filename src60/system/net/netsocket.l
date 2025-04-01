@@ -2,17 +2,19 @@ import system'threading;
 
 public interface INetSocket
 {
-   abstract Task<int> readAsync(byte[] buffer, int length);
+   Task<int> readAsync(byte[] buffer, int length)
+      = ::Task<int>.run({ ^ self.read(buffer, length) });
+     
+   Task<int> writeAsync(byte[] buffer, int length)
+      = ::Task<int>.run({ ^ self.write(buffer, length) });     
 
-   abstract Task<int> writeAsync(byte[] buffer, int length);
+   abstract int read(byte[] buffer, int length);
 
-   int read(byte[] buffer, int length)
-      = readAsync(buffer, length).Result;
-
-   int write(byte[] buffer, int length)
-      = writeAsync(buffer, length).Result;
+   abstract int write(byte[] buffer, int length);
 
    get abstract bool AvailableToRead();
+
+   verify() {}
 
    abstract close();
 }
