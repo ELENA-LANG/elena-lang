@@ -31,6 +31,16 @@ bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath
    return false; // !! temporal
 }
 
+void MachOLinker :: prepareCommands(MachOExecutableImage& image)
+{
+   // create __PAGEZERO
+   image.commands.add(createPAGEZEROCommand(image));
+
+   for (auto it = image.addressMap.sections.headers.start(); !it.eof(); ++it) {
+
+   }
+}
+
 void MachOLinker :: prepareMachOImage(MachOExecutableImage& image)
 {
    if (!image.sectionAlignment)
@@ -39,10 +49,14 @@ void MachOLinker :: prepareMachOImage(MachOExecutableImage& image)
    if (!image.fileAlignment)
       image.fileAlignment = FILE_ALIGNMENT;
 
+   image.addressMap.headerSize = SECTION_ALIGNMENT;
+
    _imageFormatter->prepareImage(provider, image.addressMap, image.imageSections,
       image.sectionAlignment,
       image.fileAlignment,
       image.withDebugInfo);
+
+   prepareCommands(image);
 }
 
 LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, path_t exeExtension)

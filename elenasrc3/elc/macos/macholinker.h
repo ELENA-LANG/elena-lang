@@ -42,14 +42,17 @@ namespace elena_lang
    class MachOLinker : public LinkerBase
    {
    protected:
+      ImageFormatter* _imageFormatter;
+
       virtual unsigned long getMagicNumber() = 0;
 
       virtual CPUType getCPUType() = 0;
       virtual CPUSubType getCPUSubType() = 0;
 
-      ImageFormatter* _imageFormatter;
+      virtual Command* createPAGEZEROCommand(MachOExecutableImage& image) = 0;
 
       virtual void prepareMachOImage(MachOExecutableImage& image);
+      virtual void prepareCommands(MachOExecutableImage& image);
 
       virtual void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) = 0;
       virtual void writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command) = 0;

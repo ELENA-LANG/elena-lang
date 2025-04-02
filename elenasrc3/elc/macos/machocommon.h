@@ -32,6 +32,7 @@ namespace elena_lang
    struct Command
    {
       uint32_t commandType;
+
       uint32_t commandSize;
    };
 

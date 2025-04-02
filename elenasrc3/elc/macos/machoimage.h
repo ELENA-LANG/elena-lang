@@ -19,7 +19,7 @@ namespace elena_lang
    protected:
       ForwardResolverBase* _resolver;
 
-      //struct ElfData
+      //struct MachOData
       //{
       //   ReferenceMap functions;
       //   LibraryList  libraries;
@@ -27,11 +27,11 @@ namespace elena_lang
       //   pos_t dynamicOffset;
       //   pos_t dynamicSize;
 
-      //   ElfData()
+         //MachOData()
       //      : functions(0), libraries(nullptr)
-      //   {
+         //{
       //      dynamicOffset = dynamicSize = 0;
-      //   }
+        // }
       //};
 
       MachOImageFormatter(ForwardResolverBase* resolver)
@@ -45,9 +45,9 @@ namespace elena_lang
       //virtual void fixSection(MemoryBase* section, AddressSpace& map) = 0;
       //virtual void fixImportSection(MemoryBase* section, AddressSpace& map) = 0;
 
-      //void mapImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections, pos_t sectionAlignment,
-      //  pos_t fileAlignment, ElfData& elfData);
-      //void fixImage(ImageProviderBase& provider, AddressSpace& map, bool withDebugInfo);
+      void mapImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections, pos_t sectionAlignment,
+        pos_t fileAlignment/*, ElfData& elfData*/);
+      void fixImage(ImageProviderBase& provider, AddressSpace& map, bool withDebugInfo);
 
    public:
       void prepareImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,

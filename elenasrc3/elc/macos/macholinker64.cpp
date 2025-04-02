@@ -27,6 +27,11 @@ void MachOLinker64 :: writeMachOHeader(MachOExecutableImage& image, FileWriter* 
    file->write((char*)&header, sizeof(MachOHeader_64));
 }
 
+Command* MachOLinker64 :: createPAGEZEROCommand(MachOExecutableImage& image)
+{
+
+}
+
 void MachOLinker64 :: writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command)
 {
 

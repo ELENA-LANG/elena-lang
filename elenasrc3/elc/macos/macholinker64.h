@@ -32,6 +32,26 @@ namespace elena_lang
       uint32_t       reserved;
    };
 
+   struct SegmentCommand_64 : public Command
+   {  
+      char       segname[16];   /* segment name */
+
+      uint64_t   vmaddr;        /* memory address of this segment */
+
+      uint64_t   vmsize;        /* memory size of this segment */
+
+      uint64_t   fileoff;       /* file offset of this segment */
+
+      uint64_t   filesize;      /* amount to map from the file */
+
+      vm_prot_t  maxprot;       /* maximum VM protection */
+
+      vm_prot_t  initprot;      /* initial VM protection */
+
+      uint32_t   nsects;        /* number of sections in segment */
+
+      uint32_t   flags;         /* flags */
+   };
 
    // --- MachOLinker64 ---
    class MachOLinker64 : public MachOLinker
@@ -41,6 +61,8 @@ namespace elena_lang
       {
          return MH_MAGIC_64;
       }
+
+      Command* createPAGEZEROCommand(MachOExecutableImage& image) override;
 
       void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) override;
       void writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command) override;

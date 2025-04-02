@@ -46,7 +46,7 @@ In development:
   - MTA support for Linux : TLS in ELF
   - #708 : Linker
   --------------------------------------
-  * #708 : working on Mach-O Linker
+  * #708 : filling command list
   --------------------------------------
 
   === Iteration 40 ===
