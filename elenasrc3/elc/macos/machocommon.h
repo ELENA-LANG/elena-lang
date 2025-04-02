@@ -29,6 +29,16 @@ namespace elena_lang
       ARM_ALL = 0
    };
 
+   constexpr auto __PAGEZERO_SEGMENT = "__PAGEZERO";
+   constexpr auto __TEXT_SEGMENT = "__TEXT";
+   constexpr auto __DATA_SEGMENT = "__DATA";
+
+   constexpr int Flags_NoUndefs = 0x000001;
+   constexpr int Flags_DyldLink = 0x000004;
+   constexpr int Flags_TwoLevel = 0x000080;
+   
+   constexpr int Command_Segment_64 = 0x00000019;
+
    struct Command
    {
       uint32_t commandType;
@@ -37,6 +47,12 @@ namespace elena_lang
    };
 
    typedef List<Command*, freeobj> Commands;
+
+   typedef vm_prot_t int;
+
+   constexpr int PROT_R = 1;
+   constexpr int PROT_W = 2;
+   constexpr int PROT_X = 4;
 }
 
 #endif

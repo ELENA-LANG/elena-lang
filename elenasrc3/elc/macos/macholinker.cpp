@@ -10,6 +10,16 @@
 
 using namespace elena_lang;
 
+void MachOLinker::writeSegments(ElfExecutableImage& image, FileWriter* file)
+{
+   for (auto it = image.imageSections.items.start(); !it.eof(); ++it) {
+      writeSection(file, (*it).section);
+      if ((*it).isAligned)
+         file->align(image.fileAlignment);
+   }
+   file->align(image.fileAlignment);
+}
+
 bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath)
 {
    if (exePath.empty())
@@ -24,25 +34,40 @@ bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath
 
    writeMachOHeader(image, &executable/*, ph_length */);
 
+   // write commands
    for (auto command_it = image.commands.start(); !command_it.eof(); ++command_it) {
-      writeCommand(image, &executable, *command);
+      Command* command = *command_it;
+
+      file->write((char*)command, command->commandSize);
    }   
 
-   return false; // !! temporal
+   // write sections
+   writeSegments(image, file);
+
+   return true;
 }
 
 void MachOLinker :: prepareCommands(MachOExecutableImage& image)
 {
-   // create __PAGEZERO
-   image.commands.add(createPAGEZEROCommand(image));
-
+   pos_t fileOffset = 0;
    for (auto it = image.addressMap.sections.headers.start(); !it.eof(); ++it) {
+      ImageSectionHeader header = *it;
 
+      Command* command = createSegmentCommand(header, fileOffset);
+      image.commands.add(command);
+
+      image.totalCommandSize += command->commandSize;
    }
 }
 
 void MachOLinker :: prepareMachOImage(MachOExecutableImage& image)
 {
+   image.flags |= Flags_NoUndefs;
+   //image.flags |= Flags_DyldLink;
+   //image.flags |= Flags_TwoLevel;
+
+   NoUndefs, DyldLink, TwoLevel, PIE
+
    if (!image.sectionAlignment)
       image.sectionAlignment = SECTION_ALIGNMENT;
 

@@ -32,8 +32,12 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
 
    // === address space mapping ===
 
+   sectionSize = map.headerSize;
+   sections.headers.add(ImageSectionHeader::get(__PAGEZERO_SEGMENT, 0, ImageSectionHeader::SectionType::Data,
+      sectionSize, 0));
+
    // --- __TEXT (code & rdata & adata & mdata & mbdata & rdata) ---
-   sectionOffset = map.headerSize;
+   sectionOffset = sectionSize;
 
    map.code = map.headerSize;               // code section should always be first
    map.codeSize = text->length();
@@ -60,7 +64,7 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    fileOffset += align(rdata->length(), fileAlignment);
    sectionSize = fileSize = fileOfset;
 
-   sections.headers.add(ImageSectionHeader::get(nullptr, map.code, ImageSectionHeader::SectionType::Text,
+   sections.headers.add(ImageSectionHeader::get(__TEXT_SEGMENT, map.code, ImageSectionHeader::SectionType::Text,
       sectionSize, fileSize));
 
    sections.items.add(sections.headers.count() + 1, { text, true });
@@ -81,7 +85,7 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    fileSize = 0;
    sectionSize = align(stat->length(), fileAlignment) + align(data->length(), fileAlignment)
 
-   sections.headers.add(ImageSectionHeader::get(nullptr, map.data, ImageSectionHeader::SectionType::Data,
+   sections.headers.add(ImageSectionHeader::get(__DATA_SEGMENT, map.data, ImageSectionHeader::SectionType::Data,
       sectionSize, fileSize));
 }
 

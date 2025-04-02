@@ -49,13 +49,13 @@ namespace elena_lang
       virtual CPUType getCPUType() = 0;
       virtual CPUSubType getCPUSubType() = 0;
 
-      virtual Command* createPAGEZEROCommand(MachOExecutableImage& image) = 0;
+      virtual Command* createSegmentCommand(ImageSectionHeader& header, pos_t& fileOffset) = 0;
 
       virtual void prepareMachOImage(MachOExecutableImage& image);
       virtual void prepareCommands(MachOExecutableImage& image);
 
       virtual void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) = 0;
-      virtual void writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command) = 0;
+      virtual void writeSegments(ElfExecutableImage& image, FileWriter* file);
 
       bool createExecutable(MachOExecutableImage image, path_t exePath);
 

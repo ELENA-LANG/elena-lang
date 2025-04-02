@@ -27,12 +27,33 @@ void MachOLinker64 :: writeMachOHeader(MachOExecutableImage& image, FileWriter* 
    file->write((char*)&header, sizeof(MachOHeader_64));
 }
 
-Command* MachOLinker64 :: createPAGEZEROCommand(MachOExecutableImage& image)
+Command* MachOLinker64 :: createSegmentCommand(ImageSectionHeader& header, pos_t& fileOffset)
 {
+   auto command = new SegmentCommand_64();
 
-}
+   command->commandType = Command_Segment_64;
+   command->commandSize = sizeof(SegmentCommand_64);
+   strncpy(command->segname, header.name.str(), header.name.length() + 1);
+   command->vmaddr = header.vaddress;
+   command->vmsize = header.memorySize;
+   command->fileoff = fileOffset;
+   command->filesize = fileSize;
+   switch (header.type) {
+      case SectionType::Text:
+         command->intprot = command->maxprot = PROT_X | PROT_R;         
+         break;
+      case SectionType::Data:
+      case SectionType::UninitializedData:
+         command->intprot = command->maxprot = PROT_R | PROT_W;
+         break;
+      case SectionType::RData:
+         command->intprot = command->maxprot = PROT_R;
+         break;
+   }
+   command->nsects = 0;
+   command->flags = 0;
 
-void MachOLinker64 :: writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command)
-{
+   fileOffset += command->filesize;
 
+   return command;
 }

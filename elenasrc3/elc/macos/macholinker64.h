@@ -62,10 +62,9 @@ namespace elena_lang
          return MH_MAGIC_64;
       }
 
-      Command* createPAGEZEROCommand(MachOExecutableImage& image) override;
+      Command* createSegmentCommand(ImageSectionHeader& header, pos_t& fileOffset) override;
 
       void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) override;
-      void writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command) override;
 
    public:
       MachOLinker64(ErrorProcessorBase* errorProcessor/*, ImageFormatter* imageFormatter*/)
