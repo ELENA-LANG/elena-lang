@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains Common ELF types
-//                                              (C)2021, by Aleksey Rakov
+//                                              (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELFCOMMON_H
@@ -16,6 +16,8 @@ namespace elena_lang
    constexpr auto elfDynamicOffset   = 1;
    constexpr auto elfDynamicVAddress = 2;
    constexpr auto elfDynamicSize     = 3;
+   constexpr auto elfTLSVSize        = 5;
+
 }
 
 #endif

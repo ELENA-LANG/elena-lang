@@ -12,7 +12,7 @@ In development:
       - MTA support for Linux  
       - #496
       - #622
-      - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
+      - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
       - unit tests for try-catch / try-catch-finally / try-finally      
       - upndown (connector - interaction)
       - support :sizeof
@@ -20,7 +20,7 @@ In development:
       - lpad / elt : declare an extension, parse it and apply to the input
   ide:
       - syntax highlighting
-      - #184 : linux - save, close, ...
+      - #184 : linux - close, ...
       - async method - auto watch : self and some variables are not displayed
   maint:
       - exception handling in rosetta code sample http (when it is compiled as STA - warn)
@@ -41,12 +41,13 @@ In development:
       - #658 :  debug elena program in VSCode
   prom: bi-posting weekly
   --------------------------------------
+  - #184 : linux - save
+  - syntax highlighting : fix an error with strings containing character codes - see httpclient
   - rosetta code : Concurrent computing
   - #658 :  debug elena program in VSCode : launch exe
-  - MTA support for Linux : TLS in ELF
-  - #708 : Linker
+  - MTA support for Linux
   --------------------------------------
-  * #708 : filling command list
+  * MTA support for Linux : TLS in ELF
   --------------------------------------
 
   === Iteration 40 ===

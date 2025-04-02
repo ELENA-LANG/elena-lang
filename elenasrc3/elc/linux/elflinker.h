@@ -20,6 +20,7 @@ namespace elena_lang
       unsigned int    fileAlignment;
       unsigned int    flags;
       bool            withDebugInfo;
+      bool            withTLS;
 
       AddressSpace    addressMap;
 
@@ -31,7 +32,8 @@ namespace elena_lang
          this->fileAlignment = this->sectionAlignment = 0;
          this->flags = 0;
          this->withDebugInfo = withDebugInfo;
-      }
+         this->withTLS = false;
+      }      
    };
 
    // --- ElfLinker ---
