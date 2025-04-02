@@ -126,12 +126,12 @@ void Elf32Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
 
    // TLS
    if (image.withTLS) {
-      pos_t tlsSize = image.addressMap.dictionary.get(elfTLSVSize);
+      pos_t tlsSize = image.addressMap.dictionary.get(elfTLSSize);
 
       ph_header.p_type = PT_TLS;
       ph_header.p_offset = offset;
       ph_header.p_vaddr = image.addressMap.imageBase + image.addressMap.tls;
-      ph_header.p_memsz = ph_header.p_filesz = info.fileSize;
+      ph_header.p_memsz = ph_header.p_filesz = tlsSize;
       ph_header.p_flags = PF_R;
 
       ph_header.p_align = 4;

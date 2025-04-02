@@ -16,6 +16,7 @@ In development:
       - unit tests for try-catch / try-catch-finally / try-finally      
       - upndown (connector - interaction)
       - support :sizeof
+      - conditional compiling
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   ide:
@@ -47,7 +48,7 @@ In development:
   - #658 :  debug elena program in VSCode : launch exe
   - MTA support for Linux
   --------------------------------------
-  * MTA support for Linux : TLS in ELF
+  * MTA support for Linux : elenart : MTA entry
   --------------------------------------
 
   === Iteration 40 ===

@@ -16,7 +16,7 @@ namespace elena_lang
    constexpr auto elfDynamicOffset   = 1;
    constexpr auto elfDynamicVAddress = 2;
    constexpr auto elfDynamicSize     = 3;
-   constexpr auto elfTLSVSize        = 5;
+   constexpr auto elfTLSSize         = 5;
 
 }
 
