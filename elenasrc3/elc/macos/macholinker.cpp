@@ -10,7 +10,7 @@
 
 using namespace elena_lang;
 
-bool MachOLinker :: createExecutable(ElfExecutableImage& image, path_t exePath)
+bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath)
 {
    if (exePath.empty())
       _errorProcessor->raiseInternalError(errEmptyTarget);
@@ -22,13 +22,35 @@ bool MachOLinker :: createExecutable(ElfExecutableImage& image, path_t exePath)
    if (!executable.isOpen())
       return false;
 
-   writeMachOHeader(/*image, &executable, ph_length*/);
+   writeMachOHeader(image, &executable/*, ph_length */);
+
+   for (auto command_it = image.commands.start(); !command_it.eof(); ++command_it) {
+      writeCommand(image, &executable, *command);
+   }   
 
    return false; // !! temporal
 }
 
+void MachOLinker :: prepareMachOImage(MachOExecutableImage& image)
+{
+   if (!image.sectionAlignment)
+      image.sectionAlignment = SECTION_ALIGNMENT;
+
+   if (!image.fileAlignment)
+      image.fileAlignment = FILE_ALIGNMENT;
+
+   _imageFormatter->prepareImage(provider, image.addressMap, image.imageSections,
+      image.sectionAlignment,
+      image.fileAlignment,
+      image.withDebugInfo);
+}
+
 LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, path_t exeExtension)
 {
+   MachOExecutableImage image(withDebugMode);
+
+   prepareMachOImage(/*provider, */image/*, calcHeaderSize()*/);
+
    PathString exePath(project.PathSetting(ProjectOption::TargetPath));
    exePath.changeExtension(exeExtension);
 

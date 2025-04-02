@@ -13,11 +13,37 @@
 
 namespace elena_lang
 {
+   struct MachOHeader_64
+   {
+      uint32_t       magic;
+
+      CPUType        cputype;
+
+      CPUSubType     cpusubtype;
+
+      uint32_t       filetype;
+
+      uint32_t       ncmds;
+
+      uint32_t       sizeofcmds;
+
+      uint32_t       flags;
+
+      uint32_t       reserved;
+   };
+
+
    // --- MachOLinker64 ---
    class MachOLinker64 : public MachOLinker
    {
    protected:
-      void writeMachOHeader() override;
+      unsigned long getMagicNumber() override
+      {
+         return MH_MAGIC_64;
+      }
+
+      void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) override;
+      void writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command) override;
 
    public:
       MachOLinker64(ErrorProcessorBase* errorProcessor/*, ImageFormatter* imageFormatter*/)

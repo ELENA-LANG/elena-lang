@@ -71,7 +71,6 @@ namespace elena_lang
 
       //void fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment, RelocationMap& importMapping) override;
    public:
-
    };
 }
 

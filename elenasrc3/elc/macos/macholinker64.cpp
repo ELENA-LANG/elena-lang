@@ -12,7 +12,22 @@ using namespace elena_lang;
 
 // --- MachOLinker64 ---
 
-void MachOLinker64 :: writeMachOHeader()
+void MachOLinker64 :: writeMachOHeader(MachOExecutableImage& image, FileWriter* file)
+{
+   MachOHeader_64 header = {};
+
+   header.magic = getMagicNumber();
+   header.cputype = getCPUType();
+   header.cpusubtype = getCPUSubType();
+   header.filetype = FILE_EXECUTABLE;
+   header.ncmds = image.commands.count_pos();
+   header.sizeofcmds = image.totalCommandSize;
+   header.flags = image.flags;
+
+   file->write((char*)&header, sizeof(MachOHeader_64));
+}
+
+void MachOLinker64 :: writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command)
 {
 
 }

@@ -10,22 +10,57 @@
 #define MACHOLINKER_H
 
 #include "clicommon.h"
+#include "machocommon.h"
 
 namespace elena_lang
 {
+   struct Mach0ExecutableImage
+   {
+      unsigned int    sectionAlignment;
+      unsigned int    fileAlignment;
+      bool            withDebugInfo;
+      int             flags;
+
+      AddressSpace    addressMap;
+
+      ImageSections   imageSections;
+
+      int             totalCommandSize;
+      Commands        commands;
+
+      ElfExecutableImage(bool withDebugInfo)
+         : imageSections({})
+      {
+         this->fileAlignment = this->sectionAlignment = 0;
+         this->flags = 0;
+         this->withDebugInfo = withDebugInfo;
+         this->totalCommandSize = 0;
+      }
+   };
+
    // --- ElfLinker ---
    class MachOLinker : public LinkerBase
    {
    protected:
-      virtual void writeMachOHeader() = 0;
+      virtual unsigned long getMagicNumber() = 0;
 
-      bool createExecutable(ElfExecutableImage& image, path_t exePath);
+      virtual CPUType getCPUType() = 0;
+      virtual CPUSubType getCPUSubType() = 0;
+
+      ImageFormatter* _imageFormatter;
+
+      virtual void prepareMachOImage(MachOExecutableImage& image);
+
+      virtual void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) = 0;
+      virtual void writeCommand(MachOExecutableImage& image, FileWriter* file, Command* command) = 0;
+
+      bool createExecutable(MachOExecutableImage image, path_t exePath);
 
    public:
       LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType uiType,
          path_t exeExtension) override;
 
-      MachOLinker(ErrorProcessorBase* errorProcessor/*, ImageFormatter* imageFormatter*/)
+      MachOLinker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
          : LinkerBase(errorProcessor)
       {
          _imageFormatter = imageFormatter;

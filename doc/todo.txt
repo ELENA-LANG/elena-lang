@@ -28,14 +28,13 @@ In development:
       - test all x86-64 examples
       - unit tests : bt optimization 
       - arrange action for i386 / amd64 linux release  
+      - refactoring : move amd64 / x86 specific code from general elf linker files
   api:
       - implement ExtensionMessage.equal
       - api : add descriptions 
       - api refactoring : main program entry to be called - Program
   port:      
-      - x86-64 : httpget, threading samples
-      - x86-64 : mta - test net examples for mta   
-      - test all x86-64 examples (net)
+      - x86-64 : net, threading samples
       - rosetta code : moving to 6.6 (test, use Console)
   tools:
       - vs #2 : elena.tmLanguage.json  
@@ -46,9 +45,8 @@ In development:
   - #658 :  debug elena program in VSCode : launch exe
   - MTA support for Linux : TLS in ELF
   - #708 : Linker
-  * #708 : working on Mach-O Linker
   --------------------------------------
-  - pi samples for aarch64 
+  * #708 : working on Mach-O Linker
   --------------------------------------
 
   === Iteration 40 ===
