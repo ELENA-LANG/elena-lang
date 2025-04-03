@@ -24,6 +24,7 @@ In development:
       - #184 : linux - close, ...
       - async method - auto watch : self and some variables are not displayed
   maint:
+      - optimization : pi - byte code
       - exception handling in rosetta code sample http (when it is compiled as STA - warn)
       - github actions : `set-output` command is deprecated 
       - test all x86-64 examples
@@ -48,7 +49,7 @@ In development:
   - #658 :  debug elena program in VSCode : launch exe
   - MTA support for Linux
   --------------------------------------
-  * MTA support for Linux : elenart : MTA entry
+  * MTA support for Linux : compile as MTA
   --------------------------------------
 
   === Iteration 40 ===
