@@ -136,14 +136,20 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    fileSize += align(data->length(), fileAlignment);
    sectionSize += align(data->length(), fileAlignment);
 
-   map.dataSize += stat->length();
-   map.stat = map.data + data->length();
-
-   sectionSize += align(stat->length(), fileAlignment);
    if (tls->length() > 0) {
+      map.tls = map.data + align(data->length(), fileAlignment);
+      map.dataSize += align(tls->length(), fileAlignment);
+
       sectionSize += align(tls->length(), fileAlignment);
       fileSize += align(tls->length(), fileAlignment);
+
+      map.stat = map.tls + tls->length();
    }
+   else map.stat = map.data + data->length();
+   
+   map.dataSize += stat->length();
+
+   sectionSize += align(stat->length(), fileAlignment);
 
    sections.headers.add(ImageSectionHeader::get(nullptr, map.import, ImageSectionHeader::SectionType::Data,
       sectionSize, fileSize));
@@ -152,9 +158,6 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    sections.items.add(sections.headers.count(), { data, true });
 
    if (tls->length() > 0) {
-      map.tls = map.stat + align(stat->length(), fileAlignment);;
-      map.dataSize += align(tls->length(), fileAlignment);
-
       map.dictionary.add(elfTLSSize, tls->length());
 
       sections.items.add(sections.headers.count(), { tls, true });
