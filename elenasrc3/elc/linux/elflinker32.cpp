@@ -130,7 +130,7 @@ void Elf32Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
 
       ph_header.p_type = PT_TLS;
       ph_header.p_offset = offset;
-      ph_header.p_vaddr = image.addressMap.imageBase + image.addressMap.tls;
+      ph_header.p_paddr = ph_header.p_vaddr = image.addressMap.imageBase + image.addressMap.tls;
       ph_header.p_memsz = ph_header.p_filesz = tlsSize;
       ph_header.p_flags = PF_R;
       ph_header.p_align = 4;
