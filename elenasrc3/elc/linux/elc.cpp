@@ -168,7 +168,8 @@ void handleOption(char* arg, IdentifierString& profile, Project& project, Compil
       {
          IdentifierString configName(arg + 2);
 
-         project.loadConfigByName(dataPath, *configName, true);
+         if(!project.loadConfigByName(dataPath, *configName, true))
+            errorProcessor.info(wrnInvalidConfig, *configName);;
          break;
       }
       case 'p':

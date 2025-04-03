@@ -24,6 +24,7 @@ In development:
       - #184 : linux - close, ...
       - async method - auto watch : self and some variables are not displayed
   maint:
+      - rename buils to scripts
       - optimization : pi - byte code
       - exception handling in rosetta code sample http (when it is compiled as STA - warn)
       - github actions : `set-output` command is deprecated 
