@@ -44,13 +44,14 @@ In development:
       - #658 :  debug elena program in VSCode
   prom: bi-posting weekly
   --------------------------------------
+  - MTA support for Linux : (use corex routines)
   - #184 : linux - save
   - syntax highlighting : fix an error with strings containing character codes - see httpclient
   - rosetta code : Concurrent computing
   - #658 :  debug elena program in VSCode : launch exe
   - MTA support for Linux
   --------------------------------------
-  * MTA support for Linux : use mta function
+  * MTA support for Linux : InitializeMTA
   --------------------------------------
 
   === Iteration 40 ===

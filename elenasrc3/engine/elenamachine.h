@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAMACHINE_H
@@ -119,13 +119,13 @@ namespace elena_lang
 
       static size_t LoadCallStack(uintptr_t framePtr, uintptr_t* list, size_t length);
 
-      static void Init(SystemEnv* env, SystemSettings settings);
+      static void InitGC(SystemEnv* env, SystemSettings settings);
       static void InitSTAExceptionHandling(SystemEnv* env, void* criticalHandler);
       static void InitMTAExceptionHandling(SystemEnv* env, size_t index, void* criticalHandler);
       static void InitMTASignals(SystemEnv* env, size_t index);
       static void ClearMTASignals(SystemEnv* env, size_t index);
       static void InitCriticalStruct(uintptr_t criticalDispatcher);
-      static void InitSTA(SystemEnv* env);
+      static void InitApp(SystemEnv* env);
 
       static long long GenerateSeed();
       static void InitRandomSeed(SeedStruct& seed, long long seedNumber);

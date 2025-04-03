@@ -197,7 +197,7 @@ void SystemRoutineProvider :: InitMTAExceptionHandling(SystemEnv* env, size_t in
       InitCriticalStruct((uintptr_t)env->veh_handler);
 }
 
-void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
+void SystemRoutineProvider :: InitGC(SystemEnv* env, SystemSettings settings)
 {
    int page_mask = settings.page_mask;
 
@@ -230,12 +230,12 @@ void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
    env->gc_table->gc_perm_end = env->gc_table->gc_perm_start;
 }
 
-void SystemRoutineProvider :: InitSTA(SystemEnv* env)
+void SystemRoutineProvider :: InitApp(SystemEnv* env)
 {
    SystemSettings settings;
    FillSettings(env, settings);
 
-   Init(env, settings);
+   InitGC(env, settings);
 }
 
 inline uintptr_t getContent(uintptr_t ptr)

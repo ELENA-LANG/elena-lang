@@ -78,6 +78,16 @@ else
   exit 1
 fi
 
+../../bin/asm-cli -x86 ../../asm/x32/corex60.asm /usr/lib/elena/core/x32
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 ../../bin/asm-cli -x86 ../../asm/x32/core60_lnx.asm /usr/lib/elena/core/x32
 ret=$?
 if [ $ret -eq 0 ]
