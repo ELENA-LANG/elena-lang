@@ -218,7 +218,7 @@
     <ClInclude Include="..\windows\wincontextbrowser.h" />
     <ClInclude Include="..\windows\windialogs.h" />
     <ClInclude Include="..\windows\winide.h" />
-    <ClInclude Include="..\windows\win32debugprocess.h" />
+    <ClInclude Include="..\windows\win32debugadapter.h" />
     <ClInclude Include="..\windows\winidestatusbar.h" />
     <ClInclude Include="..\windows\winmessagelog.h" />
     <ClInclude Include="..\windows\winoutput.h" />
@@ -265,7 +265,7 @@
     <ClCompile Include="..\windows\wincontextbrowser.cpp" />
     <ClCompile Include="..\windows\windialogs.cpp" />
     <ClCompile Include="..\windows\winide.cpp" />
-    <ClCompile Include="..\windows\win32debugprocess.cpp" />
+    <ClCompile Include="..\windows\win32debugadapter.cpp" />
     <ClCompile Include="..\windows\winidestatusbar.cpp" />
     <ClCompile Include="..\windows\winmessagelog.cpp" />
     <ClCompile Include="..\windows\winoutput.cpp" />

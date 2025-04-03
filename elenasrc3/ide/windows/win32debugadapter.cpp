@@ -1,17 +1,17 @@
-////---------------------------------------------------------------------------
-////		E L E N A   P r o j e c t:  ELENA Engine
-////               
-////		This file contains the Win32 Debugger adapter class implementation
-////                                             (C)2021-2025, by Aleksey Rakov
-////---------------------------------------------------------------------------
-//
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Engine
+//               
+//		This file contains the Win32 Debugger adapter class implementation
+//                                             (C)2021-2025, by Aleksey Rakov
+//---------------------------------------------------------------------------
+
 //#include "common.h"
-////---------------------------------------------------------------------------
-//#include "windows/win32debugprocess.h"
-//
+//---------------------------------------------------------------------------
+#include "windows/win32debugadapter.h"
+
 //#include "core.h"
 //#include "windows/pehelper.h"
-//
+
 ////#ifdef _MSC_VER
 ////
 ////#include <tchar.h>
@@ -19,9 +19,9 @@
 ////#endif
 ////
 ////#include "eng/messages.h"
-//
-//using namespace elena_lang;
-//
+
+using namespace elena_lang;
+
 //#ifdef _M_IX86
 //
 //typedef unsigned long   SIZE_T;
@@ -336,9 +336,9 @@
 //      }
 //   }
 //}
-//
-//// --- Win32DebugProcess ---
-//
+
+// --- Win32DebugProcess ---
+
 //Win32DebugProcess :: Win32DebugProcess()
 //   : _threads(nullptr), steps(nullptr)
 //{
@@ -431,19 +431,19 @@
 //
 //   return true;
 //}
-//
-//bool Win32DebugProcess :: startProgram(path_t exePath, path_t cmdLine, path_t appPath, StartUpSettings& startUpSettings)
-//{
+
+bool Win32DebugAdapter :: startProgram(path_t exePath, path_t cmdLine, path_t appPath, StartUpSettings& startUpSettings)
+{
 //   if (startProcess(exePath.str(), cmdLine.str(), appPath, startUpSettings)) {
 //      processEvent(INFINITE);
 //
 //      return true;
 //   }
-//   else return false;
-//}
-//
-//bool Win32DebugProcess :: startThread(DebugControllerBase* controller)
-//{
+   /*else */return false;
+}
+
+bool Win32DebugAdapter :: startThread(DebugControllerBase* controller)
+{
 //   HANDLE hThread = CreateThread(nullptr, 4096,
 //      (LPTHREAD_START_ROUTINE)debugEventThread,
 //      (LPVOID)controller,
@@ -455,8 +455,10 @@
 //   else ::CloseHandle(hThread);
 //
 //   return true;
-//}
-//
+
+   return false; // !! temporal
+}
+
 //void Win32DebugProcess :: continueProcess()
 //{
 //   int code = needToHandle ? DBG_EXCEPTION_NOT_HANDLED : DBG_CONTINUE;
@@ -598,33 +600,35 @@
 //      //proceedCheckPoint();
 //   }
 //}
-//
-//bool Win32DebugProcess :: proceed(int timeout)
-//{
+
+bool Win32DebugAdapter :: proceed(int timeout)
+{
 //   processEvent(timeout);
 //
 //   return !trapped;
-//}
-//
-//void Win32DebugProcess :: resetException()
-//{
+
+   return false; // !! temporal
+}
+
+void Win32DebugAdapter :: resetException()
+{
 //   exception.code = 0;
-//}
-//
-//void Win32DebugProcess :: run()
-//{
+}
+
+void Win32DebugAdapter :: run()
+{
 //   continueProcess();
-//}
-//
-//void Win32DebugProcess :: activate()
-//{
+}
+
+void Win32DebugAdapter :: activate()
+{
 //   if (started) {
 //      EnumWindows(EnumThreadWndProc, dwCurrentThreadId);
 //   }
-//}
-//
-//void Win32DebugProcess :: stop()
-//{
+}
+
+void Win32DebugAdapter :: stop()
+{
 //   if (!started)
 //      return;
 //
@@ -632,10 +636,10 @@
 //      ::TerminateProcess(_current->hProcess, 1);
 //
 //   continueProcess();
-//}
-//
-//void Win32DebugProcess :: reset()
-//{
+}
+
+void Win32DebugAdapter :: reset()
+{
 //   trapped = false;
 //
 //   _threads.clear();
@@ -656,25 +660,32 @@
 //   //exitCheckPoint = false;
 //
 //   //_vmHook = 0;
-//}
-//
-//addr_t Win32DebugProcess :: findEntryPoint(path_t programPath)
-//{
+}
+
+addr_t Win32DebugAdapter :: findEntryPoint(path_t programPath)
+{
+   return 0; // !! temporal
+
 //   return PEHelper::findEntryPoint(programPath);
-//}
-//
-//bool Win32DebugProcess :: isInitBreakpoint()
-//{
+}
+
+bool Win32DebugAdapter :: isInitBreakpoint()
+{
 //   return _current ? init_breakpoint == getIP(_current->context) : false;
-//}
-//
-//addr_t Win32DebugProcess :: getBaseAddress()
-//{
+
+   return false; // !! temporal
+}
+
+addr_t Win32DebugAdapter :: getBaseAddress()
+{
 //   return baseAddress;
-//}
-//
-//bool Win32DebugProcess :: findSignature(StreamReader& reader, char* signature, pos_t length)
-//{
+
+
+   return 0; // !! temporal
+}
+
+bool Win32DebugAdapter :: findSignature(StreamReader& reader, char* signature, pos_t length)
+{
 //   size_t rdata = 0;
 //   if (!PEHelper::seekSection(reader, ".rdata", rdata))
 //      return false;
@@ -683,162 +694,178 @@
 //   _current->readDump(rdata + sizeof(addr_t), signature, length);
 //
 //   return true;
-//}
-//
-//void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelControl)
-//{
+
+   return false; // !! temporal
+}
+
+void Win32DebugAdapter :: setBreakpoint(addr_t address, bool withStackLevelControl)
+{
 //   _breakpoints.setHardwareBreakpoint(address, _current, withStackLevelControl);
-//}
-//
-//void Win32DebugProcess :: addBreakpoint(addr_t address)
-//{
+}
+
+void Win32DebugAdapter :: addBreakpoint(addr_t address)
+{
 //   _breakpoints.addBreakpoint(address, _current, started);
-//}
-//
-//void Win32DebugProcess :: removeBreakpoint(addr_t address)
-//{
+}
+
+void Win32DebugAdapter :: removeBreakpoint(addr_t address)
+{
 //   _breakpoints.removeBreakpoint(address, _current, started);
-//}
-//
-//void Win32DebugProcess :: setStepMode()
-//{
+}
+
+void Win32DebugAdapter :: setStepMode()
+{
 //   // !! temporal
 //   _current->clearHardwareBreakpoint();
 //
 //   _current->setTrapFlag();
 //   stepMode = true;
-//}
-//
-//void Win32DebugProcess :: addStep(addr_t address, void* state)
-//{
+}
+
+void Win32DebugAdapter :: addStep(addr_t address, void* state)
+{
 //   steps.add(address, state);
 //   if (address < minAddress)
 //      minAddress = address;
 //
 //   if (address > maxAddress)
 //      maxAddress = address;
-//}
-//
-//int Win32DebugProcess :: getDataOffset()
-//{
+}
+
+int Win32DebugAdapter :: getDataOffset()
+{
 //   return sizeof(addr_t);
-//}
-//
-//void* Win32DebugProcess :: getState()
-//{
+
+   return 0; // !! temporal
+}
+
+void* Win32DebugAdapter :: getState()
+{
 //   return _current ? _current->state : nullptr;
-//}
-//
-//addr_t Win32DebugProcess :: getClassVMT(addr_t address)
-//{
+
+   return nullptr;
+}
+
+addr_t Win32DebugAdapter :: getClassVMT(addr_t address)
+{
 //   addr_t ptr = 0;
 //
 //   if (_current->readDump(address - elObjectOffset, (char*)&ptr, sizeof(addr_t))) {
 //      return ptr;
 //   }
-//   else return 0;
-//}
-//
-//addr_t Win32DebugProcess :: getStackItemAddress(disp_t disp)
-//{
+   /*else */return 0;
+}
+
+addr_t Win32DebugAdapter :: getStackItemAddress(disp_t disp)
+{
 //   return getBP(_current->context) - disp;
-//}
-//
-//addr_t Win32DebugProcess :: getStackItem(int index, disp_t offset)
-//{
+
+   return 0; // !! temporal
+}
+
+addr_t Win32DebugAdapter :: getStackItem(int index, disp_t offset)
+{
 //   return getMemoryPtr(getStackItemAddress(index * sizeof(addr_t) + offset));
-//}
-//
-//addr_t Win32DebugProcess :: getMemoryPtr(addr_t address)
-//{
+
+   return 0; // !! temporal
+}
+
+addr_t Win32DebugAdapter :: getMemoryPtr(addr_t address)
+{
 //   addr_t retPtr = 0;
 //
 //   if (_current->readDump(address, (char*)&retPtr, sizeof(addr_t))) {
 //      return retPtr;
 //   }
-//   else return 0;
-//
-//}
-//
-//unsigned short Win32DebugProcess :: getWORD(addr_t address)
-//{
+   /*else */return 0;
+}
+
+unsigned short Win32DebugAdapter :: getWORD(addr_t address)
+{
 //   unsigned short word = 0;
 //
 //   if (_current->readDump(address, (char*)&word, 2)) {
 //      return word;
 //   }
-//   else return 0;
-//}
-//
-//unsigned Win32DebugProcess::getDWORD(addr_t address)
-//{
+   /*else */return 0;
+}
+
+unsigned Win32DebugAdapter :: getDWORD(addr_t address)
+{
 //   unsigned int dword = 0;
 //
 //   if (_current->readDump(address, (char*)&dword, 4)) {
 //      return dword;
 //   }
-//   else return 0;
-//}
-//
-//char Win32DebugProcess::getBYTE(addr_t address)
-//{
+   /*else */return 0;
+}
+
+char Win32DebugAdapter :: getBYTE(addr_t address)
+{
 //   char b = 0;
 //
 //   if (_current->readDump(address, (char*)&b, 1)) {
 //      return b;
 //   }
-//   else return 0;
-//}
-//
-//unsigned long long Win32DebugProcess :: getQWORD(addr_t address)
-//{
+   /*else */return 0;
+}
+
+unsigned long long Win32DebugAdapter :: getQWORD(addr_t address)
+{
 //   unsigned long long qword = 0;
 //
 //   if (_current->readDump(address, (char*)&qword, 8)) {
 //      return qword;
 //   }
-//   else return 0;
-//}
-//
-//double Win32DebugProcess :: getFLOAT64(addr_t address)
-//{
+   /*else **/return 0;
+}
+
+double Win32DebugAdapter :: getFLOAT64(addr_t address)
+{
 //   double number = 0;
 //
 //   if (_current->readDump(address, (char*)&number, 8)) {
 //      return number;
 //   }
-//   else return 0;
-//
-//}
-//
-//ref_t Win32DebugProcess :: getClassFlags(addr_t vmtAddress)
-//{
+   /*else */return 0;
+
+}
+
+ref_t Win32DebugAdapter :: getClassFlags(addr_t vmtAddress)
+{
 //   ref_t flags = 0;
 //   if (_current->readDump(vmtAddress - elVMTFlagOffset, (char*)&flags, sizeof(flags))) {
 //      return flags;
 //   }
 //   else return 0;
 //
-//}
-//
-//addr_t Win32DebugProcess :: getField(addr_t address, int index)
-//{
+
+   return 0; // !! temporal
+}
+
+addr_t Win32DebugAdapter :: getField(addr_t address, int index)
+{
 //   disp_t offset = index * sizeof(addr_t);
 //
 //   return getMemoryPtr(address + offset);
-//}
-//
-//addr_t Win32DebugProcess :: getFieldAddress(addr_t address, disp_t disp)
-//{
+
+
+   return 0; // !! temporal
+}
+
+addr_t Win32DebugAdapter :: getFieldAddress(addr_t address, disp_t disp)
+{
 //   return address + disp;
-//}
-//
-//size_t Win32DebugProcess :: getArrayLength(addr_t address)
-//{
+
+   return 0; // !! temporal
+}
+
+size_t Win32DebugAdapter :: getArrayLength(addr_t address)
+{
 //   ObjectHeader header;
 //   if (readDump(address - elObjectOffset, (char*)&header, elObjectOffset)) {
 //      return header.size & ~elStructMask;
 //   }
-//
-//   return 0;
-//}
+
+   return 0;
+}

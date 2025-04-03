@@ -9,7 +9,7 @@
 #include "ideview.h"
 #include "windows/wincommon.h"
 #include "windows/win32controller.h"
-#include "windows/win32debugprocess.h"
+#include "windows/win32debugadapter.h"
 #include "windows/windialogs.h"
 #include "text.h"
 
@@ -58,7 +58,7 @@ bool compareFileModifiedTime(path_t sour, path_t dest)
    return sourceDT > moduleDT;
 }
 
-typedef Win32DebugProcess    DebugProcess;
+typedef Win32DebugAdapter    DebugProcess;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);

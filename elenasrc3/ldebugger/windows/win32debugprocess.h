@@ -12,7 +12,8 @@ namespace elena_lang
 {
    class Win32DebugProcess
    {
-
+   public:
+      bool startProcess(const wchar_t* exePath);
    };
 }
 
