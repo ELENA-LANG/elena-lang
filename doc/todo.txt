@@ -50,7 +50,7 @@ In development:
   - #658 :  debug elena program in VSCode : launch exe
   - MTA support for Linux
   --------------------------------------
-  * MTA support for Linux : compile as MTA
+  * MTA support for Linux : use mta function
   --------------------------------------
 
   === Iteration 40 ===
