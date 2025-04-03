@@ -25,7 +25,7 @@ IF "%1"=="-build" GOTO End
 
 ECHO Generating data files
 ECHO ----------------------------------------
-CALL build\rebuild_data60_x86.bat 
+CALL scripts\rebuild_data60_x86.bat 
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Unit tests
@@ -35,7 +35,7 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Generating data files
 ECHO ----------------------------------------
-CALL build\rebuild_data60_x64.bat 
+CALL scripts\rebuild_data60_x64.bat 
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO Unit tests
@@ -46,11 +46,11 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 ECHO =========== Release Compiled ==================
 
 ECHO ============== x86 build ======================
-CALL build\rebuild_lib60_x86.bat 
+CALL scripts\rebuild_lib60_x86.bat 
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 ECHO ============== x64 build ======================
-CALL build\rebuild_lib60_x64.bat 
+CALL scripts\rebuild_lib60_x64.bat 
 
 goto:eof
 ::ERRORS
