@@ -106,6 +106,9 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
       image.sectionAlignment,
       image.fileAlignment,
       image.withDebugInfo);
+
+   if (image.addressMap.tls > 0) 
+      image.withTLS = true;
 }
 
 LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, path_t)
