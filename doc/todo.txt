@@ -24,7 +24,6 @@ In development:
       - #184 : linux - close, ...
       - async method - auto watch : self and some variables are not displayed
   maint:
-      - rename buils to scripts
       - optimization : pi - byte code
       - exception handling in rosetta code sample http (when it is compiled as STA - warn)
       - github actions : `set-output` command is deprecated 
@@ -60,6 +59,7 @@ In development:
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
   gen:
   maint:
+  - remove old scripts from build folder
   port:
       - chat sample
   prom:
