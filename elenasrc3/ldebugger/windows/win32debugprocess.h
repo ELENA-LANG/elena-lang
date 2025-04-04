@@ -115,6 +115,7 @@ namespace elena_lang
       DWORD                      _dwCurrentThreadId;
       DWORD                      _dwDebugeeProcessId;
 
+      addr_t                     _init_breakpoint;
       addr_t                     _minAddress, _maxAddress;
       addr_t                     _baseAddress;
 
@@ -129,18 +130,77 @@ namespace elena_lang
       void processEnd();
 
    public:
+      bool isStarted()
+      {
+         return _started;
+      }
+
       bool isTrapped()
       {
          return _trapped;
       }
 
+      addr_t getBaseAddress()
+      {
+         return _baseAddress;
+      }
+
+      void initHook() { _init_breakpoint = INVALID_ADDR; }
+
+      addr_t findEntryPoint(path_t programPath);
+      bool findSignature(StreamReader& reader, char* signature, pos_t length);
+
+      bool isInitBreakpoint();
+
+      void activateWindow();
+
       void reset();
+      void resetException();
 
       void continueProcess();
       void processEvent(DWORD timeout);
 
+      void setBreakpoint(addr_t address, bool withStackLevelControl);
+      void addBreakpoint(addr_t address);
+      void removeBreakpoint(addr_t address);
+
+      void setStepMode();
+
+      void addStep(addr_t address, void* state);
+
+      void* getState()
+      {
+         return _current ? _current->state : nullptr;
+      }
+
+      Win32DebugProcessException* getException()
+      {
+         return _exception.code == 0 ? nullptr : &_exception;
+      }
+
+      addr_t getClassVMT(addr_t address);
+      addr_t getStackItemAddress(disp_t disp);
+      addr_t getStackItem(int index, disp_t offset);
+      addr_t getMemoryPtr(addr_t address);
+      addr_t getField(addr_t address, int index);
+      addr_t getFieldAddress(addr_t address, disp_t disp);
+
+      unsigned short getWORD(addr_t address);
+      unsigned getDWORD(addr_t address);
+      unsigned char getBYTE(addr_t address);
+      unsigned long long getQWORD(addr_t address);
+      double getFLOAT64(addr_t address);
+      ref_t getClassFlags(addr_t vmtAddress);
+      size_t getArrayLength(addr_t address);
+
+      bool readDump(addr_t address, char* s, pos_t length)
+      {
+         return _current->readDump(address, s, length);
+      }
+
       bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine, const wchar_t* appPath,
          bool includeAppPath2Paths, bool withExplicitConsole);
+      void stop();
 
       Win32DebugProcess(const char* endingMessage);
    };

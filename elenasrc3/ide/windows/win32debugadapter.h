@@ -10,91 +10,70 @@
 
 #include "idecommon.h"
 #include "windows/win32debugprocess.h"
+#include "windows/winevents.h"
 
 namespace elena_lang
 {
-//   // --- DebugEventManager ---
-//   typedef EventManager<int, MAX_DEBUG_EVENT> DebugEventManager;
-//
-//   class Win32DebugProcess;
-//   struct Win32BreakpointContext;
+   // --- DebugEventManager ---
+   typedef EventManager<int, MAX_DEBUG_EVENT> DebugEventManager;
 
    // --- Win32DebugAdapter ---
    class Win32DebugAdapter : public DebugProcessBase
    {
-      Win32DebugProcess _debugProcess;
-
-//   protected:
-//      DebugEventManager          _events;
+      Win32DebugProcess    _debugProcess;
+      DebugEventManager    _events;
 //
-//      addr_t                     init_breakpoint;
-//
-//      DWORD                      threadId;
-//      
-//      Win32DebugProcessException exception;
-//
-//      bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine, const wchar_t* appPath,
-//         StartUpSettings& startUpSettings);
-//
-//      void continueProcess();
-//      void processEvent(DWORD timeout);
+      DWORD                _threadId;
 
    public:
       void initEvents() override
       {
-//         _events.init(DEBUG_ACTIVE);
+         _events.init(DEBUG_ACTIVE);
       }
       void setEvent(int event) override
       {
-//         _events.setEvent(event);
+         _events.setEvent(event);
       }
       void resetEvent(int event) override
       {
-//         _events.resetEvent(event);
+         _events.resetEvent(event);
       }
       int waitForAnyEvent() override
       {
-//         return _events.waitForAnyEvent();
-
-         return 0; // !! temporal
+         return _events.waitForAnyEvent();
       }
       bool waitForEvent(int event, int timeout) override
       {
-//         return _events.waitForEvent(event, timeout);
-
-         return false; // !! temporal
+         return _events.waitForEvent(event, timeout);
       }
       void clearEvents() override
       {
-//         _events.close();
+         _events.close();
       }
 
       void resetException() override;
 
       DebugProcessException* Exception() override
       {
-//         return exception.code == 0 ? nullptr : &exception;
-
-         return nullptr; // !! temporal
+         return _debugProcess.getException();
       }
 
       bool isStarted() override
       {
-         //return started;
-
-         return false; // !! temporal
+         return _debugProcess.isStarted();
       }
 
       bool isTrapped() override
       {
-         //return trapped;
-
-         return false; // !! temporal
+         return _debugProcess.isTrapped();
       }
 
       bool isInitBreakpoint() override;
 
-      void initHook() override { /*init_breakpoint = INVALID_ADDR;*/ }
+      void initHook() override 
+      { 
+         _debugProcess.initHook(); 
+      }
 
       addr_t findEntryPoint(path_t programPath) override;
 
@@ -126,7 +105,7 @@ namespace elena_lang
       addr_t getField(addr_t address, int index) override;
       addr_t getFieldAddress(addr_t address, disp_t disp) override;
 
-      addr_t getMemoryPtr(addr_t address) override;
+      //addr_t getMemoryPtr(addr_t address) override;
       char getBYTE(addr_t address) override;
       unsigned short getWORD(addr_t address) override;
       unsigned getDWORD(addr_t address) override;
@@ -141,12 +120,7 @@ namespace elena_lang
 
       void addStep(addr_t address, void* current) override;
 
-      bool readDump(addr_t address, char* s, pos_t length) override
-      {
-         //return _current->readDump(address, s, length);
-
-         return false; // !! temporal
-      }
+      bool readDump(addr_t address, char* s, pos_t length);
 
       Win32DebugAdapter();
    };

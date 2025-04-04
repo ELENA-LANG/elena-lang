@@ -3,10 +3,10 @@
 //
 //		This file contains ELENA PEHelper implementation.
 //		Supported platforms: x86
-//                                             (C)2005-2021, by Aleksey Rakov
+//                                             (C)2005-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#include "elena.h"
+#include "common.h"
 // --------------------------------------------------------------------------
 #include "pehelper.h"
 #include <windows.h>

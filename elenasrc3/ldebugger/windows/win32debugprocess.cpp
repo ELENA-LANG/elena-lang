@@ -6,19 +6,23 @@
 //---------------------------------------------------------------------------
 
 #include "common.h"
+// -------------------------------------------------------------------------
 #include "win32debugprocess.h"
+
+#include "lruntime\windows\pehelper.h"
+#include "engine\core.h"
 
 using namespace elena_lang;
 
 #ifdef _M_IX86
 
 typedef unsigned long   SIZE_T;
-//typedef VMTHeader32     VMTHeader;
-//typedef ObjectPage32    ObjectHeader;
-//
-//constexpr auto elVMTFlagOffset   = elVMTFlagOffset32;
-//constexpr auto elObjectOffset    = elObjectOffset32;
-//constexpr auto elStructMask      = elStructMask32;
+typedef VMTHeader32     VMTHeader;
+typedef ObjectPage32    ObjectHeader;
+
+constexpr auto elVMTFlagOffset   = elVMTFlagOffset32;
+constexpr auto elObjectOffset    = elObjectOffset32;
+constexpr auto elStructMask      = elStructMask32;
 
 inline addr_t getIP(CONTEXT& context)
 {
@@ -61,6 +65,33 @@ inline addr_t getBP(CONTEXT& context)
 }
 
 #endif
+
+// --- setForegroundWindow() ---
+inline void setForegroundWindow(HWND hwnd)
+{
+   size_t dwTimeoutMS = 0;
+   // Get the current lock timeout.
+   ::SystemParametersInfo(0x2000, 0, &dwTimeoutMS, 0);
+
+   // Set the lock timeout to zero
+   ::SystemParametersInfo(0x2001, 0, 0, 0);
+
+   // Perform the SetForegroundWindow
+   ::SetForegroundWindow(hwnd);
+
+   // Set the timeout back
+   ::SystemParametersInfo(0x2001, 0, (LPVOID)dwTimeoutMS, 0);   //HWND hCurrWnd;
+}
+
+BOOL CALLBACK EnumThreadWndProc(HWND hwnd, LPARAM lParam)
+{
+   if (GetWindowThreadProcessId(hwnd, NULL) == (DWORD)lParam) {
+      setForegroundWindow(hwnd);
+
+      return FALSE;
+   }
+   else return TRUE;
+}
 
 // --- Win32BreakpointContext ---
 
@@ -316,12 +347,12 @@ void Win32DebugProcess :: reset()
    
    _steps.clear();
    _breakpoints.clear();
-   //
-   //   init_breakpoint = 0;
+   
+   _init_breakpoint = 0;
    _stepMode = false;
    _needToHandle = false;
    
-   //   //_vmHook = 0;
+   //_vmHook = 0;
 }
 
 inline bool isIncluded(path_t paths, path_t path)
@@ -496,12 +527,12 @@ void Win32DebugProcess :: processException(EXCEPTION_DEBUG_INFO* exception)
          if (_breakpoints.processStep(_current, _stepMode))
             break;
 
-         //// stop if it is VM Hook mode
-         //if (init_breakpoint == INVALID_ADDR) {
-         //   init_breakpoint = getIP(_current->context);
-         //   trapped = true;
-         //}
-         /*else */if (getIP(_current->context) >= _minAddress && getIP(_current->context) <= _maxAddress) {
+         // stop if it is VM Hook mode
+         if (_init_breakpoint == INVALID_ADDR) {
+            _init_breakpoint = getIP(_current->context);
+            _trapped = true;
+         }
+         else if (getIP(_current->context) >= _minAddress && getIP(_current->context) <= _maxAddress) {
             processStep();
          }
          if (!_trapped)
@@ -515,10 +546,10 @@ void Win32DebugProcess :: processException(EXCEPTION_DEBUG_INFO* exception)
             _stepMode = false;
             _current->setTrapFlag();
          }
-         //else if (init_breakpoint != 0 && init_breakpoint != INVALID_ADDR) {
-         //   trapped = true;
-         //   init_breakpoint = getIP(_current->context);
-         //}
+         else if (_init_breakpoint != 0 && _init_breakpoint != INVALID_ADDR) {
+            _trapped = true;
+            _init_breakpoint = getIP(_current->context);
+         }
          break;
       default:
          if (exception->dwFirstChance != 0) {
@@ -550,4 +581,194 @@ void Win32DebugProcess :: continueProcess()
    ContinueDebugEvent(_dwCurrentProcessId, _dwCurrentThreadId, code);
 
    _needToHandle = false;
+}
+
+void Win32DebugProcess :: resetException()
+{
+   _exception.code = 0;
+}
+
+void Win32DebugProcess :: activateWindow()
+{
+   if (_started) {
+      EnumWindows(EnumThreadWndProc, _dwCurrentThreadId);
+   }
+}
+
+void Win32DebugProcess :: stop()
+{
+   if (!_started)
+      return;
+   
+   if (_current)
+      ::TerminateProcess(_current->hProcess, 1);
+   
+   continueProcess();
+}
+
+void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelControl)
+{
+   _breakpoints.setHardwareBreakpoint(address, _current, withStackLevelControl);
+}
+
+void Win32DebugProcess :: addBreakpoint(addr_t address)
+{
+   _breakpoints.addBreakpoint(address, _current, _started);
+}
+
+void Win32DebugProcess :: removeBreakpoint(addr_t address)
+{
+   _breakpoints.removeBreakpoint(address, _current, _started);
+}
+
+void Win32DebugProcess :: setStepMode()
+{
+   // !! temporal
+   _current->clearHardwareBreakpoint();
+   
+   _current->setTrapFlag();
+   _stepMode = true;
+}
+
+void Win32DebugProcess :: addStep(addr_t address, void* state)
+{
+   _steps.add(address, state);
+   if (address < _minAddress)
+      _minAddress = address;
+   
+   if (address > _maxAddress)
+      _maxAddress = address;
+}
+
+addr_t Win32DebugProcess :: findEntryPoint(path_t programPath)
+{
+   return PEHelper::findEntryPoint(programPath);
+}
+
+bool Win32DebugProcess :: findSignature(StreamReader& reader, char* signature, pos_t length)
+{
+   size_t rdata = 0;
+   if (!PEHelper::seekSection(reader, ".rdata", rdata))
+      return false;
+   
+   // load Executable image
+   _current->readDump(rdata + sizeof(addr_t), signature, length);
+   
+   return true;
+}
+
+addr_t Win32DebugProcess :: getClassVMT(addr_t address)
+{
+   addr_t ptr = 0;
+   
+   if (_current->readDump(address - elObjectOffset, (char*)&ptr, sizeof(addr_t))) {
+      return ptr;
+   }
+   else return 0;
+}
+
+addr_t Win32DebugProcess :: getStackItemAddress(disp_t disp)
+{
+   return getBP(_current->context) - disp;
+}
+
+addr_t Win32DebugProcess :: getStackItem(int index, disp_t offset)
+{
+   return getMemoryPtr(getStackItemAddress(index * sizeof(addr_t) + offset));
+}
+
+addr_t Win32DebugProcess :: getMemoryPtr(addr_t address)
+{
+   addr_t retPtr = 0;
+   
+   if (_current->readDump(address, (char*)&retPtr, sizeof(addr_t))) {
+      return retPtr;
+   }
+   else return 0;
+}
+
+unsigned short Win32DebugProcess :: getWORD(addr_t address)
+{
+   unsigned short word = 0;
+   
+   if (_current->readDump(address, (char*)&word, 2)) {
+      return word;
+   }
+   else return 0;
+}
+
+unsigned Win32DebugProcess :: getDWORD(addr_t address)
+{
+   unsigned int dword = 0;
+   
+   if (_current->readDump(address, (char*)&dword, 4)) {
+      return dword;
+   }
+   else return 0;
+}
+
+unsigned char Win32DebugProcess :: getBYTE(addr_t address)
+{
+   unsigned char b = 0;
+   
+   if (_current->readDump(address, (char*)&b, 1)) {
+      return b;
+   }
+   else return 0;
+}
+
+unsigned long long Win32DebugProcess :: getQWORD(addr_t address)
+{
+   unsigned long long qword = 0;
+   
+   if (_current->readDump(address, (char*)&qword, 8)) {
+      return qword;
+   }
+   else return 0;
+}
+
+double Win32DebugProcess :: getFLOAT64(addr_t address)
+{
+   double number = 0;
+   
+   if (_current->readDump(address, (char*)&number, 8)) {
+      return number;
+   }
+   else return 0;
+}
+
+ref_t Win32DebugProcess :: getClassFlags(addr_t vmtAddress)
+{
+   ref_t flags = 0;
+   if (_current->readDump(vmtAddress - elVMTFlagOffset, (char*)&flags, sizeof(flags))) {
+      return flags;
+   }
+   else return 0;
+}
+
+addr_t Win32DebugProcess :: getField(addr_t address, int index)
+{
+   disp_t offset = index * sizeof(addr_t);
+   
+   return getMemoryPtr(address + offset);
+}
+
+addr_t Win32DebugProcess :: getFieldAddress(addr_t address, disp_t disp)
+{
+   return address + disp;
+}
+
+size_t Win32DebugProcess :: getArrayLength(addr_t address)
+{
+   ObjectHeader header;
+   if (readDump(address - elObjectOffset, (char*)&header, elObjectOffset)) {
+      return header.size & ~elStructMask;
+   }
+
+   return 0;
+}
+
+bool Win32DebugProcess :: isInitBreakpoint()
+{
+   return _current ? _init_breakpoint == getIP(_current->context) : false;
 }

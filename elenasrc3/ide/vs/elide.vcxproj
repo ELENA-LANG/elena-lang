@@ -106,6 +106,8 @@
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>lcommon.lib;ldebugger.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
@@ -171,17 +173,10 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\common\config.h" />
-    <ClInclude Include="..\..\common\dump.h" />
-    <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\common\lists.h" />
-    <ClInclude Include="..\..\common\paths.h" />
     <ClInclude Include="..\..\common\streams.h" />
-    <ClInclude Include="..\..\common\ustring.h" />
-    <ClInclude Include="..\..\common\xmltree.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\section.h" />
-    <ClInclude Include="..\..\engine\windows\pehelper.h" />
     <ClInclude Include="..\..\engine\windows\winevents.h" />
     <ClInclude Include="..\..\gui\controller.h" />
     <ClInclude Include="..\..\gui\document.h" />
@@ -201,7 +196,6 @@
     <ClInclude Include="..\..\gui\windows\wintextview.h" />
     <ClInclude Include="..\..\gui\windows\wintoolbar.h" />
     <ClInclude Include="..\..\gui\windows\wintreeview.h" />
-    <ClInclude Include="..\..\ldebugger\windows\win32debugprocess.h" />
     <ClInclude Include="..\debugcontroller.h" />
     <ClInclude Include="..\editframe.h" />
     <ClInclude Include="..\idecommon.h" />
@@ -225,15 +219,8 @@
     <ClInclude Include="..\windows\winoutput.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\common\config.cpp" />
-    <ClCompile Include="..\..\common\dump.cpp" />
-    <ClCompile Include="..\..\common\files.cpp" />
-    <ClCompile Include="..\..\common\paths.cpp" />
-    <ClCompile Include="..\..\common\ustring.cpp" />
-    <ClCompile Include="..\..\common\xmltree.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
-    <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\gui\controller.cpp" />
     <ClCompile Include="..\..\gui\document.cpp" />
     <ClCompile Include="..\..\gui\text.cpp" />
@@ -250,7 +237,6 @@
     <ClCompile Include="..\..\gui\windows\wintextview.cpp" />
     <ClCompile Include="..\..\gui\windows\wintoolbar.cpp" />
     <ClCompile Include="..\..\gui\windows\wintreeview.cpp" />
-    <ClCompile Include="..\..\ldebugger\windows\win32debugprocess.cpp" />
     <ClCompile Include="..\debugcontroller.cpp" />
     <ClCompile Include="..\editframe.cpp" />
     <ClCompile Include="..\idecommon.cpp" />
@@ -281,6 +267,14 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\windows\elide.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\vs\lcommon.vcxproj">
+      <Project>{c7728dfb-e3b8-4ce0-bef5-f8369e6761ef}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ldebugger\vs\ldebugger.vcxproj">
+      <Project>{acc215c7-8ccf-4ad5-be40-a107dec72d4f}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
