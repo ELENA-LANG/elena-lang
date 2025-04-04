@@ -322,7 +322,7 @@ void Win32DebugProcess::ConsoleHelper :: waitForAnyKey()
 // --- Win32DebugProcess ---
 
 Win32DebugProcess :: Win32DebugProcess(const char* endingMessage)
-   : _threads(nullptr), _steps(nullptr)
+   : _threads(nullptr), _steps(nullptr), _exception({})
 {
    _needToFreeConsole = false;
    _started = false;
@@ -445,7 +445,7 @@ void Win32DebugProcess :: processEvent(DWORD timeout)
 {
    DEBUG_EVENT event;
 
-   //trapped = false;
+   _trapped = false;
    if (WaitForDebugEvent(&event, timeout)) {
       _dwCurrentThreadId = event.dwThreadId;
       _dwCurrentProcessId = event.dwProcessId;

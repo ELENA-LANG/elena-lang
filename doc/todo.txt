@@ -43,16 +43,13 @@ In development:
       - #658 :  debug elena program in VSCode
   prom: bi-posting weekly
   --------------------------------------
+  - #658 :  debug elena program in VSCode : launch
   - post how to build project / compile API / compile samples - Windows / Linux
   - optimization : pi - byte code
   - #184 : linux - save
-  - rosetta code : Concurrent computing
-  - #658 :  debug elena program in VSCode
+  - rosetta code
   --------------------------------------
-  * migrate all IDE related code from win32debugprocess
-  * move Win32DebugProcess into separate static library
-  * include the libary in elena-dap
-  * launch exe
+  * Concurrent computing
   --------------------------------------
 
   === Iteration 40 ===
