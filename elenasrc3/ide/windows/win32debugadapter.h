@@ -9,7 +9,7 @@
 #define WIN32DEBUGADAPTER_H
 
 #include "idecommon.h"
-//#include "windows/winevents.h"
+#include "windows/win32debugprocess.h"
 
 namespace elena_lang
 {
@@ -18,121 +18,19 @@ namespace elena_lang
 //
 //   class Win32DebugProcess;
 //   struct Win32BreakpointContext;
-//
-//   // --- Win32ThreadBreakpoint ---
-//   struct Win32ThreadBreakpoint
-//   {
-//      bool   software;
-//      bool   hardware;
-//      addr_t next;
-//      addr_t stackLevel;
-//
-//      void clearSoftware()
-//      {
-//         software = false;
-//         next = 0;
-//      }
-//
-//      Win32ThreadBreakpoint()
-//      {
-//         hardware = software = false;
-//         stackLevel = next = 0;
-//      }
-//   };
-//
-//   // --- Win32ThreadContext ---
-//   struct Win32ThreadContext
-//   {
-//      friend class Win32DebugProcess;
-//      friend struct Win32BreakpointContext;
-//
-//   protected:
-//      void*   state;
-//      HANDLE  hProcess;
-//      HANDLE  hThread;
-//      CONTEXT context;
-//
-//   public:
-//      Win32ThreadBreakpoint breakpoint;
-//
-//      bool readDump(addr_t address, char* dump, size_t length);
-//      void writeDump(addr_t address, char* dump, size_t length);
-//
-//      void refresh();
-//
-//      void setTrapFlag();
-//      void resetTrapFlag();
-//      void setHardwareBreakpoint(addr_t breakpoint);
-//      void clearHardwareBreakpoint();
-//
-//      unsigned char setSoftwareBreakpoint(addr_t breakpoint);
-//      void clearSoftwareBreakpoint(addr_t breakpoint, unsigned char substitute);
-//
-//      void setIP(addr_t address);
-//
-//      Win32ThreadContext(HANDLE hProcess, HANDLE hThread);
-//   };
-//
-//   // --- BreakpointContext ---
-//   struct Win32BreakpointContext
-//   {
-//      Map<size_t, char> breakpoints;
-//
-//      void addBreakpoint(addr_t address, Win32ThreadContext* context, bool started);
-//      void removeBreakpoint(addr_t address, Win32ThreadContext* context, bool started);
-//      void setSoftwareBreakpoints(Win32ThreadContext* context);
-//      void setHardwareBreakpoint(addr_t address, Win32ThreadContext* context, bool withStackLevelControl);
-//
-//      bool processStep(Win32ThreadContext* context, bool stepMode);
-//      bool processBreakpoint(Win32ThreadContext* context);
-//
-//      void clear();
-//
-//      Win32BreakpointContext();
-//   };
-//
-//   // --- Win32DebugProcessException ---
-//   struct Win32DebugProcessException : DebugProcessException
-//   {
-//      
-//   };
 
    // --- Win32DebugAdapter ---
    class Win32DebugAdapter : public DebugProcessBase
    {
-//      typedef Map<int, Win32ThreadContext*, nullptr, nullptr, freeobj>  ThreadContextes;
-//      typedef MemoryMap<addr_t, void*, Map_StoreAddr, Map_GetAddr>      StepMap;
-//
-//      class ConsoleHelper
-//      {
-//      public:
-//         void printText(const char* s);
-//         void waitForAnyKey();
-//      };
-//
+      Win32DebugProcess _debugProcess;
+
 //   protected:
 //      DebugEventManager          _events;
-//      Win32BreakpointContext     _breakpoints;
-//      ThreadContextes            _threads;
-//      Win32ThreadContext*        _current;
 //
 //      addr_t                     init_breakpoint;
-//      addr_t                     minAddress, maxAddress;
-//      addr_t                     baseAddress;
 //
 //      DWORD                      threadId;
-//      bool                       started;
-//      bool                       trapped;
-//      bool                       stepMode;
-//      bool                       needToHandle;
-//      bool                       needToFreeConsole;
-//
-//      DWORD                      dwCurrentProcessId;
-//      DWORD                      dwCurrentThreadId;
-//      DWORD                      dwDebugeeProcessId;
-//
-//      StepMap                    steps;
-//
+//      
 //      Win32DebugProcessException exception;
 //
 //      bool startProcess(const wchar_t* exePath, const wchar_t* cmdLine, const wchar_t* appPath,
@@ -140,9 +38,6 @@ namespace elena_lang
 //
 //      void continueProcess();
 //      void processEvent(DWORD timeout);
-//      void processException(EXCEPTION_DEBUG_INFO* exception);
-//      void processStep();
-//      void processEnd();
 
    public:
       void initEvents() override
@@ -253,7 +148,7 @@ namespace elena_lang
          return false; // !! temporal
       }
 
-//      Win32DebugProcess();
+      Win32DebugAdapter();
    };
 }
 

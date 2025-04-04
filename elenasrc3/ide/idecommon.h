@@ -9,6 +9,7 @@
 
 #include "elena.h"
 #include "guieditor.h"
+#include "ldbg_common.h"
 
 namespace elena_lang
 {
@@ -242,13 +243,6 @@ namespace elena_lang
    {
    public:
       virtual void debugThread() = 0;
-   };
-
-   // --- DebugProcessException ---
-   struct DebugProcessException
-   {
-      int   code;
-      addr_t address;
    };
 
    struct StartUpSettings

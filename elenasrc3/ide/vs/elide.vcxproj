@@ -100,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..\ldebugger;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -201,6 +201,7 @@
     <ClInclude Include="..\..\gui\windows\wintextview.h" />
     <ClInclude Include="..\..\gui\windows\wintoolbar.h" />
     <ClInclude Include="..\..\gui\windows\wintreeview.h" />
+    <ClInclude Include="..\..\ldebugger\windows\win32debugprocess.h" />
     <ClInclude Include="..\debugcontroller.h" />
     <ClInclude Include="..\editframe.h" />
     <ClInclude Include="..\idecommon.h" />
@@ -249,6 +250,7 @@
     <ClCompile Include="..\..\gui\windows\wintextview.cpp" />
     <ClCompile Include="..\..\gui\windows\wintoolbar.cpp" />
     <ClCompile Include="..\..\gui\windows\wintreeview.cpp" />
+    <ClCompile Include="..\..\ldebugger\windows\win32debugprocess.cpp" />
     <ClCompile Include="..\debugcontroller.cpp" />
     <ClCompile Include="..\editframe.cpp" />
     <ClCompile Include="..\idecommon.cpp" />
