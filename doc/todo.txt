@@ -47,9 +47,13 @@ In development:
   - post how to build project / compile API / compile samples - Windows / Linux
   - optimization : pi - byte code
   - #184 : linux - save
-  - rosetta code
+  - rosetta code : Concurrent computing
   --------------------------------------
-  * Concurrent computing
+  * async function
+  * async function - generate sync entry automatically
+  * async function short-cut syntax
+  * async main program
+  * publish concurrent computing example
   --------------------------------------
 
   === Iteration 40 ===
