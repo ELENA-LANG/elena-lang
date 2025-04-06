@@ -15,12 +15,6 @@
 
 #include "bytecode.h"
 
-#ifdef FULL_OUTOUT_INFO
-
-#include "serializer.h"
-
-#endif
-
 using namespace elena_lang;
 
 typedef ExpressionAttribute   EAttr;
@@ -7582,32 +7576,32 @@ bool Compiler::compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
    ref_t constRef = generateConstant(scope, retVal, scope.reference, false);
    if (constRef) {
       switch (retVal.kind) {
-      case ObjectKind::Singleton:
-         scope.info.symbolType = SymbolType::Singleton;
-         scope.info.valueRef = retVal.reference;
+         case ObjectKind::Singleton:
+            scope.info.symbolType = SymbolType::Singleton;
+            scope.info.valueRef = retVal.reference;
 
-         break;
-      case ObjectKind::StringLiteral:
-      case ObjectKind::WideStringLiteral:
-      case ObjectKind::Float64Literal:
-         scope.info.symbolType = SymbolType::Constant;
-         scope.info.valueRef = constRef;
-         break;
-      case ObjectKind::IntLiteral:
-         scope.info.symbolType = SymbolType::Constant;
-         scope.info.valueRef = constRef;
-         break;
-      case ObjectKind::Constant:
-         scope.info.symbolType = SymbolType::Constant;
-         scope.info.valueRef = retVal.reference;
-         break;
-      case ObjectKind::ConstArray:
-         scope.info.symbolType = SymbolType::ConstantArray;
-         scope.info.valueRef = retVal.reference;
-         break;
-      default:
-         assert(false);
-         break;
+            break;
+         case ObjectKind::StringLiteral:
+         case ObjectKind::WideStringLiteral:
+         case ObjectKind::Float64Literal:
+            scope.info.symbolType = SymbolType::Constant;
+            scope.info.valueRef = constRef;
+            break;
+         case ObjectKind::IntLiteral:
+            scope.info.symbolType = SymbolType::Constant;
+            scope.info.valueRef = constRef;
+            break;
+         case ObjectKind::Constant:
+            scope.info.symbolType = SymbolType::Constant;
+            scope.info.valueRef = retVal.reference;
+            break;
+         case ObjectKind::ConstArray:
+            scope.info.symbolType = SymbolType::ConstantArray;
+            scope.info.valueRef = retVal.reference;
+            break;
+         default:
+            assert(false);
+            break;
       }
       scope.info.typeRef = resolveStrongType(scope, retVal.typeInfo);
 

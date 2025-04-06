@@ -15,6 +15,7 @@
 #include "modulescope.h"
 #include "bcwriter.h"
 #include "separser.h"
+#include "serializer.h"
 
 using namespace elena_lang;
 
@@ -536,15 +537,96 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    }
 }
 
+inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>* filters)
+{
+   DynamicUStr target;
+
+   SyntaxTreeSerializer::save(node, target, filters);
+
+   presenter->print(target.str());
+}
+
+inline void printTree(PresenterBase* presenter, BuildNode node, List<BuildKey>* filters)
+{
+   DynamicUStr target;
+
+   BuildTreeSerializer::save(node, target, filters);
+
+   presenter->print(target.str());
+}
+
+void CompilingProcess :: printSyntaxTree(SyntaxTree& syntaxTree)
+{
+   List<SyntaxKey> filters(SyntaxKey::None);
+   if (!_verbose) {
+      filters.add(SyntaxKey::Column);
+      filters.add(SyntaxKey::Row);
+      filters.add(SyntaxKey::SourcePath);
+      filters.add(SyntaxKey::InlineTemplate);
+   }
+
+   _presenter->print("\nSyntax Tree:");
+   printTree(_presenter, syntaxTree.readRoot(), &filters);
+}
+
+void CompilingProcess :: printBuildTree(ModuleBase* module, BuildTree& buildTree)
+{
+   List<BuildKey> filters(BuildKey::None);
+   if (!_verbose) {
+      filters.add(BuildKey::Path);
+      filters.add(BuildKey::Breakpoint);
+      filters.add(BuildKey::VirtualBreakpoint);
+      filters.add(BuildKey::EOPBreakpoint);
+      filters.add(BuildKey::ClassName);
+      filters.add(BuildKey::MethodName);
+      filters.add(BuildKey::VariableInfo);
+      filters.add(BuildKey::ArgumentsInfo);
+   }
+
+   _presenter->print("\nBuild Tree:");
+
+   BuildNode node = buildTree.readRoot();
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      switch (current.key) {
+         case BuildKey::Symbol:
+            _presenter->print("\n@symbol %s", module->resolveReference(current.arg.reference));
+
+            printTree(_presenter, current, &filters);
+            break;
+         case BuildKey::Class:
+            _presenter->print("\n@class %s", module->resolveReference(current.arg.reference));
+
+            printTree(_presenter, current, &filters);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 bool CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode,
    ExtensionMap* outerExtensionList)
 {
+   // print the incoming syntax tree if required
+   if (_traceMode) {
+      printSyntaxTree(*syntaxTree);
+   }
+
    // generating build tree
    BuildTree buildTree;
    bool retVal = compileModule(moduleScope, *syntaxTree, buildTree, outerExtensionList);
 
    // generating byte code
    generateModule(moduleScope, buildTree, !templateMode);
+
+   // print the outcome bui tree if required
+   if (_traceMode) {
+      printBuildTree(moduleScope.module, buildTree);
+   }
 
    return retVal;
 }
@@ -670,6 +752,8 @@ void CompilingProcess :: compile(ProjectBase& project,
       _errorProcessor->raiseInternalError(errParserNotInitialized);
    }
 
+   _traceMode = project.BoolSetting(ProjectOption::TracingMode);
+
    // load the environment
    ProjectEnvironment env;
    project.initEnvironment(env);
@@ -714,7 +798,7 @@ void CompilingProcess :: compile(ProjectBase& project,
 void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)
 {
    // ignore link operation for trace mode
-   if (project.BoolSetting(ProjectOption::TracingMode))
+   if (_traceMode)
       return;
 
    PlatformType uiType = project.UITargetType();

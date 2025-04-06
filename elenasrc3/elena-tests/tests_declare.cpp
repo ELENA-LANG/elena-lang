@@ -1,3 +1,13 @@
+/*
+* TemplateArrayFixture:
+* ---------------------
+*
+* NewTemplateArrayFixture:
+* -----------------------
+*
+*/
+
+
 #include "pch.h"
 // ------------------------------------------------
 #include "declaration.h"

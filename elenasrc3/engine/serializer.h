@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Tree Serializer classes declaration.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SERIALIZER_H
@@ -18,7 +18,7 @@ namespace elena_lang
    class BuildTreeSerializer
    {
    public:
-      static void save(BuildNode node, DynamicUStr& target);
+      static void save(BuildNode node, DynamicUStr& target, List<BuildKey>* filters);
       static void load(ustr_t source, BuildNode& target);
    };
 
@@ -26,7 +26,7 @@ namespace elena_lang
    class SyntaxTreeSerializer
    {
    public:
-      static void save(SyntaxNode node, DynamicUStr& target);
+      static void save(SyntaxNode node, DynamicUStr& target, List<SyntaxKey>* filters);
       static void load(ustr_t source, SyntaxNode& target);
    };
 }

@@ -1,3 +1,31 @@
+/*
+* AccessPrivateFieldTest:
+* ----------------------
+* 
+* AccessParentPrivateFieldTest:
+* -----------------------------
+* 
+* CallingIndexedMethodTest:
+* -------------------------
+*
+* interface X
+* {
+*    int calc(int arg)
+*     = arg + 2;
+* }
+* 
+* singleton Y : X {}
+* {
+*   int ret := Y.calc(3); // Must be indexed call
+* }
+* 
+* DuplicateBoxingTest:
+* --------------------
+*   int x : = 2;
+*   Helper.testArg2({ ^ x }, { ^ x });
+* 
+*/
+
 #include "pch.h"
 // ------------------------------------------------
 #include "serializer.h"
@@ -104,19 +132,7 @@ TEST_F(AccessPrivateField, AccessParentPrivateFieldTest)
 
 
 // --- CallingIndexedethodFromSealed ---
-/*
-interface X
-{
-   int calc(int arg)
-      = arg + 2;
-}
 
-singleton Y : X {}
-
-{
-   int ret := Y.calc(3); // Must be indexed call
-}
-*/
 void CallingIndexedMethodFromSealed::SetUp()
 {
    ExprTest::SetUp();
@@ -133,10 +149,6 @@ TEST_F(CallingIndexedMethodFromSealed, CallingIndexedMethodTest)
 }
 
 // --- DuplicateBoxingTest ---
-/*
-   int x : = 2;
-   Helper.testArg2({ ^ x }, { ^ x });
-*/
 
 void DuplicateBoxingTest :: SetUp()
 {

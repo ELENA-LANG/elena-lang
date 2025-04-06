@@ -414,6 +414,12 @@ namespace elena_lang
          map.add("reserved", BuildKey::Reserved);
          map.add("reserved_n", BuildKey::ReservedN);         
          map.add("index_table_mode", BuildKey::IndexTableMode);
+         map.add("class", BuildKey::Class);
+         map.add("method", BuildKey::Method);
+         map.add("symbol", BuildKey::Symbol);
+         map.add("param_address", BuildKey::ParameterAddress);
+         map.add("dispatch_op", BuildKey::DispatchingOp);
+         map.add("redirect_op", BuildKey::RedirectOp);
       }
    };
 

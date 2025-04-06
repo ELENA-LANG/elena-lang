@@ -14,21 +14,32 @@ public class Program
 }
 */
 
-import system'threading;
 
-class A
-{
-   async /*Task */function()
-   {
-   }
-}
+//import system'threading;
+
+//class A
+//{
+//   async /*Task */function()
+//   {
+//   }
+//}
 
 
-public program()
-{
+//public program()
+//{
 //   Task t1 := Task.run::{ Console.printLineConcurrent("Enjoy") };
 //   Task t1 := Task.run::{ Console.printLineConcurrent("Rosetta") };
 //   Task t1 := Task.run::{ Console.printLineConcurrent("Code") };
 
 
+//}
+
+class A
+{
+   int calcSum(int arg1, int arg2)
+      = arg1 + arg2;
+}
+
+public program()
+{
 }

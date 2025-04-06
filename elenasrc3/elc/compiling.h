@@ -91,8 +91,12 @@ namespace elena_lang
       MemoryDump          _btRules;
 
       bool                _verbose;
+      bool                _traceMode;
 
       IdentifierList      _forwards;
+
+      void printSyntaxTree(SyntaxTree& syntaxTree);
+      void printBuildTree(ModuleBase* module, BuildTree& buildTree);
 
       bool buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
          ExtensionMap* outerExtensionList);
