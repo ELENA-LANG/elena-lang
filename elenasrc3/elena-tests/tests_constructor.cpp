@@ -44,7 +44,8 @@ void VariadicCompiletimeConstructorSingleDispatch :: SetUp()
 
    BuildTreeSerializer::load(BuildTree_VariadicSingleDispatch_3, controlOutputNode);
 
-   argArrayRef = 0x80;
+   argArrayTemplateRef = 0x80;
+
    genericVargRef = 3;
    targetVargRef = 4;
    targetRef = 5;
@@ -65,7 +66,7 @@ void CallPrivateConstructorDirectly :: SetUp()
    targetRef = 3;
 }
 
-SyntaxNode CallPrivateConstructorDirectly :: findTargetNode()
+SyntaxNode CallPrivateConstructorDirectly :: findTargetNode(int)
 {
    return findClassNode().findChild(SyntaxKey::Constructor).nextNode();
 }

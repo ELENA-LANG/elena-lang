@@ -581,6 +581,8 @@ void CompilingProcess :: printBuildTree(ModuleBase* module, BuildTree& buildTree
       filters.add(BuildKey::MethodName);
       filters.add(BuildKey::VariableInfo);
       filters.add(BuildKey::ArgumentsInfo);
+      filters.add(BuildKey::OpenStatement);
+      filters.add(BuildKey::EndStatement);
    }
 
    _presenter->print("\nBuild Tree:");

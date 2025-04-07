@@ -36,8 +36,8 @@ public class Program
 
 class A
 {
-   int calcSum(int arg1, int arg2)
-      = arg1 + arg2;
+   int incSum(int arg1)
+      = arg1 + 1;
 }
 
 public program()

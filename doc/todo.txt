@@ -49,7 +49,6 @@ In development:
   - #184 : linux - save
   - rosetta code : Concurrent computing
   --------------------------------------
-  * unit test to test compileByRefHandler / compileByRefHandlerInvoker
   * refactor compileByRefHandlerInvoker - it must be injected into the syntax tree
   * async function
   * async function - generate sync entry automatically
