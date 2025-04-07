@@ -1357,6 +1357,8 @@ namespace elena_lang
 
          MethodScope scope;
 
+         bool isMethodInvoker(SyntaxNode current);
+
          void compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassScope& classClassScope);
 
       public:
@@ -1912,6 +1914,7 @@ namespace elena_lang
       void compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileExpressionMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
+      void compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);

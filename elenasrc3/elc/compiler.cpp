@@ -62,26 +62,6 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //   }
 //}
 
-#ifdef FULL_OUTOUT_INFO
-
-inline void printTree(PresenterBase* presenter, SyntaxNode node)
-{
-   DynamicUStr target;
-
-   SyntaxTreeSerializer::save(node, target);
-
-   presenter->print(target.str());
-}
-
-#endif // FULL_OUTOUT_INFO
-
-//inline void storeNode(BuildNode node)
-//{
-//   DynamicUStr target;
-//
-//   BuildTreeSerializer::save(node, target);
-//}
-
 inline bool isSelfCall(ObjectInfo target)
 {
    switch (target.kind) {
@@ -5187,11 +5167,6 @@ void Compiler::declareTemplate(TemplateScope& scope, SyntaxNode& node)
 
    saveTemplate(scope, node);
 
-#ifdef FULL_OUTOUT_INFO
-   _presenter->print("\nSyntax tree:\n");
-   printTree(_presenter, node);
-#endif
-
    node.setKey(SyntaxKey::Idle);
 }
 
@@ -8745,6 +8720,21 @@ void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
    writer.closeNode();
 }
 
+void Compiler :: compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+{
+   CodeScope codeScope(&scope);
+
+   if (scope.info.byRefHandler) {
+      compileByRefHandler(writer, scope, node, scope.info.byRefHandler);
+
+      beginMethod(writer, scope, node, BuildKey::Method, false);
+      compileByRefHandlerInvoker(writer, scope, codeScope, scope.info.byRefHandler, scope.info.outputRef);
+      codeScope.syncStack(&scope);
+      endMethod(writer, scope);
+   }
+   else assert(false); // should never reach this point
+}
+
 void Compiler::compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
@@ -8752,19 +8742,6 @@ void Compiler::compileMethod(BuildTreeWriter& writer, MethodScope& scope, Syntax
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
 
    CodeScope codeScope(&scope);
-
-   if (scope.info.byRefHandler && !scope.checkHint(MethodHint::InterfaceDispatcher)) {
-      compileByRefHandler(writer, scope, node, scope.info.byRefHandler);
-
-      beginMethod(writer, scope, node, BuildKey::Method, false);
-      compileByRefHandlerInvoker(writer, scope, codeScope, scope.info.byRefHandler, scope.info.outputRef);
-      codeScope.syncStack(&scope);
-      endMethod(writer, scope);
-
-      // NOTE : normal byrefhandler has an alternative implementation
-      // overriding the normal routine
-      return;
-   }
 
    beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
 
@@ -9701,24 +9678,9 @@ void Compiler :: compileClassVMT(BuildTreeWriter& writer, ClassScope& classClass
       switch (current.key) {
          case SyntaxKey::StaticMethod:
          {
-            MethodScope methodScope(&classClassScope);
-            initializeMethod(classClassScope, methodScope, current);
+            Method method(this, classClassScope);
 
-   #ifdef FULL_OUTOUT_INFO
-            IdentifierString messageName;
-            ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
-
-            _errorProcessor->info(infoCurrentMethod, *messageName);
-   #endif // FULL_OUTOUT_INFO
-
-            if (methodScope.isYieldable()) {
-               compileYieldMethod(writer, methodScope, current);
-            }
-            else if (methodScope.checkHint(MethodHint::Async)) {
-               compileAsyncMethod(writer, methodScope, current);
-            }
-            else compileMethod(writer, methodScope, current);
-
+            method.compile(writer, current);
             break;
          }
          default:
@@ -11204,11 +11166,6 @@ bool Compiler::Class::isParentDeclared(SyntaxNode node)
 
 void Compiler::Class::declare(SyntaxNode node)
 {
-#ifdef FULL_OUTOUT_INFO
-   compiler->_presenter->print("\nSyntax tree:\n");
-   printTree(compiler->_presenter, node);
-#endif
-
    bool extensionDeclaration = isExtensionDeclaration(node);
    resolveClassPostfixes(node, extensionDeclaration);
 
@@ -11428,6 +11385,15 @@ Compiler::Method::Method(Compiler* compiler, ClassScope& classScope)
 {
 }
 
+bool Compiler::Method :: isMethodInvoker(SyntaxNode current)
+{
+   if (scope.info.byRefHandler && !scope.checkHint(MethodHint::InterfaceDispatcher)) {
+      return true;
+   }
+
+   return false;
+}
+
 void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
@@ -11460,6 +11426,9 @@ void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
    }
    else if (scope.checkHint(MethodHint::Async)) {
       compiler->compileAsyncMethod(writer, scope, current);
+   }
+   else if (isMethodInvoker(current)) {
+      compiler->compileMethodInvoker(writer, scope, current);
    }
    // if it is a normal method
    else compiler->compileMethod(writer, scope, current);
