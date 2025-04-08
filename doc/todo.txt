@@ -52,7 +52,8 @@ In development:
   - optimization : pi - byte code
   - #184 : linux - save
   --------------------------------------
-  * save dialog
+  * save - dialog
+  * save as - dialog
   * save file
   * save all
   * save project

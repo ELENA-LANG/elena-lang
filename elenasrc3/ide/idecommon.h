@@ -9,7 +9,7 @@
 
 #include "elena.h"
 #include "guieditor.h"
-#include "ldbg_common.h"
+//#include "ldbg_common.h"
 
 namespace elena_lang
 {
@@ -251,6 +251,12 @@ namespace elena_lang
       bool includeAppPath2Paths;  // applicable only for Windows
    };
 
+   struct ExceptionInfo
+   {
+      int   code;
+      addr_t address;
+   };
+
    // --- DebugProcessBase ---
    class DebugProcessBase
    {
@@ -266,7 +272,7 @@ namespace elena_lang
 
       virtual void setStepMode() = 0;
 
-      virtual DebugProcessException* Exception() = 0;
+      virtual ExceptionInfo* Exception() = 0;
       virtual void resetException() = 0;
 
       virtual void initEvents() = 0;

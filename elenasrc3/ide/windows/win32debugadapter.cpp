@@ -73,6 +73,9 @@ bool Win32DebugAdapter :: proceed(int timeout)
 
 void Win32DebugAdapter :: resetException()
 {
+   _exception.address = 0;
+   _exception.code = 0;
+
    _debugProcess.resetException();
 }
 

@@ -22,7 +22,9 @@ namespace elena_lang
    {
       Win32DebugProcess    _debugProcess;
       DebugEventManager    _events;
-//
+
+      ExceptionInfo        _exception;
+
       DWORD                _threadId;
 
    public:
@@ -53,9 +55,13 @@ namespace elena_lang
 
       void resetException() override;
 
-      DebugProcessException* Exception() override
+      ExceptionInfo* Exception() override
       {
-         return _debugProcess.getException();
+         auto debugException = _debugProcess.getException();
+         _exception.address = debugException->address;
+         _exception.code = debugException->code;
+
+         return &_exception;
       }
 
       bool isStarted() override
