@@ -10,7 +10,6 @@ In development:
   dev: 
       - support fladd, flsub, fldiv, flmul (throu special prefix??)
       - MTA support for Linux  
-      - #620
       - #496
       - #622
       - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
@@ -46,21 +45,23 @@ In development:
       - rosetta code : Comma quibbling, Program termination, Parallel calculations
   prom: bi-posting weekly
   --------------------------------------
+  - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
   - API - review / description
   - #658 :  debug elena program in VSCode : launch
   - post how to build project / compile API / compile samples - Windows / Linux
   - optimization : pi - byte code
   - #184 : linux - save
-  - some syntax improvement : using a is:b / a as:b with a single colon
   --------------------------------------
-  * $castTo operator
-  * support checking type with a single colon too : 
-    p as:int
+  * save dialog
+  * save file
+  * save all
+  * save project
   --------------------------------------
 
   === Iteration 40 ===
   --------------------------------------
   dev: 
+  - #620
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
   - MTA support for Linux (fix simple program - access to TLS)
   gen:

@@ -827,7 +827,7 @@ namespace elena_lang
          encoder(level, writer, node.key, node.identifier(), node.arg.value, arg);
          Node current = node.firstChild();
          while (current != defKey) {
-            if (filters && filters->retrieveIndex<Key>(current.key, [](Key arg, Key current)
+            if (filters && filters->template retrieveIndex<Key>(current.key, [](Key arg, Key current)
                {
                   return current == arg;
                }) == -1)
