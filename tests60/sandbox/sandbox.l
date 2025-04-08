@@ -15,41 +15,13 @@ public class Program
 */
 
 
-//import system'threading;
+import system'threading;
 
-//class A
-//{
-//   async /*Task */function()
-//   {
-//   }
-//}
-
-
-//public program()
-//{
-//   Task t1 := Task.run::{ Console.printLineConcurrent("Enjoy") };
-//   Task t1 := Task.run::{ Console.printLineConcurrent("Rosetta") };
-//   Task t1 := Task.run::{ Console.printLineConcurrent("Code") };
-
-
-//}
-
-async myFunction(int n)
+public async program()
 {
-   Console.printLineConcurrent("Code ", n)
-}
+   Task t1 := Task.run::{ Console.printLineConcurrent("Enjoy") };
+   Task t1 := Task.run::{ Console.printLineConcurrent("Rosetta") };
+   Task t1 := Task.run::{ Console.printLineConcurrent("Code") };
 
-singleton Helper
-{
-   async system'threading'Task test()
-   {
-      :await myFunction(2);
-   }
-}
-
-public program()
-{
-   Helper.test().Result;
-
-   myFunction(3);
+   :await Task.waitAllArgs(t1, t2, t3);
 }

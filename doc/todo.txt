@@ -50,7 +50,6 @@ In development:
   - #184 : linux - save
   - rosetta code : Concurrent computing
   --------------------------------------
-  * async function - testing
   * async main program
   * async function short-cut syntax
   * publish concurrent computing example
