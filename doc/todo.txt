@@ -51,12 +51,11 @@ In development:
   - post how to build project / compile API / compile samples - Windows / Linux
   - optimization : pi - byte code
   - #184 : linux - save
-  - rosetta code : Concurrent computing
+  - some syntax improvement : using a is:b / a as:b with a single colon
   --------------------------------------
-  * try to use "is" with a single colon
   * $castTo operator
   * support checking type with a single colon too : 
-    p is:int, p as:int
+    p as:int
   --------------------------------------
 
   === Iteration 40 ===

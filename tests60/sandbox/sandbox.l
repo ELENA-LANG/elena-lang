@@ -18,10 +18,10 @@ public class Program
 public program()
 {
    var o := 2;
-   if (o is:IntNumber) {
-      Console.writeLine("It works!");
-   }
-   else Console.writeLine("It fails!");
+
+   var s := o as:string;
+
+   Console.writeLine(s);
 }
 
 //public program()

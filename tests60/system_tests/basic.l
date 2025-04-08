@@ -2016,7 +2016,7 @@ public decoratorTest() : testCase()
    var a := new DecoratorBaseA(2);
    var decA := new DecoratorA(a, 3);
 
-   Assert.ifEqual((decA as::IDecoratorA).giveMe(), 5);
+   Assert.ifEqual((decA as:IDecoratorA).giveMe(), 5);
 
    Console.write(".");
 }
@@ -2383,7 +2383,7 @@ sealed class MyIntValue
 
 public implicitConvertorTest() : testCase()
 {
-   auto v := "2" as:: MyIntValue;
+   auto v := "2" as:MyIntValue;
 
    Assert.ifEqual(v.Value, 2);
    Console.write(".");   
