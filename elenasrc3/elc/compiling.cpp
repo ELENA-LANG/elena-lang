@@ -303,7 +303,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.newNode(SyntaxKey::Namespace);
 
       _processor.generateClassTemplate(&moduleScope, generatedReference, writer,
-         sectionInfo.section, parameters);
+         sectionInfo.section, parameters, templateRef);
 
       writer.closeNode();
       writer.closeNode();

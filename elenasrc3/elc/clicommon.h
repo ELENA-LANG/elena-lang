@@ -432,6 +432,7 @@ enum class ExpressionAttribute : pos64_t
    Class                = 0x000100000000,
    Nillable             = 0x000200000000,
    AllowGenericSignature= 0x000400000000,
+   AsyncOp              = 0x000800000000,
    OutRefOp             = 0x001000000000,
    WithVariadicArgCast  = 0x002008000000,
    DistributedForward   = 0x004000000000,
@@ -789,7 +790,8 @@ enum class VirtualType : int
    None = 0,
    Multimethod,
    ByRefHandler,
-   AbstractByRefHandler
+   AbstractByRefHandler,
+   AsyncInvoker
 };
 
 struct VirtualMethod

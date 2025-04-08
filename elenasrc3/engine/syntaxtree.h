@@ -210,6 +210,8 @@ namespace elena_lang
       EnumArgParameter        = 0x000114,
       NillableInfo            = 0x000115,
       HasStaticConstructor    = 0x000116,
+      AsyncInvoker            = 0x000117,
+      SourceRef               = 0x000118,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

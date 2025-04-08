@@ -34,12 +34,22 @@ public class Program
 
 //}
 
-class A
+async myFunction(int n)
 {
-   int incSum(int arg1)
-      = arg1 + 1;
+   Console.printLineConcurrent("Code ", n)
+}
+
+singleton Helper
+{
+   async system'threading'Task test()
+   {
+      :await myFunction(2);
+   }
 }
 
 public program()
 {
+   Helper.test().Result;
+
+   myFunction(3);
 }

@@ -1607,6 +1607,8 @@ namespace elena_lang
       bool                   _withDebugInfo;
       bool                   _strictTypeEnforcing;
 
+      mssg_t overwriteAsAsyncFunction(Scope& scope, mssg_t weakMessage);
+
       void addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeInfo typeInfo);
 
       void importExtensions(NamespaceScope& ns, ustr_t importedNs);
@@ -1785,8 +1787,9 @@ namespace elena_lang
 
       void declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node);
 
-      void declareByRefHandler(SyntaxNode classNode, SyntaxKey methodType,
-         ref_t targetRef, ClassInfo& info, mssg_t message, bool abstractOne);
+      void declareInvoker(ClassInfo& info, mssg_t targetMssg, MethodInfo& methodInfo, bool abstractOne, ref_t newHints);
+      void declareByRefHandler(ClassInfo& info, mssg_t message, bool abstractOne);
+      void declareAsyncInvoker(ClassInfo& info, mssg_t asyncFunction);
 
       void declareMetaInfo(Scope& scope, SyntaxNode node);
       void declareMethodMetaInfo(MethodScope& scope, SyntaxNode node);
@@ -1876,6 +1879,7 @@ namespace elena_lang
       void compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classClassScope, SyntaxNode node);
       void compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope,
          mssg_t handler, ref_t targetRef);
+      void compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& methodScope, CodeScope& codeScope, mssg_t asyncFunction);
 
       void compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
          bool withGenerics);

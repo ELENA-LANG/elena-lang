@@ -323,7 +323,7 @@ namespace elena_lang
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 
       void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, 
-         MemoryBase* templateBody, bool importModuleInfo);
+         MemoryBase* templateBody, bool importModuleInfo, ref_t templateRef);
 
       void importTemplate(Type type, MemoryBase* templateSection, SyntaxNode target,
          List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
@@ -341,7 +341,7 @@ namespace elena_lang
       void importTextblock(MemoryBase* templateSection, SyntaxNode target);
 
       void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTreeWriter& writer,
-         MemoryBase* sectionBody, List<SyntaxNode>& args);
+         MemoryBase* sectionBody, List<SyntaxNode>& args, ref_t templateRef);
 
       TemplateProssesor() = default;
    };

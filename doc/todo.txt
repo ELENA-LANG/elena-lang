@@ -33,7 +33,6 @@ In development:
       - refactoring : move amd64 / x86 specific code from general elf linker files
   api:
       - implement ExtensionMessage.equal
-      - api : add descriptions 
       - api refactoring : main program entry to be called - Program
   port:      
       - x86-64 : net, threading samples
@@ -43,15 +42,14 @@ In development:
       - #658 :  debug elena program in VSCode
   prom: bi-posting weekly
   --------------------------------------
+  - API - review / description
   - #658 :  debug elena program in VSCode : launch
   - post how to build project / compile API / compile samples - Windows / Linux
   - optimization : pi - byte code
   - #184 : linux - save
   - rosetta code : Concurrent computing
   --------------------------------------
-  * refactor compileByRefHandlerInvoker - the special flag must be injected to handle it centrolized
-  * async function - generate sync entry automatically
-  * async function
+  * async function - testing
   * async function short-cut syntax
   * async main program
   * publish concurrent computing example
