@@ -10,6 +10,7 @@ In development:
   dev: 
       - support fladd, flsub, fldiv, flmul (throu special prefix??)
       - MTA support for Linux  
+      - #620
       - #496
       - #622
       - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
@@ -41,6 +42,8 @@ In development:
   tools:
       - vs #2 : elena.tmLanguage.json  
       - #658 :  debug elena program in VSCode
+  samples:
+      - rosetta code : Comma quibbling, Program termination, Parallel calculations
   prom: bi-posting weekly
   --------------------------------------
   - API - review / description
@@ -50,9 +53,10 @@ In development:
   - #184 : linux - save
   - rosetta code : Concurrent computing
   --------------------------------------
-  * async main program
-  * async function short-cut syntax
-  * publish concurrent computing example
+  * try to use "is" with a single colon
+  * $castTo operator
+  * support checking type with a single colon too : 
+    p is:int, p as:int
   --------------------------------------
 
   === Iteration 40 ===

@@ -15,13 +15,24 @@ public class Program
 */
 
 
-import system'threading;
-
-public async program()
+public program()
 {
-   Task t1 := Task.run::{ Console.printLineConcurrent("Enjoy") };
-   Task t1 := Task.run::{ Console.printLineConcurrent("Rosetta") };
-   Task t1 := Task.run::{ Console.printLineConcurrent("Code") };
-
-   :await Task.waitAllArgs(t1, t2, t3);
+   var o := 2;
+   if (o is:IntNumber) {
+      Console.writeLine("It works!");
+   }
+   else Console.writeLine("It fails!");
 }
+
+//public program()
+//{
+//   var o := 2;
+
+//   int n := o $castTo int;
+
+
+/*   if (o is:IntNumber) {
+      Console.writeLine("It works!");
+   }
+   else Console.writeLine("It fails!");*/
+//}

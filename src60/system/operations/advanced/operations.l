@@ -39,3 +39,6 @@ public template as<T>(expr)  : __included(statements)
 
 public template is<T>(expr) : __included(statements)
    = expr.instanceOf(T);
+
+public template operator::is(expr, T) : __included(statements)
+   = expr.instanceOf(T);

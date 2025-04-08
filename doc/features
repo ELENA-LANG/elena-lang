@@ -242,3 +242,14 @@ public program()
  Async program entry
 ----------------------------------------------------------------------------
 
+import system'threading;
+import extensions'threading;
+
+async public program()
+{
+   Task t1 := Task.run({ Console.printLineConcurrent("Enjoy") });
+   Task t2 := Task.run({ Console.printLineConcurrent("Rosetta") });
+   Task t3 := Task.run({ Console.printLineConcurrent("Code") });
+
+   :await Task.whenAllArgs(t1, t2, t3);
+}
