@@ -24,6 +24,7 @@ In development:
       - #184 : linux - close, ...
       - async method - auto watch : self and some variables are not displayed
   maint:
+      - review simple sample : too many stack is allocated
       - optimization : pi - byte code
       - exception handling in rosetta code sample http (when it is compiled as STA - warn)
       - github actions : `set-output` command is deprecated 
@@ -50,8 +51,8 @@ In development:
   - rosetta code : Concurrent computing
   --------------------------------------
   * async function - testing
-  * async function short-cut syntax
   * async main program
+  * async function short-cut syntax
   * publish concurrent computing example
   --------------------------------------
 

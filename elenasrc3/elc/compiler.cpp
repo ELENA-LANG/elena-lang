@@ -12176,8 +12176,10 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
          mssg_t asyncMessage = compiler->overwriteAsAsyncFunction(scope, resolvedMessage);
 
          CheckMethodResult dummy = {};
-         if (compiler->_logic->checkMethod(*scope.moduleScope, functionRef, asyncMessage, dummy))
+         if (compiler->_logic->checkMethod(*scope.moduleScope, functionRef, asyncMessage, dummy)) {
+            callContext.weakMessage = asyncMessage;
             resolvedMessage = asyncMessage;
+         }            
       }
 
       if (!resolvedMessage && !ignoreVariadics) {
