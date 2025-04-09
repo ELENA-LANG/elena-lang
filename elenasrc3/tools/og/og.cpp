@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //              E L E N A   p r o j e c t
 //                Command line syntax generator main file
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "buildtree.h"
@@ -127,6 +127,7 @@ void parseOpcodeRule(ScriptReader& reader, ScriptToken& token, ByteCodeTrieBuild
 
    pos_t position = trie.add(0, pattern);
 
+   ByteCodePatternType matchArg = ByteCodePatternType::None;
    while (!token.compare("=>")) {
       if (token.compare(",")) {
          reader.read(token);
@@ -134,10 +135,17 @@ void parseOpcodeRule(ScriptReader& reader, ScriptToken& token, ByteCodeTrieBuild
       else throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
 
       position = trie.add(position, decodePattern(reader, token));
+
+      if (token.compare("$")) {
+         matchArg = ByteCodePatternType::IfAccFree;
+         reader.read(token);
+         if(!token.compare("=>"))
+            throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+      }
    }
 
    // save end state
-   position = trie.add(position, { ByteCode::Match });
+   position = trie.add(position, { ByteCode::Match, matchArg });
 
    // save replacement (should be saved in reverse order, to simplify transform algorithm)
    reader.read(token);

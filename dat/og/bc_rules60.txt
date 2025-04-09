@@ -11,3 +11,4 @@ load dp:$1, save dp:#1 => load dp, idle;
 store sp:$1, peek sp:#1 => store sp, idle;
 store fp:$1, peek fp:#1 => store fp, idle;
 store fp:$1, load dp, save, peek fp:#1 => store fp, load dp, save, idle;
+set dp, load $ => load dp, idle

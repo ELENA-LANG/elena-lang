@@ -508,7 +508,8 @@ namespace elena_lang
       None = 0,
       Set,
       Match,
-      MatchArg
+      MatchArg,
+      IfAccFree // NOTE : can be used only for ByteCode::Match
    };
 
    struct PatternArg

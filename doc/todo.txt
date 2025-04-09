@@ -50,9 +50,8 @@ In development:
   - #658 :  debug elena program in VSCode : launch
   - post how to build project / compile API / compile samples - Windows / Linux
   - optimization : pi - byte code
-  - #184 : linux - save
   --------------------------------------
-  * close
+  * review pi main program byte code
   --------------------------------------
 
   === Iteration 40 ===
@@ -66,6 +65,7 @@ In development:
   - #184 : linux -  open project, new project, save project, save all, close project ...
   maint:
   - remove old scripts from build folder
+  - optimization : pi (used classes byte code)
   port:
       - chat sample
   prom:
