@@ -79,32 +79,50 @@ namespace elena_lang
          }
       };
 
-      class BuildTreeOptimizer
+      class BuildTreeTransformerBase
       {
-         BuildTreeTransformer _btTransformer;
+      protected:
+         BuildTreeTransformer _btPatterns;
 
-         bool matchTriePatterns(BuildNode node);
+         virtual bool matchTriePatterns(BuildNode node) = 0;
 
       public:
          void load(StreamReader& reader);
 
          void proceed(BuildNode node);
 
-         BuildTreeOptimizer();
+         BuildTreeTransformerBase() = default;
+      };
+
+      class BuildTreeAnalyzer : public BuildTreeTransformerBase
+      {
+         bool matchTriePatterns(BuildNode node) override;
+
+      public:
+         BuildTreeAnalyzer() = default;
+      };
+
+      class BuildTreeOptimizer : public BuildTreeTransformerBase
+      {
+         bool matchTriePatterns(BuildNode node) override;
+
+      public:
+         BuildTreeOptimizer() = default;
       };
 
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);
       typedef bool(*Transformer)(BuildNode lastNode);
 
    private:
-      BuildTreeOptimizer   _buildTreeOptimizer;
+      BuildTreeAnalyzer    _btAnalyzer;
+      BuildTreeOptimizer   _btTransformer;
 
       ByteCodeTransformer  _bcTransformer;      
 
-      const Saver*        _commands;
-      LibraryLoaderBase*  _loader;
+      const Saver*         _commands;
+      LibraryLoaderBase*   _loader;
 
-      bool                _threadFriendly;
+      bool                 _threadFriendly;
 
       pos_t savePath(BuildNode node, Scope& scope, ReferenceMap& paths);
 

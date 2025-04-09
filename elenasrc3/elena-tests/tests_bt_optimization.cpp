@@ -145,16 +145,16 @@ void BTOptimization :: SetUp()
 void BTOptimization :: runBTTest()
 {
    // Arrange
-   ByteCodeWriter::BuildTreeOptimizer buildTreeOptimizer;
+   ByteCodeWriter::BuildTreeAnalyzer buildTreeAnalyzer;
    MemoryReader reader(&btRules);
-   buildTreeOptimizer.load(reader);
+   buildTreeAnalyzer.load(reader);
 
    BuildTree output;
    BuildTreeWriter writer(output);
    BuildTree::copyNode(writer, buildNode, true);
 
    // Act
-   buildTreeOptimizer.proceed(output.readRoot());
+   buildTreeAnalyzer.proceed(output.readRoot());
 
    // Assess
    bool matched = BuildTree::compare(output.readRoot(), afterOptimization, true);

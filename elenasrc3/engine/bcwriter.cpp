@@ -3762,7 +3762,8 @@ inline bool isNested(BuildKey key)
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef,
    ReferenceMap& paths, bool tapeOptMode)
 {
-   _buildTreeOptimizer.proceed(node.findChild(BuildKey::Tape));
+   _btAnalyzer.proceed(node.findChild(BuildKey::Tape));
+   _btTransformer.proceed(node.findChild(BuildKey::Tape));
 
    if (scope.moduleScope->debugModule)
       openMethodDebugInfo(scope, sourcePathRef);
@@ -3975,7 +3976,7 @@ void ByteCodeWriter :: loadBuildTreeRules(MemoryDump* dump)
 {
    MemoryReader reader(dump);
 
-   _buildTreeOptimizer.load(reader);
+   _btAnalyzer.load(reader);
 }
 
 void ByteCodeWriter :: loadByteCodeRules(MemoryDump* dump)
@@ -3986,22 +3987,17 @@ void ByteCodeWriter :: loadByteCodeRules(MemoryDump* dump)
    _bcTransformer.loaded = true;
 }
 
-// --- ByteCodeWriter::BuildTreeOptimizer ---
+// --- ByteCodeWriter::BuildTreeTransformerBase ---
 
-ByteCodeWriter::BuildTreeOptimizer :: BuildTreeOptimizer()
+void ByteCodeWriter::BuildTreeTransformerBase :: load(StreamReader& reader)
 {
-
+   _btPatterns.trie.load(&reader);
+   _btPatterns.loaded = true;
 }
 
-void ByteCodeWriter::BuildTreeOptimizer :: load(StreamReader& reader)
+void ByteCodeWriter::BuildTreeTransformerBase :: proceed(BuildNode node)
 {
-   _btTransformer.trie.load(&reader);
-   _btTransformer.loaded = true;
-}
-
-void ByteCodeWriter::BuildTreeOptimizer :: proceed(BuildNode node)
-{
-   if (!_btTransformer.loaded)
+   if (!_btPatterns.loaded)
       return;
 
    bool applied = true;
@@ -4012,7 +4008,9 @@ void ByteCodeWriter::BuildTreeOptimizer :: proceed(BuildNode node)
    }
 }
 
-bool ByteCodeWriter::BuildTreeOptimizer :: matchTriePatterns(BuildNode node)
+// --- ByteCodeWriter::BuildTreeAnalyzer ---
+
+bool ByteCodeWriter::BuildTreeAnalyzer :: matchTriePatterns(BuildNode node)
 {
    BuildPatterns matchedOnes;
    BuildPatterns nextOnes;
@@ -4035,7 +4033,7 @@ bool ByteCodeWriter::BuildTreeOptimizer :: matchTriePatterns(BuildNode node)
          continue;
       }
 
-      matched->add({ &_btTransformer.trie });
+      matched->add({ &_btPatterns.trie });
       followers->clear();
 
       for (auto it = matched->start(); !it.eof(); ++it) {
@@ -4046,7 +4044,9 @@ bool ByteCodeWriter::BuildTreeOptimizer :: matchTriePatterns(BuildNode node)
             auto currentPatternValue = currentPattern.Value();
 
             if (currentPatternValue.match(current)) {
-               if (currentPatternValue.patternId && transformers[currentPatternValue.patternId](current))
+               int patternId = currentPatternValue.argValue;
+
+               if (currentPatternValue.key == BuildKey::Match && patternId && transformers[patternId](current))
                   return true;
 
                followers->add(currentPattern);
@@ -4067,6 +4067,14 @@ bool ByteCodeWriter::BuildTreeOptimizer :: matchTriePatterns(BuildNode node)
 
       current = current.nextNode();
    }
+
+   return false;
+}
+
+// --- ByteCodeWriter::BuildTreeOptimizer ---
+
+bool ByteCodeWriter::BuildTreeOptimizer :: matchTriePatterns(BuildNode node)
+{
 
    return false;
 }

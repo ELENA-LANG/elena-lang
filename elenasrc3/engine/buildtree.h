@@ -243,6 +243,7 @@ namespace elena_lang
       TempVar              = 0x8014,
       IndexTableMode       = 0x8015,
 
+      Match                = 0x8FFE,
       Idle                 = 0x8FFF,
 
       //MetaDictionary    = 0x0022,
@@ -429,27 +430,34 @@ namespace elena_lang
 
    constexpr int BuildKeyNoArg = INT_MAX;
 
+   enum class BuildKeyPatternType
+   {
+      None = 0,
+      MatchArg,
+      Set,
+      Match
+   };
+
    // --- BuildKeyPattern ---
    struct BuildKeyPattern
    {
-      BuildKey type;
+      BuildKey             key;
+      BuildKeyPatternType  argType;
+      int                  argValue;
 
-      int      argument;
-      int      patternId;
-
-      bool operator ==(BuildKey type) const
+      bool operator ==(BuildKey key) const
       {
-         return (this->type == type);
+         return (this->key == key);
       }
 
-      bool operator !=(BuildKey type) const
+      bool operator !=(BuildKey key) const
       {
-         return (this->type != type);
+         return (this->key != key);
       }
 
       bool operator ==(BuildKeyPattern pattern)
       {
-         return (type == pattern.type && argument == pattern.argument);
+         return (key == pattern.key && argType == pattern.argType && argValue == pattern.argValue);
       }
 
       bool operator !=(BuildKeyPattern pattern)
@@ -459,16 +467,26 @@ namespace elena_lang
 
       bool match(BuildNode node)
       {
-         return node.key == type && (argument == BuildKeyNoArg || node.arg.value == argument);
+         if (key != node.key)
+            return key == BuildKey::Match;
+
+         if ((argType == BuildKeyPatternType::MatchArg && node.arg.value != argValue))
+            return false;
+
+         return true;
       }
 
       BuildKeyPattern()
-         : type(BuildKey::None), argument(BuildKeyNoArg), patternId(0)
+         : key(BuildKey::None), argValue(0), argType(BuildKeyPatternType::None)
       {
          
       }
-      BuildKeyPattern(BuildKey type)
-         : type(type), argument(BuildKeyNoArg), patternId(0)
+      BuildKeyPattern(BuildKey key)
+         : key(key), argValue(0), argType(BuildKeyPatternType::None)
+      {
+      }
+      BuildKeyPattern(BuildKey key, int argValue)
+         : key(key), argValue(argValue), argType(BuildKeyPatternType::None)
       {
       }
    };
