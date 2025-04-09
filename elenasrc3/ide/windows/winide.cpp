@@ -305,6 +305,11 @@ void IDEWindow :: saveFile()
    _controller->doSaveFile(fileDialog, _model, false, true);
 }
 
+void IDEWindow::saveFileAs()
+{
+   _controller->doSaveFile(fileDialog, _model, true, true);
+}
+
 void IDEWindow::saveAll()
 {
    _controller->doSaveAll(fileDialog, projectDialog, _model);
@@ -719,6 +724,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_FILE_SAVE:
          saveFile();
+         break;
+      case IDM_FILE_SAVEAS:
+         saveFileAs();
          break;
       case IDM_FILE_SAVEALL:
          saveAll();

@@ -31,11 +31,12 @@ int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);
 
-   IDEModel      ideModel;
-   GUISettinngs  settings = { true };
    TextViewSettings textViewSettings = { EOLMode::LF, false, 3 };
+
+   IDEModel      ideModel(textViewSettings);
+   GUISettinngs  settings = { true };
    IDEController     ideController(/*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr, /*&debugProcess*/nullptr, &ideModel,
-                        textViewSettings, CURRENT_PLATFORM, /*&pathHelper*/nullptr, /*compareFileModifiedTime*/nullptr);
+                        CURRENT_PLATFORM, /*&pathHelper*/nullptr, /*compareFileModifiedTime*/nullptr);
    IDEFactory    factory(&ideModel, &ideController, settings);
 
    GUIApp* app = factory.createApp();

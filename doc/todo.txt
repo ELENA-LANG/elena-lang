@@ -21,7 +21,6 @@ In development:
       - lpad / elt : declare an extension, parse it and apply to the input
   ide:
       - syntax highlighting
-      - #184 : linux - close, ...
       - async method - auto watch : self and some variables are not displayed
   maint:
       - review simple sample : too many stack is allocated
@@ -45,6 +44,7 @@ In development:
       - rosetta code : Comma quibbling, Program termination, Parallel calculations
   prom: bi-posting weekly
   --------------------------------------
+  - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
   - API - review / description
   - #658 :  debug elena program in VSCode : launch
@@ -52,6 +52,7 @@ In development:
   - optimization : pi - byte code
   - #184 : linux - save
   --------------------------------------
+  * saveas
   * save - dialog
   * save as - dialog
   * save file
@@ -66,6 +67,8 @@ In development:
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
   - MTA support for Linux (fix simple program - access to TLS)
   gen:
+  ide:
+  - #184 : linux - close, new project, ...
   maint:
   - remove old scripts from build folder
   port:

@@ -51,7 +51,7 @@ protected:
    }
    void on_menu_file_save()
    {
-      //_controller->doSave(false);
+      _controller->doSaveFile(fileDialog, _model, false, true);
    }
    void on_menu_file_saveas()
    {

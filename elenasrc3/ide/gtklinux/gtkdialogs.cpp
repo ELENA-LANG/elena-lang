@@ -96,21 +96,36 @@ bool FileDialog :: openFiles(List<path_t, freepath>& files)
       return true;
    }
    return false;
-
-   return false;
 }
 
 bool FileDialog :: saveFile(path_t ext, PathString& path)
 {
-//   _struct.Flags = _defaultFlags | OFN_PATHMUSTEXIST;
-//   _struct.lpstrDefExt = ext;
-//
-//   if (::GetSaveFileName(&_struct)) {
-//      path.copy(_fileName);
-//
-//      return true;
-//   }
-   /*else */return false;
+   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_SAVE);
+   dialog.set_transient_for(*_owner);
+
+   if (!emptystr(_initialDir))
+      dialog.set_current_folder (_initialDir);
+
+   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+   dialog.add_button("_Open", Gtk::RESPONSE_OK);
+
+   for (int i = 0; i < _filterCounter; i += 2) {
+      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+
+      filter_l->set_name(_filter[i + 1]);
+      filter_l->add_pattern(_filter[i]);
+      dialog.add_filter(filter_l);
+   }
+
+   int result = dialog.run();
+   if (result == Gtk::RESPONSE_OK) {
+      std::string filename = dialog.get_filename();
+
+      path.copy(filename.c_str());
+
+      return true;
+   }
+   return false;
 }
 
 //MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str param)
