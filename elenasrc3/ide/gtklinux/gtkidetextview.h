@@ -19,6 +19,7 @@ class IDETextViewFrame : public TextViewFrame
 
 protected:
     void onTabChange(int page_num) override;
+    void onDocumentModeChanged(int index, bool modifiedMode);
 
 public:
    void on_text_model_change(TextViewModelEvent event);

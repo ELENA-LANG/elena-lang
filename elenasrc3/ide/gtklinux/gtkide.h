@@ -23,6 +23,8 @@ protected:
    IDEController*    _controller;
 
    FileDialog        fileDialog;
+   FileDialog        projectDialog;
+   MessageDialog     messageDialog;
 
    void populateMenu();
 
@@ -33,7 +35,6 @@ protected:
    }
    void on_menu_file_new_project()
    {
-      //_controller->doCreateProject();
    }
    void on_menu_file_open_source()
    {
@@ -43,7 +44,8 @@ protected:
    }
    void on_menu_file_open_project()
    {
-      //_controller->doOpenProject();
+      _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model);
+      //_recentProjectList.reload();
    }
    void on_menu_file_quit()
    {
@@ -55,7 +57,7 @@ protected:
    }
    void on_menu_file_saveas()
    {
-      //_controller->doSave(true);
+      _controller->doSaveFile(fileDialog, _model, true, true);
    }
    void on_menu_project_saveas()
    {
@@ -67,7 +69,7 @@ protected:
    }
    void on_menu_file_close()
    {
-      //_controller->doCloseFile();
+      _controller->doCloseFile(fileDialog, messageDialog, _model);
    }
    void on_menu_file_closeall()
    {

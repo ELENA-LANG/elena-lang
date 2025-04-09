@@ -134,10 +134,20 @@ const char* SOURCE_FILE_FILTER[] =
    "Any files"
 };
 
+const char* PROJECT_FILE_FILTER[] =
+{
+   "*.prj",
+   "ELENA project file",
+   "*",
+   "Any files"
+};
+
 // --- GTKIDEWindow ---
 
 GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model)
-   : fileDialog(this, SOURCE_FILE_FILTER, 4, OPEN_FILE_CAPTION, *model->projectModel.paths.lastPath)
+   : fileDialog(this, SOURCE_FILE_FILTER, 4, OPEN_FILE_CAPTION, *model->projectModel.paths.lastPath),
+     projectDialog(this, PROJECT_FILE_FILTER, 4, OPEN_PROJECT_CAPTION, *model->projectModel.paths.lastPath),
+     messageDialog(this)
 {
    _model = model;
    _controller = controller;

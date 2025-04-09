@@ -52,12 +52,7 @@ In development:
   - optimization : pi - byte code
   - #184 : linux - save
   --------------------------------------
-  * saveas
-  * save - dialog
-  * save as - dialog
-  * save file
-  * save all
-  * save project
+  * close
   --------------------------------------
 
   === Iteration 40 ===
@@ -68,7 +63,7 @@ In development:
   - MTA support for Linux (fix simple program - access to TLS)
   gen:
   ide:
-  - #184 : linux - close, new project, ...
+  - #184 : linux -  open project, new project, save project, save all, close project ...
   maint:
   - remove old scripts from build folder
   port:

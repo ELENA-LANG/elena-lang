@@ -17,6 +17,16 @@ BroadcasterBase* eventBroadcaster)
    _eventBroadcaster = eventBroadcaster;
 }
 
+void IDETextViewFrame :: onDocumentModeChanged(int index, bool modifiedMode)
+{
+   IdentifierString title(_model->getDocumentName(index), modifiedMode ? "*" : "");
+
+   if (index == -1)
+      index = _model->getCurrentIndex();
+
+   renameTab(index - 1, *title);
+}
+
 void IDETextViewFrame :: on_text_model_change(TextViewModelEvent event)
 {
    if (test(event.status, STATUS_FRAME_CHANGED)) {
@@ -24,6 +34,12 @@ void IDETextViewFrame :: on_text_model_change(TextViewModelEvent event)
       if (docIndex > 0) {
          selectTab(docIndex - 1);
       }
+   }
+
+   if (event.changeStatus.modifiedChanged) {
+      auto docInfo = _model->DocView();
+
+      onDocumentModeChanged(-1, docInfo->isModified());
    }
 
    auto client = getCurrentTextView();

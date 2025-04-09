@@ -53,23 +53,25 @@ namespace elena_lang
       FileDialog(Gtk::Window* owner, const char** filter, int filterCounter, const char* caption,
          const char* initialDir = nullptr);
    };
-//
-//   class MessageDialog : public MessageDialogBase
-//   {
-//      WindowBase* _owner;
-//
-//   public:
-//      Answer question(text_str message, text_str param) override;
-//      Answer question(text_str message) override;
-//
-//      void info(text_str message) override;
-//
-//      MessageDialog(WindowBase* owner)
-//      {
-//         _owner = owner;
-//      }
-//   };
-//
+
+   class MessageDialog : public MessageDialogBase
+   {
+      Gtk::Window* _owner;
+
+      int show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel);
+
+   public:
+      Answer question(text_str message, text_str param) override;
+      Answer question(text_str message) override;
+
+      void info(text_str message) override;
+
+      MessageDialog(Gtk::Window* owner)
+      {
+         _owner = owner;
+      }
+   };
+
 //   class WinDialog
 //   {
 //   protected:

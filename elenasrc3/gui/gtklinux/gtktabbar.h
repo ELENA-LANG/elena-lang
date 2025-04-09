@@ -34,6 +34,8 @@ namespace elena_lang
          return get_current_page();
       }
 
+      void renameTab(int index, const char* title);
+
       Gtk::Widget* getCurrentControl();
 
       TabBar();
