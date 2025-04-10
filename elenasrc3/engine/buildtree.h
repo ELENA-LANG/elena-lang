@@ -62,7 +62,7 @@ namespace elena_lang
       Argument             = 0x0020,
       BranchOp             = 0x0021,
       StrongRedirectOp     = 0x0022,
-      ResendOp             = 0x0023,
+      //ResendOp             = 0x0023,
       SealedDispatchingOp  = 0x0024,
       BoolSOp              = 0x0025,
       IntCondOp            = 0x0026,
@@ -224,7 +224,7 @@ namespace elena_lang
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed
       ReservedN            = 0x8003,      // reserved unmanaged
-      Index                = 0x8004,
+      VMTIndex             = 0x8004,
       Type                 = 0x8005,
       Column               = 0x8006,
       Row                  = 0x8007,
@@ -242,6 +242,9 @@ namespace elena_lang
       Length               = 0x8013,
       TempVar              = 0x8014,
       IndexTableMode       = 0x8015,
+      OperatorId           = 0x8016,
+      StackIndex           = 0x8017,
+      StackAddress         = 0x8018,
 
       Match                = 0x8FFE,
       Idle                 = 0x8FFF,
@@ -408,7 +411,7 @@ namespace elena_lang
          map.add("column", BuildKey::Column);
          map.add("row", BuildKey::Row);
          map.add("message", BuildKey::Message);
-         map.add("index", BuildKey::Index);
+         map.add("vmt_index", BuildKey::VMTIndex);
          map.add("length", BuildKey::Length);
          map.add("temp_var", BuildKey::TempVar);
          map.add("message", BuildKey::Message);
@@ -421,6 +424,7 @@ namespace elena_lang
          map.add("param_address", BuildKey::ParameterAddress);
          map.add("dispatch_op", BuildKey::DispatchingOp);
          map.add("redirect_op", BuildKey::RedirectOp);
+         map.add("operator_id", BuildKey::OperatorId);
       }
    };
 

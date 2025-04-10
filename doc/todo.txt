@@ -8,7 +8,6 @@ In development:
   === Iteration 39 (18.4) ===
   --------------------------------------
   dev: 
-      - support fladd, flsub, fldiv, flmul (throu special prefix??)
       - MTA support for Linux  
       - #496
       - #622
@@ -16,12 +15,11 @@ In development:
       - unit tests for try-catch / try-catch-finally / try-finally      
       - upndown (connector - interaction)
       - support :sizeof
-      - conditional compiling
   gen:
       - lpad / elt : declare an extension, parse it and apply to the input
   ide:
-      - syntax highlighting : auto indent
-      - async method - auto watch : self and some variables are not displayed
+      - ide :syntax highlighting : floating point numbers
+      - ide : auto indent
   maint:
       - review simple sample : too many stack is allocated
       - optimization : pi - byte code
@@ -51,11 +49,8 @@ In development:
   - post how to build project / compile API / compile samples - Windows / Linux
   - optimization : pi - byte code
   --------------------------------------
-  * ide :fix several issues with IDE : ctrl+x, ctrl+c, ctrl+v, ctrl+z, ctrl+u (in the same file, switching between tabs)
-  * ide :syntax highlighting : floating point numbers
-  * ide : auto indent
+  * test the refactoring
   * support bt-rules similar to bc-rules
-  * modify real_int_op -> the operation code inside - the output address next
   * support rule : 
 
 local_address, saving_stack =0, local_address, saving_stack=1, real_int_op $1
@@ -71,10 +66,13 @@ load_long_index, save_long_index $1, local_address, saving_stack, x_real_int_op;
   - #620
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
   - MTA support for Linux (fix simple program - access to TLS)
+  - support fladd, flsub, fldiv, flmul (throu special prefix??)
+  - conditional compiling
   gen:
   ide:
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - syntax highlighting
+  - async method - auto watch : self and some variables are not displayed
   maint:
   - remove old scripts from build folder
   - optimization : pi (used classes byte code)

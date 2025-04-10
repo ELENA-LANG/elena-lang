@@ -7779,70 +7779,70 @@ void Compiler :: addVariableInfo(BuildNode node, Scope& scope, ustr_t name, Para
             { V_INT8 }, { localInfo.typeInfo.elementRef }, false))
          {
             BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, name);
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
+            varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
          }
          else if (_logic->isCompatible(*moduleScope,
             { V_UINT8 }, { localInfo.typeInfo.elementRef }, false))
          {
             BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, name);
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
+            varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
          }
          else if (_logic->isCompatible(*moduleScope,
             { V_INT16 }, { localInfo.typeInfo.elementRef }, false))
          {
             BuildNode varNode = node.appendChild(BuildKey::ShortArrayAddress, name);
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
+            varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
          }
          else if (_logic->isCompatible(*moduleScope,
             { V_INT32 }, { localInfo.typeInfo.elementRef }, false))
          {
             BuildNode varNode = node.appendChild(BuildKey::IntArrayAddress, name);
-            varNode.appendChild(BuildKey::Index, localInfo.offset);
+            varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
          }
       }
       else if (localInfo.typeInfo.typeRef == moduleScope->buildins.intReference) {
          BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (localInfo.typeInfo.typeRef == moduleScope->buildins.uintReference) {
          BuildNode varNode = node.appendChild(BuildKey::UIntVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (localInfo.typeInfo.typeRef == moduleScope->buildins.int8Reference) {
          BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (localInfo.typeInfo.typeRef == moduleScope->buildins.uint8Reference) {
          BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (localInfo.typeInfo.typeRef == moduleScope->buildins.shortReference) {
          BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (localInfo.typeInfo.typeRef == moduleScope->buildins.longReference) {
          BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (localInfo.typeInfo.typeRef == moduleScope->buildins.realReference) {
          BuildNode varNode = node.appendChild(BuildKey::RealVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (_logic->isCompatible(*moduleScope,
          { V_INT32 }, { localInfo.typeInfo.typeRef }, false))
       {
          BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (_logic->isCompatible(*moduleScope,
          { V_INT64 }, { localInfo.typeInfo.typeRef }, false))
       {
          BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else {
          BuildNode varNode = node.appendChild(BuildKey::VariableAddress, name);
-         varNode.appendChild(BuildKey::Index, localInfo.offset);
+         varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
 
          ustr_t className = moduleScope->module->resolveReference(localInfo.typeInfo.typeRef);
          if (isWeakReference(className)) {
@@ -7856,7 +7856,7 @@ void Compiler :: addVariableInfo(BuildNode node, Scope& scope, ustr_t name, Para
    }
    else {
       BuildNode varNode = node.appendChild(BuildKey::Variable, name);
-      varNode.appendChild(BuildKey::Index, localInfo.offset);
+      varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
    }
 }
 
@@ -8777,7 +8777,7 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
    }
    else writer.newNode(BuildKey::Parameter, name);
 
-   writer.appendNode(BuildKey::Index, index);
+   writer.appendNode(BuildKey::StackIndex, index);
    writer.closeNode();
 }
 
@@ -9326,7 +9326,7 @@ void Compiler::compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
             // NOTE : the named constructor should be polymorphic, depending on the message target
             writer.appendNode(BuildKey::Local, -1);
             writer.newNode(BuildKey::CallOp, defConstrMssg);
-            writer.appendNode(BuildKey::Index, 1); // built-in constructor entry should be the second entry in VMT
+            writer.appendNode(BuildKey::VMTIndex, 1); // built-in constructor entry should be the second entry in VMT
             writer.closeNode();
          }
       }
@@ -9576,7 +9576,7 @@ void Compiler::compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& sco
          // change incoming message to variadic multi-method
          writer.newNode(BuildKey::LoadingSubject,
             encodeMessage(getAction(scope.moduleScope->buildins.dispatch_message), argCount, mask));
-         writer.appendNode(BuildKey::Index, scope.messageLocalAddress);
+         writer.appendNode(BuildKey::StackAddress, scope.messageLocalAddress);
          if (mixedDispatcher)
             writer.appendNode(BuildKey::Special, -1);
          writer.closeNode();
@@ -12595,8 +12595,8 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
          writer->appendNode(BuildKey::SavingInStack, 0);
       }
 
-      writer->newNode(op, operatorId);
-      writer->appendNode(BuildKey::Index, loperand.argument);
+      writer->newNode(op, loperand.argument);
+      writer->appendNode(BuildKey::OperatorId, operatorId);
       writer->closeNode();
 
       unboxArguments({}, &updatedOuterArgs);
@@ -12852,7 +12852,7 @@ ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
    writer->newNode(BuildKey::CatchOp, ehLocal.argument);
 
    if (finallyNode != SyntaxKey::None)
-      writer->appendNode(BuildKey::Index, scope.newTempLocal());
+      writer->appendNode(BuildKey::StackIndex, scope.newTempLocal());
 
    writer->newNode(BuildKey::Tape);
    compile(opNode, 0, EAttr::TryMode, nullptr);
@@ -12896,7 +12896,7 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node)
       opNode = opNode.findChild(SyntaxKey::ClosureBlock);
 
    writer->newNode(BuildKey::FinalOp, ehLocal.argument);
-   writer->appendNode(BuildKey::Index, index1);
+   writer->appendNode(BuildKey::StackIndex, index1);
 
    writer->newNode(BuildKey::Tape);
    compile(opNode, 0, EAttr::TryMode, nullptr);
@@ -13300,7 +13300,7 @@ ObjectInfo Compiler::Expression::compileCollection(SyntaxNode node, ExpressionAt
       for (size_t i = 0; i < arguments.count(); i++) {
          writeObjectInfo(arguments[i], node);
          writer->newNode(BuildKey::CopyingItem, -sizeInfo.size);
-         writer->appendNode(BuildKey::Index, (pos_t)i);
+         writer->appendNode(BuildKey::Value, (pos_t)i);
          writer->closeNode();
       }
 
@@ -15357,12 +15357,12 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, ArgumentsInfo
       if (ioperand.kind != ObjectKind::Unknown)
          writeObjectInfo(ioperand);
 
-      writer->newNode(op, operatorId);
-
-      // check if the operation requires an extra arguments
       if (needToAlloc) {
-         writer->appendNode(BuildKey::Index, retVal.argument);
+         // NOTE : for allowing build tree tranformation, the target must be an operation argument
+         writer->newNode(op, retVal.argument);
+         writer->appendNode(BuildKey::OperatorId, operatorId);
       }
+      else writer->newNode(op, operatorId);
 
       switch (op) {
          case BuildKey::BinaryArraySOp:
@@ -15660,8 +15660,8 @@ void Compiler::Expression::writeMessageArguments(ObjectInfo& target,
       // get length
       writeObjectInfo(arguments[counter]);
       writer->appendNode(BuildKey::SavingInStack);
-      writer->newNode(BuildKey::VArgSOp, LEN_OPERATOR_ID);
-      writer->appendNode(BuildKey::Index, lenLocal.argument);
+      writer->newNode(BuildKey::VArgSOp, lenLocal.argument);
+      writer->appendNode(BuildKey::OperatorId, LEN_OPERATOR_ID);
       writer->closeNode();
 
       if (argType == ArgumentListType::VariadicArgListWithTypecasting && arguments[counter].typeInfo.elementRef != scope.moduleScope->buildins.superReference) {
@@ -15670,7 +15670,7 @@ void Compiler::Expression::writeMessageArguments(ObjectInfo& target,
          mssg_t typecastMssg = mapTypecasting(scope.module, arguments[counter].typeInfo.elementRef);
 
          writer->newNode(BuildKey::UnboxAndCallMessage, arguments[counter].argument);
-         writer->appendNode(BuildKey::Index, counter);
+         writer->appendNode(BuildKey::Value, counter);
          writer->appendNode(BuildKey::Length, lenLocal.reference);
          writer->appendNode(BuildKey::TempVar, tempLocal.reference);
          writer->appendNode(BuildKey::Message, typecastMssg);
@@ -15679,7 +15679,7 @@ void Compiler::Expression::writeMessageArguments(ObjectInfo& target,
       else {
          writer->appendNode(BuildKey::LoadingIndex, lenLocal.argument);
          writer->newNode(BuildKey::UnboxMessage, arguments[counter].argument);
-         writer->appendNode(BuildKey::Index, counter);
+         writer->appendNode(BuildKey::Value, counter);
          writer->closeNode();
       }
    }
@@ -15984,8 +15984,8 @@ ObjectInfo Compiler::Expression::boxArgumentInPlace(ObjectInfo info, ref_t targe
 
       writeObjectInfo(info);
       writer->appendNode(BuildKey::SavingInStack, 0);
-      writer->newNode(BuildKey::BinaryArraySOp, LEN_OPERATOR_ID);
-      writer->appendNode(BuildKey::Index, lenLocal.argument);
+      writer->newNode(BuildKey::BinaryArraySOp, lenLocal.argument);
+      writer->appendNode(BuildKey::OperatorId, LEN_OPERATOR_ID);
       writer->appendNode(BuildKey::Size, elementSize);
       writer->closeNode();
 
@@ -16014,8 +16014,8 @@ ObjectInfo Compiler::Expression::boxArgumentInPlace(ObjectInfo info, ref_t targe
 
       writeObjectInfo(info, info.kind == ObjectKind::DistributedTypeList);
       writer->appendNode(BuildKey::SavingInStack, 0);
-      writer->newNode(BuildKey::ObjArraySOp, LEN_OPERATOR_ID);
-      writer->appendNode(BuildKey::Index, lenLocal.argument);
+      writer->newNode(BuildKey::ObjArraySOp, lenLocal.argument);
+      writer->appendNode(BuildKey::OperatorId, LEN_OPERATOR_ID);
       writer->closeNode();
 
       // allocate the object
@@ -16119,8 +16119,8 @@ ObjectInfo Compiler::Expression :: boxVariadicArgument(ObjectInfo info)
    // get length
    writeObjectInfo(info);
    writer->appendNode(BuildKey::SavingInStack);
-   writer->newNode(BuildKey::VArgSOp, LEN_OPERATOR_ID);
-   writer->appendNode(BuildKey::Index, lenLocal.argument);
+   writer->newNode(BuildKey::VArgSOp, lenLocal.argument);
+   writer->appendNode(BuildKey::OperatorId, LEN_OPERATOR_ID);
    writer->closeNode();
 
    // create  a dynamic array
