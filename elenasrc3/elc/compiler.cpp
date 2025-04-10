@@ -15360,9 +15360,10 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, ArgumentsInfo
       if (needToAlloc) {
          // NOTE : for allowing build tree tranformation, the target must be an operation argument
          writer->newNode(op, retVal.argument);
-         writer->appendNode(BuildKey::OperatorId, operatorId);
       }
       else writer->newNode(op, operatorId);
+
+      writer->appendNode(BuildKey::OperatorId, operatorId); // HOTFIX : please provide the operator id for all operation, to make sure all operations can be correctly saved
 
       switch (op) {
          case BuildKey::BinaryArraySOp:

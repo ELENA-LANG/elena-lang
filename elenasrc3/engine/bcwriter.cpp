@@ -2353,7 +2353,7 @@ inline bool intOpWithConsts(BuildNode lastNode)
          savingOp1.setKey(BuildKey::LoadingAccToIndex);
          savingOp1.setArgumentValue(0);
          intNode.setKey(BuildKey::IndexOp);
-         intNode.setArgumentValue(opNode.arg.value);
+         intNode.setArgumentValue(operatorId);
          savingOp2.setKey(BuildKey::SavingIndex);
          savingOp2.setArgumentValue(tempTarget);
          opNode.setKey(BuildKey::Idle);
@@ -2363,7 +2363,7 @@ inline bool intOpWithConsts(BuildNode lastNode)
       case SHL_OPERATOR_ID:
       case SHR_OPERATOR_ID:
          setChild(intNode, BuildKey::Source, sourceNode.arg.value);
-         setChild(intNode, BuildKey::OperatorId, tempTarget);
+         setChild(intNode, BuildKey::OperatorId, operatorId);
 
          intNode.setKey(BuildKey::IntConstOp);
          intNode.setArgumentValue(tempTarget);
