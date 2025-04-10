@@ -67,15 +67,24 @@ void Clipboard :: freeBuffer(HGLOBAL buffer)
    ::GlobalUnlock(buffer);
 }
 
-bool Clipboard :: copyToClipboard(DocumentView* docView)
+bool Clipboard :: copyToClipboard(DocumentView* docView, bool selectionMode)
 {
    if (begin()) {
       clear();
 
-      HGLOBAL buffer = createBuffer(docView->getSelectionLength());
-      wchar_t* text = allocateBuffer(buffer);
+      HGLOBAL buffer = nullptr;
+      if (selectionMode) {
+         buffer = createBuffer(docView->getSelectionLength());
+         wchar_t* text = allocateBuffer(buffer);
 
-      docView->copySelection(text);
+         docView->copySelection(text);
+      }
+      else {
+         buffer = createBuffer(docView->getCurrentLineLength() + 2);
+         wchar_t* text = allocateBuffer(buffer);
+
+         docView->copyCurrentLine(text);
+      }
 
       freeBuffer(buffer);
       copy(buffer);
@@ -1051,8 +1060,6 @@ void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
 
    ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
 
-   enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection, true);
-   enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection, true);
    enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable(), true);
 
    menu->show(_handle, p);
@@ -1357,8 +1364,6 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 
       bool isSelected = docInfo ? docInfo->hasSelection() : false;
 
-      enableMenuItemById(IDM_EDIT_COPY, isSelected, true);
-      enableMenuItemById(IDM_EDIT_CUT, isSelected, true);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_DELETE, isSelected);

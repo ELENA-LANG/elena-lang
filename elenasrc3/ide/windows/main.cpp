@@ -86,6 +86,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    IDEController     ideController(&outputProcess, &vmConsoleProcess, &debugProcess, &ideModel,
                         CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);
 
+   // NOTE : it must be initialized before factory / controller
+   IDEFactory::initPathSettings(&ideModel);
+
    ideModel.sourceViewModel.refreshSettings();
 
    PathString configPath(ideModel.projectModel.paths.appPath);

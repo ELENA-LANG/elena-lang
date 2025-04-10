@@ -317,4 +317,3 @@ void TabBar :: refresh()
 
    CustomTabBar::refresh();
 }
-

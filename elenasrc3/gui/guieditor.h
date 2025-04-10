@@ -36,7 +36,7 @@ namespace elena_lang
    class ClipboardBase
    {
    public:
-      virtual bool copyToClipboard(DocumentView* docView) = 0;
+      virtual bool copyToClipboard(DocumentView* docView, bool selectionMode) = 0;
       virtual void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) = 0;
    };
 

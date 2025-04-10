@@ -299,6 +299,7 @@ namespace elena_lang
       int getRowCount() const { return _text->getRowCount(); }
       int getMaxColumn() const { return _maxColumn; }
       disp_t getSelectionLength();
+      disp_t getCurrentLineLength();
 
       bool hasSelection() const { return (_selection != 0); }
       bool isReadOnly() { return status.readOnly; }
@@ -358,6 +359,7 @@ namespace elena_lang
       void moveToFrame(DocumentChangeStatus& changeStatus, int column, int row, bool selecting);
 
       void copySelection(text_c* text);
+      void copyCurrentLine(text_c* text);
       void copyText(text_c* text, disp_t length);
 
       void insertChar(DocumentChangeStatus& changeStatus, text_c ch)

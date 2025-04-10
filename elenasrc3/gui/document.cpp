@@ -942,10 +942,14 @@ void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
 {
    int rowCount = _text->getRowCount();
 
+   Point caret = _caret.getCaret(true);
+
    _caret.moveTo(0, _caret.row());
 
    _text->eraseLine(_caret, _caret.length());
    _text->eraseChar(_caret);
+
+   setCaret(caret.x, caret.y, false, changeStatus);
 
    changeStatus.textChanged = true;
    changeStatus.caretChanged = true;
@@ -1056,6 +1060,25 @@ void DocumentView :: copySelection(text_c* text)
    else {
       _text->copyTo(_caret, text, _selection);
    }
+}
+
+void DocumentView :: copyCurrentLine(text_c* text)
+{
+   auto lineCaret = _caret;
+   lineCaret.moveTo(0, _caret.row());
+
+   auto nextLineCaret = lineCaret;
+   if (nextLineCaret.moveToNextBOL()) {
+      _text->copyTo(lineCaret, text, nextLineCaret.position() - lineCaret.position());
+   }
+   else _text->copyTo(lineCaret, text, lineCaret.length());
+}
+
+disp_t DocumentView :: getCurrentLineLength()
+{
+   auto lineCaret = _caret;
+
+   return lineCaret.length();
 }
 
 void DocumentView :: undo(DocumentChangeStatus& changeStatus)

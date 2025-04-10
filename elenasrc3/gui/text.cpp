@@ -867,6 +867,8 @@ bool Text :: insertChar(TextBookmark& bookmark, text_c ch)
    return true;
 }
 
+
+
 bool Text :: insertNewLine(TextBookmark& bookmark)
 {
    validateBookmark(bookmark);

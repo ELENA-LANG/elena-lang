@@ -187,6 +187,8 @@ inline void canonicalize(PathString& path)
 
 // --- IDEFactory ---
 
+PathSettings IDEFactory::_pathSettings;
+
 IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel, 
    IDEController* controller,
    GUISettinngs   settings)
@@ -200,13 +202,6 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
    _model = ideModel;
    _controller = controller;
 
-   wchar_t appPath[MAX_PATH];
-   ::GetModuleFileName(NULL, appPath, MAX_PATH);
-   ::PathRemoveFileSpec(appPath);
-
-   _pathSettings.appPath.copy(appPath);
-
-   _model->projectModel.paths.appPath.copy(*_pathSettings.appPath);
    _model->projectModel.paths.compilerPath.copy(CLI_PATH);
    _model->projectModel.paths.vmTerminalPath.copy(ELT_CLI_PATH);
 
@@ -222,6 +217,17 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
 
    canonicalize(_model->projectModel.paths.librarySourceRoot);
    canonicalize(_model->projectModel.paths.libraryRoot);
+}
+
+void IDEFactory :: initPathSettings(IDEModel* ideModel)
+{
+   wchar_t appPath[MAX_PATH];
+   ::GetModuleFileName(NULL, appPath, MAX_PATH);
+   ::PathRemoveFileSpec(appPath);
+
+   _pathSettings.appPath.copy(appPath);
+
+   ideModel->projectModel.paths.appPath.copy(*_pathSettings.appPath);
 }
 
 void IDEFactory :: registerClasses()
