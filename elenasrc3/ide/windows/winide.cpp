@@ -1202,16 +1202,13 @@ void IDEWindow :: onLayoutChange()
       enableMenuItemById(IDM_EDIT_UNDO, false, true);
       enableMenuItemById(IDM_EDIT_REDO, false, true);
 
-      enableMenuItemById(IDM_EDIT_CUT, false, true);
-      enableMenuItemById(IDM_EDIT_COPY, false, true);
-      enableMenuItemById(IDM_EDIT_PASTE, false, true);
-
       enableMenuItemById(IDM_PROJECT_INCLUDE, false, false);
       enableMenuItemById(IDM_PROJECT_EXCLUDE, false, false);
    }
-   else {
-      enableMenuItemById(IDM_EDIT_PASTE, true, true);
-   }
+
+   enableMenuItemById(IDM_EDIT_CUT, !empty, true);
+   enableMenuItemById(IDM_EDIT_COPY, !empty, true);
+   enableMenuItemById(IDM_EDIT_PASTE, !empty, true);
 
    enableMenuItemById(IDM_EDIT_DELETE, !empty, false);
    enableMenuItemById(IDM_EDIT_COMMENT, !empty, false);

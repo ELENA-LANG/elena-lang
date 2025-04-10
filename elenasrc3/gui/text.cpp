@@ -1294,7 +1294,9 @@ bool TextHistory :: undo(Text* text, TextBookmark& caret)
 #endif
 
    _locking = true;
-   caret.moveOn(position - caret.position());
+
+   disp_t disp = (int)position - (int)caret.position();
+   caret.moveOn(disp);
    if (eraseMode) {
       // erase mode
       text->insertLine(caret, (text_t)line, length);
@@ -1333,7 +1335,8 @@ bool TextHistory :: redo(Text* text, TextBookmark& caret)
 #endif
 
    _locking = true;
-   caret.moveOn(position - caret.position());
+   disp_t disp = (int)position - (int)caret.position();
+   caret.moveOn(disp);
    if (eraseMode) {
       // erase mode
       text->eraseLine(caret, length);

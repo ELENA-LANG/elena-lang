@@ -845,14 +845,14 @@ void DocumentView :: insertNewLine(DocumentChangeStatus& changeStatus)
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
-void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, disp_t length)
+void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, size_t length)
 {
    int rowCount = _text->getRowCount();
 
    eraseSelection(changeStatus);
 
    _text->insertLine(_caret, text, length);
-   _caret.moveOn(length);
+   _caret.moveOn((disp_t)length);
    changeStatus.textChanged = true;
 
    setCaret(_caret.getCaret(), false, changeStatus);
@@ -974,7 +974,7 @@ void DocumentView :: duplicateLine(DocumentChangeStatus& changeStatus)
 
    _caret.moveTo(0, caret.y + 1);
    _text->insertNewLine(_caret);
-   _text->insertLine(_caret, buffer, length);
+   _text->insertLine(_caret, buffer, abs(length));
 
    freestr(buffer);
 
@@ -998,7 +998,7 @@ void DocumentView :: copyText(text_c* text, disp_t length)
 
 void DocumentView :: toLowercase(DocumentChangeStatus& changeStatus)
 {
-   disp_t selection = abs(_selection);
+   size_t selection = abs(_selection);
 
    if (selection > 0) {
       text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
@@ -1026,7 +1026,7 @@ void DocumentView :: toLowercase(DocumentChangeStatus& changeStatus)
 
 void DocumentView :: toUppercase(DocumentChangeStatus& changeStatus)
 {
-   disp_t selection = abs(_selection);
+   size_t selection = abs(_selection);
 
    if (selection > 0) {
       text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
