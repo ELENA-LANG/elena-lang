@@ -923,6 +923,15 @@ bool Text :: eraseLine(TextBookmark& bookmark, size_t length)
 
    erase(bookmark, length, true);
    bookmark._length = NOTFOUND_POS;
+
+   if (bookmark._offset >= (*bookmark._page).used) {
+      // HOTFIX : place the bookmark to the correct position
+      int col = bookmark._column;
+      int row = bookmark._row;
+
+      bookmark.moveToClosestRow(row);
+      bookmark.moveTo(col, row);
+   }
    //   bookmark.skipEmptyPages();
 
    _rowCount = retrieveRowCount();
