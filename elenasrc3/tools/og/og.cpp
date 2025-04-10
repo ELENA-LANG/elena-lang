@@ -236,7 +236,6 @@ BuildKeyPattern decodeBuildPattern(BuildKeyMap& dictionary, ScriptReader& reader
          pattern.argType = BuildKeyPatternType::Match;
          reader.read(token);
       }
-      else throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
    }
 
    return pattern;
@@ -260,7 +259,11 @@ void parseBuildCodeRule(ScriptReader& reader, ScriptToken& token, BuildKeyTrieBu
 
    reader.read(token);
    if (token.state == dfaInteger) {
-      position = trie.add(position, { BuildKey::Match, token.token.toInt() });
+      position = trie.add(position, { BuildKey::Match, BuildKeyPatternType::None, token.token.toInt() });
+
+      reader.read(token);
+      if(!token.compare(";"))
+         throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
    }
    else {
       // save end state
@@ -297,7 +300,7 @@ int parseBuildKeyRules(FileEncoding encoding, path_t path)
    }
 
    // add suffix links
-   trie.prepare(isMatchNode);
+   //trie.prepare(isMatchNode);
 
    // save the result
    PathString outputFile(path);

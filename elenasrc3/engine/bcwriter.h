@@ -96,6 +96,8 @@ namespace elena_lang
 
       class BuildTreeAnalyzer : public BuildTreeTransformerBase
       {
+         bool matchBuildKey(BuildPatterns* matched, BuildPatterns* followers, BuildNode current, BuildNode previous);
+
          bool matchTriePatterns(BuildNode node) override;
 
       public:

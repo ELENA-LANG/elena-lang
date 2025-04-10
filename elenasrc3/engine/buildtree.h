@@ -475,20 +475,6 @@ namespace elena_lang
 
          return true;
       }
-
-      BuildKeyPattern()
-         : key(BuildKey::None), argValue(0), argType(BuildKeyPatternType::None)
-      {
-         
-      }
-      BuildKeyPattern(BuildKey key)
-         : key(key), argValue(0), argType(BuildKeyPatternType::None)
-      {
-      }
-      BuildKeyPattern(BuildKey key, int argValue)
-         : key(key), argValue(argValue), argType(BuildKeyPatternType::None)
-      {
-      }
    };
 
    typedef MemoryTrieBuilder<BuildKeyPattern>            BuildCodeTrie;

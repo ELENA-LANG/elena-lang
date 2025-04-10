@@ -4010,6 +4010,31 @@ void ByteCodeWriter::BuildTreeTransformerBase :: proceed(BuildNode node)
 
 // --- ByteCodeWriter::BuildTreeAnalyzer ---
 
+bool ByteCodeWriter::BuildTreeAnalyzer :: matchBuildKey(BuildPatterns* matched, BuildPatterns* followers, BuildNode current, BuildNode previous)
+{
+   for (auto it = matched->start(); !it.eof(); ++it) {
+      auto pattern = *it;
+
+      for (auto child_it = pattern.Children(); !child_it.eof(); ++child_it) {
+         auto currentPattern = child_it.Node();
+         auto currentPatternValue = currentPattern.Value();
+
+         if (currentPatternValue.match(current)) {
+            int patternId = currentPatternValue.argValue;
+
+            if (currentPatternValue.key == BuildKey::Match && patternId) {
+               if (transformers[patternId](previous))
+                  return true;
+            }
+
+            followers->add(currentPattern);
+         }
+      }
+   }
+
+   return false;
+}
+
 bool ByteCodeWriter::BuildTreeAnalyzer :: matchTriePatterns(BuildNode node)
 {
    BuildPatterns matchedOnes;
@@ -4019,6 +4044,7 @@ bool ByteCodeWriter::BuildTreeAnalyzer :: matchTriePatterns(BuildNode node)
    BuildPatterns* followers = &nextOnes;
    bool           reversed = false;
 
+   BuildNode previous = {};
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
       if (isNested(current.key)) {
@@ -4036,23 +4062,8 @@ bool ByteCodeWriter::BuildTreeAnalyzer :: matchTriePatterns(BuildNode node)
       matched->add({ &_btPatterns.trie });
       followers->clear();
 
-      for (auto it = matched->start(); !it.eof(); ++it) {
-         auto pattern = *it;
-
-         for (auto child_it = pattern.Children(); !child_it.eof(); ++child_it) {
-            auto currentPattern = child_it.Node();
-            auto currentPatternValue = currentPattern.Value();
-
-            if (currentPatternValue.match(current)) {
-               int patternId = currentPatternValue.argValue;
-
-               if (currentPatternValue.key == BuildKey::Match && patternId && transformers[patternId](current))
-                  return true;
-
-               followers->add(currentPattern);
-            }
-         }
-      }
+      if (matchBuildKey(matched, followers, current, previous))
+         return true;
 
       if (reversed) {
          reversed = false;
@@ -4065,8 +4076,12 @@ bool ByteCodeWriter::BuildTreeAnalyzer :: matchTriePatterns(BuildNode node)
          followers = &matchedOnes;
       }
 
+      previous = current;
       current = current.nextNode();
    }
+
+   // check the remaining patterns
+   return matchBuildKey(matched, followers, current, previous);
 
    return false;
 }
