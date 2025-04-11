@@ -451,7 +451,7 @@ void CompilingProcess :: parseFile(path_t projectPath,
 {
    // save the path to the current source
    path_t sourceRelativePath = (*file_it).str();
-   if (!projectPath.empty())
+   if (!projectPath.empty() && sourceRelativePath.startsWith(projectPath))
       sourceRelativePath += projectPath.length() + 1;
 
    _presenter->printPathLine(ELC_PARSING_FILE, sourceRelativePath);

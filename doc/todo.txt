@@ -31,8 +31,8 @@ In development:
   - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
   - API - review / description
-  - fixing rosetta code samples (provide output path for every project)
-  - fixing example samples (provide output path for every project)  
+  - fixing rosetta code samples (provide base path for every project)
+  - fixing example samples (provide base path for every project)  
   --------------------------------------
   * support options in project map
   * specify correct output folder for single file projects
