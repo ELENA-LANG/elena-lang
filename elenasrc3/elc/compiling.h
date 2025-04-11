@@ -89,6 +89,7 @@ namespace elena_lang
 
       MemoryDump          _bcRules;
       MemoryDump          _btRules;
+      MemoryDump          _btXRules;
 
       bool                _verbose;
       bool                _traceMode;

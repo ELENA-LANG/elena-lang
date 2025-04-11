@@ -164,8 +164,11 @@ namespace elena_lang
       ThreadVarAssigning   = 0x0086,
       OpenThreadVar        = 0x0087,
       CloseThreadVar       = 0x0088,
+      LoadingLIndex        = 0x0089,
+      SavingLIndex         = 0x008A,
+      RealIntXOp           = 0x008B,
 
-      MaxOperationalKey    = 0x0088,
+      MaxOperationalKey    = 0x008B,
 
       Import               = 0x0090,
       DictionaryOp         = 0x0091,
@@ -425,6 +428,9 @@ namespace elena_lang
          map.add("dispatch_op", BuildKey::DispatchingOp);
          map.add("redirect_op", BuildKey::RedirectOp);
          map.add("operator_id", BuildKey::OperatorId);
+         map.add("load_long_index", BuildKey::LoadingLIndex);
+         map.add("save_long_index", BuildKey::SavingLIndex);
+         map.add("real_int_xop", BuildKey::RealIntXOp);
       }
    };
 
@@ -434,7 +440,7 @@ namespace elena_lang
 
    constexpr int BuildKeyNoArg = INT_MAX;
 
-   enum class BuildKeyPatternType
+   enum class BuildPatternType
    {
       None = 0,
       MatchArg,
@@ -442,12 +448,18 @@ namespace elena_lang
       Match
    };
 
-   // --- BuildKeyPattern ---
-   struct BuildKeyPattern
+   struct BuildPatternArg
    {
-      BuildKey             key;
-      BuildKeyPatternType  argType;
-      int                  argValue;
+      int arg1;
+      int arg2;
+   };
+
+   // --- BuildPattern ---
+   struct BuildPattern
+   {
+      BuildKey          key;
+      BuildPatternType  argType;
+      int               argValue;
 
       bool operator ==(BuildKey key) const
       {
@@ -459,36 +471,53 @@ namespace elena_lang
          return (this->key != key);
       }
 
-      bool operator ==(BuildKeyPattern pattern)
+      bool operator ==(BuildPattern pattern)
       {
          return (key == pattern.key && argType == pattern.argType && argValue == pattern.argValue);
       }
 
-      bool operator !=(BuildKeyPattern pattern)
+      bool operator !=(BuildPattern pattern)
       {
          return !(*this == pattern);
       }
 
-      bool match(BuildNode node)
+      bool match(BuildNode node, BuildPatternArg& args)
       {
          if (key != node.key)
             return key == BuildKey::Match;
 
-         if ((argType == BuildKeyPatternType::MatchArg && node.arg.value != argValue))
-            return false;
-
-         return true;
+         switch (argType) {
+            case BuildPatternType::Set:
+               if (argValue == 1) {
+                  args.arg1 = node.arg.value;
+               }
+               else args.arg2 = node.arg.value;
+               return true;
+            case BuildPatternType::Match:
+               return ((argValue == 1) ? args.arg1 : args.arg2) == node.arg.value;
+            case BuildPatternType::MatchArg:
+               return node.arg.value == argValue;
+            default:
+               return true;
+         }
       }
    };
 
-   typedef MemoryTrieBuilder<BuildKeyPattern>            BuildCodeTrie;
-   typedef MemoryTrieNode<BuildKeyPattern>               BuildCodeTrieNode;
-   typedef CachedList<BuildCodeTrieNode, 10>             BuildPatterns;
+   typedef MemoryTrieBuilder<BuildPattern>            BuildCodeTrie;
+   typedef MemoryTrieNode<BuildPattern>               BuildCodeTrieNode;
+
+   struct BuildPatternContext
+   {
+      BuildCodeTrieNode node;
+      BuildPatternArg   args;
+   };
+
+   typedef CachedList<BuildPatternContext, 10>        BuildPatterns;
 
    // --- BuildTreeTransformer ---
    struct BuildTreeTransformer
    {
-      typedef MemoryTrie<BuildKeyPattern>     MemoryBuildCodeTrie;
+      typedef MemoryTrie<BuildPattern>     MemoryBuildCodeTrie;
 
       MemoryBuildCodeTrie  trie;
       bool                 loaded;

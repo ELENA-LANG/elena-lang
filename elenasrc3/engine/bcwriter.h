@@ -84,7 +84,10 @@ namespace elena_lang
       protected:
          BuildTreeTransformer _btPatterns;
 
-         virtual bool matchTriePatterns(BuildNode node) = 0;
+         virtual bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) = 0;
+
+         bool matchBuildKey(BuildPatterns* matched, BuildPatterns* followers, BuildNode current, BuildNode previous);
+         bool matchTriePatterns(BuildNode node);
 
       public:
          void load(StreamReader& reader);
@@ -96,9 +99,7 @@ namespace elena_lang
 
       class BuildTreeAnalyzer : public BuildTreeTransformerBase
       {
-         bool matchBuildKey(BuildPatterns* matched, BuildPatterns* followers, BuildNode current, BuildNode previous);
-
-         bool matchTriePatterns(BuildNode node) override;
+         bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) override;
 
       public:
          BuildTreeAnalyzer() = default;
@@ -106,7 +107,7 @@ namespace elena_lang
 
       class BuildTreeOptimizer : public BuildTreeTransformerBase
       {
-         bool matchTriePatterns(BuildNode node) override;
+         bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) override;
 
       public:
          BuildTreeOptimizer() = default;
@@ -193,6 +194,7 @@ namespace elena_lang
 
    public:
       void loadBuildTreeRules(MemoryDump* dump);
+      void loadBuildTreeXRules(MemoryDump* dump);
       void loadByteCodeRules(MemoryDump* dump);
 
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, 

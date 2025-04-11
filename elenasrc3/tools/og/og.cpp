@@ -23,14 +23,14 @@ constexpr auto DEFAULT_ENCODING = FileEncoding::UTF8;
 #endif
 
 typedef MemoryTrieBuilder<ByteCodePattern>         ByteCodeTrieBuilder;
-typedef MemoryTrieBuilder<BuildKeyPattern>         BuildKeyTrieBuilder;
+typedef MemoryTrieBuilder<BuildPattern>         BuildTrieBuilder;
 
 bool isMatchNode(ByteCodePattern pattern)
 {
    return pattern.code == ByteCode::Match;
 }
 
-bool isMatchNode(BuildKeyPattern pattern)
+bool isMatchNode(BuildPattern pattern)
 {
    return pattern.key == BuildKey::Match;
 }
@@ -107,6 +107,51 @@ ByteCodePattern decodePattern(ScriptReader& reader, ScriptToken& token)
    return pattern;
 }
 
+BuildPattern decodeBuildPattern(BuildKeyMap& dictionary, ScriptReader& reader, ScriptToken& token)
+{
+   BuildPattern pattern = { dictionary.get(token.token.str()) };
+
+   reader.read(token);
+
+   if (pattern.key == BuildKey::None)
+      throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+
+   if (token.compare("=")) {
+      reader.read(token);
+
+      pattern.argValue = token.token.toInt();
+      pattern.argType = BuildPatternType::MatchArg;
+
+      reader.read(token);
+   }
+   else {
+      if (token.compare("$1")) {
+         pattern.argValue = 1;
+         pattern.argType = BuildPatternType::Set;
+
+         reader.read(token);
+      }
+      else if (token.compare("$2")) {
+         pattern.argValue = 2;
+         pattern.argType = BuildPatternType::Set;
+
+         reader.read(token);
+      }
+      else if (token.compare("#1")) {
+         pattern.argValue = 1;
+         pattern.argType = BuildPatternType::Match;
+         reader.read(token);
+      }
+      else if (token.compare("#2")) {
+         pattern.argValue = 2;
+         pattern.argType = BuildPatternType::Match;
+         reader.read(token);
+      }
+   }
+
+   return pattern;
+}
+
 pos_t readTransformPart(pos_t position, ScriptReader& reader, ScriptToken& token, ByteCodeTrieBuilder& trie)
 {
    if (!token.compare(";")) {
@@ -120,6 +165,25 @@ pos_t readTransformPart(pos_t position, ScriptReader& reader, ScriptToken& token
 
       // should be saved in reverse order, to simplify transform algorithm
       position = readTransformPart(position, reader, token, trie);
+
+      return trie.add(position, pattern);
+   }
+   return position;
+}
+
+pos_t readBuildTransformPart(pos_t position, ScriptReader& reader, ScriptToken& token, BuildTrieBuilder& trie, BuildKeyMap& dictionary)
+{
+   if (!token.compare(";")) {
+      BuildPattern pattern = decodeBuildPattern(dictionary, reader, token);
+
+      if (token.compare(",")) {
+         reader.read(token);
+      }
+      else if (!token.compare(";"))
+         throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
+
+      // should be saved in reverse order, to simplify transform algorithm
+      position = readBuildTransformPart(position, reader, token, trie, dictionary);
 
       return trie.add(position, pattern);
    }
@@ -196,55 +260,10 @@ int parseByteCodeRuleSet(FileEncoding encoding, path_t path)
    return 0;
 }
 
-BuildKeyPattern decodeBuildPattern(BuildKeyMap& dictionary, ScriptReader& reader, ScriptToken& token)
-{
-   BuildKeyPattern pattern = { dictionary.get(token.token.str()) };
-
-   reader.read(token);
-
-   if (pattern.key == BuildKey::None)
-      throw SyntaxError(OG_INVALID_OPCODE, token.lineInfo);
-
-   if (token.compare("=")) {
-      reader.read(token);
-
-      pattern.argValue = token.token.toInt();
-      pattern.argType = BuildKeyPatternType::MatchArg;
-
-      reader.read(token);
-   }
-   else {
-      if (token.compare("$1")) {
-         pattern.argValue = 1;
-         pattern.argType = BuildKeyPatternType::Set;
-
-         reader.read(token);
-      }
-      else if (token.compare("$2")) {
-         pattern.argValue = 2;
-         pattern.argType = BuildKeyPatternType::Set;
-
-         reader.read(token);
-      }
-      else if (token.compare("#1")) {
-         pattern.argValue = 1;
-         pattern.argType = BuildKeyPatternType::Match;
-         reader.read(token);
-      }
-      else if (token.compare("#2")) {
-         pattern.argValue = 2;
-         pattern.argType = BuildKeyPatternType::Match;
-         reader.read(token);
-      }
-   }
-
-   return pattern;
-}
-
-void parseBuildCodeRule(ScriptReader& reader, ScriptToken& token, BuildKeyTrieBuilder& trie, BuildKeyMap& dictionary)
+void parseBuildCodeRule(ScriptReader& reader, ScriptToken& token, BuildTrieBuilder& trie, BuildKeyMap& dictionary)
 {
    // save opcode pattern
-   BuildKeyPattern pattern = decodeBuildPattern(dictionary, reader, token);
+   BuildPattern pattern = decodeBuildPattern(dictionary, reader, token);
 
    pos_t position = trie.add(0, pattern);
 
@@ -259,7 +278,7 @@ void parseBuildCodeRule(ScriptReader& reader, ScriptToken& token, BuildKeyTrieBu
 
    reader.read(token);
    if (token.state == dfaInteger) {
-      position = trie.add(position, { BuildKey::Match, BuildKeyPatternType::None, token.token.toInt() });
+      position = trie.add(position, { BuildKey::Match, BuildPatternType::None, token.token.toInt() });
 
       reader.read(token);
       if(!token.compare(";"))
@@ -270,7 +289,7 @@ void parseBuildCodeRule(ScriptReader& reader, ScriptToken& token, BuildKeyTrieBu
       position = trie.add(position, { BuildKey::Match });
 
       // save replacement (should be saved in reverse order, to simplify transform algorithm)
-      //readTransformPart(position, reader, token, trie);
+      readBuildTransformPart(position, reader, token, trie, dictionary);
    }
 }
 
@@ -279,7 +298,7 @@ int parseBuildKeyRules(FileEncoding encoding, path_t path)
    BuildKeyMap dictionary({ BuildKey::None });
    BuildTree::loadBuildKeyMap(dictionary);
 
-   BuildKeyTrieBuilder trie({ });
+   BuildTrieBuilder trie({ });
 
    TextFileReader source(path.str(), encoding, false);
    if (!source.isOpen()) {

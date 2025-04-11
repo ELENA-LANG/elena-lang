@@ -57,8 +57,10 @@ move %~dp0..\dat\sg\syntax60.dat %~dp0\x86\bin\
 
 %~dp0\..\bin\og-cli %~dp0\..\dat\og\bc_rules60.txt
 %~dp0\..\bin\og-cli -s %~dp0\..\dat\og\bt_rules60.txt
+%~dp0\..\bin\og-cli -s %~dp0\..\dat\og\bt_xrules60.txt
 
 move %~dp0..\dat\og\bt_rules60.dat %~dp0\x86\bin\
+move %~dp0..\dat\og\bt_xrules60.dat %~dp0\x86\bin\
 move %~dp0..\dat\og\bc_rules60.dat %~dp0\x86\bin\
 
 md %~dp0\lib60

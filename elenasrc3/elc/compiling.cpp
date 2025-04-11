@@ -363,6 +363,12 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
       _btRules.load(btRuleReader, btRuleReader.length());
    }
 
+   PathString btXRulesPath(appPath, BT_XRULES_FILE);
+   FileReader btXRuleReader(*btXRulesPath, FileRBMode, FileEncoding::Raw, false);
+   if (btRuleReader.isOpen()) {
+      _btXRules.load(btXRuleReader, btXRuleReader.length());
+   }
+
    _verbose = false;
 }
 
@@ -520,6 +526,8 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    ByteCodeWriter bcWriter(&_libraryProvider, true);
    if (_btRules.length() > 0)
       bcWriter.loadBuildTreeRules(&_btRules);
+   if (_btXRules.length() > 0)
+      bcWriter.loadBuildTreeXRules(&_btXRules);
    if (_bcRules.length() > 0)
       bcWriter.loadByteCodeRules(&_bcRules);
 

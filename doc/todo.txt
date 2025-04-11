@@ -49,14 +49,6 @@ In development:
   - post how to build project / compile API / compile samples - Windows / Linux
   - optimization : pi - byte code
   --------------------------------------
-  * test the refactoring
-  * support bt-rules similar to bc-rules
-  * support rule : 
-
-local_address, saving_stack =0, local_address, saving_stack=1, real_int_op $1
-=>
-load_long_index, save_long_index $1, local_address, saving_stack, x_real_int_op;
-
   * review pi main program byte code
   --------------------------------------
 

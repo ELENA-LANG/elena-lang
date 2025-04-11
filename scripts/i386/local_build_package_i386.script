@@ -35,6 +35,16 @@ else
   exit 1
 fi
 
+../../bin/og-cli -s ../../dat/og/bt_xrules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 cp ../../dat/og/*.dat ../../bin
 cp ../../dat/sg/syntax60.dat ../../bin
 

@@ -26,6 +26,12 @@ if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 move dat\og\bt_rules60.dat bin
 
+bin\og64-cli -s dat\og\bt_xrules60.txt 
+@echo off 
+if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+@echo on
+move dat\og\bt_xrules60.dat bin
+
 @echo off 
 echo === Done ===
 @echo on

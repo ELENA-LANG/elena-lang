@@ -461,6 +461,16 @@ void savingNInStack(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SaveSI, node.arg.value);
 }
 
+void load_long_index(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::LLoadDP, node.arg.value);
+}
+
+void save_long_index(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::LSaveDP, node.arg.value);
+}
+
 void savingLInStack(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::LLoad);
@@ -606,16 +616,12 @@ void intLongOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void real_int_op(CommandTape& tape, BuildNode& node, TapeScope&)
+void real_int_xop(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
    int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
 
-   if (!isAssignOp(operatorId)) {
-      tape.write(ByteCode::CopyDPN, targetOffset, 8);
-      tape.write(ByteCode::XMovSISI, 0, 1);
-   }
    tape.write(ByteCode::SetDP, targetOffset);
 
    switch (operatorId) {
@@ -638,6 +644,20 @@ void real_int_op(CommandTape& tape, BuildNode& node, TapeScope&)
       default:
          throw InternalError(errFatalError);
    }
+}
+
+void real_int_op(CommandTape& tape, BuildNode& node, TapeScope& scope)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.arg.value;
+   int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
+
+   if (!isAssignOp(operatorId)) {
+      tape.write(ByteCode::CopyDPN, targetOffset, 8);
+      tape.write(ByteCode::XMovSISI, 0, 1);
+   }
+
+   real_int_xop(tape, node, scope);
 }
 
 void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -2173,7 +2193,7 @@ ByteCodeWriter::Saver commands[] =
    intRealOp, real_int_op, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
 
    uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssigning, threadVarBegin,
-   threadVarEnd
+   threadVarEnd, load_long_index, save_long_index, real_int_xop
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -4008,6 +4028,13 @@ void ByteCodeWriter :: loadBuildTreeRules(MemoryDump* dump)
    _btAnalyzer.load(reader);
 }
 
+void ByteCodeWriter :: loadBuildTreeXRules(MemoryDump* dump)
+{
+   MemoryReader reader(dump);
+
+   _btTransformer.load(reader);
+}
+
 void ByteCodeWriter :: loadByteCodeRules(MemoryDump* dump)
 {
    MemoryReader reader(dump);
@@ -4037,34 +4064,7 @@ void ByteCodeWriter::BuildTreeTransformerBase :: proceed(BuildNode node)
    }
 }
 
-// --- ByteCodeWriter::BuildTreeAnalyzer ---
-
-bool ByteCodeWriter::BuildTreeAnalyzer :: matchBuildKey(BuildPatterns* matched, BuildPatterns* followers, BuildNode current, BuildNode previous)
-{
-   for (auto it = matched->start(); !it.eof(); ++it) {
-      auto pattern = *it;
-
-      for (auto child_it = pattern.Children(); !child_it.eof(); ++child_it) {
-         auto currentPattern = child_it.Node();
-         auto currentPatternValue = currentPattern.Value();
-
-         if (currentPatternValue.match(current)) {
-            int patternId = currentPatternValue.argValue;
-
-            if (currentPatternValue.key == BuildKey::Match && patternId) {
-               if (transformers[patternId](previous))
-                  return true;
-            }
-
-            followers->add(currentPattern);
-         }
-      }
-   }
-
-   return false;
-}
-
-bool ByteCodeWriter::BuildTreeAnalyzer :: matchTriePatterns(BuildNode node)
+bool ByteCodeWriter::BuildTreeTransformerBase :: matchTriePatterns(BuildNode node)
 {
    BuildPatterns matchedOnes;
    BuildPatterns nextOnes;
@@ -4111,14 +4111,78 @@ bool ByteCodeWriter::BuildTreeAnalyzer :: matchTriePatterns(BuildNode node)
 
    // check the remaining patterns
    return matchBuildKey(matched, followers, current, previous);
+}
+
+bool ByteCodeWriter::BuildTreeTransformerBase :: matchBuildKey(BuildPatterns* matched, BuildPatterns* followers, BuildNode current, BuildNode previous)
+{
+   for (auto it = matched->start(); !it.eof(); ++it) {
+      BuildPatternArg args = (*it).args;
+      auto pattern = (*it).node;
+
+      for (auto child_it = pattern.Children(); !child_it.eof(); ++child_it) {
+         auto currentPattern = child_it.Node();
+         auto currentPatternValue = currentPattern.Value();
+
+         if (currentPatternValue.match(current, args)) {
+            if (currentPatternValue.key == BuildKey::Match) {
+               if (transform(currentPattern, previous, args))
+                  return true;
+            }
+
+            followers->add({ currentPattern, args });
+         }
+      }
+   }
+
+   return false;
+}
+
+// --- ByteCodeWriter::BuildTreeAnalyzer ---
+
+bool ByteCodeWriter::BuildTreeAnalyzer :: transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args)
+{
+   auto matchNodeValue = matchNode.Value();
+   int patternId = matchNodeValue.argValue;
+   if (matchNodeValue.key == BuildKey::Match && patternId) {
+      return transformers[patternId](current);
+   }
 
    return false;
 }
 
 // --- ByteCodeWriter::BuildTreeOptimizer ---
 
-bool ByteCodeWriter::BuildTreeOptimizer :: matchTriePatterns(BuildNode node)
+bool ByteCodeWriter::BuildTreeOptimizer :: transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args)
 {
+   BuildCodeTrieNode replacement = matchNode.FirstChild();
 
-   return false;
+   BuildPattern pattern = replacement.Value();
+   while (pattern.key != BuildKey::None) {
+      // skip meta commands (except label)
+      while (isNonOperational(current.key))
+         current = current.prevNode();
+
+      switch (pattern.argType) {
+         case BuildPatternType::Set:
+            if (pattern.argValue == 1) {
+               current.setArgumentValue(args.arg1);
+            }
+            else current.setArgumentValue(args.arg2);
+            break;
+         case BuildPatternType::MatchArg:
+            current.setArgumentValue(pattern.argValue);
+            break;
+         default:
+            break;
+      }
+
+      current.setKey(pattern.key);
+
+      current = current.prevNode();
+
+      replacement = replacement.FirstChild();
+      pattern = replacement.Value();
+   }
+
+   return true;
 }
