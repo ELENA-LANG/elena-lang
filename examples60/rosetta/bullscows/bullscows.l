@@ -40,7 +40,7 @@ class GameMaster
                var number := ch.toString().toInt();
                     
                // check range
-               ifnot (number > 0 && number < 10)
+               if:not (number > 0 && number < 10)
                   { InvalidArgumentException.raise() };
                     
                // check duplicates
