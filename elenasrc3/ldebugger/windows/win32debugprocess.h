@@ -111,6 +111,7 @@ namespace elena_lang
       bool                       _started;
       bool                       _trapped;
       bool                       _stepMode;
+      bool                       _newThread;
 
       DWORD                      _dwCurrentProcessId;
       DWORD                      _dwCurrentThreadId;
@@ -139,6 +140,14 @@ namespace elena_lang
       bool isTrapped()
       {
          return _trapped;
+      }
+
+      bool isNewThread()
+      {
+         bool retVal = _newThread;
+         _newThread = false;
+
+         return _newThread;
       }
 
       addr_t getBaseAddress()

@@ -31,9 +31,10 @@ In development:
   - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
   - API - review / description
-  - #658 :  debug elena program in VSCode : launch
+  - fixing rosetta code samples (provide output path for every project)
+  - fixing example samples (provide output path for every project)  
   --------------------------------------
-  * implement adapter - launch a program
+  * support options in project map
   --------------------------------------
 
   === Iteration 40 ===
@@ -56,7 +57,7 @@ In development:
   - optimization : pi (used classes byte code)
   - test all x86-64 examples
   tools:
-  - #658 :  debug elena program in VSCode
+  - #658 :  debug elena program in VSCode : loading source info, step over source
   port:
   - x86-64 : net, threading samples
   - chat sample

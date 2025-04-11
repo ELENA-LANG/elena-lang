@@ -335,6 +335,7 @@ Win32DebugProcess :: Win32DebugProcess(const char* endingMessage)
 void Win32DebugProcess :: reset()
 {
    _trapped = false;
+   _newThread = false;
    
    _threads.clear();
    _current = nullptr;
@@ -461,6 +462,8 @@ void Win32DebugProcess :: processEvent(DWORD timeout)
                _baseAddress = (addr_t)event.u.CreateProcessInfo.lpBaseOfImage;
                _breakpoints.setSoftwareBreakpoints(_current);
             }
+
+            _newThread = true;
 
             ::CloseHandle(event.u.CreateProcessInfo.hFile);
             break;

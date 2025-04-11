@@ -17,11 +17,7 @@ public class Program
 
 public program()
 {
-   var o := 2;
-
-   var s := o as:string;
-
-   Console.writeLine(s);
+   Console.write("Press any key").readChar()
 }
 
 //public program()
