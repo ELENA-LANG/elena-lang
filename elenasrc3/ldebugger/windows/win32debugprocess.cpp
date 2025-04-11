@@ -387,7 +387,7 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
    }
    else flags |= CREATE_NEW_CONSOLE;
 
-   pos_t trimPos = INVALID_POS;
+   size_t trimPos = NOTFOUND_POS;
    if (includeAppPath2Paths) {
       flags |= CREATE_UNICODE_ENVIRONMENT;
 
@@ -395,7 +395,7 @@ bool Win32DebugProcess :: startProcess(const wchar_t* exePath, const wchar_t* cm
 
       int dwRet = GetEnvironmentVariable(L"PATH", (LPWSTR)pathsEnv.str(), 4096);
       if (dwRet && !isIncluded(pathsEnv.str(), appPath)) {
-         trimPos = pathsEnv.length_pos();
+         trimPos = pathsEnv.length();
 
          if (!pathsEnv.empty() && pathsEnv[pathsEnv.length() - 1] != ';')
             pathsEnv.append(';');

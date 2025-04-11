@@ -9,7 +9,7 @@
 #define WIN32DEBUGADAPTER_H
 
 #include "idecommon.h"
-#include "windows/win32debugprocess.h"
+#include "ldebugger/windows/win32debugprocess.h"
 #include "windows/winevents.h"
 
 namespace elena_lang
@@ -58,8 +58,13 @@ namespace elena_lang
       ExceptionInfo* Exception() override
       {
          auto debugException = _debugProcess.getException();
-         _exception.address = debugException->address;
-         _exception.code = debugException->code;
+         if (debugException) {
+            _exception.address = debugException->address;
+            _exception.code = debugException->code;
+         }
+         else {
+            _exception.code = _exception.address = 0;
+         }
 
          return &_exception;
       }
