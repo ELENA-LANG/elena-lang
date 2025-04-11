@@ -499,7 +499,7 @@ void Project :: loadProfileList(ConfigFile& config)
 // --- ProjectCollection ---
 
 inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& modules, 
-   ProjectCollection::ProjectSpecs projectSpecs)
+   ProjectCollection::ProjectSpecs& projectSpecs)
 {
    DynamicString<char> pathStr;
    DynamicString<char> basePath;
