@@ -103,9 +103,6 @@ For Linux x86-64 (amd64):
 
     make all_amd64
 
-
-    make all_i386
-
 After this you can either install it globally:
 
     cd scripts/amd64
@@ -213,7 +210,7 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 
 ### 3. Rosetta code
 
-You may try to implement some of [Rosetta code tasks](http://rosettacode.org/wiki/Reports:Tasks_not_implemented_in_Elena) 
+You may look at or try to implement some of [Rosetta code tasks](https://rosettacode.org/wiki/Category:Elena) 
 which are not yet implemented
 
 ## Contact Us
@@ -223,19 +220,20 @@ Reach out with any questions you may have and we'll make sure to answer them as 
 | Platform  | Link        |
 |:----------|:------------|
 | 💬 Instant Message Chat | [![Discord Banner](https://discordapp.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
+| Forum | [Discussions](https://github.com/orgs/ELENA-LANG/discussions)
 | 📧 E-mail | elenaprolang@gmail.com
-| 🐤 Twitter | [@elena_language](https://twitter.com/elena_language)
+| 🐤 BlueSky | [@elena_language](https://bsky.app/profile/alexrakov.bsky.social)
 
 ## Resources
-- **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
+- **Nightly builds:** <https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml>
 - **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
 - **ELENA API 6.0** <https://elena-lang.github.io/api/index.html>
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
 - **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
 - **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
 - **Source code:** <https://github.com/ELENA-LANG/elena-lang>
-- **Twitter:** <https://twitter.com/elena_language>
-- **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
+- **BluSky:** <https://bsky.app/profile/alexrakov.bsky.social>
+- **Rosetta code:** <https://rosettacode.org/wiki/Category:Elena>
 
 ## License
 
