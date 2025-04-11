@@ -748,6 +748,7 @@ namespace elena_lang
    constexpr auto COLLECTION_CATEGORY           = "configuration/collection/*";
    constexpr auto COLLECTIONS_CATEGORY          = "configuration/collections/*";
 
+   constexpr auto PROFILE_ATTR                  = "profile";
    constexpr auto BASE_PATH_ATTR                = "base_path";
 
    constexpr auto TEMPLATE_CATEGORY             = "templates/*";

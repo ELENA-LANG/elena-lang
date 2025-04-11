@@ -34,9 +34,9 @@ In development:
   - fixing rosetta code samples (provide base path for every project)
   - fixing example samples (provide base path for every project)  
   --------------------------------------
-  * support options in project map
-  * specify correct output folder for single file projects
-  * run all examples (x86 / x86-64)
+  * support profile in project collection
+  * compile all examples (x86 / x86-64)
+  * compile all rosetta examples (x86 / x86-64)
   --------------------------------------
 
   === Iteration 40 ===

@@ -14,7 +14,8 @@
       <project>console\regex\regex.prj</project>
       <project base_path="console\replace">replace.l</project>
       <project>console\trans\translit.prj</project>
-      <project>console\sum\sum.prj</project>
+      <project profile="intsum">console\sum\sum.prj</project>
+      <project profile="realsum">console\sum\sum.prj</project>
       <project base_path="console\words">words.l</project>
     </collection>
     <collection name="db">

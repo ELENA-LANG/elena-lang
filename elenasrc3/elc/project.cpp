@@ -499,27 +499,33 @@ void Project :: loadProfileList(ConfigFile& config)
 // --- ProjectCollection ---
 
 inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& modules, 
-   XmlProjectBase::Paths& paths, XmlProjectBase::Paths& basePaths)
+   ProjectCollection::ProjectSpecs projectSpecs)
 {
    DynamicString<char> pathStr;
    DynamicString<char> basePath;
+   DynamicString<char> profile;
    for (auto it = modules.start(); !it.eof(); ++it) {
       ConfigFile::Node node = *it;
       node.readContent(pathStr);
 
+      ProjectCollection::ProjectSpec* spec = new ProjectCollection::ProjectSpec();
       if (node.readAttribute(BASE_PATH_ATTR, basePath)) {
          PathString fullPath(collectionPath, basePath.str());
-
-         basePaths.add((*fullPath).clone());
+         spec->basePath = (*fullPath).clone();
 
          fullPath.combine(pathStr.str());
-         paths.add((*fullPath).clone());
+         spec->path = (*fullPath).clone();
       }
       else {
          PathString fullPath(collectionPath, pathStr.str());
-         paths.add((*fullPath).clone());
-         basePaths.add(nullptr);
+         spec->path = (*fullPath).clone();
       }
+
+      if (node.readAttribute(PROFILE_ATTR, profile)) {
+         spec->profile = ustr_t(profile.str()).clone();
+      }
+
+      projectSpecs.add(spec);
    }
 }
 
@@ -532,7 +538,7 @@ bool ProjectCollection :: load(path_t path)
    if (config.load(path, _encoding)) {
       ConfigFile::Collection modules;
       if (config.select(COLLECTION_CATEGORY, modules)) {
-         loadModuleCollection(*collectionPath, modules, paths, basePaths);
+         loadModuleCollection(*collectionPath, modules, projectSpecs);
       }
       else {
          ConfigFile::Collection collections;
@@ -540,7 +546,7 @@ bool ProjectCollection :: load(path_t path)
             for (auto it = collections.start(); !it.eof(); ++it) {
                ConfigFile::Collection subModules;
                if (config.select(*it, "*", subModules)) {
-                  loadModuleCollection(*collectionPath, subModules, paths, basePaths);
+                  loadModuleCollection(*collectionPath, subModules, projectSpecs);
                }
             }
          }

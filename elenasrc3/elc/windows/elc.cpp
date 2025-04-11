@@ -147,7 +147,7 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
 }
 
 int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& errorProcessor, 
-   CompilingProcess& process, path_t basePath)
+   CompilingProcess& process, path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
    bool cleanMode = false;
 
@@ -158,7 +158,7 @@ int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& err
    PathString configPath(appPath, DEFAULT_CONFIG);
    project.loadConfig(*configPath, nullptr, false);
 
-   IdentifierString profile;
+   IdentifierString profile(defaultProfile);
    for (int i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
          handleOption(argv[i], profile, project, process,
@@ -224,24 +224,24 @@ int compileProjectCollection(int argc, wchar_t** argv, path_t path, path_t appPa
       return ERROR_RET_CODE;
    }
 
-   for (auto it = collection.paths.start(), base_it = collection.basePaths.start(); !it.eof(); ++it) {
+   for (auto it = collection.projectSpecs.start(); !it.eof(); ++it) {
+      auto spec = *it;
+
       size_t destLen = FILENAME_MAX;
       wchar_t projectPath[FILENAME_MAX];
-      StrConvertor::copy(projectPath, (*it).str(), (*it).length(), destLen);
+      StrConvertor::copy(projectPath, spec->path.str(), spec->path.length(), destLen);
       projectPath[destLen] = 0;
 
       argv[argc - 1] = projectPath;
       presenter->printPath(ELC_COMPILING_PROJECT, projectPath);
 
-      int result = compileProject(argc, argv, appPath, errorProcessor, process, *base_it);
+      int result = compileProject(argc, argv, appPath, errorProcessor, process, spec->basePath, spec->profile);
       if (result == ERROR_RET_CODE) {
          return ERROR_RET_CODE;
       }
       else if (result == WARNING_RET_CODE) {
          retVal = WARNING_RET_CODE;
       }
-
-      ++base_it;
    }
 
    return retVal;
@@ -280,7 +280,7 @@ int main()
          retVal = compileProjectCollection(argc, argv, argv[argc - 1],
             *appPath, errorProcessor, process);
       }
-      else retVal = compileProject(argc, argv, *appPath, errorProcessor, process, nullptr);
+      else retVal = compileProject(argc, argv, *appPath, errorProcessor, process);
 
 #ifdef TIME_RECORDING
       finish = clock();

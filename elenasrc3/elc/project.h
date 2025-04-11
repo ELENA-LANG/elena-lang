@@ -122,13 +122,34 @@ namespace elena_lang
       FileEncoding            _encoding;
 
    public:
-      XmlProjectBase::Paths   paths;
-      XmlProjectBase::Paths   basePaths;
+      struct ProjectSpec
+      {
+         path_t path;
+         path_t basePath;
+         ustr_t profile;
+
+         ProjectSpec()
+            : path(nullptr), basePath(nullptr), profile(nullptr)
+         {
+
+         }
+         virtual ~ProjectSpec()
+         {
+            freepath(path);
+            freepath(path);
+            freeUStr(profile);
+         }
+
+      };
+
+      typedef List<ProjectSpec*, freeobj>    ProjectSpecs;
+
+      ProjectSpecs  projectSpecs;
 
       bool load(path_t path);
 
       ProjectCollection()
-         : paths(nullptr), basePaths(nullptr)
+         : projectSpecs(nullptr)
       {
          _encoding = FileEncoding::UTF8;
       }
