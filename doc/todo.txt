@@ -35,6 +35,8 @@ In development:
   - fixing example samples (provide output path for every project)  
   --------------------------------------
   * support options in project map
+  * specify correct output folder for single file projects
+  * run all examples (x86 / x86-64)
   --------------------------------------
 
   === Iteration 40 ===
@@ -57,7 +59,7 @@ In development:
   - optimization : pi (used classes byte code)
   - test all x86-64 examples
   tools:
-  - #658 :  debug elena program in VSCode : loading source info, step over source
+  - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   port:
   - x86-64 : net, threading samples
   - chat sample

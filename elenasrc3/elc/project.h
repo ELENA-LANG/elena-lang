@@ -123,11 +123,12 @@ namespace elena_lang
 
    public:
       XmlProjectBase::Paths   paths;
+      XmlProjectBase::Paths   basePaths;
 
       bool load(path_t path);
 
       ProjectCollection()
-         : paths(nullptr)
+         : paths(nullptr), basePaths(nullptr)
       {
          _encoding = FileEncoding::UTF8;
       }

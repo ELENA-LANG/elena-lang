@@ -147,7 +147,7 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
 }
 
 int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& errorProcessor, 
-   CompilingProcess& process)
+   CompilingProcess& process, path_t basePath)
 {
    bool cleanMode = false;
 
@@ -193,6 +193,9 @@ int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& err
       }
    }
 
+   if (!basePath.empty())
+      project.setBasePath(basePath);
+
    if (cleanMode) {
       return process.clean(project);
    }
@@ -221,7 +224,7 @@ int compileProjectCollection(int argc, wchar_t** argv, path_t path, path_t appPa
       return ERROR_RET_CODE;
    }
 
-   for (auto it = collection.paths.start(); !it.eof(); ++it) {
+   for (auto it = collection.paths.start(), base_it = collection.basePaths.start(); !it.eof(); ++it) {
       size_t destLen = FILENAME_MAX;
       wchar_t projectPath[FILENAME_MAX];
       StrConvertor::copy(projectPath, (*it).str(), (*it).length(), destLen);
@@ -230,13 +233,15 @@ int compileProjectCollection(int argc, wchar_t** argv, path_t path, path_t appPa
       argv[argc - 1] = projectPath;
       presenter->printPath(ELC_COMPILING_PROJECT, projectPath);
 
-      int result = compileProject(argc, argv, appPath, errorProcessor, process);
+      int result = compileProject(argc, argv, appPath, errorProcessor, process, *base_it);
       if (result == ERROR_RET_CODE) {
          return ERROR_RET_CODE;
       }
       else if (result == WARNING_RET_CODE) {
          retVal = WARNING_RET_CODE;
       }
+
+      ++base_it;
    }
 
    return retVal;
@@ -275,7 +280,7 @@ int main()
          retVal = compileProjectCollection(argc, argv, argv[argc - 1],
             *appPath, errorProcessor, process);
       }
-      else retVal = compileProject(argc, argv, *appPath, errorProcessor, process);
+      else retVal = compileProject(argc, argv, *appPath, errorProcessor, process, nullptr);
 
 #ifdef TIME_RECORDING
       finish = clock();
