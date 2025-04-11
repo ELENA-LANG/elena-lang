@@ -10,7 +10,8 @@
 
 #include <windows.h>
 
-#include "ldbg_common.h"
+#include "common/common.h"
+#include "ldebugger/ldbg_common.h"
 
 namespace elena_lang
 {

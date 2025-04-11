@@ -8,11 +8,7 @@ In development:
   === Iteration 39 (18.4) ===
   --------------------------------------
   dev: 
-      - MTA support for Linux  
-      - #496
-      - #622
-      - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
-      - unit tests for try-catch / try-catch-finally / try-finally      
+      - MTA support for Linux        
       - upndown (connector - interaction)
       - support :sizeof
   gen:
@@ -21,45 +17,35 @@ In development:
       - ide :syntax highlighting : floating point numbers
       - ide : auto indent
   maint:
-      - review simple sample : too many stack is allocated
-      - optimization : pi - byte code
-      - exception handling in rosetta code sample http (when it is compiled as STA - warn)
-      - github actions : `set-output` command is deprecated 
-      - test all x86-64 examples
-      - unit tests : bt optimization 
-      - arrange action for i386 / amd64 linux release  
-      - refactoring : move amd64 / x86 specific code from general elf linker files
+      - github actions : `set-output` command is deprecated       
   api:
-      - implement ExtensionMessage.equal
       - api refactoring : main program entry to be called - Program
   port:      
-      - x86-64 : net, threading samples
       - rosetta code : moving to 6.6 (test, use Console)
   tools:
       - vs #2 : elena.tmLanguage.json  
-      - #658 :  debug elena program in VSCode
   samples:
       - rosetta code : Comma quibbling, Program termination, Parallel calculations
-  prom: bi-posting weekly
   --------------------------------------
+  - arrange action for i386 / amd64 linux release  
   - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
   - API - review / description
   - #658 :  debug elena program in VSCode : launch
-  - post how to build project / compile API / compile samples - Windows / Linux
-  - optimization : pi - byte code
   --------------------------------------
-  * review pi main program byte code
+  * implement adapter - launch a program
   --------------------------------------
 
   === Iteration 40 ===
   --------------------------------------
   dev: 
-  - #620
+  - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
+  - #620 : backlog
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
   - MTA support for Linux (fix simple program - access to TLS)
   - support fladd, flsub, fldiv, flmul (throu special prefix??)
   - conditional compiling
+  - #622 : api backlog
   gen:
   ide:
   - #184 : linux -  open project, new project, save project, save all, close project ...
@@ -68,9 +54,14 @@ In development:
   maint:
   - remove old scripts from build folder
   - optimization : pi (used classes byte code)
+  - test all x86-64 examples
+  tools:
+  - #658 :  debug elena program in VSCode
   port:
-      - chat sample
-  prom:
+  - x86-64 : net, threading samples
+  - chat sample
+  prom: 
+  - bi-posting weekly
   --------------------------------------
   --------------------------------------
   --------------------------------------
@@ -82,7 +73,7 @@ In development:
   dev: 
   gen:
   maint:
-      - review pi performance (must < 6)
+      - review pi performance (must < 6) : realOp.power[3] byte code
   port:
   prom:
   --------------------------------------
