@@ -202,7 +202,7 @@ Please take a look at our [Getting started Wiki](https://github.com/ELENA-LANG/e
 
 If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new/choose)!
 
-[Join](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3A%22Design+Idea%22) design discussions or [take part](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3ADiscussion) in general talks.
+[Join](https://github.com/orgs/ELENA-LANG/discussions/categories/ideas) design discussions or [take part](https://github.com/orgs/ELENA-LANG/discussions/categories/general) in general talks.
 
 ### 2. Implement "up for grab" issues
 
