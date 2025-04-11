@@ -61,12 +61,11 @@ namespace elena_lang
          if (debugException) {
             _exception.address = debugException->address;
             _exception.code = debugException->code;
-         }
-         else {
-            _exception.code = _exception.address = 0;
+
+            return &_exception;
          }
 
-         return &_exception;
+         return nullptr;
       }
 
       bool isStarted() override
