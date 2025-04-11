@@ -112,10 +112,10 @@ singleton operatorState
    eval(ch)
    {
       ch =>
-         $40 {      // (
+         $40 : {      // (
             ^ weak self.newBracket().gotoStarting()  
          }
-         ! {
+         ! : {
             ^ weak self.newToken().append(ch).gotoToken()
          }
    }
@@ -126,22 +126,22 @@ singleton tokenState
    eval(ch)
    {
       ch =>
-         $41 {      // )
+         $41 : {      // )
             ^ weak self.closeBracket().gotoToken()
          }
-         $42 {      // *
+         $42 : {      // *
             ^ weak self.newProduct().gotoOperator()
          }
-         $43 {      // +
+         $43 : {      // +
             ^ weak self.newSummary().gotoOperator()
          }
-         $45 {      // -
+         $45 : {      // -
             ^ weak self.newDifference().gotoOperator()
          }
-         $47 {      // /
+         $47 : {      // /
             ^ weak self.newFraction().gotoOperator()
          }
-         ! {
+         ! : {
             ^ weak self.append(ch)
          }
    }
@@ -152,13 +152,13 @@ singleton startState
    eval(ch)
    {
       ch =>
-         $40 {      // (
+         $40 : {      // (
             ^ weak self.newBracket().gotoStarting()
          }
-         $45 { // -
+         $45 : { // -
             ^ weak self.newToken().append("0").newDifference().gotoOperator()
          }
-         ! {
+         ! : {
             ^ weak self.newToken().append(ch).gotoToken()
          }
    }

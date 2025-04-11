@@ -33,7 +33,6 @@ In development:
   - API - review / description
   - #658 :  debug elena program in VSCode : launch
   --------------------------------------
-  * ide : failing
   * implement adapter - launch a program
   --------------------------------------
 
