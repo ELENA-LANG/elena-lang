@@ -145,7 +145,8 @@ namespace elena_lang
          _forwards.add(f.clone());
       }
 
-      void greeting();
+      static void greeting(PresenterBase* presenter);
+
       int build(Project& project, 
          LinkerBase& linker, 
          pos_t defaultStackAlignment, 

@@ -34,7 +34,7 @@ In development:
   - fixing rosetta code samples (provide base path for every project)
   - fixing example samples (provide base path for every project)  
   --------------------------------------
-  * support profile in project collection
+  * compile helloworld xforms example
   * compile all examples (x86 / x86-64)
   * compile all rosetta examples (x86 / x86-64)
   --------------------------------------

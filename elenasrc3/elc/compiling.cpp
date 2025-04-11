@@ -857,10 +857,10 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    freeobj(addressMapper);
 }
 
-void CompilingProcess :: greeting()
+void CompilingProcess :: greeting(PresenterBase* presenter)
 {
    // Greetings
-   _presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
+   presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
 }
 
 void CompilingProcess :: cleanUp(ProjectBase& project)

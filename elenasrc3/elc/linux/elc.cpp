@@ -185,10 +185,14 @@ void handleOption(char* arg, IdentifierString& profile, Project& project, Compil
    }
 }
 
-int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
-   CompilingProcess& process)
+int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor)
 {
    bool cleanMode = false;
+
+   JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
+   CompilingProcess process(dataPath, nullptr, "<moduleProlog>", "<prolog>", "<epilog>",
+      &Presenter::getInstance(), &errorProcessor,
+      VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
    Project          project(dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
    LinuxLinker      linker(&errorProcessor, &LinuxImageFormatter::getInstance(&project));
@@ -253,7 +257,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
 }
 
 int compileProjectCollection(int argc, char** argv, path_t path, path_t dataPath,
-   ErrorProcessor& errorProcessor, CompilingProcess& process)
+   ErrorProcessor& errorProcessor)
 {
    Presenter* presenter = &Presenter::getInstance();
 
@@ -266,7 +270,9 @@ int compileProjectCollection(int argc, char** argv, path_t path, path_t dataPath
       return ERROR_RET_CODE;
    }
 
-   for (auto it = collection.paths.start(); !it.eof(); ++it) {
+   for (auto it = collection.projectSpecs.start(); !it.eof(); ++it) {
+      auto spec = *it;
+
       size_t destLen = FILENAME_MAX;
       char projectPath[FILENAME_MAX];
       StrConvertor::copy(projectPath, (*it).str(), (*it).length(), destLen);
@@ -275,7 +281,7 @@ int compileProjectCollection(int argc, char** argv, path_t path, path_t dataPath
       argv[argc - 1] = projectPath;
       presenter->printPath(ELC_COMPILING_PROJECT, projectPath);
 
-      int result = compileProject(argc, argv, dataPath, errorProcessor, process);
+      int result = compileProject(argc, argv, dataPath, errorProcessor, spec->basePath, spec->profile);
       if (result == ERROR_RET_CODE) {
          return ERROR_RET_CODE;
       }
@@ -295,13 +301,9 @@ int main(int argc, char* argv[])
    {
       PathString dataPath(PathHelper::retrievePath(dataFileList, 3, DATA_PATH));
 
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
-      CompilingProcess process(*dataPath, nullptr, "<moduleProlog>", "<prolog>", "<epilog>",
-         &Presenter::getInstance(), &errorProcessor,
-         VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
-      process.greeting();
+      CompilingProcess::greeting(&Presenter::getInstance());
 
       // Reading command-line arguments...
       if (argc < 2) {
@@ -310,9 +312,9 @@ int main(int argc, char* argv[])
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
          return compileProjectCollection(argc, argv, argv[argc - 1],
-            *dataPath, errorProcessor, process);
+            *dataPath, errorProcessor);
       }
-      else return compileProject(argc, argv, *dataPath, errorProcessor, process);
+      else return compileProject(argc, argv, *dataPath, errorProcessor);
    }
    catch (CLIException)
    {
