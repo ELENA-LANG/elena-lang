@@ -451,8 +451,12 @@ void CompilingProcess :: parseFile(path_t projectPath,
 {
    // save the path to the current source
    path_t sourceRelativePath = (*file_it).str();
-   if (!projectPath.empty() && sourceRelativePath.startsWith(projectPath))
+   if (!projectPath.empty()) {
+      if (!sourceRelativePath.startsWith(projectPath))
+         _errorProcessor->raisePathError(errInvalidFile, sourceRelativePath);
+
       sourceRelativePath += projectPath.length() + 1;
+   }      
 
    _presenter->printPathLine(ELC_PARSING_FILE, sourceRelativePath);
 

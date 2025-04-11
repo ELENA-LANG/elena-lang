@@ -512,7 +512,7 @@ inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& 
 
          basePaths.add((*fullPath).clone());
 
-         fullPath.copy(pathStr.str());
+         fullPath.combine(pathStr.str());
          paths.add((*fullPath).clone());
       }
       else {
