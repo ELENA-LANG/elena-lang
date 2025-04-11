@@ -12,7 +12,7 @@
       <project base_path="console\pi2">pi2.l</project>
       <project base_path="console\random">random.l</project>
       <project>console\regex\regex.prj</project>
-      <project base_path="console\replace">console\replace\replace.l</project>
+      <project base_path="console\replace">replace.l</project>
       <project>console\trans\translit.prj</project>
       <project>console\sum\sum.prj</project>
       <project base_path="console\words">words.l</project>
