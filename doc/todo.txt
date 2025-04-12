@@ -16,11 +16,8 @@ In development:
   - fixing rosetta code samples (provide base path for every project)
   - fixing example samples (provide base path for every project)  
   --------------------------------------
-  * fix system_test64
-  * compile calc example
-  * compile all examples (x86 / x86-64)
-  * compile all rosetta examples (x86 / x86-64)
   * compile linux all examples (x86)
+  * compile all rosetta examples (x86 / x86-64)
   * compile linux rosetta all examples (x86)
   --------------------------------------
 

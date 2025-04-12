@@ -185,7 +185,8 @@ void handleOption(char* arg, IdentifierString& profile, Project& project, Compil
    }
 }
 
-int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor)
+int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
+   path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
    bool cleanMode = false;
 
@@ -275,7 +276,7 @@ int compileProjectCollection(int argc, char** argv, path_t path, path_t dataPath
 
       size_t destLen = FILENAME_MAX;
       char projectPath[FILENAME_MAX];
-      StrConvertor::copy(projectPath, (*it).str(), (*it).length(), destLen);
+      StrConvertor::copy(projectPath, spec->path.str(), spec->path.length(), destLen);
       projectPath[destLen] = 0;
 
       argv[argc - 1] = projectPath;
