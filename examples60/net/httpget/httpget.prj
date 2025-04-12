@@ -1,5 +1,8 @@
 <configuration>
     <profile key="default">
+      <project>
+        <executable>httpget</executable>
+      </project>
       <files>
         <module>
             <file>httpget.l</file>
@@ -7,6 +10,9 @@
       </files>
     </profile>
     <profile key="ssl">
+      <project>
+        <executable>httpsget</executable>
+      </project>
       <files>
         <module>
             <file>httpsget.l</file>
@@ -14,7 +20,6 @@
       </files>
     </profile>
     <project>
-        <executable>httpget</executable>
         <options></options>
         <template>mt_console</template>
         <namespace>httpget</namespace>

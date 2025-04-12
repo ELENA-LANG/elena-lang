@@ -32,7 +32,8 @@
       <project>gui\helloworld\xforms_hellowindow.prj</project>
     </collection>
     <collection name="net">
-      <project>net\httpget\httpget.prj</project>
+      <project profile="default">net\httpget\httpget.prj</project>
+      <project profile="ssl">net\httpget\httpget.prj</project>
     </collection>
     <collection name="scripts">
       <project>scripts\calc\calc.prj</project>

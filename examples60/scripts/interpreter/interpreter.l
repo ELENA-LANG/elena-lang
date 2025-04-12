@@ -360,19 +360,19 @@ public program()
    string path := program_arguments[1];
 
    solution =>
-      0 {
+      0 : {
          solution0()
       }
-      1 {
+      1 : {
          solution1()
       }
-      2 {
+      2 : {
          solution2()
       }
-      3 {
+      3 : {
          solution3(path)
       }
-      ! {
+      ! : {
          solution4(path)
       };
 }
