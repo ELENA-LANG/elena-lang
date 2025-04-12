@@ -62,7 +62,7 @@ sealed class Model
  
     constructor load(string stateString, int maxX, int maxY)
     {
-        var strings := stateString.splitBy(newLineConstant).selectBy::(s => s.toArray()).toArray();
+        var strings := stateString.splitBy(NewLineConstant).selectBy::(s => s.toArray()).toArray();
  
         theSpace := IntMatrixSpace.allocate(maxX, maxY, RuleSet
         {
