@@ -435,6 +435,8 @@ void CompilingProcess :: parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWri
       parser.parse(path, derivationTree);
 
       syntaxWriter->saveTree(derivationTree);
+
+      parser.clearStack();
    }
    catch (ParserError& e)
    {

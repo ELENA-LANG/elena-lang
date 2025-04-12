@@ -40,7 +40,7 @@
       <project>scripts\js\jsinterpreter.prj</project>
       <project>scripts\ls\lsinterpreter.prj</project>
     </collection>
-    <collection name="scripts">
+    <collection name="threads">
       <project>scripts\async\asyncsamples.prj</project>
       <project>scripts\tasks\tasksamples.prj</project>
       <project>scripts\threadpool\threadpoolsamples.prj</project>

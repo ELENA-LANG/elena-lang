@@ -136,7 +136,7 @@ namespace elena_lang
          virtual ~ProjectSpec()
          {
             freepath(path);
-            freepath(path);
+            freepath(basePath);
             freeUStr(profile);
          }
 

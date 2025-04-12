@@ -9,7 +9,7 @@
 #ifndef RTCOMMON_H
 #define RTCOMMON_H
 
-#define ELENASM_REVISION_NUMBER        0x0015
+#define ELENASM_REVISION_NUMBER        0x0016
 
 namespace elena_lang
 {

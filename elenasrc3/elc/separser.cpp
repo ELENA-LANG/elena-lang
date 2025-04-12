@@ -50,6 +50,7 @@ ScriptParser :: ScriptParser()
    _InterpretFile = (void* (__cdecl*)(const char*, int, bool))_library->loadFunction("InterpretFileSMLA");
    _GetStatus = (size_t(__cdecl*)(char*, size_t))_library->loadFunction("GetStatusSMLA");
    _Release = (void(__cdecl*)(void*))_library->loadFunction("ReleaseSMLA");
+   _ClearStack = (void(__cdecl*)(void*))_library->loadFunction("ClearStackSMLA");
 
 #else
 
@@ -59,6 +60,7 @@ ScriptParser :: ScriptParser()
    *(void **)(&_InterpretFile) = _library->loadFunction("InterpretFileSMLA");
    *(void **)(&_GetStatus) = _library->loadFunction("GetStatusSMLA");
    *(void **)(&_Release) = _library->loadFunction("ReleaseSMLA");
+   *(void**)(&_ClearStack) = _library->loadFunction("ClearStackSMLA");
 
 #endif
 }
@@ -122,4 +124,9 @@ void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
 
       _Release(tape);
    }
+}
+
+void ScriptParser :: clearStack()
+{
+   _ClearStack();
 }
