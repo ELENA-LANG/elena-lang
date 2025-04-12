@@ -3,5 +3,6 @@
     <project>system/system.linux.prj</project>
     <project>extensions/extensions.linux.prj</project>
     <project>ltests/ltests.linux.prj</project>
+    <project>algorithms\algorithms.prj</project>
   </collection>
 </configuration>
