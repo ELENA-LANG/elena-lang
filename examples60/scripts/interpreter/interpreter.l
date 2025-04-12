@@ -115,7 +115,7 @@ class TapeAssembler
                         new Message("add[2]"),
                         Expression.MessageCall(                                    
                             new Message("toInt[2]"),                           
-                            Expression.Constant(intConvertExt),
+                            Expression.Constant(IntConvertExt),
                             Expression.MessageCall(
                                 new Message("at[2]"),
                                 Expression.Variable("tape"),
@@ -142,7 +142,7 @@ class TapeAssembler
                         new Message("subtract[2]"),
                         Expression.MessageCall(                                    
                             new Message("toInt[2]"),                           
-                            Expression.Constant(intConvertExt),
+                            Expression.Constant(IntConvertExt),
                             Expression.MessageCall(
                                 new Message("at[2]"),
                                 Expression.Variable("tape"),
