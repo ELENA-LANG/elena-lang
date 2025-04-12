@@ -14,7 +14,6 @@ In development:
   - ide :  Now it's the right click context menu that behaves weird. Instead of opening on where the mouse cursor currently is, it's opening somewhere else.
   - fixing rosetta code samples (provide base path for every project)
   --------------------------------------
-  * compile all rosetta examples (x86 / x86-64)
   * compile linux rosetta all examples (x86)
   --------------------------------------
 
