@@ -33,7 +33,7 @@ extension mathOp
         
         while (n != 0)
         {
-            ifnot (n.isPrime())
+            if:not (n.isPrime())
                 { ^ false };
             
             n := n / 10
@@ -52,7 +52,7 @@ extension mathOp
             
         while (n != 0)
         {
-            ifnot (n.isPrime())
+            if:not (n.isPrime())
                 { ^ false };
 
             tens := tens / 10;
