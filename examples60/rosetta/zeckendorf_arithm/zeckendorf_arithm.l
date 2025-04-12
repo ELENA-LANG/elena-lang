@@ -50,7 +50,7 @@ sealed struct ZeckendorfNumber
                 0 { ^ self }
                 1 { ^ self }
                 2 {
-                    ifnot ((dVal $shr ((i + 1) * 2)).allMask(1))
+                    if:not ((dVal $shr ((i + 1) * 2)).allMask(1))
                     {
                         ^ self
                     };
@@ -81,7 +81,7 @@ sealed struct ZeckendorfNumber
     {
         if (pos == 0) { ^ self.inc() };
         
-        ifnot((dVal $shr pos).allMask(1))
+        if:not((dVal $shr pos).allMask(1))
         {
             dVal += (1 $shl pos);
             self.a(pos / 2);

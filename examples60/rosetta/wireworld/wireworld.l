@@ -75,10 +75,10 @@ sealed class Model
                     if (y < l.Length)
                     {
                         (l[y]) =>
-                            conductorLabel { retVal := conductor }
-                            headLabel      { retVal := electronHead }
-                            tailLabel      { retVal := electronTail }
-                            emptyLabel     { retVal := empty }
+                            conductorLabel : { retVal := conductor }
+                            headLabel      : { retVal := electronHead }
+                            tailLabel      : { retVal := electronTail }
+                            emptyLabel     : { retVal := empty }
                     }
                     else
                     {

@@ -50,7 +50,7 @@ extension zhangsuenOp : Matrix<CharValue>
         if(self.numTransitions(r,c) != 1)
             { ^ false };
  
-        ifnot (self.atLeastOneIsWhite(r,c,firstStep.iif(0,1)))
+        if:not (self.atLeastOneIsWhite(r,c,firstStep.iif(0,1)))
             { ^ false };
  
         toWhite.append(new { x = c; y = r; });
