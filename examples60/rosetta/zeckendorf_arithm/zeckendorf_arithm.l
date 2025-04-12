@@ -21,7 +21,7 @@ sealed struct ZeckendorfNumber
         
         while (i >= 0)
         {
-            dVal += ((intConvertor.convert(s[i]) - 48) * q);
+            dVal += ((IntConvertor.convert(s[i]) - 48) * q);
             q *= 2;
             
             i -= 1
