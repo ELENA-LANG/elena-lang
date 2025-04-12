@@ -50,7 +50,7 @@ ScriptParser :: ScriptParser()
    _InterpretFile = (void* (__cdecl*)(const char*, int, bool))_library->loadFunction("InterpretFileSMLA");
    _GetStatus = (size_t(__cdecl*)(char*, size_t))_library->loadFunction("GetStatusSMLA");
    _Release = (void(__cdecl*)(void*))_library->loadFunction("ReleaseSMLA");
-   _ClearStack = (void(__cdecl*)(void*))_library->loadFunction("ClearStackSMLA");
+   _ClearStack = (void(__cdecl*)())_library->loadFunction("ClearStackSMLA");
 
 #else
 
