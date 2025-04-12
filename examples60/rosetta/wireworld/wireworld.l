@@ -117,9 +117,9 @@ sealed class Model
                 int cell := theSpace.at(i, j);
  
                 cell =>
-                    conductor    { label := conductorLabel }
-                    electronHead { label := headLabel }
-                    electronTail { label := tailLabel };
+                    conductor    : { label := conductorLabel }
+                    electronHead : { label := headLabel }
+                    electronTail : { label := tailLabel };
  
                 Console.write(label);
  
