@@ -42,9 +42,9 @@
       <project>scripts\ls\lsinterpreter.prj</project>
     </collection>
     <collection name="threads">
-      <project>scripts\async\asyncsamples.prj</project>
-      <project>scripts\tasks\tasksamples.prj</project>
-      <project>scripts\threadpool\threadpoolsamples.prj</project>
+      <project>threads\async\asyncsamples.prj</project>
+      <project>threads\tasks\tasksamples.prj</project>
+      <project>threads\threadpool\threadpoolsamples.prj</project>
     </collection>
   </collections>
 </configuration>
