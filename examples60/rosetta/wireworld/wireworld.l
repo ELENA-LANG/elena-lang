@@ -30,7 +30,7 @@ wireWorldRuleSet = new RuleSet
         int cell := s.at(x, y);
  
         cell =>
-            conductor 
+            conductor:
             {
                 int number := s.LiveCell(x, y, electronHead);
                 if (number == 1 || number == 2)
@@ -42,15 +42,15 @@ wireWorldRuleSet = new RuleSet
                     ^ conductor
                 }                
             }
-            electronHead 
+            electronHead:
             {
                 ^ electronTail
             }
-            electronTail
+            electronTail:
             {
                 ^ conductor
             }
-            !{
+            !:{
                 ^ cell
             }
     }
