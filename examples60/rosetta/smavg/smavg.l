@@ -19,8 +19,8 @@ class SMA
 
         var count := theList.Length;
         count =>
-            0 { ^0.0r }
-            ! {
+            0 : { ^0.0r }
+            ! : {
                 if (count > thePeriod)
                 {
                     theList.removeAt(0);
