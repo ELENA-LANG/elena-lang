@@ -187,7 +187,7 @@ void IDENotificationFormatter :: sendTextContextMenuEvent(ContextMenuEvent* even
    ContextMenuNMHDR nw = {};
 
    nw.x = event->X();
-   nw.y = event->X();
+   nw.y = event->Y();
    nw.hasSelection = event->HasSelection();
 
    app->notify(EVENT_TEXT_CONTEXTMENU, (NMHDR*)&nw);
