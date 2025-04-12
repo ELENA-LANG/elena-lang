@@ -47,9 +47,9 @@ sealed struct ZeckendorfNumber
             
             int v := (dVal $shr (i * 2)) & 3;
             v =>    
-                0 { ^ self }
-                1 { ^ self }
-                2 {
+                0 : { ^ self }
+                1 : { ^ self }
+                2 : {
                     if:not ((dVal $shr ((i + 1) * 2)).allMask(1))
                     {
                         ^ self
