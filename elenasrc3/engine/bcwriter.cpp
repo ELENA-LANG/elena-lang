@@ -3801,6 +3801,7 @@ inline bool isNested(BuildKey key)
       case BuildKey::SwitchOption:
       case BuildKey::ElseOption:
       case BuildKey::StackCondOp:
+      case BuildKey::TernaryOp:
       case BuildKey::Tape:
          return true;
       default:
