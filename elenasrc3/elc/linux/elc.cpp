@@ -208,7 +208,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
    PathString configPath(dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
    project.loadConfig(*configPath, nullptr, false);
 
-   IdentifierString profile;
+   IdentifierString profile(defaultProfile);
    for (int i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
          handleOption(argv[i], profile, project, process,
@@ -242,6 +242,9 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
          project.addSource(*fileName, argv[i], nullptr, nullptr);
       }
    }
+
+   if (!basePath.empty())
+      project.setBasePath(basePath);
 
    if (cleanMode) {
       return process.clean(project);
