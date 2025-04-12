@@ -16,8 +16,6 @@ In development:
   - fixing rosetta code samples (provide base path for every project)
   - fixing example samples (provide base path for every project)  
   --------------------------------------
-  * fix linux elc : support base path and profile
-  * compile linux all examples (x86)
   * compile all rosetta examples (x86 / x86-64)
   * compile linux rosetta all examples (x86)
   --------------------------------------
