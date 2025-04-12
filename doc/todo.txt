@@ -7,26 +7,8 @@ In development:
 
   === Iteration 39 (18.4) ===
   --------------------------------------
-  dev: 
-      - MTA support for Linux        
-      - upndown (connector - interaction)
-      - support :sizeof
-  gen:
-      - lpad / elt : declare an extension, parse it and apply to the input
-  ide:
-      - ide :syntax highlighting : floating point numbers
-      - ide : auto indent
-  maint:
-      - github actions : `set-output` command is deprecated       
-  api:
-      - api refactoring : main program entry to be called - Program
-  port:      
-      - rosetta code : moving to 6.6 (test, use Console)
-  tools:
-      - vs #2 : elena.tmLanguage.json  
-  samples:
-      - rosetta code : Comma quibbling, Program termination, Parallel calculations
-  --------------------------------------
+  - ide :  Now it's the right click context menu that behaves weird. Instead of opening on where the mouse cursor currently is, it's opening somewhere else.
+  - fix highlighting - samples60/rosetta/arrays/arrays.l, floating point numbers
   - arrange action for i386 / amd64 linux release  
   - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
@@ -34,14 +16,20 @@ In development:
   - fixing rosetta code samples (provide base path for every project)
   - fixing example samples (provide base path for every project)  
   --------------------------------------
-  * compile helloworld xforms example
+  * fix system_test64
+  * compile calc example
   * compile all examples (x86 / x86-64)
   * compile all rosetta examples (x86 / x86-64)
+  * compile linux all examples (x86)
+  * compile linux rosetta all examples (x86)
   --------------------------------------
 
   === Iteration 40 ===
   --------------------------------------
   dev: 
+  - MTA support for Linux        
+  - upndown (connector - interaction)
+  - support :sizeof
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
   - #620 : backlog
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
@@ -50,7 +38,9 @@ In development:
   - conditional compiling
   - #622 : api backlog
   gen:
+  - lpad / elt : declare an extension, parse it and apply to the input
   ide:
+  - auto indent
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
@@ -58,11 +48,18 @@ In development:
   - remove old scripts from build folder
   - optimization : pi (used classes byte code)
   - test all x86-64 examples
+  - github actions : `set-output` command is deprecated       
+  api:
+  - api refactoring : main program entry to be called - Program
   tools:
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
+  - vs #2 : elena.tmLanguage.json  
   port:
   - x86-64 : net, threading samples
+  - rosetta code : moving to 6.6 (test, use Console)
   - chat sample
+  samples:
+  - rosetta code : Comma quibbling, Program termination, Parallel calculations
   prom: 
   - bi-posting weekly
   --------------------------------------
