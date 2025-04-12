@@ -1,26 +1,26 @@
 <configuration>
   <collections>
     <collection name="console">
-      <project>console\helloworld\helloworld.prj</project>
-      <project base_path="console\binary">binary.l</project>
-      <project base_path="console\bsort">bsort.l</project>
-      <project base_path="console\collatz">collatz.l</project>
-      <project>console\datetime\datetime.prj</project>
-      <project base_path="console\goods">goods.l</project>
-      <project>console\matrix\matrix.prj</project>
-      <project base_path="console\pi">pi.l</project>
-      <project base_path="console\pi2">pi2.l</project>
-      <project base_path="console\random">random.l</project>
-      <project>console\regex\regex.prj</project>
-      <project base_path="console\replace">replace.l</project>
-      <project>console\trans\translit.prj</project>
-      <project profile="intsum">console\sum\sum.prj</project>
-      <project profile="realsum">console\sum\sum.prj</project>
-      <project base_path="console\words">words.l</project>
+      <project>console/helloworld/helloworld.prj</project>
+      <project base_path="console/binary">binary.l</project>
+      <project base_path="console/bsort">bsort.l</project>
+      <project base_path="console/collatz">collatz.l</project>
+      <project>console/datetime/datetime.prj</project>
+      <project base_path="console/goods">goods.l</project>
+      <project>console/matrix/matrix.prj</project>
+      <project base_path="console/pi">pi.l</project>
+      <project base_path="console/pi2">pi2.l</project>
+      <project base_path="console/random">random.l</project>
+      <project>console/regex/regex.prj</project>
+      <project base_path="console/replace">replace.l</project>
+      <project>console/trans/translit.prj</project>
+      <project profile="intsum">console/sum/sum.prj</project>
+      <project profile="realsum">console/sum/sum.prj</project>
+      <project base_path="console/words">words.l</project>
     </collection>
     <collection name="files">
-      <project base_path="files\textdb">textdb.l</project>
-      <project base_path="files\textfile">textfile.l</project>
+      <project base_path="files/textdb">textdb.l</project>
+      <project base_path="files/textfile">textfile.l</project>
     </collection>
   </collections>
 </configuration>
