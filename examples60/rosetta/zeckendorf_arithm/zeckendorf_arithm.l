@@ -59,7 +59,7 @@ sealed struct ZeckendorfNumber
                     
                     ^ self
                 }
-                3 {
+                3 : {
                     int tmp := 3 $shl (i * 2);
                     tmp := tmp.bxor(-1);
                     dVal := dVal & tmp;
