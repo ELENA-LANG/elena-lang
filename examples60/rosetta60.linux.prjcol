@@ -37,7 +37,6 @@
     <project base_path="rosetta/reverse_words_in_string">reverse_words.l</project>
     <project base_path="rosetta/smavg">smavg.l</project>
     <project base_path="rosetta/string_append">string_append.l</project>
-    <project base_path="rosetta/string_case">string_case.l</project>
     <project base_path="rosetta/string_comparison">string_comparision.l</project>
     <project base_path="rosetta/string_concatenation">string_concatenation.l</project>
     <project base_path="rosetta/string_interpolation">string_interpolation.l</project>
