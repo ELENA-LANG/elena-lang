@@ -1139,8 +1139,6 @@ namespace elena_lang
       int      offset   = 0;
       TypeInfo typeInfo = {};
       ref_t    valueRef = 0;
-
-      StaticFieldInfo() = default;
    };
 
    // --- ClassHeader ---
