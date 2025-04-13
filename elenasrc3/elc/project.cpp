@@ -95,9 +95,9 @@ PlatformType Project :: ThreadModeType()
    return _platform & PlatformType::ThreadMask;
 }
 
-void Project :: addSource(ustr_t ns, path_t path, ustr_t target, ustr_t hints)
+void Project :: addSource(ustr_t ns, path_t path, ustr_t target, ustr_t hints, bool singleFileMode)
 {
-   if (!_loaded && _projectName.empty())
+   if (singleFileMode && _projectName.empty())
       _projectName.copy(ns);
 
    ProjectNode files = _root.findChild(ProjectOption::Files);
@@ -175,7 +175,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
                node.readContent(path);
 
                PathString filePath(path.str());
-               addSource(*ns, *filePath, target.str(), hints.str());
+               addSource(*ns, *filePath, target.str(), hints.str(), false);
             }
          }
       }

@@ -12,7 +12,7 @@ In development:
   - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
   --------------------------------------
-  * test / fix
+  * fix an exception
   * new test in scripts_test
   --------------------------------------
 

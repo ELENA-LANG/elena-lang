@@ -239,7 +239,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       else {
          FileNameString fileName(argv[i]);
 
-         project.addSource(*fileName, argv[i], nullptr, nullptr);
+         project.addSource(*fileName, argv[i], nullptr, nullptr, true);
       }
    }
 

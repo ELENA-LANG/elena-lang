@@ -194,7 +194,7 @@ int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& err
       else {
          FileNameString fileName(argv[i]);
          IdentifierString ns(*fileName);
-         project.addSource(*ns, argv[i], nullptr, nullptr);
+         project.addSource(*ns, argv[i], nullptr, nullptr, true);
       }
    }
 
