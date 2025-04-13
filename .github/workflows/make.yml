@@ -37,3 +37,6 @@ jobs:
 
     - name: Build
       run: make all_${{ matrix.platform }}
+
+    - name: Generate Data / API
+      run: sudo scripts/{{ matrix.platform }}/local_build_package_{{ matrix.platform }}.script 

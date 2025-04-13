@@ -8,10 +8,8 @@ In development:
   === Iteration 39 (18.4) ===
   --------------------------------------
   - arrange action for i386 / amd64 linux release  
-  - fix highlighting - samples60/rosetta/arrays/arrays.l, floating point numbers
   --------------------------------------
-  * fix punctuation and numbers are not correctly highlighted
-  * fix floating point numbers
+  * build api
   --------------------------------------
 
   === Iteration 40 ===
@@ -41,6 +39,7 @@ In development:
   - test all x86-64 examples
   - github actions : `set-output` command is deprecated       
   - API - review / description
+  - Actions : run functional test 
   api:
   - api refactoring : main program entry to be called - Program
   tools:
