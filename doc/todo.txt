@@ -39,7 +39,7 @@ In development:
   - test all x86-64 examples
   - github actions : `set-output` command is deprecated       
   - API - review / description
-  - Actions : run functional test 
+  - Actions : create a release archive
   api:
   - api refactoring : main program entry to be called - Program
   tools:
