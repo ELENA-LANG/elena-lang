@@ -12,8 +12,6 @@ In development:
   - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
   --------------------------------------
-  * fix for vm mode 
-  * fix an exception for stand-alone
   * new test in scripts_test
   --------------------------------------
 

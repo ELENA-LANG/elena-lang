@@ -12,6 +12,7 @@
   <project>
      <namespace>script_tests</namespace>
      <template>console</template>
+     <autoextension>-1</autoextension>
   </project>
   <files>
      <module>
