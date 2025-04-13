@@ -549,6 +549,12 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
 
       _libraryProvider.saveModule(moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
+
+      if (_verbose) {
+         PathString path;
+         _libraryProvider.retrievePath(moduleScope.module, path);
+         _presenter->printPath(ELC_MODULE_TARGET_PATH, *path);
+      }
    }
 }
 

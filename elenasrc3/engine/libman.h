@@ -104,6 +104,8 @@ namespace elena_lang
       bool saveModule(ModuleBase* module);
       bool saveDebugModule(ModuleBase* module);
 
+      void retrievePath(ModuleBase* module, PathString& path);
+
       ModuleBase* loadModule(ustr_t name);
 
       ModuleRequestResult loadModuleIfRequired(ustr_t name);

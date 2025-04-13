@@ -45,6 +45,7 @@ namespace elena_lang
    constexpr auto ELC_COMPILING_TEMPLATE     = "\nCompiling %s";
 
    constexpr auto ELC_SAVING_MODULE          = "\nsaving %s\n";
+   constexpr auto ELC_MODULE_TARGET_PATH     = "\ntarget path is %s\n";
 
    constexpr auto ELC_COMPILING_PROJECT      = "\nCompiling Project %s\n\n";
 
