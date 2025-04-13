@@ -29,7 +29,6 @@
     <project base_path="rosetta/dynamic_var">dynamic_var.l</project>
     <project base_path="rosetta/evolutionary">evolutionary.l</project>
     <project base_path="rosetta/firstclass">firstclass.l</project>
-    <project base_path="rosetta/gameoflife">gameoflife.prj</project>
     <project base_path="rosetta/knutalg">knutalg.l</project>
     <project base_path="rosetta/loop_multiple_arrays">loopma.l</project>
     <project base_path="rosetta/manboy">manboy.l</project>
