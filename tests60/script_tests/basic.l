@@ -14,7 +14,7 @@ public evalTest() : testCase()
 
 public extensionCallTest() : testCase()
 {
-    Console.print("Calling an extension in evaluation mode:");
+    Console.print("Calling an extension in evaluation mode - ");
 
     var t := new ScriptEngine()
             .loadScript("[[ #grammar build ]]")
