@@ -7,12 +7,11 @@ In development:
 
   === Iteration 39 (18.4) ===
   --------------------------------------
-  - fix highlighting - samples60/rosetta/arrays/arrays.l, floating point numbers
   - arrange action for i386 / amd64 linux release  
-  - #731
-  - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
+  - fix highlighting - samples60/rosetta/arrays/arrays.l, floating point numbers
   --------------------------------------
-  * new test in scripts_test
+  * fix punctuation and numbers are not correctly highlighted
+  * fix floating point numbers
   --------------------------------------
 
   === Iteration 40 ===
@@ -28,6 +27,7 @@ In development:
   - support fladd, flsub, fldiv, flmul (throu special prefix??)
   - conditional compiling
   - #622 : api backlog
+  - #731
   gen:
   - lpad / elt : declare an extension, parse it and apply to the input
   ide:
