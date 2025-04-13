@@ -82,7 +82,7 @@ fi
    exit 1
  fi
 
- ../../bin/elena64-cli -v ../../src60/elena_api.linux.prjcol
+ ../../bin/elena64-cli ../../src60/elena_api.linux.prjcol
  ret=$?
  if [ $ret -eq 2 ]
  then

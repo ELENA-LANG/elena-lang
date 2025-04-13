@@ -44,4 +44,6 @@ jobs:
         sudo ./local_build_package_${{ matrix.platform }}.script 
 
     - name: Run functional test
-      run: sudo ./local_runtests.script
+      run: |
+        cd scripts/${{ matrix.platform }}
+        sudo ./local_runtests.script
