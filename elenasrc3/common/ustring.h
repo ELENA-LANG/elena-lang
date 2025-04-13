@@ -55,10 +55,10 @@ namespace elena_lang
       static wide_c* clone(const wide_c* s);
 
       static void move(char* s1, const char* s2, size_t length);
-      static void move(wchar_t* s1, const wchar_t* s2, size_t length);
+      static void move(wide_c* s1, const wide_c* s2, size_t length);
 
       static void append(char* dest, const char* sour, size_t length);
-      static void append(wchar_t* dest, const wchar_t* sour, size_t length);
+      static void append(wide_c* dest, const wide_c* sour, size_t length);
 
       static void insert(char* s, size_t pos, size_t length, const char* subs);
       static void insert(wide_c* s, size_t pos, size_t length, const wide_c* subs);
