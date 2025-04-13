@@ -1,23 +1,14 @@
 import extensions;
-
-sealed class VariadicTester
+import extensions'scripting;
+   
+public program()
 {
-   int sum(params int[] numbers)
-   {
-      int sum := 0;
-      for (int i := 0; i < numbers.Length; i += 1) {
-         sum += numbers[i];
-      };
-
-      ^ sum;
-   }
-
-   int passAndSum(params int[] numbers)
-      <= sum(params numbers);
-}
-
-public variadicTest() : testCase()
-{
-    var tester := new VariadicTester();
-    Assert.ifTrue(tester.passAndSum(1,2,3)==6);
+    var t := new ScriptEngine()
+            .loadScript("[[ #grammar build ]]")
+            .loadPath("~\scripts\grammar.es")
+            .loadPath("~\scripts\tscript.es");
+            
+    var o := t.buildScript("import extensions; public program() { console.printLine(""Hello World"") }");
+    
+    o.eval();
 }
