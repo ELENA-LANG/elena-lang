@@ -1,3 +1,5 @@
+import extensions;
+
 sealed class VariadicTester
 {
    int sum(params int[] numbers)
