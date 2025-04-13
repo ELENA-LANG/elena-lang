@@ -136,7 +136,7 @@ public:
    ~Presenter() = default;
 };
 
-JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
+JITCompilerBase* createJITCompiler(PlatformType platform)
 {
    switch (platform) {
 #if defined(__i386__) || defined(__x86_64__)
