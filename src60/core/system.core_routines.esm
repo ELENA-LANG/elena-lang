@@ -1953,7 +1953,7 @@ labUnboxing:
   xrefresh   sp:0
   xrefresh   sp:1
 
-  call       vt:0
+  xdispatch  i:1
 
   close      []
   $clear
