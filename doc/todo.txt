@@ -12,6 +12,7 @@ In development:
   - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
   --------------------------------------
+  * fix variadic test
   * linux - fixing rosetta code samples : calendar
   * new test in scripts_test
   * test / fix
