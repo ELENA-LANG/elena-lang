@@ -280,8 +280,6 @@ inline bool isSingleObject(ObjectKind kind)
       default:
          return isConstant(kind);
    }
-
-   return false;
 }
 
 inline bool areConstants(ArgumentsInfo& args)
@@ -12904,7 +12902,7 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node)
 
    scope.syncStack();
 
-   int prevAllocated1, prevAllocated2;
+   int prevAllocated1 = 0, prevAllocated2 = 0;
    if (finallyNode != SyntaxKey::None)
       scope.commitTempStack(prevAllocated1, prevAllocated2); // HOTFIX : to prevent overwritting temporal variables
 
@@ -15107,7 +15105,9 @@ ObjectInfo Compiler::Expression::compileTernaryOperands(SyntaxNode rnode, Syntax
 {
    writer->newNode(BuildKey::Tape);
 
-   ObjectInfo lexpr = compile(rnode, 0, EAttr::RetValExpected, nullptr);
+   EAttr mode = (withoutDebugInfo ? EAttr::NoDebugInfo : EAttr::None) | EAttr::RetValExpected;
+
+   ObjectInfo lexpr = compile(rnode, 0, mode, nullptr);
 
    writeObjectInfo(lexpr);
 
@@ -15117,7 +15117,7 @@ ObjectInfo Compiler::Expression::compileTernaryOperands(SyntaxNode rnode, Syntax
 
    // NOTE : it should immediately follow if-block
    writer->newNode(BuildKey::Tape);
-   ObjectInfo rexpr = compile(r2node, 0, EAttr::RetValExpected, nullptr);
+   ObjectInfo rexpr = compile(r2node, 0, mode, nullptr);
 
    writeObjectInfo(rexpr, r2node);
 
@@ -15656,7 +15656,7 @@ void Compiler::Expression::writeMessageArguments(ObjectInfo& target,
    if (argType == ArgumentListType::VariadicArgListWithTypecasting || argType == ArgumentListType::VariadicArgList) {
       counter--;
 
-      ObjectInfo lenLocal = declareTempLocal(scope.moduleScope->buildins.intReference, false);
+      lenLocal = declareTempLocal(scope.moduleScope->buildins.intReference, false);
 
       // get length
       writeObjectInfo(arguments[counter]);

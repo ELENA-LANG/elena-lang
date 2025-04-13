@@ -47,7 +47,7 @@ void WinNtLinker :: writeExecutableHeader(WinNtExecutableImage& image, FileWrite
    header.PointerToSymbolTable = 0;
    header.NumberOfSymbols = 0;
    header.Machine = image.machine;
-   header.SizeOfOptionalHeader = image.optionalHeaderSize;
+   header.SizeOfOptionalHeader = (WORD)image.optionalHeaderSize;
    executable.write(&header, IMAGE_SIZEOF_FILE_HEADER);
 }
 

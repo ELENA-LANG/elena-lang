@@ -23,14 +23,14 @@ AddressMap::Iterator TargetImage :: externals()
 }
 
 TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resolver, LibraryLoaderBase* loader,
-   JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
+   JITCompilerBase* (*jitCompilerFactory)(PlatformType),
    TargetImageInfo imageInfo, AddressMapperBase* addressMapper)
 {
    _systemTarget = systemTarget;
    _tlsVariable = INVALID_ADDR;
    _stackReserved = imageInfo.coreSettings.stackReserved;
 
-   JITCompilerBase* compiler = jitCompilerFactory(loader, imageInfo.type);
+   JITCompilerBase* compiler = jitCompilerFactory(imageInfo.type);
 
    JITLinkerSettings settings =
    {

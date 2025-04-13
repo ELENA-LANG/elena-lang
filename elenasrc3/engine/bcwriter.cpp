@@ -197,7 +197,7 @@ void semiDirectCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::VCallMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
-void exit(CommandTape& tape, BuildNode& node, TapeScope& scope)
+void exit(CommandTape& tape, BuildNode&, TapeScope&)
 {
    tape.write(ByteCode::Quit);
 }
@@ -379,22 +379,22 @@ void addVirtualBreakpoint(CommandTape& tape, BuildNode&, TapeScope& tapeScope)
    tape.write(ByteCode::Breakpoint);
 }
 
-void intLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void intLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskIntLiteralRef);
 }
 
-void longLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void longLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskLongLiteralRef);
 }
 
-void realLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void realLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskRealLiteralRef);
 }
 
-void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
 }
@@ -2309,7 +2309,7 @@ inline bool doubleAssigningByRefHandler(BuildNode lastNode)
       BuildNode prevCopyOp = getPrevious(opNode);
 
       // check if it is unboxing op
-      if (prevCopyOp.key != BuildKey::Copying || prevCopyOp.arg.reference != lastNode.arg.value)
+      if (prevCopyOp.key != BuildKey::Copying || prevCopyOp.arg.reference != lastNode.arg.reference)
          prevCopyOp = {};
 
       // modify the tree to exclude double copying
@@ -4140,7 +4140,7 @@ bool ByteCodeWriter::BuildTreeTransformerBase :: matchBuildKey(BuildPatterns* ma
 
 // --- ByteCodeWriter::BuildTreeAnalyzer ---
 
-bool ByteCodeWriter::BuildTreeAnalyzer :: transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args)
+bool ByteCodeWriter::BuildTreeAnalyzer :: transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg&)
 {
    auto matchNodeValue = matchNode.Value();
    int patternId = matchNodeValue.argValue;

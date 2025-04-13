@@ -70,7 +70,7 @@ uintptr_t ELENAMachine :: createPermVMT(SystemEnv* env, size_t size)
    uintptr_t addr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, alignSize(size, gcPageSize));
 
    ObjectPage* header = (ObjectPage*)(addr - elObjectOffset);
-   header->size = size;
+   header->size = (pos_t)size;
    header->vmtPtr = 0;
 
    return (uintptr_t)header + elObjectOffset;
@@ -323,11 +323,11 @@ bool SystemRoutineProvider :: overrideClass(void* ptr, void* classPtr)
    return false;
 }
 
-int SystemRoutineProvider :: GetFlags(void* classPtr)
+pos_t SystemRoutineProvider :: GetFlags(void* classPtr)
 {
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
 
-   return header->flags;
+   return (pos_t)header->flags;
 }
 
 size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip, 

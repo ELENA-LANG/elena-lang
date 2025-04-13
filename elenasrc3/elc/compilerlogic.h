@@ -26,6 +26,8 @@ namespace elena_lang
       bool        withCustomDispatcher;
       int         nillableArgs;
       mssg_t      byRefHandler;
+
+      CheckMethodResult() = default;
    };
 
    struct TypeAttributes

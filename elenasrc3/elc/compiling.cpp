@@ -327,12 +327,13 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
    JITSettings defaultCoreSettings,
-   JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
+   JITCompilerBase* (*compilerFactory)(PlatformType)
 ) :
    _appPath(appPath),
    _templateGenerator(this),
    _forwards(nullptr),
-   _parser(nullptr)
+   _parser(nullptr),
+   _traceMode(false)
 {
    _exeExtension = exeExtension;
    _modulePrologName = modulePrologName;

@@ -11,6 +11,13 @@
 
 #include "elena.h"
 
+#if _MSC_VER
+
+#pragma warning( push )
+#pragma warning( disable : 4458 )
+
+#endif
+
 namespace elena_lang
 {
 
@@ -622,5 +629,11 @@ namespace elena_lang
 
    };
 }
+
+#ifdef _MSC_VER
+
+#pragma warning( pop )
+
+#endif
 
 #endif

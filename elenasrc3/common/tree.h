@@ -9,6 +9,13 @@
 #ifndef TREE_H
 #define TREE_H
 
+#ifdef _MSC_VER
+
+#pragma warning( push )
+#pragma warning( disable : 4458 )
+
+#endif
+
 namespace elena_lang
 {
    // --- Tree ---
@@ -861,5 +868,11 @@ namespace elena_lang
       Tree() = default;
    };
 }
+
+#ifdef _MSC_VER
+
+#pragma warning( pop )
+
+#endif
 
 #endif

@@ -497,8 +497,8 @@ namespace elena_lang
    constexpr ref_t INV_ARG12_2            = 0x0000002Au;
 
    // predefined debug module sections
-   constexpr ref_t DEBUG_LINEINFO_ID      = -1;
-   constexpr ref_t DEBUG_STRINGS_ID       = -2;
+   constexpr ref_t DEBUG_LINEINFO_ID      = (ref_t)-1;
+   constexpr ref_t DEBUG_STRINGS_ID       = (ref_t)-2;
 
    // === ELENA Error codes ===
    constexpr auto errNotImplemented = -3;

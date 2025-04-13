@@ -86,12 +86,12 @@ namespace elena_lang
 
 #endif
 
-   constexpr pos_t   INVALID_POS = -1;
-   constexpr ref_t   INVALID_REF = -1;
+   constexpr pos_t   INVALID_POS = (pos_t)-1;
+   constexpr ref_t   INVALID_REF = (ref_t)-1;
    constexpr ref_t   MAX_OFFSET = 0x7FFFFFFF;
    constexpr ref_t   MID_OFFSET = 0x3FFFFFFF;
-   constexpr addr_t  INVALID_ADDR = -1;
-   constexpr size_t  INVALID_SIZE = -1;
+   constexpr addr_t  INVALID_ADDR = (addr_t)-1;
+   constexpr size_t  INVALID_SIZE = (size_t)-1;
 
 }
 
@@ -111,10 +111,10 @@ namespace elena_lang
    // --- ExceptionBase ---
    class ExceptionBase {};
 
-   class AbortError : ExceptionBase {};
+   class AbortError : public ExceptionBase {};
 
    // --- InternalError ---
-   struct InternalError : ExceptionBase
+   struct InternalError : public ExceptionBase
    {
       int messageCode;
       int arg;

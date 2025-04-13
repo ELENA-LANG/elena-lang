@@ -51,7 +51,7 @@ namespace elena_lang
       void writeImm12(MemoryWriter* writer, int value, int type) override;
 
       void alignCode(MemoryWriter& writer, pos_t alignment, bool isText) override;
-      void alignJumpAddress(MemoryWriter& writer) override
+      void alignJumpAddress(MemoryWriter&) override
       {
          // must be implemented
       }

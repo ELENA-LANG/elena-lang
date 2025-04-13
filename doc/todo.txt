@@ -11,9 +11,10 @@ In development:
   - arrange action for i386 / amd64 linux release  
   - #731
   - execute script : https://www.reddit.com/r/elena_lang/comments/ibblff/run_elena_code_without_build_work_in_progress/
-  - ide :  Now it's the right click context menu that behaves weird. Instead of opening on where the mouse cursor currently is, it's opening somewhere else.
   --------------------------------------
-  * check content menu
+  * linux - fixing rosetta code samples : calendar
+  * new test in scripts_test
+  * test / fix
   --------------------------------------
 
   === Iteration 40 ===
@@ -42,7 +43,6 @@ In development:
   - test all x86-64 examples
   - github actions : `set-output` command is deprecated       
   - API - review / description
-  - linux - fixing rosetta code samples : calendar
   api:
   - api refactoring : main program entry to be called - Program
   tools:

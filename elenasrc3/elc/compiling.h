@@ -83,7 +83,7 @@ namespace elena_lang
       pos_t               _codeAlignment;
       JITSettings         _defaultCoreSettings;
 
-      JITCompilerBase*(*_jitCompilerFactory)(LibraryLoaderBase*, PlatformType);
+      JITCompilerBase*(*_jitCompilerFactory)(PlatformType);
 
       TemplateGenerator   _templateGenerator;
 
@@ -167,7 +167,7 @@ namespace elena_lang
          PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,
          JITSettings defaultCoreSettings,
-         JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType));
+         JITCompilerBase* (*compilerFactory)(PlatformType));
 
       virtual ~CompilingProcess()
       {

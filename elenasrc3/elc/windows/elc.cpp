@@ -112,7 +112,7 @@ void getAppPath(PathString& appPath)
    appPath.lower();
 }
 
-JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
+JITCompilerBase* createJITCompiler(PlatformType platform)
 {
    switch (platform) {
       case PlatformType::Win_x86:

@@ -139,7 +139,7 @@ void buildTreeEncoder(int level, TextWriter<char>& writer, BuildKey key, ustr_t,
 
    BuildKeyMap* map = static_cast<BuildKeyMap*>(extraArg);
 
-   ustr_t keyName = map->retrieve<BuildKey>(nullptr, key, [](BuildKey arg, ustr_t value, BuildKey current)
+   ustr_t keyName = map->retrieve<BuildKey>(nullptr, key, [](BuildKey arg, ustr_t, BuildKey current)
       {
          return current == arg;
       });

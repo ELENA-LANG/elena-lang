@@ -147,7 +147,7 @@ namespace elena_lang
       static size_t GetVMTLength(void* classPtr);
       static addr_t GetClass(void* ptr);
       static addr_t GetParent(void* classPtr);
-      static int GetFlags(void* classPtr);
+      static pos_t GetFlags(void* classPtr);
       static bool overrideClass(void* ptr, void* classPtr);
 
       static bool CheckMessage(MemoryBase* msection, void* classPtr, mssg_t message);

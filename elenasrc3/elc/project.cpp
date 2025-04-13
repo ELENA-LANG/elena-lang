@@ -502,15 +502,19 @@ inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& 
    ProjectCollection::ProjectSpecs& projectSpecs)
 {
    DynamicString<char> pathStr;
-   DynamicString<char> basePath;
-   DynamicString<char> profile;
+   DynamicString<char> basePathStr;
+   DynamicString<char> profileStr;
    for (auto it = modules.start(); !it.eof(); ++it) {
       ConfigFile::Node node = *it;
       node.readContent(pathStr);
 
       ProjectCollection::ProjectSpec* spec = new ProjectCollection::ProjectSpec();
-      if (node.readAttribute(BASE_PATH_ATTR, basePath)) {
-         PathString fullPath(collectionPath, basePath.str());
+      spec->path = nullptr;
+      spec->basePath = nullptr;
+      spec->profile = nullptr;
+
+      if (node.readAttribute(BASE_PATH_ATTR, basePathStr)) {
+         PathString fullPath(collectionPath, basePathStr.str());
          spec->basePath = (*fullPath).clone();
 
          fullPath.combine(pathStr.str());
@@ -521,8 +525,8 @@ inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& 
          spec->path = (*fullPath).clone();
       }
 
-      if (node.readAttribute(PROFILE_ATTR, profile)) {
-         spec->profile = ustr_t(profile.str()).clone();
+      if (node.readAttribute(PROFILE_ATTR, profileStr)) {
+         spec->profile = ustr_t(profileStr.str()).clone();
       }
 
       projectSpecs.add(spec);

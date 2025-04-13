@@ -441,11 +441,11 @@ namespace elena_lang
             else return {};
          }
 
-         virtual ObjectInfo mapMember(ustr_t identifier)
+         virtual ObjectInfo mapMember(ustr_t)
          {
             return {};
          }
-         virtual ObjectInfo mapGlobal(ustr_t globalReference)
+         virtual ObjectInfo mapGlobal(ustr_t)
          {
             return {};
          }
