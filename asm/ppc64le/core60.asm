@@ -1002,6 +1002,19 @@ inline %034h
 
 end
 
+// ; dfree
+inline % 35h
+
+  sldi    r16, r14, 3
+
+  addi    r16, r16, 8     // ; rounding to 10h
+  srdi    r16, r16, 4
+  sldi    r16, r16, 4
+
+  add     r1, r1,  r16   // ; allocate stack
+
+end
+
 // ; fiadd
 inline %070h
 

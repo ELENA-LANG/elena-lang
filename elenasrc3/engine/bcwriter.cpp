@@ -2072,8 +2072,7 @@ void threadVarAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
 
 void freeStack(CommandTape& tape, BuildNode& node, TapeScope&)
 {
-   tape.write(ByteCode::Neg);
-   tape.write(ByteCode::DAlloc);
+   tape.write(ByteCode::DFree);
 }
 
 inline void savingInt(CommandTape& tape, BuildNode& node, TapeScope&)

@@ -939,6 +939,21 @@ inline %034h
 
 end
 
+// ; dfree
+inline % 16h
+
+  lsl     x12, x9, #3
+  add     x12, x12, #8    // ; rounding to 10h
+
+  lsr     x12, x12, #4
+  lsl     x12, x12, #4
+
+  mov     x13, sp
+  add     x13, x13, x12   // ; allocate stack
+  mov     sp, x13
+
+end
+
 // ; fiadd
 inline %070h
 

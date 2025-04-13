@@ -80,6 +80,7 @@ namespace elena_lang
       AltMode        = 0x31,  
       XNop           = 0x32,
       XQuit          = 0x34,
+      DFree          = 0x35,
 
       FIAdd          = 0x70,
       FISub          = 0x71,
