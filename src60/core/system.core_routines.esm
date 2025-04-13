@@ -1946,14 +1946,14 @@ labUnboxing:
   free       i:1
 
   load       dp:mssg
-  and        n:0FFFFFFE0h
-  or         n:082h
+  and        n:0FFFFFF80h
+  or         n:062h
 
   peek       fp:target
   xrefresh   sp:0
   xrefresh   sp:1
 
-  xdispatch  i:1
+  call       vt:0
 
   close      []
   $clear
