@@ -8,7 +8,7 @@ public evalTest() : testCase()
 
    Assert.ifEqual(ret, "Hello World");
 
-   Console.write(".");
+   Console.writeLine(".");
 }
 
 
