@@ -519,6 +519,14 @@ namespace elena_lang
       BuildPatternArg   args;
 
       BuildPatternContext() = default;
+      BuildPatternContext(BuildCodeTrieNode node, BuildPatternArg args)
+         : node(node), args(args)
+      {
+      }
+      BuildPatternContext(BuildCodeTrieNode node)
+         : node(node), args({})
+      {
+      }
    };
 
    typedef CachedList<BuildPatternContext, 10>        BuildPatterns;
