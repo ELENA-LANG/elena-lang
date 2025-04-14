@@ -850,6 +850,13 @@ end
 // ; system startup
 inline %4CFh
 
+#if _LNX
+
+  lea  eax, gs:[-4]
+  lea  ecx, gs:[0]
+
+#endif
+
   finit
 
   mov  eax, esp
@@ -1354,19 +1361,3 @@ procedure % VEH_HANDLER
 #endif
 
 end
-
-// ; openin i, 0
-inline %6F0h
-
-  lea  eax, gs:[-4]
-  lea  ecx, gs:[0]
-
-  push ebp
-  mov  ebp, esp
-  xor  eax, eax
-  mov  ecx, __n_1
-  sub  esp, __arg32_1
-  mov  edi, esp
-  rep  stos
-
-end 
