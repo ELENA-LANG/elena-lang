@@ -71,7 +71,7 @@ jobs:
       shell: cmd
       run: scripts\create_package_${{matrix.platform}}.bat 
         
-    - run: Compress-Archive .\scripts\${{matrix.platform}}\* .\scripts\elena-lang-${{matrix.platform}}-${{ env.BUILD_TAG }}.zip
+    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-${{ env.BUILD_TAG }}.zip
           
     - name: Upload Release
       uses: softprops/action-gh-release@v2
