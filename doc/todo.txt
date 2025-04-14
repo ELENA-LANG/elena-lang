@@ -8,7 +8,6 @@ In development:
   === Iteration 40 (4.05) ===
   --------------------------------------
   dev: 
-  - MTA support for Linux        
   - upndown (connector - interaction)
   - support :sizeof
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
@@ -21,8 +20,7 @@ In development:
   - #731
   gen:
   - lpad / elt : declare an extension, parse it and apply to the input
-  ide:
-  - auto indent
+  ide:  
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
@@ -40,14 +38,23 @@ In development:
   - vs #2 : elena.tmLanguage.json  
   port:
   - x86-64 : net, threading samples
-  - rosetta code : moving to 6.6 (test, use Console)
   - chat sample
   samples:
-  - rosetta code : Comma quibbling, Program termination, Parallel calculations
+  - rosetta code : Program termination, Parallel calculations
   prom: 
-  - bi-posting weekly
+  - weekly posting
   --------------------------------------
+  - rosetta code : moving to 6.6 (test, use Console)
+  - rosetta code : Comma quibbling
+  - auto indent
+  - MTA support for Linux        
   --------------------------------------
+  * x86 : modify the script to generate two version of corex -> corex_win.bin & corex_lnx.bin
+  * x86 : modify the script to generate two version of core -> core_win.bin & core_lnx.bin
+  * looking for the register + offset where tls is located 
+  * gs :     movl    %eax, %gs:myVar@ntpoff
+  * fix operation with OS TLS storage
+  * test a single thread application in MTA mode
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

@@ -2057,6 +2057,9 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
    if (target.prefix == SegmentPrefix::FS) {
       writer.writeByte(0x64);
    }
+   else if (target.prefix == SegmentPrefix::GS) {
+      writer.writeByte(0x65);
+   }
 
    if(source.type == X86OperandType::EAX && target.type == X86OperandType::Disp32) {
       writer.writeByte(0xA1);

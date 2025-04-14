@@ -3,6 +3,7 @@
 - ELENA
   - [ADDED] user defined type alias
   - [ADDED] supporting auto field
+  - [ADDED] async action / async program entry
 
 - ELC
   - [ADDED] new option "-xj" to turn on jump alignment
@@ -36,6 +37,9 @@
   - [FIXED] string interpolation with character codes
   - [FIXED] ppc64le : fiadd, fisub, fimul, fidiv opcodes
   - [ADDED] project collection : support sub folders 
+  - [FIXED] AARXH64 : fiadd, fisub, fimul, fidiv
+  - [ADDED] supporting base_path attribute in a project collection
+  - [ADDED] supporting profile attribute in a project collection
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri
@@ -47,6 +51,8 @@
   - [ADDED] net'HttpClient
   - [FIXED] system'threading'Task - raise an exception if the task was completed before
   - [FIXED] BlockingQueue<T> implementation
+  - [ADDED] new library : mbedtls 
+  - [FIXED] VariadicExtensionDispatcher : dispatcher
 
 - SM
   - [ADDED] supporting $regex rules
@@ -58,6 +64,7 @@
   - [ADDED] console regex sample
   - [ADDED] net : httpget sample
   - [FIXED] ppc64le : pi sample
+  - [FIXED] aarch64 : pi sample
 
 - IDE
   - [FIXED]debugger : step over multi-select statement
@@ -72,6 +79,10 @@
   - [ADDED] #723 : include path to approot temporally inside IDE
   - [ADDED] #722 : [IDE] Scrolling experience
   - [ADDED] #725 : [IDE] large toolbar buttons
+  - [FIXED] highlighting a string containing character codes
+  - [FIXED] saving IDE config file in the correct folder
+  - [FIXED] supporting clipboard operation without selection
+  - [FIXED] IDE64 : fixing undo / redo operations
 
 - Tools
   - [ADDED][LDOC] static methods are in the separate category

@@ -1,101 +1,62 @@
+REM NOTE : the script MUST be called from the root folder
+
 @echo off
 
-ECHO =========== Compiling ELENA files ==================
+ECHO =========== Copying ELENA files ==================
 
-md %~dp0\x64
-md %~dp0\x64\bin
-md %~dp0\x64\bin\templates
-md %~dp0\x64\bin\scripts
-md %~dp0\x64\bin\amd64
-md %~dp0\x64\doc
-md %~dp0\x64\examples60 
+md build\x64
+md build\x64\bin
+md build\x64\bin\templates
+md build\x64\bin\scripts
+md build\x64\bin\x32
+md build\x64\doc
+md build\x64\examples60 
+md build\x64\src60
+md build\x64\lib60
 
-copy %~dp0\..\bin\asm64-cli.exe %~dp0\x64\bin
-copy %~dp0\..\bin\elena64-cli.exe %~dp0\x64\bin
-copy %~dp0\..\bin\elena64-ide.exe %~dp0\x64\bin
-copy %~dp0\..\bin\sg64-cli.exe %~dp0\x64\bin
-copy %~dp0\..\bin\og64-cli.exe %~dp0\x64\bin
-copy %~dp0\..\bin\ecv64-cli.exe %~dp0\x64\bin
-copy %~dp0\..\bin\elenart60_64.dll %~dp0\x64\bin
-copy %~dp0\..\bin\winstub.ex_ %~dp0\x64\bin
-copy %~dp0\..\bin\elc60.cfg %~dp0\x64\bin
-copy %~dp0\..\bin\elenart60.cfg %~dp0\x64\bin
-copy %~dp0\..\bin\elenavm60.cfg %~dp0\x64\bin
+copy bin\asm64-cli.exe build\x64\bin
+copy bin\elena64-cli.exe build\x64\bin
+copy bin\elena64-ide.exe build\x64\bin
+copy bin\sg64-cli.exe build\x64\bin
+copy bin\og64-cli.exe bindx64\bin
+copy bin\ecv64-cli.exe build\x64\bin
+copy bin\elt64-cli.exe build\x64\bin
+copy bin\elenart60_64.dll build\x64\bin
+copy bin\elenasm60_64.dll build\x64\bin
+copy bin\elenavm60_64.dll build\x64\bin
+copy bin\winstub.ex_ build\x64\bin
+copy bin\elc60.cfg build\x64\bin
+copy bin\elenart60.cfg build\x64\bin
+copy bin\elenavm60.cfg build\x64\bin
+copy bin\*.es build\x64\bin
 
-copy %~dp0\..\bin\amd64\core60.bin %~dp0\x64\bin\amd64
-copy %~dp0\..\bin\amd64\core60_win.bin %~dp0\x64\bin\amd64
-copy %~dp0\..\bin\amd64\corex60.bin %~dp0\x64\bin\amd64
-copy %~dp0\..\bin\amd64\core60_win_client.bin %~dp0\x64\bin\amd64
+copy bin\*.dat build\x64\bin\
+copy bin\amd64\*.bin build\x64\bin\amd64\
 
-copy %~dp0\..\bin\templates\*.cfg %~dp0\x64\bin\templates\
-copy %~dp0\..\bin\scripts\*.es %~dp0\x64\bin\scripts\
+copy bin\templates\*.cfg build\x64\bin\templates\
+copy bin\scripts\*.es build\x64\bin\scripts\
 
-copy %~dp0\..\doc\license %~dp0\x64\doc\
-copy %~dp0\..\doc\contributors %~dp0\x64\doc\
-copy %~dp0\..\readme.md %~dp0\x64\
-copy %~dp0\..\CHANGELOG.md %~dp0\x64\
-copy %~dp0\..\VERSION %~dp0\x64\
+copy doc\license build\x64\doc\
+copy doc\contributors build\x64\doc\
+copy readme.md build\x64\
+copy CHANGELOG.md build\x64\
+copy VERSION build\x64\
 
-md %~dp0\x64\src60
-xcopy %~dp0\..\src60\*.l %~dp0\x64\src60\ /s
-xcopy %~dp0\..\src60\*.prj %~dp0\x64\src60\ /s
+xcopy src60\*.l build\x64\src60\ /s
+xcopy src60\*.prj build\x64\src60\ /s
 
-copy %~dp0\..\src60\elena_api.prjcol %~dp0\x64\src60\
+copy src60\elena_api.prjcol build\x64\src60\
 
-%~dp0\..\bin\sg64-cli.exe %~dp0\..\dat\sg\syntax60.txt
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
+xcopy lib60_64\*.nl build\x64\lib60_64\ /s
+xcopy lib60_64\*.dnl build\x64\lib60_64\ /s
 
-move %~dp0..\dat\sg\syntax60.dat %~dp0\x64\bin\
+xcopy examples60\*.l build\x64\examples60\ /s
+xcopy examples60\*.prj build\x64\examples60\ /s
+xcopy examples60\*.txt build\x64\examples60\ /s
+xcopy examples60\*.bmp build\x64\examples60\ /s
+xcopy examples60\*.es build\x64\examples60\ /s
+xcopy examples60\*.js build\x64\examples60\ /s
+xcopy examples60\*.ls build\x64\examples60\ /s
+xcopy examples60\*.xs build\x64\examples60\ /s
 
-%~dp0\..\bin\og64-cli %~dp0\..\dat\og\bc_rules60.txt
-%~dp0\..\bin\og64-cli -s %~dp0\..\dat\og\bt_rules60.txt
-%~dp0\..\bin\og64-cli -s %~dp0\..\dat\og\bt_xrules60.txt
-
-move %~dp0..\dat\og\bt_rules60.dat %~dp0\x64\bin\
-move %~dp0..\dat\og\bt_xrules60.dat %~dp0\x64\bin\
-move %~dp0..\dat\og\bc_rules60.dat %~dp0\x64\bin\
-
-md %~dp0\lib60_64
-
-%~dp0\..\bin\asm64-cli -bc64 %~dp0\..\src60\core\system.core_routines.esm %~dp0\x64\lib60_64
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\..\bin\asm64-cli -bc64 %~dp0\..\src60\core\system.win_core_routines.esm %~dp0\x64\lib60_64
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\x64\bin\elena64-cli %~dp0x64\src60\elena_api.prjcol
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\..\bin\asm64-cli -amd64 %~dp0\..\asm\amd64\core60.asm bin\amd64
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-%~dp0\..\bin\asm64-cli -amd64 %~dp0\..\asm\amd64\core60_win.asm bin\amd64
-@echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
-@echo on
-
-xcopy %~dp0\..\examples60\*.l %~dp0\x64\examples60\ /s
-xcopy %~dp0\..\examples60\*.prj %~dp0\x64\examples60\ /s
-xcopy %~dp0\..\examples60\*.txt %~dp0\x64\examples60\ /s
-xcopy %~dp0\..\examples60\*.bmp %~dp0\x64\examples60\ /s
-xcopy %~dp0\..\examples60\*.es %~dp0\x64\examples60\ /s
-xcopy %~dp0\..\examples60\*.js %~dp0\x64\examples60\ /s
-xcopy %~dp0\..\examples60\*.ls %~dp0\x64\examples60\ /s
-xcopy %~dp0\..\examples60\*.xs %~dp0\x64\examples60\ /s
-
-goto:eof
-::ERRORS
-::---------------------
-:CompilerError
-echo The MSBuild returns error %ERRORLEVEL%
 goto:eof

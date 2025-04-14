@@ -5,7 +5,7 @@ bin\asm-cli -x86 asm\x32\core60.asm bin\x32
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-bin\asm-cli -x86 asm\x32\corex60.asm bin\x32
+bin\asm-cli -windows -x86 asm\x32\corex60.asm bin\x32 corex60_win.bin
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
