@@ -1329,3 +1329,28 @@ inline %0BF2h
   mov  esi, eax
 
 end 
+
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+#ifdef _WIN
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+
+  mov  ecx, fs:[2Ch]
+  mov  ecx, [ecx]
+  jmp  [ecx]
+
+#elif _LNX
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+
+  lea  eax, gs:[0]
+  mov  eax, [eax]
+  jmp  [eax]
+
+#endif
+
+end
