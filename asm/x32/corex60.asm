@@ -133,7 +133,7 @@ labStart:
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
   push esi
 
@@ -393,7 +393,7 @@ labPERMCollect:
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   push esi
@@ -544,7 +544,7 @@ labWait:
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  eax, [eax]
@@ -601,7 +601,7 @@ inline %0Ah
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  ecx, [eax]
@@ -617,7 +617,7 @@ inline %0Bh
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  ecx, [eax]
@@ -637,7 +637,7 @@ inline % 10h
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
   mov  edi, [eax]
   mov  [edi + tt_flags], 1
@@ -656,7 +656,7 @@ inline % 11h
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  edi, [eax]
@@ -673,7 +673,7 @@ inline %17h
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  edi, [eax]
@@ -715,7 +715,7 @@ inline %0BBh
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  eax, [eax]
@@ -730,7 +730,7 @@ inline %0BCh
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  eax, [eax]
@@ -753,7 +753,7 @@ inline %0CAh
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
 
   mov  edi, [ecx]
@@ -781,7 +781,7 @@ inline %1CAh
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
 
   mov  edi, [ecx]
@@ -836,7 +836,7 @@ inline %3CFh
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  eax, [eax]
@@ -889,7 +889,7 @@ inline %0E6h
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   lea  edi, [ebp + __arg32_1]
@@ -918,7 +918,7 @@ inline %0F2h
 #if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
 #endif
 
   mov  edi, [eax]
@@ -958,7 +958,7 @@ inline %1F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
 
   mov  edi, [ecx]
@@ -994,7 +994,7 @@ inline %2F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1030,7 +1030,7 @@ inline %3F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1067,7 +1067,7 @@ inline %4F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1105,7 +1105,7 @@ inline %5F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1144,7 +1144,7 @@ inline %6F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1179,7 +1179,7 @@ inline %7F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1209,7 +1209,7 @@ inline %8F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1240,7 +1240,7 @@ inline %9F2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1273,7 +1273,7 @@ inline %0AF2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1307,7 +1307,7 @@ inline %0BF2h
 #if _WIN
   mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  ecx, gs:[0]
+  lea  ecx, gs:[-4]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1347,7 +1347,7 @@ procedure % VEH_HANDLER
   mov  esi, edx
   mov  edx, eax   // ; set exception code
 
-  lea  eax, gs:[0]
+  lea  eax, gs:[-4]
   mov  eax, [eax]
   jmp  [eax]
 
