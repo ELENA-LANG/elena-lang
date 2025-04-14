@@ -135,7 +135,6 @@ labStart:
 #elif _LNX
   lea  eax, gs:[0]
 #endif
-
   push esi
 
   // ; GCXT: find the current thread entry
@@ -752,9 +751,9 @@ inline %0CAh
   pop  ebx
 
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
 
   mov  edi, [ecx]
@@ -780,9 +779,9 @@ inline %1CAh
   pop  ebx
 
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
 
   mov  edi, [ecx]
@@ -957,9 +956,9 @@ inline %1F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
 
   mov  edi, [ecx]
@@ -993,9 +992,9 @@ inline %2F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1029,9 +1028,9 @@ inline %3F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1066,9 +1065,9 @@ inline %4F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1104,9 +1103,9 @@ inline %5F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1143,9 +1142,9 @@ inline %6F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1178,9 +1177,9 @@ inline %7F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1208,9 +1207,9 @@ inline %8F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1239,9 +1238,9 @@ inline %9F2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1272,9 +1271,9 @@ inline %0AF2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
@@ -1306,9 +1305,9 @@ inline %0BF2h
 
   push ebp     
 #if _WIN
-  mov  eax, fs:[2Ch]
+  mov  ecx, fs:[2Ch]
 #elif _LNX
-  lea  eax, gs:[0]
+  lea  ecx, gs:[0]
 #endif
   mov  edi, [ecx]
   mov  eax, [edi + tt_stack_frame]
