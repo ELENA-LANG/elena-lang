@@ -67,15 +67,24 @@ void Clipboard :: freeBuffer(HGLOBAL buffer)
    ::GlobalUnlock(buffer);
 }
 
-bool Clipboard :: copyToClipboard(DocumentView* docView)
+bool Clipboard :: copyToClipboard(DocumentView* docView, bool selectionMode)
 {
    if (begin()) {
       clear();
 
-      HGLOBAL buffer = createBuffer(docView->getSelectionLength());
-      wchar_t* text = allocateBuffer(buffer);
+      HGLOBAL buffer = nullptr;
+      if (selectionMode) {
+         buffer = createBuffer(docView->getSelectionLength());
+         wchar_t* text = allocateBuffer(buffer);
 
-      docView->copySelection(text);
+         docView->copySelection(text);
+      }
+      else {
+         buffer = createBuffer(docView->getCurrentLineLength() + 2);
+         wchar_t* text = allocateBuffer(buffer);
+
+         docView->copyCurrentLine(text);
+      }
 
       freeBuffer(buffer);
       copy(buffer);
@@ -178,7 +187,7 @@ void IDENotificationFormatter :: sendTextContextMenuEvent(ContextMenuEvent* even
    ContextMenuNMHDR nw = {};
 
    nw.x = event->X();
-   nw.y = event->X();
+   nw.y = event->Y();
    nw.hasSelection = event->HasSelection();
 
    app->notify(EVENT_TEXT_CONTEXTMENU, (NMHDR*)&nw);
@@ -303,6 +312,11 @@ void IDEWindow :: openFile()
 void IDEWindow :: saveFile()
 {
    _controller->doSaveFile(fileDialog, _model, false, true);
+}
+
+void IDEWindow::saveFileAs()
+{
+   _controller->doSaveFile(fileDialog, _model, true, true);
 }
 
 void IDEWindow::saveAll()
@@ -720,6 +734,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_SAVE:
          saveFile();
          break;
+      case IDM_FILE_SAVEAS:
+         saveFileAs();
+         break;
       case IDM_FILE_SAVEALL:
          saveAll();
          break;
@@ -1043,8 +1060,6 @@ void IDEWindow :: onContextMenu(ContextMenuNMHDR* rec)
 
    ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.editorContextMenu]);
 
-   enableMenuItemById(IDM_EDIT_CUT, rec->hasSelection, true);
-   enableMenuItemById(IDM_EDIT_COPY, rec->hasSelection, true);
    enableMenuItemById(IDM_EDIT_PASTE, Clipboard::isAvailable(), true);
 
    menu->show(_handle, p);
@@ -1187,16 +1202,13 @@ void IDEWindow :: onLayoutChange()
       enableMenuItemById(IDM_EDIT_UNDO, false, true);
       enableMenuItemById(IDM_EDIT_REDO, false, true);
 
-      enableMenuItemById(IDM_EDIT_CUT, false, true);
-      enableMenuItemById(IDM_EDIT_COPY, false, true);
-      enableMenuItemById(IDM_EDIT_PASTE, false, true);
-
       enableMenuItemById(IDM_PROJECT_INCLUDE, false, false);
       enableMenuItemById(IDM_PROJECT_EXCLUDE, false, false);
    }
-   else {
-      enableMenuItemById(IDM_EDIT_PASTE, true, true);
-   }
+
+   enableMenuItemById(IDM_EDIT_CUT, !empty, true);
+   enableMenuItemById(IDM_EDIT_COPY, !empty, true);
+   enableMenuItemById(IDM_EDIT_PASTE, !empty, true);
 
    enableMenuItemById(IDM_EDIT_DELETE, !empty, false);
    enableMenuItemById(IDM_EDIT_COMMENT, !empty, false);
@@ -1349,8 +1361,6 @@ void IDEWindow :: onDocumentUpdate(DocumentChangeStatus& changeStatus)
 
       bool isSelected = docInfo ? docInfo->hasSelection() : false;
 
-      enableMenuItemById(IDM_EDIT_COPY, isSelected, true);
-      enableMenuItemById(IDM_EDIT_CUT, isSelected, true);
       menu->enableMenuItemById(IDM_EDIT_COMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_UNCOMMENT, isSelected);
       menu->enableMenuItemById(IDM_EDIT_DELETE, isSelected);

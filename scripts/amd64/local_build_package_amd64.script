@@ -35,6 +35,15 @@ else
   exit 1
 fi
 
+../../bin/og64-cli -s ../../dat/og/bt_xrules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
 
 cp ../../dat/og/*.dat ../../bin
 cp ../../dat/sg/syntax60.dat ../../bin
@@ -74,26 +83,6 @@ fi
  fi
 
  ../../bin/elena64-cli ../../src60/elena_api.linux.prjcol
- ret=$?
- if [ $ret -eq 2 ]
- then
-   echo "Failure" >&2
-   exit 1
- else
-   echo .
- fi
-
- elena64-cli ../../tests60/system_tests/system_tests.prj
- ret=$?
- if [ $ret -eq 2 ]
- then
-   echo "Failure" >&2
-   exit 1
- else
-   echo .
- fi
-
- ../../tests60/system_tests/system_tests
  ret=$?
  if [ $ret -eq 2 ]
  then

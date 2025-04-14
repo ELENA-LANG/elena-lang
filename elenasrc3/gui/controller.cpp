@@ -125,13 +125,13 @@ void TextViewController :: redo(TextViewModelBase* model)
 bool TextViewController :: copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard)
 {
    auto docView = model->DocView();
-   if (docView->hasSelection()) {
-      if (clipboard->copyToClipboard(docView)) {
-         notifyOnClipboardOperation(clipboard);
 
-         return true;
-      }
+   if (clipboard->copyToClipboard(docView, docView->hasSelection())) {
+      notifyOnClipboardOperation(clipboard);
+
+      return true;
    }
+
    return false;
 }
 
@@ -235,7 +235,10 @@ void TextViewController :: deleteText(TextViewModelBase* model)
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
    if (!docView->isReadOnly()) {
-      docView->eraseSelection(status);
+      if (docView->hasSelection()) {
+         docView->eraseSelection(status);
+      }
+      else docView->eraseLine(status);
    }
 
    notifyTextModelChange(model, status);

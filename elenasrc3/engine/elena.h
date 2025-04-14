@@ -307,7 +307,7 @@ namespace elena_lang
          this->metaSection = nullptr;
          this->reference = 0;
       }
-      SectionInfo(MemoryBase* section, MemoryBase* mataSection)
+      SectionInfo(MemoryBase* section, MemoryBase* metaSection)
       {
          this->module = nullptr;
          this->section = section;
@@ -1136,9 +1136,9 @@ namespace elena_lang
    // --- StaticFieldInfo ---
    struct StaticFieldInfo
    {
-      int      offset;
-      TypeInfo typeInfo;
-      ref_t    valueRef;
+      int      offset   = 0;
+      TypeInfo typeInfo = {};
+      ref_t    valueRef = 0;
    };
 
    // --- ClassHeader ---

@@ -23,7 +23,7 @@ const char* _fnOpcodes[256] =
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
    "bcopy", "wcopy", "xpeekeq", "trylock", "freelock", "parent", "xget", "xcall",
 
-   "xfsave", "altmode", "xnop", OPCODE_UNKNOWN, "xquit", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "xfsave", "altmode", "xnop", OPCODE_UNKNOWN, "xquit", "dfree", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -61,6 +61,23 @@ const char* _fnOpcodes[256] =
 
    "open", "xstore sp", "extopen", "mov sp", "new", "newn", "xmov sp", "createn",
    "fillir", "xstore fp", "xdispatch", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+};
+
+const ByteCode opNotUsingAcc[] = { 
+   ByteCode::Nop, ByteCode::Breakpoint, ByteCode::SNop, ByteCode::MovEnv, ByteCode::Unhook, ByteCode::Exclude, ByteCode::Include, ByteCode::MovFrm, ByteCode::MLen, ByteCode::DAlloc, 
+   ByteCode::ConvL, ByteCode::LNeg, ByteCode::Not, ByteCode::Neg, ByteCode::AltMode, ByteCode::XNop, ByteCode::XQuit, ByteCode::Shl, ByteCode::Shr, ByteCode::FAbsDP, 
+   ByteCode::FSqrtDP, ByteCode::FExpDP, ByteCode::FLnDP, ByteCode::FSinDP, ByteCode::FCosDP, ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::XSwapSI, ByteCode::MovM, ByteCode::MovN, 
+   ByteCode::LoadDP, ByteCode::XCmpDP, ByteCode::SubN, ByteCode::AddN, ByteCode::CloseN, ByteCode::AllocI, ByteCode::FreeI, ByteCode::AddN, ByteCode::CmpN, ByteCode::FTruncDP, 
+   ByteCode::OrN, ByteCode::MulN, ByteCode::XAddDP, ByteCode::FRoundDP, ByteCode::SaveDP, ByteCode::SaveSI, ByteCode::XFlushSI, ByteCode::XRefreshSI, ByteCode::LSaveDP, ByteCode::LSaveSI, 
+   ByteCode::LLoadDP, ByteCode::TstM, ByteCode::TstN, ByteCode::XCmpSI, ByteCode::ExtCloseN, ByteCode::LLoadSI, ByteCode::LoadSI, ByteCode::XLoadArgFI, ByteCode::FAddDPN, ByteCode::FSubDPN, 
+   ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::UDivDPN, ByteCode::XLabelDPR, ByteCode::IAndDPN, ByteCode::IOrDPN, ByteCode::IXorDPN, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN, 
+   ByteCode::XOpenIN, ByteCode::CopyDPN, ByteCode::IAddDPN, ByteCode::ISubDPN, ByteCode::IMulDPN, ByteCode::IDivDPN, ByteCode::NSaveDPN, ByteCode::XHookDPR, ByteCode::NAddDPN, ByteCode::DCopyDPN, 
+   ByteCode::OpenIN, ByteCode::XStoreSIR, ByteCode::ExtOpenIN, ByteCode::MovSIFI, ByteCode::XMovSISI, ByteCode::XStoreFIR, ByteCode::CallExtR, ByteCode::DFree
+};
+
+const ByteCode opSetAcc[] = {
+   ByteCode::SetR, ByteCode::SetDP, ByteCode::PeekR, ByteCode::SetFP, ByteCode::CreateR, ByteCode::XSetFP, ByteCode::PeekFI, ByteCode::PeekSI, ByteCode::SetSP, 
+   ByteCode::PeekTLS, ByteCode::XCreateR, ByteCode::SelGrRR, ByteCode::NewIR, ByteCode::NewNR, ByteCode::CreateNR, 
 };
 
 // --- Auxiliary  ---
@@ -874,6 +891,40 @@ inline void skipImport(ByteCodeIterator& bc_it)
       ++bc_it;
 }
 
+inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
+{
+   for (size_t i = 0; i < len; i++) {
+      if (list[i] == bc)
+         return true;
+   }
+
+   return false;
+}
+
+inline bool isAccFree(ByteCodeIterator bc_it)
+{
+   while (bc_it.eof()) {
+      ByteCode bc = (*bc_it).code;
+      if (contains(opSetAcc, sizeof(opSetAcc) / sizeof(ByteCode), bc))
+         return true;
+
+      if (!contains(opNotUsingAcc, sizeof(opNotUsingAcc) / sizeof(ByteCode), bc))
+         return false;
+
+      ++bc_it;
+   }
+
+   return true;
+}
+
+inline bool endOfPattern(ByteCodePattern& currentPattern, ByteCodeIterator& bc_it)
+{
+   if (currentPattern.argType == ByteCodePatternType::IfAccFree) {
+      return isAccFree(bc_it);
+   }
+   return currentPattern.code == ByteCode::Match;
+}
+
 bool ByteCodeTransformer :: apply(CommandTape& commandTape)
 {
    ByteCodePatterns  matchedOnes;
@@ -905,7 +956,7 @@ bool ByteCodeTransformer :: apply(CommandTape& commandTape)
                auto currentPattern = currentPatternNode.Value();
 
                if (currentPattern.match(bc_it, arg)) {
-                  if (currentPattern.code == ByteCode::Match) {
+                  if (endOfPattern(currentPattern, bc_it)) {
                      transform(--bc_it, currentPatternNode.FirstChild(), arg);
 
                      return true;

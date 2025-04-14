@@ -1,14 +1,14 @@
 import extensions;
-
+import extensions'scripting;
+   
 public program()
 {
-    int i := 1;
-
-    real a :=  -1.0/*.power(i)*/;
-
-    //Console.printLine(a);
-    //Console.printLine(b);
-    //Console.printLine(c);
-    //Console.printLine(d);
-    Console.printLine(a / (i*2/*+1*/) /** 4*/);
+    var t := new ScriptEngine()
+            .loadScript("[[ #grammar build ]]")
+            .loadPath("~\scripts\grammar60.es")
+            .loadPath("~\scripts\lscript60.es");
+            
+    var o := t.buildScript("import extensions; public program() { console.printLine(""Hello World"") }");
+    
+    o.eval();
 }

@@ -79,10 +79,14 @@ namespace elena_lang
          }
       };
 
-      class BuildTreeOptimizer
+      class BuildTreeTransformerBase
       {
-         BuildTreeTransformer _btTransformer;
+      protected:
+         BuildTreeTransformer _btPatterns;
 
+         virtual bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) = 0;
+
+         bool matchBuildKey(BuildPatterns* matched, BuildPatterns* followers, BuildNode current, BuildNode previous);
          bool matchTriePatterns(BuildNode node);
 
       public:
@@ -90,21 +94,38 @@ namespace elena_lang
 
          void proceed(BuildNode node);
 
-         BuildTreeOptimizer();
+         BuildTreeTransformerBase() = default;
+      };
+
+      class BuildTreeAnalyzer : public BuildTreeTransformerBase
+      {
+         bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) override;
+
+      public:
+         BuildTreeAnalyzer() = default;
+      };
+
+      class BuildTreeOptimizer : public BuildTreeTransformerBase
+      {
+         bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) override;
+
+      public:
+         BuildTreeOptimizer() = default;
       };
 
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);
       typedef bool(*Transformer)(BuildNode lastNode);
 
    private:
-      BuildTreeOptimizer   _buildTreeOptimizer;
+      BuildTreeAnalyzer    _btAnalyzer;
+      BuildTreeOptimizer   _btTransformer;
 
       ByteCodeTransformer  _bcTransformer;      
 
-      const Saver*        _commands;
-      LibraryLoaderBase*  _loader;
+      const Saver*         _commands;
+      LibraryLoaderBase*   _loader;
 
-      bool                _threadFriendly;
+      bool                 _threadFriendly;
 
       pos_t savePath(BuildNode node, Scope& scope, ReferenceMap& paths);
 
@@ -173,6 +194,7 @@ namespace elena_lang
 
    public:
       void loadBuildTreeRules(MemoryDump* dump);
+      void loadBuildTreeXRules(MemoryDump* dump);
       void loadByteCodeRules(MemoryDump* dump);
 
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, 

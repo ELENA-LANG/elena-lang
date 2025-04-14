@@ -9,6 +9,13 @@
 #ifndef TREE_H
 #define TREE_H
 
+#ifdef _MSC_VER
+
+#pragma warning( push )
+#pragma warning( disable : 4458 )
+
+#endif
+
 namespace elena_lang
 {
    // --- Tree ---
@@ -822,17 +829,23 @@ namespace elena_lang
          return counter;
       }
 
-      static void serialize(Node& node, void(*encoder)(TextWriter<char>&, Key, ustr_t, int, void*), TextWriter<char>& writer, void* arg)
+      static void serialize(int level, Node& node, void(*encoder)(int level, TextWriter<char>&, Key, ustr_t, int, void*), TextWriter<char>& writer, void* arg, List<Key>* filters)
       {
-         encoder(writer, node.key, node.identifier(), node.arg.value, arg);
+         encoder(level, writer, node.key, node.identifier(), node.arg.value, arg);
          Node current = node.firstChild();
          while (current != defKey) {
-            serialize(current, encoder, writer, arg);
+            if (filters && filters->template retrieveIndex<Key>(current.key, [](Key arg, Key current)
+               {
+                  return current == arg;
+               }) == -1)
+            {
+               serialize(level + 1, current, encoder, writer, arg, filters);
+            }
 
             current = current.nextNode();
          }
 
-         encoder(writer, defKey, nullptr, 0, nullptr);
+         encoder(level, writer, defKey, nullptr, 0, nullptr);
       }
 
       static void deserialize(Node root, bool(*reader)(Key&, IdentifierString&, int&, void*), void* arg)
@@ -855,5 +868,11 @@ namespace elena_lang
       Tree() = default;
    };
 }
+
+#ifdef _MSC_VER
+
+#pragma warning( pop )
+
+#endif
 
 #endif

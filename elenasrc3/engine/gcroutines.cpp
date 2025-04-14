@@ -553,7 +553,7 @@ void SystemRoutineProvider :: CalcGCStatistics(SystemEnv* systemEnv, GCStatistic
    auto table = systemEnv->gc_table;
 
    statistics->ygInfo.allocated = (unsigned int)(table->gc_yg_current - table->gc_yg_start);
-   statistics->ygInfo.free = (unsigned int)table->gc_yg_end - table->gc_yg_current;
+   statistics->ygInfo.free = (unsigned int)(table->gc_yg_end - table->gc_yg_current);
 
    statistics->mgInfo.allocated = (unsigned int)(table->gc_mg_current - table->gc_mg_start);
    statistics->mgInfo.free = (unsigned int)(table->gc_end - table->gc_mg_current);

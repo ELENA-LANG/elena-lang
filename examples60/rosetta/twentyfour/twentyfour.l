@@ -18,13 +18,13 @@ class ExpressionTree
             var node := new DynamicStruct();
             
             ch =>
-                $43 { node.Level := level + 1; node.Operation := mssg add }        // +
-                $45 { node.Level := level + 1; node.Operation := mssg subtract }   // -
-                $42 { node.Level := level + 2; node.Operation := mssg multiply }   // *
-                $47 { node.Level := level + 2; node.Operation := mssg divide }     // /
-                $40 { level.append(10); ^ self }                               // (
-                $41 { level.reduce(10); ^ self }                               // )
-                ! {
+                $43 : { node.Level := level + 1; node.Operation := mssg add }        // +
+                $45 : { node.Level := level + 1; node.Operation := mssg subtract }   // -
+                $42 : { node.Level := level + 2; node.Operation := mssg multiply }   // *
+                $47 : { node.Level := level + 2; node.Operation := mssg divide }     // /
+                $40 : { level.append(10); ^ self }                               // (
+                $41 : { level.reduce(10); ^ self }                               // )
+                ! : {
                     node.Leaf := ch.toString().toReal();
                     node.Level := level + 3
                 };
@@ -149,7 +149,7 @@ class TwentyFourGame
         var leaves := new ArrayList();
         tree.readLeaves(leaves);
         
-        ifnot (leaves.ascendant().sequenceEqual(theNumbers.ascendant()))
+        if:not (leaves.ascendant().sequenceEqual(theNumbers.ascendant()))
             { Console.printLine("Invalid input. Enter an equation using all of those four digits. Try again."); ^ self };
             
         var result := tree.Value;

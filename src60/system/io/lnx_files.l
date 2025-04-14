@@ -113,7 +113,7 @@ namespace io
 
       bool isAvailable(path)
       {
-         int ret := extern libc.access(path as::String, F_OK);
+         int ret := extern libc.access(path as:String, F_OK);
             
          ^ ret == 0
       }      

@@ -30,7 +30,7 @@ wireWorldRuleSet = new RuleSet
         int cell := s.at(x, y);
  
         cell =>
-            conductor 
+            conductor:
             {
                 int number := s.LiveCell(x, y, electronHead);
                 if (number == 1 || number == 2)
@@ -42,15 +42,15 @@ wireWorldRuleSet = new RuleSet
                     ^ conductor
                 }                
             }
-            electronHead 
+            electronHead:
             {
                 ^ electronTail
             }
-            electronTail
+            electronTail:
             {
                 ^ conductor
             }
-            !{
+            !:{
                 ^ cell
             }
     }
@@ -62,7 +62,7 @@ sealed class Model
  
     constructor load(string stateString, int maxX, int maxY)
     {
-        var strings := stateString.splitBy(newLineConstant).selectBy::(s => s.toArray()).toArray();
+        var strings := stateString.splitBy(NewLineConstant).selectBy::(s => s.toArray()).toArray();
  
         theSpace := IntMatrixSpace.allocate(maxX, maxY, RuleSet
         {
@@ -75,10 +75,10 @@ sealed class Model
                     if (y < l.Length)
                     {
                         (l[y]) =>
-                            conductorLabel { retVal := conductor }
-                            headLabel      { retVal := electronHead }
-                            tailLabel      { retVal := electronTail }
-                            emptyLabel     { retVal := empty }
+                            conductorLabel : { retVal := conductor }
+                            headLabel      : { retVal := electronHead }
+                            tailLabel      : { retVal := electronTail }
+                            emptyLabel     : { retVal := empty }
                     }
                     else
                     {
@@ -117,9 +117,9 @@ sealed class Model
                 int cell := theSpace.at(i, j);
  
                 cell =>
-                    conductor    { label := conductorLabel }
-                    electronHead { label := headLabel }
-                    electronTail { label := tailLabel };
+                    conductor    : { label := conductorLabel }
+                    electronHead : { label := headLabel }
+                    electronTail : { label := tailLabel };
  
                 Console.write(label);
  

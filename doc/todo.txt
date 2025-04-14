@@ -5,56 +5,47 @@ In development:
 [development]
   ### EPIC: elena 6.7 ###
 
-  === Iteration 39 (18.4) ===
+  === Iteration 40 (4.05) ===
   --------------------------------------
   dev: 
-      - support fladd, flsub, fldiv, flmul (throu special prefix??)
-      - #34 : https get (Mbed TLS - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_client1.c), 
-      - MTA support for Linux  
-      - #496
-      - #622
-      - #708 : compile the project (elc, og, sg, asm, ecv), create Linker
-      - unit tests for try-catch / try-catch-finally / try-finally      
-      - upndown (connector - interaction)
-  gen:
-      - lpad / elt : declare an extension, parse it and apply to the input
-  ide:
-      - ide : windows
-      - syntax highlighting
-      - #184 : linux - save, close, ...
-      - async method - auto watch : self and some variables are not displayed
-  maint:
-      - github actions : `set-output` command is deprecated 
-      - test all x86-64 examples
-      - unit tests : bt optimization 
-      - arrange action for i386 / amd64 linux release  
-  api:
-      - implement ExtensionMessage.equal
-      - api : add descriptions 
-      - api refactoring : main program entry to be called - Program
-  port:
-      - pi samples for aarch64 
-      - x86-64 : httpget, threading samples
-      - rosetta code : moving to 6.6 (test, use Console)
-      - x86-64 : mta - test net examples for mta   
-      - test all x86-64 examples (net)
-  tools:
-      - vs #2 : elena.tmLanguage.json  
-      - #658 :  connect with ldbg from VSCode : launch exe, implement built-in debugger
-  prom: bi-posting weekly
-  --------------------------------------
-  --------------------------------------
-  --------------------------------------
-
-  === Iteration 40 ===
-  --------------------------------------
-  dev: 
+  - MTA support for Linux        
+  - upndown (connector - interaction)
+  - support :sizeof
+  - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
+  - #620 : backlog
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
+  - MTA support for Linux (fix simple program - access to TLS)
+  - support fladd, flsub, fldiv, flmul (throu special prefix??)
+  - conditional compiling
+  - #622 : api backlog
+  - #731
   gen:
+  - lpad / elt : declare an extension, parse it and apply to the input
+  ide:
+  - auto indent
+  - #184 : linux -  open project, new project, save project, save all, close project ...
+  - syntax highlighting
+  - async method - auto watch : self and some variables are not displayed
   maint:
+  - remove old scripts from build folder
+  - optimization : pi (used classes byte code)
+  - test all x86-64 examples
+  - github actions : `set-output` command is deprecated       
+  - API - review / description
+  - Actions : create a release archive
+  api:
+  - api refactoring : main program entry to be called - Program
+  tools:
+  - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
+  - vs #2 : elena.tmLanguage.json  
   port:
-      - chat sample
-  prom:
+  - x86-64 : net, threading samples
+  - rosetta code : moving to 6.6 (test, use Console)
+  - chat sample
+  samples:
+  - rosetta code : Comma quibbling, Program termination, Parallel calculations
+  prom: 
+  - bi-posting weekly
   --------------------------------------
   --------------------------------------
   --------------------------------------
@@ -66,7 +57,7 @@ In development:
   dev: 
   gen:
   maint:
-      - review pi performance (must < 6)
+      - review pi performance (must < 6) : realOp.power[3] byte code
   port:
   prom:
   --------------------------------------

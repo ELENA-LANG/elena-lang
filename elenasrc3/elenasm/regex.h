@@ -60,7 +60,7 @@ namespace elena_lang
       virtual int getMode() = 0;
 
       virtual PatternRule* gotoNext(Stack<PatternRule*>& parents) = 0;
-      virtual PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) = 0;
+      virtual PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) = 0;
 
       virtual ~PatternRule() = default;
    };
@@ -99,7 +99,7 @@ namespace elena_lang
       }
 
       LinkRule()
-         : _mode(0)
+         : _mode(0), nextRule(nullptr)
       {
       }
    };
@@ -131,7 +131,7 @@ namespace elena_lang
       PatternRule* child;
 
    public:
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          parents.push(this);
          PatternRule* next = child->makeStep(s, index, ch, parents);
@@ -152,7 +152,7 @@ namespace elena_lang
    class OptionalRule : public NestedRule
    {
    public:
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          parents.push(this);
          PatternRule* next = child->makeStep(s, index, ch, parents);
@@ -180,7 +180,7 @@ namespace elena_lang
          return this;
       }
 
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          parents.push(this);
          PatternRule* next = child->makeStep(s, index, ch, parents);
@@ -203,7 +203,7 @@ namespace elena_lang
    class OrRule : public GroupRule
    {
    public:
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          parents.push(this);
 
@@ -231,7 +231,7 @@ namespace elena_lang
       char chTill;
 
    public:
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          if (ch >= chFrom && ch <= chTill) {
             return gotoNext(parents);
@@ -249,7 +249,7 @@ namespace elena_lang
    class AnyWordChar : public LinkRule
    {
    public:
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          if (PatternRule::isLetter(ch)) {
             return gotoNext(parents);
@@ -269,7 +269,7 @@ namespace elena_lang
    class DigitChar : public LinkRule
    {
    public:
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          if (PatternRule::isDigit(ch)) {
             return gotoNext(parents);
@@ -286,13 +286,13 @@ namespace elena_lang
    class AnyRule : public LinkRule
    {
    public:
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          if (ch == 10 || ch == 0) {
             return nullptr;
          }
 
-         if (index < s.length_int()) {
+         if (index < s.length()) {
             return gotoNext(parents);
          }
 
@@ -310,7 +310,7 @@ namespace elena_lang
       char _ch;
 
    public:
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          if (_ch == ch) {
             return gotoNext(parents);
@@ -334,7 +334,7 @@ namespace elena_lang
          throw AbortError();
       }
 
-      PatternRule* makeStep(ustr_t s, int index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
       {
          return ch == 0 ? this : nullptr;
       }

@@ -22,16 +22,16 @@ namespace elena_lang
    class IDEFactory : public GUIFactoryBase, public ViewFactoryBase
    {
    protected:
-      FontFactory    _fontFactory;
-      ViewStyles     _styles;
-      StyleInfo*     _schemes[3];
-      GUISettinngs   _settings;
-      PathSettings   _pathSettings;
+      static PathSettings  _pathSettings;
 
-      HINSTANCE      _instance;
+      FontFactory          _fontFactory;
+      ViewStyles           _styles;
+      StyleInfo*           _schemes[3];
+      GUISettinngs         _settings;
+      HINSTANCE            _instance;
 
-      IDEModel*      _model;
-      IDEController* _controller;
+      IDEModel*            _model;
+      IDEController*       _controller;
 
       void registerClasses();
 
@@ -54,6 +54,8 @@ namespace elena_lang
          int vmConsoleOutput, int toolBarControl, int contextEditor, int textIndex);
 
    public:
+      static void initPathSettings(IDEModel* ideModel);
+
       void reloadStyles(TextViewModelBase* viewModel) override;
 
       void styleControl(GUIControlBase* control) override;

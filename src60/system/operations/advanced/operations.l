@@ -35,7 +35,13 @@ public template if::is<expr, target>(truePart) : __included(statements)
 public template as<T>(expr)  : __included(statements)
    = cast T(expr);
 
+public template operator::as(expr, T)  : __included(statements)
+   = cast T(expr);
+
 // --- expr is: T ---
 
 public template is<T>(expr) : __included(statements)
+   = expr.instanceOf(T);
+
+public template operator::is(expr, T) : __included(statements)
    = expr.instanceOf(T);

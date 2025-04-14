@@ -739,6 +739,18 @@ inline %34h
   ret
 
 end
+
+// ; dfree
+inline %35h
+
+  lea  rax, [rdx*8]
+  add  eax, 7
+  and  eax, 0FFFFFFF0h
+
+  add  rsp, rax
+
+end
+
 // ; fadd
 inline %070h
 

@@ -43,6 +43,15 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+
+   class ByRefHandlerTest : public MethodScenarioTest
+   {
+   protected:
+      BuildNode getExpectedOutput(BuildNode node, int scenario) override;
+      SyntaxNode findTargetNode(int scenario) override;
+
+      void SetUp() override;
+   };
 }
 
 #endif

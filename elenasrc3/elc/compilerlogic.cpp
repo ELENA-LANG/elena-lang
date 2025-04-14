@@ -1360,6 +1360,13 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
       && !test(info.header.flags, elDynamicRole);
 }
 
+bool CompilerLogic :: isNumericData(ClassInfo& info)
+{
+   int dataMask = info.header.flags & elDebugMask;
+
+   return dataMask == elDebugDWORD || dataMask == elDebugQWORD || dataMask == elDebugFLOAT64;
+}
+
 bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
    if (typeInfo.nillable)
@@ -1884,10 +1891,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
 
 SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 {
-   SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole) };
+   SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole), false };
 
    if (isEmbeddableStruct(info)) {
       sizeInfo.size = info.size;
+      sizeInfo.numeric = isNumericData(info);
 
       return sizeInfo;
    }
@@ -2909,7 +2917,7 @@ ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& s
       String<char, 5> tmp;
       tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
 
-      if(argumentLen != tmp.toInt())
+      if(argumentLen != tmp.toUInt())
          return 0;
    }
    else return 0;

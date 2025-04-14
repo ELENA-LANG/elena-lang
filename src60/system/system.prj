@@ -18,7 +18,7 @@
     </project>
     <manifest>
         <name>ELENA Standard Library</name>
-        <version>6.6.1</version>
+        <version>6.6.3</version>
         <author>Aleksey Rakov</author>
     </manifest>
     <files>
@@ -143,6 +143,7 @@
         <module name="net">
             <include>net\win_common.l</include>
             <include>net\win_sockets.l</include>
+            <include>net\netsocket.l</include>
             <include>net\networkstream.l</include>
         </module>
         <module name="text'parsing">

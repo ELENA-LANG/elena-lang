@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, compileAltMode, loadXNop, loadNop, loadOp, loadNop, loadNop, loadNop,
+   loadOp, compileAltMode, loadXNop, loadNop, loadOp, loadOp, loadNop, loadNop,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -90,7 +90,7 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
 };
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 178;
+constexpr size_t bcCommandNumber = 179;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -128,7 +128,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
    ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave,
    ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg, ByteCode::Parent,
-   ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS
+   ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS, ByteCode::DFree
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -265,7 +265,7 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
 }
 
 void elena_lang :: writeMDataReference(JITCompilerScope* scope, ref_t mask,
-   pos_t disp, void* code, ModuleBase* module)
+   pos_t disp, void* code, ModuleBase*)
 {
    // references should be already preloaded - except the import one
    switch (mask) {
@@ -1480,7 +1480,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
             break;
          case DISP32HI_2:
             if (scope->command.arg2 == -1) {
-            writer->writeWord((short)-1);
+            writer->writeShort((short)-1);
             }
             else if (scope->command.arg2) {
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Hi);
@@ -1489,7 +1489,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
             break;
          case DISP32LO_2:
             if (scope->command.arg2 == -1) {
-               writer->writeWord((short)-1);
+               writer->writeShort((short)-1);
             }
             else if (scope->command.arg2) {
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskDisp32Lo);
@@ -1498,7 +1498,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
             break;
          case XDISP32HI_2:
             if (scope->command.arg2 == -1) {
-               writer->writeWord((short)-1);
+               writer->writeShort((short)-1);
             }
             else if (scope->command.arg2) {
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Hi);
@@ -1507,7 +1507,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
             break;
          case XDISP32LO_2:
             if (scope->command.arg2 == -1) {
-               writer->writeWord((short)-1);
+               writer->writeShort((short)-1);
             }
             else if (scope->command.arg2) {
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskXDisp32Lo);
@@ -1517,7 +1517,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
          case PTR32HI_2:
          {
             if (scope->command.arg2 == -1) {
-               writer->writeWord((short)-1);
+               writer->writeShort((short)-1);
             }
             else if (scope->command.arg2) {
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
@@ -1528,7 +1528,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
          case PTR32LO_2:
          {
             if (scope->command.arg2 == -1) {
-               writer->writeWord((short)-1);
+               writer->writeShort((short)-1);
             }
             else if (scope->command.arg2) {
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
@@ -1678,7 +1678,7 @@ void elena_lang::loadIndexNOp(JITCompilerScope* scope)
             writer->writeDWord(scope->command.arg1 << scope->constants->indexPower);
             break;
          case INV_ARG16_1:
-            writer->writeWord(-(scope->command.arg1 << scope->constants->indexPower));
+            writer->writeShort(-(scope->command.arg1 << scope->constants->indexPower));
             break;
          case NARG_1:
             writer->writeDWord(scope->command.arg1);
@@ -2354,7 +2354,7 @@ void elena_lang :: loadDispNOp(JITCompilerScope* scope)
          writer->writeDWord(scope->command.arg1);
          break;
       case ARG16_1:
-         writer->writeWord(scope->command.arg1);
+         writer->writeWord((unsigned short)scope->command.arg1);
          break;
       case ARG12_1:
          scope->compiler->writeImm12(writer, scope->command.arg1, 0);
@@ -2409,7 +2409,7 @@ void elena_lang :: loadONOp(JITCompilerScope* scope)
             writer->writeDWord(scope->command.arg1);
             break;
          case ARG16_1:
-            writer->writeWord(scope->command.arg1);
+            writer->writeWord((unsigned short)scope->command.arg1);
             break;
          case ARG12_1:
             scope->compiler->writeImm12(writer, scope->command.arg1, 0);

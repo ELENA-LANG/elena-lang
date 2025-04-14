@@ -204,7 +204,7 @@ namespace elena_lang
       {
          switch (type) {
             case INV_ARG:
-               writer->writeWord(-value);
+               writer->writeShort(-value);
                break;
             default:
                writer->writeWord(value);

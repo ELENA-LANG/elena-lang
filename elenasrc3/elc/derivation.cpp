@@ -1327,7 +1327,7 @@ inline void copyFunctionAttributes(SyntaxTreeWriter& writer, SyntaxNode node)
             current.setKey(SyntaxKey::Idle);
             break;
          case SyntaxKey::Attribute:
-            if (current.arg.reference == V_FUNCTION) {
+            if (current.arg.reference == V_FUNCTION || current.arg.reference == V_ASYNC) {
                // copy the function attribute
                SyntaxTree::copyNodeSafe(writer, current, true);
                current.setKey(SyntaxKey::Idle);
@@ -2344,7 +2344,7 @@ void TemplateProssesor :: copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode no
 }
 
 void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, 
-   MemoryBase* templateBody, bool importModuleInfo)
+   MemoryBase* templateBody, bool importModuleInfo, ref_t templateRef)
 {
    SyntaxTree templateTree;
    templateTree.load(templateBody);
@@ -2358,7 +2358,8 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
 
       writer.newNode(SyntaxKey::Class, INVALID_REF);
       writer.appendNode(SyntaxKey::Attribute, V_TEMPLATEBASED);
-      writer.appendNode(SyntaxKey::Name, scope.moduleScope->mapFullReference(fullName, true));
+      writer.appendNode(SyntaxKey::SourceRef, templateRef);
+      writer.appendNode(SyntaxKey::Name, scope.moduleScope->mapFullReference(fullName, true));      
    }
 
    SyntaxNode current = rootNode.firstChild();
@@ -2392,10 +2393,10 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
 }
 
 void TemplateProssesor :: generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, 
-   SyntaxTreeWriter& writer, MemoryBase* sectionBody, List<SyntaxNode>& args)
+   SyntaxTreeWriter& writer, MemoryBase* sectionBody, List<SyntaxNode>& args, ref_t templateRef)
 {
    TemplateScope templateScope(Type::Class, moduleScope, classRef);
    loadArguments(templateScope, &args);
 
-   generateTemplate(writer, templateScope, sectionBody, true);
+   generateTemplate(writer, templateScope, sectionBody, true, templateRef);
 }

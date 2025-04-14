@@ -26,6 +26,8 @@ namespace elena_lang
       bool        withCustomDispatcher;
       int         nillableArgs;
       mssg_t      byRefHandler;
+
+      CheckMethodResult() = default;
    };
 
    struct TypeAttributes
@@ -121,6 +123,8 @@ namespace elena_lang
       bool isAbstract(ClassInfo& info);
       bool isReadOnly(ClassInfo& info);
       bool withVariadicsMethods(ClassInfo& info);
+
+      bool isNumericData(ClassInfo& info);
 
       bool isDynamic(ClassInfo& info);
       bool isEmbeddableArray(ClassInfo& info);

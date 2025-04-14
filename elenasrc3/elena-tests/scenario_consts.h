@@ -17,3 +17,5 @@ constexpr auto S1_VariadicTemplates = " class (attribute -2147467263 ()attribute
 constexpr auto Tester_2Args = "class (attribute -2147467263 ()attribute -2147479546 () nameattr (identifier \"Tester\" ()) method (nameattr (identifier \"testArg2\" ()) parameter (nameattr (identifier \"arg1\" ())) parameter (nameattr (identifier \"arg2\" ())) code ()))";
 
 constexpr auto IndexedClass_Scenario1 = "class (attribute -2147479545 ()nameattr 67 (identifier \"X\" ())method (type (identifier \"IntNumber\" ())nameattr (identifier \"calc\" ())parameter (type (identifier \"IntNumber\" ())nameattr (identifier \"arg\" ()))returning ())) class (attribute -2147479546 ()nameattr (identifier \"Y\" ())parent (type (identifier \"X\" ())))";
+
+constexpr auto S_ByRefHandlerTest_Class = "class (attribute -2147479551 (identifier \"class\" ())nameattr (identifier \"A\" ()) method (type (identifier \"IntNumber\" ()) nameattr (identifier \"incSum\" ()) parameter (type (identifier \"IntNumber\" ()) nameattr (identifier \"arg1\" ()))returning (expression (add_operation (object (identifier \"arg1\" ())expression (object (integer \"1\" ())))))))";

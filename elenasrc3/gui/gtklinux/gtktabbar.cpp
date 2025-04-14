@@ -46,6 +46,11 @@ void TabBar :: onTabChange(int page_num)
 {
 }
 
+void TabBar :: renameTab(int index, const char* title)
+{
+   set_tab_label_text(*get_nth_page(index), title);
+}
+
 /*Gtk::Widget* TabBar :: getTabControl(int index) const
 {
    if (index == -1)

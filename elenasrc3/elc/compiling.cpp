@@ -15,6 +15,7 @@
 #include "modulescope.h"
 #include "bcwriter.h"
 #include "separser.h"
+#include "serializer.h"
 
 using namespace elena_lang;
 
@@ -302,7 +303,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.newNode(SyntaxKey::Namespace);
 
       _processor.generateClassTemplate(&moduleScope, generatedReference, writer,
-         sectionInfo.section, parameters);
+         sectionInfo.section, parameters, templateRef);
 
       writer.closeNode();
       writer.closeNode();
@@ -326,12 +327,13 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
    JITSettings defaultCoreSettings,
-   JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
+   JITCompilerBase* (*compilerFactory)(PlatformType)
 ) :
    _appPath(appPath),
    _templateGenerator(this),
    _forwards(nullptr),
-   _parser(nullptr)
+   _parser(nullptr),
+   _traceMode(false)
 {
    _exeExtension = exeExtension;
    _modulePrologName = modulePrologName;
@@ -360,6 +362,12 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    FileReader btRuleReader(*btRulesPath, FileRBMode, FileEncoding::Raw, false);
    if (btRuleReader.isOpen()) {
       _btRules.load(btRuleReader, btRuleReader.length());
+   }
+
+   PathString btXRulesPath(appPath, BT_XRULES_FILE);
+   FileReader btXRuleReader(*btXRulesPath, FileRBMode, FileEncoding::Raw, false);
+   if (btRuleReader.isOpen()) {
+      _btXRules.load(btXRuleReader, btXRuleReader.length());
    }
 
    _verbose = false;
@@ -428,6 +436,8 @@ void CompilingProcess :: parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWri
       parser.parse(path, derivationTree);
 
       syntaxWriter->saveTree(derivationTree);
+
+      parser.clearStack();
    }
    catch (ParserError& e)
    {
@@ -444,8 +454,12 @@ void CompilingProcess :: parseFile(path_t projectPath,
 {
    // save the path to the current source
    path_t sourceRelativePath = (*file_it).str();
-   if (!projectPath.empty())
+   if (!projectPath.empty()) {
+      if (!sourceRelativePath.startsWith(projectPath))
+         _errorProcessor->raisePathError(errInvalidFile, sourceRelativePath);
+
       sourceRelativePath += projectPath.length() + 1;
+   }      
 
    _presenter->printPathLine(ELC_PARSING_FILE, sourceRelativePath);
 
@@ -519,6 +533,8 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    ByteCodeWriter bcWriter(&_libraryProvider, true);
    if (_btRules.length() > 0)
       bcWriter.loadBuildTreeRules(&_btRules);
+   if (_btXRules.length() > 0)
+      bcWriter.loadBuildTreeXRules(&_btXRules);
    if (_bcRules.length() > 0)
       bcWriter.loadByteCodeRules(&_bcRules);
 
@@ -533,18 +549,107 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
 
       _libraryProvider.saveModule(moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
+
+      if (_verbose) {
+         PathString path;
+         _libraryProvider.retrievePath(moduleScope.module, path);
+         _presenter->printPath(ELC_MODULE_TARGET_PATH, *path);
+      }
+   }
+}
+
+inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>* filters)
+{
+   DynamicUStr target;
+
+   SyntaxTreeSerializer::save(node, target, filters);
+
+   presenter->print(target.str());
+}
+
+inline void printTree(PresenterBase* presenter, BuildNode node, List<BuildKey>* filters)
+{
+   DynamicUStr target;
+
+   BuildTreeSerializer::save(node, target, filters);
+
+   presenter->print(target.str());
+}
+
+void CompilingProcess :: printSyntaxTree(SyntaxTree& syntaxTree)
+{
+   List<SyntaxKey> filters(SyntaxKey::None);
+   if (!_verbose) {
+      filters.add(SyntaxKey::Column);
+      filters.add(SyntaxKey::Row);
+      filters.add(SyntaxKey::SourcePath);
+      filters.add(SyntaxKey::InlineTemplate);
+   }
+
+   _presenter->print("\nSyntax Tree:");
+   printTree(_presenter, syntaxTree.readRoot(), &filters);
+}
+
+void CompilingProcess :: printBuildTree(ModuleBase* module, BuildTree& buildTree)
+{
+   List<BuildKey> filters(BuildKey::None);
+   if (!_verbose) {
+      filters.add(BuildKey::Path);
+      filters.add(BuildKey::Breakpoint);
+      filters.add(BuildKey::VirtualBreakpoint);
+      filters.add(BuildKey::EOPBreakpoint);
+      filters.add(BuildKey::ClassName);
+      filters.add(BuildKey::MethodName);
+      filters.add(BuildKey::VariableInfo);
+      filters.add(BuildKey::ArgumentsInfo);
+      filters.add(BuildKey::OpenStatement);
+      filters.add(BuildKey::EndStatement);
+   }
+
+   _presenter->print("\nBuild Tree:");
+
+   BuildNode node = buildTree.readRoot();
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      switch (current.key) {
+         case BuildKey::Symbol:
+            _presenter->print("\n@symbol %s", module->resolveReference(current.arg.reference));
+
+            printTree(_presenter, current, &filters);
+            break;
+         case BuildKey::Class:
+            _presenter->print("\n@class %s", module->resolveReference(current.arg.reference));
+
+            printTree(_presenter, current, &filters);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+
+      current = current.nextNode();
    }
 }
 
 bool CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode,
    ExtensionMap* outerExtensionList)
 {
+   // print the incoming syntax tree if required
+   if (_traceMode) {
+      printSyntaxTree(*syntaxTree);
+   }
+
    // generating build tree
    BuildTree buildTree;
    bool retVal = compileModule(moduleScope, *syntaxTree, buildTree, outerExtensionList);
 
    // generating byte code
    generateModule(moduleScope, buildTree, !templateMode);
+
+   // print the outcome bui tree if required
+   if (_traceMode) {
+      printBuildTree(moduleScope.module, buildTree);
+   }
 
    return retVal;
 }
@@ -670,6 +775,8 @@ void CompilingProcess :: compile(ProjectBase& project,
       _errorProcessor->raiseInternalError(errParserNotInitialized);
    }
 
+   _traceMode = project.BoolSetting(ProjectOption::TracingMode);
+
    // load the environment
    ProjectEnvironment env;
    project.initEnvironment(env);
@@ -714,7 +821,7 @@ void CompilingProcess :: compile(ProjectBase& project,
 void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)
 {
    // ignore link operation for trace mode
-   if (project.BoolSetting(ProjectOption::TracingMode))
+   if (_traceMode)
       return;
 
    PlatformType uiType = project.UITargetType();
@@ -759,10 +866,10 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    freeobj(addressMapper);
 }
 
-void CompilingProcess :: greeting()
+void CompilingProcess :: greeting(PresenterBase* presenter)
 {
    // Greetings
-   _presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
+   presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
 }
 
 void CompilingProcess :: cleanUp(ProjectBase& project)

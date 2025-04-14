@@ -845,14 +845,14 @@ void DocumentView :: insertNewLine(DocumentChangeStatus& changeStatus)
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
-void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, disp_t length)
+void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, size_t length)
 {
    int rowCount = _text->getRowCount();
 
    eraseSelection(changeStatus);
 
    _text->insertLine(_caret, text, length);
-   _caret.moveOn(length);
+   _caret.moveOn((disp_t)length);
    changeStatus.textChanged = true;
 
    setCaret(_caret.getCaret(), false, changeStatus);
@@ -942,10 +942,14 @@ void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
 {
    int rowCount = _text->getRowCount();
 
+   Point caret = _caret.getCaret(true);
+
    _caret.moveTo(0, _caret.row());
 
    _text->eraseLine(_caret, _caret.length());
    _text->eraseChar(_caret);
+
+   setCaret(caret.x, caret.y, false, changeStatus);
 
    changeStatus.textChanged = true;
    changeStatus.caretChanged = true;
@@ -970,7 +974,7 @@ void DocumentView :: duplicateLine(DocumentChangeStatus& changeStatus)
 
    _caret.moveTo(0, caret.y + 1);
    _text->insertNewLine(_caret);
-   _text->insertLine(_caret, buffer, length);
+   _text->insertLine(_caret, buffer, abs(length));
 
    freestr(buffer);
 
@@ -994,7 +998,7 @@ void DocumentView :: copyText(text_c* text, disp_t length)
 
 void DocumentView :: toLowercase(DocumentChangeStatus& changeStatus)
 {
-   disp_t selection = abs(_selection);
+   size_t selection = abs(_selection);
 
    if (selection > 0) {
       text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
@@ -1022,7 +1026,7 @@ void DocumentView :: toLowercase(DocumentChangeStatus& changeStatus)
 
 void DocumentView :: toUppercase(DocumentChangeStatus& changeStatus)
 {
-   disp_t selection = abs(_selection);
+   size_t selection = abs(_selection);
 
    if (selection > 0) {
       text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
@@ -1056,6 +1060,25 @@ void DocumentView :: copySelection(text_c* text)
    else {
       _text->copyTo(_caret, text, _selection);
    }
+}
+
+void DocumentView :: copyCurrentLine(text_c* text)
+{
+   auto lineCaret = _caret;
+   lineCaret.moveTo(0, _caret.row());
+
+   auto nextLineCaret = lineCaret;
+   if (nextLineCaret.moveToNextBOL()) {
+      _text->copyTo(lineCaret, text, nextLineCaret.position() - lineCaret.position());
+   }
+   else _text->copyTo(lineCaret, text, lineCaret.length());
+}
+
+disp_t DocumentView :: getCurrentLineLength()
+{
+   auto lineCaret = _caret;
+
+   return lineCaret.length();
 }
 
 void DocumentView :: undo(DocumentChangeStatus& changeStatus)

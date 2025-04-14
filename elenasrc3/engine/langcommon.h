@@ -427,6 +427,7 @@ namespace elena_lang
    constexpr auto infoTargetClass            = 707;
    constexpr auto infoScopeMethod            = 708;
    constexpr auto infoExptectedType          = 709;
+   constexpr auto infoInternalDefConstructor = 710;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;
@@ -725,27 +726,30 @@ namespace elena_lang
    constexpr auto START_FORWARD              = "$symbol_entry";
 
    // --- Configuration xpaths ---
-   constexpr auto WIN_X86_KEY       = "Win_x86";
-   constexpr auto WIN_X86_64_KEY    = "Win_x64";
-   constexpr auto LINUX_X86_KEY     = "Linux_I386";
-   constexpr auto LINUX_X86_64_KEY  = "Linux_AMD64";
-   constexpr auto LINUX_PPC64le_KEY = "Linux_PPC64le";
-   constexpr auto LINUX_ARM64_KEY   = "Linux_ARM64";
+   constexpr auto WIN_X86_KEY                   = "Win_x86";
+   constexpr auto WIN_X86_64_KEY                = "Win_x64";
+   constexpr auto LINUX_X86_KEY                 = "Linux_I386";
+   constexpr auto LINUX_X86_64_KEY              = "Linux_AMD64";
+   constexpr auto LINUX_PPC64le_KEY             = "Linux_PPC64le";
+   constexpr auto LINUX_ARM64_KEY               = "Linux_ARM64";
 
-   constexpr auto MACOS_ARM64_KEY   = "MacOS_ARM64";
+   constexpr auto MACOS_ARM64_KEY               = "MacOS_ARM64";
 
-   constexpr auto LIBRARY_KEY       = "Library";
-   constexpr auto CONSOLE_KEY       = "STA Console";
-   constexpr auto GUI_KEY           = "STA GUI";
-   constexpr auto MT_CONSOLE_KEY    = "MTA Console";
-   constexpr auto VM_CONSOLE_KEY    = "VM STA Console";
-   constexpr auto VM_GUI_KEY        = "VM STA GUI";
+   constexpr auto LIBRARY_KEY                   = "Library";
+   constexpr auto CONSOLE_KEY                   = "STA Console";
+   constexpr auto GUI_KEY                       = "STA GUI";
+   constexpr auto MT_CONSOLE_KEY                = "MTA Console";
+   constexpr auto VM_CONSOLE_KEY                = "VM STA Console";
+   constexpr auto VM_GUI_KEY                    = "VM STA GUI";
 
    constexpr auto CONFIG_ROOT                   = "configuration";
    constexpr auto PLATFORM_CATEGORY             = "configuration/platform";
 
    constexpr auto COLLECTION_CATEGORY           = "configuration/collection/*";
    constexpr auto COLLECTIONS_CATEGORY          = "configuration/collections/*";
+
+   constexpr auto PROFILE_ATTR                  = "profile";
+   constexpr auto BASE_PATH_ATTR                = "base_path";
 
    constexpr auto TEMPLATE_CATEGORY             = "templates/*";
    constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";

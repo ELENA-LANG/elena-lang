@@ -70,7 +70,7 @@ uintptr_t ELENAMachine :: createPermVMT(SystemEnv* env, size_t size)
    uintptr_t addr = (uintptr_t)SystemRoutineProvider::GCRoutinePerm(env->gc_table, alignSize(size, gcPageSize));
 
    ObjectPage* header = (ObjectPage*)(addr - elObjectOffset);
-   header->size = size;
+   header->size = (pos_t)size;
    header->vmtPtr = 0;
 
    return (uintptr_t)header + elObjectOffset;
@@ -197,7 +197,7 @@ void SystemRoutineProvider :: InitMTAExceptionHandling(SystemEnv* env, size_t in
       InitCriticalStruct((uintptr_t)env->veh_handler);
 }
 
-void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
+void SystemRoutineProvider :: InitGC(SystemEnv* env, SystemSettings settings)
 {
    int page_mask = settings.page_mask;
 
@@ -230,12 +230,12 @@ void SystemRoutineProvider :: Init(SystemEnv* env, SystemSettings settings)
    env->gc_table->gc_perm_end = env->gc_table->gc_perm_start;
 }
 
-void SystemRoutineProvider :: InitSTA(SystemEnv* env)
+void SystemRoutineProvider :: InitApp(SystemEnv* env)
 {
    SystemSettings settings;
    FillSettings(env, settings);
 
-   Init(env, settings);
+   InitGC(env, settings);
 }
 
 inline uintptr_t getContent(uintptr_t ptr)
@@ -323,11 +323,11 @@ bool SystemRoutineProvider :: overrideClass(void* ptr, void* classPtr)
    return false;
 }
 
-int SystemRoutineProvider :: GetFlags(void* classPtr)
+pos_t SystemRoutineProvider :: GetFlags(void* classPtr)
 {
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
 
-   return header->flags;
+   return (pos_t)header->flags;
 }
 
 size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip, 

@@ -112,7 +112,7 @@ void getAppPath(PathString& appPath)
    appPath.lower();
 }
 
-JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
+JITCompilerBase* createJITCompiler(PlatformType platform)
 {
    switch (platform) {
       case PlatformType::Win_x86:
@@ -147,9 +147,14 @@ void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, Com
 }
 
 int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& errorProcessor, 
-   CompilingProcess& process)
+   path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
    bool cleanMode = false;
+
+   JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
+   CompilingProcess process(appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
+      &Presenter::getInstance(), &errorProcessor,
+      VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
    Project          project(appPath, CURRENT_PLATFORM, &Presenter::getInstance());
    WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
@@ -158,7 +163,7 @@ int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& err
    PathString configPath(appPath, DEFAULT_CONFIG);
    project.loadConfig(*configPath, nullptr, false);
 
-   IdentifierString profile;
+   IdentifierString profile(defaultProfile);
    for (int i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
          handleOption(argv[i], profile, project, process,
@@ -189,9 +194,12 @@ int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& err
       else {
          FileNameString fileName(argv[i]);
          IdentifierString ns(*fileName);
-         project.addSource(*ns, argv[i], nullptr, nullptr);
+         project.addSource(*ns, argv[i], nullptr, nullptr, true);
       }
    }
+
+   if (!basePath.empty())
+      project.setBasePath(basePath);
 
    if (cleanMode) {
       return process.clean(project);
@@ -208,7 +216,7 @@ int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& err
 }
 
 int compileProjectCollection(int argc, wchar_t** argv, path_t path, path_t appPath,
-   ErrorProcessor& errorProcessor, CompilingProcess& process)
+   ErrorProcessor& errorProcessor)
 {
    Presenter* presenter = &Presenter::getInstance();
 
@@ -221,16 +229,18 @@ int compileProjectCollection(int argc, wchar_t** argv, path_t path, path_t appPa
       return ERROR_RET_CODE;
    }
 
-   for (auto it = collection.paths.start(); !it.eof(); ++it) {
+   for (auto it = collection.projectSpecs.start(); !it.eof(); ++it) {
+      auto spec = *it;
+
       size_t destLen = FILENAME_MAX;
       wchar_t projectPath[FILENAME_MAX];
-      StrConvertor::copy(projectPath, (*it).str(), (*it).length(), destLen);
+      StrConvertor::copy(projectPath, spec->path.str(), spec->path.length(), destLen);
       projectPath[destLen] = 0;
 
       argv[argc - 1] = projectPath;
       presenter->printPath(ELC_COMPILING_PROJECT, projectPath);
 
-      int result = compileProject(argc, argv, appPath, errorProcessor, process);
+      int result = compileProject(argc, argv, appPath, errorProcessor, spec->basePath, spec->profile);
       if (result == ERROR_RET_CODE) {
          return ERROR_RET_CODE;
       }
@@ -249,13 +259,9 @@ int main()
       PathString appPath;
       getAppPath(appPath);
       
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
-      CompilingProcess process(*appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
-         &Presenter::getInstance(), &errorProcessor,
-         VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
-      process.greeting();
+      CompilingProcess::greeting(&Presenter::getInstance());
 
       // Reading command-line arguments...
       int argc;
@@ -273,9 +279,9 @@ int main()
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
          retVal = compileProjectCollection(argc, argv, argv[argc - 1],
-            *appPath, errorProcessor, process);
+            *appPath, errorProcessor);
       }
-      else retVal = compileProject(argc, argv, *appPath, errorProcessor, process);
+      else retVal = compileProject(argc, argv, *appPath, errorProcessor);
 
 #ifdef TIME_RECORDING
       finish = clock();

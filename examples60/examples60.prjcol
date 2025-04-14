@@ -2,27 +2,28 @@
   <collections>
     <collection name="console">
       <project>console\helloworld\helloworld.prj</project>
-      <project>console\binary\binary.l</project>
-      <project>console\bsort\bsort.l</project>
-      <project>console\collatz\collatz.l</project>
+      <project base_path="console\binary">binary.l</project>
+      <project base_path="console\bsort">bsort.l</project>
+      <project base_path="console\collatz">collatz.l</project>
       <project>console\datetime\datetime.prj</project>
-      <project>console\goods\goods.l</project>
+      <project base_path="console\goods">goods.l</project>
       <project>console\matrix\matrix.prj</project>
-      <project>console\pi\pi.l</project>
-      <project>console\pi2\pi2.l</project>
-      <project>console\random\random.l</project>
+      <project base_path="console\pi">pi.l</project>
+      <project base_path="console\pi2">pi2.l</project>
+      <project base_path="console\random">random.l</project>
       <project>console\regex\regex.prj</project>
-      <project>console\replace\replace.l</project>
+      <project base_path="console\replace">replace.l</project>
       <project>console\trans\translit.prj</project>
-      <project>console\sum\sum.prj</project>
-      <project>console\words\words.l</project>
+      <project profile="intsum">console\sum\sum.prj</project>
+      <project profile="realsum">console\sum\sum.prj</project>
+      <project base_path="console\words">words.l</project>
     </collection>
     <collection name="db">
       <project>db\sqlite\sqlite_test.prj</project>
     </collection>
     <collection name="files">
-      <project>files\textdb\textdb.l</project>
-      <project>files\textfile\textfile.l</project>
+      <project base_path="files\textdb">textdb.l</project>
+      <project base_path="files\textfile">textfile.l</project>
     </collection>
     <collection name="gui">
       <project>gui\agenda\agenda.prj</project>
@@ -31,18 +32,19 @@
       <project>gui\helloworld\xforms_hellowindow.prj</project>
     </collection>
     <collection name="net">
-      <project>net\httpget\httpget.prj</project>
+      <project profile="default">net\httpget\httpget.prj</project>
+      <project profile="ssl">net\httpget\httpget.prj</project>
     </collection>
     <collection name="scripts">
       <project>scripts\calc\calc.prj</project>
-      <project>scripts\interpreter\interpreter.l</project>
+      <project base_path="scripts\interpreter">interpreter.l</project>
       <project>scripts\js\jsinterpreter.prj</project>
       <project>scripts\ls\lsinterpreter.prj</project>
     </collection>
-    <collection name="scripts">
-      <project>scripts\async\asyncsamples.prj</project>
-      <project>scripts\tasks\tasksamples.prj</project>
-      <project>scripts\threadpool\threadpoolsamples.prj</project>
+    <collection name="threads">
+      <project>threads\async\asyncsamples.prj</project>
+      <project>threads\tasks\tasksamples.prj</project>
+      <project>threads\threadpool\threadpoolsamples.prj</project>
     </collection>
   </collections>
 </configuration>

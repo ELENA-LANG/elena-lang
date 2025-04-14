@@ -4,7 +4,7 @@ import system'threading;
 
 public class TcpListener
 {
-   Socket _listenSocket;
+   NativeSocket _listenSocket;
    bool   _noDelayMode;
 
    constructor new(int port)
@@ -32,7 +32,7 @@ public class TcpListener
          int       ai_addrlen := addrinfo.ai_addrlen;
          pointer   ai_addrptr := addrinfo.ai_addr;
 
-         _listenSocket := new Socket(ai_family, ai_socktype, ai_protocol);
+         _listenSocket := new NativeSocket(ai_family, ai_socktype, ai_protocol);
 
          _listenSocket.bind(ai_addrptr, ai_addrlen);
 
@@ -48,9 +48,9 @@ public class TcpListener
       _listenSocket.close()
    }
 
-   Socket acceptSocket()
+   NativeSocket acceptSocket()
    {
-      Socket socket := _listenSocket.accept();
+      NativeSocket socket := _listenSocket.accept();
       if:not(socket.isInvalid)
       {
          if (_noDelayMode)
@@ -60,12 +60,12 @@ public class TcpListener
       ^ socket
    }
 
-   private Task<Socket> listenAsync()
-      = ::Task<Socket>.run({ ^ _listenSocket.accept(); });
+   private Task<NativeSocket> listenAsync()
+      = ::Task<NativeSocket>.run({ ^ _listenSocket.accept(); });
 
-   async Task<Socket> acceptSocketAsync()
+   async Task<NativeSocket> acceptSocketAsync()
    {
-      Socket socket := :await listenAsync();
+      NativeSocket socket := :await listenAsync();
       if:not(socket.isInvalid)
       {
          if (_noDelayMode)
@@ -77,7 +77,7 @@ public class TcpListener
 
    TcpClient acceptTcpClient()
    {
-      Socket socket := _listenSocket.accept();
+      NativeSocket socket := _listenSocket.accept();
       if:not(socket.isInvalid)
       {
          if (_noDelayMode)
@@ -89,7 +89,7 @@ public class TcpListener
 
    async Task<TcpClient> acceptTcpClientAsync()
    {
-      Socket socket := :await listenAsync();
+      NativeSocket socket := :await listenAsync();
       if:not(socket.isInvalid)
       {
          if (_noDelayMode)

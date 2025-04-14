@@ -19,7 +19,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
-  BUILD_TAG: 6.6.4
+  BUILD_TAG: 6.6.5
 
 permissions: write-all
 
@@ -35,7 +35,7 @@ jobs:
     steps:    
     - uses: actions/checkout@v4
       with:
-        ref: iteration39
+        ref: iteration40
        
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -54,7 +54,7 @@ jobs:
 
     - name: Generate Data
       shell: cmd
-      run: build\rebuild_data60_${{matrix.platform}}.bat
+      run: scripts\rebuild_data60_${{matrix.platform}}.bat
 
     - name: Run Tests
       shell: cmd
@@ -62,19 +62,19 @@ jobs:
 
     - name: Compile Lib
       shell: cmd
-      run: build\rebuild_lib60_${{matrix.platform}}.bat
+      run: scripts\rebuild_lib60_${{matrix.platform}}.bat
 
     - name: Prepare Artifact
       shell: cmd
-      run: build\create_package_${{matrix.platform}}.bat 
+      run: scripts\create_package_${{matrix.platform}}.bat 
 
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
         name: elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}
-        path: build\${{matrix.platform}}
+        path: scripts\${{matrix.platform}}
 
-    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+    - run: Compress-Archive .\scripts\${{matrix.platform}}\* .\scripts\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
           
     - name: Upload Release
       uses: softprops/action-gh-release@v2
@@ -83,4 +83,4 @@ jobs:
         draft: false
         prerelease: true
         files: |
-          ./build/*.zip
+          ./scripts/*.zip

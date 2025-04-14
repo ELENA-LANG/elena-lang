@@ -9,7 +9,7 @@
 #include "ideview.h"
 #include "windows/wincommon.h"
 #include "windows/win32controller.h"
-#include "windows/win32debugprocess.h"
+#include "windows/win32debugadapter.h"
 #include "windows/windialogs.h"
 #include "text.h"
 
@@ -58,7 +58,7 @@ bool compareFileModifiedTime(path_t sour, path_t dest)
    return sourceDT > moduleDT;
 }
 
-typedef Win32DebugProcess    DebugProcess;
+typedef Win32DebugAdapter    DebugProcess;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -85,7 +85,9 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    DebugProcess      debugProcess;
    IDEController     ideController(&outputProcess, &vmConsoleProcess, &debugProcess, &ideModel,
                         CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);
-   IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
+
+   // NOTE : it must be initialized before factory / controller
+   IDEFactory::initPathSettings(&ideModel);
 
    ideModel.sourceViewModel.refreshSettings();
 
@@ -96,6 +98,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    PathString sysConfigPath(ideModel.projectModel.paths.appPath);
    sysConfigPath.combine(_T("elc60.cfg"));
    ideController.loadSystemConfig(&ideModel, *sysConfigPath, TEMPLATE_XPATH, TARGET_XPATH);
+
+   IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
    GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess, &vmConsoleProcess);

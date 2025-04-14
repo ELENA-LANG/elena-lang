@@ -136,7 +136,7 @@ public abstract class BaseWinControl : BaseControl
          { ^ nil };
             
       if(_handle == handle)
-         { ^ weak self as::IControl };
+         { ^ weak self as:IControl };
             
       ^ nil 
    }

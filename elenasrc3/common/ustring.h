@@ -415,12 +415,70 @@ namespace elena_lang
 
          return true;
       }
+      static bool ulongToStr(unsigned long long n, T* s, int radix, size_t maxLength)
+      {
+         unsigned long long rem = 0;
+         size_t    pos = 0;
+         size_t    start = 0;
+
+         do
+         {
+            if (pos >= maxLength)
+               return false;
+
+            rem = n % radix;
+            n /= radix;
+            switch (rem) {
+            case 10:
+               s[pos++] = 'a';
+               break;
+            case 11:
+               s[pos++] = 'b';
+               break;
+            case 12:
+               s[pos++] = 'c';
+               break;
+            case 13:
+               s[pos++] = 'd';
+               break;
+            case 14:
+               s[pos++] = 'e';
+               break;
+            case 15:
+               s[pos++] = 'f';
+               break;
+            default:
+               if (rem < 10) {
+                  s[pos++] = (T)(rem + 0x30);
+               }
+            }
+         } while (n != 0);
+
+         s[pos] = 0;
+         pos--;
+         while (start < pos) {
+            T tmp = s[start];
+            s[start++] = s[pos];
+            s[pos--] = tmp;
+         }
+
+         return true;
+      }
 
       void appendHex(int n)
       {
          size_t pos = getlength(_string);
 
          uintToStr(n, _string + pos, 16, size - pos);
+
+         StrUtil::upper(_string + pos);
+      }
+
+      void appendLongHex(long long n)
+      {
+         size_t pos = getlength(_string);
+
+         ulongToStr(n, _string + pos, 16, size - pos);
 
          StrUtil::upper(_string + pos);
       }
@@ -556,7 +614,7 @@ namespace elena_lang
          return StrConvertor::toInt(_string, radix);
       }
 
-      int toUInt(int radix = 10) const
+      unsigned int toUInt(int radix = 10) const
       {
          return StrConvertor::toUInt(_string, radix);
       }

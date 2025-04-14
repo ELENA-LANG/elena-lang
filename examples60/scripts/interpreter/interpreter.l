@@ -115,7 +115,7 @@ class TapeAssembler
                         new Message("add[2]"),
                         Expression.MessageCall(                                    
                             new Message("toInt[2]"),                           
-                            Expression.Constant(intConvertExt),
+                            Expression.Constant(IntConvertExt),
                             Expression.MessageCall(
                                 new Message("at[2]"),
                                 Expression.Variable("tape"),
@@ -142,7 +142,7 @@ class TapeAssembler
                         new Message("subtract[2]"),
                         Expression.MessageCall(                                    
                             new Message("toInt[2]"),                           
-                            Expression.Constant(intConvertExt),
+                            Expression.Constant(IntConvertExt),
                             Expression.MessageCall(
                                 new Message("at[2]"),
                                 Expression.Variable("tape"),
@@ -360,19 +360,19 @@ public program()
    string path := program_arguments[1];
 
    solution =>
-      0 {
+      0 : {
          solution0()
       }
-      1 {
+      1 : {
          solution1()
       }
-      2 {
+      2 : {
          solution2()
       }
-      3 {
+      3 : {
          solution3(path)
       }
-      ! {
+      ! : {
          solution4(path)
       };
 }

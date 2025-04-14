@@ -1,25 +1,26 @@
 <configuration>
   <collections>
     <collection name="console">
-      <project>console/helloworld/helloworld.linux.prj</project>
-      <project>console/binary/binary.l</project>
-      <project>console/bsort/bsort.l</project>
-      <project>console/collatz/collatz.l</project>
-      <project>console/datetime/datetime.linux.prj</project>
-      <project>console/goods/goods.l</project>
+      <project>console/helloworld/helloworld.prj</project>
+      <project base_path="console/binary">binary.l</project>
+      <project base_path="console/bsort">bsort.l</project>
+      <project base_path="console/collatz">collatz.l</project>
+      <project>console/datetime/datetime.prj</project>
+      <project base_path="console/goods">goods.l</project>
       <project>console/matrix/matrix.prj</project>
-      <project>console/pi/pi.l</project>
-      <project>console/pi2/pi2.l</project>
-      <project>console/random/random.l</project>
+      <project base_path="console/pi">pi.l</project>
+      <project base_path="console/pi2">pi2.l</project>
+      <project base_path="console/random">random.l</project>
       <project>console/regex/regex.prj</project>
-      <project>console/replace/replace.l</project>
-      <project>console/trans/translit.linux.prj</project>
-      <project>console/sum/sum.linux.prj</project>
-      <project>console/words/words.l</project>
+      <project base_path="console/replace">replace.l</project>
+      <project>console/trans/translit.prj</project>
+      <project profile="intsum">console/sum/sum.prj</project>
+      <project profile="realsum">console/sum/sum.prj</project>
+      <project base_path="console/words">words.l</project>
     </collection>
     <collection name="files">
-      <project>files/textdb/textdb.l</project>
-      <project>files/textfile/textfile.l</project>
+      <project base_path="files/textdb">textdb.l</project>
+      <project base_path="files/textfile">textfile.l</project>
     </collection>
   </collections>
 </configuration>

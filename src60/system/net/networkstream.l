@@ -5,18 +5,18 @@ import system'threading;
 
 public class NetworkStream : Stream
 {
-   Socket _socket;
-   bool   _ownStream;
-   byte[] _buffer; 
+   INetSocket  _socket;
+   bool        _ownStream;
+   byte[]      _buffer; 
 
-   constructor(Socket socket)
+   constructor(INetSocket socket)
    {
       _socket := socket;
       _ownStream := false;
       _buffer := new byte[](512);
    }
 
-   constructor assign(Socket socket, bool socketStream)
+   constructor assign(INetSocket socket, bool socketStream)
    {
       _socket := socket;
       _ownStream := socketStream;
@@ -48,23 +48,23 @@ public class NetworkStream : Stream
    }
 
    int read(byte[] dump, int length)
-      = _socket.receive(dump, length, 0);
+      = _socket.read(dump, length);
      
    int write(byte[] dump, int length)
    {
-      int retVal := _socket.send(dump, length, 0);
+      int retVal := _socket.write(dump, length);
 
       ^ retVal
    }
      
    indexed internal Task<int> readAsync(byte[] dump, int length)
-      = ::Task<int>.run({ ^ _socket.receive(dump, length, 0) });
+      = _socket.readAsync(dump, length);
      
    indexed internal Task<int> writeAsync(byte[] dump, int length)
-      = ::Task<int>.run({ ^ _socket.send(dump, length, 0) });
+      = _socket.writeAsync(dump, length);
      
    indexed internal bool isDataAvailable
-      = _socket.available() != 0;
+      = _socket.AvailableToRead;
 
    indexed async internal Task<int> readAsync(MemoryBuffer buffer, int length)
    {
@@ -76,6 +76,28 @@ public class NetworkStream : Stream
             size := length;
 
          int received := :await readAsync(_buffer, size);
+         if (received > 0) {
+            total_received += received;
+            total -= received;
+
+            buffer.write(0, received, _buffer);
+         }
+         else :break;
+      };
+
+      ^ total_received;
+   }
+
+   indexed internal int readToBuffer(MemoryBuffer buffer, int length)
+   {
+      int total_received := 0;
+      int total := length;
+      while (total > 0) {
+         int size := 512;
+         if (size > length)
+            size := length;
+
+         int received := read(_buffer, size);
          if (received > 0) {
             total_received += received;
             total -= received;
@@ -102,6 +124,26 @@ public class NetworkStream : Stream
          int converted := UTF8Encoder.toByteArray(s, index, ref sublen, tmp, 0, 1024);
          
          converted := :await self.writeAsync(tmp, converted);
+
+         index += converted;
+         len -= converted;
+      };
+   }
+
+   indexed internal writeString(string s)
+   {
+      byte tmp[1024];
+      int len := s.Length;
+      int index := 0;
+      while (len > 0) {
+         int sublen := 1024;
+         if (len < sublen) {
+            sublen := len;
+         };
+
+         int converted := UTF8Encoder.toByteArray(s, index, ref sublen, tmp, 0, 1024);
+         
+         converted := self.write(tmp, converted);
 
          index += converted;
          len -= converted;
@@ -144,46 +186,17 @@ public extension AsyncStreamExtension : NetworkStream
    Task writeAsync(string s)
       = self.writeAsync(s);
 
+   write(string s)
+      = self.writeString(s);
+
    Task<string> readAsStringAsync()
       = self.readAsStringAsync();
 
    Task<int> readAsync(MemoryBuffer buffer, int length)
       = self.readAsync(buffer, length);
 
-//   async Task writeAsync(string s)
-//   {
-//      byte tmp[1024];
-//      int len := s.Length;
-//      int index := 0;
-//      while (len > 0) {
-//         int sublen := 1024;
-//         if (len < sublen) {
-//            sublen := len;
-//         };
-//
-//         int converted := UTF8Encoder.toByteArray(s, index, ref sublen, tmp, 0, 1024);
-//         
-//         converted := :await self.writeAsync(tmp, converted);
-//
-//         index += converted;
-//         len -= converted;
-//      };
-//   }
-
-//   async Task<string> readAsStringAsync()
-//   {
-//      MemoryBuffer buffer := MemoryBuffer.allocate();
-//
-//      byte tmp[1024];
-//      int read := :await self.readAsync(tmp, 1024);
-//      while (read > 0) {
-//         buffer.write(0, read, tmp);
-//
-//         read := :await self.readAsync(tmp, 1024);
-//      };
-//
-//      ^ UTF8Encoding.toString(0, buffer.Length, buffer.Value);
-//   }
+   int readToBuffer(MemoryBuffer buffer, int length)
+      = self.readToBuffer(buffer, length);
 
    bool isDataAvailable
       = self.isDataAvailable;

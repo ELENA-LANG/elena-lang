@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive ELF Image class implementation
 //       supported platform: I386, AMD64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -66,6 +66,7 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    MemoryBase* import = provider.getImportSection();
    MemoryBase* data = provider.getDataSection();
    MemoryBase* stat = provider.getStatSection();
+   MemoryBase* tls = provider.getTLSSection();
 
    // === address space mapping ===
 
@@ -135,8 +136,18 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    fileSize += align(data->length(), fileAlignment);
    sectionSize += align(data->length(), fileAlignment);
 
+   if (tls->length() > 0) {
+      map.tls = map.data + align(data->length(), fileAlignment);
+      map.dataSize += align(tls->length(), fileAlignment);
+
+      sectionSize += align(tls->length(), fileAlignment);
+      fileSize += align(tls->length(), fileAlignment);
+
+      map.stat = map.tls + tls->length();
+   }
+   else map.stat = map.data + data->length();
+   
    map.dataSize += stat->length();
-   map.stat = map.data + data->length();
 
    sectionSize += align(stat->length(), fileAlignment);
 
@@ -145,6 +156,12 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
 
    sections.items.add(sections.headers.count(), { import, true });
    sections.items.add(sections.headers.count(), { data, true });
+
+   if (tls->length() > 0) {
+      map.dictionary.add(elfTLSSize, tls->length());
+
+      sections.items.add(sections.headers.count(), { tls, true });
+   }
 
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
    fileOffset = align(fileOffset + fileSize, fileAlignment);

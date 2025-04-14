@@ -101,3 +101,10 @@ size_t GetStatusSMLA(char* buffer, size_t maxLength)
    }
    else return 0;
 }
+
+void ClearStackSMLA()
+{
+   if (engine) {
+      engine->clearParserStack();
+   }
+}

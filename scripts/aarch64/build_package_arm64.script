@@ -1,11 +1,11 @@
 #!/bin/bash
-RELEASE=elena-6.6.3.ppc64le-linux
+RELEASE=elena-6.6.5.aarch64-linux
 
 mkdir -p ../lib60_64
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
-mkdir -p /usr/lib/elena/core/ppc64le/
+mkdir -p /usr/lib/elena/core/aarch64/
 mkdir -p /usr/lib/elena/lib60_64
 
 cp ../../bin/libelenart60_64.so /usr/lib/elena/
@@ -49,12 +49,7 @@ else
   exit 1
 fi
 
-cp ../../dat/og/*.dat /usr/share/elena/
-cp ../../dat/sg/syntax60.dat /usr/share/elena
-
-echo compiling assembly files
-
-../../bin/asm64-cli -ppc64le ../../asm/ppc64le/core60.asm /usr/lib/elena/core/ppc64le
+../../bin/og64-cli -s ../../dat/og/bt_xrules60.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -64,7 +59,22 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -ppc64le ../../asm/ppc64le/core60_lnx.asm /usr/lib/elena/core/ppc64le
+cp ../../dat/og/*.dat /usr/share/elena/
+cp ../../dat/sg/syntax60.dat /usr/share/elena
+
+echo compiling assembly files
+
+../../bin/asm64-cli -arm64 ../../asm/aarch64/core60.asm /usr/lib/elena/core/aarch64
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/asm64-cli -arm64 ../../asm/aarch64/core60_lnx.asm /usr/lib/elena/core/aarch64
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -140,7 +150,7 @@ fi
  mkdir -p ./$RELEASE/etc/elena/
  mkdir -p ./$RELEASE/etc/elena/templates/
  mkdir -p ./$RELEASE/usr/share/elena/
- mkdir -p ./$RELEASE/usr/lib/elena/core/ppc64le/
+ mkdir -p ./$RELEASE/usr/lib/elena/core/aarch64/
  mkdir -p ./$RELEASE/usr/lib/elena/lib60_64/
  mkdir -p ./$RELEASE/usr/bin/
  mkdir -p ./$RELEASE/usr/elena-lang
@@ -155,6 +165,7 @@ fi
  echo compiling shared files
 
  cp ../../dat/og/bt_rules60.dat ./$RELEASE/usr/share/elena
+ cp ../../dat/og/bt_xrules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/og/bc_rules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
 
@@ -165,7 +176,7 @@ fi
 
  echo compiling core
 
- cp /usr/lib/elena/core/ppc64le/*.bin ./$RELEASE/usr/lib/elena/core/ppc64le/
+ cp /usr/lib/elena/core/aarch64/*.bin ./$RELEASE/usr/lib/elena/core/aarch64/
 
  echo compiling lib60
 

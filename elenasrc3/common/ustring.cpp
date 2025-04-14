@@ -1067,7 +1067,7 @@ char* StrFactory :: reallocate(char* s, size_t size)
 
 #ifdef _MSC_VER
 
-void StrUtil :: move(wchar_t* s1, const wchar_t* s2, size_t length)
+void StrUtil :: move(wide_c* s1, const wide_c* s2, size_t length)
 {
    memmove(s1, s2, length << 1);
 }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA SM Engine
 //             Linux Shared Library Declaration
-//                                             (C)2022-2023, by Aleksey Rakov
+//                                             (C)2022-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENASM_H_INCLUDED
@@ -36,6 +36,8 @@ extern "C"
    DLL_PUBLIC void ReleaseSMLA(void* tape);
 
    DLL_PUBLIC size_t GetStatusSMLA(char* buffer, size_t maxLength);
+
+   DLL_PUBLIC void ClearStackSMLA();
 }
 
 #endif // ELENASM_H_INCLUDED

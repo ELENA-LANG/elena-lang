@@ -37,3 +37,13 @@ jobs:
 
     - name: Build
       run: make all_${{ matrix.platform }}
+
+    - name: Generate Data / API
+      run: |
+        cd scripts/${{ matrix.platform }}
+        sudo ./local_build_package_${{ matrix.platform }}.script 
+
+    - name: Run functional test
+      run: |
+        cd scripts/${{ matrix.platform }}
+        sudo ./local_runtests.script

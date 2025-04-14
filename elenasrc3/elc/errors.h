@@ -130,6 +130,7 @@ namespace elena_lang
    constexpr auto infoMsgTargetClass         = "info 707:   target class: %s\n";
    constexpr auto infoMsgScopeMethod         = "info 708:   in the method: %s\n";
    constexpr auto infoMssgExptectedType      = "\ninfo 709: the expected type is %s, but the actual type is %s\n";
+   constexpr auto infoMsgInternalDefConstructor = "\ninfo 710: default constructor cannot be internal\n";
 
 } // _ELENA_
 

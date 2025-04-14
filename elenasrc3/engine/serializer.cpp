@@ -15,10 +15,10 @@ using namespace elena_lang;
 
 // --- SyntaxTreeReader ---
 
-void syntaxTreeEncoder(TextWriter<char>& writer, SyntaxKey key, ustr_t strArg, int arg, void* extraArg)
+void syntaxTreeEncoder(int level, TextWriter<char>& writer, SyntaxKey key, ustr_t strArg, int arg, void* extraArg)
 {
    if (key == SyntaxKey::None) {
-      writer.writeTextLine(")");
+      writer.writeText(")");
 
       return;
    }
@@ -29,6 +29,11 @@ void syntaxTreeEncoder(TextWriter<char>& writer, SyntaxKey key, ustr_t strArg, i
       {
          return current == arg;
       });
+
+   writer.writeTextLine(nullptr);
+
+   for (int i = 0; i < level; i++)
+      writer.writeChar(' ');
 
    if (keyName.empty()) {
       IdentifierString code;
@@ -53,17 +58,17 @@ void syntaxTreeEncoder(TextWriter<char>& writer, SyntaxKey key, ustr_t strArg, i
       writer.writeChar(' ');
    }
 
-   writer.writeTextLine("(");
+   writer.writeText("(");
 }
 
-void SyntaxTreeSerializer :: save(SyntaxNode node, DynamicUStr& target)
+void SyntaxTreeSerializer :: save(SyntaxNode node, DynamicUStr& target, List<SyntaxKey>* filters)
 {
    TokenMap list(SyntaxKey::None);
    SyntaxTree::loadTokens(list);
 
    DynamicUStrWriter writer(&target);
 
-   SyntaxTree::serialize(node, syntaxTreeEncoder, writer, &list);
+   SyntaxTree::serialize(0, node, syntaxTreeEncoder, writer, &list, filters);
 }
 
 struct LoadScope
@@ -124,20 +129,25 @@ void SyntaxTreeSerializer :: load(ustr_t source, SyntaxNode& target)
 
 // --- BuildTreeSerializer ---
 
-void buildTreeEncoder(TextWriter<char>& writer, BuildKey key, ustr_t, int arg, void* extraArg)
+void buildTreeEncoder(int level, TextWriter<char>& writer, BuildKey key, ustr_t, int arg, void* extraArg)
 {
    if (key == BuildKey::None) {
-      writer.writeTextLine(")");
+      writer.writeText(")");
 
       return;
    }
 
    BuildKeyMap* map = static_cast<BuildKeyMap*>(extraArg);
 
-   ustr_t keyName = map->retrieve<BuildKey>(nullptr, key, [](BuildKey arg, ustr_t value, BuildKey current)
+   ustr_t keyName = map->retrieve<BuildKey>(nullptr, key, [](BuildKey arg, ustr_t, BuildKey current)
       {
          return current == arg;
       });
+
+   writer.writeTextLine(nullptr);
+
+   for (int i = 0; i < level; i++)
+      writer.writeChar(' ');
 
    if (keyName.empty()) {
       IdentifierString code;
@@ -156,17 +166,17 @@ void buildTreeEncoder(TextWriter<char>& writer, BuildKey key, ustr_t, int arg, v
       writer.writeChar(' ');
    }
 
-   writer.writeTextLine("(");
+   writer.writeText("(");
 }
 
-void BuildTreeSerializer :: save(BuildNode node, DynamicUStr& target)
+void BuildTreeSerializer :: save(BuildNode node, DynamicUStr& target, List<BuildKey>* filters)
 {
    BuildKeyMap map(BuildKey::None);
    BuildTree::loadBuildKeyMap(map);
 
    DynamicUStrWriter writer(&target);
 
-   BuildTree::serialize(node, buildTreeEncoder, writer, &map);
+   BuildTree::serialize(0, node, buildTreeEncoder, writer, &map, filters);
 }
 
 struct BuildLoadScope

@@ -72,7 +72,7 @@ EXTERN_DLL_EXPORT void InitializeSTLA(SystemEnv* env, void* entry, void* cririca
 
    __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 
-   machine->startSTA(env, entry);
+   machine->startApp(env, entry);
 }
 
 EXTERN_DLL_EXPORT void InitializeMTLA(SystemEnv* env, SymbolList* entry, void* criricalHandler)
@@ -80,7 +80,7 @@ EXTERN_DLL_EXPORT void InitializeMTLA(SystemEnv* env, SymbolList* entry, void* c
    systemEnv = env;
 
 #ifdef DEBUG_OUTPUT
-   printf("InitializeSTA.6 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("InitializeMTA.6 %x,%x\n", (int)env, (int)criricalHandler);
 
    fflush(stdout);
 #endif
@@ -89,7 +89,7 @@ EXTERN_DLL_EXPORT void InitializeMTLA(SystemEnv* env, SymbolList* entry, void* c
    __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
    __routineProvider.InitMTASignals(env, index);
 
-   machine->startSTA(env, entry);
+   machine->startApp(env, entry);
 }
 
 EXTERN_DLL_EXPORT void ExitLA(int retVal)

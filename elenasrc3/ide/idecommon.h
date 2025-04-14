@@ -9,6 +9,7 @@
 
 #include "elena.h"
 #include "guieditor.h"
+//#include "ldbg_common.h"
 
 namespace elena_lang
 {
@@ -244,17 +245,16 @@ namespace elena_lang
       virtual void debugThread() = 0;
    };
 
-   // --- DebugProcessException ---
-   struct DebugProcessException
-   {
-      int   code;
-      addr_t address;
-   };
-
    struct StartUpSettings
    {
       bool withExplicitConsole;
       bool includeAppPath2Paths;  // applicable only for Windows
+   };
+
+   struct ExceptionInfo
+   {
+      int   code;
+      addr_t address;
    };
 
    // --- DebugProcessBase ---
@@ -272,7 +272,7 @@ namespace elena_lang
 
       virtual void setStepMode() = 0;
 
-      virtual DebugProcessException* Exception() = 0;
+      virtual ExceptionInfo* Exception() = 0;
       virtual void resetException() = 0;
 
       virtual void initEvents() = 0;
@@ -293,7 +293,7 @@ namespace elena_lang
       virtual addr_t getBaseAddress() = 0;
       virtual void* getState() = 0;
 
-      virtual addr_t getMemoryPtr(addr_t address) = 0;
+      //virtual addr_t getMemoryPtr(addr_t address) = 0;
 
       virtual addr_t getStackItem(int index, disp_t offset = 0) = 0;
       virtual addr_t getStackItemAddress(disp_t disp) = 0;

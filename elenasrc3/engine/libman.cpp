@@ -486,6 +486,12 @@ ModuleBase* LibraryProvider :: createDebugModule(ustr_t name)
    return module;
 }
 
+void LibraryProvider :: retrievePath(ModuleBase* module, PathString& path)
+{
+   ustr_t name = module->name();
+   nameToPath(name, path, "nl");
+}
+
 bool LibraryProvider :: saveModule(ModuleBase* module)
 {
    // resolving the module output path

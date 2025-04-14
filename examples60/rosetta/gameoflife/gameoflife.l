@@ -1,4 +1,4 @@
-import system'threading;
+import extensions'threading;
 import cellular;
 
 const int DELAY = 50;

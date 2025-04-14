@@ -79,18 +79,8 @@ public class HttpResponse
       _headers := new HttpHeaders();
    }
 
-   async internal Task readHeader()
+   private parseHeaders(int eoh)
    {
-      int eoh := 0;
-      int received := :await _stream.readAsync(_buffer, 512);
-      while (received > 0) {
-         eoh := seekHeaderEnd();
-         if (eoh > 0)
-            :break;
-
-         received := :await _stream.readAsync(_buffer, 512);
-      };
-
       byte[] buffer := _buffer.Content;
       int length := _buffer.Length;
 
@@ -124,13 +114,38 @@ public class HttpResponse
       }
    }
 
-   async Task<string> readAsStringAsync()
+   async internal Task readHeaderAsync()
    {
+      int eoh := 0;
       int received := :await _stream.readAsync(_buffer, 512);
       while (received > 0) {
+         eoh := seekHeaderEnd();
+         if (eoh > 0)
+            :break;
+
          received := :await _stream.readAsync(_buffer, 512);
       };
 
+      parseHeaders(eoh)
+   }
+
+   internal readHeader()
+   {
+      int eoh := 0;
+      int received := _stream.readToBuffer(_buffer, 512);
+      while (received > 0) {
+         eoh := seekHeaderEnd();
+         if (eoh > 0)
+            :break;
+
+         received := _stream.readToBuffer(_buffer, 512);
+      };
+
+      parseHeaders(eoh)
+   }
+
+   private string returnContentAsString()
+   {
       byte[] buffer := _buffer.Content;
       int length := _buffer.Length;
       int eoh := seekHeaderEnd();
@@ -157,7 +172,26 @@ public class HttpResponse
       }
       else {
          ^ UTF8Encoding.toString(eoh, length - eoh, _buffer.Content);
-      }
-      
+      }      
+   }
+
+   async Task<string> readAsStringAsync()
+   {
+      int received := :await _stream.readAsync(_buffer, 512);
+      while (received > 0) {
+         received := :await _stream.readAsync(_buffer, 512);
+      };
+
+      ^ returnContentAsString();
+   }
+
+   string readAsString()
+   {
+      int received := _stream.readToBuffer(_buffer, 512);
+      while (received > 0) {
+         received := _stream.readToBuffer(_buffer, 512);
+      };
+
+      ^ returnContentAsString();
    }
 }

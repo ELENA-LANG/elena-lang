@@ -16,7 +16,7 @@ public abstract class BaseWinForm : BaseWinContainer
    {
       control.Parent := self;
 
-      _controls.append(weak control as::IControl)
+      _controls.append(weak control as:IControl)
    }
 
    close()

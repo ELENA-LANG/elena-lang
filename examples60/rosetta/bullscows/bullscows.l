@@ -40,7 +40,7 @@ class GameMaster
                var number := ch.toString().toInt();
                     
                // check range
-               ifnot (number > 0 && number < 10)
+               if:not (number > 0 && number < 10)
                   { InvalidArgumentException.raise() };
                     
                // check duplicates
@@ -68,9 +68,9 @@ class GameMaster
       };
 
       bulls =>
-        -1 { Console.printLine("Not a valid guess."); ^ true }
-         4 { Console.printLine("Congratulations! You have won!"); ^ false }
-         ! {
+        -1 : { Console.printLine("Not a valid guess."); ^ true }
+         4 : { Console.printLine("Congratulations! You have won!"); ^ false }
+         ! : {
             _attempt.append(1);
                  
             Console.printLine("Your Score is ",bulls," bulls and ",cows," cows");

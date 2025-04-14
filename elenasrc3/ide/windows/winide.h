@@ -75,7 +75,7 @@ namespace elena_lang
    public:
       static bool isAvailable();
 
-      bool copyToClipboard(DocumentView* docView) override;
+      bool copyToClipboard(DocumentView* docView, bool selectionMode) override;
       void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) override;
 
       Clipboard(ControlBase* owner);
@@ -202,6 +202,7 @@ namespace elena_lang
       void newFile();
       void openFile();
       void saveFile();
+      void saveFileAs();
       void saveAll();
       void saveProject();
       void closeFile();

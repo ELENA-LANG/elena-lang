@@ -105,7 +105,7 @@ inline void relocate64(pos_t pos, ref_t mask, ref_t reference, void* address, Ad
    }
 }
 
-inline void relocateImport(pos_t pos, ref_t mask, ref_t reference, void* address, AddressSpace* space)
+inline void relocateImport(pos_t, ref_t mask, ref_t reference, void* address, AddressSpace* space)
 {
    switch (mask) {
       case mskImportRef32:
@@ -121,7 +121,7 @@ inline void relocateImport(pos_t pos, ref_t mask, ref_t reference, void* address
    }
 }
 
-inline void relocateElfImport(pos_t pos, ref_t mask, ref_t reference, void* address, AddressSpace* space)
+inline void relocateElfImport(pos_t, ref_t mask, ref_t reference, void* address, AddressSpace* space)
 {
    switch (mask) {
       case mskImportRef32:
@@ -155,7 +155,7 @@ inline void relocateElfImport(pos_t pos, ref_t mask, ref_t reference, void* addr
    }
 }
 
-inline void relocateElf64Import(pos_t pos, ref_t mask, ref_t reference, void* address, AddressSpace* space)
+inline void relocateElf64Import(pos_t, ref_t mask, ref_t reference, void* address, AddressSpace* space)
 {
    switch (mask) {
       case mskImportRef64:

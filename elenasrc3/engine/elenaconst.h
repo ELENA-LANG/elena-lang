@@ -99,6 +99,7 @@ namespace elena_lang
    constexpr auto CONSTRUCTOR_MESSAGE2       = "#constructor2";   // protected constructor
    constexpr auto CAST_MESSAGE               = "#cast";
    constexpr auto INVOKE_MESSAGE             = "#invoke";
+   constexpr auto ASYNC_INVOKE_MESSAGE       = "#async_invoke";
    constexpr auto TRY_INVOKE_MESSAGE         = "#try_invoke";
    constexpr auto INIT_MESSAGE               = "#init";
    constexpr auto CLASS_INIT_MESSAGE         = "#class_init";
@@ -122,7 +123,7 @@ namespace elena_lang
    constexpr auto NOT_MESSAGE                = "Inverted";
    constexpr auto NEGATE_MESSAGE             = "Negative";
    constexpr auto VALUE_MESSAGE              = "Value";
-   constexpr auto ITEM_MESSAGE               = "Value";
+   constexpr auto RESULT_MESSAGE             = "Result";
    constexpr auto DEFAULT_MESSAGE            = "Default";
    constexpr auto BNOT_MESSAGE               = "BInverted";
    constexpr auto NOTEQUAL_MESSAGE           = "notequal";
@@ -310,6 +311,7 @@ namespace elena_lang
       ExtOverloadList   = 0x90A,
       Initializer       = 0x10B,
       YieldContextSize  = 0x80C,
+      SourceTemplateRef = 0x10D,
    };
 
    // === Reference constants ====
@@ -495,8 +497,8 @@ namespace elena_lang
    constexpr ref_t INV_ARG12_2            = 0x0000002Au;
 
    // predefined debug module sections
-   constexpr ref_t DEBUG_LINEINFO_ID      = -1;
-   constexpr ref_t DEBUG_STRINGS_ID       = -2;
+   constexpr ref_t DEBUG_LINEINFO_ID      = (ref_t)-1;
+   constexpr ref_t DEBUG_STRINGS_ID       = (ref_t)-2;
 
    // === ELENA Error codes ===
    constexpr auto errNotImplemented = -3;

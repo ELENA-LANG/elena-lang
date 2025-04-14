@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Machine declaration
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -314,10 +314,10 @@ void ELENARTMachine :: Exit(int exitCode)
    __routineProvider.Exit(exitCode);
 }
 
-void ELENARTMachine :: startSTA(SystemEnv* env, void* entry)
+void ELENARTMachine :: startApp(SystemEnv* env, void* entry)
 {
    // setting up system
-   __routineProvider.InitSTA(env);
+   __routineProvider.InitApp(env);
 
    // executing the program
    execute(entry);

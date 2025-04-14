@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -78,7 +78,26 @@ void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 
    __routineProvider.InitSTAExceptionHandling(env, criricalHandler);
 
-   machine->startSTA(env, entryList);
+   machine->startApp(env, entryList);
+}
+
+void InitializeMTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
+{
+   systemEnv = env;
+
+#ifdef DEBUG_OUTPUT
+   printf("InitializeMTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
+   fflush(stdout);
+#endif
+
+   if (machine == nullptr)
+      init();
+
+   size_t index = machine->allocateThreadEntry(env);
+   __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
+   __routineProvider.InitMTASignals(env, index);
+
+   machine->startApp(env, entryList);
 }
 
 void* CollectGCLA(void* roots, size_t size)

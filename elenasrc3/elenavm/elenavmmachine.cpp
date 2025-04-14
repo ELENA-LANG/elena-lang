@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //                                             (C)2021-2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
@@ -148,7 +148,7 @@ void ELENAVMMachine :: init(SystemEnv* exeEnv)
    _env = (SystemEnv*)_compiler->getSystemEnv();
 
    // setting up system
-   __routineProvider.InitSTA(_env);
+   __routineProvider.InitApp(_env);
 
    _initialized = true;
 }

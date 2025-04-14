@@ -11,6 +11,13 @@
 
 #include "elena.h"
 
+#if _MSC_VER
+
+#pragma warning( push )
+#pragma warning( disable : 4458 )
+
+#endif
+
 namespace elena_lang
 {
 
@@ -73,6 +80,7 @@ namespace elena_lang
       AltMode        = 0x31,  
       XNop           = 0x32,
       XQuit          = 0x34,
+      DFree          = 0x35,
 
       FIAdd          = 0x70,
       FISub          = 0x71,
@@ -508,7 +516,8 @@ namespace elena_lang
       None = 0,
       Set,
       Match,
-      MatchArg
+      MatchArg,
+      IfAccFree // NOTE : can be used only for ByteCode::Match
    };
 
    struct PatternArg
@@ -621,5 +630,11 @@ namespace elena_lang
 
    };
 }
+
+#ifdef _MSC_VER
+
+#pragma warning( pop )
+
+#endif
 
 #endif

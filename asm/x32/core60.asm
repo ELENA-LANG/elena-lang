@@ -743,6 +743,14 @@ inline %34h
 
 end
 
+// ; dfree
+inline %35h
+
+  lea  eax, [edx*4]
+  add  esp, eax
+
+end
+
 // ; fiadd
 inline %070h
 
