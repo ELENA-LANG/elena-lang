@@ -49,11 +49,10 @@ In development:
   - auto indent
   - MTA support for Linux        
   --------------------------------------
-  * linux i386 : test
+  * test a single thread application in MTA mode
+  * fix operation with OS TLS storage
   * looking for the register + offset where tls is located 
   * gs :     movl    %eax, %gs:myVar@ntpoff
-  * fix operation with OS TLS storage
-  * test a single thread application in MTA mode
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
