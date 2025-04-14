@@ -49,10 +49,9 @@ In development:
   - auto indent
   - MTA support for Linux        
   --------------------------------------
-  * test build
-  * linux i386 : modify the script to generate corex_lnx.bin
+  * x86 : modify the script to generate two version of core -> core_win.bin
 
-  * x86 : modify the script to generate two version of core -> core_win.bin & core_lnx.bin
+  * linux i386 : modify the script to generate corex_lnx.bin, core_lnx.bin
   * looking for the register + offset where tls is located 
   * gs :     movl    %eax, %gs:myVar@ntpoff
   * fix operation with OS TLS storage

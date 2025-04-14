@@ -288,7 +288,18 @@ end
 
 procedure %PREPARE
 
+#if _WIN
+
   ret
+
+#elif _LNX
+
+  push eax 
+  call extern "$rt.PrepareLA"
+  add  esp, 4
+  ret
+
+#endif
 
 end
 
@@ -4579,5 +4590,26 @@ end
 inline %7FEh
 
   call extern __ptr32_1
+
+end
+
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+#if _WIN
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+  mov  eax, [data : % CORE_SINGLE_CONTENT]
+  jmp  eax
+
+#elif _LNX
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+  mov  eax, [data : % CORE_SINGLE_CONTENT]
+  jmp  eax
+
+#endif
 
 end
