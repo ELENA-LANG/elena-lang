@@ -390,7 +390,8 @@ labPERMCollect:
   sub  ecx, eax
 
   // ; GCXT: find the current thread entry
-#ifdef _WIN
+
+#if _WIN
   mov  eax, fs:[2Ch]
 #elif _LNX
   lea  eax, gs:[0]
@@ -1333,7 +1334,7 @@ end
 // VEH_HANDLER() 
 procedure % VEH_HANDLER
 
-#ifdef _WIN
+#if _WIN
 
   mov  esi, edx
   mov  edx, eax   // ; set exception code
