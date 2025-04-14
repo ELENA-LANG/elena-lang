@@ -19,7 +19,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
-  BUILD_TAG: 6.6.4
+  BUILD_TAG: 6.6.5
 
 permissions: write-all
 
@@ -35,7 +35,7 @@ jobs:
     steps:    
     - uses: actions/checkout@v4
       with:
-        ref: iteration39
+        ref: iteration40
        
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
