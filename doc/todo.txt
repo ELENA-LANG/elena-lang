@@ -47,6 +47,7 @@ In development:
   - rosetta code : moving to 6.6 (test, use Console)
   - rosetta code : Comma quibbling
   - auto indent
+  - tutorial >: how to use command-line compiler
   - MTA support for Linux        
   --------------------------------------
   * test a single thread application in MTA mode

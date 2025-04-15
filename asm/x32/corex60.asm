@@ -853,11 +853,7 @@ inline %4CFh
 #if _LNX
 
   mov  eax, gs:[0]
-  lea  ecx, [eax-4]
-  lea  edx, [eax]
-  mov  eax, fs:[0]
-  lea  ecx, [eax-4]
-  lea  edx, [eax]
+  lea  ecx, [eax-tt_size]
               
 #endif
 
