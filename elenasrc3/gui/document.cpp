@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      DocumentView class body
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "guicommon.h"
@@ -254,10 +254,11 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 
 int DocumentView::VerticalScrollOffset = 1;
 
-DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter) :
+DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter, bool autoIndent) :
    _undoBuffer(UNDO_BUFFER_SIZE),
    _formatter(text, formatter, &_markers),
-   _markers({})
+   _markers({}),
+   _autoIndent(autoIndent)
 {
    _text = text;
 
@@ -801,8 +802,11 @@ void DocumentView :: tabbing(DocumentChangeStatus& changeStatus, text_c space, s
    changeStatus.selelectionChanged = true;
 }
 
-void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t count)
+void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t count, bool advancing)
 {
+   if (count == 0)
+      return;
+
    if (hasSelection()) {
       int rowCount = _text->getRowCount();
 
@@ -821,8 +825,11 @@ void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, s
          changeStatus.textChanged = true;
 
          _text->validateBookmark(_caret);
-         _caret.moveOn(1);
-         setCaret(_caret.getCaret(), false, changeStatus);
+         if (advancing) {
+            _caret.moveOn(1);
+
+            setCaret(_caret.getCaret(), false, changeStatus);
+         }
       }
       else break;
 
@@ -830,14 +837,88 @@ void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, s
    }
 }
 
+text_t DocumentView :: getCurrentLine(disp_t disp, size_t& length)
+{
+   TextBookmark bm = _caret;
+   bm.moveTo(0, _caret.row());
+   if (disp == 0 || bm.moveOn(disp)) {
+      return _text->getLine(bm, length);
+   }
+   else {
+      length = 0;
+
+      return nullptr;
+   }
+}
+
+text_c DocumentView :: getCurrentChar()
+{
+   size_t length = 0;
+   text_t line = NULL;
+
+   TextBookmark bm = _caret;
+   // return current or previous if EOL
+   if (!bm.isEOL()) {
+      line = _text->getLine(bm, length);
+   }
+   else {
+      if (bm.moveOn(-1))
+         line = _text->getLine(bm, length);
+   }
+
+   return (length > 0) ? line[0] : 0;
+}
+
+DocumentView::IndentDirection DocumentView :: IsAutoIndent(text_c ch)
+{
+   if (ch == '{')
+      return IndentDirection::Right;
+   else if (ch == '}') {
+      return IndentDirection::Left;
+   }
+   else return IndentDirection::None;
+}
+
+disp_t DocumentView :: calcAutoIndent(text_c currentChar)
+{
+   if (!_autoIndent)
+      return 0;
+
+   size_t length = 0;
+   disp_t disp = 0;
+   text_t line = getCurrentLine(0, length);
+   while (length > 0) {
+      IndentDirection dir = IsAutoIndent(currentChar);
+      for (size_t i = 0; i < length; i++) {
+         if (line[i] != 0x20 && line[i] != 0x9) {
+            disp += i;
+
+            if (dir == IndentDirection::Right)
+               disp += Text::TabSize;
+
+            return disp;
+         }
+      }
+      disp += length;
+
+      line = getCurrentLine(disp, length);
+   }
+
+   return 0;
+}
+
 void DocumentView :: insertNewLine(DocumentChangeStatus& changeStatus)
 {
+   text_c currentChar = getCurrentChar();
+
    int rowCount = _text->getRowCount();
 
    eraseSelection(changeStatus);
 
+   disp_t disp = calcAutoIndent(currentChar);
    if (_text->insertNewLine(_caret)) {
       setCaret(0, _caret.row() + 1, false, changeStatus);
+      insertChar(changeStatus, ' ', disp);
 
       changeStatus.textChanged = true;
    }

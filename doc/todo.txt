@@ -13,11 +13,8 @@ In development:
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
   - #620 : backlog
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
-  - MTA support for Linux (fix simple program - access to TLS)
-  - support fladd, flsub, fldiv, flmul (throu special prefix??)
+  - MTA support for Linux : support MT routines in elenart
   - conditional compiling
-  - #622 : api backlog
-  - #731
   gen:
   - lpad / elt : declare an extension, parse it and apply to the input
   ide:  
@@ -33,6 +30,8 @@ In development:
   - Actions : create a release archive
   api:
   - api refactoring : main program entry to be called - Program
+  - #622 : api backlog
+  - #731
   tools:
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   - vs #2 : elena.tmLanguage.json  
@@ -45,11 +44,13 @@ In development:
   - weekly posting
   --------------------------------------
   - rosetta code : moving to 6.6 (test, use Console)
+  - MTA support for Linux : simple app
   - rosetta code : Comma quibbling
-  - auto indent
-  - MTA support for Linux        
+  - ide : auto indent
   --------------------------------------
-  * test a single thread application in MTA mode
+  * review previous solution
+  * implementing it by new line
+  * implementing it by delete?
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

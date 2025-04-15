@@ -7,7 +7,38 @@
 #include "elena.h"
 #include "idecommon.h"
 
+#ifdef _MSC_VER
+
+#include <tchar.h>
+
+#endif
+
 using namespace elena_lang;
+
+constexpr auto OPENNING_BRAKCETS = _T("({[\"");
+constexpr auto CLOSING_BRAKCETS  = _T(")}]\"");
+
+bool isPairedBracket(text_c ch)
+{
+   size_t len = getlength(OPENNING_BRAKCETS);
+   for (size_t i = 0; i < len; i++) {
+      if (OPENNING_BRAKCETS[i] == ch)
+         return true;
+   }
+
+   return false;
+}
+
+text_c getClosingBracket(text_c ch)
+{
+   size_t len = getlength(OPENNING_BRAKCETS);
+   for (size_t i = 0; i < len; i++) {
+      if (OPENNING_BRAKCETS[i] == ch)
+         return CLOSING_BRAKCETS[i];
+   }
+
+   return 0;
+}
 
 // --- TextViewController ---
 
@@ -159,7 +190,14 @@ bool TextViewController :: insertNewLine(TextViewModelBase* model)
    auto docView = model->DocView();
    if (!docView->isReadOnly()) {
       docView->eraseSelection(status);
+
+      auto lastPoint = docView->getCaret();
+      text_c currentChar = docView->getCurrentChar();
       docView->insertNewLine(status);
+      if (currentChar == '}') {
+         docView->setCaret(lastPoint, false, status);
+         docView->insertNewLine(status);
+      }
 
       notifyTextModelChange(model, status);
 
@@ -176,6 +214,9 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
    if (!docView->isReadOnly() && ch >= 0x20) {
       docView->eraseSelection(status);
       docView->insertChar(status, ch);
+
+      if (isPairedBracket(ch))
+         docView->insertChar(status, getClosingBracket(ch), 1, false);
 
       notifyTextModelChange(model, status);
 

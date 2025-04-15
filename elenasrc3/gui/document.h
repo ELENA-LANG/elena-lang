@@ -112,7 +112,7 @@ namespace elena_lang
 
       bool isViewChanged()
       {
-         bool flag = formatterChanged | frameChanged | textChanged | selelectionChanged;
+         bool flag = formatterChanged || frameChanged || textChanged || selelectionChanged;
 
          return flag;
       }
@@ -219,6 +219,13 @@ namespace elena_lang
          }
       };
 
+      enum class IndentDirection
+      {
+         None = 0,
+         Left,
+         Right
+      };
+
       friend struct LexicalReader;
 
    protected:
@@ -235,6 +242,8 @@ namespace elena_lang
 
       int               _maxColumn;
 
+      bool              _autoIndent;
+
       MarkerList        _markers;
 
       pos_t format(LexicalReader& reader);
@@ -246,6 +255,11 @@ namespace elena_lang
       TextBookmark getCaretBookmark() { return _caret; }
 
       void setCaret(int column, int row, bool selecting, DocumentChangeStatus& changeStatus);
+
+      text_t getCurrentLine(disp_t disp, size_t& length);      
+
+      IndentDirection IsAutoIndent(text_c ch);
+      disp_t calcAutoIndent(text_c currentChar);
 
    public:
       void addMarker(int row, pos_t style, bool instanteMode, bool togleMark, DocumentChangeStatus& changeStatus)
@@ -325,6 +339,8 @@ namespace elena_lang
          status.included = false;
       }
 
+      text_c getCurrentChar();
+
       Point getSize() const { return _size; }
 
       virtual void setSize(Point size);
@@ -366,7 +382,7 @@ namespace elena_lang
       {
          insertChar(changeStatus, ch, 1);
       }
-      void insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t number);
+      void insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t number, bool advancing = true);
       void insertNewLine(DocumentChangeStatus& changeStatus);
       void insertLine(DocumentChangeStatus& changeStatus, const_text_t text, size_t length);
 
@@ -392,9 +408,9 @@ namespace elena_lang
 
       void refresh(DocumentChangeStatus& changeStatus);
 
-      bool findLine(DocumentChangeStatus& changeStatus, const_text_t text, bool matchCase, bool wholeWord);
+      bool findLine(DocumentChangeStatus& changeStatus, const_text_t text, bool matchCase, bool wholeWord);   
 
-      DocumentView(Text* text, TextFormatterBase* formatter);
+      DocumentView(Text* text, TextFormatterBase* formatter, bool autoIndent);
       virtual ~DocumentView();
    };
 }
