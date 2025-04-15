@@ -45,16 +45,8 @@ In development:
   --------------------------------------
   - rosetta code : moving to 6.6 (test, use Console)
   - MTA support for Linux : simple app
-  - rosetta code : Comma quibbling
   --------------------------------------
-  * support an empty array : string[] {}
-
-  * stringwriter - a constructor to add existing element
-  * replace .summarize(new StringWriter()).toString() + "}" with
-   
-    .summarize(new StringWriter()).append("}")
-
-  * Comma quibbling
+  * modify elenart for Linux
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

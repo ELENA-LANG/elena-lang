@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  Linux ELENA System Routines
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -62,6 +62,14 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
    return !r ? 0 : (uintptr_t)allocPtr;
+}
+
+void* SystemRoutineProvider::CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
+{
+}
+
+void SystemRoutineProvider::ExitThread(int exitCode)
+{
 }
 
 void SystemRoutineProvider :: RaiseError(int code)
@@ -197,4 +205,28 @@ long long SystemRoutineProvider :: GenerateSeed()
    long long seed = (long int)t;
 
    return seed;
+}
+
+void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
+{
+}
+
+void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
+{
+}
+
+void SystemRoutineProvider::GCSignalStop(void* handle)
+{
+}
+
+void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
+{
+}
+
+void SystemRoutineProvider::GCWaitForSignal(void* handle)
+{
+}
+
+void SystemRoutineProvider::GCSignalClear(void* handle)
+{
 }
