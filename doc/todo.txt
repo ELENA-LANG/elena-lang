@@ -47,6 +47,13 @@ In development:
   - MTA support for Linux : simple app
   - rosetta code : Comma quibbling
   --------------------------------------
+  * support an empty array : string[] {}
+
+  * stringwriter - a constructor to add existing element
+  * replace .summarize(new StringWriter()).toString() + "}" with
+   
+    .summarize(new StringWriter()).append("}")
+
   * Comma quibbling
   --------------------------------------
 

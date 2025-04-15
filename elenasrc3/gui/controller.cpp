@@ -215,8 +215,11 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
       docView->eraseSelection(status);
       docView->insertChar(status, ch);
 
-      if (isPairedBracket(ch))
-         docView->insertChar(status, getClosingBracket(ch), 1, false);
+      if (isPairedBracket(ch)) {
+         auto caret = docView->getCaret();
+         if (caret.x == docView->getCurrentLineLength()) 
+            docView->insertChar(status, getClosingBracket(ch), 1, false);
+      }
 
       notifyTextModelChange(model, status);
 
