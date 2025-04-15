@@ -310,6 +310,10 @@ namespace elena_lang
 
       text_t getLine(TextBookmark& bookmark, pos_t& length);
 
+#if defined _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
+      text_t getLine(TextBookmark& bookmark, size_t& length);
+#endif
+
       void create();
       bool load(path_t path, FileEncoding encoding, bool autoDetecting);
       void save(path_t path);
