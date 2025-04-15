@@ -10,7 +10,7 @@ public extension QuibbleOp : Array<string>
          self.Length.coundDown().selectBy::(n => n == self.Length ? EmptyString : (n == 1 ? " and " : ", ") ),
          (word, prefix => prefix + word)
       )
-      .summarize(StringWriter.load("{")).append("}")
+      .summarize(StringWriter.load("{")) + "}"
    }
 }
 
