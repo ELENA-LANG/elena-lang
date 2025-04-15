@@ -46,11 +46,8 @@ In development:
   - rosetta code : moving to 6.6 (test, use Console)
   - MTA support for Linux : simple app
   - rosetta code : Comma quibbling
-  - ide : auto indent
   --------------------------------------
-  * review previous solution
-  * implementing it by new line
-  * implementing it by delete?
+  * Comma quibbling
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

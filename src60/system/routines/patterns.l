@@ -678,6 +678,48 @@ public class RangeEnumerator : Enumerator
     enumerable() = _variable;
 }
 
+// -- CountDownEnumerator ---
+
+public class CountDownEnumerator : Enumerator<int>
+{
+   Reference<int> _current;
+   int            _count;
+   bool           _start;
+   
+   constructor new(int count)
+   {
+      _count := count;
+      _current := count;
+      _start := true
+   }
+   
+   reset()
+   {
+      _current.Value := _count;
+      _start := true
+   }
+   
+   get int Value()
+      = *_current;
+   
+   bool next()
+   {
+      if (_start) {
+         _start := false;
+         
+         ^ true
+      }
+      else _current.reduce(1);
+      
+      ^ *_current > 0
+   }
+   
+   Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
+   
+   enumerable()
+      = _count;   
+}
+
 // --- ZipEnumerator ---
 
 public class ZipEnumerator : Enumerator
