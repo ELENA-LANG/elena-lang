@@ -47,13 +47,9 @@ In development:
   - rosetta code : moving to 6.6 (test, use Console)
   - rosetta code : Comma quibbling
   - auto indent
-  - tutorial >: how to use command-line compiler
   - MTA support for Linux        
   --------------------------------------
   * test a single thread application in MTA mode
-  * fix operation with OS TLS storage
-  * looking for the register + offset where tls is located 
-  * gs :     movl    %eax, %gs:myVar@ntpoff
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
