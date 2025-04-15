@@ -192,8 +192,8 @@ public extension enumerableOp
    top(counter)
       = TopFilter.new(cast int(counter), cast Enumerator(self.enumerator()));
 
-   coundDown(int counter)
-      = CountDownEnumerator.new(counter);
+   coundDown()
+      = CountDownEnumerator.new(self);
 
    joinBy(object list, Func2 filter_f, Func2 select_f)
       = JoinEnumerator.new(filter_f, select_f, cast Enumerator(self.enumerator()), cast Enumerator(list.enumerator()));        
