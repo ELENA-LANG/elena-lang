@@ -236,6 +236,12 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 You may look at or try to implement some of [Rosetta code tasks](https://rosettacode.org/wiki/Category:Elena) 
 which are not yet implemented
 
+## Terminal, IDEs
+
+ELENA support both [command-line tools](https://github.com/ELENA-LANG/elena-lang/wiki/Using-command%E2%80%90line-tools) and IDE.
+
+The work on [VSCode extension](https://github.com/ELENA-LANG/vscode-elena-lang) & [Debug Adapter Protoco support](https://github.com/ELENA-LANG/elena_dap) is going on
+
 ## License
 
 The compiler and executables distributed in this package fall under MIT License, 
