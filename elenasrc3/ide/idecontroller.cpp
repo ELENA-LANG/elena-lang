@@ -335,9 +335,8 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
    size_t projectPathLen = projectModel.projectPath.length();
 
    NamespaceString name;
-   PathString rootPath(*projectModel.projectPath, projectModel.getOutputPath());
    for (auto it = projectModel.sources.start(); !it.eof(); ++it) {
-      PathString source(*rootPath, *it);
+      PathString source(*projectModel.projectPath, *it);
 
       PathString module;
       module.copySubPath(*source, true);
@@ -347,17 +346,16 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
 
       _debugController.resolveNamespace(name);
 
-      ReferenceName::nameToPath(module, *name);
-      module.append(_T(".nl"));
+      DebugInfoProvider::defineModulePath(*name, module, *projectModel.projectPath, projectModel.getOutputPath(), _T(".nl"));
 
-      if (name.length() != 0) {
+      if (module.length() != 0) {
          if (_compareFileModifiedTime(*source, *module))
-            return false;
+            return true;
       }
-      else return false;
+      else return true;
    }
 
-   return true;
+   return false;
 }
 
 bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
@@ -365,7 +363,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& so
 {
    if (!_debugController.isStarted()) {
       bool toRecompile = model.autoRecompile && !withoutPostponeAction;
-      if (!isOutaged(model, sourceModel)) {
+      if (isOutaged(model, sourceModel)) {
          if (toRecompile) {
             if (!doCompileProject(model, action))
                return false;

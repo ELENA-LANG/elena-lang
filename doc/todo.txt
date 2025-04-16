@@ -8,7 +8,6 @@ In development:
   === Iteration 40 (4.05) ===
   --------------------------------------
   dev: 
-  - upndown (connector - interaction)
   - support :sizeof
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
   - #620 : backlog
@@ -16,13 +15,12 @@ In development:
   - MTA support for Linux : support MT routines in elenart
   - conditional compiling
   gen:
-  - lpad / elt : declare an extension, parse it and apply to the input
+  - work on REPL (elt) : execute simple program
   ide:  
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
   maint:
-  - remove old scripts from build folder
   - optimization : pi (used classes byte code)
   - test all x86-64 examples
   - github actions : `set-output` command is deprecated       
@@ -30,8 +28,6 @@ In development:
   - Actions : create a release archive
   api:
   - api refactoring : main program entry to be called - Program
-  - #622 : api backlog
-  - #731
   tools:
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   - vs #2 : elena.tmLanguage.json  
@@ -40,13 +36,16 @@ In development:
   - chat sample
   samples:
   - rosetta code : Program termination, Parallel calculations
+  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
   prom: 
   - weekly posting
   --------------------------------------
-  - rosetta code : moving to 6.6 (test, use Console)
-  - MTA support for Linux : simple app
+  - #731 : xml
+  - #622 : (linux_files.l) directoryControl must support create, delete methods
+  - #622 : BinarySearchAlgorithm
+  - upndown (connector - interaction)
   --------------------------------------
-  * modify elenart for Linux
+  * add missing event handlers
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
@@ -55,8 +54,11 @@ In development:
   --------------------------------------
   dev: 
   gen:
+  api:
+  - #622 : api backlog
+  - #731
   maint:
-      - review pi performance (must < 6) : realOp.power[3] byte code
+  - review pi performance (must < 6) : realOp.power[3] byte code
   port:
   prom:
   --------------------------------------

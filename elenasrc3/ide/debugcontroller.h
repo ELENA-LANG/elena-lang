@@ -57,6 +57,8 @@ namespace elena_lang
       ModuleBase* getDebugModule(addr_t address);
 
    public:
+      static void defineModulePath(ustr_t name, PathString& path, path_t projectPath, path_t outputPath, path_t extension);
+
       addr_t getEntryPoint()
       {
          return _entryPoint;
