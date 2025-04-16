@@ -149,8 +149,9 @@ namespace io
 
       bool isAvailable(string path)
       {
+         string s := path;
          if:not(path.endingWith("/"))
-            path := path + "/";
+            s := path + "/";
 
          int ret := extern libc.access(path, F_OK);
             
