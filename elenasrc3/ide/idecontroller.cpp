@@ -346,7 +346,7 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
 
       _debugController.resolveNamespace(name);
 
-      DebugInfoProvider::defineModulePath(*name, module, *projectModel.projectPath, projectModel.getOutputPath(), _T(".nl"));
+      DebugInfoProvider::defineModulePath(*name, module, *projectModel.projectPath, projectModel.getOutputPath(), _T("nl"));
 
       if (module.length() != 0) {
          if (_compareFileModifiedTime(*source, *module))
