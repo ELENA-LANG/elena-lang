@@ -201,7 +201,7 @@ namespace io
             { IOException.new("Cannot create a directory").raise() }
       }
  
-      delete(path)
+      bool delete(path)
       {
          wide s := cast wide(path); // !! temporal
             
