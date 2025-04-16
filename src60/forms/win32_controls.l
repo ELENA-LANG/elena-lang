@@ -838,6 +838,24 @@ class PanelListener : WindowCallback
       _owner.resize(control, width, height);
    }
 
+   onClick(Handle handle)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.click() };
+        
+      super.onClick(handle)
+   }
+
+   onChange(Handle control)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.change() };
+        
+      super.onClick(handle)
+   }
+
    onWMDestoy(Handle hwnd)
    {
       super.onWMDestoy(hwnd);

@@ -156,7 +156,7 @@ class ChildWindowListener : ChildWindowCallback
       if(nil != control)
          { control.change() };
         
-      super.onClick(handle)
+      super.onChange(handle)
    }
 
    onWMDestoy(Handle hwnd)
@@ -170,15 +170,6 @@ class ChildWindowListener : ChildWindowCallback
    {
       _owner.resize(control, width, height);
    }
-    
-//    onchange(WindowHandle hwnd, ref int retVal)
-//    {
-//        auto control := theOwner.retrieve(handle);
-//        if(nil != control)
-//            { control.click() };
-//        
-//        super.onchange(handle, ref retVal)
-//    }
 }
 
 public closed class ChildForm : BaseWinForm
