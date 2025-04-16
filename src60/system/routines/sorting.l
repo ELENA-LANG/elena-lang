@@ -12,6 +12,8 @@ public interface SortingAgent
    abstract setAt(int index, object value);
     
    abstract exchange(int i, int j);
+   
+   abstract move(int i, int j);
 }
 
 public sealed ArraySortingAgent : SortingAgent
@@ -46,6 +48,11 @@ public sealed ArraySortingAgent : SortingAgent
       var tmp := a[i];
       a[i]:= a[j];
       a[j] := tmp
+   }    
+
+   move(int i, int j)
+   {
+      a[i]:= a[j];
    }    
 }
 
@@ -98,6 +105,15 @@ public sealed IndexerSortingAgent : SortingAgent
       a.Index := i;
       a.Value := vj
    }    
+
+   move(int i, int j)
+   {
+      a.Index := j;
+      var vj := *a;
+            
+      a.Index := i;
+      a.Value := vj
+   }       
 }
 
 public singleton QuickSorting

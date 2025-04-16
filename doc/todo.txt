@@ -14,6 +14,7 @@ In development:
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
   - MTA support for Linux : support MT routines in elenart
   - conditional compiling
+  - upndown (connector - cmdSearch)
   gen:
   - work on REPL (elt) : execute simple program
   ide:  
@@ -42,12 +43,11 @@ In development:
   --------------------------------------
   - #731 : xml
   - #622 : (linux_files.l) directoryControl must support create, delete methods
-  - #622 : BinarySearchAlgorithm
-  - upndown (connector - cmdSearch)
+  - #622 : BinarySearchAlgorithm, InsertionSortAlgorithm
   --------------------------------------
-  * fix edit.onChange event
-  * $onUserNameChange
-  * searchplayer button
+  * implement InsertionSortAlgorithm
+  * BinarySearchAlgorithm
+  * strong typed operations
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

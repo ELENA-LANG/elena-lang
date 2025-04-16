@@ -25,12 +25,13 @@
   </project>
   <manifest>
      <name>ELENA Algorithms Library</name>
-     <version>6.5.0</version>
+     <version>6.6.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
      <module>
         <include>quicksort.l</include>
+        <include>insertsort.l</include>
         <include>sort_extensions.l</include>
      </module>
   </files>

@@ -37,3 +37,40 @@ public extension quickSortOp3
       QuickSortAlgorithm.sort(new IndexerSortingAgent(self), 0, self.Length, ifOrdered);
    }
 }
+
+public extension insertSortOp : Indexable
+{
+   insertSort(int length, Func2 compf)
+   {
+      InsertSortAlgorithm.sort(new IndexerSortingAgent(self), 0, length, compf);
+   }
+
+   insertSort(int length)
+      = self.quickSort(length, ifOrdered);
+}
+
+public extension isnertSortOp2 : ArrayList
+{
+   insertSort(Func2 compf)
+   {
+      InsertSortAlgorithm.sort(new IndexerSortingAgent(self), 0, self.Length, compf);
+   }
+
+   insertSort()
+   {
+      InsertSortAlgorithm.sort(new IndexerSortingAgent(self), 0, self.Length, ifOrdered);
+   }
+}
+
+public extension insertSortOp3
+{
+   insertSort(Func2 compf)
+   {
+      InsertSortAlgorithm.sort(new IndexerSortingAgent(self), 0, self.Length, compf);
+   }
+
+   insertSort()
+   {
+      InsertSortAlgorithm.sort(new IndexerSortingAgent(self), 0, self.Length, ifOrdered);
+   }
+}
