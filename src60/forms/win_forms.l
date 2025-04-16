@@ -39,7 +39,7 @@ class SDIWindowListener : SDIWindowCallback
       super.onClick(handle)
    }
 
-   onChange(Handle handle)
+   onChange(Handle control)
    {
       auto control := _owner.retrieve(handle);
       if(nil != control)
@@ -146,6 +146,15 @@ class ChildWindowListener : ChildWindowCallback
       auto control := _owner.retrieve(handle);
       if(nil != control)
          { control.click() };
+        
+      super.onClick(handle)
+   }
+
+   onChange(Handle control)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.change() };
         
       super.onClick(handle)
    }

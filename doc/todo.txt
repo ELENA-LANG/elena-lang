@@ -43,12 +43,10 @@ In development:
   - #731 : xml
   - #622 : (linux_files.l) directoryControl must support create, delete methods
   - #622 : BinarySearchAlgorithm
-  - upndown (connector - interaction)
+  - upndown (connector - cmdSearch)
   --------------------------------------
+  * fix edit.onChange event
   * $onUserNameChange
-  * combobox onchange event
-  * onPlayerSelect
-  * onformopen
   * searchplayer button
   --------------------------------------
 
