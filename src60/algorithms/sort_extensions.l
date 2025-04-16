@@ -53,7 +53,7 @@ public extension quickSortOp<T> : Array<T>
 
    quickSort()
    {
-      QuickSortAlgorithm.sort(new ArraySortingAgent<T>(self), 0, self.Length, ::IfOrdered<T>);
+      QuickSortAlgorithm<T>.sort(new ArraySortingAgent<T>(self), 0, self.Length, ::IfOrdered<T>);
    }
 }
 
@@ -91,5 +91,18 @@ public extension insertSortOp3
    insertSort()
    {
       InsertSortAlgorithm.sort(new IndexerSortingAgent(self), 0, self.Length, ifOrdered);
+   }
+}
+
+public extension insertSortOp<T> : Array<T>
+{
+   insertSort(Func<T,T,bool> compf)
+   {
+      InsertSortAlgorithm<T>.sort(new ArraySortingAgent<T>(self), 0, self.Length, compf);
+   }
+
+   insertSort()
+   {
+      InsertSortAlgorithm<T>.sort(new ArraySortingAgent<T>(self), 0, self.Length, ::IfOrdered<T>);
    }
 }
