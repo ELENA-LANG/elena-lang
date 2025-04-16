@@ -43,11 +43,13 @@ In development:
   --------------------------------------
   - #731 : xml
   - #622 : (linux_files.l) directoryControl must support create, delete methods
-  - #622 : BinarySearchAlgorithm, InsertionSortAlgorithm
+  - #622 : BinarySearchAlgorithm
   --------------------------------------
   * implement InsertionSortAlgorithm
   * BinarySearchAlgorithm
   * strong typed operations
+  * extension over strong typed array
+  * BinarySearchAlgorithm
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

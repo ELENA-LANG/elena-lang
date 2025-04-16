@@ -1,23 +1,8 @@
-import system'routines;
-import extensions;
-import extensions'text;
-
-public extension QuibbleOp : Array<string>
-{
-   string quibble()
-   {
-      ^ self.zipBy(
-         self.Length.coundDown().selectBy::(n => n == self.Length ? EmptyString : (n == 1 ? " and " : ", ") ),
-         (word, prefix => prefix + word)
-      )
-      .summarize(StringWriter.load("{")) + "}"
-   }
-}
+import algorithms;
 
 public program()
 {
-   Console.printLine(new string[] { }.quibble());
-   Console.printLine(new string[] { "ABC" }.quibble());
-   Console.printLine(new string[] { "ABC", "ADF" }.quibble());
-   Console.printLine(new string[] { "ABC", "DEF", "G", "H" }.quibble())
+   var list := new int[]{3, 9, 4, 6, 8, 1, 7, 2, 5};
+
+   Cconsole.printLine("after :", list.insertSort().asEnumerable());
 }
