@@ -18,6 +18,8 @@ public interface IControl
    abstract close();
 
    abstract click();
+   
+   abstract change();
 }
 
 // --- BaseWindowControl ---
@@ -155,6 +157,8 @@ public abstract class BaseWinControl : BaseControl
    }
 
    click() {}
+   
+   change() {}   
 }
 
 // --- BaseWinContainer ---
@@ -283,10 +287,17 @@ public class StaticLabel : Label
 
 abstract class BaseEdit : BaseWinControl
 {
+   Func1 onChange : event;
+   
    protected constructor new()
       <= super new()
    {
    }
+   
+   change()
+   {
+      onChange?.(self)
+   }   
 
    string Value = self.Caption;
 
@@ -1091,6 +1102,8 @@ public sealed class ImageList : Object, interface<IControl>
    }
     
    click() {}
+   
+   change() {}   
 
    open()
    {

@@ -39,6 +39,15 @@ class SDIWindowListener : SDIWindowCallback
       super.onClick(handle)
    }
 
+   onChange(Handle handle)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.change() };
+        
+      super.onClick(handle)
+   }
+
    onWMDestoy(Handle hwnd)
    {
       super.onWMDestoy(hwnd);

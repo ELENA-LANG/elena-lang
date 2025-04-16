@@ -45,7 +45,11 @@ In development:
   - #622 : BinarySearchAlgorithm
   - upndown (connector - interaction)
   --------------------------------------
-  * add missing event handlers
+  * $onUserNameChange
+  * combobox onchange event
+  * onPlayerSelect
+  * onformopen
+  * searchplayer button
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
