@@ -37,8 +37,8 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
   - Closures
   - Mixins
   - Type interfaces / Conversions
-  - Class / Code templates
-  - Extensions / Template extensions
+  - Class templates / Expression templates
+  - Extensions /  Extension Templates
   - Script Engine
 
 ## Currently Supported Platforms
