@@ -847,7 +847,7 @@ class PanelListener : WindowCallback
       super.onClick(handle)
    }
 
-   onChange(Handle control)
+   onChange(Handle handle)
    {
       auto control := _owner.retrieve(handle);
       if(nil != control)
