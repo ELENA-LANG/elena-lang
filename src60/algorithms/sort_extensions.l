@@ -1,6 +1,12 @@
 import system'collections;
 import system'routines;
 
+public singleton IfOrdered<T> : Func<T,T,bool>
+{
+   bool function(T f, T l)
+      = f < l;
+}
+
 public extension quickSortOp : Indexable
 {
    quickSort(int length, Func2 compf)
@@ -35,6 +41,19 @@ public extension quickSortOp3
    quickSort()
    {
       QuickSortAlgorithm.sort(new IndexerSortingAgent(self), 0, self.Length, ifOrdered);
+   }
+}
+
+public extension quickSortOp<T> : Array<T>
+{
+   quickSort(Func<T,T,bool> compf)
+   {
+      QuickSortAlgorithm<T>.sort(new ArraySortingAgent<T>(self), 0, self.Length, compf);
+   }
+
+   quickSort()
+   {
+      QuickSortAlgorithm.sort(new ArraySortingAgent<T>(self), 0, self.Length, ::IfOrdered<T>);
    }
 }
 

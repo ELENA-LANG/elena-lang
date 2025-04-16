@@ -22,6 +22,7 @@
      <module>
         <include>quicksort.l</include>
         <include>insertsort.l</include>
+        <include>binary.l</include>
         <include>sort_extensions.l</include>
      </module>
   </files>

@@ -45,8 +45,6 @@ In development:
   - #622 : (linux_files.l) directoryControl must support create, delete methods
   - #622 : BinarySearchAlgorithm
   --------------------------------------
-  * implement InsertionSortAlgorithm
-  * BinarySearchAlgorithm
   * strong typed operations
   * extension over strong typed array
   * BinarySearchAlgorithm
