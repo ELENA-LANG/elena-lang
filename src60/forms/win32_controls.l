@@ -3,6 +3,29 @@ import system'collections;
 import system'runtime;
 import system'drawing;
 
+// --- ListenerBase ---
+
+textblock ListenerBase
+{
+   onClick(Handle handle)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.click() };
+        
+      super.onClick(handle)
+   }
+
+   onChange(Handle handle)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.change() };
+        
+      super.onClick(handle)
+   }   
+}
+
 // --- IControl ---
 
 public interface IControl
@@ -824,7 +847,7 @@ public abstract class BasePanel : BaseWinContainer
    }    
 }
 
-class PanelListener : WindowCallback
+class PanelListener : WindowCallback, using(ListenerBase)
 {
    Panel _owner;
     
@@ -836,24 +859,6 @@ class PanelListener : WindowCallback
    onSize(Handle control, int width, int height)
    {
       _owner.resize(control, width, height);
-   }
-
-   onClick(Handle handle)
-   {
-      auto control := _owner.retrieve(handle);
-      if(nil != control)
-         { control.click() };
-        
-      super.onClick(handle)
-   }
-
-   onChange(Handle handle)
-   {
-      auto control := _owner.retrieve(handle);
-      if(nil != control)
-         { control.change() };
-        
-      super.onClick(handle)
    }
 
    onWMDestoy(Handle hwnd)

@@ -26,27 +26,9 @@ public abstract class BaseWinForm : BaseWinContainer
 
 // --- SDI ---
 
-class SDIWindowListener : SDIWindowCallback
+class SDIWindowListener : SDIWindowCallback, using(ListenerBase)
 {
    SDIForm _owner;
-
-   onClick(Handle handle)
-   {
-      auto control := _owner.retrieve(handle);
-      if(nil != control)
-         { control.click() };
-        
-      super.onClick(handle)
-   }
-
-   onChange(Handle control)
-   {
-      auto control := _owner.retrieve(handle);
-      if(nil != control)
-         { control.change() };
-        
-      super.onClick(handle)
-   }
 
    onWMDestoy(Handle hwnd)
    {
@@ -132,31 +114,13 @@ public class SDIDialog : SDIForm
 
 // --- Child ---
 
-class ChildWindowListener : ChildWindowCallback
+class ChildWindowListener : ChildWindowCallback, using(ListenerBase)
 {
-    ChildForm _owner;
+   ChildForm _owner;
     
-    constructor(ChildForm owner)
-    {
-        _owner := owner
-    }
-    
-   onClick(Handle handle)
+   constructor(ChildForm owner)
    {
-      auto control := _owner.retrieve(handle);
-      if(nil != control)
-         { control.click() };
-        
-      super.onClick(handle)
-   }
-
-   onChange(Handle control)
-   {
-      auto control := _owner.retrieve(handle);
-      if(nil != control)
-         { control.change() };
-        
-      super.onChange(handle)
+      _owner := owner
    }
 
    onWMDestoy(Handle hwnd)
@@ -219,4 +183,3 @@ public closed class ChildForm : BaseWinForm
     }
 
 }
-
