@@ -217,6 +217,7 @@ namespace elena_lang
       Row                     = 0x000202,
 
       ExternalTree            = 0x000301,
+      ExternalFunction        = 0x000302,
 
       Idle                    = 0x000F01,
    };

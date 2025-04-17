@@ -43,13 +43,11 @@ In development:
   - #743
   - #739
   - script to generate project file with a simple template 
-  - #742
   - #731 : xml 
+  - #742 : Declaring external callback
   --------------------------------------
-  * redesign field template : it must contain the field declaration
-  * prop template - provide the field name:
-      int X : prop(_x) ; it can be only maximal three arguments so far
-  * get rid of override attribute  
+  * implement
+  * test
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

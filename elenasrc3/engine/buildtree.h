@@ -34,6 +34,7 @@ namespace elena_lang
       Method               = 0x1004,
       Tape                 = 0x1005,
       AbstractMethod       = 0x1006,
+      Procedure            = 0x1007,
 
       OpenFrame            = 0x0001,
       CloseFrame           = 0x0002,
@@ -174,10 +175,14 @@ namespace elena_lang
       LoadingLIndex        = 0x0089,
       SavingLIndex         = 0x008A,
       RealIntXOp           = 0x008B,
+      OpenExtFrame         = 0x008C,
+      LoadExtArg           = 0x008D,
+      CloseExtFrame        = 0x008E,
+      ExtExit              = 0x008F,
+      ProcedureReference   = 0x0090,
 
-      MaxOperationalKey    = 0x008B,
+      MaxOperationalKey    = 0x0090,
 
-      Import               = 0x0090,
       DictionaryOp         = 0x0091,
       ObjOp                = 0x0092,
       AttrDictionaryOp     = 0x0093,
@@ -202,6 +207,7 @@ namespace elena_lang
       NilRefBranchOp       = 0x00A6,
       ExcludeTry           = 0x00A7,
       IncludeTry           = 0x00A8,
+      Import               = 0x00A9,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,
@@ -438,6 +444,7 @@ namespace elena_lang
          map.add("load_long_index", BuildKey::LoadingLIndex);
          map.add("save_long_index", BuildKey::SavingLIndex);
          map.add("real_int_xop", BuildKey::RealIntXOp);
+         map.add("procedure_ref", BuildKey::ProcedureReference);
       }
    };
 

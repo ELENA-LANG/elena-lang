@@ -98,6 +98,7 @@ namespace elena_lang
       MemberInfo,
       LocalField,
       ConstGetter,  // key = value constant
+      InternalCallback
    };
 
    enum TargetMode
@@ -140,6 +141,15 @@ namespace elena_lang
       Normal   = 0,
       TryCatch = 1,
       Alt      = 2
+   };
+
+   enum class DeclarationError
+   {
+      None = 0,
+      Hint,
+      Duplicate,
+      Type,
+      Operation
    };
 
    struct ObjectInfo
@@ -653,6 +663,8 @@ namespace elena_lang
          void save();
          void load();
 
+         static void saveSymbolInfo(ModuleBase* module, SymbolInfo& info, ref_t reference);
+
          SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility);
       };
 
@@ -880,7 +892,7 @@ namespace elena_lang
             return false;
          }
 
-         MethodScope(ClassScope* classScope);
+         MethodScope(SourceScope* classScope);
       };
 
       typedef Map<int, SyntaxNode> NodeMap;
@@ -1005,7 +1017,9 @@ namespace elena_lang
 
          void syncStack(MethodScope* methodScope);
          void syncStack(CodeScope* parentScope);
+         void syncStack(SymbolScope* methodScope);
 
+         CodeScope(SymbolScope* scope);
          CodeScope(MethodScope* scope);
          CodeScope(CodeScope* scope);
       };
@@ -1705,7 +1719,7 @@ namespace elena_lang
 
       ref_t declareMultiType(Scope& scope, SyntaxNode& node, ref_t elementRef);
 
-      void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags);
+      void declareClassAttributes(ClassScope& scope, SyntaxNode node, ref_t& fldeclaredFlagsags, bool& externalOp);
 
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode);
@@ -1765,6 +1779,8 @@ namespace elena_lang
       void generateClassFields(ClassScope& scope, SyntaxNode node, bool singleField);
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
+      DeclarationError declareVariable(Scope& scope, ustr_t identifier, TypeInfo typeInfo, ObjectInfo& variable, int& size,
+         ExprScope* exprScope, CodeScope* codeScope, MethodScope* methodScope);
       bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate);
 
       void markYieldVariable(Scope& scope, ref_t localOffset);
@@ -1779,6 +1795,8 @@ namespace elena_lang
 
       ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode);
 
+      void declareParameters(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode,
+         bool& variadicMode, bool& weakSignature, bool& noSignature, pos_t& paramCount, size_t& signatureLen, ref_t* signature);
       void declareVMTMessage(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode, bool templateBasedMode);
       void declareClosureMessage(MethodScope& scope, SyntaxNode node);
       void declareIteratorMessage(MethodScope& scope, SyntaxNode node);
@@ -1927,6 +1945,8 @@ namespace elena_lang
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
       void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node, ref_t parentRef);
+
+      void compileExternalCallback(BuildTreeWriter& writer, SymbolScope& symbolScope, SyntaxNode node);
 
       void compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node,
          bool exclusiveMode = false, bool ignoreAutoMultimethod = false);

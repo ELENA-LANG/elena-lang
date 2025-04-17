@@ -81,6 +81,15 @@ void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::OpenIN, reservedManaged, reservedUnmanaged);
 }
 
+void extOpenFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   int reservedManaged = tapeScope.reserved;
+   int reservedUnmanaged = tapeScope.reservedN;
+
+   tape.newLabel();
+   tape.write(ByteCode::ExtOpenIN, reservedManaged, reservedUnmanaged);
+}
+
 void closeFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    int reservedUnmanaged = tapeScope.reservedN;
@@ -93,6 +102,14 @@ void closeFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
          tape.write(ByteCode::XRefreshSI, i);
       }
    }
+}
+
+void close_ext_frame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   int reservedUnmanaged = tapeScope.reservedN;
+
+   tape.setLabel();
+   tape.write(ByteCode::ExtCloseN, reservedUnmanaged);
 }
 
 void nilReference(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -200,6 +217,11 @@ void semiDirectCallOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 void exit(CommandTape& tape, BuildNode&, TapeScope&)
 {
    tape.write(ByteCode::Quit);
+}
+
+void ext_exit(CommandTape& tape, BuildNode&, TapeScope&)
+{
+   tape.write(ByteCode::XQuit);
 }
 
 void savingInStack(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -437,6 +459,11 @@ void distrConstant(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 void constantArray(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskConstArray);
+}
+
+void procedure_ref(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskProcedureRef);
 }
 
 void goingToEOP(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
@@ -2075,6 +2102,12 @@ void freeStack(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::DFree);
 }
 
+
+inline void load_ext_arg(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::XLoadArgFI, node.arg.value);
+}
+
 inline void savingInt(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    BuildNode value = node.findChild(BuildKey::Value);
@@ -2192,7 +2225,9 @@ ByteCodeWriter::Saver commands[] =
    intRealOp, real_int_op, copyingToLocalArr, loadingStackDump, savingStackDump, savingFloatIndex, intCopyingToAccField, intOpWithConst,
 
    uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssigning, threadVarBegin,
-   threadVarEnd, load_long_index, save_long_index, real_int_xop
+   threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
+
+   procedure_ref
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -3707,7 +3742,9 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
 void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList,
    int ptrSize, ReferenceMap& paths, bool tapeOptMode)
 {
-   auto section = moduleScope->mapSection(node.arg.reference | mskSymbolRef, false);
+   ref_t mask = node.key == BuildKey::Procedure ? mskProcedureRef : mskSymbolRef;
+
+   auto section = moduleScope->mapSection(node.arg.reference | mask, false);
    MemoryWriter writer(section);
 
    Scope scope = { nullptr, &writer, moduleScope, nullptr, nullptr, minimalArgList, ptrSize };
@@ -4007,6 +4044,7 @@ void ByteCodeWriter :: save(BuildTree& tree, SectionScopeBase* moduleScope,
    while (current != BuildKey::None) {
       switch (current.key) {
          case BuildKey::Symbol:
+         case BuildKey::Procedure:
             saveSymbol(current, moduleScope, minimalArgList, ptrSize, paths, tapeOptMode);
             break;
          case BuildKey::Class:

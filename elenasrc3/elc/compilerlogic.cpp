@@ -777,7 +777,9 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
       default:
       {
          ref_t dummy = 0;
-         return validateClassAttribute(attribute, dummy, visibility);
+         bool externalOp = false;
+         if (validateClassAttribute(attribute, dummy, visibility, externalOp))
+            return !externalOp;
       }
    }
 
@@ -817,7 +819,7 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
    return true;
 }
 
-bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility)
+bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility, bool& externalOne)
 {
    switch (attribute) {
       case V_PUBLIC:
@@ -870,6 +872,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
          break;
       case V_PACKED_STRUCT:
          flags |= elPacked | elStructureRole;
+         break;
+      case V_EXTERN:
+         externalOne = true;
          break;
       case 0:
          // ignore idle
