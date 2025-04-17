@@ -2120,6 +2120,11 @@ inline void loadingAccToIndex(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::Load);
 }
 
+inline void loadingAccToLongIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::LLoad);
+}
+
 inline void savingIndexToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::Save);
@@ -2227,7 +2232,7 @@ ByteCodeWriter::Saver commands[] =
    uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssigning, threadVarBegin,
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
-   procedure_ref
+   procedure_ref, loadingAccToLongIndex
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

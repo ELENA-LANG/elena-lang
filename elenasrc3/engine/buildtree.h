@@ -180,10 +180,10 @@ namespace elena_lang
       CloseExtFrame        = 0x008E,
       ExtExit              = 0x008F,
       ProcedureReference   = 0x0090,
+      LoadingAccToLongIndex = 0x0091,
 
-      MaxOperationalKey    = 0x0090,
+      MaxOperationalKey    = 0x0091,
 
-      DictionaryOp         = 0x0091,
       ObjOp                = 0x0092,
       AttrDictionaryOp     = 0x0093,
       DeclOp               = 0x0094,
@@ -208,6 +208,7 @@ namespace elena_lang
       ExcludeTry           = 0x00A7,
       IncludeTry           = 0x00A8,
       Import               = 0x00A9,
+      DictionaryOp         = 0x00AA,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,

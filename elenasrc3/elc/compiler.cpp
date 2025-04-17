@@ -8887,9 +8887,6 @@ void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& s
       case SyntaxKey::CodeBlock:
          retVal = compileCode(writer, codeScope, bodyNode, true, !_withDebugInfo);
          break;
-      case SyntaxKey::ReturnExpression:
-         retVal = compileRetExpression(writer, codeScope, bodyNode, EAttr::None);
-         break;
       default:
          scope.raiseError(errInvalidOperation, bodyNode);
          break;
@@ -8901,15 +8898,14 @@ void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& s
 
    // load the returning value as external retval
    Expression expression(this, codeScope, writer);
-   expression.writeObjectInfo(retVal);
 
    if (isArg64(_logic, scope.moduleScope, retVal.typeInfo.typeRef))
    {
-      writer.appendNode(BuildKey::LoadingLIndex);
+      writer.appendNode(BuildKey::LoadingAccToLongIndex);
    }
    else if (isArg32(_logic, scope.moduleScope, retVal.typeInfo.typeRef))
    {
-      writer.appendNode(BuildKey::LoadingIndex);
+      writer.appendNode(BuildKey::LoadingAccToIndex);
    }
    else scope.raiseError(errInvalidOperation, node);
 
