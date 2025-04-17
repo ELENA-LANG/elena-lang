@@ -950,7 +950,7 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
                         }
                         break;
                      case SymbolType::Procedure:
-                        return { ObjectKind::InternalCallback, { moduleScope->ptrSize == 8 ? V_PTR64 : V_PTR32 }, reference };
+                        return { ObjectKind::InternalCallback, { V_OBJECT }, reference };
                      default:
                         break;
                   }
@@ -13920,6 +13920,9 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t extern
       switch (arg.kind) {
          case ObjectKind::IntLiteral:
             writer->appendNode(BuildKey::SavingNInStack, i - 1);
+            break;
+         case ObjectKind::InternalCallback:
+            writer->appendNode(BuildKey::SavingInStack, i - 1);
             break;
          default:
             if (compiler->_logic->isCompatible(*scope.moduleScope, { intArgType },
