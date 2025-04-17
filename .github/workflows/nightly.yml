@@ -72,7 +72,7 @@ jobs:
       uses: actions/upload-artifact@v4
       with:
         name: elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}
-        path: scripts\${{matrix.platform}}
+        path: build\${{matrix.platform}}
 
     - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
           
