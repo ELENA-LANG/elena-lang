@@ -109,6 +109,11 @@ void close_ext_frame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    int reservedUnmanaged = tapeScope.reservedN;
 
    tape.setLabel();
+   if (tapeScope.scope->ptrSize == 8) {
+      tape.write(ByteCode::LLoad);
+   }
+   else tape.write(ByteCode::Load);
+
    tape.write(ByteCode::ExtCloseN, reservedUnmanaged);
 }
 

@@ -8894,20 +8894,14 @@ void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& s
 
    codeScope.syncStack(&scope);
 
-   writer.appendNode(BuildKey::CloseExtFrame);
-
    // load the returning value as external retval
-   Expression expression(this, codeScope, writer);
+   if (!isArg64(_logic, scope.moduleScope, retVal.typeInfo.typeRef) 
+      && !isArg32(_logic, scope.moduleScope, retVal.typeInfo.typeRef))
+   {
+      scope.raiseError(errInvalidOperation, node);
+   }
 
-   if (isArg64(_logic, scope.moduleScope, retVal.typeInfo.typeRef))
-   {
-      writer.appendNode(BuildKey::LoadingAccToLongIndex);
-   }
-   else if (isArg32(_logic, scope.moduleScope, retVal.typeInfo.typeRef))
-   {
-      writer.appendNode(BuildKey::LoadingAccToIndex);
-   }
-   else scope.raiseError(errInvalidOperation, node);
+   writer.appendNode(BuildKey::CloseExtFrame);
 
    writer.appendNode(BuildKey::ExtExit);
 
