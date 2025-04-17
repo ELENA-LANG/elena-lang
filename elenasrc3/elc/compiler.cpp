@@ -8868,7 +8868,7 @@ void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& s
          auto err = declareVariable(scope, p_it.key(), param.typeInfo, variable, size, nullptr, &codeScope, nullptr);
          assert(err == DeclarationError::None);
 
-         writer.appendNode(BuildKey::LoadExtArg, param.offset);
+         writer.appendNode(BuildKey::LoadExtArg, -param.offset);
 
          if (isArg32(_logic, scope.moduleScope, param.typeInfo.typeRef)) {
             writer.appendNode(BuildKey::SavingIndex, variable.reference);
