@@ -1,0 +1,24 @@
+<configuration>
+    <platform key="Win_x86">
+         <project>
+            <output>..\..\lib60</output>
+         </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <output>..\..\lib60_64</output>
+        </project>
+    </platform>
+    <files>
+        <module>
+            <file>xmlnode.l</file>
+            <file>xmldoc.l</file>
+        </module>
+    </files>
+    <project>
+        <executable></executable>
+        <options></options>
+        <namespace>xml</namespace>
+        <template>lib60</template>
+    </project>
+</configuration>

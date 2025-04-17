@@ -1690,7 +1690,7 @@ namespace elena_lang
       bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne);
       bool includeBlock(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
-      bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);
+      bool importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode& target);
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
 
       void injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, ClassScope* classScope, CodeScope& codeScope);
@@ -1751,7 +1751,7 @@ namespace elena_lang
       bool generateClassField(ClassScope& scope, FieldAttributes& attrs, ustr_t name, int sizeHint,
          TypeInfo typeInfo, bool singleField);
 
-      void declareFieldMetaInfo(FieldScope& scope, SyntaxNode node);
+      void declareFieldMetaInfo(FieldScope& scope, SyntaxNode& node);
       void declareFieldMetaInfos(ClassScope& scope, SyntaxNode node);
 
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);

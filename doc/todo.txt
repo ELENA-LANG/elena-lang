@@ -41,9 +41,15 @@ In development:
   prom: 
   - weekly posting
   --------------------------------------
+  - script to generate project file with a simple template 
   - #731 : xml
-  - #622 : (linux_files.l) directoryControl must support create, delete methods
   --------------------------------------
+  * redesign field template : it must contain the field declaration
+  * prop template - provide the field name:
+      int X : prop(_x) ; it can be only maximal three arguments so far
+  * get rid of override attribute
+  * new library xml
+  * xmldocument
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
@@ -54,7 +60,6 @@ In development:
   gen:
   api:
   - #622 : api backlog
-  - #731
   maint:
   - review pi performance (must < 6) : realOp.power[3] byte code
   port:

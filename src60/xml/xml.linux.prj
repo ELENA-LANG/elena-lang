@@ -1,0 +1,34 @@
+<configuration>
+    <platform key="Linux_I386">
+        <project>
+            <output>../../lib60</output>
+        </project>
+    </platform>
+    <platform key="Linux_AMD64">
+        <project>
+            <output>../../lib60_64</output>
+        </project>
+    </platform>
+    <platform key="Linux_PPC64le">
+        <project>
+            <output>../../lib60_64</output>
+        </project>
+    </platform>
+    <platform key="Linux_ARM64">
+        <project>
+            <output>../../lib60_64</output>
+        </project>
+    </platform>
+    <files>
+        <module>
+            <file>xmlnode.l</file>
+            <file>xmldoc.l</file>
+        </module>
+    </files>
+    <project>
+        <executable></executable>
+        <options></options>
+        <namespace>xml</namespace>
+        <template>lib60</template>
+    </project>
+</configuration>

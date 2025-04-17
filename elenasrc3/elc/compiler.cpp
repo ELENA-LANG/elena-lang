@@ -2252,7 +2252,7 @@ bool Compiler::importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfi
    return true;
 }
 
-bool Compiler::importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target)
+bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode& target)
 {
    List<SyntaxNode> parameters({});
 
@@ -2281,6 +2281,8 @@ bool Compiler::importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t post
    }
    writer.closeNode();
 
+   // add extra arguments if available
+
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, SyntaxKey::TemplateArg, nullptr);
    if (!templateRef)
@@ -2291,6 +2293,9 @@ bool Compiler::importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t post
    {
       scope.raiseError(errInvalidOperation, node);
    }
+
+   // field must be declared explictitly inside the field template
+   target.setKey(SyntaxKey::Idle);
 
    return true;
 }
@@ -3671,7 +3676,7 @@ void Compiler::declareMetaInfo(Scope& scope, SyntaxNode node)
    }
 }
 
-void Compiler::declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
+void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode& node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -3681,6 +3686,7 @@ void Compiler::declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
                if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node))
                   scope.raiseError(errUnknownTemplate, node);
             }
+
             break;
          case SyntaxKey::InlinePropertyTemplate:
             if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX,

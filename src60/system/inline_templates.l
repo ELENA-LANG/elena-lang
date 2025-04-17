@@ -36,6 +36,8 @@ public inline preloaded()
 
 public field prop<name, T>
 {
+   T name;
+
    get T name()
    {
       ^ name
@@ -49,6 +51,8 @@ public field prop<name, T>
 
 public field prop<name>
 {
+   T name;
+
    get name()
    {
       ^ name
@@ -64,6 +68,8 @@ public field prop<name>
 
 public field rprop<name, T>
 {
+   T name;
+
    get T name()
    {
       ^ name
@@ -72,6 +78,8 @@ public field rprop<name, T>
 
 public field rprop<name>
 {
+   T name;
+
    get name()
    {
       ^ name
@@ -82,6 +90,8 @@ public field rprop<name>
 
 public field dto_prop<name, T>
 {
+   T name;
+
    get T name()
    {
       ^ name

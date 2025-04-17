@@ -75,7 +75,7 @@ namespace elena_lang
                case ScopeType::PropertyTemplate:
                {
                   ref_t index = arguments.get(node.identifier());
-                  if (index == 1) {
+                  if (index == 1 || index == 3) {
                      parameterKey = SyntaxKey::NameParameter;
                      parameterIndex = index + nestedLevel;
                      return true;
