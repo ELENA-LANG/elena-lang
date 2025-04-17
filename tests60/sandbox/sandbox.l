@@ -1,23 +1,23 @@
 import extensions;
-/*
-public field prop<prop_name, T, field_name>
-{
-   override T field_name;
 
-   get T name()
+public field xprop<prop_name, T, field_name>
+{
+   T field_name;
+
+   get T prop_name()
    {
       ^ field_name
    }
 
-   set name(T value)
+   set prop_name(T value)
    {
       field_name := value
    }
 }
-*/
+
 Point
 {
-   int X : prop/*(_x)*/;
+   int X : xprop(_x);
 }
 
 public program()

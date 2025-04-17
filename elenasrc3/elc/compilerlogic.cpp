@@ -914,9 +914,6 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_READONLY:
          attrs.isReadonly = true;
          break;
-      case V_OVERRIDE:
-         attrs.overrideMode = true;
-         break;
       case V_PRIVATE:
          attrs.privateOne = true;
          break;

@@ -24,7 +24,6 @@ In development:
   maint:
   - optimization : pi (used classes byte code)
   - test all x86-64 examples
-  - github actions : `set-output` command is deprecated       
   - API - review / description
   - Actions : create a release archive
   api:
@@ -41,15 +40,16 @@ In development:
   prom: 
   - weekly posting
   --------------------------------------
+  - #743
+  - #739
   - script to generate project file with a simple template 
-  - #731 : xml
+  - #742
+  - #731 : xml 
   --------------------------------------
   * redesign field template : it must contain the field declaration
   * prop template - provide the field name:
       int X : prop(_x) ; it can be only maximal three arguments so far
-  * get rid of override attribute
-  * new library xml
-  * xmldocument
+  * get rid of override attribute  
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

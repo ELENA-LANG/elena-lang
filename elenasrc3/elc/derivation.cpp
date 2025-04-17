@@ -813,7 +813,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
 
          if (scope.withNameParameters()) {
             int index = scope.arguments.get(current.identifier());
-            if (index == 1) {
+            if (scope.isNameIndex(index)) {
                key = SyntaxKey::NameArgParameter;
                attrRef = index + scope.nestedLevel;
             }

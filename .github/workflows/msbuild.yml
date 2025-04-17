@@ -39,7 +39,7 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Setup Nuget
-      uses: Nuget/setup-nuget@v1.0.5
+      uses: Nuget/setup-nuget@v2
 
     - name: Restore nuget packages
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}

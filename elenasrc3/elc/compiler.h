@@ -1751,7 +1751,7 @@ namespace elena_lang
       bool generateClassField(ClassScope& scope, FieldAttributes& attrs, ustr_t name, int sizeHint,
          TypeInfo typeInfo, bool singleField);
 
-      void declareFieldMetaInfo(FieldScope& scope, SyntaxNode& node);
+      void declareFieldMetaInfo(FieldScope& scope, SyntaxNode node);
       void declareFieldMetaInfos(ClassScope& scope, SyntaxNode node);
 
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);

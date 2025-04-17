@@ -62,6 +62,19 @@ MethodHint operator | (const ref_t& l, const MethodHint& r)
 //   }
 //}
 
+inline bool isSimpleNode(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+
+   if (current == SyntaxKey::Expression && current.nextNode() == SyntaxKey::None) {
+      return isSimpleNode(current);
+   }
+   else if (current == SyntaxKey::Object && current.nextNode() == SyntaxKey::None) {
+      return true;
+   }
+   return false;
+}
+
 inline bool isSelfCall(ObjectInfo target)
 {
    switch (target.kind) {
@@ -2279,14 +2292,36 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
 
       writer.closeNode();
    }
-   writer.closeNode();
 
    // add extra arguments if available
+   SyntaxNode extraNameNode = node.findChild(SyntaxKey::Expression);
+   if (extraNameNode != SyntaxKey::None) {
+      if (!isSimpleNode(extraNameNode))
+         scope.raiseError(errInvalidSyntax, extraNameNode);
+
+      // the third one is a name as well
+      writer.newNode(SyntaxKey::TemplateArg);
+      writer.newNode(SyntaxKey::Name);
+      SyntaxTree::copyNode(writer, extraNameNode.firstChild(), false);
+
+      writer.closeNode();
+      parameters.add(writer.CurrentNode());
+
+      writer.closeNode();
+
+      // only upto three arguments are allowed so far
+      if (extraNameNode.nextNode() != SyntaxKey::None)
+         scope.raiseError(errInvalidSyntax, extraNameNode.nextNode());
+   }
+
+   writer.closeNode();
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
    ref_t templateRef = retrieveTemplate(*ns, node, parameters, postfix, SyntaxKey::TemplateArg, nullptr);
    if (!templateRef)
       return false;
+
+   SyntaxNode lastChild = target.parentNode().lastChild();
 
    if (!_templateProcessor->importPropertyTemplate(*scope.moduleScope, templateRef,
       target.parentNode(), parameters))
@@ -2296,6 +2331,11 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
 
    // field must be declared explictitly inside the field template
    target.setKey(SyntaxKey::Idle);
+
+   // try to find a new field and set it as a target
+   SyntaxNode newTarget = SyntaxTree::gotoNode(lastChild.nextNode(), SyntaxKey::Field);
+   if (newTarget == SyntaxKey::Field)
+      target = newTarget              ;
 
    return true;
 }
@@ -3381,23 +3421,6 @@ void Compiler::generateClassStaticField(ClassScope& scope, SyntaxNode node, Fiel
    }
 }
 
-inline bool checkPreviousDeclaration(SyntaxNode node, ustr_t name)
-{
-   SyntaxNode current = node.prevNode();
-   while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::Field) {
-         ustr_t currentName = node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-
-         if (currentName.compare(name))
-            return true;
-      }
-
-      current = current.prevNode();
-   }
-
-   return false;
-}
-
 inline bool isInterface(int flagMask)
 {
    return flagMask == elInterface || flagMask == elWeakInterface;
@@ -3541,12 +3564,7 @@ DeclResult Compiler::checkAndGenerateClassField(ClassScope& scope, SyntaxNode no
    }
 
    if (!generateClassField(scope, attrs, name, sizeHint, typeInfo, singleField)) {
-      if (attrs.overrideMode && checkPreviousDeclaration(node, name)) {
-         // override the field type if both declared in the same scope
-         auto it = scope.info.fields.getIt(name);
-         (*it).typeInfo = typeInfo;
-      }
-      else return DeclResult::Illegal;
+      return DeclResult::Illegal;
    }
 
    if (attrs.privateOne)
@@ -3676,12 +3694,13 @@ void Compiler::declareMetaInfo(Scope& scope, SyntaxNode node)
    }
 }
 
-void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode& node)
+void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
+            // NOTE : that node variable can be updated inside importPropertyTemplate, pointing to a actual field!
             if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)) {
                if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node))
                   scope.raiseError(errUnknownTemplate, node);
@@ -3689,6 +3708,7 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode& node)
 
             break;
          case SyntaxKey::InlinePropertyTemplate:
+            // NOTE : that node variable can be updated inside importPropertyTemplate, pointing to a actual field!
             if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX,
                node))
             {
@@ -6904,19 +6924,6 @@ inline bool isConditionalOp(SyntaxKey key)
    default:
       return false;
    }
-}
-
-inline bool isSimpleNode(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-
-   if (current == SyntaxKey::Expression && current.nextNode() == SyntaxKey::None) {
-      return isSimpleNode(current);
-   }
-   else if (current == SyntaxKey::Object && current.nextNode() == SyntaxKey::None) {
-      return true;
-   }
-   return false;
 }
 
 inline SyntaxNode skipNestedExpression(SyntaxNode node)

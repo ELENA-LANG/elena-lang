@@ -30,7 +30,7 @@ public sealed EventHandler<TF>
 
 public field event<name, T>
 {
-   override EventHandler<T> name;
+   EventHandler<T> name;
 
    set name(T f)
    {

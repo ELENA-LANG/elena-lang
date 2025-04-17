@@ -479,7 +479,6 @@ namespace elena_lang
    constexpr auto V_ABSTRACT              = 0x80003002u;
    constexpr auto V_CLOSED                = 0x80003003u;
    constexpr auto V_PREDEFINED            = 0x80003005u;
-   constexpr auto V_OVERRIDE              = 0x80003006u;
 
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;

@@ -23,7 +23,6 @@
 #let attributes["abstract"]    := 80003002h;
 #let attributes["closed"]      := 80003003h;
 #let attributes["predefined"]  := 80003005h;
-#let attributes["override"]    := 80003006h;
 
 /// scope_prefix:
 #let attributes["const"]       := 80002001h;
