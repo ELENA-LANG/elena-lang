@@ -36,8 +36,9 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
   - Concurrent programming
   - Closures
   - Mixins
-  - Type interfaces / conversions
-  - Class / code templates
+  - Type interfaces / Conversions
+  - Class templates / Expression templates
+  - Extensions /  Extension Templates
   - Script Engine
 
 ## Currently Supported Platforms
@@ -48,6 +49,28 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 ## Platforms to be supported
 
 - **macOS** : arm64 (a64)
+
+## Resources
+- **Nightly builds:** <https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml>
+- **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
+- **ELENA API 6.0** <https://elena-lang.github.io/api/index.html>
+- **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
+- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
+- **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
+- **Source code:** <https://github.com/ELENA-LANG/elena-lang>
+- **BluSky:** <https://bsky.app/profile/alexrakov.bsky.social>
+- **Rosetta code:** <https://rosettacode.org/wiki/Category:Elena>
+
+## Contact Us
+
+Reach out with any questions you may have and we'll make sure to answer them as soon as possible!
+
+| Platform  | Link        |
+|:----------|:------------|
+| 💬 Instant Message Chat | [![Discord Banner](https://discordapp.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
+| Forum | [Discussions](https://github.com/orgs/ELENA-LANG/discussions)
+| 📧 E-mail | elenaprolang@gmail.com
+| 🐤 BlueSky | [@elena_language](https://bsky.app/profile/alexrakov.bsky.social)
 
 ## Installing ELENA from source
 
@@ -214,27 +237,11 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 You may look at or try to implement some of [Rosetta code tasks](https://rosettacode.org/wiki/Category:Elena) 
 which are not yet implemented
 
-## Contact Us
+## Terminal, IDEs
 
-Reach out with any questions you may have and we'll make sure to answer them as soon as possible!
+ELENA support both [command-line tools](https://github.com/ELENA-LANG/elena-lang/wiki/Using-command%E2%80%90line-tools) and IDE.
 
-| Platform  | Link        |
-|:----------|:------------|
-| 💬 Instant Message Chat | [![Discord Banner](https://discordapp.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
-| Forum | [Discussions](https://github.com/orgs/ELENA-LANG/discussions)
-| 📧 E-mail | elenaprolang@gmail.com
-| 🐤 BlueSky | [@elena_language](https://bsky.app/profile/alexrakov.bsky.social)
-
-## Resources
-- **Nightly builds:** <https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml>
-- **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
-- **ELENA API 6.0** <https://elena-lang.github.io/api/index.html>
-- **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
-- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
-- **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
-- **Source code:** <https://github.com/ELENA-LANG/elena-lang>
-- **BluSky:** <https://bsky.app/profile/alexrakov.bsky.social>
-- **Rosetta code:** <https://rosettacode.org/wiki/Category:Elena>
+The work on [VSCode extension](https://github.com/ELENA-LANG/vscode-elena-lang) & [Debug Adapter Protoco support](https://github.com/ELENA-LANG/elena_dap) is going on
 
 ## License
 
