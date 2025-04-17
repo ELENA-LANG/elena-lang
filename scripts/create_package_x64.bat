@@ -8,7 +8,7 @@ md build\x64
 md build\x64\bin
 md build\x64\bin\templates
 md build\x64\bin\scripts
-md build\x64\bin\x32
+md build\x64\bin\amd64
 md build\x64\doc
 md build\x64\examples60 
 md build\x64\src60
