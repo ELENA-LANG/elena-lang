@@ -8821,7 +8821,8 @@ void Compiler :: compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& metho
 inline bool isArg32(CompilerLogic* logic, ModuleScopeBase* moduleScope, ref_t typeRef)
 {
    return logic->isCompatible(*moduleScope, { V_INT32 }, { typeRef }, false)
-      || logic->isCompatible(*moduleScope, { V_PTR32 }, { typeRef }, false);
+      || logic->isCompatible(*moduleScope, { V_PTR32 }, { typeRef }, false)
+      || logic->isCompatible(*moduleScope, { V_UINT32 }, { typeRef }, false);
 }
 
 inline bool isArg64(CompilerLogic* logic, ModuleScopeBase* moduleScope, ref_t typeRef)
