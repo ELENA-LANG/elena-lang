@@ -99,7 +99,7 @@ namespace io
       static TextWriter textwriter(string path) 
          = fileControl.newWriter(path);         
       
-      static TextWriter textreader(string path) 
+      static TextReader textreader(string path) 
          = fileControl.newReader(path);         
       
    }
