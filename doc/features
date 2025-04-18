@@ -311,3 +311,17 @@ public program()
 {
     Color color := Color.Red; 
 }
+
+----------------------------------------------------------------------------
+ Type short-cuts
+----------------------------------------------------------------------------
+
+use extern KERNEL32;
+use system'text'StringBuilder; 
+
+public program()
+{
+   StringBuilder sb := new StringBuilder(); // allow to use the class proper name without importing the whole namespace
+
+   pointer commandLinePtr := KERNEL32.GetCommandLineW(); // skipping extern attribute
+}

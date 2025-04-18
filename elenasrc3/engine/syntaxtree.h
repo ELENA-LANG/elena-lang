@@ -212,6 +212,7 @@ namespace elena_lang
       HasStaticConstructor    = 0x000116,
       AsyncInvoker            = 0x000117,
       SourceRef               = 0x000118,
+      Shortcut                = 0x000119,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

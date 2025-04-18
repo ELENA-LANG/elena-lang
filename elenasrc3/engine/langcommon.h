@@ -456,6 +456,10 @@ namespace elena_lang
    constexpr auto V_CATEGORY_MASK         = 0x7FFFFF00u;
    constexpr auto V_CATEGORY_MAX          = 0x0000F000u;
 
+   /// instruction
+   constexpr auto V_USE                   = 0x80008001u;
+   constexpr auto V_IMPORT                = 0x80008002u;
+
    /// modificator
    constexpr auto V_IGNOREDUPLICATE       = 0x80007001u;
    constexpr auto V_SCRIPTSELFMODE        = 0x80007002u;
@@ -514,7 +518,6 @@ namespace elena_lang
    constexpr auto V_EXTERN                = 0x80001015u;
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
-   constexpr auto V_IMPORT                = 0x80001018u;
    constexpr auto V_MIXIN                 = 0x80001019u;
    constexpr auto V_DISTRIBUTED_FORWARD   = 0x8000101Au;
    constexpr auto V_AUTO                  = 0x8000101Cu;

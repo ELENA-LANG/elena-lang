@@ -15,8 +15,6 @@ In development:
   - MTA support for Linux : support MT routines in elenart
   - conditional compiling
   - upndown (connector - cmdSearch)
-  gen:
-  - work on REPL (elt) : execute simple program
   ide:  
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - syntax highlighting
@@ -42,12 +40,11 @@ In development:
   --------------------------------------
   - #743
   - #739
-  - script to generate project file with a simple template 
+  - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
-  - #742 : Declaring external callback
+  - support type shortcut
   --------------------------------------
-  * implement
-  * test
+  * deextern
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
@@ -56,6 +53,7 @@ In development:
   --------------------------------------
   dev: 
   gen:
+  - work on REPL (elt) : execute simple program
   api:
   - #622 : api backlog
   maint:

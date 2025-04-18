@@ -294,6 +294,8 @@ namespace elena_lang
    typedef Map<ObjectKey, ObjectTrackingInfo>                                                ObjectTrackingMap;
    typedef CachedList<ref_t, 4>                                                              TemplateTypeList;
 
+   typedef Map < ustr_t, ObjectInfo, allocUStr, freeUStr>                                    ShortcutMap;
+
    struct Parameter
    {
       int      offset;
@@ -520,6 +522,8 @@ namespace elena_lang
          ReferenceName        nsName;
          IdentifierString     sourcePath;
 
+         // shortcuts
+         ShortcutMap          shortcuts;
          // forward declarations
          ForwardMap           forwards;
          // imported namespaces
@@ -575,6 +579,7 @@ namespace elena_lang
 
          NamespaceScope(ModuleScopeBase* moduleScope, ErrorProcessor* errorProcessor, CompilerLogic* compilerLogic, ExtensionMap* outerExtensionList) :
             Scope(nullptr),
+            shortcuts({}),
             forwards(0),
             importedNs(nullptr),
             extensions({}),
@@ -1652,6 +1657,8 @@ namespace elena_lang
          ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr);
 
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
+
+      void declareShortcut(NamespaceScope& scope, SyntaxNode node);
 
       void declareTemplateAttributes(Scope& scope, SyntaxNode node, TemplateTypeList& parameters,
          TypeAttributes& attributes, bool declarationMode, bool objectMode);

@@ -794,6 +794,7 @@ bool Interpreter::eval(BuildKey key, ref_t operator_id, ArgumentsInfo& arguments
 
 Compiler::NamespaceScope::NamespaceScope(NamespaceScope* parent) :
    Scope(parent),
+   shortcuts({}),
    forwards(0),
    importedNs(nullptr),
    extensions({}),
@@ -1017,6 +1018,11 @@ ObjectInfo Compiler::NamespaceScope::mapIdentifier(ustr_t identifier, bool refer
       reference = moduleScope->aliases.get(identifier);
       if (isPrimitiveRef(reference))
          reference = 0;
+
+      // try resolve as shortcut
+      ObjectInfo shortcut = shortcuts.get(identifier);
+      if (shortcut.kind != ObjectKind::Unknown)
+         return shortcut;
    }
 
    if (!reference)
@@ -7331,6 +7337,39 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
    return retVal;
 }
 
+void Compiler :: declareShortcut(NamespaceScope& scope, SyntaxNode node)
+{
+   SyntaxNode nameNode = node.findChild(SyntaxKey::Name);
+   SyntaxNode identNode = nameNode.firstChild(SyntaxKey::TerminalMask);
+
+   SyntaxNode current = node.firstChild().nextNode();
+
+   // generate an expected expression
+   SyntaxTree exprTree;
+   SyntaxTreeWriter exprWriter(exprTree);
+   exprWriter.newNode(SyntaxKey::Root);
+   while (current != SyntaxKey::None) {
+      SyntaxTree::copyNode(exprWriter, current, current != SyntaxKey::Name);
+
+      current = current.nextNode();
+   }
+   exprWriter.closeNode();
+
+   ReferenceName name;
+   ReferenceName::copyProperName(name, identNode.identifier());
+
+   ObjectInfo info = mapObject(scope, exprTree.readRoot(), EAttr::None);
+   switch (info.kind) {
+      case ObjectKind::Extern:
+      case ObjectKind::Class:
+         scope.shortcuts.add(*name, info);
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
+   }
+}
+
 ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declaredTypeInfo, EAttr attrs)
 {
    bool externalOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::Extern);
@@ -11289,6 +11328,11 @@ void Compiler::Namespace::declareNamespace(SyntaxNode node, bool ignoreImport, b
                   scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownModule, current.findChild(SyntaxKey::Name));
                   current.setKey(SyntaxKey::Idle); // remove the node, to prevent duplicate warnings
                }
+            }
+            break;
+         case SyntaxKey::Shortcut:
+            if (!ignoreImport) {
+               compiler->declareShortcut(scope, current);
             }
             break;
          default:

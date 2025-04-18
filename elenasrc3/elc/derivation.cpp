@@ -1610,6 +1610,7 @@ enum DeclarationType
 {
    Class,
    Import,
+   Shortcut,
    Namespace
 };
 
@@ -1623,6 +1624,9 @@ inline DeclarationType defineDeclarationType(SyntaxNode node)
          switch (current.arg.reference) {
             case V_IMPORT:
                type = DeclarationType::Import;
+               break;
+            case V_USE:
+               type = DeclarationType::Shortcut;
                break;
             case V_NAMESPACE:
                type = DeclarationType::Namespace;
@@ -1798,6 +1802,9 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode&
       switch (type) {
          case DeclarationType::Import:
             writer.CurrentNode().setKey(SyntaxKey::Import);
+            break;
+         case DeclarationType::Shortcut:
+            writer.CurrentNode().setKey(SyntaxKey::Shortcut);
             break;
          case DeclarationType::Namespace:
             writer.CurrentNode().setKey(SyntaxKey::Namespace);
