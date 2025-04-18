@@ -2,16 +2,23 @@ import system'text;
 
 public class XmlDocument
 {
-   RootXmlNode _root;
+   XmlNode _root;
    
-   constructor()
+   constructor new(XmlNode root)
    {
-      _root := new RootXmlNode(self)
+      _root := root;
    }
-   
-   XmlNode newNode(string xpath)
+
+   XmlNode findNode(string xpath)
    {
+      if (xpath[0]==$47) {
+         string current, string subpath := XmlNode.parseXPath(1, xpath);
+         
+         if (_root.Name == current) {
+            ^ _root.findChild(subpath)
+         };
+      };
       
+      ^ nil;
    }
-   
-}
+} 

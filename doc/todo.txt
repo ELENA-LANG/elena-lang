@@ -42,9 +42,10 @@ In development:
   - #739
   - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
-  - support type shortcut
   --------------------------------------
-  * deextern
+  * save - using formatter
+  * load
+  * test
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
