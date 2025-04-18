@@ -7,12 +7,15 @@ public class XmlNode
    List<Tuple<string, string>>   _attributes;   
    List<XmlNode>                 _children;
    
-   string Name  : rprop(_name);
+   string Name    : rprop(_name);
    
-   string Value : prop(_value);
+   string Content : rprop(_content);
    
    appendChild(XmlNode child)
    {
+      if:not:nil(_content)
+         InvalidOperationException.raise("The node has already content"); 
+      
       _children.append(child);
       
       child.setParent(self);
@@ -26,12 +29,9 @@ public class XmlNode
       _parent := parent
    }
    
-   static XmlNode newNode(string name, string value, params XmlNode[] children)
+   static XmlNode newElement(string name, string value)
    {
       auto node := XmlNode.new(nil, name, value);
-      for (int i := 0; i < children.Length; i++) {
-         node.appendChild(children[i]);         
-      };
       
       ^ node
    }
@@ -45,6 +45,23 @@ public class XmlNode
       
       ^ node
    }
+   
+   internal int getChildIndex(XmlNode child)
+   {
+      for (int i := 0; i < _children.Length; i++) {
+         if (child.equalReference(_children[i])) {
+            ^ i;
+         }
+      };
+      
+      ^ -1
+   }
+   
+   internal XmlNode getChild(int index)
+      = _children[index];
+   
+   get int ChildCounter()
+      = _children.Length;
    
    internal static ::(string, string) parseXPath(int index, string xpath)
    {
@@ -79,6 +96,56 @@ public class XmlNode
       ^ nil
    }
    
+   XmlNode nextSibling()
+   {
+      if:nil(_parent)
+      {
+         ^ nil;
+      };
+      
+      int index := _parent.getChildIndex(self);
+      int length := _parent.ChildCounter;
+      
+      index += 1;
+      if (index < length) {
+         ^ _parent.getChild(index)
+      };
+      
+      ^ nil
+   }
+   
+   XmlNode previousSibling()
+   {
+      if:nil(_parent)
+         { ^ nil };
+      
+      int index := _parent.getChildIndex(self);
+      
+      if (index > 0) {
+         ^ _parent.getChild(index - 1)
+      };
+      
+      ^ nil      
+   }
+   
+   XmlNode firstChild()
+   {
+      if (_children.Length == 0) {
+         ^ nil
+      };
+      
+      ^ _children[0]
+   }
+   
+   XmlNode lastChild()
+   {
+      if (_children.Length == 0) {
+         ^ nil
+      };
+      
+      ^ _children[_children.Length - 1]
+   }   
+   
    internal constructor new(XmlNode? parent, string name)
    {
       _attributes := new List<Tuple<string, string>>();
@@ -89,12 +156,12 @@ public class XmlNode
          parent.appendChild(self)
    }
    
-   internal constructor new(XmlNode? parent, string name, string value)
+   internal constructor new(XmlNode? parent, string name, string content)
    {
       _attributes := new List<Tuple<string, string>>();
       _children := new List<XmlNode>();
       _name := name;
-      _value := value;
+      _content := content;
       
       if:not:nil(parent)
          parent.appendChild(self)

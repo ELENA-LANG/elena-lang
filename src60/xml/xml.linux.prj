@@ -23,8 +23,14 @@
         <module>
             <file>xmlnode.l</file>
             <file>xmldoc.l</file>
-        </module>
+            <file>xmlformatter.l</file>
+       </module>
     </files>
+    <manifest>
+       <name>ELENA XML Library</name>
+       <version>6.6.0</version>
+       <author>Aleksey Rakov</author>
+    </manifest>
     <project>
         <executable></executable>
         <options></options>

@@ -30,27 +30,6 @@ bin\elena-cli src60\elena_api.prjcol
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
 @echo on
 
-bin\ldoc system doc\api
-bin\ldoc system'collections'threadsafe doc\api
-bin\ldoc system'routines doc\api
-bin\ldoc system'runtime doc\api
-bin\ldoc system'threading doc\api
-bin\ldoc system'dynamic doc\api
-bin\ldoc system'drawing doc\api
-bin\ldoc system'winforms doc\api
-bin\ldoc system'net doc\api
-bin\ldoc extensions doc\api
-bin\ldoc extensions'routines doc\api
-bin\ldoc extensions'scripting doc\api
-bin\ldoc extensions'dynamic doc\api
-bin\ldoc extensions'io doc\api
-bin\ldoc cellular doc\api
-bin\ldoc algorithms doc\api
-bin\ldoc sqlite doc\api
-bin\ldoc forms doc\api
-bin\ldoc ltests doc\api
-bin\ldoc net doc\api
-
 bin\elena-cli tests60\system_tests\system_tests.prj
 @echo off 
 if %ERRORLEVEL% EQU -2 GOTO CompilerError
