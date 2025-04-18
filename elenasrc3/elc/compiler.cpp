@@ -6573,17 +6573,17 @@ ObjectInfo Compiler::mapClassSymbol(Scope& scope, ref_t classRef)
    else return {};
 }
 
-ExternalInfo Compiler::mapExternal(Scope& scope, SyntaxNode node)
+ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node, ref_t nameRef)
 {
-   SyntaxNode objNode = node.parentNode();
-
-   ustr_t dllAlias = node.identifier();
-   ustr_t functionName = SyntaxTree::gotoNode(objNode, SyntaxKey::Message).firstChild(SyntaxKey::TerminalMask).identifier();
+   ustr_t dllAlias = node.firstChild(SyntaxKey::TerminalMask).identifier();
+   ustr_t functionName = SyntaxTree::gotoNode(node, SyntaxKey::Message).firstChild(SyntaxKey::TerminalMask).identifier();
 
    if (functionName.empty()) {
       functionName = dllAlias;
       dllAlias = RT_FORWARD;
    }
+   else if (nameRef)
+      dllAlias = scope.module->resolveConstant(nameRef);
 
    return scope.moduleScope->mapExternal(dllAlias, functionName);
 }
@@ -7360,7 +7360,7 @@ void Compiler :: declareShortcut(NamespaceScope& scope, SyntaxNode node)
 
    ObjectInfo info = mapObject(scope, exprTree.readRoot(), EAttr::None);
    switch (info.kind) {
-      case ObjectKind::Extern:
+      case ObjectKind::ExternLibrary:
       case ObjectKind::Class:
          scope.shortcuts.add(*name, info);
          break;
@@ -7389,13 +7389,7 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
    ObjectInfo retVal;
    bool invalid = false;
    if (externalOp) {
-      auto externalInfo = mapExternal(scope, node);
-      switch (externalInfo.type) {
-         case ExternalType::WinApi:
-            return { ObjectKind::Extern, {}, externalInfo.reference, 0, TargetMode::WinApi };
-         default:
-            return { ObjectKind::Extern, {}, externalInfo.reference, 0, TargetMode::External };
-      }
+      return { ObjectKind::ExternLibrary, {}, scope.module->mapConstant(node.identifier()), TargetMode::External};
    }
    else if (newOp || castOp) {
       if (node.key == SyntaxKey::identifier && EAttrs::testAndExclude(attrs, ExpressionAttribute::RetrievingType)) {
@@ -12546,14 +12540,12 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
    bool probeMode = source.mode == TargetMode::Probe;
    switch (source.mode) {
       case TargetMode::External:
-      case TargetMode::WinApi:
       {
          compileMessageArguments(current, arguments, 0, EAttr::None, nullptr, argListType, 0);
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileExternalOp(node, source.reference,
-            source.mode == TargetMode::WinApi, arguments, expectedRef);
+         retVal = compileExternalOp(current, source.reference, arguments, expectedRef);
          break;
       }
       case TargetMode::CreatingArray:
@@ -13922,9 +13914,12 @@ ref_t Compiler::Expression::compileMessageArguments(SyntaxNode current, Argument
    return 0;
 }
 
-ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t externalRef,
-   bool stdCall, ArgumentsInfo& arguments, ref_t expectedRef)
+ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRef,
+   ArgumentsInfo& arguments, ref_t expectedRef)
 {
+   auto externalInfo = compiler->mapExternal(scope, node, nameRef);
+   bool stdCall = externalInfo.type == ExternalType::WinApi;
+
    pos_t count = arguments.count_pos();
 
    writer->appendNode(BuildKey::Allocating,
@@ -13986,7 +13981,7 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t extern
       }
    }
 
-   writer->newNode(BuildKey::ExtCallOp, externalRef);
+   writer->newNode(BuildKey::ExtCallOp, externalInfo.reference);
 
    BuildNode opNode = writer->CurrentNode();
 

@@ -69,6 +69,7 @@ namespace elena_lang
       LocalAddress,
       TempLocalAddress,
       SelfBoxableLocal, // the argument can be stack allocated
+      ExternLibrary,
       Extern,
       FloatExtern,
       NewVariable,
@@ -106,7 +107,6 @@ namespace elena_lang
       None,
       Probe,
       External,
-      WinApi,
       CreatingArray,
       Creating,
       Casting,
@@ -1465,8 +1465,7 @@ namespace elena_lang
          ObjectInfo validateObject(SyntaxNode node, ObjectInfo retVal,
             ref_t targetRef, bool noPrimitives, bool paramMode, bool dynamicRequired, bool nillable);
 
-         ObjectInfo compileExternalOp(SyntaxNode node, ref_t externalRef, bool stdCall,
-            ArgumentsInfo& arguments, ref_t expectedRef);
+         ObjectInfo compileExternalOp(SyntaxNode node, ref_t nameRef, ArgumentsInfo& arguments, ref_t expectedRef);
 
          ObjectInfo compileNewArrayOp(SyntaxNode node, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
 
@@ -1645,7 +1644,7 @@ namespace elena_lang
          ref_t flags, ref_t* signature, size_t signatureLen, bool withoutWeakMessages, bool noSignature);
       mssg_t mapMessage(Scope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
 
-      ExternalInfo mapExternal(Scope& scope, SyntaxNode node);
+      ExternalInfo mapExternal(Scope& scope, SyntaxNode node, ref_t nameRef);
       static ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
       ObjectInfo mapConstructorTarget(MethodScope& scope);
 
