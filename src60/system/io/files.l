@@ -21,7 +21,7 @@ namespace io
 
       TextReader textreader() = fileControl.newReader(_path);
 
-      TextWriter textwriter() = fileControl.writer(_path);
+      TextWriter textwriter() = fileControl.newWriter(_path);
 
       TextWriter logger() = fileControl.logger(_path);
 
@@ -51,14 +51,14 @@ namespace io
 
       static saveContent(string path, string content)
       {
-         using(TextWriter writer := fileControl.writer(path)) {
+         using(TextWriter writer := fileControl.newWriter(path)) {
             writer.write(content);
          }         
       }
 
       static saveContent(string path, string content, Encoder encoder)
       {
-         using(TextWriter writer := fileControl.writer(path, encoder)) {
+         using(TextWriter writer := fileControl.newWriter(path, encoder)) {
             writer.write(content);
          }         
       }
