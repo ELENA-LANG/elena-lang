@@ -95,6 +95,13 @@ namespace io
             
          ^ output.Value
       }
+      
+      static TextWriter textwriter(string path) 
+         = fileControl.newWriter(path);         
+      
+      static TextWriter textreader(string path) 
+         = fileControl.newReader(path);         
+      
    }
 
    // --- Directory ---
