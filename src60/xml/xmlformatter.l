@@ -1,6 +1,6 @@
 import system'io;
 
-public class TabXmlFormatter : IXmlFormatter
+public singleton TabXmlFormatter : IXmlFormatter
 {
    openTag(TextWriter output, int level, XmlNode node)
    {
