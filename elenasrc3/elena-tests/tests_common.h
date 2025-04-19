@@ -143,6 +143,16 @@ namespace elena_lang
       {
       }
 
+      bool declareImport(ustr_t, ustr_t) override
+      {
+         return false;
+      }
+
+      ustr_t resolveImport(ustr_t alias) override
+      {
+         return alias;
+      }
+
       TestModuleScope(bool tapeOptMode);
    };
 
