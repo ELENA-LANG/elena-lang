@@ -1737,6 +1737,8 @@ namespace elena_lang
 
       static ustr_t retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr_t defaultPrefix, ExpressionAttribute mode);
 
+      bool declareImport(Scope& scope, SyntaxNode node);
+
       void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility,
          Scope::ScopeLevel level, bool shareMode);
 
@@ -1849,6 +1851,7 @@ namespace elena_lang
       ObjectInfo evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
       ObjectInfo evalGetter(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
 
+      ObjectInfo evalExpression(MetaScope& scope, SyntaxNode node);
       void evalStatement(MetaScope& scope, SyntaxNode node);
 
       static void addBreakpoint(BuildTreeWriter& writer, SyntaxNode node, BuildKey bpKey);

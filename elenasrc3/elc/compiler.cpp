@@ -2392,6 +2392,28 @@ ustr_t Compiler :: retrieveDictionaryOwner(Scope& scope, ustr_t properName, ustr
    return defaultPrefix;
 }
 
+bool Compiler :: declareImport(Scope& scope, SyntaxNode node)
+{
+   MetaScope metaScope(&scope, Scope::ScopeLevel::Namespace);
+
+   SyntaxNode objNode = node.firstChild();
+   SyntaxNode exprNode = objNode.nextNode();
+
+   ObjectInfo alias = evalExpression(metaScope, objNode);
+   ObjectInfo externalName = evalExpression(metaScope, exprNode);
+
+   if (alias.kind == ObjectKind::ExternLibrary && externalName.kind == ObjectKind::StringLiteral) {
+      scope.moduleScope->declareImport(
+         scope.module->resolveConstant(alias.reference),
+         scope.module->resolveConstant(externalName.reference)
+      );
+
+      return true;
+   }
+
+   return false;
+}
+
 void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility, Scope::ScopeLevel level, bool shareMode)
 {
    bool superMode = false;
@@ -4648,13 +4670,24 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
    return retVal;
 }
 
-void Compiler::evalStatement(MetaScope& scope, SyntaxNode node)
+void Compiler :: evalStatement(MetaScope& scope, SyntaxNode node)
 {
    Interpreter interpreter(scope.moduleScope, _logic);
 
    ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
    if (retVal.kind == ObjectKind::Unknown)
       scope.raiseError(errCannotEval, node);
+}
+
+ObjectInfo Compiler :: evalExpression(MetaScope& scope, SyntaxNode node)
+{
+   Interpreter interpreter(scope.moduleScope, _logic);
+
+   ObjectInfo retVal = evalExpression(interpreter, scope, node);
+   if (retVal.kind == ObjectKind::Unknown)
+      scope.raiseError(errCannotEval, node);
+
+   return retVal;
 }
 
 inline bool hasToBePresaved(ObjectInfo retVal)
@@ -7389,7 +7422,9 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
    ObjectInfo retVal;
    bool invalid = false;
    if (externalOp) {
-      return { ObjectKind::ExternLibrary, {}, scope.module->mapConstant(node.identifier()), TargetMode::External};
+      ustr_t externLibName = scope.moduleScope->resolveImport(node.identifier());
+
+      return { ObjectKind::ExternLibrary, {}, scope.module->mapConstant(externLibName), TargetMode::External};
    }
    else if (newOp || castOp) {
       if (node.key == SyntaxKey::identifier && EAttrs::testAndExclude(attrs, ExpressionAttribute::RetrievingType)) {
@@ -11459,6 +11494,12 @@ bool Compiler::Namespace::declareMembers(SyntaxNode node, bool& repeatMode, bool
             break;
          case SyntaxKey::SharedMetaDictionary:
             compiler->declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Namespace, true);
+            break;
+         case SyntaxKey::ImportStatement:
+            if (compiler->declareImport(scope, current)) {
+               current.setKey(SyntaxKey::Idle);
+            }
+            else scope.raiseError(errInvalidSyntax, current);
             break;
          default:
             // to make compiler happy

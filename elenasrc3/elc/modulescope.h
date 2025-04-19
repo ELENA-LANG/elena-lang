@@ -23,6 +23,7 @@ class ModuleScope : public ModuleScopeBase
    ForwardResolverBase* forwardResolver;
 
    Forwards             reusedTemplates;
+   Forwards             declaredImportLibraries;
 
    void saveListMember(ustr_t name, ustr_t memberName);
 
@@ -82,6 +83,18 @@ public:
 
    Visibility retrieveVisibility(ref_t reference) override;
 
+   bool declareImport(ustr_t name, ustr_t importName) override
+   {
+      return declaredImportLibraries.add(name, importName, true);
+   }
+
+   ustr_t resolveImport(ustr_t alias) override
+   {
+      ustr_t declared = declaredImportLibraries.get(alias);
+
+      return declared.empty() ? alias : declared;
+   }
+
    void flush() override;
 
    ModuleScope(LibraryLoaderBase* loader, 
@@ -95,7 +108,7 @@ public:
       int ptrSize,
       int moduleHint)
       : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
-         minimalArgList, ptrSize, false), reusedTemplates(nullptr)
+         minimalArgList, ptrSize, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;

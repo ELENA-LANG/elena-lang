@@ -22,6 +22,7 @@ __define END_OF_BLOCK        4107;
 __define DICTIONARY          4128;
 __define META_STATEMENT      4129;
 __define INCLUDE_STATEMENT   4130;
+__define IMPORT_STATEMENT    4131;
 __define SHARED_DICTIONARY   4133;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
@@ -141,7 +142,8 @@ META_DECLARATION ::=
 	"#new" DICTIONARY DECLARATION_END
 	| "#share" SHARED_DICTIONARY DECLARATION_END
 	| "#let" META_STATEMENT DECLARATION_END
-	| "#include" INCLUDE_STATEMENT DECLARATION_END;
+	| "#include" INCLUDE_STATEMENT DECLARATION_END
+	| "#import" IMPORT_STATEMENT DECLARATION_END;
 
 DECLARATION ::=
 	{ identifier | reference }+ IR_DECLARATION
@@ -1319,6 +1321,9 @@ RESEND_R ::=
 INCLUDE_STATEMENT ::=
 	{ identifier | reference }+ ^ OBJECT;
 
+IMPORT_STATEMENT ::=
+	{ identifier | reference }+ ^ OBJECT "=" EXPRESSION;
+
 COMPLEX_NAME ::=
 	identifier;
 
@@ -1358,9 +1363,9 @@ TEMPLATE_BRACKETS ::=
 	"<" TEMPLATE_ARG { "," TEMPLATE_ARG }* ">";
 
 TEMPLATE_ARG ::=
-	identifier { TEMPLATE_BRACKETS ^ TEMPLATE_TYPE | DYNAMIC_DIMENSION ^ARRAY_TYPE }?
-	| reference
-	| global;
+	identifier { TEMPLATE_BRACKETS ^ TEMPLATE_TYPE | DYNAMIC_DIMENSION ^ARRAY_TYPE }? { "?" ^NULLABLE_TYPE }?
+	| reference { "?" ^NULLABLE_TYPE }?
+	| global { "?" ^NULLABLE_TYPE }?;
 
 POSTFIXES ::=
 	":" POSTFIX { "," POSTFIX }*;

@@ -66,6 +66,7 @@ namespace elena_lang
       MetaDictionary          = 0x001020,
       MetaExpression          = 0x001021,
       IncludeStatement        = 0x001022,
+      ImportStatement         = 0x001023,
       SharedMetaDictionary    = 0x001025,
       Object                  = 0x001031,
       TemplateType            = 0x001032,

@@ -355,6 +355,9 @@ public:
 
    virtual Visibility retrieveVisibility(ref_t reference) = 0;
 
+   virtual bool declareImport(ustr_t name, ustr_t importName) = 0;
+   virtual ustr_t resolveImport(ustr_t) = 0;
+
    virtual void flush() = 0;
 
    ModuleScopeBase(ModuleBase* module,

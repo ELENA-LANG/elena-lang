@@ -13,7 +13,6 @@ In development:
   - #620 : backlog
   - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
   - MTA support for Linux : support MT routines in elenart
-  - conditional compiling
   - upndown (connector - cmdSearch)
   ide:  
   - #184 : linux -  open project, new project, save project, save all, close project ...
@@ -42,7 +41,20 @@ In development:
   - #739
   - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
+  - UnsafePointer<T>
+  - conditional compiling
+  - support giving dll alias in the code
   --------------------------------------
+  * #import mydll = "mydll";
+  * #import __decl = arg;
+  * -----------
+  * #if / #elif / #endif
+  * -----------
+  * declare UnsafePointer<T>
+  * Value must return the fixed size struct
+  * getArray(int length) must return the array
+  * -----------
+  * #562 : Stack<XmlNode?> stack
   * save - using formatter
   * load
   * test
