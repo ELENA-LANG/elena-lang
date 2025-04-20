@@ -32,6 +32,13 @@ public inline preloaded()
    #let preloadedSymbols += __decl;
 }
 
+// --- importing ---
+
+public inline importing(libraryName)
+{
+   #import __src = libraryName;
+}
+
 // --- prop ---
 
 public field prop<prop_name, T, field_name>

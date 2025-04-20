@@ -45,8 +45,10 @@ In development:
   - conditional compiling
   - support giving dll alias in the code
   --------------------------------------
-  * #import mydll = "mydll";
-  * #import __decl = arg;
+  * new build-in meta variable : __src
+  * declare importing inline prefix
+  * shortcut : support prefix statment
+  * support use extern libcxx : importing("libc++");
   * -----------
   * #if / #elif / #endif
   * -----------

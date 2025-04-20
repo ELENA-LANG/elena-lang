@@ -1,11 +1,11 @@
 //import system'io;
 //import xml;
 
-#import extern libcxx = "libc++";
+//#import extern libcxx = "libc++";
 
-use extern libcxx;
+//use extern libcxx;
 
-//use extern libcxx : importing("libc++");
+use extern libcxx : importing("libc++");
 
 /*
 public program()

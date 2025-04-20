@@ -1063,7 +1063,15 @@ void SyntaxTreeBuilder :: flushSymbolPostfixes(SyntaxTreeWriter& writer, Scope& 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Postfix) {
-         flushTemplageExpression(writer, scope, current, SyntaxKey::InlineTemplate, false);
+         SyntaxNode child = current.firstChild();
+         switch (child.key) {
+            case SyntaxKey::InlinePostfix:
+               flushTemplageExpression(writer, scope, child, SyntaxKey::InlineTemplate, false);
+               break;
+            default:
+               flushTemplageExpression(writer, scope, current, SyntaxKey::InlineTemplate, false);
+               break;
+         }
       }
 
       current = current.nextNode();
@@ -1805,6 +1813,8 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode&
             break;
          case DeclarationType::Shortcut:
             writer.CurrentNode().setKey(SyntaxKey::Shortcut);
+
+            flushSymbolPostfixes(writer, scope, node);
             break;
          case DeclarationType::Namespace:
             writer.CurrentNode().setKey(SyntaxKey::Namespace);

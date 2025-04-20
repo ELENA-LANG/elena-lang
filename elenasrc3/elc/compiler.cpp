@@ -10588,6 +10588,11 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
       {
          return current == reference;
       }));
+   moduleScope->srcVar.copy(moduleScope->predefined.retrieve<ref_t>("@src", V_SOURCE_VAR,
+      [](ref_t reference, ustr_t key, ref_t current)
+      {
+         return current == reference;
+      }));
    moduleScope->superVar.copy(moduleScope->predefined.retrieve<ref_t>("@super", V_SUPER_VAR,
       [](ref_t reference, ustr_t key, ref_t current)
       {
