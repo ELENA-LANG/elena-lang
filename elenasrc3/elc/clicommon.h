@@ -296,7 +296,6 @@ public:
 
    IdentifierString     selfVar;
    IdentifierString     declVar;
-   IdentifierString     srcVar;
    IdentifierString     superVar;
    IdentifierString     receivedVar;
 

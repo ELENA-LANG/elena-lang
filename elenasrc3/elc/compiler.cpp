@@ -1128,6 +1128,11 @@ ObjectInfo Compiler::MetaScope::mapDecl()
       return { ObjectKind::Symbol, { V_DECLARATION }, symbolScope->reference };
    }
 
+   ShortcutScope* shortcutScope = Scope::getScope<ShortcutScope>(*this, ScopeLevel::Shortcut);
+   if (shortcutScope != nullptr) {
+      return shortcutScope->shortcutInfo;
+   }
+
    return {};
 }
 
@@ -2208,7 +2213,7 @@ ref_t Compiler::retrieveBlock(NamespaceScope& scope, SyntaxNode node)
    return reference;
 }
 
-bool Compiler::importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
+bool Compiler :: importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
 {
    TypeAttributes attributes = {};
 
@@ -3794,6 +3799,31 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
             break;
          default:
             scope.raiseError(errInvalidSyntax, node);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: declareShortcutMetaInfo(Scope& scope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::InlineTemplate:
+            if (!importInlineTemplate(scope, current, INLINE_PREFIX, node))
+               scope.raiseError(errUnknownTemplate, node);
+
+            current.setKey(SyntaxKey::Idle);
+            break;
+         case SyntaxKey::ImportStatement:
+            if (declareImport(scope, current)) {
+               current.setKey(SyntaxKey::Idle);
+            }
+            else scope.raiseError(errInvalidSyntax, current);
+            break;
+         default:
             break;
       }
 
@@ -7374,6 +7404,7 @@ void Compiler :: declareShortcut(NamespaceScope& scope, SyntaxNode node)
 {
    SyntaxNode nameNode = node.findChild(SyntaxKey::Name);
    SyntaxNode identNode = nameNode.firstChild(SyntaxKey::TerminalMask);
+   SyntaxNode postfix = node.findChild(SyntaxKey::InlineTemplate);
 
    SyntaxNode current = node.firstChild().nextNode();
 
@@ -7382,7 +7413,10 @@ void Compiler :: declareShortcut(NamespaceScope& scope, SyntaxNode node)
    SyntaxTreeWriter exprWriter(exprTree);
    exprWriter.newNode(SyntaxKey::Root);
    while (current != SyntaxKey::None) {
-      SyntaxTree::copyNode(exprWriter, current, current != SyntaxKey::Name);
+      if (current != postfix) {
+         SyntaxTree::copyNode(exprWriter, current, current != SyntaxKey::Name);
+      }
+      else break;
 
       current = current.nextNode();
    }
@@ -7400,6 +7434,12 @@ void Compiler :: declareShortcut(NamespaceScope& scope, SyntaxNode node)
       default:
          scope.raiseError(errInvalidOperation, node);
          break;
+   }
+
+   if (postfix != SyntaxKey::None) {
+      ShortcutScope shortcutScope(&scope, info);
+
+      declareShortcutMetaInfo(shortcutScope, node);
    }
 }
 
@@ -10584,11 +10624,6 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
          return current == reference;
       }));
    moduleScope->declVar.copy(moduleScope->predefined.retrieve<ref_t>("@decl", V_DECL_VAR,
-      [](ref_t reference, ustr_t key, ref_t current)
-      {
-         return current == reference;
-      }));
-   moduleScope->srcVar.copy(moduleScope->predefined.retrieve<ref_t>("@src", V_SOURCE_VAR,
       [](ref_t reference, ustr_t key, ref_t current)
       {
          return current == reference;

@@ -1453,6 +1453,7 @@ void SyntaxTreeBuilder :: flushTemplateCode(SyntaxTreeWriter& writer, Scope& sco
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::IncludeStatement:
+         case SyntaxKey::ImportStatement:
             flushExpression(writer, scope, current);
             break;
          case SyntaxKey::MetaExpression:

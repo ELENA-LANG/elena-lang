@@ -35,7 +35,7 @@ public program()
 
 public program()
 {
-   extern libcxx.do();
+   libcxx.do();
 
 //   auto stack := new Stack<string?>();
 

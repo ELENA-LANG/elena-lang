@@ -36,7 +36,7 @@ public inline preloaded()
 
 public inline importing(libraryName)
 {
-   #import __src = libraryName;
+   #import __decl = libraryName;
 }
 
 // --- prop ---

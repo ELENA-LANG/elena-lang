@@ -325,3 +325,14 @@ public program()
 
    pointer commandLinePtr := KERNEL32.GetCommandLineW(); // skipping extern attribute
 }
+
+----------------------------------------------------------------------------
+ Providing an external library name
+----------------------------------------------------------------------------
+
+use extern libcxx : importing("libc++");
+
+public program()
+{
+   libcxx.do();
+}

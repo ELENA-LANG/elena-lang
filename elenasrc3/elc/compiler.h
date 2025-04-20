@@ -411,7 +411,8 @@ namespace elena_lang
             Method,
             Field,
             Code,
-            Expr
+            Expr,
+            Shortcut
          };
 
          ModuleBase*      module;
@@ -514,6 +515,25 @@ namespace elena_lang
                this->moduleScope = nullptr;
                this->compilerLogic = nullptr;
             }
+         }
+      };
+
+      struct ShortcutScope : Scope
+      {
+         ObjectInfo shortcutInfo;
+
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::Shortcut) {
+               return this;
+            }
+            else return Scope::getScope(level);
+         }
+
+         ShortcutScope(Scope* parent, ObjectInfo info)
+            : Scope(parent), shortcutInfo(info)
+         {
+
          }
       };
 
@@ -1812,6 +1832,7 @@ namespace elena_lang
       void initializeMethod(ClassScope& scope, MethodScope& methodScope, SyntaxNode current);
 
       void declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node);
+      void declareShortcutMetaInfo(Scope& scope, SyntaxNode node);
 
       void declareInvoker(ClassInfo& info, mssg_t targetMssg, MethodInfo& methodInfo, bool abstractOne, ref_t newHints);
       void declareByRefHandler(ClassInfo& info, mssg_t message, bool abstractOne);

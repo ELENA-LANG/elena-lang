@@ -43,13 +43,7 @@ In development:
   - #731 : xml 
   - UnsafePointer<T>
   - conditional compiling
-  - support giving dll alias in the code
   --------------------------------------
-  * new build-in meta variable : __src
-  * declare importing inline prefix
-  * shortcut : support prefix statment
-  * support use extern libcxx : importing("libc++");
-  * -----------
   * #if / #elif / #endif
   * -----------
   * declare UnsafePointer<T>
