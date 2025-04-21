@@ -2523,6 +2523,13 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
          case SyntaxKey::SharedMetaDictionary:
             declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class, true);
             break;
+         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::CondStatement:
+            if (!evalCondStatement(scope, current)) {
+               skipCondStatement(current);
+               continue;
+            }
+            break;
          case SyntaxKey::Method:
          {
             MethodScope methodScope(&scope);

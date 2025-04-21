@@ -1437,8 +1437,20 @@ void SyntaxTreeBuilder :: flushClass(SyntaxTreeWriter& writer, Scope& scope, Syn
    else {
       SyntaxNode current = node.firstChild();
       while (current != SyntaxKey::None) {
-         if (current.key == SyntaxKey::Declaration) {
-            flushClassMember(writer, scope, current);
+         switch (current.key) {
+            case SyntaxKey::CondStatement:
+            case SyntaxKey::ElseCondStatement:
+            case SyntaxKey::EndCondStatement:
+            {
+               Scope scope;
+               flushStatement(writer, scope, current);
+               break;
+            }
+            case SyntaxKey::Declaration:
+               flushClassMember(writer, scope, current);
+               break;
+            default:
+               break;
          }
 
          current = current.nextNode();

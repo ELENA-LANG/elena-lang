@@ -25,19 +25,18 @@ public program()
 }
 */
 
+class A
+{
 #if (__project["_Win32"])
 
-class Win32A
-{
-}
+  test32() {}
 
 #elif (__project["_Win64"])
 
-class Win64A
-{
-}
+  test64() {}
 
 #endif
+}
 
 public program()
 {
