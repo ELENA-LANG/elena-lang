@@ -8186,6 +8186,13 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
          case SyntaxKey::EOP:
             addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
             break;
+         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::CondStatement:
+            if (!evalCondStatement(codeScope, current)) {
+               skipCondStatement(current);
+               continue;
+            }
+            break;
          default:
             break;
       }

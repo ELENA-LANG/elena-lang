@@ -27,15 +27,18 @@ public program()
 
 class A
 {
+  test() 
+  {
 #if (__project["_Win32"])
 
-  test32() {}
+    Console.writeLine("I'm 32 bit app");
 
 #elif (__project["_Win64"])
 
-  test64() {}
+    Console.writeLine("I'm 64 bit app");
 
 #endif
+  }
 }
 
 public program()

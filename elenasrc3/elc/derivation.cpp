@@ -1161,6 +1161,14 @@ void SyntaxTreeBuilder :: flushMethodCode(SyntaxTreeWriter& writer, Scope& scope
          case SyntaxKey::EOP:
             flushNode(writer, scope, current);
             break;
+         case SyntaxKey::CondStatement:
+         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::EndCondStatement:
+         {
+            Scope scope;
+            flushStatement(writer, scope, current);
+            break;
+         }
          default:
             if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
                current.setKey(SyntaxKey::Expression);
