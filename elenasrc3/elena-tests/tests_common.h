@@ -153,6 +153,11 @@ namespace elena_lang
          return alias;
       }
 
+      bool checkVariable(ustr_t) override
+      {
+         return false;
+      }
+
       TestModuleScope(bool tapeOptMode);
    };
 
