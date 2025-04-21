@@ -1165,7 +1165,6 @@ void SyntaxTreeBuilder :: flushMethodCode(SyntaxTreeWriter& writer, Scope& scope
          case SyntaxKey::ElseCondStatement:
          case SyntaxKey::EndCondStatement:
          {
-            Scope scope;
             flushStatement(writer, scope, current);
             break;
          }

@@ -11,7 +11,6 @@ In development:
   - support :sizeof
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
   - #620 : backlog
-  - #34 : http client : support redirects, post, put, patch, delete, head, options, trace), web api
   - MTA support for Linux : support MT routines in elenart
   - upndown (connector - cmdSearch)
   ide:  
@@ -37,21 +36,13 @@ In development:
   prom: 
   - weekly posting
   --------------------------------------
+  - #34 : http client : post, put, delete, return status, headers
   - prom : article how to implement analog of record using meta programming (extensions'records)
   - #743
   - #739
   - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
-  - UnsafePointer<T>
-  - conditional compiling
   --------------------------------------
-  * #if / #elif - test
-  * support condition compilation : declaration level : namespace, class, method
-  * -----------
-  * declare UnsafePointer<T>
-  * Value must return the fixed size struct
-  * getArray(int length) must return the array
-  * -----------
   * #562 : Stack<XmlNode?> stack
   * save - using formatter
   * load
@@ -67,6 +58,7 @@ In development:
   - work on REPL (elt) : execute simple program
   api:
   - #622 : api backlog
+  - #34 : http client : support patch, head, options, trace redirects, web api
   maint:
   - review pi performance (must < 6) : realOp.power[3] byte code
   port:

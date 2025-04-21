@@ -25,25 +25,9 @@ public program()
 }
 */
 
-class A
-{
-  test() 
-  {
-#if (__project["_Win32"])
-
-    Console.writeLine("I'm 32 bit app");
-
-#elif (__project["_Win64"])
-
-    Console.writeLine("I'm 64 bit app");
-
-#endif
-  }
-}
-
 public program()
 {
-//   auto stack := new Stack<string?>();
+   auto stack := new Stack<string?>();
 
-//   stack.push(nil)
+   stack.push(nil)
 }

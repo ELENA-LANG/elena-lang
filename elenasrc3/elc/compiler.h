@@ -367,6 +367,7 @@ namespace elena_lang
       bool evalObjArrayOp(ref_t operator_id, ArgumentsInfo& args);
       bool evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+      bool evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalProjectInfoOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
@@ -1876,7 +1877,7 @@ namespace elena_lang
       ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne, bool ignoreErrors);
       ObjectInfo evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
       ObjectInfo evalExprValueOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
-      ObjectInfo evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
+      ObjectInfo evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool metaMode = false);
       ObjectInfo evalGetter(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
 
       ObjectInfo evalExpression(MetaScope& scope, SyntaxNode node);

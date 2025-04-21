@@ -691,6 +691,72 @@ bool Interpreter::evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& 
    return false;
 }
 
+bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   switch (operator_id) {
+      case EQUAL_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            bool value = loperand.extra == roperand.extra;
+
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+
+            return true;
+         }
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            bool value = loperand.extra != roperand.extra;
+
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+
+            return true;
+         }
+         break;
+      case GREATER_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            bool value = loperand.extra > roperand.extra;
+
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+
+            return true;
+         }
+         break;
+      case NOTGREATER_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            bool value = loperand.extra <= roperand.extra;
+
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+
+            return true;
+         }
+         break;
+      case LESS_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            bool value = loperand.extra < roperand.extra;
+
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+
+            return true;
+         }
+         break;
+      case NOTLESS_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
+            bool value = loperand.extra >= roperand.extra;
+
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+
+            return true;
+         }
+         break;
+      default:
+         break;
+   }
+   return false;
+}
+
 bool Interpreter::evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
 {
    ObjectInfo loperand = args[0];
@@ -802,6 +868,8 @@ bool Interpreter::eval(BuildKey key, ref_t operator_id, ArgumentsInfo& arguments
          return evalRealOp(operator_id, arguments, retVal);
       case BuildKey::ProjectInfoOp:
          return evalProjectInfoOp(operator_id, arguments, retVal);
+      case BuildKey::IntCondOp:
+         return evalIntCondOp(operator_id, arguments, retVal);
       default:
          return false;
    }
@@ -4460,7 +4528,7 @@ ObjectInfo Compiler::evalExprValueOperation(Interpreter& interpreter, Scope& sco
    return {};
 }
 
-ObjectInfo Compiler::evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors)
+ObjectInfo Compiler::evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool metaMode)
 {
    SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
 
@@ -4482,7 +4550,7 @@ ObjectInfo Compiler::evalSizeOperation(Interpreter& interpreter, Scope& scope, S
          break;
    }
 
-   if (sizeInfo.size > 0)
+   if (sizeInfo.size > 0 || metaMode)
       return { ObjectKind::IntLiteral, { V_INT32 }, ::mapIntConstant(scope.moduleScope, sizeInfo.size), sizeInfo.size };
 
    if (!ignoreErrors) {
@@ -4693,10 +4761,19 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
       case SyntaxKey::NameOperation:
       case SyntaxKey::ReferOperation:
       case SyntaxKey::IndexerOperation:
+      case SyntaxKey::GreaterOperation:
+      case SyntaxKey::NotGreaterOperation:
+      case SyntaxKey::EqualOperation:
+      case SyntaxKey::NotEqualOperation:
+      case SyntaxKey::LessOperation:
+      case SyntaxKey::NotLessOperation:
          retVal = evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS, ignoreErrors);
          break;
       case SyntaxKey::ExprValOperation:
          retVal = evalExprValueOperation(interpreter, scope, node, ignoreErrors);
+         break;
+      case SyntaxKey::SizeOperation:
+         retVal = evalSizeOperation(interpreter, scope, node, ignoreErrors, true);
          break;
       case SyntaxKey::Object:
          retVal = evalObject(interpreter, scope, node);
