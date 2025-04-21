@@ -37,6 +37,7 @@ In development:
   prom: 
   - weekly posting
   --------------------------------------
+  - prom : article how to implement analog of record using meta programming (extensions'records)
   - #743
   - #739
   - gen : script to generate project file with a simple template from elt-cli
@@ -44,7 +45,8 @@ In development:
   - UnsafePointer<T>
   - conditional compiling
   --------------------------------------
-  * #if / #elif / #endif
+  * #if / #elif - test
+  * support condition compilation : declaration level : namespace, class, method
   * -----------
   * declare UnsafePointer<T>
   * Value must return the fixed size struct

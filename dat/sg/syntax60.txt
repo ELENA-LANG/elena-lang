@@ -23,7 +23,9 @@ __define DICTIONARY          4128;
 __define META_STATEMENT      4129;
 __define INCLUDE_STATEMENT   4130;
 __define IMPORT_STATEMENT    4131;
+__define COND_STATEMENT      4132;
 __define SHARED_DICTIONARY   4133;
+__define ENDCOND_STATEMENT   4134;
 __define OBJECT              4145;
 __define TEMPLATE_TYPE       4146;
 __define ARRAY_TYPE          4147;
@@ -143,7 +145,9 @@ META_DECLARATION ::=
 	| "#share" SHARED_DICTIONARY DECLARATION_END
 	| "#let" META_STATEMENT DECLARATION_END
 	| "#include" INCLUDE_STATEMENT DECLARATION_END
-	| "#import" IMPORT_STATEMENT DECLARATION_END;
+	| "#import" IMPORT_STATEMENT DECLARATION_END
+        | "#if" COND_STATEMENT
+	| ENDCOND_STATEMENT;
 
 DECLARATION ::=
 	{ identifier | reference }+ IR_DECLARATION
@@ -1324,6 +1328,12 @@ INCLUDE_STATEMENT ::=
 
 IMPORT_STATEMENT ::=
 	{ identifier | reference }+ ^ OBJECT "=" EXPRESSION;
+
+COND_STATEMENT ::=
+	"(" EXPRESSION ")";
+
+ENDCOND_STATEMENT ::=
+	"#endif";
 
 COMPLEX_NAME ::=
 	identifier;

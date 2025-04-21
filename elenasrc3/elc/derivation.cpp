@@ -99,6 +99,7 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
             flushDictionary(writer, current);
             break;
          case SyntaxKey::MetaExpression:
+         case SyntaxKey::CondStatement:
          {
             Scope scope;
             flushStatement(writer, scope, current);

@@ -124,6 +124,7 @@ namespace elena_lang
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
+         VariableResolverBase* variableResolver,
          ModuleSettings& moduleSettings,
          int minimalArgList,
          int ptrSize);

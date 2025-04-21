@@ -99,7 +99,9 @@ namespace elena_lang
       MemberInfo,
       LocalField,
       ConstGetter,  // key = value constant
-      InternalCallback
+      InternalCallback,
+      ProjectInfo,
+      ProjectVariable,
    };
 
    enum TargetMode
@@ -366,6 +368,7 @@ namespace elena_lang
       bool evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+      bool evalProjectInfoOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
    public:
       ObjectInfo mapStringConstant(ustr_t s);
@@ -1054,6 +1057,7 @@ namespace elena_lang
          ScopeLevel scopeLevel;
 
          ObjectInfo mapDecl();
+         ObjectInfo mapProject();
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
@@ -1676,6 +1680,9 @@ namespace elena_lang
          ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr);
 
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
+
+      bool evalCondStatement(Scope& scope, SyntaxNode& node);
+      void skipCondStatement(SyntaxNode& node);
 
       void declareShortcut(NamespaceScope& scope, SyntaxNode node);
 

@@ -1,12 +1,6 @@
 //import system'io;
 //import xml;
 
-//#import extern libcxx = "libc++";
-
-//use extern libcxx;
-
-use extern libcxx : importing("libc++");
-
 /*
 public program()
 {
@@ -31,12 +25,24 @@ public program()
 }
 */
 
+#if (__project["_Win32"])
 
+class Win32A
+{
+}
+
+#endif
+
+#if (__project["_Win64"])
+
+class Win64A
+{
+}
+
+#endif
 
 public program()
 {
-   libcxx.do();
-
 //   auto stack := new Stack<string?>();
 
 //   stack.push(nil)

@@ -317,6 +317,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
          ProjectOption::References, configPath);
 
       loadForwards(config, root, FORWARD_CATEGORY);
+      loadVariables(config, root, VARIABLE_CATEGORY);
 
       loadLexicals(config, root, LEXICAL_CATEGORY);
 

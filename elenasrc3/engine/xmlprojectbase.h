@@ -188,6 +188,7 @@ namespace elena_lang
 
       Paths          _paths;
       Forwards       _forwards;
+      Variables      _variables;
       LexicalMap     _lexicals;
 
       ProjectTree    _projectTree;
@@ -209,16 +210,20 @@ namespace elena_lang
          ProjectOption key);
 
       void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
+      void loadVariables(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
       void loadLexicals(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
 
       ustr_t resolveKey(ProjectOption category, ProjectOption item, ustr_t key);
 
    public:
       void addForward(ustr_t forward, ustr_t referenceName) override;
+      void addVariable(ustr_t name, bool value);
 
       ustr_t resolveForward(ustr_t weakReference) override;
       ustr_t resolveWinApi(ustr_t forward) override;
       ustr_t resolveExternal(ustr_t forward) override;
+
+      bool checkVariable(ustr_t name) override;
 
       ustr_t StringSetting(ProjectOption option) const override;
 

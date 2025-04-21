@@ -209,6 +209,7 @@ namespace elena_lang
       IncludeTry           = 0x00A8,
       Import               = 0x00A9,
       DictionaryOp         = 0x00AA,
+      ProjectInfoOp        = 0x00AB,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,

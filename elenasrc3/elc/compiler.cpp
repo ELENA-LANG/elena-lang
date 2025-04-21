@@ -731,6 +731,21 @@ bool Interpreter::evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo&
    return true;
 }
 
+bool Interpreter :: evalProjectInfoOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   if (loperand.kind == ObjectKind::ProjectInfo && roperand.kind == ObjectKind::StringLiteral) {
+      ustr_t variableStr = _scope->module->resolveConstant(roperand.reference);
+   
+      retVal = { ObjectKind::ProjectVariable, { V_FLAG }, _scope->checkVariable(variableStr) ? -1 : 0 };
+
+      return true;
+   }
+   return false;
+}
+
 bool Interpreter::evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
 {
    ObjectInfo loperand = args[0];
@@ -785,6 +800,8 @@ bool Interpreter::eval(BuildKey key, ref_t operator_id, ArgumentsInfo& arguments
          return evalIntOp(operator_id, arguments, retVal);
       case BuildKey::RealOp:
          return evalRealOp(operator_id, arguments, retVal);
+      case BuildKey::ProjectInfoOp:
+         return evalProjectInfoOp(operator_id, arguments, retVal);
       default:
          return false;
    }
@@ -1136,11 +1153,19 @@ ObjectInfo Compiler::MetaScope::mapDecl()
    return {};
 }
 
+ObjectInfo Compiler::MetaScope :: mapProject()
+{
+   return { ObjectKind::ProjectInfo, { V_PROJECT_VAR }, 0 };
+}
+
 ObjectInfo Compiler::MetaScope::mapIdentifier(ustr_t identifier, bool referenceOne, EAttr attr)
 {
    if (!referenceOne) {
       if (moduleScope->declVar.compare(identifier)) {
          return mapDecl();
+      }
+      else if (moduleScope->projectVar.compare(identifier)) {
+         return mapProject();
       }
       else {
          ObjectInfo retVal = {};
@@ -4329,6 +4354,37 @@ bool inline isExtensionDeclaration(SyntaxNode node)
    return false;
 }
 
+bool Compiler :: evalCondStatement(Scope& scope, SyntaxNode& node)
+{
+   MetaScope metaScope(&scope, Scope::ScopeLevel::Namespace);
+
+   ObjectInfo retVal = evalExpression(metaScope, node.firstChild());
+
+   return (retVal.typeInfo.typeRef == V_FLAG && retVal.argument == -1);
+}
+
+void Compiler :: skipCondStatement(SyntaxNode& node)
+{
+   node.setKey(SyntaxKey::Idle);
+
+   int level = 0;
+   while (node != SyntaxKey::None) {
+      node = node.nextNode();
+
+      if (node == SyntaxKey::CondStatement) {
+         level++;
+         node.setKey(SyntaxKey::Idle);
+      }
+      else if (node != SyntaxKey::EndCondStatement || level > 0) {
+         if (node == SyntaxKey::EndCondStatement)
+            level--;
+
+         node.setKey(SyntaxKey::Idle);
+      }
+      else break;
+   }
+}
+
 void Compiler::declareFieldMetaInfos(ClassScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
@@ -4626,6 +4682,7 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
       case SyntaxKey::AddAssignOperation:
       case SyntaxKey::NameOperation:
       case SyntaxKey::ReferOperation:
+      case SyntaxKey::IndexerOperation:
          retVal = evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS, ignoreErrors);
          break;
       case SyntaxKey::ExprValOperation:
@@ -10628,6 +10685,11 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
       {
          return current == reference;
       }));
+   moduleScope->projectVar.copy(moduleScope->predefined.retrieve<ref_t>("@project_var", V_PROJECT_VAR,
+      [](ref_t reference, ustr_t key, ref_t current)
+      {
+         return current == reference;
+      }));
    moduleScope->superVar.copy(moduleScope->predefined.retrieve<ref_t>("@super", V_SUPER_VAR,
       [](ref_t reference, ustr_t key, ref_t current)
       {
@@ -11461,6 +11523,11 @@ void Compiler::Namespace::declareMemberIdentifiers(SyntaxNode node)
          current.setArgumentReference(classScope.reference);
          break;
       }
+      case SyntaxKey::CondStatement:
+         if (!compiler->evalCondStatement(scope, current)) {
+            compiler->skipCondStatement(current);
+         }
+         break;
       default:
          // to make compiler happy
          break;
