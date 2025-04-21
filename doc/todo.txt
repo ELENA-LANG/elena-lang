@@ -42,7 +42,8 @@ In development:
   - #739
   - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
-  --------------------------------------
+  --------------------------------------  
+  * correctly resolve the following code : 2 + 3 * 4 == 14 (the result is compiled in compile-time)
   * #562 : Stack<XmlNode?> stack
   * save - using formatter
   * load
