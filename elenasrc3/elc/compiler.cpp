@@ -4375,6 +4375,9 @@ void Compiler :: skipCondStatement(SyntaxNode& node)
          level++;
          node.setKey(SyntaxKey::Idle);
       }
+      else if (node == SyntaxKey::ElseCondStatement && level == 0) {
+         break;
+      }
       else if (node != SyntaxKey::EndCondStatement || level > 0) {
          if (node == SyntaxKey::EndCondStatement)
             level--;
@@ -11480,57 +11483,59 @@ void Compiler::Namespace::declareMemberIdentifiers(SyntaxNode node)
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-      case SyntaxKey::Namespace:
-      {
-         Namespace subNamespace(compiler, &scope);
-         subNamespace.declare(current, false);
-         break;
-      }
-      case SyntaxKey::Symbol:
-      {
-         SymbolScope symbolScope(&scope, 0, scope.defaultVisibility);
-         compiler->declareSymbolAttributes(symbolScope, current, true);
-
-         SyntaxNode name = current.findChild(SyntaxKey::Name);
-
-         ref_t reference = compiler->mapNewTerminal(symbolScope, nullptr, name, nullptr, symbolScope.visibility);
-         symbolScope.module->mapSection(reference | mskSymbolRef, false);
-
-         current.setArgumentReference(reference);
-         break;
-      }
-      case SyntaxKey::Class:
-      {
-         ClassScope classScope(&scope, 0, scope.defaultVisibility);
-
-         ref_t flags = classScope.info.header.flags;
-         bool externalOp = false;
-         compiler->declareClassAttributes(classScope, current, flags, externalOp);
-
-         SyntaxNode name = current.findChild(SyntaxKey::Name);
-         if (current.arg.reference == INVALID_REF) {
-            // if it is a template based class - its name was already resolved
-            classScope.reference = current.findChild(SyntaxKey::Name).arg.reference;
+         case SyntaxKey::Namespace:
+         {
+            Namespace subNamespace(compiler, &scope);
+            subNamespace.declare(current, false);
+            break;
          }
-         else classScope.reference = compiler->mapNewTerminal(classScope, nullptr,
-            name, nullptr, classScope.visibility);
+         case SyntaxKey::Symbol:
+         {
+            SymbolScope symbolScope(&scope, 0, scope.defaultVisibility);
+            compiler->declareSymbolAttributes(symbolScope, current, true);
 
-         if (externalOp) {
-            classScope.module->mapSection(classScope.reference | mskProcedureRef, false);
-         }
-         else classScope.module->mapSection(classScope.reference | mskSymbolRef, false);
+            SyntaxNode name = current.findChild(SyntaxKey::Name);
 
-         current.setArgumentReference(classScope.reference);
-         break;
-      }
-      case SyntaxKey::CondStatement:
-         if (!compiler->evalCondStatement(scope, current)) {
-            compiler->skipCondStatement(current);
+            ref_t reference = compiler->mapNewTerminal(symbolScope, nullptr, name, nullptr, symbolScope.visibility);
+            symbolScope.module->mapSection(reference | mskSymbolRef, false);
+
+            current.setArgumentReference(reference);
+            break;
          }
-         break;
-      default:
-         // to make compiler happy
-         break;
+         case SyntaxKey::Class:
+         {
+            ClassScope classScope(&scope, 0, scope.defaultVisibility);
+
+            ref_t flags = classScope.info.header.flags;
+            bool externalOp = false;
+            compiler->declareClassAttributes(classScope, current, flags, externalOp);
+
+            SyntaxNode name = current.findChild(SyntaxKey::Name);
+            if (current.arg.reference == INVALID_REF) {
+               // if it is a template based class - its name was already resolved
+               classScope.reference = current.findChild(SyntaxKey::Name).arg.reference;
+            }
+            else classScope.reference = compiler->mapNewTerminal(classScope, nullptr,
+               name, nullptr, classScope.visibility);
+
+            if (externalOp) {
+               classScope.module->mapSection(classScope.reference | mskProcedureRef, false);
+            }
+            else classScope.module->mapSection(classScope.reference | mskSymbolRef, false);
+
+            current.setArgumentReference(classScope.reference);
+            break;
+         }
+         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::CondStatement:
+            if (!compiler->evalCondStatement(scope, current)) {
+               compiler->skipCondStatement(current);
+               continue;
+            }
+            break;
+         default:
+            // to make compiler happy
+            break;
       }
 
       current = current.nextNode();

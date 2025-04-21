@@ -31,9 +31,7 @@ class Win32A
 {
 }
 
-#endif
-
-#if (__project["_Win64"])
+#elif (__project["_Win64"])
 
 class Win64A
 {
