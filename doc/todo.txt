@@ -36,6 +36,7 @@ In development:
   prom: 
   - weekly posting
   --------------------------------------
+  - nillable single dispatcher : use direct reference to nilValue symbol 
   - prom : article how to implement analog of record using meta programming (extensions'records)
   - #34 : http client : post, put, delete, return status, headers
   - #743

@@ -14994,15 +14994,15 @@ bool Compiler::Expression::writeObjectInfo(ObjectInfo info, bool allowMeta)
       case ObjectKind::ClassSelf:
       case ObjectKind::Singleton:
       case ObjectKind::ConstantRole:
-         writer->appendNode(BuildKey::ClassReference, info.reference);
-         break;
-      case ObjectKind::Constant:
          if (!info.reference) {
             if (info.typeInfo.typeRef == V_FLAG) {
                info.reference = info.extra == -1 ? scope.moduleScope->branchingInfo.trueRef : scope.moduleScope->branchingInfo.falseRef;
             }
             else assert(false);
          }
+         writer->appendNode(BuildKey::ClassReference, info.reference);
+         break;
+      case ObjectKind::Constant:
          writer->appendNode(BuildKey::ConstantReference, info.reference);
          break;
       case ObjectKind::ConstArray:

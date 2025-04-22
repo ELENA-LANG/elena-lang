@@ -25,7 +25,7 @@ public program()
 }
 */
 
-class Record<T>
+/*class Record<T>
 {
    T arg;
 
@@ -33,13 +33,15 @@ class Record<T>
    {
       this arg := arg
    }
-}
+}*/
 
 public program()
 {
-    var r := new Record<string?>();
+   Assert.ifTrue(2 + 3 * 4 == 14);
 
-    r.set(nil);
+//    var r := new Record<string?>();
+
+//    r.set(nil);
 
 //   auto stack := new Stack<string?>();
 
