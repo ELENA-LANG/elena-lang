@@ -5988,6 +5988,7 @@ ref_t Compiler::resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ref_t elem
 TypeInfo Compiler::resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
    bool declarationMode, bool allowRole)
 {
+   bool nullable = false;
    ref_t elementRef = 0;
 
    SyntaxNode current = node.firstChild();
@@ -6003,12 +6004,15 @@ TypeInfo Compiler::resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribute
          case SyntaxKey::TemplateType:
             elementRef = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole).typeRef;
             break;
+         case SyntaxKey::NullableType:
+            elementRef = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole).typeRef;
+            nullable = true;
+            break;
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
          case SyntaxKey::globalreference:
             elementRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
             break;
-         case SyntaxKey::NullableType:
          case SyntaxKey::ArrayType:
             elementRef = resolvePrimitiveType(*scope.moduleScope,
                resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole), declarationMode);
@@ -6025,7 +6029,7 @@ TypeInfo Compiler::resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribute
       if (attributes.variadicOne) {
          return { V_ARGARRAY, elementRef };
       }
-      else return { defineArrayType(scope, elementRef, declarationMode), elementRef };
+      else return { defineArrayType(scope, elementRef, declarationMode), elementRef, nullable };
    }
    else if (node == SyntaxKey::NullableType) {
       return { elementRef, 0, true };

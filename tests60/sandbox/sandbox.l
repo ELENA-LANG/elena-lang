@@ -1,3 +1,5 @@
+import system'collections;
+
 //import system'io;
 //import xml;
 
@@ -25,29 +27,10 @@ public program()
 }
 */
 
-sealed class Record<T>
-{
-   T arg;
-
-   set(T arg)
-   {
-      this arg := arg
-   }
-   
-   T get()
-      = arg;
-}
 
 public program()
 {
-   auto r := new Record<int?>();
-   
-   r.set(nil);
-   
-   int n := r.get()
-   
+   auto stack := new Stack<string?>();
 
-//   auto stack := new Stack<string?>();
-
-//   stack.push(nil)
+   stack.push(nil)
 }
