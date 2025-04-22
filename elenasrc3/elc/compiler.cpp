@@ -701,7 +701,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra == roperand.extra;
 
-            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -710,7 +710,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra != roperand.extra;
 
-            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -719,7 +719,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra > roperand.extra;
 
-            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -728,7 +728,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra <= roperand.extra;
 
-            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -737,7 +737,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra < roperand.extra;
 
-            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -746,7 +746,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra >= roperand.extra;
 
-            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, value ? -1 : 0 };
+            retVal = retVal = { ObjectKind::Constant, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -805,7 +805,7 @@ bool Interpreter :: evalProjectInfoOp(ref_t operator_id, ArgumentsInfo& args, Ob
    if (loperand.kind == ObjectKind::ProjectInfo && roperand.kind == ObjectKind::StringLiteral) {
       ustr_t variableStr = _scope->module->resolveConstant(roperand.reference);
    
-      retVal = { ObjectKind::ProjectVariable, { V_FLAG }, _scope->checkVariable(variableStr) ? -1 : 0 };
+      retVal = { ObjectKind::ProjectVariable, { V_FLAG }, 0, _scope->checkVariable(variableStr) ? -1 : 0 };
 
       return true;
    }
@@ -4435,7 +4435,7 @@ bool Compiler :: evalCondStatement(Scope& scope, SyntaxNode& node)
 
    ObjectInfo retVal = evalExpression(metaScope, node.firstChild());
 
-   return (retVal.typeInfo.typeRef == V_FLAG && retVal.argument == -1);
+   return (retVal.typeInfo.typeRef == V_FLAG && retVal.extra == -1);
 }
 
 void Compiler :: skipCondStatement(SyntaxNode& node)
@@ -15011,6 +15011,12 @@ bool Compiler::Expression::writeObjectInfo(ObjectInfo info, bool allowMeta)
          writer->appendNode(BuildKey::ClassReference, info.reference);
          break;
       case ObjectKind::Constant:
+         if (!info.reference) {
+            if (info.typeInfo.typeRef == V_FLAG) {
+               info.reference = info.extra == -1 ? scope.moduleScope->branchingInfo.trueRef : scope.moduleScope->branchingInfo.falseRef;
+            }
+            else assert(false);
+         }
          writer->appendNode(BuildKey::ConstantReference, info.reference);
          break;
       case ObjectKind::ConstArray:

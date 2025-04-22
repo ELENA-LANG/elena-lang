@@ -74,7 +74,7 @@ public intTests() : testCase()
    int k := 4;
    int l := 3;
                     
-   //Assert.ifTrue(2 + 3 * 4 == 14);
+   Assert.ifTrue(2 + 3 * 4 == 14);
    Assert.ifTrue(n + m * k == 14);
    Console.write(".");
    Assert.ifFalse(n == m);

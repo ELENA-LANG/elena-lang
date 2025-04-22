@@ -36,14 +36,15 @@ In development:
   prom: 
   - weekly posting
   --------------------------------------
-  - #34 : http client : post, put, delete, return status, headers
   - prom : article how to implement analog of record using meta programming (extensions'records)
+  - #34 : http client : post, put, delete, return status, headers
   - #743
   - #739
   - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
   --------------------------------------  
-  * correctly resolve the following code : 2 + 3 * 4 == 14 (the result is compiled in compile-time)
+  * support nilable template argument
+  * Stack<string?> stack
   * #562 : Stack<XmlNode?> stack
   * save - using formatter
   * load

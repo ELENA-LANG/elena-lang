@@ -25,9 +25,25 @@ public program()
 }
 */
 
+/*template Record<T>
+{
+   T arg;
+
+   set(T arg)
+   {
+      this arg := arg
+   }
+}*/
+
 public program()
 {
-   auto stack := new Stack<string?>();
+   var b := 2 + 3 * 4 == 14;
 
-   stack.push(nil)
+//    var r := Record<string?>();
+
+//    r.set(nil);
+
+//   auto stack := new Stack<string?>();
+
+//   stack.push(nil)
 }
