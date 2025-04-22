@@ -5262,6 +5262,7 @@ void Compiler::declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool
             break;
          }
          case SyntaxKey::Type:
+         case SyntaxKey::NullableType:
          case SyntaxKey::ArrayType:
          case SyntaxKey::TemplateType:
             // if it is a type attribute

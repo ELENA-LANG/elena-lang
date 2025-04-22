@@ -44,8 +44,7 @@ In development:
   - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
   --------------------------------------  
-  * support nilable template argument
-  * ecv : show nullable field / parameters
+  * warn when nullable int is assigned to stack-allocated one
   * Stack<string?> stack
   * #562 : Stack<XmlNode?> stack
   * save - using formatter

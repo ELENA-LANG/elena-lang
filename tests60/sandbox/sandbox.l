@@ -25,7 +25,7 @@ public program()
 }
 */
 
-class Record<T>
+sealed class Record<T>
 {
    T arg;
 
@@ -33,17 +33,19 @@ class Record<T>
    {
       this arg := arg
    }
+   
+   T get()
+      = arg;
 }
 
 public program()
 {
-    var r := new Record<string?>();
-
-    r.set(nil);
-
-    auto r2 := new Record<string?>();
-
-    r2.set(nil);
+   auto r := new Record<int?>();
+   
+   r.set(nil);
+   
+   int n := r.get()
+   
 
 //   auto stack := new Stack<string?>();
 
