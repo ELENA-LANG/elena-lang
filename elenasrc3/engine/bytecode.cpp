@@ -134,8 +134,7 @@ void ByteCodeUtil :: decode(ByteCode code, IdentifierString& target)
    target.append(_fnOpcodes[(int)code]);
 }
 
-void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
-   ref_t* references, size_t len, pos_t argCount, ref_t flags)
+inline void addMessageNamePrefix(IdentifierString& messageName, ref_t flags)
 {
    if (test(flags, STATIC_MESSAGE))
       messageName.append("static:");
@@ -156,6 +155,21 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
       default:
          break;
    }
+}
+
+inline void addMessageNamePostfix(IdentifierString& messageName, pos_t argCount)
+{
+   if (argCount != 0) {
+      messageName.append('[');
+      messageName.appendInt(argCount);
+      messageName.append(']');
+   }
+}
+
+void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+   ref_t* references, size_t len, pos_t argCount, ref_t flags)
+{
+   addMessageNamePrefix(messageName, flags);
 
    messageName.append(actionName);
    if (len > 0) {
@@ -170,11 +184,34 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
       messageName.append('>');
    }
 
-   if (argCount != 0) {
-      messageName.append('[');
-      messageName.appendInt(argCount);
-      messageName.append(']');
+   addMessageNamePostfix(messageName, argCount);
+}
+
+void ByteCodeUtil :: formatMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+   ref_t* references, size_t len, pos_t argCount, ref_t flags, int nullableArgs)
+{
+   addMessageNamePrefix(messageName, flags);
+
+   messageName.append(actionName);
+   if (len > 0) {
+      messageName.append('<');
+
+      int currentArg = 1;
+      for (size_t i = 0; i < len; i++) {
+         if (i != 0)
+            messageName.append(',');
+
+         messageName.append(module->resolveReference(references[i]));
+
+         if (test(nullableArgs, currentArg))
+            messageName.append('?');
+
+         currentArg << 1;
+      }
+      messageName.append('>');
    }
+
+   addMessageNamePostfix(messageName, argCount);
 }
 
 bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
@@ -192,6 +229,25 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    size_t len = signature ? module->resolveSignature(signature, references) : 0;
 
    formatMessageName(messageName, module, actionName, references, len, argCount, flags);
+
+   return true;
+}
+
+bool ByteCodeUtil :: resolveMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, mssg_t message, int nullableArgs)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ref_t signature = 0;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+   if (emptystr(actionName))
+      return false;
+
+   ref_t references[ARG_COUNT];
+   size_t len = signature ? module->resolveSignature(signature, references) : 0;
+
+   formatMessageNameWithNullableArgs(messageName, module, actionName, references, len, argCount, flags, nullableArgs);
 
    return true;
 }

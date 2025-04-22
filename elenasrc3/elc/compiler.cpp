@@ -153,15 +153,17 @@ void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
    dummyWriter.newNode(SyntaxKey::Root);
 
    for (size_t i = 0; i < typeList.count(); i++) {
-      ref_t elementRef = typeList[i];
+      TypeInfo elementInfo = typeList[i];
 
-      dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
+      assert(!isPrimitiveRef(elementInfo.typeRef)); // NOTE that the code must check if it is nullable
+
+      dummyWriter.newNode(SyntaxKey::TemplateArg, elementInfo.typeRef);
 
       parameters.add(dummyWriter.CurrentNode());
 
-      dummyWriter.newNode(SyntaxKey::Type);
+      dummyWriter.newNode(elementInfo.nillable ? SyntaxKey::NullableType : SyntaxKey::Type);
 
-      ustr_t referenceName = module->resolveReference(elementRef);
+      ustr_t referenceName = module->resolveReference(elementInfo.typeRef);
       if (isWeakReference(referenceName)) {
          dummyWriter.appendNode(SyntaxKey::reference, referenceName);
       }
@@ -196,25 +198,6 @@ void declareArguments(SyntaxNode node, SyntaxTree& dummyTree, List<SyntaxNode>& 
 
       current = current.nextNode();
    }
-
-   //for (size_t i = 0; i < typeList.count(); i++) {
-   //   ref_t elementRef = typeList[i];
-
-   //   dummyWriter.newNode(SyntaxKey::TemplateArg, elementRef);
-
-   //   parameters.add(dummyWriter.CurrentNode());
-
-   //   dummyWriter.newNode(SyntaxKey::Type);
-
-   //   ustr_t referenceName = module->resolveReference(elementRef);
-   //   if (isWeakReference(referenceName)) {
-   //      dummyWriter.appendNode(SyntaxKey::reference, referenceName);
-   //   }
-   //   else dummyWriter.appendNode(SyntaxKey::globalreference, referenceName);
-
-   //   dummyWriter.closeNode();
-   //   dummyWriter.closeNode();
-   //}
 
    dummyWriter.closeNode();
 }
@@ -3891,6 +3874,7 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
             break;
          case SyntaxKey::Name:
          case SyntaxKey::Type:
+         case SyntaxKey::NullableType:
          case SyntaxKey::TemplateType:
          case SyntaxKey::Attribute:
          case SyntaxKey::Dimension:
@@ -5834,7 +5818,7 @@ void Compiler::declareTemplateAttributes(Scope& scope, SyntaxNode node,
          case SyntaxKey::TemplateType:
          {
             auto typeInfo = resolveStrongTypeAttribute(scope, current, declarationMode, attributes.mssgNameLiteral);
-            parameters.add(typeInfo.typeRef);
+            parameters.add(typeInfo);
 
             break;
          }
@@ -5888,7 +5872,7 @@ ObjectInfo Compiler::defineArrayType(Scope& scope, ObjectInfo info, bool declara
    return info;
 }
 
-ref_t Compiler::resolveTypeTemplate(Scope& scope, SyntaxNode node,
+TypeInfo Compiler::resolveTypeTemplate(Scope& scope, SyntaxNode node,
    TypeAttributes& attributes, bool declarationMode, bool objectMode)
 {
    TemplateTypeList typeList;
@@ -6020,7 +6004,8 @@ TypeInfo Compiler::resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribute
             break;
          case SyntaxKey::identifier:
          case SyntaxKey::reference:
-            elementRef = resolveTypeIdentifier(scope, current.identifier(), node.key, declarationMode, allowRole);
+         case SyntaxKey::globalreference:
+            elementRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
             break;
          case SyntaxKey::NullableType:
          case SyntaxKey::ArrayType:
@@ -6066,20 +6051,20 @@ TypeInfo Compiler::resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttri
             typeInfo = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole);
          }
          else if (current == SyntaxKey::TemplateType) {
-            typeInfo.typeRef = resolveTypeTemplate(scope, current, attributes, declarationMode);
+            typeInfo = resolveTypeTemplate(scope, current, attributes, declarationMode);
          }
          else if (SyntaxTree::test(current.key, SyntaxKey::TerminalMask)) {
             if (current.nextNode() == SyntaxKey::TemplateArg) {
                // !! should be refactored : TemplateType should be used instead
-               typeInfo.typeRef = resolveTypeTemplate(scope, current, attributes, declarationMode);
+               typeInfo = resolveTypeTemplate(scope, current, attributes, declarationMode);
             }
-            else typeInfo.typeRef = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
+            else typeInfo = resolveTypeIdentifier(scope, current.identifier(), current.key, declarationMode, allowRole);
          }
          else assert(false);
          break;
       }
       case SyntaxKey::TemplateType:
-         typeInfo.typeRef = resolveTypeTemplate(scope, node, attributes, declarationMode);
+         typeInfo = resolveTypeTemplate(scope, node, attributes, declarationMode);
          break;
       case SyntaxKey::ArrayType:
       {
@@ -6148,6 +6133,7 @@ void Compiler::readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttr
             break;
          case SyntaxKey::Type:
          case SyntaxKey::TemplateType:
+         case SyntaxKey::NullableType:
             if (!attrs.typeInfo.typeRef) {
                TypeAttributes typeAttributes = {};
 

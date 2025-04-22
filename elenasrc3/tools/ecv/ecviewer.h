@@ -87,7 +87,7 @@ namespace elena_lang
       void addCommandArguments(ByteCommand& command, IdentifierString& commandStr, 
          List<pos_t>& labels, pos_t commandPosition);
 
-      void addMessage(IdentifierString& commandStr, mssg_t message);
+      void addMessage(IdentifierString& commandStr, mssg_t message, int nullableArgs = 0);
 
       void printCommand(ByteCommand& command, int indent, 
          List<pos_t>& labels, pos_t commandPosition);

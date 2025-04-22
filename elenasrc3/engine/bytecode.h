@@ -1,9 +1,10 @@
 //------------------------------------------------------------------------------
+// 
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2024, by Aleksey Rakov
+//                                                (C)2021-2025, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef BYTECODE_H
@@ -502,6 +503,11 @@ namespace elena_lang
       static void formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
          ref_t* references, size_t len, pos_t argCount, ref_t flags);
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
+
+      // NOTE : information about nullable arguments are optional and is used only in ECV tool
+      static void formatMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+         ref_t* references, size_t len, pos_t argCount, ref_t flags, int nullableArgs);
+      static bool resolveMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, mssg_t message, int nullableArgs);
 
       static void parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount);
 

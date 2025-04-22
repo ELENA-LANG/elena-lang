@@ -294,7 +294,7 @@ namespace elena_lang
    typedef Pair<ObjectKind, ref_t, ObjectKind::Unknown, 0>                                   ObjectKey;
    typedef MemoryMap<ObjectKey, ObjectInfo, Map_StoreKey<ObjectKey>, Map_GetKey<ObjectKey>>  ObjectKeyMap;
    typedef Map<ObjectKey, ObjectTrackingInfo>                                                ObjectTrackingMap;
-   typedef CachedList<ref_t, 4>                                                              TemplateTypeList;
+   typedef CachedList<TypeInfo, 4>                                                           TemplateTypeList;
 
    typedef Map < ustr_t, ObjectInfo, allocUStr, freeUStr>                                    ShortcutMap;
 
@@ -1704,7 +1704,7 @@ namespace elena_lang
       ref_t retrieveType(Scope& scope, ObjectInfo info);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type,
          bool declarationMode, bool allowRole);
-      ref_t resolveTypeTemplate(Scope& scope, SyntaxNode node,
+      TypeInfo resolveTypeTemplate(Scope& scope, SyntaxNode node,
          TypeAttributes& attributes, bool declarationMode, bool objectMode = false);
 
       ref_t resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, ref_t elementRef, bool declarationMode);

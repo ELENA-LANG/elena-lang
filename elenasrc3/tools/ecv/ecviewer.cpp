@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ecviewer.h"
@@ -516,12 +516,16 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
    }
 }
 
-void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message)
+void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message, int nullableArgs)
 {
-   if (!ByteCodeUtil::resolveMessageName(commandStr, _module, message)) {
-      commandStr.append("invalid ");
-      commandStr.appendUInt(message);
-   }      
+   if (nullableArgs != 0 && ByteCodeUtil::resolveMessageNameWithNullableArgs(commandStr, _module, message, nullableArgs)) {
+      return;
+   }
+   else if (ByteCodeUtil::resolveMessageName(commandStr, _module, message))
+      return;
+
+   commandStr.append("invalid ");
+   commandStr.appendUInt(message);
 }
 
 inline void appendHex32(IdentifierString& command, unsigned int hex)
@@ -840,6 +844,9 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
 
          line.append(" of ");
          line.append(typeName);
+
+         if (fieldInfo.typeInfo.nillable)
+            line.append('?');
       }
 
       printLineAndCount("@field ", *line, row, pageSize);
@@ -936,7 +943,7 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
          IdentifierString line;
          line.copy(*className);
          line.append('.');
-         addMessage(line, message);
+         addMessage(line, message, methodInfo.nillableArgs);
          if (methodInfo.outputRef) {
             line.append("->");
             line.append(_module->resolveReference(methodInfo.outputRef));

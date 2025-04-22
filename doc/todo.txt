@@ -44,6 +44,7 @@ In development:
   - #731 : xml 
   --------------------------------------  
   * support nilable template argument
+  * ecv : show nullable field / parameters
   * Stack<string?> stack
   * #562 : Stack<XmlNode?> stack
   * save - using formatter

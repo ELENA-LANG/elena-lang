@@ -25,7 +25,7 @@ public program()
 }
 */
 
-/*template Record<T>
+class Record<T>
 {
    T arg;
 
@@ -33,15 +33,13 @@ public program()
    {
       this arg := arg
    }
-}*/
+}
 
 public program()
 {
-   var b := 2 + 3 * 4 == 14;
+    var r := new Record<string?>();
 
-//    var r := Record<string?>();
-
-//    r.set(nil);
+    r.set(nil);
 
 //   auto stack := new Stack<string?>();
 
