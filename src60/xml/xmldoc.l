@@ -27,34 +27,36 @@ public class XmlDocument
       int level := 0;
       stack.push(_root);
       while (stack.Length > 0) {
-         XmlNode node := stack.peek();
+         XmlNode node := stack.pop();
          if:not:nil(node) {
             if (node.ChildCounter > 0) {               
                level++;
                formatter.openTag(output, level, node);
-               
+                  
+               stack.push(node);
                stack.push(nil);
                
-               XmlNode next := node.nextSibling();
-               if:not:nil(next)
-                  stack.push(next);
-                  
                XmlNode child := node.firstChild();
                if:not:nil(child)
                   stack.push(child);
             }
             else {
-               formatter.writeElement(output, level, node);
+               formatter.writeElement(output, level + 1, node);
                
-               stack.pop();
+               XmlNode next := node.nextSibling();
+               if:not:nil(next)
+                  stack.push(next);               
             }
          }
          else {
-            stack.pop();
             node := stack.pop();
             
             formatter.closeTag(output, level, node);
             level--;
+               
+            XmlNode next := node.nextSibling();
+            if:not:nil(next)
+               stack.push(next);
          }
       };
    }
