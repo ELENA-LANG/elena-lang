@@ -1,9 +1,6 @@
-import system'collections;
+import system'io;
+import xml;
 
-//import system'io;
-//import xml;
-
-/*
 public program()
 {
    XmlDocument doc := XmlDocument.new(
@@ -24,13 +21,4 @@ public program()
    using(auto writer := File.textwriter("db.xml")) {
       doc.save(TabXmlFormatter, writer)
    }
-}
-*/
-
-
-public program()
-{
-   auto stack := new Stack<string?>();
-
-   stack.push(nil)
 }

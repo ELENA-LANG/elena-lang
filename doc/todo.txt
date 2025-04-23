@@ -37,15 +37,12 @@ In development:
   - weekly posting
   --------------------------------------
   - nillable single dispatcher : use direct reference to nilValue symbol 
-  - prom : article how to implement analog of record using meta programming (extensions'records)
   - #34 : http client : post, put, delete, return status, headers
   - #743
   - #739
   - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
   --------------------------------------  
-  * Stack<string?> stack
-  * #562 : Stack<XmlNode?> stack
   * save - using formatter
   * load
   * test
@@ -56,6 +53,7 @@ In development:
   === Iteration 41 ===
   --------------------------------------
   dev: 
+  - implement analog of record using meta programming (extensions'records)
   gen:
   - work on REPL (elt) : execute simple program
   api:
@@ -65,6 +63,7 @@ In development:
   - review pi performance (must < 6) : realOp.power[3] byte code
   port:
   prom:
+  - post an article about records using meta programming
   --------------------------------------
   --------------------------------------
   --------------------------------------
