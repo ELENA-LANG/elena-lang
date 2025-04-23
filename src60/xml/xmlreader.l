@@ -49,6 +49,9 @@ public class XmlReader : IXmlReader
    
    read()
    {
+      if:not(available)
+         :break;
+      
       int offs := *currentOffset;
       if (offs >= currentLine.Length) {
          if (!input.Available) {
@@ -61,10 +64,18 @@ public class XmlReader : IXmlReader
          lineNumber.append(1);
          currentOffset.Value := 0;
          offs := 0;
+         
+         if (currentLine.isEmpty()) {
+            read();
+            :break;
+         }
       };
       
-      if (tokenMode == TokenType.OpenTag) {
-         int start := offs;
+      int start := offs;
+      while (currentLine[offs].isWhitespace())
+         offs += currentLine[offs].Length;
+      
+      if (tokenMode == TokenType.OpenTag && currentLine[offs] != $60) {
          tokenMode := TokenType.Content;
          
          while (currentLine[offs] != $60) {
@@ -72,7 +83,6 @@ public class XmlReader : IXmlReader
          };
 
          content := currentLine.Substring(start, offs - start);
-         :break;         
       }
       else {
          while (currentLine[offs].isWhitespace())
@@ -82,7 +92,7 @@ public class XmlReader : IXmlReader
             InvalidOperationException.raise($"Invalid xml line:{lineNumber}");
 
          offs += currentLine[offs].Length;
-         int start := offs;
+         start := offs;
 
          if (currentLine[offs] == $47) {
             tokenMode := TokenType.CloseTag;
@@ -105,7 +115,10 @@ public class XmlReader : IXmlReader
          };
          
          tagName := currentLine.Substring(start, offs - start);
-         tokenMode := TokenType.OpenTag;
-      }
+         
+         offs++;
+      };
+      
+      currentOffset := offs;
    }
 }

@@ -447,6 +447,7 @@ namespace elena_lang
          map.add("save_long_index", BuildKey::SavingLIndex);
          map.add("real_int_xop", BuildKey::RealIntXOp);
          map.add("procedure_ref", BuildKey::ProcedureReference);
+         map.add("break_op", BuildKey::BreakOp);
       }
    };
 

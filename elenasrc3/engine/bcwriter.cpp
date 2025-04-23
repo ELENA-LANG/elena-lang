@@ -1889,7 +1889,7 @@ void breakOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    if (eolLabel > 0) {
       tape.write(ByteCode::Jump, eolLabel);
    }
-   else tape.write(ByteCode::Jump, PseudoArg::CurrentLabel);
+   else tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
 }
 
 void continueOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
