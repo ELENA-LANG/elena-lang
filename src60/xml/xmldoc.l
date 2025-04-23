@@ -37,6 +37,10 @@ public class XmlDocument
       _root := root;
    }
 
+   constructor new()
+   {
+   }
+
    load(IXmlReader reader)
    {
       Stack<XmlNode> nodes := new Stack<XmlNode>();

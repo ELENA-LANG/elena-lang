@@ -2,7 +2,7 @@ import system'io;
 
 const struct TokenType : enum<int>(None ::= 0, Content ::= 1, OpenTag ::= 2, CloseTag ::= 3);
 
-public class XmlReader //: IXmlReader
+public class XmlReader : IXmlReader
 {
    TextReader     input;
    string         currentLine;
