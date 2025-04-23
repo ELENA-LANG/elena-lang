@@ -16,6 +16,7 @@ In development:
   ide:  
   - compile in the separate thread
   - debugger : stepped into the property / operator automatically (see for example xml)
+  - debugger : watch list is not refreshed correctly  (see for example xml)
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
