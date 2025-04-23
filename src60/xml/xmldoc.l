@@ -43,7 +43,11 @@ public class XmlDocument
                if:not:nil(child)
                   stack.push(child);
             }
-            else formatter.writeElement(output, level, node);
+            else {
+               formatter.writeElement(output, level, node);
+               
+               stack.pop();
+            }
          }
          else {
             stack.pop();
