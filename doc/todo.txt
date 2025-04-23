@@ -14,6 +14,7 @@ In development:
   - MTA support for Linux : support MT routines in elenart
   - upndown (connector - cmdSearch)
   ide:  
+  - compile in the separate thread
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
@@ -43,9 +44,9 @@ In development:
   - gen : script to generate project file with a simple template from elt-cli
   - #731 : xml 
   --------------------------------------  
-  * save - using formatter
   * load
-  * test
+  * test loading
+  * functional test - xml (separate test)
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

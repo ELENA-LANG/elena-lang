@@ -29,6 +29,15 @@ public class XmlNode
       _parent := parent
    }
    
+   internal setContent(string content)
+   {
+      if(_children.Length > 0) {
+         InvalidOperationException.raise("The node has children");
+      };
+      
+      _content := content
+   }
+   
    static XmlNode newElement(string name, string value)
    {
       auto node := XmlNode.new(nil, name, value);

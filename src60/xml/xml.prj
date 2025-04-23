@@ -14,6 +14,7 @@
             <file>xmlnode.l</file>
             <file>xmldoc.l</file>
             <file>xmlformatter.l</file>
+            <file>xmlreader.l</file>
         </module>
     </files>
     <manifest>

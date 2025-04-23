@@ -11,6 +11,23 @@ public interface IXmlFormatter
    abstract closeTag(TextWriter output, int level, XmlNode node);
 }
 
+public interface IXmlReader
+{
+   abstract read();
+   
+   get abstract bool isAvailable();
+   
+   get abstract bool isOpenTag();
+   
+   get abstract bool isCloseTag();
+   
+   get abstract bool isContent();
+   
+   get abstract string Name();
+   
+   get abstract string Content();
+}
+
 public class XmlDocument
 {
    XmlNode _root;
@@ -18,6 +35,35 @@ public class XmlDocument
    constructor new(XmlNode root)
    {
       _root := root;
+   }
+
+   load(IXmlReader reader)
+   {
+      Stack<XmlNode> nodes := new Stack<XmlNode>();
+      
+      reader.read();
+      while(reader.isAvailable) {
+         if (reader.isOpenTag) {
+            XmlNode node := XmlNode.newNode(reader.Name);
+            
+            nodes.push(node);
+         }
+         else if(reader.isCloseTag) {
+            XmlNode node := nodes.pop();
+            if (nodes.Length > 0) {
+               nodes.peek().appendChild(node)
+            }
+            else if:not:nil(_root) { 
+               InvalidOperationException.raise("The XML can have only one root element");
+            }            
+            else _root := node;
+         }
+         else if (reader.isContent) {
+            nodes.peek().setContent(reader.Content);
+         };
+         
+         reader.read();
+      }
    }
 
    save(IXmlFormatter formatter, TextWriter output)
