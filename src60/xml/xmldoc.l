@@ -22,7 +22,7 @@ public class XmlDocument
 
    save(IXmlFormatter formatter, TextWriter output)
    {
-      Stack<XmlNode> stack := new Stack<XmlNode>();
+      Stack<XmlNode?> stack := new Stack<XmlNode?>();
       
       int level := 0;
       stack.push(_root);

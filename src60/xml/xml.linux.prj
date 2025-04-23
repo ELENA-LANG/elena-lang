@@ -28,7 +28,7 @@
     </files>
     <manifest>
        <name>ELENA XML Library</name>
-       <version>6.6.0</version>
+       <version>6.6.1</version>
        <author>Aleksey Rakov</author>
     </manifest>
     <project>
