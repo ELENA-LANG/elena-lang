@@ -131,6 +131,19 @@ namespace text
 
          ^ len
       }
+
+      int getSubStringCharCount(string s, int index, int length)
+      {
+         int len := 0;
+         int end := index + length;
+         while (index < end) {
+            index += s[index].Length;
+            
+            len += 1;
+         };
+
+         ^ len
+      }
    }
 
    // --- UTF16Encoding ---

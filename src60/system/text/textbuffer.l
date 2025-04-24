@@ -506,6 +506,17 @@ namespace text
          _length.append(counter)
       }
 
+      writeSubstring(string s, int index, int length)
+      {
+         int counter := UTF8Encoding.getSubStringCharCount(s, index, length);
+         self.reserve(counter);
+         
+         int s_len := length;
+         UTF8Encoder.toByteArray(s, index, ref s_len, _buffer, *_length, ref counter);
+         
+         _length.append(counter)
+      }
+
       write(o)
          <= write(o.toPrintable());
 

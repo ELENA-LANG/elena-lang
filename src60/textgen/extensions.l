@@ -1,13 +1,17 @@
+import system'text;
 import extensions'scripting;
 
 public extension textGenOp
 {
-   string generateFor(string script)
+   string generateFrom(string script)
    {
-      string full_script := "program() { " + script + " }";
+      string full_script := ScriptGenerator.parse(script);
+      auto output := new StringBuilder();
       
       var function := LScript.eval(full_script).program;
       
-      ^ function();
+      function(self, output);
+      
+      ^ *output
    }
 }

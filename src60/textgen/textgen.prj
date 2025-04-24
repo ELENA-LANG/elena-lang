@@ -11,6 +11,7 @@
     </platform>
     <files>
         <module>
+            <file>parser.l </file>
             <file>extensions.l </file>
         </module>
     </files>

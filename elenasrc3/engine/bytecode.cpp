@@ -206,7 +206,7 @@ void ByteCodeUtil :: formatMessageNameWithNullableArgs(IdentifierString& message
          if (test(nullableArgs, currentArg))
             messageName.append('?');
 
-         currentArg << 1;
+         currentArg <<= 1;
       }
       messageName.append('>');
    }

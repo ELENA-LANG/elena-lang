@@ -24,11 +24,12 @@ public program()
 }
 */
 
-import extensions'scripting;
+import textgen;
 
 public program()
 {
-   var f := lscript.interpretLine("function() { system'console.writeLine(""Hello World""); }");
+   //var text := "Hello World!!".generateFrom("<={self}=>");
+   var text := "Hello World!!".generateFrom("<=Hello!!=>");
 
-   f();
+   Console.writeLine(text);
 }

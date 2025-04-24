@@ -42,9 +42,8 @@ In development:
   - #739
   - gen : script to generate project file with a simple template from elt-cli
   --------------------------------------  
-  * execute script over target:
-      "Hello".execute("Console.writeLine(self)");
-
+  * execute 
+     "Hello".generateFrom("<={self}=>");
   * execute for loop
   * come up with a syntax to generate Comma quibbling:
   --------------------------------------
