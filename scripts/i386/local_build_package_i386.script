@@ -92,4 +92,7 @@ fi
    echo .
  fi
 
+ mkdir -p /usr/lib/elena/
+ ln -s ../../bin/libelenart60.so /usr/lib/elena
+
 exit 0

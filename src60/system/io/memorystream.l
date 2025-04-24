@@ -193,13 +193,18 @@ namespace io
     
       int read(byte[] dump, int len)
       {
+         int totalLen := _buffer.Length;
          int pos := _position.Value;
             
-         _buffer.read(pos, len, dump);
+         int actualLen := len;             
+         if (len > totalLen - pos)
+            actualLen := totalLen - pos;
+            
+         _buffer.read(pos, actualLen, dump);
     
-         _position.append(len);
+         _position.append(actualLen);
 
-         ^ len
+         ^ actualLen
       }
     
       int Index

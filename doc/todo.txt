@@ -12,7 +12,6 @@ In development:
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
   - #620 : backlog
   - MTA support for Linux : support MT routines in elenart
-  - upndown (connector - cmdSearch)
   ide:  
   - splitter is not correctly displayed
   - compile in the separate thread
@@ -33,21 +32,17 @@ In development:
   - vs #2 : elena.tmLanguage.json  
   port:
   - x86-64 : net, threading samples
-  - chat sample
   samples:
   - rosetta code : Program termination, Parallel calculations
   - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
   prom: 
   - weekly posting
   --------------------------------------
-  - nillable single dispatcher : use direct reference to nilValue symbol 
   - #34 : http client : post, put, delete, return status, headers
   - #743
   - #739
   - gen : script to generate project file with a simple template from elt-cli
-  - #731 : xml 
   --------------------------------------  
-  * functional test - xml (separate test)
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
@@ -56,6 +51,7 @@ In development:
   --------------------------------------
   dev: 
   - implement analog of record using meta programming (extensions'records)
+  - upndown (connector - cmdSearch)
   gen:
   - work on REPL (elt) : execute simple program
   api:
@@ -63,7 +59,9 @@ In development:
   - #34 : http client : support patch, head, options, trace redirects, web api
   maint:
   - review pi performance (must < 6) : realOp.power[3] byte code
+  - nillable single dispatcher : use direct reference to nilValue symbol 
   port:
+  - chat sample
   prom:
   - post an article about records using meta programming
   --------------------------------------
