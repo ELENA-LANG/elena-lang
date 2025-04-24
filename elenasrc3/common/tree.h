@@ -637,7 +637,10 @@ namespace elena_lang
          {
             _bookmarks.pop();
          }
-
+         void setBookmark(Node node)
+         {
+            _bookmarks.push(node._position);
+         }
          void newNode(Key key, ref_t arg)
          {
             if (_current == INVALID_POS) {

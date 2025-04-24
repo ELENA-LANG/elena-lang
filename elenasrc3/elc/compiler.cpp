@@ -2434,19 +2434,20 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
 
    SyntaxNode lastChild = target.parentNode().lastChild();
 
+   // NOTE : for the property template, target is the property field
    if (!_templateProcessor->importPropertyTemplate(*scope.moduleScope, templateRef,
-      target.parentNode(), parameters))
+      target, parameters))
    {
       scope.raiseError(errInvalidOperation, node);
    }
-
-   // field must be declared explictitly inside the field template
+   // field must be declared explictitly inside the field template;
+   // so the original field must be removed
    target.setKey(SyntaxKey::Idle);
 
    // try to find a new field and set it as a target
-   SyntaxNode newTarget = SyntaxTree::gotoNode(lastChild.nextNode(), SyntaxKey::Field);
+   SyntaxNode newTarget = SyntaxTree::gotoNode(target, SyntaxKey::Field);
    if (newTarget == SyntaxKey::Field)
-      target = newTarget              ;
+      target = newTarget;
 
    return true;
 }

@@ -1,6 +1,13 @@
 import system'io;
 import xml;
 
+   struct INPUT_RECORD
+   {
+      short eventType : prop;
+      short dummy;
+   } 
+
+
 public program()
 {
 //   XmlDocument doc := XmlDocument.new(
@@ -21,12 +28,6 @@ public program()
 //   using(auto writer := File.textwriter("db.xml")) {
 //      doc.save(TabXmlFormatter, writer)
 //   }
-
-   bool b := true;
-   if (b)
-      :break;
-
-   Console.writeLine("Wrong")
 
 //   using(auto reader := File.textreader("db.xml")) {
 //      XmlDocument doc := XmlDocument.new();

@@ -289,6 +289,18 @@ namespace elena_lang
          else writer.newNode(node.key, node.arg.reference);
       }
 
+      static void injectNode(SyntaxTreeWriter& writer, SyntaxNode node)
+      {
+         if (node.arg.strArgPosition != INVALID_POS) {
+            writer.inject(node.key, node.identifier());
+         }
+         else writer.inject(node.key, node.arg.reference);
+
+         copyNode(writer, node);
+
+         writer.closeNode();
+      }
+
       static void copyNode(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
       static void copyNodeSafe(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);
       static void saveNode(SyntaxNode node, MemoryBase* section, bool includingNode = false);
