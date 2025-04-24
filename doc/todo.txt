@@ -21,10 +21,8 @@ In development:
   - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
   maint:
-  - optimization : pi (used classes byte code)
   - test all x86-64 examples
   - API - review / description
-  - Actions : create a release archive
   api:
   - api refactoring : main program entry to be called - Program
   tools:
@@ -38,11 +36,17 @@ In development:
   prom: 
   - weekly posting
   --------------------------------------
+  - Linux Actions : create a release archive
   - #34 : http client : post, put, delete, return status, headers
   - #743
   - #739
   - gen : script to generate project file with a simple template from elt-cli
   --------------------------------------  
+  * execute script over target:
+      "Hello".execute("Console.writeLine(self)");
+
+  * execute for loop
+  * come up with a syntax to generate Comma quibbling:
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
@@ -60,6 +64,8 @@ In development:
   maint:
   - review pi performance (must < 6) : realOp.power[3] byte code
   - nillable single dispatcher : use direct reference to nilValue symbol 
+  samples:
+  - optimization : pi (used classes byte code)
   port:
   - chat sample
   prom:
@@ -73,6 +79,19 @@ In development:
   dev: 
   gen:
   maint:
+  samples:
+  port:
+  prom:
+  --------------------------------------
+  --------------------------------------
+  --------------------------------------
+
+  === Iteration 43 ===
+  --------------------------------------
+  dev: 
+  gen:
+  maint:
+  samples:
   port:
   prom:
   --------------------------------------

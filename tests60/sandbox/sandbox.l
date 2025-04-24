@@ -1,30 +1,34 @@
-import system'io;
-import xml;
+/*
+import system'routines;
+import extensions;
+import extensions'text;
+
+public extension QuibbleOp : Array<string>
+{
+   string quibble()
+   {
+      ^ self.zipBy(
+         self.Length.coundDown().selectBy::(n => n == self.Length ? EmptyString : (n == 1 ? " and " : ", ") ),
+         (word, prefix => prefix + word)
+      )
+      .summarize(StringWriter.load("{")) + "}"
+   }
+}
 
 public program()
 {
-//   XmlDocument doc := XmlDocument.new(
-//      XmlNode.newNode("Employees", 
-//         XmlNode.newNode("Employee", 
-//            XmlNode.newElement("FullName", "Lydia Thomason"),
-//            XmlNode.newElement("Salary", "25.64"),
-//            XmlNode.newElement("DepartmentID", "1")
-//         ),
-//         XmlNode.newNode("Employee", 
-//            XmlNode.newElement("FullName", "June Grath"),
-//            XmlNode.newElement("Salary", "16.38"),
-//            XmlNode.newElement("DepartmentID", "4")
-//         )
-//      )
-//   );
-//   
-//   using(auto writer := File.textwriter("db.xml")) {
-//      doc.save(TabXmlFormatter, writer)
-//   }
+   Console.printLine(new string[] { }.quibble());
+   Console.printLine(new string[] { "ABC" }.quibble());
+   Console.printLine(new string[] { "ABC", "ADF" }.quibble());
+   Console.printLine(new string[] { "ABC", "DEF", "G", "H" }.quibble())
+}
+*/
 
-//   using(auto reader := File.textreader("db.xml")) {
-//      XmlDocument doc := XmlDocument.new();
-      
-//      doc.load(XmlReader.open(reader));
-//   }
+import extensions'scripting;
+
+public program()
+{
+   var f := lscript.interpretLine("function() { system'console.writeLine(""Hello World""); }");
+
+   f();
 }
