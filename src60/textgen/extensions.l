@@ -8,6 +8,6 @@ public extension textGenOp
       
       var function := LScript.eval(full_script).program;
       
-      ^ function.();
+      ^ function();
    }
 }
