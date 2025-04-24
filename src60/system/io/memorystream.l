@@ -176,6 +176,11 @@ namespace io
          self.write(array, index, length)
       }
         
+      constructor load(byte[] array)
+      {
+         self.write(array, 0, array.Length)
+      }
+        
       write(byte[] dump, int length)
       {
          _buffer.write(0, length, dump)
