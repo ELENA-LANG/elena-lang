@@ -4,7 +4,7 @@ import ltests;
 
 public evalTest() : testCase()
 {
-   var ret := lscript.interpretLine("""Hello "".add(""World"")");
+   var ret := LScript.interpretLine("""Hello "".add(""World"")");
 
    Assert.ifEqual(ret, "Hello World");
 
