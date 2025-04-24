@@ -1,13 +1,6 @@
 import system'io;
 import xml;
 
-   struct INPUT_RECORD
-   {
-      short eventType : prop;
-      short dummy;
-   } 
-
-
 public program()
 {
 //   XmlDocument doc := XmlDocument.new(
