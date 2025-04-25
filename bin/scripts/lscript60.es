@@ -77,6 +77,7 @@
    #define statement      ::= var_statement;
    #define statement      ::= branching;
    #define statement      ::= looping;
+   #define statement      ::= for_looping;
    #define statement      ::= assign_expr;
 
    #define decl_variable  ::= <= expression ( assign_operation ( => new_variable ":=" expression <= ) ) =>;
