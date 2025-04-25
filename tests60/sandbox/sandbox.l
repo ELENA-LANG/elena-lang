@@ -28,10 +28,15 @@ import textgen;
 
 public program()
 {
-   //var text := "Hello World!!".generateFrom("<={self}=>");
-   //var text := "Hello World!!".generateFrom("<=Hello!!=>");
+   auto script := "<= {self[0]}=>
+for (var i := 1; i < self.Length; i++) {
+   if (i == self.Length - 1) {
+     <= and {self[i]} =>
+   }
+   else {
+      <=, {self[i]} =>
+   }
+}";
 
-   var text := 5.generateFrom("for(var n := 0; n < self; n := n + 1) { <={n}=> }");
-
-   Console.writeLine(text);
+   Console.printLine("{", new string[] { "ABC", "DEF", "G", "H" }.generateFrom(script),"}");
 }

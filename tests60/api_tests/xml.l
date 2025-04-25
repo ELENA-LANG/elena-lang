@@ -42,6 +42,7 @@ public xmlLoadSaveTest() : testCase()
    };   
 
    Assert.ifEqual(actual, XmlExpected1);
+   Console.writeLine(".");
 }
 
 public xmlBuildTest() : testCase()
@@ -70,4 +71,5 @@ public xmlBuildTest() : testCase()
    };   
 
    Assert.ifEqual(actual, XmlExpected1);
+   Console.writeLine(".");
 }
