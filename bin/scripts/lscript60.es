@@ -167,15 +167,17 @@
 
    #define l4_expression  ::= <= expression ( => l4 <= ) =>;
 
-   #define l5             ::= $ object l1_operation* l2_operation* l3_operation* l4_operation* l5_operation?;
+   #define l5             ::= $ object l0_operation* l1_operation* l2_operation* l3_operation* l4_operation* l5_operation?;
 
-   #define l4             ::= $ object l1_operation* l2_operation* l3_operation* l4_operation*;
+   #define l4             ::= $ object l0_operation* l1_operation* l2_operation* l3_operation* l4_operation*;
 
-   #define l3             ::= $ object l1_operation* l2_operation* l3_operation*;
+   #define l3             ::= $ object l0_operation* l1_operation* l2_operation* l3_operation*;
 
-   #define l2             ::= $ object l1_operation* l2_operation*;
+   #define l2             ::= $ object l0_operation* l1_operation* l2_operation*;
 
    #define new_operation  ::= <= message_operation ( => "new" new_terminal args <= ) =>;
+
+   #define l0_operation   ::= ^ <= message_operation ( => "[" expression "]" <= ) =>;
 
    #define l1_operation   ::= function_call;
 
@@ -198,7 +200,6 @@
 
    #define args           ::= "(" ")";
    #define args           ::= "(" arg next_arg* ")";
-   #define args           ::= ":" s_expression;
 
    #define arg            ::= expression;
    #define next_arg       ::= "," arg;

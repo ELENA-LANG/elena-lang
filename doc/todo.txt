@@ -44,7 +44,10 @@ In development:
   - test vm client samples
   - gen : script to generate project file with a simple template from elt-cli
   --------------------------------------  
-  * come up with a syntax to generate Comma quibbling:
+  * generate Comma quibbling:
+  * support { inside output
+  * post new rosetta code
+  * post new redit article
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
