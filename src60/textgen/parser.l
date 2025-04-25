@@ -2,6 +2,20 @@ import system'text;
 
 singleton ScriptGenerator
 {
+   private writeOutput(StringBuilder fullScript, string script, int start, int index)
+   {
+      fullScript.write("output.write(""");   
+      fullScript.writeSubstring(script, start, index - start);
+      fullScript.write(""");");      
+   }
+   
+   private writeExpression(StringBuilder fullScript, string script, int start, int index)
+   {
+      fullScript.write("output.write(");   
+      fullScript.writeSubstring(script, start, index - start);
+      fullScript.write(");");      
+   }
+   
    string parse(string script)
    {
       int length := script.Length;
@@ -16,14 +30,28 @@ singleton ScriptGenerator
          if (index >= 0) {
             fullScript.writeSubstring(script, start, index - start);
             
-            fullScript.write("output.write(""");
-            
             start := index + 2;
             index := script.indexOf(start, "=>");
             
             if (index >= 0) {
-               fullScript.writeSubstring(script, start, index - start);
-               fullScript.write(""");");
+               int injectIndex := script.indexOf(start, "{");
+               while (injectIndex > 0 && injectIndex < index) {
+                  if (injectIndex > start) {
+                     writeOutput(fullScript, script, start, injectIndex);
+                  };
+                  
+                  start := script.indexOf(start, "}");
+                  if (start == -1 || start > index)
+                     InvalidArgumentException.raise("script");
+                     
+                  writeExpression(fullScript, script, injectIndex + 1, start);
+                  
+                  injectIndex := script.indexOf(start, "{");
+                  
+                  start++
+               };
+            
+               writeOutput(fullScript, script, start, index);
                
                start := index + 2;               
             }
@@ -35,6 +63,8 @@ singleton ScriptGenerator
             start := length;
          }
       };
+      
+      fullScript.write(" }");
       
       ^ *fullScript
    }

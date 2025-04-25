@@ -28,14 +28,8 @@ import textgen;
 
 public program()
 {
-   //var text := "Hello World!!".generateFrom("<={self}=>");
-//   var text := "Hello World!!".generateFrom("<=Hello!!=>");
+   var text := "Hello World!!".generateFrom("<={self}=>");
+   //var text := "Hello World!!".generateFrom("<=Hello!!=>");
 
-//   Console.writeLine(text);
-
-   string s := "abcd";
-
-   int index := 2;
-
-   index += s[index].Length
+   Console.writeLine(text);
 }

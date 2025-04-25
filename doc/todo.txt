@@ -44,9 +44,6 @@ In development:
   - test vm client samples
   - gen : script to generate project file with a simple template from elt-cli
   --------------------------------------  
-  * fix : index += s[index].Length;
-  * execute 
-     "Hello".generateFrom("<={self}=>");
   * execute for loop
   * come up with a syntax to generate Comma quibbling:
   --------------------------------------
