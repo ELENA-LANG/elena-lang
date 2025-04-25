@@ -28,8 +28,10 @@ import textgen;
 
 public program()
 {
-   var text := "Hello World!!".generateFrom("<={self}=>");
+   //var text := "Hello World!!".generateFrom("<={self}=>");
    //var text := "Hello World!!".generateFrom("<=Hello!!=>");
+
+   var text := 5.generateFrom("for(var n := 0; n < self; n := n + 1) { <={n}=> }");
 
    Console.writeLine(text);
 }

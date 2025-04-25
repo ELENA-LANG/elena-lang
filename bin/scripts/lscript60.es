@@ -70,9 +70,11 @@
    #define method         ::= <= get_method ( => name ret_statement ";" <= ) =>;
    #define method         ::= <= script_method ( => name f_parameters body <= ) =>;
 
+   #define var_statement  ::= "var" decl_variable;
+
    #define statement      ::= expression;
    #define statement      ::= ret_expr;
-   #define statement      ::= "var" decl_variable;
+   #define statement      ::= var_statement;
    #define statement      ::= branching;
    #define statement      ::= looping;
    #define statement      ::= assign_expr;
@@ -106,6 +108,51 @@
                               "while" "(" expression ")" code_brackets
 <=
                    )
+                )
+             )
+=>;
+
+   #define for_looping      ::= 
+       "for" "(" var_statement for_cond ")" ;
+
+   #define for_cond ::= 
+<= 
+             expression
+             (
+                loop_expression (
+                   if_operation (
+=>
+
+                              ";" expression for_body
+<=
+                   )
+                )
+             )
+=>;
+
+   #define for_body       ::=
+<=
+
+                 expression (
+                    closure (
+                       code (
+=>
+            ";" step_expr "{" statement next_statement $
+<=
+                       )
+                    )
+                 )
+=>;
+
+   #define step_expr ::= ^ <= expression ( => l5 <= ) =>;
+   #define step_expr ::= ^
+<=
+             expression
+             (
+                assign_operation ( 
+=>
+                              variable ":=" expression
+<=
                 )
              )
 =>;
