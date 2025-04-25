@@ -37,6 +37,7 @@
      <module>
         <include>main.l</include>
         <include>xml.l</include>
+        <include>textgen.l</include>
      </module>
   </files>
 </configuration>

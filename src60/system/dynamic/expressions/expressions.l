@@ -1583,6 +1583,13 @@ namespace expressions
          
          this body := CodeblockExpression.load(body, step_expr);
       }      
+
+      declare(ExpressionScope scope)
+      {
+         init_expr.declare(scope);
+
+         super.declare(scope);
+      }
       
       saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
       {
@@ -1994,4 +2001,3 @@ namespace expressions
       }
    }
 }
-
