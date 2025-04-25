@@ -1,17 +1,24 @@
-/*
-import system'routines;
 import extensions;
-import extensions'text;
+import textgen;
+
+const string Script = "for (var i := 0; i < self.Length; i := i + 1) {
+      if (i > 0) {
+        if (i == self.Length - 1) {
+           <= and =>
+        }
+        else {
+           <=, =>
+        }
+      };
+         
+      <={self[i]}=>
+   }";
 
 public extension QuibbleOp : Array<string>
 {
    string quibble()
    {
-      ^ self.zipBy(
-         self.Length.coundDown().selectBy::(n => n == self.Length ? EmptyString : (n == 1 ? " and " : ", ") ),
-         (word, prefix => prefix + word)
-      )
-      .summarize(StringWriter.load("{")) + "}"
+      ^ "{ " + self.generateFrom(Script) + " }";
    }
 }
 
@@ -21,22 +28,4 @@ public program()
    Console.printLine(new string[] { "ABC" }.quibble());
    Console.printLine(new string[] { "ABC", "ADF" }.quibble());
    Console.printLine(new string[] { "ABC", "DEF", "G", "H" }.quibble())
-}
-*/
-
-import textgen;
-
-public program()
-{
-   auto script := "<= {self[0]}=>
-for (var i := 1; i < self.Length; i++) {
-   if (i == self.Length - 1) {
-     <= and {self[i]} =>
-   }
-   else {
-      <=, {self[i]} =>
-   }
-}";
-
-   Console.printLine("{", new string[] { "ABC", "DEF", "G", "H" }.generateFrom(script),"}");
 }
