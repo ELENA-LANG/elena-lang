@@ -126,11 +126,14 @@
    #define step_expr ::= <= expression ( => l5 <= ) =>;
    #define step_expr ::=
 <=
+             expression
+             (
                 assign_operation ( 
 =>
                               variable ":=" expression
 <=
                 )
+             )
 =>;
 
    #define assign_expr    ::=

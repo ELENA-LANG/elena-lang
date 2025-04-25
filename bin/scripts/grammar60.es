@@ -128,9 +128,11 @@
              )
 =>;
 
-  #define statement       ::= "expression" "(" root_expr ")"; 
+  #define statement       ::= statement_expr; 
   #define statement       ::= for_looping; 
   #define statement       ::= ret_expression; 
+
+  #define statement_expr  ::= "expression" "(" root_expr ")"; 
 
   #define root_expr       ::= expression;
   #define root_expr       ::= "assign_operation" "(" variable ")";
@@ -175,7 +177,7 @@
 <=
                system'dynamic'expressions'ForLoopExpression (
 =>
-                              root_expr expression root_expr closure_body
+                              statement_expr expression statement_expr closure_body
 <=
                )
 =>;
