@@ -42,12 +42,10 @@ In development:
   - #739
   - ide : brackets highlight
   - test vm client samples
-  - gen : script to generate project file with a simple template from elt-cli
   --------------------------------------  
-  * generate Comma quibbling:
-  * support { inside output
-  * post new rosetta code
-  * post new redit article
+  * find out, why elenavm fails on start
+  * test hellosample
+  * test elt
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
@@ -57,11 +55,13 @@ In development:
   dev: 
   - implement analog of record using meta programming (extensions'records)
   - upndown (connector - cmdSearch)
+  - VM support for Linux
   gen:
   - work on REPL (elt) : execute simple program
   api:
   - #622 : api backlog
   - #34 : http client : support patch, head, options, trace redirects, web api
+  - textgen : support {{ }} special symbols 
   maint:
   - review pi performance (must < 6) : realOp.power[3] byte code
   - nillable single dispatcher : use direct reference to nilValue symbol 
