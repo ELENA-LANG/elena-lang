@@ -89,9 +89,24 @@ void TreeScriptParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* outpu
    SyntaxTree       tree;
    SyntaxTreeWriter treeWriter(tree);
 
+   SyntaxTree       clipboard;
+   SyntaxTreeWriter clipboardWriter(clipboard);
+   clipboardWriter.newNode(SyntaxKey::Root);
+
    ScriptBookmark bm = reader.read();
    while (!reader.eof()) {
-      parseStatement(reader, bm, treeWriter);
+      if (reader.compare("clipboard")) {
+         bm = reader.read();
+         if (reader.compare("$")) {
+            clipboardWriter.closeNode();
+
+            SyntaxTree::copyNode(treeWriter, clipboard.readRoot());
+            clipboardWriter.clear();
+            clipboardWriter.newNode(SyntaxKey::Root);
+         }
+         else parseStatement(reader, bm, clipboardWriter);
+      }
+      else parseStatement(reader, bm, treeWriter);
 
       bm = reader.read();
    }

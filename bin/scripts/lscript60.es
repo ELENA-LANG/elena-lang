@@ -137,17 +137,18 @@
                     closure (
                        code (
 =>
-            ";" step_expr "{" statement next_statement $
+            ";" step_expr ")" "{" statement next_statement;
 <=
+                          clipboard $
                        )
                     )
                  )
 =>;
 
-   #define step_expr ::= ^ <= expression ( => l5 <= ) =>;
+   #define step_expr ::= ^ <= clipboard expression ( => l5 <= ) =>;
    #define step_expr ::= ^
 <=
-             expression
+             clipboard expression
              (
                 assign_operation ( 
 =>
