@@ -40,8 +40,11 @@ In development:
   - #34 : http client : post, put, delete, return status, headers
   - #743
   - #739
+  - ide : brackets highlight
+  - test vm client samples
   - gen : script to generate project file with a simple template from elt-cli
   --------------------------------------  
+  * fix : index += s[index].Length;
   * execute 
      "Hello".generateFrom("<={self}=>");
   * execute for loop
