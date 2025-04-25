@@ -177,9 +177,7 @@
 
    #define new_operation  ::= <= message_operation ( => "new" new_terminal args <= ) =>;
 
-   #define l0_operation   ::= "[" at_message index_call;
-
-   #define index_call     ::= ^ <= message_operation ( => expression close_sbracket <= ) =>;
+   #define l0_operation   ::= ^ <= at_operation ( => "[" expression "]" <= ) =>;
 
    #define l1_operation   ::= function_call;
 
@@ -242,7 +240,6 @@
    #define next_statement ::= ";" statement next_statement;
    #define next_statement ::= ";" "}";
    #define next_statement ::= "}";
-   #define close_sbracket ::= "]";
 
    #define f_parameters   ::= "(" parameters;
 
@@ -252,7 +249,7 @@
    #define parameter      ::= <= parameter ( nameattr ( identifier = $identifier )) =>;
 
    #define message        ::= <= message ( identifier = $identifier ) =>;
-   #define at_message     ::= <= message ( identifier = at ) =>;
+   #define at_message     ::= <= message ( identifier = => at_str <= ) =>;
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
    #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;
@@ -264,4 +261,5 @@
    #define integer        ::= <= integer = $numeric =>;
    #define literal        ::= <= literal = "$literal" =>;
    #define character      ::= <= character = $character =>;
+   #define at_str         ::= <= at =>;
 ]]

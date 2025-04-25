@@ -153,6 +153,7 @@
   #define expression      ::= "div_operation" "(" div_expression ")";
   #define expression      ::= "equal_operation" "(" equal_expression ")";
   #define expression      ::= "less_operation" "(" less_expression ")";
+  #define expression      ::= "at_operation" "(" at_expression ")";
   #define expression      ::= object_expr;
  
   #define branch_op       ::= 
@@ -246,6 +247,18 @@
 <=
                )
 =>;
+
+  #define at_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression at_operation
+<=
+               )
+=>;
+
+  #define at_operation ::=
+               <= "at" => expression;
 
   #define add_expression ::=
 <=
