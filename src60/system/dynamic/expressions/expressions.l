@@ -188,6 +188,9 @@ namespace expressions
       static Expression Loop(Expression cond, Expression body)
          = new LoopExpression(cond, body);
 
+      static Expression ForLoop(Expression init_cond, Expression cond, Expression step, Expression body)
+         = new ForLoopExpression(init_cond, cond, step, body);
+
       static Expression VariableByIndex(int index)
          = new VariableByIndexExpression(index);
 
@@ -1566,6 +1569,26 @@ namespace expressions
          list[bookmark] := new JumpIfNotFunction(offs);
             
          list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+      }
+   }
+
+   public class ForLoopExpression : LoopExpression
+   {
+      Expression init_expr;
+      
+      constructor(Expression init_expr, Expression condition, Expression step_expr, Expression body)
+      {
+         this init_expr := init_expr;
+         this condition := condition;
+         
+         this body := CodeblockExpression.load(body, step_expr);
+      }      
+      
+      saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
+      {
+         init_expr.saveTo(list, scope, 0);
+         
+         super.saveTo(list, scope, index);
       }
    }
 

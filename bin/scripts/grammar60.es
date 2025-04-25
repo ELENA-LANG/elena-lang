@@ -136,9 +136,11 @@
   #define root_expr       ::= "assign_operation" "(" assigning ")";
   #define root_expr       ::= branching; 
   #define root_expr       ::= looping; 
+  #define root_expr       ::= for_looping; 
 
   #define branching       ::= "branch_operation" "(" branch_op ")";
-  #define looping         ::= "loop_expression" "(" "if_operation" "("  loop_op ")" ")";
+  #define looping         ::= "loop_expression" "(" "if_operation" "(" loop_op ")" ")";
+  #define for_looping     ::= "virtual_for_loop" "(" for_loop_op ")";
 
   #define expression      ::= "expression" "(" expression ")";
   #define expression      ::= "message_operation" "(" call_expression ")";
@@ -165,6 +167,15 @@
                system'dynamic'expressions'LoopExpression (
 =>
                               expression closure_body
+<=
+               )
+=>;
+
+  #define for_loop_op       ::= 
+<=
+               system'dynamic'expressions'ForLoopExpression (
+=>
+                              root_expr expression root_expr closure_body
 <=
                )
 =>;

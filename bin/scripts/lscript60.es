@@ -114,42 +114,19 @@
 =>;
 
    #define for_looping      ::= 
-       "for" "(" var_statement for_cond ;
-
-   #define for_cond ::= 
 <= 
-             expression
+             virtual_for_loop
              (
-                loop_expression (
-                   if_operation (
 =>
-
-                              ";" expression for_body
+                              "for" "(" var_statement ";" expression ";" step_expr ")" code_brackets
 <=
-                   )
-                )
              )
 =>;
 
-   #define for_body       ::=
-<=
-
-                 expression (
-                    closure (
-                       code (
-=>
-            ";" step_expr ")" "{" statement next_statement
-<=
-                          clipboard()
-                       )
-                    )
-                 )
-=>;
-
-   #define step_expr ::= <= clipboard expression ( => l5 <= ) =>;
+   #define step_expr ::= <= expression ( => l5 <= ) =>;
    #define step_expr ::=
 <=
-             clipboard expression
+             expression
              (
                 assign_operation ( 
 =>

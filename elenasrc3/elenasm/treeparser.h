@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2023 by Aleksey Rakov
+//                                              (C)2023-2025 by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TREEPARSER_H
@@ -22,7 +22,9 @@ namespace elena_lang
       void parseScope(ScriptEngineReaderBase& reader, ScriptBookmark& bm,
          SyntaxTreeWriter& writer, SyntaxKey type);
 
-      void parseStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, 
+      void parseVirtualStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm,
+         SyntaxTreeWriter& writer);
+      void parseStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm,
          SyntaxTreeWriter& writer);
 
    public:

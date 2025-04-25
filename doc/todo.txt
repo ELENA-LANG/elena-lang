@@ -44,7 +44,10 @@ In development:
   - test vm client samples
   - gen : script to generate project file with a simple template from elt-cli
   --------------------------------------  
+  * modify scripts to support for loop
   * execute for loop
+  * run functional script tests
+
   * come up with a syntax to generate Comma quibbling:
   --------------------------------------
 

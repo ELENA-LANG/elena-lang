@@ -4,6 +4,9 @@ singleton ScriptGenerator
 {
    private writeOutput(StringBuilder fullScript, string script, int start, int index)
    {
+      if (start == index)
+         :break;
+      
       fullScript.write("output.write(""");   
       fullScript.writeSubstring(script, start, index - start);
       fullScript.write(""");");      
