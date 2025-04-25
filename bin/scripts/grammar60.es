@@ -152,6 +152,7 @@
   #define expression      ::= "mul_operation" "(" mul_expression ")";
   #define expression      ::= "div_operation" "(" div_expression ")";
   #define expression      ::= "equal_operation" "(" equal_expression ")";
+  #define expression      ::= "not_equal_operation" "(" not_equal_expression ")";
   #define expression      ::= "less_operation" "(" less_expression ")";
   #define expression      ::= "at_operation" "(" at_expression ")";
   #define expression      ::= object_expr;
@@ -319,6 +320,18 @@
 
   #define equal_operation ::=
                <= "equal" => expression;
+
+  #define not_equal_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression not_equal_operation
+<=
+               )
+=>;
+
+  #define not_equal_operation ::=
+               <= "notequal" => expression;
 
   #define less_expression ::=
 <=
