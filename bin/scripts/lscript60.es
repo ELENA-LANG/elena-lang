@@ -146,8 +146,8 @@
                  )
 =>;
 
-   #define step_expr ::= ^ <= clipboard expression ( => l5 <= ) =>;
-   #define step_expr ::= ^
+   #define step_expr ::= <= clipboard expression ( => l5 <= ) =>;
+   #define step_expr ::=
 <=
              clipboard expression
              (
