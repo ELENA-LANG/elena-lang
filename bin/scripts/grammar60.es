@@ -129,6 +129,7 @@
 =>;
 
   #define statement       ::= "expression" "(" root_expr ")"; 
+  #define statement       ::= for_looping; 
   #define statement       ::= ret_expression; 
 
   #define root_expr       ::= expression;
@@ -136,7 +137,6 @@
   #define root_expr       ::= "assign_operation" "(" assigning ")";
   #define root_expr       ::= branching; 
   #define root_expr       ::= looping; 
-  #define root_expr       ::= for_looping; 
 
   #define branching       ::= "branch_operation" "(" branch_op ")";
   #define looping         ::= "loop_expression" "(" "if_operation" "(" loop_op ")" ")";
