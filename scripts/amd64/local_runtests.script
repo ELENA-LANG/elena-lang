@@ -1,5 +1,9 @@
 #!/bin/bash
 
+ mkdir -p /usr/lib/elena/lib60_64
+
+ cp ../../bin/libelenart60_64.so /usr/lib/elena/
+
  ../../bin/elena64-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
  if [ $ret -eq 2 ]

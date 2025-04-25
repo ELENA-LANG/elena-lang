@@ -114,7 +114,7 @@
 =>;
 
    #define for_looping      ::= 
-       "for" "(" var_statement for_cond ")" ;
+       "for" "(" var_statement for_cond ;
 
    #define for_cond ::= 
 <= 
@@ -138,7 +138,7 @@
                     closure (
                        code (
 =>
-            ";" step_expr ")" "{" statement next_statement;
+            ";" step_expr ")" "{" statement next_statement "}"
 <=
                           clipboard $
                        )

@@ -1,7 +1,5 @@
 #!/bin/bash
 
-BASEDIR=$(dirname $0)
-
 mkdir -p ../../lib60_64
 mkdir -p ../../bin/amd64
 
@@ -93,8 +91,5 @@ fi
  else
    echo .
  fi
-
- mkdir -p /usr/lib/elena/
- ln -s $BASEDIR/../../bin/libelenart60_64.so /usr/lib/elena
 
 exit 0
