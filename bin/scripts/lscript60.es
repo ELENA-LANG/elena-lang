@@ -140,7 +140,7 @@
 =>
             ";" step_expr ")" "{" statement next_statement "}"
 <=
-                          clipboard $
+                          clipboard()
                        )
                     )
                  )

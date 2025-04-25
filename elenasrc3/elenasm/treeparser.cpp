@@ -97,12 +97,16 @@ void TreeScriptParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* outpu
    while (!reader.eof()) {
       if (reader.compare("clipboard")) {
          bm = reader.read();
-         if (reader.compare("$")) {
+         if (reader.compare("(")) {
             clipboardWriter.closeNode();
 
             SyntaxTree::copyNode(treeWriter, clipboard.readRoot());
             clipboardWriter.clear();
             clipboardWriter.newNode(SyntaxKey::Root);
+
+            bm = reader.read();
+            if (reader.compare(")"))
+               throw SyntaxError("closing bracket is expected", bm.lineInfo);
          }
          else parseStatement(reader, bm, clipboardWriter);
       }
