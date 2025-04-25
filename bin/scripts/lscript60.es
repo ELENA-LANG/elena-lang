@@ -138,7 +138,7 @@
                     closure (
                        code (
 =>
-            ";" step_expr ")" "{" statement next_statement "}"
+            ";" step_expr ")" "{" statement next_statement
 <=
                           clipboard()
                        )
