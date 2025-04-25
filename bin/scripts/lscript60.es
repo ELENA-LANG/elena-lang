@@ -177,9 +177,9 @@
 
    #define new_operation  ::= <= message_operation ( => "new" new_terminal args <= ) =>;
 
-   #define l0_operation   ::= "[" at_message index_call "]";
+   #define l0_operation   ::= "[" at_message index_call;
 
-   #define index_call     ::= ^ <= message_operation ( => expression <= ) =>;
+   #define index_call     ::= ^ <= message_operation ( => expression close_sbracket <= ) =>;
 
    #define l1_operation   ::= function_call;
 
@@ -242,6 +242,7 @@
    #define next_statement ::= ";" statement next_statement;
    #define next_statement ::= ";" "}";
    #define next_statement ::= "}";
+   #define close_sbracket ::= "]";
 
    #define f_parameters   ::= "(" parameters;
 
