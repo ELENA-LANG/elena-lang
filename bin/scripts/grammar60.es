@@ -154,6 +154,7 @@
   #define expression      ::= "equal_operation" "(" equal_expression ")";
   #define expression      ::= "not_equal_operation" "(" not_equal_expression ")";
   #define expression      ::= "less_operation" "(" less_expression ")";
+  #define expression      ::= "greater_operation" "(" greater_expression ")";
   #define expression      ::= "at_operation" "(" at_expression ")";
   #define expression      ::= object_expr;
  
@@ -344,6 +345,18 @@
 
   #define less_operation ::=
                <= "less" => expression;
+
+  #define greater_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression greater_operation
+<=
+               )
+=>;
+
+  #define greater_operation ::=
+               <= "greater" => expression;
 
   #define object_expr     ::= "object" "(" object ")";
 

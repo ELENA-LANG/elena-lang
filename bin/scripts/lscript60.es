@@ -193,6 +193,7 @@
    #define l5_operation   ::= ^ <= equal_operation ( => "==" l4_expression <= ) =>;
    #define l5_operation   ::= ^ <= not_equal_operation ( => "!=" l4_expression <= ) =>;
    #define l5_operation   ::= ^ <= less_operation ( => "<" l4_expression <= ) =>;
+   #define l5_operation   ::= ^ <= greater_operation ( => ">" l4_expression <= ) =>;
 
    #define mssg_call      ::= ^ <= message_operation ( =>  args <= ) =>;
    #define prop_call      ::= ^ <= property_operation ( => not_bracket <= ) =>;
