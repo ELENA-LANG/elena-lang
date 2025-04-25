@@ -177,7 +177,9 @@
 
    #define new_operation  ::= <= message_operation ( => "new" new_terminal args <= ) =>;
 
-   #define l0_operation   ::= ^ <= message_operation ( => "[" expression "]" <= ) =>;
+   #define l0_operation   ::= "[" at_message index_call;
+
+   #define index_call     ::= ^ <= message_operation ( => expression "]" <= ) =>;
 
    #define l1_operation   ::= function_call;
 
@@ -249,6 +251,7 @@
    #define parameter      ::= <= parameter ( nameattr ( identifier = $identifier )) =>;
 
    #define message        ::= <= message ( identifier = $identifier ) =>;
+   #define at_message     ::= <= message ( identifier = at ) =>;
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
    #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;
