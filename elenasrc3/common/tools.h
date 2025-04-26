@@ -11,9 +11,7 @@
 
 #ifdef __GNUG__
 
-#include <ctype.h>
-
-#define _gcvt gcvt
+//#include <ctype.h>
 
 #endif // __GNUG__
 

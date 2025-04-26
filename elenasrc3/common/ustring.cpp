@@ -545,7 +545,18 @@ char* StrConvertor :: toString(double value, int precision, char* s, size_t dest
 
       s[destLength] = 0;
    }
-   else _gcvt(value, precision, s);
+   else if (precision == 10) {
+      snprintf(s, destLength, "%.16g", value);
+   }
+   else {
+      char format[10] = "%.";
+      snprintf(format + 2, 8, "%d", precision);
+      size_t len = strlen(format);
+      format[len] = 'g';
+      format[len + 1] = 0;
+
+      snprintf(s, destLength, format, value);
+   }
 
    return s;
 }
@@ -553,7 +564,7 @@ char* StrConvertor :: toString(double value, int precision, char* s, size_t dest
 wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_t destLength)
 {
    char tmp[25];
-   gcvt(value, precision, tmp);
+   StrConvertor::toString(value, precision, tmp, 25);
 
    for (size_t i = 0; i <= getlength(tmp); i++) {
       s[i] = tmp[i];
