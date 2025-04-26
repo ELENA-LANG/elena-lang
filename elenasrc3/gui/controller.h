@@ -168,6 +168,8 @@ namespace elena_lang
 
       void goToLine(TextViewModelBase* model, int row);
 
+      void highlightBrackets(TextViewModelBase* model, DocumentChangeStatus& changeStatus);
+
       TextViewController()
       {
          _notifier = nullptr;

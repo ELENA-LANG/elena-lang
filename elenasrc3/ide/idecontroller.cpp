@@ -1057,6 +1057,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path, GUISettinngs& gui
       model->rememberLastPath = loadSetting(config, LASTPATH_SETTINGS, -1) != 0;
       model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
       model->sourceViewModel.highlightSyntax = loadSetting(config, HIGHLIGHTSYNTAX_SETTINGS, -1) != 0;
+      model->sourceViewModel.highlightBrackets = loadSetting(config, HIGHLIGHTBRACKETS_SETTINGS, -1) != 0;
       model->sourceViewModel.lineNumbersVisible = loadSetting(config, LINENUMBERS_SETTINGS, -1) != 0;
       model->sourceViewModel.scrollOffset = loadSetting(config, VSCROLL_SETTINGS, 1);
       model->sourceViewModel.settings.tabSize = loadSetting(config, TABSIZE_SETTINGS, 3);
@@ -1101,6 +1102,7 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath, GUISettinng
    saveSetting(config, LASTPATH_SETTINGS, model->rememberLastPath);
    saveSetting(config, LASTPROJECT_SETTINGS, model->rememberLastProject);
    saveSetting(config, HIGHLIGHTSYNTAX_SETTINGS, model->sourceViewModel.highlightSyntax);
+   saveSetting(config, HIGHLIGHTBRACKETS_SETTINGS, model->sourceViewModel.highlightBrackets);
    saveSetting(config, LINENUMBERS_SETTINGS, model->sourceViewModel.lineNumbersVisible);
    saveSetting(config, VSCROLL_SETTINGS, model->sourceViewModel.scrollOffset);
    saveSetting(config, TABSIZE_SETTINGS, model->sourceViewModel.settings.tabSize);
@@ -1999,9 +2001,12 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
 {
    int prevSchemeIndex = model->viewModel()->schemeIndex;
    bool prevHighlightSyntax = model->viewModel()->highlightSyntax;
+   bool prevHighlightBrackets = model->viewModel()->highlightBrackets;
 
    if(editorDialog.showModal()) {
-      if (prevSchemeIndex != model->viewModel()->schemeIndex || prevHighlightSyntax != model->viewModel()->highlightSyntax) {
+      if (prevSchemeIndex != model->viewModel()->schemeIndex || prevHighlightSyntax != model->viewModel()->highlightSyntax
+         || prevHighlightBrackets != model->viewModel()->highlightBrackets)
+      {
          notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
       }
    }

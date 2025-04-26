@@ -50,6 +50,7 @@ namespace elena_lang
       }
    };
    typedef CachedMemoryMap<int, Marker, 5>   MarkerList;
+   typedef CachedMemoryMap<pos_t, pos_t, 2>  HighlightList;
 
    // --- TextFormatterBase ---
    class TextFormatterBase
@@ -67,6 +68,7 @@ namespace elena_lang
 
       Text*                _text;
       MarkerList*          _markers;
+      HighlightList*       _highlights;
       MemoryDump           _indexes;
       MemoryDump           _lexical;
 
@@ -82,6 +84,7 @@ namespace elena_lang
       }
 
       bool checkMarker(ReaderInfo& info);
+      bool checkPrecedingHighlight(pos_t start, pos_t& end);
       void format();
 
    public:
@@ -93,7 +96,7 @@ namespace elena_lang
 
       pos_t proceed(pos_t position, ReaderInfo& info);
 
-      LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers);
+      LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers, HighlightList* highlights);
       virtual ~LexicalFormatter();
    };
 
@@ -234,6 +237,7 @@ namespace elena_lang
       Text*             _text;
       TextHistory       _undoBuffer;
       LexicalFormatter  _formatter;
+      HighlightList     _highlights;
 
       Point             _size;
       TextBookmark      _frame;
@@ -292,6 +296,25 @@ namespace elena_lang
 
          return false;
       }
+
+      bool clearHighlights()
+      {
+         if (_highlights.count() > 0) {
+            _highlights.clear();
+
+            return true;
+         }
+         return false;
+      }
+
+      void addHighlight(pos_t position, pos_t style)
+      {
+         _highlights.add(position, style);
+      }
+
+      Text* getText() { return _text; }
+
+      TextBookmark getCurrentTextBookmark() { return _caret; }
 
       Point getFrame() const { return _frame.getCaret(); }
       Point getCaret(bool virtualOne = true) const { return _caret.getCaret(virtualOne); }

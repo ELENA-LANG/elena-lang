@@ -25,10 +25,12 @@ constexpr auto UNDO_BUFFER_SIZE = 0x40000;
 
 // --- LexicalFormatter ---
 
-LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers)
+LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers, 
+   HighlightList* highlights)
 {
    _text = text;
    _markers = markers;
+   _highlights = highlights;
    _formatter = formatter;
    _enabled = false;
 
@@ -118,6 +120,24 @@ bool LexicalFormatter :: checkMarker(ReaderInfo& info)
    return false;
 }
 
+bool LexicalFormatter :: checkPrecedingHighlight(pos_t start, pos_t& end)
+{
+   for (auto it = _highlights->start(); !it.eof(); ++it) {
+      pos_t current = it.key();
+
+      if (current < start) {
+         break;
+      }
+      if (current < end) {
+         end = it.key();
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
 pos_t LexicalFormatter :: proceed(pos_t position, ReaderInfo& info)
 {
    if (!_enabled)
@@ -137,8 +157,18 @@ pos_t LexicalFormatter :: proceed(pos_t position, ReaderInfo& info)
    pos_t current = 0;
    while (reader.readPos(curStyle)) {
       current = reader.getPos();
+      if (_highlights->get(position) != INVALID_POS) {
+         info.style = _highlights->get(position);
+         count = 1;
+         break;
+      }
+
       if (current > position) {
          info.style = curStyle;
+         // to allow bracket highlighting foregoing another operator
+         if (curStyle == STYLE_OPERATOR && checkPrecedingHighlight(position, current)) {
+            
+         }
          count = current - position;
          break;
       }
@@ -256,8 +286,8 @@ int DocumentView::VerticalScrollOffset = 1;
 
 DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter, bool autoIndent) :
    _undoBuffer(UNDO_BUFFER_SIZE),
-   _formatter(text, formatter, &_markers),
-   _markers({}),
+   _markers({}), _highlights(INVALID_POS),
+   _formatter(text, formatter, &_markers, &_highlights),
    _autoIndent(autoIndent)
 {
    _text = text;

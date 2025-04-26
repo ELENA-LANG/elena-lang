@@ -40,11 +40,7 @@ In development:
   - #34 : http client : post, put, delete, return status, headers
   - #743
   - #739
-  - ide : brackets highlight
-  - move away from the usage of gcvt (snprintf)
   --------------------------------------  
-  * replace gcvt with snprintf
-  * brackets highlight
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

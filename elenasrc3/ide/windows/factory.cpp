@@ -79,6 +79,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Color(0, 0x80, 0), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0xFF, 0x80, 0x40), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0, 0x80, 0x80), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 };
 
 StyleInfo classicStyles[STYLE_MAX + 1] = {
@@ -93,6 +94,7 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
    {Color(0xC0, 0xC0, 0xC0), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0, 0xFF, 0x80), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0, 0xFF, 0xFF), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 };
 
 StyleInfo darkStyles[STYLE_MAX + 1] = {
@@ -107,6 +109,7 @@ StyleInfo darkStyles[STYLE_MAX + 1] = {
    {Color(87, 166, 74), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(181, 230, 168), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(214, 157, 133), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0xFF, 0xFF, 0xFF), Color(0x27, 0x2D, 0x60), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 };
 
 constexpr auto STYLE_SCHEME_COUNT = 3;

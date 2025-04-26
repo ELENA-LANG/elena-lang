@@ -479,6 +479,7 @@ void EditorSettings::onCreate()
    setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->schemeIndex);
 
    setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
+   setCheckState(IDC_EDITOR_HIGHLIGHBRACKETFLAG, _model->highlightBrackets);
    setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumbersVisible);
 
    setIntText(IDC_EDITOR_TABSIZE, _model->settings.tabSize);
@@ -494,6 +495,10 @@ void EditorSettings :: onOK()
    bool value = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
    if (_model->highlightSyntax != value)
       _model->setHighlightMode(value);
+
+   value = getCheckState(IDC_EDITOR_HIGHLIGHBRACKETFLAG);
+   if (_model->highlightBrackets != value)
+      _model->highlightBrackets = value;
 
    _model->lineNumbersVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
 

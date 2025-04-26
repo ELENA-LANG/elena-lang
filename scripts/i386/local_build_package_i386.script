@@ -95,6 +95,6 @@ fi
  fi
 
  mkdir -p /usr/lib/elena/
- ln -s $BASEDIR/../../bin/libelenart60.so /usr/lib/elena
+ ln -s $(realpath ../../bin/libelenart60.so) /usr/lib/elena/libelenart60.so
 
 exit 0
