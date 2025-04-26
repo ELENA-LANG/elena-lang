@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Project routine functions
 //
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TOOLS_H
@@ -11,7 +11,7 @@
 
 #ifdef __GNUG__
 
-//#include <ctype.h>
+#include <ctype.h>
 
 #endif // __GNUG__
 
