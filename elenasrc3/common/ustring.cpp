@@ -546,7 +546,7 @@ char* StrConvertor :: toString(double value, int precision, char* s, size_t dest
       s[destLength] = 0;
    }
    else if (precision == 10) {
-      snprintf(s, destLength, "%.16g", value);
+      snprintf(s, destLength, "%.10g", value);
    }
    else {
       char format[10] = "%.";
