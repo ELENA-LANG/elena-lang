@@ -50,16 +50,38 @@ uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSiz
 
 uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
 {
+#if defined(__FreeBSD__)
+
+   void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+#else
+
    void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+#endif
+
+   assert(r == allocPtr);
 
    return !r ? 0 : (uintptr_t)r;
 }
 
 uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
 {
+#if defined(__FreeBSD__)
+
+   void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+#else
+
    void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+#endif
+
+   assert(r == allocPtr);
 
    return !r ? 0 : (uintptr_t)allocPtr;
 }
