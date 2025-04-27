@@ -88,6 +88,28 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
    ucontext_t* u = (ucontext_t*)unused;
 
+#if defined(__FreeBSD__)
+
+   switch (sig) {
+   case SIGFPE:
+      u->uc_mcontext.mc_edx = u->uc_mcontext.mc_eip;
+      u->uc_mcontext.mc_eax = ELENA_ERR_DIVIDE_BY_ZERO;
+      u->uc_mcontext.mc_eip = CriticalHandler;
+      break;
+   case SIGSEGV:
+      u->uc_mcontext.mc_edx = u->uc_mcontext.mc_eip;
+      u->uc_mcontext.mc_eax = ELENA_ERR_ACCESS_VIOLATION;
+      u->uc_mcontext.mc_eip = CriticalHandler;
+      break;
+   default:
+      u->uc_mcontext.mc_edx = u->uc_mcontext.mc_eip;
+      u->uc_mcontext.mc_eax = ELENA_ERR_CRITICAL;
+      u->uc_mcontext.mc_eip = CriticalHandler;
+      break;
+   }
+
+#else
+
    switch (sig) {
       case SIGFPE:
          u->uc_mcontext.gregs[REG_EDX] = u->uc_mcontext.gregs[REG_EIP];
@@ -106,6 +128,7 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
          break;
    }
 
+#endif
 }
 
 #elif __x86_64__
@@ -114,23 +137,47 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
    ucontext_t* u = (ucontext_t*)unused;
 
+#if defined(__FreeBSD__)
+
    switch (sig) {
-   case SIGFPE:
-      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
-      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_DIVIDE_BY_ZERO;
-      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
-      break;
-   case SIGSEGV:
-      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
-      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_ACCESS_VIOLATION;
-      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
-      break;
-   default:
-      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
-      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_CRITICAL;
-      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
-      break;
+      case SIGFPE:
+         u->uc_mcontext.mc_rdx = u->uc_mcontext.mc_rip;
+         u->uc_mcontext.mc_rax = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.mc_rip = CriticalHandler;
+         break;
+      case SIGSEGV:
+         u->uc_mcontext.mc_rdx = u->uc_mcontext.mc_rip;
+         u->uc_mcontext.mc_rax = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.mc_rip = CriticalHandler;
+         break;
+      default:
+         u->uc_mcontext.mc_rdx = u->uc_mcontext.mc_rip;
+         u->uc_mcontext.mc_rax = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.mc_rip = CriticalHandler;
+         break;
    }
+
+#else
+
+   switch (sig) {
+      case SIGFPE:
+         u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+         u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+      case SIGSEGV:
+         u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+         u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+      default:
+         u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+         u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+   }
+
+#endif
 }
 
 #elif __aarch64__
