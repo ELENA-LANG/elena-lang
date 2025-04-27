@@ -41,6 +41,7 @@ In development:
   - #743
   - #739
   --------------------------------------  
+  * https://github.com/orgs/ELENA-LANG/discussions/739
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

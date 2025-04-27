@@ -9,6 +9,12 @@
 #ifndef ELFIMAGE_H
 #define ELFIMAGE_H
 
+#if defined(__FreeBSD__)
+
+   #define R_X86_64_JUMP_SLOT R_X86_64_JMP_SLOT
+
+#endif
+
 namespace elena_lang
 {
    typedef List<ustr_t, freeUStr> LibraryList;

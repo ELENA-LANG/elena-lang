@@ -524,7 +524,11 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
 int ElfAmd64ImageFormatter:: getRelocationType()
 {
+#if defined(__FreeBSD__)
+   return R_X86_64_JMP_SLOT;
+#else
    return R_X86_64_JUMP_SLOT;
+#endif
 }
 
 void ElfAmd64ImageFormatter :: fixSection(MemoryBase* section, AddressSpace& map)
