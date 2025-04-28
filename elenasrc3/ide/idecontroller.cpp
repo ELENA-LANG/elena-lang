@@ -33,6 +33,8 @@ inline ustr_t getPlatformName(PlatformType type)
          return LINUX_X86_KEY;
       case PlatformType::Linux_x86_64:
          return LINUX_X86_64_KEY;
+      case PlatformType::FreeBSD_x86_64:
+         return FREEBSD_X86_64_KEY;
       case PlatformType::Linux_PPC64le:
          return LINUX_PPC64le_KEY;
       case PlatformType::Linux_ARM64:

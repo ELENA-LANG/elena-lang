@@ -38,6 +38,14 @@ void Elf32Linker :: writeELFHeader(ElfExecutableImage& image, FileWriter* file, 
    header.e_ident[EI_CLASS] = ELFCLASS32;
    header.e_ident[EI_DATA] = ELFDATA2LSB;
    header.e_ident[EI_VERSION] = EV_CURRENT;
+   switch (image.platformType) {
+      case PlatformType::Linux_x86:
+         header.e_ident[EI_OSABI] = ELFOSABI_LINUX;
+         break;
+      default:
+         assert(false); // !! should not be here
+         break;
+   }
 
    header.e_type = ET_EXEC;
    header.e_machine = getMachine();

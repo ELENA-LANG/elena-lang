@@ -839,7 +839,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
       return;
    }
 
-   auto result = linker.run(project, code, uiType, _exeExtension);
+   auto result = linker.run(project, code, imageInfo.type, uiType, _exeExtension);
 
    _presenter->print(ELC_SUCCESSFUL_LINKING);
 

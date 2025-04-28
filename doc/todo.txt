@@ -42,8 +42,10 @@ In development:
   - Linux Actions : create a release archive
   - Supporting FreeBSD #748
   --------------------------------------  
-  * compile lib 
+  * new target - FreeBSD_AMD64
+  * elf - support elf for freebsd
   * compile examples
+  * new target - FreeBSD_I386
   * compile i386, lib32, tests32
   --------------------------------------
 

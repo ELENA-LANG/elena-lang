@@ -113,10 +113,10 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
       image.withTLS = true;
 }
 
-LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, path_t)
+LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType osType, PlatformType, path_t)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
-   ElfExecutableImage image(withDebugMode);
+   ElfExecutableImage image(withDebugMode, osType);
 
    image.addressMap.entryPoint = (pos_t)provider.getEntryPoint();
    prepareElfImage(provider, image, calcHeaderSize());

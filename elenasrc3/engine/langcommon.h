@@ -739,6 +739,8 @@ namespace elena_lang
 
    constexpr auto MACOS_ARM64_KEY               = "MacOS_ARM64";
 
+   constexpr auto FREEBSD_X86_64_KEY            = "FreeBSD_AMD64";
+
    constexpr auto LIBRARY_KEY                   = "Library";
    constexpr auto CONSOLE_KEY                   = "STA Console";
    constexpr auto GUI_KEY                       = "STA GUI";
@@ -811,6 +813,8 @@ namespace elena_lang
             return LINUX_ARM64_KEY;
          case PlatformType::MacOS_ARM64:
             return MACOS_ARM64_KEY;
+         case PlatformType::FreeBSD_x86_64:
+            return FREEBSD_X86_64_KEY;
          default:
             return nullptr;
       }

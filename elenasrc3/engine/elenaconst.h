@@ -223,6 +223,8 @@ namespace elena_lang
 
       MacOS_ARM64    = 0x00034,
 
+      FreeBSD_x86_64 = 0x00042,
+
       TargetMask     = 0x00F00,
       Standalone     = 0x00000,
       VMClient       = 0x00100,

@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class body
 //		Supported platforms: Linux 64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elflinker64.h"
@@ -42,6 +42,19 @@ void Elf64Linker :: writeELFHeader(ElfExecutableImage& image, FileWriter* file, 
    header.e_ident[EI_CLASS] = ELFCLASS64;
    header.e_ident[EI_DATA] = ELFDATA2LSB;
    header.e_ident[EI_VERSION] = EV_CURRENT;
+   switch (image.platformType) {
+      case PlatformType::Linux_x86_64:
+      case PlatformType::Linux_ARM64:
+      case PlatformType::Linux_PPC64le:
+         header.e_ident[EI_OSABI] = ELFOSABI_LINUX;
+         break;
+      case PlatformType::FreeBSD_x86_64:
+         header.e_ident[EI_OSABI] = ELFOSABI_FREEBSD;
+         break;
+      default:
+         assert(false); // !! should not be here
+         break;
+   }
 
    header.e_type = ET_EXEC;
    header.e_machine = getMachine();

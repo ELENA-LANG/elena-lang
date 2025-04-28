@@ -748,7 +748,7 @@ protected:
 
 public:
    virtual LinkResult run(ProjectBase& project, ImageProviderBase& provider, 
-      PlatformType uiType, path_t exeExtension) = 0;
+      PlatformType osType, PlatformType uiType, path_t exeExtension) = 0;
 
    LinkerBase(ErrorProcessorBase* errorProcessor)
    {

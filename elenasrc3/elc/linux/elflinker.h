@@ -16,6 +16,8 @@ namespace elena_lang
    // --- ElfExecutableImage ---
    struct ElfExecutableImage
    {
+      PlatformType    platformType;
+
       unsigned int    sectionAlignment;
       unsigned int    fileAlignment;
       unsigned int    flags;
@@ -26,8 +28,8 @@ namespace elena_lang
 
       ImageSections   imageSections;
 
-      ElfExecutableImage(bool withDebugInfo)
-         : imageSections(ImageSections())
+      ElfExecutableImage(bool withDebugInfo, PlatformType platformType)
+         : imageSections(ImageSections()), platformType(platformType)
       {
          this->fileAlignment = this->sectionAlignment = 0;
          this->flags = 0;
@@ -58,7 +60,7 @@ namespace elena_lang
       virtual void prepareElfImage(ImageProviderBase& provider, ElfExecutableImage& image, unsigned int headerSize);
 
    public:
-      LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType uiType, 
+      LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType osType, PlatformType uiType,
          path_t exeExtension) override;
 
       ElfLinker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
