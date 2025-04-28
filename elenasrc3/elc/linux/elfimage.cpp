@@ -118,8 +118,13 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    // --- data segment ---
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
    fileOffset = align(fileOffset + fileSize, fileAlignment);
+   
+   printf("before %x\n", sectionOffset);
+
    // NOTE : due to loader requirement, adjust offset
    sectionOffset += (fileOffset & (sectionAlignment - 1));
+
+   printf("after %x\n", sectionOffset);
 
    map.importSize = import->length();
    map.import = sectionOffset;
@@ -128,6 +133,10 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
 
    map.dataSize += data->length();
    map.data = map.import + fileSize;
+
+   printf("%x - %x\n", 
+      fileOffset + fileSize + elfData.dynamicOffset, 
+      sectionOffset + fileSize + elfData.dynamicOffset);
 
    map.dictionary.add(elfDynamicOffset, fileOffset + fileSize + elfData.dynamicOffset);
    map.dictionary.add(elfDynamicVAddress, sectionOffset + fileSize + elfData.dynamicOffset);
