@@ -32,7 +32,7 @@ inline bool loadAppPath(char* appPath, size_t len)
    mib[1] = KERN_PROC;
    mib[2]1 = KERN_PROC_PATHNAME;
    mib[3] = -1;
-   sysctl(mib, 4, appPath, len, nullptr, 0);
+   sysctl(mib, 4, appPath, &len, nullptr, 0);
 
 #elif defined(__unix__)
 
