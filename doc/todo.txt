@@ -36,12 +36,13 @@ In development:
   prom: 
   - weekly posting
   --------------------------------------
-  - Linux Actions : create a release archive
   - #34 : http client : post, put, delete, return status, headers
   - #743
   - #739
+  - Linux Actions : create a release archive
+  - Supporting FreeBSD #748
   --------------------------------------  
-  * https://github.com/orgs/ELENA-LANG/discussions/739
+  * compile lib
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
