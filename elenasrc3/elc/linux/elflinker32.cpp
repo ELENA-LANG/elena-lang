@@ -121,11 +121,21 @@ void Elf32Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
 
    // Dynamic
    pos_t dynamicOffset = image.addressMap.dictionary.get(elfDynamicOffset);
-   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicVAddress);
    pos_t dynamicSize = image.addressMap.dictionary.get(elfDynamicSize);
+
+#if defined __FreeBSD__
+
+   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicOffset);
+
+#else
+
+   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicVAddress);
+
+#endif
 
    ph_header.p_type = PT_DYNAMIC;
    ph_header.p_offset = dynamicOffset;
+
    ph_header.p_paddr = ph_header.p_vaddr = image.addressMap.imageBase + dynamicVAddress;
    ph_header.p_filesz = ph_header.p_memsz = align(dynamicSize, 8);
    ph_header.p_flags = PF_R + PF_W;
