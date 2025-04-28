@@ -42,11 +42,9 @@ In development:
   - Linux Actions : create a release archive
   - Supporting FreeBSD #748
   --------------------------------------  
-  * new target - FreeBSD_AMD64
-  * elf - support elf for freebsd
+  * fix : there is no dynamic section
+  * fix relocation : unsupported relocation type 7 in non-PLT relocation
   * compile examples
-  * new target - FreeBSD_I386
-  * compile i386, lib32, tests32
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
@@ -57,6 +55,7 @@ In development:
   - implement analog of record using meta programming (extensions'records)
   - upndown (connector - cmdSearch)
   - VM support for Linux
+  - #748 : i386
   gen:
   - work on REPL (elt) : execute simple program
   api:

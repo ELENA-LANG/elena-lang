@@ -549,7 +549,11 @@ void ElfAmd64ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_
    codeWriter.writeDReference(gotReference, 8);
    codeWriter.writeWord(0x25FF);
    codeWriter.writeDReference(gotReference, 16);
+#if defined(__FreeBSD__)
+   codeWriter.writeDWord(0x401F0F);
+#else
    codeWriter.writeDWord(0);
+#endif
 }
 
 pos_t ElfAmd64ImageFormatter :: writePLTEntry(MemoryWriter& codeWriter, pos_t symbolIndex, ref_t gotReference, pos_t gotOffset, int entryIndex)

@@ -2,5 +2,5 @@ import extensions;
 
 public program()
 {
-   sfsdfg dssdg
+   Console.writeLine("Hello");
 }
