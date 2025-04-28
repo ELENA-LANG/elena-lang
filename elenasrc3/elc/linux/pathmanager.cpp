@@ -35,6 +35,8 @@ inline bool loadAppPath(char* appPath, size_t len)
 
 #endif
 
+   printf("exe path %s\n", appPath);
+
    size_t index = path_t(appPath).findLast(PATH_SEPARATOR);
    if (index != NOTFOUND_POS)
       appPath[index] = 0;

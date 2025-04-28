@@ -42,7 +42,9 @@ In development:
   - Linux Actions : create a release archive
   - Supporting FreeBSD #748
   --------------------------------------  
-  * compile lib
+  * compile lib 
+  * compile examples
+  * compile i386, lib32, tests32
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
