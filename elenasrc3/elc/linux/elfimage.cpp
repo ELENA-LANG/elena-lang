@@ -130,11 +130,7 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    map.data = map.import + fileSize;
 
    map.dictionary.add(elfDynamicOffset, fileOffset + fileSize + elfData.dynamicOffset);
-#ifdef __FreeBSD__
-   map.dictionary.add(elfDynamicVAddress, sectionOffset + fileSize + elfData.dynamicOffset - 0x1000); // !! HARDCODED, temporally
-#else
    map.dictionary.add(elfDynamicVAddress, sectionOffset + fileSize + elfData.dynamicOffset);
-#endif
    map.dictionary.add(elfDynamicSize, elfData.dynamicSize);
 
    fileSize += align(data->length(), fileAlignment);
