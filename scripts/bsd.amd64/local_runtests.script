@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
  ../../bin/elena64-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
