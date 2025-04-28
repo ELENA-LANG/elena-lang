@@ -330,6 +330,8 @@ int parseBuildKeyRules(FileEncoding encoding, path_t path)
       IdentifierString pathStr(*outputFile);
 
       printf("\nCannot create a file %s\n", pathStr.str());
+
+      return -1;
    }
 
    trie.save(&file);

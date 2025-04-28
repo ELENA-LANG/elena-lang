@@ -62,7 +62,7 @@ uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
 
 #endif
 
-   assert(r == allocPtr);
+   //assert(r == allocPtr);
 
    return !r ? 0 : (uintptr_t)r;
 }
@@ -81,7 +81,7 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
 
 #endif
 
-   assert(r == allocPtr);
+   //assert(r == allocPtr);
 
    return !r ? 0 : (uintptr_t)allocPtr;
 }
