@@ -19,7 +19,7 @@ PathHelper::PathMap* PathHelper::pathCache = nullptr;
 
 inline bool loadAppPath(char* appPath, size_t len)
 {
-#if defined(__FREEBSD__) 
+#if defined(__FreeBSD__) 
 
    int mib[4];
    mib[0] = CTL_KERN;
@@ -34,8 +34,6 @@ inline bool loadAppPath(char* appPath, size_t len)
       return false;
 
 #endif
-
-   printf("exe path %s\n", appPath);
 
    size_t index = path_t(appPath).findLast(PATH_SEPARATOR);
    if (index != NOTFOUND_POS)
@@ -70,18 +68,12 @@ path_t PathHelper :: retrievePath(const char* filesToLookFor[], size_t listLengt
 
 path_t PathHelper :: retrieveFilePath(path_t defaultPath)
 {
-   printf("retrieveFilePath.1\n");
-
    if (pathCache && pathCache->exist(defaultPath))
       return pathCache->get(defaultPath);
-
-   printf("retrieveFilePath.2\n");
 
    char appPath[FILENAME_MAX] = { 0 };
    if (!loadAppPath(appPath, FILENAME_MAX))
       return defaultPath;
-
-   printf("retrieveFilePath.3\n");
 
    PathString fullPath(appPath);
    FileNameString fileName(defaultPath, true);
