@@ -116,11 +116,10 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    sections.items.add(sections.headers.count(), { rdata, true });
 
    // --- data segment ---
+   pos_t checkVal = sectionOffset + align(sectionSize, sectionAlignment);
+
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
    fileOffset = align(fileOffset + fileSize, fileAlignment);   
-
-   pos_t adjustOffs = fileOffset & (sectionAlignment - 1);
-   pos_t checkVal = sectionOffset + adjustOffs;
 
    // NOTE : due to loader requirement, adjust offset
    sectionOffset += (fileOffset & (sectionAlignment - 1));
