@@ -205,6 +205,8 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       defaultConfigPath = DEFAULT_CONFIG;
    }
 
+   fflush();
+
    PathString configPath(dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
    project.loadConfig(*configPath, nullptr, false);
 

@@ -70,12 +70,18 @@ path_t PathHelper :: retrievePath(const char* filesToLookFor[], size_t listLengt
 
 path_t PathHelper :: retrieveFilePath(path_t defaultPath)
 {
+   printf("retrieveFilePath.1\n");
+
    if (pathCache && pathCache->exist(defaultPath))
       return pathCache->get(defaultPath);
+
+   printf("retrieveFilePath.2\n");
 
    char appPath[FILENAME_MAX] = { 0 };
    if (!loadAppPath(appPath, FILENAME_MAX))
       return defaultPath;
+
+   printf("retrieveFilePath.3\n");
 
    PathString fullPath(appPath);
    FileNameString fileName(defaultPath, true);
