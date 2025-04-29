@@ -387,7 +387,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    RelocationMap& importMapping)
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
-   pos_t global_count = elfData.variables.count();
+   pos_t global_count = /*elfData.variables.count()*/0;
 
    MemoryBase* code = provider.getTextSection();
    MemoryBase* data = provider.getDataSection();
@@ -405,8 +405,8 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // reserve got table
    MemoryWriter gotWriter(import);
-   pos_t gotStartVar = gotWriter.position();
-   gotWriter.writeBytes(0, global_count * 8);
+   //pos_t gotStartVar = gotWriter.position();
+   //gotWriter.writeBytes(0, global_count * 8);
    pos_t gotPltPos = gotWriter.position();
    gotWriter.writeQReference(mskDataRef64, elfData.dynamicOffset);
    gotWriter.writeQWord(0);   // reserved for run-time linker
@@ -416,11 +416,11 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    
    // reserve relocation table
    MemoryWriter reltabWriter(import);
-   pos_t relGlobalOffset = reltabWriter.position();
-   reltabWriter.writeBytes(0, global_count * 24);
+   //pos_t relGlobalOffset = reltabWriter.position();
+   //reltabWriter.writeBytes(0, global_count * 24);
    pos_t reltabOffset = reltabWriter.position();
    reltabWriter.writeBytes(0, count * 24);
-
+      
    // reserve symbol table
    MemoryWriter symtabWriter(import);
    pos_t symtabOffset = symtabWriter.position();
@@ -432,34 +432,34 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    pos_t strOffset = strWriter.position();
    strWriter.writeChar('\0');
 
-   // globals
-   if (global_count > 0) {
-      gotWriter.seek(gotStartVar);
-      reltabWriter.seek(relGlobalOffset);
+   //// globals
+   //if (global_count > 0) {
+   //   gotWriter.seek(gotStartVar);
+   //   reltabWriter.seek(relGlobalOffset);
 
-      int globalRelocateType = /*getGlobalRelocationType()*/6;
-      for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
-         printf("%s\n", glob.key().str());
+   //   int globalRelocateType = /*getGlobalRelocationType()*/6;
+   //   for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
+   //      printf("%s\n", glob.key().str());
 
-         pos_t gotPosition = gotWriter.position();
+   //      pos_t gotPosition = gotWriter.position();
 
-         ref_t globalRef = *glob & ~mskAnyRef;
-         importMapping.add(globalRef | mskImportRelRef32, gotPosition);
+   //      ref_t globalRef = *glob & ~mskAnyRef;
+   //      importMapping.add(globalRef | mskImportRelRef32, gotPosition);
 
-         pos_t strIndex = strWriter.position() - strOffset;
+   //      pos_t strIndex = strWriter.position() - strOffset;
 
-         // relocation table entry
-         reltabWriter.writeQReference(importRef, gotPosition);
-         reltabWriter.writeDWord(globalRelocateType);
-         reltabWriter.writeDWord(strIndex);
-         reltabWriter.writeQWord(0);
+   //      // relocation table entry
+   //      reltabWriter.writeQReference(importRef, gotPosition);
+   //      reltabWriter.writeDWord(globalRelocateType);
+   //      reltabWriter.writeDWord(strIndex);
+   //      reltabWriter.writeQWord(0);
 
-         // string table entry
-         strWriter.writeString(glob.key());
+   //      // string table entry
+   //      strWriter.writeString(glob.key());
 
-         gotWriter.writeQWord(0);
-      }
-   }
+   //      gotWriter.writeQWord(0);
+   //   }
+   //}
 
    // code writer
    MemoryWriter codeWriter(code);
