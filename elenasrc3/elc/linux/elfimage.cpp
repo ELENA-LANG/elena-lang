@@ -592,12 +592,12 @@ void ElfAmd64ImageFormatter :: fixImportSection(MemoryBase* section, AddressSpac
    dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateElf64Import);
 }
 
-void ElfAmd64ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t)
+void ElfAmd64ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t gotPlt)
 {
    codeWriter.writeWord(0x35FF);
-   codeWriter.writeDReference(gotReference, 8);
+   codeWriter.writeDReference(gotReference, gotPlt + 8);
    codeWriter.writeWord(0x25FF);
-   codeWriter.writeDReference(gotReference, 16);
+   codeWriter.writeDReference(gotReference, gotPlt + 16);
 #if defined(__FreeBSD__)
    codeWriter.writeDWord(0x401F0F);
 #else
