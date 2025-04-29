@@ -35,7 +35,10 @@ pos_t ElfImageFormatter :: fillImportTable(AddressMap::Iterator it, ElfData& elf
          }
       }
 
-      elfData.functions.add(functionName, (ref_t)*it);
+      if (functionName.startsWith("##")) {
+         elfData.variables.add(functionName + 2, (ref_t)*it);
+      }
+      else elfData.functions.add(functionName, (ref_t)*it);
 
       ustr_t lib = elfData.libraries.retrieve<ustr_t>(*dll, [](ustr_t item, ustr_t current)
       {
@@ -384,6 +387,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    RelocationMap& importMapping)
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
+   pos_t global_count = elfData.variables.count();
 
    MemoryBase* code = provider.getTextSection();
    MemoryBase* data = provider.getDataSection();
@@ -410,9 +414,10 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // reserve relocation table
    MemoryWriter reltabWriter(import);
+   pos_t relGlobalOffset = reltabWriter.position();
+   reltabWriter.writeBytes(0, global_count * 24);
    pos_t reltabOffset = reltabWriter.position();
    reltabWriter.writeBytes(0, count * 24);
-   reltabWriter.seek(reltabOffset);
 
    // reserve symbol table
    MemoryWriter symtabWriter(import);
@@ -429,6 +434,33 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    MemoryWriter codeWriter(code);
    writePLTStartEntry(codeWriter, importRelRef, 0);
 
+   // globals
+   if (global_count > 0) {
+      reltabWriter.seek(relGlobalOffset);
+
+      int globalRelocateType = getGlobalRelocationType();
+      for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
+         pos_t gotPosition = gotWriter.position();
+
+         ref_t globalRef = *glob & ~mskAnyRef;
+         importMapping.add(globalRef | mskImportRelRef32, gotPosition);
+
+         pos_t strIndex = strWriter.position() - strOffset;
+
+         // relocation table entry
+         reltabWriter.writeQReference(importRef, gotPosition);
+         reltabWriter.writeQWord((strIndex << 32) + globalRelocateType);
+         reltabWriter.writeQWord(0);
+
+         // string table entry
+         strWriter.writeString(fun.key());
+
+         gotWriter.writeQWord(0);
+      }
+   }
+
+   // functions
+   reltabWriter.seek(reltabOffset);
    int relocateType = getRelocationType();
    long long symbolIndex = 1;
    int pltIndex = 1;
@@ -504,13 +536,14 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQReference(importRef, reltabOffset);
 
 #if defined(__FreeBSD__)
-
    dynamicWriter.writeQWord(DT_RELA);
-   dynamicWriter.writeQWord(0);
-   dynamicWriter.writeQWord(DT_RELASZ);
-   dynamicWriter.writeQWord(0);
+   dynamicWriter.writeQReference(importRef, relGlobalOffset);
 
+   dynamicWriter.writeQWord(DT_RELASZ);
+   dynamicWriter.writeQWord(global_count * 24);
 #else
+   assert(global_count == 0); // !! temporally globals are supported only for FreeBSD
+
    dynamicWriter.writeQWord(DT_RELA);
    dynamicWriter.writeQReference(importRef, reltabOffset);
 

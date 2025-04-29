@@ -1020,6 +1020,8 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
                         break;
                      case SymbolType::Procedure:
                         return { ObjectKind::InternalCallback, { V_OBJECT }, reference };
+                     case SymbolType::External:
+                        return { ObjectKind::ExternalVar, { symbolInfo.typeRef }, reference };
                      default:
                         break;
                   }
@@ -3767,6 +3769,16 @@ void Compiler::declareSymbol(SymbolScope& scope, SyntaxNode node)
    declareSymbolAttributes(scope, node, false);
    declareSymbolMetaInfo(scope, node);
 
+   if (scope.type == SymbolKind::ExternVar) {
+      auto externalInfo = mapExternalVariable(scope, node, 0);
+
+      scope.info.symbolType = SymbolType::External;
+      scope.info.valueRef = externalInfo.reference;
+
+      // external variable must be handled only in declaration pass
+      node.setKey(SyntaxKey::Idle);
+   }
+
    scope.save();
 }
 
@@ -5136,11 +5148,14 @@ void Compiler::declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool
       current = current.nextNode();
    }
 
-   if (scope.visibility == Visibility::Public) {
+   if (scope.visibility == Visibility::Public && scope.type != SymbolKind::ExternVar) {
       scope.info.loadableInRuntime = true;
    }
 
    if (constant && !identifierDeclarationMode) {
+      if (scope.type == SymbolKind::ExternVar)
+         scope.raiseError(errInvalidOperation, node); // !! currently external variable cannot be constant
+
       scope.info.symbolType = SymbolType::Constant;
 
       Interpreter interpreter(scope.moduleScope, _logic);
@@ -6785,6 +6800,20 @@ ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node, ref_t nameRe
       dllAlias = scope.module->resolveConstant(nameRef);
 
    return scope.moduleScope->mapExternal(dllAlias, functionName);
+}
+
+ExternalInfo Compiler :: mapExternalVariable(Scope& scope, SyntaxNode node, ref_t nameRef)
+{
+   IdentifierString variableName("##", node.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier());
+   ustr_t dllAlias = node.firstChild(SyntaxKey::GetExpression).firstChild(SyntaxKey::Expression).findChild(SyntaxKey::Object).firstChild(SyntaxKey::TerminalMask).identifier();
+
+   if (dllAlias.empty() || variableName.length() <= 2)
+      scope.raiseError(errInvalidOperation, node);
+
+   if (nameRef)
+      dllAlias = scope.module->resolveConstant(nameRef);
+
+   return scope.moduleScope->mapExternal(dllAlias, *variableName);
 }
 
 SyntaxNode Compiler::addStaticInitializerMethod(ClassScope& scope, SyntaxNode node)
@@ -15095,6 +15124,9 @@ bool Compiler::Expression::writeObjectInfo(ObjectInfo info, bool allowMeta)
          break;
       case ObjectKind::InternalCallback:
          writer->appendNode(BuildKey::ProcedureReference, info.reference);
+         break;
+      case ObjectKind::ExternalVar:
+         writer->appendNode(BuildKey::ExternalVarReference, info.reference);
          break;
       default:
          return false;

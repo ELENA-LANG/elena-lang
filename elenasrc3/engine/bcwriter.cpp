@@ -471,6 +471,11 @@ void procedure_ref(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskProcedureRef);
 }
 
+void externalvar_ref(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskExternalRef);
+}
+
 void goingToEOP(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    //gotoEnd(tape, baFirstLabel);
@@ -2237,7 +2242,7 @@ ByteCodeWriter::Saver commands[] =
    uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssigning, threadVarBegin,
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
-   procedure_ref, loadingAccToLongIndex
+   procedure_ref, loadingAccToLongIndex, externalvar_ref
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

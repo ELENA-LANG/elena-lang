@@ -8,10 +8,44 @@ In development:
   === Iteration 40 (4.05) ===
   --------------------------------------
   dev: 
+  - #620 : backlog
+  samples:
+  - rosetta code : Program termination, Parallel calculations
+  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
+  --------------------------------------
+  - #34 : http client : post, put, delete, return status, headers
+  - #743
+  - #739
+  - Linux Actions : create a release archive
+  - Supporting FreeBSD #748
+  --------------------------------------  
+  * support external variables
+
+  * review how environ is declared in gcc app
+  * declare global variable environ
+  * environ in not defined (missing a library)
+  * compile examples
+  --------------------------------------
+
+  ### EPIC: elena 6.8 ###
+
+  === Iteration 41 ===
+  --------------------------------------
+  dev: 
+  - MTA support for Linux : support MT routines in elenart
   - support :sizeof
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
-  - #620 : backlog
-  - MTA support for Linux : support MT routines in elenart
+  - implement analog of record using meta programming (extensions'records)
+  - upndown (connector - cmdSearch)
+  - VM support for Linux
+  - #748 : i386
+  gen:
+  - work on REPL (elt) : execute simple program
+  api:
+  - api refactoring : main program entry to be called - Program
+  - #622 : api backlog
+  - #34 : http client : support patch, head, options, trace redirects, web api
+  - textgen : support {{ }} special symbols 
   ide:  
   - splitter is not correctly displayed
   - compile in the separate thread
@@ -23,54 +57,18 @@ In development:
   maint:
   - test all x86-64 examples
   - API - review / description
-  api:
-  - api refactoring : main program entry to be called - Program
-  tools:
-  - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
-  - vs #2 : elena.tmLanguage.json  
-  port:
-  - x86-64 : net, threading samples
-  samples:
-  - rosetta code : Program termination, Parallel calculations
-  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
-  prom: 
-  - weekly posting
-  --------------------------------------
-  - #34 : http client : post, put, delete, return status, headers
-  - #743
-  - #739
-  - Linux Actions : create a release archive
-  - Supporting FreeBSD #748
-  --------------------------------------  
-  * check about the length
-  * fix relocation : critical signal
-  * compile examples
-  --------------------------------------
-
-  ### EPIC: elena 6.8 ###
-
-  === Iteration 41 ===
-  --------------------------------------
-  dev: 
-  - implement analog of record using meta programming (extensions'records)
-  - upndown (connector - cmdSearch)
-  - VM support for Linux
-  - #748 : i386
-  gen:
-  - work on REPL (elt) : execute simple program
-  api:
-  - #622 : api backlog
-  - #34 : http client : support patch, head, options, trace redirects, web api
-  - textgen : support {{ }} special symbols 
-  maint:
   - review pi performance (must < 6) : realOp.power[3] byte code
   - nillable single dispatcher : use direct reference to nilValue symbol 
   samples:
   - optimization : pi (used classes byte code)
   port:
   - chat sample
+  tools:
+  - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
+  - vs #2 : elena.tmLanguage.json  
   prom:
   - post an article about records using meta programming
+  - weekly posting
   --------------------------------------
   --------------------------------------
   --------------------------------------
@@ -79,9 +77,12 @@ In development:
   --------------------------------------
   dev: 
   gen:
+  api:
+  ide:  
   maint:
   samples:
   port:
+  tools:
   prom:
   --------------------------------------
   --------------------------------------
@@ -91,9 +92,12 @@ In development:
   --------------------------------------
   dev: 
   gen:
+  api:
+  ide:  
   maint:
   samples:
   port:
+  tools:
   prom:
   --------------------------------------
   --------------------------------------

@@ -163,7 +163,8 @@ enum class SymbolKind
 {
    Normal = 0,
    Static = 1,
-   ThreadVar = 2
+   ThreadVar = 2,
+   ExternVar = 3
 };
 
 struct BranchingInfo

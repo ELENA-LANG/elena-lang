@@ -102,6 +102,7 @@ namespace elena_lang
       InternalCallback,
       ProjectInfo,
       ProjectVariable,
+      ExternalVar,
    };
 
    enum TargetMode
@@ -1670,6 +1671,7 @@ namespace elena_lang
       mssg_t mapMessage(Scope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
 
       ExternalInfo mapExternal(Scope& scope, SyntaxNode node, ref_t nameRef);
+      ExternalInfo mapExternalVariable(Scope& scope, SyntaxNode node, ref_t nameRef);
       static ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
       ObjectInfo mapConstructorTarget(MethodScope& scope);
 

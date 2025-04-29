@@ -812,6 +812,9 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
       case V_THREADVAR:
          symbolKind = SymbolKind::ThreadVar;
          break;
+      case V_EXTERN:
+         symbolKind = SymbolKind::ExternVar;
+         break;
       case 0:
          // ignore idle
          break;

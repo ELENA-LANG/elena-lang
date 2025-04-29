@@ -28,6 +28,7 @@ namespace elena_lang
       struct ElfData
       {
          ReferenceMap functions;
+         ReferenceMap variables;
          LibraryList  libraries;
 
          pos_t dynamicOffset;

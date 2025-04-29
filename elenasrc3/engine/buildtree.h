@@ -181,10 +181,10 @@ namespace elena_lang
       ExtExit              = 0x008F,
       ProcedureReference   = 0x0090,
       LoadingAccToLongIndex = 0x0091,
+      ExternalVarReference = 0x0092,
 
-      MaxOperationalKey    = 0x0091,
-
-      ObjOp                = 0x0092,
+      MaxOperationalKey    = 0x0092,
+      
       AttrDictionaryOp     = 0x0093,
       DeclOp               = 0x0094,
       DeclDictionaryOp     = 0x0095,
@@ -210,6 +210,7 @@ namespace elena_lang
       Import               = 0x00A9,
       DictionaryOp         = 0x00AA,
       ProjectInfoOp        = 0x00AB,
+      ObjOp                = 0x00AC,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,

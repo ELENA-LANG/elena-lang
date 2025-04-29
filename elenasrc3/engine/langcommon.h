@@ -125,7 +125,8 @@ namespace elena_lang
       Singleton,
       Constant,
       ConstantArray,
-      Procedure
+      Procedure,
+      External
    };
 
    struct SymbolInfo
