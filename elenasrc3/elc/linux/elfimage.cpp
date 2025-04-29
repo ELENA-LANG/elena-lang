@@ -463,7 +463,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // code writer
    MemoryWriter codeWriter(code);
-   writePLTStartEntry(codeWriter, importRelRef, gotPltPos);
+   writePLTStartEntry(codeWriter, importRelRef, /*gotPltPos*/0);
 
    // functions
    gotWriter.seek(gotStart);
@@ -531,7 +531,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQWord(24);
 
    dynamicWriter.writeQWord(DT_PLTGOT);
-   dynamicWriter.writeQReference(importRef, gotPltPos);
+   dynamicWriter.writeQReference(importRef, /*gotPltPos*/0);
 
    dynamicWriter.writeQWord(DT_PLTRELSZ);
    dynamicWriter.writeQWord(count * 24);
