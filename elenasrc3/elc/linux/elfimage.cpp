@@ -413,6 +413,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    gotWriter.writeQWord(0);
    pos_t gotStart = gotWriter.position();
    gotWriter.writeBytes(0, count * 8);
+   gotWriter.seek(gotStart);
    
    // reserve relocation table
    MemoryWriter reltabWriter(import);
@@ -466,7 +467,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    writePLTStartEntry(codeWriter, importRelRef, /*gotPltPos*/0);
 
    // functions
-   gotWriter.seek(gotStart);
+   //gotWriter.seek(gotStart);
    reltabWriter.seek(reltabOffset);
    int relocateType = getRelocationType();
    long long symbolIndex = 1;
