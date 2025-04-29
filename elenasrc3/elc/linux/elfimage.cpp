@@ -387,7 +387,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    RelocationMap& importMapping)
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
-   pos_t global_count = /*elfData.variables.count()*/0;
+   pos_t global_count = elfData.variables.count();
 
    MemoryBase* code = provider.getTextSection();
    MemoryBase* data = provider.getDataSection();
@@ -405,23 +405,23 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // reserve got table
    MemoryWriter gotWriter(import);
-   //pos_t gotStartVar = gotWriter.position();
-   //gotWriter.writeBytes(0, global_count * 8);
+   pos_t gotStartVar = gotWriter.position();
+   gotWriter.writeBytes(0, global_count * 8);
    pos_t gotPltPos = gotWriter.position();
    gotWriter.writeQReference(mskDataRef64, elfData.dynamicOffset);
    gotWriter.writeQWord(0);   // reserved for run-time linker
    gotWriter.writeQWord(0);
    pos_t gotStart = gotWriter.position();
    gotWriter.writeBytes(0, count * 8);
-   gotWriter.seek(gotStart);
+   //gotWriter.seek(gotStart);
    
    // reserve relocation table
    MemoryWriter reltabWriter(import);
-   //pos_t relGlobalOffset = reltabWriter.position();
-   //reltabWriter.writeBytes(0, global_count * 24);
+   pos_t relGlobalOffset = reltabWriter.position();
+   reltabWriter.writeBytes(0, global_count * 24);
    pos_t reltabOffset = reltabWriter.position();
    reltabWriter.writeBytes(0, count * 24);
-   reltabWriter.seek(reltabOffset);
+   //reltabWriter.seek(reltabOffset);
       
    // reserve symbol table
    MemoryWriter symtabWriter(import);
@@ -465,11 +465,11 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // code writer
    MemoryWriter codeWriter(code);
-   writePLTStartEntry(codeWriter, importRelRef, /*gotPltPos*/0);
+   writePLTStartEntry(codeWriter, importRelRef, gotPltPos);
 
    // functions
-   //gotWriter.seek(gotStart);
-   //reltabWriter.seek(reltabOffset);
+   gotWriter.seek(gotStart);
+   reltabWriter.seek(reltabOffset);
    int relocateType = getRelocationType();
    long long symbolIndex = 1;
    int pltIndex = 1;
@@ -533,7 +533,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQWord(24);
 
    dynamicWriter.writeQWord(DT_PLTGOT);
-   dynamicWriter.writeQReference(importRef, /*gotPltPos*/0);
+   dynamicWriter.writeQReference(importRef, gotPltPos);
 
    dynamicWriter.writeQWord(DT_PLTRELSZ);
    dynamicWriter.writeQWord(count * 24);
