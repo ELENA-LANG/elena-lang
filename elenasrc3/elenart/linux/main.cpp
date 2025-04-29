@@ -35,8 +35,6 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
 #endif // defined
 
-extern char** environ;
-
 //#define DEBUG_OUTPUT 1
 
 static ELENARTMachine* machine = nullptr;
