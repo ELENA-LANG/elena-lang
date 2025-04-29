@@ -432,10 +432,6 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    pos_t strOffset = strWriter.position();
    strWriter.writeChar('\0');
 
-   // code writer
-   MemoryWriter codeWriter(code);
-   writePLTStartEntry(codeWriter, importRelRef, 0);
-
    // globals
    if (global_count > 0) {
       gotWriter.seek(gotStartVar);
@@ -464,6 +460,10 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
          gotWriter.writeQWord(0);
       }
    }
+
+   // code writer
+   MemoryWriter codeWriter(code);
+   writePLTStartEntry(codeWriter, importRelRef, gotPltPos);
 
    // functions
    gotWriter.seek(gotStart);
