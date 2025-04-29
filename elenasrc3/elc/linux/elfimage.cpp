@@ -547,7 +547,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQReference(importRef, relGlobalOffset);
 
    dynamicWriter.writeQWord(DT_RELASZ);
-   dynamicWriter.writeQWord(global_count * 24);
+   dynamicWriter.writeQWord(/*global_count * 24*/0);
 #else
    assert(global_count == 0); // !! temporally globals are supported only for FreeBSD
 
