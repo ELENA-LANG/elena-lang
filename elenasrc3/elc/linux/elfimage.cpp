@@ -409,7 +409,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    gotWriter.writeQWord(0);   // reserved for run-time linker
    gotWriter.writeQWord(0);
    pos_t gotStart = gotWriter.position();
-   gotWriter.writeBytes(0, count * 8);
+   gotWriter.writeBytes(0, (count + global_count) * 8);
    gotWriter.seek(gotStart);
 
    // reserve relocation table
