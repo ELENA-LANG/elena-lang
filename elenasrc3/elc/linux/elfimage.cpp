@@ -407,6 +407,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    MemoryWriter gotWriter(import);
    pos_t gotStartVar = gotWriter.position();
    gotWriter.writeBytes(0, global_count * 8);
+   pos_t gotPltPos = gotWriter.position();
    gotWriter.writeQReference(mskDataRef64, elfData.dynamicOffset);
    gotWriter.writeQWord(0);   // reserved for run-time linker
    gotWriter.writeQWord(0);
@@ -530,7 +531,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQWord(24);
 
    dynamicWriter.writeQWord(DT_PLTGOT);
-   dynamicWriter.writeQReference(importRef, /*gotStart*/0);
+   dynamicWriter.writeQReference(importRef, gotPltPos);
 
    dynamicWriter.writeQWord(DT_PLTRELSZ);
    dynamicWriter.writeQWord(count * 24);
