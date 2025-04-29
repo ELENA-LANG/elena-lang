@@ -1021,7 +1021,7 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
                      case SymbolType::Procedure:
                         return { ObjectKind::InternalCallback, { V_OBJECT }, reference };
                      case SymbolType::External:
-                        return { ObjectKind::ExternalVar, { symbolInfo.typeRef }, reference };
+                        return { ObjectKind::ExternalVar, { symbolInfo.typeRef }, symbolInfo.valueRef };
                      default:
                         break;
                   }
