@@ -440,6 +440,8 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
       int globalRelocateType = /*getGlobalRelocationType()*/6;
       for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
+         printf("%s\n", glob.key().str());
+
          pos_t gotPosition = gotWriter.position();
 
          ref_t globalRef = *glob & ~mskAnyRef;
@@ -449,7 +451,8 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
          // relocation table entry
          reltabWriter.writeQReference(importRef, gotPosition);
-         reltabWriter.writeQWord((strIndex << 32) + globalRelocateType);
+         reltabWriter.writeDWord(globalRelocateType);
+         reltabWriter.writeDWord(strIndex);
          reltabWriter.writeQWord(0);
 
          // string table entry
