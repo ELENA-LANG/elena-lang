@@ -1,11 +1,11 @@
 import extensions;
 
-extern pointer environ
-  = libc;
+//extern pointer environ
+//  = libc;
 
 public program()
 {
-   pointer ptr := environ;
+//   pointer ptr := environ;
 
    Console.writeLine("Hello");
 }
