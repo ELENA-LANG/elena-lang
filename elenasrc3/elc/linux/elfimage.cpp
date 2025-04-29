@@ -35,10 +35,11 @@ pos_t ElfImageFormatter :: fillImportTable(AddressMap::Iterator it, ElfData& elf
          }
       }
 
-      if (functionName.startsWith("##")) {
-         elfData.variables.add(functionName + 2, (ref_t)*it);
+      if (!functionName.startsWith("##")) {
+         elfData.functions.add(functionName, (ref_t)*it);
+         count++;
       }
-      else elfData.functions.add(functionName, (ref_t)*it);
+      else elfData.variables.add(functionName + 2, (ref_t)*it); 
 
       ustr_t lib = elfData.libraries.retrieve<ustr_t>(*dll, [](ustr_t item, ustr_t current)
       {
@@ -49,7 +50,6 @@ pos_t ElfImageFormatter :: fillImportTable(AddressMap::Iterator it, ElfData& elf
       }
 
       ++it;
-      count++;
    }
 
    return count;
@@ -421,6 +421,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    //reltabWriter.writeBytes(0, global_count * 24);
    pos_t reltabOffset = reltabWriter.position();
    reltabWriter.writeBytes(0, count * 24);
+   reltabWriter.seek(reltabOffset);
       
    // reserve symbol table
    MemoryWriter symtabWriter(import);
@@ -468,7 +469,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // functions
    //gotWriter.seek(gotStart);
-   reltabWriter.seek(reltabOffset);
+   //reltabWriter.seek(reltabOffset);
    int relocateType = getRelocationType();
    long long symbolIndex = 1;
    int pltIndex = 1;
