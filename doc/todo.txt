@@ -42,8 +42,8 @@ In development:
   - Linux Actions : create a release archive
   - Supporting FreeBSD #748
   --------------------------------------  
-  * fix : there is no dynamic section
-  * fix relocation : unsupported relocation type 7 in non-PLT relocation
+  * check about the length
+  * fix relocation : critical signal
   * compile examples
   --------------------------------------
 
