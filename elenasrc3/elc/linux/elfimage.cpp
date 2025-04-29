@@ -434,34 +434,34 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    pos_t strOffset = strWriter.position();
    strWriter.writeChar('\0');
 
-   //// globals
-   //if (global_count > 0) {
-   //   gotWriter.seek(gotStartVar);
-   //   reltabWriter.seek(relGlobalOffset);
+   // globals
+   if (global_count > 0) {
+      gotWriter.seek(gotStartVar);
+      reltabWriter.seek(relGlobalOffset);
 
-   //   int globalRelocateType = /*getGlobalRelocationType()*/6;
-   //   for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
-   //      printf("%s\n", glob.key().str());
+      int globalRelocateType = /*getGlobalRelocationType()*/6;
+      for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
+         printf("%s\n", glob.key().str());
 
-   //      pos_t gotPosition = gotWriter.position();
+         pos_t gotPosition = gotWriter.position();
 
-   //      ref_t globalRef = *glob & ~mskAnyRef;
-   //      importMapping.add(globalRef | mskImportRelRef32, gotPosition);
+         ref_t globalRef = *glob & ~mskAnyRef;
+         importMapping.add(globalRef | mskImportRelRef32, gotPosition);
 
-   //      pos_t strIndex = strWriter.position() - strOffset;
+         pos_t strIndex = strWriter.position() - strOffset;
 
-   //      // relocation table entry
-   //      reltabWriter.writeQReference(importRef, gotPosition);
-   //      reltabWriter.writeDWord(globalRelocateType);
-   //      reltabWriter.writeDWord(strIndex);
-   //      reltabWriter.writeQWord(0);
+         // relocation table entry
+         reltabWriter.writeQReference(importRef, gotPosition);
+         reltabWriter.writeDWord(globalRelocateType);
+         reltabWriter.writeDWord(strIndex);
+         reltabWriter.writeQWord(0);
 
-   //      // string table entry
-   //      strWriter.writeString(glob.key());
+         // string table entry
+         strWriter.writeString(glob.key());
 
-   //      gotWriter.writeQWord(0);
-   //   }
-   //}
+         gotWriter.writeQWord(0);
+      }
+   }
 
    // code writer
    MemoryWriter codeWriter(code);
@@ -546,10 +546,10 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
 #if defined(__FreeBSD__)
    dynamicWriter.writeQWord(DT_RELA);
-   dynamicWriter.writeQReference(importRef, /*relGlobalOffset*/0);
+   dynamicWriter.writeQReference(importRef, relGlobalOffset);
 
    dynamicWriter.writeQWord(DT_RELASZ);
-   dynamicWriter.writeQWord(/*global_count * 24*/0);
+   dynamicWriter.writeQWord(global_count * 24);
 #else
    assert(global_count == 0); // !! temporally globals are supported only for FreeBSD
 
