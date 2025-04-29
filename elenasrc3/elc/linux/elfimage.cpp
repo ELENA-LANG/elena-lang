@@ -500,13 +500,13 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQWord(DT_PLTREL);
    dynamicWriter.writeQWord(DT_RELA);
 
-#if !defined(__FreeBSD__)
    dynamicWriter.writeQWord(DT_JMPREL);
    dynamicWriter.writeQReference(importRef, reltabOffset);
-#endif
 
+#if !defined(__FreeBSD__)
    dynamicWriter.writeQWord(DT_RELA);
    dynamicWriter.writeQReference(importRef, reltabOffset);
+#endif
 
    dynamicWriter.writeQWord(DT_RELASZ);
    dynamicWriter.writeQWord(count * 24);
