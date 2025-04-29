@@ -405,13 +405,14 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // reserve got table
    MemoryWriter gotWriter(import);
+   pos_t gotStartVar = gotWriter.position();
+   gotWriter.writeBytes(0, global_count * 8);
    gotWriter.writeQReference(mskDataRef64, elfData.dynamicOffset);
    gotWriter.writeQWord(0);   // reserved for run-time linker
    gotWriter.writeQWord(0);
    pos_t gotStart = gotWriter.position();
-   gotWriter.writeBytes(0, (count + global_count) * 8);
-   gotWriter.seek(gotStart);
-
+   gotWriter.writeBytes(0, count * 8);
+   
    // reserve relocation table
    MemoryWriter reltabWriter(import);
    pos_t relGlobalOffset = reltabWriter.position();
@@ -436,6 +437,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // globals
    if (global_count > 0) {
+      gotWriter.seek(gotStartVar);
       reltabWriter.seek(relGlobalOffset);
 
       int globalRelocateType = /*getGlobalRelocationType()*/6;
@@ -463,6 +465,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    }
 
    // functions
+   gotWriter.seek(gotStart);
    reltabWriter.seek(reltabOffset);
    int relocateType = getRelocationType();
    long long symbolIndex = 1;
