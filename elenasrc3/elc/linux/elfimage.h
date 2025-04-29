@@ -35,7 +35,7 @@ namespace elena_lang
          pos_t dynamicSize;
 
          ElfData()
-            : functions(0), libraries(nullptr)
+            : functions(0), variables(0), libraries(nullptr)
          {
             dynamicOffset = dynamicSize = 0;
          }

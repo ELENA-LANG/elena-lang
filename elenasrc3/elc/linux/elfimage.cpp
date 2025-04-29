@@ -120,7 +120,7 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
 
    // --- data segment ---
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
-   fileOffset = align(fileOffset + fileSize, fileAlignment);   
+   fileOffset = align(fileOffset + fileSize, fileAlignment);
    // NOTE : due to loader requirement, adjust offset
    sectionOffset += (fileOffset & (sectionAlignment - 1));
 
@@ -149,7 +149,7 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
       map.stat = map.tls + tls->length();
    }
    else map.stat = map.data + data->length();
-   
+
    map.dataSize += stat->length();
 
    sectionSize += align(stat->length(), fileAlignment);
@@ -438,7 +438,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    if (global_count > 0) {
       reltabWriter.seek(relGlobalOffset);
 
-      int globalRelocateType = getGlobalRelocationType();
+      int globalRelocateType = /*getGlobalRelocationType()*/6;
       for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
          pos_t gotPosition = gotWriter.position();
 
@@ -453,7 +453,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
          reltabWriter.writeQWord(0);
 
          // string table entry
-         strWriter.writeString(fun.key());
+         strWriter.writeString(glob.key());
 
          gotWriter.writeQWord(0);
       }
