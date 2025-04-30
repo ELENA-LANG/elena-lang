@@ -387,7 +387,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    RelocationMap& importMapping)
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
-   //pos_t global_count = elfData.variables.count();
+   pos_t global_count = /*elfData.variables.count()*/0;
 
    MemoryBase* code = provider.getTextSection();
    MemoryBase* data = provider.getDataSection();
@@ -543,6 +543,8 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQWord(DT_JMPREL);
    dynamicWriter.writeQReference(importRef, reltabOffset);
 
+   assert(global_count == 0); // !! temporally globals are not supported
+
 #if defined(__FreeBSD__)
    dynamicWriter.writeQWord(DT_RELA);
    dynamicWriter.writeQReference(importRef, reltabOffset/*relatabOffset*/);
@@ -550,8 +552,6 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQWord(DT_RELASZ);
    dynamicWriter.writeQWord(/*global_count * 24*/0);
 #else
-   assert(global_count == 0); // !! temporally globals are supported only for FreeBSD
-
    dynamicWriter.writeQWord(DT_RELA);
    dynamicWriter.writeQReference(importRef, reltabOffset);
 
