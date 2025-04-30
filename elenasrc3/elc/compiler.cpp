@@ -2434,8 +2434,6 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
    if (!templateRef)
       return false;
 
-   SyntaxNode lastChild = target.parentNode().lastChild();
-
    // NOTE : for the property template, target is the property field
    if (!_templateProcessor->importPropertyTemplate(*scope.moduleScope, templateRef,
       target, parameters))
