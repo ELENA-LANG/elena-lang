@@ -13,11 +13,11 @@ namespace elena_lang
 {
 
    // --- path_t ---
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
    typedef wstr_t path_t;
 
-#elif __GNUG__
+#elif defined(__unix__)
 
    typedef ustr_t path_t;
 
@@ -41,7 +41,7 @@ namespace elena_lang
       static bool isRelative(path_t path, size_t length);
 
       static bool checkExtension(path_t path, path_t extension);
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
       static bool checkExtension(path_t path, ustr_t extension);
 #endif
 
@@ -133,7 +133,7 @@ namespace elena_lang
          copy(root);
          combine(subPath);
       }
-   #ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
       bool append(const path_c* s, size_t length)
       {
          return String::append(s, length);
