@@ -475,8 +475,6 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    // globals
    if (global_count > 0) {
       gotWriter.seek(gotStartVar);
-      reltabWriter.seek(relGlobalOffset);
-
       for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
          pos_t gotPosition = gotWriter.position();
 
@@ -490,7 +488,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
          symtabWriter.writeByte(0x11);
          symtabWriter.writeByte(0);
          symtabWriter.writeWord(0x1B); // R_X86_64_GOT64
-         reltabWriter.writeQReference(importRef, gotPosition);
+         symtabWriter.writeQReference(importRef, gotPosition);
          symtabWriter.writeQWord(0);
 
          // string table entry
