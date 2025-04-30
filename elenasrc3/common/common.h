@@ -70,7 +70,7 @@ namespace elena_lang
 
 #endif
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
    constexpr auto PATH_SEPARATOR = '\\';
 
