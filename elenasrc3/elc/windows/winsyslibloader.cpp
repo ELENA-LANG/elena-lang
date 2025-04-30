@@ -23,5 +23,9 @@ WinSysLibraryLoader :: WinSysLibraryLoader(path_t libraryPath)
 
 void* WinSysLibraryLoader :: loadFunction(const char* name)
 {
+#if defined(_MSC_VER)
    return GetProcAddress((HINSTANCE)_handle, name);
+#else
+   return (void*)GetProcAddress((HINSTANCE)_handle, name);
+#endif
 }
