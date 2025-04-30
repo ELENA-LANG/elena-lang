@@ -7,12 +7,6 @@ In development:
 
   === Iteration 40 (4.05) ===
   --------------------------------------
-  dev: 
-  - #620 : backlog
-  samples:
-  - rosetta code : Program termination, Parallel calculations
-  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
-  --------------------------------------
   - #34 : http client : post, put, delete, return status, headers
   - #743
   - #739
@@ -34,6 +28,7 @@ In development:
   - upndown (connector - cmdSearch)
   - VM support for Linux
   - #748 : i386
+  - #620 : backlog
   gen:
   - work on REPL (elt) : execute simple program
   api:
@@ -56,6 +51,8 @@ In development:
   - nillable single dispatcher : use direct reference to nilValue symbol 
   samples:
   - optimization : pi (used classes byte code)
+  - rosetta code : Program termination, Parallel calculations
+  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
   port:
   - chat sample
   tools:
