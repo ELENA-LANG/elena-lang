@@ -67,7 +67,6 @@ void init()
 void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
    printf("testing\n");
-   printf("args : %x %x %x\n", (int)env, (int)entryList, (int)criricalHandler);
 
    systemEnv = env;
 
