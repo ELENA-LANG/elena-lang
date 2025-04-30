@@ -19,10 +19,7 @@ using namespace elena_lang;
 
 //#ifden __FreeBSD__
 
-extern "C"
-{
-   DLL_PUBLIC char** environ;
-}
+extern char** environ;
 
 //#endif
 
