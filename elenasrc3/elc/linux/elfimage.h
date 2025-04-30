@@ -122,6 +122,7 @@ namespace elena_lang
 
       virtual int getRelocationType() = 0;
 
+      pos_t fillElfHashTable(ElfData& elfData, MemoryBase* image, int nbucket, int nchain);
       void fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment, RelocationMap& importMapping) override;
 
    public:

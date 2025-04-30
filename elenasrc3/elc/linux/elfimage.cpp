@@ -17,6 +17,20 @@
 
 using namespace elena_lang;
 
+unsigned long elf_hash(const unsigned char* name)
+{
+   unsigned long h = 0, g;
+
+   while (*name)
+   {
+      h = (h << 4) + *name++;
+      if (g = h & 0xf0000000)
+         h ^= g >> 24;
+      h &= ~g;
+   }
+   return h;
+}
+
 // --- ElfImageFormatter ---
 
 pos_t ElfImageFormatter :: fillImportTable(AddressMap::Iterator it, ElfData& elfData)
@@ -283,6 +297,7 @@ void Elf32ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    }
 
    // write dynamic segment
+   fillHashTable64();
 
    // write libraries needed to be loaded
    auto dll = elfData.libraries.start();
@@ -382,6 +397,41 @@ pos_t ElfI386ImageFormatter :: writePLTEntry(MemoryWriter& codeWriter, pos_t sym
 }
 
 // --- Elf64ImageFormatter ---
+
+pos_t Elf64ImageFormatter :: fillElfHashTable(ElfData& elfData, MemoryBase* import, int nbucket, int nchain)
+{
+   MemoryWriter hashWriter(import);
+
+   pos_t position = hashWriter.position();
+   hashWriter.writeDWord(nbucket);
+   hashWriter.writeDWord(nchain);
+   
+   pos_t bucketPos = hashWriter.position();
+   hashWriter.writeBytes(0, sizeof(Elf64_Word) * nbucket);
+   pos_t chainPos = hashWriter.position();
+   hashWriter.writeBytes(0, sizeof(Elf64_Word) * nchain);
+
+   int* bucket = import->get(bucketPos);
+   int* chain = import->get(chainPos);
+
+   Elf64_Word k = 0;
+   for (auto fun = elfData.functions.start(); !fun.eof(); ++fun) {
+      unsigned char* symbol = fun.key();
+      unsigned long x = elf_hash(symbol);
+      if (bucket[x % nbucket] == STN_UNDEF) {
+         bucket[x % nbucket] = k;
+      }
+      else {
+         Elf64_Word y = bucket[x % nbucket];
+         while (chain[y] != STN_UNDEF)
+            y = chain[y];
+         chain[y] = k;
+      }
+      k++;   
+   }
+
+   return position;
+}
 
 void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment,
    RelocationMap& importMapping)
@@ -504,7 +554,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    //   }
    //}
 
-   // write dynamic segment
+   // == write dynamic segment ==
 
    // write libraries needed to be loaded
    auto dll = elfData.libraries.start();
@@ -519,6 +569,14 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    strWriter.writeChar('\0');
    pos_t strLength = strWriter.position() - strOffset;
 
+   // build hash table
+   int nchain = count + 1;
+   int nbucket = nchain * 2 + 1;   
+   pos_t hashffset = fillElfHashTable(elfDatam, import, nchain, nbucket);
+   dynamicWriter.writeQWord(DT_HASH);
+   dynamicWriter.writeQReference(importRef, hashffset);
+
+   // fill other mandatory entries
    dynamicWriter.writeQWord(DT_STRTAB);
    dynamicWriter.writeQReference(importRef, strOffset);
 

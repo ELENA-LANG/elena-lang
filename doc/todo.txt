@@ -19,7 +19,7 @@ In development:
   - Linux Actions : create a release archive
   - Supporting FreeBSD #748
   --------------------------------------  
-  * support external variables
+  * implement hash table
 
   * review how environ is declared in gcc app
   * declare global variable environ
