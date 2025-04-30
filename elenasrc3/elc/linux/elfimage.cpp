@@ -546,11 +546,11 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    assert(global_count == 0); // !! temporally globals are not supported
 
 #if defined(__FreeBSD__)
-   //dynamicWriter.writeQWord(DT_RELA);
-   //dynamicWriter.writeQReference(importRef, reltabOffset/*relatabOffset*/);
+   dynamicWriter.writeQWord(DT_RELA);
+   dynamicWriter.writeQReference(importRef, reltabOffset/*relatabOffset*/);
 
-   //dynamicWriter.writeQWord(DT_RELASZ);
-   //dynamicWriter.writeQWord(/*global_count * 24*/0);
+   dynamicWriter.writeQWord(DT_RELASZ);
+   dynamicWriter.writeQWord(/*global_count * 24*/0);
 #else
    dynamicWriter.writeQWord(DT_RELA);
    dynamicWriter.writeQReference(importRef, reltabOffset);
@@ -599,11 +599,7 @@ void ElfAmd64ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_
    codeWriter.writeDReference(gotReference, gotPlt + 8);
    codeWriter.writeWord(0x25FF);
    codeWriter.writeDReference(gotReference, gotPlt + 16);
-#if defined(__FreeBSD__)
-   codeWriter.writeDWord(0x401F0F);
-#else
    codeWriter.writeDWord(0);
-#endif
 }
 
 pos_t ElfAmd64ImageFormatter :: writePLTEntry(MemoryWriter& codeWriter, pos_t symbolIndex, ref_t gotReference, pos_t gotOffset, int entryIndex)

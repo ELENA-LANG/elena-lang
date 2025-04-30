@@ -684,7 +684,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra == roperand.extra;
 
-            retVal = retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
+            retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -693,7 +693,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra != roperand.extra;
 
-            retVal = retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
+            retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -702,7 +702,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra > roperand.extra;
 
-            retVal = retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
+            retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -711,7 +711,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra <= roperand.extra;
 
-            retVal = retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
+            retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -720,7 +720,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra < roperand.extra;
 
-            retVal = retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
+            retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
@@ -729,7 +729,7 @@ bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, Object
          if (loperand.kind == ObjectKind::IntLiteral && roperand.kind == ObjectKind::IntLiteral) {
             bool value = loperand.extra >= roperand.extra;
 
-            retVal = retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
+            retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
 
             return true;
          }
