@@ -67,8 +67,11 @@ void init()
 void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
    printf("testing\n");
+   printf("args : %x %x %x\n", (int)env, (int)entryList, (int)criricalHandler);
 
    systemEnv = env;
+
+   printf("testing2");
 
 #ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
@@ -208,8 +211,6 @@ int GetArgLA(int index, char* buffer, int length)
 
 void PrepareLA(uintptr_t arg)
 {
-   printf("PrepareLA\n");
-
    __argc = *(int*)arg;
 
 #if defined __PPC64__
