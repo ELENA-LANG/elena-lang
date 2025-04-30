@@ -149,6 +149,21 @@ ifeq ($(OS),Windows_NT)
 $(OBJDIR_RELEASE)/__/windows/elc.o: ../windows/elc.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/elc.cpp -o $(OBJDIR_RELEASE)/__/windows/elc.o
 
+$(OBJDIR_RELEASE)/__/windows/elfimage.o: ../windows/elfimage.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntimage.cpp -o $(OBJDIR_RELEASE)/__/windows/ntimage.o
+
+$(OBJDIR_RELEASE)/__/windows/elflinker.o: ../windows/elflinker.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker.o
+
+$(OBJDIR_RELEASE)/__/windows/elflinker32.o: ../windows/elflinker32.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker32.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker32.o
+
+$(OBJDIR_RELEASE)/__/windows/elflinker64.o: ../windows/elflinker64.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker64.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker64.o
+
+$(OBJDIR_RELEASE)/__/windows/elfsyslibloader.o: ../windows/elfsyslibloader.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/winsyslibloader.cpp -o $(OBJDIR_RELEASE)/__/windows/winsyslibloader.o
+
 else
 
 $(OBJDIR_RELEASE)/__/linux/elc.o: ../linux/elc.cpp
