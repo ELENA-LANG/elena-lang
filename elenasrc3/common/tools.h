@@ -87,7 +87,7 @@ inline void freestr(unsigned short* s)
 
 // --- miscellaneous string routines ---
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 inline static size_t __fastcall getlength(const wchar_t* s)
 {
@@ -104,7 +104,7 @@ inline static int __fastcall getlength_int(const wchar_t* s)
    return (s == nullptr) ? 0 : (int)wcslen(s);
 }
 
-#elif __GNUG__
+#elif defined(__unix__)
 
 inline size_t getlength(const unsigned short* s)
 {
