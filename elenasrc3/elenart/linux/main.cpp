@@ -206,8 +206,6 @@ int GetArgLA(int index, char* buffer, int length)
 
 void PrepareLA(uintptr_t arg)
 {
-   printf("PrepareLA\n");
-
    __argc = *(int*)arg;
 
 #if defined __PPC64__
@@ -220,6 +218,8 @@ void PrepareLA(uintptr_t arg)
    __argv = (char**)(arg + sizeof(uintptr_t));
 
 #endif
+
+   printf("PrepareLA %x\n", __argc);
 }
 
 void ExitLA(int retVal)
