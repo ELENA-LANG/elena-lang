@@ -24,6 +24,8 @@
 
 extern "C"
 {
+   DLL_PUBLIC char** __environ;
+
    DLL_PUBLIC void InitializeSTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
    DLL_PUBLIC void InitializeMTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
    DLL_PUBLIC void* CollectGCLA(void* roots, size_t size);
