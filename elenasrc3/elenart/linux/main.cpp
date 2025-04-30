@@ -17,11 +17,12 @@ using namespace elena_lang;
 #define ROOT_PATH          "/usr/lib/elena"
 #define CONFIG_PATH        "/etc/elena/elenart60.config"
 
-//#ifden __FreeBSD__
+#ifden __FreeBSD__
 
-extern char** environ;
+const char* __progname = "elena-prog";
+char** environ = nullptr;
 
-//#endif
+#endif
 
 #if defined(__x86_64__)
 
