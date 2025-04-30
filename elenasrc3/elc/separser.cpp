@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Script Engine Parser class declaration.
 //
-//                                             (C)2023-2024, by Aleksey Rakov
+//                                             (C)2023-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -12,7 +12,7 @@
 
 #include "parser.h"
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 #include "windows\winsyslibloader.h"
 
