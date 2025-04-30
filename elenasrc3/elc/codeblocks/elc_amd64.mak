@@ -15,17 +15,18 @@ INC = -I.. -I../../engine -I../../common
 ifeq ($(OS),Windows_NT)
 
 CFLAGS = -Wall -std=c++20 -m64 -municode
+LDFLAGS = -m64 -static-libgcc -static-libstdc++
 
 else
 
 CFLAGS = -Wall -std=c++20 -m64
+LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
 
 endif
 
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O3
