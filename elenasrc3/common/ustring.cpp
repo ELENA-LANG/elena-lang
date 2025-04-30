@@ -648,7 +648,7 @@ char* util_clone(const char* s, size_t length)
    else return nullptr;
 }
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 char* util_clone(const char* s)
 {
@@ -1076,7 +1076,7 @@ char* StrFactory :: reallocate(char* s, size_t size)
    return (char*)realloc(s, size);
 }
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 void StrUtil :: move(wide_c* s1, const wide_c* s2, size_t length)
 {
