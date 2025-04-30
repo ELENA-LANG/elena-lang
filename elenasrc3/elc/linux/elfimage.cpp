@@ -53,7 +53,7 @@ pos_t ElfImageFormatter :: fillImportTable(AddressMap::Iterator it, ElfData& elf
          elfData.functions.add(functionName, (ref_t)*it);
          count++;
       }
-      else elfData.variables.add(functionName + 2, (ref_t)*it); 
+      else elfData.variables.add(functionName + 2, (ref_t)*it);
 
       ustr_t lib = elfData.libraries.retrieve<ustr_t>(*dll, [](ustr_t item, ustr_t current)
       {
@@ -296,8 +296,7 @@ void Elf32ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
       pltIndex++;
    }
 
-   // write dynamic segment
-   fillHashTable64();
+   // == write dynamic segment ==
 
    // write libraries needed to be loaded
    auto dll = elfData.libraries.start();
@@ -405,18 +404,18 @@ pos_t Elf64ImageFormatter :: fillElfHashTable(ElfData& elfData, MemoryBase* impo
    pos_t position = hashWriter.position();
    hashWriter.writeDWord(nbucket);
    hashWriter.writeDWord(nchain);
-   
+
    pos_t bucketPos = hashWriter.position();
    hashWriter.writeBytes(0, sizeof(Elf64_Word) * nbucket);
    pos_t chainPos = hashWriter.position();
    hashWriter.writeBytes(0, sizeof(Elf64_Word) * nchain);
 
-   int* bucket = import->get(bucketPos);
-   int* chain = import->get(chainPos);
+   int* bucket = (int*)import->get(bucketPos);
+   int* chain = (int*)import->get(chainPos);
 
    Elf64_Word k = 0;
    for (auto fun = elfData.functions.start(); !fun.eof(); ++fun) {
-      unsigned char* symbol = fun.key();
+      const unsigned char* symbol = (const unsigned char*)fun.key().str();
       unsigned long x = elf_hash(symbol);
       if (bucket[x % nbucket] == STN_UNDEF) {
          bucket[x % nbucket] = k;
@@ -427,7 +426,7 @@ pos_t Elf64ImageFormatter :: fillElfHashTable(ElfData& elfData, MemoryBase* impo
             y = chain[y];
          chain[y] = k;
       }
-      k++;   
+      k++;
    }
 
    return position;
@@ -463,12 +462,12 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    gotWriter.writeQWord(0);
    pos_t gotStart = gotWriter.position();
    gotWriter.writeBytes(0, count * 8);
-   
+
    // reserve relocation table
    MemoryWriter reltabWriter(import);
    pos_t reltabOffset = reltabWriter.position();
    reltabWriter.writeBytes(0, count * 24);
-      
+
    // reserve symbol table
    MemoryWriter symtabWriter(import);
    pos_t symtabOffset = symtabWriter.position();
@@ -571,8 +570,8 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // build hash table
    int nchain = count + 1;
-   int nbucket = nchain * 2 + 1;   
-   pos_t hashffset = fillElfHashTable(elfDatam, import, nchain, nbucket);
+   int nbucket = nchain * 2 + 1;
+   pos_t hashffset = fillElfHashTable(elfData, import, nchain, nbucket);
    dynamicWriter.writeQWord(DT_HASH);
    dynamicWriter.writeQReference(importRef, hashffset);
 
