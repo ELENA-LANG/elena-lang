@@ -11,7 +11,17 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
+
+ifeq ($(OS),Windows_NT)
+
 CFLAGS = -Wall -std=c++20 -m64
+
+else
+
+CFLAGS = -Wall -std=c++20 -m64 -municode
+
+endif
+
 RESINC = 
 LIBDIR = 
 LIB = 
@@ -46,8 +56,13 @@ before_release:
 	test -d ../../../bin || mkdir -p ../../../bin
 	test -d $(OBJDIR_RELEASE)/__ || mkdir -p $(OBJDIR_RELEASE)/__
 	test -d $(OBJDIR_RELEASE)/__/__/engine || mkdir -p $(OBJDIR_RELEASE)/__/__/engine
+ifeq ($(OS),Windows_NT)
+	test -d $(OBJDIR_RELEASE)/__/__/engine/windows || mkdir -p $(OBJDIR_RELEASE)/__/__/engine/windows
+	test -d $(OBJDIR_RELEASE)/__/windows || mkdir -p $(OBJDIR_RELEASE)/__/windows
+else
 	test -d $(OBJDIR_RELEASE)/__/__/engine/linux || mkdir -p $(OBJDIR_RELEASE)/__/__/engine/linux
 	test -d $(OBJDIR_RELEASE)/__/linux || mkdir -p $(OBJDIR_RELEASE)/__/linux
+endif
 	test -d $(OBJDIR_RELEASE)/__/__/common || mkdir -p $(OBJDIR_RELEASE)/__/__/common
 
 after_release: 
@@ -123,9 +138,6 @@ $(OBJDIR_RELEASE)/__/__/engine/serializer.o: ../../engine/serializer.cpp
 $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o: ../../engine/scriptreader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/scriptreader.cpp -o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o
 
-$(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o: ../../engine/linux/presenter.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o
-
 $(OBJDIR_RELEASE)/__/codeimage.o: ../codeimage.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../codeimage.cpp -o $(OBJDIR_RELEASE)/__/codeimage.o
 
@@ -146,6 +158,9 @@ $(OBJDIR_RELEASE)/__/modulescope.o: ../modulescope.cpp
 
 ifeq ($(OS),Windows_NT)
 
+$(OBJDIR_RELEASE)/__/__/engine/windows/presenter.o: ../../engine/windows/presenter.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/windows/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/windows/presenter.o
+
 $(OBJDIR_RELEASE)/__/windows/elc.o: ../windows/elc.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/elc.cpp -o $(OBJDIR_RELEASE)/__/windows/elc.o
 
@@ -165,6 +180,9 @@ $(OBJDIR_RELEASE)/__/windows/elfsyslibloader.o: ../windows/elfsyslibloader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/winsyslibloader.cpp -o $(OBJDIR_RELEASE)/__/windows/winsyslibloader.o
 
 else
+
+$(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o: ../../engine/linux/presenter.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o
 
 $(OBJDIR_RELEASE)/__/linux/elc.o: ../linux/elc.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elc.cpp -o $(OBJDIR_RELEASE)/__/linux/elc.o
