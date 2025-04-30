@@ -35,7 +35,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
 #endif // defined
 
-//#define DEBUG_OUTPUT 1
+#define DEBUG_OUTPUT 1
 
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
@@ -207,8 +207,6 @@ int GetArgLA(int index, char* buffer, int length)
 void PrepareLA(uintptr_t arg)
 {
    __argc = *(int*)arg;
-
-   printf("PrepareLA %x %x\n", arg, __argc);
 
 #if defined __PPC64__
 
