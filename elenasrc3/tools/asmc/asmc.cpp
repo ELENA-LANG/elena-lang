@@ -64,7 +64,7 @@ void printLine(ustr_t mssg, path_t path)
 
 constexpr auto targetPlatform = ASM_FREEBSD_TARGET;
 
-#eldef __unix__         
+#elif __unix__         
 
 constexpr auto targetPlatform = ASM_LNX_TARGET;
 
