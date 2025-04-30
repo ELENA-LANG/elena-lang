@@ -14,11 +14,11 @@ INC = -I.. -I../../engine -I../../common
 
 ifeq ($(OS),Windows_NT)
 
-CFLAGS = -Wall -std=c++20 -m64
+CFLAGS = -Wall -std=c++20 -m64 -municode
 
 else
 
-CFLAGS = -Wall -std=c++20 -m64 -municode
+CFLAGS = -Wall -std=c++20 -m64
 
 endif
 
@@ -164,19 +164,19 @@ $(OBJDIR_RELEASE)/__/__/engine/windows/presenter.o: ../../engine/windows/present
 $(OBJDIR_RELEASE)/__/windows/elc.o: ../windows/elc.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/elc.cpp -o $(OBJDIR_RELEASE)/__/windows/elc.o
 
-$(OBJDIR_RELEASE)/__/windows/elfimage.o: ../windows/elfimage.cpp
+$(OBJDIR_RELEASE)/__/windows/ntimage.o: ../windows/ntimage.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntimage.cpp -o $(OBJDIR_RELEASE)/__/windows/ntimage.o
 
-$(OBJDIR_RELEASE)/__/windows/elflinker.o: ../windows/elflinker.cpp
+$(OBJDIR_RELEASE)/__/windows/ntlinker.o: ../windows/ntlinker.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker.o
 
-$(OBJDIR_RELEASE)/__/windows/elflinker32.o: ../windows/elflinker32.cpp
+$(OBJDIR_RELEASE)/__/windows/ntlinker32.o: ../windows/ntlinker32.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker32.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker32.o
 
-$(OBJDIR_RELEASE)/__/windows/elflinker64.o: ../windows/elflinker64.cpp
+$(OBJDIR_RELEASE)/__/windows/ntlinker64.o: ../windows/ntlinker64.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker64.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker64.o
 
-$(OBJDIR_RELEASE)/__/windows/elfsyslibloader.o: ../windows/elfsyslibloader.cpp
+$(OBJDIR_RELEASE)/__/windows/winsyslibloader.o: ../windows/winsyslibloader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/winsyslibloader.cpp -o $(OBJDIR_RELEASE)/__/windows/winsyslibloader.o
 
 else
