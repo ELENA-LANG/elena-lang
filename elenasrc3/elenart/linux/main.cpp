@@ -35,7 +35,7 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
 #endif // defined
 
-#define DEBUG_OUTPUT 1
+//#define DEBUG_OUTPUT 1
 
 static ELENARTMachine* machine = nullptr;
 static SystemEnv* systemEnv = nullptr;
@@ -66,11 +66,7 @@ void init()
 
 void InitializeSTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler)
 {
-   printf("testing\n");
-
    systemEnv = env;
-
-   printf("testing2");
 
 #ifdef DEBUG_OUTPUT
    printf("InitializeSTA.6 %llx,%llx,%llx\n", (long long)env, (long long)entryList, (long long)criricalHandler);
