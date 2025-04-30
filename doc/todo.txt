@@ -25,6 +25,7 @@ In development:
   * declare global variable environ
   * environ in not defined (missing a library)
   * compile examples
+  * external variable - only pointer is allowed so far
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
