@@ -19,11 +19,9 @@ In development:
   - Linux Actions : create a release archive
   - Supporting FreeBSD #748
   --------------------------------------  
-  * implement hash table
-
-  * review how environ is declared in gcc app
-  * declare global variable environ
-  * environ in not defined (missing a library)
+  * debug an error on start
+  * run sandbox example
+  * execute system tests
   * compile examples
   * external variable - only pointer is allowed so far
   --------------------------------------
