@@ -26,7 +26,7 @@
 namespace elena_lang
 {
 
-#ifdef __GNUG__
+#ifdef __unix__
 inline size_t wcslen(const unsigned short* s)
 {
    const unsigned short* p = s;
