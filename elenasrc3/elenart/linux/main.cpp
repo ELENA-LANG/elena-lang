@@ -17,13 +17,6 @@ using namespace elena_lang;
 #define ROOT_PATH          "/usr/lib/elena"
 #define CONFIG_PATH        "/etc/elena/elenart60.config"
 
-#ifden __FreeBSD__
-
-__progname = "elena-prog";
-environ = nullptr;
-
-#endif
-
 #if defined(__x86_64__)
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86_64;

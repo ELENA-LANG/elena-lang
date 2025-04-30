@@ -26,8 +26,8 @@ extern "C"
 {
 #ifdef __FreeBSD__
    // temporal solution to work on FreeBSD
-   DLL_PUBLIC char** environ;
-   DLL_PUBLIC const char* __progname;
+   DLL_PUBLIC char** environ = nullptr;
+   DLL_PUBLIC const char* __progname = "elena-prog";
 #endif
 
    DLL_PUBLIC void InitializeSTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
