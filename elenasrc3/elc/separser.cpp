@@ -42,7 +42,7 @@ ScriptParser :: ScriptParser()
 {
    _encoding = FileEncoding::UTF8;
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
    _library = new WinSysLibraryLoader(SCRIPTENGINE_LIB);
 
