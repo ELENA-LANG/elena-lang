@@ -21,7 +21,7 @@ using namespace elena_lang;
 
 extern "C"
 {
-   DLL_PUBLIC char** __environ;
+   DLL_PUBLIC char** environ;
 }
 
 //#endif

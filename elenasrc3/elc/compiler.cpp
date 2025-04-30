@@ -3402,7 +3402,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
                hintNode.setArgumentReference(hintNode.arg.reference & ~(ref_t)MethodHint::Async);
             }
 
-            ref_t hints = current.findChild(SyntaxKey::Hints).arg.value;
+            //ref_t hints = current.findChild(SyntaxKey::Hints).arg.value;
          }
       }
       current = current.nextNode();
