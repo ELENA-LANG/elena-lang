@@ -60,7 +60,11 @@ void printLine(ustr_t mssg, path_t path)
 
 #endif
 
-#ifdef __unix__         
+#ifdef __FreeBSD__
+
+constexpr auto targetPlatform = ASM_FREEBSD_TARGET;
+
+#eldef __unix__         
 
 constexpr auto targetPlatform = ASM_LNX_TARGET;
 
@@ -169,6 +173,9 @@ int main(int argc, char* argv[])
          }
          else if (arg.compare(ASM_LNX_TARGET_MODE)) {
             platform.copy(ASM_LNX_TARGET);
+         }
+         else if (arg.compare(ASM_FREEBSD_TARGET_MODE)) {
+            platform.copy(ASM_FREEBSD_TARGET);
          }
          else if (arg.compare(BC_32_MODE)) {
             mode = CompileMode::bc32;

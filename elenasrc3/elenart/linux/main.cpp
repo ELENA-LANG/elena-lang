@@ -208,6 +208,8 @@ void PrepareLA(uintptr_t arg)
 {
    __argc = *(int*)arg;
 
+   printf("PrepareLA %x %x\n", arg, __argc);
+
 #if defined __PPC64__
 
    uintptr_t argptr = *(uintptr_t*)(arg + sizeof(uintptr_t));
@@ -219,7 +221,11 @@ void PrepareLA(uintptr_t arg)
 
 #endif
 
-   printf("PrepareLA %x\n", __argc);
+#if defined __FreeBSD__
+
+   __progname = __argv[0];
+
+#endif 
 }
 
 void ExitLA(int retVal)

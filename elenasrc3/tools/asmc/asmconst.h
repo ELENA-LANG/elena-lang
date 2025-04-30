@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x000F
+   #define ASM_REVISION_NUMBER               0x0010
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -67,6 +67,7 @@ namespace elena_lang
 
    constexpr auto ASM_WIN_TARGET_MODE        = "windows";
    constexpr auto ASM_LNX_TARGET_MODE        = "linux";
+   constexpr auto ASM_FREEBSD_TARGET_MODE    = "freebsd";
 
    constexpr auto ASM_X86_MODE               = "x86";
    constexpr auto ASM_AMD64_MODE             = "amd64";
@@ -78,6 +79,7 @@ namespace elena_lang
 
    constexpr auto ASM_WIN_TARGET             = "_WIN";
    constexpr auto ASM_LNX_TARGET             = "_LNX";
+   constexpr auto ASM_FREEBSD_TARGET         = "_FREEBSD";
 
    constexpr auto ASM_SYNTAXERROR            = "(%d,%d): Syntax error\n";
    constexpr auto ASM_INVALID_SOURCE         = "(%d,%d): Invalid source operand\n";
