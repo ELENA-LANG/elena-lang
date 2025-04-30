@@ -19,8 +19,8 @@ using namespace elena_lang;
 
 #ifden __FreeBSD__
 
-const char* __progname = "elena-prog";
-char** environ = nullptr;
+__progname = "elena-prog";
+environ = nullptr;
 
 #endif
 
