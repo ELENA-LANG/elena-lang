@@ -539,7 +539,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
 #if defined(__FreeBSD__)
    dynamicWriter.writeQWord(DT_RELA);
-   dynamicWriter.writeQReference(importRef, reltabOffset);
+   dynamicWriter.writeQWord(0);
 
    dynamicWriter.writeQWord(DT_RELASZ);
    dynamicWriter.writeQWord(global_count * 24);
