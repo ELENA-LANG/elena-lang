@@ -11,11 +11,20 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
-CFLAGS = -Wall -std=c++20 -m64 -fPIC
 RESINC = 
 LIBDIR = 
 LIB = 
 LDFLAGS = -m64 -fvisibility=hidden
+
+ifeq ($(OS),Windows_NT)
+
+CFLAGS = -Wall -std=c++20 -m64 -fPIC -municode
+
+else
+
+CFLAGS = -Wall -std=c++20 -m64 -fPIC
+
+endif
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O3
@@ -28,7 +37,15 @@ OBJDIR_RELEASE = ../../temp/elenasm64
 DEP_RELEASE = 
 OUT_RELEASE = ../../../bin/libelenasm60_64.so
 
+ifeq ($(OS),Windows_NT)
+
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/windows/dllmain.o
+
+else
+
 OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/linux/main.o
+
+endif
 
 all: release
 
@@ -38,7 +55,11 @@ before_release:
 	test -d ../../../bin || mkdir -p ../../../bin
 	test -d $(OBJDIR_RELEASE)/__ || mkdir -p $(OBJDIR_RELEASE)/__
 	test -d $(OBJDIR_RELEASE)/__/__/engine || mkdir -p $(OBJDIR_RELEASE)/__/__/engine
+ifeq ($(OS),Windows_NT)
+	test -d $(OBJDIR_RELEASE)/__/windows || mkdir -p $(OBJDIR_RELEASE)/__/windows
+else
 	test -d $(OBJDIR_RELEASE)/__/linux || mkdir -p $(OBJDIR_RELEASE)/__/linux
+endif
 	test -d $(OBJDIR_RELEASE)/__/__/common || mkdir -p $(OBJDIR_RELEASE)/__/__/common
 
 after_release: 
@@ -87,14 +108,27 @@ out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
 $(OBJDIR_RELEASE)/__/__/engine/amd64/amd64routines.o: ../../engine/amd64/amd64routines.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/amd64/amd64routines.cpp -o $(OBJDIR_RELEASE)/__/__/engine/amd64/amd64routines.o
 
+ifeq ($(OS),Windows_NT)
+
+$(OBJDIR_RELEASE)/__/windows/dllmain.o: ../windows/dllmain.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/dllmain.cpp -o $(OBJDIR_RELEASE)/__/windows/dllmain.o
+
+else
+
 $(OBJDIR_RELEASE)/__/linux/main.o: ../linux/main.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/main.cpp -o $(OBJDIR_RELEASE)/__/linux/main.o
+
+endif
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine
+ifeq ($(OS),Windows_NT)
+	rm -rf $(OBJDIR_RELEASE)/__/windows
+else
 	rm -rf $(OBJDIR_RELEASE)/__/linux
+endif
 	rm -rf $(OBJDIR_RELEASE)/__/__/common
 
 .PHONY: before_release after_release clean_release

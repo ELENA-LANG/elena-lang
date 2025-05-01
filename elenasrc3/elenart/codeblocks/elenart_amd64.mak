@@ -146,12 +146,13 @@ clean_release:
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine
-	rm -rf $(OBJDIR_RELEASE)/__/__/engine/linux
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine/amd64
 ifeq ($(OS),Windows_NT)
-	rm -rf $(OBJDIR_RELEASE)/__/linux
+	rm -rf $(OBJDIR_RELEASE)/__/windows
+	rm -rf $(OBJDIR_RELEASE)/__/__/engine/windows
 else
 	rm -rf $(OBJDIR_RELEASE)/__/linux
+	rm -rf $(OBJDIR_RELEASE)/__/__/engine/linux
 endif
 	rm -rf $(OBJDIR_RELEASE)/__/__/common
 
