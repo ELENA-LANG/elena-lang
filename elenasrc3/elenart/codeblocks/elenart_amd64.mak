@@ -10,7 +10,6 @@ AR = ar
 LD = g++
 WINDRES = windres
 
-INC = -I.. -I../../engine -I../../common
 RESINC = 
 LIBDIR = 
 LIB = 
@@ -18,10 +17,12 @@ LDFLAGS = -m64 -fvisibility=hidden
 
 ifeq ($(OS),Windows_NT)
 
+INC = -I.. -I../../engine -I../../common -I../../lruntime
 CFLAGS = -Wall -std=c++20 -m64 -fPIC -municode
 
 else
 
+INC = -I.. -I../../engine -I../../common
 CFLAGS = -Wall -std=c++20 -m64 -fPIC
 
 endif
