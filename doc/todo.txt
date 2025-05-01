@@ -11,9 +11,8 @@ In development:
   - #743
   - #739
   - Linux Actions : create a release archive
-  - #756 : supporting mingw
   --------------------------------------  
-  * add new make for amd64
+  * new script to create a package
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
