@@ -39,11 +39,11 @@ OUT_RELEASE = ../../../bin/libelenasm60_64.so
 
 ifeq ($(OS),Windows_NT)
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/windows/dllmain.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/windows/dllmain.o $(OBJDIR_RELEASE)/__/regex.o
 
 else
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/linux/main.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/linux/main.o $(OBJDIR_RELEASE)/__/regex.o
 
 endif
 
@@ -99,14 +99,8 @@ $(OBJDIR_RELEASE)/__/treeparser.o: ../treeparser.cpp
 $(OBJDIR_RELEASE)/__/vmparser.o: ../vmparser.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../vmparser.cpp -o $(OBJDIR_RELEASE)/__/vmparser.o
 
-$(OBJDIR_RELEASE)/__/linux/main.o: ../linux/main.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/main.cpp -o $(OBJDIR_RELEASE)/__/linux/main.o
-
-out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
-	$(LD) -shared $(LIBDIR_RELEASE) -o $(OUT_RELEASE) $(OBJ_RELEASE)  $(LDFLAGS_RELEASE) $(LIB_RELEASE)
-
-$(OBJDIR_RELEASE)/__/__/engine/amd64/amd64routines.o: ../../engine/amd64/amd64routines.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/amd64/amd64routines.cpp -o $(OBJDIR_RELEASE)/__/__/engine/amd64/amd64routines.o
+$(OBJDIR_RELEASE)/__/regex.o: ../regex.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../regex.cpp -o $(OBJDIR_RELEASE)/__/regex.o
 
 ifeq ($(OS),Windows_NT)
 
@@ -119,6 +113,9 @@ $(OBJDIR_RELEASE)/__/linux/main.o: ../linux/main.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/main.cpp -o $(OBJDIR_RELEASE)/__/linux/main.o
 
 endif
+
+out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
+	$(LD) -shared $(LIBDIR_RELEASE) -o $(OUT_RELEASE) $(OBJ_RELEASE)  $(LDFLAGS_RELEASE) $(LIB_RELEASE)
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
