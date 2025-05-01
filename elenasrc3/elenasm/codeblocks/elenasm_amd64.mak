@@ -39,11 +39,11 @@ OUT_RELEASE = ../../../bin/libelenasm60_64.so
 
 ifeq ($(OS),Windows_NT)
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/windows/dllmain.o $(OBJDIR_RELEASE)/__/regex.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/windows/dllmain.o $(OBJDIR_RELEASE)/__/regex.o $(OBJDIR_RELEASE)/__/scriptparser.o
 
 else
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/linux/main.o $(OBJDIR_RELEASE)/__/regex.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/linux/main.o $(OBJDIR_RELEASE)/__/regex.o $(OBJDIR_RELEASE)/__/scriptparser.o
 
 endif
 
@@ -101,6 +101,9 @@ $(OBJDIR_RELEASE)/__/vmparser.o: ../vmparser.cpp
 
 $(OBJDIR_RELEASE)/__/regex.o: ../regex.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../regex.cpp -o $(OBJDIR_RELEASE)/__/regex.o
+
+$(OBJDIR_RELEASE)/__/scriptparser.o: ../scriptparser.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../regex.cpp -o $(OBJDIR_RELEASE)/__/scriptparser.o
 
 ifeq ($(OS),Windows_NT)
 
