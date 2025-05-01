@@ -103,7 +103,7 @@ $(OBJDIR_RELEASE)/__/regex.o: ../regex.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../regex.cpp -o $(OBJDIR_RELEASE)/__/regex.o
 
 $(OBJDIR_RELEASE)/__/scriptparser.o: ../scriptparser.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../regex.cpp -o $(OBJDIR_RELEASE)/__/scriptparser.o
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../scriptparser.cpp -o $(OBJDIR_RELEASE)/__/scriptparser.o
 
 ifeq ($(OS),Windows_NT)
 
