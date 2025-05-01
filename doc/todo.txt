@@ -21,12 +21,12 @@ In development:
   === Iteration 41 ===
   --------------------------------------
   dev: 
+  - VM support for Linux (make for both linux and windows)
   - MTA support for Linux : support MT routines in elenart
   - support :sizeof
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
   - implement analog of record using meta programming (extensions'records)
   - upndown (connector - cmdSearch)
-  - VM support for Linux
   - #748 : i386
   - #620 : backlog
   gen:
