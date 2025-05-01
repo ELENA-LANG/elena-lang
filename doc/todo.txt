@@ -7,12 +7,11 @@ In development:
 
   === Iteration 40 (4.05) ===
   --------------------------------------
-  - #34 : http client : post, put, delete, return status, headers
-  - #743
   - #739
-  - Linux Actions : create a release archive
+  - #743
+  - test build actions : msbuild / make 
+  - #34 : http client : post, put, delete, return status, headers
   --------------------------------------  
-  * new script to create a package
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
