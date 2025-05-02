@@ -1,5 +1,7 @@
 namespace text
 {
+   import system'io;
+   
    // --- Encoder ---
    public interface Encoder
    {
@@ -119,6 +121,29 @@ namespace text
       string toString(int index, int size, byte[] buffer)
       {
          ^ String.fromByteArray(index, size, buffer);
+      }
+
+      int fromString(string sour, MemoryBuffer output)
+      {
+         byte tmp[1024];
+         int len := sour.Length;
+         int tmp_len := 1024;
+         int index := 0;
+         while (len > 0) {
+            if (len < 1024) {
+               tmp_len := len;
+            }
+            else tmp_len := 1024;
+            
+            tmp_len := sour.saveToByteArray(index, tmp, tmp_len);
+            
+            output.write(0, tmp_len, tmp);
+            
+            len -= tmp_len;
+            index += tmp_len;
+         };
+         
+         ^ index
       }
 
       int getCharCount(string s)
