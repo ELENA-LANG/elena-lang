@@ -3161,6 +3161,7 @@ inline %1DDh
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
+  and     x18, x18, 0FFh
   lsr     x18, x18, x17
 
   strb    w18, [x19]
@@ -3175,6 +3176,7 @@ inline %2DDh
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
+  and     x18, x18, 0FFFFh
   lsr     x18, x18, x17
 
   strh    w18, [x19]

@@ -2434,6 +2434,7 @@ inline %1DCh
   lea  edi, [ebp + __arg32_1]
   mov  ecx, [esi]
   mov  eax, [edi]
+  and  eax, 0FFh
   shl  eax, cl
   mov  byte ptr [edi], al
 
@@ -2445,6 +2446,7 @@ inline %2DCh
   lea  edi, [ebp + __arg32_1]
   mov  ecx, [esi]
   mov  eax, [edi]
+  and  eax, 0FFFFh
   shl  eax, cl
   mov  word ptr [edi], ax
 
@@ -2505,6 +2507,7 @@ inline %1DDh
   lea  edi, [ebp + __arg32_1]
   mov  ecx, [esi]
   mov  eax, [edi]
+  and  eax, 0FFh
   shr  eax, cl
   mov  byte ptr [edi], al
 
@@ -2516,6 +2519,7 @@ inline %2DDh
   lea  edi, [ebp + __arg32_1]
   mov  ecx, [esi]
   mov  eax, [edi]
+  and  eax, 0FFFFh
   shr  eax, cl
   mov  word ptr [edi], ax
 
