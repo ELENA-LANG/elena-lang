@@ -5027,6 +5027,7 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
       case V_WRAPPER:
       case V_OUTWRAPPER:
          return resolveWrapperTemplate(moduleScope, typeInfo.elementRef, declarationMode);
+      case V_UINT8ARRAY:
       case V_INT8ARRAY:
       case V_INT16ARRAY:
       case V_INT32ARRAY:
@@ -6909,47 +6910,48 @@ mssg_t Compiler::resolveOperatorMessage(ModuleScopeBase* scope, int operatorId)
 inline bool isPrimitiveArray(ref_t typeRef)
 {
    switch (typeRef) {
-   case V_BINARYARRAY:
-   case V_OBJARRAY:
-   case V_INT32ARRAY:
-   case V_INT8ARRAY:
-   case V_INT16ARRAY:
-   case V_FLOAT64ARRAY:
-      return true;
-   default:
-      return false;
+      case V_BINARYARRAY:
+      case V_OBJARRAY:
+      case V_INT32ARRAY:
+      case V_INT8ARRAY:
+      case V_UINT8ARRAY:
+      case V_INT16ARRAY:
+      case V_FLOAT64ARRAY:
+         return true;
+      default:
+         return false;
    }
 }
 
 inline bool DoesOperationSupportConvertableIntLiteral(int operatorId)
 {
    switch (operatorId) {
-   case ADD_OPERATOR_ID:
-   case SUB_OPERATOR_ID:
-   case LESS_OPERATOR_ID:
-   case EQUAL_OPERATOR_ID:
-   case NOTEQUAL_OPERATOR_ID:
-   case ELSE_OPERATOR_ID:
-   case MUL_OPERATOR_ID:
-   case DIV_OPERATOR_ID:
-   case NOTLESS_OPERATOR_ID:
-   case GREATER_OPERATOR_ID:
-   case NOTGREATER_OPERATOR_ID:
-   case BAND_OPERATOR_ID:
-   case BOR_OPERATOR_ID:
-   case BXOR_OPERATOR_ID:
-   case BNOT_OPERATOR_ID:
-   case AND_OPERATOR_ID:
-   case OR_OPERATOR_ID:
-   case XOR_OPERATOR_ID:
-   case ADD_ASSIGN_OPERATOR_ID:
-   case SUB_ASSIGN_OPERATOR_ID:
-   case MUL_ASSIGN_OPERATOR_ID:
-   case DIV_ASSIGN_OPERATOR_ID:
-   case SET_INDEXER_OPERATOR_ID:
-      return true;
-   default:
-      return false;
+      case ADD_OPERATOR_ID:
+      case SUB_OPERATOR_ID:
+      case LESS_OPERATOR_ID:
+      case EQUAL_OPERATOR_ID:
+      case NOTEQUAL_OPERATOR_ID:
+      case ELSE_OPERATOR_ID:
+      case MUL_OPERATOR_ID:
+      case DIV_OPERATOR_ID:
+      case NOTLESS_OPERATOR_ID:
+      case GREATER_OPERATOR_ID:
+      case NOTGREATER_OPERATOR_ID:
+      case BAND_OPERATOR_ID:
+      case BOR_OPERATOR_ID:
+      case BXOR_OPERATOR_ID:
+      case BNOT_OPERATOR_ID:
+      case AND_OPERATOR_ID:
+      case OR_OPERATOR_ID:
+      case XOR_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
+      case SET_INDEXER_OPERATOR_ID:
+         return true;
+      default:
+         return false;
    }
 }
 
@@ -9230,7 +9232,7 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
       if (typeInfo.typeRef == V_INT16ARRAY) {
          writer.newNode(BuildKey::ShortArrayParameter, name);
       }
-      else if (typeInfo.typeRef == V_INT8ARRAY) {
+      else if (typeInfo.typeRef == V_INT8ARRAY || typeInfo.typeRef == V_UINT8ARRAY) {
          writer.newNode(BuildKey::ByteArrayParameter, name);
       }
       else if (typeInfo.typeRef == V_INT32ARRAY) {
@@ -16470,23 +16472,26 @@ void Compiler::Expression::convertIntLiteralForOperation(SyntaxNode node, int op
    ObjectInfo literal = {};
    ref_t loperandRef = messageArguments[0].typeInfo.typeRef;
    switch (loperandRef) {
-   case V_INT16ARRAY:
-      literal = convertIntLiteral(scope, node, messageArguments[1], V_INT16, true);
-      break;
-   case V_INT8ARRAY:
-      literal = convertIntLiteral(scope, node, messageArguments[1], V_INT8, true);
-      break;
-   case V_BINARYARRAY:
-      literal = convertIntLiteral(scope, node, messageArguments[1],
-         compiler->_logic->retrievePrimitiveType(*scope.moduleScope, messageArguments[0].typeInfo.elementRef), true);
-      break;
-   default:
-   {
-      literal = convertIntLiteral(scope, node, messageArguments[1],
-         compiler->_logic->retrievePrimitiveType(*scope.moduleScope, loperandRef), true);
+      case V_INT16ARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], V_INT16, true);
+         break;
+      case V_INT8ARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], V_INT8, true);
+         break;
+      case V_UINT8ARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1], V_UINT8, true);
+         break;
+      case V_BINARYARRAY:
+         literal = convertIntLiteral(scope, node, messageArguments[1],
+            compiler->_logic->retrievePrimitiveType(*scope.moduleScope, messageArguments[0].typeInfo.elementRef), true);
+         break;
+      default:
+      {
+         literal = convertIntLiteral(scope, node, messageArguments[1],
+            compiler->_logic->retrievePrimitiveType(*scope.moduleScope, loperandRef), true);
 
-      break;
-   }
+         break;
+      }
    }
 
    if (literal.kind != ObjectKind::Unknown)

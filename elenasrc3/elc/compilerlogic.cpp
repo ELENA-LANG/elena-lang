@@ -42,7 +42,7 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 208;
+constexpr auto OperationLength = 215;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -572,7 +572,31 @@ constexpr Op Operations[OperationLength] =
       SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_ELEMENT, V_INT32, 0
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_UINT8, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_ELEMENT, V_UINT8, 0
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_ELEMENT, V_INT8, 0
+   },
+   {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_UINT8ARRAY, 0, 0, V_INT32
    },
    {
       LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_INT16ARRAY, 0, 0, V_INT32
@@ -1850,6 +1874,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 2;
          break;
       case V_INT8ARRAY:
+      case V_UINT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
@@ -1946,6 +1971,9 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
    if (isEmbeddableStruct(info) && structOne) {
       if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
          return V_INT8ARRAY;
+
+      if (isCompatible(scope, { V_UINT8 }, { elementRef }, true) && info.size == 1)
+         return V_UINT8ARRAY;
 
       if (isCompatible(scope, { V_INT16 }, { elementRef }, true) && info.size == 2)
          return V_INT16ARRAY;

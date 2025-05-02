@@ -238,6 +238,7 @@ namespace elena_lang
             case V_INT32ARRAY:
             case V_INT16ARRAY:
             case V_INT8ARRAY:
+            case V_UINT8ARRAY:
             case V_FLOAT64ARRAY:
             case V_BINARYARRAY:
                return true;

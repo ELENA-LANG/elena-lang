@@ -12,9 +12,8 @@ In development:
   - test build actions : msbuild / make 
   - #34 : http client
   --------------------------------------    
-  * byteop : direct operation with constant ()
-  * use constant value directly for shr / shl
-  * optimize the following expression : byte b := map[buffer[0] shr:2];
+  * optimize the following expression : byte b := map[buffer[0] shr:2] - use direct operation;
+  * test base64 encoder
   * functional test base64 encoder : to and from (>1024) 
   * functional test base64 encoder : to and from (>1024) 
   * support constant array

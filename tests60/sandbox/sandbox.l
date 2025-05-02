@@ -4,10 +4,10 @@ import system'io;
 
 public program()
 {
-//   byte map[10];
-//   byte buffer[4];
+   byte map[10];
+   byte buffer[4];
 
-/*   buffer[0] := 12;
+   buffer[0] := 12;
    map[0] := 1;
    map[1] := 2;
    map[2] := 3;
@@ -17,13 +17,10 @@ public program()
    map[6] := 7;
    map[7] := 8;
    map[8] := 9;
-   map[9] := 10;*/
+   map[9] := 10;
 
-   byte i := 12;
-
-   byte r := i shr:2;
-
-//   byte b := map[/*buffer[0]*/i shr:2];
+   byte i := 4;
+   byte b := map[buffer[0] shr:2];
 
 //   Console.writeLine(b);
 
