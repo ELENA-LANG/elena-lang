@@ -119,8 +119,9 @@ namespace text
          ^ *builder;
       }
       
-      byte[] fromString(string s)
+      int fromString(string s, MemoryBuffer output)
       {
+         int saved := 0;
          int len := s.Length;
          
          auto output := MemoryBuffer.allocate(len);
@@ -139,10 +140,20 @@ namespace text
             
             int dest_len := decoding(tmp, 0, tmp_len, dest_tmp, 1024);
             output.write(0, dest_len, dest_tmp);
+            saved += dest_len;
             
             src_index += tmp_len;
             len -= tmp_len;
          };
+         
+         ^ saved;
+      }
+      
+      byte[] fromString(string s)
+      {
+         auto output := MemoryBuffer.allocate(s.Length);
+
+         fromString(s, output);
          
          ^ *output
       }

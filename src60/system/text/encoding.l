@@ -123,6 +123,9 @@ namespace text
          ^ String.fromByteArray(index, size, buffer);
       }
 
+      string toString(MemoryBuffer buffer)
+         <= toString(0, buffer.Length, *buffer);
+
       int fromString(string sour, MemoryBuffer output)
       {
          byte tmp[1024];
