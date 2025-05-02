@@ -72,7 +72,198 @@ xml'IXmlFormatter</LI>
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>classTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+<CODE>writeElement(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>closeTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="IXmlReader">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+xml'</DIV>
+<H2 title="IXmlReader" class="title">IXmlReader</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">IXmlReader</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+xml'IXmlReader</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isAvailable()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isOpenTag()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isCloseTag()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isContent()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Name()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Content()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="TabXmlFormatter">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+xml'</DIV>
+<H2 title="TabXmlFormatter" class="title">TabXmlFormatter</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public singleton <SPAN CLASS="typeNameLabel">TabXmlFormatter</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlFormatter">xml'IXmlFormatter</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+xml'TabXmlFormatter</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>openTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>writeElement(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>closeTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
 </CODE>
 </TD>
 </TR>
@@ -145,6 +336,15 @@ xml'XmlDocument</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlDocument">XmlDocument</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -162,11 +362,20 @@ xml'XmlDocument</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>save(<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlFormatter">IXmlFormatter</A></SPAN> formatter, <SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlReader">IXmlReader</A></SPAN> reader)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>save(<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlFormatter">IXmlFormatter</A></SPAN> formatter, <SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
@@ -252,7 +461,7 @@ xml'XmlNode</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_value</CODE>
+<CODE>_content</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -281,7 +490,7 @@ xml'XmlNode</LI>
 <CODE>
 <i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> name, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> value)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> parent, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> name, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> content)
 </CODE>
 </TD>
 </TR>
@@ -311,7 +520,7 @@ xml'XmlNode</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>newNode(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> name, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> value, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN><i>[]</i> children)
+<CODE>newElement(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> name, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -331,6 +540,26 @@ xml'XmlNode</LI>
 <TD CLASS="colLast">
 <CODE>parseXPath(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> xpath)
 </CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>ChildCounter()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -366,27 +595,27 @@ xml'XmlNode</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>getChildIndex(<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> child)
+<CODE>setContent(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> content)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>getChild(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+<CODE>getChildIndex(<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> child)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>getChildCounter()
+<CODE>getChild(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -432,6 +661,218 @@ xml'XmlNode</LI>
 <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>lastChild()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="XmlReader">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+xml'</DIV>
+<H2 title="XmlReader" class="title">XmlReader</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">XmlReader</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlReader">xml'IXmlReader</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+xml'XmlReader</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextReader">TextReader</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>input</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>currentLine</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>currentOffset</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>lineNumber</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>available</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="xml-$private.html#TokenType">TokenType</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>tokenMode</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>tagName</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>content</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlReader">XmlReader</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextReader">TextReader</A></SPAN> input)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isAvailable()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isOpenTag()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isCloseTag()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isContent()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Name()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Content()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>read()
 </CODE>
 </TD>
 </TR>

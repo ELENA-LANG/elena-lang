@@ -6,7 +6,7 @@ import system'routines;
 import system'culture;
 import extensions;
 
-public class HttpResponse
+public sealed class HttpResponse
 {
    NetworkStream _stream;
    MemoryBuffer  _buffer;
@@ -16,6 +16,30 @@ public class HttpResponse
    string        _protocol;
    int           _statusCode;
    string        _statusText;
+
+   string StatusText
+   {
+      get()
+      {
+         ^ _statusText;
+      }
+   }
+   
+   int StatusCode
+   {
+      get()
+      {
+         ^ _statusCode;
+      }
+   }   
+
+   HttpHeaders Headers
+   {
+      get()
+      {
+         ^ _headers;
+      }
+   }
 
    private int seekEOL(byte[] buffer, int start, int length)
    {

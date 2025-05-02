@@ -10,8 +10,11 @@ In development:
   - #739
   - #743
   - test build actions : msbuild / make 
-  - #34 : http client : post, put, delete, return status, headers
+  - #34 : http client
   --------------------------------------  
+  * base64 encoding
+  * http request - encode body
+  * http client : post
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
@@ -32,7 +35,7 @@ In development:
   api:
   - api refactoring : main program entry to be called - Program
   - #622 : api backlog
-  - #34 : http client : support patch, head, options, trace redirects, web api
+  - #34 : http client : support redirects, put, delete, support patch, head, options, web api
   - textgen : support {{ }} special symbols 
   ide:  
   - splitter is not correctly displayed
@@ -57,6 +60,7 @@ In development:
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   - vs #2 : elena.tmLanguage.json  
   prom:
+  - api : BaseNumber
   - post an article about records using meta programming
   - weekly posting
   --------------------------------------

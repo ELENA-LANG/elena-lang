@@ -107,6 +107,35 @@ public class HttpClient
       ^ response;
    }
 
+   async Task<HttpResponse> postAsync(string path, HttpRequest request)
+   {
+      int length := request.ContentLength;
+      
+      /* Send headers to server */
+      NetworkStream stream := new NetworkStream(_socket);
+
+      HttpHeaders postHeaders := default;
+      if (request.Headers.Length == 0) {
+         postHeaders := _headers;
+      }
+      else {
+         postHeaders := HttpHeaders.combine(_headers, request.Headers);
+      };
+      
+      string headers := postHeaders.Value;
+      string content := request.Content;
+      
+      string request := $"POST {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"Content-Length:{length}"$13$10"Content-Type:application/x-www-form-urlencoded"$13$10"{headers}"$13$10"{content}";
+
+      :await stream.writeAsync(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      :await response.readHeaderAsync();
+
+      ^ response;
+   }
+
    HttpResponse get()
       <= get("/");
 
@@ -117,6 +146,39 @@ public class HttpClient
 
       string headers := _headers.Value;
       string request := $"GET {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
+
+      stream.write(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      response.readHeader();
+
+      ^ response;
+   }
+
+
+   HttpResponse post(HttpRequest request)
+      <= post("/", request);
+
+   HttpResponse post(string path, HttpRequest request)
+   {
+      int length := request.ContentLength;
+      
+      /* Send headers to server */
+      NetworkStream stream := new NetworkStream(_socket);
+
+      HttpHeaders postHeaders := default;
+      if (request.Headers.Length == 0) {
+         postHeaders := _headers;
+      }
+      else {
+         postHeaders := HttpHeaders.combine(_headers, request.Headers);
+      };
+      
+      string headers := postHeaders.Value;
+      string content := request.Content;
+      
+      string request := $"POST {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"Content-Length:{length}"$13$10"Content-Type:application/x-www-form-urlencoded"$13$10"{headers}"$13$10"{content}";
 
       stream.write(request);
 
