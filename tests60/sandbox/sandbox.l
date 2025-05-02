@@ -4,11 +4,25 @@ import system'io;
 
 public program()
 {
-   int k := 2;
-//   int n := k shl:3;
-   int m := (k + 1) shl:3;
+   byte map[10];
+//   byte buffer[4];
 
-   Console.writeLine(m);
+/*   buffer[0] := 12;
+   map[0] := 1;
+   map[1] := 2;
+   map[2] := 3;
+   map[3] := 4;
+   map[4] := 5;
+   map[5] := 6;
+   map[6] := 7;
+   map[7] := 8;
+   map[8] := 9;
+   map[9] := 10;*/
+
+   byte i := 12;
+   byte b := map[/*buffer[0]*/i shr:2];
+
+   Console.writeLine(b);
 
 /*   auto source := "Standard comparison operations are defined for all the primitive numeric types.";
    auto expected := "U3RhbmRhcmQgY29tcGFyaXNvbiBvcGVyYXRpb25zIGFyZSBkZWZpbmVkIGZvciBhbGwgdGhlIHByaW1pdGl2ZSBudW1lcmljIHR5cGVzLg==";

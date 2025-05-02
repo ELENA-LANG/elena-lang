@@ -35,15 +35,16 @@ LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS) -s
 OBJDIR_RELEASE = ../../temp/elenasm64
 DEP_RELEASE = 
-OUT_RELEASE = ../../../bin/libelenasm60_64.so
 
 ifeq ($(OS),Windows_NT)
 
 OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/windows/dllmain.o $(OBJDIR_RELEASE)/__/regex.o $(OBJDIR_RELEASE)/__/scriptparser.o
+OUT_RELEASE = ../../../bin/elenasm60_64.dll
 
 else
 
 OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/cfparser.o $(OBJDIR_RELEASE)/__/scriptmachine.o $(OBJDIR_RELEASE)/__/transformer.o $(OBJDIR_RELEASE)/__/treeparser.o $(OBJDIR_RELEASE)/__/vmparser.o  $(OBJDIR_RELEASE)/__/linux/main.o $(OBJDIR_RELEASE)/__/regex.o $(OBJDIR_RELEASE)/__/scriptparser.o
+OUT_RELEASE = ../../../bin/libelenasm60_64.so
 
 endif
 
