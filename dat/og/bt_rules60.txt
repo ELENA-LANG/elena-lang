@@ -2,6 +2,7 @@ breakpoint, breakpoint => 1;
 byrefmark => 2;
 int_literal, copying => 3;
 local_address, saving_stack, int_literal, saving_stack =1, intop => 4;
+local_address, saving_stack, int_literal, saving_stack =1, byteop => 4;
 int_literal, saving_stack =0, intop => 5;
 copying,      addingint, local_address, copying => 15;
 saving_index, addingint, local_address, copying => 15;

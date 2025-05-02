@@ -93,6 +93,16 @@ public byteTests() : testCase()
    Assert.ifTrue(m <= l);
    Console.write(".");
 
+   m := n + 3;
+   Assert.ifEqual(m, 5);
+   n := m - 2;
+   Assert.ifEqual(n, 3);
+   m := n * 4;
+   Assert.ifEqual(m, 12);
+   m := m / 3;
+   Assert.ifEqual(m, 4);
+   Console.write(".");
+
    n := 12;
    n := n shr:2;
    Assert.ifEqual(n, 3);

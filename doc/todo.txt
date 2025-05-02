@@ -12,8 +12,7 @@ In development:
   - test build actions : msbuild / make 
   - #34 : http client
   --------------------------------------    
-  * check if it works correctly byte b := map[buffer[0] shr:2];
-  * unit tests : shr / shl with byte
+  * byteop : direct operation with constant ()
   * use constant value directly for shr / shl
   * optimize the following expression : byte b := map[buffer[0] shr:2];
   * functional test base64 encoder : to and from (>1024) 

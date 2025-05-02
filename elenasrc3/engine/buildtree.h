@@ -182,10 +182,10 @@ namespace elena_lang
       ProcedureReference   = 0x0090,
       LoadingAccToLongIndex = 0x0091,
       ExternalVarReference = 0x0092,
+      ByteConstOp          = 0x0093,
 
-      MaxOperationalKey    = 0x0092,
+      MaxOperationalKey    = 0x0093,      
       
-      AttrDictionaryOp     = 0x0093,
       DeclOp               = 0x0094,
       DeclDictionaryOp     = 0x0095,
       LoopOp               = 0x0096,
@@ -211,6 +211,7 @@ namespace elena_lang
       DictionaryOp         = 0x00AA,
       ProjectInfoOp        = 0x00AB,
       ObjOp                = 0x00AC,
+      AttrDictionaryOp     = 0x00AD,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,
@@ -376,6 +377,7 @@ namespace elena_lang
          map.add("local_address", BuildKey::LocalAddress);
          map.add("saving_stack", BuildKey::SavingInStack);
          map.add("intop", BuildKey::IntOp);
+         map.add("byteop", BuildKey::ByteOp);
          map.add("create_struct", BuildKey::CreatingStruct);
          map.add("assigning", BuildKey::Assigning);
          map.add("copying_to_acc", BuildKey::CopyingToAcc);

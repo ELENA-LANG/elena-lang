@@ -819,6 +819,53 @@ void intOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SaveDP, targetOffset);
 }
 
+void byteOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand
+   int targetOffset = node.arg.value;
+   int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
+   int sourceOffset = node.findChild(BuildKey::Source).arg.value;
+   int value = node.findChild(BuildKey::Value).arg.value;
+
+   // loaddpn
+   tape.write(ByteCode::LoadDP, sourceOffset);
+
+   switch (operatorId) {
+      case ADD_OPERATOR_ID:
+         tape.write(ByteCode::AndN, 0xFF);
+         tape.write(ByteCode::AddN, value);
+         break;
+      case SUB_OPERATOR_ID:
+         tape.write(ByteCode::AndN, 0xFF);
+         tape.write(ByteCode::SubN, value);
+         break;
+      case MUL_OPERATOR_ID:
+         tape.write(ByteCode::AndN, 0xFF);
+         tape.write(ByteCode::MulN, value);
+         break;
+      case BAND_OPERATOR_ID:
+         tape.write(ByteCode::AndN, value);
+         break;
+      case BOR_OPERATOR_ID:
+         tape.write(ByteCode::AndN, 0xFF);
+         tape.write(ByteCode::OrN, value);
+         break;
+      case SHL_OPERATOR_ID:
+         tape.write(ByteCode::AndN, 0xFF);
+         tape.write(ByteCode::Shl, value);
+         break;
+      case SHR_OPERATOR_ID:
+         tape.write(ByteCode::AndN, 0xFF);
+         tape.write(ByteCode::Shr, value);
+         break;
+      default:
+         throw InternalError(errFatalError);
+   }
+
+   // savedpn
+   tape.write(ByteCode::SaveDP, targetOffset);
+}
+
 void uintOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -2242,7 +2289,7 @@ ByteCodeWriter::Saver commands[] =
    uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssigning, threadVarBegin,
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
-   procedure_ref, loadingAccToLongIndex, externalvar_ref
+   procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2401,6 +2448,22 @@ inline bool intOpWithConsts(BuildNode lastNode)
    BuildNode savingOp1 = getPrevious(intNode);
    BuildNode sourceNode = getPrevious(savingOp1);
 
+   BuildKey constOp = BuildKey::None;
+   int size = 0;
+   switch (opNode.key) {
+      case BuildKey::IntOp:
+         size = 4;
+         constOp = BuildKey::IntConstOp;
+         break;
+      case BuildKey::ByteOp:
+         size = 1;
+         constOp = BuildKey::ByteConstOp;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
    int tempTarget = opNode.arg.value;
    int operatorId = opNode.findChild(BuildKey::OperatorId).arg.value;
    switch (operatorId) {
@@ -2408,7 +2471,7 @@ inline bool intOpWithConsts(BuildNode lastNode)
       case SUB_OPERATOR_ID:
          savingOp1.setKey(BuildKey::Copying);
          savingOp1.setArgumentValue(tempTarget);
-         savingOp1.appendChild(BuildKey::Size, 4);
+         savingOp1.appendChild(BuildKey::Size, size);
          intNode.setKey(BuildKey::AddingInt);
          intNode.setArgumentValue(tempTarget);
          if (operatorId == SUB_OPERATOR_ID) {
@@ -2434,7 +2497,7 @@ inline bool intOpWithConsts(BuildNode lastNode)
          setChild(intNode, BuildKey::Source, sourceNode.arg.value);
          setChild(intNode, BuildKey::OperatorId, operatorId);
 
-         intNode.setKey(BuildKey::IntConstOp);
+         intNode.setKey(constOp);
          intNode.setArgumentValue(tempTarget);
 
          opNode.setKey(BuildKey::Idle);
