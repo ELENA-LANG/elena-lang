@@ -67,6 +67,41 @@ public booleanTest() : testCase()
 
 // --- intTests ---
 
+// --- intTests ---
+
+public byteTests() : testCase()
+{
+   byte n := 2;
+   byte m := 3;
+   byte k := 4;
+   byte l := 3;
+                    
+   Assert.ifTrue(2 + 3 * 4 == 14);
+   Assert.ifTrue(n + m * k == 14);
+   Console.write(".");
+   Assert.ifFalse(n == m);
+   Assert.ifTrue(n == n);
+   Assert.ifTrue(n < m);
+   Assert.ifFalse(n > m);
+   Assert.ifTrue(n <= m);
+   Assert.ifTrue(n <= n);
+   Assert.ifTrue(n >= n);
+   Assert.ifFalse(n >= m);
+   Assert.ifFalse(m > l);
+   Assert.ifFalse(m < l);
+   Assert.ifTrue(m >= l);
+   Assert.ifTrue(m <= l);
+   Console.write(".");
+
+   n := 12;
+   n := n shr:2;
+   Assert.ifEqual(n, 3);
+   n := 12;
+   n := n shl:2;
+   Assert.ifEqual(n, 48);
+   Console.write(".");
+}
+
 public intTests() : testCase()
 {
    int n := 2;
