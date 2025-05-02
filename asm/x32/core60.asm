@@ -2776,6 +2776,7 @@ inline %1E4h
 
   mov  ecx, [esi]
   mov  eax, [ebp+__arg32_1]
+  and  eax, 0FFh
   cdq
   idiv cl
   mov  byte ptr [ebp+__arg32_1], al
@@ -2787,6 +2788,7 @@ inline %2E4h
 
   mov  ecx, [esi]
   mov  eax, [ebp+__arg32_1]
+  and  eax, 0FFFFh
   cdq
   idiv cx
   mov  word ptr [ebp+__arg32_1], ax
