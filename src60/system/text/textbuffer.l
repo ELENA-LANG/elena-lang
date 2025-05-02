@@ -517,6 +517,33 @@ namespace text
          _length.append(counter)
       }
 
+      internal write(byte[] src, int index, int src_len)
+      {
+         if (index == 0) {
+            Array<byte>.copyTo(_buffer, src, *_length, src_len);
+            _length.append(src_len)
+         }
+         else {
+            byte tmp[1024];
+            int len := src_len;
+            int tmp_len := 1024;
+            int s_index := index;
+            while (len > 0) {
+               if (len < 1024) {
+                  tmp_len := len;
+               }
+               else tmp_len := 1024;
+               
+               Array<byte>.copy(tmp, src, s_index, tmp_len);
+               Array<byte>.copyTo(_buffer, tmp, *_length, tmp_len);
+               _length.append(tmp_len);
+               
+               s_index += tmp_len;
+               len -= tmp_len;
+            }
+         }         
+      }
+
       write(o)
          <= write(o.toPrintable());
 
