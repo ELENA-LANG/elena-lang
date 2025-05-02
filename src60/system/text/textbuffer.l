@@ -41,7 +41,7 @@ namespace text
       }
     
       char[] cast()
-         = _buffer;
+         = ::Array<char>.copy(_buffer, 0, *_length);
     
       string cast()
          = String.copy(0, *_length, _buffer);
@@ -53,7 +53,7 @@ namespace text
       {
          ^ WideString.copy(0, _length.Value, _buffer);
       }
-    
+            
       wide cast()
          = WideString.copy(0, *_length, _buffer);
             

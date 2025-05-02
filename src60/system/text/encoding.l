@@ -138,7 +138,7 @@ namespace text
             }
             else tmp_len := 1024;
             
-            tmp_len := sour.saveToByteArray(index, tmp, tmp_len);
+            sour.saveToByteArray(index, tmp, tmp_len);
             
             output.write(0, tmp_len, tmp);
             

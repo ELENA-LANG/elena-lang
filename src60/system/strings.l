@@ -1010,7 +1010,7 @@ public const struct String : BaseValue,
    int save(int index, int length, char[] buffer, int destIndex)
       = PrimitiveStringOperations.save(buffer, self, index, length, destIndex);
 
-   internal int saveToByteArray(int index, byte[] buffer, int length)
+   internal saveToByteArray(int index, byte[] buffer, int length)
       = PrimitiveStringOperations.save(buffer, this array, index, length);
 
    Enumerator<char> enumerator()
