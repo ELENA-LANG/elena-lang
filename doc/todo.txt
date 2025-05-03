@@ -14,9 +14,6 @@ In development:
   - test build actions : msbuild / make 
   - #34 : http client
   --------------------------------------    
-  * support constant array
-  * uncomment const from base64.l
-  * new class Base64Encoder
   * http request - encode body
   * http client : post
   --------------------------------------

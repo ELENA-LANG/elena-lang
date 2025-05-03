@@ -4,6 +4,7 @@ import system'dynamic;
 import system'dynamic'expressions;
 import system'text;
 import system'text'parsing;
+import system'io;
 import ltests;
 
 // --- ControlTest ---
