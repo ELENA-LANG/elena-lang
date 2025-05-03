@@ -364,6 +364,26 @@ void Interpreter::addIntArrayItem(ref_t dictionaryRef, int value)
    writer.writeDWord(value);
 }
 
+void Interpreter :: addByteArrayItem(ref_t dictionaryRef, int value)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskConstant, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   MemoryWriter writer(dictionary);
+   writer.writeByte(value);
+}
+
+void Interpreter::addWordArrayItem(ref_t dictionaryRef, int value)
+{
+   MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskConstant, true);
+   if (!dictionary)
+      throw InternalError(errFatalError);
+
+   MemoryWriter writer(dictionary);
+   writer.writeWord(value);
+}
+
 void Interpreter::addLongArrayItem(ref_t dictionaryRef, long long value)
 {
    MemoryBase* dictionary = _scope->module->mapSection(dictionaryRef | mskConstant, true);
@@ -499,7 +519,7 @@ void Interpreter::copyConstCollection(ref_t sourRef, ref_t destRef, bool byValue
    }
 }
 
-ObjectInfo Interpreter::createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue)
+ObjectInfo Interpreter::createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue, int elementSize)
 {
    ref_t mask = byValue ? mskConstant : mskConstArray;
    auto section = _scope->module->mapSection(arrayRef | mask, false);
@@ -512,7 +532,17 @@ ObjectInfo Interpreter::createConstCollection(ref_t arrayRef, ref_t typeRef, Arg
             break;
          case ObjectKind::IntLiteral:
             if (byValue) {
-               addIntArrayItem(arrayRef, arg.extra);
+               switch (elementSize) {
+                  case 1:
+                     addByteArrayItem(arrayRef, arg.extra);
+                     break;
+                  case 2:
+                     addWordArrayItem(arrayRef, arg.extra);
+                     break;
+                  default:
+                     addIntArrayItem(arrayRef, arg.extra);
+                     break;
+               }               
             }
             else addConstArrayItem(arrayRef, arg.reference, mskIntLiteralRef);
             break;
@@ -4737,9 +4767,12 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
       node.setArgumentReference(nestedRef);
    }
 
+   int size = 0;
    bool byValue = _logic->isEmbeddableArray(*scope.moduleScope, collectionTypeRef);
+   if (byValue)
+      size = _logic->defineStructSize(*scope.moduleScope, elementTypeRef).size;
 
-   return interpreter.createConstCollection(nestedRef, collectionTypeRef, arguments, byValue);
+   return interpreter.createConstCollection(nestedRef, collectionTypeRef, arguments, byValue, size);
 }
 
 ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool resolveMode)

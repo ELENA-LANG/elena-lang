@@ -27,6 +27,6 @@ public sealed class HttpRequest
 
       _headers := new HttpHeaders();
       
-      _buffer.write(0, length, body);
+      Base64Encoding.encode(0, length, body, _buffer);
    }
 }

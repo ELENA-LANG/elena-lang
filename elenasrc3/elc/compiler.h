@@ -359,6 +359,8 @@ namespace elena_lang
       void addTypeListItem(ref_t dictionaryRef, ref_t symbolRef, ref_t mask);
       void addConstArrayItem(ref_t dictionaryRef, ref_t item, ref_t mask);
       void addIntArrayItem(ref_t dictionaryRef, int value);
+      void addByteArrayItem(ref_t dictionaryRef, int value);
+      void addWordArrayItem(ref_t dictionaryRef, int value);
       void addLongArrayItem(ref_t dictionaryRef, long long value);
       void addFloatArrayItem(ref_t dictionaryRef, double value);
       void addMssgNameArrayItem(ref_t dictionaryRef, ref_t constRef);
@@ -378,7 +380,7 @@ namespace elena_lang
 
       bool eval(BuildKey key, ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
-      ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue);
+      ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue, int elementSize = 0);
 
       void copyConstCollection(ref_t sourRef, ref_t destRef, bool byValue);
 

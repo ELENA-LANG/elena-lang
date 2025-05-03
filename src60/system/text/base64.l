@@ -147,6 +147,46 @@ namespace text
          ^ saved;
       }
       
+      encode(int index, int length, byte[] src, MemoryBuffer output)
+      {
+         byte tmp[1024];
+         int tmp_len := 1024;
+         int src_index := index;
+         int len := length;
+         while (len > 0) {
+            if (len < 1024) {
+               tmp_len := len;
+            }
+            else tmp_len := 1024;
+
+            int dest_len := encoding(src, 0, ref tmp_len, tmp, 1024);
+            output.write(0, dest_len, tmp);
+            
+            src_index += tmp_len;
+            len -= tmp_len;
+         };         
+      }
+      
+      decode(int index, int length, byte[] src, MemoryBuffer output)
+      {
+         byte tmp[1024];
+         int tmp_len := 1024;
+         int src_index := index;
+         int len := length;
+         while (len > 0) {
+            if (len < 1024) {
+               tmp_len := len;
+            }
+            else tmp_len := 1024;
+
+            int dest_len := decoding(src, 0, ref tmp_len, tmp, 1024);
+            output.write(0, dest_len, tmp);
+            
+            src_index += tmp_len;
+            len -= tmp_len;
+         };         
+      }
+      
       byte[] fromString(string s)
       {
          auto output := MemoryBuffer.allocate(s.Length);
@@ -174,7 +214,7 @@ namespace text
             }
             else tmp_len := 1024;
             
-            int dest_len := Base64Encoding.encoding(byteArray, src_index, tmp_len, tmp, 1024);
+            int dest_len := Base64Encoding.encoding(byteArray, src_index, ref tmp_len, tmp, 1024);
             dest_output.write(0, dest_len, tmp);
             
             len -= src_len;
