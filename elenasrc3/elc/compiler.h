@@ -1901,7 +1901,7 @@ namespace elena_lang
 
       void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);
 
-      static ObjectInfo convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError = false);
+      static ObjectInfo convertIntLiteral(Scope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError = false);
 
       bool compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal);
 

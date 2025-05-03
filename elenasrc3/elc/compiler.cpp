@@ -4676,6 +4676,7 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
 
    ref_t collectionTypeRef = 0;
    ref_t elementTypeRef = 0;
+   bool numericOne = false;
 
    if (!anonymousOne) {
       ObjectInfo objectInfo = evalObject(interpreter, scope, current);
@@ -4699,6 +4700,7 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
 
       auto fieldInfo = *(collectionInfo.fields.start());
       elementTypeRef = resolveStrongType(scope, { fieldInfo.typeInfo.elementRef });
+      numericOne = _logic->isNumericType(*scope.moduleScope, elementTypeRef);
    }
 
    ArgumentsInfo arguments;
@@ -4707,6 +4709,12 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
          auto argInfo = evalExpression(interpreter, scope, current, ignoreErrors);
 
          argInfo.typeInfo.typeRef = resolveStrongType(scope, argInfo.typeInfo);
+
+         ref_t typeRef = argInfo.typeInfo.typeRef;
+         if (argInfo.kind == ObjectKind::IntLiteral && numericOne) {
+            // HOTFIX : convert int literal in place
+            argInfo = convertIntLiteral(scope, node, argInfo, elementTypeRef);
+         }
 
          if (!isConstant(argInfo.kind)
             || (elementTypeRef && !_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true)))
@@ -7751,7 +7759,7 @@ inline bool isNormalConstant(ObjectInfo info)
    }
 }
 
-ObjectInfo Compiler::convertIntLiteral(ExprScope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError)
+ObjectInfo Compiler::convertIntLiteral(Scope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError)
 {
    bool invalid = false;
    switch (targetRef) {
