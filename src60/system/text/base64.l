@@ -4,7 +4,7 @@ namespace text
    
    internal /*const */byte[] base_map = new byte[] 
    {  65, 66, 67, 68,  69,  70,  71,  72,  73,  74,  75,  76,  77,  78,  79,  80,  81,  82,  83,  84,  85,  86,  87,  88,  89,  90,
-      97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 117, 117, 118, 119, 120, 121, 122,
+      97, 98, 99, 100, 101, 102, 103, 104, 105, 106, 107, 108, 109, 110, 111, 112, 113, 114, 115, 116, 117, 118, 119, 120, 121, 122,
       48, 49, 50, 51, 52, 53, 54, 55, 56, 57, 43, 47         
    };
    
@@ -59,7 +59,7 @@ namespace text
       {
          byte[] map := base_map; // !! temporally
          
-         int buffer_index := 0;
+         byte buffer_index := 0;
          byte buffer[4];
          
          int len := src_len;
@@ -84,7 +84,7 @@ namespace text
                if (buffer[3] != 64) {
                   dest[dest_index] := (buffer[2] shl:6) + buffer[3]; dest_index++;
                };
-               dest_index := 0;
+               buffer_index := 0;
                               
                if (dest_len - dest_index < 5) {
                   src_len := end - i;
@@ -111,7 +111,7 @@ namespace text
             else tmp_len := 1024;
             
             int dest_len := encoding(buffer, src_index, tmp_len, tmp, 1024);
-            builder.write(tmp, 0, tmp_len);
+            builder.write(tmp, 0, dest_len);
             len -= tmp_len;
             src_index += tmp_len;
          };
@@ -124,8 +124,6 @@ namespace text
          int saved := 0;
          int len := s.Length;
          
-         auto output := MemoryBuffer.allocate(len);
-         
          byte dest_tmp[1024];
          byte tmp[1024];
          int tmp_len := 1024;
@@ -136,7 +134,7 @@ namespace text
             }
             else tmp_len := 1024;
 
-            tmp_len := s.saveToByteArray(src_index, tmp, tmp_len);
+            s.saveToByteArray(src_index, tmp, tmp_len);
             
             int dest_len := decoding(tmp, 0, tmp_len, dest_tmp, 1024);
             output.write(0, dest_len, dest_tmp);

@@ -7,15 +7,17 @@ In development:
 
   === Iteration 40 (4.05) ===
   --------------------------------------
+  - freebsd : install in system (/usr/local)
+  - clang
   - #739
   - #743
   - test build actions : msbuild / make 
   - #34 : http client
   --------------------------------------    
-  * optimize the following expression : byte b := map[buffer[0] shr:2] - use direct operation;
   * test base64 encoder
-  * functional test base64 encoder : to and from (>1024) 
-  * functional test base64 encoder : to and from (>1024) 
+  * functional test base64 encoder : to and from
+  * unit test : native operation with byte array + byte
+  * unit test : native operation with byte array + int
   * support constant array
   * uncomment const from base64.l
   * new class Base64Encoder
