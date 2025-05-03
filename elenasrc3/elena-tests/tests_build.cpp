@@ -53,6 +53,7 @@
 * NillableIntAssigning
 * --------------------
 * 
+* ByteArrayOp
 */
 
 
@@ -153,4 +154,14 @@ TEST_F(IntAssigningNil, BuildTest)
 TEST_F(NillableIntAssigning, BuildTest)
 {
    runTest(false);
+}
+
+TEST_F(ByteArrayOperation, BuildTest)
+{
+   runTest();
+}
+
+TEST_F(ByteArrayOperation2, BuildTest)
+{
+   runTest();
 }

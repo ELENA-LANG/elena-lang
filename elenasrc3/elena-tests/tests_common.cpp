@@ -415,6 +415,35 @@ void ScenarioTest::SetUp()
    controlOutputNode = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
+void ScenarioTest :: run(ModuleScopeBase* moduleScope, int scenario)
+{
+   moduleScope->predefined.add("nil", V_NIL);
+
+   Compiler* compiler = env.createCompiler();
+
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   Compiler::Namespace nsScope(compiler, moduleScope, TestErrorProcessor::getInstance(), nullptr, nullptr);
+
+   // Act
+   nsScope.declare(declarationNode.firstChild(), true);
+
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   classHelper.load();
+   Compiler::Method methodHelper(classHelper);
+
+   SyntaxNode methodNode = findTargetNode(scenario);
+   if (methodNode != SyntaxKey::None)
+      methodHelper.compile(writer, methodNode);
+
+   // Assess
+   bool matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
+   EXPECT_TRUE(matched);
+
+   freeobj(compiler);
+   freeobj(moduleScope);
+}
+
 // --- CompileTest ---
 
 void CompileTest :: SetUp()

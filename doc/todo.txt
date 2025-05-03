@@ -14,10 +14,6 @@ In development:
   - test build actions : msbuild / make 
   - #34 : http client
   --------------------------------------    
-  * test base64 encoder
-  * functional test base64 encoder : to and from
-  * unit test : native operation with byte array + byte
-  * unit test : native operation with byte array + int
   * support constant array
   * uncomment const from base64.l
   * new class Base64Encoder

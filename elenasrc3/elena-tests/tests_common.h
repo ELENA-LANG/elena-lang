@@ -257,6 +257,8 @@ namespace elena_lang
       virtual SyntaxNode findTargetNode(int scenario);
 
       void SetUp() override;
+
+      void run(ModuleScopeBase* moduleScope, int scenario);
    };
 
    // --- ScenarioTest --- 
