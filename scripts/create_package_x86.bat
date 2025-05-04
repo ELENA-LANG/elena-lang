@@ -14,8 +14,6 @@ md build\x86\examples60
 md build\x86\src60
 md build\x86\lib60
 
-dat\api2html\api2html.bat
-
 copy bin\asm-cli.exe build\x86\bin
 copy bin\elena-cli.exe build\x86\bin
 copy bin\elena-ide.exe build\x86\bin
