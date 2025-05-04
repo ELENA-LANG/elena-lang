@@ -10,7 +10,6 @@ In development:
   - #739
   - #743
   - test build actions : msbuild / make 
-  - clang
   --------------------------------------    
   * support clang in makefile for freebsd
   --------------------------------------
