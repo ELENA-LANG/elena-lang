@@ -19,6 +19,8 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
+  VERSION: 6.6.5
+
 permissions: write-all
 
 jobs:
@@ -39,19 +41,20 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Setup Nuget
-      uses: Nuget/setup-nuget@v2
+      uses: Nuget/setup-nuget@v1.0.5
 
     - name: Restore nuget packages
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Set variables
+    - name: Set version
+      shell: cmd
       run: |
         VER=$(type VERSION)
         echo "VERSION=$VER" >> $GITHUB_ENV
 
-   - name: Show variables
+    - name: Show variables
       run: |
-        echo "${{ env.VERSION }} < VERSION"
+        echo "${{ env.VERSION }}"
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
