@@ -7,7 +7,7 @@ WORKDIR = `pwd`
 CC = clang
 CXX = clang++
 AR = ar
-LD = lld
+LD = clang++
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
