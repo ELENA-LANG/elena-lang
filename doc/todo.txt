@@ -36,6 +36,7 @@ In development:
   - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
   maint:
+  - freebsd : create package, workflow
   - test all x86-64 examples
   - API - review / description
   - review pi performance (must < 6) : realOp.power[3] byte code

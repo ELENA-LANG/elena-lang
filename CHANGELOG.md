@@ -4,6 +4,10 @@
   - [ADDED] user defined type alias
   - [ADDED] supporting auto field
   - [ADDED] async action / async program entry
+  - [ADDED] "use" statement to declare a short cut
+  - [ADDED] "#import" statement to register the external library name
+  - [ADDED] project variables
+  - [ADDED] Conditional compilation
 
 - ELC
   - [ADDED] new option "-xj" to turn on jump alignment
@@ -40,6 +44,9 @@
   - [FIXED] AARXH64 : fiadd, fisub, fimul, fidiv
   - [ADDED] supporting base_path attribute in a project collection
   - [ADDED] supporting profile attribute in a project collection
+  - [ADDED] #742 : Declaring external callback 
+  - [ADDED] #748 : Supporting FreeBSD 
+  - [ADDED] #756 : supporting mingw toolset
 
 - API
   - [ADDED] net'http'HttpClient, net'http'Uri
@@ -53,12 +60,25 @@
   - [FIXED] BlockingQueue<T> implementation
   - [ADDED] new library : mbedtls 
   - [FIXED] VariadicExtensionDispatcher : dispatcher
+  - [ADDED] system'routines'CountDownEnumerator
+  - [ADDED] extension countDown
+  - [ADDED] BaseEdit.onChange event
+  - [ADDED] algorithms'InsertSortAlgorithm, algorithms'InsertSortAlgorithm<T>
+  - [ADDED] algorithms'BinarySearchAlgorithm<T>
+  - [ADDED] system'UnsafePointer<T>
+  - [FIXED] system'io'MemoryStream - reading operation
+  - [FIXED] ByteArrayExConvertor.toByteArray extension method
+  - [ADDED] new library : textgen
+  - [ADDED] system'dynamic'expressions : ForLoopExpression
+  - [ADDED] net'http'HttpClient : post, postAsync
+  - [ADDED] system'text : Base64Encoding, Base64Encoder
 
 - SM
   - [ADDED] supporting $regex rules
 
 - Scripts
   - [ADDED] xforms : supporting RadioButton, Panel, Edit, Combobox
+  - [ADDED] LScript : for loop
 
 - SAMPLES
   - [ADDED] console regex sample
@@ -83,6 +103,9 @@
   - [FIXED] saving IDE config file in the correct folder
   - [FIXED] supporting clipboard operation without selection
   - [FIXED] IDE64 : fixing undo / redo operations
+  - [ADDED] auto indent
+  - [FIXED] an outage is not being calculated correctly
+  - [ADDED] brackets highlighting
 
 - Tools
   - [ADDED][LDOC] static methods are in the separate category
