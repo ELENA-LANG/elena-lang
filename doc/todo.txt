@@ -11,9 +11,8 @@ In development:
   - #743
   - test build actions : msbuild / make 
   - clang
-  - freebsd : install in system (/usr/local)
   --------------------------------------    
-  * install in system 
+  * support clang in makefile for freebsd
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

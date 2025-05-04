@@ -10,6 +10,9 @@ all_amd64: elc_amd64 sg_amd64 og_amd64 asmc_amd64 ecv_amd64 elenart_amd64 elenas
 elc_amd64: 
 	$(MAKE) -C elenasrc3/elc/codeblocks all -f bsd.elc_amd64.mak
 
+clang_elc_amd64: 
+	$(MAKE) -C elenasrc3/elc/codeblocks all -f bsd.clang_elc_amd64.mak
+
 sg_amd64: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks all -f bsd.sg_amd64.mak
 
