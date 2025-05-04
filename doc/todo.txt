@@ -7,15 +7,15 @@ In development:
 
   === Iteration 40 (4.05) ===
   --------------------------------------
-  - freebsd : install in system (/usr/local)
-  - clang
   - #739
   - #743
   - test build actions : msbuild / make 
-  - #34 : http client
+  - clang
+  - freebsd : install in system (/usr/local)
+  - bsd : change paths
   --------------------------------------    
-  * http request - encode body
-  * http client : post
+  * change script
+  * change config files
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
