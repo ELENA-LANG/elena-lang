@@ -12,10 +12,8 @@ In development:
   - test build actions : msbuild / make 
   - clang
   - freebsd : install in system (/usr/local)
-  - bsd : change paths
   --------------------------------------    
-  * change script
-  * change config files
+  * install in system 
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
