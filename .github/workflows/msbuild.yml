@@ -21,8 +21,6 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
-  VERSION: 6.6.5
-
 permissions: write-all
 
 jobs:
@@ -47,9 +45,9 @@ jobs:
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
  
     - name: Set version
-      shell: cmd
+      shell: bash
       run: |
-        VER=$(type VERSION)
+        VER=$(cat VERSION)
         echo "VERSION=$VER" >> $GITHUB_ENV
 
     - name: Build

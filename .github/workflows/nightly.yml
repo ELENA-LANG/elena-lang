@@ -19,8 +19,6 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
-  VERSION: 6.6.5
-
 permissions: write-all
 
 jobs:
