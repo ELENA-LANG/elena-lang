@@ -7,12 +7,12 @@ WORKDIR = `pwd`
 CC = clang
 CXX = clang++
 AR = ar
-LD = g++
+LD = lld
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
 CFLAGS = -Wall -std=c++20 -m64
-LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
+LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl -fuse-ld=lld
 
 RESINC = 
 LIBDIR = 
