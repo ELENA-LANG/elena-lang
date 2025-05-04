@@ -51,6 +51,7 @@ jobs:
         echo "BUILD_TAG=$VER" >> $GITHUB_ENV
 
     - name: Test output
+      shell: cmd
       run: echo ${{ env.BUILD_TAG }}
 
     - name: Build
