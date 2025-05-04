@@ -49,7 +49,7 @@ jobs:
     - name: Set version
       shell: bash
       run: |
-        VER=$(type VERSION)
+        VER=$(cat VERSION)
         echo "VERSION=$VER" >> $GITHUB_ENV
 
     - name: Show variables
