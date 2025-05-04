@@ -940,7 +940,7 @@ inline %034h
 end
 
 // ; dfree
-inline % 16h
+inline % 35h
 
   lsl     x12, x9, #3
   add     x12, x12, #8    // ; rounding to 10h
