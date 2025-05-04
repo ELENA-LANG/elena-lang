@@ -47,7 +47,7 @@ jobs:
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
     - name: Set version
-      shell: cmd
+      shell: bash
       run: |
         VER=$(type VERSION)
         echo "VERSION=$VER" >> $GITHUB_ENV

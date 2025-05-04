@@ -5,20 +5,13 @@ In development:
 [development]
   ### EPIC: elena 6.7 ###
 
-  === Iteration 40 (4.05) ===
-  --------------------------------------
-  - #739
-  - #743
-  - test build actions
-  --------------------------------------    
-  * get version in windows
-  --------------------------------------
-
   ### EPIC: elena 6.8 ###
 
   === Iteration 41 ===
   --------------------------------------
   dev: 
+  - #739
+  - #743
   - VM support for Linux (make for both linux and windows)
   - MTA support for Linux : support MT routines in elenart
   - support :sizeof
