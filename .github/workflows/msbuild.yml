@@ -47,7 +47,7 @@ jobs:
     - name: Set version
       run: |
         VER=$(cat VERSION)
-        echo "BUILD_TAG=$VER" >> $GITHUB_ENV
+        echo "VERSION=$VER" >> $GITHUB_ENV
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
