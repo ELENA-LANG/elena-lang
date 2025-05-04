@@ -39,6 +39,8 @@ namespace elena_lang
    constexpr auto LINUX_PPC64le_KEY                   = "Linux_PPC64le";
    constexpr auto LINUX_ARM64_KEY                     = "Linux_ARM64";
 
+   constexpr auto FREEBSD_X86_64_KEY                  = "FreeBSD_AMD64";
+
    constexpr auto ERROR_RUN_NEED_TARGET               = 0x0001;
    constexpr auto ERROR_DEBUG_FILE_NOT_FOUND_COMPILE  = 0x0002;
    constexpr auto ERROR_RUN_NEED_RECOMPILE            = 0x0003;

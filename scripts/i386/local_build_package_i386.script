@@ -1,5 +1,7 @@
 #!/bin/bash
 
+BASEDIR=$(dirname $0)
+
 mkdir -p ../../lib60
 mkdir -p ../../bin/x32
 
@@ -50,7 +52,7 @@ cp ../../dat/sg/syntax60.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm-cli -x86 ../../asm/x32/core60.asm ../../bin/x32
+../../bin/asm-cli -linux -x86 ../../asm/x32/core60.asm ../../bin/x32 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -60,17 +62,7 @@ else
   exit 1
 fi
 
-../../bin/asm-cli -x86 ../../asm/x32/corex60.asm ../../bin/x32
-ret=$?
-if [ $ret -eq 0 ]
-then
-  echo .
-else
-  echo "Failure" >&2
-  exit 1
-fi
-
-../../bin/asm-cli -x86 ../../asm/x32/core60_lnx.asm ../../bin/x32
+../../bin/asm-cli -linux -x86 ../../asm/x32/corex60.asm ../../bin/x32  corex60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -101,5 +93,8 @@ fi
  else
    echo .
  fi
+
+ mkdir -p /usr/lib/elena/
+ ln -s $(realpath ../../bin/libelenart60.so) /usr/lib/elena/libelenart60.so
 
 exit 0

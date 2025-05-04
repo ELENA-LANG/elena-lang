@@ -3,6 +3,29 @@ import system'collections;
 import system'runtime;
 import system'drawing;
 
+// --- ListenerBase ---
+
+textblock ListenerBase
+{
+   onClick(Handle handle)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.click() };
+        
+      super.onClick(handle)
+   }
+
+   onChange(Handle handle)
+   {
+      auto control := _owner.retrieve(handle);
+      if(nil != control)
+         { control.change() };
+        
+      super.onClick(handle)
+   }   
+}
+
 // --- IControl ---
 
 public interface IControl
@@ -18,6 +41,8 @@ public interface IControl
    abstract close();
 
    abstract click();
+   
+   abstract change();
 }
 
 // --- BaseWindowControl ---
@@ -155,6 +180,8 @@ public abstract class BaseWinControl : BaseControl
    }
 
    click() {}
+   
+   change() {}   
 }
 
 // --- BaseWinContainer ---
@@ -283,10 +310,17 @@ public class StaticLabel : Label
 
 abstract class BaseEdit : BaseWinControl
 {
+   Func1 onChange : event;
+   
    protected constructor new()
       <= super new()
    {
    }
+   
+   change()
+   {
+      onChange?.(self)
+   }   
 
    string Value = self.Caption;
 
@@ -813,7 +847,7 @@ public abstract class BasePanel : BaseWinContainer
    }    
 }
 
-class PanelListener : WindowCallback
+class PanelListener : WindowCallback, using(ListenerBase)
 {
    Panel _owner;
     
@@ -1091,6 +1125,8 @@ public sealed class ImageList : Object, interface<IControl>
    }
     
    click() {}
+   
+   change() {}   
 
    open()
    {

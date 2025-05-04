@@ -155,6 +155,20 @@ namespace elena_lang
       void runTest(bool withVariadic, int scenario = 0);
    };
 
+   class ArrayOpTest : public ScenarioTest
+   {
+   protected:
+      ref_t      intNumberRef;
+      ref_t      arrayTemplateRef;
+      ref_t      elementRef;
+      ref_t      arrayRef;
+
+      void SetUp() override;
+
+   public:
+      void runTest(int scenario = 0);
+   };
+
    class CallMethodWithoutTarget : public MethodCallTest
    {
    protected:
@@ -222,6 +236,18 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+
+   class ByteArrayOperation : public ArrayOpTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class ByteArrayOperation2 : public ArrayOpTest
+   {
+   protected:
+      void SetUp() override;
+   }; 
 }
 
 #endif

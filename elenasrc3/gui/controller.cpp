@@ -7,7 +7,38 @@
 #include "elena.h"
 #include "idecommon.h"
 
+#ifdef _MSC_VER
+
+#include <tchar.h>
+
+#endif
+
 using namespace elena_lang;
+
+constexpr auto OPENING_BRACKETS = _T("({[\"");
+constexpr auto CLOSING_BRACKETS  = _T(")}]\"");
+
+bool isPairedBracket(text_c ch)
+{
+   size_t len = getlength(OPENING_BRACKETS);
+   for (size_t i = 0; i < len; i++) {
+      if (OPENING_BRACKETS[i] == ch)
+         return true;
+   }
+
+   return false;
+}
+
+text_c getClosingBracket(text_c ch)
+{
+   size_t len = getlength(OPENING_BRACKETS);
+   for (size_t i = 0; i < len; i++) {
+      if (OPENING_BRACKETS[i] == ch)
+         return CLOSING_BRACKETS[i];
+   }
+
+   return 0;
+}
 
 // --- TextViewController ---
 
@@ -159,7 +190,14 @@ bool TextViewController :: insertNewLine(TextViewModelBase* model)
    auto docView = model->DocView();
    if (!docView->isReadOnly()) {
       docView->eraseSelection(status);
+
+      auto lastPoint = docView->getCaret();
+      text_c currentChar = docView->getCurrentChar();
       docView->insertNewLine(status);
+      if (currentChar == '}') {
+         docView->setCaret(lastPoint, false, status);
+         docView->insertNewLine(status);
+      }
 
       notifyTextModelChange(model, status);
 
@@ -176,6 +214,12 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
    if (!docView->isReadOnly() && ch >= 0x20) {
       docView->eraseSelection(status);
       docView->insertChar(status, ch);
+
+      if (isPairedBracket(ch)) {
+         auto caret = docView->getCaret();
+         if (caret.x == docView->getCurrentLineLength()) 
+            docView->insertChar(status, getClosingBracket(ch), 1, false);
+      }
 
       notifyTextModelChange(model, status);
 
@@ -374,9 +418,81 @@ void TextViewController :: notifyOnClipboardOperation(ClipboardBase* clipboard)
 
 }
 
+bool findBracket(Text* text, TextBookmark& bookmark, text_c starting, text_c ending, bool forward)
+{
+   // define the upper / lower border of bracket search
+   int frameY = 0;
+   if (forward)
+      frameY = text->getRowCount();
+
+   int counter = 0;
+   while (true) {
+      text_c ch = text->getChar(bookmark);
+      if (ch == starting)
+         counter++;
+      else if (ch == ending) {
+         counter--;
+         if (counter == 0)
+            return true;
+      }
+
+      if (forward) {
+         if (!bookmark.moveOn(1) || (bookmark.row() > frameY))
+            break;
+      }
+      else {
+         if (!bookmark.moveOn(-1) || bookmark.row() < frameY)
+            break;
+      }
+   }
+   return false;
+}
+
+
+void TextViewController :: highlightBrackets(TextViewModelBase* model, DocumentChangeStatus& changeStatus)
+{
+   auto docView = model->DocView();
+
+   Text* text = docView->getText();
+   TextBookmark caret = docView->getCurrentTextBookmark();
+
+   if (docView->clearHighlights())
+      changeStatus.formatterChanged = true;
+
+   text_c current_ch = text->getChar(caret);
+   if (current_ch == '"')
+      return;
+
+   size_t pos = text_str(OPENING_BRACKETS).find(current_ch);
+   if (pos != NOTFOUND_POS) {
+      docView->addHighlight(caret.position(), STYLE_HIGHLIGHTED_BRACKET);
+
+      if (findBracket(text, caret, OPENING_BRACKETS[pos], CLOSING_BRACKETS[pos], true)) {
+         docView->addHighlight(caret.position(), STYLE_HIGHLIGHTED_BRACKET);
+      }
+
+      changeStatus.formatterChanged = true;
+   }
+
+   pos = text_str(CLOSING_BRACKETS).find(current_ch);
+   if (pos != NOTFOUND_POS) {
+      pos_t closeBracketPos = caret.position();
+      if (findBracket(text, caret, CLOSING_BRACKETS[pos], OPENING_BRACKETS[pos], false)) {
+         docView->addHighlight(caret.position(), STYLE_HIGHLIGHTED_BRACKET);
+         docView->addHighlight(closeBracketPos, STYLE_HIGHLIGHTED_BRACKET);
+
+         changeStatus.formatterChanged = true;
+      }      
+   }
+}
+
 void TextViewController :: notifyTextModelChange(TextViewModelBase* model, DocumentChangeStatus& changeStatus)
 {
    model->refresh(changeStatus);
+
+   if (changeStatus.caretChanged && model->highlightBrackets) {
+      highlightBrackets(model, changeStatus);
+   }
 
    if (!_notifier)
       return;

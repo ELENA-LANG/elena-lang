@@ -72,7 +72,7 @@ public class OutOfMemoryException : Exception
 public class InvalidArgumentException : Exception
 {
    constructor new() : info("Creates the exception")
-      <= new("Invalid argument");
+      <= super new("Invalid argument");
 
    constructor new(string argument) : info("Creates the exception")
       <= super new($"an invalid argument {argument}");
@@ -173,5 +173,14 @@ public class TypeLoaderException : Exception
    /// Creates the exception
    constructor new(string className)
       <= super new("Type " + className + " cannot be loaded");
+}
+
+// --- TypeLoaderException ---
+
+public class MessageLoaderException : Exception
+{
+   /// Creates the exception
+   constructor new(string messageName)
+      <= super new("Message " + messageName + " cannot be loaded");
 }
 

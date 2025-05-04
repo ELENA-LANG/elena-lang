@@ -129,11 +129,20 @@ inline % GC_COLLECT
 
 labStart:
   // ; GCXT: find the current thread entry
+
+#if _WIN
   mov  eax, fs:[2Ch]
+#elif _LNX
+  mov  eax, gs:[0]
+#endif
   push esi
 
+#if _WIN
   // ; GCXT: find the current thread entry
   mov  eax, [eax]
+#elif _LNX
+  lea  eax, [eax-tt_size]
+#endif
 
   push ebp
 
@@ -384,12 +393,21 @@ labPERMCollect:
   sub  ecx, eax
 
   // ; GCXT: find the current thread entry
+
+#if _WIN
   mov  eax, fs:[2Ch]
+#elif _LNX
+  mov  eax, gs:[0]
+#endif
 
   push esi
 
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  eax, [eax]
+#elif _LNX
+  lea  eax, [eax-tt_size]
+#endif
 
   push ebp
 
@@ -531,8 +549,13 @@ labWait:
   jnz  short labWait
 
   // ; find the current thread entry
+#if _WIN
   mov  eax, fs:[2Ch]
   mov  eax, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  eax, [eax-tt_size]
+#endif
 
   mov  esi, [eax+tt_sync_event]   // ; get current thread event
   mov  [eax+tt_stack_frame], edi  // ; lock stack frame
@@ -583,8 +606,14 @@ end
 // ; throw
 inline %0Ah
 
+#if _WIN
   mov  eax, fs:[2Ch]
   mov  ecx, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  ecx, [eax-tt_size]
+#endif
+
   mov  edi, [ecx + et_current]
   jmp  [edi + es_catch_addr]
 
@@ -594,8 +623,14 @@ end
 inline %0Bh
 
   // ; GCXT: get current thread frame
+#if _WIN
   mov  eax, fs:[2Ch]
   mov  ecx, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  ecx, [eax-tt_size]
+#endif
+
   mov  edi, [ecx + et_current]
 
   mov  eax, [edi + es_prev_struct]
@@ -609,8 +644,13 @@ end
 // ; exclude
 inline % 10h
      
+#if _WIN
   mov  eax, fs:[2Ch]
   mov  edi, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax-tt_size]
+#endif
   mov  [edi + tt_flags], 1
   mov  eax, [edi + tt_stack_frame]
   push eax
@@ -623,8 +663,15 @@ end
 inline % 11h
 
   add  esp, 4
+
+#if _WIN
   mov  eax, fs:[2Ch]
   mov  edi, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax-tt_size]
+#endif
+
   mov  [edi + tt_flags], 0
   pop  eax
   mov  [edi + tt_stack_frame], eax
@@ -635,8 +682,14 @@ end
 inline %17h
 
   // ; COREX
+#if _WIN
   mov  eax, fs:[2Ch]
   mov  edi, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax-tt_size]
+#endif
+
   mov  eax, [edi + tt_stack_root]
 
   xor  ecx, ecx
@@ -672,9 +725,16 @@ end
 // ; peektls
 inline %0BBh
 
-  mov  eax, fs: [2Ch]
+#if _WIN
+  mov  eax, fs:[2Ch]
   mov  eax, [eax]
   lea  edi, [eax + __arg32_1]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax - __arg32_1]
+  lea  edi, [edi-4]
+#endif
+
   mov  ebx, [edi]
 
 end
@@ -682,9 +742,16 @@ end
 // ; storetls
 inline %0BCh
 
-  mov  eax, fs: [2Ch]
+#if _WIN
+  mov  eax, fs:[2Ch]
   mov  eax, [eax]
   lea  edi, [eax + __arg32_1]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax - __arg32_1]
+  lea  edi, [edi-4]
+#endif
+
   mov  [edi], ebx
 
 end
@@ -699,8 +766,15 @@ inline %0CAh
   add  esp, 8
 
   pop  ebx
+
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
+
   mov  [edi + tt_stack_frame], ebx
 
   pop  ebp
@@ -721,8 +795,15 @@ inline %1CAh
   add  esp, 8
 
   pop  ebx
+
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
+
   mov  [edi + tt_stack_frame], ebx
 
   pop  ebp
@@ -771,8 +852,14 @@ end
 // ; system 3 (thread startup)
 inline %3CFh
 
-  mov  eax, fs: [2Ch]
+#if _WIN
+  mov  eax, fs:[2Ch]
   mov  eax, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  eax, [eax-tt_size]
+#endif
+
   mov  edi, data : %CORE_THREAD_TABLE + tt_slots
   mov  [edi + edx * 8], eax
 
@@ -819,9 +906,18 @@ end
 inline %0E6h
 
   // ; GCXT: get current thread frame
+#if _WIN
   mov  eax, fs:[2Ch]
+#elif _LNX
+  mov  eax, gs:[0]
+#endif
+
   lea  edi, [ebp + __arg32_1]
+#if _WIN
   mov  eax, [eax]
+#elif _LNX
+  lea  eax, [eax-tt_size]
+#endif
 
   mov  ecx, [eax + et_current]
   mov  [edi + es_catch_frame], ebp
@@ -842,8 +938,15 @@ inline %0F2h
   push ebx
 
   push ebp     
+
+#if _WIN
   mov  eax, fs:[2Ch]
   mov  edi, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax-tt_size]
+#endif
+
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -877,8 +980,14 @@ inline %1F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
+
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -908,8 +1017,13 @@ inline %2F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -940,8 +1054,13 @@ inline %3F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -973,8 +1092,13 @@ inline %4F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1007,8 +1131,13 @@ inline %5F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1042,8 +1171,13 @@ inline %6F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1073,8 +1207,13 @@ inline %7F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1099,8 +1238,13 @@ inline %8F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1126,8 +1270,13 @@ inline %9F2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1155,8 +1304,13 @@ inline %0AF2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1185,8 +1339,13 @@ inline %0BF2h
   push ebx
 
   push ebp     
+#if _WIN
   mov  ecx, fs:[2Ch]
   mov  edi, [ecx]
+#elif _LNX
+  mov  ecx, gs:[0]
+  lea  edi, [ecx-tt_size]
+#endif
   mov  eax, [edi + tt_stack_frame]
   push eax 
 
@@ -1206,3 +1365,29 @@ inline %0BF2h
   mov  esi, eax
 
 end 
+
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+#if _WIN
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+
+  mov  ecx, fs:[2Ch]
+  mov  ecx, [ecx]
+  jmp  [ecx]
+
+#elif _LNX
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+
+  mov  ecx, gs:[0]
+  lea  ecx, [ecx-tt_size]
+
+  jmp  [ecx]
+
+#endif
+
+end

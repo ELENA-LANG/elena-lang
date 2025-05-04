@@ -99,6 +99,8 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
             flushDictionary(writer, current);
             break;
          case SyntaxKey::MetaExpression:
+         case SyntaxKey::CondStatement:
+         case SyntaxKey::ElseCondStatement:
          {
             Scope scope;
             flushStatement(writer, scope, current);
@@ -813,7 +815,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
 
          if (scope.withNameParameters()) {
             int index = scope.arguments.get(current.identifier());
-            if (index == 1) {
+            if (scope.isNameIndex(index)) {
                key = SyntaxKey::NameArgParameter;
                attrRef = index + scope.nestedLevel;
             }
@@ -1063,7 +1065,15 @@ void SyntaxTreeBuilder :: flushSymbolPostfixes(SyntaxTreeWriter& writer, Scope& 
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Postfix) {
-         flushTemplageExpression(writer, scope, current, SyntaxKey::InlineTemplate, false);
+         SyntaxNode child = current.firstChild();
+         switch (child.key) {
+            case SyntaxKey::InlinePostfix:
+               flushTemplageExpression(writer, scope, child, SyntaxKey::InlineTemplate, false);
+               break;
+            default:
+               flushTemplageExpression(writer, scope, current, SyntaxKey::InlineTemplate, false);
+               break;
+         }
       }
 
       current = current.nextNode();
@@ -1151,6 +1161,13 @@ void SyntaxTreeBuilder :: flushMethodCode(SyntaxTreeWriter& writer, Scope& scope
          case SyntaxKey::EOP:
             flushNode(writer, scope, current);
             break;
+         case SyntaxKey::CondStatement:
+         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::EndCondStatement:
+         {
+            flushStatement(writer, scope, current);
+            break;
+         }
          default:
             if (SyntaxTree::testSuperKey(current.key, SyntaxKey::Expression)) {
                current.setKey(SyntaxKey::Expression);
@@ -1427,8 +1444,20 @@ void SyntaxTreeBuilder :: flushClass(SyntaxTreeWriter& writer, Scope& scope, Syn
    else {
       SyntaxNode current = node.firstChild();
       while (current != SyntaxKey::None) {
-         if (current.key == SyntaxKey::Declaration) {
-            flushClassMember(writer, scope, current);
+         switch (current.key) {
+            case SyntaxKey::CondStatement:
+            case SyntaxKey::ElseCondStatement:
+            case SyntaxKey::EndCondStatement:
+            {
+               Scope scope;
+               flushStatement(writer, scope, current);
+               break;
+            }
+            case SyntaxKey::Declaration:
+               flushClassMember(writer, scope, current);
+               break;
+            default:
+               break;
          }
 
          current = current.nextNode();
@@ -1445,6 +1474,7 @@ void SyntaxTreeBuilder :: flushTemplateCode(SyntaxTreeWriter& writer, Scope& sco
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::IncludeStatement:
+         case SyntaxKey::ImportStatement:
             flushExpression(writer, scope, current);
             break;
          case SyntaxKey::MetaExpression:
@@ -1610,6 +1640,7 @@ enum DeclarationType
 {
    Class,
    Import,
+   Shortcut,
    Namespace
 };
 
@@ -1623,6 +1654,9 @@ inline DeclarationType defineDeclarationType(SyntaxNode node)
          switch (current.arg.reference) {
             case V_IMPORT:
                type = DeclarationType::Import;
+               break;
+            case V_USE:
+               type = DeclarationType::Shortcut;
                break;
             case V_NAMESPACE:
                type = DeclarationType::Namespace;
@@ -1798,6 +1832,11 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode&
       switch (type) {
          case DeclarationType::Import:
             writer.CurrentNode().setKey(SyntaxKey::Import);
+            break;
+         case DeclarationType::Shortcut:
+            writer.CurrentNode().setKey(SyntaxKey::Shortcut);
+
+            flushSymbolPostfixes(writer, scope, node);
             break;
          case DeclarationType::Namespace:
             writer.CurrentNode().setKey(SyntaxKey::Namespace);
@@ -2173,7 +2212,13 @@ void TemplateProssesor :: importTemplate(Type type, MemoryBase* templateSection,
 
    bufferWriter.closeNode();
 
-   SyntaxTreeWriter targetWriter(target);
+   // NOTE : for the inline property, the target is the property node, so targetWriter must be assigned to the property parent
+   SyntaxNode writerTarget = type == Type::InlineProperty ? target.parentNode() : target;
+   SyntaxTreeWriter targetWriter(writerTarget);
+   if (type == Type::InlineProperty) {
+      targetWriter.setBookmark(target);
+   }
+
    if (type == Type::Class || type == Type::InlineProperty || type == Type::Enumeration) {
       SyntaxNode current = bufferTree.readRoot().firstChild();
       while (current != SyntaxKey::None) {
@@ -2184,10 +2229,16 @@ void TemplateProssesor :: importTemplate(Type type, MemoryBase* templateSection,
             targetWriter.closeNode();
          }
          else if (current == SyntaxKey::Field) {
-            targetWriter.newNode(current.key, current.arg.value);
-            targetWriter.appendNode(SyntaxKey::Autogenerated);
-            SyntaxTree::copyNode(targetWriter, current);
-            targetWriter.closeNode();
+            if (type == Type::InlineProperty) {
+               // NOTE : field must be injected next to the original place for inline property
+               SyntaxTree::injectNode(targetWriter, current);
+            }
+            else {
+               targetWriter.newNode(current.key, current.arg.value);
+               targetWriter.appendNode(SyntaxKey::Autogenerated);
+               SyntaxTree::copyNode(targetWriter, current);
+               targetWriter.closeNode();
+            }
          }
          else SyntaxTree::copyNode(targetWriter, current, true);
 

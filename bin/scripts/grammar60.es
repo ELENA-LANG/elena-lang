@@ -128,8 +128,11 @@
              )
 =>;
 
-  #define statement       ::= "expression" "(" root_expr ")"; 
+  #define statement       ::= statement_expr; 
+  #define statement       ::= for_looping; 
   #define statement       ::= ret_expression; 
+
+  #define statement_expr  ::= "expression" "(" root_expr ")"; 
 
   #define root_expr       ::= expression;
   #define root_expr       ::= "assign_operation" "(" variable ")";
@@ -138,7 +141,8 @@
   #define root_expr       ::= looping; 
 
   #define branching       ::= "branch_operation" "(" branch_op ")";
-  #define looping         ::= "loop_expression" "(" "if_operation" "("  loop_op ")" ")";
+  #define looping         ::= "loop_expression" "(" "if_operation" "(" loop_op ")" ")";
+  #define for_looping     ::= "virtual_for_loop" "(" for_loop_op ")";
 
   #define expression      ::= "expression" "(" expression ")";
   #define expression      ::= "message_operation" "(" call_expression ")";
@@ -148,7 +152,10 @@
   #define expression      ::= "mul_operation" "(" mul_expression ")";
   #define expression      ::= "div_operation" "(" div_expression ")";
   #define expression      ::= "equal_operation" "(" equal_expression ")";
+  #define expression      ::= "not_equal_operation" "(" not_equal_expression ")";
   #define expression      ::= "less_operation" "(" less_expression ")";
+  #define expression      ::= "greater_operation" "(" greater_expression ")";
+  #define expression      ::= "at_operation" "(" at_expression ")";
   #define expression      ::= object_expr;
  
   #define branch_op       ::= 
@@ -165,6 +172,15 @@
                system'dynamic'expressions'LoopExpression (
 =>
                               expression closure_body
+<=
+               )
+=>;
+
+  #define for_loop_op       ::= 
+<=
+               system'dynamic'expressions'ForLoopExpression (
+=>
+                              statement_expr expression statement_expr closure_body
 <=
                )
 =>;
@@ -234,6 +250,18 @@
                )
 =>;
 
+  #define at_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression at_operation
+<=
+               )
+=>;
+
+  #define at_operation ::=
+               <= "at" => expression;
+
   #define add_expression ::=
 <=
                system'dynamic'expressions'MessageCallExpression (
@@ -294,6 +322,18 @@
   #define equal_operation ::=
                <= "equal" => expression;
 
+  #define not_equal_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression not_equal_operation
+<=
+               )
+=>;
+
+  #define not_equal_operation ::=
+               <= "notequal" => expression;
+
   #define less_expression ::=
 <=
                system'dynamic'expressions'MessageCallExpression (
@@ -305,6 +345,18 @@
 
   #define less_operation ::=
                <= "less" => expression;
+
+  #define greater_expression ::=
+<=
+               system'dynamic'expressions'MessageCallExpression (
+=>
+                              expression greater_operation
+<=
+               )
+=>;
+
+  #define greater_operation ::=
+               <= "greater" => expression;
 
   #define object_expr     ::= "object" "(" object ")";
 

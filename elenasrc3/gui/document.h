@@ -50,6 +50,7 @@ namespace elena_lang
       }
    };
    typedef CachedMemoryMap<int, Marker, 5>   MarkerList;
+   typedef CachedMemoryMap<pos_t, pos_t, 2>  HighlightList;
 
    // --- TextFormatterBase ---
    class TextFormatterBase
@@ -67,6 +68,7 @@ namespace elena_lang
 
       Text*                _text;
       MarkerList*          _markers;
+      HighlightList*       _highlights;
       MemoryDump           _indexes;
       MemoryDump           _lexical;
 
@@ -82,6 +84,7 @@ namespace elena_lang
       }
 
       bool checkMarker(ReaderInfo& info);
+      bool checkPrecedingHighlight(pos_t start, pos_t& end);
       void format();
 
    public:
@@ -93,7 +96,7 @@ namespace elena_lang
 
       pos_t proceed(pos_t position, ReaderInfo& info);
 
-      LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers);
+      LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers, HighlightList* highlights);
       virtual ~LexicalFormatter();
    };
 
@@ -112,7 +115,7 @@ namespace elena_lang
 
       bool isViewChanged()
       {
-         bool flag = formatterChanged | frameChanged | textChanged | selelectionChanged;
+         bool flag = formatterChanged || frameChanged || textChanged || selelectionChanged;
 
          return flag;
       }
@@ -219,6 +222,13 @@ namespace elena_lang
          }
       };
 
+      enum class IndentDirection
+      {
+         None = 0,
+         Left,
+         Right
+      };
+
       friend struct LexicalReader;
 
    protected:
@@ -227,6 +237,7 @@ namespace elena_lang
       Text*             _text;
       TextHistory       _undoBuffer;
       LexicalFormatter  _formatter;
+      HighlightList     _highlights;
 
       Point             _size;
       TextBookmark      _frame;
@@ -234,6 +245,8 @@ namespace elena_lang
       int               _selection;
 
       int               _maxColumn;
+
+      bool              _autoIndent;
 
       MarkerList        _markers;
 
@@ -246,6 +259,11 @@ namespace elena_lang
       TextBookmark getCaretBookmark() { return _caret; }
 
       void setCaret(int column, int row, bool selecting, DocumentChangeStatus& changeStatus);
+
+      text_t getCurrentLine(disp_t disp, size_t& length);      
+
+      IndentDirection IsAutoIndent(text_c ch);
+      disp_t calcAutoIndent(text_c currentChar);
 
    public:
       void addMarker(int row, pos_t style, bool instanteMode, bool togleMark, DocumentChangeStatus& changeStatus)
@@ -278,6 +296,25 @@ namespace elena_lang
 
          return false;
       }
+
+      bool clearHighlights()
+      {
+         if (_highlights.count() > 0) {
+            _highlights.clear();
+
+            return true;
+         }
+         return false;
+      }
+
+      void addHighlight(pos_t position, pos_t style)
+      {
+         _highlights.add(position, style);
+      }
+
+      Text* getText() { return _text; }
+
+      TextBookmark getCurrentTextBookmark() { return _caret; }
 
       Point getFrame() const { return _frame.getCaret(); }
       Point getCaret(bool virtualOne = true) const { return _caret.getCaret(virtualOne); }
@@ -325,6 +362,8 @@ namespace elena_lang
          status.included = false;
       }
 
+      text_c getCurrentChar();
+
       Point getSize() const { return _size; }
 
       virtual void setSize(Point size);
@@ -366,7 +405,7 @@ namespace elena_lang
       {
          insertChar(changeStatus, ch, 1);
       }
-      void insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t number);
+      void insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t number, bool advancing = true);
       void insertNewLine(DocumentChangeStatus& changeStatus);
       void insertLine(DocumentChangeStatus& changeStatus, const_text_t text, size_t length);
 
@@ -392,9 +431,9 @@ namespace elena_lang
 
       void refresh(DocumentChangeStatus& changeStatus);
 
-      bool findLine(DocumentChangeStatus& changeStatus, const_text_t text, bool matchCase, bool wholeWord);
+      bool findLine(DocumentChangeStatus& changeStatus, const_text_t text, bool matchCase, bool wholeWord);   
 
-      DocumentView(Text* text, TextFormatterBase* formatter);
+      DocumentView(Text* text, TextFormatterBase* formatter, bool autoIndent);
       virtual ~DocumentView();
    };
 }

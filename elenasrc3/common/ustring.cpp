@@ -545,7 +545,18 @@ char* StrConvertor :: toString(double value, int precision, char* s, size_t dest
 
       s[destLength] = 0;
    }
-   else _gcvt(value, precision, s);
+   else if (precision == 10) {
+      snprintf(s, destLength, "%.10g", value);
+   }
+   else {
+      char format[10] = "%.";
+      snprintf(format + 2, 8, "%d", precision);
+      size_t len = strlen(format);
+      format[len] = 'g';
+      format[len + 1] = 0;
+
+      snprintf(s, destLength, format, value);
+   }
 
    return s;
 }
@@ -553,7 +564,7 @@ char* StrConvertor :: toString(double value, int precision, char* s, size_t dest
 wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_t destLength)
 {
    char tmp[25];
-   gcvt(value, precision, tmp);
+   StrConvertor::toString(value, precision, tmp, 25);
 
    for (size_t i = 0; i <= getlength(tmp); i++) {
       s[i] = tmp[i];
@@ -637,7 +648,7 @@ char* util_clone(const char* s, size_t length)
    else return nullptr;
 }
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 char* util_clone(const char* s)
 {
@@ -1065,7 +1076,7 @@ char* StrFactory :: reallocate(char* s, size_t size)
    return (char*)realloc(s, size);
 }
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 void StrUtil :: move(wide_c* s1, const wide_c* s2, size_t length)
 {

@@ -133,7 +133,7 @@ void TextViewModel :: addDocumentView(ustr_t name, Text* text, path_t path, bool
 {
    empty = false;
 
-   auto docView = new DocumentView(text, SourceFormatter::getInstance());
+   auto docView = new DocumentView(text, SourceFormatter::getInstance(), true);
    docView->setSize(_size);
    if (included)
       docView->markAsInclued();

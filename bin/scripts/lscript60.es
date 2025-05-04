@@ -70,11 +70,14 @@
    #define method         ::= <= get_method ( => name ret_statement ";" <= ) =>;
    #define method         ::= <= script_method ( => name f_parameters body <= ) =>;
 
+   #define var_statement  ::= "var" decl_variable;
+
    #define statement      ::= expression;
    #define statement      ::= ret_expr;
-   #define statement      ::= "var" decl_variable;
+   #define statement      ::= var_statement;
    #define statement      ::= branching;
    #define statement      ::= looping;
+   #define statement      ::= for_looping;
    #define statement      ::= assign_expr;
 
    #define decl_variable  ::= <= expression ( assign_operation ( => new_variable ":=" expression <= ) ) =>;
@@ -110,6 +113,29 @@
              )
 =>;
 
+   #define for_looping      ::= 
+<= 
+             virtual_for_loop
+             (
+=>
+                              "for" "(" var_statement ";" expression ";" step_expr ")" code_brackets
+<=
+             )
+=>;
+
+   #define step_expr ::= <= expression ( => l5 <= ) =>;
+   #define step_expr ::=
+<=
+             expression
+             (
+                assign_operation ( 
+=>
+                              variable ":=" expression
+<=
+                )
+             )
+=>;
+
    #define assign_expr    ::=
 <=
              expression
@@ -141,15 +167,17 @@
 
    #define l4_expression  ::= <= expression ( => l4 <= ) =>;
 
-   #define l5             ::= $ object l1_operation* l2_operation* l3_operation* l4_operation* l5_operation?;
+   #define l5             ::= $ object l0_operation* l1_operation* l2_operation* l3_operation* l4_operation* l5_operation?;
 
-   #define l4             ::= $ object l1_operation* l2_operation* l3_operation* l4_operation*;
+   #define l4             ::= $ object l0_operation* l1_operation* l2_operation* l3_operation* l4_operation*;
 
-   #define l3             ::= $ object l1_operation* l2_operation* l3_operation*;
+   #define l3             ::= $ object l0_operation* l1_operation* l2_operation* l3_operation*;
 
-   #define l2             ::= $ object l1_operation* l2_operation*;
+   #define l2             ::= $ object l0_operation* l1_operation* l2_operation*;
 
    #define new_operation  ::= <= message_operation ( => "new" new_terminal args <= ) =>;
+
+   #define l0_operation   ::= ^ <= at_operation ( => "[" expression "]" <= ) =>;
 
    #define l1_operation   ::= function_call;
 
@@ -163,7 +191,9 @@
    #define l4_operation   ::= ^ <= sub_operation ( => "-" l3_expression <= ) =>;
 
    #define l5_operation   ::= ^ <= equal_operation ( => "==" l4_expression <= ) =>;
+   #define l5_operation   ::= ^ <= not_equal_operation ( => "!=" l4_expression <= ) =>;
    #define l5_operation   ::= ^ <= less_operation ( => "<" l4_expression <= ) =>;
+   #define l5_operation   ::= ^ <= greater_operation ( => ">" l4_expression <= ) =>;
 
    #define mssg_call      ::= ^ <= message_operation ( =>  args <= ) =>;
    #define prop_call      ::= ^ <= property_operation ( => not_bracket <= ) =>;
@@ -172,7 +202,6 @@
 
    #define args           ::= "(" ")";
    #define args           ::= "(" arg next_arg* ")";
-   #define args           ::= ":" s_expression;
 
    #define arg            ::= expression;
    #define next_arg       ::= "," arg;
@@ -222,6 +251,7 @@
    #define parameter      ::= <= parameter ( nameattr ( identifier = $identifier )) =>;
 
    #define message        ::= <= message ( identifier = $identifier ) =>;
+   #define at_message     ::= <= message ( identifier = => at_str <= ) =>;
 
    #define name           ::= <= nameattr ( identifier = $identifier ) =>; 
    #define s_name         ::= <= nameattr ( identifier = $identifier ) =>;
@@ -233,4 +263,5 @@
    #define integer        ::= <= integer = $numeric =>;
    #define literal        ::= <= literal = "$literal" =>;
    #define character      ::= <= character = $character =>;
+   #define at_str         ::= <= at =>;
 ]]

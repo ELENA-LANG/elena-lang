@@ -33,7 +33,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        sudo apt-get install gcc-multilib g++-multilib
+        sudo apt-get install build-essential gcc-multilib g++-multilib alien dpkg-dev debhelper
 
     - name: Build
       run: make all_${{ matrix.platform }}
@@ -46,4 +46,19 @@ jobs:
     - name: Run functional test
       run: |
         cd scripts/${{ matrix.platform }}
-        sudo ./local_runtests.script
+        ./local_runtests.script
+
+    - name: Create a package
+      run: |
+        cd scripts/${{ matrix.platform }}
+        ./local_create_package.script
+          
+    - name: Upload Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ env.BUILD_TAG }}
+        draft: false
+        prerelease: true
+        files: |
+          ./build/*.rpm
+          ./build/*.deb

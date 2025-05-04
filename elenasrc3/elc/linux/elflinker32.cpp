@@ -38,6 +38,14 @@ void Elf32Linker :: writeELFHeader(ElfExecutableImage& image, FileWriter* file, 
    header.e_ident[EI_CLASS] = ELFCLASS32;
    header.e_ident[EI_DATA] = ELFDATA2LSB;
    header.e_ident[EI_VERSION] = EV_CURRENT;
+   switch (image.platformType) {
+      case PlatformType::Linux_x86:
+         header.e_ident[EI_OSABI] = ELFOSABI_LINUX;
+         break;
+      default:
+         assert(false); // !! should not be here
+         break;
+   }
 
    header.e_type = ET_EXEC;
    header.e_machine = getMachine();
@@ -113,11 +121,12 @@ void Elf32Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
 
    // Dynamic
    pos_t dynamicOffset = image.addressMap.dictionary.get(elfDynamicOffset);
-   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicVAddress);
    pos_t dynamicSize = image.addressMap.dictionary.get(elfDynamicSize);
+   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicVAddress);
 
    ph_header.p_type = PT_DYNAMIC;
    ph_header.p_offset = dynamicOffset;
+
    ph_header.p_paddr = ph_header.p_vaddr = image.addressMap.imageBase + dynamicVAddress;
    ph_header.p_filesz = ph_header.p_memsz = align(dynamicSize, 8);
    ph_header.p_flags = PF_R + PF_W;

@@ -19,8 +19,6 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
-  BUILD_TAG: 6.6.5
-
 permissions: write-all
 
 jobs:
@@ -35,7 +33,7 @@ jobs:
     steps:    
     - uses: actions/checkout@v4
       with:
-        ref: iteration40
+        ref: iteration41
        
     - name: Add MSBuild to PATH
       uses: microsoft/setup-msbuild@v2
@@ -45,6 +43,16 @@ jobs:
 
     - name: Restore nuget packages
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+
+    - name: Set version
+      shell: bash
+      run: |
+        VER=$(cat VERSION)
+        echo "VERSION=$VER" >> $GITHUB_ENV
+
+    - name: Show variables
+      run: |
+        echo "${{ env.VERSION }}"
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -71,10 +79,10 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}
+        name: elena-lang-${{matrix.platform}}-nightly-${{ env.VERSION }}
         path: build\${{matrix.platform}}
 
-    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.VERSION }}.zip
           
     - name: Upload Release
       uses: softprops/action-gh-release@v2

@@ -16,13 +16,13 @@ using namespace elena_lang;
 // --- AssemblerBase ---
 
 AssemblerBase :: AssemblerBase(int tabSize, UStrReader* reader, ModuleBase* target)
-   : _reader(tabSize, reader), constants(0)
+   : _reader(tabSize, reader), constants(0), _macros(false)
 {
    _target = target;
 }
 
 AssemblerBase :: AssemblerBase(const char** dfa, int tabSize, UStrReader* reader, ModuleBase* target)
-   : _reader(dfa, tabSize, reader), constants(0)
+   : _reader(dfa, tabSize, reader), constants(0), _macros(false)
 {
    _target = target;
 }
@@ -390,6 +390,22 @@ bool AssemblerBase :: compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
 }
 
+bool AssemblerBase :: isMacroVariableDefined(ustr_t macro)
+{
+   return _macros.get(macro);
+}
+
+void AssemblerBase :: skipBlock(ScriptToken& tokenInfo)
+{
+   int level = 1;
+   do {
+      read(tokenInfo);
+      if (tokenInfo.compare("#endif") || tokenInfo.compare("#elif"))
+         level--;
+
+   } while (level > 0);
+}
+
 void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* helper)
 {
    PrefixInfo    prefixScope;
@@ -402,7 +418,19 @@ void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* help
 
    while (!tokenInfo.compare("end")) {
       if (!compileOpCode(tokenInfo, writer, labelScope, prefixScope)) {
-         if (tokenInfo.state != dfaEOF) {
+         if (tokenInfo.compare("#if") || tokenInfo.compare("#elif")) {
+            read(tokenInfo);
+
+            if (!isMacroVariableDefined(*tokenInfo.token)) {
+               skipBlock(tokenInfo);
+            }
+            else read(tokenInfo);
+         }
+         else if (tokenInfo.compare("#endif")) {
+            // ignore preprosessor directive
+            read(tokenInfo);
+         }
+         else if (tokenInfo.state != dfaEOF) {
             declareLabel(tokenInfo, writer, labelScope);
          }
          else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);

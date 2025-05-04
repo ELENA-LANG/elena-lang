@@ -44,17 +44,22 @@ inline bool isEqualOrSubSetNs(ustr_t package, ustr_t value)
    return package.compare(value) || (value.compare(package, package.length()) && (value[package.length()] == '\''));
 }
 
+void DebugInfoProvider :: defineModulePath(ustr_t name, PathString& path, path_t projectPath, path_t outputPath, path_t extension)
+{
+   path.copy(projectPath);
+   path.combine(outputPath);
+
+   ReferenceName::nameToPath(path, name);
+   path.appendExtension(extension);
+}
+
 void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t extension)
 {
    ustr_t package = _model->getPackage();
 
    // if it is the project package
    if (isEqualOrSubSetNs(package, name)) {
-      path.copy(*_model->projectPath);
-      path.combine(_model->getOutputPath());
-
-      ReferenceName::nameToPath(path, name);
-      path.appendExtension(extension);
+      defineModulePath(name, path, *_model->projectPath, _model->getOutputPath(), extension);
    }
    else {
       // check external libraries

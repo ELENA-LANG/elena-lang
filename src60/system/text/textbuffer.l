@@ -41,7 +41,7 @@ namespace text
       }
     
       char[] cast()
-         = _buffer;
+         = ::Array<char>.copy(_buffer, 0, *_length);
     
       string cast()
          = String.copy(0, *_length, _buffer);
@@ -53,7 +53,7 @@ namespace text
       {
          ^ WideString.copy(0, _length.Value, _buffer);
       }
-    
+            
       wide cast()
          = WideString.copy(0, *_length, _buffer);
             
@@ -504,6 +504,44 @@ namespace text
          UTF8Encoder.toByteArray(s, 0, ref s_len, _buffer, *_length, ref counter);
          
          _length.append(counter)
+      }
+
+      writeSubstring(string s, int index, int length)
+      {
+         int counter := UTF8Encoding.getSubStringCharCount(s, index, length);
+         self.reserve(counter);
+         
+         int s_len := length;
+         UTF8Encoder.toByteArray(s, index, ref s_len, _buffer, *_length, ref counter);
+         
+         _length.append(counter)
+      }
+
+      internal write(byte[] src, int index, int src_len)
+      {
+         if (index == 0) {
+            Array<byte>.copyTo(_buffer, src, *_length, src_len);
+            _length.append(src_len)
+         }
+         else {
+            byte tmp[1024];
+            int len := src_len;
+            int tmp_len := 1024;
+            int s_index := index;
+            while (len > 0) {
+               if (len < 1024) {
+                  tmp_len := len;
+               }
+               else tmp_len := 1024;
+               
+               Array<byte>.copy(tmp, src, s_index, tmp_len);
+               Array<byte>.copyTo(_buffer, tmp, *_length, tmp_len);
+               _length.append(tmp_len);
+               
+               s_index += tmp_len;
+               len -= tmp_len;
+            }
+         }         
       }
 
       write(o)

@@ -36,6 +36,9 @@ namespace elena_lang
          CompilingProcess* _process;
          TemplateProssesor _processor;
 
+         void defineTemplateName(ModuleScopeBase& moduleScope, IdentifierString& name,
+            ref_t templateRef, List<SyntaxNode>& parameters);
+
          ref_t declareTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
             ref_t templateRef, List<SyntaxNode>& parameters);
          ref_t generateTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
@@ -124,6 +127,7 @@ namespace elena_lang
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
+         VariableResolverBase* variableResolver,
          ModuleSettings& moduleSettings,
          int minimalArgList,
          int ptrSize);

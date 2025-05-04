@@ -143,6 +143,21 @@ namespace elena_lang
       {
       }
 
+      bool declareImport(ustr_t, ustr_t) override
+      {
+         return false;
+      }
+
+      ustr_t resolveImport(ustr_t alias) override
+      {
+         return alias;
+      }
+
+      bool checkVariable(ustr_t) override
+      {
+         return false;
+      }
+
       TestModuleScope(bool tapeOptMode);
    };
 
@@ -242,6 +257,8 @@ namespace elena_lang
       virtual SyntaxNode findTargetNode(int scenario);
 
       void SetUp() override;
+
+      void run(ModuleScopeBase* moduleScope, int scenario);
    };
 
    // --- ScenarioTest --- 

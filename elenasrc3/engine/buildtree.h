@@ -34,6 +34,7 @@ namespace elena_lang
       Method               = 0x1004,
       Tape                 = 0x1005,
       AbstractMethod       = 0x1006,
+      Procedure            = 0x1007,
 
       OpenFrame            = 0x0001,
       CloseFrame           = 0x0002,
@@ -174,13 +175,17 @@ namespace elena_lang
       LoadingLIndex        = 0x0089,
       SavingLIndex         = 0x008A,
       RealIntXOp           = 0x008B,
+      OpenExtFrame         = 0x008C,
+      LoadExtArg           = 0x008D,
+      CloseExtFrame        = 0x008E,
+      ExtExit              = 0x008F,
+      ProcedureReference   = 0x0090,
+      LoadingAccToLongIndex = 0x0091,
+      ExternalVarReference = 0x0092,
+      ByteConstOp          = 0x0093,
 
-      MaxOperationalKey    = 0x008B,
-
-      Import               = 0x0090,
-      DictionaryOp         = 0x0091,
-      ObjOp                = 0x0092,
-      AttrDictionaryOp     = 0x0093,
+      MaxOperationalKey    = 0x0093,      
+      
       DeclOp               = 0x0094,
       DeclDictionaryOp     = 0x0095,
       LoopOp               = 0x0096,
@@ -202,6 +207,11 @@ namespace elena_lang
       NilRefBranchOp       = 0x00A6,
       ExcludeTry           = 0x00A7,
       IncludeTry           = 0x00A8,
+      Import               = 0x00A9,
+      DictionaryOp         = 0x00AA,
+      ProjectInfoOp        = 0x00AB,
+      ObjOp                = 0x00AC,
+      AttrDictionaryOp     = 0x00AD,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,
@@ -367,6 +377,7 @@ namespace elena_lang
          map.add("local_address", BuildKey::LocalAddress);
          map.add("saving_stack", BuildKey::SavingInStack);
          map.add("intop", BuildKey::IntOp);
+         map.add("byteop", BuildKey::ByteOp);
          map.add("create_struct", BuildKey::CreatingStruct);
          map.add("assigning", BuildKey::Assigning);
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
@@ -438,6 +449,9 @@ namespace elena_lang
          map.add("load_long_index", BuildKey::LoadingLIndex);
          map.add("save_long_index", BuildKey::SavingLIndex);
          map.add("real_int_xop", BuildKey::RealIntXOp);
+         map.add("procedure_ref", BuildKey::ProcedureReference);
+         map.add("break_op", BuildKey::BreakOp);
+         map.add("bytearray_op", BuildKey::ByteArrayOp);
       }
    };
 

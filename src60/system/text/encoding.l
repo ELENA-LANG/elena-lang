@@ -1,5 +1,7 @@
 namespace text
 {
+   import system'io;
+   
    // --- Encoder ---
    public interface Encoder
    {
@@ -121,11 +123,51 @@ namespace text
          ^ String.fromByteArray(index, size, buffer);
       }
 
+      string toString(MemoryBuffer buffer)
+         <= toString(0, buffer.Length, *buffer);
+
+      int fromString(string sour, MemoryBuffer output)
+      {
+         byte tmp[1024];
+         int len := sour.Length;
+         int tmp_len := 1024;
+         int index := 0;
+         while (len > 0) {
+            if (len < 1024) {
+               tmp_len := len;
+            }
+            else tmp_len := 1024;
+            
+            sour.saveToByteArray(index, tmp, tmp_len);
+            
+            output.write(0, tmp_len, tmp);
+            
+            len -= tmp_len;
+            index += tmp_len;
+         };
+         
+         ^ index
+      }
+
       int getCharCount(string s)
       {
          int len := 0;
          auto en := s.enumerator();
          while (en.next()) {
+            len += 1;
+         };
+
+         ^ len
+      }
+
+      int getSubStringCharCount(string s, int index, int length)
+      {
+         int i := index;
+         int len := 0;
+         int end := index + length;
+         while (i < end) {
+            i += s[index].Length;
+            
             len += 1;
          };
 

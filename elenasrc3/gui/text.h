@@ -309,6 +309,11 @@ namespace elena_lang
       void copyTo(TextBookmark bookmark, text_c* buffer, disp_t length);
 
       text_t getLine(TextBookmark& bookmark, pos_t& length);
+      text_c getChar(TextBookmark& bookmark);
+
+#if defined _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
+      text_t getLine(TextBookmark& bookmark, size_t& length);
+#endif
 
       void create();
       bool load(path_t path, FileEncoding encoding, bool autoDetecting);

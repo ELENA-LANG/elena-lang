@@ -288,7 +288,18 @@ end
 
 procedure %PREPARE
 
+#if _WIN
+
   ret
+
+#elif _LNX
+
+  push eax 
+  call extern "$rt.PrepareLA"
+  add  esp, 4
+  ret
+
+#endif
 
 end
 
@@ -2423,6 +2434,7 @@ inline %1DCh
   lea  edi, [ebp + __arg32_1]
   mov  ecx, [esi]
   mov  eax, [edi]
+  and  eax, 0FFh
   shl  eax, cl
   mov  byte ptr [edi], al
 
@@ -2434,6 +2446,7 @@ inline %2DCh
   lea  edi, [ebp + __arg32_1]
   mov  ecx, [esi]
   mov  eax, [edi]
+  and  eax, 0FFFFh
   shl  eax, cl
   mov  word ptr [edi], ax
 
@@ -2494,6 +2507,7 @@ inline %1DDh
   lea  edi, [ebp + __arg32_1]
   mov  ecx, [esi]
   mov  eax, [edi]
+  and  eax, 0FFh
   shr  eax, cl
   mov  byte ptr [edi], al
 
@@ -2505,6 +2519,7 @@ inline %2DDh
   lea  edi, [ebp + __arg32_1]
   mov  ecx, [esi]
   mov  eax, [edi]
+  and  eax, 0FFFFh
   shr  eax, cl
   mov  word ptr [edi], ax
 
@@ -2761,6 +2776,7 @@ inline %1E4h
 
   mov  ecx, [esi]
   mov  eax, [ebp+__arg32_1]
+  and  eax, 0FFh
   cdq
   idiv cl
   mov  byte ptr [ebp+__arg32_1], al
@@ -2772,6 +2788,7 @@ inline %2E4h
 
   mov  ecx, [esi]
   mov  eax, [ebp+__arg32_1]
+  and  eax, 0FFFFh
   cdq
   idiv cx
   mov  word ptr [ebp+__arg32_1], ax
@@ -4579,5 +4596,26 @@ end
 inline %7FEh
 
   call extern __ptr32_1
+
+end
+
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+#if _WIN
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+  mov  eax, [data : % CORE_SINGLE_CONTENT]
+  jmp  eax
+
+#elif _LNX
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+  mov  eax, [data : % CORE_SINGLE_CONTENT]
+  jmp  eax
+
+#endif
 
 end

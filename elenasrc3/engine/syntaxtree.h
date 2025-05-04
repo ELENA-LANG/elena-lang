@@ -66,7 +66,11 @@ namespace elena_lang
       MetaDictionary          = 0x001020,
       MetaExpression          = 0x001021,
       IncludeStatement        = 0x001022,
+      ImportStatement         = 0x001023,
+      CondStatement           = 0x001024,
       SharedMetaDictionary    = 0x001025,
+      EndCondStatement        = 0x001026,
+      ElseCondStatement       = 0x001027,
       Object                  = 0x001031,
       TemplateType            = 0x001032,
       ArrayType               = 0x001033,
@@ -212,11 +216,13 @@ namespace elena_lang
       HasStaticConstructor    = 0x000116,
       AsyncInvoker            = 0x000117,
       SourceRef               = 0x000118,
+      Shortcut                = 0x000119,
 
       Column                  = 0x000201,
       Row                     = 0x000202,
 
       ExternalTree            = 0x000301,
+      ExternalFunction        = 0x000302,
 
       Idle                    = 0x000F01,
    };
@@ -281,6 +287,18 @@ namespace elena_lang
             else writer.newNode(node.key, node.identifier());
          }
          else writer.newNode(node.key, node.arg.reference);
+      }
+
+      static void injectNode(SyntaxTreeWriter& writer, SyntaxNode node)
+      {
+         if (node.arg.strArgPosition != INVALID_POS) {
+            writer.inject(node.key, node.identifier());
+         }
+         else writer.inject(node.key, node.arg.reference);
+
+         copyNode(writer, node);
+
+         writer.closeNode();
       }
 
       static void copyNode(SyntaxTreeWriter& writer, SyntaxNode node, bool includingNode = false);

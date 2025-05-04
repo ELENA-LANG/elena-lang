@@ -32,10 +32,34 @@ public inline preloaded()
    #let preloadedSymbols += __decl;
 }
 
+// --- importing ---
+
+public inline importing(libraryName)
+{
+   #import __decl = libraryName;
+}
+
 // --- prop ---
+
+public field prop<prop_name, T, field_name>
+{
+   T field_name;
+
+   get T prop_name()
+   {
+      ^ field_name
+   }
+
+   set prop_name(T value)
+   {
+      field_name := value
+   }
+}
 
 public field prop<name, T>
 {
+   T name;
+
    get T name()
    {
       ^ name
@@ -49,6 +73,8 @@ public field prop<name, T>
 
 public field prop<name>
 {
+   T name;
+
    get name()
    {
       ^ name
@@ -62,8 +88,20 @@ public field prop<name>
 
 // --- rprop ---
 
+public field rprop<prop_name, T, field_name>
+{
+   T field_name;
+
+   get T prop_name()
+   {
+      ^ field_name
+   }
+}
+
 public field rprop<name, T>
 {
+   T name;
+
    get T name()
    {
       ^ name
@@ -72,6 +110,8 @@ public field rprop<name, T>
 
 public field rprop<name>
 {
+   T name;
+
    get name()
    {
       ^ name
@@ -80,8 +120,34 @@ public field rprop<name>
 
 // --- dto_prop ---
 
+public field dto_prop<prop_name, T, field_name>
+{
+   T field_name;
+
+   get T prop_name()
+   {
+      ^ field_name
+   }
+
+   set prop_name(T value)
+   {
+      field_name := value
+   }
+
+   const subject[] __dto_properties;
+
+   this __dto_properties += mssg prop_name;
+
+   static MessageName[] __dto_properties()
+   {
+      ^ __dto_properties
+   }
+}
+
 public field dto_prop<name, T>
 {
+   T name;
+
    get T name()
    {
       ^ name

@@ -50,7 +50,15 @@ using namespace elena_lang;
 
 #if defined(__x86_64__)
 
+#if defined(__FreeBSD__)
+
+constexpr auto CURRENT_PLATFORM = PlatformType::FreeBSD_x86_64;
+
+#else
+
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86_64;
+
+#endif
 
 constexpr int MINIMAL_ARG_LIST            = 2;
 
@@ -145,6 +153,7 @@ JITCompilerBase* createJITCompiler(PlatformType platform)
 #endif
 #if defined(__x86_64__)
       case PlatformType::Linux_x86_64:
+      case PlatformType::FreeBSD_x86_64:
          return new X86_64JITCompiler();
 #endif
 #if defined(__PPC64__)

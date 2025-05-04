@@ -92,4 +92,7 @@ fi
    echo .
  fi
 
+ mkdir -p /usr/lib/elena/
+ ln -s $(realpath ../../bin/libelenart60_64.so) /usr/lib/elena/libelenart60_64.so
+
 exit 0

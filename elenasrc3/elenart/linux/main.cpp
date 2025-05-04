@@ -218,6 +218,12 @@ void PrepareLA(uintptr_t arg)
    __argv = (char**)(arg + sizeof(uintptr_t));
 
 #endif
+
+#if defined __FreeBSD__
+
+   __progname = __argv[0];
+
+#endif 
 }
 
 void ExitLA(int retVal)

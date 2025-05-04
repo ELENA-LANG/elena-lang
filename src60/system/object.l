@@ -9,7 +9,7 @@ public class Object
    const __ptr __packageInfo  := $reference __decl;
 
    constructor() 
-      : info("Creates the object")
+      : info("Creates an object")
    {
    }
 

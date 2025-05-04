@@ -1,5 +1,4 @@
 #!/bin/bash
-RELEASE=elena-6.6.5.i386-linux
 
 mkdir -p ../lib60
 mkdir -p /usr/share/elena
@@ -78,7 +77,7 @@ cp ../../dat/sg/syntax60.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm-cli -x86 ../../asm/x32/core60.asm /usr/lib/elena/core/x32
+../../bin/asm-cli -linux -x86 ../../asm/x32/core60.asm /usr/lib/elena/core/x32 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -88,7 +87,7 @@ else
   exit 1
 fi
 
-../../bin/asm-cli -x86 ../../asm/x32/corex60.asm /usr/lib/elena/core/x32
+../../bin/asm-cli -linux -x86 ../../asm/x32/corex60.asm /usr/lib/elena/core/x32 corex60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -97,26 +96,6 @@ else
   echo "Failure" >&2
   exit 1
 fi
-
-../../bin/asm-cli -x86 ../../asm/x32/core60_lnx.asm /usr/lib/elena/core/x32
-ret=$?
-if [ $ret -eq 0 ]
-then
-  echo .
-else
-  echo "Failure" >&2
-  exit 1
-fi
-
-# ../bin/elena-asm2binx ../asm/x32/coreapi.asm /usr/lib/elena/core/x32
-# ret=$?
-# if [ $ret -eq 0 ]
-# then
-#   echo .
-# else
-#   echo "Failure" >&2
-#   exit 1
-# fi
 
 echo compiling lib60 files
 
@@ -163,57 +142,5 @@ echo compiling lib60 files
    echo .
  fi
 
- echo "Do you wish to create a package?"
- select yn in "Yes" "No"; do
-    case $yn in
-        Yes ) break;;
-        No ) exit;;
-    esac
- done
-
- mkdir -p ./$RELEASE/etc/elena/
- mkdir -p ./$RELEASE/etc/elena/templates/
- mkdir -p ./$RELEASE/usr/share/elena/
- mkdir -p ./$RELEASE/usr/lib/elena/core/x32/
- mkdir -p ./$RELEASE/usr/lib/elena/lib60/
- mkdir -p ./$RELEASE/usr/bin/
- mkdir -p ./$RELEASE/usr/elena-lang
-
- mkdir -p ./$RELEASE/usr/elena-lang/examples60
-
- echo copying configuration
-
- cp ../../bin/*.config ./$RELEASE/etc/elena/
- cp ../../bin/templates/*.config ./$RELEASE/etc/elena/templates
-
- echo compiling shared files
-
- cp ../../dat/og/bt_rules60.dat ./$RELEASE/usr/share/elena
- cp ../../dat/og/bt_xrules60.dat ./$RELEASE/usr/share/elena
- cp ../../dat/og/bc_rules60.dat ./$RELEASE/usr/share/elena
- cp ../../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
-
- echo copying binaries
-
- cp ../../bin/elena-cli ./$RELEASE/usr/bin/
- cp ../../bin/libelenart60.so ./$RELEASE/usr/lib/elena/
-
- echo compiling core
-
- cp /usr/lib/elena/core/x32/*.bin ./$RELEASE/usr/lib/elena/core/x32/
-
- echo compiling lib60
-
- cp /usr/lib/elena/lib60/*.* ./$RELEASE/usr/lib/elena/lib60/
-
- cp -r ../../examples60 $RELEASE/usr/elena-lang
- cp -r ../../src60 $RELEASE/usr/elena-lang
-
- mkdir ./$RELEASE/DEBIAN
- cp ./control ./$RELEASE/DEBIAN
-
- dpkg-deb --build $RELEASE
-
- alien -r -c -v *.deb
 
 exit 0

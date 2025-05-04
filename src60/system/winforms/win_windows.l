@@ -57,6 +57,10 @@ public closed class WindowCallback
    {
    }
 
+   onChange(Handle control)
+   {
+   }
+
    onSize(Handle control, int width, int height)
    {
    }
@@ -100,6 +104,8 @@ public closed class WindowCallback
 
       if (command == BN_CLICKED)
          { self.onClick(control); ^ self };      
+      if (command == EN_CHANGE)
+         { self.onChange(control); ^ self };      
    }
 
    onWMClose(Handle hwnd)

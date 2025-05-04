@@ -193,7 +193,7 @@ namespace elena_lang
 
    typedef Map<ustr_t, ustr_t, allocUStr, freeUStr, freeUStr> LexicalMap;
 
-   class ProjectBase : public ForwardResolverBase
+   class ProjectBase : public ForwardResolverBase, public VariableResolverBase
    {
    public:
       virtual ModuleIteratorBase* allocModuleIterator() = 0;

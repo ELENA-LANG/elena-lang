@@ -33,6 +33,8 @@ inline ustr_t getPlatformName(PlatformType type)
          return LINUX_X86_KEY;
       case PlatformType::Linux_x86_64:
          return LINUX_X86_64_KEY;
+      case PlatformType::FreeBSD_x86_64:
+         return FREEBSD_X86_64_KEY;
       case PlatformType::Linux_PPC64le:
          return LINUX_PPC64le_KEY;
       case PlatformType::Linux_ARM64:
@@ -335,9 +337,8 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
    size_t projectPathLen = projectModel.projectPath.length();
 
    NamespaceString name;
-   PathString rootPath(*projectModel.projectPath, projectModel.getOutputPath());
    for (auto it = projectModel.sources.start(); !it.eof(); ++it) {
-      PathString source(*rootPath, *it);
+      PathString source(*projectModel.projectPath, *it);
 
       PathString module;
       module.copySubPath(*source, true);
@@ -347,17 +348,16 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
 
       _debugController.resolveNamespace(name);
 
-      ReferenceName::nameToPath(module, *name);
-      module.append(_T(".nl"));
+      DebugInfoProvider::defineModulePath(*name, module, *projectModel.projectPath, projectModel.getOutputPath(), _T("nl"));
 
-      if (name.length() != 0) {
+      if (module.length() != 0) {
          if (_compareFileModifiedTime(*source, *module))
-            return false;
+            return true;
       }
-      else return false;
+      else return true;
    }
 
-   return true;
+   return false;
 }
 
 bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
@@ -365,7 +365,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& so
 {
    if (!_debugController.isStarted()) {
       bool toRecompile = model.autoRecompile && !withoutPostponeAction;
-      if (!isOutaged(model, sourceModel)) {
+      if (isOutaged(model, sourceModel)) {
          if (toRecompile) {
             if (!doCompileProject(model, action))
                return false;
@@ -1059,6 +1059,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path, GUISettinngs& gui
       model->rememberLastPath = loadSetting(config, LASTPATH_SETTINGS, -1) != 0;
       model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
       model->sourceViewModel.highlightSyntax = loadSetting(config, HIGHLIGHTSYNTAX_SETTINGS, -1) != 0;
+      model->sourceViewModel.highlightBrackets = loadSetting(config, HIGHLIGHTBRACKETS_SETTINGS, -1) != 0;
       model->sourceViewModel.lineNumbersVisible = loadSetting(config, LINENUMBERS_SETTINGS, -1) != 0;
       model->sourceViewModel.scrollOffset = loadSetting(config, VSCROLL_SETTINGS, 1);
       model->sourceViewModel.settings.tabSize = loadSetting(config, TABSIZE_SETTINGS, 3);
@@ -1103,6 +1104,7 @@ void IDEController :: saveConfig(IDEModel* model, path_t configPath, GUISettinng
    saveSetting(config, LASTPATH_SETTINGS, model->rememberLastPath);
    saveSetting(config, LASTPROJECT_SETTINGS, model->rememberLastProject);
    saveSetting(config, HIGHLIGHTSYNTAX_SETTINGS, model->sourceViewModel.highlightSyntax);
+   saveSetting(config, HIGHLIGHTBRACKETS_SETTINGS, model->sourceViewModel.highlightBrackets);
    saveSetting(config, LINENUMBERS_SETTINGS, model->sourceViewModel.lineNumbersVisible);
    saveSetting(config, VSCROLL_SETTINGS, model->sourceViewModel.scrollOffset);
    saveSetting(config, TABSIZE_SETTINGS, model->sourceViewModel.settings.tabSize);
@@ -2001,9 +2003,12 @@ void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog
 {
    int prevSchemeIndex = model->viewModel()->schemeIndex;
    bool prevHighlightSyntax = model->viewModel()->highlightSyntax;
+   bool prevHighlightBrackets = model->viewModel()->highlightBrackets;
 
    if(editorDialog.showModal()) {
-      if (prevSchemeIndex != model->viewModel()->schemeIndex || prevHighlightSyntax != model->viewModel()->highlightSyntax) {
+      if (prevSchemeIndex != model->viewModel()->schemeIndex || prevHighlightSyntax != model->viewModel()->highlightSyntax
+         || prevHighlightBrackets != model->viewModel()->highlightBrackets)
+      {
          notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
       }
    }

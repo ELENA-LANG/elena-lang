@@ -12,7 +12,7 @@
 
 using namespace elena_lang;
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 #include <direct.h>
 #include <io.h>
@@ -79,7 +79,7 @@ void PathUtil :: makeCorrectExePath(PathString& target)
    }
 }
 
-#elif __GNUG__
+#elif defined(__unix__)
 
 #include <unistd.h>
 #include <sys/stat.h>

@@ -9,6 +9,12 @@
 #ifndef ELFIMAGE_H
 #define ELFIMAGE_H
 
+#if defined(__FreeBSD__)
+
+   #define R_X86_64_JUMP_SLOT R_X86_64_JMP_SLOT
+
+#endif
+
 namespace elena_lang
 {
    typedef List<ustr_t, freeUStr> LibraryList;
@@ -22,13 +28,14 @@ namespace elena_lang
       struct ElfData
       {
          ReferenceMap functions;
+         ReferenceMap variables;
          LibraryList  libraries;
 
          pos_t dynamicOffset;
          pos_t dynamicSize;
 
          ElfData()
-            : functions(0), libraries(nullptr)
+            : functions(0), variables(0), libraries(nullptr)
          {
             dynamicOffset = dynamicSize = 0;
          }
@@ -115,6 +122,7 @@ namespace elena_lang
 
       virtual int getRelocationType() = 0;
 
+      pos_t fillElfHashTable(ElfData& elfData, MemoryBase* image, int nbucket, int nchain);
       void fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment, RelocationMap& importMapping) override;
 
    public:

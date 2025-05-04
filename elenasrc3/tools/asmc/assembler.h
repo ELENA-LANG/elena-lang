@@ -86,6 +86,7 @@ namespace elena_lang
    {
    protected:
       typedef Map<ustr_t, int, allocUStr, freeUStr> ConstantMap;
+      typedef Map<ustr_t, bool, allocUStr, freeUStr> MacroMap;
 
       struct PrefixInfo
       {
@@ -101,6 +102,7 @@ namespace elena_lang
       ScriptReader _reader;
       ModuleBase*  _target;
 
+      MacroMap     _macros;
       ConstantMap  constants;
 
       void checkComma(ScriptToken& tokenInfo);
@@ -156,8 +158,17 @@ namespace elena_lang
       void compileStructure(ScriptToken& tokenInfo);
       void declareConstant(ScriptToken& tokenInfo);
 
+      bool isMacroVariableDefined(ustr_t macro);
+      void skipBlock(ScriptToken& tokenInfo);
+
    public:
       void compile();
+
+      void defineMacro(ustr_t macro, bool value)
+      {
+         _macros.erase(macro);
+         _macros.add(macro, value);
+      }
 
       AssemblerBase(int tabSize, UStrReader* reader, ModuleBase* target);
       AssemblerBase(const char** dfa, int tabSize, UStrReader* reader, ModuleBase* target);

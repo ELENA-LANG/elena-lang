@@ -125,6 +125,8 @@ namespace elena_lang
       Singleton,
       Constant,
       ConstantArray,
+      Procedure,
+      External
    };
 
    struct SymbolInfo
@@ -455,6 +457,10 @@ namespace elena_lang
    constexpr auto V_CATEGORY_MASK         = 0x7FFFFF00u;
    constexpr auto V_CATEGORY_MAX          = 0x0000F000u;
 
+   /// instruction
+   constexpr auto V_USE                   = 0x80008001u;
+   constexpr auto V_IMPORT                = 0x80008002u;
+
    /// modificator
    constexpr auto V_IGNOREDUPLICATE       = 0x80007001u;
    constexpr auto V_SCRIPTSELFMODE        = 0x80007002u;
@@ -479,7 +485,6 @@ namespace elena_lang
    constexpr auto V_ABSTRACT              = 0x80003002u;
    constexpr auto V_CLOSED                = 0x80003003u;
    constexpr auto V_PREDEFINED            = 0x80003005u;
-   constexpr auto V_OVERRIDE              = 0x80003006u;
 
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;
@@ -514,7 +519,6 @@ namespace elena_lang
    constexpr auto V_EXTERN                = 0x80001015u;
    constexpr auto V_INTERN                = 0x80001016u;
    constexpr auto V_FORWARD               = 0x80001017u;
-   constexpr auto V_IMPORT                = 0x80001018u;
    constexpr auto V_MIXIN                 = 0x80001019u;
    constexpr auto V_DISTRIBUTED_FORWARD   = 0x8000101Au;
    constexpr auto V_AUTO                  = 0x8000101Cu;
@@ -582,12 +586,14 @@ namespace elena_lang
    constexpr auto V_NILLABLE              = 0x80000023u;
    constexpr auto V_FLOAT64ARRAY          = 0x80000024u;
    constexpr auto V_GETTER                = 0x80000025u;
+   constexpr auto V_UINT8ARRAY            = 0x80000026u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
    constexpr auto V_DECL_VAR              = 0x80000082u;
    constexpr auto V_SUPER_VAR             = 0x80000083u;
    constexpr auto V_RECEIVED_VAR          = 0x80000084u;
+   constexpr auto V_PROJECT_VAR           = 0x80000085u;
 
    // === Operators ===
    constexpr auto OPERATOR_MAKS              = 0x1840;
@@ -735,6 +741,8 @@ namespace elena_lang
 
    constexpr auto MACOS_ARM64_KEY               = "MacOS_ARM64";
 
+   constexpr auto FREEBSD_X86_64_KEY            = "FreeBSD_AMD64";
+
    constexpr auto LIBRARY_KEY                   = "Library";
    constexpr auto CONSOLE_KEY                   = "STA Console";
    constexpr auto GUI_KEY                       = "STA GUI";
@@ -755,6 +763,7 @@ namespace elena_lang
    constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";
    constexpr auto LEXICAL_CATEGORY              = "lexicals/*";
    constexpr auto FORWARD_CATEGORY              = "forwards/*";
+   constexpr auto VARIABLE_CATEGORY             = "variables/*";
    constexpr auto EXTERNAL_CATEGORY             = "externals/*";
    constexpr auto WINAPI_CATEGORY               = "winapi/*";
    constexpr auto REFERENCE_CATEGORY            = "references/*";
@@ -806,6 +815,8 @@ namespace elena_lang
             return LINUX_ARM64_KEY;
          case PlatformType::MacOS_ARM64:
             return MACOS_ARM64_KEY;
+         case PlatformType::FreeBSD_x86_64:
+            return FREEBSD_X86_64_KEY;
          default:
             return nullptr;
       }

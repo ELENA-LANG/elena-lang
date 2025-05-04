@@ -39,15 +39,16 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Setup Nuget
-      uses: Nuget/setup-nuget@v1.0.5
+      uses: Nuget/setup-nuget@v2
 
     - name: Restore nuget packages
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
  
     - name: Set version
+      shell: bash
       run: |
         VER=$(cat VERSION)
-        echo "BUILD_TAG=$VER" >> $GITHUB_ENV
+        echo "VERSION=$VER" >> $GITHUB_ENV
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -71,13 +72,13 @@ jobs:
       shell: cmd
       run: scripts\create_package_${{matrix.platform}}.bat 
         
-    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-${{ env.BUILD_TAG }}.zip
+    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-${{ env.VERSION }}.zip
           
     - name: Upload Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v${{ env.BUILD_TAG }}
+        tag_name: v${{ env.VERSION }}
         draft: false
         prerelease: true
         files: |
-          ./scripts/*.zip
+          ./build/*.zip

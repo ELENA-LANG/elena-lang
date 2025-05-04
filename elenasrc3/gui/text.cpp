@@ -683,6 +683,37 @@ text_t Text :: getLine(TextBookmark& bookmark, pos_t& length)
    }
 }
 
+text_c Text :: getChar(TextBookmark& bookmark)
+{
+   validateBookmark(bookmark);
+
+   bookmark.normalize();
+   if (bookmark._status == BM_EOT) {
+      return 0;
+   }
+   else return *((*bookmark._page).text + bookmark._offset);
+}
+
+#if defined _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
+
+text_t Text::getLine(TextBookmark& bookmark, size_t& length)
+{
+   validateBookmark(bookmark);
+
+   bookmark.normalize();
+   if (bookmark._status == BM_EOT) {
+      length = 0;
+      return nullptr;
+   }
+   else {
+      length = (*bookmark._page).used - bookmark._offset;
+
+      return (*bookmark._page).text + bookmark._offset;
+   }
+}
+
+#endif //  
+
 void Text :: create()
 {
    _pages.clear();

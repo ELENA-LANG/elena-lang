@@ -3015,6 +3015,7 @@ inline %1DDh
   lwz     r17, 0(r3)
   lwz     r18, 0(r19)
 
+  andi.   r18, r18, 0FFh
   srd     r18, r18, r17
 
   stb     r17, 0(r19)
@@ -3029,6 +3030,7 @@ inline %2DDh
   lwz     r17, 0(r3)
   lwz     r18, 0(r19)
 
+  andi.   r18, r18, 0FFFFh
   srd     r18, r18, r17
 
   sth     r17, 0(r19)

@@ -5,5 +5,6 @@
     <project>ltests/ltests.linux.prj</project>
     <project>algorithms/algorithms.linux.prj</project>
     <project>cellular/cellular.linux.prj</project>
+    <project>xml/xml.linux.prj</project>
   </collection>
 </configuration>

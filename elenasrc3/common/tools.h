@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Project routine functions
 //
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TOOLS_H
@@ -12,8 +12,6 @@
 #ifdef __GNUG__
 
 #include <ctype.h>
-
-#define _gcvt gcvt
 
 #endif // __GNUG__
 
@@ -28,7 +26,7 @@
 namespace elena_lang
 {
 
-#ifdef __GNUG__
+#ifdef __unix__
 inline size_t wcslen(const unsigned short* s)
 {
    const unsigned short* p = s;
@@ -89,7 +87,7 @@ inline void freestr(unsigned short* s)
 
 // --- miscellaneous string routines ---
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 inline static size_t __fastcall getlength(const wchar_t* s)
 {
@@ -106,7 +104,7 @@ inline static int __fastcall getlength_int(const wchar_t* s)
    return (s == nullptr) ? 0 : (int)wcslen(s);
 }
 
-#elif __GNUG__
+#elif defined(__unix__)
 
 inline size_t getlength(const unsigned short* s)
 {

@@ -326,6 +326,14 @@ int parseBuildKeyRules(FileEncoding encoding, path_t path)
    outputFile.changeExtension("dat");
 
    FileWriter file(*outputFile, FileEncoding::Raw, false);
+   if (!file.isOpen()) {
+      IdentifierString pathStr(*outputFile);
+
+      printf("\nCannot create a file %s\n", pathStr.str());
+
+      return -1;
+   }
+
    trie.save(&file);
 
    printf("\nSuccessfully created\n");

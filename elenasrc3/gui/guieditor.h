@@ -13,24 +13,24 @@
 namespace elena_lang
 {
    // --- ELENA IDE Styles ---
-   constexpr auto SCHEME_COUNT         = 2;
+   constexpr auto SCHEME_COUNT               = 2;
 
-   constexpr auto STYLE_DEFAULT        = 0;
-   constexpr auto STYLE_MARGIN         = 1;
-   constexpr auto STYLE_SELECTION      = 2;
-   constexpr auto STYLE_TRACE_LINE     = 3;
-   constexpr auto STYLE_ERROR_LINE     = 4;
-   constexpr auto STYLE_BREAKPOINT     = 5;
-   constexpr auto STYLE_KEYWORD        = 6;
-   constexpr auto STYLE_OPERATOR       = 7;
-   constexpr auto STYLE_COMMENT        = 8;
-   constexpr auto STYLE_NUMBER         = 9;
-   constexpr auto STYLE_STRING         = 10;
+   constexpr auto STYLE_DEFAULT              = 0;
+   constexpr auto STYLE_MARGIN               = 1;
+   constexpr auto STYLE_SELECTION            = 2;
+   constexpr auto STYLE_TRACE_LINE           = 3;
+   constexpr auto STYLE_ERROR_LINE           = 4;
+   constexpr auto STYLE_BREAKPOINT           = 5;
+   constexpr auto STYLE_KEYWORD              = 6;
+   constexpr auto STYLE_OPERATOR             = 7;
+   constexpr auto STYLE_COMMENT              = 8;
+   constexpr auto STYLE_NUMBER               = 9;
+   constexpr auto STYLE_STRING               = 10;
+   constexpr auto STYLE_HIGHLIGHTED_BRACKET  = 11;
    //#define STYLE_MESSAGE                           6
    //#define STYLE_HINT                              9  // !! not used
    //#define STYLE_TRACE                             12
-   //#define STYLE_HIGHLIGHTED_BRACKET               14
-   constexpr auto STYLE_MAX            = 10;
+   constexpr auto STYLE_MAX                  = 11;
 
    // --- ClipboardBase ----
    class ClipboardBase
@@ -109,6 +109,7 @@ namespace elena_lang
 
       bool              lineNumbersVisible;
       bool              highlightSyntax;
+      bool              highlightBrackets;
       bool              empty;
       FontInfo          fontInfo;
       int               schemeIndex;
@@ -165,6 +166,7 @@ namespace elena_lang
          this->empty = true;
          this->schemeIndex = 0;
          this->highlightSyntax = true;
+         this->highlightBrackets = true;
          this->scrollOffset = 1;
       }
    };

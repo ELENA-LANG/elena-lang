@@ -53,6 +53,9 @@ constexpr auto S1_DirectCall_3 = "class (attribute -2147479546 ()nameattr (ident
 
 constexpr auto S1_MethodWithSignatureOfObject = "class (attribute -2147479546 ()nameattr (identifier \"Helper\" ())method (nameattr (identifier \"test\" ())parameter (type (identifier \"Object\" ())nameattr (identifier \"arg\" ()))code ())) class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (assign_operation (object (type (identifier \"Object\" ())identifier \"arg\" ())expression (object (integer \"2\" ()))))expression (message_operation (object (identifier \"Helper\" ()) message(identifier \"test\" ())expression (object (identifier \"arg\" ())))))))";
 
+constexpr auto S1_DirectByteOperation = "class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (index_operation (object (type (identifier \"ByteNumber\" ()) identifier \"tmp\" ()) expression (object (integer \"10\" ())))) expression (assign_operation (object (type (identifier \"ByteNumber\" ())identifier \"r\" ())expression (index_operation (object (identifier \"tmp\" ())expression (object (integer \"10\" ())))))))))))";
+constexpr auto S1_DirectByteOperation2 = "class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (index_operation (object (type (identifier \"ByteNumber\" ())identifier \"tmp\" ())expression (object (integer \"10\" ()))))expression (object (type (identifier \"ByteNumber\" ())identifier \"index\" ()))expression (assign_operation (object (type (identifier \"ByteNumber\" ())identifier \"r\" ())expression (index_operation (object (identifier \"tmp\" ())expression (object (identifier \"index\" ()))))))))))";
+
 // S2 Scenarion : lmbda
 
 constexpr auto S2_Func = "class (attribute -2147467263 ()attribute -2147479545 ()nameattr (identifier \"Func\" ())method (attribute -2147471358 ()nameattr (identifier \"function\" ())no_body ()))";
@@ -80,6 +83,8 @@ constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assignin
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3074 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1217 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1217 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3138 (type 4 ())local 1 ()close_frame()exit())reserved 9 ()";
 constexpr auto BuildTree_CallMethodWithNil = "tape (open_frame ()assigning 1 ()nil_reference ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 1538 (type 3 ())local 1 ()close_frame ()exit ())reserved 3 ()";
+constexpr auto BuildTree_DirectByteOperation = "tape (open_frame ()assigning 1 ()local_address -8 ()saving_stack ()int_literal 3 (value 10 ())saving_stack 1 ()bytearray_op -24 (operator_id 1 ()) local_address -24 ()copying -20 (size 1 ())local 1 ()close_frame ()exit ())reserved 3 ()reserved_n 24 ()";
+constexpr auto BuildTree_DirectByteOperation2 = "tape (open_frame ()assigning 1 ()local_address -8 ()saving_stack ()local_address -20 ()saving_stack 1 ()bytearray_op -28 (operator_id 1 ())local_address -28 ()copying -24 (size 1 ())local 1 ()close_frame ()exit ())reserved 3 ()reserved_n 28 ()";
 
 constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 2 ()";
 
@@ -112,6 +117,8 @@ constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assignin
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3074 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1217 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1217 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3138 (type 4 ())local 1 ()close_frame()exit())reserved 10 ()";
 constexpr auto BuildTree_CallMethodWithNil = "tape (open_frame ()assigning 1 ()nil_reference ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 1538 (type 3 ())local 1 ()close_frame ()exit ())reserved 4 ()";
+constexpr auto BuildTree_DirectByteOperation = "tape (open_frame ()assigning 1 ()local_address -24 ()saving_stack ()int_literal 3 (value 10 ())saving_stack 1 ()bytearray_op -56 (operator_id 1 ()) local_address -56 ()copying -40 (size 1 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 64 ()";
+constexpr auto BuildTree_DirectByteOperation2 = "tape (open_frame ()assigning 1 ()local_address -24 ()saving_stack ()local_address -40 ()saving_stack 1 ()bytearray_op -72 (operator_id 1 ())local_address -72 ()copying -56 (size 1 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 80 ()";
 
 constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 4 ()";
 
@@ -450,31 +457,30 @@ void MethodCallTest :: runTest(bool withVariadic, int scenario)
       env.setUpTemplateMockup(argArrayRef, 2, targetVargRef);
    }
 
-   moduleScope->predefined.add("nil", V_NIL);
+   run(moduleScope, scenario);
+}
 
-   Compiler* compiler = env.createCompiler();
+// --- ArrayOpTest ---
 
-   BuildTree output;
-   BuildTreeWriter writer(output);
-   Compiler::Namespace nsScope(compiler, moduleScope, TestErrorProcessor::getInstance(), nullptr, nullptr);
+void ArrayOpTest::SetUp()
+{
+   ScenarioTest::SetUp();
+}
 
-   // Act
-   nsScope.declare(declarationNode.firstChild(), true);
+void ArrayOpTest :: runTest(int scenario)
+{
+   // Arrange
+   ModuleScopeBase* moduleScope = env.createModuleScope(true);
+   moduleScope->buildins.superReference = 1;
+   moduleScope->buildins.intReference = intNumberRef;
+   moduleScope->buildins.constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
+         0, FUNCTION_MESSAGE);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
-   classHelper.load();
-   Compiler::Method methodHelper(classHelper);
+   moduleScope->buildins.arrayTemplateReference = arrayTemplateRef;
+   env.setUpTemplateMockup(arrayTemplateRef, elementRef, arrayRef);
 
-   SyntaxNode methodNode = findTargetNode(scenario);
-   if (methodNode != SyntaxKey::None)
-      methodHelper.compile(writer, methodNode);
-
-   // Assess
-   bool matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
-   EXPECT_TRUE(matched);
-
-   freeobj(compiler);
-   freeobj(moduleScope);
+   run(moduleScope, scenario);
 }
 
 // --- CallMethodWithoutTarget ---
@@ -531,6 +537,40 @@ void CallMethodWithNil :: SetUp()
    LoadDeclarationScenario(S_DefaultNamespace_1, S1_DirectCallWithNil_1, S1_DirectCallWithNil_2);
 
    BuildTreeSerializer::load(BuildTree_CallMethodWithNil, controlOutputNode);
+}
+
+// --- ByteArrayOperation ---
+
+void ByteArrayOperation :: SetUp()
+{
+   ArrayOpTest::SetUp();
+
+   arrayTemplateRef = 0x80;
+   intNumberRef = 2;
+   elementRef = 3;
+   arrayRef = 5;
+   targetRef = 5;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_ByteNumber, S_DummyByteArray, S1_DirectByteOperation);
+
+   BuildTreeSerializer::load(BuildTree_DirectByteOperation, controlOutputNode);
+}
+
+// --- ByteArrayOperation ---
+
+void ByteArrayOperation2 :: SetUp()
+{
+   ArrayOpTest::SetUp();
+
+   arrayTemplateRef = 0x80;
+   intNumberRef = 2;
+   elementRef = 3;
+   arrayRef = 5;
+   targetRef = 5;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_ByteNumber, S_DummyByteArray, S1_DirectByteOperation2);
+
+   BuildTreeSerializer::load(BuildTree_DirectByteOperation2, controlOutputNode);
 }
 
 // --- LambdaTest ---

@@ -188,8 +188,7 @@ extension gameOp
                 }
                 catch(Exception e)
                 {
-                    Console.printLine(e)
-                    //Console.printLine:"An error occurred.  Check your input and try again."
+                    Console.printLine:"An error occurred.  Check your input and try again."
                 }
             };
                 

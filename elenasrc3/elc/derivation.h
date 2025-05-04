@@ -52,6 +52,11 @@ namespace elena_lang
             return type == ScopeType::Enumeration;
          }
 
+         bool isNameIndex(int index)
+         {
+            return (index == 1 || index == 3) && type == ScopeType::PropertyTemplate;
+         }
+
          bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex, bool allowType)
          {
             switch (type) {
@@ -75,7 +80,7 @@ namespace elena_lang
                case ScopeType::PropertyTemplate:
                {
                   ref_t index = arguments.get(node.identifier());
-                  if (index == 1) {
+                  if (isNameIndex(index)) {
                      parameterKey = SyntaxKey::NameParameter;
                      parameterIndex = index + nestedLevel;
                      return true;

@@ -201,21 +201,20 @@ size_t getLengthSkipPostfix(ustr_t name)
    return len;
 }
 
-ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
-   ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared)
+void CompilingProcess::TemplateGenerator :: defineTemplateName(ModuleScopeBase& moduleScope, IdentifierString& name,
+   ref_t templateRef, List<SyntaxNode>& parameters)
 {
    ModuleBase* module = moduleScope.module;
 
    ustr_t templateName = module->resolveReference(templateRef);
 
-   IdentifierString name;
    if (isWeakReference(templateName)) {
       name.copy(module->name());
       name.append(templateName);
    }
    else name.copy(templateName);
 
-   for(auto it = parameters.start(); !it.eof(); ++it) {
+   for (auto it = parameters.start(); !it.eof(); ++it) {
       name.append("&");
 
       ref_t typeRef = (*it).arg.reference;
@@ -232,12 +231,19 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
          name.append(param, paramLen);
       }
       else name.append(param, paramLen);
+
+      // NOTE : the names must be different for normal and nullable template argument
+      if ((*it).existChild(SyntaxKey::NullableType))
+         name.append("#nble");
    }
    name.replaceAll('\'', '@', 0);
+}
 
-   // !! temporal
-   if ((*name).findStr("Task#1&system@Int") != NOTFOUND_POS)
-      alreadyDeclared |= false;
+ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
+   ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared)
+{
+   IdentifierString name;
+   defineTemplateName(moduleScope, name, templateRef, parameters);
 
    return moduleScope.mapTemplateIdentifier(*name, visibility, alreadyDeclared, false);
 }
@@ -245,32 +251,8 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
 ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
    ref_t templateRef, List<SyntaxNode>& parameters)
 {
-   ModuleBase* module = moduleScope.module;
-
-   ustr_t templateName = module->resolveReference(templateRef);
    IdentifierString name;
-   if (isWeakReference(templateName)) {
-      name.copy(module->name());
-      name.append(templateName);
-   }
-   else name.copy(templateName);
-
-   for (auto it = parameters.start(); !it.eof(); ++it) {
-      name.append("&");
-
-      ref_t typeRef = (*it).arg.reference;
-      ustr_t param = module->resolveReference(typeRef);
-      if (isTemplateWeakReference(param)) {
-         // if template based argument - pass as is
-         name.append(param);
-      }
-      else if (isWeakReference(param)) {
-         name.append(module->name());
-         name.append(param);
-      }
-      else name.append(param);
-   }
-   name.replaceAll('\'', '@', 0);
+   defineTemplateName(moduleScope, name, templateRef, parameters);
 
    bool dummy = false;
    return moduleScope.mapTemplateIdentifier(*name, visibility, dummy, true);
@@ -604,6 +586,7 @@ void CompilingProcess :: printBuildTree(ModuleBase* module, BuildTree& buildTree
       filters.add(BuildKey::ArgumentsInfo);
       filters.add(BuildKey::OpenStatement);
       filters.add(BuildKey::EndStatement);
+      filters.add(BuildKey::Idle);
    }
 
    _presenter->print("\nBuild Tree:");
@@ -658,6 +641,7 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    LexicalMap::Iterator& lexical_it,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
+   VariableResolverBase* variableResolver,
    ModuleSettings& moduleSettings,
    int minimalArgList,
    int ptrSize)
@@ -665,6 +649,7 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    ModuleScope moduleScope(
       &_libraryProvider,
       forwardResolver,
+      variableResolver,
       _libraryProvider.createModule(module_it.name()),
       moduleSettings.debugMode ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
       moduleSettings.stackAlingment,
@@ -804,7 +789,7 @@ void CompilingProcess :: compile(ProjectBase& project,
       compiled |= buildModule(
          env,
          lexical_it,
-         *module_it, &syntaxTree, &project,
+         *module_it, &syntaxTree, &project, &project,
          moduleSettings,
          minimalArgList,
          sizeof(uintptr_t));
@@ -855,7 +840,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
       return;
    }
 
-   auto result = linker.run(project, code, uiType, _exeExtension);
+   auto result = linker.run(project, code, imageInfo.type, uiType, _exeExtension);
 
    _presenter->print(ELC_SUCCESSFUL_LINKING);
 

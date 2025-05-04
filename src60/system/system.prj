@@ -18,7 +18,7 @@
     </project>
     <manifest>
         <name>ELENA Standard Library</name>
-        <version>6.6.3</version>
+        <version>6.6.9</version>
         <author>Aleksey Rakov</author>
     </manifest>
     <files>
@@ -72,6 +72,7 @@
             <include>text\encoding.l</include>
             <include>text\win_encoding.l</include>
             <include>text\textbuffer.l</include>
+            <include>text\base64.l</include>
             <include>io\common.l</include>
             <include>io\streamreader.l</include>
             <include>io\streamwriter.l</include>

@@ -188,7 +188,7 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    image.headerSize += IMAGE_SIZEOF_SECTION_HEADER * image.imageSections.headers.count();
 }
 
-LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType uiType, path_t exeExtension)
+LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, PlatformType uiType, path_t exeExtension)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true); // !! temporally by default the debug mode is on
 

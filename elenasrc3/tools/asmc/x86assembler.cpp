@@ -2043,6 +2043,13 @@ bool X86Assembler :: compileJmpBack(bool shortJump, int offset, MemoryWriter& wr
 
 bool X86Assembler :: compileLea(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
+   if (target.prefix == SegmentPrefix::FS) {
+      writer.writeByte(0x64);
+   }
+   else if (target.prefix == SegmentPrefix::GS) {
+      writer.writeByte(0x65);
+   }
+
    if (source.isR32() && target.isM32()) {
       writer.writeByte(0x8D);
       X86Helper::writeModRM(writer, source, target);
@@ -2056,6 +2063,9 @@ bool X86Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWrit
 {
    if (target.prefix == SegmentPrefix::FS) {
       writer.writeByte(0x64);
+   }
+   else if (target.prefix == SegmentPrefix::GS) {
+      writer.writeByte(0x65);
    }
 
    if(source.type == X86OperandType::EAX && target.type == X86OperandType::Disp32) {

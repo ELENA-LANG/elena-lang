@@ -31,6 +31,7 @@ namespace elena_lang
    constexpr auto FONTNAME_SETTINGS             = "configuration/settings/font_name";
    constexpr auto SCHEME_SETTINGS               = "configuration/settings/scheme";
    constexpr auto HIGHLIGHTSYNTAX_SETTINGS      = "configuration/settings/highlight";
+   constexpr auto HIGHLIGHTBRACKETS_SETTINGS    = "configuration/settings/highlight_brackets";
    constexpr auto PERSISTENT_CONSOLE_SETTINGS   = "configuration/settings/persist_output";
    constexpr auto VSCROLL_SETTINGS              = "configuration/settings/vscroll";
    constexpr auto TABSIZE_SETTINGS              = "configuration/settings/tabsize";

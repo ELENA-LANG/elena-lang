@@ -9,6 +9,11 @@
         <output>../../lib60_64</output>
      </project>
   </platform>
+  <platform key="FreeBSD_AMD64">
+     <project>
+        <output>../../lib60_64</output>
+     </project>
+  </platform>
   <platform key="Linux_PPC64le">
      <project>
         <output>../../lib60_64</output>
@@ -25,7 +30,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.6.0</version>
+    <version>6.6.2</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>

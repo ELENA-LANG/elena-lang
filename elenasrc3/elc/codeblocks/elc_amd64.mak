@@ -11,11 +11,22 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
+
+ifeq ($(OS),Windows_NT)
+
+CFLAGS = -Wall -std=c++20 -m64 -municode
+LDFLAGS = -m64 -static-libgcc -static-libstdc++
+
+else
+
 CFLAGS = -Wall -std=c++20 -m64
+LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
+
+endif
+
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O3
@@ -28,7 +39,15 @@ OBJDIR_RELEASE = ../../temp/elena64-cli
 DEP_RELEASE = 
 OUT_RELEASE = ../../../bin/elena64-cli
 
+ifeq ($(OS),Windows_NT)
+
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o  $(OBJDIR_RELEASE)/__/__/common/xmltree.o $(OBJDIR_RELEASE)/__/__/engine/bcwriter.o $(OBJDIR_RELEASE)/__/__/engine/codescope.o $(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o $(OBJDIR_RELEASE)/__/__/engine/jitlinker.o $(OBJDIR_RELEASE)/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/engine/parsertable.o $(OBJDIR_RELEASE)/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/engine/x86_64compiler.o $(OBJDIR_RELEASE)/__/__/engine/x86compiler.o $(OBJDIR_RELEASE)/__/__/engine/x86helper.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/xmlprojectbase.o $(OBJDIR_RELEASE)/__/__/engine/windows/presenter.o $(OBJDIR_RELEASE)/__/codeimage.o $(OBJDIR_RELEASE)/__/compiler.o $(OBJDIR_RELEASE)/__/compiling.o $(OBJDIR_RELEASE)/__/derivation.o $(OBJDIR_RELEASE)/__/windows/elc.o $(OBJDIR_RELEASE)/__/windows/ntimage.o $(OBJDIR_RELEASE)/__/windows/ntlinker.o $(OBJDIR_RELEASE)/__/windows/ntlinker32.o $(OBJDIR_RELEASE)/__/windows/ntlinker64.o $(OBJDIR_RELEASE)/__/parser.o $(OBJDIR_RELEASE)/__/separser.o $(OBJDIR_RELEASE)/__/project.o $(OBJDIR_RELEASE)/__/source.o $(OBJDIR_RELEASE)/__/modulescope.o $(OBJDIR_RELEASE)/__/compilerlogic.o $(OBJDIR_RELEASE)/__/windows/winsyslibloader.o $(OBJDIR_RELEASE)/__/__/engine/serializer.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o
+
+else
+
 OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o  $(OBJDIR_RELEASE)/__/__/common/xmltree.o $(OBJDIR_RELEASE)/__/__/engine/bcwriter.o $(OBJDIR_RELEASE)/__/__/engine/codescope.o $(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o $(OBJDIR_RELEASE)/__/__/engine/jitlinker.o $(OBJDIR_RELEASE)/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/engine/parsertable.o $(OBJDIR_RELEASE)/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/engine/x86_64compiler.o $(OBJDIR_RELEASE)/__/__/engine/x86compiler.o $(OBJDIR_RELEASE)/__/__/engine/x86helper.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/xmlprojectbase.o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o $(OBJDIR_RELEASE)/__/codeimage.o $(OBJDIR_RELEASE)/__/compiler.o $(OBJDIR_RELEASE)/__/compiling.o $(OBJDIR_RELEASE)/__/derivation.o $(OBJDIR_RELEASE)/__/linux/elc.o $(OBJDIR_RELEASE)/__/linux/elfimage.o $(OBJDIR_RELEASE)/__/linux/elflinker.o $(OBJDIR_RELEASE)/__/linux/elflinker32.o $(OBJDIR_RELEASE)/__/linux/elflinker64.o $(OBJDIR_RELEASE)/__/parser.o $(OBJDIR_RELEASE)/__/separser.o $(OBJDIR_RELEASE)/__/project.o $(OBJDIR_RELEASE)/__/source.o $(OBJDIR_RELEASE)/__/modulescope.o $(OBJDIR_RELEASE)/__/compilerlogic.o $(OBJDIR_RELEASE)/__/linux/elfsyslibloader.o $(OBJDIR_RELEASE)/__/linux/pathmanager.o $(OBJDIR_RELEASE)/__/__/engine/serializer.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o
+
+endif
 
 all: release
 
@@ -38,8 +57,13 @@ before_release:
 	test -d ../../../bin || mkdir -p ../../../bin
 	test -d $(OBJDIR_RELEASE)/__ || mkdir -p $(OBJDIR_RELEASE)/__
 	test -d $(OBJDIR_RELEASE)/__/__/engine || mkdir -p $(OBJDIR_RELEASE)/__/__/engine
+ifeq ($(OS),Windows_NT)
+	test -d $(OBJDIR_RELEASE)/__/__/engine/windows || mkdir -p $(OBJDIR_RELEASE)/__/__/engine/windows
+	test -d $(OBJDIR_RELEASE)/__/windows || mkdir -p $(OBJDIR_RELEASE)/__/windows
+else
 	test -d $(OBJDIR_RELEASE)/__/__/engine/linux || mkdir -p $(OBJDIR_RELEASE)/__/__/engine/linux
 	test -d $(OBJDIR_RELEASE)/__/linux || mkdir -p $(OBJDIR_RELEASE)/__/linux
+endif
 	test -d $(OBJDIR_RELEASE)/__/__/common || mkdir -p $(OBJDIR_RELEASE)/__/__/common
 
 after_release: 
@@ -115,9 +139,6 @@ $(OBJDIR_RELEASE)/__/__/engine/serializer.o: ../../engine/serializer.cpp
 $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o: ../../engine/scriptreader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/scriptreader.cpp -o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o
 
-$(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o: ../../engine/linux/presenter.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o
-
 $(OBJDIR_RELEASE)/__/codeimage.o: ../codeimage.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../codeimage.cpp -o $(OBJDIR_RELEASE)/__/codeimage.o
 
@@ -135,6 +156,34 @@ $(OBJDIR_RELEASE)/__/compilerlogic.o: ../compilerlogic.cpp
 
 $(OBJDIR_RELEASE)/__/modulescope.o: ../modulescope.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../modulescope.cpp -o $(OBJDIR_RELEASE)/__/modulescope.o
+
+ifeq ($(OS),Windows_NT)
+
+$(OBJDIR_RELEASE)/__/__/engine/windows/presenter.o: ../../engine/windows/presenter.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/windows/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/windows/presenter.o
+
+$(OBJDIR_RELEASE)/__/windows/elc.o: ../windows/elc.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/elc.cpp -o $(OBJDIR_RELEASE)/__/windows/elc.o
+
+$(OBJDIR_RELEASE)/__/windows/ntimage.o: ../windows/ntimage.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntimage.cpp -o $(OBJDIR_RELEASE)/__/windows/ntimage.o
+
+$(OBJDIR_RELEASE)/__/windows/ntlinker.o: ../windows/ntlinker.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker.o
+
+$(OBJDIR_RELEASE)/__/windows/ntlinker32.o: ../windows/ntlinker32.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker32.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker32.o
+
+$(OBJDIR_RELEASE)/__/windows/ntlinker64.o: ../windows/ntlinker64.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ntlinker64.cpp -o $(OBJDIR_RELEASE)/__/windows/ntlinker64.o
+
+$(OBJDIR_RELEASE)/__/windows/winsyslibloader.o: ../windows/winsyslibloader.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/winsyslibloader.cpp -o $(OBJDIR_RELEASE)/__/windows/winsyslibloader.o
+
+else
+
+$(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o: ../../engine/linux/presenter.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o
 
 $(OBJDIR_RELEASE)/__/linux/elc.o: ../linux/elc.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elc.cpp -o $(OBJDIR_RELEASE)/__/linux/elc.o
@@ -157,6 +206,8 @@ $(OBJDIR_RELEASE)/__/linux/elfsyslibloader.o: ../linux/elfsyslibloader.cpp
 $(OBJDIR_RELEASE)/__/linux/pathmanager.o: ../linux/pathmanager.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/pathmanager.cpp -o $(OBJDIR_RELEASE)/__/linux/pathmanager.o
 
+endif
+
 $(OBJDIR_RELEASE)/__/parser.o: ../parser.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../parser.cpp -o $(OBJDIR_RELEASE)/__/parser.o
 
@@ -173,7 +224,11 @@ clean_release:
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine
+ifeq ($(OS),Windows_NT)
+	rm -rf $(OBJDIR_RELEASE)/__/windows
+else
 	rm -rf $(OBJDIR_RELEASE)/__/linux
+endif
 	rm -rf $(OBJDIR_RELEASE)/__/__/common
 
 .PHONY: before_release after_release clean_release

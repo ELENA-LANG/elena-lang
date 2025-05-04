@@ -102,7 +102,7 @@ namespace elena_lang
 
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, SymbolKind& symbolKind);
-      bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility);
+      bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility, bool& externalOp);
       bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
       bool validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode);
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
@@ -238,6 +238,7 @@ namespace elena_lang
             case V_INT32ARRAY:
             case V_INT16ARRAY:
             case V_INT8ARRAY:
+            case V_UINT8ARRAY:
             case V_FLOAT64ARRAY:
             case V_BINARYARRAY:
                return true;
