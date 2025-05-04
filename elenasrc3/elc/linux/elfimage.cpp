@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive ELF Image class implementation
 //       supported platform: I386, AMD64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -16,6 +16,20 @@
 #include <elf.h>
 
 using namespace elena_lang;
+
+unsigned long elf_hash(const unsigned char* name)
+{
+   unsigned long h = 0, g;
+
+   while (*name)
+   {
+      h = (h << 4) + *name++;
+      if (g = h & 0xf0000000)
+         h ^= g >> 24;
+      h &= ~g;
+   }
+   return h;
+}
 
 // --- ElfImageFormatter ---
 
@@ -35,7 +49,11 @@ pos_t ElfImageFormatter :: fillImportTable(AddressMap::Iterator it, ElfData& elf
          }
       }
 
-      elfData.functions.add(functionName, (ref_t)*it);
+      if (!functionName.startsWith("##")) {
+         elfData.functions.add(functionName, (ref_t)*it);
+         count++;
+      }
+      else elfData.variables.add(functionName + 2, (ref_t)*it);
 
       ustr_t lib = elfData.libraries.retrieve<ustr_t>(*dll, [](ustr_t item, ustr_t current)
       {
@@ -46,7 +64,6 @@ pos_t ElfImageFormatter :: fillImportTable(AddressMap::Iterator it, ElfData& elf
       }
 
       ++it;
-      count++;
    }
 
    return count;
@@ -66,6 +83,7 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    MemoryBase* import = provider.getImportSection();
    MemoryBase* data = provider.getDataSection();
    MemoryBase* stat = provider.getStatSection();
+   MemoryBase* tls = provider.getTLSSection();
 
    // === address space mapping ===
 
@@ -135,8 +153,18 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    fileSize += align(data->length(), fileAlignment);
    sectionSize += align(data->length(), fileAlignment);
 
+   if (tls->length() > 0) {
+      map.tls = map.data + align(data->length(), fileAlignment);
+      map.dataSize += align(tls->length(), fileAlignment);
+
+      sectionSize += align(tls->length(), fileAlignment);
+      fileSize += align(tls->length(), fileAlignment);
+
+      map.stat = map.tls + tls->length();
+   }
+   else map.stat = map.data + data->length();
+
    map.dataSize += stat->length();
-   map.stat = map.data + data->length();
 
    sectionSize += align(stat->length(), fileAlignment);
 
@@ -145,6 +173,12 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
 
    sections.items.add(sections.headers.count(), { import, true });
    sections.items.add(sections.headers.count(), { data, true });
+
+   if (tls->length() > 0) {
+      map.dictionary.add(elfTLSSize, tls->length());
+
+      sections.items.add(sections.headers.count(), { tls, true });
+   }
 
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
    fileOffset = align(fileOffset + fileSize, fileAlignment);
@@ -262,7 +296,7 @@ void Elf32ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
       pltIndex++;
    }
 
-   // write dynamic segment
+   // == write dynamic segment ==
 
    // write libraries needed to be loaded
    auto dll = elfData.libraries.start();
@@ -363,10 +397,46 @@ pos_t ElfI386ImageFormatter :: writePLTEntry(MemoryWriter& codeWriter, pos_t sym
 
 // --- Elf64ImageFormatter ---
 
+pos_t Elf64ImageFormatter :: fillElfHashTable(ElfData& elfData, MemoryBase* import, int nbucket, int nchain)
+{
+   MemoryWriter hashWriter(import);
+
+   pos_t position = hashWriter.position();
+   hashWriter.writeDWord(nbucket);
+   hashWriter.writeDWord(nchain);
+
+   pos_t bucketPos = hashWriter.position();
+   hashWriter.writeBytes(0, sizeof(Elf64_Word) * nbucket);
+   pos_t chainPos = hashWriter.position();
+   hashWriter.writeBytes(0, sizeof(Elf64_Word) * nchain);
+
+   int* bucket = (int*)import->get(bucketPos);
+   int* chain = (int*)import->get(chainPos);
+
+   Elf64_Word k = 0;
+   for (auto fun = elfData.functions.start(); !fun.eof(); ++fun) {
+      const unsigned char* symbol = (const unsigned char*)fun.key().str();
+      unsigned long x = elf_hash(symbol);
+      if (bucket[x % nbucket] == STN_UNDEF) {
+         bucket[x % nbucket] = k;
+      }
+      else {
+         Elf64_Word y = bucket[x % nbucket];
+         while (chain[y] != STN_UNDEF)
+            y = chain[y];
+         chain[y] = k;
+      }
+      k++;
+   }
+
+   return position;
+}
+
 void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment,
    RelocationMap& importMapping)
 {
    pos_t count = fillImportTable(provider.externals(), elfData);
+   pos_t global_count = /*elfData.variables.count()*/0;
 
    MemoryBase* code = provider.getTextSection();
    MemoryBase* data = provider.getDataSection();
@@ -384,23 +454,24 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // reserve got table
    MemoryWriter gotWriter(import);
+   //pos_t gotStartVar = gotWriter.position();
+   //gotWriter.writeBytes(0, global_count * 8);
+   pos_t gotPltPos = gotWriter.position();
    gotWriter.writeQReference(mskDataRef64, elfData.dynamicOffset);
    gotWriter.writeQWord(0);   // reserved for run-time linker
    gotWriter.writeQWord(0);
    pos_t gotStart = gotWriter.position();
    gotWriter.writeBytes(0, count * 8);
-   gotWriter.seek(gotStart);
 
    // reserve relocation table
    MemoryWriter reltabWriter(import);
    pos_t reltabOffset = reltabWriter.position();
    reltabWriter.writeBytes(0, count * 24);
-   reltabWriter.seek(reltabOffset);
 
    // reserve symbol table
    MemoryWriter symtabWriter(import);
    pos_t symtabOffset = symtabWriter.position();
-   symtabWriter.writeBytes(0, (count + 1) * 24);
+   symtabWriter.writeBytes(0, (global_count + count + 1) * 24);
    symtabWriter.seek(symtabOffset + 24);
 
    // string table
@@ -410,8 +481,11 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    // code writer
    MemoryWriter codeWriter(code);
-   writePLTStartEntry(codeWriter, importRelRef, 0);
+   writePLTStartEntry(codeWriter, importRelRef, gotPltPos);
 
+   // functions
+   gotWriter.seek(gotStart);
+   reltabWriter.seek(reltabOffset);
    int relocateType = getRelocationType();
    long long symbolIndex = 1;
    int pltIndex = 1;
@@ -447,7 +521,39 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
       pltIndex++;
    }
 
-   // write dynamic segment
+   //// globals
+   //if (global_count > 0) {
+   //   gotWriter.seek(gotStartVar);
+   //   for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
+   //      pos_t gotPosition = gotWriter.position();
+
+   //      ref_t globalRef = *glob & ~mskAnyRef;
+   //      importMapping.add(globalRef | mskImportRelRef32, gotPosition);
+
+   //      pos_t strIndex = strWriter.position() - strOffset;
+
+   //      // symbol table entry
+   //      symtabWriter.writeDWord(strIndex);
+   //      symtabWriter.writeByte(0x11);
+   //      symtabWriter.writeByte(0);
+   //      symtabWriter.writeWord(0x1B); // R_X86_64_GOT64
+   //      symtabWriter.writeQReference(importRef, gotPosition);
+   //      symtabWriter.writeQWord(0);
+
+        // relocation table entry
+         //relatabWriter.writeQReference(importRef, gotPosition);
+         //relatabWriter.writeQWord((symbolIndex << 32) + /*relocateType*/6);
+         //relatabWriter.writeQWord(0);
+
+   //      // string table entry
+   //      strWriter.writeString(glob.key());
+
+   //      gotWriter.writeQWord(0);
+   //      symbolIndex++;
+   //   }
+   //}
+
+   // == write dynamic segment ==
 
    // write libraries needed to be loaded
    auto dll = elfData.libraries.start();
@@ -462,6 +568,14 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    strWriter.writeChar('\0');
    pos_t strLength = strWriter.position() - strOffset;
 
+   // build hash table
+   int nchain = count + 1;
+   int nbucket = nchain * 2 + 1;
+   pos_t hashffset = fillElfHashTable(elfData, import, nchain, nbucket);
+   dynamicWriter.writeQWord(DT_HASH);
+   dynamicWriter.writeQReference(importRef, hashffset);
+
+   // fill other mandatory entries
    dynamicWriter.writeQWord(DT_STRTAB);
    dynamicWriter.writeQReference(importRef, strOffset);
 
@@ -475,7 +589,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQWord(24);
 
    dynamicWriter.writeQWord(DT_PLTGOT);
-   dynamicWriter.writeQReference(importRef, /*gotStart*/0);
+   dynamicWriter.writeQReference(importRef, gotPltPos);
 
    dynamicWriter.writeQWord(DT_PLTRELSZ);
    dynamicWriter.writeQWord(count * 24);
@@ -486,11 +600,21 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    dynamicWriter.writeQWord(DT_JMPREL);
    dynamicWriter.writeQReference(importRef, reltabOffset);
 
+   assert(global_count == 0); // !! temporally globals are not supported
+
+#if defined(__FreeBSD__)
+   dynamicWriter.writeQWord(DT_RELA);
+   dynamicWriter.writeQReference(importRef, reltabOffset/*relatabOffset*/);
+
+   dynamicWriter.writeQWord(DT_RELASZ);
+   dynamicWriter.writeQWord(/*global_count * 24*/0);
+#else
    dynamicWriter.writeQWord(DT_RELA);
    dynamicWriter.writeQReference(importRef, reltabOffset);
 
    dynamicWriter.writeQWord(DT_RELASZ);
    dynamicWriter.writeQWord(count * 24);
+#endif
 
    dynamicWriter.writeQWord(DT_RELAENT);
    dynamicWriter.writeQWord(24);
@@ -507,7 +631,11 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
 int ElfAmd64ImageFormatter:: getRelocationType()
 {
+#if defined(__FreeBSD__)
+   return R_X86_64_JMP_SLOT;
+#else
    return R_X86_64_JUMP_SLOT;
+#endif
 }
 
 void ElfAmd64ImageFormatter :: fixSection(MemoryBase* section, AddressSpace& map)
@@ -522,12 +650,12 @@ void ElfAmd64ImageFormatter :: fixImportSection(MemoryBase* section, AddressSpac
    dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateElf64Import);
 }
 
-void ElfAmd64ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t)
+void ElfAmd64ImageFormatter :: writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t gotPlt)
 {
    codeWriter.writeWord(0x35FF);
-   codeWriter.writeDReference(gotReference, 8);
+   codeWriter.writeDReference(gotReference, gotPlt + 8);
    codeWriter.writeWord(0x25FF);
-   codeWriter.writeDReference(gotReference, 16);
+   codeWriter.writeDReference(gotReference, gotPlt + 16);
    codeWriter.writeDWord(0);
 }
 

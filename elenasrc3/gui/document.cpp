@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      DocumentView class body
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "guicommon.h"
@@ -25,10 +25,12 @@ constexpr auto UNDO_BUFFER_SIZE = 0x40000;
 
 // --- LexicalFormatter ---
 
-LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers)
+LexicalFormatter :: LexicalFormatter(Text* text, TextFormatterBase* formatter, MarkerList* markers, 
+   HighlightList* highlights)
 {
    _text = text;
    _markers = markers;
+   _highlights = highlights;
    _formatter = formatter;
    _enabled = false;
 
@@ -118,6 +120,24 @@ bool LexicalFormatter :: checkMarker(ReaderInfo& info)
    return false;
 }
 
+bool LexicalFormatter :: checkPrecedingHighlight(pos_t start, pos_t& end)
+{
+   for (auto it = _highlights->start(); !it.eof(); ++it) {
+      pos_t current = it.key();
+
+      if (current < start) {
+         break;
+      }
+      if (current < end) {
+         end = it.key();
+
+         return true;
+      }
+   }
+
+   return false;
+}
+
 pos_t LexicalFormatter :: proceed(pos_t position, ReaderInfo& info)
 {
    if (!_enabled)
@@ -137,8 +157,18 @@ pos_t LexicalFormatter :: proceed(pos_t position, ReaderInfo& info)
    pos_t current = 0;
    while (reader.readPos(curStyle)) {
       current = reader.getPos();
+      if (_highlights->get(position) != INVALID_POS) {
+         info.style = _highlights->get(position);
+         count = 1;
+         break;
+      }
+
       if (current > position) {
          info.style = curStyle;
+         // to allow bracket highlighting foregoing another operator
+         if (curStyle == STYLE_OPERATOR && checkPrecedingHighlight(position, current)) {
+            
+         }
          count = current - position;
          break;
       }
@@ -252,10 +282,13 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 
 // --- DocumentView ---
 
-DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter) :
+int DocumentView::VerticalScrollOffset = 1;
+
+DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter, bool autoIndent) :
    _undoBuffer(UNDO_BUFFER_SIZE),
-   _formatter(text, formatter, &_markers),
-   _markers({})
+   _markers({}), _highlights(INVALID_POS),
+   _formatter(text, formatter, &_markers, &_highlights),
+   _autoIndent(autoIndent)
 {
    _text = text;
 
@@ -398,7 +431,7 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
       frame.y = caret.y;
    }
    else if (frame.y + _size.y - 1 <= caret.y) {
-      frame.y = caret.y - _size.y + 3;
+      frame.y = caret.y - _size.y + 2 + VerticalScrollOffset;
    }
 
    if (_frame.getCaret() != frame) {
@@ -590,9 +623,9 @@ void DocumentView :: moveRightToken(DocumentChangeStatus& changeStatus, bool sel
    setCaret(_caret.getCaret(), selecting, changeStatus);
 }
 
-void DocumentView :: moveFrameUp(DocumentChangeStatus& changeStatus)
+void DocumentView :: moveFrameUp(DocumentChangeStatus& changeStatus, int frameOffset)
 {
-   vscroll(changeStatus, -1);
+   vscroll(changeStatus, -frameOffset);
    if (changeStatus.frameChanged) {
       if (_frame.row() + _size.y - 2 <= _caret.row()) {
          setCaret(_caret.column(), _frame.row() + _size.y - 3, false, changeStatus);
@@ -600,9 +633,9 @@ void DocumentView :: moveFrameUp(DocumentChangeStatus& changeStatus)
    }
 }
 
-void DocumentView :: moveFrameDown(DocumentChangeStatus& changeStatus)
+void DocumentView :: moveFrameDown(DocumentChangeStatus& changeStatus, int frameOffset)
 {
-   vscroll(changeStatus, 1);
+   vscroll(changeStatus, frameOffset);
    if (changeStatus.frameChanged) {
       if (_caret.row() < _frame.row()) {
          setCaret(_caret.column(), _frame.row(), false, changeStatus);
@@ -642,9 +675,9 @@ void DocumentView :: movePageDown(DocumentChangeStatus& changeStatus, bool selec
       setCaret(_caret.column(), _text->getRowCount() - 1, selecting, changeStatus);
    }
    else {
-      vscroll(changeStatus, _size.y);
+      vscroll(changeStatus, _size.y - 1);
       if (changeStatus.frameChanged)
-         setCaret(_caret.column(), _caret.row() + _size.y, selecting, changeStatus);
+         setCaret(_caret.column(), _caret.row() + _size.y - 1, selecting, changeStatus);
    }
 }
 
@@ -657,9 +690,9 @@ void DocumentView :: movePageUp(DocumentChangeStatus& changeStatus, bool selecti
       setCaret(_caret.column(), 0, selecting, changeStatus);
    }
    else {
-      vscroll(changeStatus, -_size.y);
+      vscroll(changeStatus, -_size.y + 1);
       if (changeStatus.frameChanged)
-         setCaret(_caret.column(), _caret.row() - _size.y, selecting, changeStatus);
+         setCaret(_caret.column(), _caret.row() - _size.y + 1, selecting, changeStatus);
    }
 }
 
@@ -799,8 +832,11 @@ void DocumentView :: tabbing(DocumentChangeStatus& changeStatus, text_c space, s
    changeStatus.selelectionChanged = true;
 }
 
-void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t count)
+void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, size_t count, bool advancing)
 {
+   if (count == 0)
+      return;
+
    if (hasSelection()) {
       int rowCount = _text->getRowCount();
 
@@ -819,8 +855,11 @@ void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, s
          changeStatus.textChanged = true;
 
          _text->validateBookmark(_caret);
-         _caret.moveOn(1);
-         setCaret(_caret.getCaret(), false, changeStatus);
+         if (advancing) {
+            _caret.moveOn(1);
+
+            setCaret(_caret.getCaret(), false, changeStatus);
+         }
       }
       else break;
 
@@ -828,14 +867,88 @@ void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, s
    }
 }
 
+text_t DocumentView :: getCurrentLine(disp_t disp, size_t& length)
+{
+   TextBookmark bm = _caret;
+   bm.moveTo(0, _caret.row());
+   if (disp == 0 || bm.moveOn(disp)) {
+      return _text->getLine(bm, length);
+   }
+   else {
+      length = 0;
+
+      return nullptr;
+   }
+}
+
+text_c DocumentView :: getCurrentChar()
+{
+   size_t length = 0;
+   text_t line = NULL;
+
+   TextBookmark bm = _caret;
+   // return current or previous if EOL
+   if (!bm.isEOL()) {
+      line = _text->getLine(bm, length);
+   }
+   else {
+      if (bm.moveOn(-1))
+         line = _text->getLine(bm, length);
+   }
+
+   return (length > 0) ? line[0] : 0;
+}
+
+DocumentView::IndentDirection DocumentView :: IsAutoIndent(text_c ch)
+{
+   if (ch == '{')
+      return IndentDirection::Right;
+   else if (ch == '}') {
+      return IndentDirection::Left;
+   }
+   else return IndentDirection::None;
+}
+
+disp_t DocumentView :: calcAutoIndent(text_c currentChar)
+{
+   if (!_autoIndent)
+      return 0;
+
+   size_t length = 0;
+   disp_t disp = 0;
+   text_t line = getCurrentLine(0, length);
+   while (length > 0) {
+      IndentDirection dir = IsAutoIndent(currentChar);
+      for (size_t i = 0; i < length; i++) {
+         if (line[i] != 0x20 && line[i] != 0x9) {
+            disp += i;
+
+            if (dir == IndentDirection::Right)
+               disp += Text::TabSize;
+
+            return disp;
+         }
+      }
+      disp += length;
+
+      line = getCurrentLine(disp, length);
+   }
+
+   return 0;
+}
+
 void DocumentView :: insertNewLine(DocumentChangeStatus& changeStatus)
 {
+   text_c currentChar = getCurrentChar();
+
    int rowCount = _text->getRowCount();
 
    eraseSelection(changeStatus);
 
+   disp_t disp = calcAutoIndent(currentChar);
    if (_text->insertNewLine(_caret)) {
       setCaret(0, _caret.row() + 1, false, changeStatus);
+      insertChar(changeStatus, ' ', disp);
 
       changeStatus.textChanged = true;
    }
@@ -843,14 +956,14 @@ void DocumentView :: insertNewLine(DocumentChangeStatus& changeStatus)
    status.rowDifference += (_text->getRowCount() - rowCount);
 }
 
-void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, disp_t length)
+void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, size_t length)
 {
    int rowCount = _text->getRowCount();
 
    eraseSelection(changeStatus);
 
    _text->insertLine(_caret, text, length);
-   _caret.moveOn(length);
+   _caret.moveOn((disp_t)length);
    changeStatus.textChanged = true;
 
    setCaret(_caret.getCaret(), false, changeStatus);
@@ -940,10 +1053,14 @@ void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
 {
    int rowCount = _text->getRowCount();
 
+   Point caret = _caret.getCaret(true);
+
    _caret.moveTo(0, _caret.row());
 
    _text->eraseLine(_caret, _caret.length());
    _text->eraseChar(_caret);
+
+   setCaret(caret.x, caret.y, false, changeStatus);
 
    changeStatus.textChanged = true;
    changeStatus.caretChanged = true;
@@ -968,7 +1085,7 @@ void DocumentView :: duplicateLine(DocumentChangeStatus& changeStatus)
 
    _caret.moveTo(0, caret.y + 1);
    _text->insertNewLine(_caret);
-   _text->insertLine(_caret, buffer, length);
+   _text->insertLine(_caret, buffer, abs(length));
 
    freestr(buffer);
 
@@ -992,7 +1109,7 @@ void DocumentView :: copyText(text_c* text, disp_t length)
 
 void DocumentView :: toLowercase(DocumentChangeStatus& changeStatus)
 {
-   disp_t selection = abs(_selection);
+   size_t selection = abs(_selection);
 
    if (selection > 0) {
       text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
@@ -1020,7 +1137,7 @@ void DocumentView :: toLowercase(DocumentChangeStatus& changeStatus)
 
 void DocumentView :: toUppercase(DocumentChangeStatus& changeStatus)
 {
-   disp_t selection = abs(_selection);
+   size_t selection = abs(_selection);
 
    if (selection > 0) {
       text_c* buffer = StrFactory::allocate(selection + 1, (text_str)nullptr);
@@ -1054,6 +1171,25 @@ void DocumentView :: copySelection(text_c* text)
    else {
       _text->copyTo(_caret, text, _selection);
    }
+}
+
+void DocumentView :: copyCurrentLine(text_c* text)
+{
+   auto lineCaret = _caret;
+   lineCaret.moveTo(0, _caret.row());
+
+   auto nextLineCaret = lineCaret;
+   if (nextLineCaret.moveToNextBOL()) {
+      _text->copyTo(lineCaret, text, nextLineCaret.position() - lineCaret.position());
+   }
+   else _text->copyTo(lineCaret, text, lineCaret.length());
+}
+
+disp_t DocumentView :: getCurrentLineLength()
+{
+   auto lineCaret = _caret;
+
+   return lineCaret.length();
 }
 
 void DocumentView :: undo(DocumentChangeStatus& changeStatus)

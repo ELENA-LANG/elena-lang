@@ -3,7 +3,7 @@
 //
 //		Asm2BinX main file
 //
-//                                              (C)2021-2024, by Aleksey Rakov
+//                                              (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <cstdarg>
@@ -60,6 +60,20 @@ void printLine(ustr_t mssg, path_t path)
 
 #endif
 
+#ifdef __FreeBSD__
+
+constexpr auto targetPlatform = ASM_FREEBSD_TARGET;
+
+#elif __unix__         
+
+constexpr auto targetPlatform = ASM_LNX_TARGET;
+
+#elif defined(_WIN32) || defined(_WIN64) 
+
+constexpr auto targetPlatform = ASM_WIN_TARGET;
+
+#endif
+
 enum class CompileMode
 {
    x86,
@@ -70,7 +84,7 @@ enum class CompileMode
    bc64
 };
 
-template<class AssemblyT> void compileAssembly(path_t source, path_t target)
+template<class AssemblyT> void compileAssembly(path_t source, path_t target, ustr_t platform)
 {
    Module         targetModule(BINARY_MODULE);
 
@@ -81,6 +95,8 @@ template<class AssemblyT> void compileAssembly(path_t source, path_t target)
    }
 
    AssemblyT      assembler(4, &reader, &targetModule);
+
+   assembler.defineMacro(platform, true);
 
    assembler.compile();
 
@@ -120,17 +136,22 @@ void compileByteCode(path_t source, path_t target, bool mode64, int rawDataAlign
 int main(int argc, char* argv[])
 {
    printf(ASM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ASM_REVISION_NUMBER);
-   if (argc < 2 || argc > 4) {
+   if (argc < 2 || argc > 6) {
       printf(ASM_HELP);
       return  -1;
    }
 
+   IdentifierString platform(targetPlatform);
    PathString source;
    PathString target;
+   PathString targetName;
    CompileMode mode = CompileMode::x86;
    bool supportStdMode = false;
+   int optionIndex = 0;
    for (int i = 1; i < argc; i++) {
       if (argv[i][0] == '-') {
+         optionIndex = i;
+
          ustr_t arg(argv[i] + 1);
          if (arg.compare(ASM_X86_MODE)) {
             mode = CompileMode::x86;
@@ -147,6 +168,15 @@ int main(int argc, char* argv[])
          else if (arg.compare(ASM_AARCH64_MODE)) {
             mode = CompileMode::arm64;
          }
+         else if (arg.compare(ASM_WIN_TARGET_MODE)) {
+            platform.copy(ASM_WIN_TARGET);
+         }
+         else if (arg.compare(ASM_LNX_TARGET_MODE)) {
+            platform.copy(ASM_LNX_TARGET);
+         }
+         else if (arg.compare(ASM_FREEBSD_TARGET_MODE)) {
+            platform.copy(ASM_FREEBSD_TARGET);
+         }
          else if (arg.compare(BC_32_MODE)) {
             mode = CompileMode::bc32;
 #ifdef WIN32
@@ -161,11 +191,14 @@ int main(int argc, char* argv[])
             return  -1;
          }
       }
-      else if (i == 2) {
+      else if (i == optionIndex + 1) {
          source.copy(argv[i]);
       }
-      else if (i == 3) {
+      else if (i == optionIndex + 2) {
          target.copy(argv[i]);
+      }
+      else if (i == optionIndex + 3) {
+         targetName.copy(argv[i]);
       }
       else {
          printf(ASM_HELP);
@@ -175,6 +208,15 @@ int main(int argc, char* argv[])
 
    if (target.empty()) {
       target.copy(*source);
+
+      if (!targetName.empty()) {
+         PathString temp;
+         temp.copySubPath(*target, true);
+         target.combine(*targetName);
+      }
+   }
+   else if (!targetName.empty()) {
+      target.combine(*targetName);
    }
    else {
       FileNameString name(*source, true);
@@ -192,7 +234,7 @@ int main(int argc, char* argv[])
 
             target.changeExtension("bin");
 
-            compileAssembly<X86Assembler>(*source, *target);
+            compileAssembly<X86Assembler>(*source, *target, *platform);
             break;
          }
          case CompileMode::amd64:
@@ -201,7 +243,7 @@ int main(int argc, char* argv[])
 
             target.changeExtension("bin");
 
-            compileAssembly<X86_64Assembler>(*source, *target);
+            compileAssembly<X86_64Assembler>(*source, *target, *platform);
             break;
          }
          case CompileMode::ppc64le:
@@ -210,7 +252,7 @@ int main(int argc, char* argv[])
 
             target.changeExtension("bin");
 
-            compileAssembly<PPC64Assembler>(*source, *target);
+            compileAssembly<PPC64Assembler>(*source, *target, *platform);
 
             break;
          }
@@ -220,7 +262,7 @@ int main(int argc, char* argv[])
 
             target.changeExtension("bin");
 
-            compileAssembly<Arm64Assembler>(*source, *target);
+            compileAssembly<Arm64Assembler>(*source, *target, *platform);
 
             break;
          }

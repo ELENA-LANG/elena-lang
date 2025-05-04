@@ -43,7 +43,7 @@ puzzle = new Func1[]
 
 public program()
 {
-    console.writeLine();
+    Console.writeLine();
     
     for(int n := 0; n < 2.power(12); n += 1)
     {
@@ -53,10 +53,10 @@ public program()
         var counts := bits.zipBy(results, (b,r => b.xor(r).toBit() )).summarize();
 
         counts =>
-            0  { console.printLine("Total hit :",results.printSolution(bits)) }
-            1  { console.printLine("Near miss :",results.printSolution(bits)) }
-            12 { console.printLine("Total miss:",results.printSolution(bits)) };
+            0 : { Console.printLine("Total hit :",results.printSolution(bits)) }
+            1 : { Console.printLine("Near miss :",results.printSolution(bits)) }
+            12: { Console.printLine("Total miss:",results.printSolution(bits)) };
     };
     
-    console.readChar()
+    Console.readChar()
 }

@@ -96,57 +96,76 @@ bool FileDialog :: openFiles(List<path_t, freepath>& files)
       return true;
    }
    return false;
-
-   return false;
 }
 
 bool FileDialog :: saveFile(path_t ext, PathString& path)
 {
-//   _struct.Flags = _defaultFlags | OFN_PATHMUSTEXIST;
-//   _struct.lpstrDefExt = ext;
-//
-//   if (::GetSaveFileName(&_struct)) {
-//      path.copy(_fileName);
-//
-//      return true;
-//   }
-   /*else */return false;
+   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_SAVE);
+   dialog.set_transient_for(*_owner);
+
+   if (!emptystr(_initialDir))
+      dialog.set_current_folder (_initialDir);
+
+   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+   dialog.add_button("_Save", Gtk::RESPONSE_OK);
+
+   for (int i = 0; i < _filterCounter; i += 2) {
+      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+
+      filter_l->set_name(_filter[i + 1]);
+      filter_l->add_pattern(_filter[i]);
+      dialog.add_filter(filter_l);
+   }
+
+   int result = dialog.run();
+   if (result == Gtk::RESPONSE_OK) {
+      std::string filename = dialog.get_filename();
+
+      path.copy(filename.c_str());
+
+      return true;
+   }
+   return false;
 }
 
-//MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str param)
-//{
-//   WideMessage wideMessage(message);
-//   wideMessage.append(param);
-//
-//   int result = MsgBox::show(_owner->handle(), *wideMessage, MB_YESNOCANCEL | MB_ICONQUESTION);
-//
-//   if (MsgBox::isYes(result)) {
-//      return Answer::Yes;
-//   }
-//   else if (MsgBox::isCancel(result)) {
-//      return Answer::Cancel;
-//   }
-//   else return Answer::No;
-//}
-//
-//MessageDialogBase::Answer MessageDialog :: question(text_str message)
-//{
-//   int result = MsgBox::show(_owner->handle(), message, MB_YESNOCANCEL | MB_ICONQUESTION);
-//
-//   if (MsgBox::isYes(result)) {
-//      return Answer::Yes;
-//   }
-//   else if (MsgBox::isCancel(result)) {
-//      return Answer::Cancel;
-//   }
-//   else return Answer::No;
-//}
-//
-//void MessageDialog :: info(text_str message)
-//{
-//   ::MessageBox(_owner->handle(), message, APP_NAME, MB_OK | MB_ICONWARNING);
-//}
-//
+// --- MessageDialog ---
+
+int MessageDialog :: show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel)
+{
+   Gtk::MessageDialog dialog(message, false, messageType, buttonTypes, true);
+   dialog.set_transient_for(*_owner);
+
+   if (withCancel)
+      dialog.add_button("Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
+
+   return dialog.run();
+}
+
+MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str param)
+{
+   IdentifierString questionStr(message, param);
+
+   return question(*questionStr);
+}
+
+MessageDialogBase::Answer MessageDialog :: question(text_str message)
+{
+   int retVal = show(message, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+
+   if (retVal == Gtk::ResponseType::RESPONSE_YES) {
+      return Answer::Yes;
+   }
+   else if (retVal == Gtk::ResponseType::RESPONSE_CANCEL) {
+      return Answer::Cancel;
+   }
+   else return Answer::No;
+}
+
+void MessageDialog :: info(text_str message)
+{
+   show(message, Gtk::MessageType::MESSAGE_INFO, Gtk::ButtonsType::BUTTONS_OK, false);
+}
+
 //// --- WinDialog ---
 //
 //BOOL CALLBACK WinDialog::DialogProc(HWND hWnd, size_t message, WPARAM wParam, LPARAM lParam)

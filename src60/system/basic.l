@@ -3,27 +3,27 @@ public abstract class BaseValue
    : info("a base value")
 {
    bool equal(BaseVariable var)
-            : info("Returns true if a value of var is equal to the object value; otherwise, false")
+            : info("Returns true if a value of a variable <b>var</b> is equal to the object value; otherwise, false")
       <= equal(*var);
 
    bool less(BaseVariable var)
-            : info("Returns true if the object value is less than a value of var; otherwise, false")
+            : info("Returns true if the object value is less than a value of a variable <b>var</b> ; otherwise, false")
       <= less(*var);
 
-   abstract bool less(v)
+   abstract bool less(o)
             : info("Returns true if the object value is less than o; otherwise, false;<br/>should be overridden");
 
-   bool greater(v)
+   bool greater(o)
             : info("Returns true if the object value is greater than o; otherwise, false;<br/>by default sends less[2] to o with the object as an argument")
-      = v.less(self);
+      = o.less(self);
 
-   bool notless(v) 
+   bool notless(o) 
             : info("Returns true if the object value is not less than o; otherwise, false;<br/>by default inverts the result of less[2] operation")
-      = !self.less(v);
+      = !self.less(o);
 
-   bool notgreater(v) 
+   bool notgreater(o) 
             : info("Returns true if the object value is not greater than o; otherwise, false;<br/>by default inverts the result of greater[2] operation")
-      = !self.greater(v);
+      = !self.greater(o);
 }
 
 // --- BoolValue ---
@@ -49,9 +49,10 @@ public interface BoolValue
                   : info("Returns trueVal if the value is true or falseVal otherwise;<br/>has to be implemented");
 
    abstract bool equal(bool f)
-                  : info("Determines whether the specified object is equal to the current object boolean value;<br/>has to be implemented");
+                  : info("Returns true if an argument f is equal to the current object boolean value;<br/>has to be implemented");
 
-   abstract bool notequal(bool f);
+   abstract bool notequal(bool f)
+                  : info("Returns true if an argument f is not equal to the current object boolean value;<br/>has to be implemented");
 
    abstract bool or(expr)
                   : info("Executes logical OR operation<;br/>has to be implemented");
@@ -88,7 +89,7 @@ public interface BoolValue
             = trueVal;
 
          bool equal(bool b)
-                  : info("Determines whether the specified object is equal to the current object boolean value.")
+                  : info("Returns true if an argument b is true")
             = b;
 
          bool notequal(bool b)
@@ -185,15 +186,19 @@ public abstract class BaseNumber : BaseValue,
    info("a base numeric value")
 {
    add(BaseVariable var)
+            : info("Adds a variable value of <b>var</b> argument")
       <= add(*var);
 
    subtract(BaseVariable var)
+            : info("Subtracts a variable value of <b>var</b> argument")
       <= subtract(*var);
 
    multiply(BaseVariable var)
+            : info("Multiplies a variable value of <b>var</b> argument")
       <= multiply(*var);
 
    divide(BaseVariable var)
+            : info("Divides by a variable value of <b>var</b> argument")
       <= divide(*var);
 
    abstract add(o)
@@ -263,6 +268,7 @@ public const struct ByteNumber : IntBaseNumber,
       = 255;
 
    static byte Default
+            : info("returns the default value (0)")
       = 0;
 
    constructor()

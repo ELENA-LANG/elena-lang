@@ -2,9 +2,9 @@ import ltests;
 
 public program()
 {
-   console.writeLine("--- ELENA 6 API Functional Tests ---");
+   Console.writeLine("--- ELENA 6 System API Functional Tests ---");
 
    Engine.run();
 
-   console.writeLine("--- Passed ---")
+   Console.writeLine("--- Passed ---")
 }

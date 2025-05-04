@@ -12,6 +12,24 @@ public interface SortingAgent
    abstract setAt(int index, object value);
     
    abstract exchange(int i, int j);
+   
+   abstract move(int i, int j);
+}
+
+public interface SortingAgent<T>
+{
+   abstract int Length
+   {
+      get();
+   }    
+    
+   abstract T at(int index);
+   
+   abstract setAt(int index, T value);
+    
+   abstract exchange(int i, int j);
+   
+   abstract move(int i, int j);
 }
 
 public sealed ArraySortingAgent : SortingAgent
@@ -46,6 +64,11 @@ public sealed ArraySortingAgent : SortingAgent
       var tmp := a[i];
       a[i]:= a[j];
       a[j] := tmp
+   }    
+
+   move(int i, int j)
+   {
+      a[i]:= a[j];
    }    
 }
 
@@ -98,6 +121,56 @@ public sealed IndexerSortingAgent : SortingAgent
       a.Index := i;
       a.Value := vj
    }    
+
+   move(int i, int j)
+   {
+      a.Index := j;
+      var vj := *a;
+            
+      a.Index := i;
+      a.Value := vj
+   }       
+}
+
+public class ArraySortingAgent<T> : SortingAgent<T>
+{
+   T[] _array;
+   
+   constructor(T[] array) 
+   {
+      _array := array
+   }
+   
+   
+   int Length
+   {
+      get()
+      {
+         int len := _array.Length;
+            
+         ^ len
+      }
+   }
+        
+   T at(int index)
+      = _array[index];
+    
+   setAt(int index, T value)
+   {
+      _array[index] := value
+   }
+
+   exchange(int i, int j)
+   {
+      T tmp := _array[i];
+      _array[i] := _array[j];
+      _array[j] := tmp
+   }    
+
+   move(int i, int j)
+   {
+      _array[i] := _array[j];
+   }       
 }
 
 public singleton QuickSorting

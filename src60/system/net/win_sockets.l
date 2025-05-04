@@ -79,47 +79,6 @@ public sealed struct IN_ADDR
    }
 }
 
-// --- hostent ---
-public sealed struct hostent
-{
-   pointer h_name;
-   pointer h_aliases;
-   short   h_addrtype;
-   short   h_length;
-   pointer h_addr_list;
-
-   static hostent load(string host)
-   {
-      hostent tmp := default;
-
-      pointer ptr := extern WS2_32.gethostbyname(host);
-
-      ptr.copyToUnsafe(tmp, $size tmp);
-
-      ^ tmp
-   }
-
-   get string IP()
-   {
-      if (h_addrtype == AF_INET) {
-         pointer addr := h_addr_list.Value;
-         pointer paddr_in := addr.Value;
-
-         IN_ADDR addr_in := default;
-         addr_in.Value := paddr_in.getLongValue();
-
-         pointer pip := extern WS2_32.inet_ntoa(addr_in);
-
-         ^ pip.getStringUnsafe();
-      }
-      else {
-         SocketException.new("gethostbyname failed").raise()
-      };
-
-      ^ nil;
-   }
-}
-
 // --- SOCKADDR_IN ---
 
 public sealed packed SOCKADDR_IN
@@ -142,28 +101,31 @@ public sealed packed SOCKADDR_IN
       }
    }
 
-   set Ip_address(string ip)
+   set Ip4_address(string ip)
    {
       family := AF_INET;
 
-      int retVal := extern WS2_32.inet_pton(AF_INET, ip, sin_addr);
+      IN_ADDR in_addr := default;
+      int retVal := extern WS2_32.inet_pton(AF_INET, ip, /*sin_addr*/in_addr);
 
       if (retVal < 0) {
          SocketException.new("Can't set remote->sin_addr.s_addr", retVal).raise();
       }
       else if (retVal == 0) {
          SocketException.new("Not a valid IP", retVal).raise();
-      }
+      };
+
+      sin_addr := in_addr;
    }
    
    set Port(short value)
    {
-      port := extern WS2_32.htons(value);
+      port := /*extern WS2_32.htons(value)*/value;
    }
 
    get short Port()
    {
-      short val := extern WS2_32.ntohs(port); 
+      short val := /*extern WS2_32.ntohs(*/port/*)*/; 
 
       ^ val
    }
@@ -245,10 +207,52 @@ public const struct SelectMode : enum<int>(SelectRead ::= 1, SelectWrite ::= 2, 
 
 // --- Socket ---
 
-public sealed const struct Socket
+public sealed const struct NativeSocket
 {
    handle _handle;
    
+   static NativeSocket connect(string host, short port)
+   {
+      NativeSocket socket := default;   
+
+      //resolve server address and port
+      AddrInfo addrinfo := default;
+        
+      // set address info
+      addrinfo.ai_family := AF_UNSPEC;
+      addrinfo.ai_socktype := SOCK_STREAM;
+      addrinfo.ai_protocol := IPPROTO_TCP;
+        
+      AddrInfoReader reader := new AddrInfoReader(host, port.toPrintable(), addrinfo);
+      while (reader.Available)
+      {
+         reader.read(addrinfo);
+            
+         int     ai_family := addrinfo.ai_family;
+         int     ai_socktype := addrinfo.ai_socktype;
+         int     ai_protocol := addrinfo.ai_protocol;
+         int     ai_addrlen := addrinfo.ai_addrlen;
+         pointer ai_addrptr := addrinfo.ai_addr;
+
+         socket := new NativeSocket(ai_family, ai_socktype, ai_protocol);
+
+         if (socket.tryOpen(ai_addrptr, ai_addrlen))
+         {
+            reader.close();
+        
+            ^ socket
+         };
+            
+         reader.next()
+      };
+        
+      reader.close();
+        
+      SocketException.raise($"Unable to open {host}");
+
+      ^ socket
+   }
+
    constructor(handle handle)
    {
       _handle := handle
@@ -315,37 +319,12 @@ public sealed const struct Socket
       ^ (SOCKET_ERROR != retVal)
    }
 
-   connect(string ip_address, int port)
-   {
-      SOCKADDR_IN addr := SOCKADDR_IN.Default;
-      addr.Port := port;
-      addr.Family := system'net'AF_INET;
-      addr.Ip_address := ip_address;
-        
-      pointer ptr := addr;
-      int retVal := extern WS2_32.connect(_handle, ptr, SOCKADDR_IN_SIZE);
-            
-      if (retVal == SOCKET_ERROR)
-         { SocketException.new("Error at socket").raise() }
-   }
-
-   Task connectAsync(string ip_address, int port)
-      = Task.run({ connect(ip_address, port); });
-
    int send(byte[] buffer)
    {
       int len := buffer.Length;
 
       ^ self.send(buffer, len, 0);
    }
-
-   Task<int> sendAsync(byte[] buffer)
-      = ::Task<int>.run(
-      {
-         int written := send(buffer);
-
-         ^ written
-      });
 
    int send(byte[] buffer, int length, int flags)
    {
@@ -356,14 +335,6 @@ public sealed const struct Socket
             
       ^ retVal
    }
-
-   Task<int> sendAsync(byte[] buffer, int length, int flags)
-      = ::Task<int>.run(
-      {
-         int sent := send(buffer, length, flags);
-
-         ^ sent
-      });
 
    int receive(byte[] buffer, int maxLength, int flags)
    {
@@ -379,28 +350,12 @@ public sealed const struct Socket
       ^ retVal
    }
 
-   Task<int> receiveAsync(byte[] buffer, int maxLength, int flags)
-      = ::Task<int>.run(
-      {
-         int received := receive(buffer, maxLength, flags);
-
-         ^ received
-      });
-
-   Socket accept()
+   NativeSocket accept()
    {
       handle socket := extern WS2_32.accept(_handle, 0, 0);
             
       ^ socket
    }
-
-   Task<Socket> acceptAsync()
-      = ::Task<Socket>.run(
-      {
-         handle socket := extern WS2_32.accept(_handle, 0, 0);
-
-         ^ new Socket(socket)
-      });
 
    shutdown(int how)
    {

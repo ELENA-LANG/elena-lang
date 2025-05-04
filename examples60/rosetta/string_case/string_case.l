@@ -4,7 +4,7 @@ public program()
 {
     string s1 := "alphaBETA";
  
-    console.writeLine(s1.toLower(currentLocale));
-    console.writeLine(s1.toUpper(currentLocale));
-    console.readChar()
+    Console.writeLine(s1.toLower(currentLocale));
+    Console.writeLine(s1.toUpper(currentLocale));
+    Console.readChar()
 }

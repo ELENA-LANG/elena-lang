@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class implementations.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -13,7 +13,7 @@
 
 using namespace elena_lang;
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 #define file_open _wfopen
 
@@ -79,7 +79,7 @@ bool File :: readText(char* s, FileEncoding encoding, size_t length, size_t& was
          }
          return wasRead != 0;
       }
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
       case FileEncoding::Ansi:
 #endif
       case FileEncoding::UTF8:
@@ -115,7 +115,7 @@ bool File :: readText(wide_c* s, FileEncoding encoding, size_t length, size_t& w
          }
          return (wasRead > 0);
       }
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
       case FileEncoding::Ansi:
       default:
       {
@@ -165,7 +165,7 @@ bool File :: writeText(const wide_c* s, FileEncoding encoding, size_t length)
          }
          return true;
       }
-   #ifdef _MSC_VER
+   #if (defined(_WIN32) || defined(__WIN32__))
       case FileEncoding::Ansi:
       default:
       {
@@ -216,7 +216,7 @@ bool File :: writeText(const char* s, FileEncoding encoding, size_t length)
          }
          return true;
       }
-   #ifdef _MSC_VER
+   #if (defined(_WIN32) || defined(__WIN32__))
       case FileEncoding::Ansi:
       default:
       {
@@ -362,7 +362,7 @@ bool TextFileReader :: read(char* s, pos_t length)
 {
    switch (_encoding) {
       case FileEncoding::UTF8:
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
       case FileEncoding::Ansi:
 #endif
          return _file.readLine(s, length);

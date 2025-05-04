@@ -9,5 +9,8 @@
     <project>forms\forms.prj</project>
     <project>xforms\xforms.prj</project>
     <project>net\net.prj</project>
+    <project>mbedtls\mbedtls.prj</project>
+    <project>xml\xml.prj</project>
+    <project>textgen\textgen.prj</project>
   </collection>
 </configuration>

@@ -1,0 +1,3 @@
+local_address, saving_stack=0, local_address, saving_stack=1, real_int_op $1 
+=> 
+load_long_index, save_long_index $1, local_address, saving_stack=0, real_int_xop;

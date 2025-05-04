@@ -1,0 +1,46 @@
+<configuration>
+    <platform key="Linux_I386">
+        <project>
+            <output>../../lib60</output>
+        </project>
+    </platform>
+    <platform key="Linux_AMD64">
+        <project>
+            <output>../../lib60_64</output>
+        </project>
+    </platform>
+    <platform key="FreeBSD_AMD64">
+        <project>
+            <output>../../lib60_64</output>
+        </project>
+    </platform>
+    <platform key="Linux_PPC64le">
+        <project>
+            <output>../../lib60_64</output>
+        </project>
+    </platform>
+    <platform key="Linux_ARM64">
+        <project>
+            <output>../../lib60_64</output>
+        </project>
+    </platform>
+    <files>
+        <module>
+            <file>xmlnode.l</file>
+            <file>xmldoc.l</file>
+            <file>xmlformatter.l</file>
+            <file>xmlreader.l</file>
+       </module>
+    </files>
+    <manifest>
+       <name>ELENA XML Library</name>
+       <version>6.6.1</version>
+       <author>Aleksey Rakov</author>
+    </manifest>
+    <project>
+        <executable></executable>
+        <options></options>
+        <namespace>xml</namespace>
+        <template>lib60</template>
+    </project>
+</configuration>

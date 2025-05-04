@@ -15,6 +15,7 @@
 #include "modulescope.h"
 #include "bcwriter.h"
 #include "separser.h"
+#include "serializer.h"
 
 using namespace elena_lang;
 
@@ -200,21 +201,20 @@ size_t getLengthSkipPostfix(ustr_t name)
    return len;
 }
 
-ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
-   ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared)
+void CompilingProcess::TemplateGenerator :: defineTemplateName(ModuleScopeBase& moduleScope, IdentifierString& name,
+   ref_t templateRef, List<SyntaxNode>& parameters)
 {
    ModuleBase* module = moduleScope.module;
 
    ustr_t templateName = module->resolveReference(templateRef);
 
-   IdentifierString name;
    if (isWeakReference(templateName)) {
       name.copy(module->name());
       name.append(templateName);
    }
    else name.copy(templateName);
 
-   for(auto it = parameters.start(); !it.eof(); ++it) {
+   for (auto it = parameters.start(); !it.eof(); ++it) {
       name.append("&");
 
       ref_t typeRef = (*it).arg.reference;
@@ -231,8 +231,19 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
          name.append(param, paramLen);
       }
       else name.append(param, paramLen);
+
+      // NOTE : the names must be different for normal and nullable template argument
+      if ((*it).existChild(SyntaxKey::NullableType))
+         name.append("#nble");
    }
    name.replaceAll('\'', '@', 0);
+}
+
+ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
+   ref_t templateRef, List<SyntaxNode>& parameters, bool& alreadyDeclared)
+{
+   IdentifierString name;
+   defineTemplateName(moduleScope, name, templateRef, parameters);
 
    return moduleScope.mapTemplateIdentifier(*name, visibility, alreadyDeclared, false);
 }
@@ -240,32 +251,8 @@ ref_t CompilingProcess::TemplateGenerator :: generateTemplateName(ModuleScopeBas
 ref_t CompilingProcess::TemplateGenerator :: declareTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
    ref_t templateRef, List<SyntaxNode>& parameters)
 {
-   ModuleBase* module = moduleScope.module;
-
-   ustr_t templateName = module->resolveReference(templateRef);
    IdentifierString name;
-   if (isWeakReference(templateName)) {
-      name.copy(module->name());
-      name.append(templateName);
-   }
-   else name.copy(templateName);
-
-   for (auto it = parameters.start(); !it.eof(); ++it) {
-      name.append("&");
-
-      ref_t typeRef = (*it).arg.reference;
-      ustr_t param = module->resolveReference(typeRef);
-      if (isTemplateWeakReference(param)) {
-         // if template based argument - pass as is
-         name.append(param);
-      }
-      else if (isWeakReference(param)) {
-         name.append(module->name());
-         name.append(param);
-      }
-      else name.append(param);
-   }
-   name.replaceAll('\'', '@', 0);
+   defineTemplateName(moduleScope, name, templateRef, parameters);
 
    bool dummy = false;
    return moduleScope.mapTemplateIdentifier(*name, visibility, dummy, true);
@@ -298,7 +285,7 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       writer.newNode(SyntaxKey::Namespace);
 
       _processor.generateClassTemplate(&moduleScope, generatedReference, writer,
-         sectionInfo.section, parameters);
+         sectionInfo.section, parameters, templateRef);
 
       writer.closeNode();
       writer.closeNode();
@@ -322,12 +309,13 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
    JITSettings defaultCoreSettings,
-   JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType)
+   JITCompilerBase* (*compilerFactory)(PlatformType)
 ) :
    _appPath(appPath),
    _templateGenerator(this),
    _forwards(nullptr),
-   _parser(nullptr)
+   _parser(nullptr),
+   _traceMode(false)
 {
    _exeExtension = exeExtension;
    _modulePrologName = modulePrologName;
@@ -356,6 +344,12 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    FileReader btRuleReader(*btRulesPath, FileRBMode, FileEncoding::Raw, false);
    if (btRuleReader.isOpen()) {
       _btRules.load(btRuleReader, btRuleReader.length());
+   }
+
+   PathString btXRulesPath(appPath, BT_XRULES_FILE);
+   FileReader btXRuleReader(*btXRulesPath, FileRBMode, FileEncoding::Raw, false);
+   if (btRuleReader.isOpen()) {
+      _btXRules.load(btXRuleReader, btXRuleReader.length());
    }
 
    _verbose = false;
@@ -424,6 +418,8 @@ void CompilingProcess :: parseFileUserDefinedGrammar(SyntaxWriterBase* syntaxWri
       parser.parse(path, derivationTree);
 
       syntaxWriter->saveTree(derivationTree);
+
+      parser.clearStack();
    }
    catch (ParserError& e)
    {
@@ -440,8 +436,12 @@ void CompilingProcess :: parseFile(path_t projectPath,
 {
    // save the path to the current source
    path_t sourceRelativePath = (*file_it).str();
-   if (!projectPath.empty())
+   if (!projectPath.empty()) {
+      if (!sourceRelativePath.startsWith(projectPath))
+         _errorProcessor->raisePathError(errInvalidFile, sourceRelativePath);
+
       sourceRelativePath += projectPath.length() + 1;
+   }      
 
    _presenter->printPathLine(ELC_PARSING_FILE, sourceRelativePath);
 
@@ -515,6 +515,8 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    ByteCodeWriter bcWriter(&_libraryProvider, true);
    if (_btRules.length() > 0)
       bcWriter.loadBuildTreeRules(&_btRules);
+   if (_btXRules.length() > 0)
+      bcWriter.loadBuildTreeXRules(&_btXRules);
    if (_bcRules.length() > 0)
       bcWriter.loadByteCodeRules(&_bcRules);
 
@@ -525,20 +527,112 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
       // saving a module
       _presenter->print(ELC_SAVING_MODULE, moduleScope.module->name());
 
+      moduleScope.flush();
+
       _libraryProvider.saveModule(moduleScope.module);
       _libraryProvider.saveDebugModule(moduleScope.debugModule);
+
+      if (_verbose) {
+         PathString path;
+         _libraryProvider.retrievePath(moduleScope.module, path);
+         _presenter->printPath(ELC_MODULE_TARGET_PATH, *path);
+      }
+   }
+}
+
+inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>* filters)
+{
+   DynamicUStr target;
+
+   SyntaxTreeSerializer::save(node, target, filters);
+
+   presenter->print(target.str());
+}
+
+inline void printTree(PresenterBase* presenter, BuildNode node, List<BuildKey>* filters)
+{
+   DynamicUStr target;
+
+   BuildTreeSerializer::save(node, target, filters);
+
+   presenter->print(target.str());
+}
+
+void CompilingProcess :: printSyntaxTree(SyntaxTree& syntaxTree)
+{
+   List<SyntaxKey> filters(SyntaxKey::None);
+   if (!_verbose) {
+      filters.add(SyntaxKey::Column);
+      filters.add(SyntaxKey::Row);
+      filters.add(SyntaxKey::SourcePath);
+      filters.add(SyntaxKey::InlineTemplate);
+   }
+
+   _presenter->print("\nSyntax Tree:");
+   printTree(_presenter, syntaxTree.readRoot(), &filters);
+}
+
+void CompilingProcess :: printBuildTree(ModuleBase* module, BuildTree& buildTree)
+{
+   List<BuildKey> filters(BuildKey::None);
+   if (!_verbose) {
+      filters.add(BuildKey::Path);
+      filters.add(BuildKey::Breakpoint);
+      filters.add(BuildKey::VirtualBreakpoint);
+      filters.add(BuildKey::EOPBreakpoint);
+      filters.add(BuildKey::ClassName);
+      filters.add(BuildKey::MethodName);
+      filters.add(BuildKey::VariableInfo);
+      filters.add(BuildKey::ArgumentsInfo);
+      filters.add(BuildKey::OpenStatement);
+      filters.add(BuildKey::EndStatement);
+      filters.add(BuildKey::Idle);
+   }
+
+   _presenter->print("\nBuild Tree:");
+
+   BuildNode node = buildTree.readRoot();
+   BuildNode current = node.firstChild();
+   while (current != BuildKey::None) {
+      switch (current.key) {
+         case BuildKey::Symbol:
+            _presenter->print("\n@symbol %s", module->resolveReference(current.arg.reference));
+
+            printTree(_presenter, current, &filters);
+            break;
+         case BuildKey::Class:
+            _presenter->print("\n@class %s", module->resolveReference(current.arg.reference));
+
+            printTree(_presenter, current, &filters);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
+
+      current = current.nextNode();
    }
 }
 
 bool CompilingProcess :: buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode,
    ExtensionMap* outerExtensionList)
 {
+   // print the incoming syntax tree if required
+   if (_traceMode) {
+      printSyntaxTree(*syntaxTree);
+   }
+
    // generating build tree
    BuildTree buildTree;
    bool retVal = compileModule(moduleScope, *syntaxTree, buildTree, outerExtensionList);
 
    // generating byte code
    generateModule(moduleScope, buildTree, !templateMode);
+
+   // print the outcome bui tree if required
+   if (_traceMode) {
+      printBuildTree(moduleScope.module, buildTree);
+   }
 
    return retVal;
 }
@@ -547,6 +641,7 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    LexicalMap::Iterator& lexical_it,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
+   VariableResolverBase* variableResolver,
    ModuleSettings& moduleSettings,
    int minimalArgList,
    int ptrSize)
@@ -554,6 +649,7 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    ModuleScope moduleScope(
       &_libraryProvider,
       forwardResolver,
+      variableResolver,
       _libraryProvider.createModule(module_it.name()),
       moduleSettings.debugMode ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
       moduleSettings.stackAlingment,
@@ -664,6 +760,8 @@ void CompilingProcess :: compile(ProjectBase& project,
       _errorProcessor->raiseInternalError(errParserNotInitialized);
    }
 
+   _traceMode = project.BoolSetting(ProjectOption::TracingMode);
+
    // load the environment
    ProjectEnvironment env;
    project.initEnvironment(env);
@@ -691,7 +789,7 @@ void CompilingProcess :: compile(ProjectBase& project,
       compiled |= buildModule(
          env,
          lexical_it,
-         *module_it, &syntaxTree, &project,
+         *module_it, &syntaxTree, &project, &project,
          moduleSettings,
          minimalArgList,
          sizeof(uintptr_t));
@@ -708,7 +806,7 @@ void CompilingProcess :: compile(ProjectBase& project,
 void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS)
 {
    // ignore link operation for trace mode
-   if (project.BoolSetting(ProjectOption::TracingMode))
+   if (_traceMode)
       return;
 
    PlatformType uiType = project.UITargetType();
@@ -742,7 +840,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
       return;
    }
 
-   auto result = linker.run(project, code, uiType, _exeExtension);
+   auto result = linker.run(project, code, imageInfo.type, uiType, _exeExtension);
 
    _presenter->print(ELC_SUCCESSFUL_LINKING);
 
@@ -753,10 +851,10 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    freeobj(addressMapper);
 }
 
-void CompilingProcess :: greeting()
+void CompilingProcess :: greeting(PresenterBase* presenter)
 {
    // Greetings
-   _presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
+   presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
 }
 
 void CompilingProcess :: cleanUp(ProjectBase& project)
@@ -817,6 +915,9 @@ int CompilingProcess :: build(Project& project,
    {
       configurateParser(project.getSyntaxVersion());
       configurate(project);
+
+      if (project.Namespace().empty())
+         throw InternalError(errMissingNamespace);
 
       PlatformType targetType = project.TargetType();
 

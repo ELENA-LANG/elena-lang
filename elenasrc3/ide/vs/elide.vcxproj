@@ -100,12 +100,14 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..\;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <AdditionalOptions>comctl32.lib shlwapi.lib %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>lcommon.lib;ldebugger.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\..\..\bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
     <Manifest>
       <EnableDpiAwareness>true</EnableDpiAwareness>
@@ -119,7 +121,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..\engine;..;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,7 +140,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..\engine;..;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,7 +159,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;_WINDOWS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..\engine;..;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..;..\..;..\..\gui;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -171,17 +173,10 @@
     </Manifest>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\common\config.h" />
-    <ClInclude Include="..\..\common\dump.h" />
-    <ClInclude Include="..\..\common\files.h" />
     <ClInclude Include="..\..\common\lists.h" />
-    <ClInclude Include="..\..\common\paths.h" />
     <ClInclude Include="..\..\common\streams.h" />
-    <ClInclude Include="..\..\common\ustring.h" />
-    <ClInclude Include="..\..\common\xmltree.h" />
     <ClInclude Include="..\..\engine\module.h" />
     <ClInclude Include="..\..\engine\section.h" />
-    <ClInclude Include="..\..\engine\windows\pehelper.h" />
     <ClInclude Include="..\..\engine\windows\winevents.h" />
     <ClInclude Include="..\..\gui\controller.h" />
     <ClInclude Include="..\..\gui\document.h" />
@@ -218,21 +213,14 @@
     <ClInclude Include="..\windows\wincontextbrowser.h" />
     <ClInclude Include="..\windows\windialogs.h" />
     <ClInclude Include="..\windows\winide.h" />
-    <ClInclude Include="..\windows\win32debugprocess.h" />
+    <ClInclude Include="..\windows\win32debugadapter.h" />
     <ClInclude Include="..\windows\winidestatusbar.h" />
     <ClInclude Include="..\windows\winmessagelog.h" />
     <ClInclude Include="..\windows\winoutput.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\common\config.cpp" />
-    <ClCompile Include="..\..\common\dump.cpp" />
-    <ClCompile Include="..\..\common\files.cpp" />
-    <ClCompile Include="..\..\common\paths.cpp" />
-    <ClCompile Include="..\..\common\ustring.cpp" />
-    <ClCompile Include="..\..\common\xmltree.cpp" />
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
-    <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\gui\controller.cpp" />
     <ClCompile Include="..\..\gui\document.cpp" />
     <ClCompile Include="..\..\gui\text.cpp" />
@@ -265,7 +253,7 @@
     <ClCompile Include="..\windows\wincontextbrowser.cpp" />
     <ClCompile Include="..\windows\windialogs.cpp" />
     <ClCompile Include="..\windows\winide.cpp" />
-    <ClCompile Include="..\windows\win32debugprocess.cpp" />
+    <ClCompile Include="..\windows\win32debugadapter.cpp" />
     <ClCompile Include="..\windows\winidestatusbar.cpp" />
     <ClCompile Include="..\windows\winmessagelog.cpp" />
     <ClCompile Include="..\windows\winoutput.cpp" />
@@ -279,6 +267,14 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="..\windows\elide.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\vs\lcommon.vcxproj">
+      <Project>{c7728dfb-e3b8-4ce0-bef5-f8369e6761ef}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\ldebugger\vs\ldebugger.vcxproj">
+      <Project>{acc215c7-8ccf-4ad5-be40-a107dec72d4f}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

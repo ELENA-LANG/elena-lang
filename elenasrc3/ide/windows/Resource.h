@@ -38,6 +38,24 @@
 #define	IDR_GOTO                      216
 #define  IDR_FILETREE                  217
 
+#define	IDR_FILENEW_L                 218
+#define	IDR_FILEOPEN_L                219
+#define	IDR_FILESAVE_L                220
+#define	IDR_SAVEALL_L                 221
+#define	IDR_CLOSEFILE_L               222
+#define	IDR_CLOSEALL_L                223
+#define	IDR_CUT_L                     224
+#define	IDR_COPY_L                    225
+#define	IDR_PASTE_L                   226
+#define	IDR_UNDO_L                    227
+#define	IDR_REDO_L                    228
+#define	IDR_RUN_L                     229
+#define	IDR_STOP_L                    230
+#define	IDR_STEPINTO_L					   231
+#define	IDR_STEPOVER_L                232
+#define	IDR_GOTO_L                    233
+#define  IDR_FILETREE_L                234
+
 #define IDM_FILE_NEW                   401
 #define IDM_FILE_OPEN                  402
 #define IDM_FILE_EXIT                  403
@@ -171,7 +189,6 @@
 #define IDD_EDITOR_SETTINGS            1700
 #define IDC_EDITOR_LINENUMBERFLAG      1701
 #define IDC_EDITOR_COLORSCHEME         1702
-#define IDC_EDITOR_FONTSIZE            1703
 #define IDC_EDITOR_USETAB              1704
 #define IDC_EDITOR_TABSIZE             1705
 #define IDC_EDITOR_HIGHLIGHSYNTAXFLAG  1706
@@ -186,9 +203,13 @@
 #define IDC_DEBUGGER_LIBPATH           1715
 #define IDC_IDE_AUTORECOMPILE          1716
 #define IDC_IDE_AUTOSAVE               1717
+#define IDC_IDE_INCLUDE_APPPATH        1718
+#define IDC_EDITOR_SCROLLOFFSET        1719
+#define IDC_EDITOR_HIGHLIGHBRACKETFLAG 1720
 
 #define IDM_EDITOR_OPTIONS             1750
 #define IDM_IDE_OPTIONS                1751
+#define IDM_EDITOR_FONT_OPTIONS        1752
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                 -1

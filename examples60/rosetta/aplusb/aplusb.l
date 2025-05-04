@@ -19,7 +19,7 @@ import extensions;
 
 public program()
 {
-   console.printLine(console.readLine()
+   Console.printLine(Console.readLine()
                               .split()
                               .selectBy(mssgconst toInt<intConvertOp>[1])
                               .summarize())
@@ -30,5 +30,5 @@ public program_alt()
    var A := Integer.new();
    var B := Integer.new();
  
-   console.loadLine(A,B).printLine(A + B)
+   Console.loadLine(A,B).printLine(A + B)
 }

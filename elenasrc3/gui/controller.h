@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI Controller header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CONTOLLER_H
@@ -19,6 +19,13 @@ namespace elena_lang
       virtual bool openFile(PathString& path) = 0;
       virtual bool openFiles(List<path_t, freepath>& files) = 0;
       virtual bool saveFile(path_t ext, PathString& path) = 0;
+   };
+
+   // --- FontDialogBase ---
+   class FontDialogBase
+   {
+   public:
+      virtual bool selectFont(FontInfo& fontInfo) = 0;
    };
 
    // --- MessageDialogBase ---
@@ -88,19 +95,10 @@ namespace elena_lang
       virtual SelectResult selectWindow() = 0;
    };
 
-   // --- TextViewSettings ---
-   struct TextViewSettings
-   {
-      EOLMode  eolMode;
-      bool     tabUsing;
-      int      tabSize;
-   };
-
    // --- TextViewController ---
    class TextViewController : public TextViewControllerBase
    {
-   protected:
-      TextViewSettings _settings;
+   protected:      
       NotifierBase*    _notifier;
 
       //void onTextChanged(TextViewModelBase* model, DocumentView* view);
@@ -170,9 +168,10 @@ namespace elena_lang
 
       void goToLine(TextViewModelBase* model, int row);
 
-      TextViewController(TextViewSettings& settings)
+      void highlightBrackets(TextViewModelBase* model, DocumentChangeStatus& changeStatus);
+
+      TextViewController()
       {
-         _settings = settings;
          _notifier = nullptr;
       }
    };

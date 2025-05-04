@@ -15,6 +15,11 @@
 #pragma GCC diagnostic push
 #pragma GCC diagnostic ignored "-Waddress"
 
+#elif _MSC_VER
+
+#pragma warning( push )
+#pragma warning( disable:4127 )
+
 #endif
 
 namespace elena_lang
@@ -1761,7 +1766,7 @@ namespace elena_lang
       {
          if (_top) {
             pos_t currentOffset = _top;
-            pos_t previousOffset = -1;
+            pos_t previousOffset = INVALID_POS;
             while (currentOffset) {
                Item* current = (Item*)_buffer.get(currentOffset);
 
@@ -2842,6 +2847,7 @@ namespace elena_lang
          CachedMemoryMapIterator()
          {
             this->_cachedMap = nullptr;
+            this->_index = 0;
          }
       };
       friend class CachedMemoryMapIterator;
@@ -3658,6 +3664,10 @@ DISABLE_WARNING_POP
 #ifdef __GNUC__
 
 #pragma GCC diagnostic pop
+
+#elif _MSC_VER
+
+#pragma warning( pop )
 
 #endif
 

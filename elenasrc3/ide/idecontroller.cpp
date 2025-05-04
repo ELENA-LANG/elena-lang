@@ -1,7 +1,7 @@
 ﻿//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller implementation File
-//                                             (C)2005-2024, by Aleksey Rakov
+//                                             (C)2005-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifdef _MSC_VER
@@ -33,6 +33,8 @@ inline ustr_t getPlatformName(PlatformType type)
          return LINUX_X86_KEY;
       case PlatformType::Linux_x86_64:
          return LINUX_X86_64_KEY;
+      case PlatformType::FreeBSD_x86_64:
+         return FREEBSD_X86_64_KEY;
       case PlatformType::Linux_PPC64le:
          return LINUX_PPC64le_KEY;
       case PlatformType::Linux_ARM64:
@@ -74,6 +76,11 @@ inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
    number.appendInt(value);
 
    config.appendSetting(xpath, number.str());
+}
+
+inline void saveSetting(ConfigFile& config, ustr_t xpath, ustr_t value)
+{
+   config.appendSetting(xpath, value.str());
 }
 
 inline void removeSetting(ConfigFile& config, ustr_t xpath)
@@ -295,17 +302,17 @@ bool ProjectController :: startDebugger(ProjectModel& model, DebugActionResult& 
       commandLine.append(arguments);
 
       bool withPersistentConsole = model.withPersistentConsole && (model.singleSourceProject || (*model.profile).endsWith("console"));
+      bool includeAppPath2Paths = model.includeAppPath2PathsTemporally;
       bool debugMode = model.getDebugMode();
       if (debugMode) {
-         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode, withPersistentConsole)) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), debugMode, { withPersistentConsole, includeAppPath2Paths })) {
             result.noDebugFile = true;
 
             return false;
          }
-
       }
       else {
-         if (!_debugController.start(exePath.str(), commandLine.str(), false, withPersistentConsole)) {
+         if (!_debugController.start(exePath.str(), commandLine.str(), false, { withPersistentConsole, includeAppPath2Paths })) {
             //notifyCompletion(NOTIFY_DEBUGGER_RESULT, ERROR_RUN_NEED_RECOMPILE);
 
             return false;
@@ -330,9 +337,8 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
    size_t projectPathLen = projectModel.projectPath.length();
 
    NamespaceString name;
-   PathString rootPath(*projectModel.projectPath, projectModel.getOutputPath());
    for (auto it = projectModel.sources.start(); !it.eof(); ++it) {
-      PathString source(*rootPath, *it);
+      PathString source(*projectModel.projectPath, *it);
 
       PathString module;
       module.copySubPath(*source, true);
@@ -342,17 +348,16 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
 
       _debugController.resolveNamespace(name);
 
-      ReferenceName::nameToPath(module, *name);
-      module.append(_T(".nl"));
+      DebugInfoProvider::defineModulePath(*name, module, *projectModel.projectPath, projectModel.getOutputPath(), _T("nl"));
 
-      if (name.length() != 0) {
+      if (module.length() != 0) {
          if (_compareFileModifiedTime(*source, *module))
-            return false;
+            return true;
       }
-      else return false;
+      else return true;
    }
 
-   return true;
+   return false;
 }
 
 bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
@@ -360,7 +365,7 @@ bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& so
 {
    if (!_debugController.isStarted()) {
       bool toRecompile = model.autoRecompile && !withoutPostponeAction;
-      if (!isOutaged(model, sourceModel)) {
+      if (isOutaged(model, sourceModel)) {
          if (toRecompile) {
             if (!doCompileProject(model, action))
                return false;
@@ -1039,25 +1044,45 @@ void IDEController :: loadSystemConfig(IDEModel* model, path_t path, ustr_t type
    }
 }
 
-bool IDEController :: loadConfig(IDEModel* model, path_t path)
+bool IDEController :: loadConfig(IDEModel* model, path_t path, GUISettinngs& guiSettings)
 {
    model->projectModel.paths.configPath.copy(path);
 
    ConfigFile config;
    if (config.load(path, FileEncoding::UTF8)) {
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
-      model->sourceViewModel.fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
       model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
       model->projectModel.withPersistentConsole = loadSetting(config, PERSISTENT_CONSOLE_SETTINGS, -1) != 0;
+#ifdef _MSC_VER
+      model->projectModel.includeAppPath2PathsTemporally = loadSetting(config, INCLIDE_PATH2ENV_SETTINGS, 0) != 0;
+#endif
       model->rememberLastPath = loadSetting(config, LASTPATH_SETTINGS, -1) != 0;
       model->rememberLastProject = loadSetting(config, LASTPROJECT_SETTINGS, -1) != 0;
       model->sourceViewModel.highlightSyntax = loadSetting(config, HIGHLIGHTSYNTAX_SETTINGS, -1) != 0;
+      model->sourceViewModel.highlightBrackets = loadSetting(config, HIGHLIGHTBRACKETS_SETTINGS, -1) != 0;
       model->sourceViewModel.lineNumbersVisible = loadSetting(config, LINENUMBERS_SETTINGS, -1) != 0;
+      model->sourceViewModel.scrollOffset = loadSetting(config, VSCROLL_SETTINGS, 1);
+      model->sourceViewModel.settings.tabSize = loadSetting(config, TABSIZE_SETTINGS, 3);
       model->projectModel.autoRecompile = loadSetting(config, AUTO_RECOMPILE_SETTING, -1) != 0;
-      model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;
+      model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;      
+
+      guiSettings.withLargeToolbar = loadSetting(config, LARGETOOLBAR_SETTINGS, -1) != 0;
+      guiSettings.withTabAboverscore = loadSetting(config, TABABOVESCORE_SETTINGS, -1) != 0;
+
+      // load font size
+      int fontSize = loadSetting(config, FONTSIZE_SETTINGS, 12);
+      IdentifierString fontName;
+      loadSetting(config, FONTNAME_SETTINGS, fontName);
+      if (fontName.empty()) {
+         fontName.copy(DEFAULT_FONTNAME);
+      }
+
+      model->sourceViewModel.fontInfo = { *fontName, fontSize };
 
       loadRecentFiles(config, RECENTFILES_SETTINGS, model->projectModel.lastOpenFiles);
       loadRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
+
+      model->sourceViewModel.refreshSettings();
 
       return true;
    }
@@ -1066,20 +1091,33 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path)
    }
 }
 
-void IDEController :: saveConfig(IDEModel* model, path_t configPath)
+void IDEController :: saveConfig(IDEModel* model, path_t configPath, GUISettinngs& guiSettings)
 {
    ConfigFile config(ROOT_NODE);
 
    saveSetting(config, MAXIMIZED_SETTINGS, model->appMaximized);
-   saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontSize);
    saveSetting(config, SCHEME_SETTINGS, model->sourceViewModel.schemeIndex);
    saveSetting(config, PERSISTENT_CONSOLE_SETTINGS, model->projectModel.withPersistentConsole);
+#ifdef _MSC_VER
+   saveSetting(config, INCLIDE_PATH2ENV_SETTINGS, model->projectModel.includeAppPath2PathsTemporally);
+#endif
    saveSetting(config, LASTPATH_SETTINGS, model->rememberLastPath);
    saveSetting(config, LASTPROJECT_SETTINGS, model->rememberLastProject);
    saveSetting(config, HIGHLIGHTSYNTAX_SETTINGS, model->sourceViewModel.highlightSyntax);
+   saveSetting(config, HIGHLIGHTBRACKETS_SETTINGS, model->sourceViewModel.highlightBrackets);
    saveSetting(config, LINENUMBERS_SETTINGS, model->sourceViewModel.lineNumbersVisible);
+   saveSetting(config, VSCROLL_SETTINGS, model->sourceViewModel.scrollOffset);
+   saveSetting(config, TABSIZE_SETTINGS, model->sourceViewModel.settings.tabSize);
+
    saveSetting(config, AUTO_RECOMPILE_SETTING, model->projectModel.autoRecompile);
    saveSetting(config, AUTO_SAVE_SETTING, model->autoSave);
+
+   saveSetting(config, FONTSIZE_SETTINGS, model->sourceViewModel.fontInfo.size);
+   IdentifierString fontName(model->sourceViewModel.fontInfo.name.str());
+   saveSetting(config, FONTNAME_SETTINGS, *fontName);
+
+   saveSetting(config, LARGETOOLBAR_SETTINGS, guiSettings.withLargeToolbar);
+   saveSetting(config, TABABOVESCORE_SETTINGS, guiSettings.withTabAboverscore);
 
    saveRecentFiles(config, RECENTFILE_SETTINGS, model->projectModel.lastOpenFiles);
    saveRecentFiles(config, RECENTPROJECTS_SETTINGS, model->projectModel.lastOpenProjects);
@@ -1846,11 +1884,11 @@ void IDEController :: onDebuggerStep(IDEModel* model)
    model->running = false;
 }
 
-void IDEController :: onIDEStop(IDEModel* model)
+void IDEController :: onIDEStop(IDEModel* model, GUISettinngs& guiSettings)
 {
    PathString path(*model->projectModel.paths.configPath);
 
-   saveConfig(model, *path);
+   saveConfig(model, *path, guiSettings);
 }
 
 void IDEController :: toggleBreakpoint(IDEModel* model, int row)
@@ -1964,11 +2002,22 @@ void IDEController :: doOutdent(IDEModel* model)
 void IDEController :: doConfigureEditorSettings(EditorSettingsBase& editorDialog, IDEModel* model)
 {
    int prevSchemeIndex = model->viewModel()->schemeIndex;
+   bool prevHighlightSyntax = model->viewModel()->highlightSyntax;
+   bool prevHighlightBrackets = model->viewModel()->highlightBrackets;
 
    if(editorDialog.showModal()) {
-      if (prevSchemeIndex != model->viewModel()->schemeIndex) {
+      if (prevSchemeIndex != model->viewModel()->schemeIndex || prevHighlightSyntax != model->viewModel()->highlightSyntax
+         || prevHighlightBrackets != model->viewModel()->highlightBrackets)
+      {
          notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
       }
+   }
+}
+
+void IDEController :: doConfigureFontSettings(FontDialogBase& editorDialog, IDEModel* model)
+{
+   if (editorDialog.selectFont(model->viewModel()->fontInfo)) {
+      notifyOnModelChange(STATUS_FRAME_CHANGED | STATUS_COLORSCHEME_CHANGED);
    }
 }
 

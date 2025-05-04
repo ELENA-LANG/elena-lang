@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Win32 Common header
 //      Win32 graphic tools header
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CANVAS_H
@@ -14,8 +14,11 @@ namespace elena_lang
    // --- Font ---
    struct Font : public FontBase
    {
-      wstr_t fontName;
-      HFONT  fontID;
+      TextString fontName;
+      HFONT      fontID;
+
+      static int toSize(HDC handler, int value);
+      static int fromSize(HDC handler, int value);
 
       void create(HDC handler);
       void release();

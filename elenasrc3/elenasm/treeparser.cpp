@@ -34,6 +34,61 @@ void TreeScriptParser :: parseScope(ScriptEngineReaderBase& reader, ScriptBookma
    }
 }
 
+void TreeScriptParser::parseVirtualStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm,
+   SyntaxTreeWriter& writer)
+{
+   ScriptBookmark nameBm = bm;
+   ustr_t virtualOp = reader.lookup(bm);
+
+   SyntaxTree       tempTree;
+   SyntaxTreeWriter tempWriter(tempTree);
+   tempWriter.newNode(SyntaxKey::Root);
+
+   bm = reader.read();
+   if (!reader.compare("("))
+      throw SyntaxError("invalid grammar rule", bm.lineInfo);
+
+   bm = reader.read();
+   while (!reader.compare(")")) {
+      parseStatement(reader, bm, tempWriter);
+
+      bm = reader.read();
+   }
+
+   tempWriter.closeNode();
+
+   if (virtualOp.compare("virtual_for_loop")) {
+      SyntaxNode initNode = tempTree.readRoot().firstChild();
+      SyntaxNode condNode = initNode.nextNode();
+      SyntaxNode stepNode = condNode.nextNode();
+      SyntaxNode bodyNode = stepNode.nextNode();
+
+      SyntaxNode codeNode = bodyNode.firstChild();
+      if (codeNode == SyntaxKey::ClosureBlock) {
+         codeNode = codeNode.firstChild();
+      }
+      if (codeNode == SyntaxKey::CodeBlock) {
+         SyntaxTreeWriter codeWriter(codeNode);
+
+         SyntaxTree::copyNode(codeWriter, stepNode);
+      }
+      else throw SyntaxError("invalid grammar rule", nameBm.lineInfo);
+
+      SyntaxTree::copyNode(writer, initNode);
+
+      writer.newNode(SyntaxKey::Expression);
+      writer.newNode(SyntaxKey::LoopOperation);
+      writer.newNode(SyntaxKey::IfOperation);
+      SyntaxTree::copyNode(writer, condNode);
+      SyntaxTree::copyNode(writer, bodyNode);
+
+      writer.closeNode();
+      writer.closeNode();
+      writer.closeNode();
+   }
+   else throw SyntaxError("invalid grammar rule", nameBm.lineInfo);
+}
+
 void TreeScriptParser :: parseStatement(ScriptEngineReaderBase& reader, ScriptBookmark& bm, 
    SyntaxTreeWriter& writer)
 {
@@ -91,7 +146,10 @@ void TreeScriptParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* outpu
 
    ScriptBookmark bm = reader.read();
    while (!reader.eof()) {
-      parseStatement(reader, bm, treeWriter);
+      if (reader.lookup(bm).startsWith("virtual_")) {
+         parseVirtualStatement(reader, bm, treeWriter);
+      }
+      else parseStatement(reader, bm, treeWriter);
 
       bm = reader.read();
    }

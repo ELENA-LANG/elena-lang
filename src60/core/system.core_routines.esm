@@ -1601,9 +1601,13 @@ procedure __messagename_loadbystr (self, s)
   cmp  n:0
   jne  labExit
 
-  xstore     sp:0, class : "system'InvalidArgumentException"
 
-  set        mssgconst : "new[1]"
+  peek       fp:s
+  store      sp:1
+
+  xstore     sp:0, class : "system'MessageLoaderException"
+
+  set        mssgconst : "new[2]"
   throw
 
 labExit:
@@ -1946,8 +1950,8 @@ labUnboxing:
   free       i:1
 
   load       dp:mssg
-  and        n:0FFFFFFE0h
-  or         n:082h
+  and        n:0FFFFFF80h
+  or         n:062h
 
   peek       fp:target
   xrefresh   sp:0

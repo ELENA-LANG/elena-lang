@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2024, by Aleksey Rakov
+//                                                (C)2021-2025, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #include "bytecode.h"
@@ -23,7 +23,7 @@ const char* _fnOpcodes[256] =
    "coalesce", "not", "neg", "bread", "lsave", "fsave", "wread", "xjump",
    "bcopy", "wcopy", "xpeekeq", "trylock", "freelock", "parent", "xget", "xcall",
 
-   "xfsave", "altmode", "xnop", OPCODE_UNKNOWN, "xquit", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "xfsave", "altmode", "xnop", OPCODE_UNKNOWN, "xquit", "dfree", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
@@ -61,6 +61,23 @@ const char* _fnOpcodes[256] =
 
    "open", "xstore sp", "extopen", "mov sp", "new", "newn", "xmov sp", "createn",
    "fillir", "xstore fp", "xdispatch", "dispatch mssg", "vcall mssg", "call mssg", "call extern", OPCODE_UNKNOWN
+};
+
+const ByteCode opNotUsingAcc[] = { 
+   ByteCode::Nop, ByteCode::Breakpoint, ByteCode::SNop, ByteCode::MovEnv, ByteCode::Unhook, ByteCode::Exclude, ByteCode::Include, ByteCode::MovFrm, ByteCode::MLen, ByteCode::DAlloc, 
+   ByteCode::ConvL, ByteCode::LNeg, ByteCode::Not, ByteCode::Neg, ByteCode::AltMode, ByteCode::XNop, ByteCode::XQuit, ByteCode::Shl, ByteCode::Shr, ByteCode::FAbsDP, 
+   ByteCode::FSqrtDP, ByteCode::FExpDP, ByteCode::FLnDP, ByteCode::FSinDP, ByteCode::FCosDP, ByteCode::FArctanDP, ByteCode::FPiDP, ByteCode::XSwapSI, ByteCode::MovM, ByteCode::MovN, 
+   ByteCode::LoadDP, ByteCode::XCmpDP, ByteCode::SubN, ByteCode::AddN, ByteCode::CloseN, ByteCode::AllocI, ByteCode::FreeI, ByteCode::AddN, ByteCode::CmpN, ByteCode::FTruncDP, 
+   ByteCode::OrN, ByteCode::MulN, ByteCode::XAddDP, ByteCode::FRoundDP, ByteCode::SaveDP, ByteCode::SaveSI, ByteCode::XFlushSI, ByteCode::XRefreshSI, ByteCode::LSaveDP, ByteCode::LSaveSI, 
+   ByteCode::LLoadDP, ByteCode::TstM, ByteCode::TstN, ByteCode::XCmpSI, ByteCode::ExtCloseN, ByteCode::LLoadSI, ByteCode::LoadSI, ByteCode::XLoadArgFI, ByteCode::FAddDPN, ByteCode::FSubDPN, 
+   ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::UDivDPN, ByteCode::XLabelDPR, ByteCode::IAndDPN, ByteCode::IOrDPN, ByteCode::IXorDPN, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN, 
+   ByteCode::XOpenIN, ByteCode::CopyDPN, ByteCode::IAddDPN, ByteCode::ISubDPN, ByteCode::IMulDPN, ByteCode::IDivDPN, ByteCode::NSaveDPN, ByteCode::XHookDPR, ByteCode::NAddDPN, ByteCode::DCopyDPN, 
+   ByteCode::OpenIN, ByteCode::XStoreSIR, ByteCode::ExtOpenIN, ByteCode::MovSIFI, ByteCode::XMovSISI, ByteCode::XStoreFIR, ByteCode::CallExtR, ByteCode::DFree
+};
+
+const ByteCode opSetAcc[] = {
+   ByteCode::SetR, ByteCode::SetDP, ByteCode::PeekR, ByteCode::SetFP, ByteCode::CreateR, ByteCode::XSetFP, ByteCode::PeekFI, ByteCode::PeekSI, ByteCode::SetSP, 
+   ByteCode::PeekTLS, ByteCode::XCreateR, ByteCode::SelGrRR, ByteCode::NewIR, ByteCode::NewNR, ByteCode::CreateNR, 
 };
 
 // --- Auxiliary  ---
@@ -117,8 +134,7 @@ void ByteCodeUtil :: decode(ByteCode code, IdentifierString& target)
    target.append(_fnOpcodes[(int)code]);
 }
 
-void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
-   ref_t* references, size_t len, pos_t argCount, ref_t flags)
+inline void addMessageNamePrefix(IdentifierString& messageName, ref_t flags)
 {
    if (test(flags, STATIC_MESSAGE))
       messageName.append("static:");
@@ -139,6 +155,21 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
       default:
          break;
    }
+}
+
+inline void addMessageNamePostfix(IdentifierString& messageName, pos_t argCount)
+{
+   if (argCount != 0) {
+      messageName.append('[');
+      messageName.appendInt(argCount);
+      messageName.append(']');
+   }
+}
+
+void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+   ref_t* references, size_t len, pos_t argCount, ref_t flags)
+{
+   addMessageNamePrefix(messageName, flags);
 
    messageName.append(actionName);
    if (len > 0) {
@@ -153,11 +184,34 @@ void ByteCodeUtil :: formatMessageName(IdentifierString& messageName, ModuleBase
       messageName.append('>');
    }
 
-   if (argCount != 0) {
-      messageName.append('[');
-      messageName.appendInt(argCount);
-      messageName.append(']');
+   addMessageNamePostfix(messageName, argCount);
+}
+
+void ByteCodeUtil :: formatMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+   ref_t* references, size_t len, pos_t argCount, ref_t flags, int nullableArgs)
+{
+   addMessageNamePrefix(messageName, flags);
+
+   messageName.append(actionName);
+   if (len > 0) {
+      messageName.append('<');
+
+      int currentArg = 1;
+      for (size_t i = 0; i < len; i++) {
+         if (i != 0)
+            messageName.append(',');
+
+         messageName.append(module->resolveReference(references[i]));
+
+         if (test(nullableArgs, currentArg))
+            messageName.append('?');
+
+         currentArg <<= 1;
+      }
+      messageName.append('>');
    }
+
+   addMessageNamePostfix(messageName, argCount);
 }
 
 bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
@@ -175,6 +229,25 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    size_t len = signature ? module->resolveSignature(signature, references) : 0;
 
    formatMessageName(messageName, module, actionName, references, len, argCount, flags);
+
+   return true;
+}
+
+bool ByteCodeUtil :: resolveMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, mssg_t message, int nullableArgs)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ref_t signature = 0;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+   if (emptystr(actionName))
+      return false;
+
+   ref_t references[ARG_COUNT];
+   size_t len = signature ? module->resolveSignature(signature, references) : 0;
+
+   formatMessageNameWithNullableArgs(messageName, module, actionName, references, len, argCount, flags, nullableArgs);
 
    return true;
 }
@@ -678,6 +751,11 @@ void CommandTape::write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask)
    write(code, arg1, resolvePseudoArg(arg2) | mask);
 }
 
+void CommandTape :: write(ByteCode code, arg_t arg1, int arg2, ref_t mask)
+{
+   write(code, arg1, arg2 | mask);
+}
+
 void CommandTape :: write(ByteCode code, arg_t arg1, arg_t arg2)
 {
    ByteCommand command(code, arg1, arg2);
@@ -869,6 +947,40 @@ inline void skipImport(ByteCodeIterator& bc_it)
       ++bc_it;
 }
 
+inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
+{
+   for (size_t i = 0; i < len; i++) {
+      if (list[i] == bc)
+         return true;
+   }
+
+   return false;
+}
+
+inline bool isAccFree(ByteCodeIterator bc_it)
+{
+   while (bc_it.eof()) {
+      ByteCode bc = (*bc_it).code;
+      if (contains(opSetAcc, sizeof(opSetAcc) / sizeof(ByteCode), bc))
+         return true;
+
+      if (!contains(opNotUsingAcc, sizeof(opNotUsingAcc) / sizeof(ByteCode), bc))
+         return false;
+
+      ++bc_it;
+   }
+
+   return true;
+}
+
+inline bool endOfPattern(ByteCodePattern& currentPattern, ByteCodeIterator& bc_it)
+{
+   if (currentPattern.argType == ByteCodePatternType::IfAccFree) {
+      return isAccFree(bc_it);
+   }
+   return currentPattern.code == ByteCode::Match;
+}
+
 bool ByteCodeTransformer :: apply(CommandTape& commandTape)
 {
    ByteCodePatterns  matchedOnes;
@@ -900,7 +1012,7 @@ bool ByteCodeTransformer :: apply(CommandTape& commandTape)
                auto currentPattern = currentPatternNode.Value();
 
                if (currentPattern.match(bc_it, arg)) {
-                  if (currentPattern.code == ByteCode::Match) {
+                  if (endOfPattern(currentPattern, bc_it)) {
                      transform(--bc_it, currentPatternNode.FirstChild(), arg);
 
                      return true;

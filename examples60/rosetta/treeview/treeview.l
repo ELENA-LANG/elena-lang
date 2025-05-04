@@ -62,5 +62,5 @@ public program()
                     Node.new("e")
                  });
                  
-    console.writeTree(tree).readChar()
+    Console.writeTree(tree).readChar()
 }

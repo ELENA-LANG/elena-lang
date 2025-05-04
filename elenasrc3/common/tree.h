@@ -9,6 +9,13 @@
 #ifndef TREE_H
 #define TREE_H
 
+#ifdef _MSC_VER
+
+#pragma warning( push )
+#pragma warning( disable : 4458 )
+
+#endif
+
 namespace elena_lang
 {
    // --- Tree ---
@@ -108,6 +115,7 @@ namespace elena_lang
 
          NodeRecord nw;
          nw.next = INVALID_POS;
+         nw.child = INVALID_POS;
          nw.key = key;
          nw.arg = arg;
 
@@ -595,7 +603,6 @@ namespace elena_lang
          pos_t          _current;
 
          Stack<pos_t>   _bookmarks;
-         pos_t          _pendingBookmarks;
 
          void updateBookmarks(Stack<pos_t>& bookmarks, pos_t oldPos, pos_t newPos)
          {
@@ -609,11 +616,10 @@ namespace elena_lang
          {
             NodeArg arg(argument, strArgRef);
 
-            pos_t prev = _tree->readPrevious(position);
-            if (prev != INVALID_REF) {
-               _current = _tree->injectSibling(prev, type, arg);
+            if (position != INVALID_REF) {
+               _current = _tree->injectSibling(position, type, arg);
             }
-            else _current = _tree->injectChild(position, type, arg);
+            else _current = _tree->injectChild(_current, type, arg);
 
             updateBookmarks(_bookmarks, position, _current);
          }
@@ -621,18 +627,20 @@ namespace elena_lang
       public:
          pos_t newBookmark()
          {
-            _pendingBookmarks++;
+            Node lastNode = CurrentNode().lastChild();
 
-            return _bookmarks.count() + _pendingBookmarks;
+            _bookmarks.push(lastNode._position);
+
+            return _bookmarks.count();
          }
          void removeBookmark()
          {
-            if (_pendingBookmarks > 0) {
-               _pendingBookmarks--;
-            }
-            else _bookmarks.pop();
+            _bookmarks.pop();
          }
-
+         void setBookmark(Node node)
+         {
+            _bookmarks.push(node._position);
+         }
          void newNode(Key key, ref_t arg)
          {
             if (_current == INVALID_POS) {
@@ -705,7 +713,6 @@ namespace elena_lang
             _tree->clear();
             _current = INVALID_POS;
             _bookmarks.clear();
-            _pendingBookmarks = 0;
          }
 
          Writer(Tree& tree)
@@ -713,14 +720,12 @@ namespace elena_lang
          {
             this->_tree = &tree;
             this->_current = INVALID_POS;
-            this->_pendingBookmarks = 0;
          }
          Writer(Node& node)
             : _bookmarks(INVALID_POS)
          {
             this->_tree = node._tree;
             this->_current = node._position;
-            this->_pendingBookmarks = 0;
          }
       };
 
@@ -827,17 +832,23 @@ namespace elena_lang
          return counter;
       }
 
-      static void serialize(Node& node, void(*encoder)(TextWriter<char>&, Key, ustr_t, int, void*), TextWriter<char>& writer, void* arg)
+      static void serialize(int level, Node& node, void(*encoder)(int level, TextWriter<char>&, Key, ustr_t, int, void*), TextWriter<char>& writer, void* arg, List<Key>* filters)
       {
-         encoder(writer, node.key, node.identifier(), node.arg.value, arg);
+         encoder(level, writer, node.key, node.identifier(), node.arg.value, arg);
          Node current = node.firstChild();
          while (current != defKey) {
-            serialize(current, encoder, writer, arg);
+            if (filters && filters->template retrieveIndex<Key>(current.key, [](Key arg, Key current)
+               {
+                  return current == arg;
+               }) == -1)
+            {
+               serialize(level + 1, current, encoder, writer, arg, filters);
+            }
 
             current = current.nextNode();
          }
 
-         encoder(writer, defKey, nullptr, 0, nullptr);
+         encoder(level, writer, defKey, nullptr, 0, nullptr);
       }
 
       static void deserialize(Node root, bool(*reader)(Key&, IdentifierString&, int&, void*), void* arg)
@@ -860,5 +871,11 @@ namespace elena_lang
       Tree() = default;
    };
 }
+
+#ifdef _MSC_VER
+
+#pragma warning( pop )
+
+#endif
 
 #endif

@@ -95,9 +95,9 @@ PlatformType Project :: ThreadModeType()
    return _platform & PlatformType::ThreadMask;
 }
 
-void Project :: addSource(ustr_t ns, path_t path, ustr_t target, ustr_t hints)
+void Project :: addSource(ustr_t ns, path_t path, ustr_t target, ustr_t hints, bool singleFileMode)
 {
-   if (!_loaded && _projectName.empty())
+   if (singleFileMode && _projectName.empty())
       _projectName.copy(ns);
 
    ProjectNode files = _root.findChild(ProjectOption::Files);
@@ -153,6 +153,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
       for (auto m_it = modules.start(); !m_it.eof(); ++m_it) {
+
          ConfigFile::Node moduleNode = *m_it;
 
          if (!moduleNode.readAttribute("name", subNs)) {
@@ -174,7 +175,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
                node.readContent(path);
 
                PathString filePath(path.str());
-               addSource(*ns, *filePath, target.str(), hints.str());
+               addSource(*ns, *filePath, target.str(), hints.str(), false);
             }
          }
       }
@@ -316,6 +317,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
          ProjectOption::References, configPath);
 
       loadForwards(config, root, FORWARD_CATEGORY);
+      loadVariables(config, root, VARIABLE_CATEGORY);
 
       loadLexicals(config, root, LEXICAL_CATEGORY);
 
@@ -497,6 +499,41 @@ void Project :: loadProfileList(ConfigFile& config)
 
 // --- ProjectCollection ---
 
+inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& modules, 
+   ProjectCollection::ProjectSpecs& projectSpecs)
+{
+   DynamicString<char> pathStr;
+   DynamicString<char> basePathStr;
+   DynamicString<char> profileStr;
+   for (auto it = modules.start(); !it.eof(); ++it) {
+      ConfigFile::Node node = *it;
+      node.readContent(pathStr);
+
+      ProjectCollection::ProjectSpec* spec = new ProjectCollection::ProjectSpec();
+      spec->path = nullptr;
+      spec->basePath = nullptr;
+      spec->profile = nullptr;
+
+      if (node.readAttribute(BASE_PATH_ATTR, basePathStr)) {
+         PathString fullPath(collectionPath, basePathStr.str());
+         spec->basePath = (*fullPath).clone();
+
+         fullPath.combine(pathStr.str());
+         spec->path = (*fullPath).clone();
+      }
+      else {
+         PathString fullPath(collectionPath, pathStr.str());
+         spec->path = (*fullPath).clone();
+      }
+
+      if (node.readAttribute(PROFILE_ATTR, profileStr)) {
+         spec->profile = ustr_t(profileStr.str()).clone();
+      }
+
+      projectSpecs.add(spec);
+   }
+}
+
 bool ProjectCollection :: load(path_t path)
 {
    PathString collectionPath;
@@ -504,18 +541,22 @@ bool ProjectCollection :: load(path_t path)
 
    ConfigFile config;
    if (config.load(path, _encoding)) {
-      DynamicString<char> pathStr;
-
       ConfigFile::Collection modules;
       if (config.select(COLLECTION_CATEGORY, modules)) {
-         for (auto it = modules.start(); !it.eof(); ++it) {
-            ConfigFile::Node node = *it;
-            node.readContent(pathStr);
-
-            PathString fullPath(*collectionPath, pathStr.str());
-            paths.add((*fullPath).clone());
+         loadModuleCollection(*collectionPath, modules, projectSpecs);
+      }
+      else {
+         ConfigFile::Collection collections;
+         if (config.select(COLLECTIONS_CATEGORY, collections)) {
+            for (auto it = collections.start(); !it.eof(); ++it) {
+               ConfigFile::Collection subModules;
+               if (config.select(*it, "*", subModules)) {
+                  loadModuleCollection(*collectionPath, subModules, projectSpecs);
+               }
+            }
          }
       }
+
       return true;
    }
    return false;

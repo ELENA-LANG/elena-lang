@@ -939,10 +939,25 @@ inline %034h
 
 end
 
+// ; dfree
+inline % 35h
+
+  lsl     x12, x9, #3
+  add     x12, x12, #8    // ; rounding to 10h
+
+  lsr     x12, x12, #4
+  lsl     x12, x12, #4
+
+  mov     x13, sp
+  add     x13, x13, x12   // ; allocate stack
+  mov     sp, x13
+
+end
+
 // ; fiadd
 inline %070h
 
-  ldr     x19, [x0]
+  ldrsw   x19, [x0]
   ldr     d17, [x10]
   scvtf   d18, x19
   fadd    d17, d17, d18  
@@ -953,7 +968,7 @@ end
 // ; fsub
 inline %071h
 
-  ldr     x19, [x0]
+  ldrsw   x19, [x0]
   ldr     d17, [x10]
   scvtf   d18, x19
   fsub    d17, d17, d18  
@@ -964,7 +979,7 @@ end
 // ; fmul
 inline %072h
 
-  ldr     x19, [x0]
+  ldrsw   x19, [x0]
   ldr     d17, [x10]
   scvtf   d18, x19
   fmul    d17, d17, d18  
@@ -975,7 +990,7 @@ end
 // ; fdiv
 inline %073h
 
-  ldr     x19, [x0]
+  ldrsw   x19, [x0]
   ldr     d17, [x10]
   scvtf   d18, x19
   fdiv    d17, d17, d18  
@@ -3146,6 +3161,7 @@ inline %1DDh
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
+  and     x18, x18, 0FFh
   lsr     x18, x18, x17
 
   strb    w18, [x19]
@@ -3160,6 +3176,7 @@ inline %2DDh
   ldrsw   x17, [x0]
   ldrsw   x18, [x19]
 
+  and     x18, x18, 0FFFFh
   lsr     x18, x18, x17
 
   strh    w18, [x19]

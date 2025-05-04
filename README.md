@@ -14,6 +14,7 @@
 <div align="center">
     
 [![MSBuild](https://github.com/ELENA-LANG/elena-lang/actions/workflows/msbuild.yml/badge.svg?branch=master)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/msbuild.yml)
+[![Nightly MSBuild](https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml/badge.svg)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml)
 [![Sponsor](https://img.shields.io/badge/patreon-donate-green.svg)](https://www.patreon.com/elena_lang)
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/arakov)](https://github.com/sponsors/arakov)
 
@@ -32,36 +33,168 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
   - Returning Multiple Values
   - Support of variadic methods
   - Support of yieldable methods
+  - Concurrent programming
   - Closures
   - Mixins
-  - Type interfaces / conversions
-  - Class / code templates
+  - Type interfaces / Conversions
+  - Class templates / Expression templates
+  - Extensions /  Extension Templates
   - Script Engine
 
 ## Currently Supported Platforms
 
 - **Windows** : x86 (32-bit) / x86-64 (64-bit) 
 - **Linux** : x86 (32-bit) / x86-64 (64-bit)  / ppc64le / arm64 (a64)
+- **FreeBSD** :x86-64 (64-bit)
 
 ## Platforms to be supported
 
 - **macOS** : arm64 (a64)
 
-## Source Download and Compilation
+## Resources
+- **Nightly builds:** <https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml>
+- **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
+- **ELENA API 6.0** <https://elena-lang.github.io/api/index.html>
+- **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
+- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
+- **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
+- **Source code:** <https://github.com/ELENA-LANG/elena-lang>
+- **BluSky:** <https://bsky.app/profile/alexrakov.bsky.social>
+- **Rosetta code:** <https://rosettacode.org/wiki/Category:Elena>
+
+## Contact Us
+
+Reach out with any questions you may have and we'll make sure to answer them as soon as possible!
+
+| Platform  | Link        |
+|:----------|:------------|
+| 💬 Instant Message Chat | [![Discord Banner](https://discordapp.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
+| Forum | [Discussions](https://github.com/orgs/ELENA-LANG/discussions)
+| 📧 E-mail | elenaprolang@gmail.com
+| 🐤 BlueSky | [@elena_language](https://bsky.app/profile/alexrakov.bsky.social)
+
+## Installing ELENA from source
 
 To acquire the source code clone the git repository:
 
     git clone https://github.com/ELENA-LANG/elena-lang.git
+    cd elena-lang
 
 ### Windows:
 
-The compiler code is implemented in C++ and does not require external dependencies. You just need Visual Studio 2019.
+The compiler code is implemented in C++ and does not require external dependencies. You just need Visual Studio 2019 / 2022.
 
 You have to add a path to _BIN_ folder to the system environment *PATH* or copy elenavm.dll and elenart.dll to _Windows\System32_ folder.
 
 To build the compiler and API under VS2019 / VS2022 you have to go to the root folder and type:
 
     recompile60.bat 
+
+### Linux:    
+
+To compile the code in Linux you have to install GCC tool set
+
+    sudo apt-get install gcc-multilib g++-multilib
+
+Then you have to run the compilation:
+
+#### For x86
+
+For Linux x86 (i386):
+
+    make all_i386
+
+After this you can either install it globally:
+
+    cd scripts/i386
+    sudo ./build_package_i386.script 
+
+or locally
+
+    cd scripts/i386
+    sudo ./local_build_package_i386.script
+
+*Note : in this case you have to copy libelenart60.so into /usr/lib/elena or modify the configuration file bin/templates/lnx_console60.config and provide the correct path:*    
+
+    <platform key="Linux_I386">
+     <externals>
+        <external key="$rt">/usr/lib/elena/libelenart60.so</external>  <!-- put your local path where libelenart60.so is located
+     </externals>
+    </platform>
+
+#### For x86-64
+
+For Linux x86-64 (amd64):
+
+    make all_amd64
+
+After this you can either install it globally:
+
+    cd scripts/amd64
+    sudo ./build_package_amd64.script 
+
+or locally
+
+    cd scripts/amd64
+    sudo ./local_build_package_amd64.script
+
+*Note : in this case you have to copy libelenart60_64.so into /usr/lib/elena or modify the configuration file bin/templates/lnx_console60.config and provide the correct path:*    
+
+    <platform key="Linux_AMD64">
+     <externals>
+        <external key="$rt">/usr/lib/elena/libelenart60_64.so</external>  <!-- put your local path where libelenart60_64.so is located
+     </externals>
+    </platform>
+    
+#### For AARCH64
+
+For Linux AARCH64 (arm64):
+
+    make all_arm64
+
+After this you can install it globally:
+
+    cd scripts/aarch64
+    sudo ./build_package_aarch64.script 
+
+#### For PPC64le
+
+For Linux PPC64le:
+
+    make all_ppc64le
+
+After this you can install it globally:
+
+    cd scripts/ppc64le
+    sudo ./build_package_ppc64le.script 
+    
+### Building samples
+
+To build all existing samples you can go to the **examples** folder:
+
+    cd examples60
+
+and compile them:
+
+**For Windows 32**:
+
+    elena-cli examples60.prjcol 
+    elena-cli rosetta60.prjcol 
+
+**For Windows 64**:
+
+    elena64-cli examples60.prjcol 
+    elena64-cli rosetta60.prjcol 
+
+**For Linux 32 (i386)**:
+
+    elena-cli examples60.linux.prjcol 
+    elena-cli rosetta60.linux.prjcol 
+
+**For Linux 64 (amd64, aarch64, ppc64le)**:
+
+    elena64-cli examples60.linux.prjcol 
+    elena64-cli rosetta60.linux.prjcol 
 
 ## Source Code Organization
 
@@ -88,13 +221,13 @@ The ELENA source code is organized as follows:
 ## Community
 We want your contributions and suggestions! One of the easiest ways to contribute is to participate in Github discussions or on Discord.
 
-Please take a look at our [contributor page](https://github.com/ELENA-LANG/elena-lang/wiki/Getting-Started-with-the-project)
+Please take a look at our [Getting started Wiki](https://github.com/ELENA-LANG/elena-lang/wiki/Getting-Started-with-the-project)
 
 ### 1. Bugs, questions, suggestions?
 
 If you've noticed a bug or have a question go ahead and [make one](https://github.com/ELENA-LANG/elena-lang/issues/new/choose)!
 
-[Join](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3A%22Design+Idea%22) design discussions or [take part](https://github.com/ELENA-LANG/elena-lang/issues?q=is%3Aissue+is%3Aopen+label%3ADiscussion) in general talks.
+[Join](https://github.com/orgs/ELENA-LANG/discussions/categories/ideas) design discussions or [take part](https://github.com/orgs/ELENA-LANG/discussions/categories/general) in general talks.
 
 ### 2. Implement "up for grab" issues
 
@@ -102,29 +235,14 @@ If you've noticed a bug or have a question go ahead and [make one](https://githu
 
 ### 3. Rosetta code
 
-You may try to implement some of [Rosetta code tasks](http://rosettacode.org/wiki/Reports:Tasks_not_implemented_in_Elena) 
+You may look at or try to implement some of [Rosetta code tasks](https://rosettacode.org/wiki/Category:Elena) 
 which are not yet implemented
 
-## Contact Us
+## Terminal, IDEs
 
-Reach out with any questions you may have and we'll make sure to answer them as soon as possible!
+ELENA support both [command-line tools](https://github.com/ELENA-LANG/elena-lang/wiki/Using-command%E2%80%90line-tools) and IDE.
 
-| Platform  | Link        |
-|:----------|:------------|
-| 💬 Instant Message Chat | [![Discord Banner](https://discordapp.com/api/guilds/1023392280087908352/widget.png?style=banner2)](https://discord.gg/pMCjunWSxH)
-| 📧 E-mail | elenaprolang@gmail.com
-| 🐤 Twitter | [@elena_language](https://twitter.com/elena_language)
-
-## Resources
-- **Nightly builds:** <https://ci.appveyor.com/project/arakov/elena-lang/build/artifacts>
-- **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
-- **ELENA API 6.0** <https://elena-lang.github.io/api/index.html>
-- **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
-- **Tutorials:** <https://github.com/ELENA-LANG/tutorials>
-- **ELENA reddit:** <https://www.reddit.com/r/elena_lang/>
-- **Source code:** <https://github.com/ELENA-LANG/elena-lang>
-- **Twitter:** <https://twitter.com/elena_language>
-- **Rosetta code:** <http://rosettacode.org/wiki/Category:Elena>
+The work on [VSCode extension](https://github.com/ELENA-LANG/vscode-elena-lang) & [Debug Adapter Protoco support](https://github.com/ELENA-LANG/elena_dap) is going on
 
 ## License
 

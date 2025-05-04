@@ -17,6 +17,15 @@ namespace elena_lang
    class MachOARM64Linker : public MachOLinker64
    {
    protected:
+      virtual CPUType getCPUType()
+      {
+         return CPUType::AARCH64;
+      }
+
+      virtual CPUSubType getCPUSubType()
+      {
+         return CPUSubType::ARM_ALL;
+      }
 
    public:
       MachOARM64Linker(ErrorProcessorBase* errorProcessor)

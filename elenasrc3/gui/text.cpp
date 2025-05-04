@@ -683,6 +683,37 @@ text_t Text :: getLine(TextBookmark& bookmark, pos_t& length)
    }
 }
 
+text_c Text :: getChar(TextBookmark& bookmark)
+{
+   validateBookmark(bookmark);
+
+   bookmark.normalize();
+   if (bookmark._status == BM_EOT) {
+      return 0;
+   }
+   else return *((*bookmark._page).text + bookmark._offset);
+}
+
+#if defined _M_X64 || __x86_64__ || __PPC64__ || __aarch64__
+
+text_t Text::getLine(TextBookmark& bookmark, size_t& length)
+{
+   validateBookmark(bookmark);
+
+   bookmark.normalize();
+   if (bookmark._status == BM_EOT) {
+      length = 0;
+      return nullptr;
+   }
+   else {
+      length = (*bookmark._page).used - bookmark._offset;
+
+      return (*bookmark._page).text + bookmark._offset;
+   }
+}
+
+#endif //  
+
 void Text :: create()
 {
    _pages.clear();
@@ -867,6 +898,8 @@ bool Text :: insertChar(TextBookmark& bookmark, text_c ch)
    return true;
 }
 
+
+
 bool Text :: insertNewLine(TextBookmark& bookmark)
 {
    validateBookmark(bookmark);
@@ -921,6 +954,15 @@ bool Text :: eraseLine(TextBookmark& bookmark, size_t length)
 
    erase(bookmark, length, true);
    bookmark._length = NOTFOUND_POS;
+
+   if (bookmark._offset >= (*bookmark._page).used) {
+      // HOTFIX : place the bookmark to the correct position
+      int col = bookmark._column;
+      int row = bookmark._row;
+
+      bookmark.moveToClosestRow(row);
+      bookmark.moveTo(col, row);
+   }
    //   bookmark.skipEmptyPages();
 
    _rowCount = retrieveRowCount();
@@ -1292,7 +1334,9 @@ bool TextHistory :: undo(Text* text, TextBookmark& caret)
 #endif
 
    _locking = true;
-   caret.moveOn(position - caret.position());
+
+   disp_t disp = (int)position - (int)caret.position();
+   caret.moveOn(disp);
    if (eraseMode) {
       // erase mode
       text->insertLine(caret, (text_t)line, length);
@@ -1331,7 +1375,8 @@ bool TextHistory :: redo(Text* text, TextBookmark& caret)
 #endif
 
    _locking = true;
-   caret.moveOn(position - caret.position());
+   disp_t disp = (int)position - (int)caret.position();
+   caret.moveOn(disp);
    if (eraseMode) {
       // erase mode
       text->eraseLine(caret, length);

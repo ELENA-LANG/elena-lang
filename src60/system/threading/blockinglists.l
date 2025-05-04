@@ -13,9 +13,9 @@ public sealed class BlockingQueue<T>
 
    push(T value)
    {
-      _semaphore.release();
-
       _list.push(value);
+
+      _semaphore.release();
    }
 
    T pop()

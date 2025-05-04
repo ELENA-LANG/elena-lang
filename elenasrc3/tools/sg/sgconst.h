@@ -3,7 +3,7 @@
 //
 //		This file contains the compiler common interfaces & types
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CLICONST
@@ -12,9 +12,9 @@
 namespace elena_lang
 {
 
-   #define SG_REVISION_NUMBER            0x0003
+   #define SG_REVISION_NUMBER            0x0004
 
-   constexpr auto SG_GREETING            = "ELENA command line syntax generator %d.%d.%d (C)2005-2024 by Aleksey Rakov\n";
+   constexpr auto SG_GREETING            = "ELENA command line syntax generator %d.%d.%d (C)2005-2025 by Aleksey Rakov\n";
 
    constexpr auto SG_HELP                = "sg-cli <syntax_file> [-cp<codepage>]\n";
 

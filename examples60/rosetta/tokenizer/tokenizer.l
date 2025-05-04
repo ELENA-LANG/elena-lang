@@ -7,6 +7,6 @@ public program()
  
     string.splitBy(",").forEach::(s)
     {
-        console.print(s,".")
+        Console.print(s,".")
     }
 }

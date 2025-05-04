@@ -159,7 +159,7 @@ void ContextBrowserBase :: populateQWORD(WatchContext* context, long long value)
 {
    String<char, 40> number;
    if (_model->hexadecimalMode) {
-      number.appendHex(value);
+      number.appendLongHex(value);
       number.append('h');
    }
    else number.appendLong(value);

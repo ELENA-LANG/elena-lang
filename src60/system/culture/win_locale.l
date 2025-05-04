@@ -20,10 +20,10 @@ namespace culture
          _name := nil
       }
       
-      get static Current()
+      get static ILocale Current()
          = Locale.new(emptyWideString);
         
-      get static Invariant()
+      get static ILocale Invariant()
          = new Locale();
 
       private strToUpper(short[] src, int length, short[] dest, ref int destLength)
@@ -127,7 +127,7 @@ namespace culture
       }
    }
 
-   public static Locale invariantLocale = Locale.Invariant;
+   public static ILocale invariantLocale = Locale.Invariant;
     
-   public static Locale currentLocale = Locale.Current;
+   public static ILocale currentLocale = Locale.Current;
 }

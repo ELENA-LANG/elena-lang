@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FACTORY_H
@@ -22,16 +22,16 @@ namespace elena_lang
    class IDEFactory : public GUIFactoryBase, public ViewFactoryBase
    {
    protected:
-      FontFactory    _fontFactory;
-      ViewStyles     _styles;
-      StyleInfo*     _schemes[3];
-      GUISettinngs   _settings;
-      PathSettings   _pathSettings;
+      static PathSettings  _pathSettings;
 
-      HINSTANCE      _instance;
+      FontFactory          _fontFactory;
+      ViewStyles           _styles;
+      StyleInfo*           _schemes[3];
+      GUISettinngs         _settings;
+      HINSTANCE            _instance;
 
-      IDEModel*      _model;
-      IDEController* _controller;
+      IDEModel*            _model;
+      IDEController*       _controller;
 
       void registerClasses();
 
@@ -47,13 +47,15 @@ namespace elena_lang
       GUIControlBase* createMenu(ControlBase* owner);
       GUIControlBase* createDebugContextMenu(ControlBase* owner);
       GUIControlBase* createEditorContextMenu(ControlBase* owner);
-      GUIControlBase* createToolbar(ControlBase* owner);
+      GUIControlBase* createToolbar(ControlBase* owner, bool largeMode);
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
          int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, 
          int vmConsoleOutput, int toolBarControl, int contextEditor, int textIndex);
 
    public:
+      static void initPathSettings(IDEModel* ideModel);
+
       void reloadStyles(TextViewModelBase* viewModel) override;
 
       void styleControl(GUIControlBase* control) override;

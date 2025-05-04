@@ -51,6 +51,8 @@ uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
    // allocate
    LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
 
+   assert(r == allocPtr);
+
    return !r ? 0 : (uintptr_t)allocPtr;
 }
 
@@ -58,6 +60,8 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
 {
    // allocate
    LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
+
+   assert(r == allocPtr);
 
    return !r ? 0 : (uintptr_t)allocPtr;
 }

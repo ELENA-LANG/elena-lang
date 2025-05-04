@@ -1,44 +1,197 @@
 import system'net;
 import system'threading;
 
+public class SocketFactory
+{
+   static object _sync := new object();
+
+   static INetSocketFactory _httpFactory;
+   static INetSocketFactory _httpsFactory;
+
+   static constructor()
+   {
+      _httpFactory := NativeSocketFactory.create();
+   }
+
+   static assignHttpsFactory(INetSocketFactory factory)
+   {
+      lock(_sync) {
+         _httpsFactory := factory;
+      }
+   }
+
+   static assignHttpFactory(INetSocketFactory factory)
+   {
+      lock(_sync) {
+         _httpFactory := factory;
+      }
+   }
+
+   static INetSocket openSocket(Uri uri)
+   {
+      INetSocket socket := nil;
+      string scheme := uri.Scheme;
+      short port := uri.Port;
+      scheme =>
+         "http" : 
+         {
+            if (port==0)
+               port := 80;
+
+            lock(_sync) {
+               socket := _httpFactory.openSocket(uri.Host, port);
+            }
+         } 
+         "https" : 
+         {
+            if (port==0)
+               port := 443;
+
+            lock(_sync) {
+               socket := _httpsFactory.openSocket(uri.Host, port);
+            }
+         }
+         ! : {
+            InvalidArgumentException.raise("uri");
+         };
+      
+      ^ socket 
+   }
+}
+
 public class HttpClient
 {      
+   string      _host;
    HttpHeaders _headers;
-   Socket      _socket;
+   INetSocket  _socket;
 
-   constructor new()
+   static Task<HttpClient> openAsync(Uri uri)
+      = ::Task<HttpClient>.run({ ^ HttpClient.assign(SocketFactory.openSocket(uri), uri.Host); });
+
+   static Task<HttpClient> openAsync(string url)
+      = HttpClient.openAsync(Uri.parse(url));
+
+   static open(Uri uri)
+      = HttpClient.assign(SocketFactory.openSocket(uri), uri.Host);
+
+   static open(string url)
+      = HttpClient.open(Uri.parse(url));
+
+   internal constructor assign(INetSocket  socket, string host)
    {
+      _socket := socket;
+      _host := host;
       _headers := new HttpHeaders();
    }
 
    HttpHeaders Headers
       = _headers;
 
-   async Task<HttpResponse> getAsync(Uri uri)
+   Task<HttpResponse> getAsync()
+      <= getAsync("/");
+
+   async Task<HttpResponse> getAsync(string path)
    {
-      /* Create TCP socket */
-      _socket := new Socket(AF_INET, SOCK_STREAM, IPPROTO_TCP);
-
-      /* Set remote->sin_addr.s_addr */
-      SOCKADDR_IN remote := default;   
-
-      remote.Ip_address := uri.IP;
-      remote.Port := uri.Port;
-
-      /* Connect */
-      _socket.open(remote);
-
       /* Send headers to server */
       NetworkStream stream := new NetworkStream(_socket);
 
-      :await stream.writeAsync(_headers.Value);
+      string headers := _headers.Value;
+      string request := $"GET {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
 
-      ^ HttpResponse.assign(stream);
+      :await stream.writeAsync(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      :await response.readHeaderAsync();
+
+      ^ response;
+   }
+
+   async Task<HttpResponse> postAsync(string path, HttpRequest request)
+   {
+      int length := request.ContentLength;
       
+      /* Send headers to server */
+      NetworkStream stream := new NetworkStream(_socket);
+
+      HttpHeaders postHeaders := default;
+      if (request.Headers.Length == 0) {
+         postHeaders := _headers;
+      }
+      else {
+         postHeaders := HttpHeaders.combine(_headers, request.Headers);
+      };
+      
+      string headers := postHeaders.Value;
+      string content := request.Content;
+      
+      string request := $"POST {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"Content-Length:{length}"$13$10"Content-Type:application/x-www-form-urlencoded"$13$10"{headers}"$13$10"{content}";
+
+      :await stream.writeAsync(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      :await response.readHeaderAsync();
+
+      ^ response;
+   }
+
+   HttpResponse get()
+      <= get("/");
+
+   HttpResponse get(string path)
+   {
+      /* Send headers to server */
+      NetworkStream stream := new NetworkStream(_socket);
+
+      string headers := _headers.Value;
+      string request := $"GET {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
+
+      stream.write(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      response.readHeader();
+
+      ^ response;
+   }
+
+
+   HttpResponse post(HttpRequest request)
+      <= post("/", request);
+
+   HttpResponse post(string path, HttpRequest request)
+   {
+      int length := request.ContentLength;
+      
+      /* Send headers to server */
+      NetworkStream stream := new NetworkStream(_socket);
+
+      HttpHeaders postHeaders := default;
+      if (request.Headers.Length == 0) {
+         postHeaders := _headers;
+      }
+      else {
+         postHeaders := HttpHeaders.combine(_headers, request.Headers);
+      };
+      
+      string headers := postHeaders.Value;
+      string content := request.Content;
+      
+      string request := $"POST {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"Content-Length:{length}"$13$10"Content-Type:application/x-www-form-urlencoded"$13$10"{headers}"$13$10"{content}";
+
+      stream.write(request);
+
+      HttpResponse response := HttpResponse.assign(stream);
+
+      response.readHeader();
+
+      ^ response;
    }
 
    close()
    {
-      _socket.close()
+      if:not:nil(_socket)
+         _socket.close()
    }
 }

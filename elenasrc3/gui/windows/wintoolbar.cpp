@@ -16,40 +16,58 @@ ToolBar :: ToolBar(int iconSize)
    : ControlBase(_T("Toolbar"), 0, 0, 800, iconSize + 11)
 {
    _iconSize = iconSize;
+   _hImageList = 0;
+}
+
+ToolBar::~ToolBar()
+{
+   if (_hImageList)
+      ImageList_Destroy(_hImageList);
 }
 
 HWND ToolBar :: createControl(HINSTANCE instance, ControlBase* owner, 
    ToolBarButton* buttons, size_t counter)
 {
-   _handle = ::CreateWindowEx(
-      WS_EX_PALETTEWINDOW, TOOLBARCLASSNAME, _title,
-      WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | TBSTYLE_TOOLTIPS | TBSTYLE_FLAT | CCS_TOP | BTNS_AUTOSIZE,
-      CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, owner->handle(), nullptr, instance, (LPVOID)this);
+   _handle = CreateWindowEx(WS_EX_PALETTEWINDOW, TOOLBARCLASSNAME, _title, 
+      WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | TBSTYLE_TOOLTIPS | TBSTYLE_WRAPABLE | TBSTYLE_FLAT | CCS_TOP, CW_USEDEFAULT, 0, CW_USEDEFAULT, 0,
+      owner->handle(), nullptr, instance, (LPVOID)this);
+
+   SendMessage(_handle, CCM_SETVERSION, (WPARAM)6, 0);
 
    ::SendMessage(_handle, TB_BUTTONSTRUCTSIZE, (WPARAM)sizeof(TBBUTTON), 0);
+   ::SendMessage(_handle, TB_SETBITMAPSIZE, 0, MAKELPARAM(_iconSize, _iconSize));
 
-   //::SendMessage(_self, TB_LOADIMAGES, IDB_STD_SMALL_COLOR, (LPARAM)HINST_COMMCTRL);
-   TBADDBITMAP bitmap = { instance, 0 };
+   _hImageList = ImageList_Create(_iconSize, _iconSize,   // Dimensions of individual bitmaps.
+      ILC_COLOR24 | ILC_MASK,   // Ensures transparent background.
+      2, 0);
+
+   COLORREF crMask = RGB(255, 0, 255);
+
    TBBUTTON* tbButtons = new TBBUTTON[counter];
-   for (size_t i = 0; i < counter; i++) {
+   int       imageListId = 0;
+   for (size_t i = 0; i < counter/*2*/; i++) {
       tbButtons[i].idCommand = buttons[i].command;
       tbButtons[i].fsState = TBSTATE_ENABLED;
       tbButtons[i].dwData = 0;
       tbButtons[i].iString = 0;
 
       if (buttons[i].command != 0) {
-         bitmap.nID = buttons[i].iconId;
-         tbButtons[i].iBitmap = (int)::SendMessage(_handle, TB_ADDBITMAP, 1, (LPARAM)&bitmap);
+         tbButtons[i].iBitmap = imageListId++;
+         tbButtons[i].fsStyle = TBSTYLE_BUTTON;
 
-         tbButtons[i].fsStyle = BTNS_BUTTON;
+         HBITMAP hBitmap = (HBITMAP)LoadImage(instance, MAKEINTRESOURCE(buttons[i].iconId), IMAGE_BITMAP, _iconSize, _iconSize, NULL);
+
+         //ImageList_Add(_hImageList, hBitmap, NULL);
+         ImageList_AddMasked(_hImageList, hBitmap, crMask);
       }
       else {
          tbButtons[i].iBitmap = 0;
          tbButtons[i].fsStyle = BTNS_SEP;
       }
    }
-   ::SendMessage(_handle, TB_SETBUTTONSIZE, 0, MAKELONG(_iconSize, _iconSize));
-   ::SendMessage(_handle, TB_ADDBUTTONS, (WPARAM)counter, (LPARAM)tbButtons);
+
+   ::SendMessage(_handle, TB_SETIMAGELIST, (WPARAM)0, (LPARAM)_hImageList);
+   ::SendMessage(_handle, TB_ADDBUTTONS, counter, (LPARAM)tbButtons);
    ::SendMessage(_handle, TB_AUTOSIZE, 0, 0);
 
    delete[] tbButtons;

@@ -227,7 +227,7 @@ int main(int argc, char* argv[])
 
       JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
-      CompilingProcess process(*dataPath, nullptr, "<moduleProlog>", "<prolog>", "<epilog>",
+      CompilingProcess process(*dataPath, "o", "<moduleProlog>", "<prolog>", "<epilog>",
          &Presenter::getInstance(), &errorProcessor,
          VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 

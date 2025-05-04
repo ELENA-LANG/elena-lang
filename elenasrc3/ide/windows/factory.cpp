@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -79,6 +79,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Color(0, 0x80, 0), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0xFF, 0x80, 0x40), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0, 0x80, 0x80), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 };
 
 StyleInfo classicStyles[STYLE_MAX + 1] = {
@@ -93,6 +94,7 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
    {Color(0xC0, 0xC0, 0xC0), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0, 0xFF, 0x80), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0, 0xFF, 0xFF), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 };
 
 StyleInfo darkStyles[STYLE_MAX + 1] = {
@@ -107,6 +109,7 @@ StyleInfo darkStyles[STYLE_MAX + 1] = {
    {Color(87, 166, 74), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(181, 230, 168), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(214, 157, 133), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0xFF, 0xFF, 0xFF), Color(0x27, 0x2D, 0x60), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
 };
 
 constexpr auto STYLE_SCHEME_COUNT = 3;
@@ -153,6 +156,29 @@ ToolBarButton AppToolBarButtons[] =
    {IDM_DEBUG_GOTOSOURCE, IDR_GOTO},
 };
 
+ToolBarButton AppToolBarButtonsLarge[] =
+{
+   {IDM_FILE_NEW, IDR_FILENEW_L},
+   {IDM_FILE_OPEN, IDR_FILEOPEN_L},
+   {IDM_FILE_SAVE, IDR_FILESAVE_L},
+   {IDM_FILE_SAVEALL, IDR_SAVEALL_L},
+   {IDM_FILE_CLOSE, IDR_CLOSEFILE_L},
+   {IDM_PROJECT_CLOSE, IDR_CLOSEALL_L},
+   {0, IDR_SEPARATOR},
+   {IDM_EDIT_CUT, IDR_CUT_L},
+   {IDM_EDIT_COPY, IDR_COPY_L},
+   {IDM_EDIT_PASTE, IDR_PASTE_L},
+   {0, IDR_SEPARATOR},
+   {IDM_EDIT_UNDO, IDR_UNDO_L},
+   {IDM_EDIT_REDO, IDR_REDO_L},
+   {0, IDR_SEPARATOR},
+   {IDM_DEBUG_RUN, IDR_RUN_L},
+   {IDM_DEBUG_STEPINTO, IDR_STEPINTO_L},
+   {IDM_DEBUG_STEPOVER, IDR_STEPOVER_L},
+   {IDM_DEBUG_STOP, IDR_STOP_L},
+   {IDM_DEBUG_GOTOSOURCE, IDR_GOTO_L},
+};
+
 inline void canonicalize(PathString& path)
 {
    wchar_t p[MAX_PATH];
@@ -163,6 +189,8 @@ inline void canonicalize(PathString& path)
 }
 
 // --- IDEFactory ---
+
+PathSettings IDEFactory::_pathSettings;
 
 IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel, 
    IDEController* controller,
@@ -177,13 +205,6 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
    _model = ideModel;
    _controller = controller;
 
-   wchar_t appPath[MAX_PATH];
-   ::GetModuleFileName(NULL, appPath, MAX_PATH);
-   ::PathRemoveFileSpec(appPath);
-
-   _pathSettings.appPath.copy(appPath);
-
-   _model->projectModel.paths.appPath.copy(*_pathSettings.appPath);
    _model->projectModel.paths.compilerPath.copy(CLI_PATH);
    _model->projectModel.paths.vmTerminalPath.copy(ELT_CLI_PATH);
 
@@ -199,6 +220,17 @@ IDEFactory :: IDEFactory(HINSTANCE instance, IDEModel* ideModel,
 
    canonicalize(_model->projectModel.paths.librarySourceRoot);
    canonicalize(_model->projectModel.paths.libraryRoot);
+}
+
+void IDEFactory :: initPathSettings(IDEModel* ideModel)
+{
+   wchar_t appPath[MAX_PATH];
+   ::GetModuleFileName(NULL, appPath, MAX_PATH);
+   ::PathRemoveFileSpec(appPath);
+
+   _pathSettings.appPath.copy(appPath);
+
+   ideModel->projectModel.paths.appPath.copy(*_pathSettings.appPath);
 }
 
 void IDEFactory :: registerClasses()
@@ -219,13 +251,6 @@ void IDEFactory :: registerClasses()
 ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* notifier)
 {
    auto viewModel = _model->viewModel();
-
-   // update font size
-   for (int j = 0; j < STYLE_MAX; j++) {
-      defaultStyles[j].size = viewModel->fontSize;
-      classicStyles[j].size = viewModel->fontSize;
-      darkStyles[j].size = viewModel->fontSize;
-   }
 
    // initialize view styles
    reloadStyles(viewModel);
@@ -252,7 +277,7 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
          notifier->notify(&event);
       });
 
-   view->create(_instance, szTextView, owner);
+   view->create(_instance, szTextView, owner, 0);
    frame->createControl(_instance, owner);
 
    return { frame, view };
@@ -260,7 +285,19 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
 
 void IDEFactory :: reloadStyles(TextViewModelBase* viewModel)
 {
-   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontSize + 5, 20, &_fontFactory);
+   // update font size
+   for (int j = 0; j <= STYLE_MAX; j++) {
+      defaultStyles[j].size = viewModel->fontInfo.size;
+      defaultStyles[j].faceName = *viewModel->fontInfo.name;
+
+      classicStyles[j].size = viewModel->fontInfo.size;
+      classicStyles[j].faceName = *viewModel->fontInfo.name;
+
+      darkStyles[j].size = viewModel->fontInfo.size;
+      darkStyles[j].faceName = *viewModel->fontInfo.name;
+   }
+
+   _styles.assign(STYLE_MAX + 1, _schemes[viewModel->schemeIndex], viewModel->fontInfo.size + 5, 20, &_fontFactory);
 }
 
 void IDEFactory :: styleControl(GUIControlBase* control)
@@ -404,11 +441,11 @@ GUIControlBase* IDEFactory :: createEditorContextMenu(ControlBase* owner)
    return menu;
 }
 
-GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner)
+GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner, bool largeMode)
 {
-   ToolBar* toolBar = new ToolBar(16);
+   ToolBar* toolBar = new ToolBar(largeMode ? 32 : 16);
 
-   toolBar->createControl(_instance, owner, AppToolBarButtons, AppToolBarButtonNumber);
+   toolBar->createControl(_instance, owner, largeMode ? AppToolBarButtonsLarge : AppToolBarButtons, AppToolBarButtonNumber);
    toolBar->show();
 
    return toolBar;
@@ -476,7 +513,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int editIndex = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, this);
-   sdi->create(_instance, szSDI, nullptr);
+   sdi->create(_instance, szSDI, nullptr, WS_EX_ACCEPTFILES);
 
    VerticalBox* vb = new VerticalBox(false, 1);
 
@@ -495,7 +532,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
-   children[toolBarControl] = createToolbar(sdi);
+   children[toolBarControl] = createToolbar(sdi, _settings.withLargeToolbar);
    children[contextEditor] = createEditorContextMenu(sdi);
    children[editIndex] = textCtrls.value2;
 

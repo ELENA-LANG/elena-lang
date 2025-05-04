@@ -184,7 +184,7 @@ public singleton ByteArrayExConvertor
          if (len > tmp_len)
             { len := tmp_len };
               
-         UTF8Encoder.toByteArray(s, i, ref len, tmp, 0, ref tmp_len);
+         tmp_len := UTF8Encoder.toByteArray(s, i, ref len, tmp, 0, tmp_len);
                 
          if (nil == retVal)
          { 

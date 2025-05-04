@@ -14,16 +14,16 @@ extension lexicalOp
          { ^ mssg letter };
 
       self =>
-         $32 { ^ mssg whitespace }
-         $40 { ^ mssg opening }
-         $41 { ^ mssg closing }
-         $42 { ^ mssg star }
-         $43 { ^ mssg plus }
-         $44 { ^ mssg comma }
-         $45 { ^ mssg minus }
-         $46 { ^ mssg dot }
-         $47 { ^ mssg slash }
-         ! { ^ mssg unknown }
+         $32 : { ^ mssg whitespace }
+         $40 : { ^ mssg opening }
+         $41 : { ^ mssg closing }
+         $42 : { ^ mssg star }
+         $43 : { ^ mssg plus }
+         $44 : { ^ mssg comma }
+         $45 : { ^ mssg minus }
+         $46 : { ^ mssg dot }
+         $47 : { ^ mssg slash }
+         ! : { ^ mssg unknown }
    }
 }
 
@@ -313,10 +313,10 @@ class StateMachine
    {
       var function;
       operator =>
-         "+" { function := mssgconst add[2]}
-         "-" { function := mssgconst subtract[2]}        
-         "*" { function := mssgconst multiply[2]}
-         "/" { function := mssgconst divide[2]};
+         "+" : { function := mssgconst add[2]}
+         "-" : { function := mssgconst subtract[2]}        
+         "*" : { function := mssgconst multiply[2]}
+         "/" : { function := mssgconst divide[2]};
             
       _derivationTree.append(TreeNode.new(_level + nodeLevel, function));
    }
@@ -342,7 +342,7 @@ extension parserOp
       }
       catch(Exception e)
       {
-         console.printLine(e);
+         Console.printLine(e);
             
          stateMachine.invalidate()
       };

@@ -52,6 +52,11 @@ namespace elena_lang
             return type == ScopeType::Enumeration;
          }
 
+         bool isNameIndex(int index)
+         {
+            return (index == 1 || index == 3) && type == ScopeType::PropertyTemplate;
+         }
+
          bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex, bool allowType)
          {
             switch (type) {
@@ -75,7 +80,7 @@ namespace elena_lang
                case ScopeType::PropertyTemplate:
                {
                   ref_t index = arguments.get(node.identifier());
-                  if (index == 1) {
+                  if (isNameIndex(index)) {
                      parameterKey = SyntaxKey::NameParameter;
                      parameterIndex = index + nestedLevel;
                      return true;
@@ -323,7 +328,7 @@ namespace elena_lang
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 
       void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, 
-         MemoryBase* templateBody, bool importModuleInfo);
+         MemoryBase* templateBody, bool importModuleInfo, ref_t templateRef);
 
       void importTemplate(Type type, MemoryBase* templateSection, SyntaxNode target,
          List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
@@ -341,7 +346,7 @@ namespace elena_lang
       void importTextblock(MemoryBase* templateSection, SyntaxNode target);
 
       void generateClassTemplate(ModuleScopeBase* moduleScope, ref_t classRef, SyntaxTreeWriter& writer,
-         MemoryBase* sectionBody, List<SyntaxNode>& args);
+         MemoryBase* sectionBody, List<SyntaxNode>& args, ref_t templateRef);
 
       TemplateProssesor() = default;
    };

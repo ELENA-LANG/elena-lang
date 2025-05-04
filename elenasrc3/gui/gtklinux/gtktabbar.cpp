@@ -37,6 +37,20 @@ Gtk::Widget* TabBar :: getCurrentControl()
    return list[0];
 }
 
+void TabBar :: selectTab(int index)
+{
+   set_current_page(index);
+}
+
+void TabBar :: onTabChange(int page_num)
+{
+}
+
+void TabBar :: renameTab(int index, const char* title)
+{
+   set_tab_label_text(*get_nth_page(index), title);
+}
+
 /*Gtk::Widget* TabBar :: getTabControl(int index) const
 {
    if (index == -1)

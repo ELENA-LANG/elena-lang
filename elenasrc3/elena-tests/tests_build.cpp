@@ -1,3 +1,62 @@
+/*
+* BTOptimization1_1
+* -------------
+*
+* BTOptimization1_2
+* -----------------
+*
+* BTOptimization1_3
+* ----------------*
+*
+* BTOptimization1_4
+* -----------------
+*
+* BTOptimization2
+* ---------------
+*
+* BTOptimization4
+* ---------------
+*
+* StructAlignment
+* ---------------
+* 
+* PackedStructAlignment
+* ---------------------
+* 
+* VariadicRuntimeSingleDispatch
+* -----------------------------
+* 
+* VariadicCompiletimeSingleDispatch
+* ---------------------------------
+* 
+* CallMethodWithoutTarget
+* -----------------------
+* 
+* CallVariadocMethodWithoutTarget
+* -------------------------------
+* 
+* CallMethodWithSignatureOfSuperClass
+* -----------------------------------
+* 
+* CallMethodWithNil
+* -----------------
+* 
+* VariadicCompiletimeSingleDispatch_WithDifferentArgs
+* ---------------------------------------------------
+* 
+* Lambda_CallingPrivateMethod
+* ---------------------------
+* 
+* IntAssigningNil
+* ---------------
+* 
+* NillableIntAssigning
+* --------------------
+* 
+* ByteArrayOp
+*/
+
+
 #include "pch.h"
 // ------------------------------------------------
 #include "bt_optimization.h"
@@ -95,4 +154,14 @@ TEST_F(IntAssigningNil, BuildTest)
 TEST_F(NillableIntAssigning, BuildTest)
 {
    runTest(false);
+}
+
+TEST_F(ByteArrayOperation, BuildTest)
+{
+   runTest();
+}
+
+TEST_F(ByteArrayOperation2, BuildTest)
+{
+   runTest();
 }

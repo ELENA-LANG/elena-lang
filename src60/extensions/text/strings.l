@@ -1,5 +1,9 @@
 namespace text
 {
+   use system'io'TextWriter;
+   use system'text'Encoder;
+   //use system'text'UTF8Encoder;
+   
    // --- StringBookmark ---
    public class StringBookmark : BaseValue
    {
@@ -156,7 +160,7 @@ namespace text
    }
 
    // --- StringWriter ---
-   public sealed class StringWriter : BaseVariable
+   public sealed class StringWriter : BaseVariable, interface<TextWriter>
    {
       string _value;
       string _newLine;
@@ -188,12 +192,22 @@ namespace text
          _value := _value.add(s)
       }
         
+      write(wide s)
+      {
+         _value := _value.add(s)
+      }
+        
       write(char ch)
       {
          _value := _value.add(ch)
       }
         
       writeLine(string s)
+      {
+         self.write(s).write(_newLine)
+      }
+        
+      writeLine(wide s)
       {
          self.write(s).write(_newLine)
       }
@@ -229,9 +243,24 @@ namespace text
          _value := EmptyString
       }
     
+      close() {}
+
+      write(char[] array, int length)
+      {
+         write(String.copy(0, length, array))
+      }
+            
       string toPrintable() = _value;
     
       string cast() = _value;
+    
+      wide cast() = _value;
+    
+      Source
+         = self;
+    
+      Encoder Encoder
+         = system'text'UTF8Encoder;
     
       string Value
       {
@@ -242,9 +271,5 @@ namespace text
             _value := val
          }
       }
-    
-      wide cast() = _value;
-    
-      dispatch() => _value;
    }
 }

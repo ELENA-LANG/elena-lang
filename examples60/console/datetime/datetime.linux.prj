@@ -1,0 +1,35 @@
+<configuration>
+  <platform key="Linux_I386">
+     <project>
+        <executable>datetime</executable>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <executable>datetime64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <project>
+        <executable>datetime64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_ARM64">
+     <project>
+        <executable>datetime64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>datetime</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>control.l</include>
+     </module>
+  </files>
+  <forwards>
+     <forward key="program">extensions'ProgramLoop</forward>
+     <forward key="program'control">datetime'Control</forward>
+  </forwards>
+</configuration>

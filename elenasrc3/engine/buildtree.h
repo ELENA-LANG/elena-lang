@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Byte code Build Tree classes
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BUILDTREE_H
@@ -12,6 +12,13 @@
 #include "elena.h"
 #include "tree.h"
 #include <climits>
+
+#ifdef _MSC_VER
+
+#pragma warning( push )
+#pragma warning( disable : 4458 )
+
+#endif
 
 namespace elena_lang
 {
@@ -27,6 +34,7 @@ namespace elena_lang
       Method               = 0x1004,
       Tape                 = 0x1005,
       AbstractMethod       = 0x1006,
+      Procedure            = 0x1007,
 
       OpenFrame            = 0x0001,
       CloseFrame           = 0x0002,
@@ -62,7 +70,7 @@ namespace elena_lang
       Argument             = 0x0020,
       BranchOp             = 0x0021,
       StrongRedirectOp     = 0x0022,
-      ResendOp             = 0x0023,
+      //ResendOp             = 0x0023,
       SealedDispatchingOp  = 0x0024,
       BoolSOp              = 0x0025,
       IntCondOp            = 0x0026,
@@ -164,13 +172,20 @@ namespace elena_lang
       ThreadVarAssigning   = 0x0086,
       OpenThreadVar        = 0x0087,
       CloseThreadVar       = 0x0088,
+      LoadingLIndex        = 0x0089,
+      SavingLIndex         = 0x008A,
+      RealIntXOp           = 0x008B,
+      OpenExtFrame         = 0x008C,
+      LoadExtArg           = 0x008D,
+      CloseExtFrame        = 0x008E,
+      ExtExit              = 0x008F,
+      ProcedureReference   = 0x0090,
+      LoadingAccToLongIndex = 0x0091,
+      ExternalVarReference = 0x0092,
+      ByteConstOp          = 0x0093,
 
-      MaxOperationalKey    = 0x0088,
-
-      Import               = 0x0090,
-      DictionaryOp         = 0x0091,
-      ObjOp                = 0x0092,
-      AttrDictionaryOp     = 0x0093,
+      MaxOperationalKey    = 0x0093,      
+      
       DeclOp               = 0x0094,
       DeclDictionaryOp     = 0x0095,
       LoopOp               = 0x0096,
@@ -190,6 +205,13 @@ namespace elena_lang
       YieldDispatch        = 0x00A4,
       TernaryOp            = 0x00A5,
       NilRefBranchOp       = 0x00A6,
+      ExcludeTry           = 0x00A7,
+      IncludeTry           = 0x00A8,
+      Import               = 0x00A9,
+      DictionaryOp         = 0x00AA,
+      ProjectInfoOp        = 0x00AB,
+      ObjOp                = 0x00AC,
+      AttrDictionaryOp     = 0x00AD,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,
@@ -222,7 +244,7 @@ namespace elena_lang
       Value                = 0x8001,
       Reserved             = 0x8002,      // reserved managed
       ReservedN            = 0x8003,      // reserved unmanaged
-      Index                = 0x8004,
+      VMTIndex             = 0x8004,
       Type                 = 0x8005,
       Column               = 0x8006,
       Row                  = 0x8007,
@@ -240,7 +262,11 @@ namespace elena_lang
       Length               = 0x8013,
       TempVar              = 0x8014,
       IndexTableMode       = 0x8015,
+      OperatorId           = 0x8016,
+      StackIndex           = 0x8017,
+      StackAddress         = 0x8018,
 
+      Match                = 0x8FFE,
       Idle                 = 0x8FFF,
 
       //MetaDictionary    = 0x0022,
@@ -324,6 +350,23 @@ namespace elena_lang
             writer.closeNode();
       }
 
+      static void injectChildren(Tree<BuildKey, BuildKey::None>::Writer& writer, Tree<BuildKey, BuildKey::None>::Node node)
+      {
+         auto current = node.firstChild();
+         while (current != BuildKey::None) {
+            if (current.arg.strArgPosition != INVALID_POS) {
+               writer.inject(current.key, current.identifier());
+            }
+            else writer.inject(current.key, current.arg.reference);
+
+            copyNode(writer, current);
+
+            writer.closeNode();
+
+            current = current.nextNode();
+         }
+      }
+
       static void loadBuildKeyMap(BuildKeyMap& map)
       {
          map.add("breakpoint", BuildKey::Breakpoint);
@@ -334,6 +377,7 @@ namespace elena_lang
          map.add("local_address", BuildKey::LocalAddress);
          map.add("saving_stack", BuildKey::SavingInStack);
          map.add("intop", BuildKey::IntOp);
+         map.add("byteop", BuildKey::ByteOp);
          map.add("create_struct", BuildKey::CreatingStruct);
          map.add("assigning", BuildKey::Assigning);
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
@@ -388,13 +432,26 @@ namespace elena_lang
          map.add("column", BuildKey::Column);
          map.add("row", BuildKey::Row);
          map.add("message", BuildKey::Message);
-         map.add("index", BuildKey::Index);
+         map.add("vmt_index", BuildKey::VMTIndex);
          map.add("length", BuildKey::Length);
          map.add("temp_var", BuildKey::TempVar);
          map.add("message", BuildKey::Message);
          map.add("reserved", BuildKey::Reserved);
          map.add("reserved_n", BuildKey::ReservedN);         
          map.add("index_table_mode", BuildKey::IndexTableMode);
+         map.add("class", BuildKey::Class);
+         map.add("method", BuildKey::Method);
+         map.add("symbol", BuildKey::Symbol);
+         map.add("param_address", BuildKey::ParameterAddress);
+         map.add("dispatch_op", BuildKey::DispatchingOp);
+         map.add("redirect_op", BuildKey::RedirectOp);
+         map.add("operator_id", BuildKey::OperatorId);
+         map.add("load_long_index", BuildKey::LoadingLIndex);
+         map.add("save_long_index", BuildKey::SavingLIndex);
+         map.add("real_int_xop", BuildKey::RealIntXOp);
+         map.add("procedure_ref", BuildKey::ProcedureReference);
+         map.add("break_op", BuildKey::BreakOp);
+         map.add("bytearray_op", BuildKey::ByteArrayOp);
       }
    };
 
@@ -404,58 +461,94 @@ namespace elena_lang
 
    constexpr int BuildKeyNoArg = INT_MAX;
 
-   // --- BuildKeyPattern ---
-   struct BuildKeyPattern
+   enum class BuildPatternType
    {
-      BuildKey type;
+      None = 0,
+      MatchArg,
+      Set,
+      Match
+   };
 
-      int      argument;
-      int      patternId;
+   struct BuildPatternArg
+   {
+      int arg1;
+      int arg2;
+   };
 
-      bool operator ==(BuildKey type) const
+   // --- BuildPattern ---
+   struct BuildPattern
+   {
+      BuildKey          key;
+      BuildPatternType  argType;
+      int               argValue;
+
+      bool operator ==(BuildKey key) const
       {
-         return (this->type == type);
+         return (this->key == key);
       }
 
-      bool operator !=(BuildKey type) const
+      bool operator !=(BuildKey key) const
       {
-         return (this->type != type);
+         return (this->key != key);
       }
 
-      bool operator ==(BuildKeyPattern pattern)
+      bool operator ==(BuildPattern pattern)
       {
-         return (type == pattern.type && argument == pattern.argument);
+         return (key == pattern.key && argType == pattern.argType && argValue == pattern.argValue);
       }
 
-      bool operator !=(BuildKeyPattern pattern)
+      bool operator !=(BuildPattern pattern)
       {
          return !(*this == pattern);
       }
 
-      bool match(BuildNode node)
+      bool match(BuildNode node, BuildPatternArg& args)
       {
-         return node.key == type && (argument == BuildKeyNoArg || node.arg.value == argument);
-      }
+         if (key != node.key)
+            return key == BuildKey::Match;
 
-      BuildKeyPattern()
-         : type(BuildKey::None), argument(BuildKeyNoArg), patternId(0)
-      {
-         
+         switch (argType) {
+            case BuildPatternType::Set:
+               if (argValue == 1) {
+                  args.arg1 = node.arg.value;
+               }
+               else args.arg2 = node.arg.value;
+               return true;
+            case BuildPatternType::Match:
+               return ((argValue == 1) ? args.arg1 : args.arg2) == node.arg.value;
+            case BuildPatternType::MatchArg:
+               return node.arg.value == argValue;
+            default:
+               return true;
+         }
       }
-      BuildKeyPattern(BuildKey type)
-         : type(type), argument(BuildKeyNoArg), patternId(0)
+   };
+
+   typedef MemoryTrieBuilder<BuildPattern>            BuildCodeTrie;
+   typedef MemoryTrieNode<BuildPattern>               BuildCodeTrieNode;
+
+   struct BuildPatternContext
+   {
+      BuildCodeTrieNode node;
+      BuildPatternArg   args;
+
+      BuildPatternContext() = default;
+      BuildPatternContext(BuildCodeTrieNode node, BuildPatternArg args)
+         : node(node), args(args)
+      {
+      }
+      BuildPatternContext(BuildCodeTrieNode node)
+         : node(node), args({})
       {
       }
    };
 
-   typedef MemoryTrieBuilder<BuildKeyPattern>            BuildCodeTrie;
-   typedef MemoryTrieNode<BuildKeyPattern>               BuildCodeTrieNode;
-   typedef CachedList<BuildCodeTrieNode, 10>             BuildPatterns;
+   typedef CachedList<BuildPatternContext, 10>        BuildPatterns;
 
    // --- BuildTreeTransformer ---
    struct BuildTreeTransformer
    {
-      typedef MemoryTrie<BuildKeyPattern>     MemoryBuildCodeTrie;
+      typedef MemoryTrie<BuildPattern>     MemoryBuildCodeTrie;
 
       MemoryBuildCodeTrie  trie;
       bool                 loaded;
@@ -469,5 +562,11 @@ namespace elena_lang
 
 
 }
+
+#ifdef _MSC_VER
+
+#pragma warning( pop )
+
+#endif
 
 #endif

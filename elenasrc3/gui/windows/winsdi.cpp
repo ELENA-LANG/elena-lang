@@ -442,6 +442,9 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
       }
       case WM_ERASEBKGND:
          return paintBackground();
+      case WM_DROPFILES:
+         onDropFiles((HDROP)wParam);
+         break;
       //case WM_PAINT:
       //   break;
       //case WM_CTLCOLORLISTBOX:

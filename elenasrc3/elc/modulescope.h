@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class declaration.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MODULESCOPE_H
@@ -17,10 +17,14 @@ namespace elena_lang
 // --- ModuleScope ---
 class ModuleScope : public ModuleScopeBase
 {
-   int                  hints;
+   int                   hints;
 
-   LibraryLoaderBase*   loader;
-   ForwardResolverBase* forwardResolver;
+   LibraryLoaderBase*    loader;
+   ForwardResolverBase*  forwardResolver;
+   VariableResolverBase* variableResolver;
+
+   Forwards              reusedTemplates;
+   Forwards              declaredImportLibraries;
 
    void saveListMember(ustr_t name, ustr_t memberName);
 
@@ -80,8 +84,28 @@ public:
 
    Visibility retrieveVisibility(ref_t reference) override;
 
+   bool declareImport(ustr_t name, ustr_t importName) override
+   {
+      return declaredImportLibraries.add(name, importName, true);
+   }
+
+   ustr_t resolveImport(ustr_t alias) override
+   {
+      ustr_t declared = declaredImportLibraries.get(alias);
+
+      return declared.empty() ? alias : declared;
+   }
+
+   bool checkVariable(ustr_t name) override
+   {
+      return variableResolver->checkVariable(name);
+   }
+
+   void flush() override;
+
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 
+      VariableResolverBase* variableResolver,
       ModuleBase* module,
       ModuleBase* debugModule,
       pos_t stackAlingment,
@@ -91,10 +115,11 @@ public:
       int ptrSize,
       int moduleHint)
       : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
-         minimalArgList, ptrSize, false)
+         minimalArgList, ptrSize, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;
+      this->variableResolver = variableResolver;
       this->hints = moduleHint;
    }
 };

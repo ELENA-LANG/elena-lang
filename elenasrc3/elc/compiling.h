@@ -36,6 +36,9 @@ namespace elena_lang
          CompilingProcess* _process;
          TemplateProssesor _processor;
 
+         void defineTemplateName(ModuleScopeBase& moduleScope, IdentifierString& name,
+            ref_t templateRef, List<SyntaxNode>& parameters);
+
          ref_t declareTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
             ref_t templateRef, List<SyntaxNode>& parameters);
          ref_t generateTemplateName(ModuleScopeBase& moduleScope, Visibility visibility,
@@ -83,16 +86,21 @@ namespace elena_lang
       pos_t               _codeAlignment;
       JITSettings         _defaultCoreSettings;
 
-      JITCompilerBase*(*_jitCompilerFactory)(LibraryLoaderBase*, PlatformType);
+      JITCompilerBase*(*_jitCompilerFactory)(PlatformType);
 
       TemplateGenerator   _templateGenerator;
 
       MemoryDump          _bcRules;
       MemoryDump          _btRules;
+      MemoryDump          _btXRules;
 
       bool                _verbose;
+      bool                _traceMode;
 
       IdentifierList      _forwards;
+
+      void printSyntaxTree(SyntaxTree& syntaxTree);
+      void printBuildTree(ModuleBase* module, BuildTree& buildTree);
 
       bool buildSyntaxTree(ModuleScopeBase& moduleScope, SyntaxTree* syntaxTree, bool templateMode, 
          ExtensionMap* outerExtensionList);
@@ -119,6 +127,7 @@ namespace elena_lang
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
+         VariableResolverBase* variableResolver,
          ModuleSettings& moduleSettings,
          int minimalArgList,
          int ptrSize);
@@ -140,7 +149,8 @@ namespace elena_lang
          _forwards.add(f.clone());
       }
 
-      void greeting();
+      static void greeting(PresenterBase* presenter);
+
       int build(Project& project, 
          LinkerBase& linker, 
          pos_t defaultStackAlignment, 
@@ -161,7 +171,7 @@ namespace elena_lang
          PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,
          JITSettings defaultCoreSettings,
-         JITCompilerBase* (*compilerFactory)(LibraryLoaderBase*, PlatformType));
+         JITCompilerBase* (*compilerFactory)(PlatformType));
 
       virtual ~CompilingProcess()
       {

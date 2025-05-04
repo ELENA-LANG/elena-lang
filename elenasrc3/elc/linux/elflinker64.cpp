@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class body
 //		Supported platforms: Linux 64
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elflinker64.h"
@@ -16,7 +16,15 @@ constexpr unsigned int HEADER_INTERPRETER_SIZE  = 0x200;
 constexpr unsigned int ELF64_HEADER_SIZE        = 0x40;
 constexpr unsigned int ELF64_PH_SIZE            = 0x38;
 
+#if defined(__FreeBSD__)
+
+constexpr auto INTERPRETER64_PATH = "/libexec/ld-elf.so.1";
+
+#else
+
 constexpr auto INTERPRETER64_PATH = "/lib64/ld-linux-x86-64.so.2";
+
+#endif
 
 using namespace elena_lang;
 
@@ -42,6 +50,19 @@ void Elf64Linker :: writeELFHeader(ElfExecutableImage& image, FileWriter* file, 
    header.e_ident[EI_CLASS] = ELFCLASS64;
    header.e_ident[EI_DATA] = ELFDATA2LSB;
    header.e_ident[EI_VERSION] = EV_CURRENT;
+   switch (image.platformType) {
+      case PlatformType::Linux_x86_64:
+      case PlatformType::Linux_ARM64:
+      case PlatformType::Linux_PPC64le:
+         header.e_ident[EI_OSABI] = ELFOSABI_LINUX;
+         break;
+      case PlatformType::FreeBSD_x86_64:
+         header.e_ident[EI_OSABI] = ELFOSABI_FREEBSD;
+         break;
+      default:
+         assert(false); // !! should not be here
+         break;
+   }
 
    header.e_type = ET_EXEC;
    header.e_machine = getMachine();
@@ -117,8 +138,8 @@ void Elf64Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
 
    // Dynamic
    pos_t dynamicOffset = image.addressMap.dictionary.get(elfDynamicOffset);
-   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicVAddress);
    pos_t dynamicSize = image.addressMap.dictionary.get(elfDynamicSize);
+   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicVAddress);
 
    ph_header.p_type = PT_DYNAMIC;
    ph_header.p_offset = dynamicOffset;

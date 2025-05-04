@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Source Reader class declaration.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TEXTPARSER_H
@@ -43,6 +43,7 @@ namespace elena_lang
    constexpr char dfaStartInterpol  = 'g';
    constexpr char dfaNextInterpol   = 'f';
    constexpr char dfaAltQuote       = 'h';
+   constexpr char dfaAltQuote2      = 'j';
 
    constexpr char dfaPrivate        = 'N';
    constexpr char dfaLong           = '?';

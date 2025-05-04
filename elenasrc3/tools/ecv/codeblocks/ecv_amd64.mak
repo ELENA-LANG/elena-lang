@@ -11,11 +11,21 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../../engine -I../../../common
-CFLAGS = -Wall -std=c++20 -m64
 RESINC = 
 LIBDIR = 
 LIB = 
+
+ifeq ($(OS),Windows_NT)
+
+CFLAGS = -Wall -std=c++20 -m64 -municode
+LDFLAGS = -m64 -static-libgcc -static-libstdc++
+
+else
+
+CFLAGS = -Wall -std=c++20 -m64
 LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
+
+endif
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O3
@@ -28,7 +38,15 @@ OBJDIR_RELEASE = ../../../temp/ecv64-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/ecv64-cli
 
+ifeq ($(OS),Windows_NT)
+
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o  $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o  $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o  $(OBJDIR_RELEASE)/__/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/windows/ecv.o
+
+else
+
 OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o  $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o  $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o  $(OBJDIR_RELEASE)/__/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/ecviewer.o $(OBJDIR_RELEASE)/__/linux/ecv.o
+
+endif
 
 all: release
 
@@ -39,7 +57,11 @@ before_release:
 	test -d $(OBJDIR_RELEASE)/__ || mkdir -p $(OBJDIR_RELEASE)/__
 	test -d $(OBJDIR_RELEASE)/__/__/__/engine || mkdir -p $(OBJDIR_RELEASE)/__/__/__/engine
 	test -d $(OBJDIR_RELEASE)/__/__/__/common || mkdir -p $(OBJDIR_RELEASE)/__/__/__/common
+ifeq ($(OS),Windows_NT)
+	test -d $(OBJDIR_RELEASE)/__/windows || mkdir -p $(OBJDIR_RELEASE)/__/windows
+else
 	test -d $(OBJDIR_RELEASE)/__/linux || mkdir -p $(OBJDIR_RELEASE)/__/linux
+endif
 
 after_release: 
 
@@ -81,8 +103,17 @@ $(OBJDIR_RELEASE)/__/__/__/engine/libman.o: ../../../engine/libman.cpp
 $(OBJDIR_RELEASE)/__/ecviewer.o  : ../ecviewer.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../ecviewer.cpp -o $(OBJDIR_RELEASE)/__/ecviewer.o
 
+ifeq ($(OS),Windows_NT)
+
+$(OBJDIR_RELEASE)/__/windows/ecv.o  : ../windows/ecv.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/ecv.cpp -o $(OBJDIR_RELEASE)/__/windows/ecv.o
+
+else
+
 $(OBJDIR_RELEASE)/__/linux/ecv.o  : ../linux/ecv.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/ecv.cpp -o $(OBJDIR_RELEASE)/__/linux/ecv.o
+
+endif
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)

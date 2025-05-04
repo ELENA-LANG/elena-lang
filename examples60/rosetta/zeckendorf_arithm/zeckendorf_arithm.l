@@ -21,7 +21,7 @@ sealed struct ZeckendorfNumber
         
         while (i >= 0)
         {
-            dVal += ((intConvertor.convert(s[i]) - 48) * q);
+            dVal += ((IntConvertor.convert(s[i]) - 48) * q);
             q *= 2;
             
             i -= 1
@@ -47,10 +47,10 @@ sealed struct ZeckendorfNumber
             
             int v := (dVal $shr (i * 2)) & 3;
             v =>    
-                0 { ^ self }
-                1 { ^ self }
-                2 {
-                    ifnot ((dVal $shr ((i + 1) * 2)).allMask(1))
+                0 : { ^ self }
+                1 : { ^ self }
+                2 : {
+                    if:not ((dVal $shr ((i + 1) * 2)).allMask(1))
                     {
                         ^ self
                     };
@@ -59,7 +59,7 @@ sealed struct ZeckendorfNumber
                     
                     ^ self
                 }
-                3 {
+                3 : {
                     int tmp := 3 $shl (i * 2);
                     tmp := tmp.bxor(-1);
                     dVal := dVal & tmp;
@@ -81,7 +81,7 @@ sealed struct ZeckendorfNumber
     {
         if (pos == 0) { ^ self.inc() };
         
-        ifnot((dVal $shr pos).allMask(1))
+        if:not((dVal $shr pos).allMask(1))
         {
             dVal += (1 $shl pos);
             self.a(pos / 2);
@@ -229,33 +229,33 @@ sealed struct ZeckendorfNumber
 
 public program()
 {
-    console.printLine("Addition:");
+    Console.printLine("Addition:");
     var n := 10n;
     
     n += 10n;
-    console.printLine(n);
+    Console.printLine(n);
     n += 10n;
-    console.printLine(n);
+    Console.printLine(n);
     n += 1001n;
-    console.printLine(n);
+    Console.printLine(n);
     n += 1000n;
-    console.printLine(n);
+    Console.printLine(n);
     n += 10101n;
-    console.printLine(n);
+    Console.printLine(n);
     
-    console.printLine("Subtraction:");
+    Console.printLine("Subtraction:");
     n := 1000n;
     n -= 101n;
-    console.printLine(n);
+    Console.printLine(n);
     n := 10101010n;
     n -= 1010101n;
-    console.printLine(n);
+    Console.printLine(n);
     
-    console.printLine("Multiplication:");
+    Console.printLine("Multiplication:");
     n := 1001n;
     n *= 101n;
-    console.printLine(n);
+    Console.printLine(n);
     n := 101010n;
     n += 101n;
-    console.printLine(n)
+    Console.printLine(n)
 }

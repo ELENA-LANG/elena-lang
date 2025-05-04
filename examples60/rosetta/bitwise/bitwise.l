@@ -6,16 +6,16 @@ extension testOp
 {
    bitwiseTest(y)
    {
-      console.printLine(self," and ",y," = ",self.band(y));
-      console.printLine(self," or ",y," = ",self.bor(y));
-      console.printLine(self," xor ",y," = ",self.bxor(y));
-      console.printLine("not ",self," = ",self.BInverted);
-      console.printLine(self," shr ",y," = ",self.shiftRight(y));
-      console.printLine(self," shl ",y," = ",self.shiftLeft(y));
+      Console.printLine(self," and ",y," = ",self.band(y));
+      Console.printLine(self," or ",y," = ",self.bor(y));
+      Console.printLine(self," xor ",y," = ",self.bxor(y));
+      Console.printLine("not ",self," = ",self.BInverted);
+      Console.printLine(self," shr ",y," = ",self.shiftRight(y));
+      Console.printLine(self," shl ",y," = ",self.shiftLeft(y));
    }
 }
 
 public program()
 {
-   console.loadLineTo(new Integer()).bitwiseTest(console.loadLineTo(new Integer()))
+   Console.loadLineTo(new Integer()).bitwiseTest(Console.loadLineTo(new Integer()))
 }

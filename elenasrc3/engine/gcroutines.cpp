@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  GC System Routines
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -11,6 +11,8 @@
 using namespace elena_lang;
 
 #if _M_IX86 || __i386__
+
+constexpr int LOCK_FLAG          = 0x01000000;
 
 constexpr int elObjectOffset     = elObjectOffset32;
 constexpr int gcCollectedMask    = 0x80000000;
@@ -33,6 +35,8 @@ constexpr int heapheader_inc     = 0x0A800;
 typedef ObjectPage32    ObjectPage;
 
 #else
+
+constexpr size_t LOCK_FLAG       = 0x00000000;
 
 constexpr int elObjectOffset     = elObjectOffset64;
 constexpr int gcCollectedMask    = 0x80000000;
@@ -180,53 +184,49 @@ inline void CollectMG2YGRoots(GCTable* table, ObjectPage* &shadowPtr)
       if (card) {
          if (testanyLong(card, 0xFFULL)) {
             wb_root.stack_ptr_addr = mg_current + elObjectOffset;
-            wb_root.size = getSize(wb_root.stack_ptr_addr);
+            wb_root.size = getSize(wb_root.stack_ptr_addr) & ~LOCK_FLAG;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
          if (testanyLong(card, 0xFF00ULL)) {
             wb_root.stack_ptr_addr = mg_current + page_size + elObjectOffset;
-            wb_root.size = getSize(wb_root.stack_ptr_addr);
+            wb_root.size = getSize(wb_root.stack_ptr_addr) & ~LOCK_FLAG;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
          if (testanyLong(card, 0xFF0000ULL)) {
             wb_root.stack_ptr_addr = mg_current + (page_size << 1) + elObjectOffset;
-            wb_root.size = getSize(wb_root.stack_ptr_addr);
+            wb_root.size = getSize(wb_root.stack_ptr_addr) & ~LOCK_FLAG;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
          if (testanyLong(card, 0xFF000000ULL)) {
             wb_root.stack_ptr_addr = mg_current + (page_size * 3) + elObjectOffset;
-            wb_root.size = getSize(wb_root.stack_ptr_addr);
+            wb_root.size = getSize(wb_root.stack_ptr_addr) & ~LOCK_FLAG;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
          if (testanyLong(card, 0xFF00000000ULL)) {
             wb_root.stack_ptr_addr = mg_current + (page_size << 2) + elObjectOffset;
-            wb_root.size = getSize(wb_root.stack_ptr_addr);
+            wb_root.size = getSize(wb_root.stack_ptr_addr) & ~LOCK_FLAG;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
          if (testanyLong(card, 0xFF0000000000ULL)) {
             wb_root.stack_ptr_addr = mg_current + ((page_size << 2) + page_size) + elObjectOffset;
-            wb_root.size = getSize(wb_root.stack_ptr_addr);
+            wb_root.size = getSize(wb_root.stack_ptr_addr) & ~LOCK_FLAG;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
          if (testanyLong(card, 0xFF000000000000ULL)) {
             wb_root.stack_ptr_addr = mg_current + (page_size * 6) + elObjectOffset;
-            wb_root.size = getSize(wb_root.stack_ptr_addr);
+            wb_root.size = getSize(wb_root.stack_ptr_addr) & ~LOCK_FLAG;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
          if (testanyLong(card, 0xFF00000000000000ULL)) {
             wb_root.stack_ptr_addr = mg_current + (page_size * 7) + elObjectOffset;
-            wb_root.size = getSize(wb_root.stack_ptr_addr);
-
-            // !! temporal trace code
-            if (wb_root.size > 0x10000)
-               wb_root.size = wb_root.size;
+            wb_root.size = getSize(wb_root.stack_ptr_addr) & ~LOCK_FLAG;
 
             YGCollect(&wb_root, table->gc_yg_start, table->gc_yg_end, shadowPtr, nullptr);
          }
@@ -264,7 +264,7 @@ inline void CollectPermYGRoots(GCTable* table, ObjectPage*& shadowPtr)
 void MGCollect(GCRoot* root, size_t start, size_t end)
 {
    size_t* ptr = (size_t*)root->stack_ptr;
-   size_t  size = root->size;
+   size_t  size = root->size & ~LOCK_FLAG;
 
    GCRoot  current;
 
@@ -294,7 +294,7 @@ void MGCollect(GCRoot* root, size_t start, size_t end)
 inline void FixObject(GCTable* table, GCRoot* roots, size_t start, size_t end)
 {
    uintptr_t* ptr = (uintptr_t*)roots->stack_ptr;
-   size_t  size = roots->size;
+   size_t  size = roots->size & ~LOCK_FLAG;
 
    GCRoot  current;
 
@@ -415,7 +415,7 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
    memset((void*)table->gc_mg_wbar, 0, size);
 }
 
-void* SystemRoutineProvider :: GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode)
+void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode)
 {
    //printf("GCRoutine %llx,%llx\n", (long long)roots, (long long)size);
 
@@ -553,7 +553,7 @@ void SystemRoutineProvider :: CalcGCStatistics(SystemEnv* systemEnv, GCStatistic
    auto table = systemEnv->gc_table;
 
    statistics->ygInfo.allocated = (unsigned int)(table->gc_yg_current - table->gc_yg_start);
-   statistics->ygInfo.free = (unsigned int)table->gc_yg_end - table->gc_yg_current;
+   statistics->ygInfo.free = (unsigned int)(table->gc_yg_end - table->gc_yg_current);
 
    statistics->mgInfo.allocated = (unsigned int)(table->gc_mg_current - table->gc_mg_start);
    statistics->mgInfo.free = (unsigned int)(table->gc_end - table->gc_mg_current);

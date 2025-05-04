@@ -92,6 +92,13 @@ EXTERN_DLL_EXPORT size_t GetStatusSMLA(char* buffer, size_t maxLength)
    else return 0;
 }
 
+EXTERN_DLL_EXPORT void ClearStackSMLA()
+{
+   if (engine) {
+      engine->clearParserStack();
+   }
+}
+
 BOOL APIENTRY DllMain(HMODULE hModule,
    DWORD  ul_reason_for_call,
    LPVOID lpReserved

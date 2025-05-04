@@ -74,7 +74,7 @@ namespace elena_lang
       void generateAutoSymbol(ModuleBase* module, MemoryDump& tapeSymbol, bool withExtFrame);
 
       TargetImage(PlatformType systemTarget, ForwardResolverBase* resolver, LibraryLoaderBase* loader,
-         JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType),
+         JITCompilerBase* (*jitCompilerFactory)(PlatformType),
          TargetImageInfo imageInfo, AddressMapperBase* addressMapper);
    };
 }

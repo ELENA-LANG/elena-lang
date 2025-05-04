@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Executive Linker class implementation
 //		Supported platforms: Linux
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elflinker.h"
@@ -19,7 +19,9 @@ using namespace elena_lang;
 
 unsigned short ElfLinker :: calcPHLength(ElfExecutableImage& image)
 {
-   return image.imageSections.headers.count() + 3; // sections + HDR + interpreter + dynamic
+   unsigned short def_ph_count = image.withTLS ? 4 : 3;
+
+   return image.imageSections.headers.count() + def_ph_count; // sections + HDR + interpreter + dynamic
 }
 
 void ElfLinker :: writeSection(FileWriter* file, MemoryBase* section)
@@ -106,12 +108,15 @@ void ElfLinker :: prepareElfImage(ImageProviderBase& provider, ElfExecutableImag
       image.sectionAlignment,
       image.fileAlignment,
       image.withDebugInfo);
+
+   if (image.addressMap.tls > 0) 
+      image.withTLS = true;
 }
 
-LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, path_t)
+LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType osType, PlatformType, path_t)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
-   ElfExecutableImage image(withDebugMode);
+   ElfExecutableImage image(withDebugMode, osType);
 
    image.addressMap.entryPoint = (pos_t)provider.getEntryPoint();
    prepareElfImage(provider, image, calcHeaderSize());

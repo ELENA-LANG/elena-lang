@@ -1,5 +1,9 @@
 #new attributes;
 
+/// instruction:
+#let attributes["use"]         := 80008001h;
+#let attributes["import"]      := 80008002h;
+
 /// modificator:
 #let attributes["__ignore_duplicates"] :=  80007001h;
 
@@ -23,7 +27,6 @@
 #let attributes["abstract"]    := 80003002h;
 #let attributes["closed"]      := 80003003h;
 #let attributes["predefined"]  := 80003005h;
-#let attributes["override"]    := 80003006h;
 
 /// scope_prefix:
 #let attributes["const"]       := 80002001h;
@@ -58,7 +61,6 @@
 #let attributes["extern"]      := 80001015h;
 #let attributes["intern"]      := 80001016h;
 #let attributes["forward"]     := 80001017h;
-#let attributes["import"]      := 80001018h;
 #let attributes["mixin"]       := 80001019h;
 #let attributes["distributed"] := 8000101Ah;
 #let attributes["auto"]        := 8000101Ch;

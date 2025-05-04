@@ -1,15 +1,23 @@
 //------------------------------------------------------------------------------
+// 
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2024, by Aleksey Rakov
+//                                                (C)2021-2025, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef BYTECODE_H
 #define BYTECODE_H
 
 #include "elena.h"
+
+#if _MSC_VER
+
+#pragma warning( push )
+#pragma warning( disable : 4458 )
+
+#endif
 
 namespace elena_lang
 {
@@ -73,6 +81,7 @@ namespace elena_lang
       AltMode        = 0x31,  
       XNop           = 0x32,
       XQuit          = 0x34,
+      DFree          = 0x35,
 
       FIAdd          = 0x70,
       FISub          = 0x71,
@@ -306,6 +315,20 @@ namespace elena_lang
          return labelSeed;
       }
 
+      int renewLabel(int oldLabel)
+      {
+         labelSeed++;
+
+         for (auto it = labels.start(); !it.eof(); ++it) {
+            if (*it == oldLabel) {
+               *it = labelSeed;
+               break;
+            }
+         }
+
+         return labelSeed;
+      }
+
       void setLabel(bool persist = false)
       {
          if (persist) {
@@ -341,6 +364,7 @@ namespace elena_lang
       void write(ByteCode code, PseudoArg arg);
       void write(ByteCode code, arg_t arg1, PseudoArg arg2);
       void write(ByteCode code, arg_t arg1, PseudoArg arg2, ref_t mask);
+      void write(ByteCode code, arg_t arg1, int arg2, ref_t mask);
 
       void import(ModuleBase* sourceModule, MemoryBase* source, bool withHeader, ModuleBase * targetModule);
 
@@ -480,6 +504,11 @@ namespace elena_lang
          ref_t* references, size_t len, pos_t argCount, ref_t flags);
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
 
+      // NOTE : information about nullable arguments are optional and is used only in ECV tool
+      static void formatMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
+         ref_t* references, size_t len, pos_t argCount, ref_t flags, int nullableArgs);
+      static bool resolveMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, mssg_t message, int nullableArgs);
+
       static void parseMessageName(ustr_t messageName, IdentifierString& actionName, ref_t& flags, pos_t& argCount);
 
       static mssg_t resolveMessage(ustr_t messageName, ModuleBase* module, bool readOnlyMode);
@@ -493,7 +522,8 @@ namespace elena_lang
       None = 0,
       Set,
       Match,
-      MatchArg
+      MatchArg,
+      IfAccFree // NOTE : can be used only for ByteCode::Match
    };
 
    struct PatternArg
@@ -606,5 +636,11 @@ namespace elena_lang
 
    };
 }
+
+#ifdef _MSC_VER
+
+#pragma warning( pop )
+
+#endif
 
 #endif

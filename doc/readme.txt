@@ -1,5 +1,5 @@
-                      ELENA Language Project V. 6.0
-                        (C)2005-2024  By Alex Rakov
+                      ELENA Language Project V. 6.6
+                        (C)2005-2026  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
 samples, command-line compiler, IDE.

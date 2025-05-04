@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Project Model header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECT_H
@@ -12,17 +12,38 @@
 
 namespace elena_lang
 {
+#ifdef _MSC_VER
+
+#define DEFAULT_FONTNAME "Courier New"
+
+#elif __GNUG__
+
+#define DEFAULT_FONTNAME "Monospace"
+
+#endif
+
+
    constexpr auto ROOT_NODE                     = "configuration";
    constexpr auto MAXIMIZED_SETTINGS            = "configuration/settings/maximized";
    constexpr auto LASTPATH_SETTINGS             = "configuration/settings/last_path";
    constexpr auto LASTPROJECT_SETTINGS          = "configuration/settings/last_project";
    constexpr auto FONTSIZE_SETTINGS             = "configuration/settings/font_size";
+   constexpr auto FONTNAME_SETTINGS             = "configuration/settings/font_name";
    constexpr auto SCHEME_SETTINGS               = "configuration/settings/scheme";
    constexpr auto HIGHLIGHTSYNTAX_SETTINGS      = "configuration/settings/highlight";
+   constexpr auto HIGHLIGHTBRACKETS_SETTINGS    = "configuration/settings/highlight_brackets";
    constexpr auto PERSISTENT_CONSOLE_SETTINGS   = "configuration/settings/persist_output";
+   constexpr auto VSCROLL_SETTINGS              = "configuration/settings/vscroll";
+   constexpr auto TABSIZE_SETTINGS              = "configuration/settings/tabsize";
+#ifdef _MSC_VER
+   constexpr auto INCLIDE_PATH2ENV_SETTINGS     = "configuration/settings/include_path_2_env";
+#endif
    constexpr auto LINENUMBERS_SETTINGS          = "configuration/settings/line_number";
    constexpr auto AUTO_RECOMPILE_SETTING        = "configuration/settings/autocomp";
    constexpr auto AUTO_SAVE_SETTING             = "configuration/settings/autosave";
+
+   constexpr auto LARGETOOLBAR_SETTINGS         = "configuration/startup/largetoolbar";
+   constexpr auto TABABOVESCORE_SETTINGS        = "configuration/startup/tababovescore";
 
    constexpr auto RECENTFILES_SETTINGS          = "configuration/recent_files/*";
    constexpr auto RECENTFILE_SETTINGS           = "configuration/recent_files/path";
@@ -58,6 +79,7 @@ namespace elena_lang
       ReferencePathMap referencePaths;
 
       bool              withPersistentConsole;
+      bool              includeAppPath2PathsTemporally;
 
       bool              singleSourceProject;
       bool              autoRecompile;

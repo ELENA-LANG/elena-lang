@@ -1,0 +1,31 @@
+<configuration>
+    <platform key="Win_x86">
+         <project>
+            <output>..\..\lib60</output>
+         </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <output>..\..\lib60_64</output>
+        </project>
+    </platform>
+    <files>
+        <module>
+            <file>xmlnode.l</file>
+            <file>xmldoc.l</file>
+            <file>xmlformatter.l</file>
+            <file>xmlreader.l</file>
+        </module>
+    </files>
+    <manifest>
+       <name>ELENA XML Library</name>
+       <version>6.6.2</version>
+       <author>Aleksey Rakov</author>
+    </manifest>
+    <project>
+        <executable></executable>
+        <options></options>
+        <namespace>xml</namespace>
+        <template>lib60</template>
+    </project>
+</configuration>

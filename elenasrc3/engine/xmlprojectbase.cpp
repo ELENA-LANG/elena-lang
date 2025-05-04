@@ -75,7 +75,7 @@ unsigned int XmlProjectBase :: UIntSetting(ProjectOption option, unsigned int de
 }
 
 XmlProjectBase :: XmlProjectBase(PlatformType platform)
-   : _paths(nullptr), _forwards(nullptr), _lexicals(nullptr)
+   : _paths(nullptr), _forwards(nullptr), _variables(false), _lexicals(nullptr)
 {
    _platform = platform;
 
@@ -227,6 +227,24 @@ void XmlProjectBase :: loadForwards(ConfigFile& config, ConfigFile::Node& root, 
    }
 }
 
+void XmlProjectBase :: loadVariables(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath)
+{
+   DynamicString<char> key, value;
+
+   ConfigFile::Collection collection;
+   if (config.select(root, xpath, collection)) {
+      for (auto it = collection.start(); !it.eof(); ++it) {
+         ConfigFile::Node node = *it;
+
+         if (node.readAttribute("key", key)) {
+            node.readContent(value);
+
+            addVariable(key.str(), ustr_t(value.str()).compare("-1"));
+         }
+      }
+   }
+}
+
 void XmlProjectBase :: loadLexicals(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath)
 {
    DynamicString<char> key, value;
@@ -272,4 +290,15 @@ void XmlProjectBase :: addForward(ustr_t forward, ustr_t referenceName)
    freeUStr(_forwards.exclude(forward));
 
    _forwards.add(forward, referenceName.clone());
+}
+
+void XmlProjectBase :: addVariable(ustr_t name, bool value)
+{
+   _variables.erase(name);
+   _variables.add(name, value);
+}
+
+bool XmlProjectBase :: checkVariable(ustr_t name)
+{
+   return _variables.get(name);
 }

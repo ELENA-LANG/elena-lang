@@ -50,7 +50,7 @@ extension zhangsuenOp : Matrix<CharValue>
         if(self.numTransitions(r,c) != 1)
             { ^ false };
  
-        ifnot (self.atLeastOneIsWhite(r,c,firstStep.iif(0,1)))
+        if:not (self.atLeastOneIsWhite(r,c,firstStep.iif(0,1)))
             { ^ false };
  
         toWhite.append(new { x = c; y = r; });
@@ -136,12 +136,12 @@ extension zhangsuenOp : Matrix<CharValue>
     {
         var it := self.enumerator();
  
-        it.forEach::(ch){ console.print(ch," ") };
+        it.forEach::(ch){ Console.print(ch," ") };
         while (it.next())
         {
-            console.writeLine();
+            Console.writeLine();
 
-            it.forEach::(ch){ console.print(ch," ") }
+            it.forEach::(ch){ Console.print(ch," ") }
         }
     }
 }
@@ -162,5 +162,5 @@ public program()
  
     grid.print();
  
-    console.readChar()
+    Console.readChar()
 }

@@ -108,8 +108,12 @@
 		<Unit filename="../../engine/module.h" />
 		<Unit filename="../../engine/parsertable.cpp" />
 		<Unit filename="../../engine/parsertable.h" />
+		<Unit filename="../../engine/scriptreader.cpp" />
+		<Unit filename="../../engine/scriptreader.h" />
 		<Unit filename="../../engine/section.cpp" />
 		<Unit filename="../../engine/section.h" />
+		<Unit filename="../../engine/serializer.cpp" />
+		<Unit filename="../../engine/serializer.h" />
 		<Unit filename="../../engine/syntaxtree.cpp" />
 		<Unit filename="../../engine/syntaxtree.h" />
 		<Unit filename="../../engine/x86_64compiler.cpp" />

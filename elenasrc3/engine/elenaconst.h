@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Compiler Engine templates,
 //		classes, structures, functions and constants
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENACONST_H
@@ -38,7 +38,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE            = "ELENA.";          // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE         = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE           = "ELENA.0605";      // the module version
+   constexpr auto MODULE_SIGNATURE           = "ELENA.0606";      // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE     = "ED.06";
 
   // --- ELENA core module names ---
@@ -50,10 +50,10 @@ namespace elena_lang
 
    // --- ELENA special sections ---
    constexpr auto NAMESPACES_SECTION         = "$namespaces";
-   constexpr auto IMPORTS_SECTION            = "$import";
    constexpr auto EXTENSION_SECTION          = "#extensions";
    constexpr auto INITIALIZER_SECTION        = "#initializer";
    constexpr auto PACKAGE_SECTION            = "#package";
+   constexpr auto TEMPLATE_MAPPING           = "#templates";
 
    constexpr auto WEAK_POSTFIX               = "#weak";
    constexpr auto ENUM_POSTFIX               = "#enum";
@@ -99,6 +99,7 @@ namespace elena_lang
    constexpr auto CONSTRUCTOR_MESSAGE2       = "#constructor2";   // protected constructor
    constexpr auto CAST_MESSAGE               = "#cast";
    constexpr auto INVOKE_MESSAGE             = "#invoke";
+   constexpr auto ASYNC_INVOKE_MESSAGE       = "#async_invoke";
    constexpr auto TRY_INVOKE_MESSAGE         = "#try_invoke";
    constexpr auto INIT_MESSAGE               = "#init";
    constexpr auto CLASS_INIT_MESSAGE         = "#class_init";
@@ -122,7 +123,7 @@ namespace elena_lang
    constexpr auto NOT_MESSAGE                = "Inverted";
    constexpr auto NEGATE_MESSAGE             = "Negative";
    constexpr auto VALUE_MESSAGE              = "Value";
-   constexpr auto ITEM_MESSAGE               = "Value";
+   constexpr auto RESULT_MESSAGE             = "Result";
    constexpr auto DEFAULT_MESSAGE            = "Default";
    constexpr auto BNOT_MESSAGE               = "BInverted";
    constexpr auto NOTEQUAL_MESSAGE           = "notequal";
@@ -222,6 +223,8 @@ namespace elena_lang
 
       MacOS_ARM64    = 0x00034,
 
+      FreeBSD_x86_64 = 0x00042,
+
       TargetMask     = 0x00F00,
       Standalone     = 0x00000,
       VMClient       = 0x00100,
@@ -310,6 +313,7 @@ namespace elena_lang
       ExtOverloadList   = 0x90A,
       Initializer       = 0x10B,
       YieldContextSize  = 0x80C,
+      SourceTemplateRef = 0x10D,
    };
 
    // === Reference constants ====
@@ -359,6 +363,7 @@ namespace elena_lang
    constexpr ref_t mskPackageRef          = 0x27000000u;
    constexpr ref_t mskDistrTypeListRef    = 0x28000000u;
    constexpr ref_t mskTLSVariable         = 0x29000000u;
+   constexpr ref_t mskMetaInfo            = 0x2A000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;
@@ -494,8 +499,8 @@ namespace elena_lang
    constexpr ref_t INV_ARG12_2            = 0x0000002Au;
 
    // predefined debug module sections
-   constexpr ref_t DEBUG_LINEINFO_ID      = -1;
-   constexpr ref_t DEBUG_STRINGS_ID       = -2;
+   constexpr ref_t DEBUG_LINEINFO_ID      = (ref_t)-1;
+   constexpr ref_t DEBUG_STRINGS_ID       = (ref_t)-2;
 
    // === ELENA Error codes ===
    constexpr auto errNotImplemented = -3;

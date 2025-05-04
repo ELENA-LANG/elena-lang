@@ -157,9 +157,9 @@ class Calendar
 
 public program()
 {
-   var calender := Calendar.new(console.write("ENTER THE YEAR:").readLine().toInt());
+   var calender := Calendar.new(Console.write("ENTER THE YEAR:").readLine().toInt());
     
-   calender.printTo(console);
+   calender.printTo(Console);
 
-   console.readChar()
+   Console.readChar()
 }

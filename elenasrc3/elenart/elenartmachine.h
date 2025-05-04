@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Machine declaration
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENARTMACHINE_H
@@ -41,7 +41,7 @@ namespace elena_lang
       void Exit(int exitCode);
 
    public:
-      void startSTA(SystemEnv* env, void* entry);
+      void startApp(SystemEnv* env, void* entry);
       void startThread(SystemEnv* env, void* entryPoint, int index);
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);

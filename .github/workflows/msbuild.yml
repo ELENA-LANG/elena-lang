@@ -10,6 +10,7 @@ on:
     branches: [ "master" ]
   pull_request:
     branches: [ "master" ]
+  workflow_dispatch: # Put here!!
 
 env:
   # Path to the solution file relative to the root of the project.
@@ -20,10 +21,7 @@ env:
   # https://docs.github.com/actions/learn-github-actions/managing-complex-workflows#using-a-build-matrix
   BUILD_CONFIGURATION: Release
 
-  BUILD_TAG: 6.6.1
-
-permissions:
-  contents: read
+permissions: write-all
 
 jobs:
   build:
@@ -41,10 +39,16 @@ jobs:
       uses: microsoft/setup-msbuild@v2
 
     - name: Setup Nuget
-      uses: Nuget/setup-nuget@v1.0.5
+      uses: Nuget/setup-nuget@v2
 
     - name: Restore nuget packages
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
+ 
+    - name: Set version
+      shell: bash
+      run: |
+        VER=$(cat VERSION)
+        echo "VERSION=$VER" >> $GITHUB_ENV
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -54,7 +58,7 @@ jobs:
 
     - name: Generate Data
       shell: cmd
-      run: build\rebuild_data60_${{matrix.platform}}.bat
+      run: scripts\rebuild_data60_${{matrix.platform}}.bat
 
     - name: Run Tests
       shell: cmd
@@ -62,14 +66,19 @@ jobs:
 
     - name: Compile Lib
       shell: cmd
-      run: build\rebuild_lib60_${{matrix.platform}}.bat
+      run: scripts\rebuild_lib60_${{matrix.platform}}.bat
 
-    - name: Prepare Artifact
+    - name: Prepare Release
       shell: cmd
-      run: build\create_package_${{matrix.platform}}.bat 
-
-    - name: Upload artifact
-      uses: actions/upload-artifact@v4
+      run: scripts\create_package_${{matrix.platform}}.bat 
+        
+    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-${{ env.VERSION }}.zip
+          
+    - name: Upload Release
+      uses: softprops/action-gh-release@v2
       with:
-        name: elena-lang-${{matrix.platform}}-${{ env.BUILD_TAG }}
-        path: build\${{matrix.platform}}
+        tag_name: v${{ env.VERSION }}
+        draft: false
+        prerelease: true
+        files: |
+          ./build/*.zip

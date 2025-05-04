@@ -92,7 +92,7 @@ namespace elena_lang
 
       void forEachForward(void* arg, void(* feedback)(void* arg, ustr_t key, ustr_t value)) override;
 
-      void addSource(ustr_t ns, path_t path, ustr_t target, ustr_t hints);
+      void addSource(ustr_t ns, path_t path, ustr_t target, ustr_t hints, bool singleFileMode);
 
       bool loadConfigByName(path_t configPath, ustr_t name, bool markAsLoaded);
 
@@ -122,12 +122,34 @@ namespace elena_lang
       FileEncoding            _encoding;
 
    public:
-      XmlProjectBase::Paths   paths;
+      struct ProjectSpec
+      {
+         path_t path;
+         path_t basePath;
+         ustr_t profile;
+
+         ProjectSpec()
+            : path(nullptr), basePath(nullptr), profile(nullptr)
+         {
+
+         }
+         virtual ~ProjectSpec()
+         {
+            freepath(path);
+            freepath(basePath);
+            freeUStr(profile);
+         }
+
+      };
+
+      typedef List<ProjectSpec*, freeobj>    ProjectSpecs;
+
+      ProjectSpecs  projectSpecs;
 
       bool load(path_t path);
 
       ProjectCollection()
-         : paths(nullptr)
+         : projectSpecs(nullptr)
       {
          _encoding = FileEncoding::UTF8;
       }

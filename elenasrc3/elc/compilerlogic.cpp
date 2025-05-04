@@ -42,7 +42,7 @@ bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 207;
+constexpr auto OperationLength = 215;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -75,6 +75,9 @@ constexpr Op Operations[OperationLength] =
    {
       NAME_OPERATOR_ID, BuildKey::DeclOp, V_GETTER, 0, 0, V_STRING
    },
+   {
+      INDEX_OPERATOR_ID, BuildKey::ProjectInfoOp, V_PROJECT_VAR, V_STRING, 0, V_FLAG
+   },   
    {
       REFERENCE_OPERATOR_ID, BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING
    },
@@ -569,7 +572,31 @@ constexpr Op Operations[OperationLength] =
       SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_ELEMENT, V_INT32, 0
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_UINT8, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_ELEMENT, V_UINT8, 0
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT8, 0, V_ELEMENT
+   },
+   {
+      SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_ELEMENT, V_INT8, 0
+   },
+   {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_UINT8ARRAY, 0, 0, V_INT32
    },
    {
       LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_INT16ARRAY, 0, 0, V_INT32
@@ -777,7 +804,9 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
       default:
       {
          ref_t dummy = 0;
-         return validateClassAttribute(attribute, dummy, visibility);
+         bool externalOp = false;
+         if (validateClassAttribute(attribute, dummy, visibility, externalOp))
+            return !externalOp;
       }
    }
 
@@ -807,6 +836,9 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
       case V_THREADVAR:
          symbolKind = SymbolKind::ThreadVar;
          break;
+      case V_EXTERN:
+         symbolKind = SymbolKind::ExternVar;
+         break;
       case 0:
          // ignore idle
          break;
@@ -817,7 +849,7 @@ bool CompilerLogic :: validateSymbolAttribute(ref_t attribute, Visibility& visib
    return true;
 }
 
-bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility)
+bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility, bool& externalOne)
 {
    switch (attribute) {
       case V_PUBLIC:
@@ -871,6 +903,9 @@ bool CompilerLogic :: validateClassAttribute(ref_t attribute, ref_t& flags, Visi
       case V_PACKED_STRUCT:
          flags |= elPacked | elStructureRole;
          break;
+      case V_EXTERN:
+         externalOne = true;
+         break;
       case 0:
          // ignore idle
          break;
@@ -914,11 +949,12 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_READONLY:
          attrs.isReadonly = true;
          break;
-      case V_OVERRIDE:
-         attrs.overrideMode = true;
-         break;
       case V_PRIVATE:
          attrs.privateOne = true;
+         break;
+      case V_AUTO:
+         attrs.typeInfo = { V_AUTO };
+         attrs.isAuto = true;
          break;
       default:
          return false;
@@ -1354,6 +1390,13 @@ bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
 {
    return test(info.header.flags, elStructureRole)
       && !test(info.header.flags, elDynamicRole);
+}
+
+bool CompilerLogic :: isNumericData(ClassInfo& info)
+{
+   int dataMask = info.header.flags & elDebugMask;
+
+   return dataMask == elDebugDWORD || dataMask == elDebugQWORD || dataMask == elDebugFLOAT64;
 }
 
 bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
@@ -1831,6 +1874,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 2;
          break;
       case V_INT8ARRAY:
+      case V_UINT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
@@ -1880,10 +1924,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
 
 SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 {
-   SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole) };
+   SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole), false };
 
    if (isEmbeddableStruct(info)) {
       sizeInfo.size = info.size;
+      sizeInfo.numeric = isNumericData(info);
 
       return sizeInfo;
    }
@@ -1926,6 +1971,9 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
    if (isEmbeddableStruct(info) && structOne) {
       if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
          return V_INT8ARRAY;
+
+      if (isCompatible(scope, { V_UINT8 }, { elementRef }, true) && info.size == 1)
+         return V_UINT8ARRAY;
 
       if (isCompatible(scope, { V_INT16 }, { elementRef }, true) && info.size == 2)
          return V_INT16ARRAY;
@@ -2905,7 +2953,7 @@ ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& s
       String<char, 5> tmp;
       tmp.copy(pattern + argLenPos + 1, i - argLenPos - 3);
 
-      if(argumentLen != tmp.toInt())
+      if(argumentLen != tmp.toUInt())
          return 0;
    }
    else return 0;

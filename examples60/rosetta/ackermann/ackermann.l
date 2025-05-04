@@ -20,11 +20,11 @@ ackermann(m,n)
    };
     
    m =>
-      0 { ^n + 1 }
-      ! {
+      0 : { ^n + 1 }
+      ! : {
          n => 
-            0 { ^ackermann(m - 1,1) }
-            ! { ^ackermann(m - 1,ackermann(m,n-1)) }
+            0 : { ^ackermann(m - 1,1) }
+            ! : { ^ackermann(m - 1,ackermann(m,n-1)) }
          }
 }
 
@@ -34,9 +34,9 @@ public program()
    {
       for(int j := 0; j <= 5; j += 1)
       {
-         console.printLine("A(",i,",",j,")=",ackermann(i,j))
+         Console.printLine("A(",i,",",j,")=",ackermann(i,j))
       }
    };
 
-   console.readChar()
+   Console.readChar()
 }

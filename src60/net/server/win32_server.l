@@ -66,18 +66,18 @@ public sealed class EventBasedTcpServer
 
    private readClients()
    {
-      int counter := _clients.Length;
-      for (int i := 0; i < counter; i += 1) {
-         TcpClient client := _clients[i];
-
-         NetworkStream stream := client.stream();
-         if (stream.isDataAvailable) {
-            byte buffer[BUFFER_SIZE];
-            int bytesRead := stream.read(buffer, BUFFER_SIZE);
-
-            OnReceived?.(client,buffer,bytesRead)
-         }
-      }
+//      int counter := _clients.Length;
+//      for (int i := 0; i < counter; i += 1) {
+//         TcpClient client := _clients[i];
+//
+//         NetworkStream stream := client.stream();
+//         if (stream.isDataAvailable) {
+//            byte buffer[BUFFER_SIZE];
+//            int bytesRead := stream.read(buffer, BUFFER_SIZE);
+//
+//            OnReceived?.(client,buffer,bytesRead)
+//         }
+//      }
    }
 
    private proceed()
@@ -102,15 +102,15 @@ public sealed class EventBasedTcpServer
 
    broadcast(byte[] buffer, int length)
    {
-      int counter := _clients.Length;
-        
-      for(int i := 0; i < counter; i += 1)
-      {
-         TcpClient client := _clients[i];
-         auto stream := client.stream();
-            
-         stream.write(buffer, length)
-      }
+//      int counter := _clients.Length;
+//        
+//      for(int i := 0; i < counter; i += 1)
+//      {
+//         TcpClient client := _clients[i];
+//         auto stream := client.stream();
+//            
+//         stream.write(buffer, length)
+//      }
    }
     
    close()

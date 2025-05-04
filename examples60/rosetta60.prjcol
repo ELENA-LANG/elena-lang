@@ -1,0 +1,60 @@
+<configuration>
+  <collection>
+    <project base_path="rosetta\accumulator">accumulator.l</project>
+    <project base_path="rosetta\ackermann">ackermann.l</project>
+    <project base_path="rosetta\addfield">addfield.l</project>
+    <project base_path="rosetta\amb">amb.l</project>
+    <project base_path="rosetta\anagram">anagram.l</project>
+    <project base_path="rosetta\anonymrec">anonymrec.l</project>
+    <project base_path="rosetta\aplusb">aplusb.l</project>
+    <project base_path="rosetta\applycallback">applycallback.l</project>
+    <project base_path="rosetta\arithmeticint">arithmeticint.l</project>
+    <project base_path="rosetta\arithmeval">arithmeval.l</project>
+    <project base_path="rosetta\arithmmean">arithmmean.l</project>
+    <project base_path="rosetta\arrayconcat">arrayconcat.l</project>
+    <project base_path="rosetta\arraymode">arraymode.l</project>
+    <project base_path="rosetta\arrays">arrays.l</project>
+    <project base_path="rosetta\associativearrays">associativearrays.l</project>
+    <project base_path="rosetta\bestshuffle">bestshuffle.l</project>
+    <project base_path="rosetta\binary">binary.l</project>
+    <project base_path="rosetta\bitwise">bitwise.l</project>
+    <project base_path="rosetta\brackets">brackets.l</project>
+    <project base_path="rosetta\bullscows">bullscows.l</project>
+    <project base_path="rosetta\caesar">caesar.l</project>
+    <project base_path="rosetta\calendar">calendar.l</project>
+    <project base_path="rosetta\charmatch">charmatch.l</project>
+    <project base_path="rosetta\combinations">combinations.l</project>
+    <project base_path="rosetta\complist">complist.l</project>
+    <project base_path="rosetta\doors">doors.l</project>
+    <project base_path="rosetta\dynamic_var">dynamic_var.l</project>
+    <project base_path="rosetta\evolutionary">evolutionary.l</project>
+    <project base_path="rosetta\firstclass">firstclass.l</project>
+    <project base_path="rosetta\gameoflife">gameoflife.prj</project>
+    <project base_path="rosetta\knutalg">knutalg.l</project>
+    <project base_path="rosetta\loop_multiple_arrays">loopma.l</project>
+    <project base_path="rosetta\manboy">manboy.l</project>
+    <project base_path="rosetta\median">median.l</project>
+    <project base_path="rosetta\ninetynine">ninetynine.l</project>
+    <project base_path="rosetta\reverse_words_in_string">reverse_words.l</project>
+    <project>rosetta\simple_windowed_app\simple_windowed_app.prj</project>
+    <project base_path="rosetta\smavg">smavg.l</project>
+    <project base_path="rosetta\string_append">string_append.l</project>
+    <project base_path="rosetta\string_case">string_case.l</project>
+    <project base_path="rosetta\string_comparison">string_comparision.l</project>
+    <project base_path="rosetta\string_concatenation">string_concatenation.l</project>
+    <project base_path="rosetta\string_interpolation">string_interpolation.l</project>
+    <project base_path="rosetta\string_matching">string_matching.l</project>
+    <project base_path="rosetta\string_prepend">string_prepend.l</project>
+    <project base_path="rosetta\tokenizer">tokenizer.l</project>
+    <project base_path="rosetta\toppergroup">toppergroup.l</project>
+    <project base_path="rosetta\treeview">treeview.l</project>
+    <project base_path="rosetta\trigonometric">trigonometric.l</project>
+    <project base_path="rosetta\truncprime">truncprime.l</project>
+    <project base_path="rosetta\twelvestats">twelvestats.l</project>
+    <project base_path="rosetta\twentyfour">twentyfour.l</project>
+    <project base_path="rosetta\wireworld">wireworld.l</project>
+    <project base_path="rosetta\ycombinator">ycombinator.l</project>
+    <project base_path="rosetta\zeckendorf_arithm">zeckendorf_arithm.l</project>
+    <project base_path="rosetta\zhangsuen">zhangsuen.l</project>
+  </collection>
+</configuration>

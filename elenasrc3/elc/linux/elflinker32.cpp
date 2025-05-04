@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class body
 //		Supported platforms: Linux 32
-//                                              (C)2021, by Aleksey Rakov
+//                                              (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elflinker32.h"
@@ -38,6 +38,14 @@ void Elf32Linker :: writeELFHeader(ElfExecutableImage& image, FileWriter* file, 
    header.e_ident[EI_CLASS] = ELFCLASS32;
    header.e_ident[EI_DATA] = ELFDATA2LSB;
    header.e_ident[EI_VERSION] = EV_CURRENT;
+   switch (image.platformType) {
+      case PlatformType::Linux_x86:
+         header.e_ident[EI_OSABI] = ELFOSABI_LINUX;
+         break;
+      default:
+         assert(false); // !! should not be here
+         break;
+   }
 
    header.e_type = ET_EXEC;
    header.e_machine = getMachine();
@@ -113,16 +121,30 @@ void Elf32Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
 
    // Dynamic
    pos_t dynamicOffset = image.addressMap.dictionary.get(elfDynamicOffset);
-   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicVAddress);
    pos_t dynamicSize = image.addressMap.dictionary.get(elfDynamicSize);
+   pos_t dynamicVAddress = image.addressMap.dictionary.get(elfDynamicVAddress);
 
    ph_header.p_type = PT_DYNAMIC;
    ph_header.p_offset = dynamicOffset;
+
    ph_header.p_paddr = ph_header.p_vaddr = image.addressMap.imageBase + dynamicVAddress;
    ph_header.p_filesz = ph_header.p_memsz = align(dynamicSize, 8);
    ph_header.p_flags = PF_R + PF_W;
    ph_header.p_align = 8;
    file->write((char*)&ph_header, ELF_PH_SIZE);
+
+   // TLS
+   if (image.withTLS) {
+      pos_t tlsSize = image.addressMap.dictionary.get(elfTLSSize);
+
+      ph_header.p_type = PT_TLS;
+      ph_header.p_offset = offset;
+      ph_header.p_paddr = ph_header.p_vaddr = image.addressMap.imageBase + image.addressMap.tls;
+      ph_header.p_memsz = ph_header.p_filesz = tlsSize;
+      ph_header.p_flags = PF_R;
+      ph_header.p_align = 4;
+      file->write((char*)&ph_header, ELF_PH_SIZE);
+   }
 }
 
 void Elf32Linker :: writeInterpreter(FileWriter* file)

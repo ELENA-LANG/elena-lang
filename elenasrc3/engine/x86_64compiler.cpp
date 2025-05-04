@@ -45,7 +45,7 @@ inline void x86_64FreeStack(int args, MemoryWriter* code)
    if (args < 0x80) {
       code->writeByte(0x48);
       code->writeWord(0xC483);
-      code->writeByte(args << 3);
+      code->writeByte((char)(args << 3));
    }
    else {
       code->writeByte(0x48);
@@ -171,12 +171,12 @@ void X86_64JITCompiler :: prepare(
    JITCompiler64::prepare(loader, imageProvider, helper, &lh, _settings, virtualMode);
 }
 
-void X86_64JITCompiler :: writeImm9(MemoryWriter* writer, int value, int type)
+void X86_64JITCompiler :: writeImm9(MemoryWriter* writer, int, int)
 {
    throw InternalError(errNotImplemented);
 }
 
-void X86_64JITCompiler :: writeImm12(MemoryWriter* writer, int value, int type)
+void X86_64JITCompiler :: writeImm12(MemoryWriter* writer, int, int)
 {
    throw InternalError(errNotImplemented);
 }

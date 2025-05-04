@@ -47,7 +47,7 @@ void WinNtLinker :: writeExecutableHeader(WinNtExecutableImage& image, FileWrite
    header.PointerToSymbolTable = 0;
    header.NumberOfSymbols = 0;
    header.Machine = image.machine;
-   header.SizeOfOptionalHeader = image.optionalHeaderSize;
+   header.SizeOfOptionalHeader = (WORD)image.optionalHeaderSize;
    executable.write(&header, IMAGE_SIZEOF_FILE_HEADER);
 }
 
@@ -188,7 +188,7 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    image.headerSize += IMAGE_SIZEOF_SECTION_HEADER * image.imageSections.headers.count();
 }
 
-LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType uiType, path_t exeExtension)
+LinkResult WinNtLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, PlatformType uiType, path_t exeExtension)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true); // !! temporally by default the debug mode is on
 

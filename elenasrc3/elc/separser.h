@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Script Engine Parser class declaration.
 //
-//                                              (C)2023, by Aleksey Rakov
+//                                              (C)2023-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SEPARSER_H
@@ -25,11 +25,14 @@ namespace elena_lang
       void* (*_InterpretFile)(const char* path, int encoding, bool autoDetect);
       size_t(*_GetStatus)(char* error, size_t maxLength);
       void(*_Release)(void* tape);
+      void(*_ClearStack)();
 
    public:
       bool setOption(ustr_t option, path_t projectPath);
 
       void parse(path_t filePath, SyntaxTree& tree);
+
+      void clearStack();
 
       ScriptParser();
    };

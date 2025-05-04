@@ -11,11 +11,21 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../../engine -I../../../common
-CFLAGS = -Wall -std=c++20 -m64
 RESINC = 
 LIBDIR = 
 LIB = 
+
+ifeq ($(OS),Windows_NT)
+
+CFLAGS = -Wall -std=c++20 -m64 -municode
+LDFLAGS = -m64 -static-libgcc -static-libstdc++
+
+else
+
+CFLAGS = -Wall -std=c++20 -m64
 LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
+
+endif
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O3

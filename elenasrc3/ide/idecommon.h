@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE common classes header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECOMMON_H
@@ -9,6 +9,7 @@
 
 #include "elena.h"
 #include "guieditor.h"
+//#include "ldbg_common.h"
 
 namespace elena_lang
 {
@@ -37,6 +38,8 @@ namespace elena_lang
    constexpr auto LINUX_X86_64_KEY                    = "Linux_AMD64";
    constexpr auto LINUX_PPC64le_KEY                   = "Linux_PPC64le";
    constexpr auto LINUX_ARM64_KEY                     = "Linux_ARM64";
+
+   constexpr auto FREEBSD_X86_64_KEY                  = "FreeBSD_AMD64";
 
    constexpr auto ERROR_RUN_NEED_TARGET               = 0x0001;
    constexpr auto ERROR_DEBUG_FILE_NOT_FOUND_COMPILE  = 0x0002;
@@ -244,8 +247,13 @@ namespace elena_lang
       virtual void debugThread() = 0;
    };
 
-   // --- DebugProcessException ---
-   struct DebugProcessException
+   struct StartUpSettings
+   {
+      bool withExplicitConsole;
+      bool includeAppPath2Paths;  // applicable only for Windows
+   };
+
+   struct ExceptionInfo
    {
       int   code;
       addr_t address;
@@ -256,7 +264,7 @@ namespace elena_lang
    {
    public:
       virtual bool startThread(DebugControllerBase* controller) = 0;
-      virtual bool startProgram(path_t exePath, path_t cmdLine, bool withExplicitConsole) = 0;
+      virtual bool startProgram(path_t exePath, path_t cmdLine, path_t appPath, StartUpSettings& startUpSettings) = 0;
 
       virtual void activate() = 0;
       virtual void run() = 0;
@@ -266,7 +274,7 @@ namespace elena_lang
 
       virtual void setStepMode() = 0;
 
-      virtual DebugProcessException* Exception() = 0;
+      virtual ExceptionInfo* Exception() = 0;
       virtual void resetException() = 0;
 
       virtual void initEvents() = 0;
@@ -287,7 +295,7 @@ namespace elena_lang
       virtual addr_t getBaseAddress() = 0;
       virtual void* getState() = 0;
 
-      virtual addr_t getMemoryPtr(addr_t address) = 0;
+      //virtual addr_t getMemoryPtr(addr_t address) = 0;
 
       virtual addr_t getStackItem(int index, disp_t offset = 0) = 0;
       virtual addr_t getStackItemAddress(disp_t disp) = 0;
@@ -342,6 +350,7 @@ namespace elena_lang
    struct GUISettinngs
    {
       bool withTabAboverscore;
+      bool withLargeToolbar;
    };
 
    // --- GUIFactory ---

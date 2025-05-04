@@ -1002,10 +1002,23 @@ inline %034h
 
 end
 
+// ; dfree
+inline % 35h
+
+  sldi    r16, r14, 3
+
+  addi    r16, r16, 8     // ; rounding to 10h
+  srdi    r16, r16, 4
+  sldi    r16, r16, 4
+
+  add     r1, r1,  r16   // ; allocate stack
+
+end
+
 // ; fiadd
 inline %070h
 
-  lfd     f18, 0(r3) 
+  lfiwax  f18, r3
   fcfid   f18, f18
   lfd     f17, 0(r15)
   fadd    f17, f17, f18  
@@ -1016,7 +1029,7 @@ end
 // ; fsub
 inline %071h
 
-  lfd     f18, 0(r3) 
+  lfiwax  f18, r3
   fcfid   f18, f18
   lfd     f17, 0(r15)
   fsub    f17, f18, f17
@@ -1024,10 +1037,10 @@ inline %071h
 
 end
 
-// ; fmul
+// ; fimul
 inline %072h
 
-  lfd     f18, 0(r3) 
+  lfiwax  f18, r3
   fcfid   f18, f18
   lfd     f17, 0(r15)
   fmul    f17, f17, f18  
@@ -1035,13 +1048,13 @@ inline %072h
 
 end
 
-// ; fdiv
+// ; fidiv
 inline %073h
 
-  lfd     f18, 0(r3) 
+  lfiwax  f18, r3
   fcfid   f18, f18
   lfd     f17, 0(r15)
-  fdiv    f17, f18, f17
+  fdiv    f17, f17, f18
   stfd    f17, 0(r15)
 
 end
@@ -3002,6 +3015,7 @@ inline %1DDh
   lwz     r17, 0(r3)
   lwz     r18, 0(r19)
 
+  andi.   r18, r18, 0FFh
   srd     r18, r18, r17
 
   stb     r17, 0(r19)
@@ -3016,6 +3030,7 @@ inline %2DDh
   lwz     r17, 0(r3)
   lwz     r18, 0(r19)
 
+  andi.   r18, r18, 0FFFFh
   srd     r18, r18, r17
 
   sth     r17, 0(r19)

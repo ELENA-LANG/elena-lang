@@ -21,7 +21,7 @@ namespace elena_lang
    class CallPrivateConstructorDirectly : public MethodScenarioTest
    {
    protected:
-      SyntaxNode findTargetNode() override;
+      SyntaxNode findTargetNode(int scenario) override;
 
       void SetUp() override;
    };

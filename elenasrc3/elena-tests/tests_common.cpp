@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Test Common implementation
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "pch.h"
@@ -392,7 +392,7 @@ void elena_lang::getAppPath(PathString& appPath)
 
 // --- ScenarioTest ---
 
-SyntaxNode ScenarioTest::findTargetNode()
+SyntaxNode ScenarioTest::findTargetNode(int)
 {
    return findClassNode().findChild(SyntaxKey::Method);
 }
@@ -415,35 +415,10 @@ void ScenarioTest::SetUp()
    controlOutputNode = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
-// --- CompileTest ---
-
-void CompileTest :: SetUp()
+void ScenarioTest :: run(ModuleScopeBase* moduleScope, int scenario)
 {
-   SyntaxTreeWriter writer(syntaxTree);
-   writer.appendNode(SyntaxKey::Root);
+   moduleScope->predefined.add("nil", V_NIL);
 
-   declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
-}
-
-// --- MethodScenarioTest ---
-
-void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttributes)
-{
-   // Arrange
-   ModuleScopeBase* moduleScope = env.createModuleScope(true, withAttributes);
-   moduleScope->buildins.superReference = 1;
-   moduleScope->buildins.intReference = intNumberRef;
-   moduleScope->buildins.argArrayTemplateReference = argArrayRef;
-   moduleScope->buildins.constructor_message =
-      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
-         0, FUNCTION_MESSAGE);
-   if (withProtectedConstructor)
-      moduleScope->buildins.protected_constructor_message =
-      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
-         0, FUNCTION_MESSAGE);
-
-   env.setUpTemplateMockup(argArrayRef, 1, genericVargRef);
-   env.setUpTemplateMockup(argArrayRef, 2, targetVargRef);
    Compiler* compiler = env.createCompiler();
 
    BuildTree output;
@@ -457,7 +432,72 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
-   SyntaxNode methodNode = findTargetNode();
+   SyntaxNode methodNode = findTargetNode(scenario);
+   if (methodNode != SyntaxKey::None)
+      methodHelper.compile(writer, methodNode);
+
+   // Assess
+   bool matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
+   EXPECT_TRUE(matched);
+
+   freeobj(compiler);
+   freeobj(moduleScope);
+}
+
+// --- CompileTest ---
+
+void CompileTest :: SetUp()
+{
+   SyntaxTreeWriter writer(syntaxTree);
+   writer.appendNode(SyntaxKey::Root);
+
+   declarationNode = syntaxTree.readRoot().appendChild(SyntaxKey::Idle, 1);
+}
+
+// --- MethodScenarioTest ---
+
+void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttributes, int syntaxScenario, int buildScrenario)
+{
+   // Arrange
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, withAttributes);
+   moduleScope->buildins.superReference = 1;
+   moduleScope->buildins.intReference = intNumberRef;
+
+   if (argArrayTemplateRef != INVALID_REF) {
+      moduleScope->buildins.argArrayTemplateReference = argArrayTemplateRef;
+
+      env.setUpTemplateMockup(argArrayTemplateRef, 1, genericVargRef);
+      env.setUpTemplateMockup(argArrayTemplateRef, 2, targetVargRef);
+   }
+   if (byRefTemplateRef != INVALID_REF) {
+      moduleScope->buildins.wrapperTemplateReference = byRefTemplateRef;
+
+      env.setUpTemplateMockup(byRefTemplateRef, intNumberRef, intByRefRef);
+   }
+
+   moduleScope->buildins.constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
+         0, FUNCTION_MESSAGE);
+   if (withProtectedConstructor)
+      moduleScope->buildins.protected_constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
+         0, FUNCTION_MESSAGE);
+
+   Compiler* compiler = env.createCompiler();
+
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   writer.newNode(BuildKey::Root);
+   Compiler::Namespace nsScope(compiler, moduleScope, TestErrorProcessor::getInstance(), nullptr, nullptr);
+
+   // Act
+   nsScope.declare(declarationNode.firstChild(), true);
+
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   classHelper.load();
+   Compiler::Method methodHelper(classHelper);
+
+   SyntaxNode methodNode = findTargetNode(syntaxScenario);
    if (methodNode == SyntaxKey::Method) {
       methodHelper.compile(writer, methodNode);
    }
@@ -468,8 +508,11 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
       methodHelper.compileConstructor(writer, methodNode, classClassHelper);
    }      
 
+   writer.closeNode();
+
    // Assess
-   bool matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
+   bool matched = BuildTree::compare(getExpectedOutput(output.readRoot().firstChild(), buildScrenario),
+      getExpectedOutput(controlOutputNode, buildScrenario), !checkTargetMessage);
    EXPECT_TRUE(matched);
 
    freeobj(compiler);

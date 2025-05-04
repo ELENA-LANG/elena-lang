@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BCWRITER_H
@@ -18,6 +18,28 @@ namespace elena_lang
    class ByteCodeWriter
    {
    public:
+      struct TryContextInfo
+      {
+         bool      catchMode;
+         int       index;
+         int       retLabel;
+         int       endLabel;
+         int       altLabel;
+         ref_t     ptr;
+         BuildNode catchNode;
+
+         TryContextInfo()
+            : TryContextInfo(false)
+         {
+
+         }
+         TryContextInfo(bool catchMode)
+            : catchMode(catchMode), index(0), retLabel(0), endLabel(0), altLabel(0), ptr(0)
+         {
+
+         }
+      };
+
       struct Scope
       {
          MemoryWriter*     vmt;
@@ -34,6 +56,7 @@ namespace elena_lang
 
       typedef Stack<Pair<int, int>>       LoopLabels;
       typedef CachedList<mssg_t, 0x10>    IndexedMessages;
+      typedef Stack<TryContextInfo>       TryContexts;
 
       struct TapeScope
       {
@@ -46,18 +69,24 @@ namespace elena_lang
          bool        threadFriendly;
 
          LoopLabels  loopLabels;
+         TryContexts tryContexts;
 
          TapeScope(Scope* scope, int reserved, int reservedN, bool classMode, bool threadFriendly)
-            : scope(scope), reserved(reserved), reservedN(reservedN), classMode(classMode), threadFriendly(threadFriendly), loopLabels({})
+            : scope(scope), reserved(reserved), reservedN(reservedN), classMode(classMode), 
+              threadFriendly(threadFriendly), loopLabels({}), tryContexts({})
          {
             
          }
       };
 
-      class BuildTreeOptimizer
+      class BuildTreeTransformerBase
       {
-         BuildTreeTransformer _btTransformer;
+      protected:
+         BuildTreeTransformer _btPatterns;
 
+         virtual bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) = 0;
+
+         bool matchBuildKey(BuildPatterns* matched, BuildPatterns* followers, BuildNode current, BuildNode previous);
          bool matchTriePatterns(BuildNode node);
 
       public:
@@ -65,21 +94,38 @@ namespace elena_lang
 
          void proceed(BuildNode node);
 
-         BuildTreeOptimizer();
+         BuildTreeTransformerBase() = default;
+      };
+
+      class BuildTreeAnalyzer : public BuildTreeTransformerBase
+      {
+         bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) override;
+
+      public:
+         BuildTreeAnalyzer() = default;
+      };
+
+      class BuildTreeOptimizer : public BuildTreeTransformerBase
+      {
+         bool transform(BuildCodeTrieNode matchNode, BuildNode current, BuildPatternArg& args) override;
+
+      public:
+         BuildTreeOptimizer() = default;
       };
 
       typedef void(*Saver)(CommandTape& tape, BuildNode& node, TapeScope& scope);
       typedef bool(*Transformer)(BuildNode lastNode);
 
    private:
-      BuildTreeOptimizer   _buildTreeOptimizer;
+      BuildTreeAnalyzer    _btAnalyzer;
+      BuildTreeOptimizer   _btTransformer;
 
       ByteCodeTransformer  _bcTransformer;      
 
-      const Saver*        _commands;
-      LibraryLoaderBase*  _loader;
+      const Saver*         _commands;
+      LibraryLoaderBase*   _loader;
 
-      bool                _threadFriendly;
+      bool                 _threadFriendly;
 
       pos_t savePath(BuildNode node, Scope& scope, ReferenceMap& paths);
 
@@ -90,6 +136,14 @@ namespace elena_lang
       void endDebugInfo(Scope& scope);
 
       void importTree(CommandTape& tape, BuildNode node, Scope& scope);
+
+      void openTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool virtualMode);
+      void closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo, bool virtualMode,
+         TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
+
+      void includeTryBlocks(CommandTape& tape, TapeScope& tapeScope);
+      void excludeTryBlocks(CommandTape& tape,
+         TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode);
 
       void saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope, 
          ReferenceMap& paths, bool tapeOptMode, bool loopMode = false);
@@ -140,6 +194,7 @@ namespace elena_lang
 
    public:
       void loadBuildTreeRules(MemoryDump* dump);
+      void loadBuildTreeXRules(MemoryDump* dump);
       void loadByteCodeRules(MemoryDump* dump);
 
       void save(BuildTree& tree, SectionScopeBase* moduleScope, int minimalArgList, 

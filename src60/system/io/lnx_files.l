@@ -8,6 +8,10 @@ namespace io
    const int SEEK_CUR = 1;
    const int SEEK_END = 2;
 
+   const int S_IRWXU  = 448;
+   const int S_IRGRP  = 32; 
+   const int S_IXGRP  = 8;
+
    // --- FileStream ---
    public struct FileStream : Stream
    {
@@ -105,22 +109,22 @@ namespace io
    {
       TextReader newReader(path) = TextStreamReader.new(path);
 
-      TextWriter writer(path) = StreamWriter.new(FileStream.openForReWrite(path), UTF8Encoder);
+      TextWriter newWriter(path) = StreamWriter.new(FileStream.openForReWrite(path), UTF8Encoder);
 
-      TextWriter writer(string path, Encoder encoder) = StreamWriter.new(FileStream.openForReWrite(path), encoder);
+      TextWriter newWriter(string path, Encoder encoder) = StreamWriter.new(FileStream.openForReWrite(path), encoder);
 
       TextWriter logger(path) = StreamWriter.new(FileStream.openForAppend(path), UTF8Encoder);
 
-      bool isAvailable(path)
+      bool isAvailable(string path)
       {
-         int ret := extern libc.access(path as::String, F_OK);
+         int ret := extern libc.access(path, F_OK);
             
          ^ ret == 0
       }      
 
-      bool delete(path)
+      bool delete(string path)
       {
-         int ret := extern libc.remove(path as::String);
+         int ret := extern libc.remove(path);
             
          ^ ret == 0
       }
@@ -128,13 +132,28 @@ namespace io
 
    singleton directoryControl
    {
-      bool isAvailable(path)
+      create(string path)
       {
-         string s := path as::String;
-         if:not(s.endingWith("/"))
-            s := s + "/";
+         int ret := extern libc.mkdir(path, S_IRWXU|S_IRGRP|S_IXGRP);
 
-         int ret := extern libc.access(s, F_OK);
+         if(ret != 0)
+            { IOException.new("Cannot create a directory").raise() }
+      }
+
+      bool delete(string path)
+      {
+         int ret := extern libc.rmdir(path);
+
+         ^ ret == 0
+      }
+
+      bool isAvailable(string path)
+      {
+         string s := path;
+         if:not(path.endingWith("/"))
+            s := path + "/";
+
+         int ret := extern libc.access(path, F_OK);
             
          ^ ret == 0
       }      

@@ -24,7 +24,7 @@ namespace elena_lang
 
          JumpInfo()
          {
-            position = -1;
+            position = INVALID_POS;
             offset = 0;
          }
          JumpInfo(pos_t position)

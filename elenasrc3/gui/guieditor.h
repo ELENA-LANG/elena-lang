@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI common editor header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GUIEDITOR_H
@@ -13,30 +13,30 @@
 namespace elena_lang
 {
    // --- ELENA IDE Styles ---
-   constexpr auto SCHEME_COUNT         = 2;
+   constexpr auto SCHEME_COUNT               = 2;
 
-   constexpr auto STYLE_DEFAULT        = 0;
-   constexpr auto STYLE_MARGIN         = 1;
-   constexpr auto STYLE_SELECTION      = 2;
-   constexpr auto STYLE_TRACE_LINE     = 3;
-   constexpr auto STYLE_ERROR_LINE     = 4;
-   constexpr auto STYLE_BREAKPOINT     = 5;
-   constexpr auto STYLE_KEYWORD        = 6;
-   constexpr auto STYLE_OPERATOR       = 7;
-   constexpr auto STYLE_COMMENT        = 8;
-   constexpr auto STYLE_NUMBER         = 9;
-   constexpr auto STYLE_STRING         = 10;
+   constexpr auto STYLE_DEFAULT              = 0;
+   constexpr auto STYLE_MARGIN               = 1;
+   constexpr auto STYLE_SELECTION            = 2;
+   constexpr auto STYLE_TRACE_LINE           = 3;
+   constexpr auto STYLE_ERROR_LINE           = 4;
+   constexpr auto STYLE_BREAKPOINT           = 5;
+   constexpr auto STYLE_KEYWORD              = 6;
+   constexpr auto STYLE_OPERATOR             = 7;
+   constexpr auto STYLE_COMMENT              = 8;
+   constexpr auto STYLE_NUMBER               = 9;
+   constexpr auto STYLE_STRING               = 10;
+   constexpr auto STYLE_HIGHLIGHTED_BRACKET  = 11;
    //#define STYLE_MESSAGE                           6
    //#define STYLE_HINT                              9  // !! not used
    //#define STYLE_TRACE                             12
-   //#define STYLE_HIGHLIGHTED_BRACKET               14
-   constexpr auto STYLE_MAX            = 10;
+   constexpr auto STYLE_MAX                  = 11;
 
    // --- ClipboardBase ----
    class ClipboardBase
    {
    public:
-      virtual bool copyToClipboard(DocumentView* docView) = 0;
+      virtual bool copyToClipboard(DocumentView* docView, bool selectionMode) = 0;
       virtual void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) = 0;
    };
 
@@ -74,6 +74,30 @@ namespace elena_lang
       }
    };
 
+   // --- FontInfo ---
+   struct FontInfo
+   {
+      TextString name;
+      int        size;
+
+      FontInfo(ustr_t name, int size)
+         : name(name), size(size)
+      {
+      }
+      FontInfo(int size)
+         : size(size)
+      {
+      }
+   };
+
+   // --- TextViewSettings ---
+   struct TextViewSettings
+   {
+      EOLMode  eolMode;
+      bool     tabUsing;
+      int      tabSize;
+   };
+
    // --- TextViewBase ---
    class TextViewModelBase
    {
@@ -81,11 +105,15 @@ namespace elena_lang
       DocumentView* _currentView;
 
    public:
-      bool          lineNumbersVisible;
-      bool          highlightSyntax;
-      bool          empty;
-      int           fontSize;
-      int           schemeIndex;
+      TextViewSettings  settings;
+
+      bool              lineNumbersVisible;
+      bool              highlightSyntax;
+      bool              highlightBrackets;
+      bool              empty;
+      FontInfo          fontInfo;
+      int               schemeIndex;
+      int               scrollOffset;
 
       DocumentView* DocView()
       {
@@ -124,14 +152,22 @@ namespace elena_lang
             _currentView->refresh(changeStatus);
       }
 
-      TextViewModelBase()
+      void refreshSettings()
+      {
+         DocumentView::VerticalScrollOffset = scrollOffset;
+         Text::TabSize = settings.tabSize;
+      }
+
+      TextViewModelBase(TextViewSettings settings)
+         : fontInfo(10), settings(settings)
       {
          this->_currentView = nullptr;
          this->lineNumbersVisible = true; // !! temporal hard-coded
          this->empty = true;
-         this->fontSize = 10;
          this->schemeIndex = 0;
-         this->highlightSyntax = false;
+         this->highlightSyntax = true;
+         this->highlightBrackets = true;
+         this->scrollOffset = 1;
       }
    };
 

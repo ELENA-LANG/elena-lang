@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Script Engine Parser class declaration.
 //
-//                                             (C)2023-2024, by Aleksey Rakov
+//                                             (C)2023-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -12,7 +12,7 @@
 
 #include "parser.h"
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
 #include "windows\winsyslibloader.h"
 
@@ -42,7 +42,7 @@ ScriptParser :: ScriptParser()
 {
    _encoding = FileEncoding::UTF8;
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 
    _library = new WinSysLibraryLoader(SCRIPTENGINE_LIB);
 
@@ -50,6 +50,7 @@ ScriptParser :: ScriptParser()
    _InterpretFile = (void* (__cdecl*)(const char*, int, bool))_library->loadFunction("InterpretFileSMLA");
    _GetStatus = (size_t(__cdecl*)(char*, size_t))_library->loadFunction("GetStatusSMLA");
    _Release = (void(__cdecl*)(void*))_library->loadFunction("ReleaseSMLA");
+   _ClearStack = (void(__cdecl*)())_library->loadFunction("ClearStackSMLA");
 
 #else
 
@@ -59,6 +60,7 @@ ScriptParser :: ScriptParser()
    *(void **)(&_InterpretFile) = _library->loadFunction("InterpretFileSMLA");
    *(void **)(&_GetStatus) = _library->loadFunction("GetStatusSMLA");
    *(void **)(&_Release) = _library->loadFunction("ReleaseSMLA");
+   *(void**)(&_ClearStack) = _library->loadFunction("ClearStackSMLA");
 
 #endif
 }
@@ -122,4 +124,9 @@ void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
 
       _Release(tape);
    }
+}
+
+void ScriptParser :: clearStack()
+{
+   _ClearStack();
 }

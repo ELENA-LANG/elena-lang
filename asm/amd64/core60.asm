@@ -739,6 +739,18 @@ inline %34h
   ret
 
 end
+
+// ; dfree
+inline %35h
+
+  lea  rax, [rdx*8]
+  add  eax, 7
+  and  eax, 0FFFFFFF0h
+
+  add  rsp, rax
+
+end
+
 // ; fadd
 inline %070h
 
@@ -2384,6 +2396,7 @@ inline %1DCh
   lea  rdi, [rbp + __arg32_1]
   mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
+  and  eax, 0FFh
   shl  eax, cl
   mov  byte ptr [rdi], al
 
@@ -2395,6 +2408,7 @@ inline %2DCh
   lea  rdi, [rbp + __arg32_1]
   mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
+  and  eax, 0FFFFh
   shl  eax, cl
   mov  word ptr [rdi], ax
 
@@ -2428,6 +2442,7 @@ inline %1DDh
   lea  rdi, [rbp + __arg32_1]
   mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
+  and  eax, 0FFh
   shr  eax, cl
   mov  byte ptr [rdi], al
 
@@ -2439,6 +2454,7 @@ inline %2DDh
   lea  rdi, [rbp + __arg32_1]
   mov  rcx, [r10]
   mov  eax, dword ptr [rdi]
+  and  eax, 0FFFFh
   shr  eax, cl
   mov  word ptr [rdi], ax
 
@@ -2636,6 +2652,7 @@ inline %1E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
+  and  eax, 0FFh
   cdq
   idiv cl
   mov  byte ptr [rbp+__arg32_1], al
@@ -2647,6 +2664,7 @@ inline %2E4h
 
   mov  rcx, [r10]
   mov  rax, [rbp+__arg32_1]
+  and  eax, 0FFFFh
   cdq
   idiv cx
   mov  word ptr [rbp+__arg32_1], ax

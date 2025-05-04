@@ -18,5 +18,5 @@ public program()
 
     // Enumerate
     map.forEach::
-        (tuple){ console.printLine(tuple.Item1," : ",tuple.Item2) }
+        (tuple){ Console.printLine(tuple.Item1," : ",tuple.Item2) }
 }

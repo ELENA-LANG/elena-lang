@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI SDI Window Header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINSDI_H
@@ -130,6 +130,8 @@ namespace elena_lang
       virtual bool onCommand(int command) { return false; }
       virtual void onNotify(NMHDR* hdr);
       bool onSetCursor() override;
+
+      virtual void onDropFiles(HDROP hDrop) {}
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 

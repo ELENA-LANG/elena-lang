@@ -193,6 +193,9 @@ ELENA byte codes (or ecodes)
                               has to immediately follow close opcode;
                               has to be paired with attach opcode
 
+   dfree                    - sp -= index ; reserve and fill with zeros; 
+                              new sp value is aligned to 2 in x86-64 mode
+
    free i                   - sp -= i ; release the stack; 
                               new sp value is aligned to 2 in x86-64 mode
 
@@ -390,6 +393,14 @@ ELENA byte codes (or ecodes)
    fimul                    - double:[acc] *= int:[sp[0]]
 
    fisub                    - double:[acc] -= int:[sp[0]]
+ 
+   fladd                    - double:[acc] += long:[sp[0]]
+ 
+   fldiv                    - double:[acc] /= long:[sp[0]]
+ 
+   flmul                    - double:[acc] *= long:[sp[0]]
+
+   flsub                    - double:[acc] -= long:[sp[0]]
  
    fmul dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] *= temp;

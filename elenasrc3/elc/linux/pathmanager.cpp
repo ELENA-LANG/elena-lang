@@ -11,6 +11,12 @@
 #include "pathmanager.h"
 #include <unistd.h>
 
+#if defined(__FreeBSD__) 
+
+#include <sys/sysctl.h>
+
+#endif
+
 using namespace elena_lang;
 
 // --- PathHelper ---
@@ -19,8 +25,21 @@ PathHelper::PathMap* PathHelper::pathCache = nullptr;
 
 inline bool loadAppPath(char* appPath, size_t len)
 {
+#if defined(__FreeBSD__) 
+
+   int mib[4];
+   mib[0] = CTL_KERN;
+   mib[1] = KERN_PROC;
+   mib[2] = KERN_PROC_PATHNAME;
+   mib[3] = -1;
+   sysctl(mib, 4, appPath, &len, nullptr, 0);
+
+#elif defined(__unix__)
+
    if (readlink("/proc/self/exe", appPath, len) == -1)
       return false;
+
+#endif
 
    size_t index = path_t(appPath).findLast(PATH_SEPARATOR);
    if (index != NOTFOUND_POS)

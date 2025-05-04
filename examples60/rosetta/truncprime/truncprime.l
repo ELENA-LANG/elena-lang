@@ -33,7 +33,7 @@ extension mathOp
         
         while (n != 0)
         {
-            ifnot (n.isPrime())
+            if:not (n.isPrime())
                 { ^ false };
             
             n := n / 10
@@ -52,7 +52,7 @@ extension mathOp
             
         while (n != 0)
         {
-            ifnot (n.isPrime())
+            if:not (n.isPrime())
                 { ^ false };
 
             tens := tens / 10;
@@ -87,8 +87,8 @@ public program()
         n := n - 1
     };
 
-    console.printLine("Largest truncable left is ",max_lt);   
-    console.printLine("Largest truncable right is ",max_rt);
+    Console.printLine("Largest truncable left is ",max_lt);   
+    Console.printLine("Largest truncable right is ",max_rt);
     
-    console.readChar()
+    Console.readChar()
 }

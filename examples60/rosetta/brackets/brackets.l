@@ -47,8 +47,8 @@ public program()
    {
       var str := randomBrackets(len);
 
-      console.printLine("""",str,"""",str.isBalanced ? " is balanced" : " is not balanced")
+      Console.printLine("""",str,"""",str.isBalanced ? " is balanced" : " is not balanced")
    };
 
-   console.readChar()
+   Console.readChar()
 }

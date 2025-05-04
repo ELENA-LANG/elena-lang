@@ -1,12 +1,13 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: Static dialog implementations
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
 
 #include "windialogs.h"
+#include "windows/wincanvas.h"
 
 #include "Resource.h"
 #include "eng/messages.h"
@@ -113,6 +114,40 @@ bool FileDialog :: saveFile(path_t ext, PathString& path)
    }
    else return false;
 }
+
+// --- FontDialog ---
+
+FontDialog :: FontDialog(HINSTANCE instance, WindowBase* owner)
+{
+   _owner = owner;
+
+   // Initialize CHOOSEFONT
+   ZeroMemory(&_lf, sizeof(_lf));
+   ZeroMemory(&_cf, sizeof(_cf));
+   _cf.lStructSize = sizeof(_cf);
+   _cf.hwndOwner = owner->handle();
+   _cf.lpLogFont = &_lf;
+   _cf.Flags = CF_SCREENFONTS;
+}
+
+bool FontDialog :: selectFont(FontInfo& fontInfo)
+{
+   HDC hdc = ::GetDC(_owner->handle());
+
+   _lf.lfHeight = Font::fromSize(hdc, fontInfo.size);
+   StrUtil::move(_lf.lfFaceName, fontInfo.name.str(), fontInfo.name.length() + 1);
+
+   _cf.Flags = CF_SCREENFONTS | CF_INITTOLOGFONTSTRUCT | CF_TTONLY;
+   if (ChooseFont(&_cf) == TRUE) {
+      fontInfo.size = Font::toSize(hdc, _lf.lfHeight);
+      fontInfo.name.copy(_lf.lfFaceName);
+
+      return true;
+   }
+   return false;
+}
+
+// --- MessageDialog ---
 
 MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str param)
 {
@@ -444,17 +479,11 @@ void EditorSettings::onCreate()
    setComboBoxIndex(IDC_EDITOR_COLORSCHEME, _model->schemeIndex);
 
    setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
+   setCheckState(IDC_EDITOR_HIGHLIGHBRACKETFLAG, _model->highlightBrackets);
    setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumbersVisible);
 
-   // populate font size combo box
-   String<wchar_t, 4> size;
-   for (int i = 8; i < 25; i++) {
-      size.appendInt(i);
-      addComboBoxItem(IDC_EDITOR_FONTSIZE, size.str());
-      size.clear();
-   }
-
-   setComboBoxIndex(IDC_EDITOR_FONTSIZE, _model->fontSize - 8);
+   setIntText(IDC_EDITOR_TABSIZE, _model->settings.tabSize);
+   setIntText(IDC_EDITOR_SCROLLOFFSET, _model->scrollOffset);
 }
 
 void EditorSettings :: onOK()
@@ -463,16 +492,25 @@ void EditorSettings :: onOK()
    if (index != -1)
       _model->schemeIndex = index;
 
-   int fontSize = getComboBoxIndex(IDC_EDITOR_COLORSCHEME) + 8;
-   if (_model->fontSize != fontSize) {
-      _model->fontSize = fontSize;
-   }
-
    bool value = getCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG);
    if (_model->highlightSyntax != value)
       _model->setHighlightMode(value);
 
+   value = getCheckState(IDC_EDITOR_HIGHLIGHBRACKETFLAG);
+   if (_model->highlightBrackets != value)
+      _model->highlightBrackets = value;
+
    _model->lineNumbersVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
+
+   int intValue = getIntText(IDC_EDITOR_TABSIZE);
+   if (intValue > 0 && intValue < 100)
+      _model->settings.tabSize = intValue;
+
+   intValue = getIntText(IDC_EDITOR_SCROLLOFFSET);
+   if (intValue > 0 && intValue < 100)
+      _model->scrollOffset = intValue;
+
+   _model->refreshSettings();
 }
 
 bool EditorSettings :: showModal()
@@ -490,9 +528,12 @@ IDESettings :: IDESettings(HINSTANCE instance, WindowBase* owner, IDEModel* mode
 
 void IDESettings :: onCreate()
 {
+   loadFontList();
+
    setCheckState(IDC_IDE_REMEMBERPATH, _model->rememberLastPath);
    setCheckState(IDC_IDE_REMEMBERPROJECT, _model->rememberLastProject);
    setCheckState(IDC_IDE_PERSIST_CONSOLE, _model->projectModel.withPersistentConsole);
+   setCheckState(IDC_IDE_INCLUDE_APPPATH, _model->projectModel.includeAppPath2PathsTemporally);
    setCheckState(IDC_IDE_APPMAXIMIZED, _model->appMaximized);
    setCheckState(IDC_IDE_AUTORECOMPILE, _model->projectModel.autoRecompile);
    setCheckState(IDC_IDE_AUTOSAVE, _model->autoSave);
@@ -504,6 +545,7 @@ void IDESettings :: onOK()
    _model->rememberLastProject = getCheckState(IDC_IDE_REMEMBERPROJECT);
    _model->appMaximized = getCheckState(IDC_IDE_APPMAXIMIZED);
    _model->projectModel.withPersistentConsole = getCheckState(IDC_IDE_PERSIST_CONSOLE);
+   _model->projectModel.includeAppPath2PathsTemporally = getCheckState(IDC_IDE_INCLUDE_APPPATH);
    _model->projectModel.autoRecompile = getCheckState(IDC_IDE_AUTORECOMPILE);
    _model->autoSave = getCheckState(IDC_IDE_AUTOSAVE);
 }
@@ -511,6 +553,15 @@ void IDESettings :: onOK()
 bool IDESettings :: showModal()
 {
    return show() == IDOK;
+}
+
+void IDESettings :: loadFontList()
+{
+   //LOGFONT lf;
+   //memset(&lf, 0, sizeof(lf));
+   //lf.lfCharSet = DEFAULT_CHARSET;
+
+   //EnumFontFamiliesEx(screenDC, &lf, GetFontsCallback, NULL, 0)
 }
 
 // --- DebuggerSettings ---

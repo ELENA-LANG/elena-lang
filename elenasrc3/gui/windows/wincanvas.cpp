@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Win32 Common header
 //      Win32 graphic tools body
-//                                              (C)2021, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincanvas.h"
@@ -15,19 +15,28 @@ Font ::  Font()
    fontID = nullptr;
    characterSet = /*IDE_CHARSET_DEFAULT*/0;
    size = 8;
-   fontName = nullptr;
    bold = italic = false;
 }
 
 Font :: Font(wstr_t faceName, int characterSet, int size, bool bold, bool italic)
 {
-   this->fontName = faceName;
+   this->fontName.copy(faceName);
    this->characterSet = characterSet;
    this->size = size;
    this->bold = bold;
    this->italic = italic;
 
    this->fontID = nullptr;
+}
+
+int Font :: toSize(HDC handler, int lfHeight)
+{
+   return MulDiv(-lfHeight, 72, GetDeviceCaps(handler, LOGPIXELSY));
+}
+
+int Font :: fromSize(HDC handler, int size)
+{
+   return -MulDiv(size, ::GetDeviceCaps(handler, LOGPIXELSY), 72);
 }
 
 void Font :: create(HDC handler)
@@ -41,7 +50,7 @@ void Font :: create(HDC handler)
    lf.lfCharSet = (BYTE)(characterSet);
 
    size_t length = LF_FACESIZE;
-   StrConvertor::copy(lf.lfFaceName, fontName, fontName.length(), length);
+   StrConvertor::copy(lf.lfFaceName, fontName.str(), fontName.length(), length);
    lf.lfFaceName[length] = 0;
 
    fontID = ::CreateFontIndirect(&lf);
@@ -62,7 +71,7 @@ Font* FontFactory :: createFont(wstr_t fontName, int size, int characterSet, boo
    for (auto it = _cache.start(); !it.eof(); ++it) {
       Font* font = *it;
 
-      if (font->fontName.compare(fontName) && font->size == size &&
+      if ((*font->fontName).compare(fontName) && font->size == size &&
          font->characterSet == characterSet && font->bold == bold && font->italic == italic)
       {
          return font;

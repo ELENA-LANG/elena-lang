@@ -125,7 +125,7 @@ namespace elena_lang
    class VariadicRuntimeSingleDispatch : public MethodScenarioTest
    {
    protected:
-      SyntaxNode findTargetNode() override;
+      SyntaxNode findTargetNode(int scenario) override;
 
       void SetUp() override;
    };
@@ -152,7 +152,21 @@ namespace elena_lang
       void SetUp() override;
 
    public:
-      void runTest(bool withVariadic);
+      void runTest(bool withVariadic, int scenario = 0);
+   };
+
+   class ArrayOpTest : public ScenarioTest
+   {
+   protected:
+      ref_t      intNumberRef;
+      ref_t      arrayTemplateRef;
+      ref_t      elementRef;
+      ref_t      arrayRef;
+
+      void SetUp() override;
+
+   public:
+      void runTest(int scenario = 0);
    };
 
    class CallMethodWithoutTarget : public MethodCallTest
@@ -190,7 +204,7 @@ namespace elena_lang
       void SetUp() override;
 
    public:
-      void runTest();
+      void runTest(int scenario = 0);
    };
 
    class Lambda_CallingPrivateMethod : public LambdaTest
@@ -208,7 +222,7 @@ namespace elena_lang
       void SetUp() override;
 
    public:
-      void runTest(bool exceptionExpected = false);
+      void runTest(bool exceptionExpected = false, int scenario = 0);
    };
 
    class NillableIntAssigning : public IntOperation
@@ -222,6 +236,18 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+
+   class ByteArrayOperation : public ArrayOpTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class ByteArrayOperation2 : public ArrayOpTest
+   {
+   protected:
+      void SetUp() override;
+   }; 
 }
 
 #endif

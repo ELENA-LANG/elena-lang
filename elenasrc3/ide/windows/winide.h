@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Header File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINIDE_H
@@ -75,7 +75,7 @@ namespace elena_lang
    public:
       static bool isAvailable();
 
-      bool copyToClipboard(DocumentView* docView) override;
+      bool copyToClipboard(DocumentView* docView, bool selectionMode) override;
       void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) override;
 
       Clipboard(ControlBase* owner);
@@ -127,6 +127,7 @@ namespace elena_lang
       EditorSettings    editorSettingsDialog;
       IDESettings       ideSettingsDialog;
       DebuggerSettings  debuggerSettingsDialog;
+      FontDialog        fontSettingsDialog;
 
       ViewFactoryBase*  _viewFactory;
 
@@ -185,7 +186,6 @@ namespace elena_lang
 
       void onProjectChange(bool empty);
       void onProjectRefresh(bool empty);
-      void onProjectViewSel(int index);
 
       void onColorSchemeChange();
 
@@ -202,6 +202,7 @@ namespace elena_lang
       void newFile();
       void openFile();
       void saveFile();
+      void saveFileAs();
       void saveAll();
       void saveProject();
       void closeFile();
@@ -243,6 +244,8 @@ namespace elena_lang
       void onDebuggerStart();
       void onDebuggerSourceNotFound();
       void onDocumentUpdate(DocumentChangeStatus& changeStatus);
+
+      void onDropFiles(HDROP hDrop) override;
 
    public:
       void populate(size_t counter, GUIControlBase** children) override;

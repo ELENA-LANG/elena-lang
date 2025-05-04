@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //             Linux Shared Library Declaration
-//                                             (C)2022-2024, by Aleksey Rakov
+//                                             (C)2022-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENART_H_INCLUDED
@@ -24,7 +24,14 @@
 
 extern "C"
 {
+#ifdef __FreeBSD__
+   // temporal solution to work on FreeBSD
+   DLL_PUBLIC char** environ = nullptr;
+   DLL_PUBLIC const char* __progname = "elena-prog";
+#endif
+
    DLL_PUBLIC void InitializeSTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
+   DLL_PUBLIC void InitializeMTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
    DLL_PUBLIC void* CollectGCLA(void* roots, size_t size);
    DLL_PUBLIC size_t LoadMessageNameLA(size_t message, char* buffer, size_t length);
    DLL_PUBLIC size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length);

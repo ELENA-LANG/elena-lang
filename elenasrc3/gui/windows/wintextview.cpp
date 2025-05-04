@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Body File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wintextview.h"
@@ -70,10 +70,10 @@ void TextViewWindow :: registerTextViewWindow(HINSTANCE hInstance, wstr_t classN
    WindowBase::registerClass(hInstance, WindowBase::WndProc, className, nullptr, nullptr, nullptr, CS_HREDRAW | CS_VREDRAW | CS_DBLCLKS);
 }
 
-HWND TextViewWindow :: create(HINSTANCE instance, wstr_t className, ControlBase* owner)
+HWND TextViewWindow :: create(HINSTANCE instance, wstr_t className, ControlBase* owner, int dwExStyles)
 {
    _handle = ::CreateWindowEx(
-      WS_EX_CLIENTEDGE, className, _title,
+      dwExStyles | WS_EX_CLIENTEDGE, className, _title,
       WS_CHILD | WS_VSCROLL | WS_HSCROLL | WS_CLIPCHILDREN | WS_EX_RTLREADING,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, owner->handle(), nullptr, instance, (LPVOID)this);
 
@@ -496,7 +496,7 @@ void TextViewWindow :: onMouseWheel(short wheelDelta, bool kbCtrl)
    DocumentChangeStatus status = {};
    auto docView = _model->DocView();
 
-   int offset = (wheelDelta > 0) ? -1 : 1;
+   int offset = (wheelDelta > 0) ? -_model->scrollOffset : _model->scrollOffset;
    if (kbCtrl) {
       offset *= docView->getSize().y;
    }

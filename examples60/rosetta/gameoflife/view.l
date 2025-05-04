@@ -5,7 +5,7 @@ public extension presenterOp : Space
 {
    print()
    {
-      console.setCursorPosition(0, 0);
+      Console.setCursorPosition(0, 0);
      
       int columns := self.Columns;
       int rows := self.Rows;
@@ -21,7 +21,7 @@ public extension presenterOp : Space
             line.write((cell == 0).iif(" ","o"));
          };
          
-         console.writeLine(line.Value)
+         Console.writeLine(line.Value)
       }
    }
 }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  Linux ELENA System Routines
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -50,18 +50,48 @@ uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSiz
 
 uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
 {
+#if defined(__FreeBSD__)
+
+   void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+#else
+
    void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+#endif
+
+   //assert(r == allocPtr);
 
    return !r ? 0 : (uintptr_t)r;
 }
 
 uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
 {
+#if defined(__FreeBSD__)
+
+   void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+#else
+
    void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
+#endif
+
+   //assert(r == allocPtr);
+
    return !r ? 0 : (uintptr_t)allocPtr;
+}
+
+void* SystemRoutineProvider::CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
+{
+}
+
+void SystemRoutineProvider::ExitThread(int exitCode)
+{
 }
 
 void SystemRoutineProvider :: RaiseError(int code)
@@ -79,6 +109,28 @@ void SystemRoutineProvider :: Exit(int exitCode)
 static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
    ucontext_t* u = (ucontext_t*)unused;
+
+#if defined(__FreeBSD__)
+
+   switch (sig) {
+   case SIGFPE:
+      u->uc_mcontext.mc_edx = u->uc_mcontext.mc_eip;
+      u->uc_mcontext.mc_eax = ELENA_ERR_DIVIDE_BY_ZERO;
+      u->uc_mcontext.mc_eip = CriticalHandler;
+      break;
+   case SIGSEGV:
+      u->uc_mcontext.mc_edx = u->uc_mcontext.mc_eip;
+      u->uc_mcontext.mc_eax = ELENA_ERR_ACCESS_VIOLATION;
+      u->uc_mcontext.mc_eip = CriticalHandler;
+      break;
+   default:
+      u->uc_mcontext.mc_edx = u->uc_mcontext.mc_eip;
+      u->uc_mcontext.mc_eax = ELENA_ERR_CRITICAL;
+      u->uc_mcontext.mc_eip = CriticalHandler;
+      break;
+   }
+
+#else
 
    switch (sig) {
       case SIGFPE:
@@ -98,6 +150,7 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
          break;
    }
 
+#endif
 }
 
 #elif __x86_64__
@@ -106,23 +159,47 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
    ucontext_t* u = (ucontext_t*)unused;
 
+#if defined(__FreeBSD__)
+
    switch (sig) {
-   case SIGFPE:
-      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
-      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_DIVIDE_BY_ZERO;
-      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
-      break;
-   case SIGSEGV:
-      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
-      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_ACCESS_VIOLATION;
-      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
-      break;
-   default:
-      u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
-      u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_CRITICAL;
-      u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
-      break;
+      case SIGFPE:
+         u->uc_mcontext.mc_rdx = u->uc_mcontext.mc_rip;
+         u->uc_mcontext.mc_rax = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.mc_rip = CriticalHandler;
+         break;
+      case SIGSEGV:
+         u->uc_mcontext.mc_rdx = u->uc_mcontext.mc_rip;
+         u->uc_mcontext.mc_rax = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.mc_rip = CriticalHandler;
+         break;
+      default:
+         u->uc_mcontext.mc_rdx = u->uc_mcontext.mc_rip;
+         u->uc_mcontext.mc_rax = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.mc_rip = CriticalHandler;
+         break;
    }
+
+#else
+
+   switch (sig) {
+      case SIGFPE:
+         u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+         u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+      case SIGSEGV:
+         u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+         u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+      default:
+         u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
+         u->uc_mcontext.gregs[REG_RAX] = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.gregs[REG_RIP] = CriticalHandler;
+         break;
+   }
+
+#endif
 }
 
 #elif __aarch64__
@@ -197,4 +274,28 @@ long long SystemRoutineProvider :: GenerateSeed()
    long long seed = (long int)t;
 
    return seed;
+}
+
+void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
+{
+}
+
+void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
+{
+}
+
+void SystemRoutineProvider::GCSignalStop(void* handle)
+{
+}
+
+void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
+{
+}
+
+void SystemRoutineProvider::GCWaitForSignal(void* handle)
+{
+}
+
+void SystemRoutineProvider::GCSignalClear(void* handle)
+{
 }

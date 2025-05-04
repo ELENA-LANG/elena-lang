@@ -38,7 +38,7 @@ entry()
       {
          startUpEvents.handlingError(err);
 
-         console.writeLine(err);
+         Console.writeLine(err);
 
          extern ExitLA(-1);
       }

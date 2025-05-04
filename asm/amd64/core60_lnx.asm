@@ -144,9 +144,20 @@ end
 inline %4CFh
 
   finit
-  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], rsp
+
+#if _FREEBSD
+
+  push 0 
+  mov  rax, rdi
+
+#elif _LNX
 
   mov  rax, rsp
+
+#endif
+
+  mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], rsp
+
   call %PREPARE
 
   xor  rbp, rbp

@@ -1,13 +1,18 @@
 import system'text'parsing;
 import system'net;
 
+public class HttpException : Exception
+{
+   constructor new(string s)
+      <= super new(s);
+}
+
 internal static RegEx UrlRegEx = new RegEx("^(ht|f)tp(s?)\:\/\/[0-9a-zA-Z]((\.|-+)?[0-9a-zA-Z])*(:(0-9)*)?(\/?)([a-zA-Z0-9\-\.\?\,\'\/\\\+&%\$#_=]*)?$");
 
 public sealed class Uri
 {
    string _scheme;
    string _host;
-   string _ip; 
    string _port;
    string _path;
    string _query;
@@ -22,9 +27,6 @@ public sealed class Uri
 
    get string Host()
       = _host;
-
-   get string IP()
-      = _query;
 
    get string PortValue()
       = _port ?? String.MinValue;
@@ -68,7 +70,9 @@ public sealed class Uri
          _host := url.Substring(index, portIndex - index);
          _port := url.Substring(portIndex + 1, end - portIndex - 1);
       }
-      else _host := url.Substring(index, end - index);
+      else { 
+         _host := url.Substring(index, end - index);
+      };
 
       index := end + 1;
       
@@ -85,9 +89,6 @@ public sealed class Uri
       if (index < len) {
          _query := url.Substring(index, len - index);
       };
-
-      hostent h := hostent.load(_host);
-      _ip := h.IP;
 
       ^ true;
    }

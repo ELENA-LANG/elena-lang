@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine File class declarations.
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FILES_H
@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-#ifdef _MSC_VER
+   #if (defined(_WIN32) || defined(__WIN32__))
 
    // --- FileEncoding ---
    enum class FileEncoding { Ansi = 0, Raw = -1, UTF8 = -2, UTF16 = -3, UTF32 = -4 };

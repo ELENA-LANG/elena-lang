@@ -1,4 +1,4 @@
-public singleton lscript
+public singleton LScript
 {
    eval(string script)
       = lscriptEngine.buildScript(script).compile();
@@ -35,3 +35,5 @@ public singleton lscript
       ^ s()
    }
 }
+
+public lscript = LScript; // !! obsolte

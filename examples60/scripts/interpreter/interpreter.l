@@ -58,7 +58,7 @@ class TapeAssembler
                 Expression.Variable("ptr"),
                 Expression.MessageCall(
                     new Message("readChar[1]"),
-                    Expression.Constant(console)
+                    Expression.Constant(Console)
                 )
             )
         )
@@ -69,7 +69,7 @@ class TapeAssembler
         _tape.append(
             Expression.MessageCall(
                  new Message("write[2]"),
-                 Expression.Constant(console), 
+                 Expression.Constant(Console), 
                  Expression.MessageCall(
                    new Message("at[2]"),
                    Expression.Variable("tape"),
@@ -115,7 +115,7 @@ class TapeAssembler
                         new Message("add[2]"),
                         Expression.MessageCall(                                    
                             new Message("toInt[2]"),                           
-                            Expression.Constant(intConvertExt),
+                            Expression.Constant(IntConvertExt),
                             Expression.MessageCall(
                                 new Message("at[2]"),
                                 Expression.Variable("tape"),
@@ -142,7 +142,7 @@ class TapeAssembler
                         new Message("subtract[2]"),
                         Expression.MessageCall(                                    
                             new Message("toInt[2]"),                           
-                            Expression.Constant(intConvertExt),
+                            Expression.Constant(IntConvertExt),
                             Expression.MessageCall(
                                 new Message("at[2]"),
                                 Expression.Variable("tape"),
@@ -243,14 +243,14 @@ public solution0()
                         "ptr",
                         Expression.Constant(0)
                       ),
-                      // tape[ptr] := console.readChar()
+                      // tape[ptr] := Console.readChar()
                       Expression.MessageCall(
                         new Message("setAt[3]"),
                         Expression.Variable("tape"),
                         Expression.Variable("ptr"),
                         Expression.MessageCall(
                            new Message("readChar[1]"),
-                           Expression.Constant(console)
+                           Expression.Constant(Console)
                         )
                       ),
                       // while (tape[ptr]!=0) {
@@ -265,24 +265,24 @@ public solution0()
                              Expression.Constant($0)
                           ),                             
                           Expression.CodeBlock(                          
-                              // console.write(tape[ptr])  
+                              // Console.write(tape[ptr])  
                               Expression.MessageCall(
                                  new Message("write[2]"),
-                                 Expression.Constant(console), 
+                                 Expression.Constant(Console), 
                                  Expression.MessageCall(
                                    new Message("at[2]"),
                                    Expression.Variable("tape"),
                                    Expression.Variable("ptr")
                                  )
                               ),                                 
-                              // tape[ptr] := console readChar
+                              // tape[ptr] := Console readChar
                               Expression.MessageCall(
                                 new Message("setAt[3]"),
                                 Expression.Variable("tape"),
                                 Expression.Variable("ptr"), 
                                 Expression.MessageCall(
                                     new Message("readChar[1]"),
-                                    Expression.Constant(console)
+                                    Expression.Constant(Console)
                                 )
                               )
                           )
@@ -342,7 +342,7 @@ public solution4(string path)
 
     var bfProgram := TapeCGenerator.load(bfAssemblyProgram).compile();
 
-    console.writeLine(bfProgram)
+    Console.writeLine(bfProgram)
 }
 
 public program()
@@ -351,7 +351,7 @@ public program()
 
    if (program_arguments.Length == 1)
    { 
-      console.write("Please provide the path to the file to interpret"); AbortException.raise() 
+      Console.write("Please provide the path to the file to interpret"); AbortException.raise() 
    }
    else if (program_arguments.Length == 3) {
       solution := program_arguments[2].toInt();
@@ -360,19 +360,19 @@ public program()
    string path := program_arguments[1];
 
    solution =>
-      0 {
+      0 : {
          solution0()
       }
-      1 {
+      1 : {
          solution1()
       }
-      2 {
+      2 : {
          solution2()
       }
-      3 {
+      3 : {
          solution3(path)
       }
-      ! {
+      ! : {
          solution4(path)
       };
 }

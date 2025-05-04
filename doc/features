@@ -89,7 +89,7 @@ public program()
  String interpolation
 ----------------------------------------------------------------------------
 
-  var s := var s := $"a_{ 1 }_b_{ 2 }_c";
+  var s := $"a_{ 1 }_b_{ 2 }_c";
 
 ----------------------------------------------------------------------------
  user-defined literals
@@ -216,3 +216,141 @@ public program()
       console.printLine(variable);
    }
 }
+
+----------------------------------------------------------------------------
+ Auto fields 
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+ Private fields 
+----------------------------------------------------------------------------
+
+----------------------------------------------------------------------------
+ Module info
+----------------------------------------------------------------------------
+
+import extensions;
+import extensions'runtime;
+
+public program()
+{
+  var o := new MyObject();
+  Console.printLine("MyObject info:", o.getFullPackageInfo());
+}
+
+----------------------------------------------------------------------------
+ Async program entry
+----------------------------------------------------------------------------
+
+import system'threading;
+import extensions'threading;
+
+async public program()
+{
+   Task t1 := Task.run({ Console.printLineConcurrent("Enjoy") });
+   Task t2 := Task.run({ Console.printLineConcurrent("Rosetta") });
+   Task t3 := Task.run({ Console.printLineConcurrent("Code") });
+
+   :await Task.whenAllArgs(t1, t2, t3);
+}
+
+----------------------------------------------------------------------------
+ Evaluating a script without compilation
+----------------------------------------------------------------------------
+
+import extensions;
+import extensions'scripting;
+   
+public program()
+{
+    Console.print("Evaluating:");
+
+    var t := new ScriptEngine()
+            .loadScript("[[ #grammar build ]]")
+            .loadPath("~\scripts\grammar60.es")
+            .loadPath("~\scripts\lscript60.es");
+            
+    var o := t.buildScript("import extensions; public program() { Console.printLine(""Hello "", ""World"") }");
+    
+    o.eval();
+}
+
+----------------------------------------------------------------------------
+ Using a callback function declared in ELENA
+----------------------------------------------------------------------------
+
+const int CTRL_C_EVENT = 0;
+const int CTRL_BREAK_EVENT = 1;
+
+extern int myFunction(uint fdwCtrlType)
+{
+   fdwCtrlType =>
+      CTRL_C_EVENT : { Console.writeLine("Ctrl-C event"); ^ -1 }
+      CTRL_BREAK_EVENT : { Console.writeLine("Ctrl-Break event"); ^ 0 };
+      
+   ^ 0;      
+}
+
+public program()
+{
+   extern KERNEL32.SetConsoleCtrlHandler(&myFunction, -1);
+   
+   Console.writeLine("The Control Handler is installed.");
+   Console.writeLine("-- Now try pressing Ctrl+C or Ctrl+Break");
+   
+   while(true) {}
+}
+
+----------------------------------------------------------------------------
+ Enumerations
+----------------------------------------------------------------------------
+
+public const struct Color : enum<int>(Red ::= 1,Green ::= 2,Blue ::= 3);
+
+public program()
+{
+    Color color := Color.Red; 
+}
+
+----------------------------------------------------------------------------
+ Type short-cuts
+----------------------------------------------------------------------------
+
+use extern KERNEL32;
+use system'text'StringBuilder; 
+
+public program()
+{
+   StringBuilder sb := new StringBuilder(); // allow to use the class proper name without importing the whole namespace
+
+   pointer commandLinePtr := KERNEL32.GetCommandLineW(); // skipping extern attribute
+}
+
+----------------------------------------------------------------------------
+ Providing an external library name
+----------------------------------------------------------------------------
+
+use extern libcxx : importing("libc++");
+
+public program()
+{
+   libcxx.do();
+}
+
+----------------------------------------------------------------------------
+ Conditional compilation
+----------------------------------------------------------------------------
+
+#if (__project["_Win32"])
+
+class Win32A
+{
+}
+
+#elif (__project["_Win64"])
+
+class Win64A
+{
+}
+
+#endif

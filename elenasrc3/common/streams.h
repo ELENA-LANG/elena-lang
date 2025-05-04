@@ -309,6 +309,10 @@ namespace elena_lang
       {
          return write(&value, 2);
       }
+      bool writeShort(short value)
+      {
+         return write(&value, 2);
+      }
       bool writeByte(unsigned char value)
       {
          return write(&value, 1);

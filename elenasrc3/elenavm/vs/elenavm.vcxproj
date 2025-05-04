@@ -100,7 +100,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;_DEBUG;RT_EXPORTS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\..\lruntime;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -119,7 +119,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>WIN32;NDEBUG;RT_EXPORTS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\..\lruntime;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -138,7 +138,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;RT_EXPORTS;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\..\lruntime;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -157,7 +157,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>NDEBUG;RT_EXPORTS;_USRDLL;_CRT_SECURE_NO_WARNINGS;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\common;..\..\engine;..\..\lruntime;..\windows;..;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
@@ -171,12 +171,7 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <ClInclude Include="..\..\common\config.h" />
     <ClInclude Include="..\..\common\dump.h" />
-    <ClInclude Include="..\..\common\files.h" />
-    <ClInclude Include="..\..\common\paths.h" />
-    <ClInclude Include="..\..\common\ustring.h" />
-    <ClInclude Include="..\..\common\xmltree.h" />
     <ClInclude Include="..\..\engine\bytecode.h" />
     <ClInclude Include="..\..\engine\codescope.h" />
     <ClInclude Include="..\..\engine\core.h" />
@@ -189,7 +184,6 @@
     <ClInclude Include="..\..\engine\projectbase.h" />
     <ClInclude Include="..\..\engine\rtmanager.h" />
     <ClInclude Include="..\..\engine\section.h" />
-    <ClInclude Include="..\..\engine\windows\pehelper.h" />
     <ClInclude Include="..\..\engine\windows\presenter.h" />
     <ClInclude Include="..\..\engine\x86compiler.h" />
     <ClInclude Include="..\..\engine\x86helper.h" />
@@ -202,12 +196,6 @@
     <ClInclude Include="resource.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="..\..\common\config.cpp" />
-    <ClCompile Include="..\..\common\dump.cpp" />
-    <ClCompile Include="..\..\common\files.cpp" />
-    <ClCompile Include="..\..\common\paths.cpp" />
-    <ClCompile Include="..\..\common\ustring.cpp" />
-    <ClCompile Include="..\..\common\xmltree.cpp" />
     <ClCompile Include="..\..\engine\amd64\amd64routines.cpp">
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">false</ExcludedFromBuild>
       <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|x64'">false</ExcludedFromBuild>
@@ -224,7 +212,6 @@
     <ClCompile Include="..\..\engine\module.cpp" />
     <ClCompile Include="..\..\engine\rtmanager.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
-    <ClCompile Include="..\..\engine\windows\pehelper.cpp" />
     <ClCompile Include="..\..\engine\windows\presenter.cpp" />
     <ClCompile Include="..\..\engine\windows\winroutines.cpp" />
     <ClCompile Include="..\..\engine\x86compiler.cpp">
@@ -254,6 +241,14 @@
   </ItemGroup>
   <ItemGroup>
     <ResourceCompile Include="elenavm.rc" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\..\common\vs\lcommon.vcxproj">
+      <Project>{c7728dfb-e3b8-4ce0-bef5-f8369e6761ef}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\lruntime\vs\lruntime.vcxproj">
+      <Project>{49f68d87-f240-4e39-922d-219ee1601240}</Project>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

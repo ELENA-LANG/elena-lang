@@ -58,7 +58,7 @@ public sealed const struct UnsafePointer
 
    constructor(object obj)
    {
-      if (obj is::pointer) {
+      if (obj is:pointer) {
          _pointer := cast UnsafePointer(weak obj)
       }
       else self.assignPtr(obj);
@@ -148,6 +148,60 @@ public sealed const struct UnsafePointer
    copyTo(byte[] target, int index, int len) : external(system'core_routines'__ptrCopySubTo);
 }
 
+// --- UnsafePointer<T> ---
+
+public sealed const struct UnsafePointer<T>
+{
+   embeddable __ptr _pointer;
+
+   private assignPtr(object obj) : external(system'core_routines'__assignPtr); 
+   private loadData(T target, int size) : external(system'core_routines'__ptrCopyTo);
+
+   constructor()
+      = default;
+
+   constructor(UnsafePointer<T> ptr)
+   {
+      _pointer := ptr
+   }
+
+   constructor(T obj)
+   {
+      self.assignPtr(obj);
+   }
+
+   get T Value()
+   {
+#if ($size class T > 0)
+
+      T value := default;
+      
+      self.loadData(value, $size class T);
+      
+#elif ($size class T <= 0)
+      T value := nil;
+
+      NotSupportedException.raise("Operation is not supported");
+
+#endif
+
+      ^ value
+   }
+
+   copyTo(T value, int size)
+   {
+#if ($size class T >= 0)
+
+      NotSupportedException.raise("Operation is not supported");
+      
+#elif ($size class T < 0)
+      
+      self.loadData(value, size);
+
+#endif      
+   }
+}
+
 // --- CallStack ---
 
 public sealed class CallStack
@@ -191,5 +245,5 @@ public sealed class CallStack
       };
 
       ^ callStackText
-   }
+   }   
 }

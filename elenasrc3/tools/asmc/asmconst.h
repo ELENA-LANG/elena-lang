@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x000B
+   #define ASM_REVISION_NUMBER               0x0010
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -55,7 +55,7 @@ namespace elena_lang
    constexpr auto QWORD_ARGUMENT2            = "__arg64_2";
 
    constexpr auto ASM_GREETING               = "ELENA Assembler Compiler %d.%d.%d (C)2011-2025 by Alexei Rakov\n";
-   constexpr auto ASM_HELP                   = "asmc-cli [-amd64 | -x86] <file> <output path>\n";
+   constexpr auto ASM_HELP                   = "asmc-cli [-amd64 | -x86] [-windows | -linux] <file> <output path> [<output_name>]\n";
 
    constexpr auto ASM_COMPILE_X86            = "X86 Assembler : compiling %s\n";
    constexpr auto ASM_COMPILE_X86_64         = "X86-64 Assembler : compiling %s\n";
@@ -65,6 +65,10 @@ namespace elena_lang
    constexpr auto BC_COMPILE_64              = "64bit Byte-code Compiler : compiling %s\n";
    constexpr auto ASM_DONE                   = "Successfully compiled\n";
 
+   constexpr auto ASM_WIN_TARGET_MODE        = "windows";
+   constexpr auto ASM_LNX_TARGET_MODE        = "linux";
+   constexpr auto ASM_FREEBSD_TARGET_MODE    = "freebsd";
+
    constexpr auto ASM_X86_MODE               = "x86";
    constexpr auto ASM_AMD64_MODE             = "amd64";
    constexpr auto ASM_PPC64le_MODE           = "ppc64le";
@@ -72,6 +76,10 @@ namespace elena_lang
    constexpr auto ASM_AARCH64_MODE           = "aarch64";
    constexpr auto BC_32_MODE                 = "bc32";
    constexpr auto BC_64_MODE                 = "bc64";
+
+   constexpr auto ASM_WIN_TARGET             = "_WIN";
+   constexpr auto ASM_LNX_TARGET             = "_LNX";
+   constexpr auto ASM_FREEBSD_TARGET         = "_FREEBSD";
 
    constexpr auto ASM_SYNTAXERROR            = "(%d,%d): Syntax error\n";
    constexpr auto ASM_INVALID_SOURCE         = "(%d,%d): Invalid source operand\n";

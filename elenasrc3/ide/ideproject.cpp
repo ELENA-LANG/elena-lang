@@ -20,6 +20,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
    this->status = status;
 
    this->withPersistentConsole = false;
+   this->includeAppPath2PathsTemporally = false;
    this->autoRecompile = false;
 
    this->empty = true;

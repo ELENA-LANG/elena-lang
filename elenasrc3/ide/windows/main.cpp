@@ -9,7 +9,7 @@
 #include "ideview.h"
 #include "windows/wincommon.h"
 #include "windows/win32controller.h"
-#include "windows/win32debugprocess.h"
+#include "windows/win32debugadapter.h"
 #include "windows/windialogs.h"
 #include "text.h"
 
@@ -58,7 +58,7 @@ bool compareFileModifiedTime(path_t sour, path_t dest)
    return sourceDT > moduleDT;
 }
 
-typedef Win32DebugProcess    DebugProcess;
+typedef Win32DebugAdapter    DebugProcess;
 
 // Forward declarations of functions included in this code module:
 ATOM                MyRegisterClass(HINSTANCE hInstance);
@@ -74,28 +74,32 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    UNREFERENCED_PARAMETER(lpCmdLine);
    UNREFERENCED_PARAMETER(nCmdShow);
 
-   Text::TabSize = 4; // !! temporal
-
    PathHelper       pathHelper;
 
-   GUISettinngs     guiSettings = { true };
+   GUISettinngs     guiSettings = { true, true };
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
-   IDEModel          ideModel;
+   IDEModel          ideModel(textViewSettings);
    Win32Process      vmConsoleProcess(50);
    Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
    IDEController     ideController(&outputProcess, &vmConsoleProcess, &debugProcess, &ideModel,
-                        textViewSettings, CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);
-   IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
+                        CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);
+
+   // NOTE : it must be initialized before factory / controller
+   IDEFactory::initPathSettings(&ideModel);
+
+   ideModel.sourceViewModel.refreshSettings();
 
    PathString configPath(ideModel.projectModel.paths.appPath);
    configPath.combine(_T("ide60.cfg"));
-   ideController.loadConfig(&ideModel, *configPath);
+   ideController.loadConfig(&ideModel, *configPath, guiSettings);
 
    PathString sysConfigPath(ideModel.projectModel.paths.appPath);
    sysConfigPath.combine(_T("elc60.cfg"));
    ideController.loadSystemConfig(&ideModel, *sysConfigPath, TEMPLATE_XPATH, TARGET_XPATH);
+
+   IDEFactory        factory(hInstance, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
    GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess, &vmConsoleProcess);
@@ -105,7 +109,7 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    StartUpEvent startUpEvent(STATUS_NONE);
    int retVal = app->run(ideWindow, ideModel.appMaximized, &startUpEvent);
 
-   ideController.onIDEStop(&ideModel);
+   ideController.onIDEStop(&ideModel, guiSettings);
 
    delete app;
 
