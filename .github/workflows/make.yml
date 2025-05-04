@@ -52,13 +52,3 @@ jobs:
       run: |
         cd scripts/${{ matrix.platform }}
         ./local_create_package.script
-          
-    - name: Upload Release
-      uses: softprops/action-gh-release@v2
-      with:
-        tag_name: v${{ env.BUILD_TAG }}
-        draft: false
-        prerelease: true
-        files: |
-          ./build/*.rpm
-          ./build/*.deb

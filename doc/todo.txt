@@ -9,9 +9,9 @@ In development:
   --------------------------------------
   - #739
   - #743
-  - test build actions : msbuild / make 
+  - test build actions
   --------------------------------------    
-  * support clang in makefile for freebsd
+  * make 
   --------------------------------------
 
   ### EPIC: elena 6.8 ###

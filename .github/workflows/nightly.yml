@@ -50,6 +50,9 @@ jobs:
         VER=$(type VERSION)
         echo "BUILD_TAG=$VER" >> $GITHUB_ENV
 
+    - name: Test output
+      run: echo ${{ env.BUILD_TAG }}
+
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
       # Add additional options to the MSBuild command line here (like platform or verbosity level).
