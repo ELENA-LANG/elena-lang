@@ -204,9 +204,9 @@ net'http'HttpClient</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpResponse">HttpResponse</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpResponse&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>get()
+<CODE>postAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpRequest">HttpRequest</A></SPAN> request)
 </CODE>
 </TD>
 </TR>
@@ -215,11 +215,38 @@ net'http'HttpClient</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpResponse">HttpResponse</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>get(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+<CODE>get()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpResponse">HttpResponse</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>get(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpResponse">HttpResponse</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>post(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpRequest">HttpRequest</A></SPAN> request)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpResponse">HttpResponse</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>post(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpRequest">HttpRequest</A></SPAN> request)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -368,9 +395,39 @@ net'http'HttpHeaders</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'collections'Tuple&lt;system'String,system'String&gt;&gt;</A></SPAN> headers)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>combine(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers1, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers2)
 </CODE>
 </TD>
 </TR>
@@ -385,6 +442,22 @@ net'http'HttpHeaders</LI>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'collections'Tuple&lt;system'String,system'String&gt;&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>List()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -422,6 +495,119 @@ net'http'HttpHeaders</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> key)
 </CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="HttpRequest">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+net'http'</DIV>
+<H2 title="HttpRequest" class="title">HttpRequest</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">HttpRequest</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+net'http'HttpRequest</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_buffer</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_headers</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpRequest">HttpRequest</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> body, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Headers()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>ContentLength()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Content()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -531,6 +717,42 @@ net'http'HttpResponse</LI>
 <TD CLASS="colLast">
 <CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN> stream)
 </CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>StatusText()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>StatusCode()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Headers()</CODE>
 </TD>
 </TR>
 </TABLE>
