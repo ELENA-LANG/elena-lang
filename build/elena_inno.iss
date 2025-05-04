@@ -7,8 +7,8 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{3CAA69D3-0F98-44B1-A73E-E864BA51D5BD}
 AppName=ELENA Programming Language
-AppVersion=6.6.3
-;AppVerName=ELENA Programming Language 6.6.0
+AppVersion=6.7.0
+;AppVerName=ELENA Programming Language 6.7.0
 AppPublisher=Alexey Rakov
 AppPublisherURL=http://github.com/ELENA-LANG/elena-lang
 AppSupportURL=http://github.com/ELENA-LANG/elena-lang
