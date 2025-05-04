@@ -44,11 +44,14 @@ jobs:
     - name: Restore nuget packages
       run: nuget restore ${{env.SOLUTION_FILE_PATH}}
 
-    - name: Set version
-      shell: pwsh
+    - name: Set variables
       run: |
-        VER=$(Get-Content VERSION)
-        echo "BUILD_TAG=$VER" >> $GITHUB_ENV
+        VER=$(type VERSION)
+        echo "VERSION=$VER" >> $GITHUB_ENV
+
+   - name: Show variables
+      run: |
+        echo "${{ env.VERSION }} < VERSION"
 
     - name: Build
       working-directory: ${{env.GITHUB_WORKSPACE}}
@@ -75,10 +78,10 @@ jobs:
     - name: Upload artifact
       uses: actions/upload-artifact@v4
       with:
-        name: elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}
+        name: elena-lang-${{matrix.platform}}-nightly-${{ env.VERSION }}
         path: build\${{matrix.platform}}
 
-    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.BUILD_TAG }}.zip
+    - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.VERSION }}.zip
           
     - name: Upload Release
       uses: softprops/action-gh-release@v2

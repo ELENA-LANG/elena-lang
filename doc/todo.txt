@@ -11,7 +11,7 @@ In development:
   - #743
   - test build actions
   --------------------------------------    
-  * make 
+  * get version in windows
   --------------------------------------
 
   ### EPIC: elena 6.8 ###
