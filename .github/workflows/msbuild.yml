@@ -46,7 +46,7 @@ jobs:
  
     - name: Set version
       run: |
-        VER=$(cat VERSION)
+        VER=$(Get-Content VERSION)
         echo "VERSION=$VER" >> $GITHUB_ENV
 
     - name: Build
