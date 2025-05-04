@@ -1,14 +1,15 @@
 #!/bin/bash
+
 mkdir -p ../../lib60_64
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
-mkdir -p /usr/lib/elena/core/x32/
-mkdir -p /usr/lib/elena/core/amd64/
-mkdir -p /usr/lib/elena/lib60_64
+mkdir -p /usr/local/lib/elena/core/x32/
+mkdir -p /usr/local/lib/elena/core/amd64/
+mkdir -p /usr/local/lib/elena/lib60_64
 
-cp ../../bin/libelenart60_64.so /usr/lib/elena/
-cp ../../bin/libelenasm60_64.so /usr/lib/elena/
+cp ../../bin/libelenart60_64.so /usr/local/lib/elena/
+cp ../../bin/libelenasm60_64.so /usr/local/lib/elena/
 # cp ../bin/libelenavm.so /usr/lib/elena/
 cp ../../bin/elena64-cli /usr/bin/
 
@@ -73,7 +74,7 @@ cp ../../dat/sg/syntax60.dat /usr/share/elena
 
 echo compiling assembly files
 
-../../bin/asm64-cli -amd64 ../../asm/amd64/core60.asm /usr/lib/elena/core/amd64
+../../bin/asm64-cli -amd64 ../../asm/amd64/core60.asm /usr/local/lib/elena/core/amd64
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -83,7 +84,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -amd64 ../../asm/amd64/core60_lnx.asm /usr/lib/elena/core/amd64
+../../bin/asm64-cli -amd64 ../../asm/amd64/core60_lnx.asm /usr/local/lib/elena/core/amd64
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -125,7 +126,7 @@ fi
    echo .
  fi
 
- cp ../../lib60_64/*.nl /usr/lib/elena/lib60_64
- cp ../../lib60_64/*.dnl /usr/lib/elena/lib60_64 
+ cp ../../lib60_64/*.nl /usr/local/lib/elena/lib60_64
+ cp ../../lib60_64/*.dnl /usr/local/lib/elena/lib60_64 
 
 exit 0
