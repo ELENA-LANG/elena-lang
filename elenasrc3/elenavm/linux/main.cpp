@@ -29,11 +29,11 @@ static ELENAVMMachine* machine = nullptr;
 
 #if defined(__FreeBSD__)
 
-#define ROOT_PATH          "/usr/local/lib/elena"
+#define CONFIG_PATH          "/usr/local/lib/elena/elenavm60.config"
 
 #else
 
-#define ROOT_PATH          "/usr/lib/elena"
+#define CONFIG_PATH          "/usr/lib/elena/elenavm60.config"
 
 #endif
 
@@ -125,7 +125,7 @@ public:
 
 void init()
 {
-   machine = new ELENAUnixVMMachine(ROOT_PATH, &Presenter::getInstance(), CURRENT_PLATFORM,
+   machine = new ELENAUnixVMMachine(CONFIG_PATH, &Presenter::getInstance(), CURRENT_PLATFORM,
       VA_ALIGNMENT, { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED }, createJITCompiler);
 }
 
