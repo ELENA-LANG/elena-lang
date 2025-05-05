@@ -22,6 +22,7 @@
 #define DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER    DISABLE_WARNING(4100)
 #define DISABLE_WARNING_UNREFERENCED_FUNCTION            DISABLE_WARNING(4505)
 #define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(26495)
+#define DISABLE_WARNING_UNUSEDVARIABLE                   DISABLE_WARNING(4189)
 // other warnings you want to deactivate...
 
 #elif defined(__GNUC__) || defined(__clang__)
@@ -32,7 +33,8 @@
 
 #define DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER    DISABLE_WARNING(-Wunused-parameter)
 #define DISABLE_WARNING_UNREFERENCED_FUNCTION            DISABLE_WARNING(-Wunused-function)
-#define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(-Wunused-function)
+#define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(-Wunused-variable)
+#define DISABLE_WARNING_UNUSEDVARIABLE                   DISABLE_WARNING(-Wunused-variable)
 // other warnings you want to deactivate... 
 
 #else
@@ -40,6 +42,7 @@
 #define DISABLE_WARNING_POP
 #define DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER
 #define DISABLE_WARNING_UNREFERENCED_FUNCTION
+#define DISABLE_WARNING_UNUSEDVARIABLE
 // other warnings you want to deactivate... 
 
 #endif
