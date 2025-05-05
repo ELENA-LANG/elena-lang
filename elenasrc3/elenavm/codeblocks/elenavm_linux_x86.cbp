@@ -2,13 +2,13 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="elenart" />
+		<Option title="elenavm" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug32">
-				<Option output="../../../bin/elenart60" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../temp/elenart60/" />
+				<Option output="../../../bin/elenavm" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../temp/elenavm/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -23,8 +23,8 @@
 				</Linker>
 			</Target>
 			<Target title="Release32">
-				<Option output="../../../bin/elenart60" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../temp/release/elenart60/" />
+				<Option output="../../../bin/elenavm60" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../temp/release/elenavm60/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -41,8 +41,8 @@
 				</Linker>
 			</Target>
 			<Target title="Debug64">
-				<Option output="../../../bin/elenart60_64" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../temp/elenart60_64/" />
+				<Option output="../../../bin/elenavm60_64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../temp/elenavm60_64/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -58,8 +58,8 @@
 				</Linker>
 			</Target>
 			<Target title="Release64">
-				<Option output="../../../bin/elenart60_64" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../temp/release/elenart60_64/" />
+				<Option output="../../../bin/elenavm60_64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../temp/release/elenavm60_64/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -85,8 +85,8 @@
 		<Unit filename="../../engine/elenamachine.cpp" />
 		<Unit filename="../../engine/elenamachine.h" />
 		<Unit filename="../../engine/linux/lnxroutines.cpp" />
-		<Unit filename="../elenartmachine.cpp" />
-		<Unit filename="../elenartmachine.h" />
+		<Unit filename="../elenavmmachine.cpp" />
+		<Unit filename="../elenavmmachine.h" />
 		<Unit filename="../linux/main.cpp" />
 		<Extensions />
 	</Project>

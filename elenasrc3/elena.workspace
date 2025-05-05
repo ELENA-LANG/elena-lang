@@ -9,5 +9,6 @@
 		<Project filename="elenasm/codeblocks/elenasm_linux_x86.cbp" />
 		<Project filename="ide/codeblocks/elide_gtk.cbp" />
 		<Project filename="tools/og/codeblocks/og_linux_x86.cbp" />
+		<Project filename="elenavm/codeblocks/elenavm_linux_x86.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>

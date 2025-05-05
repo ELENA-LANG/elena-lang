@@ -9,7 +9,10 @@
 #include <unistd.h>
 
 #include "elenavm.h"
+#include "langcommon.h"
 #include "linux/lnxconsts.h"
+#include "linux/presenter.h"
+#include "elenavmmachine.h"
 
 using namespace elena_lang;
 
@@ -27,6 +30,8 @@ static ELENAVMMachine* machine = nullptr;
 
 #if defined(__x86_64__)
 
+#include "x86_64compiler.h"
+
 #if defined(__FreeBSD__)
 
 constexpr auto CURRENT_PLATFORM = PlatformType::FreeBSD_x86_64;
@@ -35,17 +40,23 @@ constexpr auto CURRENT_PLATFORM = PlatformType::FreeBSD_x86_64;
 
 constexpr auto CURRENT_PLATFORM = PlatformType::Linux_x86_64;
 
-#elif
+#endif
 
 #elif defined(__i386__)
+
+#include "x86compiler.h"
 
 constexpr auto CURRENT_PLATFORM = PlatformType::Linux_x86;
 
 #elif defined(__PPC64__)
 
+#include "ppc64compiler.h "
+
 constexpr auto CURRENT_PLATFORM = PlatformType::Linux_PPC64le;
 
 #elif defined(__aarch64__)
+
+#include "arm64compiler.h"
 
 constexpr auto CURRENT_PLATFORM = PlatformType::Linux_ARM64;
 
