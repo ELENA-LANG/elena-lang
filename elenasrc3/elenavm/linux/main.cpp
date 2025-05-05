@@ -13,8 +13,14 @@
 #include "linux/lnxconsts.h"
 #include "linux/presenter.h"
 #include "elenavmmachine.h"
+#include "elenalnxvmachine.h"
 
 using namespace elena_lang;
+
+constexpr auto VA_ALIGNMENT = 0x08;
+constexpr unsigned int DEFAULT_MGSIZE = 344064;
+constexpr unsigned int DEFAULT_YGSIZE = 86016;
+constexpr unsigned int DEFAULT_STACKRESERVED = 0x200000;
 
 static ELENAVMMachine* machine = nullptr;
 
@@ -116,7 +122,7 @@ public:
 
 void init()
 {
-   machine = new ELENAWinVMMachine(ROOT_PATH, &Presenter::getInstance(), CURRENT_PLATFORM,
+   machine = new ELENAUnixVMMachine(ROOT_PATH, &Presenter::getInstance(), CURRENT_PLATFORM,
       VA_ALIGNMENT, { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED }, createJITCompiler);
 }
 
@@ -156,7 +162,7 @@ void printError(int errCode, ustr_t arg)
    }
 }
 
-void InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
+int InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
 #ifdef DEBUG_OUTPUT
    printf("InitializeVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);

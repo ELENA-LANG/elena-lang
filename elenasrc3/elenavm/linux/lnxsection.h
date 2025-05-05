@@ -1,27 +1,22 @@
 //---------------------------------------------------------------------------
-//		E L E N A   P r o j e c t:  ELENA Windows Image Section declaration
+//		E L E N A   P r o j e c t:  ELENA *nix Image Section declaration
 //
-//                                             (C)2022-2024, by Aleksey Rakov
+//                                             (C)2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#ifndef WINSECTION_H
-#define WINSECTION_H
+#ifndef LNXSECTION_H
+#define LNXSECTION_H
 
 #include "elena.h"
-#include <windows.h>
 
 namespace elena_lang
 {
-   // --- WinImageSection ---
-   class WinImageSection : public MemoryBase
+   // --- UnixImageSection ---
+   class UnixImageSection : public MemoryBase
    {
-      pos_t       _size;
-      pos_t       _allocated;
-      pos_t       _used;
-
-      void*       _section;
-
-      SYSTEM_INFO _sysInfo;
+      void*      _code;
+      size_t     _used, _allocated;
+      size_t     _size;
 
       int getProtectedMode(bool writeAccess, bool executeAccess);
 
@@ -42,7 +37,8 @@ namespace elena_lang
 
       void protect(bool writeAccess, bool executeAccess);
 
-      WinImageSection(pos_t size, bool writeAccess, bool executeAccess, pos_t allocated = 0);
+      UnixImageSection(pos_t size, bool writeAccess, bool executeAccess, pos_t allocated = 0);
+      ~UnixImageSection();
    };
 }
 

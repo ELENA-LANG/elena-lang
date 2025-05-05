@@ -19,7 +19,7 @@
 
 extern "C"
 {
-   DLL_PUBLIC void InitializeVMSTLA(elena_lang::SystemEnv* env, void* tape, const char* criricalHandlerReference);
+   DLL_PUBLIC int InitializeVMSTLA(elena_lang::SystemEnv* env, void* tape, const char* criricalHandlerReference);
    DLL_PUBLIC int EvaluateVMLA(void* tape);
    DLL_PUBLIC int PrepareVMLA(const char* configName, const char* ns, const char* path, const char* exceptionHandler);
    DLL_PUBLIC int ExecuteVMLA(const char* target, const char* arg, char* output, size_t maxLength);

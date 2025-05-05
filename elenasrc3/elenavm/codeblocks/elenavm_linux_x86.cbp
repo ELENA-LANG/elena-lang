@@ -87,6 +87,11 @@
 		<Unit filename="../../engine/linux/lnxroutines.cpp" />
 		<Unit filename="../elenavmmachine.cpp" />
 		<Unit filename="../elenavmmachine.h" />
+		<Unit filename="../linux/elenalnxvmachine.cpp" />
+		<Unit filename="../linux/elenalnxvmachine.h" />
+		<Unit filename="../linux/elenavm.h" />
+		<Unit filename="../linux/lnxsection.cpp" />
+		<Unit filename="../linux/lnxsection.h" />
 		<Unit filename="../linux/main.cpp" />
 		<Extensions />
 	</Project>

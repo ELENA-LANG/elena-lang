@@ -1,19 +1,20 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Windows VM Implementation
 //
-//                                             (C)2022-2024, by Aleksey Rakov
+//                                             (C)2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "windows/elenawinvmachine.h"
+#include "elenalnxvmachine.h"
 #include "langcommon.h"
+#include <dlfcn.h>
 
 using namespace elena_lang;
 
 constexpr auto VA_ALIGNMENT = 0x08;
 
-ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
+ELENAUnixVMMachine :: ELENAUnixVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
    int codeAlignment, JITSettings gcSettings,
    JITCompilerBase*(* jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
       : ELENAVMMachine(configPath, presenter, platform, codeAlignment, gcSettings, jitCompilerFactory),
@@ -28,81 +29,81 @@ ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* present
 {
 }
 
-addr_t ELENAWinVMMachine::getDebugEntryPoint()
+addr_t ELENAUnixVMMachine::getDebugEntryPoint()
 {
    throw InternalError(errVMBroken);
 }
 
-addr_t ELENAWinVMMachine::getEntryPoint()
+addr_t ELENAUnixVMMachine::getEntryPoint()
 {
    throw InternalError(errVMBroken);
 }
 
-MemoryBase* ELENAWinVMMachine::getImportSection()
+MemoryBase* ELENAUnixVMMachine::getImportSection()
 {
    throw InternalError(errVMBroken);
 }
 
-MemoryBase* ELENAWinVMMachine :: getMBDataSection()
+MemoryBase* ELENAUnixVMMachine :: getMBDataSection()
 {
    return &_mbdata;
 }
 
-MemoryBase* ELENAWinVMMachine :: getDataSection()
+MemoryBase* ELENAUnixVMMachine :: getDataSection()
 {
    return &_data;
 }
 
-MemoryBase* ELENAWinVMMachine :: getADataSection()
+MemoryBase* ELENAUnixVMMachine :: getADataSection()
 {
    return &_adata;
 }
 
-MemoryBase* ELENAWinVMMachine :: getMDataSection()
+MemoryBase* ELENAUnixVMMachine :: getMDataSection()
 {
    return &_mdata;
 }
 
-MemoryBase* ELENAWinVMMachine :: getRDataSection()
+MemoryBase* ELENAUnixVMMachine :: getRDataSection()
 {
    return &_rdata;
 }
 
-MemoryBase* ELENAWinVMMachine :: getStatSection()
+MemoryBase* ELENAUnixVMMachine :: getStatSection()
 {
    return &_stat;
 }
 
-MemoryBase* ELENAWinVMMachine :: getTargetDebugSection()
+MemoryBase* ELENAUnixVMMachine :: getTargetDebugSection()
 {
    return &_debug;
 }
 
-MemoryBase* ELENAWinVMMachine :: getTextSection()
+MemoryBase* ELENAUnixVMMachine :: getTextSection()
 {
    return &_text;
 }
 
-bool ELENAWinVMMachine :: exportFunction(path_t rootPath, size_t position, path_t dllName, ustr_t funName)
+bool ELENAUnixVMMachine :: exportFunction(path_t rootPath, size_t position, path_t dllName, ustr_t funName)
 {
-   HMODULE handle = ::LoadLibrary(dllName);
-   // if dll is not found, use root path
-   if (handle == nullptr) {
-      PathString dllPath(rootPath);
-      dllPath.combine(dllName);
+   void* handle = dlopen(dllName, RTLD_LAZY);
+   //// if dll is not found, use root path
+   //if (handle == NULL) {
+   //   Path dllPath(rootPath);
+   //   dllPath.combine(dllName);
 
-      handle = ::LoadLibrary(*dllPath);
-   }
+   //   handle = ::LoadLibrary(dllPath);
+   //}
 
    String<char, 200> lpFunName(funName);
-   addr_t address = (addr_t)::GetProcAddress(handle, lpFunName.str());
+   ref_t address = (ref_t)dlsym(handle, funName);
    if (address == 0)
       return false;
 
-   return _data.write((pos_t)position, &address, sizeof(address));
+   return _data.write(position, &address, 4);
 }
 
-addr_t ELENAWinVMMachine :: resolveExternal(ustr_t dll, ustr_t function)
+addr_t ELENAUnixVMMachine :: resolveExternal(ustr_t dll, ustr_t function)
 {
    // align memory
    MemoryWriter writer(&_data);
@@ -117,17 +118,17 @@ addr_t ELENAWinVMMachine :: resolveExternal(ustr_t dll, ustr_t function)
    return (addr_t)_data.get(reference);
 }
 
-MemoryBase* ELENAWinVMMachine :: getTLSSection()
+MemoryBase* ELENAUnixVMMachine :: getTLSSection()
 {
    return nullptr; // !! temporal
 }
 
-addr_t ELENAWinVMMachine :: getTLSVariable()
+addr_t ELENAUnixVMMachine :: getTLSVariable()
 {
    return INVALID_ADDR;
 }
 
-void ELENAWinVMMachine :: stopVM()
+void ELENAUnixVMMachine :: stopVM()
 {
    ELENAVMMachine::stopVM();
 
@@ -138,7 +139,7 @@ void ELENAWinVMMachine :: stopVM()
    _mbdata.protect(true, false);
 }
 
-void ELENAWinVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
+void ELENAUnixVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
 {
    ELENAVMMachine::resumeVM(env, criricalHandler);
 

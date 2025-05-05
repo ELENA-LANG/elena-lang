@@ -1,100 +1,109 @@
 //---------------------------------------------------------------------------
-//		E L E N A   P r o j e c t:  ELENA Windows Image Section implementation
+//		E L E N A   P r o j e c t:  ELENA *nix Image Section implementation
 //
-//                                             (C)2022-2024, by Aleksey Rakov
+//                                             (C)2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 //---------------------------------------------------------------------------
-#include "windows/winsection.h"
+#include "linux/lnxsection.h"
 #include "langcommon.h"
+
+#include <sys/mman.h>
+#include <unistd.h>
+#include <errno.h>
 
 using namespace elena_lang;
 
 // --- WinImageSection ---
 
-WinImageSection :: WinImageSection(pos_t size, bool writeAccess, bool executeAccess, pos_t allocated)
+UnixImageSection :: UnixImageSection(pos_t size, bool writeAccess, bool executeAccess, pos_t allocated)
 {
    _size = size;
    _allocated = _used = 0;
 
-   _section = ::VirtualAlloc(nullptr, size, MEM_RESERVE, getProtectedMode(writeAccess, executeAccess));
-   ::GetSystemInfo(&_sysInfo);
+   _code = mmap(nullptr, size, getProtectedMode(writeAccess, executeAccess),
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+   if (_code == (void*)INVALID_ADDR) {
+      ::exit(errno);
+   }
 
    if (allocated != 0)
       allocate(allocated);
 }
 
-int WinImageSection :: getProtectedMode(bool writeAccess, bool executeAccess)
+UnixImageSection :: ~UnixImageSection()
 {
-   int mode = PAGE_READONLY;
+   munmap(_code, _size);
+}
+
+int UnixImageSection :: getProtectedMode(bool writeAccess, bool executeAccess)
+{
+   int mode = 0;
    if (executeAccess) {
-      mode = writeAccess ? PAGE_EXECUTE_READWRITE : PAGE_EXECUTE_READ;
+      mode = PROT_READ | PROT_WRITE | PROT_EXEC;
    }
-   else if (writeAccess) {
-      mode = PAGE_EXECUTE_READ;
-   }
+   else mode = PROT_READ | PROT_WRITE;
 
    return mode;
 }
 
-bool WinImageSection :: allocate(pos_t size)
+bool UnixImageSection :: allocate(pos_t size)
 {
-   if (_allocated + size > _size)
+   if (_used + size > _size)
       return false;
 
-   pos_t blockSize = align(size, _sysInfo.dwPageSize);
-
-   LPVOID retVal = ::VirtualAlloc((LPVOID)((uintptr_t)_section + _allocated), blockSize, MEM_COMMIT, PAGE_EXECUTE_READWRITE);
-   if (retVal == nullptr)
-      return false;
+   size_t blockSize = align(size, sysconf(_SC_PAGE_SIZE));
 
    _allocated += blockSize;
 
    return true;
 }
 
-void* WinImageSection :: get(pos_t position) const
+void* UnixImageSection :: get(pos_t position) const
 {
-   return (void*)((uintptr_t)_section + position);
+   return (void*)((uintptr_t)_code + position);
 }
 
-bool WinImageSection :: insert(pos_t position, const void* s, pos_t length)
+bool UnixImageSection :: insert(pos_t position, const void* s, pos_t length)
 {
    if (_allocated - _used < length) {
       if (!allocate(length))
          return false;
    }
 
-   memmove((LPVOID)((uintptr_t)_section + position + length), (LPVOID)((uintptr_t)_section + position), _used - position - length);
-   memcpy((LPVOID)((uintptr_t)_section + position), s, length);
+   memmove((void*)((size_t)_code + position + length), (void*)((size_t)_code + position), _used - position - length);
+   memcpy((void*)((size_t)_code + position), s, length);
+
+   _used += length;
 
    return true;
 }
 
-pos_t WinImageSection :: length() const
+pos_t UnixImageSection :: length() const
 {
-   return _used;
+   return (pos_t)_used;
 }
 
-bool WinImageSection :: read(pos_t position, void* s, pos_t length) const
+bool UnixImageSection :: read(pos_t position, void* s, pos_t length) const
 {
    if (position < _used && _used >= position + length) {
-      memcpy(s, (LPVOID)((uintptr_t)_section + position), length);
+      memcpy(s, (void*)((size_t)_code + position), length);
 
       return true;
    }
    else return false;
 }
 
-void WinImageSection :: trim(pos_t size)
+void UnixImageSection :: trim(pos_t size)
 {
    _used = size;
 }
 
-bool WinImageSection :: write(pos_t position, const void* s, pos_t length)
+bool UnixImageSection :: write(pos_t position, const void* s, pos_t length)
 {
-   pos_t newSize = position + length;
+   size_t newSize = position + length;
 
    // check if the operation insert data to the end
    if (newSize > _used) {
@@ -106,14 +115,22 @@ bool WinImageSection :: write(pos_t position, const void* s, pos_t length)
       _used = newSize;
    }
 
-   memcpy((LPVOID)((size_t)_section + position), s, length);
+   memcpy((void*)((size_t)_code + position), s, length);
 
    return true;
 }
 
-void WinImageSection :: protect(bool writeAccess, bool executeAccess)
+void UnixImageSection :: protect(bool writeAccess, bool executeAccess)
 {
-   DWORD oldprotect;
-   ::VirtualProtect(_section, _size, getProtectedMode(writeAccess, executeAccess), &oldprotect);
+//   /*int retVal = */::mprotect(_code, _size, getProtectedMode(writeAccess, executeAccess));
+   /*if (retVal == -1) {
+      IdentifierString s;
+      s.appendInt(errno);
 
+      ident_t pstr = s;
+      for(int i = 0; i < getlength(s); i++)
+         putchar(pstr[i]);
+
+      fflush(stdout);
+   }*/
 }
