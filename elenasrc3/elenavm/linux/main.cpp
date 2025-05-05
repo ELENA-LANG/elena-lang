@@ -33,7 +33,7 @@ static ELENAVMMachine* machine = nullptr;
 
 #else
 
-#define CONFIG_PATH          "/usr/lib/elena/elenavm60.config"
+#define CONFIG_PATH          "/etc/elena/elenavm60.config"
 
 #endif
 
