@@ -39,7 +39,7 @@ DEP_RELEASE =
 
 ifeq ($(OS),Windows_NT)
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/elenamachine.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/gcroutines.o $(OBJDIR_RELEASE)/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/engine/rtmanager.o $(OBJDIR_RELEASE)/__/__/engine/windows/winroutines.o $(OBJDIR_RELEASE)/__/__/engine/windows/pehelper.o $(OBJDIR_RELEASE)/__/elenavmmachine.o $(OBJDIR_RELEASE)/__/__/engine/amd64/amd64routines.o $(OBJDIR_RELEASE)/__/windows/winsection.o $(OBJDIR_RELEASE)/__/windows/elenawinvmachine.o $(OBJDIR_RELEASE)/__/windows/dllmain.o $(OBJDIR_RELEASE)/__/__/engine/x86_64compiler.o $(OBJDIR_RELEASE)/__/__/engine/xmlprojectbase.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/elenamachine.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/gcroutines.o $(OBJDIR_RELEASE)/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/engine/rtmanager.o $(OBJDIR_RELEASE)/__/__/engine/windows/winroutines.o $(OBJDIR_RELEASE)/__/__/engine/windows/pehelper.o $(OBJDIR_RELEASE)/__/elenavmmachine.o $(OBJDIR_RELEASE)/__/__/engine/amd64/amd64routines.o $(OBJDIR_RELEASE)/__/windows/winsection.o $(OBJDIR_RELEASE)/__/windows/elenawinvmachine.o $(OBJDIR_RELEASE)/__/windows/dllmain.o $(OBJDIR_RELEASE)/__/__/engine/x86_64compiler.o $(OBJDIR_RELEASE)/__/__/engine/xmlprojectbase.o $(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o
 OUT_RELEASE = ../../../bin/elenavm60_64.dll
 
 else
@@ -157,6 +157,9 @@ $(OBJDIR_RELEASE)/__/linux/main.o: ../linux/main.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/main.cpp -o $(OBJDIR_RELEASE)/__/linux/main.o
 
 endif
+
+$(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o: ../../engine/jitcompiler.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/jitcompiler.cpp -o $(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o   
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
