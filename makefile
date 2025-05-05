@@ -100,7 +100,7 @@ elenart_arm64:
 elenasm_arm64: 
 	$(MAKE) -C elenasrc3/elenasm/codeblocks all -f elenasm_arm64.mak
 
-clean_i386: clean_elc_i386 clean_og_i386 clean_sg_i386 clean_asmc_i386 clean_ecv_i386 clean_elenart_i386 clean_elenasm_i386
+clean_i386: clean_elc_i386 clean_og_i386 clean_sg_i386 clean_asmc_i386 clean_ecv_i386 clean_elenart_i386 clean_elenasm_i386 clean_elenavm_i386
 
 clean_amd64: clean_elc_amd64 clean_og_amd64 clean_sg_amd64 clean_asmc_amd64 clean_ecv_amd64 clean_elenart_amd64 clean_elenasm_amd64
 
@@ -128,6 +128,9 @@ clean_elenart_i386:
 
 clean_elenasm_i386:
 	$(MAKE) -C elenasrc3/elenasm/codeblocks clean -f elenasm_i386.mak
+
+clean_elenavm_i386:
+	$(MAKE) -C elenasrc3/elenavm/codeblocks clean -f elenavm_i386.mak
 
 clean_elc_amd64: 
 	$(MAKE) -C elenasrc3/elc/codeblocks clean -f elc_amd64.mak
