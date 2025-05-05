@@ -37,6 +37,7 @@ static ELENAVMMachine* machine = nullptr;
 #if defined(__x86_64__)
 
 #include "x86_64compiler.h"
+#include "x86compiler.h"
 
 #if defined(__FreeBSD__)
 
