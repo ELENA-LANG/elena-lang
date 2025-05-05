@@ -224,12 +224,15 @@ public abstract class IntBaseNumber : BaseNumber,
    info("a base integer value")
 {
    band(BaseVariable var)
+         : info("Executes bitwise AND with a variable value of <b>var</b> argument")
       <= band(*var);
 
    bor(BaseVariable var)
+         : info("Executes bitwise OR with a variable value of <b>var</b> argument")
       <= bor(*var);
 
    bxor(BaseVariable var)
+         : info("Executes bitwise XOR with a variable value of <b>var</b> argument")
       <= bxor(*var);
 
    abstract band(o)
@@ -249,7 +252,8 @@ public abstract class IntBaseNumber : BaseNumber,
          : info("Returns true if any of the mask bits are set")
       = 0 != self.band(operand);
 
-   get abstract BInverted();
+   get abstract BInverted()
+        : info("Returns a bitwise inverted value");
 }
 
 // --- ByteNumber ---

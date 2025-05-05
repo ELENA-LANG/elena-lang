@@ -8,9 +8,7 @@ In development:
   === Iteration 41 (25.5) ===
   --------------------------------------
   dev: 
-  - #739
   - #743
-  - VM support for Linux (make for both linux and windows)
   - MTA support for Linux : support MT routines in elenart
   - support :sizeof
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
@@ -26,7 +24,6 @@ In development:
   - #34 : http client : support redirects, put, delete, support patch, head, options, web api
   - textgen : support {{ }} special symbols 
   ide:  
-  - splitter is not correctly displayed
   - compile in the separate thread
   - debugger : stepped into the property / operator automatically (see for example xml)
   - debugger : watch list is not refreshed correctly  (see for example xml)
@@ -34,7 +31,6 @@ In development:
   - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
   maint:
-  - freebsd : create package, workflow
   - test all x86-64 examples
   - API - review / description
   - review pi performance (must < 6) : realOp.power[3] byte code
@@ -50,11 +46,15 @@ In development:
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   - vs #2 : elena.tmLanguage.json  
   prom:
-  - api : BaseNumber
   - post an article about records using meta programming
   - weekly posting
   --------------------------------------
+  - api : ByteNumber
+  - freebsd : create package, workflow
+  - splitter is not correctly displayed; resizing on compiling the project
+  - VM support for Linux (make for both linux and windows)
   --------------------------------------
+  * prepare linux version
   --------------------------------------
 
   === Iteration 42 ===
