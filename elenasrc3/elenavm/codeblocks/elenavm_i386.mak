@@ -24,7 +24,7 @@ RCFLAGS_RELEASE = $(RCFLAGS)
 LIBDIR_RELEASE = $(LIBDIR)
 LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS) -s
-OBJDIR_RELEASE = ../../temp/elenart
+OBJDIR_RELEASE = ../../temp/elenavm
 DEP_RELEASE = 
 OUT_RELEASE = ../../../bin/libelenavm60.so
 
@@ -94,6 +94,9 @@ $(OBJDIR_RELEASE)/__/elenartmachine.o: ../elenartmachine.cpp
 
 $(OBJDIR_RELEASE)/__/__/engine/x86/x86routines.o: ../../engine/x86/x86routines.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/x86/x86routines.cpp -o $(OBJDIR_RELEASE)/__/__/engine/x86/x86routines.o
+
+$(OBJDIR_RELEASE)/__/elenavmmachine.o: ../elenavmmachine.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../elenavmmachine.cpp -o $(OBJDIR_RELEASE)/__/elenavmmachine.o
 
 $(OBJDIR_RELEASE)/__/linux/lnxsection.o: ../linux/lnxsection.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/lnxsection.cpp -o $(OBJDIR_RELEASE)/__/linux/lnxsection.o
