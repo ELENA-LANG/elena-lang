@@ -37,7 +37,6 @@ static ELENAVMMachine* machine = nullptr;
 #if defined(__x86_64__)
 
 #include "x86_64compiler.h"
-#include "x86compiler.h"
 
 #if defined(__FreeBSD__)
 
@@ -57,7 +56,7 @@ constexpr auto CURRENT_PLATFORM = PlatformType::Linux_x86;
 
 #elif defined(__PPC64__)
 
-#include "ppc64compiler.h "
+#include "ppc64compiler.h"
 
 constexpr auto CURRENT_PLATFORM = PlatformType::Linux_PPC64le;
 
@@ -72,7 +71,7 @@ constexpr auto CURRENT_PLATFORM = PlatformType::Linux_ARM64;
 JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
 {
    switch (platform) {
-   #if defined(__i386__) || defined(__x86_64__)
+   #if defined(__i386__)
       case PlatformType::Linux_x86:
          return new X86JITCompiler();
    #endif

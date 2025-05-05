@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../temp/elenavm64
 DEP_RELEASE = 
 OUT_RELEASE = ../../../bin/libelenavm60_64.so
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/elenamachine.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/gcroutines.o $(OBJDIR_RELEASE)/__/__/engine/linux/lnxroutines.o $(OBJDIR_RELEASE)/__/__/engine/linux/elfhelper.o $(OBJDIR_RELEASE)/__/elenavmmachine.o  $(OBJDIR_RELEASE)/__/__/engine/aarch64/aarch64routines.o $(OBJDIR_RELEASE)/__/linux/lnxsection.o $(OBJDIR_RELEASE)/__/linux/elenalnxvmachine.o $(OBJDIR_RELEASE)/__/linux/main.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/__/engine/elenamachine.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/gcroutines.o $(OBJDIR_RELEASE)/__/__/engine/linux/lnxroutines.o $(OBJDIR_RELEASE)/__/__/engine/linux/elfhelper.o $(OBJDIR_RELEASE)/__/elenavmmachine.o  $(OBJDIR_RELEASE)/__/__/engine/aarch64/aarch64routines.o $(OBJDIR_RELEASE)/__/linux/lnxsection.o $(OBJDIR_RELEASE)/__/linux/elenalnxvmachine.o $(OBJDIR_RELEASE)/__/__/engine/arm64compiler.o $(OBJDIR_RELEASE)/__/linux/main.o
 
 all: release
 
@@ -88,6 +88,9 @@ $(OBJDIR_RELEASE)/__/linux/elenalnxvmachine.o: ../linux/elenalnxvmachine.cpp
 
 $(OBJDIR_RELEASE)/__/linux/main.o: ../linux/main.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/main.cpp -o $(OBJDIR_RELEASE)/__/linux/main.o
+
+$(OBJDIR_RELEASE)/__/__/engine/arm64compiler.o: ../../engine/arm64compiler.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/arm64compiler.cpp -o $(OBJDIR_RELEASE)/__/__/engine/arm64compiler.o
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
