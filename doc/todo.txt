@@ -59,6 +59,7 @@ In development:
   * make : add elenavm for amd64, aarch64, ppc64le, freebsd amd64
   * add vm_console to linux configurations
   * test for freebsd
+  * create tests project collection
   --------------------------------------
 
   === Iteration 42 ===

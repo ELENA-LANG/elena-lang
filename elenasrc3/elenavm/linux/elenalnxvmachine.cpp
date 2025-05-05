@@ -96,11 +96,11 @@ bool ELENAUnixVMMachine :: exportFunction(path_t rootPath, size_t position, path
    //}
 
    String<char, 200> lpFunName(funName);
-   ref_t address = (ref_t)dlsym(handle, funName);
+   addr_t address = (addr_t)dlsym(handle, funName);
    if (address == 0)
       return false;
 
-   return _data.write(position, &address, 4);
+   return _data.write((pos_t)position, &address, sizeof(address));
 }
 
 addr_t ELENAUnixVMMachine :: resolveExternal(ustr_t dll, ustr_t function)
