@@ -7,7 +7,7 @@ MAKE = make
 
 all_i386: elc_i386 sg_i386 og_i386 asmc_i386 ecv_i386 elenart_i386 elenasm_i386 elenavm_i386
 
-all_amd64: elc_amd64 sg_amd64 og_amd64 asmc_amd64 ecv_amd64 elenart_amd64 elenasm_amd64
+all_amd64: elc_amd64 sg_amd64 og_amd64 asmc_amd64 ecv_amd64 elenart_amd64 elenasm_amd64 elenavm_i386
 
 all_ppc64le: elc_ppc64le sg_ppc64le og_ppc64le asmc_ppc64le ecv_ppc64le elenart_ppc64le elenasm_ppc64le
 
@@ -58,6 +58,9 @@ elenart_amd64:
 elenasm_amd64: 
 	$(MAKE) -C elenasrc3/elenasm/codeblocks all -f elenasm_amd64.mak
 
+elenavm_amd64: 
+	$(MAKE) -C elenasrc3/elenavm/codeblocks all -f elenavm_amd64.mak
+
 elc_ppc64le: 
 	$(MAKE) -C elenasrc3/elc/codeblocks all -f elc_ppc64le.mak
 
@@ -102,7 +105,7 @@ elenasm_arm64:
 
 clean_i386: clean_elc_i386 clean_og_i386 clean_sg_i386 clean_asmc_i386 clean_ecv_i386 clean_elenart_i386 clean_elenasm_i386 clean_elenavm_i386
 
-clean_amd64: clean_elc_amd64 clean_og_amd64 clean_sg_amd64 clean_asmc_amd64 clean_ecv_amd64 clean_elenart_amd64 clean_elenasm_amd64
+clean_amd64: clean_elc_amd64 clean_og_amd64 clean_sg_amd64 clean_asmc_amd64 clean_ecv_amd64 clean_elenart_amd64 clean_elenasm_amd64 clean_elenavm_amd64
 
 clean_ppc64le: clean_elc_ppc64le clean_og_ppc64le clean_sg_ppc64le clean_asmc_ppc64le clean_ecv_ppc64le clean_elenart_ppc64le clean_elenasm_ppc64le
 
@@ -156,6 +159,9 @@ clean_elenart_amd64:
 clean_elenasm_amd64:
 	$(MAKE) -C elenasrc3/elenasm/codeblocks clean -f elenasm_amd64.mak
 
+clean_elenavm_amd64:
+	$(MAKE) -C elenasrc3/elenavm/codeblocks clean -f elenavm_amd64.mak
+
 clean_elc_ppc64le: 
 	$(MAKE) -C elenasrc3/elc/codeblocks clean -f elc_ppc64le.mak
 
@@ -195,4 +201,4 @@ clean_elenart_arm64:
 clean_elenasm_arm64:
 	$(MAKE) -C elenasrc3/elenasm/codeblocks clean -f elenasm_arm64.mak
 
-.PHONY: clean_elc_i386 clean_sg_i386 clean_og_i386 clean_asmc_i386 clean_ecv_i386 clean_elenart_i386 clean_elc_amd64 clean_sg_amd64 clean_og_amd64 clean_asmc_amd64 clean_ecv_amd64 clean_elenart_amd64 clean_elc_ppc64le clean_sg_ppc64le clean_og_ppc64le clean_asmc_ppc64le clean_ecv_ppc64le clean_elenart_ppc64le clean_elc_arm64 clean_sg_arm64 clean_og_arm64 clean_asmc_arm64 clean_ecv_arm64 clean_elenart_arm64 clean_elenasm_arm64 clean_elenasm_ppc64le clean_elenasm_amd64 clean_elenasm_i386
+.PHONY: clean_elc_i386 clean_sg_i386 clean_og_i386 clean_asmc_i386 clean_ecv_i386 clean_elenart_i386 clean_elc_amd64 clean_sg_amd64 clean_og_amd64 clean_asmc_amd64 clean_ecv_amd64 clean_elenart_amd64 clean_elc_ppc64le clean_sg_ppc64le clean_og_ppc64le clean_asmc_ppc64le clean_ecv_ppc64le clean_elenart_ppc64le clean_elc_arm64 clean_sg_arm64 clean_og_arm64 clean_asmc_arm64 clean_ecv_arm64 clean_elenart_arm64 clean_elenasm_arm64 clean_elenasm_ppc64le clean_elenasm_amd64 clean_elenasm_i386 clean_elenavm_amd64 clean_elenavm_i386
