@@ -19,7 +19,14 @@
 
 extern "C"
 {
+#ifdef __FreeBSD__
+   // temporal solution to work on FreeBSD
+   DLL_PUBLIC char** environ = nullptr;
+   DLL_PUBLIC const char* __progname = "elena-prog";
+#endif
+
    DLL_PUBLIC int InitializeVMSTLA(elena_lang::SystemEnv* env, void* tape, const char* criricalHandlerReference);
+   DLL_PUBLIC void PrepareLA(uintptr_t arg);
    DLL_PUBLIC int EvaluateVMLA(void* tape);
    DLL_PUBLIC int PrepareVMLA(const char* configName, const char* ns, const char* path, const char* exceptionHandler);
    DLL_PUBLIC int ExecuteVMLA(const char* target, const char* arg, char* output, size_t maxLength);
@@ -45,6 +52,8 @@ extern "C"
    DLL_PUBLIC void GetGCStatisticsLA(elena_lang::GCStatistics* statistics);
    DLL_PUBLIC void ResetGCStatisticsLA(elena_lang::GCStatistics* statistics);
    DLL_PUBLIC void ExitLA(int retVal);
+   DLL_PUBLIC int GetArgCLA();
+   DLL_PUBLIC int GetArgLA(int index, char* buffer, int length);
    DLL_PUBLIC int FreeVMLA();
 }
 

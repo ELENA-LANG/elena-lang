@@ -22,6 +22,9 @@ constexpr unsigned int DEFAULT_MGSIZE = 344064;
 constexpr unsigned int DEFAULT_YGSIZE = 86016;
 constexpr unsigned int DEFAULT_STACKRESERVED = 0x200000;
 
+static int    __argc = 0;
+static char** __argv = nullptr;
+
 static ELENAVMMachine* machine = nullptr;
 
 #if defined(__FreeBSD__)
@@ -199,6 +202,28 @@ int InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerRefe
       machine->Exit(retVal);
 
    return retVal;
+}
+
+void PrepareLA(uintptr_t arg)
+{
+   __argc = *(int*)arg;
+
+#if defined __PPC64__
+
+   uintptr_t argptr = *(uintptr_t*)(arg + sizeof(uintptr_t));
+   __argv = (char**)argptr;
+
+#else
+
+   __argv = (char**)(arg + sizeof(uintptr_t));
+
+#endif
+
+#if defined __FreeBSD__
+
+   __progname = __argv[0];
+
+#endif 
 }
 
 int EvaluateVMLA(void* tape)
@@ -484,3 +509,30 @@ int FreeVMLA()
 {
    return -1;
 }
+
+int GetArgCLA()
+{
+   return __argc;
+}
+
+int GetArgLA(int index, char* buffer, int length)
+{
+   if (index < 0 || index >= __argc) {
+      buffer[0] = 0;
+
+      return 0;
+   }
+
+   for (int i = 0; i < length; i++) {
+      char tmp = __argv[index][i];
+
+      buffer[i] = tmp;
+
+      if (!tmp) {
+         return i;
+      }
+   }
+
+   return length;
+}
+

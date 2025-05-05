@@ -4740,7 +4740,7 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
 
          argInfo.typeInfo.typeRef = resolveStrongType(scope, argInfo.typeInfo);
 
-         ref_t typeRef = argInfo.typeInfo.typeRef;
+         //ref_t typeRef = argInfo.typeInfo.typeRef;
          if (argInfo.kind == ObjectKind::IntLiteral && numericOne) {
             // HOTFIX : convert int literal in place
             argInfo = convertIntLiteral(scope, node, argInfo, elementTypeRef);
