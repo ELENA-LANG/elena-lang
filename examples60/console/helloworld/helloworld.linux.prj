@@ -19,6 +19,11 @@
         <executable>helloworld64</executable>
      </project>
   </platform>
+  <platform key="FreeBSD_AMD64">
+     <project>
+        <executable>helloworld64</executable>
+     </project>
+  </platform>
   <project>
      <namespace>helloworld</namespace>
      <template>console</template>
@@ -28,4 +33,19 @@
         <include>helloworld.l</include>
      </module>
   </files>
+  <profile key="virtual">
+     <platform key="FreeBSD_AMD64">
+       <project>
+          <executable>vm_helloworld64</executable>
+        </project>
+     </platform>
+     <project>
+        <template>vm_console</template>
+     </project>
+  </profile> 
+  <profile key="default">
+     <project>
+        <template>console</template>
+     </project>
+  </profile> 
 </configuration>
