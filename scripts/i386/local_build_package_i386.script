@@ -100,7 +100,7 @@ fi
  ln -s $(realpath ../../bin/libelenasm60.so) /usr/lib/elena/libelenasm60.so
 
  mkdir -p /etc/elena/
- ln -s $(realpath ../../bin/elenart60.config) /etc/elena/elenart60.config
- ln -s $(realpath ../../bin/elenavm60.config) /etc/elena/elenavm60.config
+ ln -s $(realpath ../../bin/local.elenart60.config) /etc/elena/elenart60.config
+ ln -s $(realpath ../../bin/local.elenavm60.config) /etc/elena/elenavm60.config
 
 exit 0
