@@ -14,8 +14,20 @@
 
 using namespace elena_lang;
 
+#if defined(__FreeBSD__)
+
+#define ROOT_PATH          "/usr/local/lib/elena"
+
+#define CONFIG_PATH        "/usr/local/etc/elena/elenart60.config"
+
+#else
+
 #define ROOT_PATH          "/usr/lib/elena"
+
 #define CONFIG_PATH        "/etc/elena/elenart60.config"
+
+#endif
+
 
 #if defined(__x86_64__)
 

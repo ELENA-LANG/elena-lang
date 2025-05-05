@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ldoc main code
 //
-//                                              (C)2022, by Aleksey Rakov
+//                                             (C)2022-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "config.h"
@@ -12,7 +12,15 @@
 
 using namespace elena_lang;
 
+#if defined(__FreeBSD__)
+
+constexpr auto DEFAULT_CONFIG       = "/usr/local/etc/elena/templates/lib60.config";
+
+#else
+
 constexpr auto DEFAULT_CONFIG       = "/etc/elena/templates/lib60.config";
+
+#endif
 
 #if defined(__x86_64__)
 

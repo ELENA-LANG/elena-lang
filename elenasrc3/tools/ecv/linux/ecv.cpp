@@ -12,7 +12,15 @@
 
 using namespace elena_lang;
 
+#if defined(__FreeBSD__)
+
+constexpr auto DEFAULT_CONFIG       = "/usr/local/etc/elena/templates/lib60.config";
+
+#else
+
 constexpr auto DEFAULT_CONFIG       = "/etc/elena/templates/lib60.config";
+
+#endif
 
 #if defined(__x86_64__)
 
