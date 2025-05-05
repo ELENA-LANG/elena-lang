@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p ../lib60
+mkdir -p ../../lib60
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
@@ -10,12 +10,12 @@ mkdir -p /usr/lib/elena/lib60
 
 cp ../../bin/libelenart60.so /usr/lib/elena/
 cp ../../bin/libelenasm60.so /usr/lib/elena/
-# cp ../bin/libelenavm.so /usr/lib/elena/
+cp ../../bin/libelenavm60.so /usr/lib/elena/
 cp ../../bin/elena-cli /usr/bin/
 
 cp ../../bin/elc60.config /etc/elena/
 cp ../../bin/elenart60.config /etc/elena/
-# cp ../bin/elenavm.config /etc/elena/
+cp ../../bin/elenavm60.config /etc/elena/
 cp ../../bin/templates/*.config /etc/elena/templates/
 
 echo compiling data files

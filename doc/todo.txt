@@ -52,13 +52,14 @@ In development:
   - update readme - add freebsd 
   - api : ByteNumber
   - local_install - create a symbol link with config file as well (pointing to local one)
-  - freebsd : create package, workflow
+  - freebsd : #763 workflow, nightly
+  - freebsd : create package
   - splitter is not correctly displayed; resizing on compiling the project
   - VM support for Linux (make for both linux and windows)
   --------------------------------------
-  * make : freebsd amd64
-  * add vm_console to linux configurations
-  * test for freebsd
+  * test for i386
+  * test for amd64
+  * test for freebsd amd64
   * create tests project collection
   --------------------------------------
 
