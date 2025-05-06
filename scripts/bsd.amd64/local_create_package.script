@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
  RELEASE=elena-6.7.1.amd64-linux
 
