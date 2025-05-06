@@ -84,6 +84,13 @@ jobs:
 
     - run: Compress-Archive .\build\${{matrix.platform}}\* .\build\elena-lang-${{matrix.platform}}-nightly-${{ env.VERSION }}.zip
           
+    - name: Delete old release assets
+      uses: mknejp/delete-release-assets@v1
+      with:
+        token: ${{ github.token }}
+        tag: nightly
+        assets: '*.zip'
+
     - name: Upload Release
       uses: softprops/action-gh-release@v2
       with:
