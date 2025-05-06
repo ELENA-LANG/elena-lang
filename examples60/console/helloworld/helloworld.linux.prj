@@ -26,7 +26,6 @@
   </platform>
   <project>
      <namespace>helloworld</namespace>
-     <template>console</template>
   </project>
   <files>
      <module>
