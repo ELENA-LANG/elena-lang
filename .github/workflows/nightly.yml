@@ -90,6 +90,7 @@ jobs:
         token: ${{ github.token }}
         tag: nightly
         assets: 'elena-lang-${{matrix.platform}}-nightly-*.zip'
+        fail-if-no-assets : false
 
     - name: Upload Release
       uses: softprops/action-gh-release@v2

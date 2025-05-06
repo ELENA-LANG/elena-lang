@@ -1,0 +1,46 @@
+#!/bin/bash
+
+ RELEASE=elena-6.7.1.amd64-linux
+
+ mkdir -p ../../build/$RELEASE/etc/elena/
+ mkdir -p ../../build/$RELEASE/etc/elena/templates/
+ mkdir -p ../../build/$RELEASE/usr/share/elena/
+ mkdir -p ../../build/$RELEASE/usr/lib/elena/core/amd64/
+ mkdir -p ../../build/$RELEASE/usr/lib/elena/lib60_64/
+ mkdir -p ../../build/$RELEASE/usr/bin/
+ mkdir -p ../../build/$RELEASE/usr/elena-lang
+
+ mkdir -p ../../build/$RELEASE/usr/elena-lang/examples60/
+
+ echo copying configuration
+
+ cp ../../bin/*.config ../../build/$RELEASE/etc/elena/
+ cp ../../bin/templates/*.config ../../build/$RELEASE/etc/elena/templates
+
+ echo compiling shared files
+
+ cp ../../dat/og/bt_rules60.dat ../../build/$RELEASE/usr/share/elena
+ cp ../../dat/og/bt_xrules60.dat ../../build/$RELEASE/usr/share/elena
+ cp ../../dat/og/bc_rules60.dat ../../build/$RELEASE/usr/share/elena
+ cp ../../dat/sg/syntax60.dat ../../build/$RELEASE/usr/share/elena
+
+ echo copying binaries
+
+ cp ../../bin/elena64-cli ../../build/$RELEASE/usr/bin/
+ cp ../../bin/libelenart60_64.so ../../build/$RELEASE/usr/lib/elena/
+
+ echo compiling core
+
+ cp ../../bin/amd64/*.bin ../../build/$RELEASE/usr/lib/elena/core/amd64/
+
+ echo compiling lib60
+
+ cp ../../bin/lib60_64/*.* ../../build/$RELEASE/usr/lib/elena/lib60_64/
+
+ cp -r ../../examples60 $RELEASE/usr/elena-lang
+ cp -r ../../src60 $RELEASE/usr/elena-lang
+
+ mkdir ../../build/$RELEASE/DEBIAN
+ cp ./control ../../build/$RELEASE/DEBIAN
+
+ dpkg-deb --build ../../build/$RELEASE
