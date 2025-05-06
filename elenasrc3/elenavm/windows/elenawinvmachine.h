@@ -7,8 +7,6 @@
 #ifndef ELENAWINVMMACHINE_H
 #define ELENAWINVMMACHINE_H
 
-#define DEBUG_OUTPUT
-
 #include "elenavmmachine.h"
 #include "windows/winsection.h"
 
