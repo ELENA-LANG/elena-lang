@@ -14,26 +14,18 @@ permissions: write-all
 
 jobs:
   build:
-    strategy:
-      matrix:
-        vm_os: [freebsd]
-
-    runs-on: macos-13
-    steps:    
+    runs-on: ubuntu-latest
+    name: FreeBSD nightly build
+    steps:
     - uses: actions/checkout@v4
       with:
         ref: iteration41
-
-    - name: Set version
-      run: |
-        VER=$(cat VERSION)
-        echo "BUILD_TAG=$VER" >> $GITHUB_ENV
-
-    - name: Build in FreeBSD
-      uses: vmactions/freebsd-vm@v0.1.4
+    - name: Run in FreeBSD
+      id: nightly
+      uses: vmactions/freebsd-vm@v1
       with:
-        sync: rsync
         usesh: true
+        sync: rsync
         prepare: |
           pkg install -y dpkg
         run: |
@@ -42,7 +34,6 @@ jobs:
           ./local_build_package_amd64.script 
           ./local_runtests.script
           ./local_create_package.script
-
     - name: Upload Release
       uses: softprops/action-gh-release@v2
       with:
@@ -51,3 +42,5 @@ jobs:
         prerelease: true
         files: |
           ./build/*.deb
+
+
