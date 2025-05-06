@@ -65,6 +65,11 @@ bool ELENAVMConfiguration :: loadConfig(path_t path)
 
       return true;
    }
+   else {
+#ifdef DEBUG_OUTPUT
+      printf("cannot load config file %s\n", path.str());
+#endif
+   }
 
    return false;
 }
