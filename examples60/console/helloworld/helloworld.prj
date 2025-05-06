@@ -20,7 +20,7 @@
            <executable>helloworld</executable>
         </project>
      </profile>
-  </profile>
+  </platform>
   <platform key="Win_x64">
      <profile key="virtual">
         <project>
@@ -34,5 +34,5 @@
            <executable>helloworld64</executable>
         </project>
      </profile>
-  </profile>
+  </platform>
 </configuration>

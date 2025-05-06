@@ -13,13 +13,13 @@
            <executable>vm_helloworld</executable>
            <template>vm_console</template>
         </project>
-     </profile> 
+     </profile>
      <profile key="default">
         <project>
            <executable>helloworld</executable>
            <template>console</template>
         </project>
-     </profile> 
+     </profile>
   </platform>
   <platform key="Linux_AMD64">
      <profile key="virtual">
