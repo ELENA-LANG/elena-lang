@@ -14,8 +14,6 @@
 #include "projectbase.h"
 #include "xmlprojectbase.h"
 
-#define DEBUG_OUTPUT 1
-
 namespace elena_lang
 {
    // --- ELENAVMConfiguration ---

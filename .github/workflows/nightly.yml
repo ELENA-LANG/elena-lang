@@ -89,7 +89,7 @@ jobs:
       with:
         token: ${{ github.token }}
         tag: nightly
-        assets: '*.zip'
+        assets: 'elena-*.zip'
 
     - name: Upload Release
       uses: softprops/action-gh-release@v2
