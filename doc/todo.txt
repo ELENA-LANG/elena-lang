@@ -59,6 +59,7 @@ In development:
   - VM support for Linux (make for both linux and windows)
   --------------------------------------
   * test for amd64
+  * helloworld - check why the correct dll name is not used for virtual profile
   * test for freebsd amd64
   * create tests project collection
   --------------------------------------
