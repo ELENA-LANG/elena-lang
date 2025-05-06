@@ -1,29 +1,4 @@
 <configuration>
-  <platform key="Linux_I386">
-     <project>
-        <executable>helloworld</executable>
-     </project>
-  </platform>
-  <platform key="Linux_AMD64">
-     <project>
-        <executable>helloworld64</executable>
-     </project>
-  </platform>
-  <platform key="Linux_PPC64le">
-     <project>
-        <executable>helloworld64</executable>
-     </project>
-  </platform>
-  <platform key="Linux_ARM64">
-     <project>
-        <executable>helloworld64</executable>
-     </project>
-  </platform>
-  <platform key="FreeBSD_AMD64">
-     <project>
-        <executable>helloworld64</executable>
-     </project>
-  </platform>
   <project>
      <namespace>helloworld</namespace>
   </project>
@@ -63,6 +38,34 @@
      </project>
   </profile> 
   <profile key="default">
+     <platform key="Linux_I386">
+       <project>
+          <executable>helloworld</executable>
+        </project>
+     </platform>
+     <platform key="Linux_AMD64">
+       <project>
+          <executable>helloworld64</executable>
+        </project>
+     </platform>
+     <platform key="Linux_PPC64le">
+       <project>
+          <executable>helloworld64</executable>
+        </project>
+     </platform>
+     <platform key="Linux_ARM64">
+       <project>
+          <executable>helloworld64</executable>
+        </project>
+     </platform>
+     <platform key="FreeBSD_AMD64">
+       <project>
+          <executable>helloworld64</executable>
+        </project>
+     </platform>
+     <project>
+        <template>vm_console</template>
+     </project>
      <project>
         <template>console</template>
      </project>

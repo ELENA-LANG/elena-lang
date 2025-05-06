@@ -56,9 +56,10 @@ In development:
   - freebsd : #763 workflow, nightly
   - freebsd : create package
   - splitter is not correctly displayed; resizing on compiling the project
-  - VM support for Linux (make for both linux and windows)
+  - VM support for Linux
   --------------------------------------
-  * test for amd64
+  * fix win x86-64 : vm_helloworld
+  * test for amd64 : fails time to time
   * helloworld - check why the correct dll name is not used for virtual profile
   * test for freebsd amd64
   * create tests project collection
