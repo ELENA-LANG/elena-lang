@@ -8,8 +8,9 @@
  mkdir -p ../../build/$RELEASE/usr/local/lib/elena/core/amd64/
  mkdir -p ../../build/$RELEASE/usr/local/lib/elena/lib60_64/
  mkdir -p ../../build/$RELEASE/usr/local/bin/
- mkdir -p ../../build/$RELEASE/usr/local/elena-lang
+ mkdir -p ../../build/$RELEASE/usr/local/elena-lang/
  mkdir -p ../../build/$RELEASE/usr/local/elena-lang/examples60/
+ mkdir -p ../../build/$RELEASE/usr/local/elena-lang/src60/
 
  echo copying configuration
 
@@ -34,8 +35,8 @@
 
  cp ../../lib60_64/*.* ../../build/$RELEASE/usr/local/lib/elena/lib60_64/
 
- cp -r ../../examples60 $RELEASE/usr/local/elena-lang
- cp -r ../../src60 $RELEASE/usr/local/elena-lang
+ cp -r ../../examples60 ../../build/$RELEASE/usr/local/elena-lang
+ cp -r ../../src60 ../../build/$RELEASE/usr/local/elena-lang
 
  mkdir ../../build/$RELEASE/DEBIAN
  cp ./control ../../build/$RELEASE/DEBIAN

@@ -36,8 +36,8 @@ RELEASE=elena-6.7.1.i386-linux
 
  cp ../../bin/lib60/*.* ../../build/$RELEASE/usr/lib/elena/lib60/
 
- cp -r ../../examples60 $RELEASE/usr/elena-lang
- cp -r ../../src60 $RELEASE/usr/elena-lang
+ cp -r ../../examples60 ../../build/$RELEASE/usr/elena-lang
+ cp -r ../../src60 ../../build/$RELEASE/usr/elena-lang
 
  mkdir ../../build/$RELEASE/DEBIAN
  cp ./control ../../build/$RELEASE/DEBIAN
