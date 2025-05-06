@@ -29,36 +29,19 @@ jobs:
         VER=$(cat VERSION)
         echo "BUILD_TAG=$VER" >> $GITHUB_ENV
 
-    - name: Install dependencies
-      run: |
-        pkg install -y dpkg
-
-    - name: Build
-      run: make clang_all_amd64
-
-    - name: Generate Data / API
-      run: |
-        cd scripts/bsd.amd64
-        ./local_build_package_amd64.script 
-
-    - name: Run functional test
-      run: |
-        cd scripts/bsd.amd64
-        ./local_runtests.script
-
-    - name: Create a package
-      run: |
-        cd scripts/bsd.amd64
-        ./local_create_package.script
-        
-          
-    - name: Delete old release assets
-      uses: mknejp/delete-release-assets@v1
+    - name: Build in FreeBSD
+      uses: vmactions/freebsd-vm@v0.1.4
       with:
-        token: ${{ github.token }}
-        tag: nightly
-        assets: 'elena-lang-${{matrix.platform}}-nightly-*.zip'
-        fail-if-no-assets : false
+        sync: rsync
+        usesh: true
+        prepare: |
+          pkg install -y dpkg
+        run: |
+          make clang_all_amd64
+          cd scripts/bsd.amd64
+          ./local_build_package_amd64.script 
+          ./local_runtests.script
+          ./local_create_package.script
 
     - name: Upload Release
       uses: softprops/action-gh-release@v2
