@@ -2,6 +2,7 @@
   <collections>
     <collection name="console">
       <project>console/helloworld/helloworld.prj</project>
+      <project profile="virtual">console/helloworld/helloworld.prj</project>
       <project base_path="console/binary">binary.l</project>
       <project base_path="console/bsort">bsort.l</project>
       <project base_path="console/collatz">collatz.l</project>

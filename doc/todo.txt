@@ -45,6 +45,7 @@ In development:
   tools:
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   - vs #2 : elena.tmLanguage.json  
+  - elt : port to linux
   prom:
   - post an article about records using meta programming
   - weekly posting
@@ -57,7 +58,6 @@ In development:
   - splitter is not correctly displayed; resizing on compiling the project
   - VM support for Linux (make for both linux and windows)
   --------------------------------------
-  * test for i386
   * test for amd64
   * test for freebsd amd64
   * create tests project collection

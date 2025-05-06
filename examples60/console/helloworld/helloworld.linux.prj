@@ -34,6 +34,26 @@
      </module>
   </files>
   <profile key="virtual">
+     <platform key="Linux_I386">
+       <project>
+          <executable>vm_helloworld</executable>
+        </project>
+     </platform>
+     <platform key="Linux_AMD64">
+       <project>
+          <executable>vm_helloworld64</executable>
+        </project>
+     </platform>
+     <platform key="Linux_PPC64le">
+       <project>
+          <executable>vm_helloworld64</executable>
+        </project>
+     </platform>
+     <platform key="Linux_ARM64">
+       <project>
+          <executable>vm_helloworld64</executable>
+        </project>
+     </platform>
      <platform key="FreeBSD_AMD64">
        <project>
           <executable>vm_helloworld64</executable>

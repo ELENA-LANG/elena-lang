@@ -21,6 +21,16 @@
      <project>
         <template>vm_console</template>
      </project>
+     <platform key="Win_x86">
+        <project>
+           <executable>vm_helloworld</executable>
+        </project>
+     </platform>
+     <platform key="Win_x64">
+        <project>
+           <executable>vm_helloworld64</executable>
+        </project>
+     </platform>
   </profile> 
   <profile key="default">
      <project>

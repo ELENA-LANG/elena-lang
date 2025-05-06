@@ -7,7 +7,7 @@ MAKE = make
 
 all_i386: elc_i386 sg_i386 og_i386 asmc_i386 ecv_i386 elenart_i386 elenasm_i386 elenavm_i386
 
-all_amd64: elc_amd64 sg_amd64 og_amd64 asmc_amd64 ecv_amd64 elenart_amd64 elenasm_amd64 elenavm_i386
+all_amd64: elc_amd64 sg_amd64 og_amd64 asmc_amd64 ecv_amd64 elenart_amd64 elenasm_amd64 elenavm_amd64
 
 all_ppc64le: elc_ppc64le sg_ppc64le og_ppc64le asmc_ppc64le ecv_ppc64le elenart_ppc64le elenasm_ppc64le elenavm_ppc64le
 

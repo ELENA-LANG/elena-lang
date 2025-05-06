@@ -23,5 +23,7 @@
 *.user
 *.pdb
 *.filters
+*.layout
+*.depend
 /elenasrc3/temp
 .vs/
