@@ -168,7 +168,7 @@ void printError(int errCode, ustr_t arg)
 int InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
 #ifdef DEBUG_OUTPUT
-   printf("InitializeVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("InitializeVMSTLA.6 %llx,%llx,%llx\n", (long long)env, (long long)criricalHandlerReference);
 
    fflush(stdout);
 #endif
