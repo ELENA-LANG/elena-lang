@@ -29,7 +29,7 @@ static ELENAVMMachine* machine = nullptr;
 
 #if defined(__FreeBSD__)
 
-#define CONFIG_PATH          "/usr/local/lib/elena/elenavm60.config"
+#define CONFIG_PATH          "/usr/local/etc/elena/elenavm60.config"
 
 #else
 
