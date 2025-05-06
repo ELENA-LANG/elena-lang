@@ -141,7 +141,7 @@ void printError(int errCode, ustr_t arg)
 EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
 #ifdef DEBUG_OUTPUT
-   printf("InitializeVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("InitializeVMSTLA.6 %x,%x\n", (int)tape, (int)criricalHandlerReference);
 
    fflush(stdout);
 #endif
@@ -177,7 +177,7 @@ EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* c
 EXTERN_DLL_EXPORT int EvaluateVMLA(void* tape)
 {
 #ifdef DEBUG_OUTPUT
-   printf("EvaluateVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("EvaluateVMSTLA.6 %x,%x\n", (int)tape);
 
    fflush(stdout);
 #endif
