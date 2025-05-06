@@ -169,7 +169,7 @@ namespace elena_lang
          return write(&ch, 1);
       }
 
-      bool write(const char* s, pos_t length)
+      bool write(const char* s, pos_t length) override
       {
          _target->append(s, length);
 
