@@ -229,7 +229,7 @@ void PrepareLA(uintptr_t arg)
 int EvaluateVMLA(void* tape)
 {
 #ifdef DEBUG_OUTPUT
-   printf("EvaluateVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("EvaluateVMLA.6\n");
 
    fflush(stdout);
 #endif
