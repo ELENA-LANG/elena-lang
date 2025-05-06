@@ -16,10 +16,10 @@ clang_elc_amd64:
 	$(MAKE) -C elenasrc3/elc/codeblocks all -f bsd.clang_elc_amd64.mak
 
 sg_amd64: 
-	$(MAKE) -C elenasrc3/tools/sg/codeblocks all -f bsd.clang_sg_amd64.mak
+	$(MAKE) -C elenasrc3/tools/sg/codeblocks all -f bsd.sg_amd64.mak
 
 clang_sg_amd64: 
-	$(MAKE) -C elenasrc3/tools/sg/codeblocks all -f bsd.sg_amd64.mak
+	$(MAKE) -C elenasrc3/tools/sg/codeblocks all -f bsd.clang_sg_amd64.mak
 
 og_amd64: 
 	$(MAKE) -C elenasrc3/tools/og/codeblocks all -f bsd.og_amd64.mak
