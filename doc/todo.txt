@@ -58,9 +58,9 @@ In development:
   - splitter is not correctly displayed; resizing on compiling the project
   - VM support for Linux
   --------------------------------------
-  * test for amd64 : fails time to time
   * test for freebsd amd64
   * create tests project collection
+  * find out why vm_helloworld64 is not generated
   --------------------------------------
 
   === Iteration 42 ===
