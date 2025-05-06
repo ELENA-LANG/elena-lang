@@ -34,6 +34,7 @@ extern "C"
    DLL_PUBLIC void* CollectPermGCLA(size_t size);
    DLL_PUBLIC void* ForcedCollectGCLA(void* roots, int fullMode);
    DLL_PUBLIC size_t LoadMessageNameLA(size_t message, char* buffer, size_t length);
+   DLL_PUBLIC size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length);
    DLL_PUBLIC size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size_t length);
    DLL_PUBLIC elena_lang::addr_t LoadSymbolByStringLA(const char* symbolName);
    DLL_PUBLIC elena_lang::addr_t LoadClassByStringLA(const char* symbolName);
