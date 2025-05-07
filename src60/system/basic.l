@@ -395,7 +395,7 @@ public const struct ByteNumber : IntBaseNumber,
    }
 
    bool less(o)
-            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type when it is possible and compared;<br/>otherwise returns false")
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type when it is possible and compared")
       <= less(cast byte(o));
 
    bool equal(byte b)
@@ -555,6 +555,7 @@ public const struct SByteNumber : IntBaseNumber,
       = 127;
 
    static sbyte Default
+            : info("Returns the default value")
       = 0;
 
    constructor()
@@ -570,15 +571,19 @@ public const struct SByteNumber : IntBaseNumber,
       = SByteConvertor.convert(n);
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= add(cast sbyte(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= subtract(cast sbyte(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= multiply(cast sbyte(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= divide(cast sbyte(o));
 
    sbyte add(sbyte n)
@@ -662,6 +667,7 @@ public const struct SByteNumber : IntBaseNumber,
       = new RealNumber(self).divide(n);   
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is sbyte n)
       {
@@ -672,6 +678,7 @@ public const struct SByteNumber : IntBaseNumber,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type when it is possible and compared")
       <= less(cast sbyte(o));
 
    bool equal(sbyte b)
@@ -679,6 +686,7 @@ public const struct SByteNumber : IntBaseNumber,
       = _value == b;
 
    bool less(sbyte b)
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = _value < b;
 
    bool equal(short s)
@@ -686,6 +694,7 @@ public const struct SByteNumber : IntBaseNumber,
       = new ShortNumber(self).equal(s);
 
    bool less(short s)
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new ShortNumber(self).less(s);
 
    bool equal(int n)
@@ -693,7 +702,7 @@ public const struct SByteNumber : IntBaseNumber,
       = new IntNumber(self).equal(n);
 
    bool less(int n)
-            : info("Compares the value")
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new IntNumber(self).less(n);
 
    bool equal(long n)
@@ -701,7 +710,7 @@ public const struct SByteNumber : IntBaseNumber,
       = new LongNumber(self).equal(n);
 
    bool less(long n)
-            : info("Compares the value")
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new LongNumber(self).less(n);
 
    bool equal(real n)
@@ -709,16 +718,19 @@ public const struct SByteNumber : IntBaseNumber,
       = new RealNumber(self).equal(n);
 
    bool less(real n)
-            : info("Compares the value")
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new RealNumber(self).less(n);
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
       <= band(cast sbyte(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
       <= bor(cast sbyte(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
       <= bxor(cast sbyte(n));
 
    sbyte band(sbyte n)

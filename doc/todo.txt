@@ -10,7 +10,6 @@ In development:
   dev: 
   - #743
   - MTA support for Linux : support MT routines in elenart
-  - support :sizeof
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
   - implement analog of record using meta programming (extensions'records)
   - upndown (connector - cmdSearch)
@@ -21,8 +20,7 @@ In development:
   api:
   - api refactoring : main program entry to be called - Program
   - #622 : api backlog
-  - #34 : http client : support redirects, put, delete, support patch, head, options, web api
-  - textgen : support {{ }} special symbols 
+  - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
   ide:  
   - compile in the separate thread
   - debugger : stepped into the property / operator automatically (see for example xml)
@@ -40,8 +38,7 @@ In development:
   - optimization : pi (used classes byte code)
   - rosetta code : Program termination, Parallel calculations
   - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
-  - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64
-  - create tests project collection
+  - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
   port:
   - chat sample
   tools:
@@ -52,10 +49,12 @@ In development:
   - post an article about records using meta programming
   - weekly posting
   --------------------------------------
-  - api : SByteNumber
-  - #763 - freebsd : release workflow
+  - api : ShortNumber
+  - post what's new : freebsd / clang
+  - support :sizeof
+  - create tests project collection
+  - textgen : support {{ }} special symbols 
   --------------------------------------  
-  * make bsd.make workflow
   --------------------------------------
 
   === Iteration 42 ===
