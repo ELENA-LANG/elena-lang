@@ -217,7 +217,7 @@ and compile them:
     elena-cli examples60.linux.prjcol 
     elena-cli rosetta60.linux.prjcol 
 
-**For Linux 64 (amd64, aarch64, ppc64le) / FreeBSD (amd64) **:
+**For Linux 64 (amd64, aarch64, ppc64le) / FreeBSD (amd64)**:
 
     elena64-cli examples60.linux.prjcol 
     elena64-cli rosetta60.linux.prjcol 
