@@ -168,8 +168,35 @@ After this you can install it globally:
 
     cd scripts/ppc64le
     sudo ./build_package_ppc64le.script 
-    
-### Building samples
+
+### FreeBSD:
+
+#### For x86-64
+
+For FreeBSD x86-64 (amd64) 
+
+using GCC:
+
+    make all_amd64
+
+using CLANG:
+
+    make clang_all_amd64   
+
+After this you can either install it globally:
+
+    cd scripts/bsd.amd64
+    sudo ./build_package_amd64.script 
+
+or locally
+
+    cd scripts/bsd.amd64
+    sudo ./local_build_package_amd64.script
+
+*Note : in this case the script will try to create symbolic links to shared libraries libelenart60_64.so, libelenavm60_64.so, libelenasm60_64.so and config files : elenart60.config and elenavm60.config.
+Alternatively you can copy the shared libraries to /usr/local/lib/elena/ and config files to /usr/local/etc/elena/
+
+## Building samples
 
 To build all existing samples you can go to the **examples** folder:
 
