@@ -33,6 +33,7 @@ namespace elena_lang
       void setFocus() override;
 
       void refresh() override;
+      void invalidate() override;
 
       BoxBase(bool stretchMode, int spacer);
    };

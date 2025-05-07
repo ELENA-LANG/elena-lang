@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI SDI Window body File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "winsdi.h"
@@ -50,6 +50,13 @@ void BoxBase :: refresh()
 {
    for (size_t i = 0; i < _list.count(); i++) {
       _list[i]->refresh();
+   }
+}
+
+void BoxBase :: invalidate()
+{
+   for (size_t i = 0; i < _list.count(); i++) {
+      _list[i]->invalidate();
    }
 }
 
@@ -297,48 +304,50 @@ void LayoutManager :: resizeTo(Rectangle area)
    adjustHorizontal(totalWidth, totalHeight, _right);
    adjustClient(totalWidth, totalHeight, _center);
 
-   if (isVisible(_top)) {
+   bool topVisible = isVisible(_top);
+   bool bottomVisible = isVisible(_bottom);
+   bool leftVisible = isVisible(_left);
+   bool rightVisible = isVisible(_right);
+   bool centerVisible = isVisible(_center);
+
+   if (topVisible) {
       Rectangle topRect = _top->getRectangle();
 
       _top->setRectangle({ area.topLeft.x, area.topLeft.y, 
          topRect.width(), topRect.height() });
 
       y += topRect.height();
-
-      _top->refresh();
    }
-   if (isVisible(_bottom)) {
+   if (bottomVisible) {
       Rectangle bottomRect = _bottom->getRectangle();
 
       _bottom->setRectangle({ area.topLeft.x, y + totalHeight,
          bottomRect.width(), bottomRect.height() });
-
-      _bottom->refresh();
    }
-   if (isVisible(_left)) {
+   if (leftVisible) {
       Rectangle leftRect = _left->getRectangle();
-
+   
       _left->setRectangle({ area.topLeft.x, y,
          leftRect.width(), leftRect.height() });
 
       x += leftRect.width();
-
-      _left->refresh();
    }
-   if (isVisible(_right)) {
+   if (rightVisible) {
       Rectangle rightRect = _right->getRectangle();
 
       _right->setRectangle({ area.topLeft.x, y,
          rightRect.width(), rightRect.height() });
-
-      _right->refresh();
    }
 
-   if (isVisible(_center)) {
+   if (centerVisible) {
       _center->setRectangle({ x, y, totalWidth, totalHeight });
-
-      _center->refresh();
    }
+
+   if (topVisible) _top->invalidate();
+   if (bottomVisible)_bottom->invalidate();
+   if (leftVisible) _left->invalidate();
+   if (rightVisible) _right->invalidate();
+   if (centerVisible) _center->invalidate();
 }
 
 // --- SDIWindow ---

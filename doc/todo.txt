@@ -56,10 +56,7 @@ In development:
   - update readme - add freebsd 
   - api : ByteNumber
   - local_install - create a symbol link with config file as well (pointing to local one)
-  - splitter is not correctly displayed; resizing on compiling the project
-  - freebsd : #763 workflow, nightly
-  --------------------------------------
-  * adding freebsd nightly
+  --------------------------------------  
   --------------------------------------
 
   === Iteration 42 ===
