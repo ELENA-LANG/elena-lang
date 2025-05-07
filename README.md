@@ -171,9 +171,7 @@ After this you can install it globally:
 
 ### FreeBSD:
 
-#### For x86-64
-
-For FreeBSD x86-64 (amd64) 
+#### For FreeBSD x86-64
 
 using GCC:
 
@@ -194,7 +192,7 @@ or locally
     sudo ./local_build_package_amd64.script
 
 *Note : in this case the script will try to create symbolic links to shared libraries libelenart60_64.so, libelenavm60_64.so, libelenasm60_64.so and config files : elenart60.config and elenavm60.config.
-Alternatively you can copy the shared libraries to /usr/local/lib/elena/ and config files to /usr/local/etc/elena/
+Alternatively you can copy the shared libraries to /usr/local/lib/elena/ and config files to /usr/local/etc/elena/*
 
 ## Building samples
 
