@@ -52,8 +52,8 @@ In development:
   --------------------------------------
   - api : ShortNumber
   - support :sizeof
-  - create tests project collection
   --------------------------------------  
+  * new inline template
   --------------------------------------
 
   === Iteration 42 ===
