@@ -288,15 +288,19 @@ public const struct ByteNumber : IntBaseNumber,
       = ByteConvertor.convert(n);
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
      <= add(cast byte(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
      <= subtract(cast byte(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
      <= multiply(cast byte(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
      <= divide(cast byte(o));
 
    byte add(byte n)
@@ -380,6 +384,7 @@ public const struct ByteNumber : IntBaseNumber,
       = new RealNumber(_value).divide(n);   
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is byte b)
       {  
@@ -390,6 +395,7 @@ public const struct ByteNumber : IntBaseNumber,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type when it is possible and compared;<br/>otherwise returns false")
       <= less(cast byte(o));
 
    bool equal(byte b)
@@ -397,6 +403,7 @@ public const struct ByteNumber : IntBaseNumber,
       = _value == b;
 
    bool less(byte b)
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = _value < b;
 
    bool equal(short s)
@@ -404,6 +411,7 @@ public const struct ByteNumber : IntBaseNumber,
       = new ShortNumber(_value).equal(s);
 
    bool less(short s)
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new ShortNumber(_value).less(s);
 
    bool equal(int n)
@@ -431,12 +439,15 @@ public const struct ByteNumber : IntBaseNumber,
       = new RealNumber(_value).less(n);
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
       <= band(cast byte(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
       <= bor(cast byte(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
       <= bxor(cast byte(n));
 
    byte band(byte n)

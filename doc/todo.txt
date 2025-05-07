@@ -52,11 +52,10 @@ In development:
   - post an article about records using meta programming
   - weekly posting
   --------------------------------------
+  - api : SByteNumber
   - #763 - freebsd : release workflow
-  - update readme - add freebsd 
-  - api : ByteNumber
-  - local_install - create a symbol link with config file as well (pointing to local one)
   --------------------------------------  
+  * make bsd.make workflow
   --------------------------------------
 
   === Iteration 42 ===
