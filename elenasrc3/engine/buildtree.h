@@ -373,6 +373,7 @@ namespace elena_lang
          map.add("byrefmark", BuildKey::ByRefOpMark);
          map.add("inplacemark", BuildKey::InplaceCall);
          map.add("int_literal", BuildKey::IntLiteral);
+         map.add("string_literal", BuildKey::StringLiteral);
          map.add("copying", BuildKey::Copying);
          map.add("local_address", BuildKey::LocalAddress);
          map.add("saving_stack", BuildKey::SavingInStack);
@@ -452,6 +453,11 @@ namespace elena_lang
          map.add("procedure_ref", BuildKey::ProcedureReference);
          map.add("break_op", BuildKey::BreakOp);
          map.add("bytearray_op", BuildKey::ByteArrayOp);
+         map.add("loop_op", BuildKey::LoopOp);
+         map.add("virtual_breakpoint", BuildKey::VirtualBreakpoint);
+         map.add("eop_breakpoint", BuildKey::EOPBreakpoint);
+         map.add("int_sop", BuildKey::IntSOp);
+         map.add("const_param", BuildKey::Const);
       }
    };
 

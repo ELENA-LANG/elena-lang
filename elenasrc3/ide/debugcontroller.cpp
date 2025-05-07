@@ -792,8 +792,7 @@ void DebugController :: stepInto()
 
 void DebugController :: autoStepOver()
 {
-   _process->setStepMode();
-   _process->setEvent(DEBUG_RESUME);
+   stepOver();
 }
 
 void DebugController :: stepOver()

@@ -52,9 +52,8 @@ In development:
   - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
   - debugger : stepped into the property / operator automatically (see for example xml)
   --------------------------------------  
-  * breakpoint must be inside loop
-  * test while-loop
   * test for-loop
+  * test while-loop
   * property is called
   * test xml example
   --------------------------------------

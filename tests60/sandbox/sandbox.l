@@ -10,7 +10,12 @@ public program()
    while (x.isAvailable)
    {
       x.next()
-   }
+   };
+   
+   var s := "abc";
+   for(int i := 0;i < s.Length; i++) {
+      Console.writeLine(s[i])
+   };
 }
 
 X

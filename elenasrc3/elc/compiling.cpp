@@ -17,6 +17,8 @@
 #include "separser.h"
 #include "serializer.h"
 
+//#define SHOW_BREAKPOINTS 1
+
 using namespace elena_lang;
 
 // --- AddressMapper ---
@@ -577,15 +579,17 @@ void CompilingProcess :: printBuildTree(ModuleBase* module, BuildTree& buildTree
    List<BuildKey> filters(BuildKey::None);
    if (!_verbose) {
       filters.add(BuildKey::Path);
+#ifndef SHOW_BREAKPOINTS
       filters.add(BuildKey::Breakpoint);
       filters.add(BuildKey::VirtualBreakpoint);
       filters.add(BuildKey::EOPBreakpoint);
+      filters.add(BuildKey::OpenStatement);
+      filters.add(BuildKey::EndStatement);
+#endif
       filters.add(BuildKey::ClassName);
       filters.add(BuildKey::MethodName);
       filters.add(BuildKey::VariableInfo);
       filters.add(BuildKey::ArgumentsInfo);
-      filters.add(BuildKey::OpenStatement);
-      filters.add(BuildKey::EndStatement);
       filters.add(BuildKey::Idle);
    }
 
