@@ -48,15 +48,12 @@ In development:
   prom:
   - post an article about records using meta programming
   - weekly posting
+  - post what's new in ELENA 6.7
   --------------------------------------
   - api : ShortNumber
-  - post what's new : freebsd / clang
   - support :sizeof
   - create tests project collection
-  - textgen : support {{ }} special symbols 
   --------------------------------------  
-  * changing code
-  * update comma quibbling rosetta code sample
   --------------------------------------
 
   === Iteration 42 ===
