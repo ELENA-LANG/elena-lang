@@ -1,9 +1,7 @@
 import extensions;
-
-import extensions;
 import textgen;
 
-/*const string Script = "<={{=>for (var i := 0; i < self.Length; i := i + 1) {
+const string Script = "<={{=>for (var i := 0; i < self.Length; i := i + 1) {
       if (i > 0) {
         if (i == self.Length - 1) {
            <= and =>
@@ -14,12 +12,20 @@ import textgen;
       };
          
       <={self[i]}=>
-   }<=}}=>";*/
+   }; <=}}=>";
+   
+public extension QuibbleOp : Array<string>
+{
+   string quibble()
+   {
+      ^ self.generateFrom(Script);
+   }
+}
 
 public program()
 {
-   var s := "<={{!!}}=>";
-   var r := 1.generateFrom(s);
-
-   Console.writeLine(r);
+   Console.printLine(new string[] { }.quibble());
+   Console.printLine(new string[] { "ABC" }.quibble());
+   Console.printLine(new string[] { "ABC", "ADF" }.quibble());
+   Console.printLine(new string[] { "ABC", "DEF", "G", "H" }.quibble())
 }

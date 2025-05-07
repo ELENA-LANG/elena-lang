@@ -11,11 +11,11 @@ singleton ScriptGenerator
       
       int cbIndex := script.indexOf(start, "}}");
       if (cbIndex > 0 && cbIndex <= index) {
-         fullScript.writeSubstring(script, start, index - cbIndex + 1);
+         fullScript.writeSubstring(script, start, cbIndex - start + 1);
          int next := cbIndex + 2;
          cbIndex := script.indexOf(next, "}}");
          while (cbIndex > 0 && cbIndex <= index) {
-            fullScript.writeSubstring(script, next, next - cbIndex + 1);
+            fullScript.writeSubstring(script, next, cbIndex - next + 1);
             next := cbIndex + 2;
             cbIndex := script.indexOf(next, "}}");
          };
@@ -54,7 +54,7 @@ singleton ScriptGenerator
             if (index >= 0) {
                int injectIndex := script.indexOf(start, "{");
                while (injectIndex > 0 && injectIndex < index) {
-                  if (injectIndex > start) {
+                  if (injectIndex < index) {
                      if (script[injectIndex + 1] == "{") {
                         writeOutput(fullScript, script, start, injectIndex + 1);
                         

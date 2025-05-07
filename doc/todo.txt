@@ -55,6 +55,8 @@ In development:
   - create tests project collection
   - textgen : support {{ }} special symbols 
   --------------------------------------  
+  * changing code
+  * update comma quibbling rosetta code sample
   --------------------------------------
 
   === Iteration 42 ===
