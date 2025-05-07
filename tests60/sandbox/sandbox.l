@@ -1,31 +1,14 @@
 import extensions;
-import textgen;
 
-const string Script = "<={{=>for (var i := 0; i < self.Length; i := i + 1) {
-      if (i > 0) {
-        if (i == self.Length - 1) {
-           <= and =>
-        }
-        else {
-           <=, =>
-        }
-      };
-         
-      <={self[i]}=>
-   }; <=}}=>";
-   
-public extension QuibbleOp : Array<string>
+struct XY
 {
-   string quibble()
-   {
-      ^ self.generateFrom(Script);
-   }
+   int x;
+   int y;
 }
 
 public program()
 {
-   Console.printLine(new string[] { }.quibble());
-   Console.printLine(new string[] { "ABC" }.quibble());
-   Console.printLine(new string[] { "ABC", "ADF" }.quibble());
-   Console.printLine(new string[] { "ABC", "DEF", "G", "H" }.quibble())
+   XY xy := default;
+
+   Console.printLine("size of XY is ", :sizeof xy);
 }
