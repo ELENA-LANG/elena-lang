@@ -15,6 +15,7 @@
     
 [![MSBuild](https://github.com/ELENA-LANG/elena-lang/actions/workflows/msbuild.yml/badge.svg?branch=master)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/msbuild.yml)
 [![Nightly MSBuild](https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml/badge.svg)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml)
+[![Nightly FreeBSD Build](https://github.com/ELENA-LANG/elena-lang/actions/workflows/bsd.nightly.yml/badge.svg)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/bsd.nightly.yml)
 [![Sponsor](https://img.shields.io/badge/patreon-donate-green.svg)](https://www.patreon.com/elena_lang)
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/arakov)](https://github.com/sponsors/arakov)
 
@@ -167,8 +168,33 @@ After this you can install it globally:
 
     cd scripts/ppc64le
     sudo ./build_package_ppc64le.script 
-    
-### Building samples
+
+### FreeBSD:
+
+#### For FreeBSD x86-64
+
+using GCC:
+
+    make all_amd64
+
+using CLANG:
+
+    make clang_all_amd64   
+
+After this you can either install it globally:
+
+    cd scripts/bsd.amd64
+    sudo ./build_package_amd64.script 
+
+or locally
+
+    cd scripts/bsd.amd64
+    sudo ./local_build_package_amd64.script
+
+*Note : in this case the script will try to create symbolic links to shared libraries libelenart60_64.so, libelenavm60_64.so, libelenasm60_64.so and config files : elenart60.config and elenavm60.config.
+Alternatively you can copy the shared libraries to /usr/local/lib/elena/ and config files to /usr/local/etc/elena/*
+
+## Building samples
 
 To build all existing samples you can go to the **examples** folder:
 
@@ -191,7 +217,7 @@ and compile them:
     elena-cli examples60.linux.prjcol 
     elena-cli rosetta60.linux.prjcol 
 
-**For Linux 64 (amd64, aarch64, ppc64le)**:
+**For Linux 64 (amd64, aarch64, ppc64le) / FreeBSD (amd64)**:
 
     elena64-cli examples60.linux.prjcol 
     elena64-cli rosetta60.linux.prjcol 
@@ -209,6 +235,7 @@ The ELENA source code is organized as follows:
     dat\sg              language grammar file            
     dat\og              language optimization rules
     doc                 some documentations
+    doc\api             ELENA API documentations
     elenasrc3\elc       source for the compiler
     elenasrc3\elenart   source for the run-time shared library
     elenasrc3\elenasm   source for the script engine
@@ -217,6 +244,7 @@ The ELENA source code is organized as follows:
     elenasrc3\tools     source for ELENA utilities
     examples60          ELENA examples
     src60               source for ELENA libraries
+    tests60             ELENA functional tests
 
 ## Community
 We want your contributions and suggestions! One of the easiest ways to contribute is to participate in Github discussions or on Discord.
