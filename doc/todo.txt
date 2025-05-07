@@ -53,7 +53,7 @@ In development:
   - api : ShortNumber
   - support :sizeof
   --------------------------------------  
-  * new inline template
+  * fix the code - empty
   --------------------------------------
 
   === Iteration 42 ===

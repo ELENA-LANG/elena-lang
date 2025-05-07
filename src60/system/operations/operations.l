@@ -277,9 +277,7 @@ public template operator::shl(expr, arg) : __included(statements)
 public template operator::shr(expr, arg) : __included(statements)
    = expr $shr arg;
 
-// sizeof:
+// :sizeof
 
 public template operator::sizeof(expr) : __included(statements)
-{
-   $size expr;
-}
+   = $size expr;
