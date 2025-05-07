@@ -838,6 +838,7 @@ public const struct ShortNumber : IntBaseNumber,
       = 32767;
 
    static short Default
+            : info("Returns the value value (0)")
       = 0;
 
    constructor()
@@ -857,18 +858,23 @@ public const struct ShortNumber : IntBaseNumber,
       = ShortConvertor.convert(b);
 
    constructor(int n)
+            : info("Converts from an integer")
       = ShortConvertor.convert(n);
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
      <= add(cast short(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
      <= subtract(cast short(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
      <= multiply(cast short(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= divide(cast short(o));
 
    short add(short n)
@@ -952,6 +958,7 @@ public const struct ShortNumber : IntBaseNumber,
       = new RealNumber(_value).divide(n);   
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is short n)
       {
@@ -962,12 +969,15 @@ public const struct ShortNumber : IntBaseNumber,
    }
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
       <= band(cast short(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
       <= bor(cast short(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
       <= bxor(cast short(n));
 
    short band(short n)
@@ -1019,6 +1029,7 @@ public const struct ShortNumber : IntBaseNumber,
       = new LongNumber(self).bxor(n);
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type when it is possible and compared")
       <= less(cast short(o));
 
    bool equal(short b)
@@ -1082,6 +1093,7 @@ public const struct ShortNumber : IntBaseNumber,
       = RealConvertor.convert(self);
 
    string toPrintable()
+            : info("returns the literal presentation")
       = StringConvertor.convert(self, 10);
 
    short shiftLeft(int val)
@@ -1097,6 +1109,7 @@ public const struct ShortNumber : IntBaseNumber,
       = ~_value;
 
    get short Negative()
+            : info("Returns negated value")
 //      = -_value;
    {
       short v := 0;

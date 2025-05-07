@@ -1,14 +1,29 @@
-import extensions;
-
-struct XY
-{
-   int x;
-   int y;
-}
+//import extensions;
+//import xml;
+//import system'io;
+//import system'text;
+//import extensions'text;
 
 public program()
 {
-   XY xy := default;
+   X x := new X();
+   while (x.isAvailable)
+   {
+      x.next()
+   }
+}
 
-   Console.printLine("size of XY is ", :sizeof xy);
+X
+{
+   x;
+   
+   constructor() { x := 0 }
+   
+   bool isAvailable
+      = x < 3;
+   
+   next()
+   {
+      x := x + 1;
+   }
 }

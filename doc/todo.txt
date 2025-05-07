@@ -10,27 +10,23 @@ In development:
   dev: 
   - #743
   - MTA support for Linux : support MT routines in elenart
-  - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
-  - implement analog of record using meta programming (extensions'records)
+  - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
   - upndown (connector - cmdSearch)
   - #748 : i386
   - #620 : backlog
   gen:
-  - work on REPL (elt) : execute simple program
+  - work on REPL (elt), generate project template
   api:
   - api refactoring : main program entry to be called - Program
   - #622 : api backlog
   - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
   ide:  
-  - compile in the separate thread
-  - debugger : stepped into the property / operator automatically (see for example xml)
+  - compile in the separate thread  
   - debugger : watch list is not refreshed correctly  (see for example xml)
   - #184 : linux -  open project, new project, save project, save all, close project ...
-  - syntax highlighting
   - async method - auto watch : self and some variables are not displayed
   maint:
   - test all x86-64 examples
-  - API - review / description
   - review pi performance (must < 6) : realOp.power[3] byte code
   - nillable single dispatcher : use direct reference to nilValue symbol   
   - fix create release script - attach rpm file as well
@@ -50,10 +46,17 @@ In development:
   - weekly posting
   - post what's new in ELENA 6.7
   --------------------------------------
-  - api : ShortNumber
-  - support :sizeof
+  - api : UShortNumber
+  - implement analog of record using meta programming (extensions'records)
+  - work on REPL (elt) : execute simple program
+  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
+  - debugger : stepped into the property / operator automatically (see for example xml)
   --------------------------------------  
-  * fix the code - empty
+  * breakpoint must be inside loop
+  * test while-loop
+  * test for-loop
+  * property is called
+  * test xml example
   --------------------------------------
 
   === Iteration 42 ===

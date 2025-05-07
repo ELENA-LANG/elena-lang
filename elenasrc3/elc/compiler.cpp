@@ -13374,6 +13374,15 @@ ObjectInfo Compiler::Expression::compileLoop(SyntaxNode node, ExpressionAttribut
 
    writer->newNode(BuildKey::LoopOp);
 
+   if (!EAttrs::test(mode, EAttr::NoDebugInfo)) {
+      // HOTFIX : move the breakpoint inside the loop
+      auto previousNode = writer->CurrentNode().prevNode();
+      if (previousNode == BuildKey::Breakpoint) {
+         BuildTree::copyNode(*writer, previousNode, true);
+         previousNode.setKey(BuildKey::Idle);
+      }
+   }
+
    compile(node, 0, mode, nullptr);
 
    writer->appendNode(BuildKey::VirtualBreakpoint);
