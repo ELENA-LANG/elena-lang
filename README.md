@@ -235,6 +235,7 @@ The ELENA source code is organized as follows:
     dat\sg              language grammar file            
     dat\og              language optimization rules
     doc                 some documentations
+    doc\api             ELENA API documentations
     elenasrc3\elc       source for the compiler
     elenasrc3\elenart   source for the run-time shared library
     elenasrc3\elenasm   source for the script engine
@@ -243,6 +244,7 @@ The ELENA source code is organized as follows:
     elenasrc3\tools     source for ELENA utilities
     examples60          ELENA examples
     src60               source for ELENA libraries
+    tests60             ELENA functional tests
 
 ## Community
 We want your contributions and suggestions! One of the easiest ways to contribute is to participate in Github discussions or on Discord.
