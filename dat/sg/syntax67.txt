@@ -176,7 +176,8 @@ METHOD_SCOPE ::=
 	"(" { PARAMETER { "," PARAMETER }* }? ")" POSTFIXES? METHOD_BODY;
 
 METHOD_BODY ::=
-	"{" BLOCK;
+	"{" BLOCK
+	| "=" RET_EXPRESSION DECLARATION_END;
 
 BLOCK ::=
 	STATEMENT NEXT_STATEMENT
@@ -208,11 +209,35 @@ ROOT_EXPRESSION ::=
 		| eps ^OBJECT
 	}
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L2_F
+	| BRACKET SUB_EXPRESSION L3_F
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
-	| "$rep" EXPRESSION ^LOOP_OPERATION;
+	| "$rep" EXPRESSION ^LOOP_OPERATION
+	| "$ext" EXPRESSION ^EXTERN_OPERATION
+	| "$break" ^BREAK_OPERATION
+	| "$continue" ^CONTINUE_OPERATION
+	| "$yield" EXPRESSION ^YIELD_OPERATION
+	| "$await" EXPRESSION ^ASYNC_OPERATION
+	| "$lazy" EXPRESSION ^LAZY_OPERATION;
+
+RET_EXPRESSION ::=
+	EXPRESSION;
 
 SINGLE_EXPRESSION ::=
 	{ identifier | reference | global }+ ^OBJECT;	
+
+SUB_EXPRESSION ::=
+	identifier+ {
+		I_OP ")"
+		| ")" ^OBJECT
+	}
+	| { reference | global } ^OBJECT L2_F ")"
+	| { string | wide } {
+		S_OP ")"
+		| ")" ^OBJECT
+	}
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F ")"
+	| BRACKET SUB_EXPRESSION L3_F ")"
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ")";
 
 EXPRESSION ::=
 	identifier+ {
@@ -225,17 +250,28 @@ EXPRESSION ::=
 		| eps ^OBJECT
 	}
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
-	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION;
+	| BRACKET SUB_EXPRESSION L3_F
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
+	| "$await" EXPRESSION ^ASYNC_OPERATION
+	| "$lazy" EXPRESSION ^LAZY_OPERATION;
+
 I_OP ::=
-	SBRACKET ^OBJECT INDEXER_R L0_F
+	ASSIGN ^OBJECT EXPRESSION ^ASSIGN_OPERATION
+	| SBRACKET ^OBJECT INDEXER_R L0_F
 	| BRACKET ^OBJECT FUNCTION_R L2_F
-	| EQUAL ^OBJECT ^MESSAGE_OPERATION L6_EXPRESSION L7_F
+	| DOT ^OBJECT MESSAGE L3_R
+	| SHL ^OBJECT L4_EXPRESSION ^SHL_OPERATION
+	| SHR ^OBJECT L4_EXPRESSION ^SHR_OPERATION
+	| EQUAL ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION L7_F
+	| NOTEQUAL ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION L7_F
 	| ALT ^OBJECT ^MESSAGE_OPERATION ALT_R
-	| TRY ^OBJECT ^MESSAGE_OPERATION TRY_R;
+	| TRY ^OBJECT ^MESSAGE_OPERATION TRY_R
+	| FNL ^OBJECT ^MESSAGE_OPERATION FNL_R;
 
 S_OP ::=
 	SBRACKET ^OBJECT INDEXER_R L3_F
-	| EQUAL ^OBJECT ^MESSAGE_OPERATION L6_EXPRESSION L7_F;
+	| EQUAL ^OBJECT L6_EXPRESSION ^EQUAL_OPERATION L7_F
+	| NOTEQUAL ^OBJECT L6_EXPRESSION ^NOTEQUAL_OPERATION L7_F;
 
 L0_F ::=
 	L1_OP
@@ -247,17 +283,24 @@ L1_OP ::=
 L2_F ::=
 	L3_F;
 
+L3_R ::=
+	BRACKET MESSAGE_R L3_F
+	| eps ^PROPERTY_OPERATION L3_F;
+
 L3_F ::=
 	L4_F;
 
 L4_F ::=
-	L5_F;
+	SHL L4_EXPRESSION ^SHL_OPERATION
+	| SHR L4_EXPRESSION ^SHR_OPERATION
+	| L5_F;
 
 L5_F ::=
 	L6_F;
 
 L6_F ::= 
-	EQUAL ^MESSAGE_OPERATION L6_EXPRESSION
+	EQUAL L6_EXPRESSION ^EQUAL_OPERATION L7_F
+	| NOTEQUAL L6_EXPRESSION ^NOTEQUAL_OPERATION L7_F
 	| L7_F;
 
 L7_F ::=
@@ -274,11 +317,36 @@ L9_F ::=
 	| FNL ^MESSAGE_OPERATION FNL_R
 	| eps;
 
+L4_EXPRESSION ::=
+	identifier+ I_F4
+	| { reference | global } R_F4
+	| { string | wide } ^OBJECT L_F4
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L_F4
+	| BRACKET SUB_EXPRESSION L_F4
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION;
+
+I_F4 ::=
+	SBRACKET ^OBJECT INDEXER_R L2_F4
+	| BRACKET ^OBJECT FUNCTION_R
+	| L_F4;
+
+R_F4 ::=
+	SBRACKET ^OBJECT INDEXER_R
+	| L_F4;
+
+L_F4 ::=
+	eps;
+
+L2_F4 ::=
+	BRACKET ^OBJECT FUNCTION_R
+	| eps;
+
 L6_EXPRESSION ::=
 	identifier+ I_F6
 	| { reference | global } R_F6
 	| { string | wide } ^OBJECT L_F6
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L_F6
+	| BRACKET SUB_EXPRESSION L_F6
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION;
 
 I_F6 ::=
@@ -302,6 +370,7 @@ L7_EXPRESSION ::=
 	| { reference | global } R_F7
 	| { string | wide } ^OBJECT L_F7
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L_F7
+	| BRACKET SUB_EXPRESSION L_F7
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION;
 
 I_F7 ::=
@@ -398,9 +467,13 @@ BRACKET    ::= "(";
 IF         ::= "?";
 ELSE       ::= "!";
 EQUAL      ::= "==";
+NOTEQUAL   ::= "!=";
 ALT        ::= "\";
 TRY        ::= "\\";
 FNL        ::= "$fnl";
+DOT        ::= ".";
+SHL        ::= "$shl";
+SHR        ::= "$shr";
 
 DECLARATION_END ::=
 	";";
