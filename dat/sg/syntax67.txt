@@ -1,0 +1,251 @@
+__define eof                 8195;
+__define identifier         12292;
+__define integer            12293;
+__define string             12294;
+__define hexinteger         12295;
+__define reference          12296;
+__defineterminal "}"        12297;
+__define character          12298;
+__define global		    12299;
+__define wide               12300;
+__define constant           12301;
+__define long               12302;
+__define real               12303;
+__define interpolate        12304;
+
+__define DECLARATION         5120;
+__define BLOCK               7184;
+__define NO_BODY             7185;
+__define TEMPLATE_BLOCK      4104;
+__define PARAMETER           4106;
+__define END_OF_BLOCK        4107;
+__define DICTIONARY          4128;
+__define META_STATEMENT      4129;
+__define INCLUDE_STATEMENT   4130;
+__define IMPORT_STATEMENT    4131;
+__define COND_STATEMENT      4132;
+__define SHARED_DICTIONARY   4133;
+__define ENDCOND_STATEMENT   4134;
+__define ELSE_COND_STATEMENT 4135;
+__define OBJECT              4145;
+__define TEMPLATE_TYPE       4146;
+__define ARRAY_TYPE          4147;
+__define NULLABLE_TYPE       4154;
+__define NESTED              4224;
+__define CLOSURE             4225;
+__define MESSAGE             4288;
+__define SUB_VARIABLE        4311;
+__define RET_EXPRESSION      7220;
+__define GET_EXPRESSION      7222;
+__define INIT_EXPRESSION     7223;
+__define ACCUM_EXPRESSION    7225;
+__define NESTED_EXPRESSION   6197;
+__define ASYNC_OPERATION        6203;
+__define INDEXER_OPERATION      6209;
+__define ASSIGN_OPERATION       6210;
+__define ADDITION_ASSIGNMENT    6211;
+__define ADD_OPERATION          6212;
+__define SUB_OPERATION          6213;
+__define LEN_OPERATION          6214;
+__define IF_OPERATION           6215;
+__define LESS_OPERATION         6216;
+__define NAME_OPERATION         6217;
+__define EQUAL_OPERATION        6218;
+__define NOT_OPERATION          6219;
+__define NOTEQUAL_OPERATION     6220;
+__define LOOP_OPERATION         6221;
+__define ELSE_OPERATION         6222;
+__define IF_ELSE_OPERATION      6223;
+__define MUL_OPERATION          6224;
+__define DIV_OPERATION          6225;
+__define NOTLESS_OPERATION      6226;
+__define GREATER_OPERATION      6227;
+__define NOTGREATER_OPERATION   6228;
+__define EXTERN_OPERATION       6229;
+__define NEGATE_OPERATION       6230;
+__define VALUE_OPERATION        6231;
+__define BAND_OPERATION         6232;
+__define BOR_OPERATION          6233;
+__define BXOR_OPERATION         6234;
+__define BNOT_OPERATION         6235;
+__define SHL_OPERATION          6236;
+__define SHR_OPERATION          6237;
+__define SUB_ASSIGNMENT         6238;
+__define MUL_ASSIGNMENT         6239;
+__define DIV_ASSIGNMENT         6240;
+__define AND_OPERATION          6241;
+__define OR_OPERATION           6242;
+__define XOR_OPERATION          6243;
+__define BREAK_OPERATION        6244;
+__define LAZY_OPERATION         6245;
+__define TUPLE_ASSIGNING        6246;
+__define CONTINUE_OPERATION     6247;
+__define YIELD_OPERATION        6248;
+__define EXPRVAL_OPERATION      6249;
+__define REFER_OPERATION        6251;
+__define INC_OPERATION          6252;
+__define DEC_OPERATION          6253;
+__define SIZE_OPERATION         6254;
+__define TEMPLATE_EXPR_BLOCK    6304;
+
+__define MESSAGE_OPERATION      6337;
+__define PROPERTY_OPERATION     6340;
+__define EXPRESSION             6288;
+__define L5_EXPRESSION          6289;
+__define SINGLE_EXPRESSION      6290;
+__define L8_EXPRESSION          6291;
+__define ROOT_EXPRESSION        6292;
+__define L6_EXPRESSION          6293;
+__define T_EXPRESSION           6294;
+__define L4_EXPRESSION          6295;
+__define NT_EXPRESSION          6296;
+__define L7_EXPRESSION          6297;
+__define L3_SINGLE_EXPRESSION   6298;
+__define NESTED_ROOT_EXPRESSION 6299;
+__define OPERATION_TEMPLATE     6300;
+__define LT_EXPRESSION          6301;
+__define INTERPOL_EXPRESSION    6302;
+__define L3_EXPRESSION          6303;
+__define KEY_VALUE_EXPRESSION   6305;
+__define CLOSURE_OPERATION      6306;
+__define INTERPOLATE_EXPR       6307;
+__define SWITCH_OPTION 	        6353;
+__define SWITCH_LAST_OPTION     6354;
+__define SWITCH_CODE 	        6355;
+__define COLLECTION_EXPRESSION  6356;
+__define TUPLE_COLLECTION 	6357;
+__define POSTFIX                4201;
+__define TEMPLATE_POSTFIX       4202;
+
+__define ENUM_POSTFIX           4207;
+__define TEMPLATE_ARG           4208;
+__define DIMENSION              5233;
+__define RESEND                 7366;
+__define CATCH_OPERATION        7367;
+__define CATCH                  7368;
+__define FINAL_OPERATION        7386;
+__define REDIRECT               7371;
+__define ALT_OPERATION          7372;
+__define ISNIL_OPERATION        7373;
+__define SWITCH_OPERATION       7376;
+__define COMPLEX_NAME 	        4302;
+__define INLINE                 4303;
+__define SUB_DECLARATION        4312;
+__define FINALLY                7385;
+__define PARAMETER_BLOCK        4336;
+__define TUPLE_TYPE 		4341;
+
+__define BLOCK_CLOSING_EXPECTED         16386;
+
+START ::= 
+        { DECLARATION | META_DECLARATION }+ eof 
+	| eof;
+	eof;
+
+META_DECLARATION ::=
+	"#new" DICTIONARY DECLARATION_END
+	| "#share" SHARED_DICTIONARY DECLARATION_END
+	| "#let" META_STATEMENT DECLARATION_END
+	| "#include" INCLUDE_STATEMENT DECLARATION_END
+	| "#import" IMPORT_STATEMENT DECLARATION_END
+        | "#if" COND_STATEMENT
+        | "#elif" ELSE_COND_STATEMENT
+	| ENDCOND_STATEMENT;
+
+META_STATEMENT ::=
+	EXPRESSION;
+
+DECLARATION ::=
+	{ identifier | reference }+ IR_DECLARATION;
+
+IR_DECLARATION ::=
+	SCOPE;
+
+SCOPE ::=
+	METHOD_SCOPE;
+
+METHOD_SCOPE ::=
+	"(" { PARAMETER { "," PARAMETER }* }? ")" POSTFIXES? METHOD_BODY;
+
+METHOD_BODY ::=
+	"{" BLOCK;
+
+BLOCK ::=
+	STATEMENT NEXT_STATEMENT
+	| END_OF_BLOCK;
+
+STATEMENT ::=
+	ROOT_EXPRESSION
+	| "#include" INCLUDE_STATEMENT;
+
+NEXT_STATEMENT ::=
+	DECLARATION_END {
+		STATEMENT NEXT_STATEMENT 
+		| END_OF_BLOCK 
+	}
+	| END_OF_BLOCK;
+
+INCLUDE_STATEMENT ::=
+	{ identifier | reference }+ ^ OBJECT;
+
+ROOT_EXPRESSION ::=
+	identifier {
+		I_OP
+		| eps ^OBJECT
+	}
+	| { reference | global } ^OBJECT L2_F
+	| { string | wide } {
+		S_OP
+		| eps ^OBJECT
+	}
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L2_F;
+
+EXPRESSION ::=
+	identifier {
+		I_OP
+		| eps ^OBJECT
+	}
+	| { reference | global } ^OBJECT L2_F
+	| { string | wide } {
+		S_OP
+		| eps ^OBJECT
+	}
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L2_F;
+
+I_OP ::=
+	SBRACKET ^OBJECT INDEXER_R L0_F;
+
+S_OP ::=
+	SBRACKET ^OBJECT INDEXER_R L2_F;
+
+L0_F ::=
+	L1_OP
+	| L_F;
+
+L1_OP ::=
+	ASSIGN EXPRESSION ^ASSIGN_OPERATION;
+
+L2_F ::=
+	eps;
+
+INDEXER_R ::=
+	EXPRESSION "]" ^INDEXER_OPERATION;
+
+PARAMETER ::=
+	identifier;
+
+DICTIONARY ::=
+	identifier+;
+
+SBRACKET   ::= "[";
+ASSIGN     ::= ":=";
+
+DECLARATION_END ::=
+	";";
+
+END_OF_BLOCK ::=
+	"}"
+	| BLOCK_CLOSING_EXPECTED;
+
+BLOCK_CLOSING_EXPECTED ::=
+	eof;
