@@ -170,7 +170,8 @@ IR_DECLARATION ::=
 	| SCOPE;
 
 SCOPE ::=
-	METHOD_SCOPE;
+	METHOD_SCOPE
+	| DECLARATION_END;
 
 METHOD_SCOPE ::=
 	"(" { PARAMETER { "," PARAMETER }* }? ")" POSTFIXES? METHOD_BODY;
@@ -211,6 +212,7 @@ ROOT_EXPRESSION ::=
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L2_F
 	| BRACKET SUB_EXPRESSION L3_F
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
+	| "$size" SINGLE_EXPRESSION ^SIZE_OPERATION
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$break" ^BREAK_OPERATION
@@ -237,7 +239,10 @@ SUB_EXPRESSION ::=
 	}
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F ")"
 	| BRACKET SUB_EXPRESSION L3_F ")"
-	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ")";
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION ")"
+	| "$size" SINGLE_EXPRESSION ^SIZE_OPERATION ")"
+	| "$await" EXPRESSION ^ASYNC_OPERATION ")"
+	| "$lazy" EXPRESSION ^LAZY_OPERATION ")";
 
 EXPRESSION ::=
 	identifier+ {
@@ -252,6 +257,7 @@ EXPRESSION ::=
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
 	| BRACKET SUB_EXPRESSION L3_F
 	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
+	| "$size" SINGLE_EXPRESSION ^SIZE_OPERATION
 	| "$await" EXPRESSION ^ASYNC_OPERATION
 	| "$lazy" EXPRESSION ^LAZY_OPERATION;
 
@@ -437,6 +443,9 @@ PARAMETER ::=
 	identifier;
 
 DICTIONARY ::=
+	identifier+;
+
+SHARED_DICTIONARY ::=
 	identifier+;
 
 TEMPLATE_BRACKETS ::=
