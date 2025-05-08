@@ -159,7 +159,15 @@ DECLARATION ::=
 	{ identifier | reference }+ IR_DECLARATION;
 
 IR_DECLARATION ::=
-	SCOPE;
+	{
+		TEMPLATE_BRACKETS {
+			eps
+		}
+	} { POSTFIXES NESTED_SCOPE | SCOPE }
+	| "::" {
+		COMPLEX_NAME { "::" COMPLEX_NAME }* TEMPLATE_BRACKETS? METHOD_SCOPE
+	}
+	| SCOPE;
 
 SCOPE ::=
 	METHOD_SCOPE;
@@ -176,6 +184,7 @@ BLOCK ::=
 
 STATEMENT ::=
 	ROOT_EXPRESSION
+	| "#let" META_STATEMENT
 	| "#include" INCLUDE_STATEMENT;
 
 NEXT_STATEMENT ::=
@@ -189,7 +198,7 @@ INCLUDE_STATEMENT ::=
 	{ identifier | reference }+ ^ OBJECT;
 
 ROOT_EXPRESSION ::=
-	identifier {
+	identifier+ {
 		I_OP
 		| eps ^OBJECT
 	}
@@ -198,10 +207,15 @@ ROOT_EXPRESSION ::=
 		S_OP
 		| eps ^OBJECT
 	}
-	| { integer | hexinteger | long | real | constant | character } ^OBJECT L2_F;
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L2_F
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION
+	| "$rep" EXPRESSION ^LOOP_OPERATION;
+
+SINGLE_EXPRESSION ::=
+	{ identifier | reference | global }+ ^OBJECT;	
 
 EXPRESSION ::=
-	identifier {
+	identifier+ {
 		I_OP
 		| eps ^OBJECT
 	}
@@ -210,26 +224,145 @@ EXPRESSION ::=
 		S_OP
 		| eps ^OBJECT
 	}
-	| { integer | hexinteger | long | real | constant | character } ^OBJECT L2_F;
-
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION;
 I_OP ::=
-	SBRACKET ^OBJECT INDEXER_R L0_F;
+	SBRACKET ^OBJECT INDEXER_R L0_F
+	| BRACKET ^OBJECT FUNCTION_R L2_F
+	| EQUAL ^OBJECT ^MESSAGE_OPERATION L6_EXPRESSION L7_F
+	| ALT ^OBJECT ^MESSAGE_OPERATION ALT_R
+	| TRY ^OBJECT ^MESSAGE_OPERATION TRY_R;
 
 S_OP ::=
-	SBRACKET ^OBJECT INDEXER_R L2_F;
+	SBRACKET ^OBJECT INDEXER_R L3_F
+	| EQUAL ^OBJECT ^MESSAGE_OPERATION L6_EXPRESSION L7_F;
 
 L0_F ::=
 	L1_OP
-	| L_F;
+	| L2_F;
 
 L1_OP ::=
 	ASSIGN EXPRESSION ^ASSIGN_OPERATION;
 
 L2_F ::=
+	L3_F;
+
+L3_F ::=
+	L4_F;
+
+L4_F ::=
+	L5_F;
+
+L5_F ::=
+	L6_F;
+
+L6_F ::= 
+	EQUAL ^MESSAGE_OPERATION L6_EXPRESSION
+	| L7_F;
+
+L7_F ::=
+	L8_F;
+
+L8_F ::=
+	IF IF_R
+	| ELSE ELSE_R
+	| L9_F;
+
+L9_F ::=
+	ALT ALT_R
+	| TRY ^MESSAGE_OPERATION TRY_R
+	| FNL ^MESSAGE_OPERATION FNL_R
+	| eps;
+
+L6_EXPRESSION ::=
+	identifier+ I_F6
+	| { reference | global } R_F6
+	| { string | wide } ^OBJECT L_F6
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L_F6
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION;
+
+I_F6 ::=
+	SBRACKET ^OBJECT INDEXER_R L2_F6
+	| BRACKET ^OBJECT FUNCTION_R
+	| L_F6;
+
+R_F6 ::=
+	SBRACKET ^OBJECT INDEXER_R
+	| L_F6;
+
+L_F6 ::=
 	eps;
+
+L2_F6 ::=
+	BRACKET ^OBJECT FUNCTION_R
+	| eps;
+
+L7_EXPRESSION ::=
+	identifier+ I_F7
+	| { reference | global } R_F7
+	| { string | wide } ^OBJECT L_F7
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L_F7
+	| "$name" SINGLE_EXPRESSION ^NAME_OPERATION;
+
+I_F7 ::=
+	SBRACKET ^OBJECT INDEXER_R L2_F7
+	| BRACKET ^OBJECT FUNCTION_R
+	| L_F7;
+
+R_F7 ::=
+	SBRACKET ^OBJECT INDEXER_R
+	| L_F7;
+
+L_F7 ::=
+	eps;
+
+L2_F7 ::=
+	BRACKET ^OBJECT FUNCTION_R
+	| eps;
+
+L8_EXPRESSION ::=
+	"{" BLOCK ^ CLOSURE;
 
 INDEXER_R ::=
 	EXPRESSION "]" ^INDEXER_OPERATION;
+
+FUNCTION_R ::=
+	MESSAGE_PARAMETERS ")" ^MESSAGE_OPERATION
+	| ")" ^MESSAGE_OPERATION;
+
+MESSAGE_R ::=
+	MESSAGE_PARAMETERS ")" ^ MESSAGE_OPERATION
+	| ")" ^ MESSAGE_OPERATION;
+
+IF_R ::=
+	L8_EXPRESSION { eps ^IF_OPERATION | "!" L8_EXPRESSION ^IF_ELSE_OPERATION }
+	| SINGLE_EXPRESSION ":" SINGLE_EXPRESSION ^IF_ELSE_OPERATION;
+
+ELSE_R ::=
+	L8_EXPRESSION ^ELSE_OPERATION;
+
+ALT_R ::=
+	CATCH ^ALT_OPERATION;
+
+TRY_R ::=
+	CATCH { FNL FINALLY }? ^CATCH_OPERATION;
+
+FNL_R ::=
+	FINALLY ^FINAL_OPERATION;
+
+FINALLY ::=
+	L7_EXPRESSION;
+
+CATCH ::=
+	MESSAGE {
+		BRACKET MESSAGE_R
+	};
+
+MESSAGE_PARAMETERS ::=
+	MESSAGE_PARAMETER { "," MESSAGE_PARAMETER }*;
+
+MESSAGE_PARAMETER ::=
+	EXPRESSION;
 
 PARAMETER ::=
 	identifier;
@@ -237,8 +370,37 @@ PARAMETER ::=
 DICTIONARY ::=
 	identifier+;
 
+TEMPLATE_BRACKETS ::=
+	"<" TEMPLATE_ARG { "," TEMPLATE_ARG }* ">";
+
+TEMPLATE_ARG ::=
+	identifier
+	| reference
+	| global;
+
+POSTFIXES ::=
+	":" POSTFIX { "," POSTFIX }*;
+
+POSTFIX ::=
+	identifier { 
+		"(" { MESSAGE_PARAMETER { "," MESSAGE_PARAMETER }* }? ")" ^ INLINE
+		| eps };
+
+MESSAGE ::=
+	identifier;
+
+COMPLEX_NAME ::=
+	identifier;
+
 SBRACKET   ::= "[";
 ASSIGN     ::= ":=";
+BRACKET    ::= "(";
+IF         ::= "?";
+ELSE       ::= "!";
+EQUAL      ::= "==";
+ALT        ::= "\";
+TRY        ::= "\\";
+FNL        ::= "$fnl";
 
 DECLARATION_END ::=
 	";";
