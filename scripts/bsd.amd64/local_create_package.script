@@ -21,6 +21,7 @@
 
  cp ../../dat/og/*.dat ../../build/$RELEASE/usr/local/share/elena
  cp ../../dat/sg/syntax60.dat ../../build/$RELEASE/usr/local/share/elena
+ cp ../../dat/sg/syntax67.dat ../../build/$RELEASE/usr/local/share/elena
 
  echo copying binaries
 

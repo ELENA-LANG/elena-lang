@@ -689,7 +689,20 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
 
 void CompilingProcess :: configurateParser(SyntaxVersion version)
 {
-   PathString syntaxPath(_appPath, version == SyntaxVersion::L5 ? SYNTAX50_FILE : SYNTAX60_FILE);
+   ustr_t syntaxDialect = SYNTAX60_FILE;
+   switch (version) {
+      case SyntaxVersion::L5:
+         syntaxDialect = SYNTAX50_FILE;
+         break;
+      case SyntaxVersion::L7:
+         syntaxDialect = SYNTAX67_FILE;
+         break;
+      case SyntaxVersion::L6:
+      default:
+         break;
+   }
+
+   PathString syntaxPath(_appPath, syntaxDialect);
    FileReader syntax(*syntaxPath, FileRBMode, FileEncoding::Raw, false);
    if (syntax.isOpen()) {
       TerminalMap terminals(
@@ -1021,6 +1034,9 @@ void CommandHelper :: handleOption(ustr_t arg, IdentifierString& profile, Projec
          }
          else if (arg.compare("-el6")) {
             project.setSyntaxVersion(SyntaxVersion::L6);
+         }
+         else if (arg.compare("-el7")) {
+            project.setSyntaxVersion(SyntaxVersion::L7);
          }
          break;
       case 'f':

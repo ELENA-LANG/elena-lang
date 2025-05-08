@@ -29,6 +29,16 @@ else
   exit 1
 fi
 
+../../bin/sg64-cli ../../dat/sg/syntax67.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 ../../bin/og64-cli ../../dat/og/bc_rules60.txt
 ret=$?
 if [ $ret -eq 0 ]
@@ -61,6 +71,7 @@ fi
 
 cp ../../dat/og/*.dat /usr/share/elena/
 cp ../../dat/sg/syntax60.dat /usr/share/elena
+cp ../../dat/sg/syntax67.dat /usr/share/elena
 
 echo compiling assembly files
 
@@ -168,6 +179,7 @@ fi
  cp ../../dat/og/bt_xrules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/og/bc_rules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
+ cp ../../dat/sg/syntax67.dat ./$RELEASE/usr/share/elena
 
  echo copying binaries
 

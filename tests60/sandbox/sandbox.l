@@ -1,34 +1,36 @@
-//import extensions;
-//import xml;
-//import system'io;
-//import system'text;
-//import extensions'text;
-
+import extensions;
+import system'routines'stex;
+import system'collections;
+ 
+const int N = 20000;
+/* 
+extension op : IntNumber
+{
+    Enumerator<int> ProperDivisors
+        = new Range(1,self / 2).filterBy::(int n => self.mod(n) == 0);
+ 
+    get AmicablePairs()
+    {
+        auto divsums := new List<int>(
+            cast Enumerator<int>(
+                new Range(0, self).selectBy::(int i => i.ProperDivisors.summarize(0))));
+ 
+        ^ new Range(0, divsums.Length)
+            .filterBy::(int i)
+            {
+                auto sum := divsums[i];
+                ^ (i < sum) && (sum < divsums.Length) && (divsums[sum] == i)
+            }
+            .selectBy::(int i => new Tuple<int,int>(i,divsums[i]));
+    }
+}
+*/ 
 public program()
 {
-   X x := new X();
-   while (x.isAvailable)
-   {
-      x.next()
-   };
-   
-   var s := "abc";
-   for(int i := 0;i < s.Length; i++) {
-      Console.writeLine(s[i])
-   };
-}
+   Enumerator<int> e := new Range(0, N).selectBy::(int i => /*i.ProperDivisors.summarize(0)*/i + 1);
 
-X
-{
-   x;
-   
-   constructor() { x := 0 }
-   
-   bool isAvailable
-      = x < 3;
-   
-   next()
-   {
-      x := x + 1;
-   }
+/*    N.AmicablePairs.forEach::(var Tuple<int,int> pair)
+    {
+        Console.printLine(pair.Item1, " ", pair.Item2)
+    }*/
 }

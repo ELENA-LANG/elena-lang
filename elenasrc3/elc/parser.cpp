@@ -121,8 +121,13 @@ bool Parser :: derive(TerminalInfo& terminalInfo, ParserStack& stack, SyntaxWrit
                   current = stack.pop();
                   if (current == pkTransformMark) {
                      current = stack.pop();
+                     if (current == pkTransformMark) {
+                        current = stack.pop();
+                        // ^= operation - R nodes must be merged
+                        writer->mergeRChildren(current & ~pkInjectable);
+                     }
                      // ^^ operation - L nodes must be merged
-                     writer->mergeLChildren(current & ~pkInjectable);
+                     else writer->mergeLChildren(current & ~pkInjectable);
                   }
                   // = operation - the last node must be enclosed
                   else writer->encloseLastChild(current & ~pkInjectable);

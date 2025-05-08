@@ -198,7 +198,8 @@ namespace elena_lang
    enum class SyntaxVersion
    {
       L6 = 0,
-      L5 = 1
+      L5 = 1,
+      L7 = 2
    };
 
    // --- ELENA Platform type ---

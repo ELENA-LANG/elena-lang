@@ -35,6 +35,7 @@ In development:
   - rosetta code : Program termination, Parallel calculations
   - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
+  - rosetta code : moving to 6.6 : (..Apply a callback to an array)
   port:
   - chat sample
   tools:
@@ -49,13 +50,32 @@ In development:
   - api : UShortNumber
   - implement analog of record using meta programming (extensions'records)
   - work on REPL (elt) : execute simple program
-  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
-  - debugger : stepped into the property / operator automatically (see for example xml)
+  - rosetta code : moving to 6.6
   --------------------------------------  
-  * test for-loop
-  * test while-loop
-  * property is called
-  * test xml example
+  * compile all apis, tests, examples, rosetta code examples
+
+  * redesign syntax to support new extension call syntax (.ext_message<template_arg>(...))
+  * support new extension call syntax (.ext_message<template_arg>(...))
+  * use new extension call syntax to generate extension template with specified argument list
+
+  * add a new feature item : calling extension templates : using both simple syntax (.&ext_message<..>(...) and a new one .ext_message<..>(...))
+
+  * calling extension template explicitly - a.populate<int>(n => ...);
+
+
+  * find an error in Amicable pairs - Alternative variant using strong-typed closures
+  * Resolving correctly extension template #741
+  * unit / functional test
+
+  * test twelvestats
+  * test aplusb
+  * test arraymode
+
+  * Amicable pairs - Alternative variant using strong-typed closures 
+  * add as a rosetta code sample to the project
+  * Amicable pairs - Alternative variant using yield enumerator
+  * Anagrams
+  * Anonymous recursion
   --------------------------------------
 
   === Iteration 42 ===

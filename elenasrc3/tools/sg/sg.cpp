@@ -230,6 +230,14 @@ int main(int argc, char* argv[])
 
                reader.read(token);
             }
+            else if (token.compare("=")) {
+               // NOTE : ^^ means merge rchildren
+               rule[rule_len++] = pkTransformMark;
+               rule[rule_len++] = pkTransformMark;
+               rule[rule_len++] = pkTransformMark;
+
+               reader.read(token);
+            }
             rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable;
          }
          else if (token.compare("=")) {

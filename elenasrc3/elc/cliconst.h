@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x00CA
+   #define ELC_REVISION_NUMBER               0x00CB
 
 #if defined _M_IX86 || _M_X64
 
@@ -56,6 +56,7 @@ namespace elena_lang
 
    constexpr auto SYNTAX50_FILE              = "syntax50.dat";
    constexpr auto SYNTAX60_FILE              = "syntax60.dat";
+   constexpr auto SYNTAX67_FILE              = "syntax67.dat";
    constexpr auto BC_RULES_FILE              = "bc_rules60.dat";
    constexpr auto BT_RULES_FILE              = "bt_rules60.dat";
    constexpr auto BT_XRULES_FILE             = "bt_xrules60.dat";

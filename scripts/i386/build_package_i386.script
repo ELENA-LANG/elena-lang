@@ -20,7 +20,7 @@ cp ../../bin/templates/*.config /etc/elena/templates/
 
 echo compiling data files
 
-../../bin/sg-cli ../../dat/sg/syntax60.txt
+../../bin/sg-cli ../../dat/sg/syntax67.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -74,6 +74,8 @@ cp ../../dat/og/*.dat /usr/share/elena/
 cp ../../dat/og/*.dat ../../bin
 cp ../../dat/sg/syntax60.dat /usr/share/elena
 cp ../../dat/sg/syntax60.dat ../../bin
+cp ../../dat/sg/syntax67.dat /usr/share/elena
+cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
