@@ -244,6 +244,7 @@ NESTED_ROOT_EXPRESSION ::=
 					RF_OP
 					| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 					| LT_EXPRESSION ^ TEMPLATE_BLOCK
+					| eps ^MESSAGE_OPERATION
 				}
 				| { ";" EXPRESSION }+ ")" {
 					T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK					
@@ -260,6 +261,7 @@ NESTED_ROOT_EXPRESSION ::=
 			T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 			| LT_EXPRESSION ^ TEMPLATE_BLOCK
 		}
+		| "=>" ^OBJECT { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
 		| eps ^OBJECT
 	}
 	| { reference | global } ^OBJECT L2_F
@@ -276,11 +278,13 @@ ROOT_EXPRESSION ::=
 					RF_OP
 					| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 					| LT_EXPRESSION ^ TEMPLATE_BLOCK
+					| eps ^MESSAGE_OPERATION
 				}
 				| { ";" EXPRESSION }+ ")" {
 					T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK					
 					| LT_EXPRESSION ^ TEMPLATE_BLOCK
 				}
+				| { "," MESSAGE_PARAMETER }+ ")" { RF_OP | eps ^MESSAGE_OPERATION }
 			}
 			| ")" ^MESSAGE_OPERATION L2_F
 		}
@@ -292,6 +296,7 @@ ROOT_EXPRESSION ::=
 			T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
 			| LT_EXPRESSION ^ TEMPLATE_BLOCK
 		}
+		| "=>" ^OBJECT { SWITCH_OPTION+ SWITCH_LAST_OPTION? } ^SWITCH_OPERATION
 		| eps ^OBJECT
 	}
 	| { reference | global } ^OBJECT L2_F
@@ -337,7 +342,8 @@ NESTED_EXPRESSION ::=
 	| END_OF_BLOCK;
 
 SINGLE_EXPRESSION ::=
-	{ identifier | reference | global }+ ^OBJECT;	
+	{ identifier | reference | global }+ ^OBJECT
+	| BRACKET SUB_EXPRESSION;
 
 SUB_EXPRESSION ::=
 	identifier+ {
@@ -345,6 +351,7 @@ SUB_EXPRESSION ::=
 		| BRACKET ^OBJECT FUNCTION_R L2_F ")"
 		| "{" NESTED_EXPRESSION ^NESTED L2_F ")"
 		| ")" ^OBJECT
+		| "=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
 	}
 	| { reference | global } ^OBJECT L2_F ")"
 	| { string | wide } ^OBJECT S_OP ")"
@@ -949,6 +956,16 @@ TEMPLATE_ARG ::=
 	identifier
 	| reference
 	| global;
+
+SWITCH_OPTION ::=
+	identifier ^ OBJECT ":" SWITCH_CODE
+	| { integer | character | string } ^ OBJECT ":" SWITCH_CODE;
+
+SWITCH_LAST_OPTION ::=
+	"!" ":" SWITCH_CODE;
+
+SWITCH_CODE ::=
+	"{" BLOCK;
 
 POSTFIXES ::=
 	":" POSTFIX { "," POSTFIX }*;
