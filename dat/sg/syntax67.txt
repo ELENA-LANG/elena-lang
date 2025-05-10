@@ -286,14 +286,7 @@ SINGLE_EXPRESSION ::=
 
 TYPE_EXPR ::=
 	identifier {
-		LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE {
-			identifier ^OBJECT
-			| { DYNAMIC_DIMENSION ^ARRAY_TYPE }+ {
-				identifier ^OBJECT
-				| eps
-			}
-			| eps
-		}
+		LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE TEMPLATE_R
 	};
 
 NESTED_ROOT_EXPRESSION ::=
@@ -352,6 +345,7 @@ ROOT_EXPRESSION ::=
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT
 	| BRACKET SUB_EXPRESSION L3_F
 	| ":" identifier EXPRESSION? ^OPERATION_TEMPLATE
+	| "::" TYPE_EXPR
 	| "$rep" EXPRESSION ^LOOP_OPERATION
 	| "$ext" EXPRESSION ^EXTERN_OPERATION
 	| "$break" ^BREAK_OPERATION
@@ -419,7 +413,8 @@ EXPRESSION ::=
 	}
 	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_F
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR
-	| BRACKET SUB_EXPRESSION L3_F
+	| BRACKET SUB_EXPRESSION { L3_F | identifier ":" SINGLE_EXPRESSION ^ TEMPLATE_EXPR_BLOCK }
+	| "::" TYPE_EXPR
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION L4_F
 	| "~" SINGLE_EXPRESSION ^BNOT_OPERATION
 	| "!" EXPRESSION ^NOT_OPERATION
