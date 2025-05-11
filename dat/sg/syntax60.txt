@@ -153,6 +153,7 @@ META_DECLARATION ::=
 
 DECLARATION ::=
 	{ identifier | reference }+ IR_DECLARATION
+	| "(" TUPLE_TYPE ")" identifier SUB_IR_DECLARATION
 	| "::" "(" TUPLE_TYPE ")" identifier SUB_IR_DECLARATION;
 
 IR_DECLARATION ::=

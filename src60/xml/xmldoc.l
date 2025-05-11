@@ -72,7 +72,7 @@ public class XmlDocument
 
    save(IXmlFormatter formatter, TextWriter output)
    {
-      Stack<XmlNode?> stack := new Stack<XmlNode?>();
+      var Stack<XmlNode?> stack := new Stack<XmlNode?>();
       
       int level := 0;
       stack.push(_root);
@@ -114,7 +114,7 @@ public class XmlDocument
    XmlNode findNode(string xpath)
    {
       if (xpath[0]==$47) {
-         string current, string subpath := XmlNode.parseXPath(1, xpath);
+         (string current, string subpath) := XmlNode.parseXPath(1, xpath);
          
          if (_root.Name == current) {
             ^ _root.findChild(subpath)
