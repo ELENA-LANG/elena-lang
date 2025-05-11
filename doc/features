@@ -359,10 +359,6 @@ class Win64A
  New template argument syntax
 ----------------------------------------------------------------------------
 
-   Tuple<int:int> t := (2,3);
-   FixedArray<int:(3)> a := new[]{1,2,3}
-   FixedArray<int:(3)> a2 := (1,2,3);
-
-
+   Func<T1:T2> f1 := nil;
 
 

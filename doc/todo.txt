@@ -52,15 +52,19 @@ In development:
   - work on REPL (elt) : execute simple program
   - rosetta code : moving to 6.6
   --------------------------------------  
+  * implement el7
   * compile all apis, tests, examples, rosetta code examples
+  * make el7
+  * probably better use "=" instead "::=" e.g. enum<int>(x86 = 0, AMD64 = 1, ARM = 2, ARM64 = 2, IA64 = 3, Unknown = 255);
+  * should we use (){..} instead of ambigous {} ?
 
-  * redesign syntax to support new extension call syntax (.ext_message<template_arg>(...))
+  * redesign syntax to support new extension call syntax (::ext_message<template_arg>(...))
   * support new extension call syntax (.ext_message<template_arg>(...))
   * use new extension call syntax to generate extension template with specified argument list
 
-  * add a new feature item : calling extension templates : using both simple syntax (.&ext_message<..>(...) and a new one .ext_message<..>(...))
+  * add a new feature item : calling extension templates (::ext_message<..>(...))
 
-  * calling extension template explicitly - a.populate<int>(n => ...);
+  * calling extension template explicitly - a::populate<int>(n => ...);
 
 
   * find an error in Amicable pairs - Alternative variant using strong-typed closures

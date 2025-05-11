@@ -203,7 +203,7 @@ public sealed struct AddrInfoReader
 
 // --- SelectMode ---
 
-public const struct SelectMode : enum<int>(SelectRead ::= 1, SelectWrite ::= 2, Error ::= 3);
+public const struct SelectMode : enum<int>(SelectRead = 1, SelectWrite = 2, Error = 3);
 
 // --- Socket ---
 
