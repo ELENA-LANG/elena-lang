@@ -45,7 +45,7 @@ namespace io
 
          byte tempbuffer[1024];
          while (maxLength > 0) {
-            int pageSize := maxLength < 1024 ? maxLength : 1024;
+            int pageSize := (maxLength < 1024) ? maxLength : 1024;
             pageSize := read(tempbuffer, pageSize);
             if (pageSize == 0) { 
                :break
@@ -69,7 +69,7 @@ namespace io
 
          byte tempbuffer[1024];
          while (actualLen > 0) {
-            int pageSize := actualLen < 1024 ? actualLen : 1024;
+            int pageSize := (actualLen < 1024) ? actualLen : 1024;
 
             class Array<byte>.copy(tempbuffer, dump, actualOffset, pageSize);
 

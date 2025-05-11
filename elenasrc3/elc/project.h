@@ -106,7 +106,7 @@ namespace elena_lang
          : XmlProjectBase(platform), _basePath(path), availableProfileList(DEFAULT_STR)
       {
          _encoding = FileEncoding::UTF8;
-         _syntaxVersion = SyntaxVersion::L6;
+         _syntaxVersion = SyntaxVersion::L7;
 
          _platform = platform;
 

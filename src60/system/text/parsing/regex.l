@@ -219,7 +219,7 @@ internal sealed singleton EOLRule : PatternRule
    }
 
    PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
-      = ch == $0 ? self : nil;
+      = (ch == $0) ? self : nil;
 
    PatternRule? gotoNext(Stack<PatternRule> parents)
       = nil;

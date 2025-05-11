@@ -106,7 +106,7 @@ public interface BoolValue
          bool xor(expr)
                   : info("Executes logical XOR operation.")
          {
-            cast bool(expr) ? { ^ BoolValue.false };
+            (cast bool(expr)) ? { ^ BoolValue.false };
          }
 
          bool Inverted 
@@ -163,7 +163,7 @@ public interface BoolValue
          bool xor(expr)
                   : info("Executes logical XOR operation")
          {
-            cast bool(expr) ? { ^ BoolValue.true };
+            (cast bool(expr)) ? { ^ BoolValue.true };
             
             ^ this self
          }

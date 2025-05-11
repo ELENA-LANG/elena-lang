@@ -25,6 +25,7 @@ extension op : IntNumber
     }
 }
 */ 
+
 public program()
 {
    Enumerator<int> e := new Range(0, N).selectBy::(int i => /*i.ProperDivisors.summarize(0)*/i + 1);

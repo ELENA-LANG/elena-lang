@@ -689,18 +689,25 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
 
 void CompilingProcess :: configurateParser(SyntaxVersion version)
 {
-   ustr_t syntaxDialect = SYNTAX60_FILE;
+   ustr_t syntaxDialect = SYNTAX67_FILE;
    switch (version) {
       case SyntaxVersion::L5:
          syntaxDialect = SYNTAX50_FILE;
-         break;
-      case SyntaxVersion::L7:
-         syntaxDialect = SYNTAX67_FILE;
+         if (_verbose)
+            _presenter->printLine("EL5 Dialect");
          break;
       case SyntaxVersion::L6:
-      default:
+         syntaxDialect = SYNTAX60_FILE;
+         if (_verbose)
+            _presenter->printLine("EL6 Dialect");
          break;
-   }
+      default:
+      case SyntaxVersion::L7:
+         syntaxDialect = SYNTAX67_FILE;
+         if (_verbose)
+            _presenter->printLine("EL7 Dialect");
+         break;
+   }   
 
    PathString syntaxPath(_appPath, syntaxDialect);
    FileReader syntax(*syntaxPath, FileRBMode, FileEncoding::Raw, false);

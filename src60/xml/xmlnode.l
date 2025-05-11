@@ -72,7 +72,7 @@ public class XmlNode
    get int ChildCounter()
       = _children.Length;
    
-   internal static /*::(string, string)*/Tuple<string, string> parseXPath(int index, string xpath)
+   (string, string) internal static parseXPath(int index, string xpath)
    {
       int separator := xpath.indexOf(index, $47);
       if (separator != -1) {

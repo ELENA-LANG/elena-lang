@@ -754,6 +754,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
       nameNode = {};
    }
 
+   bool withTuple = false;
    SyntaxNode current = node.firstChild();
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != nameNode) {
@@ -780,6 +781,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
          writer.closeNode();
       }
       else if (current == SyntaxKey::TupleType) {
+         withTuple = true;
          flushTupleType(writer, scope, current, attributeCategory);
 
          current = current.nextNode();
@@ -794,7 +796,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
             break;
       }
       else {
-         bool allowType = nameNode.key == SyntaxKey::None || nextNode == nameNode;
+         bool allowType = (nameNode.key == SyntaxKey::None || nextNode == nameNode) && !withTuple;
          if (current == SyntaxKey::ArrayType) {
             //flushAttribute(writer, scope, current, attributeCategory, allowType, true);
             flushArrayType(writer, scope, current, false);

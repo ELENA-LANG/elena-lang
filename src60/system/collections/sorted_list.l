@@ -23,7 +23,7 @@ namespace collections
       Func<object,object,int> _comparator;
    
       constructor new()
-         <= new((object l,object r => l < r ? -1 : (l == r ? 0 : 1)))
+         <= new((object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1)))
       {
       }
    
@@ -221,7 +221,7 @@ namespace collections
       {
          _length := 0;
          _capacity := 0;
-         _comparator := (object l,object r => l < r ? -1 : (l == r ? 0 : 1));
+         _comparator := (object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1));
       }
 
       constructor(Func<object,object,int> comparator)
@@ -232,7 +232,7 @@ namespace collections
       }
 
       constructor allocate(int capacity)
-         <= allocate(capacity, (object l,object r => l < r ? -1 : (l == r ? 0 : 1)));
+         <= allocate(capacity, (object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1)));
 
       constructor allocate(int capacity, Func<object,object,int> comparator)
       {
@@ -406,7 +406,7 @@ namespace collections
       {
          _length := 0;
          _capacity := 0;
-         _comparator := (TKey l,TKey r => l < r ? -1 : (l == r ? 0 : 1));
+         _comparator := (TKey l,TKey r => (l < r) ? -1 : ((l == r) ? 0 : 1));
       }
 
       constructor(Func<TKey,TKey,int> comparator)
@@ -417,7 +417,7 @@ namespace collections
       }
 
       constructor allocate(int capacity)
-         <= allocate(capacity, (TKey l,TKey r => l < r ? -1 : (l == r ? 0 : 1)));
+         <= allocate(capacity, (TKey l,TKey r => (l < r) ? -1 : ((l == r) ? 0 : 1)));
 
       constructor allocate(int capacity, Func<TKey,TKey,int> comparator)
       {

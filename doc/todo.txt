@@ -33,9 +33,8 @@ In development:
   samples:
   - optimization : pi (used classes byte code)
   - rosetta code : Program termination, Parallel calculations
-  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
-  - rosetta code : moving to 6.6 : (..Apply a callback to an array)
+  - rosetta code : moving to 6.7 : (..Apply a callback to an array)
   port:
   - chat sample
   tools:
@@ -50,25 +49,20 @@ In development:
   - api : UShortNumber
   - implement analog of record using meta programming (extensions'records)
   - work on REPL (elt) : execute simple program
-  - rosetta code : moving to 6.6
+  - rosetta code : moving to 6.7
   --------------------------------------  
   * compile all apis, tests, examples, rosetta code examples
-  * make el7
-  * probably better use "=" instead "::=" e.g. enum<int>(x86 = 0, AMD64 = 1, ARM = 2, ARM64 = 2, IA64 = 3, Unknown = 255);
-  * should we use (){..} instead of ambigous {} ?
-  * support (RealMatrix, bool) getDecomposed(RealMatrix m) {} (without double colon)
-  * support tuple shortcut with attributes : (probably attributes after brackets?) - see xmlnode.l 
-  * support Stack<XmlNode?> stack  - does not supporting IF operator in this (it must be in brackets)
-
+  --------------------------------------  
   * redesign syntax to support new extension call syntax (::ext_message<template_arg>(...))
   * support new extension call syntax (.ext_message<template_arg>(...))
   * use new extension call syntax to generate extension template with specified argument list
-
+  --------------------------------------  
   * add a new feature item : calling extension templates (::ext_message<..>(...))
 
   * calling extension template explicitly - a::populate<int>(n => ...);
-
-
+  --------------------------------------  
+  * should we use (){..} instead of ambigous {} ?
+  --------------------------------------  
   * find an error in Amicable pairs - Alternative variant using strong-typed closures
   * Resolving correctly extension template #741
   * unit / functional test

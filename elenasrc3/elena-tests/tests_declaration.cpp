@@ -54,7 +54,7 @@ void DeclarationFixture :: runTest()
    getAppPath(appPath);
    StringTextReader<char> reader(_src);
 
-   PathString syntaxPath(*appPath, SYNTAX60_FILE);
+   PathString syntaxPath(*appPath, SYNTAX67_FILE);
    FileReader syntax(*syntaxPath, FileRBMode, FileEncoding::Raw, false);
 
    auto parser = new Parser(&syntax, terminals, nullptr);
