@@ -629,7 +629,7 @@ RI_OP ::=
 		}
 	};
 
-INLINE_F
+INLINE_F ::=
         identifier ":" SINGLE_EXPRESSION ^ TEMPLATE_EXPR_BLOCK;
 
 L0_F ::=
