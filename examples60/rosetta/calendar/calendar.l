@@ -42,7 +42,7 @@ class CalendarMonthPrinter
       {
          var dw := _date.DayOfWeek;
 
-         _line.writeCopies("   ",_date.DayOfWeek == 0 ? 6 : (_date.DayOfWeek - 1));
+         _line.writeCopies("   ",(_date.DayOfWeek == 0) ? 6 : (_date.DayOfWeek - 1));
 
          do
          {
