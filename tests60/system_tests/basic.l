@@ -1753,7 +1753,7 @@ public incTest() : testCase()
 
 singleton MultiValGetter
 {
-   object, object getMultiVal()
+   (object, object) getMultiVal()
    {
       ^ ("Alex", 13)
    }
