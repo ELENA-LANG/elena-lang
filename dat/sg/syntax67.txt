@@ -402,7 +402,8 @@ SUB_EXPRESSION ::=
 		R_OP SUB_R
 		| ")" ^OBJECT
 	}
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_F SUB_R
+	| { string | wide } ^OBJECT { SBRACKET INDEXER_R | L3_F } SUB_R
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F SUB_R
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR ")"
 	| BRACKET SUB_EXPRESSION { L3_F | L8_F | INLINE_F } ")"
 	| "::" TYPE_EXPR ")"
@@ -451,7 +452,8 @@ EXPRESSION ::=
 		R_OP
 		| eps ^OBJECT
 	}
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_F
+	| { string | wide } ^OBJECT { SBRACKET INDEXER_R | L3_F }
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR
 	| BRACKET SUB_EXPRESSION { L3_F | L8_F | INLINE_F }
 	| "{" BLOCK ^CLOSURE
@@ -745,7 +747,8 @@ L4_EXPRESSION ::=
 
 I_OP4 ::=
 	SBRACKET ^OBJECT INDEXER_R L0_F4
-	| BRACKET ^OBJECT MESSAGE_R L3_F4;
+	| BRACKET ^OBJECT MESSAGE_R L3_F4
+	| DOT ^OBJECT MESSAGE L3_R4;
 
 L0_F4 ::=
 	SBRACKET INDEXER_R L0_F4
@@ -756,6 +759,10 @@ L2_F4 ::=
 
 L3_F4 ::=
 	eps;
+
+L3_R4 ::=
+	BRACKET MESSAGE_R L3_F4
+	| eps ^PROPERTY_OPERATION;	
 
 L5_EXPRESSION ::=
 	identifier {

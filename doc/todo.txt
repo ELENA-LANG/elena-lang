@@ -51,7 +51,19 @@ In development:
   - work on REPL (elt) : execute simple program
   - rosetta code : moving to 6.7
   --------------------------------------  
-  * compile all apis, tests, examples, rosetta code examples
+  * compile all apis, tests, examples, rosetta code examples, reviewed rosetta samples from the site (till Amicable pairs)
+  * 100 doors
+  * 24 game
+  * 99 bottles of beer
+  * A+B
+  * ABC problem
+  * Abstract type
+  * Abundant, deficient and perfect number classifications
+  * Accumulator factory
+  * Ackermann function
+  * Add a variable to a class instance at runtime
+  * AKS test for primes
+  * Amb
   --------------------------------------  
   * redesign syntax to support new extension call syntax (::ext_message<template_arg>(...))
   * support new extension call syntax (.ext_message<template_arg>(...))
