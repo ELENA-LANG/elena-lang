@@ -26,29 +26,65 @@ extension op : IntNumber
 }
 */ 
 
-sealed class MyIntValue
+public decoratorTest()
 {
-   int value;
+   var a := new DecoratorBaseA(2);
+   var decA := new DecoratorA(a, 3);
 
-   constructor(string value)
-   {
-      this value := value.toInt()
-   }
+   Assert.ifEqual((decA as:IDecoratorA).giveMe(), 5);
 
-   int Value = value;
+   Console.write(".");
 }
 
-public implicitConvertorTest()
+interface IDecoratorA
 {
-   auto v := "2" as:MyIntValue;
+   abstract giveMe();
+}
 
-   Assert.ifEqual(v.Value, 2);
-   Console.write(".");   
+class DecoratorBaseA : IDecoratorA
+{
+   field value;
+
+   constructor(value)
+   {
+      this value := value
+   }
+
+   giveMe()
+      = value;
+}
+
+class DecoratorA
+{
+   object target;
+   object extra;
+
+   constructor(target, extra)
+   {
+      this target := target;
+      this extra := extra;
+   }
+
+   giveMe()
+      = target.giveMe() + extra;
+
+   generic cast()
+   {
+      var type := __received.__getFirstSignatureMember();
+
+      var proxy := ::{ dispatch() => self; };
+      proxy.__injectInferface(type);
+   
+      ^ __received(proxy);
+   }
 }
 
 public program()
 {
-   Enumerator<int> e := new Range(0, N).selectBy::(int i => /*i.ProperDivisors.summarize(0)*/i + 1);
+   decoratorTest();
+
+
+//   Enumerator<int> e := new Range(0, N).selectBy::(int i => /*i.ProperDivisors.summarize(0)*/i + 1);
 
 /*    N.AmicablePairs.forEach::(var Tuple<int,int> pair)
     {

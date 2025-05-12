@@ -52,6 +52,7 @@ In development:
   - rosetta code : moving to 6.7
   --------------------------------------  
   * compile all apis, tests, examples, rosetta code examples, reviewed rosetta samples from the site (till Amicable pairs)
+  * decoratorTest (uncomment the inline attribute after)
   * 100 doors
   * 24 game
   * 99 bottles of beer
