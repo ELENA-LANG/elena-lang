@@ -561,7 +561,7 @@ I5_OP ::=
 			| LESS ^^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^=TEMPLATE_TYPE ^=TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE TEMPLATE_R
 		}
 		| {integer | hexinteger | long | real | constant | character | string | wide} X_R
-		| "(" ^^OBJECT SUB_EXPRESSION SUB_X_R
+		| "(" =OBJECT SUB_EXPRESSION SUB_X_R
 		| "*" =OBJECT SINGLE_EXPRESSION ^=VALUE_OPERATION ^LESS_OPERATION
 	}
 	| I5_OP_MINUS_LESS;
