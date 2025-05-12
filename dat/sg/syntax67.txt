@@ -411,8 +411,8 @@ SUB_EXPRESSION ::=
 		R_OP SUB_R
 		| ")" ^OBJECT
 	}
-	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? L3_F SUB_R
-	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F SUB_R
+	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? { INLINE_F | L3_F } SUB_R
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT { INLINE_F | L3_F } SUB_R
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR ")"
 	| BRACKET SUB_EXPRESSION { L3_F | L8_F | INLINE_F } ")"
 	| "::" TYPE_EXPR ")"
@@ -462,8 +462,8 @@ EXPRESSION ::=
 		R_OP
 		| eps ^OBJECT
 	}
-	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? L3_F
-	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
+	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? { INLINE_F | L3_F }
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT { INLINE_F | L3_F }
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR
 	| BRACKET SUB_EXPRESSION { L3_F | L8_F | INLINE_F }
 	| "{" BLOCK ^CLOSURE
@@ -535,7 +535,7 @@ I5_OP ::=
 		identifier {
 			XI_R
 			| ">"  ^^OBJECT =TEMPLATE_ARG ^TEMPLATE_TYPE TEMPLATE_R
-			| LESS ^^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^=TEMPLATE_TYPE ^=TEMPLATE_ARG { ":" TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE TEMPLATE_R
+			| LESS ^^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^=TEMPLATE_TYPE ^=TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE TEMPLATE_R
 		}
 		| {integer | hexinteger | long | real | constant | character | string | wide} X_R
 		| "*" =OBJECT SINGLE_EXPRESSION ^=VALUE_OPERATION ^LESS_OPERATION
