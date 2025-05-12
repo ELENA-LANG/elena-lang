@@ -2090,7 +2090,7 @@ public ifNilOperatorTest() : testCase()
 
 // --- enumTest ---
 
-public const struct Color : enum<int>(Red ::= 1,Green ::= 2,Blue ::= 3);
+public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
 
 public enumTest() : testCase()
 {
