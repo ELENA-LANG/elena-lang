@@ -84,7 +84,7 @@ class DecoratorA
 public program()
 {
     string s := "abc";
-    for (int i := 0; i < (s.Length - 1); i += 1)
+    for (int i := 0; i < s.Length - 1; i += 1)
     {
        console.write(s[i]);
     };
