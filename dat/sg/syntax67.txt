@@ -330,7 +330,6 @@ NESTED_ROOT_EXPRESSION ::=
 	}
 	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? L3_F
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
-	| BRACKET SUB_EXPRESSION { L3_F | L8_F }
 	| ":" identifier EXPRESSION? ^OPERATION_TEMPLATE
 	| "$break" ^BREAK_OPERATION
 	| "$continue" ^CONTINUE_OPERATION
