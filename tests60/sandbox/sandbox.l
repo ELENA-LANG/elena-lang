@@ -26,6 +26,26 @@ extension op : IntNumber
 }
 */ 
 
+sealed class MyIntValue
+{
+   int value;
+
+   constructor(string value)
+   {
+      this value := value.toInt()
+   }
+
+   int Value = value;
+}
+
+public implicitConvertorTest()
+{
+   auto v := "2" as:MyIntValue;
+
+   Assert.ifEqual(v.Value, 2);
+   Console.write(".");   
+}
+
 public program()
 {
    Enumerator<int> e := new Range(0, N).selectBy::(int i => /*i.ProperDivisors.summarize(0)*/i + 1);
