@@ -103,12 +103,13 @@ __define L7_EXPRESSION          6297;
 __define L3_SINGLE_EXPRESSION   6298;
 __define NESTED_ROOT_EXPRESSION 6299;
 __define OPERATION_TEMPLATE     6300;
-__define LT_EXPRESSION          6301;
+__define LESS_SUB_EXPRESSION 	6301;
 __define INTERPOL_EXPRESSION    6302;
 __define L3_EXPRESSION          6303;
 __define KEY_VALUE_EXPRESSION   6305;
 __define CLOSURE_OPERATION      6306;
 __define INTERPOLATE_EXPR       6307;
+__define LT_EXPRESSION          6308;
 __define SWITCH_OPTION 	        6353;
 __define SWITCH_LAST_OPTION     6354;
 __define SWITCH_CODE 	        6355;
@@ -429,6 +430,9 @@ SUB_EXPRESSION ::=
 	| "$lazy" EXPRESSION ^LAZY_OPERATION ")"
 	| ")" "{" BLOCK ^CLOSURE;
 
+LESS_SUB_EXPRESSION ::=
+	SUB_EXPRESSION;
+
 INTERPOL_EXPRESSION ::=
 	identifier {
 		identifier+ ^OBJECT
@@ -561,7 +565,7 @@ I5_OP ::=
 			| LESS ^^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^=TEMPLATE_TYPE ^=TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE TEMPLATE_R
 		}
 		| {integer | hexinteger | long | real | constant | character | string | wide} X_R
-		| "(" =OBJECT SUB_EXPRESSION SUB_X_R
+		| "(" =OBJECT LESS_SUB_EXPRESSION SUB_X_R
 		| "*" =OBJECT SINGLE_EXPRESSION ^=VALUE_OPERATION ^LESS_OPERATION
 	}
 	| I5_OP_MINUS_LESS;

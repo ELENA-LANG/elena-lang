@@ -26,6 +26,7 @@ extension op : IntNumber
 }
 */ 
 
+/*
 public decoratorTest()
 {
    var a := new DecoratorBaseA(2);
@@ -78,10 +79,17 @@ class DecoratorA
       ^ __received(proxy);
    }
 }
+*/
 
 public program()
 {
-   decoratorTest();
+    string s := "abc";
+    for (int i := 0; i < (s.Length - 1); i += 1)
+    {
+       console.write(s[i]);
+    };
+
+//   decoratorTest();
 
 
 //   Enumerator<int> e := new Range(0, N).selectBy::(int i => /*i.ProperDivisors.summarize(0)*/i + 1);
