@@ -51,7 +51,6 @@ In development:
   - work on REPL (elt) : execute simple program
   - rosetta code : moving to 6.7
   --------------------------------------  
-  * fix zhangsuen
   * fix zeckendorf_arithm (135)
   * fix anonymRec sample
   * fix base64EncodingTest (uncomment the inline attribute after)
