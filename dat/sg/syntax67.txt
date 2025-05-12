@@ -314,7 +314,7 @@ NESTED_ROOT_EXPRESSION ::=
 			| eps ^OBJECT
 		}
 		| I_OP
-		| I5_OP
+		| RI5_OP
 		| RI_OP
 		| VI_OP
 		| { ":" identifier }+ "(" ^OBJECT MESSAGE_PARAMETER ")" {
@@ -345,7 +345,7 @@ ROOT_EXPRESSION ::=
 			| eps ^OBJECT
 		}
 		| I_OP
-		| I5_OP
+		| RI5_OP
 		| RI_OP
 		| VI_OP
 		| T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK
@@ -507,6 +507,9 @@ VI_OP ::=
 // ; extening I_OP
 EI_OP ::=
 	BRACKET ^OBJECT FUNCTION_R L2_F;
+
+RI5_OP ::=
+	LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE TEMPLATE_R;
 
 I5_OP ::=
 	LESS {
