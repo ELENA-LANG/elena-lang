@@ -402,7 +402,7 @@ SUB_EXPRESSION ::=
 		R_OP SUB_R
 		| ")" ^OBJECT
 	}
-	| { string | wide } ^OBJECT { SBRACKET INDEXER_R | L3_F } SUB_R
+	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? L3_F SUB_R
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F SUB_R
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR ")"
 	| BRACKET SUB_EXPRESSION { L3_F | L8_F | INLINE_F } ")"
@@ -452,7 +452,7 @@ EXPRESSION ::=
 		R_OP
 		| eps ^OBJECT
 	}
-	| { string | wide } ^OBJECT { SBRACKET INDEXER_R | L3_F }
+	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? L3_F
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR
 	| BRACKET SUB_EXPRESSION { L3_F | L8_F | INLINE_F }
