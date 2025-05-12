@@ -22,7 +22,7 @@ extension evoHelper
         = self.zipBy(s, (a,b => (a==b) ? 1 : 0)).summarize(new Integer()).toInt();
         
     mutate(p)
-        = self.selectBy::(ch => rnd.nextReal() <= p ? randomChar : ch).summarize(new StringWriter());
+        = self.selectBy::(ch => (rnd.nextReal() <= p) ? randomChar : ch).summarize(new StringWriter());
 }
 
 class EvoAlgorithm : Enumerator
