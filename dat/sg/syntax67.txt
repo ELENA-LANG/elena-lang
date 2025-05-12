@@ -415,7 +415,7 @@ SUB_EXPRESSION ::=
 	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? { INLINE_F | L3_F } SUB_R
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT { INLINE_F | L3_F } SUB_R
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR ")"
-	| BRACKET SUB_EXPRESSION { L3_F | L8_F | INLINE_F } ")"
+	| BRACKET SUB_EXPRESSION SUB_F ")"
 	| "::" TYPE_EXPR ")"
 	| ":" identifier L3_EXPRESSION? ^OPERATION_TEMPLATE ")"
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION ")"
@@ -466,7 +466,7 @@ EXPRESSION ::=
 	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? { INLINE_F | L3_F }
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT { INLINE_F | L3_F }
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR
-	| BRACKET SUB_EXPRESSION { L3_F | L8_F | INLINE_F }
+	| BRACKET SUB_EXPRESSION SUB_F
 	| "{" BLOCK ^CLOSURE
 	| "::" TYPE_EXPR
 	| ":" identifier L3_EXPRESSION? ^OPERATION_TEMPLATE
@@ -479,6 +479,12 @@ EXPRESSION ::=
 	| "$yield" EXPRESSION ^YIELD_OPERATION
 	| "$await" EXPRESSION ^ASYNC_OPERATION
 	| "$lazy" EXPRESSION ^LAZY_OPERATION;
+
+SUB_F ::=
+	BRACKET FUNCTION_R
+	| L3_F
+	| L8_F
+	| INLINE_F;
 
 SUB_R ::=
 	"," ^EXPRESSION EXPRESSION { "," EXPRESSION }* ^TUPLE_COLLECTION ")"
