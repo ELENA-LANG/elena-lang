@@ -85,6 +85,16 @@ class DecoratorA
 
 public program()
 {
+
+   byte[] map := nil;
+   byte[] dest := nil;
+   byte buffer[4];
+   
+   dest[1] := map[((buffer[0]/* & 3*/) shl:4) + (buffer[1]/* shr:4*/)];
+
+
+
+/*
    auto source := "Standard comparison operations are defined for all the primitive numeric types.";
    auto expected := "U3RhbmRhcmQgY29tcGFyaXNvbiBvcGVyYXRpb25zIGFyZSBkZWZpbmVkIGZvciBhbGwgdGhlIHByaW1pdGl2ZSBudW1lcmljIHR5cGVzLg==";
    
@@ -93,6 +103,7 @@ public program()
    var dest := Base64Encoding.toString(0, buffer.Length, *buffer);
    
    Assert.ifEqual(dest, expected);
+*/
    
 //   buffer.clear();
 //   Base64Encoding.fromString(dest, buffer);

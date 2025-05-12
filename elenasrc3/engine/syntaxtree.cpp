@@ -102,7 +102,9 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("template_arg", SyntaxKey::TemplateArg);
    map.add("template_type", SyntaxKey::TemplateType);
    map.add("size_op", SyntaxKey::SizeOperation);
-
+   map.add("shl_op", SyntaxKey::ShlOperation);
+   map.add("shr_op", SyntaxKey::ShrOperation);
+   map.add("band_op", SyntaxKey::BAndOperation);
 }
 
 bool SyntaxTree :: save(MemoryBase* section)
