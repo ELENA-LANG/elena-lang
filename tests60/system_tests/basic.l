@@ -1776,7 +1776,7 @@ public multiValTest() : testCase()
 
    Console.write(".");
 
-   var i1, i2 := MultiValGetter.getMultiVal();
+   (var i1, var i2) := MultiValGetter.getMultiVal();
    Assert.ifTrue(i1 == "Alex");
    Assert.ifTrue(i2 == 13);
 
