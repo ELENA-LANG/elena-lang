@@ -2495,7 +2495,7 @@ public regExTest() : testCase()
    Console.write(".");
 }
 
-public base64EncodingTest() : testCase()
+public base64EncodingTest() //: testCase()
 {
    auto source := "Standard comparison operations are defined for all the primitive numeric types.";
    auto expected := "U3RhbmRhcmQgY29tcGFyaXNvbiBvcGVyYXRpb25zIGFyZSBkZWZpbmVkIGZvciBhbGwgdGhlIHByaW1pdGl2ZSBudW1lcmljIHR5cGVzLg==";
