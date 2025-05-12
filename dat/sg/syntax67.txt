@@ -327,7 +327,8 @@ NESTED_ROOT_EXPRESSION ::=
 		R_OP
 		| eps ^OBJECT
 	}
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT
+	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? L3_F
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
 	| BRACKET SUB_EXPRESSION { L3_F | L8_F }
 	| ":" identifier EXPRESSION? ^OPERATION_TEMPLATE
 	| "$break" ^BREAK_OPERATION
@@ -360,7 +361,8 @@ ROOT_EXPRESSION ::=
 		R_OP
 		| eps ^OBJECT
 	}
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT
+	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? L3_F
+	| { integer | hexinteger | long | real | constant | character } ^OBJECT L3_F
 	| BRACKET SUB_EXPRESSION {
 		ASSIGN EXPRESSION ^TUPLE_ASSIGNING
 		| L3_F
