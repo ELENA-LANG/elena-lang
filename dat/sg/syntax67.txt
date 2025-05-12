@@ -787,7 +787,8 @@ L2_F4 ::=
 	L3_F4;
 
 L3_F4 ::=
-	eps;
+	DOT MESSAGE L3_R4
+	| eps;
 
 L3_R4 ::=
 	BRACKET MESSAGE_R L3_F4
