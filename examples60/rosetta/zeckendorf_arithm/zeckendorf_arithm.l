@@ -152,7 +152,8 @@ sealed struct ZeckendorfNumber
         dVal := v;
         dLen := l;
         
-        for(int GN := 0; GN < (mLen + 1) * 2; GN += 1) 
+        //for(int GN := 0; GN < (mLen + 1) * 2; GN += 1) 
+        for(int GN := 0; (GN) < (mLen + 1) * 2; GN += 1) 
         {
             if ((mVal $shr GN).allMask(1))
             {
@@ -178,7 +179,8 @@ sealed struct ZeckendorfNumber
         ZeckendorfNumber Nr := 0n;
         ZeckendorfNumber Nt := 0n;
         
-        for(int i := 0; i < (dLen + 1) * 2; i += 1) 
+//        for(int i := 0; i < (dLen + 1) * 2; i += 1) 
+        for(int i := 0; (i) < (dLen + 1) * 2; i += 1) 
         {
             if (((dVal $shr i) & 1) > 0)
             {
