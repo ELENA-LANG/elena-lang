@@ -62,7 +62,8 @@ extension zhangsuenOp : Matrix<CharValue>
     {
         int count := 0;
  
-        for (int i := 0; i < nbrs.Length - 1; i += 1)
+        //for (int i := 0; i < nbrs.Length - 1; i += 1)
+        for (int i := 0; (i) < nbrs.Length - 1; i += 1)
         {
             if (self[r + nbrs[i][1]][c + nbrs[i + 1][0]] == $35)
                 { count += 1 }
@@ -75,7 +76,8 @@ extension zhangsuenOp : Matrix<CharValue>
     {
         int count := 0;
  
-        for (int i := 0; i < nbrs.Length - 1; i += 1)
+        //for (int i := 0; i < nbrs.Length - 1; i += 1)
+        for (int i := 0; (i) < nbrs.Length - 1; i += 1)
         {
             if (self[r + nbrs[i][1]][c + nbrs[i][0]] == $32)
             {
@@ -95,7 +97,8 @@ extension zhangsuenOp : Matrix<CharValue>
         var group := nbrGroups[step];
         for(int i := 0; i < 2; i += 1)
         {            
-            for(int j := 0; j < group[i].Length; j += 1)
+            //for(int j := 0; j < group[i].Length; j += 1)
+            for(int j := 0; (j) < group[i].Length; j += 1)
             {
                 var nbr := nbrs[group[i][j]];
  
@@ -118,9 +121,11 @@ extension zhangsuenOp : Matrix<CharValue>
             hasChanged := false;
             firstStep := firstStep.Inverted;
  
-            for(int r := 1; r < self.Rows - 1; r += 1)
+            //for(int r := 1; r < self.Rows - 1; r += 1)
+            for(int r := 1; (r) < self.Rows - 1; r += 1)
             {
-                for(int c := 1; c < self.Columns - 1; c += 1)
+                //for(int c := 1; c < self.Columns - 1; c += 1)
+                for(int c := 1; (c) < self.Columns - 1; c += 1)
                 {
                     if(self.proceed(r,c,toWhite,firstStep))
                         { hasChanged := true }
