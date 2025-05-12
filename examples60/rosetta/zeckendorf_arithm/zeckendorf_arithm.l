@@ -131,7 +131,8 @@ sealed struct ZeckendorfNumber
         dVal := v;
         dLen := l;
 
-        for(int GN := 0; GN < (mLen + 1) * 2; GN += 1)
+//        for(int GN := 0; GN < (mLen + 1) * 2; GN += 1)
+        for(int GN := 0; (GN) < (mLen + 1) * 2; GN += 1)
         {
             if ((mVal $shr GN).allMask(1))
             {
