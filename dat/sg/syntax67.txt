@@ -293,7 +293,15 @@ SINGLE_EXPRESSION ::=
 	| BRACKET SUB_EXPRESSION;
 
 L3_SINGLE_EXPRESSION ::=
-	BRACKET { identifier+ LAMBDA_R | CLOSURE_RET_TYPE identifier+ LAMBDA_RX };
+	BRACKET { 
+		identifier+ {
+			LAMBDA_R 
+			| ")" {
+				"{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
+			}
+		}
+		| CLOSURE_RET_TYPE identifier+ LAMBDA_RX 
+	};
 
 TYPE_EXPR ::=
 	identifier {
