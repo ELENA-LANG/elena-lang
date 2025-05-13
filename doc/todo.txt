@@ -50,8 +50,7 @@ In development:
   - implement analog of record using meta programming (extensions'records)
   - work on REPL (elt) : execute simple program
   - rosetta code : moving to 6.7
-  --------------------------------------  
-  * fix Amb
+  - support calling extension template explicitly
   --------------------------------------  
   * redesign syntax to support new extension call syntax (::ext_message<template_arg>(...))
   * support new extension call syntax (.ext_message<template_arg>(...))
