@@ -727,7 +727,7 @@ L3_R ::=
 
 L3_F ::=
 	DOT MESSAGE L3_R
-	| "::" EXT_R
+	| "::" EXT_R L3_F
 	| L4_F;
 
 L4_F ::= 
