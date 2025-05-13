@@ -55,13 +55,10 @@ In development:
   * Resolving correctly extension template #741
   * unit / functional test
   --------------------------------------  
+  * Amicable pairs - Alternative variant using yield enumerator
   * test twelvestats
   * test aplusb
   * test arraymode
-  --------------------------------------  
-  * Amicable pairs - Alternative variant using strong-typed closures 
-  * add as a rosetta code sample to the project
-  * Amicable pairs - Alternative variant using yield enumerator
   * Anagrams
   * Anonymous recursion
   --------------------------------------
