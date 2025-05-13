@@ -50,20 +50,15 @@ In development:
   - implement analog of record using meta programming (extensions'records)
   - work on REPL (elt) : execute simple program
   - rosetta code : moving to 6.7
-  - support calling extension template explicitly
-  --------------------------------------  
-  * test calling extension template directly
-  --------------------------------------  
-  * should we use (){..} instead of ambigous {} ?
   --------------------------------------  
   * find an error in Amicable pairs - Alternative variant using strong-typed closures
   * Resolving correctly extension template #741
   * unit / functional test
-
+  --------------------------------------  
   * test twelvestats
   * test aplusb
   * test arraymode
-
+  --------------------------------------  
   * Amicable pairs - Alternative variant using strong-typed closures 
   * add as a rosetta code sample to the project
   * Amicable pairs - Alternative variant using yield enumerator
