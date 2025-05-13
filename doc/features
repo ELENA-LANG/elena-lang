@@ -356,9 +356,17 @@ class Win64A
 #endif
 
 ----------------------------------------------------------------------------
- New template argument syntax
+ Calling extension template directly
 ----------------------------------------------------------------------------
+extension testOp<T> : T
+{
+   testMe(Func<T,T> f)
+      = f(self);
+}
 
-   Func<T1:T2> f1 := nil;
-
+public program()
+{
+   var r := 3::testMe<int>((x => x + 1));
+   Console.writeLine("3+1=",r);
+}
 

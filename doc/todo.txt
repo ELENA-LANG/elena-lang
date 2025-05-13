@@ -52,10 +52,6 @@ In development:
   - rosetta code : moving to 6.7
   - support calling extension template explicitly
   --------------------------------------  
-  * redesign syntax to support new extension call syntax (::ext_message<template_arg>(...))
-  * support new extension call syntax (.ext_message<template_arg>(...))
-  * use new extension call syntax to generate extension template with specified argument list
-  --------------------------------------  
   * add a new feature item : calling extension templates (::ext_message<..>(...))
 
   * calling extension template explicitly - a::populate<int>(n => ...);

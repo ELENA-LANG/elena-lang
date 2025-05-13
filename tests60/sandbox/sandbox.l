@@ -81,18 +81,16 @@ class DecoratorA
 }
 */
 
-
+extension testOp<T> : T
+{
+   testMe(Func<T,T> f)
+      = f(self);
+}
 
 public program()
 {
-
-   byte[] map := nil;
-   byte[] dest := nil;
-   byte buffer[4];
+   var r := 3::testMe<int>((x => x + 1));
    
-   dest[1] := map[((buffer[0]/* & 3*/) shl:4) + (buffer[1]/* shr:4*/)];
-
-
 
 /*
    auto source := "Standard comparison operations are defined for all the primitive numeric types.";
