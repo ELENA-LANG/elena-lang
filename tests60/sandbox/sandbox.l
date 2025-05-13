@@ -1,36 +1,34 @@
 import extensions;
-import system'routines;
+import system'routines'stex;
+import system'collections;
  
 const int N = 20000;
  
-extension op
+extension op : IntNumber
 {
-    ProperDivisors
-        = Range.new(1,self / 2).filterBy::(n => self.mod(n) == 0);
+    Enumerator<int> ProperDivisors
+        = new Range(1,self / 2)::filterBy<int>::(int n => self.mod(n) == 0);
  
     get AmicablePairs()
     {
-        var divsums := Range
-                         .new(0, self + 1)
-                         .selectBy::(i => i.ProperDivisors.summarize(Integer.new()))
-                         .toArray();
+        auto divsums := new List<int>(
+            cast Enumerator<int>(
+                new Range(0, self)::selectBy<int>::(int i => i.ProperDivisors.summarize(0))));
  
-        ^ 1.repeatTill(divsums.Length) 
-            .filterBy::(i)
+        ^ new Range(0, divsums.Length)
+            ::filterBy<int>::(int i)
             {
-                var ii := i; 
- 
-                var sum := divsums[i];
+                auto sum := divsums[i];
                 ^ (i < sum) && (sum < divsums.Length) && (divsums[sum] == i)
-            } 
-            .selectBy::(i => new { Item1 = i; Item2 = divsums[i]; })
+            }
+            ::selectBy<int>::(int i => new Tuple<int,int>(i,divsums[i]));
     }
 }
  
 public program()
 {
-    N.AmicablePairs.forEach::(pair)
+    N.AmicablePairs.forEach::(var Tuple<int,int> pair)
     {
-        Console.printLine(pair.Item1, " ", pair.Item2)
+        console.printLine(pair.Item1, " ", pair.Item2)
     }
 }
