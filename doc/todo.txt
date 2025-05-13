@@ -50,10 +50,10 @@ In development:
   - implement analog of record using meta programming (extensions'records)
   - work on REPL (elt) : execute simple program
   - rosetta code : moving to 6.7
-  --------------------------------------  
+  --------------------------------------    
   * find an error in Amicable pairs - Alternative variant using strong-typed closures
-  * Resolving correctly extension template #741
   * unit / functional test
+  * Resolving correctly extension template #741
   --------------------------------------  
   * Amicable pairs - Alternative variant using yield enumerator
   * test twelvestats

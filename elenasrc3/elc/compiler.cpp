@@ -4071,6 +4071,7 @@ void Compiler::declareParameter(MethodScope& scope, SyntaxNode current, bool wit
    else weakSignature = false;
 
    ustr_t terminal = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
+   assert(!emptystr(terminal));
    if (scope.parameters.exist(terminal))
       scope.raiseError(errDuplicatedLocal, current);
 
