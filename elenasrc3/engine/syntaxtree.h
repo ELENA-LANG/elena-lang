@@ -192,6 +192,7 @@ namespace elena_lang
       BranchOperation         = 0x0018F3,
       TupleBlock              = 0x0010F4,
       TupleType               = 0x0010F5,
+      ClosureReturnType       = 0x0010F6,
 
       ErrClosingBlockExpected = 0x04002,               // closing curly bracket expected
 

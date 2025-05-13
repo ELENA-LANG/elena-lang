@@ -1196,6 +1196,11 @@ void SyntaxTreeBuilder :: flushClosure(SyntaxTreeWriter& writer, Scope& scope, S
       if (current == SyntaxKey::Parameter) {
          flushMethodMember(writer, scope, current, true);
       }
+      else if (current == SyntaxKey::ClosureReturnType) {
+         ref_t attributeCategory = V_CATEGORY_MAX;
+
+         flushTypeAttribute(writer, scope, current, attributeCategory, true);
+      }
       else if (current == SyntaxKey::ParameterBlock) {
          flushParameterBlock(writer, scope, current);
       }

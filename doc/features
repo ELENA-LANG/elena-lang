@@ -366,7 +366,13 @@ extension testOp<T> : T
 
 public program()
 {
-   var r := 3::testMe<int>((x => x + 1));
+   var r := 3::testMe<int>((int x => x + 1));
    Console.writeLine("3+1=",r);
 }
+
+----------------------------------------------------------------------------
+ Specify the lambda function returning value
+----------------------------------------------------------------------------
+  var f := ([real]int x => x + 1);
+  o.testMe::([object]int x => x + 1);
 

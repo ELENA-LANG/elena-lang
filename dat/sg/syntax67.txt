@@ -135,6 +135,7 @@ __define SUB_DECLARATION        4312;
 __define FINALLY                7385;
 __define PARAMETER_BLOCK        4336;
 __define TUPLE_TYPE 		4341;
+__define CLOSURE_RET_TYPE       4342;
 
 __define BLOCK_CLOSING_EXPECTED         16386;
 
@@ -292,14 +293,7 @@ SINGLE_EXPRESSION ::=
 	| BRACKET SUB_EXPRESSION;
 
 L3_SINGLE_EXPRESSION ::=
-	BRACKET identifier+ {
-		"=>" ^ PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
-		| "," ^ OBJECT ^ EXPRESSION EXPRESSION { "," EXPRESSION }* { 
-			"=>" ^ PARAMETER_BLOCK RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
-			| ")" "{" ^ PARAMETER_BLOCK BLOCK ^CLOSURE ^EXPRESSION 
-		}
-		| ")" "{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
-	};
+	BRACKET { identifier+ LAMBDA_R | CLOSURE_RET_TYPE identifier+ LAMBDA_RX };
 
 TYPE_EXPR ::=
 	identifier {
@@ -417,6 +411,7 @@ SUB_EXPRESSION ::=
 	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? { INLINE_F | L3_F } SUB_R
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT { INLINE_F | L3_F } SUB_R
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR ")"
+	| CLOSURE_RET_TYPE identifier+ LAMBDA_RX
 	| BRACKET SUB_EXPRESSION SUB_F ")"
 	| "::" TYPE_EXPR ")"
 	| ":" identifier L3_EXPRESSION? ^OPERATION_TEMPLATE ")"
@@ -503,7 +498,13 @@ LAMBDA_R ::=
 			"{" ^ PARAMETER_BLOCK BLOCK ^CLOSURE ^EXPRESSION 
 			| eps ^TUPLE_COLLECTION
 		}
-		
+	};
+
+LAMBDA_RX ::=
+	"=>" ^= PARAMETER RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
+	| "," ^=OBJECT ^=EXPRESSION EXPRESSION { "," EXPRESSION }* {
+		"=>" ^= PARAMETER_BLOCK RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
+		| ")" "{" ^= PARAMETER_BLOCK BLOCK ^CLOSURE ^EXPRESSION 
 	};
 
 XI_R ::=
@@ -1118,6 +1119,9 @@ PARAMETER ::=
 		| eps
 	}
 	| reference identifier;
+
+CLOSURE_RET_TYPE ::=
+	"[" identifier "]";
 
 DICTIONARY ::=
 	identifier+;

@@ -52,9 +52,14 @@ In development:
   - rosetta code : moving to 6.7
   - support calling extension template explicitly
   --------------------------------------  
-  * add a new feature item : calling extension templates (::ext_message<..>(...))
+  * make possible to specify returning value for a lambda function
+  --------------------------------------  
+  * resolve direct extension template single dispatch
+    (to make possible the following syntax - "3::testMe<int>((x => x + 1))" <- no types for lambad function)
 
+  * add a new feature item : calling extension templates (::ext_message<..>(...))
   * calling extension template explicitly - a::populate<int>(n => ...);
+  * functional / unit test with 
   --------------------------------------  
   * should we use (){..} instead of ambigous {} ?
   --------------------------------------  

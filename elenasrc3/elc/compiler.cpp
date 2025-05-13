@@ -6102,6 +6102,7 @@ TypeInfo Compiler::resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttri
          typeInfo = resolveTypeAttribute(scope, node.firstChild(), attributes, declarationMode, allowRole);
          break;
       case SyntaxKey::Type:
+      case SyntaxKey::ClosureReturnType:
       {
          if (node.arg.reference)
             return { node.arg.reference };
@@ -16933,10 +16934,11 @@ void Compiler::LambdaClosure::compile(SyntaxNode node)
    mssg_t multiMethod = /*!lazyExpression && */compiler->defineMultimethod(scope, methodScope.message, false);
    if (multiMethod) {
       methodScope.info.multiMethod = multiMethod;
-      methodScope.info.outputRef = V_AUTO;
+      if (!methodScope.info.outputRef)
+         methodScope.info.outputRef = V_AUTO;
    }
    // try to resolve the output type for the predefined closure type
-   else if (scope.expectedRef != 0)
+   else if (scope.expectedRef != 0 && !methodScope.info.outputRef)
       methodScope.info.outputRef = V_AUTO;
 
    if (lazyExpression) {
@@ -17027,6 +17029,16 @@ void Compiler::LambdaClosure :: declareClosureMessage(MethodScope& methodScope, 
    methodScope.message = encodeMessage(invokeAction, 0, FUNCTION_MESSAGE);
    methodScope.closureMode = true;
 
+   TypeInfo outputInfo = {};
+   SyntaxNode outputNode = node.findChild(SyntaxKey::ClosureReturnType);
+   if (outputNode != SyntaxKey::None) {
+      TypeAttributes typeAttr = {};
+      outputInfo = compiler->resolveTypeAttribute(scope, outputNode, typeAttr, false, false);
+
+      methodScope.info.outputRef = outputInfo.typeRef;
+      methodScope.info.nillableArgs = outputInfo.nillable;
+   }
+
    SyntaxNode argNode = node.findChild(SyntaxKey::Parameter);
    if (argNode != SyntaxKey::None) {
       bool weakMessage = false;
@@ -17041,10 +17053,18 @@ void Compiler::LambdaClosure :: declareClosureMessage(MethodScope& methodScope, 
             CheckMethodResult result = {};
             compiler->_logic->checkMethod(*scope.moduleScope, scope.expectedRef, resolvedMessage, result);
 
+            // if explicit output type is not matching the resolved one, ignore it
+            if (outputInfo.typeRef && (outputInfo.typeRef != result.outputInfo.typeRef || outputInfo.nillable != result.outputInfo.nillable))
+               return;
+
             // if we can define the strong method signature based on the expected target
             // adjust the message and define the parameter types
             methodScope.message = resolvedMessage;
+
             methodScope.info.outputRef = result.outputInfo.typeRef;
+            if (result.outputInfo.nillable)
+               methodScope.info.hints |= (ref_t)MethodHint::Nillable;
+
             methodScope.info.nillableArgs = result.nillableArgs;
 
             ref_t signRef = 0;

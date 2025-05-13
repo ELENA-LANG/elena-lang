@@ -81,15 +81,18 @@ class DecoratorA
 }
 */
 
-extension testOp<T> : T
+/*extension testOp<T> : T
 {
    testMe(Func<T,T> f)
       = f(self);
-}
+}*/
 
 public program()
 {
-   var r := 3::testMe<int>((x => x + 1));
+   var f := ([object]int x => x + 1);
+
+
+//   var r := 3::testMe<int>((int x => x + 1));
    
 
 /*
