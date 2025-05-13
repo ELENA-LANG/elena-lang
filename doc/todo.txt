@@ -46,21 +46,19 @@ In development:
   - weekly posting
   - post what's new in ELENA 6.7
   --------------------------------------
+  - Resolving correctly extension template #741
   - api : UShortNumber
   - implement analog of record using meta programming (extensions'records)
   - work on REPL (elt) : execute simple program
   - rosetta code : moving to 6.7
   --------------------------------------    
-  * find an error in Amicable pairs - Alternative variant using strong-typed closures
-  * unit / functional test
-  * Resolving correctly extension template #741
-  --------------------------------------  
   * Amicable pairs - Alternative variant using yield enumerator
   * test twelvestats
   * test aplusb
   * test arraymode
   * Anagrams
   * Anonymous recursion
+  --------------------------------------    
   --------------------------------------
 
   === Iteration 42 ===
