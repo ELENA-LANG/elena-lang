@@ -2514,3 +2514,29 @@ public base64EncodingTest() : testCase()
    Assert.ifEqual(decoded, source);
    Console.write(".");
 }
+
+extension dummyOp
+{
+   testMe2(Func f)
+      = self;
+}
+
+extension testOp<T> : T
+{
+   testMe(Func<T,T> f)
+      = f(self);
+
+   testMe2(Func<T,T> f)
+      = f(self);
+}
+
+public directExtensionTemplateCall() : testCase()
+{
+   var r1 := 3::testMe<int>((x => x + 1));
+   var r2 := 2::testMe2<int>((x => x + 1));
+
+   Assert.ifEqual(r1, 4);
+   Assert.ifEqual(r2, 3);
+
+   Console.writeLine(".");
+}

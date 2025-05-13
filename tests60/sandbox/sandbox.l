@@ -81,19 +81,35 @@ class DecoratorA
 }
 */
 
-/*extension testOp<T> : T
+extension dummyOp
+{
+   testMe2(Func f)
+      = self;
+}
+
+extension testOp<T> : T
 {
    testMe(Func<T,T> f)
       = f(self);
-}*/
+
+   testMe2(Func<T,T> f)
+      = f(self);
+}
+
+directExtensionTemplateCall()
+{
+   var r1 := 3::testMe<int>((x => x + 1));
+   var r2 := 2::testMe2<int>((x => x + 1));
+
+   Assert.ifEqual(r1, 4);
+   Assert.ifEqual(r2, 3);
+
+   Console.writeLine(".");
+}
 
 public program()
 {
-   var f := ([object]int x => x + 1);
-
-
-//   var r := 3::testMe<int>((int x => x + 1));
-   
+   directExtensionTemplateCall();
 
 /*
    auto source := "Standard comparison operations are defined for all the primitive numeric types.";

@@ -1515,6 +1515,8 @@ namespace elena_lang
          ref_t compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode,
             ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType, int nillableArgs);
 
+         void resolvedExtensionTemplate(ObjectInfo source, MessageCallContext& messageContext);
+
          MessageResolution resolveByRefHandler(ObjectInfo source, ref_t expectedRef, MessageCallContext& context, bool noExtensions);
          MessageResolution resolveMessageAtCompileTime(ObjectInfo target, MessageCallContext& messageContext, bool ignoreExtensions,
             bool ignoreVariadics, bool checkByRefHandler = false);
@@ -1682,7 +1684,7 @@ namespace elena_lang
       ref_t mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t parameterCount);
 
       ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCallContext& context,
-         ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr);
+         ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr, bool singleDispatchMode = false);
 
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 

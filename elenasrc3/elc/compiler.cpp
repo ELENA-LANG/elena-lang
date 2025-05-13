@@ -318,6 +318,14 @@ inline ref_t mapFloat64Const(ModuleBase* module, double val)
    return module->mapConstant(s.str());
 }
 
+inline ref_t getArgumentSignature(ModuleBase* module, ref_t signatureRef)
+{
+   ref_t signatures[ARG_COUNT];
+   size_t len = module->resolveSignature(signatureRef, signatures);
+
+   return module->mapSignature(signatures + 1, len - 1, false);
+}
+
 // --- Interpreter ---
 
 Interpreter::Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -7111,7 +7119,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
 }
 
 ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCallContext& context,
-   ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr)
+   ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr, bool singleDispatchMode)
 {
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
@@ -7120,10 +7128,15 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
       objectRef = scope.moduleScope->buildins.superReference;
    }
 
+   ref_t directExtensionRef = 0;
    if (context.templateArgCount > 0) {
       // auto generate extension template for explicitly defined strong-typed signature
       for (auto it = nsScope->extensionTemplates.getIt(context.weakMessage); !it.eof(); it = nsScope->extensionTemplates.nextIt(context.weakMessage, it)) {
-         _logic->resolveExtensionTemplateByTemplateArgs(*scope.moduleScope, this, *it,
+         if (singleDispatchMode && directExtensionRef) {
+            singleDispatchMode = false;
+         }
+
+         directExtensionRef = _logic->resolveExtensionTemplateByTemplateArgs(*scope.moduleScope, this, *it,
             *nsScope->nsName, context.templateArgCount, context.templateArgs, nsScope->outerExtensionList ? nsScope->outerExtensionList : &nsScope->extensions);
       }
    }
@@ -7132,6 +7145,22 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
       for (auto it = nsScope->extensionTemplates.getIt(context.weakMessage); !it.eof(); it = nsScope->extensionTemplates.nextIt(context.weakMessage, it)) {
          _logic->resolveExtensionTemplate(*scope.moduleScope, this, *it,
             context.implicitSignatureRef, *nsScope->nsName, nsScope->outerExtensionList ? nsScope->outerExtensionList : &nsScope->extensions);
+      }
+   }
+
+   if (singleDispatchMode && directExtensionRef && !context.implicitSignatureRef) {
+      // HOTFIX : replace weak argument with a stron one
+      directExtensionRef = scope.moduleScope->resolveWeakTemplateReferenceID(directExtensionRef);
+
+      // for singleDispatchMode define implicitSignatureRef if not provided
+      auto it = nsScope->extensions.getIt(context.weakMessage);
+      while (!it.eof()) {
+         auto extInfo = *it;
+         if (extInfo.value1 == directExtensionRef) {
+            context.implicitSignatureRef = getArgumentSignature(scope.module, getSignature(scope.module, extInfo.value2));
+         }
+
+         it = nsScope->extensions.nextIt(context.weakMessage, it);
       }
    }
 
@@ -7161,6 +7190,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
       while (!it.eof()) {
          auto extInfo = *it;
          ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
+
          int extStackAttr = 0;
          if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2,
             signatures, signatureLen, extStackAttr))
@@ -7208,7 +7238,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
          nsScope->extensionDispatchers.add(context.weakMessage, extRef);
       }
 
-      resolvedMessage = context.weakMessage |=FUNCTION_MESSAGE;
+      resolvedMessage = context.weakMessage /*|=*/| FUNCTION_MESSAGE;
 
       return extRef;
    }
@@ -12723,9 +12753,18 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    int resolvedNillableArgs = 0;
 
    EAttr paramMode = EAttr::NoPrimitives;
+   ref_t expectedSignRef = 0;
    if (source.mode != TargetMode::Weak) {
-      resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-         compiler->retrieveType(scope, source), callContext.weakMessage, isSelfCall(source), resolvedNillableArgs);
+      if (callContext.templateArgCount > 0) {
+         // try to resolve the extension expected signature
+         resolvedExtensionTemplate(source, callContext);
+         if (callContext.implicitSignatureRef)
+            expectedSignRef = getArgumentSignature(scope.module, callContext.implicitSignatureRef);
+      }
+
+      if(!resolvedMessage)
+         resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
+            compiler->retrieveType(scope, source), callContext.weakMessage, isSelfCall(source), resolvedNillableArgs);
 
       if (test(callContext.weakMessage, FUNCTION_MESSAGE) && EAttrs::testAndExclude(attrs, EAttr::AsyncOp) && resolvedMessage) {
          ref_t functionRef = compiler->retrieveType(scope, source);
@@ -12753,7 +12792,6 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
       else paramMode = paramMode | EAttr::AllowGenericSignature;
    }
 
-   ref_t expectedSignRef = 0;
    if (resolvedMessage)
       scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
 
@@ -16073,6 +16111,18 @@ ObjectInfo Compiler::Expression::allocateResult(ref_t resultRef)
    else throw InternalError(errFatalError);
 
    return {}; // NOTE : should never be reached
+}
+
+void Compiler::Expression :: resolvedExtensionTemplate(ObjectInfo target, MessageCallContext& messageContext)
+{
+   int resolvedStackSafeAttr = 0;
+   ref_t resolvedMessage = messageContext.weakMessage;
+   ref_t extensionRef = compiler->mapExtension(*writer, scope, messageContext,
+      target, resolvedMessage, resolvedStackSafeAttr, true);
+
+   if (extensionRef) {
+      scope.module->resolveAction(getAction(resolvedMessage), messageContext.implicitSignatureRef);
+   }
 }
 
 Compiler::MessageResolution Compiler::Expression :: resolveMessageAtCompileTime(ObjectInfo target, MessageCallContext& messageContext,
