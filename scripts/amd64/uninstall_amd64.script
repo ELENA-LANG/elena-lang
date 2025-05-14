@@ -11,23 +11,23 @@ rm /usr/bin/elena64-cli
 echo removing ELENA configuration files
 
 rm /etc/elena/templates/*.config
-rm /etc/elena/templates
+rmdir /etc/elena/templates
 
 rm /etc/elena/*.config
-rm /etc/elena
+rmdir /etc/elena
 
 echo removing ELENA data files
 rm /usr/share/elena/*.dat
-rm /usr/share/elena
+rmdir /usr/share/elena
 
 echo removing ELENA API compiled modules
 
 rm /usr/lib/elena/core/amd64/*.bin
-rm /usr/lib/elena/core/amd64
+rmdir /usr/lib/elena/core/amd64
 
 rm /usr/lib/elena/lib60_64/*.nl
 rm /usr/lib/elena/lib60_64/*.dnl
 
-rm /usr/lib/elena/lib60_64
+rmdir /usr/lib/elena/lib60_64
 
 exit 0
