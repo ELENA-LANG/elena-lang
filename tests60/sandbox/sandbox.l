@@ -1,33 +1,44 @@
 import extensions;
 import system'routines'stex;
 import system'collections;
- 
-const int N = 20000;
- 
-extension op : IntNumber
+   
+const int Limit = 20000;
+
+singleton ProperDivisors
 {
-    Enumerator<int> ProperDivisors
-        = new Range(1,self / 2)::filterBy<int>::(int n => self.mod(n) == 0);
- 
-    get AmicablePairs()
-    {
-        auto divsums := new List<int>(
-            cast Enumerator<int>(
-                new Range(0, self)::selectBy<int>::(int i => i.ProperDivisors.summarize(0))));
- 
-        ^ new Range(0, divsums.Length)
-            ::filterBy<int>::(int i)
-            {
-                auto sum := divsums[i];
-                ^ (i < sum) && (sum < divsums.Length) && (divsums[sum] == i)
-            }
-            ::selectBy<int>::(int i => new Tuple<int,int>(i,divsums[i]));
-    }
+    Enumerator<int> function(int number)
+        = Range.new(1, number / 2).filterBy::(int n => number.mod(n) == 0);
 }
+       
+public sealed AmicablePairs
+{
+    int max;
+    
+    constructor(int max)
+    {
+        this max := max
+    }
+    
+    yield Tuple<int, int>? next()
+    {
+        List<int> divsums := Range.new(0, max + 1).selectBy::(int i => ProperDivisors(i).summarize(0));
+        
+        for (int i := 1; i < divsums.Length; i += 1)
+        {
+            int sum := divsums[i];
+            if(i < sum && sum <= divsums.Length && divsums[sum] == i) {
+                :yield new Tuple<int, int>(i, sum);
+            }            
+        };
+        
+        ^ nil
+    }   
+} 
  
 public program()
 {
-    N.AmicablePairs.forEach::(var Tuple<int,int> pair)
+    auto e := new AmicablePairs(Limit);
+    for(auto pair := e.next(); pair != nil)
     {
         console.printLine(pair.Item1, " ", pair.Item2)
     }

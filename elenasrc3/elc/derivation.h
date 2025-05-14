@@ -166,7 +166,8 @@ namespace elena_lang
       void flushTemplateArg(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool allowType);
       void flushTemplageExpression(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, SyntaxKey type, bool allowType);
       void flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode = true);
-      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode, int nestLevel = 1);
+      void flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode, int nestLevel = 1, bool nullable = false);
+      void flushNullableType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode);
       void flushMessage(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushResend(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushObject(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
@@ -194,7 +195,7 @@ namespace elena_lang
       void flushParameterBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory, 
-         bool allowType, int arrayNestLevel = 0);
+         bool allowType, int arrayNestLevel = 0, bool nullable = false);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory, 
          bool allowType, bool onlyChildren = false);
       void flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);

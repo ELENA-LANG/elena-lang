@@ -372,16 +372,19 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
    }
 }
 
-void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode, int nestLevel)
+void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode, int nestLevel, bool nullable)
 {
    SyntaxNode current = node.firstChild();
 
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::ArrayType) {
-         flushArrayType(writer, scope, current, exprMode, nestLevel + 1);
+         flushArrayType(writer, scope, current, exprMode, nestLevel + 1, nullable);
       }
       else if (current == SyntaxKey::TemplateType) {
+         if (nullable)
+            writer.newNode(SyntaxKey::NullableType);
+
          for (int i = 0; i < nestLevel; i++)
             writer.newNode(SyntaxKey::ArrayType);
 
@@ -394,10 +397,43 @@ void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope,
 
          for (int i = 0; i < nestLevel; i++)
             writer.closeNode();
+
+         if (nullable)
+            writer.closeNode();
       }
       else {
          bool allowType = current.nextNode() == SyntaxKey::None;
-         flushAttribute(writer, scope, current, attributeCategory, allowType, nestLevel);
+         flushAttribute(writer, scope, current, attributeCategory, allowType, nestLevel, nullable);
+      }
+
+      current = current.nextNode();
+   }
+}
+
+void SyntaxTreeBuilder :: flushNullableType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode)
+{
+   SyntaxNode current = node.firstChild();
+
+   ref_t attributeCategory = V_CATEGORY_MAX;
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::ArrayType) {
+         flushArrayType(writer, scope, current, exprMode, 1, true);
+      }
+      else if (current == SyntaxKey::TemplateType) {
+         writer.newNode(SyntaxKey::NullableType);
+
+         if (exprMode) {
+            writer.newNode(SyntaxKey::TemplateType);
+            flushTemplateType(writer, scope, current);
+            writer.closeNode();
+         }
+         else flushTemplateType(writer, scope, current, false);
+
+         writer.closeNode();
+      }
+      else {
+         bool allowType = current.nextNode() == SyntaxKey::None;
+         flushAttribute(writer, scope, current, attributeCategory, allowType, 0, true);
       }
 
       current = current.nextNode();
@@ -801,6 +837,9 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
             //flushAttribute(writer, scope, current, attributeCategory, allowType, true);
             flushArrayType(writer, scope, current, false);
          }
+         else if (current == SyntaxKey::NullableType) {
+            flushNullableType(writer, scope, current, false);
+         }
          else if (current == SyntaxKey::TemplateType) {
             flushTemplateType(writer, scope, current, exprMode);
          }
@@ -840,7 +879,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
 }
 
 bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, 
-   ref_t& previusCategory, bool allowType, int arrayNestLevel)
+   ref_t& previusCategory, bool allowType, int arrayNestLevel, bool nullable)
 {
    bool typeExpr = false;
    ref_t attrRef = mapAttribute(node, allowType, previusCategory);
@@ -862,6 +901,9 @@ bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope,
       }
 
       if (arrayNestLevel > 0) {
+         if (nullable)
+            writer.newNode(SyntaxKey::NullableType);
+
          for (int i = 0; i < arrayNestLevel; i++)
             writer.newNode(SyntaxKey::ArrayType);
          
@@ -871,11 +913,20 @@ bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope,
 
          for (int i = 0; i < arrayNestLevel; i++)
             writer.closeNode();
+
+         if (nullable)
+            writer.closeNode();
       }
       else {
+         if (nullable)
+            writer.newNode(SyntaxKey::NullableType);
+
          writer.newNode(key, attrRef);
          flushNode(writer, scope, node);
          writer.closeNode();
+
+         if (nullable)
+            writer.closeNode();
       }
    }
    else _errorProcessor->raiseTerminalWarning(WARNING_LEVEL_2, wrnUnknownHint, retrievePath(node), node);

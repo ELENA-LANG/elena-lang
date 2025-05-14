@@ -40,7 +40,6 @@ In development:
   tools:
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   - vs #2 : elena.tmLanguage.json  
-  - elt : port to linux
   prom:
   - post an article about records using meta programming
   - weekly posting
@@ -49,10 +48,12 @@ In development:
   - Resolving correctly extension template #741
   - api : UShortNumber
   - implement analog of record using meta programming (extensions'records)
+  - elt : port to linux
   - work on REPL (elt) : execute simple program
+  - How to uninstall from Linux? #774
   - rosetta code : moving to 6.7
   --------------------------------------    
-  * Amicable pairs - Alternative variant using yield enumerator
+  * fix Amicable pairs - Alternative variant using yield enumerator
   * test twelvestats
   * test aplusb
   * test arraymode
