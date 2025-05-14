@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Debug Context Browser Implementation File
-//                                             (C)2022-2024, by Aleksey Rakov
+//                                             (C)2022-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincontextbrowser.h"
@@ -170,6 +170,9 @@ void ContextBrowser :: refreshCurrentNode()
 {
    TreeViewItem current = getCurrent();
 
-   _browseInvoker(_notifier, (size_t)current, getParam(current));
+   if (current == _rootItem) {
+      _browseInvoker(_notifier, 0, 0);
+   }
+   else _browseInvoker(_notifier, (size_t)current, getParam(current));
 }
 

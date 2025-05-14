@@ -68,7 +68,7 @@ bool VMSession :: loadTemplate(path_t path)
       copyPrefixPostfix(*content, 0, block2, _prefix1, _postfix1);
       copyPrefixPostfix(*content, block2 + 2, block3, _prefix2, _postfix2);
       copyPrefixPostfix(*content, block3 + 2, block4, _prefix3, _postfix3);
-      copyPrefixPostfix(*content, block4 + 2, block4, _prefix4, _postfix4);
+      copyPrefixPostfix(*content, block4 + 2, content.length(), _prefix4, _postfix4);
 
       return true;
    }
@@ -80,6 +80,8 @@ inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t pref
    size_t i = index;
    while (i < text.length()) {
       size_t pos = ustr_t(text.str()).findSub(i, '$');
+      if (pos == NOTFOUND_POS)
+         break;
 
       IdentifierString varName;
       size_t j = pos + 1;

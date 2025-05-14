@@ -153,6 +153,11 @@ public intTests() : testCase()
    i /= 2;    
    Assert.ifTrue(i == 1);
    Console.write(".");
+
+   n := IntNumber.MinValue;
+   string s := n.toPrintable();
+   Assert.ifTrue(s == "-2147483648");
+   Console.write(".");
 }
 
 public uintTests() : testCase()

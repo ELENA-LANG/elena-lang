@@ -22,7 +22,7 @@ In development:
   - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
   ide:  
   - compile in the separate thread  
-  - debugger : watch list is not refreshed correctly  (see for example xml)
+  - debugger : watch list is not refreshed correctly  (see for example xml); sometimes not all old elements are removed
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - async method - auto watch : self and some variables are not displayed
   maint:
@@ -46,17 +46,16 @@ In development:
   - post what's new in ELENA 6.7
   - adding a text how uninstall ELENA
   --------------------------------------
-  - Resolving correctly extension template #741
   - api : UShortNumber
+  - #771 : FreeBSD doesn't use DEB packages 
   - implement analog of record using meta programming (extensions'records)
+  - #767 : Inno setup for 64 bit version 
   - elt : port to linux
+  - Resolving correctly extension template #741
   - work on REPL (elt) : execute simple program
   --------------------------------------    
-  - freebsd : unstall script
-  --------------------------------------    
-  * test elt : repl mode
-  * test elt : assign variable / use variable
   * test elt : multiline mode
+  * test elt : assign variable / use variable
   * test elt : load script
   * execute simple program:
     f = () { Console.writeLine("Hello"); }

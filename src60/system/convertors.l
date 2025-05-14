@@ -686,6 +686,10 @@ public singleton StringConvertor
       int n := value;
       if (n < 0)
       {
+         if (n == 80000000h) {
+            ^ convert(-2147483648l, radix);
+         };
+         
          n := 0 - n;
       };   
 
