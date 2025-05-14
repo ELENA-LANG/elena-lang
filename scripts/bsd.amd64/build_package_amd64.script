@@ -4,7 +4,6 @@ mkdir -p ../../lib60_64
 mkdir -p /usr/local/share/elena
 mkdir -p /usr/local/etc/elena/
 mkdir -p /usr/local/etc/elena/templates/
-mkdir -p /usr/local/lib/elena/core/x32/
 mkdir -p /usr/local/lib/elena/core/amd64/
 mkdir -p /usr/local/lib/elena/lib60_64
 
