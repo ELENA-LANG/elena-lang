@@ -34,7 +34,7 @@ In development:
   - optimization : pi (used classes byte code)
   - rosetta code : Program termination, Parallel calculations
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
-  - rosetta code : moving to 6.7 : (..Apply a callback to an array)
+  - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   port:
   - chat sample
   tools:
@@ -51,15 +51,9 @@ In development:
   - elt : port to linux
   - work on REPL (elt) : execute simple program
   - How to uninstall from Linux? #774
-  - rosetta code : moving to 6.7
   --------------------------------------    
-  * fix Amicable pairs - Alternative variant using yield enumerator
-  * test twelvestats
-  * test aplusb
-  * test arraymode
-  * Anagrams
-  * Anonymous recursion
-  --------------------------------------    
+  * create a new script - uninstall_amd64 for amd64
+  * create a new script - uninstall_i386 for i386
   --------------------------------------
 
   === Iteration 42 ===
