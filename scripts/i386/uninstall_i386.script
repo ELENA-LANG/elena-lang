@@ -1,12 +1,12 @@
 #!/bin/bash
 
 echo removing ELENA shared libraries
-rm /usr/lib/elena/libelenart60_64.so
-rm /usr/lib/elena/libelenasm60_64.so
-rm /usr/lib/elena/libelenavm60_64.so
+rm /usr/lib/elena/libelenart60.so
+rm /usr/lib/elena/libelenasm60.so
+rm /usr/lib/elena/libelenavm60.so
 
 echo removing ELENA compiler executable
-rm /usr/bin/elena64-cli
+rm /usr/bin/elena-cli
 
 echo removing ELENA configuration files
 
@@ -22,13 +22,13 @@ rmdir /usr/share/elena
 
 echo removing ELENA API compiled modules
 
-rm /usr/lib/elena/core/amd64/*.bin
-rmdir /usr/lib/elena/core/amd64
+rm /usr/lib/elena/core/x32/*.bin
+rmdir /usr/lib/elena/core/x32
 
-rm /usr/lib/elena/lib60_64/*.nl
-rm /usr/lib/elena/lib60_64/*.dnl
+rm /usr/lib/elena/lib60/*.nl
+rm /usr/lib/elena/lib60/*.dnl
 
-rmdir /usr/lib/elena/lib60_64
+rmdir /usr/lib/elena/lib60
 rmdir /usr/lib/elena
 
 exit 0
