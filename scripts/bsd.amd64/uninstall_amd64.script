@@ -1,8 +1,8 @@
 #!/bin/sh
 
-read -p "You are going to uninstall ELENA Language. Are you sure (y/n)? " -n 1 -r
+read -p "You are going to uninstall ELENA Language. Are you sure (y/n)? " -r CONT
 echo    # (optional) move to a new line
-if [[ $REPLY =~ ^[Yy]$ ]]
+if [[ $CONT =~ ^[Yy]$ ]]
 then
 
   echo removing ELENA shared libraries
