@@ -24,6 +24,7 @@ echo removing ELENA API compiled modules
 
 rm /usr/lib/elena/core/amd64/*.bin
 rmdir /usr/lib/elena/core/amd64
+rmdir /usr/lib/elena/core
 
 rm /usr/lib/elena/lib60_64/*.nl
 rm /usr/lib/elena/lib60_64/*.dnl
