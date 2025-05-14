@@ -3,7 +3,7 @@
 //
 //		This is a main file containing VM session declaration
 //
-//                                             (C)2023-2024, by Aleksey Rakov
+//                                             (C)2023-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELTVMSESSION_H
@@ -16,23 +16,33 @@ namespace elena_lang
    class VMSession
    {
       bool                 _started;
+      bool                 _multiLine;
 
       FileEncoding         _encoding;
 
       PresenterBase*       _presenter;
 
-      IdentifierString     _prefix;
-      size_t               _prefixBookmark;
-      IdentifierString     _postfix;
+      IdentifierString     _prefix1;
+      IdentifierString     _postfix1;
+      IdentifierString     _prefix2;
+      IdentifierString     _postfix2;
+      IdentifierString     _prefix3;
+      IdentifierString     _postfix3;
+      IdentifierString     _prefix4;
+      IdentifierString     _postfix4;
 
       DynamicString<char>  _body;
+
+      IdentifierList       _imports;
 
       SystemEnv            _env;
 
       bool connect(void* tape);
       bool execute(void* tape);
 
-      void executeCommandLine(const char* line);
+      bool executeAssigning(ustr_t line);
+
+      void executeCommandLine(const char* line, ustr_t prefix, ustr_t postfix);
 
       bool executeTape(void* tape);
 
@@ -45,6 +55,8 @@ namespace elena_lang
       bool loadTemplate(path_t path);
 
       bool loadScript(ustr_t pathStr);
+
+      void executeBody();
 
       void start();
 

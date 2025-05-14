@@ -3,7 +3,7 @@
 //
 //		This is a main file containing VM session code
 //
-//                                             (C)2023-2024, by Aleksey Rakov
+//                                             (C)2023-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -23,18 +23,32 @@ const char* trim(const char* s)
    return s;
 }
 
+inline bool isLetterOrDigit(char ch)
+{
+   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9');
+}
+
+
 // --- VMSession ---
 
 VMSession :: VMSession(PresenterBase* presenter)
-   : _env({})
+   : _env({}), _imports(nullptr)
 {
    _started = false;
 
    _encoding = FileEncoding::UTF8;
 
    _presenter = presenter;
+}
 
-   _prefixBookmark = 0;
+inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, IdentifierString& prefix, IdentifierString& postfix)
+{
+   size_t pos = s.findSubStr(start, "$1", end-start);
+   if (pos != NOTFOUND_POS) {
+      prefix.copy(s + start, pos - start);
+      postfix.copy(s + pos + 2, end - pos - 2);
+   }
+   else prefix.copy(s + start, end - start);
 }
 
 bool VMSession :: loadTemplate(path_t path)
@@ -47,35 +61,84 @@ bool VMSession :: loadTemplate(path_t path)
       IdentifierString content;
       reader.readAll(content, buff);
 
-      size_t index = (*content).findStr("$1");
-      if (index != NOTFOUND_POS) {
-         _prefix.copy(*content, index);
-         _postfix.copy(*content + index + 2);
-      }
-      else _prefix.copy(*content);
+      size_t block2 = (*content).findStr("$$");
+      size_t block3 = (*content).findSubStr(block2 + 2, "$$", content.length() - block2 - 2);
+      size_t block4 = (*content).findSubStr(block3 + 2, "$$", content.length() - block3 - 2);
 
-      _prefixBookmark = 0;
+      copyPrefixPostfix(*content, 0, block2, _prefix1, _postfix1);
+      copyPrefixPostfix(*content, block2 + 2, block3, _prefix2, _postfix2);
+      copyPrefixPostfix(*content, block3 + 2, block4, _prefix3, _postfix3);
+      copyPrefixPostfix(*content, block4 + 2, block4, _prefix4, _postfix4);
 
       return true;
    }
    else return false;
 }
 
-void VMSession :: executeCommandLine(const char* line)
+inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
+{
+   size_t i = index;
+   while (i < text.length()) {
+      size_t pos = ustr_t(text.str()).findSub(i, '$');
+
+      IdentifierString varName;
+      size_t j = pos + 1;
+      while (isLetterOrDigit(text[j])) {
+         varName.append(text[j]);
+         j++;
+      }
+         
+      text.cut(pos, j - pos);
+
+      text.insert(postfix, pos);
+      text.insert(*varName, pos);
+      text.insert(prefix, pos);
+
+      i = pos;
+   }
+}
+
+void VMSession :: executeCommandLine(const char* line, ustr_t prefix, ustr_t postfix)
 {
    DynamicString<char> command;
 
-   command.append(*_prefix);
-   command.append(_body.str());
-   command.append('\n');
+   for (auto it = _imports.start(); !it.eof(); ++it) {
+      command.append("import ");
+      command.append(*it);
+      command.append(";\n");
+   }
+
+   command.append(prefix);
    command.append(line);
-   command.append(*_postfix);
+   command.append(postfix);
+
+   insertVariables(command, 0, *_prefix4, *_postfix4);
 
    if (!executeScript(command.str())) {
       _presenter->print(ELT_CODE_FAILED);
    }
+}
 
-   _body.clear();
+bool VMSession :: executeAssigning(ustr_t line)
+{
+   size_t assingIndex = line.findStr(":=");
+
+   IdentifierString varName(line + 1, assingIndex - 1);
+   while (varName[varName.length() - 1] == ' ')
+      varName.truncate(varName.length() - 1);
+
+   if ((*varName).find(' '))
+      return false;
+
+   DynamicString<char> text;
+   text.append('\"');
+   text.append(*varName);
+   text.append("\", ");
+   text.append(line + assingIndex + 2);
+
+   insertVariables(text, assingIndex + 2, *_prefix4, *_postfix4);
+
+   executeCommandLine(text.str(), *_prefix3, *_postfix3);
 }
 
 bool VMSession :: executeTape(void* tape)
@@ -158,39 +221,75 @@ bool VMSession :: execute(void* tape)
 
 void VMSession::printHelp()
 {
-   _presenter->print("-q                         - quit\n");
-   _presenter->print("-c                         - clear\n");
-   _presenter->print("-h                         - help\n");
-   _presenter->print("-l <path>                  - execute a script from file\n");
-   _presenter->print("-p<script>;                - prepend the prefix code\n");
-   _presenter->print("{ <script>; }*\n <script>                  - execute script\n");
+   _presenter->print("<expr>                     - evaluate the expression and print the result\n");
+   _presenter->print("$<var> := <expr>           - assign a global variable\n");
+   _presenter->print("@multiline                 - switching to a multi-line mode\n");
+   _presenter->print("@eval                      - executing the multi-line code\n");
+   _presenter->print("@quit                      - quit\n");
+   _presenter->print("@help                      - help\n");
+   _presenter->print("@load <path>               - execute a script from file\n");
+   _presenter->print("@add import <reference>    - importing a module into the session\n");
+   _presenter->print("@remove import <reference> - removing a module from the session\n");
+}
+
+inline bool isAssignment(ustr_t line)
+{
+   if (line[0] != '$')
+      return false;
+
+   size_t len = line.length();
+   size_t i = 1;
+   while (i < len && (isLetterOrDigit(line[i])))
+      i++;
+
+   while (line[i] == ' ')
+      i++;
+
+   return (i < len - 1) && (line[i] == ':' && line[i + 1] == '=');
 }
 
 bool VMSession :: executeCommand(const char* line, bool& running)
 {
-   if (getlength(line) < 2)
+   size_t len = getlength(line);
+   if (len < 2)
       return false;
 
    // check commands
-   if (line[1] == 'q') {
+   if (line[1] == 'q' || (len > 2 && ustr_t(line).compare("@quit"))) {
       running = false;
    }
-   else if (line[1] == 'h') {
+   else if (line[1] == 'h' || (len > 2 && ustr_t(line).compare("@help"))) {
       printHelp();
    }
    else if (line[1] == 'l') {
-      loadScript(line + 2);
+      if (line[2] == ' ') {
+         loadScript(line + 2);
+      }
+      else if (ustr_t(line).startsWith("@load ")) {
+         loadScript(line + 6);
+      }
    }
-   else if (line[1] == 'c') {
-      _body.clear();
-      _prefix.cut(0, _prefixBookmark);
-      _prefixBookmark = 0;
-   }
-   else if (line[1] == 'p') {
-      ustr_t snipet = line + 2;
+   else if (line[1] == 'a' && ustr_t(line).startsWith("@add import ")) {
+      IdentifierString module(line + 12);
 
-      _prefix.insert(snipet, _prefixBookmark);
-      _prefixBookmark += getlength(snipet);
+      _imports.add((*module).clone());
+   }
+   else if (line[1] == 'r' && ustr_t(line).startsWith("@remove import ")) {
+      IdentifierString module(line + 15);
+
+      _imports.cut(*module);
+   }
+   else if (ustr_t(line).compare("@multiline")) {
+      _multiLine = true;
+   }
+   else if (ustr_t(line).compare("@eval")) {
+      if (isAssignment(_body.str())) {
+         executeAssigning(_body.str());
+      }
+      else executeCommandLine(_body.str(), *_prefix2, *_postfix2);
+
+      _multiLine = false;
+      _body.clear();
    }
    else return false;
 
@@ -217,16 +316,19 @@ void VMSession :: run()
          while (!line.empty() && line[line.length() - 1] == ' ')
             line[line.length() - 1] = 0;
 
-         if (line[0] == '-') {
+         if (line[0] == '@') {
             if (!executeCommand(*line, running))
                _presenter->print("Invalid command, use -h to get the list of the commands\n");
          }
-         else if (!line.empty() && line[line.length() - 1] == ';') {
+         else if (_multiLine) {
             line[line.length() - 1] = 0;
 
             _body.append(*line);
          }
-         else executeCommandLine(*line);
+         else if (isAssignment(*line)) {
+            executeAssigning(*line);
+         }
+         else executeCommandLine(*line, *_prefix1, *_postfix1);
       }
       catch (...) {
          _presenter->print("Invalid operation");

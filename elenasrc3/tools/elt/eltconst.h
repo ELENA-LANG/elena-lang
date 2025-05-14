@@ -3,7 +3,7 @@
 //
 //		This file contains the elt common interfaces & types
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELTCONST_H
@@ -11,9 +11,9 @@
 
 namespace elena_lang
 {
-   #define ELT_REVISION_NUMBER               0x0004
+   #define ELT_REVISION_NUMBER               0x0005
 
-   constexpr auto ELT_GREETING               = "ELENA command line VM terminal %d.%d.%d (C)2021-24 by Aleksey Rakov\n";
+   constexpr auto ELT_GREETING               = "ELENA command line VM terminal %d.%d.%d (C)2021-25 by Aleksey Rakov\n";
 
    constexpr auto COMMAMD_TEMPLATE           = "command60.es";
    constexpr auto ELT_CONFIG                 = "~\\elt60.es";

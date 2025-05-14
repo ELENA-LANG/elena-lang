@@ -3,7 +3,7 @@
 //
 //		This is a main file containing VM terminal
 //
-//                                              (C)2021-2024, by Aleksey Rakov
+//                                              (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"

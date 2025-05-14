@@ -37,3 +37,7 @@ public singleton LScript
 }
 
 public lscript = LScript; // !! obsolte
+
+// --- Globlas ---
+
+static Globals = system'collections'Dictionary.new();

@@ -44,16 +44,22 @@ In development:
   - post an article about records using meta programming
   - weekly posting
   - post what's new in ELENA 6.7
+  - adding a text how uninstall ELENA
   --------------------------------------
   - Resolving correctly extension template #741
   - api : UShortNumber
   - implement analog of record using meta programming (extensions'records)
   - elt : port to linux
+  - freebsd : unstall script
   - work on REPL (elt) : execute simple program
-  - How to uninstall from Linux? #774
   --------------------------------------    
-  * create a new script - uninstall_amd64 for amd64
-  * create a new script - uninstall_i386 for i386
+  * test elt : repl mode
+  * test elt : assign variable / use variable
+  * test elt : multiline mode
+  * test elt : load script
+  * execute simple program:
+    f = () { Console.writeLine("Hello"); }
+  * modify https://rosettacode.org/wiki/Interactive_programming_(repl)#Elena   
   --------------------------------------
 
   === Iteration 42 ===
