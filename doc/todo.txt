@@ -50,8 +50,9 @@ In development:
   - api : UShortNumber
   - implement analog of record using meta programming (extensions'records)
   - elt : port to linux
-  - freebsd : unstall script
   - work on REPL (elt) : execute simple program
+  --------------------------------------    
+  - freebsd : unstall script
   --------------------------------------    
   * test elt : repl mode
   * test elt : assign variable / use variable
