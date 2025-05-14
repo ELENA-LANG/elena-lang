@@ -3,7 +3,6 @@ mkdir -p ../../lib60_64
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
-mkdir -p /usr/lib/elena/core/x32/
 mkdir -p /usr/lib/elena/core/amd64/
 mkdir -p /usr/lib/elena/lib60_64
 
@@ -70,6 +69,7 @@ else
 fi
 
 cp ../../dat/og/*.dat /usr/share/elena/
+cp ../../dat/og/*.dat ../../bin
 cp ../../dat/sg/syntax60.dat /usr/share/elena
 cp ../../dat/sg/syntax60.dat ../../bin
 cp ../../dat/sg/syntax67.dat /usr/share/elena
