@@ -19,7 +19,7 @@ public sealed AmicablePairs
         this max := max
     }
     
-    yield Tuple<int, int>? next()
+    yield Enumerator<Tuple<int, int>> next()
     {
         List<int> divsums := Range.new(0, max + 1).selectBy::(int i => ProperDivisors(i).summarize(0));
         
@@ -30,16 +30,14 @@ public sealed AmicablePairs
                 :yield new Tuple<int, int>(i, sum);
             }            
         };
-        
-        ^ nil
     }   
 } 
  
 public program()
 {
     auto e := new AmicablePairs(Limit);
-    for(auto pair := e.next(); pair != nil)
-    {
-        console.printLine(pair.Item1, " ", pair.Item2)
+    while (e.next()) {
+       auto pair := *e;
+       console.printLine(pair.Item1, " ", pair.Item2)
     }
 }
