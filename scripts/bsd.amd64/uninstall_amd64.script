@@ -2,7 +2,7 @@
 
 read -p "You are going to uninstall ELENA Language. Are you sure (y/n)? " -r CONT
 echo    # (optional) move to a new line
-if ( $CONT = "y" || $CONT = "Y" )
+if [ $CONT =~ ^[Yy]$ ];
 then
 
   echo removing ELENA shared libraries
