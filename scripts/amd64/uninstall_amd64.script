@@ -1,35 +1,42 @@
 #!/bin/bash
 
-echo removing ELENA shared libraries
-rm /usr/lib/elena/libelenart60_64.so
-rm /usr/lib/elena/libelenasm60_64.so
-rm /usr/lib/elena/libelenavm60_64.so
+read -p "You are going to uninstall ELENA Language. Are you sure? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
 
-echo removing ELENA compiler executable
-rm /usr/bin/elena64-cli
+  echo removing ELENA shared libraries
+  rm /usr/lib/elena/libelenart60_64.so
+  rm /usr/lib/elena/libelenasm60_64.so
+  rm /usr/lib/elena/libelenavm60_64.so
 
-echo removing ELENA configuration files
+  echo removing ELENA compiler executable
+  rm /usr/bin/elena64-cli
 
-rm /etc/elena/templates/*.config
-rmdir /etc/elena/templates
+  echo removing ELENA configuration files
 
-rm /etc/elena/*.config
-rmdir /etc/elena
+  rm /etc/elena/templates/*.config
+  rmdir /etc/elena/templates
 
-echo removing ELENA data files
-rm /usr/share/elena/*.dat
-rmdir /usr/share/elena
+  rm /etc/elena/*.config
+  rmdir /etc/elena
 
-echo removing ELENA API compiled modules
+  echo removing ELENA data files
+  rm /usr/share/elena/*.dat
+  rmdir /usr/share/elena
 
-rm /usr/lib/elena/core/amd64/*.bin
-rmdir /usr/lib/elena/core/amd64
-rmdir /usr/lib/elena/core
+  echo removing ELENA API compiled modules
 
-rm /usr/lib/elena/lib60_64/*.nl
-rm /usr/lib/elena/lib60_64/*.dnl
+  rm /usr/lib/elena/core/amd64/*.bin
+  rmdir /usr/lib/elena/core/amd64
+  rmdir /usr/lib/elena/core
 
-rmdir /usr/lib/elena/lib60_64
-rmdir /usr/lib/elena
+  rm /usr/lib/elena/lib60_64/*.nl
+  rm /usr/lib/elena/lib60_64/*.dnl
+
+  rmdir /usr/lib/elena/lib60_64
+  rmdir /usr/lib/elena
+
+fi
 
 exit 0
