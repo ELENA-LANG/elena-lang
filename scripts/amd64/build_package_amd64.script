@@ -71,7 +71,9 @@ fi
 
 cp ../../dat/og/*.dat /usr/share/elena/
 cp ../../dat/sg/syntax60.dat /usr/share/elena
+cp ../../dat/sg/syntax60.dat ../../bin
 cp ../../dat/sg/syntax67.dat /usr/share/elena
+cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
