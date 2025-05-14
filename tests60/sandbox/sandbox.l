@@ -19,7 +19,7 @@ public sealed AmicablePairs
         this max := max
     }
     
-    yield Enumerator<Tuple<int, int>> next()
+    yield Enumerator<Tuple<int, int>> enumerator()
     {
         List<int> divsums := Range.new(0, max + 1).selectBy::(int i => ProperDivisors(i).summarize(0));
         
@@ -35,7 +35,7 @@ public sealed AmicablePairs
  
 public program()
 {
-    auto e := new AmicablePairs(Limit);
+    auto e := new AmicablePairs(Limit).enumerator();
     while (e.next()) {
        auto pair := *e;
        console.printLine(pair.Item1, " ", pair.Item2)
