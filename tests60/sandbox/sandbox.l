@@ -1,43 +1,9 @@
+import algorithms;
 import extensions;
-import system'routines'stex;
-import system'collections;
-   
-const int Limit = 20000;
 
-singleton ProperDivisors
-{
-    Enumerator<int> function(int number)
-        = Range.new(1, number / 2).filterBy::(int n => number.mod(n) == 0);
-}
-       
-public sealed AmicablePairs
-{
-    int max;
-    
-    constructor(int max)
-    {
-        this max := max
-    }
-    
-    yield Enumerator<Tuple<int, int>> enumerator()
-    {
-        List<int> divsums := Range.new(0, max + 1).selectBy::(int i => ProperDivisors(i).summarize(0));
-        
-        for (int i := 1; i < divsums.Length; i += 1)
-        {
-            int sum := divsums[i];
-            if(i < sum && sum <= divsums.Length && divsums[sum] == i) {
-                :yield new Tuple<int, int>(i, sum);
-            }            
-        };
-    }   
-} 
- 
 public program()
 {
-    auto e := new AmicablePairs(Limit).enumerator();
-    while (e.next()) {
-       auto pair := *e;
-       console.printLine(pair.Item1, " ", pair.Item2)
-    }
+   auto list2 := new int[]{3, 9, 4, 6, 8, 1, 7, 2, 5};
+
+   Console.printLine("after :", list2.insertSort().asEnumerable());
 }
