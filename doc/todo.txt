@@ -55,7 +55,8 @@ In development:
   - Resolving correctly extension template #741
   --------------------------------------    
   * view code
-  * propose solution
+  * propose solution - using direct extension template call
+  * resolve warning in insertsort.l (InsertSortAlgorithm<T>.sort)
   --------------------------------------
 
   === Iteration 42 ===
