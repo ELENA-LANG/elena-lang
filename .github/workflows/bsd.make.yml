@@ -26,8 +26,6 @@ jobs:
       with:
         usesh: true
         sync: rsync
-        prepare: |
-          pkg install -y dpkg
         run: |
           make clang_all_amd64
           cd scripts/bsd.amd64
@@ -47,4 +45,4 @@ jobs:
         draft: false
         prerelease: true
         files: |
-          ./build/*.deb
+          ./build/*tar.xz
