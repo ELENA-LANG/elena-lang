@@ -28,6 +28,14 @@ inline bool isLetterOrDigit(char ch)
    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9');
 }
 
+inline void trimLine(IdentifierString& line)
+{
+   while (!line.empty() && line[line.length() - 1] == '\r' || line[line.length() - 1] == '\n')
+      line[line.length() - 1] = 0;
+
+   while (!line.empty() && line[line.length() - 1] == ' ')
+      line[line.length() - 1] = 0;
+}
 
 // --- VMSession ---
 
@@ -49,6 +57,9 @@ inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, IdentifierStri
       postfix.copy(s + pos + 2, end - pos - 2);
    }
    else prefix.copy(s + start, end - start);
+
+   trimLine(prefix);
+   trimLine(postfix);
 }
 
 bool VMSession :: loadTemplate(path_t path)
@@ -93,7 +104,9 @@ inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t pref
       text.cut(pos, j - pos);
 
       text.insert(postfix, pos);
+      text.insert("\"", pos);
       text.insert(*varName, pos);
+      text.insert("\"", pos);
       text.insert(prefix, pos);
 
       i = pos;
@@ -129,7 +142,7 @@ bool VMSession :: executeAssigning(ustr_t line)
    while (varName[varName.length() - 1] == ' ')
       varName.truncate(varName.length() - 1);
 
-   if ((*varName).find(' '))
+   if ((*varName).find(' ') != NOTFOUND_POS)
       return false;
 
    DynamicString<char> text;
@@ -137,8 +150,6 @@ bool VMSession :: executeAssigning(ustr_t line)
    text.append(*varName);
    text.append("\", ");
    text.append(line + assingIndex + 2);
-
-   insertVariables(text, assingIndex + 2, *_prefix4, *_postfix4);
 
    executeCommandLine(text.str(), *_prefix3, *_postfix3);
 }
@@ -301,16 +312,16 @@ bool VMSession :: executeCommand(const char* line, bool& running)
 void VMSession :: run()
 {
    char          buffer[MAX_LINE];
-   //IdentifierString line;
    bool          running = true;
 
    do {
       try {
-         _presenter->print("\n>");
+         _presenter->print(_multiLine ? ">" : "\n>");
 
          _presenter->readLine(buffer, MAX_LINE);
 
          IdentifierString line(buffer, getlength(buffer));
+         trimLine(line);
 
          while (!line.empty() && line[line.length() - 1] == '\r' || line[line.length() - 1] == '\n')
             line[line.length() - 1] = 0;
@@ -323,8 +334,6 @@ void VMSession :: run()
                _presenter->print("Invalid command, use -h to get the list of the commands\n");
          }
          else if (_multiLine) {
-            line[line.length() - 1] = 0;
-
             _body.append(*line);
          }
          else if (isAssignment(*line)) {

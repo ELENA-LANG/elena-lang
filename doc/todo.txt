@@ -46,20 +46,16 @@ In development:
   - post what's new in ELENA 6.7
   - adding a text how uninstall ELENA
   --------------------------------------
+  - work on REPL (elt) : generate an array declaration based on the entered lines and save it in the clipboard / file
   - api : UShortNumber
   - #771 : FreeBSD doesn't use DEB packages 
   - implement analog of record using meta programming (extensions'records)
   - #767 : Inno setup for 64 bit version 
   - elt : port to linux
   - Resolving correctly extension template #741
-  - work on REPL (elt) : execute simple program
   --------------------------------------    
-  * test elt : multiline mode
-  * test elt : assign variable / use variable
-  * test elt : load script
-  * execute simple program:
-    f = () { Console.writeLine("Hello"); }
-  * modify https://rosettacode.org/wiki/Interactive_programming_(repl)#Elena   
+  * view code
+  * propose solution
   --------------------------------------
 
   === Iteration 42 ===

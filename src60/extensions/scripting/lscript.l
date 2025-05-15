@@ -40,4 +40,4 @@ public lscript = LScript; // !! obsolte
 
 // --- Globlas ---
 
-static Globals = system'collections'Dictionary.new();
+public static Globals = system'collections'Dictionary.new();
