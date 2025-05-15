@@ -34,9 +34,11 @@
  cp ../../lib60_64/*.* ../../build/$RELEASE/lib60_64
 
  cp -r ../../examples60 ../../build/$RELEASE/examples60
- cp -r ../../src60 ../../build/$RELEASE/src60
+ cp -r ../../src60 ../../build/$RELEASE
 
  cp -r ../../LICENSE ../../build/$RELEASE
  cp -r ../../CHANGELOG.md ../../build/$RELEASE
  cp -r ../../README.md ../../build/$RELEASE
  cp -r ../../CONTRIBUTING.md ../../build/$RELEASE
+
+ tar -cJf ../../build/$RELEASE.tar.xz ../../build/$RELEASE
