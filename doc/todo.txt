@@ -46,14 +46,13 @@ In development:
   - post what's new in ELENA 6.7
   - adding a text how uninstall ELENA
   --------------------------------------
+  - implement analog of record using meta programming (extensions'records)
   - elt : port to linux
   - work on REPL (elt) : generate an array declaration based on the entered lines and save it in the clipboard / file
   - api : UShortNumber
   - #771 : FreeBSD doesn't use DEB packages 
-  - implement analog of record using meta programming (extensions'records)
-  - #767 : Inno setup for 64 bit version 
   --------------------------------------    
-  * create a setup
+  * per suggestion create a simple archive -  .tar.xz
   --------------------------------------
 
   === Iteration 42 ===
