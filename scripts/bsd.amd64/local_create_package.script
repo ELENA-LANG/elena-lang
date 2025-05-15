@@ -27,7 +27,7 @@
 
  echo copying core
 
- cp ../../bin/amd64/*.bin ../../build/bin/amd64
+ cp ../../bin/amd64/*.bin ../../build/$RELEASE/bin/amd64
 
  echo copying lib60
 
