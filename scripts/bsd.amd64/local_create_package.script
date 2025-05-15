@@ -5,15 +5,9 @@
  mkdir -p ../../build/$RELEASE/bin/
  mkdir -p ../../build/$RELEASE/bin/templates/
  mkdir -p ../../build/$RELEASE/bin/amd64/
-
-
- mkdir -p ../../build/$RELEASE/usr/local/share/elena/
- mkdir -p ../../build/$RELEASE/usr/local/lib/elena/core/amd64/
- mkdir -p ../../build/$RELEASE/usr/local/lib/elena/lib60_64/
- mkdir -p ../../build/$RELEASE/usr/local/bin/
- mkdir -p ../../build/$RELEASE/usr/local/elena-lang/
- mkdir -p ../../build/$RELEASE/usr/local/elena-lang/examples60/
- mkdir -p ../../build/$RELEASE/usr/local/elena-lang/src60/
+ mkdir -p ../../build/$RELEASE/lib60_64/
+ mkdir -p ../../build/$RELEASE/examples60/
+ mkdir -p ../../build/$RELEASE/src60/
 
  echo copying configuration
 
@@ -41,3 +35,8 @@
 
  cp -r ../../examples60 ../../build/$RELEASE/examples60
  cp -r ../../src60 ../../build/$RELEASE/src60
+
+ cp -r ../../LICENSE ../../build/$RELEASE
+ cp -r ../../CHANGELOG.md ../../build/$RELEASE
+ cp -r ../../README.md ../../build/$RELEASE
+ cp -r ../../CONTRIBUTING.md ../../build/$RELEASE
