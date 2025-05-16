@@ -49,7 +49,7 @@ In development:
   - elt : port to linux
   - work on REPL (elt) : generate an array declaration based on the entered lines and save it in the clipboard / file
   --------------------------------------    
-  * TextGen
+  * load the script from the file - @import
 
   * design the way how to generate the output in elt
 
@@ -64,7 +64,7 @@ $output:="C:\Alex\elena-lang\tests60\sandbox\output";
 
 $script:=
 $script:="<={self[0]}=>
-for(var i := 1; i < self.Length; i++) {
+for(var i := 1; i < self.Length; i:=i+1) {
   <=,{self[i]}=>
 }";
 $target:="1
@@ -96,6 +96,7 @@ public program()
   --------------------------------------
   dev: 
   gen:
+  - script : support ++ operator
   - work on REPL (elt), generate project template
   api:
   ide:  
