@@ -28,13 +28,13 @@ copy bin\winstub.ex_ build\x64\bin
 copy bin\elc60.cfg build\x64\bin
 copy bin\elenart60.cfg build\x64\bin
 copy bin\elenavm60.cfg build\x64\bin
-copy bin\*.es build\x64\bin
 
 copy bin\*.dat build\x64\bin\
 copy bin\amd64\*.bin build\x64\bin\amd64\
 
 copy bin\templates\*.cfg build\x64\bin\templates\
 copy bin\scripts\*.es build\x64\bin\scripts\
+copy bin\scripts\*.elt build\x64\bin\scripts\
 
 copy doc\license build\x64\doc\
 copy doc\contributors build\x64\doc\
