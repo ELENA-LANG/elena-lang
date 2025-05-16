@@ -53,80 +53,39 @@ inline bool isAssignment(ustr_t line)
    return (i < len - 1) && (line[i] == ':' && line[i + 1] == '=');
 }
 
-// --- VMSession ---
-
-VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
-   : _appPath(appPath), _env({}), _imports(nullptr)
+inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, TemplateInfo& info)
 {
-   _started = false;
-
-   _encoding = FileEncoding::UTF8;
-
-   _presenter = presenter;
-}
-
-inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, IdentifierString& prefix, IdentifierString& postfix)
-{
-   size_t pos = s.findSubStr(start, "$1", end-start);
+   size_t pos = s.findSubStr(start, "$1", end - start);
    if (pos != NOTFOUND_POS) {
-      prefix.copy(s + start, pos - start);
-      postfix.copy(s + pos + 2, end - pos - 2);
+      info.prefix.copy(s + start, pos - start);
+      info.postfix.copy(s + pos + 2, end - pos - 2);
    }
-   else prefix.copy(s + start, end - start);
+   else info.postfix.copy(s + start, end - start);
 
-   trimLine(prefix);
-   trimLine(postfix);
+   trimLine(info.prefix);
+   trimLine(info.postfix);
 }
 
-bool VMSession :: loadTemplate(path_t path)
+inline size_t findTerminator(ustr_t text, size_t index)
 {
-   char buff[512];
-
-   TextFileReader reader(path, FileEncoding::UTF8, false);
-
-   if (reader.isOpen()) {
-      IdentifierString content;
-      reader.readAll(content, buff);
-
-      size_t block2 = (*content).findStr("$$");
-      size_t block3 = (*content).findSubStr(block2 + 2, "$$", content.length() - block2 - 2);
-      size_t block4 = (*content).findSubStr(block3 + 2, "$$", content.length() - block3 - 2);
-
-      copyPrefixPostfix(*content, 0, block2, _prefix1, _postfix1);
-      copyPrefixPostfix(*content, block2 + 2, block3, _prefix2, _postfix2);
-      copyPrefixPostfix(*content, block3 + 2, block4, _prefix3, _postfix3);
-      copyPrefixPostfix(*content, block4 + 2, content.length(), _prefix4, _postfix4);
-
-      return true;
-   }
-   else return false;
-}
-
-inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
-{
+   bool quoteMode = false;
    size_t i = index;
-   while (i < text.length()) {
-      size_t pos = ustr_t(text.str()).findSub(i, '$');
-      if (pos == NOTFOUND_POS)
-         break;
-
-      IdentifierString varName;
-      size_t j = pos + 1;
-      while (isLetterOrDigit(text[j])) {
-         varName.append(text[j]);
-         j++;
+   while (text[i]) {
+      if (text[i]=='"') {
+         if (quoteMode) {
+            if (text[i + 1] != '"') {
+               quoteMode = false;
+            }
+            else i++;
+         }
+         else quoteMode = true;
       }
-         
-      text.cut(pos, j - pos);
-
-      text.insert(postfix, pos);
-      text.insert("\"", pos);
-      text.insert(*varName, pos);
-      text.insert("\"", pos);
-      text.insert(prefix, pos);
-
-      i = pos;
+      if (!quoteMode && text[i] == ';')
+         break;
+      i++;
    }
+
+   return i;
 }
 
 inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
@@ -151,7 +110,7 @@ inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, u
       }
 
       size_t assignPos = ustr_t(text.str()).findSubStr(pos, ":=", text.length() - pos);
-      size_t endPos = ustr_t(text.str()).findSub(assignPos, ';');
+      size_t endPos = findTerminator(text.str(), assignPos);
       if (endPos == NOTFOUND_POS) {
          return false;
       }
@@ -163,7 +122,7 @@ inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, u
       text.insert(*expr, pos);
       text.insert("\" ,", pos);
       text.insert(*varName, pos);
-      text.insert("\"", pos);            
+      text.insert("\"", pos);
       text.insert(prefix, pos);
 
       i = pos;
@@ -172,73 +131,63 @@ inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, u
    return true;
 }
 
-void VMSession :: executeCommandLine(bool preview, const char* line, ustr_t prefix, ustr_t postfix, ustr_t prefix2, ustr_t postfix2)
+inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
 {
-   DynamicString<char> command;
+   size_t i = index;
+   while (i < text.length()) {
+      size_t pos = ustr_t(text.str()).findSub(i, '$');
+      if (pos == NOTFOUND_POS)
+         break;
 
-   for (auto it = _imports.start(); !it.eof(); ++it) {
-      command.append("import ");
-      command.append(*it);
-      command.append(";\n");
-   }
+      IdentifierString varName;
+      size_t j = pos + 1;
+      while (isLetterOrDigit(text[j])) {
+         varName.append(text[j]);
+         j++;
+      }
 
-   command.append(prefix);
-   if (!prefix2.empty())
-      command.append(prefix2);
-   command.append(line);
-   if (!postfix2.empty())
-      command.append(postfix2);
-   command.append(postfix);
+      text.cut(pos, j - pos);
 
-   insertVariablesAssignment(command, 0, *_prefix3, *_postfix3);
-   insertVariables(command, 0, *_prefix4, *_postfix4);
+      text.insert(postfix, pos);
+      text.insert("\"", pos);
+      text.insert(*varName, pos);
+      text.insert("\"", pos);
+      text.insert(prefix, pos);
 
-   if (preview) {
-      _presenter->print(command.str());
-   }
-   else if (!executeScript(command.str())) {
-      _presenter->print(ELT_CODE_FAILED);
+      i = pos;
    }
 }
 
-bool VMSession :: executeAssigning(ustr_t line)
+// --- VMSession ---
+
+VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
+   : _appPath(appPath), _env({}), _imports(nullptr)
 {
-   size_t assingIndex = line.findStr(":=");
+   _started = false;
 
-   IdentifierString varName(line + 1, assingIndex - 1);
-   while (varName[varName.length() - 1] == ' ')
-      varName.truncate(varName.length() - 1);
+   _encoding = FileEncoding::UTF8;
 
-   if ((*varName).find(' ') != NOTFOUND_POS)
-      return false;
-
-   DynamicString<char> text;
-   text.append('\"');
-   text.append(*varName);
-   text.append("\", ");
-   text.append(line + assingIndex + 2);
-
-   executeCommandLine(text.str(), *_prefix2, *_postfix2, *_prefix3, *_postfix3);
-
-   return true;
+   _presenter = presenter;
 }
 
-bool VMSession :: loadPlugin(ustr_t name)
+bool VMSession :: loadTemplate(TemplateType type, ustr_t name)
 {
+   _presenter->print(ELT_LOADING_TEMPLATE, name);
+
    if (name.find(PATH_SEPARATOR) != NOTFOUND_POS)
       return false;
 
-   _plugedCode.clear();
+   char buffer[1024];
 
    PathString path(*_appPath);
    path.combine("scripts");
    path.combine(name);
    path.changeExtension("elt");
 
-   DynamicString<char> helpLine;
+   TextFileReader reader(*path, FileEncoding::UTF8, false);
 
-   char buffer[1024];
-   TextFileReader reader(*path, _encoding, false);
+   DynamicString<char> helpLine;
+   DynamicString<char> content;
    if (!reader.isOpen())
       return false;
 
@@ -246,30 +195,80 @@ bool VMSession :: loadPlugin(ustr_t name)
       if (ustr_t(buffer).startsWith("///")) {
          helpLine.append(buffer + 3);
       }
-      else _plugedCode.append(buffer);
+      else content.append(buffer);
    }
 
-   _presenter->print(helpLine.str());
-}
+   if (!helpLine.empty())
+      _presenter->print(helpLine.str());
 
-bool VMSession :: executeTape(void* tape)
-{
-   bool retVal = false;
-   if (!_started) {
-      retVal = connect(tape);
+   switch (type) {
+      case TemplateType::REPL:
+         _repl.clear();
+         copyPrefixPostfix(content.str(), 0, content.length(), _repl);
+         break;
+      case TemplateType::Multiline:
+         _multiline.clear();
+         copyPrefixPostfix(content.str(), 0, content.length(), _multiline);
+         break;
+      case TemplateType::GetVar:
+         _get_var.clear();
+         copyPrefixPostfix(content.str(), 0, content.length(), _get_var);
+         break;
+      case TemplateType::SetVar:
+         _set_var.clear();
+         copyPrefixPostfix(content.str(), 0, content.length(), _set_var);
+         break;
+      default:
+         return false;
    }
-   else retVal = execute(tape);
 
-   ReleaseSMLA(tape);
-
-   return retVal;
+   return true;
 }
 
-bool VMSession :: loadScript(ustr_t pathStr)
+void VMSession::printHelp()
 {
+   _presenter->print("@help                      - help\n");
+   _presenter->print("@quit                      - quit\n");
+   _presenter->print("@multiline                 - switching to a multi-line mode\n");
+
+   _presenter->print("<expr>                     - evaluate the expression and print the result\n");
+   _presenter->print("$<var> := <expr>;          - assign a global variable\n");
+   _presenter->print(".. $<var>  ..              - get a global variable value\n");
+
+   _presenter->print("@base <path>               - set the base path for scripts\n");
+   _presenter->print("@load <path>               - execute a script from file\n");
+   _presenter->print("@import <path>             - load the script into multi-line script\n");
+
+   _presenter->print("@use <template>            - use the template for multiline script\n");
+
+   _presenter->print("@eval                      - executing the multi-line code and switch back to REPL mode\n");
+   _presenter->print("@clear                     - clear the multi-line code and switch back to REPL mode\n");
+   _presenter->print("@print                     - print the multi-line code\n");
+   _presenter->print("@add import <reference>    - importing a module into the session\n");
+   _presenter->print("@remove import <reference> - removing a module from the session\n");
+}
+
+void VMSession::setBasePath(ustr_t baseStr)
+{
+   _basePath.copy(baseStr);
+}
+
+bool VMSession::loadScript(ustr_t pathStr)
+{
+   void* tape = nullptr;
+
    pathStr = trim(pathStr);
 
-   void* tape = InterpretFileSMLA(pathStr, (int)_encoding, false);
+   if (pathStr.find(PATH_SEPARATOR) == NOTFOUND_POS) {
+      PathString totalPath(_basePath);
+      totalPath.combine(pathStr);
+      totalPath.changeExtension("es");
+
+      IdentifierString totalPathStr(*totalPath);
+      tape = InterpretFileSMLA(totalPathStr.str(), (int)_encoding, false);
+   }
+   else tape = InterpretFileSMLA(pathStr, (int)_encoding, false);
+
    if (tape == nullptr) {
       char error[0x200];
       size_t length = GetStatusSMLA(error, 0x200);
@@ -283,7 +282,72 @@ bool VMSession :: loadScript(ustr_t pathStr)
    return executeTape(tape);
 }
 
-bool VMSession :: executeScript(const char* script)
+bool VMSession::importScript(ustr_t scriptName)
+{
+   PathString totalPath(_basePath);
+   totalPath.combine(scriptName);
+   totalPath.changeExtension("es");
+
+   TextFileReader reader(*totalPath, _encoding, false);
+   if (!reader.isOpen())
+      return false;
+
+   char buffer[1024];
+   while (reader.read(buffer, 1024)) {
+      _body.append(buffer);
+   }
+}
+
+void VMSession :: executeCommandLine(bool preview, TemplateType type, ustr_t script)
+{
+   DynamicString<char> command;
+
+   for (auto it = _imports.start(); !it.eof(); ++it) {
+      command.append("import ");
+      command.append(*it);
+      command.append(";\n");
+   }
+
+   switch (type) {
+      case TemplateType::REPL:
+         command.append(*_repl.prefix);
+         command.append(script);
+         command.append(*_repl.postfix);
+         break;
+      case TemplateType::Multiline:
+         command.append(*_multiline.prefix);
+         command.append(script);
+         command.append(*_multiline.postfix);
+         break;
+      default:
+         break;
+   }
+
+   insertVariablesAssignment(command, 0, *_set_var.prefix, *_set_var.postfix);
+   insertVariables(command, 0, *_get_var.prefix, *_get_var.postfix);
+
+   if (preview) {
+      _presenter->printLine(command.str());
+   }
+   else if (!executeScript(command.str())) {
+      _presenter->print(ELT_CODE_FAILED);
+   }
+}
+
+bool VMSession::executeTape(void* tape)
+{
+   bool retVal = false;
+   if (!_started) {
+      retVal = connect(tape);
+   }
+   else retVal = execute(tape);
+
+   ReleaseSMLA(0);
+
+   return retVal;
+}
+
+bool VMSession::executeScript(const char* script)
 {
    void* tape = InterpretScriptSMLA(script);
    if (tape == nullptr) {
@@ -299,14 +363,14 @@ bool VMSession :: executeScript(const char* script)
    return executeTape(tape);
 }
 
-void VMSession :: start()
+void VMSession::start()
 {
    executeScript("[[ #start; ]]");
 
    _started = true;
 }
 
-bool VMSession :: connect(void* tape)
+bool VMSession::connect(void* tape)
 {
    _env.gc_yg_size = 0x15000;
    _env.gc_mg_size = 0x54000;
@@ -321,28 +385,13 @@ bool VMSession :: connect(void* tape)
    return true;
 }
 
-bool VMSession :: execute(void* tape)
+bool VMSession::execute(void* tape)
 {
    if (EvaluateVMLA(tape) != 0) {
       return false;
    }
 
    return true;
-}
-
-void VMSession::printHelp()
-{
-   _presenter->print("<expr>                     - evaluate the expression and print the result\n");
-   _presenter->print("$<var> := <expr>           - assign a global variable\n");
-   _presenter->print("@multiline                 - switching to a multi-line mode\n");
-   _presenter->print("@eval                      - executing the multi-line code and switch back to REPL mode\n");
-   _presenter->print("@clear                     - clear the multi-line code and switch back to REPL mode\n");
-   _presenter->print("@print                     - print the multi-line code\n");
-   _presenter->print("@quit                      - quit\n");
-   _presenter->print("@help                      - help\n");
-   _presenter->print("@load <path>               - execute a script from file\n");
-   _presenter->print("@add import <reference>    - importing a module into the session\n");
-   _presenter->print("@remove import <reference> - removing a module from the session\n");
 }
 
 bool VMSession :: executeCommand(const char* line, bool& running)
@@ -358,6 +407,14 @@ bool VMSession :: executeCommand(const char* line, bool& running)
    else if (line[1] == 'h' || (len > 2 && ustr_t(line).compare("@help"))) {
       printHelp();
    }
+   else if (ustr_t(line).compare("@multiline")) {
+      _multiLine = true;
+   }
+   else if (ustr_t(line).startsWith("@base ")) {
+      IdentifierString basePath(line + 6);
+
+      setBasePath(*basePath);
+   }
    else if (line[1] == 'l') {
       if (line[2] == ' ') {
          loadScript(line + 2);
@@ -369,7 +426,26 @@ bool VMSession :: executeCommand(const char* line, bool& running)
    else if (ustr_t(line).startsWith("@use ")) {
       IdentifierString pluginName(line + 5);
 
-      loadPlugin(*pluginName);
+      if(!loadTemplate(TemplateType::Multiline, *pluginName))
+         _presenter->printLine(ELT_CANNOT_LOAD_TEMPLATE, *pluginName);
+   }
+   else if (ustr_t(line).startsWith("@import ")) {
+      IdentifierString scriptPath(line + 8);
+
+      importScript(*scriptPath);
+   }
+   else if (ustr_t(line).compare("@eval")) {
+      executeCommandLine(false, TemplateType::Multiline, _body.str());
+
+      _multiLine = false;
+      _body.clear();
+   }
+   else if (ustr_t(line).compare("@print")) {
+      executeCommandLine(true, TemplateType::Multiline, _body.str());
+   }
+   else if (ustr_t(line).compare("@clear")) {
+      _multiLine = false;
+      _body.clear();
    }
    else if (line[1] == 'a' && ustr_t(line).startsWith("@add import ")) {
       IdentifierString module(line + 12);
@@ -380,22 +456,6 @@ bool VMSession :: executeCommand(const char* line, bool& running)
       IdentifierString module(line + 15);
 
       _imports.cut(*module);
-   }
-   else if (ustr_t(line).compare("@multiline")) {
-      _multiLine = true;
-   }
-   else if (ustr_t(line).compare("@print")) {
-      executeCommandLine(true, _body.str(), *_prefix2, *_postfix2);
-   }
-   else if (ustr_t(line).compare("@clear")) {
-      _multiLine = false;
-      _body.clear();
-   }
-   else if (ustr_t(line).compare("@eval")) {
-      executeCommandLine(false, _body.str(), *_prefix2, *_postfix2, nullptr, *_plugedCode);
-
-      _multiLine = false;
-      _body.clear();
    }
    else return false;
 
@@ -432,9 +492,9 @@ void VMSession :: run()
             _body.append("\n");
          }
          else if (isAssignment(*line)) {
-            executeAssigning(*line);
+            executeCommandLine(false, TemplateType::Multiline, *line);
          }
-         else executeCommandLine(false, *line, *_prefix1, *_postfix1);
+         else executeCommandLine(false, TemplateType::REPL, *line);
       }
       catch (...) {
          _presenter->print("Invalid operation");

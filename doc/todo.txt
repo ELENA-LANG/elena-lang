@@ -51,45 +51,9 @@ In development:
   --------------------------------------    
   * load the script from the file - @import
 
-  * design the way how to generate the output in elt
-
-
-@multiline
-@use textgen_ln.es
-
-it will ask for parameters
-
-$output:= ...
-$output:="C:\Alex\elena-lang\tests60\sandbox\output";
-
-$script:=
-$script:="<={self[0]}=>
-for(var i := 1; i < self.Length; i:=i+1) {
-  <=,{self[i]}=>
-}";
-$target:="1
-2
-3
-4";
-
-@eval
-
-and it will generate an output
-
-// ===================
-
-// the script
-import textgen;
-
-public program()
-{
-   var output := TextGen.parseAsLineSeparated($target, $script);
-
-   File.saveContent($output) 
-}
+  * modify elenasm for linux
 
   * save it to the file
-  * save it to the clipboard
   --------------------------------------
 
   === Iteration 42 ===

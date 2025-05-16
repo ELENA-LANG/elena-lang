@@ -13,27 +13,42 @@
 
 namespace elena_lang
 {
+   enum class TemplateType
+   {
+      REPL,
+      Multiline,
+      GetVar,
+      SetVar
+   };
+
+   struct TemplateInfo
+   {
+      IdentifierString     prefix;
+      IdentifierString     postfix;
+
+      void clear()
+      {
+         prefix.clear();
+         postfix.clear();
+      }
+   };
+
    class VMSession
    {
       bool                 _started;
       bool                 _multiLine;
 
       PathString           _appPath;
+      PathString           _basePath;
 
       FileEncoding         _encoding;
 
       PresenterBase*       _presenter;
 
-      IdentifierString     _prefix1;
-      IdentifierString     _postfix1;
-      IdentifierString     _prefix2;
-      IdentifierString     _postfix2;
-      IdentifierString     _prefix3;
-      IdentifierString     _postfix3;
-      IdentifierString     _prefix4;
-      IdentifierString     _postfix4;
-
-      IdentifierString     _plugedCode;
+      TemplateInfo         _repl;
+      TemplateInfo         _multiline;
+      TemplateInfo         _get_var;
+      TemplateInfo         _set_var;
 
       DynamicString<char>  _body;
 
@@ -44,25 +59,23 @@ namespace elena_lang
       bool connect(void* tape);
       bool execute(void* tape);
 
-      bool executeAssigning(ustr_t line);
-
-      void executeCommandLine(bool preview, const char* line, ustr_t prefix, ustr_t postfix, ustr_t prefix2 = nullptr, ustr_t postfix2 = nullptr);
+      void executeCommandLine(bool preview, TemplateType type, ustr_t script);
 
       bool executeTape(void* tape);
 
-      bool loadPlugin(ustr_t name);
+      void setBasePath(ustr_t baseStr);
+
+      bool importScript(ustr_t name);
 
    public:
       void printHelp();
 
+      bool loadTemplate(TemplateType type, ustr_t name);
+
       bool executeScript(const char* line);
       bool executeCommand(const char* line, bool& running);
 
-      bool loadTemplate(path_t path);
-
       bool loadScript(ustr_t pathStr);
-
-      void executeBody();
 
       void start();
 

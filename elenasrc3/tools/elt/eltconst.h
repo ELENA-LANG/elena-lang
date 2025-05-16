@@ -15,7 +15,11 @@ namespace elena_lang
 
    constexpr auto ELT_GREETING               = "ELENA command line VM terminal %d.%d.%d (C)2021-25 by Aleksey Rakov\n";
 
-   constexpr auto COMMAMD_TEMPLATE           = "command60.es";
+   constexpr auto REPL_TEMPLATE_NAME         = "repl";
+   constexpr auto MULTILINE_TEMPLATE_NAME    = "multiline";
+   constexpr auto GETVAR_TEMPLATE_NAME       = "get_var";
+   constexpr auto SETVAR_TEMPLATE_NAME       = "set_var";
+
    constexpr auto ELT_CONFIG                 = "~\\elt60.es";
    constexpr auto ELT_GRAMMAR_CONFIG         = "~\\scripts\\grammar60.es";
    constexpr auto ELT_LSCRIPT_CONFIG         = "~\\scripts\\lscript60.es";
@@ -25,6 +29,9 @@ namespace elena_lang
    constexpr auto ELT_SCRIPT_FAILED          = "\nFailed:%s";
 
    constexpr auto ELT_EXCEPTION_HANDLER      = "system'core_routines'critical_exception_handler";
+
+   constexpr auto ELT_LOADING_TEMPLATE       = "Loading %s template\n";
+   constexpr auto ELT_CANNOT_LOAD_TEMPLATE   = "Cannot load %s template\n";
 }
 
 #endif

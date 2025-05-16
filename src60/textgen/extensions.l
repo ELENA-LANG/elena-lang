@@ -1,4 +1,5 @@
 import system'text;
+import extensions'scripting;
 
 public extension textGenOp
 {
@@ -10,9 +11,9 @@ public extension textGenOp
       auto scriptEngine := new ScriptEngine()
             .loadScript("[[ #grammar build ]]")
             .loadPath("~\scripts\grammar60.es")
-            .loadPath("~\scripts\lscript60.es")
+            .loadPath("~\scripts\lscript60.es");
 
-      var function := scriptEngine..buildScript(full_script).compil().program;
+      var function := scriptEngine.buildScript(full_script).compile().program;
       
       function(self, output);
       
