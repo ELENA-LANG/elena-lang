@@ -874,7 +874,7 @@ public const struct ShortNumber : IntBaseNumber,
      <= multiply(cast short(o));
 
    divide(o)
-            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
      <= divide(cast short(o));
 
    short add(short n)
@@ -1139,6 +1139,7 @@ public const struct UShortNumber : IntBaseNumber,
       = 65535;
 
    static ushort Default
+            : info("Returns the default value (0)")
       = 0;
 
    constructor()
@@ -1158,18 +1159,23 @@ public const struct UShortNumber : IntBaseNumber,
       = UShortConvertor.convert(b);
 
    constructor(int n)
+            : info("tries to convert the integer number o to unsigned short number")
       = UShortConvertor.convert(n);
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
      <= add(cast ushort(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
      <= subtract(cast ushort(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
      <= multiply(cast ushort(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
      <= divide(cast ushort(o));
 
    ushort add(ushort n)
@@ -1253,6 +1259,7 @@ public const struct UShortNumber : IntBaseNumber,
       = new RealNumber(_value).divide(n);   
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is ushort n)
       {
@@ -1263,12 +1270,15 @@ public const struct UShortNumber : IntBaseNumber,
    }
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
       <= band(cast ushort(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
       <= bor(cast ushort(n));
 
    bxor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
       <= bxor(cast ushort(n));
 
    ushort band(ushort n)
@@ -1320,6 +1330,7 @@ public const struct UShortNumber : IntBaseNumber,
       = new LongNumber(self).bxor(n);
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type when it is possible and compared")
       <= less(cast ushort(o));
 
    bool equal(ushort b)
@@ -1387,6 +1398,7 @@ public const struct UShortNumber : IntBaseNumber,
       = RealConvertor.convert(self);
 
    string toPrintable()
+            : info("returns the literal presentation")
       = StringConvertor.convert(self, 10);
 
    ushort shiftLeft(int val)
@@ -1402,6 +1414,7 @@ public const struct UShortNumber : IntBaseNumber,
       = ~_value;
 
    get ushort Negative()
+            : info("Returns negated value")
 //      = -_value;
    {
       ushort v := 0;

@@ -14,8 +14,6 @@ In development:
   - upndown (connector - cmdSearch)
   - #748 : i386
   - #620 : backlog
-  gen:
-  - work on REPL (elt), generate project template
   api:
   - api refactoring : main program entry to be called - Program
   - #622 : api backlog
@@ -46,19 +44,58 @@ In development:
   - post what's new in ELENA 6.7
   - adding a text how uninstall ELENA
   --------------------------------------
+  - api : IntNumber
   - implement analog of record using meta programming (extensions'records)
   - elt : port to linux
   - work on REPL (elt) : generate an array declaration based on the entered lines and save it in the clipboard / file
-  - api : UShortNumber
-  - #771 : FreeBSD doesn't use DEB packages 
   --------------------------------------    
-  * per suggestion create a simple archive -  .tar.xz
+  * assign multi-line value (till ;)
+  * design the way how to generate the output in elt
+
+
+@multiline
+@use textgen_ln.es
+
+it will ask for parameters
+
+$output:= ...
+$output:="C:\Alex\elena-lang\tests60\sandbox\output";
+
+$script:=
+$script:="<={self[0]}=>
+for(var i := 1; i < self.Length; i++) {
+  <=,{self[i]}=>
+}";
+$target:="1
+2
+3
+4";
+
+@eval
+
+and it will generate an output
+
+// ===================
+
+// the script
+import textgen;
+
+public program()
+{
+   var output := TextGen.parseAsLineSeparated($target, $script);
+
+   File.saveContent($output) 
+}
+
+  * save it to the file
+  * save it to the clipboard
   --------------------------------------
 
   === Iteration 42 ===
   --------------------------------------
   dev: 
   gen:
+  - work on REPL (elt), generate project template
   api:
   ide:  
   maint:

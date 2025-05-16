@@ -113,6 +113,49 @@ inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t pref
    }
 }
 
+inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
+{
+   size_t i = index;
+   while (i < text.length()) {
+      size_t pos = ustr_t(text.str()).findSub(i, '$');
+      if (pos == NOTFOUND_POS)
+         break;
+
+      if (!isAssignment(text.str() + pos)) {
+         i = pos + 1;
+
+         continue;
+      }
+
+      IdentifierString varName;
+      size_t j = pos + 1;
+      while (isLetterOrDigit(text[j])) {
+         varName.append(text[j]);
+         j++;
+      }
+
+      size_t assignPos = ustr_t(text.str()).findSubStr(pos, ":=", text.length() - pos);
+      size_t endPos = ustr_t(text.str()).findSub(assignPos, ';');
+      if (endPos == NOTFOUND_POS) {
+         return false;
+      }
+      IdentifierString expr(text.str() + assignPos + 2, endPos - assignPos - 2);
+
+      text.cut(pos, endPos - pos);
+
+      text.insert(postfix, pos);
+      text.insert(*expr, pos);
+      text.insert(", \"", pos);
+      text.insert(*varName, pos);
+      text.insert("\"", pos);            
+      text.insert(prefix, pos);
+
+      i = pos;
+   }
+
+   return true;
+}
+
 void VMSession :: executeCommandLine(const char* line, ustr_t prefix, ustr_t postfix)
 {
    DynamicString<char> command;
@@ -127,6 +170,7 @@ void VMSession :: executeCommandLine(const char* line, ustr_t prefix, ustr_t pos
    command.append(line);
    command.append(postfix);
 
+   insertVariablesAssignment(command, 0, *_prefix3, *_postfix3);
    insertVariables(command, 0, *_prefix4, *_postfix4);
 
    if (!executeScript(command.str())) {
