@@ -1,7 +1,7 @@
-$output:=the output path
-$script:=the textgen script
-$target:= the multi-line text to be parsed
-{
+///$output:=the output path
+///$script:=the textgen script
+///$target:= the multi-line text to be parsed
+
   var output := textgen'TextGen.parseAsLineSeparated($target, $script);
 
   if ($output != nil) {
@@ -9,4 +9,3 @@ $target:= the multi-line text to be parsed
   };
 
   system'Console.writeLine(output);
-}
