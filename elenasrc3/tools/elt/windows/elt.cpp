@@ -48,11 +48,13 @@ int main(int argc, char* argv[])
 {
    printf(ELT_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_REVISION_NUMBER);
 
-   ELTPresenter presenter;
-   VMSession session(&presenter);
+   PathString appPath;
+   getAppPath(appPath);
 
-   PathString commandPath;
-   getAppPath(commandPath);
+   ELTPresenter presenter;
+   VMSession session(*appPath, &presenter);
+
+   PathString commandPath(*appPath);
    commandPath.combine(COMMAMD_TEMPLATE);
    session.loadTemplate(*commandPath);
 

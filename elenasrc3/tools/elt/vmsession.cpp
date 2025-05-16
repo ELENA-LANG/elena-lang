@@ -37,10 +37,26 @@ inline void trimLine(IdentifierString& line)
       line[line.length() - 1] = 0;
 }
 
+inline bool isAssignment(ustr_t line)
+{
+   if (line[0] != '$')
+      return false;
+
+   size_t len = line.length();
+   size_t i = 1;
+   while (i < len && (isLetterOrDigit(line[i])))
+      i++;
+
+   while (line[i] == ' ')
+      i++;
+
+   return (i < len - 1) && (line[i] == ':' && line[i + 1] == '=');
+}
+
 // --- VMSession ---
 
-VMSession :: VMSession(PresenterBase* presenter)
-   : _env({}), _imports(nullptr)
+VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
+   : _appPath(appPath), _env({}), _imports(nullptr)
 {
    _started = false;
 
@@ -141,11 +157,11 @@ inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, u
       }
       IdentifierString expr(text.str() + assignPos + 2, endPos - assignPos - 2);
 
-      text.cut(pos, endPos - pos);
+      text.cut(pos, endPos - pos + 1);
 
       text.insert(postfix, pos);
       text.insert(*expr, pos);
-      text.insert(", \"", pos);
+      text.insert("\" ,", pos);
       text.insert(*varName, pos);
       text.insert("\"", pos);            
       text.insert(prefix, pos);
@@ -156,7 +172,7 @@ inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, u
    return true;
 }
 
-void VMSession :: executeCommandLine(const char* line, ustr_t prefix, ustr_t postfix)
+void VMSession :: executeCommandLine(bool preview, const char* line, ustr_t prefix, ustr_t postfix, ustr_t prefix2, ustr_t postfix2)
 {
    DynamicString<char> command;
 
@@ -167,13 +183,20 @@ void VMSession :: executeCommandLine(const char* line, ustr_t prefix, ustr_t pos
    }
 
    command.append(prefix);
+   if (!prefix2.empty())
+      command.append(prefix2);
    command.append(line);
+   if (!postfix2.empty())
+      command.append(postfix2);
    command.append(postfix);
 
    insertVariablesAssignment(command, 0, *_prefix3, *_postfix3);
    insertVariables(command, 0, *_prefix4, *_postfix4);
 
-   if (!executeScript(command.str())) {
+   if (preview) {
+      _presenter->print(command.str());
+   }
+   else if (!executeScript(command.str())) {
       _presenter->print(ELT_CODE_FAILED);
    }
 }
@@ -195,7 +218,38 @@ bool VMSession :: executeAssigning(ustr_t line)
    text.append("\", ");
    text.append(line + assingIndex + 2);
 
-   executeCommandLine(text.str(), *_prefix3, *_postfix3);
+   executeCommandLine(text.str(), *_prefix2, *_postfix2, *_prefix3, *_postfix3);
+
+   return true;
+}
+
+bool VMSession :: loadPlugin(ustr_t name)
+{
+   if (name.find(PATH_SEPARATOR) != NOTFOUND_POS)
+      return false;
+
+   _plugedCode.clear();
+
+   PathString path(*_appPath);
+   path.combine("scripts");
+   path.combine(name);
+   path.changeExtension("elt");
+
+   DynamicString<char> helpLine;
+
+   char buffer[1024];
+   TextFileReader reader(*path, _encoding, false);
+   if (!reader.isOpen())
+      return false;
+
+   while (reader.read(buffer, 1024)) {
+      if (ustr_t(buffer).startsWith("///")) {
+         helpLine.append(buffer + 3);
+      }
+      else _plugedCode.append(buffer);
+   }
+
+   _presenter->print(helpLine.str());
 }
 
 bool VMSession :: executeTape(void* tape)
@@ -281,28 +335,14 @@ void VMSession::printHelp()
    _presenter->print("<expr>                     - evaluate the expression and print the result\n");
    _presenter->print("$<var> := <expr>           - assign a global variable\n");
    _presenter->print("@multiline                 - switching to a multi-line mode\n");
-   _presenter->print("@eval                      - executing the multi-line code\n");
+   _presenter->print("@eval                      - executing the multi-line code and switch back to REPL mode\n");
+   _presenter->print("@clear                     - clear the multi-line code and switch back to REPL mode\n");
+   _presenter->print("@print                     - print the multi-line code\n");
    _presenter->print("@quit                      - quit\n");
    _presenter->print("@help                      - help\n");
    _presenter->print("@load <path>               - execute a script from file\n");
    _presenter->print("@add import <reference>    - importing a module into the session\n");
    _presenter->print("@remove import <reference> - removing a module from the session\n");
-}
-
-inline bool isAssignment(ustr_t line)
-{
-   if (line[0] != '$')
-      return false;
-
-   size_t len = line.length();
-   size_t i = 1;
-   while (i < len && (isLetterOrDigit(line[i])))
-      i++;
-
-   while (line[i] == ' ')
-      i++;
-
-   return (i < len - 1) && (line[i] == ':' && line[i + 1] == '=');
 }
 
 bool VMSession :: executeCommand(const char* line, bool& running)
@@ -326,6 +366,11 @@ bool VMSession :: executeCommand(const char* line, bool& running)
          loadScript(line + 6);
       }
    }
+   else if (ustr_t(line).startsWith("@use ")) {
+      IdentifierString pluginName(line + 5);
+
+      loadPlugin(*pluginName);
+   }
    else if (line[1] == 'a' && ustr_t(line).startsWith("@add import ")) {
       IdentifierString module(line + 12);
 
@@ -339,11 +384,15 @@ bool VMSession :: executeCommand(const char* line, bool& running)
    else if (ustr_t(line).compare("@multiline")) {
       _multiLine = true;
    }
+   else if (ustr_t(line).compare("@print")) {
+      executeCommandLine(true, _body.str(), *_prefix2, *_postfix2);
+   }
+   else if (ustr_t(line).compare("@clear")) {
+      _multiLine = false;
+      _body.clear();
+   }
    else if (ustr_t(line).compare("@eval")) {
-      if (isAssignment(_body.str())) {
-         executeAssigning(_body.str());
-      }
-      else executeCommandLine(_body.str(), *_prefix2, *_postfix2);
+      executeCommandLine(false, _body.str(), *_prefix2, *_postfix2, nullptr, *_plugedCode);
 
       _multiLine = false;
       _body.clear();
@@ -360,7 +409,8 @@ void VMSession :: run()
 
    do {
       try {
-         _presenter->print(_multiLine ? ">" : "\n>");
+         if (!_multiLine)
+            _presenter->print("\n>");
 
          _presenter->readLine(buffer, MAX_LINE);
 
@@ -379,11 +429,12 @@ void VMSession :: run()
          }
          else if (_multiLine) {
             _body.append(*line);
+            _body.append("\n");
          }
          else if (isAssignment(*line)) {
             executeAssigning(*line);
          }
-         else executeCommandLine(*line, *_prefix1, *_postfix1);
+         else executeCommandLine(false, *line, *_prefix1, *_postfix1);
       }
       catch (...) {
          _presenter->print("Invalid operation");

@@ -143,6 +143,7 @@ namespace elena_lang
    typedef bool(*state_matcher)(char ch);
 
    inline bool dummy_matcher(char) { return false; }
+   inline bool quote_matcher(char ch) { return ch == dfaQuoteStart; }
 
    /// <summary>
    /// TextParser tamplate

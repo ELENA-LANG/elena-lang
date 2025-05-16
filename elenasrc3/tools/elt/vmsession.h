@@ -18,6 +18,8 @@ namespace elena_lang
       bool                 _started;
       bool                 _multiLine;
 
+      PathString           _appPath;
+
       FileEncoding         _encoding;
 
       PresenterBase*       _presenter;
@@ -31,6 +33,8 @@ namespace elena_lang
       IdentifierString     _prefix4;
       IdentifierString     _postfix4;
 
+      IdentifierString     _plugedCode;
+
       DynamicString<char>  _body;
 
       IdentifierList       _imports;
@@ -42,9 +46,11 @@ namespace elena_lang
 
       bool executeAssigning(ustr_t line);
 
-      void executeCommandLine(const char* line, ustr_t prefix, ustr_t postfix);
+      void executeCommandLine(bool preview, const char* line, ustr_t prefix, ustr_t postfix, ustr_t prefix2 = nullptr, ustr_t postfix2 = nullptr);
 
       bool executeTape(void* tape);
+
+      bool loadPlugin(ustr_t name);
 
    public:
       void printHelp();
@@ -62,7 +68,7 @@ namespace elena_lang
 
       void run();
 
-      VMSession(PresenterBase* presenter);
+      VMSession(path_t appPath, PresenterBase* presenter);
    };
 
 }
