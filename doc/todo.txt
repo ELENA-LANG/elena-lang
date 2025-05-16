@@ -49,6 +49,8 @@ In development:
   - elt : port to linux
   - work on REPL (elt) : generate an array declaration based on the entered lines and save it in the clipboard / file
   --------------------------------------    
+  * TextGen
+
   * design the way how to generate the output in elt
 
 

@@ -174,6 +174,17 @@ public sealed Array<T> : Indexable<T>
         
       ^ copy
    }
+   
+   Array cast()
+   {
+      int len := self.Length;
+      auto clone := Array.allocate(len);
+      for (int i := 0; i < len; i++) {
+         clone[i] := array[i];
+      };
+      
+      ^ clone
+   }   
 }
 
 // --- Variadic Array template ---

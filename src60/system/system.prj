@@ -18,7 +18,7 @@
     </project>
     <manifest>
         <name>ELENA Standard Library</name>
-        <version>6.7.2</version>
+        <version>6.7.3</version>
         <author>Aleksey Rakov</author>
     </manifest>
     <files>

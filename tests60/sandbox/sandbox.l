@@ -1,9 +1,23 @@
-import algorithms;
 import extensions;
 
 public program()
 {
-   auto list2 := new int[]{3, 9, 4, 6, 8, 1, 7, 2, 5};
+   var script := "
+<={self[0]}=>
+for(var i := 1; i < self.Length; i++) {
+  <=,{self[i]}=>
+}";
 
-   Console.printLine("after :", list2::insertSort<int>().asEnumerable());
+   var target := "1
+2
+3";
+
+  var output := textgen'TextGen.parseAsLineSeparated(target, script);
+
+//  if ($output != nil) {
+//    File.saveContent($output, output) 
+//  };
+
+  system'Console.writeLine(output);
+   
 }

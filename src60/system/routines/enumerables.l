@@ -11,12 +11,12 @@ public ifDecrescent
 
 public extension stringListOp : String
 {
-   Array split()
+   string[] split()
       = self.splitBy($32);
     
-   Array splitBy(char ch)
+   string[] splitBy(char ch)
    {
-      ArrayList list := new ArrayList();
+      List<string> list := new List<string>();
       int       start := 0;
       int       index := 0;
       int       chLen := ch.Length;
@@ -35,12 +35,12 @@ public extension stringListOp : String
          }
       };
 
-      ^ list
+      ^ *list
    }
     
-   Array splitBy(string value)
+   string[] splitBy(string value)
    {
-      ArrayList list := new ArrayList();
+      List<string> list := new List<string>();
       int       start := 0;
       int       index := 0;
       int       valueLen := value.Length;
@@ -60,19 +60,43 @@ public extension stringListOp : String
          }
       };
         
-      ^ list
+      ^ *list
    }
 
+   string[] splitByNewLine()
+   {
+      List<string> list := new List<string>();
+      int       start := 0;
+      int       index := 0;
+      int       valueLen := NewLineConstant.Length;
+      int       literalLen := self.Length;
+        
+      while (index >= 0)
+      {
+         index := self.indexOf(start, NewLineConstant);
+         if (-1 != index)
+         {
+            list.append(self.Substring(start, index - start));
+            start := index + valueLen
+         }
+         else
+         {
+            list.append(self.Substring(start, literalLen - start))
+         }
+      };
+        
+      ^ *list
+   }
 }
 
 public extension wideListOp : WideString
 {
-   Array split()
+   wide[] split()
       = self.splitBy($32);
     
-   Array splitBy(char ch)
+   wide[] splitBy(char ch)
    {
-      ArrayList list := new ArrayList();
+      auto      list := new List<wide>();
       int       start := 0;
       int       index := 0;
       int       chLen := ch.Length;
@@ -91,12 +115,12 @@ public extension wideListOp : WideString
          }
       };
 
-      ^ list
+      ^ *list
    }
     
-   Array splitBy(wide value)
+   wide[] splitBy(wide value)
    {
-      ArrayList list := new ArrayList();
+      auto      list := new List<wide>();
       int       start := 0;
       int       index := 0;
       int       valueLen := value.Length;
@@ -116,8 +140,34 @@ public extension wideListOp : WideString
          }
       };
         
-      ^ list
+      ^ *list
    }
+
+   wide[] splitByNewLine()
+   {
+      auto      list := new List<wide>();
+      int       start := 0;
+      int       index := 0;
+      int       literalLen := self.Length;
+      wide      nlConst := NewLineConstant;
+      int       valueLen := nlConst.Length;
+        
+      while (index >= 0)
+      {
+         index := self.indexOf(start, nlConst);
+         if (-1 != index)
+         {
+            list.append(self.Substring(start, index - start));
+            start := index + valueLen
+         }
+         else
+         {
+            list.append(self.Substring(start, literalLen - start))
+         }
+      };
+        
+      ^ *list
+   }   
 }
 
 // --- enumeratorOp ---
