@@ -1,0 +1,12 @@
+$output:=the output path
+$script:=the textgen script
+$target:= the multi-line text to be parsed
+{
+  var output := textgen'TextGen.parseAsLineSeparated($target, $script);
+
+  if ($output != nil) {
+    File.saveContent($output, output) 
+  };
+
+  system'Console.writeLine(output);
+}
