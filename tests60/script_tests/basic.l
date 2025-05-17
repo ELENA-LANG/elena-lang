@@ -28,7 +28,7 @@ public extensionCallTest() : testCase()
 
 public nilOperationTest() : testCase()
 {
-   Console.print("Comparing with nil in the script:");   
+   Console.print("Comparing with nil in the script - ");   
    
    LScript.eval("
       public program()

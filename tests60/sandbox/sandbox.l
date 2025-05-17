@@ -2,22 +2,32 @@ import extensions;
 
 public program()
 {
-   var script := "
-<={self[0]}=>
-for(var i := 1; i < self.Length; i++) {
-  <=,{self[i]}=>
-}";
+    auto c := DynamicSingleton.load(
+                Expression.Method(
+                   "eval",
+                   Expression.CodeBlock(                   
+                      Expression.If(                      
+                          Expression.MessageCall(
+                            new Message("equal[2]"),
+                            Expression.Variable("a"),
+                            Expression.Identifier("nil")
+                          ),                             
+                          Expression.CodeBlock(                          
+                            Expression.Constant(true) 
+                          ),                             
+                          Expression.CodeBlock(                          
+                            Expression.Constant(false) 
+                          )
+                      )
+                   ),
+                   ScopeIdentifier.Variable("a")
+                )
+             );
 
-   var target := "1
-2
-3";
+    var o := c.compile();
 
-  var output := textgen'TextGen.parseAsLineSeparated(target, script);
+    Assert.ifTrue(o.eval(nil));
 
-//  if ($output != nil) {
-//    File.saveContent($output, output) 
-//  };
-
-  system'Console.writeLine(output);
+    Console.write(".")    
    
 }

@@ -211,6 +211,9 @@ namespace expressions
       static Expression ClassIdentifier(string s)
          = new ClassIdentifierExpression(s);
 
+      static Expression Identifier(string s)
+         = new IdentifierExpression(new ScopeIdentifier(s));
+
       static Expression New(Expression t)
          = new NewExpression(t);
            
