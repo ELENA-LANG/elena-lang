@@ -43,17 +43,20 @@ In development:
   - weekly posting
   - post what's new in ELENA 6.7
   - adding a text how uninstall ELENA
+  - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
   - api : IntNumber
-  - implement analog of record using meta programming (extensions'records)
   - elt : port to linux
+  - implement analog of record using meta programming (extensions'records)
   - work on REPL (elt) : generate an array declaration based on the entered lines and save it in the clipboard / file
   --------------------------------------    
-  * load the script from the file - @import
+  * functional test : checkl nil value
+  * system'dynamic'expressions : EqualMessageCallExpression inherites MessageCallExpression ; if the right argument is nil constant
+    => change the order
+  * system'dynamic'expressions : NotEqualMessageCallExpression inherites MessageCallExpression ; if the right argument is nil constant
+    => change the order
 
-  * modify elenasm for linux
-
-  * save it to the file
+  * save the list to the file
   --------------------------------------
 
   === Iteration 42 ===

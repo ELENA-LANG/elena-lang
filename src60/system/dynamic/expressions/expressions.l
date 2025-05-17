@@ -126,6 +126,14 @@ namespace expressions
         
       TapeFunction resolve(ScopeIdentifier variable, bool assignMode) 
       {
+         string refName := variable.Name;
+         int mode := variable.Mode;
+                    
+         if ((mode == 0 || mode == mode_class) && refName == "nil")
+         {
+            ^ ConstantFunction.load(nilValue);
+         };
+         
          ^ parent?.resolve(variable, assignMode)
       }
     
