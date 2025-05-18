@@ -694,6 +694,29 @@ namespace expressions
       }
    }
 
+   public class CondMessageCallExpression : MessageCallExpression
+   {
+      constructor(Expression t, string message, Expression p1)
+         <= load(new Message(message + "[2]"), t, p1);
+
+      constructor load(Message message, Expression t, Expression argument)
+         <= super load(message, t, argument);
+
+      constructor load(Message message, Expression t, IdentifierExpression argument)
+      {
+         _message := message;
+         if (argument.Identifier == "nil") {
+         // if it is a comparison with nil - reverse the arguments
+            _target := argument;
+            _arguments := new Expression[]{ t };
+         }
+         else {
+            _target := t;
+            _arguments := new Expression[]{ argument };
+         }         
+      }            
+   }
+
    public class ExtensionOrMessageCallExpression : Expression
    {
       Message      _message;
@@ -1647,6 +1670,9 @@ namespace expressions
       }
 
       bool IsOperation = false;
+
+      indexed internal string Identifier
+         = ident.Name;
 
       declare(ExpressionScope parentScope)
       {
