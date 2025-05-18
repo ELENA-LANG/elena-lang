@@ -312,7 +312,7 @@
 
   #define equal_expression ::=
 <=
-               system'dynamic'expressions'MessageCallExpression (
+               system'dynamic'expressions'CondMessageCallExpression (
 =>
                               expression equal_operation
 <=
@@ -324,7 +324,7 @@
 
   #define not_equal_expression ::=
 <=
-               system'dynamic'expressions'MessageCallExpression (
+               system'dynamic'expressions'CondMessageCallExpression (
 =>
                               expression not_equal_operation
 <=

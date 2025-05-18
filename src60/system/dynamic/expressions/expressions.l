@@ -8,7 +8,7 @@ namespace expressions
    const int mode_lcl   = 1;
    const int mode_class = 4;
 
-   symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
+   symbol used : preloaded = new object[]{Expression, CondMessageCallExpression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
 
    public class ScopeIdentifier
    {

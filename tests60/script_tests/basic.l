@@ -30,7 +30,7 @@ public nilOperationTest() : testCase()
 {
    Console.print("Comparing with nil in the script - ");   
    
-   LScript.eval("
+   var f := LScript.eval("
       public program()
       {
          var o := nil;
@@ -38,8 +38,7 @@ public nilOperationTest() : testCase()
             system'Console.writeLine(""Done"");
          };
       }
-");
+").program;
+
+   f();
 }
-
-
-

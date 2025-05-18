@@ -1380,9 +1380,9 @@ public ifNilExpressionTest() : testCase()
                    "eval",
                    Expression.CodeBlock(                   
                       Expression.If(                      
-                          CondMessageCallExpression.load(
-                            new Message("equal[2]"),
+                          new CondMessageCallExpression(
                             Expression.Variable("a"),
+                            "equal[2]",
                             Expression.Identifier("nil")
                           ),                             
                           Expression.CodeBlock(                          
@@ -1402,7 +1402,7 @@ public ifNilExpressionTest() : testCase()
     Assert.ifTrue(o.eval(nil));
     Assert.ifFalse(o.eval(2));
 
-    Console.write(".")
+    Console.write(".")   
 }
 
 public loopExpressionTest() : testCase()
