@@ -22,7 +22,7 @@ import extensions;
 
 //MyRecord : record(FirstName,LastName,Age);
 
-class TemplateWithDefaults<T>(defValue)
+class TemplateWithDefaults<T,(defValue)>
 {
    T X := defValue;
 }

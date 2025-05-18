@@ -56,6 +56,8 @@ In development:
 
   * generate template with parameters (resolving name? using shortcut starting with ##)
 
+  * validation : raise an error if type declaration has parameter list
+
   * reference name shortcut
   * by ecv -> using shortcut resolved
 
