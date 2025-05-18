@@ -1373,6 +1373,38 @@ public ifExpressionTest() : testCase()
     Console.write(".")    
 }
 
+public ifNilExpressionTest() : testCase()
+{
+    auto c := DynamicSingleton.load(
+                Expression.Method(
+                   "eval",
+                   Expression.CodeBlock(                   
+                      Expression.If(                      
+                          CondMessageCallExpression.load(
+                            new Message("equal[2]"),
+                            Expression.Variable("a"),
+                            Expression.Identifier("nil")
+                          ),                             
+                          Expression.CodeBlock(                          
+                            Expression.Constant(true) 
+                          ),                             
+                          Expression.CodeBlock(                          
+                            Expression.Constant(false) 
+                          )
+                      )
+                   ),
+                   ScopeIdentifier.Variable("a")
+                )
+             );
+
+    var o := c.compile();
+
+    Assert.ifTrue(o.eval(nil));
+    Assert.ifFalse(o.eval(2));
+
+    Console.write(".")
+}
+
 public loopExpressionTest() : testCase()
 {
     auto c := DynamicSingleton.load(

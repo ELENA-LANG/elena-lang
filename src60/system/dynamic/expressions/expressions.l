@@ -699,13 +699,16 @@ namespace expressions
       constructor(Expression t, string message, Expression p1)
          <= load(new Message(message + "[2]"), t, p1);
 
-      constructor load(Message message, Expression t, Expression argument)
-         <= super load(message, t, argument);
+      indexed internal bool checkIfNilExpression(argument)
+         = false;
 
-      constructor load(Message message, Expression t, IdentifierExpression argument)
+      indexed internal bool checkIfNilExpression(IdentifierExpression argument)
+         = argument.Identifier == "nil";
+
+      constructor load(Message message, Expression t, Expression argument)
       {
          _message := message;
-         if (argument.Identifier == "nil") {
+         if (checkIfNilExpression(argument)) {
          // if it is a comparison with nil - reverse the arguments
             _target := argument;
             _arguments := new Expression[]{ t };
@@ -714,7 +717,7 @@ namespace expressions
             _target := t;
             _arguments := new Expression[]{ argument };
          }         
-      }            
+      }
    }
 
    public class ExtensionOrMessageCallExpression : Expression

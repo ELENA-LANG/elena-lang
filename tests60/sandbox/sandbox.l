@@ -1,4 +1,5 @@
 import extensions;
+import system'dynamic'expressions;
 
 public program()
 {
@@ -7,7 +8,7 @@ public program()
                    "eval",
                    Expression.CodeBlock(                   
                       Expression.If(                      
-                          Expression.MessageCall(
+                          CondMessageCallExpression.load(
                             new Message("equal[2]"),
                             Expression.Variable("a"),
                             Expression.Identifier("nil")
@@ -28,6 +29,5 @@ public program()
 
     Assert.ifTrue(o.eval(nil));
 
-    Console.write(".")    
-   
+    Console.write(".")   
 }
