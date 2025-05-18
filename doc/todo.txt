@@ -51,6 +51,13 @@ In development:
   --------------------------------------
   - templates with parameters #606
   --------------------------------------    
+  - calc sample
+  --------------------------------------    
+  * fix an issue with tape in compile-time
+  --------------------------------------    
+  * templates with parameters - can be only imported, cannot be used directly (at least for now)
+  * the syntax : MyClass : TemplateWithDefault<int>:(defValue=2);
+
   * extend syntax to support parameters
   * declare template with parameters
 
