@@ -1,51 +1,36 @@
 import extensions;
-import extensions'scripting;
-import system'dynamic'expressions;
 
-//public program()
+//class Record<>(..member)
 //{
-//    auto c := DynamicSingleton.load(
-//                Expression.Method(
-//                   "eval",
-//                   Expression.CodeBlock(                   
-//                      Expression.If(                      
-//                          new CondMessageCallExpression(
-//                            Expression.Variable("a"),
-//                            "equal[2]",
-//                            Expression.Identifier("nil")
-//                          ),                             
-//                          Expression.CodeBlock(                          
-//                            Expression.Constant(true) 
-//                          ),                             
-//                          Expression.CodeBlock(                          
-//                            Expression.Constant(false) 
-//                          )
-//                      )
-//                   ),
-//                   ScopeIdentifier.Variable("a")
-//                )
-//             );
-//
-//    var o := c.compile();
-//
-//    Assert.ifTrue(o.eval(nil));
-//    Assert.ifTrue(o.eval(nilValue));
-//    Assert.ifFalse(o.eval(2));
-//
-//    Console.write(".")   
-//}
+//#for(member) 
+
+//   __privatename member;
+
+//   member
+//     = __privatename member;
+     = nil; 
+
+//#endfor
+
+//   constructor(..member)
+//   {
+//#for(member) 
+//      this __privatename member := __argumentof member;
+//#endfor
+//   }
+//}   
+
+//MyRecord : record(FirstName,LastName,Age);
+
+class TemplateWithDefaults<T>(defValue)
+{
+   T X := defValue;
+}
 
 public program()
 {
-   var f := LScript.eval("
-      public program()
-      {
-         var o := nil;
-         if (o == nil) {
-            system'Console.writeLine(""Done"");
-         };
-      }
-").program;   
+   TemplateWithDefaults<int,defValue=2> arg := new TemplateWithDefaults<int,defValue=2>();
 
-   f();
+//   MyRecord r := new MyRecord();
+//   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);
 }

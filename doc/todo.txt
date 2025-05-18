@@ -48,15 +48,33 @@ In development:
   - api : IntNumber
   - elt : port to linux
   - implement analog of record using meta programming (extensions'records)
-  - work on REPL (elt) : generate an array declaration based on the entered lines and save it in the clipboard / file
+  --------------------------------------
+  - templates with parameters #606
   --------------------------------------    
-  * functional test : checkl nil value
-  * system'dynamic'expressions : EqualMessageCallExpression inherites MessageCallExpression ; if the right argument is nil constant
-    => change the order
-  * system'dynamic'expressions : NotEqualMessageCallExpression inherites MessageCallExpression ; if the right argument is nil constant
-    => change the order
+  * extend syntax to support parameters
+  * declare template with parameters
 
-  * save the list to the file
+  * generate template with parameters (resolving name? using shortcut starting with ##)
+
+  * reference name shortcut
+  * by ecv -> using shortcut resolved
+
+  * support a template with arguments
+  * declare a template with arguments
+  * support new auto() construction to skip the type declaration
+  --------------------------------------    
+  * design support for #for meta statement
+
+  * support a template without arguments and arguments
+  * support unboxing list (e.g. ..member) <- used in the template
+
+  * list of properties / fields
+  * equal method
+  * MyRecord : record(FirstName,LastName,Age);
+  * MyRecord : record(string FirstName = String.Default,string LastName = String.Default,int Age = 0);
+  * implement sample
+  * implement record
+  * redesign enum (get rid of TemplateType::Enumeration)
   --------------------------------------
 
   === Iteration 42 ===
