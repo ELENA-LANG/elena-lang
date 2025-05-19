@@ -1,4 +1,4 @@
-import extensions;
+//import extensions;
 
 //class Record<>(..member)
 //{
@@ -8,7 +8,7 @@ import extensions;
 
 //   member
 //     = __privatename member;
-     = nil; 
+//     = nil; 
 
 //#endfor
 
@@ -22,14 +22,14 @@ import extensions;
 
 //MyRecord : record(FirstName,LastName,Age);
 
-class TemplateWithDefaults<T>::(defValue)
+class TemplateWithDefaults<T>(defValue)::
 {
-//   T X := defValue;
+   T X := defValue;
 }
 
-//MyClass : TemplateWithDefaults<int>(2)
-//{
-//}
+MyClass : TemplateWithDefaults<int>(2)
+{
+}
 
 public program()
 {

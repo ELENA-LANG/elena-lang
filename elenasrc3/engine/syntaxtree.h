@@ -131,7 +131,7 @@ namespace elena_lang
       IncOperation            = 0x00186C,
       DecOperation            = 0x00186D,
       SizeOperation           = 0x00186E,
-      EnumPostfix             = 0x00106F,
+      ParameterizedPostfix    = 0x00106F,
       TemplateArg             = 0x001070,
       Dimension               = 0x001471,
       NestedBlock             = 0x001080,

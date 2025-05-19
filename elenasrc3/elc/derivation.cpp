@@ -1069,7 +1069,7 @@ void SyntaxTreeBuilder :: flushParentTemplate(SyntaxTreeWriter& writer, Scope& s
    writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushEnumTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
+void SyntaxTreeBuilder :: flushParameterizedTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
 {
    writer.newNode(node.key);
 
@@ -1098,8 +1098,8 @@ void SyntaxTreeBuilder :: flushParent(SyntaxTreeWriter& writer, Scope& scope, Sy
       if (current == SyntaxKey::TemplatePostfix) {
          flushParentTemplate(writer, scope, current);
       }
-      else if (current == SyntaxKey::EnumPostfix) {
-         flushEnumTemplate(writer, scope, current);
+      else if (current == SyntaxKey::ParameterizedPostfix) {
+         flushParameterizedTemplate(writer, scope, current);
       }
       else if (testNodeMask(current.key, SyntaxKey::TerminalMask)) {
          flushAttribute(writer, scope, current, attributeCategory, current.nextNode() == SyntaxKey::None);
@@ -1660,8 +1660,19 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
       current = current.nextNode();
    }
 
-   while (current == SyntaxKey::TemplateArg) {
-      flushTemplateArgDescr(writer, scope, current);
+   bool argMode = true;
+   while (argMode) {
+      switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            flushTemplateArgDescr(writer, scope, current);
+            break;
+         case SyntaxKey::Parameter:
+            flushParameterArgDescr(writer, scope, current);
+            break;
+         default:
+            argMode = false;
+            break;
+      }
 
       current = current.nextNode();
    }
@@ -2189,6 +2200,7 @@ void TemplateProssesor :: copyClassMembers(SyntaxTreeWriter& writer, TemplateSco
          case SyntaxKey::Method:
             copyMethod(writer, scope, current);
             break;
+         case SyntaxKey::AssignOperation:
          case SyntaxKey::AddAssignOperation:
             copyMethod(writer, scope, current);
             break;
@@ -2225,6 +2237,7 @@ void TemplateProssesor :: generate(SyntaxTreeWriter& writer, TemplateScope& scop
       case Type::InlineProperty:
       case Type::Class:
       case Type::Textblock:
+      case Type::Parameterized:
          copyClassMembers(writer, scope, root);
          break;
       case Type::Enumeration:
@@ -2277,7 +2290,7 @@ void TemplateProssesor :: importTemplate(Type type, MemoryBase* templateSection,
       targetWriter.setBookmark(target);
    }
 
-   if (type == Type::Class || type == Type::InlineProperty || type == Type::Enumeration) {
+   if (type == Type::Class || type == Type::InlineProperty || type == Type::Enumeration || type == Type::Parameterized) {
       SyntaxNode current = bufferTree.readRoot().firstChild();
       while (current != SyntaxKey::None) {
          if(current == SyntaxKey::Method) {
@@ -2336,10 +2349,17 @@ void TemplateProssesor :: importExpressionTemplate(MemoryBase* templateSection,
    importTemplate(Type::ExpressionTemplate, templateSection, target, &arguments, &parameters);
 }
 
+// obsolete
 void TemplateProssesor :: importEnumTemplate(MemoryBase* templateSection,
    SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {
    importTemplate(Type::Enumeration, templateSection, target, &arguments, &parameters);
+}
+
+void TemplateProssesor::importParameterizedTemplate(MemoryBase* templateSection,
+   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   importTemplate(Type::Parameterized, templateSection, target, &arguments, &parameters);
 }
 
 void TemplateProssesor :: importTextblock(MemoryBase* templateSection, SyntaxNode target)

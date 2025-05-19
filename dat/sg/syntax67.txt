@@ -118,7 +118,7 @@ __define TUPLE_COLLECTION 	6357;
 __define POSTFIX                4201;
 __define TEMPLATE_POSTFIX       4202;
 
-__define ENUM_POSTFIX           4207;
+__define PARAMETERIZED_POSTFIX  4207;
 __define TEMPLATE_ARG           4208;
 __define DIMENSION              5233;
 __define RESEND                 7366;
@@ -1188,7 +1188,7 @@ POSTFIX ::=
 	identifier { 
 		"(" { MESSAGE_PARAMETER { "," MESSAGE_PARAMETER }* }? ")" ^ INLINE
 		| TEMPLATE_BRACKETS {
-			"(" { MESSAGE_PARAMETER { "," MESSAGE_PARAMETER }* }? ")" ^ENUM_POSTFIX
+			"(" { MESSAGE_PARAMETER { "," MESSAGE_PARAMETER }* }? ")" ^PARAMETERIZED_POSTFIX
 			| eps ^ TEMPLATE_TYPE
 		}
 		| eps };

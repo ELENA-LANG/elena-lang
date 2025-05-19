@@ -2329,7 +2329,7 @@ ref_t Compiler::retrieveBlock(NamespaceScope& scope, SyntaxNode node)
    return reference;
 }
 
-bool Compiler :: importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
+bool Compiler :: importParameterizedTemplate(Scope& scope, SyntaxNode node, SyntaxNode target)
 {
    TypeAttributes attributes = {};
 
@@ -2348,12 +2348,24 @@ bool Compiler :: importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode ta
    declareArguments(node, dummyTree, arguments);
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, ENUM_POSTFIX);
+
+   // try resolve as a normal parameterized template
+   IdentifierString paramPostfix("##");
+   paramPostfix.appendInt(arguments.count_int());
+   ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, paramPostfix.str());
+   // obsolete : try to resolve as enum template
+   if (!templateRef)
+      templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, ENUM_POSTFIX);
+
    if (!templateRef)
       return false;
 
-   if (!_templateProcessor->importEnumTemplate(*scope.moduleScope, templateRef, target, parameters, arguments))
+   if (_templateProcessor->importParameterizedTemplate(*scope.moduleScope, templateRef, target, parameters, arguments)) {
+   }
+   // obsolte, must be removed when the enum will be migrated to parameterized templates
+   else if (!_templateProcessor->importEnumTemplate(*scope.moduleScope, templateRef, target, parameters, arguments))
       scope.raiseError(errInvalidOperation, node);
+   // else scope.raiseError(errInvalidOperation, node);
 
    return true;
 }
@@ -5640,6 +5652,7 @@ void Compiler::declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    declareTemplateAttributes(scope, node, postfix);
 
    int argCount = SyntaxTree::countChild(node, SyntaxKey::TemplateArg);
+   int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
 
    postfix.append('#');
    postfix.appendInt(scope.type == TemplateType::Enumeration ? argCount - 1 : argCount);
@@ -5658,6 +5671,12 @@ void Compiler::declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
       case TemplateType::ClassBlock:
          prefix.append(CLASSBLOCK_PREFIX);
          postfix.clear();
+         break;
+      case TemplateType::Class:
+         if (paramCount > 0) {
+            postfix.append("##");
+            postfix.appendInt(paramCount);
+         }
          break;
       default:
          break;
@@ -11837,14 +11856,14 @@ Compiler::Class::Class(Namespace& ns, ref_t reference, Visibility visibility)
 {
 }
 
-bool Compiler::Class::isParentDeclared(SyntaxNode node)
+bool Compiler::Class :: isParentDeclared(SyntaxNode node)
 {
    SyntaxNode parentNode = node.findChild(SyntaxKey::Parent);
    if (parentNode == SyntaxKey::None)
       return true;
 
    SyntaxNode child = parentNode.firstChild();
-   if (child != SyntaxKey::TemplateType && child != SyntaxKey::EnumPostfix && child != SyntaxKey::None) {
+   if (child != SyntaxKey::TemplateType && child != SyntaxKey::ParameterizedPostfix && child != SyntaxKey::None) {
       ref_t parentRef = compiler->resolveStrongTypeAttribute(scope, child, true, false).typeRef;
 
       return scope.moduleScope->isDeclared(parentRef);
@@ -11961,8 +11980,8 @@ void Compiler::Class::resolveClassPostfixes(SyntaxNode node, bool extensionMode)
                else if (!compiler->importTemplate(scope, child, node, false))
                   scope.raiseError(errUnknownTemplate, current);
             }
-            else if (child == SyntaxKey::EnumPostfix) {
-               if (!compiler->importEnumTemplate(scope, child, node))
+            else if (child == SyntaxKey::ParameterizedPostfix) {
+               if (!compiler->importParameterizedTemplate(scope, child, node))
                   scope.raiseError(errUnknownTemplate, current);
             }
             else if (!parentRef) {

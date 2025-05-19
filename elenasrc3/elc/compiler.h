@@ -1740,7 +1740,7 @@ namespace elena_lang
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst);
 
-      bool importEnumTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
+      bool importParameterizedTemplate(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne);
       bool includeBlock(Scope& scope, SyntaxNode node, SyntaxNode target);
       bool importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode target);

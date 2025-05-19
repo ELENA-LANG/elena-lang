@@ -51,26 +51,6 @@ In development:
   --------------------------------------
   - templates with parameters #606
   --------------------------------------    
-  * declare template with parameters
-
-  * templates with parameters - can be only imported, cannot be used directly (at least for now)
-  * the syntax : MyClass : TemplateWithDefault<int>:(defValue=2);
-
-  * extend syntax to support parameters
-  * declare template with parameters
-
-  * generate template with parameters (resolving name? using shortcut starting with ##)
-
-  * validation : raise an error if type declaration has parameter list
-
-  * reference name shortcut
-  * by ecv -> using shortcut resolved
-
-  * support a template with arguments
-  * declare a template with arguments
-  * add a short sample to features doc
-  * support new auto() construction to skip the type declaration
-  --------------------------------------    
   * design support for #for meta statement
 
   * support a template without arguments and arguments

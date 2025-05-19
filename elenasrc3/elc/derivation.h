@@ -94,16 +94,23 @@ namespace elena_lang
                }
                case ScopeType::ClassTemplate:
                case ScopeType::ExtensionTemplate:
-                  if (allowType) {
-                     ref_t index = arguments.get(node.identifier());
-                     if (index > 0) {
-                        parameterKey = SyntaxKey::TemplateArgParameter;
-                        parameterIndex = index + nestedLevel;
+               {
+                  ref_t index = allowType ? arguments.get(node.identifier()) : 0;
+                  if (index > 0) {
+                     parameterKey = SyntaxKey::TemplateArgParameter;
+                     parameterIndex = index + nestedLevel;
 
-                        return true;
-                     }
+                     return true;
                   }
+                  index = parameters.get(node.identifier());
+                  if (index) {
+                     parameterKey = SyntaxKey::TemplateParameter;
+                     parameterIndex = index + nestedLevel;
+                     return true;
+                  }
+
                   return false;
+               }
                case ScopeType::Enumeration:
                {
                   ref_t index = parameters.get(node.identifier());
@@ -181,7 +188,7 @@ namespace elena_lang
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushTupleType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory);
-      void flushEnumTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushParameterizedTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
       void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool includeType);
       void copyType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
@@ -275,6 +282,7 @@ namespace elena_lang
          Inline,
          CodeTemplate,
          Class,
+         Parameterized,
          InlineProperty,
          ExpressionTemplate,
          Enumeration,
@@ -342,7 +350,10 @@ namespace elena_lang
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
       void importExpressionTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
+      // obsolete
       void importEnumTemplate(MemoryBase* templateSection,
+         SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
+      void importParameterizedTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
       void importTextblock(MemoryBase* templateSection, SyntaxNode target);
 
