@@ -22,14 +22,18 @@ import extensions;
 
 //MyRecord : record(FirstName,LastName,Age);
 
-class TemplateWithDefaults<T,(defValue)>
+class TemplateWithDefaults<T>::(defValue)
 {
-   T X := defValue;
+//   T X := defValue;
 }
+
+//MyClass : TemplateWithDefaults<int>(2)
+//{
+//}
 
 public program()
 {
-   TemplateWithDefaults<int,defValue=2> arg := new TemplateWithDefaults<int,defValue=2>();
+//   TemplateWithDefaults<int,defValue=2> arg := new TemplateWithDefaults<int,defValue=2>();
 
 //   MyRecord r := new MyRecord();
 //   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);

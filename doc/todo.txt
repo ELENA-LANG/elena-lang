@@ -51,10 +51,8 @@ In development:
   --------------------------------------
   - templates with parameters #606
   --------------------------------------    
-  - calc sample
-  --------------------------------------    
-  * fix an issue with tape in compile-time
-  --------------------------------------    
+  * declare template with parameters
+
   * templates with parameters - can be only imported, cannot be used directly (at least for now)
   * the syntax : MyClass : TemplateWithDefault<int>:(defValue=2);
 
@@ -70,6 +68,7 @@ In development:
 
   * support a template with arguments
   * declare a template with arguments
+  * add a short sample to features doc
   * support new auto() construction to skip the type declaration
   --------------------------------------    
   * design support for #for meta statement
