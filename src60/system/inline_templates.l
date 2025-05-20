@@ -180,22 +180,26 @@ public weak interface<T>
 
 // --- enum ---
 
-public enumeration enum<member, T>
+public enum<T>(params member)::
 {
    T _value;
 
    const T[] __enumValues;
    const string[] __enumNames;
 
-   this __enumValues += $value member;
-   this __enumNames += $name member;
-
    private constructor() {} 
 
    private constructor load(T v) { _value := v }
 
+#for(member)
+
+   this __enumValues += $value member;
+   this __enumNames += $name member;
+
    get static __typeof member()
       = self.load($value member);
+
+#endfor
 
    T cast()
       = _value;

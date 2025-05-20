@@ -3,17 +3,28 @@
 
 public xenum<T>(params member)::
 {
+   T _value;
+
+   const T[] __enumValues;
+   const string[] __enumNames;
+
+   private constructor() {} 
+
+   private constructor load(T v) { _value := v }
 
 #for(member)
 
-   static member
-     = nil; 
+   this __enumValues += $value member;
+   this __enumNames += $name member;
+
+   get static __typeof member()
+      = self.load($value member);
 
 #endfor
 
 }
 
-public class MyColor : xenum<int>(Red, Blue, Green);
+public class MyColor : xenum<int>(Red = 1, Blue = 1, Green = 1);
 
 //template class Record(member)::
 //template class Record<>(..member)

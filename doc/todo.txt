@@ -51,14 +51,10 @@ In development:
   --------------------------------------
   - redesign enum
   --------------------------------------
-  * support #for meta statement - must be handled by template 
-  * implement the analog of enum
-  * migrate ab enum to the new syntax
-  * get rid of TemplateType::Enumeration
+  * migrate enum to the new syntax
+  * get rid of TemplateType::Enumeration and obsolete code
   --------------------------------------
   * support a template without arguments
-
-  * design support for #for meta statement
 
   * support unboxing list (e.g. ..member) <- used in the template
 
