@@ -87,6 +87,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("source_path", SyntaxKey::SourcePath);
    map.add("parent", SyntaxKey::Parent);
    map.add("no_body", SyntaxKey::WithoutBody);
+   map.add("inline_template", SyntaxKey::InlineTemplate);
    map.add("redirect", SyntaxKey::Redirect);
 
    map.add("attribute", SyntaxKey::Attribute);

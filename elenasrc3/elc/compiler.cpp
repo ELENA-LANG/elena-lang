@@ -11996,8 +11996,11 @@ void Compiler::Class::resolveClassPostfixes(SyntaxNode node, bool extensionMode)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
-            if (!compiler->importInlineTemplate(scope, current, INLINE_PREFIX, node))
-               scope.raiseError(errInvalidOperation, current);
+            if (!compiler->importInlineTemplate(scope, current, INLINE_PREFIX, node)) {
+               // check if it a parameterized template without arguments
+               if (!compiler->importParameterizedTemplate(scope, current, node))
+                  scope.raiseError(errUnknownTemplate, current);
+            }
             break;
          case SyntaxKey::Parent:
          {

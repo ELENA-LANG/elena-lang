@@ -49,12 +49,7 @@ In development:
   - elt : port to linux
   - implement analog of record using meta programming (extensions'records)
   --------------------------------------
-  - redesign enum
-  --------------------------------------
-  * migrate enum to the new syntax
-  * get rid of TemplateType::Enumeration and obsolete code
-  --------------------------------------
-  * support a template without arguments
+  * strong typed record
 
   * support unboxing list (e.g. ..member) <- used in the template
 

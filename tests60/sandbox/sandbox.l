@@ -1,43 +1,17 @@
 //import extensions;
 //public enumeration enum<member, T>
 
-public xenum<T>(params member)::
+template record(params member)::
 {
-   T _value;
-
-   const T[] __enumValues;
-   const string[] __enumNames;
-
-   private constructor() {} 
-
-   private constructor load(T v) { _value := v }
-
-#for(member)
-
-   this __enumValues += $value member;
-   this __enumNames += $name member;
-
-   get static __typeof member()
-      = self.load($value member);
-
-#endfor
-
-}
-
-public class MyColor : xenum<int>(Red = 1, Blue = 1, Green = 1);
-
-//template class Record(member)::
-//template class Record<>(..member)
-//{
-//#for(member) 
+#for(member) 
 
 //   __privatename member;
 
-//   member
+   member
 //     = __privatename member;
-//     = nil; 
+     = default; 
 
-//#endfor
+#endfor
 
 //   constructor(..member)
 //   {
@@ -45,9 +19,9 @@ public class MyColor : xenum<int>(Red = 1, Blue = 1, Green = 1);
 //      this __privatename member := __argumentof member;
 //#endfor
 //   }
-//}   
+}   
 
-//MyRecord : record(FirstName,LastName,Age);
+MyRecord : record(string FirstName,string LastName,int Age);
 
 public program()
 {

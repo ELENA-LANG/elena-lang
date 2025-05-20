@@ -1655,7 +1655,7 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
 void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
 {
    // load arguments
-   SyntaxNode current = node.findChild(SyntaxKey::TemplateArg);
+   SyntaxNode current = node.findChild(SyntaxKey::TemplateArg, SyntaxKey::Parameter);
    bool argMode = true;
    while (argMode) {
       switch (current.key) {
@@ -2137,13 +2137,20 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
          if (node.arg.reference < 0x100) {
             SyntaxNode nodeToInject = scope.parameterValues.get(scope.variadicIndex);
 
-            writer.newNode(SyntaxKey::Name);
             SyntaxNode arg = nodeToInject.firstChild();
             if (arg == SyntaxKey::KeyValueExpression) {
+               writer.newNode(SyntaxKey::Name);
                copyKVKey(writer, scope, arg);
+               writer.closeNode();
             }
-            else copyChildren(writer, scope, nodeToInject.firstChild());
-            writer.closeNode();
+            else {
+               if (arg.existChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType)) {
+                  copyNode(writer, scope, arg.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType));
+               }
+               writer.newNode(SyntaxKey::Name);
+               copyChildren(writer, scope, arg);
+               writer.closeNode();
+            }            
          }
          else {
             writer.newNode(node.key, node.arg.reference - 0x100);
