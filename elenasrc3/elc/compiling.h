@@ -63,10 +63,6 @@ namespace elena_lang
          bool importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
             List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
 
-         // obsolete
-         bool importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-            SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
-
          bool importParameterizedTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
             SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
 

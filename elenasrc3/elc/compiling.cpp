@@ -161,21 +161,6 @@ bool CompilingProcess::TemplateGenerator :: importExpressionTemplate(ModuleScope
    return true;
 }
 
-// obsolete
-bool CompilingProcess::TemplateGenerator :: importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
-{
-   auto sectionInfo = moduleScope.getSection(
-      moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
-
-   if (!sectionInfo.section)
-      return false;
-
-   _processor.importEnumTemplate(sectionInfo.section, target, arguments, parameters);
-
-   return true;
-}
-
 bool CompilingProcess::TemplateGenerator :: importParameterizedTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {

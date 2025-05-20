@@ -792,9 +792,6 @@ bool CompilerLogic :: validateTemplateAttribute(ref_t attribute, Visibility& vis
       case V_FIELD:
          type = TemplateType::InlineProperty;
          break;
-      case V_ENUMERATION:
-         type = TemplateType::Enumeration;
-         break;
       case V_TEXTBLOCK:
          type = TemplateType::ClassBlock;
          break;

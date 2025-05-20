@@ -2362,19 +2362,11 @@ bool Compiler :: importParameterizedTemplate(Scope& scope, SyntaxNode node, Synt
       templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, paramPostfix.str());
    }   
 
-   // obsolete : try to resolve as enum template
-   if (!templateRef)
-      templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, ENUM_POSTFIX);
-
    if (!templateRef)
       return false;
 
-   if (_templateProcessor->importParameterizedTemplate(*scope.moduleScope, templateRef, target, parameters, arguments)) {
-   }
-   // obsolte, must be removed when the enum will be migrated to parameterized templates
-   else if (!_templateProcessor->importEnumTemplate(*scope.moduleScope, templateRef, target, parameters, arguments))
+   if (!_templateProcessor->importParameterizedTemplate(*scope.moduleScope, templateRef, target, parameters, arguments))
       scope.raiseError(errInvalidOperation, node);
-   // else scope.raiseError(errInvalidOperation, node);
 
    return true;
 }
@@ -5595,7 +5587,6 @@ void Compiler::saveNamespaceInfo(SyntaxNode node, NamespaceScope* nsScope, bool 
 void Compiler::declareTemplate(TemplateScope& scope, SyntaxNode& node)
 {
    switch (scope.type) {
-      case TemplateType::Enumeration:
       case TemplateType::Class:
       case TemplateType::VariadicParameterized:
       case TemplateType::InlineProperty:
@@ -5692,7 +5683,7 @@ void Compiler::declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    int paramCount = SyntaxTree::countChild(node, SyntaxKey::Parameter);
 
    postfix.append('#');
-   postfix.appendInt(scope.type == TemplateType::Enumeration ? argCount - 1 : argCount);
+   postfix.appendInt(argCount);
 
    if (SyntaxTree::ifChildExists(node, SyntaxKey::Attribute, V_WEAK))
       postfix.append(WEAK_POSTFIX);
@@ -5701,9 +5692,6 @@ void Compiler::declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    switch (scope.type) {
       case TemplateType::InlineProperty:
          prefix.append(INLINE_PROPERTY_PREFIX);
-         break;
-      case TemplateType::Enumeration:
-         postfix.append(ENUM_POSTFIX);
          break;
       case TemplateType::ClassBlock:
          prefix.append(CLASSBLOCK_PREFIX);

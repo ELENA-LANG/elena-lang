@@ -230,12 +230,6 @@ bool TestTemplateProssesor :: importExpressionTemplate(ModuleScopeBase& moduleSc
    return false;
 }
 
-bool TestTemplateProssesor :: importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
-{
-   return false;
-}
-
 bool TestTemplateProssesor :: importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target)
 {
    return false;

@@ -147,7 +147,6 @@ enum class TemplateType
    Class,
    Statement,
    Expression,
-   Enumeration,  // !! obsolete
    VariadicParameterized,
    ClassBlock
 };
@@ -552,9 +551,6 @@ public:
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
    virtual bool importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
-   // obsolete
-   virtual bool importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-      SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
    virtual bool importParameterizedTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
       SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
    virtual bool importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target) = 0;

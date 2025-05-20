@@ -27,7 +27,6 @@ namespace elena_lang
          PropertyTemplate,
          ExtensionTemplate,
          ExpressionTemplate,
-         Enumeration,  // !! obsolete
          Textblock,
          Variadic
       };
@@ -68,7 +67,6 @@ namespace elena_lang
                case ScopeType::ExpressionTemplate:
                   break;
                case ScopeType::Variadic:
-               case ScopeType::Enumeration:
                   withTypeParameters = true;
                   withVariadicParameter = true;
                   break;
@@ -134,7 +132,6 @@ namespace elena_lang
 
                   return false;
                }
-               case ScopeType::Enumeration:
                case ScopeType::Variadic:
                {
                   ref_t index = parameters.get(node.identifier());
@@ -313,7 +310,6 @@ namespace elena_lang
          Parameterized,
          InlineProperty,
          ExpressionTemplate,
-         Enumeration,
          Textblock
       };
 
@@ -361,7 +357,6 @@ namespace elena_lang
 
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
 
-      void generateEnumTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node); // !! obsolete
       bool generateForStatement(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& node);
 
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
@@ -379,9 +374,6 @@ namespace elena_lang
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
       void importExpressionTemplate(MemoryBase* templateSection,
-         SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
-      // obsolete
-      void importEnumTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
       void importParameterizedTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
