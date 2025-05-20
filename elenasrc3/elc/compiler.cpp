@@ -2353,6 +2353,15 @@ bool Compiler :: importParameterizedTemplate(Scope& scope, SyntaxNode node, Synt
    IdentifierString paramPostfix("##");
    paramPostfix.appendInt(arguments.count_int());
    ref_t templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, paramPostfix.str());
+
+   if (!templateRef) {
+      // try resolve as a variadic parameterized template
+      paramPostfix.truncate(2);
+      paramPostfix.append("1#");
+
+      templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, paramPostfix.str());
+   }   
+
    // obsolete : try to resolve as enum template
    if (!templateRef)
       templateRef = retrieveTemplate(*ns, node, parameters, nullptr, SyntaxKey::None, ENUM_POSTFIX);
@@ -5376,8 +5385,28 @@ void Compiler::declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool
    }
 }
 
+inline bool checkTemplateParameter(SyntaxNode node, bool& enumeratingOne)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Attribute) {
+         if (current.arg.reference == V_VARIADIC && current.nextNode() == SyntaxKey::identifier) {
+            enumeratingOne = true;
+         }
+         else return false;
+      }
+      else if (current != SyntaxKey::identifier)
+         return false;
+
+      current = current.nextNode();
+   }
+
+   return true;
+}
+
 void Compiler::declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix)
 {
+   bool enumeratingOne = false;
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
@@ -5398,12 +5427,19 @@ void Compiler::declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, 
          case SyntaxKey::ReturnExpression:
             scope.type = TemplateType::Expression;
             break;
+         case SyntaxKey::Parameter:
+            if (!checkTemplateParameter(current, enumeratingOne))
+               scope.raiseError(errInvalidOperation, current);
+            break;
          default:
             break;
       }
 
       current = current.nextNode();
    }
+
+   if (enumeratingOne)
+      scope.type = TemplateType::VariadicParameterized;
 }
 
 void Compiler::registerTemplateSignature(TemplateScope& scope, SyntaxNode node, IdentifierString& signature)
@@ -5561,6 +5597,7 @@ void Compiler::declareTemplate(TemplateScope& scope, SyntaxNode& node)
    switch (scope.type) {
       case TemplateType::Enumeration:
       case TemplateType::Class:
+      case TemplateType::VariadicParameterized:
       case TemplateType::InlineProperty:
       case TemplateType::ClassBlock:
       {
@@ -5677,6 +5714,15 @@ void Compiler::declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
             postfix.append("##");
             postfix.appendInt(paramCount);
          }
+         break;
+      case TemplateType::VariadicParameterized:
+         // !! temporally only one parameter is allowed
+         if (paramCount != 1)
+            scope.raiseError(errInvalidOperation, node);
+
+         postfix.append("##");
+         postfix.appendInt(paramCount);
+         postfix.append("#");
          break;
       default:
          break;

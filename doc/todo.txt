@@ -49,11 +49,17 @@ In development:
   - elt : port to linux
   - implement analog of record using meta programming (extensions'records)
   --------------------------------------
-  - templates with parameters #606
-  --------------------------------------    
+  - redesign enum
+  --------------------------------------
+  * support #for meta statement - must be handled by template 
+  * implement the analog of enum
+  * migrate ab enum to the new syntax
+  * get rid of TemplateType::Enumeration
+  --------------------------------------
+  * support a template without arguments
+
   * design support for #for meta statement
 
-  * support a template without arguments and arguments
   * support unboxing list (e.g. ..member) <- used in the template
 
   * list of properties / fields
@@ -62,7 +68,6 @@ In development:
   * MyRecord : record(string FirstName = String.Default,string LastName = String.Default,int Age = 0);
   * implement sample
   * implement record
-  * redesign enum (get rid of TemplateType::Enumeration)
   --------------------------------------
 
   === Iteration 42 ===

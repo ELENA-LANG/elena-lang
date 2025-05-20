@@ -241,6 +241,12 @@ bool TestTemplateProssesor :: importTextblock(ModuleScopeBase& moduleScope, ref_
    return false;
 }
 
+bool TestTemplateProssesor :: importParameterizedTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+{
+   return false;
+}
+
 // --- CompilerEnvironment ---
 
 CompilerEnvironment :: CompilerEnvironment()

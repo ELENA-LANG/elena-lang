@@ -854,7 +854,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
          SyntaxKey key = SyntaxKey::Name;
          ref_t attrRef = 0;
 
-         if (scope.withNameParameters()) {
+         if (scope.withNameParameters) {
             int index = scope.arguments.get(current.identifier());
             if (scope.isNameIndex(index)) {
                key = SyntaxKey::NameArgParameter;
@@ -862,10 +862,10 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
             }
             else flushNode(writer, scope, current);
          }
-         else if (scope.withEnumParameter()) {
+         else if (scope.withVariadicParameter) {
             int index = scope.parameters.get(current.identifier());
-            if (index) {
-               key = SyntaxKey::EnumNameArgParameter;
+            if (index == scope.parameters.count()) {
+               key = SyntaxKey::VariadicNameArgParameter;
                attrRef = index + scope.nestedLevel;
             }
          }
@@ -892,7 +892,7 @@ bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope,
    }
    else if (attrRef != 0 || allowType) {
       SyntaxKey key = SyntaxKey::Type;
-      if (scope.withTypeParameters()) {
+      if (scope.withTypeParameters) {
          int index = scope.arguments.get(node.identifier());
          if (index != 0) {
             key = SyntaxKey::TemplateArgParameter;
@@ -1579,7 +1579,10 @@ void SyntaxTreeBuilder :: flushParameterArgDescr(SyntaxTreeWriter& writer, Scope
       _errorProcessor->raiseTerminalError(errDuplicatedDefinition, retrievePath(node), node);
    }
 
-   SyntaxTree::copyNode(writer, node, true);
+   //SyntaxTree::copyNode(writer, node, true);
+   writer.newNode(node.key);
+   flushDescriptor(writer, scope, node, false);
+   writer.closeNode();
 }
 
 void SyntaxTreeBuilder :: flushInlineTemplatePostfixes(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
@@ -1668,6 +1671,9 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
             break;
          case SyntaxKey::Parameter:
             flushParameterArgDescr(writer, scope, current);
+            if (scope.type == ScopeType::ClassTemplate && writer.CurrentNode().lastChild() == SyntaxKey::Parameter && SyntaxTree::ifChildExists(writer.CurrentNode().lastChild(), SyntaxKey::Attribute, V_VARIADIC)) {
+               scope.type = ScopeType::Variadic;
+            }
             break;
          default:
             argMode = false;
@@ -1676,6 +1682,8 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
 
       current = current.nextNode();
    }
+
+   scope.initTemplateFlags();
 
    flushClassPostfixes(writer, scope, node);
 
@@ -1687,6 +1695,18 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
             break;
          case SyntaxKey::Declaration:
             flushClassMember(writer, scope, current);
+            break;
+         case SyntaxKey::CondStatement:
+         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::EndCondStatement:
+         {
+            Scope scope;
+            flushStatement(writer, scope, current);
+            break;
+         }
+         case SyntaxKey::ForStatement:
+         case SyntaxKey::EndForStatement:
+            flushStatement(writer, scope, current);
             break;
          default:
             break;
@@ -2123,12 +2143,16 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
             writer.closeNode();
          }
          break;
-      case SyntaxKey::EnumNameArgParameter:
+      case SyntaxKey::VariadicNameArgParameter:
          if (node.arg.reference < 0x100) {
-            SyntaxNode nodeToInject = scope.parameterValues.get(scope.enumIndex);
+            SyntaxNode nodeToInject = scope.parameterValues.get(scope.variadicIndex);
 
             writer.newNode(SyntaxKey::Name);
-            copyKVKey(writer, scope, nodeToInject.firstChild());
+            SyntaxNode arg = nodeToInject.firstChild();
+            if (arg == SyntaxKey::KeyValueExpression) {
+               copyKVKey(writer, scope, arg);
+            }
+            else copyChildren(writer, scope, nodeToInject.firstChild());
             writer.closeNode();
          }
          else {
@@ -2137,9 +2161,9 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
             writer.closeNode();
          }
          break;
-      case SyntaxKey::EnumArgParameter:
+      case SyntaxKey::VariadicArgParameter:
          if (node.arg.reference < 0x100) {
-            SyntaxNode nodeToInject = scope.parameterValues.get(scope.enumIndex);
+            SyntaxNode nodeToInject = scope.parameterValues.get(scope.variadicIndex);
             writer.CurrentNode().setKey(nodeToInject.key);
             copyChildren(writer, scope, nodeToInject);
          }
@@ -2189,34 +2213,73 @@ void TemplateProssesor :: copyChildren(SyntaxTreeWriter& writer, TemplateScope& 
    }
 }
 
+void TemplateProssesor :: copyClassMember(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& current)
+{
+   switch (current.key) {
+      case SyntaxKey::Field:
+         copyField(writer, scope, current);
+         break;
+      case SyntaxKey::Method:
+         copyMethod(writer, scope, current);
+         break;
+      case SyntaxKey::AssignOperation:
+      case SyntaxKey::AddAssignOperation:
+         copyMethod(writer, scope, current);
+         break;
+      case SyntaxKey::ForStatement:
+         if (scope.type != Type::Parameterized || !generateForStatement(writer, scope, current)) {
+            // we copy the statement, so later it will raise an error
+            copyNode(writer, scope, current);
+         }
+         break;
+      default:
+         break;
+   }
+}
+
 void TemplateProssesor :: copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Field:
-            copyField(writer, scope, current);
-            break;
-         case SyntaxKey::Method:
-            copyMethod(writer, scope, current);
-            break;
-         case SyntaxKey::AssignOperation:
-         case SyntaxKey::AddAssignOperation:
-            copyMethod(writer, scope, current);
-            break;
-         default:
-            break;
-      }
+      copyClassMember(writer, scope, current);
 
       current = current.nextNode();
    }
 }
 
+bool TemplateProssesor :: generateForStatement(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& node)
+{
+   SyntaxNode paramNode = node.findChild(SyntaxKey::Expression).firstChild();
+   if (paramNode == SyntaxKey::Object && paramNode.nextNode() == SyntaxKey::None && paramNode.firstChild() == SyntaxKey::VariadicArgParameter) {
+      scope.variadicIndex = 0;
+      for (auto it = scope.parameterValues.start(); !it.eof(); ++it) {
+         scope.variadicIndex++;
+
+         SyntaxNode current = node.nextNode();
+         while (current != SyntaxKey::EndForStatement) {
+            copyClassMember(writer, scope, current);
+
+            current = current.nextNode();
+         }
+
+         if (current == SyntaxKey::None)
+            return false;
+      }
+      scope.variadicIndex = 0;
+
+      node = SyntaxTree::gotoNode(node , SyntaxKey::EndForStatement);
+
+      return true;
+   }
+
+   return false;
+}
+
 void TemplateProssesor :: generateEnumTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node)
 {
-   scope.enumIndex = 0;
+   scope.variadicIndex = 0;
    for (auto it = scope.parameterValues.start(); !it.eof(); ++it) {
-      scope.enumIndex++;
+      scope.variadicIndex++;
 
       copyClassMembers(writer, scope, node);
    }

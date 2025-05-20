@@ -373,6 +373,19 @@ public program()
 ----------------------------------------------------------------------------
  Specify the lambda function returning value
 ----------------------------------------------------------------------------
+
   var f := ([real]int x => x + 1);
   o.testMe::([object]int x => x + 1);
 
+----------------------------------------------------------------------------
+ Declaring a parametrized template
+----------------------------------------------------------------------------
+
+class TemplateWithDefaults<T>(defValue)::
+{
+   T X := defValue;
+}
+
+MyClass : TemplateWithDefaults<int>(2)
+{
+}

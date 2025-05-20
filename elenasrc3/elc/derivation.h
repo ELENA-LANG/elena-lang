@@ -27,34 +27,57 @@ namespace elena_lang
          PropertyTemplate,
          ExtensionTemplate,
          ExpressionTemplate,
-         Enumeration,
-         Textblock
+         Enumeration,  // !! obsolete
+         Textblock,
+         Variadic
       };
 
       struct Scope
       {
          ScopeType    type;
+         bool         withTypeParameters;
+         bool         withNameParameters;
+         bool         withVariadicParameter;
+
          bool         ignoreTerminalInfo;
          ReferenceMap arguments;
          ReferenceMap parameters;
          int          nestedLevel;
 
-         bool withTypeParameters() const
-         {
-            return type == ScopeType::ClassTemplate || type == ScopeType::PropertyTemplate || type == ScopeType::ExtensionTemplate || type == ScopeType::Enumeration;
-         }
-         bool withNameParameters() const
-         {
-            return type == ScopeType::PropertyTemplate;
-         }
-         bool withEnumParameter() const
-         {
-            return type == ScopeType::Enumeration;
-         }
-
          bool isNameIndex(int index)
          {
             return (index == 1 || index == 3) && type == ScopeType::PropertyTemplate;
+         }
+
+         void initTemplateFlags()
+         {
+            switch (type)
+            {
+               case ScopeType::InlineTemplate:
+                  break;
+               case ScopeType::ClassTemplate:
+                  withTypeParameters = true;
+                  break;
+               case ScopeType::PropertyTemplate:
+                  withTypeParameters = true;
+                  withNameParameters = true;
+                  break;
+               case ScopeType::ExtensionTemplate:
+                  withTypeParameters = true;
+                  break;
+               case ScopeType::ExpressionTemplate:
+                  break;
+               case ScopeType::Variadic:
+               case ScopeType::Enumeration:
+                  withTypeParameters = true;
+                  withVariadicParameter = true;
+                  break;
+               case ScopeType::Textblock:
+                  break;
+               case ScopeType::Unknown:
+               default:
+                  break;
+            }
          }
 
          bool isParameter(SyntaxNode node, SyntaxKey& parameterKey, ref_t& parameterIndex, bool allowType)
@@ -112,10 +135,11 @@ namespace elena_lang
                   return false;
                }
                case ScopeType::Enumeration:
+               case ScopeType::Variadic:
                {
                   ref_t index = parameters.get(node.identifier());
-                  if (index > 0) {
-                     parameterKey = SyntaxKey::EnumArgParameter;
+                  if (index == parameters.count()) {
+                     parameterKey = SyntaxKey::VariadicArgParameter;
                      parameterIndex = index + nestedLevel;
 
                      return true;
@@ -135,6 +159,10 @@ namespace elena_lang
             : arguments(0), parameters(0)
          {
             this->type = ScopeType::Unknown;
+            this->withTypeParameters = false;
+            this->withNameParameters = false;
+            this->withVariadicParameter = false;
+
             this->ignoreTerminalInfo = ignoreTerminalInfo;
             this->nestedLevel = 0;
          }
@@ -298,13 +326,13 @@ namespace elena_lang
          NodeMap          parameterValues;
          ModuleScopeBase* moduleScope;
          ref_t            targetRef;
-         int              enumIndex;
+         int              variadicIndex;
 
          TemplateScope() :
             type(Type::None),
             argValues({}),
             parameterValues({}),
-            moduleScope(nullptr), targetRef(0), enumIndex(0)
+            moduleScope(nullptr), targetRef(0), variadicIndex(0)
          {
          }
          TemplateScope(Type type, ModuleScopeBase* scope, ref_t targetRef) :
@@ -313,7 +341,7 @@ namespace elena_lang
             parameterValues({}),
             moduleScope(scope),
             targetRef(targetRef),
-            enumIndex(0)
+            variadicIndex(0)
          {
          }
       };
@@ -326,13 +354,15 @@ namespace elena_lang
       void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyParent(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyClassMember(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& current);
       void copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyTemplatePostfix(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyKVKey(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
 
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
 
-      void generateEnumTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void generateEnumTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node); // !! obsolete
+      bool generateForStatement(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& node);
 
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 

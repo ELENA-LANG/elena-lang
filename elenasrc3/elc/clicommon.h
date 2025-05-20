@@ -147,7 +147,8 @@ enum class TemplateType
    Class,
    Statement,
    Expression,
-   Enumeration,
+   Enumeration,  // !! obsolete
+   VariadicParameterized,
    ClassBlock
 };
 

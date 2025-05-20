@@ -1,6 +1,22 @@
 //import extensions;
+//public enumeration enum<member, T>
 
-//class Record<>(..member)
+public xenum<T>(params member)::
+{
+
+#for(member)
+
+   static member
+     = nil; 
+
+#endfor
+
+}
+
+public class MyColor : xenum<int>(Red, Blue, Green);
+
+//template class Record(member)::
+//template class Record<>(..member)
 //{
 //#for(member) 
 
@@ -22,19 +38,8 @@
 
 //MyRecord : record(FirstName,LastName,Age);
 
-class TemplateWithDefaults<T>(defValue)::
-{
-   T X := defValue;
-}
-
-MyClass : TemplateWithDefaults<int>(2)
-{
-}
-
 public program()
 {
-//   TemplateWithDefaults<int,defValue=2> arg := new TemplateWithDefaults<int,defValue=2>();
-
 //   MyRecord r := new MyRecord();
 //   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);
 }
