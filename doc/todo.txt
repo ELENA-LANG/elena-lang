@@ -49,11 +49,8 @@ In development:
   - elt : port to linux
   - implement analog of record using meta programming (extensions'records)
   --------------------------------------
-  * strong typed record
-
-  * support unboxing list (e.g. ..member) <- used in the template
-
-  * list of properties / fields
+  * generate an argument list: for inside argument list
+  * constructor to initialize record fields
   * equal method
   * MyRecord : record(FirstName,LastName,Age);
   * MyRecord : record(string FirstName = String.Default,string LastName = String.Default,int Age = 0);

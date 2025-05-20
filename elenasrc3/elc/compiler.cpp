@@ -7835,6 +7835,29 @@ inline SyntaxNode retrieveTerminalOrType(SyntaxNode node)
    return last;
 }
 
+ObjectInfo Compiler :: mapName(Scope& scope, SyntaxNode node, EAttrs mode)
+{
+   SyntaxNode terminalNode = {};
+
+   SyntaxNode current = node.firstChild();
+   while (current == SyntaxKey::Expression)
+      current = current.firstChild();
+
+   if (current == SyntaxKey::Attribute) {
+      if (!_logic->validateExpressionAttribute(current.arg.reference, mode))
+         scope.raiseError(errInvalidHint, current);
+
+      current = current.nextNode();
+   }
+   if (current == SyntaxKey::Object) {
+      terminalNode = current.firstChild(SyntaxKey::TerminalMask);
+   }
+
+   ObjectInfo retVal = mapTerminal(scope, terminalNode, {}, mode.attrs);
+
+   return retVal;
+}
+
 ObjectInfo Compiler::mapObject(Scope& scope, SyntaxNode node, EAttrs mode)
 {
    SyntaxNode terminalNode = retrieveTerminalOrType(node);
@@ -15076,7 +15099,7 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rn
 
 ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNode roperand, ExpressionAttribute mode)
 {
-   ObjectInfo target = compiler->mapObject(scope, loperand, mode);
+   ObjectInfo target = loperand == SyntaxKey::NameOperation ? compiler->mapName(scope, loperand, mode) : compiler->mapObject(scope, loperand, mode);
    if (target.kind == ObjectKind::Unknown)
       scope.raiseError(errUnknownObject, loperand.lastChild(SyntaxKey::TerminalMask));
 

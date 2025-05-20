@@ -5,20 +5,19 @@ template record(params member)::
 {
 #for(member) 
 
-//   __privatename member;
+   member;
 
    member
-//     = __privatename member;
-     = default; 
+     = member;
 
 #endfor
 
-//   constructor(..member)
-//   {
-//#for(member) 
-//      this __privatename member := __argumentof member;
-//#endfor
-//   }
+   constructor()
+   {
+#for(member) 
+      $name this member := default;
+#endfor
+   }
 }   
 
 MyRecord : record(string FirstName,string LastName,int Age);

@@ -358,6 +358,7 @@ namespace elena_lang
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
 
       bool generateForStatement(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& node);
+      bool generateForCodeStatement(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& node);
 
       void generate(SyntaxTreeWriter& writer, TemplateScope& scope, MemoryBase* templateSection);
 

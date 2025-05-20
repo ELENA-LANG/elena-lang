@@ -1217,6 +1217,8 @@ void SyntaxTreeBuilder :: flushMethodCode(SyntaxTreeWriter& writer, Scope& scope
          case SyntaxKey::CondStatement:
          case SyntaxKey::ElseCondStatement:
          case SyntaxKey::EndCondStatement:
+         case SyntaxKey::ForStatement:
+         case SyntaxKey::EndForStatement:
          {
             flushStatement(writer, scope, current);
             break;
@@ -2204,7 +2206,10 @@ void TemplateProssesor :: copyChildren(SyntaxTreeWriter& writer, TemplateScope& 
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
-      copyNode(writer, scope, current);
+      if (current == SyntaxKey::ForStatement && scope.type == Type::Parameterized) {
+         generateForCodeStatement(writer, scope, current);
+      }
+      else copyNode(writer, scope, current);
 
       current = current.nextNode();
    }
@@ -2265,6 +2270,34 @@ bool TemplateProssesor :: generateForStatement(SyntaxTreeWriter& writer, Templat
       scope.variadicIndex = 0;
 
       node = SyntaxTree::gotoNode(node , SyntaxKey::EndForStatement);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool TemplateProssesor :: generateForCodeStatement(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& node)
+{
+   SyntaxNode paramNode = node.findChild(SyntaxKey::Expression).firstChild();
+   if (paramNode == SyntaxKey::Object && paramNode.nextNode() == SyntaxKey::None && paramNode.firstChild() == SyntaxKey::VariadicArgParameter) {
+      scope.variadicIndex = 0;
+      for (auto it = scope.parameterValues.start(); !it.eof(); ++it) {
+         scope.variadicIndex++;
+
+         SyntaxNode current = node.nextNode();
+         while (current != SyntaxKey::EndForStatement) {
+            copyNode(writer, scope, current);
+
+            current = current.nextNode();
+         }
+
+         if (current == SyntaxKey::None)
+            return false;
+      }
+      scope.variadicIndex = 0;
+
+      node = SyntaxTree::gotoNode(node, SyntaxKey::EndForStatement);
 
       return true;
    }
