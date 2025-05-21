@@ -48,6 +48,10 @@ public program()
    MyRecord r2 := new MyRecord("Ivan", "Ivanov", 22);
    MyRecord r3 := new MyRecord("Petr", "Ivanov", 22);
 
+   Console.writeLine(r.FirstName);
+   Console.writeLine(r2.FirstName);
+   Console.writeLine(r3.FirstName);
+
    Assert.ifTrue(r == r2);
    Assert.ifFalse(r == r3);
 }
