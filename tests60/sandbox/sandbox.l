@@ -48,6 +48,7 @@ singleton A { X = 2; }
 public program()
 {
     var o := get mssg X(A);
+    Console.writeLin(o);
 
 //   MyRecord r := new MyRecord();
 //   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);
