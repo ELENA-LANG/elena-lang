@@ -12914,7 +12914,6 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
       callContext.weakMessage = encodeMessage(source.reference, 1, PROPERTY_MESSAGE);
 
       source = arguments[0];
-      arguments.clear();
    }
 
    EAttr opMode = EAttr::None;

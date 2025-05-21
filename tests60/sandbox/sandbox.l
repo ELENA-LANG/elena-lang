@@ -7,7 +7,7 @@ template record(params member)::
    member;
 
    member
-     = member;
+     = $value member;
 
 #endfor
 
