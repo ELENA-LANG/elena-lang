@@ -262,6 +262,48 @@ public enum<T>(params member)::
    }
 }
 
+// --- record ---
+
+template record(params member)::
+{
+#for(member) 
+
+   member;
+
+   member
+     = $value member;
+
+#endfor
+
+   constructor(
+#for(member) 
+      member
+#endfor
+   ) {
+#for(member) 
+      $value this member := $value member;
+#endfor
+   }
+
+   constructor()
+   {
+#for(member) 
+      $value this member := default;
+#endfor
+   }
+
+   bool equal(__typeof o)
+   {
+#for(member) 
+      if($value member != $value get mssg member(o)) {
+         ^ false
+      };
+#endfor
+
+      ^ true
+   }
+}   
+
 // --- yield state machine ---
 
 public abstract class YieldStateEnumerator<T> : Enumerator<T>
