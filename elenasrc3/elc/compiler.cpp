@@ -12812,6 +12812,17 @@ bool Compiler::Expression :: resolveAndValidate(ObjectInfo target, ref_t targetR
    return false;
 }
 
+inline bool isFunctionCall(ModuleBase* module, mssg_t message, pos_t argCount)
+{
+   if (!test(message, FUNCTION_MESSAGE))
+      return false;
+
+   ref_t actionRef = module->mapAction(INVOKE_MESSAGE, 0, false);
+   mssg_t expected = encodeMessage(actionRef, argCount, FUNCTION_MESSAGE);
+
+   return message == expected;
+}
+
 ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
    ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs)
 {
@@ -12886,6 +12897,14 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    ArgumentListType argListType = ArgumentListType::Normal;
    callContext.implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, paramMode,
       updatedOuterArgs, argListType, resolvedNillableArgs);
+
+   if (!resolvedMessage && source.kind == ObjectKind::PropertyNameLiteral && isFunctionCall(scope.module, callContext.weakMessage, 1)) {
+      // HOTFIX : recognize a property call and replace it with a direct operation
+      callContext.weakMessage = encodeMessage(source.reference, 1, PROPERTY_MESSAGE);
+
+      source = arguments[0];
+      arguments.clear();
+   }
 
    EAttr opMode = EAttr::None;
    if (argListType == ArgumentListType::VariadicArgList || argListType == ArgumentListType::VariadicArgListWithTypecasting) {
