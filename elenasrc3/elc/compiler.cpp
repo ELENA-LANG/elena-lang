@@ -234,6 +234,7 @@ inline bool isSingleObject(ObjectKind kind)
       case ObjectKind::CharacterLiteral:
       case ObjectKind::ConstantLiteral:
       case ObjectKind::MssgNameLiteral:
+      case ObjectKind::PropertyNameLiteral:
       case ObjectKind::MssgLiteral:
       case ObjectKind::ExtMssgLiteral:
       case ObjectKind::Nil:
@@ -520,7 +521,7 @@ void Interpreter::copyConstCollection(ref_t sourRef, ref_t destRef, bool byValue
       ref_t currentMask = it.key() & mskAnyRef;
       ref_t currentRef = it.key() & ~mskAnyRef;
 
-      if (currentMask == mskMssgNameLiteralRef) {
+      if (currentMask == mskMssgNameLiteralRef || currentMask == mskPropNameLiteralRef) {
          target->addReference(ImportHelper::importAction(sourceInfo.module, currentRef, _scope->module) | currentMask, *it);
       }
       else target->addReference(ImportHelper::importReference(sourceInfo.module, currentRef, _scope->module) | currentMask, *it);
@@ -7798,16 +7799,8 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
       switch (node.key) {
          case SyntaxKey::identifier:
          {
-            retVal = { ObjectKind::MssgNameLiteral, { V_MESSAGENAME },
+            retVal = { EAttrs::test(attrs, EAttr::GetterMode) ? ObjectKind::PropertyNameLiteral  : ObjectKind::MssgNameLiteral, { V_MESSAGENAME },
                scope.module->mapAction(node.identifier(), 0, false) };
-
-            if (EAttrs::test(attrs, EAttr::GetterMode)) {
-               if (node.parentNode().parentNode() == SyntaxKey::MessageOperation) {
-                  retVal.mode = TargetMode::Getter;
-               }
-               else invalid = true;
-            }
-
             break;
          }
          default:
@@ -12830,9 +12823,6 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    callContext.weakMessage = compiler->mapMessage(scope, messageNode, propertyMode,
       source.kind == ObjectKind::Extension, probeMode);
 
-   if (source.mode == TargetMode::Getter)
-      callContext.weakMessage |= PROPERTY_MESSAGE;
-
    if (propertyMode || !test(callContext.weakMessage, FUNCTION_MESSAGE))
       arguments.add(source);
 
@@ -15192,6 +15182,9 @@ bool Compiler::Expression::writeObjectInfo(ObjectInfo info, bool allowMeta)
          break;
       case ObjectKind::MssgNameLiteral:
          writer->appendNode(BuildKey::MssgNameLiteral, info.reference);
+         break;
+      case ObjectKind::PropertyNameLiteral:
+         writer->appendNode(BuildKey::PropNameLiteral, info.reference);
          break;
       case ObjectKind::ExtMssgLiteral:
          writer->appendNode(BuildKey::ExtMssgLiteral, info.reference);

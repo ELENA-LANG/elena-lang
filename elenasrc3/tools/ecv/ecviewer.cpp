@@ -241,6 +241,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr, bool wit
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
       case mskMssgNameLiteralRef:
+      case mskPropNameLiteralRef:
          referenceName = arg ? _module->resolveConstant(arg & ~mskAnyRef) : nullptr;
          break;
       default:
@@ -300,6 +301,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr, bool wit
          break;
       case mskMssgNameLiteralRef:
          appendPrefix(commandStr, "mssgname:", withTabbing);
+         break;
+      case mskPropNameLiteralRef:
+         appendPrefix(commandStr, "propname:", withTabbing);
          break;
       default:
          commandStr.append(":");

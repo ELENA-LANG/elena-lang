@@ -499,6 +499,7 @@ JITLinker :: JITLinker(ReferenceMapperBase* mapper,
    _constantSettings.messageClass = forwardResolver->resolveForward(MESSAGE_FORWARD);
    _constantSettings.extMessageClass = forwardResolver->resolveForward(EXT_MESSAGE_FORWARD);
    _constantSettings.messageNameClass = forwardResolver->resolveForward(MESSAGE_NAME_FORWARD);
+   _constantSettings.propertyNameClass = forwardResolver->resolveForward(PROPERTY_NAME_FORWARD);
 }
 
 addr_t JITLinker :: getVMTAddress(ModuleBase* module, ref_t reference, VAddressMap& references)
@@ -614,6 +615,7 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             break;
          }
          case mskMssgNameLiteralRef:
+         case mskPropNameLiteralRef:
          {
             ref_t dummy = 0;
             vaddress = resolve({ info.module, info.module->resolveAction(currentRef, dummy) }, currentMask, false);
@@ -1496,6 +1498,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          size = 4;
          structMode = true;
          break;
+      case mskPropNameLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.propertyNameClass;
+         size = 4;
+         structMode = true;
+         break;
       case mskExtMssgLiteralRef:
          vmtReferenceInfo.referenceName = _constantSettings.extMessageClass;
          size = _compiler->getExtMessageSize();
@@ -1542,6 +1549,7 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          _compiler->writeMessage(writer, parseMessageLiteral(value, referenceInfo.module, messageReferences));
          break;
       case mskMssgNameLiteralRef:
+      case mskPropNameLiteralRef:
          _compiler->writeMessage(writer, parseMessageNameLiteral(value, referenceInfo.module, messageReferences));
          break;
       case mskExtMssgLiteralRef:
@@ -1845,6 +1853,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskMssgLiteralRef:
          case mskExtMssgLiteralRef:
          case mskMssgNameLiteralRef:
+         case mskPropNameLiteralRef:
             address = resolveConstant(referenceInfo, sectionMask);
             break;
          case mskConstant:

@@ -183,10 +183,10 @@ namespace elena_lang
       LoadingAccToLongIndex = 0x0091,
       ExternalVarReference = 0x0092,
       ByteConstOp          = 0x0093,
+      PropNameLiteral      = 0x0094,
 
-      MaxOperationalKey    = 0x0093,      
+      MaxOperationalKey    = 0x0094,      
       
-      DeclOp               = 0x0094,
       DeclDictionaryOp     = 0x0095,
       LoopOp               = 0x0096,
       CatchOp              = 0x0097,
@@ -212,6 +212,7 @@ namespace elena_lang
       ProjectInfoOp        = 0x00AB,
       ObjOp                = 0x00AC,
       AttrDictionaryOp     = 0x00AD,
+      DeclOp               = 0x00AE,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,

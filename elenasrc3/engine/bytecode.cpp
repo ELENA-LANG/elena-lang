@@ -349,6 +349,7 @@ inline ref_t importRArg(ref_t arg, ModuleBase* exporter, ModuleBase* importer)
       switch (mask) {
          case mskMssgLiteralRef:
          case mskMssgNameLiteralRef:
+         case mskPropNameLiteralRef:
             return ImportHelper::importMessageConstant(exporter, arg & ~mskAnyRef, importer) | mask;
             break;
          case mskExtMssgLiteralRef:

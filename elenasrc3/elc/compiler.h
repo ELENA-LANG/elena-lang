@@ -35,6 +35,7 @@ namespace elena_lang
       Float64Literal,
       ConstantLiteral,
       MssgNameLiteral,
+      PropertyNameLiteral,
       MssgLiteral,
       ExtMssgLiteral,
       Template,
@@ -123,7 +124,6 @@ namespace elena_lang
       Conditional,
       ConditionalUnboxingRequired,
       Weak,
-      Getter,
    };
 
    enum class TrackingMode

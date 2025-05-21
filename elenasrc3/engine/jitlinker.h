@@ -63,6 +63,7 @@ namespace elena_lang
          ustr_t messageClass;
          ustr_t extMessageClass;
          ustr_t messageNameClass;
+         ustr_t propertyNameClass;
       };
 
       struct VAddressInfo

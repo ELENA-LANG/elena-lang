@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image Loader class declarations
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CODESCOPE_H
@@ -30,7 +30,7 @@ namespace elena_lang
       AddressMap      _constReferences, _numberReferences, _literalReferences, _characterReferences;
       AddressMap      _longNumberReferences, _realNumberReferences;
       AddressMap      _wideReferences;
-      AddressMap      _mssgReferences, _subjReferences;
+      AddressMap      _mssgReferences, _subjReferences, _propSubjReferences;
       AddressMap      _dataReferences;
       AddressMap      _statReferences;
       AddressMap      _tlsReferences;
@@ -78,7 +78,7 @@ namespace elena_lang
          _realNumberReferences(INVALID_ADDR),
          _wideReferences(INVALID_ADDR),
          _mssgReferences(INVALID_ADDR),
-         _subjReferences(INVALID_ADDR),
+         _subjReferences(INVALID_ADDR), _propSubjReferences(INVALID_ADDR),
          _dataReferences(INVALID_ADDR),
          _statReferences(INVALID_ADDR),
          _tlsReferences(INVALID_ADDR),

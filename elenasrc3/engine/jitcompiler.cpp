@@ -3131,6 +3131,7 @@ void JITCompiler :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer,
 
          switch (currentMask) {
             case mskMssgNameLiteralRef:
+            case mskPropNameLiteralRef:
                writer.writeDWord(helper->importMessage(
                   ByteCodeUtil::resolveMessageName(
                      sectionInfo->module->resolveAction(currentRef, dummy), sectionInfo->module, true)));

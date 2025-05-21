@@ -364,6 +364,7 @@ namespace elena_lang
    constexpr ref_t mskDistrTypeListRef    = 0x28000000u;
    constexpr ref_t mskTLSVariable         = 0x29000000u;
    constexpr ref_t mskMetaInfo            = 0x2A000000u;
+   constexpr ref_t mskPropNameLiteralRef  = 0x2B000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

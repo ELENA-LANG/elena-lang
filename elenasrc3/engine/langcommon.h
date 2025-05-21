@@ -715,7 +715,8 @@ namespace elena_lang
    constexpr auto WRAPPER_FORWARD            = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD              = "$array";          // the array template
    constexpr auto VARIADIC_ARRAY_FORWARD     = "$varray";         // the array template
-   constexpr auto MESSAGE_FORWARD            = "$message";        // the message class
+   constexpr auto MESSAGE_FORWARD            = "$message";        // the message name class
+   constexpr auto PROPERTY_NAME_FORWARD      = "$prop_subject";   // the property message name class
    constexpr auto MESSAGE_NAME_FORWARD       = "$subject";        // the message class
    constexpr auto EXT_MESSAGE_FORWARD        = "$ext_message";    // the extension message class
    constexpr auto CLOSURE_FORWARD            = "$closure";        // the closure template class

@@ -431,6 +431,11 @@ void mssgNameLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgNameLiteralRef);
 }
 
+void propNameLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskPropNameLiteralRef);
+}
+
 void extMssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskExtMssgLiteralRef);
@@ -2289,7 +2294,7 @@ ByteCodeWriter::Saver commands[] =
    uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssigning, threadVarBegin,
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
-   procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst
+   procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

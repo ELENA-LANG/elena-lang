@@ -51,6 +51,7 @@ In development:
   --------------------------------------
   - support direct message call using get mssg X(o)
   --------------------------------------
+  * a new class PropertyMessageName
   * support the following code to invoke the property: get mssg X(o);
   * replace the code with direct message call in this case
   --------------------------------------
