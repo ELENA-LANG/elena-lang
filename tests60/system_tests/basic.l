@@ -2575,7 +2575,7 @@ public directExtensionTemplateCall() : testCase()
    Assert.ifEqual(r1, 4);
    Assert.ifEqual(r2, 3);
 
-   Console.writeLine(".");
+   Console.write(".");
 }
 
 // --- recordTest ---
@@ -2588,10 +2588,8 @@ public recordTest() : testCase()
    MyRecord r2 := new MyRecord("Ivan", "Ivanov", 22);
    MyRecord r3 := new MyRecord("Petr", "Ivanov", 22);
 
-   Console.writeLine(r.FirstName);
-   Console.writeLine(r2.FirstName);
-   Console.writeLine(r3.FirstName);
-
    Assert.ifTrue(r == r2);
    Assert.ifFalse(r == r3);
+
+   Console.write(".");
 }

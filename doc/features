@@ -400,3 +400,17 @@ public program()
 {
     var o := get mssg X(A);
 }
+
+----------------------------------------------------------------------------
+ Declaring a record
+----------------------------------------------------------------------------
+
+MyRecord : record(string FirstName,string LastName,int Age);
+
+public program()
+{
+   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);
+   MyRecord r2 := new MyRecord("Ivan", "Ivanov", 22);
+
+   Assert.ifTrue(r == r2);
+}
