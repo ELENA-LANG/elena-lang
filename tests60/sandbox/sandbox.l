@@ -1,5 +1,4 @@
-//import extensions;
-//public enumeration enum<member, T>
+import extensions;
 
 template record(params member)::
 {
@@ -12,7 +11,6 @@ template record(params member)::
 
 #endfor
 
-/*
    constructor(
 #for(member) 
       member
@@ -29,27 +27,27 @@ template record(params member)::
       $value this member := default;
 #endfor
    }
-*/
-   equal(__typeof o)
+
+   bool equal(__typeof o)
    {
-//#for(member) 
-//      if($value member != $value get mssg member(o)) {
-//         ^ false
-//      };
-//#endfor
+#for(member) 
+      if($value member != $value get mssg member(o)) {
+         ^ false
+      };
+#endfor
+
+      ^ true
    }
 }   
 
-//MyRecord : record(string FirstName,string LastName,int Age);
-//MyRecord2 : record(FirstName,LastName,Age);
-
-singleton A { X = 2; }
+MyRecord : record(string FirstName,string LastName,int Age);
 
 public program()
 {
-    var o := get mssg X(A);
-    Console.writeLine(o);
+   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);
+   MyRecord r2 := new MyRecord("Ivan", "Ivanov", 22);
+   MyRecord r3 := new MyRecord("Petr", "Ivanov", 22);
 
-//   MyRecord r := new MyRecord();
-//   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);
+   Assert.ifTrue(r == r2);
+   Assert.ifFalse(r == r3);
 }

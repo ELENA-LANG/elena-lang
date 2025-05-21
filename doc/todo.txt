@@ -49,15 +49,7 @@ In development:
   - elt : port to linux
   - implement analog of record using meta programming (extensions'records)
   --------------------------------------
-  - support direct message call using get mssg X(o)
-  --------------------------------------
-  * replace the code with direct message call in this case
-  --------------------------------------
-  * @value __msg member (o)
-
-  * make possible to invoke message by parameter name
   * equal method
-  * MyRecord : record(string FirstName = String.Default,string LastName = String.Default,int Age = 0);
   * MyRecord : record(FirstName,LastName,Age);
   * functional test
   * feature entry

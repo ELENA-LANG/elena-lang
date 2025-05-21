@@ -4568,6 +4568,13 @@ ObjectInfo Compiler::evalExprValueOperation(Interpreter& interpreter, Scope& sco
    while (lnode == SyntaxKey::Expression)
       lnode = lnode.firstChild();
 
+   while (lnode == SyntaxKey::Attribute) {
+      if (!_logic->validateExpressionAttribute(lnode.arg.reference, mode))
+         scope.raiseError(errInvalidHint, lnode);
+
+      lnode = lnode.nextNode();
+   }
+
    if (lnode == SyntaxKey::KeyValueExpression) {
       return evalExpression(interpreter, scope, lnode.findChild(SyntaxKey::Expression), ignoreErrors);
    }
@@ -5263,8 +5270,12 @@ void Compiler::declareArgumentAttributes(MethodScope& scope, SyntaxNode node, Ty
             typeInfo = resolveTypeScope(scope, current, attributes, declarationMode, false);
             break;
          case SyntaxKey::Attribute:
-            if (!_logic->validateArgumentAttribute(current.arg.reference, attributes))
-               scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            if (!_logic->validateArgumentAttribute(current.arg.reference, attributes)) {
+               if (current.arg.reference == V_TYPEOF) {
+                  typeInfo = { scope.getClassRef() };
+               }
+               else scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
+            }               
             break;
          default:
             break;
