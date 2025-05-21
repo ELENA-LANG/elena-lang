@@ -264,7 +264,7 @@ public enum<T>(params member)::
 
 // --- record ---
 
-template record(params member)::
+template public record(params member)::
 {
 #for(member) 
 
