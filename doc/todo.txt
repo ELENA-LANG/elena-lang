@@ -49,8 +49,6 @@ In development:
   - elt : port to linux
   - implement analog of record using meta programming (extensions'records)
   --------------------------------------
-  * equal method
-  * MyRecord : record(FirstName,LastName,Age);
   * functional test
   * feature entry
   --------------------------------------
