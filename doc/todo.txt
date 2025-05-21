@@ -49,13 +49,17 @@ In development:
   - elt : port to linux
   - implement analog of record using meta programming (extensions'records)
   --------------------------------------
-  * generate an argument list: for inside argument list
-  * constructor to initialize record fields
+  * support the following code mssg x(o); <- invoke the property
+  * replace the code with direct message call 
+
+  * @value __msg member (o)
+
+  * make possible to invoke message by parameter name
   * equal method
-  * MyRecord : record(FirstName,LastName,Age);
   * MyRecord : record(string FirstName = String.Default,string LastName = String.Default,int Age = 0);
-  * implement sample
-  * implement record
+  * MyRecord : record(FirstName,LastName,Age);
+  * functional test
+  * feature entry
   --------------------------------------
 
   === Iteration 42 ===

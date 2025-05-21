@@ -1924,7 +1924,7 @@ namespace elena_lang
       ObjectInfo mapMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef);
       ObjectInfo mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_t actionRef, ref_t extension);
 
-      ObjectInfo mapName(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
+      ObjectInfo mapExprValue(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
       ObjectInfo mapObject(Scope& scope, SyntaxNode node, ExpressionAttributes mode);
 
       ObjectInfo compileRootExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node,

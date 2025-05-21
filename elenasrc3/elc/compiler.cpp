@@ -4561,12 +4561,19 @@ void Compiler::copyParentNamespaceExtensions(NamespaceScope& source, NamespaceSc
 
 ObjectInfo Compiler::evalExprValueOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors)
 {
+   EAttrs mode;
+
    SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
    while (lnode == SyntaxKey::Expression)
       lnode = lnode.firstChild();
 
    if (lnode == SyntaxKey::KeyValueExpression) {
       return evalExpression(interpreter, scope, lnode.findChild(SyntaxKey::Expression), ignoreErrors);
+   }
+   else if (lnode == SyntaxKey::Object) {
+      SyntaxNode terminalNode = lnode.firstChild(SyntaxKey::TerminalMask);
+
+      return mapTerminal(scope, terminalNode, {}, mode.attrs);
    }
 
    if (!ignoreErrors) {
@@ -7835,7 +7842,7 @@ inline SyntaxNode retrieveTerminalOrType(SyntaxNode node)
    return last;
 }
 
-ObjectInfo Compiler :: mapName(Scope& scope, SyntaxNode node, EAttrs mode)
+ObjectInfo Compiler :: mapExprValue(Scope& scope, SyntaxNode node, EAttrs mode)
 {
    SyntaxNode terminalNode = {};
 
@@ -15099,7 +15106,7 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rn
 
 ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNode roperand, ExpressionAttribute mode)
 {
-   ObjectInfo target = loperand == SyntaxKey::NameOperation ? compiler->mapName(scope, loperand, mode) : compiler->mapObject(scope, loperand, mode);
+   ObjectInfo target = loperand == SyntaxKey::ExprValOperation ? compiler->mapExprValue(scope, loperand, mode) : compiler->mapObject(scope, loperand, mode);
    if (target.kind == ObjectKind::Unknown)
       scope.raiseError(errUnknownObject, loperand.lastChild(SyntaxKey::TerminalMask));
 

@@ -1296,6 +1296,10 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
          case SyntaxKey::ResendDispatch:
             flushResend(writer, scope, current);
             break;
+         case SyntaxKey::ForStatement:
+         case SyntaxKey::EndForStatement:
+            flushStatement(writer, scope, current);
+            break;
          default:
             break;
       }
@@ -2471,6 +2475,12 @@ void TemplateProssesor :: copyMethod(SyntaxTreeWriter& writer, TemplateScope& sc
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
             copyTemplatePostfix(writer, scope, current);
+            break;
+         case SyntaxKey::ForStatement:
+            if (current == SyntaxKey::ForStatement && scope.type == Type::Parameterized) {
+               generateForCodeStatement(writer, scope, current);
+            }
+            else copyNode(writer, scope, current);
             break;
          //case SyntaxKey::TemplateArgParameter:
          //{
