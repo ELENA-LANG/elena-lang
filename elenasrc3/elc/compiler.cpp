@@ -7800,6 +7800,14 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
          {
             retVal = { ObjectKind::MssgNameLiteral, { V_MESSAGENAME },
                scope.module->mapAction(node.identifier(), 0, false) };
+
+            if (EAttrs::test(attrs, EAttr::GetterMode)) {
+               if (node.parentNode().parentNode() == SyntaxKey::MessageOperation) {
+                  retVal.mode = TargetMode::Getter;
+               }
+               else invalid = true;
+            }
+
             break;
          }
          default:
@@ -12821,6 +12829,9 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
 
    callContext.weakMessage = compiler->mapMessage(scope, messageNode, propertyMode,
       source.kind == ObjectKind::Extension, probeMode);
+
+   if (source.mode == TargetMode::Getter)
+      callContext.weakMessage |= PROPERTY_MESSAGE;
 
    if (propertyMode || !test(callContext.weakMessage, FUNCTION_MESSAGE))
       arguments.add(source);

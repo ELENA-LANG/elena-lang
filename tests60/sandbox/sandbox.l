@@ -33,7 +33,7 @@ template record(params member)::
    equal(__typeof o)
    {
 //#for(member) 
-//      if($value member != $value mssg member(o)) {
+//      if($value member != $value get mssg member(o)) {
 //         ^ false
 //      };
 //#endfor
@@ -47,7 +47,7 @@ singleton A { X = 2; }
 
 public program()
 {
-    var o := mssg X(A);
+    var o := get mssg X(A);
 
 //   MyRecord r := new MyRecord();
 //   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);

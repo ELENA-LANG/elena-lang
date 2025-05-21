@@ -123,6 +123,7 @@ namespace elena_lang
       Conditional,
       ConditionalUnboxingRequired,
       Weak,
+      Getter,
    };
 
    enum class TrackingMode

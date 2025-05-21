@@ -389,3 +389,14 @@ class TemplateWithDefaults<T>(defValue)::
 MyClass : TemplateWithDefaults<int>(2)
 {
 }
+
+----------------------------------------------------------------------------
+ Calling property with message constant
+----------------------------------------------------------------------------
+
+singleton A { X = 2; }
+
+public program()
+{
+    var o := get mssg X(A);
+}

@@ -448,6 +448,7 @@ enum class ExpressionAttribute : pos64_t
    NoDebugInfo          = 0x040000000000,
    NoExtension          = 0x080000000000,
    TryMode              = 0x100000000000,
+   GetterMode           = 0x200000000000,
 };
 
 struct ExpressionAttributes

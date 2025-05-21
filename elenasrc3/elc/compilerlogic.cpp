@@ -1146,6 +1146,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_CLASS:
          attrs |= ExpressionAttribute::Class;
          return true;
+      case V_GETACCESSOR:
+         attrs |= ExpressionAttribute::GetterMode;
+         return true;
       default:
          return false;
    }
