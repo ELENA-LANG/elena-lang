@@ -28,15 +28,17 @@ namespace elena_lang
 
 #elif defined(__FreeBSD__)
 
+   constexpr auto ELT_CONFIG_PATH            = "/usr/local/etc/elena";
    constexpr auto ELT_CONFIG                 = "/usr/local/etc/elena/elt60.es";
    constexpr auto ELT_GRAMMAR_CONFIG         = "/usr/local/etc/elena/scripts/grammar60.es";
    constexpr auto ELT_LSCRIPT_CONFIG         = "/usr/local/etc/elena/scripts/lscript60.es";
 
 #else
 
+   constexpr auto ELT_CONFIG_PATH            = "/etc/elena";
    constexpr auto ELT_CONFIG                 = "/etc/elena/elt60.es";
-   constexpr auto ELT_GRAMMAR_CONFIG         = "/etc/elena/grammar60.es";
-   constexpr auto ELT_LSCRIPT_CONFIG         = "/etc/elena/lscript60.es";
+   constexpr auto ELT_GRAMMAR_CONFIG         = "/etc/elena/scripts/grammar60.es";
+   constexpr auto ELT_LSCRIPT_CONFIG         = "/etc/elena/scripts/lscript60.es";
 
 #endif
 

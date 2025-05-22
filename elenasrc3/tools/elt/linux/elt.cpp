@@ -43,7 +43,7 @@ int main(int argc, char* argv[])
    printf(ELT_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_REVISION_NUMBER);
 
    ELTPresenter presenter;
-   VMSession session(*appPath, &presenter);
+   VMSession session(ELT_CONFIG_PATH, &presenter);
 
    loadTemplate(presenter, session, TemplateType::REPL, REPL_TEMPLATE_NAME);
    loadTemplate(presenter, session, TemplateType::Multiline, MULTILINE_TEMPLATE_NAME);
