@@ -39,6 +39,7 @@ before_release:
 	test -d $(OBJDIR_RELEASE)/__ || mkdir -p $(OBJDIR_RELEASE)/__
 	test -d $(OBJDIR_RELEASE)/__/__/__/engine || mkdir -p $(OBJDIR_RELEASE)/__/__/__/engine
 	test -d $(OBJDIR_RELEASE)/__/__/__/common || mkdir -p $(OBJDIR_RELEASE)/__/__/__/common
+	test -d $(OBJDIR_RELEASE)/__/__/__/engine/linux || mkdir -p $(OBJDIR_RELEASE)/__/__/__/engine/linux
 	test -d $(OBJDIR_RELEASE)/__/linux || mkdir -p $(OBJDIR_RELEASE)/__/linux
 
 after_release: 
