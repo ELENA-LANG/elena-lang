@@ -15,7 +15,7 @@ CFLAGS = -march=pentium3 -Wall -std=c++20 -m32
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -m32 -static-libgcc -static-libstdc++ -ldl -llibelenavm60 -llibelenasm60 -L../../../../bin
+LDFLAGS = -m32 -static-libgcc -static-libstdc++ -ldl -lelenavm60 -lelenasm60 -L../../../../bin
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O3
