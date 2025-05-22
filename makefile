@@ -5,7 +5,7 @@
 WRKDIR = `pwd`
 MAKE = make
 
-all_i386: elc_i386 sg_i386 og_i386 asmc_i386 ecv_i386 elenart_i386 elenasm_i386 elenavm_i386
+all_i386: elc_i386 sg_i386 og_i386 asmc_i386 ecv_i386 elenart_i386 elenasm_i386 elenavm_i386 elt_i386
 
 all_amd64: elc_amd64 sg_amd64 og_amd64 asmc_amd64 ecv_amd64 elenart_amd64 elenasm_amd64 elenavm_amd64
 
@@ -27,6 +27,9 @@ asmc_i386:
 
 ecv_i386: 
 	$(MAKE) -C elenasrc3/tools/ecv/codeblocks all -f ecv_i386.mak
+
+elt_i386: 
+	$(MAKE) -C elenasrc3/tools/elt/make all -f elt_i386.mak
 
 elenart_i386: 
 	$(MAKE) -C elenasrc3/elenart/codeblocks all -f elenart_i386.mak
@@ -131,6 +134,9 @@ clean_asmc_i386:
 
 clean_ecv_i386: 
 	$(MAKE) -C elenasrc3/tools/ecv/codeblocks clean -f ecv_i386.mak
+
+clean_elt_i386: 
+	$(MAKE) -C elenasrc3/tools/elt/make clean -f elt_i386.mak
 
 clean_elenart_i386:
 	$(MAKE) -C elenasrc3/elenart/codeblocks clean -f elenart_i386.mak
