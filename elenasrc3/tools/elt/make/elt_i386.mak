@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../../temp/elt-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/elt-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/vmsession.o $(OBJDIR_RELEASE)/__/linux/elt.o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/vmsession.o $(OBJDIR_RELEASE)/__/linux/elt.o $(OBJDIR_RELEASE)/__/__/__/engine/linux/presenter.o
 
 all: release
 
@@ -63,8 +63,8 @@ $(OBJDIR_RELEASE)/__/vmsession.o  : ../vmsession.cpp
 $(OBJDIR_RELEASE)/__/linux/elt.o  : ../linux/elt.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elt.cpp -o $(OBJDIR_RELEASE)/__/linux/elt.o
 
-$(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o: ../../engine/linux/presenter.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o
+$(OBJDIR_RELEASE)/__/__/__/engine/linux/presenter.o: ../../../engine/linux/presenter.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/linux/presenter.o
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
