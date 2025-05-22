@@ -20,9 +20,25 @@ namespace elena_lang
    constexpr auto GETVAR_TEMPLATE_NAME       = "get_var";
    constexpr auto SETVAR_TEMPLATE_NAME       = "set_var";
 
+#if (defined(_WIN32) || defined(__WIN32__))
+
    constexpr auto ELT_CONFIG                 = "~\\elt60.es";
    constexpr auto ELT_GRAMMAR_CONFIG         = "~\\scripts\\grammar60.es";
    constexpr auto ELT_LSCRIPT_CONFIG         = "~\\scripts\\lscript60.es";
+
+#elif defined(__FreeBSD__)
+
+   constexpr auto ELT_CONFIG                 = "/usr/local/etc/elena/elt60.es";
+   constexpr auto ELT_GRAMMAR_CONFIG         = "/usr/local/etc/elena/scripts/grammar60.es";
+   constexpr auto ELT_LSCRIPT_CONFIG         = "/usr/local/etc/elena/scripts/lscript60.es";
+
+#else
+
+   constexpr auto ELT_CONFIG                 = "/etc/elena/elt60.es";
+   constexpr auto ELT_GRAMMAR_CONFIG         = "/etc/elena/grammar60.es";
+   constexpr auto ELT_LSCRIPT_CONFIG         = "/etc/elena/lscript60.es";
+
+#endif
 
    constexpr auto ELT_STARTUP_FAILED         = "ELENAVM: Start has failed";
    constexpr auto ELT_CODE_FAILED            = "ELENAVM: Operation has failed";

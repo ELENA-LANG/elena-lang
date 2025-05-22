@@ -34,9 +34,7 @@ In development:
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   port:
-  - chat sample
   tools:
-  - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   - vs #2 : elena.tmLanguage.json  
   prom:
   - post an article about records using meta programming
@@ -45,12 +43,24 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - support hashCode for records (redesign current ones as well)
+  - rosetta code : moving to 6.7 : (Apply a callback to an array..)
+  - chat sample
+  - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   - api : IntNumber
   - elt : port to linux
-  - implement analog of record using meta programming (extensions'records)
   --------------------------------------
-  * functional test
-  * feature entry
+  * elt : linux main function
+  * declare elt for linux x86
+  * install global
+  * install local
+  * test elt for linux linux x86
+  * declare elt for linux x86-64
+  * test elt for linux x86-64
+  * declare elt for freebsd x86-64
+  * test elt for bsd x86-64
+  * declare elt for linux aarch64
+  * test elt for linux aarch64
   --------------------------------------
 
   === Iteration 42 ===

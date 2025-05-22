@@ -13,7 +13,12 @@ echo removing ELENA configuration files
 rm /etc/elena/templates/*.config
 rmdir /etc/elena/templates
 
+rm /etc/elena/scripts/*.es
+rm /etc/elena/scripts/*.elt
+rmdir /etc/elena/scripts
+
 rm /etc/elena/*.config
+rm /etc/elena/*.es
 rmdir /etc/elena
 
 echo removing ELENA data files

@@ -4,6 +4,7 @@ mkdir -p ../../lib60
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
+mkdir -p /etc/elena/scripts/
 mkdir -p /usr/lib/elena/core/x32/
 mkdir -p /usr/lib/elena/core/amd64/
 mkdir -p /usr/lib/elena/lib60
@@ -16,7 +17,10 @@ cp ../../bin/elena-cli /usr/bin/
 cp ../../bin/elc60.config /etc/elena/
 cp ../../bin/elenart60.config /etc/elena/
 cp ../../bin/elenavm60.config /etc/elena/
+cp ../../bin/elt60.es /etc/elena/
 cp ../../bin/templates/*.config /etc/elena/templates/
+cp ../../bin/scripts/*.es /etc/elena/scripts/
+cp ../../bin/scripts/*.elt /etc/elena/scripts/
 
 echo compiling data files
 
