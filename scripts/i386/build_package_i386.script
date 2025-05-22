@@ -14,6 +14,8 @@ cp ../../bin/libelenasm60.so /usr/lib/elena/
 cp ../../bin/libelenavm60.so /usr/lib/elena/
 cp ../../bin/elena-cli /usr/bin/
 
+export LD_LIBRARY_PATH=/usr/lib/elena
+
 cp ../../bin/elc60.config /etc/elena/
 cp ../../bin/elenart60.config /etc/elena/
 cp ../../bin/elenavm60.config /etc/elena/
