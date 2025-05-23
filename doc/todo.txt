@@ -9,7 +9,6 @@ In development:
   --------------------------------------
   dev: 
   - #743
-  - MTA support for Linux : support MT routines in elenart
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
   - upndown (connector - cmdSearch)
   - #748 : i386
@@ -43,29 +42,23 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - api : UIntNumber
+  - MTA support for Linux : support MT routines in elenart
   - support hashCode for records (redesign current ones as well)
-  - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   - chat sample
+  - rosetta code : moving to 6.7 : (Apply a callback to an array..)
+  - linux elt - fix an error on startup
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
-  - api : IntNumber
-  - elt : port to linux
   --------------------------------------
-  * elt : linux main function
-  * declare elt for linux x86
-  * install global
-  * install local
-  * test elt for linux linux x86
-  * declare elt for linux x86-64
-  * test elt for linux x86-64
-  * declare elt for freebsd x86-64
-  * test elt for bsd x86-64
-  * declare elt for linux aarch64
-  * test elt for linux aarch64
+  * move code to load source code into ldebugger
+  * load debug source info on start
+  * step over source
   --------------------------------------
 
   === Iteration 42 ===
   --------------------------------------
   dev: 
+  - MTA support for Linux : support MT routines in elenart
   gen:
   - script : support ++ operator
   - work on REPL (elt), generate project template

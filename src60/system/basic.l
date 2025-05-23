@@ -1444,9 +1444,11 @@ public const struct IntNumber : IntBaseNumber,
       = 2147483647;
 
    static int Default
+            : info("Returns the default value (0)")
       = 0;
 
    constructor()
+            : info("Returns the default value")
       = 0;
 
    constructor(int n)
@@ -1458,15 +1460,19 @@ public const struct IntNumber : IntBaseNumber,
       = IntConvertor.convert(n);
 
    constructor(byte b)
+            : info("converts the argument to IntNumber")
       = b;
 
    constructor(short s)
+            : info("converts the argument to IntNumber")
       = s;
 
    constructor(ushort s)
+            : info("converts the argument to IntNumber")
       = IntConvertor.convert(s);
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is int n)
       {
@@ -1477,6 +1483,7 @@ public const struct IntNumber : IntBaseNumber,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type when it is possible and compared")
       <= less(cast int(o));
 
    bool equal(byte b)
@@ -1520,24 +1527,31 @@ public const struct IntNumber : IntBaseNumber,
    }
 
    bool equal(int n)
+            : info("Compares the integer value")
       = _value == n; 
 
    bool notequal(int n)
+            : info("Compares the integer value")
       = _value != n;
 
    bool less(int n)
+            : info("Compares the integer value")
       = _value < n;
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
      <= add(cast int(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
      <= subtract(cast int(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
      <= multiply(cast int(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
      <= divide(cast int(o));
 
    int add(int n)
@@ -1645,21 +1659,27 @@ public const struct IntNumber : IntBaseNumber,
    }
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
       <= band(cast int(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
       <= bor(cast int(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
       <= bxor(cast int(n));
 
    band(BaseVariable v)
+            : info("Returns the result of bitwise AND operation with a variable value")
       <= band(*v);
 
    bor(BaseVariable v)
+            : info("Returns the result of bitwise OR operation with a variable value")
       <= bor(*v);
 
    bxor(BaseVariable v)
+            : info("Returns the result of bitwise XOR operation with a variable value")
       <= bxor(*v);
 
    int band(int n)
@@ -1738,9 +1758,11 @@ public const struct IntNumber : IntBaseNumber,
       = new IntNumber(_value);
 
    int shiftLeft(int val)
+            : info("shifts an integer value to the left by a specified number of bits")
       = _value $shl val;
    
    int shiftRight(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
       = _value $shr val;
 
    get int BInverted()
@@ -1748,6 +1770,7 @@ public const struct IntNumber : IntBaseNumber,
       = ~_value;
 
    get int Negative()
+            : info("Returns the negated value")
       = -_value;
 
    bool allMask(int operand)

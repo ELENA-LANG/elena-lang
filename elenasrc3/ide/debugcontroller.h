@@ -11,6 +11,7 @@
 #include "idecommon.h"
 #include "ideview.h"
 #include "elena.h"
+#include "ldebugger/debuginfoprovider.h"
 
 namespace elena_lang
 {
@@ -33,26 +34,11 @@ namespace elena_lang
    };
 
    // --- DebugInfoProvider ---
-   class DebugInfoProvider
+   class DebugInfoProvider : public DebugInfoProviderBase
    {
-      typedef MemoryMap<addr_t, addr_t, Map_StoreAddr, Map_GetAddr> ClassInfoMap;
-      typedef MemoryMap<ustr_t, addr_t, Map_StoreUStr, Map_GetUStr> SymbolMap;
-
       ProjectModel*     _model;
 
-      addr_t            _entryPoint;
-      pos_t             _debugInfoSize;
-      addr_t            _debugInfoPtr;
-
-      ModuleMap         _modules;
-      ClassInfoMap      _classes;
-      SymbolMap         _classNames;
-
-      ModuleBase* loadDebugModule(ustr_t reference);
-
-      bool loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process);
-
-      void retrievePath(ustr_t name, PathString& path, path_t extension);
+      void retrievePath(ustr_t name, PathString& path, path_t extension) override;
 
       ModuleBase* getDebugModule(addr_t address);
 
@@ -88,8 +74,6 @@ namespace elena_lang
 
       addr_t getClassAddress(ustr_t name);
 
-      bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
-
       ModuleBase* resolveModule(ustr_t ns);
 
       addr_t findNearestAddress(ModuleBase* module, ustr_t path, int row);
@@ -105,22 +89,7 @@ namespace elena_lang
 
       void fixNamespace(NamespaceString& str);
 
-      void clear()
-      {
-         _entryPoint = 0;
-         _debugInfoSize = 0;
-         _debugInfoPtr = 0;
-
-         _classes.clear();
-         _modules.clear();
-         _classNames.clear();
-
-         //_tape.clear();
-         //_tapeBookmarks.clear();
-      }
-
       DebugInfoProvider(ProjectModel* model)
-         : _modules(nullptr), _classes(INVALID_ADDR), _classNames(INVALID_ADDR)
       {
          _model = model;
 
@@ -228,7 +197,7 @@ namespace elena_lang
       PathString              _arguments;
       StartUpSettings         _startUpSettings;
 
-      DebugProcessBase*       _process;
+      IDEDebugProcessBase*    _process;
       DebugInfoProvider       _provider;
       PostponedStart          _postponed;
 
@@ -305,7 +274,7 @@ namespace elena_lang
          clearDebugInfo();
       }
 
-      DebugController(DebugProcessBase* process, ProjectModel* model, 
+      DebugController(IDEDebugProcessBase* process, ProjectModel* model,
          SourceViewModel* sourceModel, DebugSourceController* sourceController);
    };
    

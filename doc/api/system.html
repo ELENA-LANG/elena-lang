@@ -920,6 +920,14 @@ Copies a source array to target at index</div>
 <CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -8886,6 +8894,8 @@ system'IntNumber</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Returns the default value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8917,6 +8927,8 @@ Creates the object with specified value</div>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
+<div class="block">
+converts the argument to IntNumber</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -8926,6 +8938,8 @@ Creates the object with specified value</div>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+converts the argument to IntNumber</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8935,6 +8949,8 @@ Creates the object with specified value</div>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#UShortNumber">UShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+converts the argument to IntNumber</div>
 </TD>
 </TR>
 </TABLE>
@@ -8975,6 +8991,8 @@ Creates the object with the maximal value</div>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Default()</CODE>
+<div class="block">
+Returns the default value (0)</div>
 </TD>
 </TR>
 </TABLE>
@@ -8995,6 +9013,8 @@ Creates the object with the maximal value</div>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Negative()</CODE>
+<div class="block">
+Returns the negated value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9088,6 +9108,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>less(o)
 </CODE>
+<div class="block">
+Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type when it is possible and compared</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9097,6 +9119,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>equal(o)
 </CODE>
+<div class="block">
+Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type when it is possible and compared; otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9115,6 +9139,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>add(o)
 </CODE>
+<div class="block">
+Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9124,6 +9150,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>subtract(o)
 </CODE>
+<div class="block">
+Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9133,6 +9161,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>multiply(o)
 </CODE>
+<div class="block">
+Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9142,6 +9172,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>divide(o)
 </CODE>
+<div class="block">
+Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9151,6 +9183,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>band(n)
 </CODE>
+<div class="block">
+Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9160,6 +9194,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>bor(n)
 </CODE>
+<div class="block">
+Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9169,6 +9205,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>bxor(n)
 </CODE>
+<div class="block">
+Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9178,6 +9216,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>band(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> v)
 </CODE>
+<div class="block">
+Returns the result of bitwise AND operation with a variable value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9187,6 +9227,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>bor(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> v)
 </CODE>
+<div class="block">
+Returns the result of bitwise OR operation with a variable value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9196,6 +9238,8 @@ Returns the unsigned integer</div>
 <TD CLASS="colLast">
 <CODE>bxor(<SPAN CLASS="memberNameLink"><A HREF="system.html#BaseVariable">BaseVariable</A></SPAN> v)
 </CODE>
+<div class="block">
+Returns the result of bitwise XOR operation with a variable value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9293,6 +9337,8 @@ Compares the integer value</div>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Compares the integer value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9302,6 +9348,8 @@ Compares the integer value</div>
 <TD CLASS="colLast">
 <CODE>notequal(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Compares the integer value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9311,6 +9359,8 @@ Compares the integer value</div>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Compares the integer value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9683,6 +9733,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>shiftLeft(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
+<div class="block">
+shifts an integer value to the left by a specified number of bits</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9692,6 +9744,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>shiftRight(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
+<div class="block">
+shifts an integer value to the right by a specified number of bits</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -12765,6 +12819,145 @@ system'OutOfRangeException</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#OutOfRangeException">OutOfRangeException</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="PropertyMessageName">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="PropertyMessageName" class="title">PropertyMessageName</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">PropertyMessageName</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'PropertyMessageName</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>value</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#PropertyMessageName">PropertyMessageName</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#PropertyMessageName">PropertyMessageName</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> mssg)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#MessageName">MessageName</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Default()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toPrintable()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+<div class="block">
+Qualifies incoming messages and redirects to the target</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#MessageName">MessageName</A></SPAN> subject)
 </CODE>
 </TD>
 </TR>

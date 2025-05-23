@@ -147,11 +147,13 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClInclude Include="..\debuginfoprovider.h" />
     <ClInclude Include="..\ldbg_common.h" />
     <ClInclude Include="..\windows\win32debugprocess.h" />
     <ClInclude Include="framework.h" />
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="..\debuginfoprovider.cpp" />
     <ClCompile Include="..\windows\win32debugprocess.cpp">
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
       <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">Create</PrecompiledHeader>
@@ -162,6 +164,9 @@
   <ItemGroup>
     <ProjectReference Include="..\..\common\vs\lcommon.vcxproj">
       <Project>{c7728dfb-e3b8-4ce0-bef5-f8369e6761ef}</Project>
+    </ProjectReference>
+    <ProjectReference Include="..\..\engine\vs\lengine.vcxproj">
+      <Project>{8d0691cd-490b-4e13-95b8-8d0af1af43bf}</Project>
     </ProjectReference>
     <ProjectReference Include="..\..\lruntime\vs\lruntime.vcxproj">
       <Project>{49f68d87-f240-4e39-922d-219ee1601240}</Project>
