@@ -27,6 +27,8 @@ namespace elena_lang
 
       virtual void addStep(addr_t address, void* current) = 0;
 
+      virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
+
       virtual ~DebugProcessBase() = default;
    };
 }

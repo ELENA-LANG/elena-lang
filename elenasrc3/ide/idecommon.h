@@ -308,7 +308,6 @@ namespace elena_lang
       virtual unsigned long long getQWORD(addr_t address) = 0;
       virtual double getFLOAT64(addr_t address) = 0;
 
-      virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
       virtual void addBreakpoint(addr_t address) = 0;
       virtual void removeBreakpoint(addr_t address) = 0;
 

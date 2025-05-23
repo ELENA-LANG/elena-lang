@@ -43,6 +43,35 @@ DebugInfoProviderBase::DebugInfoProviderBase()
 {
 }
 
+bool DebugInfoProviderBase :: loadDebugInfo(path_t debuggee, DebugInfoProviderBase* provider, DebugProcessBase* process)
+{
+   PathString debugDataPath(debuggee);
+   debugDataPath.changeExtension(_T("dn"));
+
+   FileReader reader(*debugDataPath, FileRBMode, FileEncoding::Raw, false);
+   if (!reader.isOpen())
+      return false;
+
+   char header[8];
+   reader.read(header, 8);
+   if (ustr_t(DEBUG_MODULE_SIGNATURE).compare(header, 5)) {
+      provider->setDebugInfo(reader.getDWord(), INVALID_ADDR);
+
+      if (!reader.eof()) {
+         provider->load(reader, true, process);
+
+         provider->setDebugInfoSize(reader.position());
+
+         //loadSubjectInfo(reader);
+
+         return true;
+      }
+   }
+   else provider->setDebugInfoSize(4);
+
+   return false;
+}
+
 bool DebugInfoProviderBase :: load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process)
 {
    IdentifierString reference;

@@ -45,10 +45,6 @@ namespace elena_lang
    public:
       static void defineModulePath(ustr_t name, PathString& path, path_t projectPath, path_t outputPath, path_t extension);
 
-      addr_t getEntryPoint()
-      {
-         return _entryPoint;
-      }
       addr_t getDebugInfoPtr()
       {
          return _debugInfoPtr;
@@ -56,20 +52,6 @@ namespace elena_lang
       pos_t getDebugInfoSize()
       {
          return _debugInfoSize;
-      }
-
-      void setEntryPoint(addr_t address)
-      {
-         _entryPoint = address;
-      }
-      void setDebugInfoSize(pos_t size)
-      {
-         _debugInfoSize = size;
-      }
-      void setDebugInfo(pos_t size, addr_t debugInfoPtr)
-      {
-         _debugInfoSize = size;
-         _debugInfoPtr = debugInfoPtr;
       }
 
       addr_t getClassAddress(ustr_t name);
@@ -214,8 +196,6 @@ namespace elena_lang
       bool startThread();
 
       void onInitBreakpoint();
-      void loadDebugSection(StreamReader& reader, bool starting);
-      bool loadDebugData(StreamReader& reader, bool setEntryAddress = false);
 
       void onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
       void onStop();

@@ -361,21 +361,14 @@ void DebugController :: onInitBreakpoint()
       _process->findSignature(reader, signature, 0x10);
 
       if (strncmp(signature, ELENA_SIGNITURE, strlen(ELENA_SIGNITURE)) == 0) {
-         PathString debugDataPath(_debuggee);
-         debugDataPath.changeExtension(_T("dn"));
-
-         FileReader reader(*debugDataPath, FileRBMode, FileEncoding::Raw, false);
-         if (!reader.isOpen())
-            return;
-
-         char header[8];
-         reader.read(header, 8);
-         if (ustr_t(DEBUG_MODULE_SIGNATURE).compare(header, 5)) {
-            _provider.setDebugInfo(reader.getDWord(), INVALID_ADDR);
-
-            loadDebugSection(reader, starting);
+         if (DebugInfoProviderBase::loadDebugInfo(*_debuggee, &_provider, _process)) {
+            _sourceController->traceStart(_model);
          }
-         else _provider.setDebugInfoSize(4);
+         // otherwise continue
+         else {
+            _provider.setDebugInfoSize(4);
+            _process->setEvent(DEBUG_RESUME);
+         }
       }
    //   else if (strncmp(signature, ELENACLIENT_SIGNITURE, strlen(ELENACLIENT_SIGNITURE)) == 0) {
    //      reader.seek(_debugger.getBaseAddress());
@@ -654,22 +647,6 @@ void DebugController :: stop()
    if (_process->isStarted()) {
       _process->setEvent(DEBUG_CLOSE);
    }
-}
-
-void DebugController :: loadDebugSection(StreamReader& reader, bool starting)
-{
-   // if there are new records in debug section
-   if (!reader.eof()) {
-      _provider.load(reader, starting, _process);
-
-      _sourceController->traceStart(_model);
-
-      _provider.setDebugInfoSize(reader.position());
-
-      //loadSubjectInfo(reader);
-   }
-   // otherwise continue
-   else _process->setEvent(DEBUG_RESUME);
 }
 
 void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item, addr_t address, int level,

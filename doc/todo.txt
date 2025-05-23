@@ -50,8 +50,7 @@ In development:
   - linux elt - fix an error on startup
   - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   --------------------------------------
-  * move code to load source code into ldebugger
-  * load debug source info on start
+  * load debug source info on start, set breakpoint on the program entry point
   * step over source
   --------------------------------------
 

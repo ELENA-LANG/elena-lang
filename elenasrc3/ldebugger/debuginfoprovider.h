@@ -8,7 +8,8 @@
 #ifndef DEBUGINFOPROVIDE_H
 #define DEBUGINFOPROVIDE_H
 
-#include "ldebugger\ldbg_common.h"
+#include "engine/elenacommon.h"
+#include "ldebugger/ldbg_common.h"
 
 namespace elena_lang
 {
@@ -33,6 +34,27 @@ namespace elena_lang
       bool loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process);
 
    public:
+      static bool loadDebugInfo(path_t debuggee, DebugInfoProviderBase* provider, DebugProcessBase* process);
+
+      addr_t getEntryPoint()
+      {
+         return _entryPoint;
+      }
+
+      void setEntryPoint(addr_t address)
+      {
+         _entryPoint = address;
+      }
+      void setDebugInfoSize(pos_t size)
+      {
+         _debugInfoSize = size;
+      }
+      void setDebugInfo(pos_t size, addr_t debugInfoPtr)
+      {
+         _debugInfoSize = size;
+         _debugInfoPtr = debugInfoPtr;
+      }
+ 
       bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
 
       void clear()

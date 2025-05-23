@@ -159,9 +159,11 @@
   <ItemGroup>
     <ClInclude Include="..\elenacommon.h" />
     <ClInclude Include="..\module.h" />
+    <ClInclude Include="..\section.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\module.cpp" />
+    <ClCompile Include="..\section.cpp" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

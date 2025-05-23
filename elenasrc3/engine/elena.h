@@ -135,35 +135,6 @@ namespace elena_lang
 
    // --- Tuples ---
 
-   // --- ModuleBase ---
-   class ModuleBase
-   {
-   public:
-      virtual ustr_t name() const = 0;
-
-      virtual ustr_t resolveReference(ref_t reference) = 0;
-      virtual size_t resolveSignature(ref_t signature, ref_t* references) = 0;
-      virtual ustr_t resolveAction(ref_t reference, ref_t& signature) = 0;
-      virtual ustr_t resolveConstant(ref_t reference) = 0;
-
-      virtual ref_t mapReference(ustr_t referenceName) = 0;
-      virtual ref_t mapReference(ustr_t referenceName, bool existing) = 0;
-
-      virtual void mapPredefinedReference(ustr_t referenceName, ref_t reference) = 0;
-
-      virtual ref_t mapSignature(ref_t* references, size_t length, bool existing) = 0;
-      virtual ref_t mapAction(ustr_t actionName, ref_t signature, bool existing) = 0;
-      virtual ref_t mapConstant(ustr_t reference) = 0;
-
-      virtual MemoryBase* mapSection(ref_t reference, bool existing) = 0;
-
-      virtual void forEachReference(void* arg, void(*lambda)(ModuleBase*, ref_t, void*)) = 0;
-
-      virtual ~ModuleBase() = default;
-   };
-
-   typedef Map<ustr_t, ModuleBase*, allocUStr, freeUStr, freeobj> ModuleMap;
-
    // --- ImageProviderBase ---
    class ImageProviderBase
    {
