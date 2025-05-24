@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 6.8 ###
 
-  === Iteration 41 (25.5) ===
+  === Iteration 41 (8.6) ===
   --------------------------------------
   dev: 
   - #743
@@ -48,16 +48,15 @@ In development:
   - chat sample
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   - linux elt - fix an error on startup
-  - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
   --------------------------------------
-  * load debug source info on start, set breakpoint on the program entry point
-  * step over source
+  * test elt for i386
   --------------------------------------
 
   === Iteration 42 ===
   --------------------------------------
   dev: 
   - MTA support for Linux : support MT routines in elenart
+  - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
   gen:
   - script : support ++ operator
   - work on REPL (elt), generate project template
