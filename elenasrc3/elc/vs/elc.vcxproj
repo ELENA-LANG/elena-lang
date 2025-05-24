@@ -225,6 +225,7 @@
     <ClInclude Include="..\..\engine\codescope.h" />
     <ClInclude Include="..\..\engine\core.h" />
     <ClInclude Include="..\..\engine\elena.h" />
+    <ClInclude Include="..\..\engine\elenacommon.h" />
     <ClInclude Include="..\..\engine\elenaconst.h" />
     <ClInclude Include="..\..\engine\jitcompiler.h" />
     <ClInclude Include="..\..\engine\jitlinker.h" />

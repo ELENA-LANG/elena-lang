@@ -281,3 +281,59 @@ ModuleBase* DebugInfoProviderBase :: loadDebugModule(ustr_t reference)
    }
    return module;
 }
+
+void DebugInfoProviderBase :: defineModulePath(ustr_t name, PathString& path, path_t projectPath, path_t outputPath, path_t extension)
+{
+   path.copy(projectPath);
+   path.combine(outputPath);
+
+   ReferenceName::nameToPath(path, name);
+   path.appendExtension(extension);
+}
+
+
+DebugLineInfo* DebugInfoProviderBase :: seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath)
+{
+   ModuleBase* module = getDebugModule(lineInfoAddress);
+   if (module) {
+      moduleName.copy(module->name());
+
+      DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
+      while (current->symbol != DebugSymbol::Procedure)
+         current = &current[-1];
+
+      if (current->addresses.source.nameRef != INVALID_POS) {
+         MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
+
+         if (section != nullptr) {
+            sourcePath = (const char*)section->get(current->addresses.source.nameRef);
+
+            if (sourcePath.findLast('\'') != NOTFOUND_POS) {
+               size_t index = sourcePath.findLast('\'');
+               moduleName.copy(sourcePath, index);
+               sourcePath = sourcePath + index + 1;
+            }
+         }
+      }
+
+      return (DebugLineInfo*)lineInfoAddress;
+   }
+   else return nullptr;
+}
+
+ModuleBase* DebugInfoProviderBase :: getDebugModule(addr_t address)
+{
+   ModuleMap::Iterator it = _modules.start();
+   while (!it.eof()) {
+      MemoryBase* section = (*it)->mapSection(DEBUG_LINEINFO_ID, true);
+      if (section != nullptr) {
+         addr_t starting = (addr_t)section->get(0);
+         addr_t len = section->length();
+         if (starting <= address && (address - starting) < len) {
+            return *it;
+         }
+      }
+      ++it;
+   }
+   return nullptr;
+}
