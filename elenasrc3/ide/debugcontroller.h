@@ -40,11 +40,7 @@ namespace elena_lang
 
       void retrievePath(ustr_t name, PathString& path, path_t extension) override;
 
-      ModuleBase* getDebugModule(addr_t address);
-
    public:
-      static void defineModulePath(ustr_t name, PathString& path, path_t projectPath, path_t outputPath, path_t extension);
-
       addr_t getDebugInfoPtr()
       {
          return _debugInfoPtr;
@@ -60,11 +56,6 @@ namespace elena_lang
 
       addr_t findNearestAddress(ModuleBase* module, ustr_t path, int row);
 
-      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath);
-      DebugLineInfo* seekDebugLineInfo(size_t lineInfoAddress)
-      {
-         return (DebugLineInfo*)lineInfoAddress;
-      }
       DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
 
       DebugLineInfo* seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags);

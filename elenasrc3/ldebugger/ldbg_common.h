@@ -12,6 +12,8 @@ namespace elena_lang
 {
    constexpr auto DEBUG_IDENTIFIER_LEN = 0x0300;
 
+   typedef int threadid_t;
+
    // --- DebugProcessException ---
    struct DebugProcessException
    {

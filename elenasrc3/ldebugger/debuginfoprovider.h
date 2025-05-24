@@ -31,10 +31,25 @@ namespace elena_lang
 
       ModuleBase* loadDebugModule(ustr_t reference);
 
+      ModuleBase* getDebugModule(addr_t address);
+
       bool loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process);
 
    public:
       static bool loadDebugInfo(path_t debuggee, DebugInfoProviderBase* provider, DebugProcessBase* process);
+
+      static void defineModulePath(ustr_t name, PathString& path, path_t projectPath, path_t outputPath, path_t extension);
+
+      static bool isEqualOrSubSetNs(ustr_t package, ustr_t value)
+      {
+         return package.compare(value) || (value.compare(package, package.length()) && (value[package.length()] == '\''));
+      }
+
+      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath);
+      DebugLineInfo* seekDebugLineInfo(size_t lineInfoAddress)
+      {
+         return (DebugLineInfo*)lineInfoAddress;
+      }
 
       addr_t getEntryPoint()
       {

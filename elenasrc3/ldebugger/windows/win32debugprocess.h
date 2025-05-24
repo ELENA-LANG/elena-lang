@@ -147,7 +147,7 @@ namespace elena_lang
          bool retVal = _newThread;
          _newThread = false;
 
-         return _newThread;
+         return retVal;
       }
 
       addr_t getBaseAddress()
@@ -177,6 +177,11 @@ namespace elena_lang
       void setStepMode();
 
       void addStep(addr_t address, void* state);
+
+      threadid_t getThreadId()
+      {
+         return _current ? (threadid_t)_current->hThread : 0;
+      }
 
       void* getState()
       {

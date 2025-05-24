@@ -26,20 +26,6 @@ DebugSymbol operator & (const DebugSymbol& l, const DebugSymbol& r)
 
 // --- LibraryProvider ---
 
-inline bool isEqualOrSubSetNs(ustr_t package, ustr_t value)
-{
-   return package.compare(value) || (value.compare(package, package.length()) && (value[package.length()] == '\''));
-}
-
-void DebugInfoProvider :: defineModulePath(ustr_t name, PathString& path, path_t projectPath, path_t outputPath, path_t extension)
-{
-   path.copy(projectPath);
-   path.combine(outputPath);
-
-   ReferenceName::nameToPath(path, name);
-   path.appendExtension(extension);
-}
-
 void DebugInfoProvider :: retrievePath(ustr_t name, PathString& path, path_t extension)
 {
    ustr_t package = _model->getPackage();
@@ -117,23 +103,6 @@ addr_t DebugInfoProvider :: getClassAddress(ustr_t name)
    return address;
 }
 
-ModuleBase* DebugInfoProvider :: getDebugModule(addr_t address)
-{
-   ModuleMap::Iterator it = _modules.start();
-   while (!it.eof()) {
-      MemoryBase* section = (*it)->mapSection(DEBUG_LINEINFO_ID, true);
-      if (section != nullptr) {
-         addr_t starting = (addr_t)section->get(0);
-         addr_t len = section->length();
-         if (starting <= address && (address - starting) < len) {
-            return *it;
-         }
-      }
-      ++it;
-   }
-   return nullptr;
-}
-
 ModuleBase* DebugInfoProvider :: resolveModule(ustr_t ns)
 {
    ModuleMap::Iterator it = _modules.start();
@@ -188,35 +157,6 @@ addr_t DebugInfoProvider :: findNearestAddress(ModuleBase* module, ustr_t path, 
       }
    }
    return address;
-}
-
-DebugLineInfo* DebugInfoProvider :: seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath)
-{
-   ModuleBase* module = getDebugModule(lineInfoAddress);
-   if (module) {
-      moduleName.copy(module->name());
-
-      DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
-      while (current->symbol != DebugSymbol::Procedure)
-         current = &current[-1];
-
-      if (current->addresses.source.nameRef != INVALID_POS) {
-         MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
-
-         if (section != nullptr) {
-            sourcePath = (const char*)section->get(current->addresses.source.nameRef);
-
-            if (sourcePath.findLast('\'') != NOTFOUND_POS) {
-               size_t index = sourcePath.findLast('\'');
-               moduleName.copy(sourcePath, index);
-               sourcePath = sourcePath + index + 1;
-            }
-         }
-      }
-
-      return (DebugLineInfo*)lineInfoAddress;
-   }
-   else return nullptr;
 }
 
 DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOverMode)
