@@ -26,17 +26,10 @@ public:
 // default script mode
 void startInDefaultMode(VMSession& session)
 {
-   // !! temporal
-   printf("startInDefaultMode:session to start\n");
-
    session.start();
-
-   printf("startInDefaultMode: session started\n");
 
    session.loadScript(ELT_GRAMMAR_CONFIG);
    session.loadScript(ELT_LSCRIPT_CONFIG);
-
-   printf("startInDefaultMode: scripts loaded\n");
 }
 
 inline void loadTemplate(ELTPresenter& presenter, VMSession& session, TemplateType type, ustr_t name)

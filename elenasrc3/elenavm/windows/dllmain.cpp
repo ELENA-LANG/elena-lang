@@ -444,7 +444,7 @@ EXTERN_DLL_EXPORT void GetGCStatisticsLA(GCStatistics* statistics)
    machine->getGCStatistics(statistics);
 }
 
-EXTERN_DLL_EXPORT void ResetGCStatisticsLA(GCStatistics* statistics)
+EXTERN_DLL_EXPORT void ResetGCStatisticsLA()
 {
    SystemRoutineProvider::ResetGCStatistics();
 }

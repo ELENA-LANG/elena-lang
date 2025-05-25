@@ -33,6 +33,7 @@ extern "C"
    DLL_PUBLIC void InitializeSTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
    DLL_PUBLIC void InitializeMTLA(elena_lang::SystemEnv* env, elena_lang::SymbolList* entryList, void* criricalHandler);
    DLL_PUBLIC void* CollectGCLA(void* roots, size_t size);
+   DLL_PUBLIC void* CollectPermGCLA(size_t size);
    DLL_PUBLIC size_t LoadMessageNameLA(size_t message, char* buffer, size_t length);
    DLL_PUBLIC size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length);
    DLL_PUBLIC size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size_t length);
@@ -48,6 +49,23 @@ extern "C"
    DLL_PUBLIC int GetArgCLA();
    DLL_PUBLIC int GetArgLA(int index, char* buffer, int length);
    DLL_PUBLIC void ExitLA(int retVal);
+   DLL_PUBLIC void GetGCStatisticsLA(elena_lang::GCStatistics* statistics);
+   DLL_PUBLIC void ResetGCStatisticsLA();
+   DLL_PUBLIC int LoadExtensionDispatcherLA(const char* moduleList, elena_lang::mssg_t message, void* output);
+   DLL_PUBLIC size_t LoadActionNameLA(size_t message, char* buffer, size_t length);
+   DLL_PUBLIC elena_lang::addr_t LoadClassByBufferLA(void* referenceName, size_t index, size_t length);
+   DLL_PUBLIC elena_lang::mssg_t LoadActionLA(const char* actionName);
+   DLL_PUBLIC size_t LoadClassMessagesLA(void* classPtr, elena_lang::mssg_t* output, size_t skip, size_t maxLength);
+   DLL_PUBLIC bool CheckClassMessageLA(void* classPtr, elena_lang::mssg_t message);
+   DLL_PUBLIC void* CreateThreadLA(void* arg, void* threadProc, int stackSize, int flags);
+   DLL_PUBLIC void InitThreadLA(elena_lang::SystemEnv* env, void* criricalHandler, int index);
+   DLL_PUBLIC void StartThreadLA(elena_lang::SystemEnv* env, void* entryPoint, int index);
+   DLL_PUBLIC void UninitThreadLA(elena_lang::SystemEnv* env, int index);
+   DLL_PUBLIC void ExitThreadLA(int errCode);
+   DLL_PUBLIC void SignalStopGCLA(void* handle);
+   DLL_PUBLIC WaitForSignalGCLA(void* handle);
+   DLL_PUBLIC SignalClearGCLA(void* handle);
+   DLL_PUBLIC void WaitForSignalsGCLA(size_t count, void* handles);
 }
 
 #endif // ELENART_H_INCLUDED

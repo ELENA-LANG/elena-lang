@@ -86,8 +86,12 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
    return !r ? 0 : (uintptr_t)allocPtr;
 }
 
-void* SystemRoutineProvider::CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
+void* SystemRoutineProvider :: CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
 {
+   pthread_t th;
+   pthread_create(&th, nullptr, threadProc, tt_index);
+
+   return (void*)th;
 }
 
 void SystemRoutineProvider::ExitThread(int exitCode)
@@ -278,14 +282,28 @@ long long SystemRoutineProvider :: GenerateSeed()
 
 void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 {
+   // NOTE : the thread context is followed by cond variable for Unix / Linux / FreeBSD
+   pthread_cond_t* pcond = (pthread_cond_t*)((uintptr_t)env->th_table->slots[index].content + sizeof(ThreadContext));
+
+   ::pthread_cond_init(pcond, nullptr);
+
+   env->th_table->slots[index].content->tt_sync_event = (void*)pcond;
+   env->th_table->slots[index].content->tt_flags = 0;
 }
 
 void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
 {
+   pthread_cond_t* pcond = (pthread_cond_t*)env->th_table->slots[index].content->tt_sync_event;
+
+   pthread_cond_destroy(pcond);
+
+   env->th_table->slots[index].content->tt_sync_event = nullptr;
+   env->th_table->slots[index].content->tt_flags = 0;
 }
 
 void SystemRoutineProvider::GCSignalStop(void* handle)
 {
+   pthread_cond_broadcast((pthread_cond_t*)handle);
 }
 
 void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)

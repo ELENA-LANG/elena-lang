@@ -12,26 +12,20 @@ In development:
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
   - upndown (connector - cmdSearch)
   - #748 : i386
-  - #620 : backlog
   api:
   - api refactoring : main program entry to be called - Program
   - #622 : api backlog
-  - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
   ide:  
   - compile in the separate thread  
   - debugger : watch list is not refreshed correctly  (see for example xml); sometimes not all old elements are removed
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - async method - auto watch : self and some variables are not displayed
   maint:
-  - test all x86-64 examples
-  - review pi performance (must < 6) : realOp.power[3] byte code
   - nillable single dispatcher : use direct reference to nilValue symbol   
   - fix create release script - attach rpm file as well
   samples:
-  - optimization : pi (used classes byte code)
   - rosetta code : Program termination, Parallel calculations
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
-  - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   port:
   tools:
   - vs #2 : elena.tmLanguage.json  
@@ -42,15 +36,19 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - MTA support for Linux : test simple multithread sample
+  - MTA support for Linux : signals, thread prolog / epilog (system commands)
   - api : UIntNumber
-  - MTA support for Linux : support MT routines in elenart
   - support hashCode for records (redesign current ones as well)
   - chat sample
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
-  - linux elt - fix an error on startup
+  - #620 : backlog
   --------------------------------------
-  * start vm from elt
-  * test elt for i386
+  * nullable variable / field - should be boxed only when required, otherwise it is a normal variable / field
+  * warn if a variable / field can be nil (if the option is enabled)
+  * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
+  * new opcode : fpi - ppc64le, arm64
+  * new opcode : fsin / fcos - ppc64le
   --------------------------------------
 
   === Iteration 42 ===
@@ -58,14 +56,19 @@ In development:
   dev: 
   - MTA support for Linux : support MT routines in elenart
   - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
+  - #620 : backlog
   gen:
   - script : support ++ operator
   - work on REPL (elt), generate project template
   api:
+  - #35 : working on webapi
   ide:  
   maint:
+  - test all x86-64 examples
   samples:
+  - review pi performance (must < 6) : realOp.power[3] byte code
   port:
+  - linux elt - use rpath for linking elenavm
   - linux elt - migrate to amd64
   tools:
   prom:
@@ -74,6 +77,23 @@ In development:
   --------------------------------------
 
   === Iteration 43 ===
+  --------------------------------------
+  dev: 
+  gen:
+  api:
+  - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
+  ide:  
+  maint:
+  samples:
+  - optimization : pi (used classes byte code)
+  port:
+  tools:
+  prom:
+  --------------------------------------
+  --------------------------------------
+  --------------------------------------
+
+  === Iteration 44 ===
   --------------------------------------
   dev: 
   gen:

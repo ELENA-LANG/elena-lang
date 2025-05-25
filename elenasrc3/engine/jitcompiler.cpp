@@ -3101,6 +3101,13 @@ void JITCompiler :: allocateThreadContent(MemoryWriter* tlsWriter)
 
    // allocate tls section
    tlsWriter->write(&content, (pos_t)sizeof(ThreadContent));
+
+#if defined(__unix__)
+   // NOTE : the thread context is followed by cond variable for Unix / Linux / FreeBSD
+   pthread_cond_t cond = {};
+   tlsWriter->write(&cond, (pos_t)sizeof(pthread_cond_t));
+#endif
+
 }
 
 void JITCompiler :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
