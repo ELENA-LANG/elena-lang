@@ -37,7 +37,7 @@ void printLine(const char* msg, ...)
 void LinuxConsolePresenter :: readLine(char* buffer, size_t length)
 {
    DISABLE_WARNING_PUSH
-   DISABLE_WARNING_UNINITIALIZED_FIELD
+   DISABLE_WARNING_UNUSEDVARIABLE
 
    fgets(buffer, length, stdin);
 
