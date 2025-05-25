@@ -88,10 +88,10 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
 
 void* SystemRoutineProvider :: CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
 {
-   pthread_t th;
-   pthread_create(&th, nullptr, threadProc, tt_index);
+//   pthread_t th;
+//   pthread_create(&th, nullptr, threadProc, tt_index);
 
-   return (void*)th;
+//   return (void*)th;
 }
 
 void SystemRoutineProvider::ExitThread(int exitCode)
