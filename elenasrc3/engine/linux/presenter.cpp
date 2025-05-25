@@ -39,7 +39,7 @@ void LinuxConsolePresenter :: readLine(char* buffer, size_t length)
    DISABLE_WARNING_PUSH
    DISABLE_WARNING_UNUSEDVARIABLE
 
-   fgets(buffer, length, stdin);
+   auto idle = fgets(buffer, length, stdin);
 
    DISABLE_WARNING_POP
 }
