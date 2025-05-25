@@ -13589,7 +13589,7 @@ ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
       if (finallyNode.existChild(SyntaxKey::ClosureBlock))
          finallyNode = finallyNode.findChild(SyntaxKey::ClosureBlock);
 
-      int prevAllocated1, prevAllocated2;
+      int prevAllocated1 = 0, prevAllocated2 = 0;
       scope.commitTempStack(prevAllocated1, prevAllocated2); // HOTFIX : to prevent overwritting temporal variables
 
       writer->newNode(BuildKey::Tape);
