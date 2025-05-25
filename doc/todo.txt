@@ -49,6 +49,7 @@ In development:
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   - linux elt - fix an error on startup
   --------------------------------------
+  * start vm from elt
   * test elt for i386
   --------------------------------------
 
@@ -65,6 +66,7 @@ In development:
   maint:
   samples:
   port:
+  - linux elt - migrate to amd64
   tools:
   prom:
   --------------------------------------
