@@ -83,6 +83,16 @@ else
   exit 1
 fi
 
+../../bin/asm-cli -linux -x86 ../../asm/x32/core60_client.asm ../../bin/x32  core60_lnx_client.bin
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 # echo compiling lib60 files
 
  ../../bin/asm-cli -bc32 ../../src60/core/system.core_routines.esm ../../lib60
