@@ -63,8 +63,8 @@ extern "C"
    DLL_PUBLIC void UninitThreadLA(elena_lang::SystemEnv* env, int index);
    DLL_PUBLIC void ExitThreadLA(int errCode);
    DLL_PUBLIC void SignalStopGCLA(void* handle);
-   DLL_PUBLIC WaitForSignalGCLA(void* handle);
-   DLL_PUBLIC SignalClearGCLA(void* handle);
+   DLL_PUBLIC void WaitForSignalGCLA(void* handle);
+   DLL_PUBLIC void SignalClearGCLA(void* handle);
    DLL_PUBLIC void WaitForSignalsGCLA(size_t count, void* handles);
 }
 
