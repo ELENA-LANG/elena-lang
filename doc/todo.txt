@@ -41,6 +41,7 @@ In development:
   - api : UIntNumber
   - support hashCode for records (redesign current ones as well)
   - chat sample
+  - amd64 refactore : merge core60_win.asm & core60_lnx.asm and corex60.asm & corex60_win.asm 
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   - #620 : backlog
   --------------------------------------
