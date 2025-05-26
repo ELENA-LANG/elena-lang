@@ -400,13 +400,14 @@ namespace elena_lang
    constexpr auto wrnCallingItself           = 410;
    constexpr auto wrnAssigningNillable       = 411;
    constexpr auto wrnReturningNillable       = 412;
-   constexpr auto wrnUnknownModule           = 413;
+   constexpr auto wrnNillableTarget          = 413;
    constexpr auto wrnTypeInherited           = 420;
    constexpr auto wrnDuplicateInclude        = 425;
    constexpr auto wrnUnknownTypecast         = 426;
    constexpr auto wrnUnsupportedOperator     = 427;
    constexpr auto wrnUnassignedVariable      = 428;
    constexpr auto wrnLessAccessible          = 429;
+   constexpr auto wrnUnknownModule           = 430;
 
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;

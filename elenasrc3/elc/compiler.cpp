@@ -12267,22 +12267,22 @@ Compiler::Code::Code(Method& method)
 // --- Compiler::Expression ---
 
 Compiler::Expression::Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer)
-   : CommonHelper(compiler), scope(&codeScope), writer(&writer)
+   : CommonHelper(compiler), scope(&codeScope), writer(&writer), branchVerification(nullptr)
 {
 }
 
 Compiler::Expression::Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer)
-   : CommonHelper(compiler), scope(&symbolScope), writer(&writer)
+   : CommonHelper(compiler), scope(&symbolScope), writer(&writer), branchVerification(nullptr)
 {
 }
 
 Compiler::Expression::Expression(Symbol& symbol, BuildTreeWriter& writer)
-   : CommonHelper(symbol.compiler), scope(&symbol.scope), writer(&writer)
+   : CommonHelper(symbol.compiler), scope(&symbol.scope), writer(&writer), branchVerification(nullptr)
 {
 }
 
 Compiler::Expression::Expression(Code& code, BuildTreeWriter& writer)
-   : CommonHelper(code.compiler), scope(&code.scope), writer(&writer)
+   : CommonHelper(code.compiler), scope(&code.scope), writer(&writer), branchVerification(nullptr)
 {
 }
 
@@ -13497,8 +13497,17 @@ ObjectInfo Compiler::Expression::compileIndexerOperation(SyntaxNode node, int op
    return compileOperation(node, operatorId, expectedRef, EAttr::None);
 }
 
-ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, int operatorId, bool retValExpected, bool withoutDebugInfo)
+inline void copyVerifications(Compiler::VerifiedMap& dest, Compiler::VerifiedMap& sour)
 {
+   for (auto it = sour.start(); !it.eof(); ++it) {
+      dest.add(*it);
+   }
+}
+
+ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, int operatorId, bool retValExpected, bool withoutDebugInfo)
+{
+   BranchVerification* oldVerification = branchVerification;
+
    SyntaxNode lnode = node.firstChild();
    SyntaxNode rnode = /*skipNestedExpression(*/lnode.nextNode()/*)*/;
    SyntaxNode r2node = {};
@@ -13506,6 +13515,12 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, int 
       r2node = rnode.nextNode();
 
    ArgumentsInfo updatedOuterArgs;
+   BranchVerification verificationArg;
+   branchVerification = &verificationArg;
+   if (oldVerification) {
+      copyVerifications(verificationArg.trueOnes, *oldVerification->forTrueBranch());
+      copyVerifications(verificationArg.notTrueOnes, *oldVerification->forFalseBranch());
+   }
 
    ObjectInfo loperand = compile(lnode, 0, EAttr::Parameter, &updatedOuterArgs);
 
@@ -13517,6 +13532,8 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, int 
 
    auto retVal = compileBranchingOperation(node, loperand, rnode, r2node, operatorId, &updatedOuterArgs,
       retValExpected, withoutDebugInfo);
+
+   branchVerification = oldVerification;
 
    if (!withoutDebugInfo)
       writer->appendNode(BuildKey::OpenStatement); // HOTFIX : to match the closing statement
@@ -13860,7 +13877,7 @@ inline CodeFlowMode defineTryMode(SyntaxNode node)
    return CodeFlowMode::Normal;
 }
 
-ObjectInfo Compiler::Expression::compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope)
+ObjectInfo Compiler::Expression :: compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope, VerifiedMap* verified)
 {
    bool retValExpected = EAttrs::testAndExclude(mode, EAttr::RetValExpected);
    bool withoutDebugInfo = EAttrs::testAndExclude(mode, EAttr::NoDebugInfo);
@@ -13872,6 +13889,9 @@ ObjectInfo Compiler::Expression::compileSubCode(SyntaxNode node, ExpressionAttri
    ObjectInfo retVal = {};
    if (!withoutNewScope || tryMode) {
       CodeScope codeScope(parentCodeScope);
+      if (verified)
+         copyVerifications(codeScope.verifiedObjects, *verified);
+
       if (tryMode) {
          codeScope.flowMode = defineTryMode(node);
       }
@@ -14925,6 +14945,23 @@ void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_
    }
 }
 
+void Compiler::Expression :: handleNillableMessageCall(SyntaxNode node, mssg_t message, ObjectInfo target)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+   if (codeScope && codeScope->verifiedObjects.exist(target)) {
+      // validate if the target was checked as not nil - no need to warn
+      return;
+   }
+
+   if (compiler->_verbose) {
+      ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
+
+      showContextInfo(message, targetRef);
+   }
+
+   scope.raiseWarning(WARNING_LEVEL_1, wrnNillableTarget, node);
+}
+
 ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
    ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs)
 {
@@ -15013,6 +15050,11 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
 
       // treat it as a weak reference
       targetRef = 0;
+   }
+
+   if (target.typeInfo.nillable) {
+      // warn if the target is nullable
+      handleNillableMessageCall(node, resolution.message, target);
    }
 
    if (target.kind == ObjectKind::SuperLocal) {
@@ -15719,6 +15761,9 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
    if (op != BuildKey::None) {
       writeObjectInfo(loperand);
 
+      if (branchVerification && operatorId == ELSE_OPERATOR_ID)
+         branchVerification->inverted = true;
+
       writer->newNode(op, operatorId);
       writer->appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
 
@@ -15797,7 +15842,7 @@ ObjectInfo Compiler::Expression::compileBranchingOperands(SyntaxNode rnode, Synt
 
       codeScope->withRetStatement = false;
 
-      subRetCode = compileSubCode(rnode.firstChild(), mode);
+      subRetCode = compileSubCode(rnode.firstChild(), mode, false, branchVerification ? branchVerification->forTrueBranch() : nullptr);
    }
    else subRetCode = compile(rnode, 0, mode, nullptr);
 
@@ -15818,7 +15863,7 @@ ObjectInfo Compiler::Expression::compileBranchingOperands(SyntaxNode rnode, Synt
          if (withoutDebugInfo)
             mode = mode | EAttr::NoDebugInfo;
 
-         elseSubRetCode = compileSubCode(r2node.firstChild(), mode);
+         elseSubRetCode = compileSubCode(r2node.firstChild(), mode, false, branchVerification ? branchVerification->forFalseBranch() : nullptr);
 
          if (!withRet || !codeScope->withRetStatement) {
             codeScope->withRetStatement = oldWithRet;
@@ -16027,7 +16072,7 @@ ObjectInfo Compiler::Expression::compileNested(InlineClassScope& classScope, EAt
    }
 }
 
-ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, ArgumentsInfo& messageArguments,
+ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsInfo& messageArguments,
    int operatorId, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs)
 {
    if (messageArguments.count() > 1 && messageArguments[1].kind == ObjectKind::IntLiteral) {
@@ -16138,6 +16183,13 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, ArgumentsInfo
       retVal = unboxArguments(retVal, updatedOuterArgs);
 
       scope.reserveArgs(argLen);
+
+      if (op == BuildKey::NilCondOp && branchVerification) {
+         if (operatorId == EQUAL_OPERATOR_ID) {
+            branchVerification->notTrueOnes.add(loperand);
+         }
+         else branchVerification->trueOnes.add(loperand);
+      }
    }
    else {
       mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);

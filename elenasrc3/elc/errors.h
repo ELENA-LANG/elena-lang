@@ -15,7 +15,7 @@
 namespace elena_lang
 {
    constexpr auto errMsgInvalidSyntax           = "\n%s(%d:%d): error 004: Invalid syntax near '%s'\n";
-   constexpr auto errMssgCBrExpectedSyntax      = "\n%s(%d:%d): error 009: '}' expected\n";
+   constexpr auto errMsgCBrExpectedSyntax       = "\n%s(%d:%d): error 009: '}' expected\n";
 
    constexpr auto errMsgDuplicatedSymbol        = "\n%s(%d:%d): error 102: Class '%s' already exists\n";
    constexpr auto errMsgDuplicatedMethod        = "\n%s(%d:%d): error 103: Method '%s' already exists in the class\n";
@@ -90,15 +90,17 @@ namespace elena_lang
    constexpr auto wrnMsgUnknownFunction      = "\n%s(%d:%d): warning 408: Function message does not handled by the object '%s'\n";
    constexpr auto wrnMsgUnknownDefConstructor= "\n%s(%d:%d): warning 409: Explicit constructor is not defined in the object\n";
    constexpr auto wrnMsgCallingItself        = "\n%s(%d:%d): warning 410: Calling itself can lead to short-circuiting\n";
-   constexpr auto wrnMssgAssigningNillable   = "\n%s(%d:%d): warning 411: Assinging nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
-   constexpr auto wrnMssgReturningNillable   = "\n%s(%d:%d): warning 412: Returning nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
-   constexpr auto wrnMsgUnknownModule        = "\n%s(%d:%d): warning 413: Unknown module '%s'\n";
+   constexpr auto wrnMsgAssigningNillable    = "\n%s(%d:%d): warning 411: Assinging nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
+   constexpr auto wrnMsgReturningNillable    = "\n%s(%d:%d): warning 412: Returning nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
+   constexpr auto wrnMsgNillableTarget       = "\n%s(%d:%d): warning 413: Sending a message to a nillable object can lead to nil reference exception.\nPlease use nil-coalescing operators or check if the value is not nil\n";
+
    constexpr auto wrnMsgTypeInherited        = "\n%s(%d:%d): warning 420: Type attribute is inherited\n";
    constexpr auto wrnMsgDuplicateInclude     = "\n%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
    constexpr auto wrnMsgUnknownTypecast      = "\n%s(%d:%d): warning 426: typecasting routine cannot be found\n";
    constexpr auto wrnMsgUnsupportedOperator  = "\n%s(%d:%d): warning 427: operator handler is not defined for %s\n";
    constexpr auto wrnMsgUnassignedVariable   = "\n%s(%d:%d): warning 428: an unassigned variable - '%s'\n";
    constexpr auto wrnMsgLessAccessible       = "\n%s(%d:%d): warning 429: the returning type is less accessible than '%s'\n";
+   constexpr auto wrnMsgUnknownModule = "\n%s(%d:%d): warning 430: Unknown module '%s'\n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "\nwarning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "\nwarning 501: invalid or unknown config file %s\n";

@@ -3138,6 +3138,20 @@ namespace elena_lang
          else return _allocated[index - cacheSize];
       }
 
+      bool exist(T& item)
+      {
+         for (size_t i = 0; i < _length; i++) {
+            if (i < cacheSize && _cached[i] == item) {
+               return true;
+            }
+            else if (i >= cacheSize && _allocated[i - cacheSize] == item) {
+               return true;
+            }
+         }
+
+         return false;
+      }
+
       void add(T item)
       {
          if (_length < cacheSize) {

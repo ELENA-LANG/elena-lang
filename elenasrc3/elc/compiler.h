@@ -928,20 +928,40 @@ namespace elena_lang
          MethodScope(SourceScope* classScope);
       };
 
-      typedef Map<int, SyntaxNode> NodeMap;
+      typedef Map<int, SyntaxNode>        NodeMap;
+      typedef CachedList<ObjectInfo, 3>   VerifiedMap;
+
+      struct BranchVerification
+      {
+         bool        inverted = false;
+         VerifiedMap notTrueOnes;
+         VerifiedMap trueOnes;
+
+         VerifiedMap* forTrueBranch()
+         {
+            return inverted ? &notTrueOnes : &trueOnes;
+         }
+
+         VerifiedMap* forFalseBranch()
+         {
+            return inverted ? &trueOnes : &notTrueOnes;
+         }
+      };
 
       struct CodeScope : Scope
       {
          // scope local variables
-         LocalMap locals;
-         NodeMap  localNodes;
+         LocalMap       locals;
+         NodeMap        localNodes;
 
-         pos_t    allocated1, reserved1;       // defines managed frame size
-         pos_t    allocated2, reserved2;       // defines unmanaged frame size
+         VerifiedMap    verifiedObjects;
 
-         bool     withRetStatement;
+         pos_t          allocated1, reserved1;       // defines managed frame size
+         pos_t          allocated2, reserved2;       // defines unmanaged frame size
 
-         CodeFlowMode flowMode;
+         bool           withRetStatement;
+
+         CodeFlowMode   flowMode;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -1438,8 +1458,10 @@ namespace elena_lang
             VariadicArgListWithTypecasting = 2,
          };
 
-         ExprScope         scope;
-         BuildTreeWriter*  writer;
+         ExprScope            scope;
+         BuildTreeWriter*     writer;
+
+         BranchVerification*  branchVerification;
 
          bool isDirectMethodCall(SyntaxNode& node);
 
@@ -1502,6 +1524,7 @@ namespace elena_lang
             bool withoutBoxing, bool nillable, bool directConversion);
 
          void handleUnsupportedMessageCall(SyntaxNode node, mssg_t message, ref_t targetRef, bool weakTarget, bool strongResolved);
+         void handleNillableMessageCall(SyntaxNode node, mssg_t message, ObjectInfo target);
 
          ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
             ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);
@@ -1593,7 +1616,7 @@ namespace elena_lang
          ObjectInfo compileClosureOperation(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileInterpolation(SyntaxNode node);
 
-         ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false);
+         ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false, VerifiedMap* verified = nullptr);
 
          Expression(Symbol& symbol, BuildTreeWriter& writer);
          Expression(Code& code, BuildTreeWriter& writer);

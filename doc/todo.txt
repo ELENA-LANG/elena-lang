@@ -36,6 +36,7 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - IDE : output window - add a context menu to copy the output content to the clipboard
   - MTA support for Linux : test simple multithread sample
   - MTA support for Linux : signals, thread prolog / epilog (system commands)
   - api : UIntNumber
@@ -47,9 +48,10 @@ In development:
   --------------------------------------
   - #562 : nullable
   --------------------------------------
-  * el7 : ? only for expression with a single identifier
-  * nullable variable - should be boxed only when required, otherwise it is a normal variable
-  * nullable field - should be boxed only when required, otherwise it is a normal field
+  * uncomment regex.l 
+  * skip warning if the variable was checked as not nullable
+  * syntax to enforce not nullable (-> a!)
+  * warn if nullable argument is passed to the method, not supporting nullable
   * boxing to Nullable?
   * support nullable reference (when option is on, warning on unsafe operation)
   * nullable : int? == int? -> return bool?
@@ -57,9 +59,8 @@ In development:
   * nillable argument list
   * Nullable.ValueOrDefault to returen value or default value
   * nullable closure argument
-  * syntax to enforce not nullable
-  * warn if nullable argument is passed to the method, not supporting nullable
   * quick review previous rosetta code samples
+  * an option to treat weak types as nullable
   --------------------------------------
   * warn if a variable / field can be nil (if the option is enabled)
   * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
