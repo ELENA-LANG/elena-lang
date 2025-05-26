@@ -45,7 +45,22 @@ In development:
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   - #620 : backlog
   --------------------------------------
-  * nullable variable / field - should be boxed only when required, otherwise it is a normal variable / field
+  - #562 : nullable
+  --------------------------------------
+  * el7 : ? only for expression with a single identifier
+  * nullable variable - should be boxed only when required, otherwise it is a normal variable
+  * nullable field - should be boxed only when required, otherwise it is a normal field
+  * boxing to Nullable?
+  * support nullable reference (when option is on, warning on unsafe operation)
+  * nullable : int? == int? -> return bool?
+  * nullable : int? + int? -> return int? (if both nil -> the result is nil)
+  * nillable argument list
+  * Nullable.ValueOrDefault to returen value or default value
+  * nullable closure argument
+  * syntax to enforce not nullable
+  * warn if nullable argument is passed to the method, not supporting nullable
+  * quick review previous rosetta code samples
+  --------------------------------------
   * warn if a variable / field can be nil (if the option is enabled)
   * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
   * new opcode : fpi - ppc64le, arm64

@@ -502,7 +502,8 @@ EXPRESSION ::=
 		| EI_OP
 		| I_OP
 		| I5_OP
-		| VI_OP
+		| I8_OP
+		| VI_NO_IF_OP
 		| "{" NESTED_EXPRESSION ^NESTED L3_F
 		| "=" ^OBJECT SINGLE_EXPRESSION ^KEY_VALUE_EXPRESSION
 		| eps ^OBJECT
@@ -597,12 +598,16 @@ LX3_R6 ::=
 	| eps ^= PROPERTY_OPERATION;
 
 // ; extening I_OP
-VI_OP ::=
+VI_NO_IF_OP ::=
 	{ DYNAMIC_DIMENSION ^ARRAY_TYPE }+ {
 		identifier ^OBJECT ASSIGN ASSIGN_R
 		| BRACKET ^OBJECT FUNCTION_R L3_F
 		| "{" ^OBJECT COLLECTION? "}" ^ COLLECTION_EXPRESSION L3_F
 	};
+
+VI_OP ::=
+	VI_NO_IF_OP
+	| "?" ^NULLABLE_TYPE identifier ^OBJECT { ASSIGN ASSIGN_R }?;
 
 // ; extening I_OP
 EI_OP ::=
@@ -632,6 +637,9 @@ I5_OP ::=
 	}
 	| I5_OP_MINUS_LESS;
 
+I8_OP ::=	
+	IF ^OBJECT SINGLE_EXPRESSION ":" SINGLE_EXPRESSION ^IF_ELSE_OPERATION;
+
 I_OP ::=
 	SBRACKET ^OBJECT INDEXER_R { INLINE_F | L0_F }
 	| "::" ^OBJECT EXT_R L3_F
@@ -658,7 +666,6 @@ I_OP ::=
 	| AND ^OBJECT L7_EXPRESSION ^AND_OPERATION L7_F
 	| OR ^OBJECT  L7_EXPRESSION ^OR_OPERATION L7_F
 	| XOR ^OBJECT L7_EXPRESSION ^XOR_OPERATION L7_F
-	| IF ^OBJECT SINGLE_EXPRESSION ":" SINGLE_EXPRESSION ^IF_ELSE_OPERATION
 	| ALT ^OBJECT ALT_R
 	| TRY ^OBJECT TRY_R
 	| FNL ^OBJECT FNL_R
@@ -847,6 +854,7 @@ L4_EXPRESSION ::=
 			| eps ^OBJECT
 		}
 		| I_OP4
+		| I8_OP
 		| eps ^OBJECT
 	}
 	| { reference | global } ^OBJECT
@@ -885,6 +893,7 @@ L5_EXPRESSION ::=
 			| eps ^OBJECT
 		}
 		| I_OP5
+		| I8_OP
 		| eps ^OBJECT
 	}
 	| { reference | global } ^OBJECT
@@ -941,6 +950,7 @@ L6_EXPRESSION ::=
 			| eps ^OBJECT
 		}
 		| I_OP6
+		| I8_OP
 		| eps ^OBJECT
 	}
 	| { reference | global } ^OBJECT
@@ -1007,6 +1017,7 @@ L7_EXPRESSION ::=
 			| eps ^OBJECT
 		}
 		| I_OP7
+		| I8_OP
 		| eps ^OBJECT
 	}
 	| { reference | global } ^OBJECT
