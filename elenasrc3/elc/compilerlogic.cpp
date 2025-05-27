@@ -1149,6 +1149,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_GETACCESSOR:
          attrs |= ExpressionAttribute::GetterMode;
          return true;
+      case V_SHORTCUT:
+         attrs |= ExpressionAttribute::ShortcutMode;
+         return true;
       default:
          return false;
    }

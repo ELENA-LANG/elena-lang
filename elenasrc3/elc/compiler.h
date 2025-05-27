@@ -104,6 +104,7 @@ namespace elena_lang
       ProjectInfo,
       ProjectVariable,
       ExternalVar,
+      Shortcut,
    };
 
    enum TargetMode
@@ -298,7 +299,7 @@ namespace elena_lang
    typedef Map<ObjectKey, ObjectTrackingInfo>                                                ObjectTrackingMap;
    typedef CachedList<TypeInfo, 4>                                                           TemplateTypeList;
 
-   typedef Map < ustr_t, ObjectInfo, allocUStr, freeUStr>                                    ShortcutMap;
+   typedef Map<ustr_t, ObjectInfo, allocUStr, freeUStr>                                      ShortcutMap;
 
    struct Parameter
    {
@@ -458,6 +459,14 @@ namespace elena_lang
          {
             if (parent) {
                return parent->mapIdentifier(identifier, referenceOne, attr);
+            }
+            else return {};
+         }
+
+         virtual ObjectInfo newShortcut(ustr_t identifier)
+         {
+            if (parent) {
+               return parent->newShortcut(identifier);
             }
             else return {};
          }
@@ -953,6 +962,7 @@ namespace elena_lang
          // scope local variables
          LocalMap       locals;
          NodeMap        localNodes;
+         ShortcutMap    shortcuts;
 
          VerifiedMap    verifiedObjects;
 
@@ -1058,6 +1068,35 @@ namespace elena_lang
          void mapNewLocal(ustr_t local, int level, TypeInfo typeInfo, int size, bool unassigned)
          {
             locals.add(local, Parameter(level, typeInfo, size, unassigned));
+         }
+
+         ObjectInfo newShortcut(ustr_t identifier) override
+         {
+            // return unknown result if there are locals / shortcuts with the same name in the same scope
+            if (shortcuts.exist(identifier) || locals.exist(identifier))
+               return {};
+
+            pos_t index = shortcuts.count();
+
+            shortcuts.add(identifier, {});
+
+            return { ObjectKind::Shortcut, index };
+         }
+
+         void mapShortcut(int index, ObjectInfo info)
+         {
+            assert(index >= 0);
+
+            for (auto it = shortcuts.start(); !it.eof(); ++it) {
+               if (!index) {
+                  (*it) = info;
+
+                  break;
+               }
+               index--;
+            }
+
+            assert(index == 0);
          }
 
          bool checkFlowMode(CodeFlowMode mode) override

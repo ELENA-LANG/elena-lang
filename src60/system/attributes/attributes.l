@@ -71,6 +71,7 @@
 #let attributes["weak"]        := 80001029h;
 #let attributes["packed"]      := 8000102Ch;
 #let attributes["__threadvar"] := 8000102Dh;
+#let attributes["__intermediate"] := 8000102Eh;
 
 /// primitive types
 #let attributes["__string"]    := 80000801h;

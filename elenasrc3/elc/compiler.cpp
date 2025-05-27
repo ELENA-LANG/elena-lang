@@ -1636,7 +1636,7 @@ void Compiler::MethodScope::markAsAssigned(ObjectInfo object)
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope::CodeScope(MethodScope* parent)
-   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal)
+   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal), shortcuts({})
 {
    allocated1 = reserved1 = 0;
    allocated2 = reserved2 = 0;
@@ -1644,7 +1644,7 @@ Compiler::CodeScope::CodeScope(MethodScope* parent)
 }
 
 Compiler::CodeScope::CodeScope(CodeScope* parent)
-   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal)
+   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal), shortcuts({})
 {
    reserved1 = allocated1 = parent->allocated1;
    reserved2 = allocated2 = parent->allocated2;
@@ -1652,7 +1652,7 @@ Compiler::CodeScope::CodeScope(CodeScope* parent)
 }
 
 Compiler::CodeScope::CodeScope(SymbolScope* parent)
-   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal)
+   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal), shortcuts({})
 {
    allocated1 = reserved1 = 0;
    allocated2 = reserved2 = 0;
@@ -1686,6 +1686,10 @@ ObjectInfo Compiler::CodeScope::mapIdentifier(ustr_t identifier, bool referenceO
    if (info.kind != ObjectKind::Unknown || EAttrs::test(attr, ExpressionAttribute::Local)) {
       return info;
    }
+
+   info = shortcuts.get(identifier);
+   if (info.kind != ObjectKind::Unknown)
+      return info;
 
    return Scope::mapIdentifier(identifier, referenceOne, attr);
 }
@@ -7759,6 +7763,7 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
    bool newOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::NewOp);
    bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
+   bool shortcutMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ShortcutMode);
 
    TerminalAttributes attributeMap = {
       EAttrs::testAndExclude(attrs, ExpressionAttribute::NewVariable),
@@ -7821,6 +7826,11 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
    }
    else if (node == SyntaxKey::Type && attributeMap.variableMode) {
       return { ObjectKind::Class, {}, declaredTypeInfo.typeRef };
+   }
+   else if (shortcutMode) {
+      retVal = scope.newShortcut(node.identifier());
+      if (retVal.kind == ObjectKind::Unknown)
+         scope.raiseError(errDuplicatedDefinition, node);
    }
    else retVal = defineTerminalInfo(scope, node, declaredTypeInfo, attributeMap, invalid, attrs);
 
@@ -15202,6 +15212,24 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
       else scope.raiseError(errInvalidOperation, roperand.parentNode());
    }
    else exprVal = compile(roperand, targetRef, EAttr::RetValExpected, nullptr);
+
+   if (target.kind == ObjectKind::Shortcut) {
+      CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+      assert(codeScope != nullptr);
+
+      if (!isSingleObject(exprVal.kind)) {
+         ObjectInfo tempLocal = declareTempLocal(compiler->resolveStrongType(scope, exprVal.typeInfo));
+
+         codeScope->mapShortcut(target.reference, tempLocal);
+
+         target = tempLocal;
+      }
+      else {
+         codeScope->mapShortcut(target.reference, exprVal);
+
+         return exprVal;
+      }
+   }
 
    bool nillableOp = false;
    if (!compileAssigningOp(target, exprVal, nillableOp)) {
