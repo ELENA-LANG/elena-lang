@@ -193,7 +193,7 @@ public template extern(body) : __included(statements)
 
 public template using<expr>(block) : __included(statements)
 {
-   auto v := expr;
+   __intermediate v := expr;
     
    block $fnl (v.close());
 }
@@ -202,7 +202,7 @@ public template using<expr>(block) : __included(statements)
 
 public template lock<expr>(block) : __included(statements)
 {
-   auto v := expr;
+   __intermediate v := expr;
 
    v.enterCriticalSection();
     

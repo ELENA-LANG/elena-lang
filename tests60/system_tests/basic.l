@@ -2593,3 +2593,37 @@ public recordTest() : testCase()
 
    Console.write(".");
 }
+
+// --- usingTest --
+
+class UsingScope
+{
+   bool isInitialized;
+   
+   bool checkStatus()
+      = isInitialized;
+   
+   constructor()
+   {
+      isInitialized := true;
+   }
+   
+   close()
+   {
+      isInitialized := false
+   }   
+}
+
+public usingTest() : testCase()
+{
+   var scope := new UsingScope();
+   
+   using(var scopeVar := scope)
+   {
+      Assert.ifTrue(scopeVar.checkStatus);
+   };
+   
+   Assert.ifFalse(scopeVar.checkStatus);
+   
+   Console.write(".");
+}
