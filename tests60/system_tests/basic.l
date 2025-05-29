@@ -2600,7 +2600,7 @@ class UsingScope
 {
    bool isInitialized;
    
-   bool checkStatus()
+   bool checkStatus
       = isInitialized;
    
    constructor()
@@ -2623,7 +2623,7 @@ public usingTest() : testCase()
       Assert.ifTrue(scopeVar.checkStatus);
    };
    
-   Assert.ifFalse(scopeVar.checkStatus);
+   Assert.ifFalse(scope.checkStatus);
    
    Console.write(".");
 }

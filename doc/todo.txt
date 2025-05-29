@@ -50,12 +50,6 @@ In development:
   --------------------------------------
   - redesign "?.", "!."  and "\." operator
   --------------------------------------
-  - introduce __intermediate
-  --------------------------------------
-  * using : use __intermediate
-  * lock : use __intermediate
-  * using functional test
-  --------------------------------------
   * implement as built-in operations
   * refactor generateTemplateOperation
   * get rid of templates
