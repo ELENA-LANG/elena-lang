@@ -28,20 +28,15 @@ import extensions;
 A
 {
    testMe()
-   {
-      Console.writeLine("Fired!") 
-   }
+      = "Fired!";
 }
 
 public program()
 {
-   A? a := nil;
+   A a := new A();
 
-   Console.write("a:");
-   a?.testMe();
-   
-   A? a2 := new A();
-
-   Console.write("a2:");
-   a2?.testMe();   
+   var r1 := a\.testMe();
+   Console.writeLine(r1);
+   var r2 := a\.testMe2();
+   Console.writeLine(r2);
 }

@@ -1518,6 +1518,7 @@ namespace elena_lang
          ObjectInfo compileMessageOperation(SyntaxNode node, ref_t targetRef, ExpressionAttribute attrs);
          ObjectInfo compilePropertyOperation(SyntaxNode node, ref_t targetRef, ExpressionAttribute attrs);
          ObjectInfo compileNillableMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
+         ObjectInfo compileAltMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
 
          ObjectInfo compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode);
          ObjectInfo compileEvalOnlySpecialOperation(SyntaxNode node);

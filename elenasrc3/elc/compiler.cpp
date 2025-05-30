@@ -12498,6 +12498,9 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
       case SyntaxKey::NilMessageOperation:
          retVal = compileNillableMessageOperation(current, targetRef, mode);
          break;
+      case SyntaxKey::AltMessageOperation:
+         retVal = compileAltMessageOperation(current, targetRef, mode);
+         break;
       case SyntaxKey::AssignOperation:
       case SyntaxKey::AddOperation:
       case SyntaxKey::SubOperation:
@@ -12990,6 +12993,44 @@ bool Compiler::Expression::isDirectMethodCall(SyntaxNode& node)
       }
    }
    return false;
+}
+
+ObjectInfo Compiler::Expression :: compileAltMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs)
+{
+   ArgumentsInfo updatedOuterArgs;
+
+   ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
+
+   SyntaxNode current = node.firstChild();
+   bool propMode = current.key == SyntaxKey::PropertyOperation;
+   current = current.firstChild();
+
+   ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   if (!isSingleObject(source.kind)) {
+      bool dummy = false;
+      ObjectInfo tempLocal = declareTempLocal(compiler->resolveStrongType(scope, source.typeInfo));
+      compileAssigningOp(tempLocal, source, dummy);
+
+      source = tempLocal;
+   }
+
+   current = current.nextNode();
+
+   writer->newNode(BuildKey::AltOp, ehLocal.argument);
+
+   writer->newNode(BuildKey::Tape);
+   compileMessageOperationR(source, current, propMode);
+   writer->closeNode();
+
+   writer->newNode(BuildKey::Tape);
+
+   writeObjectInfo(source);
+
+   writer->closeNode();
+
+   writer->closeNode();
+
+   return { ObjectKind::Object };
 }
 
 ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode node,

@@ -51,13 +51,13 @@ In development:
   --------------------------------------
   - redesign "?.", "!."  and "\." operator
   --------------------------------------
-  * ?. : warn if the argument is a structure
-  * implement ?. as built-in operation
   * implement \. as built-in operation
+
   * implement !. as built-in operation
   * refactor generateTemplateOperation
   * get rid of templates
   * get rid of forward
+  * ?. : warn if the argument is a structure
   * optimization : direct branching with nil -> 
   -------------------------------------
   * uncomment regex.l
