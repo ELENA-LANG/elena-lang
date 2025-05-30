@@ -13017,7 +13017,7 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
    ArgumentsInfo condArguments;
    condArguments.add(source);
    condArguments.add({ ObjectKind::Nil, { V_NIL }, 0 });
-   ObjectInfo loperand = compileOperation({}, condArguments, EQUAL_OPERATOR_ID, scope.moduleScope->branchingInfo.typeRef, &updatedOuterArgs);
+   ObjectInfo loperand = compileOperation({}, condArguments, NOTEQUAL_OPERATOR_ID, scope.moduleScope->branchingInfo.typeRef, &updatedOuterArgs);
 
    writeObjectInfo(loperand);
    writer->appendNode(BuildKey::SavingInStack, 0);
