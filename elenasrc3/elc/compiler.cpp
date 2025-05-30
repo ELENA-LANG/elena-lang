@@ -12495,6 +12495,9 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
          }
          else retVal = compilePropertyOperation(current, targetRef, mode);
          break;
+      case SyntaxKey::NilMessageOperation:
+         retVal = compileNillableMessageOperation(current, targetRef, mode);
+         break;
       case SyntaxKey::AssignOperation:
       case SyntaxKey::AddOperation:
       case SyntaxKey::SubOperation:
@@ -12987,6 +12990,65 @@ bool Compiler::Expression::isDirectMethodCall(SyntaxNode& node)
       }
    }
    return false;
+}
+
+ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode node,
+   ref_t expectedRef, ExpressionAttribute attrs)
+{
+   ObjectInfo retVal = { };
+
+   ArgumentsInfo updatedOuterArgs;
+   ArgumentsInfo arguments;
+
+   SyntaxNode current = node.firstChild();
+   bool propMode = current.key == SyntaxKey::PropertyOperation;
+   current = current.firstChild();
+
+   ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   if (!isSingleObject(source.kind)) {
+      bool dummy = false;
+      ObjectInfo tempLocal = declareTempLocal(compiler->resolveStrongType(scope, source.typeInfo));
+      compileAssigningOp(tempLocal, source, dummy);
+
+      source = tempLocal;
+   }
+
+   // checking if not nil
+   ArgumentsInfo condArguments;
+   condArguments.add(source);
+   condArguments.add({ ObjectKind::Nil, { V_NIL }, 0 });
+   ObjectInfo loperand = compileOperation({}, condArguments, EQUAL_OPERATOR_ID, scope.moduleScope->branchingInfo.typeRef, &updatedOuterArgs);
+
+   writeObjectInfo(loperand);
+   writer->appendNode(BuildKey::SavingInStack, 0);
+
+   current = current.nextNode();
+
+   writer->newNode(BuildKey::BranchOp, IF_ELSE_OPERATOR_ID);
+   writer->appendNode(BuildKey::Const, scope.moduleScope->branchingInfo.trueRef);
+
+   writer->newNode(BuildKey::Tape);
+
+   CodeScope* parentCodeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+   CodeScope codeScope(parentCodeScope);
+   codeScope.verifiedObjects.add(source);
+
+   Expression subExpr(compiler, codeScope, *writer);
+
+   retVal = subExpr.compileMessageOperationR(node, current, source, arguments,
+      &updatedOuterArgs, expectedRef, propMode, false, false, attrs);   
+
+   retVal.typeInfo.nillable = true;
+
+   writer->closeNode();
+
+   writer->newNode(BuildKey::Tape);
+   writeObjectInfo({ ObjectKind::Nil, V_NIL });
+   writer->closeNode();
+
+   writer->closeNode();
+
+   return retVal;
 }
 
 ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,

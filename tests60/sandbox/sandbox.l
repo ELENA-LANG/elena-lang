@@ -25,16 +25,23 @@ import extensions;
 //   }
 //}
 
-singleton A
+A
 {
-  string Val
-     = "Hello";
+   testMe()
+   {
+      Console.writeLine("Fired!") 
+   }
 }
-
 
 public program()
 {
-   __intermediate s := /*"Hello"*/A.Val;
+   A? a := nil;
 
-   Console.writeLine(s)
+   Console.write("a:");
+   a?.testMe();
+   
+   A? a2 := new A();
+
+   Console.write("a2:");
+   a2?.testMe();   
 }

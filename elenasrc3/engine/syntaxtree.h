@@ -189,6 +189,7 @@ namespace elena_lang
       SubDeclaration          = 0x0010D8,
       FinallyBlock            = 0x001CD9,
       FinalOperation          = 0x001CDA,
+      NilMessageOperation     = 0x0018DB,
       ParameterBlock          = 0x0010F0,
       StaticInitializerMethod = 0x0010F1,
       PrimitiveCollection     = 0x0018F2,

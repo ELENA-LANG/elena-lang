@@ -42,6 +42,7 @@ In development:
   - api : UIntNumber
   - support hashCode for records (redesign current ones as well)
   - chat sample
+  - Cross-compile from Unix to Windows #778
   - amd64 refactore : merge core60_win.asm & core60_lnx.asm and corex60.asm & corex60_win.asm 
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   - #620 : backlog
@@ -50,10 +51,14 @@ In development:
   --------------------------------------
   - redesign "?.", "!."  and "\." operator
   --------------------------------------
-  * implement as built-in operations
+  * ?. : warn if the argument is a structure
+  * implement ?. as built-in operation
+  * implement \. as built-in operation
+  * implement !. as built-in operation
   * refactor generateTemplateOperation
   * get rid of templates
   * get rid of forward
+  * optimization : direct branching with nil -> 
   -------------------------------------
   * uncomment regex.l
   * skip warning if the variable was checked as not nullable
