@@ -13023,9 +13023,7 @@ ObjectInfo Compiler::Expression :: compileAltMessageOperation(SyntaxNode node, r
    writer->closeNode();
 
    writer->newNode(BuildKey::Tape);
-
-   writeObjectInfo(source);
-
+   writeObjectInfo({ ObjectKind::Nil, V_NIL });
    writer->closeNode();
 
    writer->closeNode();
