@@ -48,18 +48,11 @@ In development:
   - Cross-compile from Unix to Windows #778
   --------------------------------------
   - #562 : nullable
-  --------------------------------------
-  - redesign template operator
-  --------------------------------------
-  * refactor generateTemplateOperation
-  * get rid of templates
-  * get rid of forward
-  * ?. : warn if the argument is a structure
-  * optimization : direct branching with nil -> 
   -------------------------------------
-  * uncomment regex.l
+  * an array of nillable items
+  * List<A?> : array of nillable items
+  * xml : fix warnings
   * skip warning if the variable was checked as not nullable
-  * syntax to enforce not nullable (-> a!)
   * warn if nullable argument is passed to the method, not supporting nullable
   * boxing to Nullable?
   * support nullable reference (when option is on, warning on unsafe operation)
@@ -69,6 +62,7 @@ In development:
   * Nullable.ValueOrDefault to returen value or default value
   * nullable closure argument
   * quick review previous rosetta code samples
+  * syntax to enforce not nullable (-> a!)
   * an option to treat weak types as nullable
   --------------------------------------
   * warn if a variable / field can be nil (if the option is enabled)
@@ -90,6 +84,7 @@ In development:
   - #35 : working on webapi
   ide:  
   maint:
+  - optimization : direct branching with nil
   - test all x86-64 examples
   samples:
   - review pi performance (must < 6) : realOp.power[3] byte code

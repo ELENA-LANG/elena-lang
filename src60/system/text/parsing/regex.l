@@ -72,7 +72,7 @@ internal sealed OptionalRule : NestedRule
       if:nil(next) {
          parents.pop();
 
-         ^ gotoNext(parents)/*?*/.makeStep(s, index, ch, parents)
+         ^ gotoNext(parents)?.makeStep(s, index, ch, parents)
       };
 
       ^ next
@@ -204,7 +204,7 @@ internal sealed RecursiveRule : NestedRule
       if:nil(next) {
          parents.pop();
 
-         ^ super.gotoNext(parents).makeStep(s, index, ch, parents);
+         ^ super.gotoNext(parents)?.makeStep(s, index, ch, parents);
       };
 
       ^ next
