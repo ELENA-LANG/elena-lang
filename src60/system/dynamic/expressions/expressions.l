@@ -256,7 +256,7 @@ namespace expressions
             target.saveTo(list, scope, 0);
             list.append(new AssigningFunction(tempVar));
                 
-            tempVariables!.push(Expression.VariableByIndex(tempVar));                
+            (tempVariables ?? tempVariables := new Queue<Expression>()).push(Expression.VariableByIndex(tempVar));                
          };
 
          for (int i := 0; i < len; i += 1) {
@@ -266,7 +266,7 @@ namespace expressions
                arguments[i].saveTo(list, scope, 0);
                list.append(new AssigningFunction(tempVar));
                 
-               tempVariables!.push(Expression.VariableByIndex(tempVar));
+               (tempVariables ?? tempVariables := new Queue<Expression>()).push(Expression.VariableByIndex(tempVar));
             }
          };
             
@@ -304,7 +304,7 @@ namespace expressions
                arguments[i].saveTo(list, scope, 0);
                list.append(new AssigningFunction(tempVar));
                 
-               tempVariables!.push(Expression.VariableByIndex(tempVar));
+               (tempVariables ?? tempVariables := new Queue<Expression>()).push(Expression.VariableByIndex(tempVar));
             }
          };
             
