@@ -49,11 +49,10 @@ In development:
   --------------------------------------
   - #562 : nullable
   --------------------------------------
-  - redesign "?.", "!."  and "\." operator
+  - redesign template operator
   --------------------------------------
-  * implement \. as built-in operation
-
-  * implement !. as built-in operation
+  * get rid of !., using the following syntax : a ?? a := new A()
+  * look into the code to replace !. with a new syntax
   * refactor generateTemplateOperation
   * get rid of templates
   * get rid of forward
