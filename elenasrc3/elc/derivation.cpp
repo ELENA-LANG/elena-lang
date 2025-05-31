@@ -593,15 +593,6 @@ void SyntaxTreeBuilder :: generateTemplateOperation(SyntaxTreeWriter& writer, Sc
    IdentifierString templateName("operator:");
    bool checkExprMode = false;
    switch (operation.key) {
-      case SyntaxKey::AltOperation:
-         templateName.append("alt#1#1");
-         break;
-      case SyntaxKey::IfNotOperation:
-         templateName.append("else#1#1");
-         break;
-      case SyntaxKey::IfOperation:
-         templateName.append("ifnil#1#1");
-         break;
       case SyntaxKey::identifier:
          templateName.append(operation.identifier());
          if (operation.nextNode().compare(SyntaxKey::Expression, SyntaxKey::L3Expression)) {

@@ -51,8 +51,6 @@ In development:
   --------------------------------------
   - redesign template operator
   --------------------------------------
-  * get rid of !., using the following syntax : a ?? a := new A()
-  * look into the code to replace !. with a new syntax
   * refactor generateTemplateOperation
   * get rid of templates
   * get rid of forward

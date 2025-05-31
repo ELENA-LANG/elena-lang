@@ -211,31 +211,6 @@ public template lock<expr>(block) : __included(statements)
 
 // --- operator templates ---
 
-// \.
-public template operator::alt<identifier>(expr) : __included(statements)
-{
-   expr \ back(identifier);
-}
-
-// !.
-public template operator::else<identifier>(expr) : __included(statements)
-{
-    (nil == identifier) ?
-    {
-        identifier := new __typeof identifier();
-    };
-    
-    expr
-}
-
-// ?.
-public template operator::ifnil<identifier>(expr) : __included(statements)
-{
-    (cast bool(nil != identifier))
-      ? { expr } 
-      ! { nil };
-}
-
 // :break
 
 public template operator::break() : __included(statements)
