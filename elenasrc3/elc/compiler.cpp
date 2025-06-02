@@ -146,6 +146,13 @@ inline ref_t mapAsWeakReference(ModuleScopeBase* scope, ref_t reference)
    return reference;
 }
 
+inline void copyVerifications(Compiler::VerifiedMap& dest, Compiler::VerifiedMap& sour)
+{
+   for (auto it = sour.start(); !it.eof(); ++it) {
+      dest.add(*it);
+   }
+}
+
 void declareTemplateParameters(ModuleBase* module, TemplateTypeList& typeList,
    SyntaxTree& dummyTree, List<SyntaxNode>& parameters)
 {
@@ -1081,7 +1088,7 @@ ObjectInfo Compiler::NamespaceScope::definePredefined(ref_t reference, Expressio
 {
    switch (reference) {
       case V_NIL:
-         return { ObjectKind::Nil, { reference }, 0 };
+         return { ObjectKind::Nil, { reference, 0, true }, 0 };
       case V_DEFAULT:
          return { ObjectKind::Default, { reference }, 0 };
       default:
@@ -1649,6 +1656,8 @@ Compiler::CodeScope::CodeScope(CodeScope* parent)
    reserved1 = allocated1 = parent->allocated1;
    reserved2 = allocated2 = parent->allocated2;
    withRetStatement = false;
+
+   copyVerifications(verifiedObjects, parent->verifiedObjects);
 }
 
 Compiler::CodeScope::CodeScope(SymbolScope* parent)
@@ -3586,7 +3595,7 @@ void Compiler::generateClassStaticField(ClassScope& scope, SyntaxNode node, Fiel
 
    if (attrs.size < 0) {
       if (!attrs.inlineArray) {
-         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, attrs.typeInfo.typeRef, true);
+         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, attrs.typeInfo.typeRef, attrs.typeInfo.nillable, true);
       }
       else scope.raiseError(errIllegalField, node);
    }
@@ -3749,7 +3758,7 @@ DeclResult Compiler::checkAndGenerateClassField(ClassScope& scope, SyntaxNode no
          scope.info.header.flags |= elDynamicRole;
       }
       else if (!test(scope.info.header.flags, elStructureRole)) {
-         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, attrs.typeInfo.typeRef, true);
+         typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, attrs.typeInfo.typeRef, attrs.typeInfo.nillable, true);
       }
       else return DeclResult::Illegal;
 
@@ -5115,7 +5124,7 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
       case V_INT32ARRAY:
       case V_FLOAT64ARRAY:
       case V_BINARYARRAY:
-         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode);
          //case V_NULLABLE:
          //   return resolveNullableTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_NIL:
@@ -5123,7 +5132,7 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
       case V_ARGARRAY:
          return resolveArgArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
       case V_OBJARRAY:
-         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode);
       case V_PTR32:
       case V_PTR64:
          return moduleScope.buildins.pointerReference;
@@ -6042,14 +6051,14 @@ TypeInfo Compiler::resolveTypeTemplate(Scope& scope, SyntaxNode node,
    }
 }
 
-ref_t Compiler::resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-   ref_t elementRef, bool declarationMode)
+ref_t Compiler :: resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+   ref_t elementRef, bool nullableElement, bool declarationMode)
 {
    if (isPrimitiveRef(elementRef))
       elementRef = resolvePrimitiveType(moduleScope, { elementRef });
 
    TemplateTypeList typeList;
-   typeList.add(elementRef);
+   typeList.add({ elementRef, 0, nullableElement });
 
    // HOTFIX : generate a temporal template to pass the type
    SyntaxTree dummyTree;
@@ -6108,12 +6117,12 @@ ref_t Compiler::resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t eleme
    if (!elementRef)
       elementRef = moduleScope.buildins.superReference;
 
-   return resolveTemplate(moduleScope, moduleScope.buildins.wrapperTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, moduleScope.buildins.wrapperTemplateReference, elementRef, false, declarationMode);
 }
 
-ref_t Compiler::resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode)
+ref_t Compiler::resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode)
 {
-   return resolveTemplate(moduleScope, moduleScope.buildins.arrayTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, moduleScope.buildins.arrayTemplateReference, elementRef, nullableElement, declarationMode);
 }
 //
 //ref_t Compiler :: resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
@@ -6123,7 +6132,7 @@ ref_t Compiler::resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t element
 
 ref_t Compiler::resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode)
 {
-   return resolveTemplate(moduleScope, moduleScope.buildins.argArrayTemplateReference, elementRef, declarationMode);
+   return resolveTemplate(moduleScope, moduleScope.buildins.argArrayTemplateReference, elementRef, false, declarationMode);
 }
 
 TypeInfo Compiler::resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
@@ -6140,8 +6149,12 @@ TypeInfo Compiler::resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribute
                scope.raiseWarning(WARNING_LEVEL_1, wrnInvalidHint, current);
             break;
          case SyntaxKey::Type:
-            elementRef = resolveStrongTypeAttribute(scope, current, declarationMode, false).typeRef;
+         {
+            auto info = resolveStrongTypeAttribute(scope, current, declarationMode, false);
+            elementRef = info.typeRef;
+            nullable = info.nillable;
             break;
+         }
          case SyntaxKey::TemplateType:
             elementRef = resolveTypeAttribute(scope, current, attributes, declarationMode, allowRole).typeRef;
             break;
@@ -6170,7 +6183,7 @@ TypeInfo Compiler::resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribute
       if (attributes.variadicOne) {
          return { V_ARGARRAY, elementRef };
       }
-      else return { defineArrayType(scope, elementRef, declarationMode), elementRef, nullable };
+      else return { defineArrayType(scope, elementRef, declarationMode), elementRef, false, nullable };
    }
    else if (node == SyntaxKey::NullableType) {
       return { elementRef, 0, true };
@@ -6311,14 +6324,14 @@ void Compiler::readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttr
 
                if (!declarationMode) {
                   resolveArrayTemplate(*scope.moduleScope,
-                     attrs.typeInfo.typeRef, declarationMode);
+                     attrs.typeInfo.typeRef, attrs.typeInfo.nillable, declarationMode);
                }
             }
             else if (attrs.size == -1) {
                // if it is a nested array
                readFieldAttributes(scope, current, attrs, declarationMode);
                attrs.typeInfo = { resolveArrayTemplate(*scope.moduleScope,
-                  attrs.typeInfo.typeRef, declarationMode) };
+                  attrs.typeInfo.typeRef, attrs.typeInfo.nillable, declarationMode)};
             }
             else scope.raiseError(errInvalidHint, current);
             break;
@@ -7794,6 +7807,7 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
             case SyntaxKey::TemplateType:
             case SyntaxKey::ArrayType:
             case SyntaxKey::Type:
+            case SyntaxKey::NullableType:
             case SyntaxKey::identifier:
             case SyntaxKey::reference:
             {
@@ -7854,7 +7868,7 @@ inline SyntaxNode retrieveTerminalOrType(SyntaxNode node)
       if (test((unsigned int)current.key, (unsigned int)SyntaxKey::TerminalMask)) {
          last = current;
       }
-      else if (current == SyntaxKey::ArrayType || current == SyntaxKey::Type || current == SyntaxKey::TemplateType) {
+      else if (current == SyntaxKey::ArrayType || current == SyntaxKey::Type || current == SyntaxKey::TemplateType || current == SyntaxKey::NullableType) {
          last = current;
       }
 
@@ -13023,7 +13037,7 @@ ObjectInfo Compiler::Expression :: compileAltMessageOperation(SyntaxNode node, r
    writer->closeNode();
 
    writer->newNode(BuildKey::Tape);
-   writeObjectInfo({ ObjectKind::Nil, V_NIL });
+   writeObjectInfo({ ObjectKind::Nil, { V_NIL, 0, true }, 0 });
    writer->closeNode();
 
    writer->closeNode();
@@ -13606,13 +13620,6 @@ ObjectInfo Compiler::Expression::compileIndexerOperation(SyntaxNode node, int op
    }
 
    return compileOperation(node, operatorId, expectedRef, EAttr::None);
-}
-
-inline void copyVerifications(Compiler::VerifiedMap& dest, Compiler::VerifiedMap& sour)
-{
-   for (auto it = sour.start(); !it.eof(); ++it) {
-      dest.add(*it);
-   }
 }
 
 ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, int operatorId, bool retValExpected, bool withoutDebugInfo)
@@ -15335,13 +15342,13 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
    bool nillableOp = false;
    if (!compileAssigningOp(target, exprVal, nillableOp)) {
       switch (target.kind) {
-      case ObjectKind::ReadOnlyField:
-      case ObjectKind::ReadOnlyFieldAddress:
-         scope.raiseError(errAssigningRealOnly, loperand.parentNode());
-         break;
-      default:
-         scope.raiseError(errInvalidOperation, loperand.parentNode());
-         break;
+         case ObjectKind::ReadOnlyField:
+         case ObjectKind::ReadOnlyFieldAddress:
+            scope.raiseError(errAssigningRealOnly, loperand.parentNode());
+            break;
+         default:
+            scope.raiseError(errInvalidOperation, loperand.parentNode());
+            break;
       }
    }
 
@@ -15843,6 +15850,9 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
       if (exprVal.typeInfo.nillable)
          nillableOp = true;
    }
+   else if (exprVal.typeInfo.nillable)
+      nillableOp = !target.typeInfo.nillable;
+
    writer->closeNode();
 
    return true;

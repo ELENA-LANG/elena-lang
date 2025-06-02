@@ -171,8 +171,7 @@ namespace elena_lang
 
       bool operator ==(ObjectInfo& val) const
       {
-         return (this->kind == val.kind && this->reference == val.reference && this->typeInfo.typeRef == val.typeInfo.typeRef
-            && this->typeInfo.elementRef == val.typeInfo.elementRef);
+         return (this->kind == val.kind && this->reference == val.reference && this->typeInfo == val.typeInfo);
       }
 
       bool operator !=(ObjectInfo& val) const
@@ -1778,11 +1777,11 @@ namespace elena_lang
       TypeInfo resolveTypeTemplate(Scope& scope, SyntaxNode node,
          TypeAttributes& attributes, bool declarationMode, bool objectMode = false);
 
-      ref_t resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, ref_t elementRef, bool declarationMode);
+      ref_t resolveTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, ref_t elementRef, bool nullableElement, bool declarationMode);
       ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
       ref_t resolveStateMachine(Scope& scope, ref_t templateRef, ref_t stateRef);
       ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
-      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
+      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode);
       //ref_t resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
       ref_t resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items);

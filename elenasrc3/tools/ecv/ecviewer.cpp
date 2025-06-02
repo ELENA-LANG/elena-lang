@@ -951,6 +951,9 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
          if (methodInfo.outputRef) {
             line.append("->");
             line.append(_module->resolveReference(methodInfo.outputRef));
+            if (test(methodInfo.hints, (ref_t)MethodHint::Nillable)) {
+               line.append("?");
+            }
          }
          if (_showMethodInfo && _showBytecodes) {
             line.append(" [");

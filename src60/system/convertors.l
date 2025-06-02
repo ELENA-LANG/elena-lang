@@ -543,8 +543,8 @@ public singleton RealConvertor
 
    real convert(string s)
    {
-      string intPartStr := nil;
-      string decimalPartStr := nil;
+      string intPartStr;
+      string? decimalPartStr := nil;
 
       int index := s.indexOf(0, $46);
       if (index != -1) {

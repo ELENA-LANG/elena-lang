@@ -808,7 +808,7 @@ public const struct String : BaseValue,
       int len := args.Length;
       int bufLen := 0;
 
-      string retVal := nil;
+      string? retVal := nil;
       for(int i := 0; i < len; i++) {
          string arg := args[i].toPrintable();
          int argLen := arg.Length;

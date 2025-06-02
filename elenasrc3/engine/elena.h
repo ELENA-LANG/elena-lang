@@ -842,8 +842,9 @@ namespace elena_lang
    struct TypeInfo
    {
       ref_t typeRef;
-      ref_t elementRef;
       bool nillable;
+      ref_t elementRef;
+      bool nillableElement;
 
       bool isPrimitive() const
       {
@@ -863,25 +864,35 @@ namespace elena_lang
       TypeInfo()
       {
          typeRef = elementRef = 0;
-         nillable = false;
+         nillableElement = nillable = false;
       }
       TypeInfo(ref_t typeRef)
       {
          this->typeRef = typeRef;
          this->elementRef = 0;
          this->nillable = false;
+         this->nillableElement = false;
       }
       TypeInfo(ref_t typeRef, ref_t elemantRef)
       {
          this->typeRef = typeRef;
          this->elementRef = elemantRef;
          this->nillable = false;
+         this->nillableElement = false;
       }
       TypeInfo(ref_t typeRef, ref_t elemantRef, bool nillable)
       {
          this->typeRef = typeRef;
          this->elementRef = elemantRef;
          this->nillable = nillable;
+         this->nillableElement = false;
+      }
+      TypeInfo(ref_t typeRef, ref_t elemantRef, bool nillable, bool nillableElement)
+      {
+         this->typeRef = typeRef;
+         this->elementRef = elemantRef;
+         this->nillable = nillable;
+         this->nillableElement = nillableElement;
       }
    };
 

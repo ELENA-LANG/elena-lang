@@ -4,7 +4,7 @@ public class Task
 {
    bool           _completed;
 
-   Exception      _exception;
+   Exception?     _exception;
    Action<Task>   _continuation;
 
    Func           _action; 

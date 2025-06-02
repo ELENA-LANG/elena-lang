@@ -49,7 +49,7 @@ In development:
   --------------------------------------
   - #562 : nullable
   -------------------------------------
-  * an array of nillable items
+  * syntax to enforce not nullable (-> a!)
   * List<A?> : array of nillable items
   * xml : fix warnings
   * skip warning if the variable was checked as not nullable
@@ -62,8 +62,9 @@ In development:
   * Nullable.ValueOrDefault to returen value or default value
   * nullable closure argument
   * quick review previous rosetta code samples
-  * syntax to enforce not nullable (-> a!)
+  * an option to ignore nillable warnings
   * an option to treat weak types as nullable
+  * close #562
   --------------------------------------
   * warn if a variable / field can be nil (if the option is enabled)
   * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)

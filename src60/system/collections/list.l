@@ -579,8 +579,8 @@ namespace collections
          info("A list of objects")
    {
       Reference<int> _count;
-      ListItem       _top;
-      ListItem       _last;
+      ListItem?      _top;
+      ListItem?      _last;
     
       /// Creates a list
       constructor()

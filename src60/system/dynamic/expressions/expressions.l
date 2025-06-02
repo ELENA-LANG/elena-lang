@@ -247,7 +247,7 @@ namespace expressions
                                             Expression[] arguments, TapeFunction operation)        
       {
          int len := arguments.Length;
-         Queue<Expression> tempVariables := nil;
+         Queue<Expression>? tempVariables := nil;
 
          // first pass - preallocating sub expr 
          if (target.IsOperation && len > 0) {
@@ -294,7 +294,7 @@ namespace expressions
                                             Expression[] arguments, TapeFunction operation)        
       {
          int len := arguments.Length;
-         Queue<Expression> tempVariables := nil;
+         Queue<Expression>? tempVariables := nil;
 
          // first pass - preallocating sub expr 
          for (int i := 0; i < len; i += 1) {

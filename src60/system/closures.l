@@ -44,7 +44,7 @@ public interface Func1
 
    retrieve(Enumerator en)
    {
-      object item := nil;
+      object? item := nil;
       while (en.next())
       {
          item := *en;

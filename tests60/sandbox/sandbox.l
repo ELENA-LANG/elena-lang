@@ -1,5 +1,7 @@
 import extensions;
 
+import system'collections;
+
 //A
 //{
 //   int? x;
@@ -25,17 +27,9 @@ import extensions;
 //   }
 //}
 
-A
-{
-   testMe()
-   {
-      Console.writeLine("Fired!")
-   }
-}
+A;
 
 public program()
 {
-   var a := nil;
-
-   (a ?? a := new A()).testMe()
+   List<int>? list := nil;
 }

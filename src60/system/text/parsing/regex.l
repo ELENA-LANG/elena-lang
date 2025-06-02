@@ -49,7 +49,7 @@ internal NestedRule : LinkRule
    PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
    {
       parents.push(self);
-      PatternRule next := _child.makeStep(s, index, ch, parents);
+      PatternRule? next := _child.makeStep(s, index, ch, parents);
       if:nil(next) {
          parents.pop();
       };
@@ -68,7 +68,7 @@ internal sealed OptionalRule : NestedRule
    PatternRule? makeStep(string s, int index, char ch, Stack<PatternRule> parents)
    {
       parents.push(self);
-      PatternRule next := _child.makeStep(s, index, ch, parents);
+      PatternRule? next := _child.makeStep(s, index, ch, parents);
       if:nil(next) {
          parents.pop();
 
@@ -172,7 +172,7 @@ internal sealed OrRule  : GroupRule
 
       int len := _rules.Length;
       for (int i := 0; i < len; i++) {
-         PatternRule next := _rules[i].makeStep(s, index, ch, parents);
+         PatternRule? next := _rules[i].makeStep(s, index, ch, parents);
          if:not:nil(next) {
             ^ next;
          };
@@ -200,7 +200,7 @@ internal sealed RecursiveRule : NestedRule
    {
       parents.push(self);
 
-      PatternRule next := _child.makeStep(s, index, ch, parents);
+      PatternRule? next := _child.makeStep(s, index, ch, parents);
       if:nil(next) {
          parents.pop();
 
@@ -295,7 +295,7 @@ public sealed class RegEx
       int i := index;
       int chLen := ch.Length;
 
-      PatternRule rule := nil;
+      PatternRule rule := default;
       if (pattern[i + chLen] == $45) {
          i += chLen;
          i++;
@@ -370,7 +370,7 @@ public sealed class RegEx
             if(list.Empty)
                InvalidArgumentException.raise("pattern");
 
-            PatternRule rule := nil;
+            PatternRule rule;
             ch =>
                $63: { rule := OptionalRule.new(list.Last) }
                $42: { rule := RecursiveRule.new(list.Last) }
@@ -385,7 +385,7 @@ public sealed class RegEx
          }
          else {
             bool continueMode := false;
-            PatternRule rule := nil;
+            PatternRule? rule := nil;
             ch =>
                $91: {
                   rule := parseGroup(pattern, ref i, len);
@@ -459,11 +459,11 @@ public sealed class RegEx
 
       int len := s.Length;
       int index := 0;
-      PatternRule current := _startRule;
+      PatternRule? current := _startRule;
       while (index < len) {
          char ch := s[index];
 
-         current := current.makeStep(s, index, ch, parents);
+         current := current?.makeStep(s, index, ch, parents);
          if:nil(current) {
             ^ false
          };
@@ -471,6 +471,6 @@ public sealed class RegEx
          index += ch.Length;
       };
 
-      ^ current.makeStep(s, len, $0, parents) != nil
+      ^ current?.makeStep(s, len, $0, parents) != nil
    }
 }

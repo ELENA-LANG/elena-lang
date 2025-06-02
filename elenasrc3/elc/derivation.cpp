@@ -372,14 +372,14 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
    }
 }
 
-void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode, int nestLevel, bool nullable)
+void SyntaxTreeBuilder :: flushType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode, int nestLevel, bool nullable, bool nullableElement)
 {
    SyntaxNode current = node.firstChild();
 
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::ArrayType) {
-         flushArrayType(writer, scope, current, exprMode, nestLevel + 1, nullable);
+         flushType(writer, scope, current, exprMode, nestLevel + 1, nullable);
       }
       else if (current == SyntaxKey::TemplateType) {
          if (nullable)
@@ -401,9 +401,12 @@ void SyntaxTreeBuilder :: flushArrayType(SyntaxTreeWriter& writer, Scope& scope,
          if (nullable)
             writer.closeNode();
       }
+      else if (current == SyntaxKey::NullableType) {
+         flushType(writer, scope, current, exprMode, nestLevel, nullable, true);
+      }
       else {
          bool allowType = current.nextNode() == SyntaxKey::None;
-         flushAttribute(writer, scope, current, attributeCategory, allowType, nestLevel, nullable);
+         flushAttribute(writer, scope, current, attributeCategory, allowType, nestLevel, nullable, nullableElement);
       }
 
       current = current.nextNode();
@@ -417,7 +420,7 @@ void SyntaxTreeBuilder :: flushNullableType(SyntaxTreeWriter& writer, Scope& sco
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::ArrayType) {
-         flushArrayType(writer, scope, current, exprMode, 1, true);
+         flushType(writer, scope, current, exprMode, 1, true);
       }
       else if (current == SyntaxKey::TemplateType) {
          writer.newNode(SyntaxKey::NullableType);
@@ -504,15 +507,21 @@ void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, Sy
          writer.closeNode();
       }
    }
-   else if (current == SyntaxKey::ArrayType) {
+   else if (current == SyntaxKey::ArrayType || current == SyntaxKey::NullableType) {
       if (current.nextNode() == SyntaxKey::identifier) {
          SyntaxNode identNode = node.lastChild(SyntaxKey::TerminalMask);
 
-         flushArrayType(writer, scope, current, true);
+         if (current == SyntaxKey::ArrayType) {
+            flushType(writer, scope, current, true);
+         }
+         else flushType(writer, scope, current, true, 0, true);
 
          flushNode(writer, scope, identNode);
       }
-      else flushArrayType(writer, scope, current, true);
+      else if (current == SyntaxKey::ArrayType) {
+         flushType(writer, scope, current, true);
+      }
+      else flushType(writer, scope, current, true, 0, true);
    }
    else if (current == SyntaxKey::Expression) {
       //HOTFIX : expression cannot be inside an object
@@ -826,7 +835,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
          bool allowType = (nameNode.key == SyntaxKey::None || nextNode == nameNode) && !withTuple;
          if (current == SyntaxKey::ArrayType) {
             //flushAttribute(writer, scope, current, attributeCategory, allowType, true);
-            flushArrayType(writer, scope, current, false);
+            flushType(writer, scope, current, false);
          }
          else if (current == SyntaxKey::NullableType) {
             flushNullableType(writer, scope, current, false);
@@ -870,7 +879,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
 }
 
 bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, 
-   ref_t& previusCategory, bool allowType, int arrayNestLevel, bool nullable)
+   ref_t& previusCategory, bool allowType, int arrayNestLevel, bool nullable, bool nullableElement)
 {
    bool typeExpr = false;
    ref_t attrRef = mapAttribute(node, allowType, previusCategory);
@@ -898,7 +907,7 @@ bool SyntaxTreeBuilder :: flushAttribute(SyntaxTreeWriter& writer, Scope& scope,
          for (int i = 0; i < arrayNestLevel; i++)
             writer.newNode(SyntaxKey::ArrayType);
          
-         writer.newNode(key, attrRef);
+         writer.newNode(nullableElement ? SyntaxKey::NullableType : key, attrRef);         
          flushNode(writer, scope, node);
          writer.closeNode();
 
