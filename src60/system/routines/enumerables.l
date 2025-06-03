@@ -306,8 +306,8 @@ public extension enumerableOp
 
    get LastMember()
    {
-      auto   en := cast Enumerator(self.enumerator());
-      object lastItem := nil;
+      auto en := cast Enumerator(self.enumerator());
+      var  lastItem := nil;
         
       while (en.next())
          { lastItem := *en };
@@ -361,7 +361,7 @@ public extension enumerableOp
    {
       auto en := cast Enumerator(self.enumerator());
         
-      object maximal := nil;
+      var maximal := nil;
       while (en.next())
       {
             var item := *en;
@@ -382,7 +382,7 @@ public extension enumerableOp
    {
       auto en := cast Enumerator(self.enumerator());
         
-      object maximal := nil;
+      var maximal := nil;
       while (en.next())
       {
          var item := *en;

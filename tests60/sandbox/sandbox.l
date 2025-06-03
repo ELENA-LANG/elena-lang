@@ -27,9 +27,25 @@ import system'collections;
 //   }
 //}
 
-A;
+/*A<T>
+{
+   static A<T>? Default
+      = nil;      
+}*/
+
+B;
+
+A
+{
+   B Item : prop;
+}
 
 public program()
 {
-   List<int>? list := nil;
+    A? a := nil;
+
+    var r := (a ?? a := new A()).Item;
+	
+//   A<int> n := new A<int>();
+   //List<int>? list := nil;
 }

@@ -57,10 +57,10 @@ namespace io
     
    public sealed class FileEnumerator : Enumerator<WIN32_FIND_DATA>
    {
-      WIN32_FIND_DATA ffd;
-      handle          hFind;  
-      bool            open;
-      wide            mask;
+      WIN32_FIND_DATA? ffd;
+      handle           hFind;  
+      bool             open;
+      wide             mask;
         
       constructor assign(string mask)
       {
@@ -108,16 +108,16 @@ namespace io
          ^ open                        
       }
         
-      get WIN32_FIND_DATA Value()
-            = ffd;
+      get WIN32_FIND_DATA? Value()
+         = ffd;
             
       enumerable()
-            = mask;            
+         = mask;            
             
       reset()
       {
-            open := false;
-            ffd := nil
+         open := false;
+         ffd := nil
       }
         
       Enumerator cast() = new Enumerator{ embeddable dispatch() => self; };

@@ -253,7 +253,7 @@ public sealed class RegEx
       ^ CharRule.new(ch)
    }
 
-   private PatternRule? defineEscRule(char ch)
+   private PatternRule defineEscRule(char ch)
    {
       ch =>
          $119: { ^ new AnyWordChar() };
@@ -295,7 +295,7 @@ public sealed class RegEx
       int i := index;
       int chLen := ch.Length;
 
-      PatternRule rule := default;
+      PatternRule? rule := nil;
       if (pattern[i + chLen] == $45) {
          i += chLen;
          i++;
@@ -316,7 +316,7 @@ public sealed class RegEx
 
       index := i;
 
-      ^ rule;
+      ^ rule!;
    }
 
    private PatternRule parseGroup(string pattern, ref int index, int len)

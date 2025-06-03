@@ -1152,6 +1152,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_SHORTCUT:
          attrs |= ExpressionAttribute::ShortcutMode;
          return true;
+      case V_NOTNILLABLE:
+         attrs |= ExpressionAttribute::NotNil;
+         return true;
       default:
          return false;
    }

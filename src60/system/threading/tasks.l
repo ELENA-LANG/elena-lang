@@ -33,7 +33,7 @@ public class Task
    indexed internal getResultUnsafe()
       = nil;
 
-   indexed internal Exception Exception
+   indexed internal Exception? Exception
    {  
       get()
          = _exception;
@@ -92,13 +92,13 @@ public class Task
          ^ self
       };   
 
-      ManualResetEvent mres := nil;
+      ManualResetEvent? mres := nil;
       lock (self)
       {
          if:not(_completed)
          {
             mres := ManualResetEvent.new();
-            continueWithUnsafe((Task x){ mres.set() });
+            continueWithUnsafe((Task x){ mres!.set() });
          }
       };
       
@@ -132,7 +132,7 @@ public class Task
       int len := tasks.Length;
       int remaining := len;
 
-      Exception e := nil;
+      Exception? e := nil;
 
       Action<Task> continuation := (Task completed)
       {
@@ -162,7 +162,7 @@ public class Task
       int len := tasks.Length;
       int remaining := len;
 
-      Exception e := nil;
+      Exception? e := nil;
 
       Action<Task> continuation := (Task completed)
       {

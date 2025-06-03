@@ -113,8 +113,8 @@ class PermVectorChain
 
 public singleton PermVectorTable
 {
-   static PermVectorChain _firstChainItem;
-   static PermVectorChain _chainItem;
+   static PermVectorChain? _firstChainItem;
+   static PermVectorChain? _chainItem;
 
    get private bool isAvailable()
    {
@@ -130,8 +130,8 @@ public singleton PermVectorTable
 
    bool rearrange()
    {
-      PermVectorChain previous := nil;
-      PermVectorChain current := _firstChainItem;
+      PermVectorChain? previous := nil;
+      PermVectorChain? current := _firstChainItem;
       while (current != nil) {
          if (current.rearrange()) {
             _chainItem := current;
@@ -162,14 +162,14 @@ public singleton PermVectorTable
          }
       };
 
-      pointer ptr := _chainItem.allocate(obj);
+      pointer ptr := _chainItem!.allocate(obj);
 
       ^ ptr;
    }
 
    release(object obj)
    {
-      PermVectorChain current := _firstChainItem;
+      PermVectorChain? current := _firstChainItem;
       while (current != nil) {
          int index := current.indexOf(obj);
          if (index >= 0) {

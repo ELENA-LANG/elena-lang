@@ -1023,6 +1023,13 @@ namespace elena_lang
             return scope ? scope->isExtension : false;
          }
 
+         bool isNillableOutput()
+         {
+            MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
+
+            return scope ? (scope->checkHint(MethodHint::Nillable) || scope->info.outputRef == 0) : false;
+         }
+
          bool resolveAutoType(ObjectInfo& info, TypeInfo typeInfo, int size, int extra) override;
 
          void markAsAssigned(ObjectInfo object) override;
@@ -1517,6 +1524,7 @@ namespace elena_lang
          ObjectInfo compileMessageOperation(SyntaxNode node, ref_t targetRef, ExpressionAttribute attrs);
          ObjectInfo compilePropertyOperation(SyntaxNode node, ref_t targetRef, ExpressionAttribute attrs);
          ObjectInfo compileNillableMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
+         ObjectInfo compileNotNilMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
          ObjectInfo compileAltMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
 
          ObjectInfo compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode);
@@ -1565,6 +1573,8 @@ namespace elena_lang
 
          void handleUnsupportedMessageCall(SyntaxNode node, mssg_t message, ref_t targetRef, bool weakTarget, bool strongResolved);
          void handleNillableMessageCall(SyntaxNode node, mssg_t message, ObjectInfo target);
+         void handleNillableReturn(SyntaxNode node, ObjectInfo target);
+         void handleNillableAssign(SyntaxNode node, ObjectInfo target);
 
          ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
             ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);

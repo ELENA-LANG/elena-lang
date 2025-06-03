@@ -600,7 +600,7 @@ namespace collections
       }
     
       /// Returns the top item
-      internal ListItem TopItem = _top;
+      internal ListItem? TopItem = _top;
     
       append(object)
       {
@@ -614,7 +614,7 @@ namespace collections
          {
             auto newItem := ListItem.new(object);
                 
-            _last.NextItem := newItem;
+            _last!.NextItem := newItem;
             _last:= newItem
          }
       }
@@ -632,7 +632,7 @@ namespace collections
       internal ListItem getItemAt(int index)
       {
          int      currentIndex := index;
-         ListItem item := _top;
+         ListItem item := _top!;
             
          while (currentIndex > 0)
          {
@@ -677,7 +677,7 @@ namespace collections
             
          if (0 == index)
          {
-            _top := _top.NextItem;
+            _top := _top!.NextItem;
             if (nil == _top)
                { _last := nil }
          }
@@ -729,7 +729,7 @@ namespace collections
       {
          auto list := new List();
             
-         ListItem item := _top;        
+         ListItem? item := _top;        
          while (nil != item)
          {
             list.append(item.get());
@@ -744,8 +744,8 @@ namespace collections
    // --- ListEnumerator ---
    class ListEnumerator : Enumerator
    {
-      List     _list;
-      ListItem _current;
+      List      _list;
+      ListItem? _current;
         
       /// Creates a list enumerator
       constructor(List list)
@@ -754,7 +754,7 @@ namespace collections
       }
     
       /// Returns the current object
-      get Value() = _current.get();
+      get Value() = _current?.get();
         
       /// Resets the enumerator
       reset()
@@ -786,7 +786,7 @@ namespace collections
    class ListIndexer : Indexer
    {
       List           _list;
-      ListItem       _current;
+      ListItem?      _current;
       Reference<int> _index;
         
       /// Creates a list indexer
@@ -801,12 +801,12 @@ namespace collections
       get bool Available() = nil != _current;
    
       /// Returns the current member
-      get Value() = _current.get();
+      get Value() = _current?.get();
         
       /// Sets the current member
       set Value(o)
       {
-         _current.set(o)
+         _current!.set(o)
       }
         
       /// Reads the current index into an output parameter

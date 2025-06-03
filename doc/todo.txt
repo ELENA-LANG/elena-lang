@@ -49,7 +49,10 @@ In development:
   --------------------------------------
   - #562 : nullable
   -------------------------------------
-  * syntax to enforce not nullable (-> a!)
+  * support : if(a != nil && a.X)
+
+  * remove all warnings
+
   * List<A?> : array of nillable items
   * xml : fix warnings
   * skip warning if the variable was checked as not nullable

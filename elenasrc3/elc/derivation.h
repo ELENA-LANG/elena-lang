@@ -213,6 +213,7 @@ namespace elena_lang
       void flushStatement(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushMethodCode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushTupleType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory);
+      void flushTypeBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& current, ref_t& attributeCategory);
       void flushParameterizedTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
 
       void copyHeader(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool includeType);
@@ -226,6 +227,7 @@ namespace elena_lang
       void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode = false);
       void flushParameterBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushAttributeBlock(SyntaxTreeWriter& writer, Scope& scope, ref_t& attributeCategory, SyntaxNode& current, SyntaxNode identNode, bool noTypes);
       bool flushAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory, 
          bool allowType, int arrayNestLevel = 0, bool nullable = false, bool nullableElement = false);
       void flushTypeAttribute(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, ref_t& previusCategory, 

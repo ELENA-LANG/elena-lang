@@ -79,10 +79,10 @@ namespace expressions
          NotSupportedException.raise();
       }
 
-      TapeFunction resolveExtension(Message message)
+      TapeFunction? resolveExtension(Message message)
          = nil;    
 
-      TapeFunction resolve(ScopeIdentifier ident, bool assignMode)
+      TapeFunction? resolve(ScopeIdentifier ident, bool assignMode)
          = nil; 
    }
 
@@ -124,7 +124,7 @@ namespace expressions
          ^ *reserved;
       }
         
-      TapeFunction resolve(ScopeIdentifier variable, bool assignMode) 
+      TapeFunction? resolve(ScopeIdentifier variable, bool assignMode) 
       {
          string refName := variable.Name;
          int mode := variable.Mode;
@@ -142,7 +142,7 @@ namespace expressions
          declared.append(1);
       }
 
-      TapeFunction resolveExtension(Message message)
+      TapeFunction? resolveExtension(Message message)
          => parent;    
    }
 
@@ -235,7 +235,7 @@ namespace expressions
       static Expression ActionMethod(Expression body)
          = new ActionMethodExpression(body);        
 
-      object Key = nil;
+      Key = nil;
 
       get abstract bool IsOperation();
 
@@ -273,12 +273,12 @@ namespace expressions
          // second pass - the operation
          Expression firstArg := target;
          if (target.IsOperation && len > 0) {
-            firstArg := tempVariables.pop() 
+            firstArg := tempVariables!.pop() 
          };
 
          for (int i := 0; i < len; i += 1) {
             if (arguments[i].IsOperation) {
-               tempVariables.pop().saveTo(list, scope, i + 1) 
+               tempVariables!.pop().saveTo(list, scope, i + 1) 
             }
             else {
                arguments[i].saveTo(list, scope, i + 1) 
@@ -311,7 +311,7 @@ namespace expressions
          // second pass - the operation
          for (int i := len - 1; i >= 0; i -= 1) {
             if (arguments[i].IsOperation) {
-               tempVariables.pop().saveTo(list, scope, i) 
+               tempVariables!.pop().saveTo(list, scope, i) 
             }
             else {
                arguments[i].saveTo(list, scope, i) 
@@ -1936,7 +1936,7 @@ namespace expressions
             imports := imports + subarr
          }
                 
-         TapeFunction resolveExtension(Message message)
+         TapeFunction? resolveExtension(Message message)
          {
             var op := ExtensionDispatcher.load(message, imports);
             if (op != nil)
@@ -1955,7 +1955,7 @@ namespace expressions
             ^ nil
          }
 
-         TapeFunction resolve(ScopeIdentifier variable, bool assignModemode) 
+         TapeFunction? resolve(ScopeIdentifier variable, bool assignModemode) 
          {
             string refName := variable.Name;
             int mode := variable.Mode;

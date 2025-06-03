@@ -2461,7 +2461,7 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
       writer.closeNode();
    }
    // add implicit type
-   SyntaxNode typeNode = target.findChild(SyntaxKey::Type, SyntaxKey::TemplateType);
+   SyntaxNode typeNode = target.findChild(SyntaxKey::Type, SyntaxKey::TemplateType, SyntaxKey::NullableType, SyntaxKey::ArrayType);
    if (typeNode != SyntaxKey::None) {
       writer.newNode(SyntaxKey::TemplateArg);
       SyntaxTree::copyNode(writer, typeNode, true);
@@ -7777,6 +7777,7 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
    bool castOp = EAttrs::testAndExclude(attrs, ExpressionAttribute::CastOp);
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
    bool shortcutMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ShortcutMode);
+   bool notNil = EAttrs::testAndExclude(attrs, ExpressionAttribute::NotNil);
 
    TerminalAttributes attributeMap = {
       EAttrs::testAndExclude(attrs, ExpressionAttribute::NewVariable),
@@ -7853,6 +7854,12 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
 
    if (probeMode)
       retVal.mode = TargetMode::Probe;
+
+   if (notNil) {
+      CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+      if (codeScope)
+         codeScope->verifiedObjects.add(retVal);
+   }
 
    return retVal;
 }
@@ -12443,7 +12450,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
          scope.raiseError(errInvalidOperation, node);
 
       if (nillableOp)
-         scope.raiseWarning(WARNING_LEVEL_1, wrnReturningNillable, node);
+         handleNillableReturn(node, retVal);
 
       retVal = scope.mapSelf();
    }
@@ -12455,6 +12462,10 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
 
       retVal = boxArgument(retVal,
          !dynamicRequired && retVal.kind == ObjectKind::SelfBoxableLocal, true, false);
+
+      if (retVal.typeInfo.nillable && !codeScope->isNillableOutput()) {
+         handleNillableReturn(node, retVal);
+      }
 
       if (!hasToBePresaved(retVal)) {
          writeObjectInfo(retVal);
@@ -12511,6 +12522,9 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
          break;
       case SyntaxKey::NilMessageOperation:
          retVal = compileNillableMessageOperation(current, targetRef, mode);
+         break;
+      case SyntaxKey::NotNilMessageOperation:
+         retVal = compileNotNilMessageOperation(current, targetRef, mode);
          break;
       case SyntaxKey::AltMessageOperation:
          retVal = compileAltMessageOperation(current, targetRef, mode);
@@ -13045,6 +13059,39 @@ ObjectInfo Compiler::Expression :: compileAltMessageOperation(SyntaxNode node, r
    return { ObjectKind::Object };
 }
 
+ObjectInfo Compiler::Expression :: compileNotNilMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
+   ArgumentsInfo updatedOuterArgs;
+   ArgumentsInfo arguments;
+
+   SyntaxNode current = node.firstChild();
+   bool propMode = current.key == SyntaxKey::PropertyOperation;
+   current = current.firstChild();
+
+   ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   if (!isSingleObject(source.kind)) {
+      bool dummy = false;
+      ObjectInfo tempLocal = declareTempLocal(compiler->resolveStrongType(scope, source.typeInfo));
+      compileAssigningOp(tempLocal, source, dummy);
+
+      source = tempLocal;
+   }
+
+   // mark it as not nil verified 
+   codeScope->verifiedObjects.add(source);
+
+   current = current.nextNode();
+
+   ObjectInfo retVal = compileMessageOperationR(node, current, source, arguments,
+      &updatedOuterArgs, expectedRef, propMode, false, false, attrs);
+
+   retVal.typeInfo.nillable = false;
+
+   return retVal;
+}
+
 ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode node,
    ref_t expectedRef, ExpressionAttribute attrs)
 {
@@ -13518,6 +13565,11 @@ ObjectInfo Compiler::Expression::compileBoolOperation(SyntaxNode node, int opera
       writeObjectInfo(loperand, node);
 
       writer->closeNode();
+
+      if (operatorId != AND_OPERATOR_ID && branchVerification != nullptr) {
+         // !! if it is OR operation, the verification must be cleared
+         branchVerification->forTrueBranch()->clear();
+      }
 
       writer->newNode(BuildKey::Tape);
       writeObjectInfo(compile(rnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None, nullptr), node);
@@ -15071,6 +15123,10 @@ void Compiler::Expression :: handleNillableMessageCall(SyntaxNode node, mssg_t m
       return;
    }
 
+   if (branchVerification && branchVerification->forTrueBranch()->exist(target))
+      // if it is verified to be not nil in the expression - skip the warning
+      return;
+
    if (compiler->_verbose) {
       ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
 
@@ -15078,6 +15134,28 @@ void Compiler::Expression :: handleNillableMessageCall(SyntaxNode node, mssg_t m
    }
 
    scope.raiseWarning(WARNING_LEVEL_1, wrnNillableTarget, node);
+}
+
+void Compiler::Expression :: handleNillableReturn(SyntaxNode node, ObjectInfo target)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+   if (codeScope && codeScope->verifiedObjects.exist(target)) {
+      // validate if the target was checked as not nil - no need to warn
+      return;
+   }
+
+   scope.raiseWarning(WARNING_LEVEL_1, wrnReturningNillable, node);
+}
+
+void Compiler::Expression::handleNillableAssign(SyntaxNode node, ObjectInfo target)
+{
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+   if (codeScope && codeScope->verifiedObjects.exist(target)) {
+      // validate if the target was checked as not nil - no need to warn
+      return;
+   }
+
+   scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, node);
 }
 
 ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
@@ -15352,11 +15430,13 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
       }
    }
 
-   if (nillableOp)
-      scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, roperand);
+   if (nillableOp && target.typeInfo.typeRef)
+      handleNillableAssign(roperand, exprVal);
 
    if (target == exprVal)
       scope.raiseError(errAssigningToSelf, loperand.lastChild(SyntaxKey::TerminalMask));
+
+   target.typeInfo.nillable = nillableOp;
 
    return target;
 }

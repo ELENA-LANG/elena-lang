@@ -450,6 +450,7 @@ enum class ExpressionAttribute : pos64_t
    TryMode              = 0x100000000000,
    GetterMode           = 0x200000000000,
    ShortcutMode         = 0x400000000000,
+   NotNil               = 0x800000000000,
 };
 
 struct ExpressionAttributes

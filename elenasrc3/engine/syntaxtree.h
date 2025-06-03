@@ -191,6 +191,7 @@ namespace elena_lang
       FinalOperation          = 0x001CDA,
       NilMessageOperation     = 0x0018DB,
       AltMessageOperation     = 0x0018DC,
+      NotNilMessageOperation  = 0x0018DD,
       ParameterBlock          = 0x0010F0,
       StaticInitializerMethod = 0x0010F1,
       PrimitiveCollection     = 0x0018F2,
@@ -198,6 +199,8 @@ namespace elena_lang
       TupleBlock              = 0x0010F4,
       TupleType               = 0x0010F5,
       ClosureReturnType       = 0x0010F6,
+      NotNilAttribute         = 0x0010F7,
+      TypeBlock               = 0x0010F8,
 
       ErrClosingBlockExpected = 0x04002,               // closing curly bracket expected
 

@@ -8,7 +8,7 @@ namespace culture
     
    public sealed class Locale : ILocale
    {
-      wide _name;
+      wide? _name;
 
       constructor new(wide name)
       {

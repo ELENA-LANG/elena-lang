@@ -373,6 +373,16 @@ namespace elena_lang
             return current != defKey;
          }
 
+         bool existChild(Key key1, Key key2, Key key3, Key key4)
+         {
+            Node current = firstChild();
+            while (current != defKey && current.key != key1 && current.key != key2 && current.key != key3 && current.key != key4) {
+               current = current.nextNode();
+            }
+
+            return current != defKey;
+         }
+
          Node lastChild() const
          {
             Node current = firstChild();

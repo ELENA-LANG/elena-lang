@@ -4,7 +4,7 @@ public sealed Array<T> : Indexable<T>
 {
    embeddable __string T[] array;
 
-   static Array<T> Default
+   static Array<T>? Default
       = nil;
 
    static Array<T> MinValue
@@ -833,7 +833,7 @@ public const struct String : BaseValue,
       }
       else retVal := retVal + tempStr;
 
-      ^ retVal;      
+      ^ retVal!;      
    }
 
    wide cast()

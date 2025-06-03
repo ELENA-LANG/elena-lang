@@ -146,8 +146,6 @@ public sealed class Thread
          InvalidOperationException.raise();
 
       _handle.close();
-
-      _handle := nil;
    }
 
    static sleep(int milliseconds)

@@ -313,6 +313,16 @@ void SyntaxTreeBuilder :: flushL6AsTemplateArg(SyntaxTreeWriter& writer, Scope& 
    writer.closeNode();
 }
 
+void SyntaxTreeBuilder :: flushAttributeBlock(SyntaxTreeWriter& writer, Scope& scope, ref_t& attributeCategory, SyntaxNode& current, SyntaxNode identNode, bool noTypes)
+{
+   while (current != identNode) {
+      bool allowType = !noTypes && current.nextNode() == identNode;
+      flushAttribute(writer, scope, current, attributeCategory, allowType);
+
+      current = current.nextNode();
+   }
+}
+
 void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode)
 {
    if (exprMode) {
@@ -323,12 +333,7 @@ void SyntaxTreeBuilder :: flushTemplateType(SyntaxTreeWriter& writer, Scope& sco
       SyntaxNode identNode = objNode.lastChild(SyntaxKey::TerminalMask);
 
       ref_t attributeCategory = V_CATEGORY_MAX;
-      while (current != identNode) {
-         bool allowType = current.nextNode() == identNode;
-         flushAttribute(writer, scope, current, attributeCategory, allowType);
-
-         current = current.nextNode();
-      }
+      flushAttributeBlock(writer, scope, attributeCategory, current, identNode, false);
 
       SyntaxKey parameterKey;
       ref_t parameterIndex = 0;
@@ -488,6 +493,14 @@ void SyntaxTreeBuilder :: flushObject(SyntaxTreeWriter& writer, Scope& scope, Sy
    writer.newNode(node.key);
 
    SyntaxNode current = node.firstChild();
+
+   if (current == SyntaxKey::NotNilAttribute) {
+      writer.appendNode(SyntaxKey::Attribute, V_NOTNILLABLE);
+
+      node = current;
+      current = node.firstChild();
+   }
+
    if (current == SyntaxKey::Idle)
       current = current.nextNode();
 
@@ -779,6 +792,64 @@ void SyntaxTreeBuilder :: flushTupleType(SyntaxTreeWriter& writer, Scope& scope,
    }
 }
 
+void SyntaxTreeBuilder :: flushTypeBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& current, ref_t& attributeCategory)
+{
+   SyntaxNode blockNode = current.nextNode();
+   while (blockNode.key == SyntaxKey::TemplateArg)
+      blockNode = blockNode.nextNode();
+
+   bool nullable = false;
+   int arrayNestLevel = 0;
+   if (blockNode == SyntaxKey::TypeBlock) {
+      SyntaxNode typeNode = blockNode.firstChild();
+      while (typeNode != SyntaxKey::None) {
+         if (typeNode == SyntaxKey::ArrayType) {
+            arrayNestLevel++;
+         }
+         else if (typeNode == SyntaxKey::NullableType) {
+            nullable = true;
+         }
+         typeNode = typeNode.firstChild();
+      }
+
+      blockNode = blockNode.nextNode();
+   }
+
+   if (nullable)
+      writer.newNode(SyntaxKey::NullableType);
+
+   for (int i = 0; i < arrayNestLevel; i++)
+      writer.newNode(SyntaxKey::ArrayType);
+
+   writer.newNode(SyntaxKey::TemplateType);
+
+   SyntaxKey parameterKey;
+   ref_t parameterIndex = 0;
+   if (current == SyntaxKey::identifier && scope.isParameter(current, parameterKey, parameterIndex, false)) {
+      writer.newNode(parameterKey, parameterIndex);
+      flushIdentifier(writer, current, scope.ignoreTerminalInfo);
+      writer.closeNode();
+   }
+   else flushNode(writer, scope, current);
+
+   current = current.nextNode();
+   while (current == SyntaxKey::TemplateArg) {
+      flushTypeAttribute(writer, scope, current, attributeCategory, true);
+
+      current = current.nextNode();
+   }
+
+   writer.closeNode();
+
+   for (int i = 0; i < arrayNestLevel; i++)
+      writer.closeNode();
+
+   if (nullable)
+      writer.closeNode();
+
+   current = blockNode;
+}
+
 void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool withNameNode, 
    bool typeDescriptor, bool exprMode)
 {
@@ -795,41 +866,16 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != nameNode) {
       SyntaxNode nextNode = current.nextNode();
-      if (nextNode == SyntaxKey::TemplateArg) {
-         writer.newNode(SyntaxKey::TemplateType);
+      if (nextNode == SyntaxKey::TypeBlock || nextNode == SyntaxKey::TemplateArg) {
+         flushTypeBlock(writer, scope, current, attributeCategory);
 
-         SyntaxKey parameterKey;
-         ref_t parameterIndex = 0;
-         if (current == SyntaxKey::identifier && scope.isParameter(current, parameterKey, parameterIndex, false)) {
-            writer.newNode(parameterKey, parameterIndex);
-            flushIdentifier(writer, current, scope.ignoreTerminalInfo);
-            writer.closeNode();
-         }
-         else flushNode(writer, scope, current);
-
-         current = nextNode;
-         while (current == SyntaxKey::TemplateArg) {
-            flushTypeAttribute(writer, scope, current, attributeCategory, true);
-
-            current = current.nextNode();
-         }
-
-         writer.closeNode();
+         break;
       }
       else if (current == SyntaxKey::TupleType) {
          withTuple = true;
          flushTupleType(writer, scope, current, attributeCategory);
 
          current = current.nextNode();
-      }
-      else if (current == SyntaxKey::SubDeclaration) {
-         flushDescriptor(writer, scope, current, withNameNode, typeDescriptor);
-
-         current = current.nextNode();
-
-         // HOTFIX : the last sub declaration contains the name node and should be the last one to analyze
-         if (current != SyntaxKey::SubDeclaration)
-            break;
       }
       else {
          bool allowType = (nameNode.key == SyntaxKey::None || nextNode == nameNode) && !withTuple;
@@ -1310,7 +1356,7 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
 
 inline bool isTypeRelated(SyntaxNode current)
 {
-   return current.key == SyntaxKey::Type || current.key == SyntaxKey::ArrayType || current.key == SyntaxKey::TemplateType;
+   return current.key == SyntaxKey::Type || current.key == SyntaxKey::ArrayType || current.key == SyntaxKey::TemplateType || current.key == SyntaxKey::NullableType;
 }
 
 bool ifTypeRelatedExists(SyntaxNode node)
@@ -1402,6 +1448,7 @@ inline void copyFunctionAttributes(SyntaxTreeWriter& writer, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Type:
+         case SyntaxKey::NullableType:
          case SyntaxKey::TemplateType:
          case SyntaxKey::ArrayType:
             SyntaxTree::copyNodeSafe(writer, current, true);
@@ -2150,8 +2197,8 @@ void TemplateProssesor :: copyNode(SyntaxTreeWriter& writer, TemplateScope& scop
                writer.closeNode();
             }
             else {
-               if (arg.existChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType)) {
-                  copyNode(writer, scope, arg.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType));
+               if (arg.existChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType, SyntaxKey::NullableType)) {
+                  copyNode(writer, scope, arg.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType, SyntaxKey::NullableType));
                }
                writer.newNode(SyntaxKey::Name);
                copyChildren(writer, scope, arg);
