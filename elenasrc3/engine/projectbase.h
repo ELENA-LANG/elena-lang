@@ -72,6 +72,7 @@ namespace elena_lang
       OptimizationMode,
       GenerateParamNameInfo,
       StrictTypeEnforcing,
+      NullableTypeWarning,
       ConditionalBoxing,
       EvaluateOp,
 

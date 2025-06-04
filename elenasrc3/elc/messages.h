@@ -10,7 +10,7 @@
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 105;
+   constexpr auto MessageLength = 106;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -69,6 +69,7 @@ namespace elena_lang
       {infoNewMethod, infoMsgNewMethod},
       {infoCurrentMethod, infoMsgCurrentMethod},
       {infoUnknownMessage, infoMsgUnknownMessage},
+      {infoMessageInfo, infoMsgMessageInfo},
       {infoTargetClass, infoMsgTargetClass},
       {infoScopeMethod, infoMsgScopeMethod},
       {infoCurrentClass, infoMsgCurrentClass},

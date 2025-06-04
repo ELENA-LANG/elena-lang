@@ -15,6 +15,7 @@ namespace elena_lang
    constexpr bool DEFAULT_CONDITIONAL_BOXING       = true;
    constexpr bool DEFAULT_EVALUATE_OP              = true;
    constexpr bool DEFAULT_STRICT_TYPE_ENFORCING    = false;
+   constexpr bool DEFAULT_NULLABLE_TYPE_WARNING    = true;
 
    enum MetaHint : int
    {
@@ -431,6 +432,7 @@ namespace elena_lang
    constexpr auto infoScopeMethod            = 708;
    constexpr auto infoExptectedType          = 709;
    constexpr auto infoInternalDefConstructor = 710;
+   constexpr auto infoMessageInfo            = 711;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;

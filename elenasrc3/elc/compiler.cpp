@@ -2132,6 +2132,7 @@ Compiler::Compiler(
    _noValidation = false;
    _withDebugInfo = true;
    _strictTypeEnforcing = false;
+   _nullableTypeWarning = false;
 
    _trackingUnassigned = false;
 
@@ -13529,7 +13530,7 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
          scope.raiseError(errInvalidOperation, node);
 
       if (nillableOp)
-         scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, node);
+         handleNillableAssign(node, opVal);
    }
 
    return loperand;
@@ -14407,7 +14408,7 @@ ObjectInfo Compiler::Expression::compileTupleAssigning(SyntaxNode node)
       bool nillableOp = false;
       compileAssigningOp(targetVar, sourceVar, nillableOp);
       if (nillableOp)
-         scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, node);
+         handleNillableAssign(node, sourceVar);
    }
 
    return exprVal;
@@ -15077,7 +15078,7 @@ void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_
       }
       else if (messageNode == SyntaxKey::None) {
          if (compiler->_verbose) {
-            showContextInfo(message, targetRef);
+            showContextInfo(message, targetRef, infoUnknownMessage);
          }
 
          if ((message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE) {
@@ -15119,6 +15120,9 @@ void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_
 
 void Compiler::Expression :: handleNillableMessageCall(SyntaxNode node, mssg_t message, ObjectInfo target)
 {
+   if (!compiler->checkNullableTypeFlag())
+      return;
+
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    if (codeScope && codeScope->verifiedObjects.exist(target)) {
       // validate if the target was checked as not nil - no need to warn
@@ -15132,7 +15136,7 @@ void Compiler::Expression :: handleNillableMessageCall(SyntaxNode node, mssg_t m
    if (compiler->_verbose) {
       ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
 
-      showContextInfo(message, targetRef);
+      showContextInfo(message, targetRef, infoMessageInfo);
    }
 
    scope.raiseWarning(WARNING_LEVEL_1, wrnNillableTarget, node);
@@ -15140,6 +15144,9 @@ void Compiler::Expression :: handleNillableMessageCall(SyntaxNode node, mssg_t m
 
 void Compiler::Expression :: handleNillableReturn(SyntaxNode node, ObjectInfo target)
 {
+   if (!compiler->checkNullableTypeFlag())
+      return;
+
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    if (codeScope && codeScope->verifiedObjects.exist(target)) {
       // validate if the target was checked as not nil - no need to warn
@@ -15151,6 +15158,9 @@ void Compiler::Expression :: handleNillableReturn(SyntaxNode node, ObjectInfo ta
 
 void Compiler::Expression::handleNillableAssign(SyntaxNode node, ObjectInfo target)
 {
+   if (!compiler->checkNullableTypeFlag())
+      return;
+
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    if (codeScope && codeScope->verifiedObjects.exist(target)) {
       // validate if the target was checked as not nil - no need to warn
@@ -15218,7 +15228,7 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
 
             if (checkShortCircle && validateShortCircle(resolution.message, target)) {
                if (compiler->_verbose) {
-                  showContextInfo(resolution.message, targetRef);
+                  showContextInfo(resolution.message, targetRef, infoMessageInfo);
                }
 
                if (target.kind == ObjectKind::ConstructorSelf) {
@@ -16648,12 +16658,12 @@ bool Compiler::Expression::validateShortCircle(mssg_t message, ObjectInfo target
    return false;
 }
 
-void Compiler::Expression::showContextInfo(mssg_t message, ref_t targetRef)
+void Compiler::Expression::showContextInfo(mssg_t message, ref_t targetRef, int infoMessage)
 {
    IdentifierString messageName;
    ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
 
-   compiler->_errorProcessor->info(infoUnknownMessage, *messageName);
+   compiler->_errorProcessor->info(infoMessage, *messageName);
 
    ustr_t name = scope.module->resolveReference(targetRef);
    if (!name.empty())
@@ -17203,7 +17213,7 @@ void Compiler::Expression::compileAssigning(SyntaxNode node, ObjectInfo target, 
       scope.raiseError(errInvalidOperation, node);
 
    if (nillableOp)
-      scope.raiseWarning(WARNING_LEVEL_1, wrnAssigningNillable, node);
+      handleNillableAssign(node, source);
 }
 
 void Compiler::Expression::compileConverting(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool stackSafe)

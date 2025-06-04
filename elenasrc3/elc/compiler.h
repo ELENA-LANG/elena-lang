@@ -1636,7 +1636,7 @@ namespace elena_lang
 
          bool resolveAutoType(ObjectInfo source, ObjectInfo& target);
 
-         void showContextInfo(mssg_t message, ref_t targetRef);
+         void showContextInfo(mssg_t message, ref_t targetRef, int infoMessage);
 
          void writeMessageArguments(ObjectInfo& target, mssg_t message, ArgumentsInfo& arguments, ObjectInfo& lenLocal,
             int& stackSafeAttr, bool targetOverridden, bool found, ArgumentListType argType, bool stackSafe);
@@ -1729,6 +1729,7 @@ namespace elena_lang
       bool                   _noValidation;
       bool                   _withDebugInfo;
       bool                   _strictTypeEnforcing;
+      bool                   _nullableTypeWarning;
 
       mssg_t overwriteAsAsyncFunction(Scope& scope, mssg_t weakMessage);
 
@@ -2164,6 +2165,15 @@ namespace elena_lang
       void setStrictTypeFlag(bool flag)
       {
          _strictTypeEnforcing = flag;
+      }
+
+      bool checkNullableTypeFlag()
+      {
+         return _nullableTypeWarning;
+      }
+      void setNullableTypeFlag(bool flag)
+      {
+         _nullableTypeWarning = flag;
       }
 
       void setVerboseOn()

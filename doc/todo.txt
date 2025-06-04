@@ -50,7 +50,7 @@ In development:
   - #562 : nullable
   -------------------------------------
   * an option to ignore nillable warnings
-  * an option to treat weak types as nullable
+  * review examples / rosetta code samples
   * close #562
 
   * quick review previous rosetta code samples

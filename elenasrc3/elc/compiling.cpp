@@ -761,6 +761,9 @@ void CompilingProcess :: configurate(Project& project)
    bool strictTypeFlag = project.BoolSetting(ProjectOption::StrictTypeEnforcing, DEFAULT_STRICT_TYPE_ENFORCING);
    _compiler->setStrictTypeFlag(strictTypeFlag);
 
+   bool nullableTypeWarning = project.BoolSetting(ProjectOption::NullableTypeWarning, DEFAULT_NULLABLE_TYPE_WARNING);
+   _compiler->setNullableTypeFlag(nullableTypeWarning);
+
    // load program forwards
    for (auto it = _forwards.start(); !it.eof(); ++it) {
       ustr_t f = *it;
@@ -1115,6 +1118,9 @@ void CommandHelper :: handleOption(ustr_t arg, IdentifierString& profile, Projec
          }
          else if (arg[2] == 'j') {
             project.addBoolSetting(ProjectOption::WithJumpAlignment, arg[3] != '-');
+         }
+         else if (arg[2] == 'n') {
+            project.addBoolSetting(ProjectOption::NullableTypeWarning, arg[3] != '-');
          }
          else if (arg[2] == 'm') {
             project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, arg[3] != '-');
