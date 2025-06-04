@@ -7,8 +7,8 @@ class PermVectorArray
    __string object[] array;
 
    // cannot be created directly
-   protected constructor(int size)
-      = nil;
+   private constructor()
+      = NotSupportedException.raise();
 
    at(int index)
       = array[index];

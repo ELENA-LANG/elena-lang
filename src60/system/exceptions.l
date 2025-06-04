@@ -21,7 +21,7 @@ public class Exception
 
    raise() : external(system'core_routines'__exception_raise);
 
-   sealed static raise()
+    __throwop sealed static raise()
    {
        weak self.new().raise()
    }

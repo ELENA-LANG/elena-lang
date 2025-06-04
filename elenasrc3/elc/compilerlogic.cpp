@@ -1037,6 +1037,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_INDEXED_ATTR:
          hint = (ref_t)MethodHint::Indexed;
          return true;
+      case V_THROWOP:
+         hint = (ref_t)MethodHint::ThrowOp;
+         return true;
       default:
          return false;
    }
@@ -2463,6 +2466,8 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       // check nillable attribute
       result.outputInfo.nillable = test(methodInfo.hints, (ref_t)MethodHint::Nillable);
+
+      result.throwOp = test(methodInfo.hints, (ref_t)MethodHint::ThrowOp);
 
       result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
       if (result.kind == (ref_t)MethodHint::Normal) {

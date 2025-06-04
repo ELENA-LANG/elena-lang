@@ -125,6 +125,7 @@ namespace elena_lang
       Conditional,
       ConditionalUnboxingRequired,
       Weak,
+      ThrowOp
    };
 
    enum class TrackingMode

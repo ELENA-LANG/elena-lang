@@ -105,9 +105,7 @@ public sealed Array<T> : Indexable<T>
          ^ array[n] 
       };
 
-      system'InvalidArgumentException.raise();
-
-      ^ default
+      ^ system'InvalidArgumentException.raise();
    }
 
    setAt(int n, T item)

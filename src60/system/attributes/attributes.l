@@ -5,7 +5,8 @@
 #let attributes["import"]      := 80008002h;
 
 /// modificator:
-#let attributes["__ignore_duplicates"] :=  80007001h;
+#let attributes["__ignore_duplicates"] := 80007001h;
+#let attributes["__throwop"]           := 80007003h;
 
 /// method attributes:
 #let attributes["indexed"]     :=  80006001h;
@@ -87,3 +88,4 @@
 #let attributes["__ptr"]       := 8000080Ah;
 #let attributes["__ext_mssg"]  := 8000080Bh;
 #let attributes["__typeof"]    := 8000080Ch;
+

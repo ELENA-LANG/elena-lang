@@ -27,25 +27,17 @@ import system'collections;
 //   }
 //}
 
-/*A<T>
+class XList<T>
 {
-   static A<T>? Default
-      = nil;      
-}*/
+   T[]            _array;
 
-B;
-
-A
-{
-   B Item : prop;
+   do()
+   {
+      T a := _array[0];
+   }
 }
 
 public program()
 {
-    A? a := nil;
-
-    var r := (a ?? a := new A()).Item;
-	
-//   A<int> n := new A<int>();
-   //List<int>? list := nil;
+   List<int?> list := nil;
 }

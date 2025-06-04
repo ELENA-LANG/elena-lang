@@ -24,6 +24,7 @@ namespace elena_lang
       bool        stackSafe;
       bool        withVariadicDispatcher;
       bool        withCustomDispatcher;
+      bool        throwOp;
       int         nillableArgs;
       mssg_t      byRefHandler;
 

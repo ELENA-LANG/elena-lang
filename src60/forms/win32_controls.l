@@ -155,7 +155,7 @@ public abstract class BaseWinControl : BaseControl
       }        
    }
 
-   IControl retrieve(Handle handle)
+   IControl? retrieve(Handle handle)
    {
       if(nil == _handle)
          { ^ nil };
@@ -1119,7 +1119,7 @@ public sealed class ImageList : Object, interface<IControl>
       }
    }
 
-   IControl retrieve(Handle handle)
+   IControl? retrieve(Handle handle)
    {
       ^ nil
    }

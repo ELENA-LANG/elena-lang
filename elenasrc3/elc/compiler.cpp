@@ -3759,6 +3759,7 @@ DeclResult Compiler::checkAndGenerateClassField(ClassScope& scope, SyntaxNode no
       }
       else if (!test(scope.info.header.flags, elStructureRole)) {
          typeInfo.typeRef = resolveArrayTemplate(*scope.moduleScope, attrs.typeInfo.typeRef, attrs.typeInfo.nillable, true);
+         typeInfo.nillable = false;
       }
       else return DeclResult::Illegal;
 
@@ -12454,7 +12455,8 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, EAttr mode,
 
       retVal = scope.mapSelf();
    }
-   else {
+   // NOTE : if the operation will not return control normally no need to typecast the operation
+   else if (retVal.mode != TargetMode::ThrowOp) {
       // HOTFIX : converting nil value to a structure is not allowed in returning expression
       if (retVal.kind == ObjectKind::Nil && compiler->_logic->isEmbeddableStruct(*scope.moduleScope, outputInfo)) {
          scope.raiseError(errInvalidOperation, node);
@@ -15196,6 +15198,9 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
    }
 
    if (found) {
+      if (result.throwOp)
+         retVal.mode = TargetMode::ThrowOp;
+
       retVal.typeInfo = result.outputInfo;
       switch ((MethodHint)result.kind) {
          case MethodHint::Sealed:

@@ -49,27 +49,16 @@ In development:
   --------------------------------------
   - #562 : nullable
   -------------------------------------
-  * support : if(a != nil && a.X)
-
-  * remove all warnings
-
-  * List<A?> : array of nillable items
   * xml : fix warnings
-  * skip warning if the variable was checked as not nullable
-  * warn if nullable argument is passed to the method, not supporting nullable
-  * boxing to Nullable?
-  * support nullable reference (when option is on, warning on unsafe operation)
-  * nullable : int? == int? -> return bool?
-  * nullable : int? + int? -> return int? (if both nil -> the result is nil)
-  * nillable argument list
-  * Nullable.ValueOrDefault to returen value or default value
-  * nullable closure argument
-  * quick review previous rosetta code samples
+
   * an option to ignore nillable warnings
   * an option to treat weak types as nullable
+  * List<A?> : array of nillable items
   * close #562
-  --------------------------------------
+  * quick review previous rosetta code samples
   * warn if a variable / field can be nil (if the option is enabled)
+  --------------------------------------
+  --------------------------------------
   * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
   * new opcode : fpi - ppc64le, arm64
   * new opcode : fsin / fcos - ppc64le
