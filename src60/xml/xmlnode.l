@@ -82,7 +82,7 @@ public class XmlNode
       ^ (xpath.Substring(index), String.MinValue);
    }
    
-   XmlNode findChild(string xpath)
+   XmlNode? findChild(string xpath)
    {
       if (xpath == String.MinValue)
       {
@@ -105,7 +105,7 @@ public class XmlNode
       ^ nil
    }
    
-   XmlNode nextSibling()
+   XmlNode? nextSibling()
    {
       if:nil(_parent)
       {
@@ -123,7 +123,7 @@ public class XmlNode
       ^ nil
    }
    
-   XmlNode previousSibling()
+   XmlNode? previousSibling()
    {
       if:nil(_parent)
          { ^ nil };
@@ -137,7 +137,7 @@ public class XmlNode
       ^ nil      
    }
    
-   XmlNode firstChild()
+   XmlNode? firstChild()
    {
       if (_children.Length == 0) {
          ^ nil
@@ -146,7 +146,7 @@ public class XmlNode
       ^ _children[0]
    }
    
-   XmlNode lastChild()
+   XmlNode? lastChild()
    {
       if (_children.Length == 0) {
          ^ nil

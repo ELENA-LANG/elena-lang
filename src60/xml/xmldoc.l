@@ -77,7 +77,7 @@ public class XmlDocument
       int level := 0;
       stack.push(_root);
       while (stack.Length > 0) {
-         XmlNode node := stack.pop();
+         XmlNode? node := stack.pop();
          if:not:nil(node) {
             if (node.ChildCounter > 0) {               
                level++;
@@ -86,14 +86,14 @@ public class XmlDocument
                stack.push(node);
                stack.push(nil);
                
-               XmlNode child := node.firstChild();
+               XmlNode? child := node.firstChild();
                if:not:nil(child)
                   stack.push(child);
             }
             else {
                formatter.writeElement(output, level + 1, node);
                
-               XmlNode next := node.nextSibling();
+               XmlNode? next := node.nextSibling();
                if:not:nil(next)
                   stack.push(next);               
             }
@@ -104,14 +104,14 @@ public class XmlDocument
             formatter.closeTag(output, level, node);
             level--;
                
-            XmlNode next := node.nextSibling();
+            XmlNode? next := node?.nextSibling();
             if:not:nil(next)
                stack.push(next);
          }
       };
    }
 
-   XmlNode findNode(string xpath)
+   XmlNode? findNode(string xpath)
    {
       if (xpath[0]==$47) {
          (string current, string subpath) := XmlNode.parseXPath(1, xpath);
