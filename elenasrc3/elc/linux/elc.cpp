@@ -194,18 +194,18 @@ void handleOption(char* arg, IdentifierString& profile, Project& project, Compil
    }
 }
 
-PlatformType definePlatform(int argc, char** argv, PlatformType defaultPlatform) 
+PlatformType definePlatform(int argc, char** argv, PlatformType defaultPlatform)
 {
    for (int i = 1; i < argc; i++) {
-      if (ustr_t(argv[i]).compatre(WIN32_PLATFORM_OPTION)) {
-#if defined(__x86_64__) || defined(__i386__)      
+      if (ustr_t(argv[i]).compare(WIN32_PLATFORM_OPTION)) {
+#if defined(__x86_64__) || defined(__i386__)
          return PlatformType::Win_x86;
 #else
          return PlatformType::None;
 #endif
       }
-      else if (ustr_t(argv[i]).compatre(WIN64_PLATFORM_OPTION)) {
-#if defined(__x86_64__) || defined(__i386__)      
+      else if (ustr_t(argv[i]).compare(WIN64_PLATFORM_OPTION)) {
+#if defined(__x86_64__) || defined(__i386__)
          return PlatformType::Win_x86_64;
 #else
          return PlatformType::None;
@@ -232,7 +232,7 @@ LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessor
 #endif
          return new LinuxLinker(errorProcessor, &LinuxImageFormatter::getInstance(project));
       default:
-         errorProcessor.raiseError(errNotSupportedPlatform);
+         errorProcessor->raiseError(errNotSupportedPlatform);
          return nullptr;
    }
 }

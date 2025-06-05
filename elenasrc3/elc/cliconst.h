@@ -62,7 +62,7 @@ namespace elena_lang
    constexpr auto BT_XRULES_FILE             = "bt_xrules60.dat";
 
    constexpr auto WIN32_PLATFORM_OPTION      = "-xtwin32";
-   constexpr auto WIN32_PLATFORM_OPTION      = "-xtwin32";
+   constexpr auto WIN64_PLATFORM_OPTION      = "-xtwin64";
 
    constexpr auto VA_ALIGNMENT               = 0x08;
 
