@@ -13,6 +13,8 @@
 #include "project.h"
 #include "elfimage.h"
 
+#define CROSS_COMPILE_MODE 1
+
 #if defined(__x86_64__)
 
 #include "elflinker32.h"
@@ -20,10 +22,23 @@
 #include "x86compiler.h"
 #include "x86_64compiler.h"
 
+#if CROSS_COMPILE_MODE
+
+#include "windows/ntlinker32.h"
+#include "windows/ntlinker64.h"
+
+#endif
+
 #elif defined(__i386__)
 
 #include "elflinker32.h"
 #include "x86compiler.h"
+
+#if CROSS_COMPILE_MODE
+
+#include "windows/ntlinker32.h"
+
+#endif
 
 #elif defined(__PPC64__)
 
@@ -147,13 +162,16 @@ public:
 JITCompilerBase* createJITCompiler(PlatformType platform)
 {
    switch (platform) {
+
 #if defined(__i386__) || defined(__x86_64__)
       case PlatformType::Linux_x86:
+      case PlatformType::Win_x86:
          return new X86JITCompiler();
 #endif
 #if defined(__x86_64__)
       case PlatformType::Linux_x86_64:
       case PlatformType::FreeBSD_x86_64:
+      case PlatformType::Win_x86_64:
          return new X86_64JITCompiler();
 #endif
 #if defined(__PPC64__)
@@ -219,6 +237,14 @@ PlatformType definePlatform(int argc, char** argv, PlatformType defaultPlatform)
 LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessorBase* errorProcessor)
 {
    switch(platform) {
+#if CROSS_COMPILE_MODE && defined(__x86_64__)
+      case PlatformType::Win_x86_64:
+         return new Win64NtLinker(errorProcessor, &Win64NtImageFormatter::getInstance(project));
+#endif
+#if CROSS_COMPILE_MODE && (defined(__x86_64__) || defined(__i386__))
+      case PlatformType::Win_x86:
+         return new Win32NtLinker(errorProcessor, &Win32NtImageFormatter::getInstance(project));
+#endif
 #if defined(__x86_64__) && defined(__FreeBSD__)
       case PlatformType::FreeBSD_x86_64:
 #elif defined(__x86_64__)

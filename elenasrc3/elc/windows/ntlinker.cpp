@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Executive Linker base class body
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -11,7 +11,16 @@
 #include "langcommon.h"
 #include "windows/winconsts.h"
 
+#if defined(__unix__)
+
+#include "windows/ntdeclaration.h"
+
+#else
+
 #include <windows.h>
+
+#endif
+
 #include <time.h>
 
 #pragma warning(disable:4996)

@@ -2,14 +2,22 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Executive Win64 Linker class body
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
 // --------------------------------------------------------------------------
 #include "ntlinker64.h"
 
+#if defined(__unix__)
+
+#include "windows/ntdeclaration.h"
+
+#else
+
 #include <windows.h>
+
+#endif
 
 using namespace elena_lang;
 
