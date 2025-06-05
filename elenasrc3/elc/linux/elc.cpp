@@ -201,7 +201,7 @@ PlatformType definePlatform(PlatformType defaultPlatform)
 
 LinkerBase* createLinker(PlatformType defaultPlatform, Project* project, ErrorProcessorBase* errorProcessor)
 {
-   return new LinuxLinker(errorProcessor, project);
+   return new LinuxLinker(errorProcessor, &LinuxImageFormatter::getInstance(project));
 }
 
 int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
