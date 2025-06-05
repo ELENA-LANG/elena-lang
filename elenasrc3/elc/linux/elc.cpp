@@ -194,9 +194,20 @@ void handleOption(char* arg, IdentifierString& profile, Project& project, Compil
    }
 }
 
+PlatformType definePlatform(PlatformType defaultPlatform) 
+{
+   return defaultPlatform;
+}
+
+LinkerBase* createLinker(PlatformType defaultPlatform, Project* project, ErrorProcessorBase* errorProcessor)
+{
+   return new LinuxLinker(errorProcessor, project);
+}
+
 int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
+   PlatformType platform = definePlatform(CURRENT_PLATFORM);
    bool cleanMode = false;
 
    JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
@@ -204,8 +215,8 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       &Presenter::getInstance(), &errorProcessor,
       VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
-   Project          project(dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
-   LinuxLinker      linker(&errorProcessor, &LinuxImageFormatter::getInstance(&project));
+   Project          project(dataPath, platform, &Presenter::getInstance());
+   LinkerBase*      linker = createLinker(platform, &project, &errorProcessor);
 
    // Initializing...
    path_t defaultConfigPath = PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
@@ -260,7 +271,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
    }
    else {
       // Building...
-      return process.build(project, linker,
+      return process.build(project, *linker,
          DEFAULT_STACKALIGNMENT,
          DEFAULT_RAW_STACKALIGNMENT,
          DEFAULT_EHTABLE_ENTRY_SIZE,

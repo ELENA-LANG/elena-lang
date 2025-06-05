@@ -1486,7 +1486,7 @@ public nilDispatcherTest() : testCase()
 {
    auto d := new NilDispatcher();
    var d2 := d;
-   A a := nil;
+   A? a := nil;
    var b := nil;
     
    d.testMe(1, a) \ back(nil);
@@ -2148,7 +2148,7 @@ NilArgB;
 
 NilArgA
 {
-   NilArgB b;
+   NilArgB? b;
 
    constructor new(NilArgB? b)
    {
@@ -2249,7 +2249,7 @@ public isNilOperatorTest() : testCase()
    Assert.ifFailed({ var a := nil; var b := nil; var r := a ?? b.test() });
    Console.write(".");
 
-   string s := nil;
+   string? s := nil;
    Assert.ifEqual(s ?? String.MinValue, EmptyString);
    Console.write(".");
 }
