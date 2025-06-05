@@ -159,6 +159,14 @@
 		<Unit filename="../separser.h" />
 		<Unit filename="../source.cpp" />
 		<Unit filename="../source.h" />
+		<Unit filename="../windows/ntimage.cpp" />
+		<Unit filename="../windows/ntimage.h" />
+		<Unit filename="../windows/ntlinker.cpp" />
+		<Unit filename="../windows/ntlinker.h" />
+		<Unit filename="../windows/ntlinker32.cpp" />
+		<Unit filename="../windows/ntlinker32.h" />
+		<Unit filename="../windows/ntlinker64.cpp" />
+		<Unit filename="../windows/ntlinker64.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
