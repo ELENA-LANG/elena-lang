@@ -27,7 +27,12 @@
 
 using namespace elena_lang;
 
+#if defined(__unix__)
+constexpr auto WINSTUB_PATH      = "winstub.ex_";
+#else
 constexpr auto WINSTUB_PATH      = L"winstub.ex_";
+#endif
+
 constexpr auto FILE_ALIGNMENT    = 0x200;
 constexpr auto SECTION_ALIGNMENT = 0x1000;
 
@@ -174,8 +179,8 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    image.sectionAlignment = SECTION_ALIGNMENT;
    image.addressSpace.imageBase = IMAGE_BASE;
 
-   _imageFormatter->prepareImage(provider, image.addressSpace, image.imageSections, 
-      image.sectionAlignment, 
+   _imageFormatter->prepareImage(provider, image.addressSpace, image.imageSections,
+      image.sectionAlignment,
       image.fileAlignment,
       image.withDebugInfo);
 

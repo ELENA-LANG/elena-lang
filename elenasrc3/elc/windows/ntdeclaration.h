@@ -50,8 +50,8 @@ typedef int                 BOOL;
 typedef unsigned char       BYTE;
 typedef unsigned short      WORD;
 
-typedef __int64 LONGLONG;
-typedef unsigned __int64 ULONGLONG;
+typedef int64_t LONGLONG;
+typedef uint64_t ULONGLONG;
 
 typedef struct _IMAGE_DATA_DIRECTORY {
     DWORD   VirtualAddress;

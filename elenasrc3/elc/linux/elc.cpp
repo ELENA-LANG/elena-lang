@@ -13,7 +13,7 @@
 #include "project.h"
 #include "elfimage.h"
 
-#define CROSS_COMPILE_MODE 1
+//#define CROSS_COMPILE_MODE 1
 
 #if defined(__x86_64__)
 
@@ -26,6 +26,7 @@
 
 #include "windows/ntlinker32.h"
 #include "windows/ntlinker64.h"
+#include "windows/ntimage.h"
 
 #endif
 
@@ -37,6 +38,7 @@
 #if CROSS_COMPILE_MODE
 
 #include "windows/ntlinker32.h"
+#include "windows/ntimage.h"
 
 #endif
 
