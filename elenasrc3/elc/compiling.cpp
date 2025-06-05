@@ -1131,6 +1131,9 @@ void CommandHelper :: handleOption(ustr_t arg, IdentifierString& profile, Projec
          else if (arg[2] == 's') {
             project.addBoolSetting(ProjectOption::StrictTypeEnforcing, arg[3] != '-');
          }
+         else if (arg[2] == 't') {
+            // ignore platform specification
+         }
          break;
       case '-':
          if (arg.compare("--tracing")) {

@@ -194,20 +194,57 @@ void handleOption(char* arg, IdentifierString& profile, Project& project, Compil
    }
 }
 
-PlatformType definePlatform(PlatformType defaultPlatform) 
+PlatformType definePlatform(int argc, char** argv, PlatformType defaultPlatform) 
 {
+   for (int i = 1; i < argc; i++) {
+      if (ustr_t(argv[i]).compatre(WIN32_PLATFORM_OPTION)) {
+#if defined(__x86_64__) || defined(__i386__)      
+         return PlatformType::Win_x86;
+#else
+         return PlatformType::None;
+#endif
+      }
+      else if (ustr_t(argv[i]).compatre(WIN64_PLATFORM_OPTION)) {
+#if defined(__x86_64__) || defined(__i386__)      
+         return PlatformType::Win_x86_64;
+#else
+         return PlatformType::None;
+#endif
+      }
+   }
+
    return defaultPlatform;
 }
 
-LinkerBase* createLinker(PlatformType defaultPlatform, Project* project, ErrorProcessorBase* errorProcessor)
+LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessorBase* errorProcessor)
 {
-   return new LinuxLinker(errorProcessor, &LinuxImageFormatter::getInstance(project));
+   switch(platform) {
+#if defined(__x86_64__) && defined(__FreeBSD__)
+      case PlatformType::FreeBSD_x86_64:
+#elif defined(__x86_64__)
+      case PlatformType::Linux_x86_64:
+#elif defined(__i386__)
+      case PlatformType::Linux_x86:
+#elif defined(__aarch64__)
+      case PlatformType::Linux_ARM64:
+#elif defined(__PPC64__)
+      case PlatformType::Linux_PPC64le:
+#endif
+         return new LinuxLinker(errorProcessor, &LinuxImageFormatter::getInstance(project));
+      default:
+         errorProcessor.raiseError(errNotSupportedPlatform);
+         return nullptr;
+   }
 }
 
 int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
-   PlatformType platform = definePlatform(CURRENT_PLATFORM);
+   // try to specify supported cross-compile platform
+   PlatformType platform = definePlatform(argc, argv, CURRENT_PLATFORM);
+   if (platform == PlatformType::None)
+      errorProcessor.raiseError(errNotSupportedPlatform);
+
    bool cleanMode = false;
 
    JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
@@ -217,6 +254,8 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
 
    Project          project(dataPath, platform, &Presenter::getInstance());
    LinkerBase*      linker = createLinker(platform, &project, &errorProcessor);
+   if (!linker)
+      errorProcessor.raiseError(errNotSupportedPlatform);
 
    // Initializing...
    path_t defaultConfigPath = PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
