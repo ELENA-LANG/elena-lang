@@ -1,0 +1,42 @@
+#!/bin/bash
+
+(cd ../.. && make clean_i386 all_i386)
+
+read -p "Install locally (in bin directory)? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+
+	. local_build_package_i386.script 
+
+	read -p "Build cross-compile version? " -n 1 -r
+	echo    # (optional) move to a new line
+	if [[ $REPLY =~ ^[Yy]$ ]]
+	then
+
+		(cd ../.. && make cross_elc_i386)
+
+		. local_build_package_win32.script 
+
+	fi
+
+else
+
+	. build_package_i386.script
+
+	read -p "Build cross-compile version? " -n 1 -r
+	echo    # (optional) move to a new line
+	if [[ $REPLY =~ ^[Yy]$ ]]
+	then
+
+		(cd ../.. && make cross_elc_i386)
+
+		. build_package_win32.script 
+
+		. local_runtests.script 
+
+	fi
+
+fi
+
+exit 0

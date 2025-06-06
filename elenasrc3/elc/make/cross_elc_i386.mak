@@ -24,7 +24,7 @@ RCFLAGS_RELEASE = $(RCFLAGS)
 LIBDIR_RELEASE = $(LIBDIR)
 LIB_RELEASE = $(LIB)
 LDFLAGS_RELEASE = $(LDFLAGS) -s
-OBJDIR_RELEASE = ../../temp/elena-cli
+OBJDIR_RELEASE = ../../temp/cross-elena-cli
 DEP_RELEASE = 
 OUT_RELEASE = ../../../bin/elena-cli
 
