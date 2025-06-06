@@ -2,7 +2,7 @@
 
 (cd ../.. && make clean_i386 all_i386)
 
-read -p "Install locally (in bin directory)? " -n 1 -r
+read -p "Install locally (in bin directory) (y/n)? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
@@ -24,7 +24,7 @@ else
 
 	. build_package_i386.script
 
-	read -p "Build cross-compile version? " -n 1 -r
+	read -p "Build cross-compile version (y/n)? " -n 2 -r
 	echo    # (optional) move to a new line
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
