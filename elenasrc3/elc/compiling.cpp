@@ -882,6 +882,10 @@ void CompilingProcess :: greeting(PresenterBase* presenter)
 {
    // Greetings
    presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
+
+#if CROSS_COMPILE_MODE
+   presenter->print(ELC_CROSS_COMPILE_GREETING);
+#endif
 }
 
 void CompilingProcess :: cleanUp(ProjectBase& project)

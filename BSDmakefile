@@ -10,10 +10,10 @@ all_amd64: elc_amd64 sg_amd64 og_amd64 asmc_amd64 ecv_amd64 elenart_amd64 elenas
 clang_all_amd64: clang_elc_amd64 clang_sg_amd64 clang_og_amd64 clang_asmc_amd64 clang_ecv_amd64 clang_elenart_amd64 clang_elenasm_amd64 clang_elenavm_amd64
 
 elc_amd64: 
-	$(MAKE) -C elenasrc3/elc/codeblocks all -f bsd.elc_amd64.mak
+	$(MAKE) -C elenasrc3/elc/make all -f bsd.elc_amd64.mak
 
 clang_elc_amd64: 
-	$(MAKE) -C elenasrc3/elc/codeblocks all -f bsd.clang_elc_amd64.mak
+	$(MAKE) -C elenasrc3/elc/make all -f bsd.clang_elc_amd64.mak
 
 sg_amd64: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks all -f bsd.sg_amd64.mak
@@ -60,7 +60,7 @@ clang_elenavm_amd64:
 clean_amd64: clean_elc_amd64 clean_og_amd64 clean_sg_amd64 clean_asmc_amd64 clean_ecv_amd64 clean_elenart_amd64 clean_elenasm_amd64 clean_elenavm_amd64
 
 clean_elc_amd64: 
-	$(MAKE) -C elenasrc3/elc/codeblocks clean -f bsd.elc_amd64.mak
+	$(MAKE) -C elenasrc3/elc/make clean -f bsd.elc_amd64.mak
 
 clean_sg_amd64: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks clean -f bsd.sg_amd64.mak

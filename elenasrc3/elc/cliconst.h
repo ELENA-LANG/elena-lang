@@ -29,6 +29,7 @@ namespace elena_lang
 
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2025 by Aleksey Rakov, ELENA-LANG Org\n";
+   constexpr auto ELC_CROSS_COMPILE_GREETING = "Cross-comile version\n"
    constexpr auto ELC_STARTING               = "\nProject: %s, Platform: %s, Target type: %s";
    constexpr auto ELC_STRICT_MODE            = "Strict type enforcing is on";
    constexpr auto ELC_PROFILE_INFO           = "Project profile: %s";
