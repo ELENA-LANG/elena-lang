@@ -159,6 +159,3 @@ echo compiling lib60 files
  else
    echo .
  fi
-
-
-exit 0

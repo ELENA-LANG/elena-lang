@@ -48,5 +48,3 @@ echo compiling lib60 files
 
  cp ../../lib60_win/*.nl /usr/lib/elena/lib60_win
  cp ../../lib60_win/*.dnl /usr/lib/elena/lib60_win
-
-exit 0
