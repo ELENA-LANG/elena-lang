@@ -1673,7 +1673,7 @@ void Compiler::MethodScope::markAsAssigned(ObjectInfo object)
 // --- Compiler::CodeScope ---
 
 Compiler::CodeScope::CodeScope(MethodScope* parent)
-   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal), shortcuts({})
+   : Scope(parent), locals({}), localNodes({}), shortcuts({}), flowMode(CodeFlowMode::Normal)
 {
    allocated1 = reserved1 = 0;
    allocated2 = reserved2 = 0;
@@ -1681,7 +1681,7 @@ Compiler::CodeScope::CodeScope(MethodScope* parent)
 }
 
 Compiler::CodeScope::CodeScope(CodeScope* parent)
-   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal), shortcuts({})
+   : Scope(parent), locals({}), localNodes({}), shortcuts({}), flowMode(CodeFlowMode::Normal)
 {
    reserved1 = allocated1 = parent->allocated1;
    reserved2 = allocated2 = parent->allocated2;
@@ -1691,7 +1691,7 @@ Compiler::CodeScope::CodeScope(CodeScope* parent)
 }
 
 Compiler::CodeScope::CodeScope(SymbolScope* parent)
-   : Scope(parent), locals({}), localNodes({}), flowMode(CodeFlowMode::Normal), shortcuts({})
+   : Scope(parent), locals({}), localNodes({}), shortcuts({}), flowMode(CodeFlowMode::Normal)
 {
    allocated1 = reserved1 = 0;
    allocated2 = reserved2 = 0;
