@@ -2077,3 +2077,15 @@ class BitArray32Enumerator : Enumerator<bool>
     
    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
+
+#if (__project["_Win"]) // Windows
+
+public const String NewLineConstant
+    = $13$10;
+
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+public const string NewLineConstant
+    = ""$10;
+
+#endif

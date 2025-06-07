@@ -54,7 +54,6 @@
             <include>events.l</include>
             <include>console.l</include>
             <include>app.l</include>
-            <include>win_strings.l</include>
             <include>template_tests.l</include>
             <include>collections\list.l</include>
             <include>collections\queues.l</include>
