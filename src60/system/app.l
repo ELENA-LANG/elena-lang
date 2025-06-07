@@ -13,7 +13,7 @@ singleton CommandLineFactory
 public CommandLine = 
     CommandLineFactory.load();
 
-#else // Linux & FreeBSD
+#elif (__project["_Linux"] || __project["_FreeBSD"])
 
 // --- CommandLine ---
 
