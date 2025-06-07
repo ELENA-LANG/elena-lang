@@ -3,56 +3,26 @@
      <project>
         <output>../../lib60</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx32_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="Linux_AMD64">
      <project>
         <output>../../lib60_64</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx64_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="FreeBSD_AMD64">
      <project>
         <output>../../lib60_64</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx64_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="Linux_PPC64le">
      <project>
         <output>../../lib60_64</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx64_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="Linux_ARM64">
      <project>
         <output>../../lib60_64</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx64_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="Win_x86">
      <project>
@@ -115,6 +85,8 @@
         <include>collections/sorted_list.l</include>
         <include>collections/template_tests.l</include>
         <include>math/math.l</include>
+        <include>calendar/date_routines.l</include>
+        <include>calendar/dates.l</include>
         <include>text/encoding.l</include>
         <include>text/textbuffer.l</include>
         <include>text/base64.l</include>
