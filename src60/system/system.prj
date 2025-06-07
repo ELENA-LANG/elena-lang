@@ -18,7 +18,7 @@
     </project>
     <manifest>
         <name>ELENA Standard Library</name>
-        <version>6.7.6</version>
+        <version>6.7.7</version>
         <author>Aleksey Rakov</author>
     </manifest>
     <files>
@@ -55,7 +55,6 @@
             <include>events.l</include>
             <include>console.l</include>
             <include>app.l</include>
-            <include>win_app.l</include>
             <include>win_strings.l</include>
             <include>template_tests.l</include>
             <include>collections\list.l</include>

@@ -826,6 +826,36 @@ bool Interpreter::evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo&
    return true;
 }
 
+inline bool evalFlag(ObjectInfo& info)
+{
+   return info.extra == -1;
+}
+
+bool Interpreter :: evalBoolOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   if (loperand.typeInfo.typeRef != V_FLAG || roperand.typeInfo.typeRef != V_FLAG)
+      return false;
+
+   bool result = false;
+   switch (operator_id) {
+      case AND_OPERATOR_ID:
+         result = evalFlag(loperand) && evalFlag(roperand);
+         break;
+      case OR_OPERATOR_ID:
+         result = evalFlag(loperand) || evalFlag(roperand);
+         break;
+      default:
+         return false;
+   }
+
+   retVal = { ObjectKind::Object, { V_FLAG }, 0, result ? -1 : 0 };
+
+   return true;
+}
+
 bool Interpreter :: evalProjectInfoOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
 {
    ObjectInfo loperand = args[0];
@@ -4636,6 +4666,27 @@ ObjectInfo Compiler::evalSizeOperation(Interpreter& interpreter, Scope& scope, S
    return {};
 }
 
+ObjectInfo Compiler :: evalBoolOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors)
+{
+   SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
+   SyntaxNode rnode = lnode.nextNode(SyntaxKey::DeclarationMask);
+
+   ObjectInfo retVal = {};
+
+   ArgumentsInfo arguments;
+   arguments.add(evalExpression(interpreter, scope, lnode, ignoreErrors));
+   arguments.add(evalExpression(interpreter, scope, rnode, ignoreErrors));
+
+   if (!interpreter.evalBoolOp(operator_id, arguments, retVal)) {
+      if (!ignoreErrors) {
+         scope.raiseError(errCannotEval, node);
+      }
+      else return {};
+   }
+
+   return retVal;
+}
+
 ObjectInfo Compiler::evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors)
 {
    ObjectInfo loperand = {};
@@ -4645,7 +4696,7 @@ ObjectInfo Compiler::evalOperation(Interpreter& interpreter, Scope& scope, Synta
 
    SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
    SyntaxNode rnode = lnode.nextNode(SyntaxKey::DeclarationMask);
-   if (lnode == SyntaxKey::IndexerOperation) {
+   if (lnode == SyntaxKey::IndexerOperation && operator_id == SET_OPERATOR_ID) {
       SyntaxNode sublnode = lnode.firstChild(SyntaxKey::DeclarationMask);
       SyntaxNode subrnode = sublnode.nextNode(SyntaxKey::DeclarationMask);
 
@@ -4834,6 +4885,10 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
    switch (node.key) {
       case SyntaxKey::Expression:
          retVal = evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask), ignoreErrors, resolveMode);
+         break;
+      case SyntaxKey::AndOperation:
+      case SyntaxKey::OrOperation:
+         retVal = evalBoolOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS, ignoreErrors);
          break;
       case SyntaxKey::AssignOperation:
       case SyntaxKey::AddOperation:

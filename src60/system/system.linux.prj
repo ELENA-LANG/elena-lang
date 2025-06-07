@@ -54,6 +54,16 @@
         </module>
      </files>
   </platform>
+  <platform key="Win_x86">
+     <project>
+        <output>../../lib60_win</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
+  </platform>
   <project>
      <namespace>system</namespace>
      <template>lib60</template>
@@ -61,7 +71,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.7.6</version>
+     <version>6.7.7</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -98,7 +108,6 @@
         <include>events.l</include>
         <include>console.l</include>
         <include>app.l</include>
-        <include>lnx_app.l</include>
         <include>lnx_strings.l</include>
         <include>template_tests.l</include>
         <include>collections/list.l</include>

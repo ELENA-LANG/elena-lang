@@ -381,6 +381,7 @@ namespace elena_lang
       ObjectInfo mapWideStringConstant(ustr_t s);
 
       bool eval(BuildKey key, ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+      bool evalBoolOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
       ObjectInfo createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue, int elementSize = 0);
 
@@ -1954,6 +1955,7 @@ namespace elena_lang
       void warnOnUnassignedParameter(SyntaxNode node, Scope& scope, ustr_t paramName);
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
+      ObjectInfo evalBoolOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
       ObjectInfo evalObject(Interpreter& interpreter, Scope& scope, SyntaxNode node);
       ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne, bool ignoreErrors);
