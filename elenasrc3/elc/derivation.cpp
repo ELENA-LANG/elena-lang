@@ -74,6 +74,8 @@ void SyntaxTreeBuilder :: flushNamespace(SyntaxTreeWriter& writer, SyntaxNode& n
             flushDictionary(writer, current);
             break;
          case SyntaxKey::MetaExpression:
+         case SyntaxKey::CondStatement:
+         case SyntaxKey::ElseCondStatement:
          {
             Scope scope;
             flushStatement(writer, scope, current);

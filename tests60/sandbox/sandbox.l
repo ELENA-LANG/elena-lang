@@ -4,6 +4,14 @@ import extensions;
 
 A;
 
+#elif (__project["_Linux32"])
+
+A;
+
+#elif (__project["_Linux32"])
+
+A;
+
 #endif
 
 public program()
