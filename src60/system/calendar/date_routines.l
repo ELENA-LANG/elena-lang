@@ -659,30 +659,6 @@ namespace calendar
       }
    }
 
-   public singleton systemTimeFactory
-   {
-      SystemTime getUtcNow()
-      {
-         SystemTime time := 0l;        
-         extern libc.gettimeofday(time, 0);
-            
-         TimeStruct tm;
-         tm.writeUTC(time);
-            
-         tm.readTo(ref time);
-            
-         ^ time
-      }
-        
-      SystemTime getNow()
-      {
-         SystemTime time := 0l;
-         extern libc.gettimeofday(time, 0);
-            
-         ^ time
-      }
-   }
-
 #elif (__project["_Linux64"] || __project["_FreeBSD64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"])
 
    const int TMSize = 56;
