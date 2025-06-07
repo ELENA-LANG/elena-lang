@@ -49,7 +49,6 @@
             <include>closures.l</include>
             <include>convertors.l</include>
             <include>pointers.l</include>
-            <include>win_primitives.l</include>
             <include>dynamic.l</include>
             <include>exceptions.l</include>
             <include>events.l</include>
