@@ -95,7 +95,6 @@
             <include>runtime\common.l</include>
             <include>runtime\gc_routines.l</include>
             <include>runtime\vectortable.l</include>
-            <include>runtime\win32_env.l</include>
             <include>runtime\env.l</include>
         </module>
         <module name="threading">

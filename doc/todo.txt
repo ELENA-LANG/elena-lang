@@ -49,9 +49,8 @@ In development:
   --------------------------------------
   - Cross-compile from Unix to Windows #778
   --------------------------------------
-  * win_encoding
-
-  * refactore sys lib - get rid of win_* and lnx_* , using conditional compiling
+  * win32_env.l => env.l
+  * refactor system'runtime
 
   * Cross-compile from Unix to Windows fox x86
   * Cross-compile from Unix to Windows fox x86-64
