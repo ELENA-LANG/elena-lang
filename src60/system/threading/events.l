@@ -128,4 +128,11 @@ internal struct EventHandle
    }
 }
 
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+internal struct EventHandle
+{
+   Handle  _handle;
+}
+
 #endif

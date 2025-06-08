@@ -101,7 +101,7 @@
             <include>threading\common.l</include>
             <include>threading\handlers.l</include>
             <include>threading\thread.l</include>
-            <include>threading\win32_semaphores.l</include>
+            <include>threading\semaphores.l</include>
             <include>threading\events.l</include>
             <include>threading\blockinglists.l</include>
             <include>threading\threadpool.l</include>

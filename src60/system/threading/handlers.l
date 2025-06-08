@@ -129,4 +129,11 @@ public sealed struct ThreadHandle
    }
 }
 
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+public sealed struct ThreadHandle
+{
+   Handle  _handle;
+}
+
 #endif

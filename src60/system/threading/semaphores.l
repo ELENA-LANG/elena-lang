@@ -1,5 +1,7 @@
 import system;
 
+#if (__project["_Win"]) // Windows
+
 public struct Semaphore
 {
    Handle  _handle;
@@ -27,3 +29,12 @@ public struct Semaphore
       extern KERNEL32.ReleaseSemaphore(_handle, 1, 0);
    }
 }
+
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+public struct Semaphore
+{
+   Handle  _handle;
+}
+
+#endif

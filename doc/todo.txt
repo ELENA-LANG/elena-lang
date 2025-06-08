@@ -49,10 +49,6 @@ In development:
   --------------------------------------
   - Cross-compile from Unix to Windows #778
   --------------------------------------
-  * winevents => events
-  * win32_handlers => handlers
-  * win32_semaphores => semaphores
-  * refactor system'threading
   * add system'threading to linux (dummy classes)
 
   * Cross-compile from Unix to Windows fox x86
