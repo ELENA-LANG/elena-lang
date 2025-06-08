@@ -72,7 +72,19 @@ internal class SystemInfo
    }
 }
 
-internal static SystemInfo systemInfo
-   = new SystemInfo();
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+internal class SystemInfo
+{
+   int           ProcessorCount : rprop;
+   ProcessorType ProcessorType : rprop;   
+
+   constructor()
+   {
+   }
+}
 
 #endif
+
+internal static SystemInfo systemInfo
+   = new SystemInfo();
