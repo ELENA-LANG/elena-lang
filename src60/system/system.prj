@@ -74,7 +74,7 @@
             <include>io\streamreader.l</include>
             <include>io\streamwriter.l</include>
             <include>io\memorystream.l</include>
-            <include>io\win_console.l</include>
+            <include>io\console.l</include>
             <include>io\files.l</include>
             <include>io\ioexceptions.l</include>
             <include>io\getfiles.l</include>
