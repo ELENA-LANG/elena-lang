@@ -99,7 +99,7 @@
         </module>
         <module name="threading">
             <include>threading\common.l</include>
-            <include>threading\win32_handlers.l</include>
+            <include>threading\handlers.l</include>
             <include>threading\thread.l</include>
             <include>threading\win32_semaphores.l</include>
             <include>threading\events.l</include>

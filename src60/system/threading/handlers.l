@@ -1,6 +1,8 @@
 import system;
 import system'runtime;
 
+#if (__project["_Win"]) // Windows
+
 public const int INFINITE = 0FFFFFFFFh;
 
 public const int WAIT_TIMEOUT  = 00000102h;
@@ -126,3 +128,5 @@ public sealed struct ThreadHandle
       }
    }
 }
+
+#endif
