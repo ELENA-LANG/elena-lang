@@ -1,8 +1,10 @@
+import system'text;
+import system'collections;
+    
 namespace io
 {
-   import system'text;
-   import system'collections;
-    
+#if (__project["_Win"]) // Windows
+
    const int INVALID_HANDLE_VALUE = -1;
    const int ERROR_FILE_NOT_FOUND = 2;
    const int ERROR_NO_MORE_FILES = 012h;
@@ -218,4 +220,12 @@ namespace io
          }
       }
    }
+
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+   public SearchFiles(string path, string mask, List<string> output)
+   {
+      NotSupportedException.raise()
+   }
+
 }
