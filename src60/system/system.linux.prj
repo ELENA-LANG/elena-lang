@@ -97,7 +97,6 @@
         <include>io/lnx_console.l</include>
         <include>io/files.l</include>
         <include>io/ioexceptions.l</include>
-        <include>io/lnx_files.l</include>
         <include>io/lnx_getfiles.l</include>
      </module>
      <module name="routines">

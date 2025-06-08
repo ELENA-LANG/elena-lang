@@ -77,7 +77,6 @@
             <include>io\win_console.l</include>
             <include>io\files.l</include>
             <include>io\ioexceptions.l</include>
-            <include>io\win_files.l</include>
             <include>io\win_getfiles.l</include>
         </module>
         <module name="collections'threadsafe">
