@@ -67,7 +67,6 @@
             <include>culture\common.l</include>
             <include>culture\win_locale.l</include>
             <include>text\encoding.l</include>
-            <include>text\win_encoding.l</include>
             <include>text\textbuffer.l</include>
             <include>text\base64.l</include>
             <include>io\common.l</include>

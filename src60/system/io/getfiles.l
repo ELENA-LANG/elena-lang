@@ -3,6 +3,7 @@ import system'collections;
     
 namespace io
 {
+
 #if (__project["_Win"]) // Windows
 
    const int INVALID_HANDLE_VALUE = -1;
