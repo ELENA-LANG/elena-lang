@@ -4539,6 +4539,9 @@ void Compiler :: skipCondStatement(SyntaxNode& node)
    while (node != SyntaxKey::None) {
       node = node.nextNode();
 
+      if (node == SyntaxKey::None) {
+         break;
+      }
       if (node == SyntaxKey::CondStatement) {
          level++;
          node.setKey(SyntaxKey::Idle);
