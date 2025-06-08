@@ -24,6 +24,16 @@
             <output>../../lib60_64</output>
         </project>
     </platform>
+    <platform key="Win_x86">
+        <project>
+            <output>../../lib60_win</output>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <output>../../lib60_64_win</output>
+        </project>
+    </platform>
     <files>
         <module>
             <file>xmlnode.l</file>

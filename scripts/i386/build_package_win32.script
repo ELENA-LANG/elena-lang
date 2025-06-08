@@ -36,7 +36,7 @@ echo compiling lib60 files
    exit 1
  fi
 
- ../../bin/elena-cli -p../../lib60_win ../../src60/elena_api.prjcol
+ ../../bin/elena-cli -xtwin32 ../../src60/elena_api.linux.prjcol
  ret=$?
  if [ $ret -eq 2 ]
  then

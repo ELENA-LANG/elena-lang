@@ -24,6 +24,16 @@
         <output>../../lib60_64</output>
      </project>
   </platform>
+  <platform key="Win_x86">
+     <project>
+        <output>../../lib60_win</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
+  </platform>
   <project>
      <namespace>extensions</namespace>
      <template>lib60</template>
@@ -42,7 +52,6 @@
         <include>tests.l</include>
         <include>random.l</include>
         <include>app.l</include>
-        <include>lnx_args.l</include>
         <include>text/strings.l</include>
         <include>text/words.l</include>
         <include>math/functions.l</include>

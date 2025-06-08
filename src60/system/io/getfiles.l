@@ -229,4 +229,6 @@ namespace io
       NotSupportedException.raise()
    }
 
+#endif
+
 }
