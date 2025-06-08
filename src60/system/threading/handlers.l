@@ -134,6 +134,21 @@ public sealed struct ThreadHandle
 public sealed struct ThreadHandle
 {
    Handle  _handle;
+
+   constructor()
+   {
+      NotSupportedException.raise()
+   }
+
+   constructor(object f)
+   {
+      NotSupportedException.raise()
+   }
+
+   constructor(object f, int stackSize)
+   {
+      NotSupportedException.raise()
+   }
 }
 
 #endif
