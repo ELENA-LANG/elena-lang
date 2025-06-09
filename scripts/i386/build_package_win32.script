@@ -1,6 +1,7 @@
 #!/bin/bash
 
 mkdir -p ../../lib60_win
+mkdir -p /usr/lib/elena/lib60_win
 
 echo compiling assembly files
 
