@@ -121,6 +121,3 @@ fi
  mkdir -p /usr/local/etc/elena/
  ln -s $(realpath ../../bin/elenart60.config) /etc/elena/elenart60.config
  ln -s $(realpath ../../bin/elenavm60.config) /etc/elena/elenavm60.config
-
-
-exit 0

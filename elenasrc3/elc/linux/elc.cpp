@@ -265,6 +265,18 @@ LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessor
    }
 }
 
+ustr_t getDefaultExtension(PlatformType platform)
+{
+   switch (platform)
+   {
+      case PlatformType::Win_x86:
+      case PlatformType::Win_x86_64:
+         return "exe";
+      default:
+         return nullptr;
+   }
+}
+
 int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
@@ -276,7 +288,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
    bool cleanMode = false;
 
    JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
-   CompilingProcess process(dataPath, nullptr, "<moduleProlog>", "<prolog>", "<epilog>",
+   CompilingProcess process(dataPath, getDefaultExtension(platform), "<moduleProlog>", "<prolog>", "<epilog>",
       &Presenter::getInstance(), &errorProcessor,
       VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 

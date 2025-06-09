@@ -5,7 +5,7 @@ echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
-	(cd ../.. && make clean_i386 all_i386)
+	(cd ../.. && make clean_amd64 all_amd64)
 
 fi
 
@@ -14,16 +14,16 @@ echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
-	. local_build_package_i386.script 
+	. local_build_package_amd64.script 
 
 	read -p "Build cross-compile version (y/n)?" -n 1 -r
 	echo    # (optional) move to a new line
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
 
-		(cd ../.. && make cross_elc_i386)
+		(cd ../.. && make cross_elc_amd64)
 
-		. local_build_package_win32.script 
+		. local_build_package_win64.script 
 
 	fi
 
@@ -31,17 +31,16 @@ then
 
 else
 
-	. build_package_i386.script
+	. build_package_amd64.script
 
 	read -p "Build cross-compile version (y/n)? " -n 1 -r
 	echo    # (optional) move to a new line
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
 
-		(cd ../.. && make cross_elc_i386)
+		(cd ../.. && make cross_elc_amd64)
 
-		. build_package_win32.script 
-
+		. build_package_win64.script 
 	fi
 
 fi

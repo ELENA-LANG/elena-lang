@@ -129,5 +129,3 @@ fi
 
  cp ../../lib60_64/*.nl /usr/lib/elena/lib60_64
  cp ../../lib60_64/*.dnl /usr/lib/elena/lib60_64 
-
-exit 0
