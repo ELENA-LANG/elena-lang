@@ -77,17 +77,7 @@ cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm64-cli -amd64 ../../asm/amd64/core60.asm /usr/local/lib/elena/core/amd64
-ret=$?
-if [ $ret -eq 0 ]
-then
-  echo .
-else
-  echo "Failure" >&2
-  exit 1
-fi
-
-../../bin/asm64-cli -amd64 ../../asm/amd64/core60_lnx.asm /usr/local/lib/elena/core/amd64
+../../bin/asm64-cli -freebsd -amd64 ../../asm/amd64/core60.asm /usr/lib/elena/core/amd64 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
