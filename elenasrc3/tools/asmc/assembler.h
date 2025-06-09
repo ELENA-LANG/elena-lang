@@ -158,7 +158,7 @@ namespace elena_lang
       void compileStructure(ScriptToken& tokenInfo);
       void declareConstant(ScriptToken& tokenInfo);
 
-      bool isMacroVariableDefined(ustr_t macro);
+      bool isMacroVariableDefined(ScriptToken& tokenInfo);
       void skipBlock(ScriptToken& tokenInfo);
 
    public:

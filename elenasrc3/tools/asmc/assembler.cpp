@@ -390,9 +390,30 @@ bool AssemblerBase :: compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
 }
 
-bool AssemblerBase :: isMacroVariableDefined(ustr_t macro)
+bool AssemblerBase :: isMacroVariableDefined(ScriptToken& tokenInfo)
 {
-   return _macros.get(macro);
+   if (tokenInfo.compare("(")) {
+      bool defined = false;
+
+      do {
+         read(tokenInfo);
+
+         if (_macros.get(*tokenInfo.token)) {
+            defined = true;
+         }
+
+         read(tokenInfo);
+         if (tokenInfo.compare("|"))
+            read(tokenInfo);
+
+      } while (tokenInfo.compare("|"));
+
+      if (!tokenInfo.compare(")"))
+         throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
+
+      return defined;
+   }
+   else return _macros.get(*tokenInfo.token);
 }
 
 void AssemblerBase :: skipBlock(ScriptToken& tokenInfo)
@@ -421,7 +442,7 @@ void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* help
          if (tokenInfo.compare("#if") || tokenInfo.compare("#elif")) {
             read(tokenInfo);
 
-            if (!isMacroVariableDefined(*tokenInfo.token)) {
+            if (!isMacroVariableDefined(tokenInfo)) {
                skipBlock(tokenInfo);
             }
             else read(tokenInfo);

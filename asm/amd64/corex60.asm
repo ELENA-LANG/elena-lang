@@ -1404,3 +1404,19 @@ inline %0BF2h
   mov  r11, rax
 
 end 
+
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+#if _WIN
+
+  mov  esi, edx
+  mov  edx, eax   // ; set exception code
+
+  mov  rcx, gs:[58h]
+  mov  rcx, [rcx]
+  jmp  [rcx]
+
+#endif
+
+end

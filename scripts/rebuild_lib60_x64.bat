@@ -1,21 +1,11 @@
 REM NOTE : the script MUST be called from the root folder
 
-bin\asm64-cli -amd64 asm\amd64\core60.asm bin\amd64
+bin\asm64-cli -windows -amd64 asm\amd64\core60.asm bin\amd64 core60_win.bin
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on
 
-bin\asm64-cli -amd64 asm\amd64\core60_win.asm bin\amd64
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-
-bin\asm64-cli -amd64 asm\amd64\corex60.asm bin\amd64
-@echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
-@echo on
-
-bin\asm64-cli -amd64 asm\amd64\corex60_win.asm bin\amd64
+bin\asm64-cli -windows -amd64 asm\amd64\corex60.asm bin\amd64 corex60_win.bin
 @echo off 
 if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
 @echo on

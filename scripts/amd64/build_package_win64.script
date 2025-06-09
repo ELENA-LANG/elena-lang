@@ -1,11 +1,11 @@
 #!/bin/bash
 
-mkdir -p ../../lib60_win
-mkdir -p /usr/lib/elena/lib60_win
+mkdir -p ../../lib60_64_win
+mkdir -p /usr/lib/elena/lib60_64_win
 
 echo compiling assembly files
 
-../../bin/asm-cli -windows -x86 ../../asm/x32/core60.asm /usr/lib/elena/core/x32 core60_win.bin
+../../bin/asm64-cli -windows -amd64 ../../asm/amd64/core60.asm /usr/lib/elena/core/amd64 core60_win.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -15,7 +15,7 @@ else
   exit 1
 fi
 
-../../bin/asm-cli -windows -x86 ../../asm/x32/corex60.asm /usr/lib/elena/core/x32 corex60_win.bin
+../../bin/asm64-cli -windows -amd64 ../../asm/amd64/corex60.asm /usr/lib/elena/core/amd64 corex60_win.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -27,7 +27,7 @@ fi
 
 echo compiling lib60 files
 
- ../../bin/asm-cli -bc32 ../../src60/core/system.core_routines.esm ../../lib60_win
+ ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_win
  ret=$?
  if [ $ret -eq 0 ]
  then
@@ -37,7 +37,7 @@ echo compiling lib60 files
    exit 1
  fi
 
- ../../bin/elena-cli -xtwin32 ../../src60/elena_api.linux.prjcol
+ ../../bin/elena64-cli -xtwin64 ../../src60/elena_api.linux.prjcol
  ret=$?
  if [ $ret -eq 2 ]
  then
