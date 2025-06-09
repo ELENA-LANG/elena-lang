@@ -314,8 +314,8 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    JITCompilerBase* (*compilerFactory)(PlatformType)
 ) :
    _appPath(appPath),
-   _templateGenerator(this),
    _parser(nullptr),
+   _templateGenerator(this),
    _traceMode(false),
    _forwards(nullptr)
 {
