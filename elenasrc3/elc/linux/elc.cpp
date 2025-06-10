@@ -189,21 +189,21 @@ JITCompilerSettings getJITSettings(PlatformType platform)
 #if defined(__i386__) || defined(__x86_64__)
       case PlatformType::Linux_x86:
       case PlatformType::Win_x86:
-         return X86JITCompiler::getJITSettings();
+         return X86JITCompiler::getSettings();
 #endif
 #if defined(__x86_64__)
       case PlatformType::Linux_x86_64:
       case PlatformType::FreeBSD_x86_64:
       case PlatformType::Win_x86_64:
-         return X86_64JITCompiler::getJITSettings();
+         return X86_64JITCompiler::getSettings();
 #endif
 #if defined(__PPC64__)
       case PlatformType::Linux_PPC64le:
-         return PPC64leJITCompiler::getJITSettings();
+         return PPC64leJITCompiler::getSettings();
 #endif
 #if defined(__aarch64__)
       case PlatformType::Linux_ARM64:
-         return ARM64JITCompiler::getJITSettings();
+         return ARM64JITCompiler::getSettings();
 #endif
       default:
          errorProcessor->raiseError(errNotSupportedPlatform);
