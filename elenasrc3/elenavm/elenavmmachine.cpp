@@ -97,7 +97,7 @@ void ELENAVMConfiguration :: forEachForward(void* arg, void (*feedback)(void* ar
 // --- ELENAVMMachine ---
 
 ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
-   int codeAlignment, JITSettings gcSettings,
+   int codeAlignment, ProcessSettings gcSettings,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
       : _mapper(this), _rootPath(configPath), _preloadedList({})
 {

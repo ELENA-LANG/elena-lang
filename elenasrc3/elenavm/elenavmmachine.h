@@ -168,7 +168,7 @@ namespace elena_lang
       }
 
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
-         int codeAlignment, JITSettings gcSettings,
+         int codeAlignment, ProcessSettings gcSettings,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));
       virtual ~ELENAVMMachine()
       {
