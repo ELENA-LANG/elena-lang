@@ -45,7 +45,7 @@ namespace elena_lang
 #define IMAGE_SUBSYSTEM_WINDOWS_GUI      2
 #define IMAGE_SUBSYSTEM_WINDOWS_CUI      3
 
-typedef unsigned long       DWORD;
+typedef unsigned int        DWORD;
 typedef int                 BOOL;
 typedef unsigned char       BYTE;
 typedef unsigned short      WORD;
