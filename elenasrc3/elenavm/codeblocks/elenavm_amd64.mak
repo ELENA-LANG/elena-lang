@@ -134,7 +134,7 @@ $(OBJDIR_RELEASE)/__/windows/winsection.o: ../windows/winsection.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/winsection.cpp -o $(OBJDIR_RELEASE)/__/windows/winsection.o
 
 $(OBJDIR_RELEASE)/__/windows/elenawinvmachine.o: ../windows/elenawinvmachine.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/elenalnxvmachine.cpp -o $(OBJDIR_RELEASE)/__/windows/elenawinvmachine.o
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/elenawinvmachine.cpp -o $(OBJDIR_RELEASE)/__/windows/elenawinvmachine.o
 
 $(OBJDIR_RELEASE)/__/windows/dllmain.o: ../windows/dllmain.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../windows/dllmain.cpp -o $(OBJDIR_RELEASE)/__/windows/dllmain.o
