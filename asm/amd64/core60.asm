@@ -4737,14 +4737,14 @@ procedure % VEH_HANDLER
 
   mov  r10, rdx
   mov  rdx, rax   // ; set exception code
-  mov  rax, [data : % CORE_ET_TABLE]
+  mov  rax, [data : % CORE_SINGLE_CONTENT]
   jmp  rax
 
 #elif (_LNX || _FREEBSD)
 
   mov  r10, rdx
   mov  rdx, rax   // ; set exception code
-  mov  rax, [data : % CORE_ET_TABLE]
+  mov  rax, [data : % CORE_SINGLE_CONTENT]
   jmp  rax
 
 #endif
