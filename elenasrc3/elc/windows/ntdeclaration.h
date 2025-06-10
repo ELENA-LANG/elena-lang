@@ -53,9 +53,6 @@ typedef unsigned short      WORD;
 typedef int64_t LONGLONG;
 typedef uint64_t ULONGLONG;
 
-
-#pragma pack(push, 1)
-
 typedef struct _IMAGE_DATA_DIRECTORY {
     DWORD   VirtualAddress;
     DWORD   Size;
@@ -69,7 +66,7 @@ typedef struct _IMAGE_FILE_HEADER {
     DWORD   NumberOfSymbols;
     WORD    SizeOfOptionalHeader;
     WORD    Characteristics;
-} IMAGE_FILE_HEADER;
+} __attribute__((packed)) IMAGE_FILE_HEADER;
 
 typedef struct _IMAGE_SECTION_HEADER {
     BYTE    Name[IMAGE_SIZEOF_SHORT_NAME];
@@ -85,7 +82,7 @@ typedef struct _IMAGE_SECTION_HEADER {
     WORD    NumberOfRelocations;
     WORD    NumberOfLinenumbers;
     DWORD   Characteristics;
-} IMAGE_SECTION_HEADER;
+} __attribute__((packed)) IMAGE_SECTION_HEADER;
 
 typedef struct _IMAGE_OPTIONAL_HEADER {
     WORD    Magic;
@@ -119,7 +116,7 @@ typedef struct _IMAGE_OPTIONAL_HEADER {
     DWORD   LoaderFlags;
     DWORD   NumberOfRvaAndSizes;
     IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER32;
+} __attribute__((packed)) IMAGE_OPTIONAL_HEADER32;
 
 typedef struct _IMAGE_OPTIONAL_HEADER64 {
     WORD        Magic;
@@ -152,9 +149,7 @@ typedef struct _IMAGE_OPTIONAL_HEADER64 {
     DWORD       LoaderFlags;
     DWORD       NumberOfRvaAndSizes;
     IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
-} IMAGE_OPTIONAL_HEADER64;
-
-#pragma pack(pop)
+} __attribute__((packed)) IMAGE_OPTIONAL_HEADER64;
 
 #endif
 
