@@ -380,7 +380,6 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
    else {
       // Building...
       return process.build(project, *linker, jitSettings,
-         getMinimalArgumentNumber(platform),
          *profile);
    }
 }
