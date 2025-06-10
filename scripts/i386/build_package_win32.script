@@ -1,7 +1,10 @@
 #!/bin/bash
 
+mkdir -p /usr/lib/elena/core/x32/
 mkdir -p ../../lib60_win
 mkdir -p /usr/lib/elena/lib60_win
+
+cp ../../bin/elena-cli /usr/bin/
 
 echo compiling assembly files
 
