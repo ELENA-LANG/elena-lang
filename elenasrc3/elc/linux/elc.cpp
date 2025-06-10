@@ -206,7 +206,6 @@ JITCompilerSettings getJITCompilerSettings(PlatformType platform)
          return ARM64JITCompiler::getSettings();
 #endif
       default:
-         errorProcessor->raiseError(errNotSupportedPlatform);
          return {};
    }
 }
@@ -217,13 +216,13 @@ ProcessSettings getProcessSettings(PlatformType platform)
 #if defined(__i386__) || defined(__x86_64__)
    case PlatformType::Linux_x86:
    case PlatformType::Win_x86:
-      return { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
+      return { 344064, 86016, 0x200000, 1, true, true };
 #endif
 #if defined(__x86_64__)
    case PlatformType::Linux_x86_64:
    case PlatformType::FreeBSD_x86_64:
    case PlatformType::Win_x86_64:
-      return { 344064, 86016, 0x200000, 1, true, true };
+      return { 688128, 204800, 0x200000, 1, true, true };
 #endif
 #if defined(__PPC64__)
    case PlatformType::Linux_PPC64le:
@@ -234,7 +233,6 @@ ProcessSettings getProcessSettings(PlatformType platform)
       return { 688128, 204800, 0x200000, 1, true, true };
 #endif
    default:
-      errorProcessor->raiseError(errNotSupportedPlatform);
       return {};
    }
 }
@@ -315,7 +313,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
 
    bool cleanMode = false;
 
-   ProcessSettings     defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
+   ProcessSettings     defaultCoreSettings = getProcessSettings(platform);
    JITCompilerSettings jitSettings = getJITCompilerSettings(platform);
    CompilingProcess process(dataPath, getDefaultExtension(platform), "<moduleProlog>", "<prolog>", "<epilog>",
       &Presenter::getInstance(), &errorProcessor,
