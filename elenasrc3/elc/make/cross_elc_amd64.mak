@@ -14,12 +14,12 @@ INC = -I.. -I../../engine -I../../common
 
 ifeq ($(OS),Windows_NT)
 
-CFLAGS = -Wall -std=c++20 -m64 -municode -D CROSS_COMPILE_MODE
+CFLAGS = -Wall -std=c++20 -m64 -municode
 LDFLAGS = -m64 -static-libgcc -static-libstdc++
 
 else
 
-CFLAGS = -Wall -std=c++20 -m64
+CFLAGS = -Wall -std=c++20 -m64 -D CROSS_COMPILE_MODE
 LDFLAGS = -m64 -static-libgcc -static-libstdc++ -ldl
 
 endif
