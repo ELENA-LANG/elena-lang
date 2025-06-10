@@ -50,8 +50,8 @@ echo compiling lib60 files
    echo .
  fi
 
- cp ../../lib60_win/*.nl /usr/lib/elena/lib60_win
- cp ../../lib60_win/*.dnl /usr/lib/elena/lib60_win
+ cp ../../lib60_win/*.nl /usr/lib/elena/lib60_64_win
+ cp ../../lib60_win/*.dnl /usr/lib/elena/lib60_64_win
 
  cp ../../bin/winstub.ex_ /usr/share/elena
 
