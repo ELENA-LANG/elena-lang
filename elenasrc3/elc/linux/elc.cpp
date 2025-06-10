@@ -183,7 +183,7 @@ JITCompilerBase* createJITCompiler(PlatformType platform)
    }
 }
 
-JITCompilerSettings getJITSettings(PlatformType platform)
+JITCompilerSettings getJITCompilerSettings(PlatformType platform)
 {
    switch (platform) {
 #if defined(__i386__) || defined(__x86_64__)
