@@ -53,6 +53,9 @@ typedef unsigned short      WORD;
 typedef int64_t LONGLONG;
 typedef uint64_t ULONGLONG;
 
+
+#pragma pack(push, 1)
+
 typedef struct _IMAGE_DATA_DIRECTORY {
     DWORD   VirtualAddress;
     DWORD   Size;
@@ -150,6 +153,8 @@ typedef struct _IMAGE_OPTIONAL_HEADER64 {
     DWORD       NumberOfRvaAndSizes;
     IMAGE_DATA_DIRECTORY DataDirectory[IMAGE_NUMBEROF_DIRECTORY_ENTRIES];
 } IMAGE_OPTIONAL_HEADER64;
+
+#pragma pack(pop)
 
 #endif
 
