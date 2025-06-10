@@ -310,7 +310,7 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    path_t modulePrologName, path_t prologName, path_t epilogName,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
-   JITSettings defaultCoreSettings,
+   ProcessSettings& defaultCoreSettings,
    JITCompilerBase* (*compilerFactory)(PlatformType)
 ) :
    _appPath(appPath),
@@ -777,11 +777,7 @@ void CompilingProcess :: configurate(Project& project)
    }
 }
 
-void CompilingProcess :: compile(ProjectBase& project,
-   pos_t defaultStackAlignment,
-   pos_t defaultRawStackAlignment,
-   pos_t defaultEHTableEntrySize,
-   int minimalArgList)
+void CompilingProcess :: compile(ProjectBase& project, JITCompilerSettings& jitSettings)
 {
    if (_parser == nullptr) {
       _errorProcessor->raiseInternalError(errParserNotInitialized);
@@ -801,9 +797,9 @@ void CompilingProcess :: compile(ProjectBase& project,
    while (!module_it->eof()) {
       ModuleSettings moduleSettings =
       {
-         project.UIntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
-         project.UIntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
-         project.UIntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
+         project.UIntSetting(ProjectOption::StackAlignment, jitSettings.stackAlignment),
+         project.UIntSetting(ProjectOption::RawStackAlignment, jitSettings.rawStackAlignment),
+         project.UIntSetting(ProjectOption::EHTableEntrySize, jitSettings.ehTableEntrySize),
          project.BoolSetting(ProjectOption::DebugMode, true),
          {
             project.StringSetting(ProjectOption::ManifestName),
@@ -818,7 +814,7 @@ void CompilingProcess :: compile(ProjectBase& project,
          lexical_it,
          *module_it, &syntaxTree, &project, &project,
          moduleSettings,
-         minimalArgList,
+         jitSettings.minimalStackLength,
          sizeof(uintptr_t));
 
       ++(*module_it);
@@ -936,10 +932,7 @@ int CompilingProcess :: clean(Project& project)
 
 int CompilingProcess :: build(Project& project,
    LinkerBase& linker,
-   pos_t defaultStackAlignment,
-   pos_t defaultRawStackAlignment,
-   pos_t defaultEHTableEntrySize,
-   int minimalArgList,
+   JITCompilerSettings& jitSettings,
    ustr_t profile)
 {
    try
@@ -966,7 +959,7 @@ int CompilingProcess :: build(Project& project,
       _presenter->printLine(ELC_CLEANING);
       cleanUp(project);
 
-      compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList);
+      compile(project, jitSettings);
 
       // generating target when required
       switch (targetType) {

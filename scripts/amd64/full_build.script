@@ -21,7 +21,7 @@ then
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
 
-		(cd ../.. && make cross_elc_amd64)
+		(cd ../.. && make clean_cross_elc_amd64 cross_elc_amd64)
 
 		. local_build_package_win64.script 
 
@@ -38,7 +38,7 @@ else
 	if [[ $REPLY =~ ^[Yy]$ ]]
 	then
 
-		(cd ../.. && make cross_elc_amd64)
+		(cd ../.. && make clean_cross_elc_amd64 cross_elc_amd64)
 
 		. build_package_win64.script 
 	fi

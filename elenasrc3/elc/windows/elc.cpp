@@ -35,34 +35,14 @@ using namespace elena_lang;
 
 #ifdef _M_IX86
 
-constexpr auto DEFAULT_STACKALIGNMENT     = 1;
-constexpr auto DEFAULT_RAW_STACKALIGNMENT = 4;
-constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 16;
-
 constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86;
-
-constexpr int DEFAULT_MGSIZE              = 344064;
-constexpr int DEFAULT_YGSIZE              = 86016;
-constexpr int DEFAULT_STACKRESERV         = 0x200000;
-
-constexpr int MINIMAL_ARG_LIST            = 1;
 
 typedef Win32NtLinker             WinLinker;
 typedef Win32NtImageFormatter     WinImageFormatter;
 
 #elif _M_X64
 
-constexpr auto DEFAULT_STACKALIGNMENT     = 2;
-constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
-constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
-
 constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
-
-constexpr int DEFAULT_MGSIZE              = 688128;
-constexpr int DEFAULT_YGSIZE              = 204800;
-constexpr int DEFAULT_STACKRESERV         = 0x200000;
-
-constexpr int MINIMAL_ARG_LIST            = 2;
 
 typedef Win64NtLinker             WinLinker;
 typedef Win64NtImageFormatter     WinImageFormatter;
@@ -124,6 +104,28 @@ JITCompilerBase* createJITCompiler(PlatformType platform)
    }
 }
 
+ProcessSettings getProcessSettings(PlatformType platform)
+{
+   switch (platform) {
+      case PlatformType::Win_x86_64:
+         return { 688128, 204800, 0x200000, 1, true, true };
+      case PlatformType::Win_x86:
+      default:
+         return { 344064, 86016, 0x200000, 1, true, true };
+   }
+}
+
+JITCompilerSettings getJITCompilerSettings(PlatformType platform)
+{
+   switch (platform) {
+      case PlatformType::Win_x86_64:
+         return X86_64JITCompiler::getSettings();
+      case PlatformType::Win_x86:
+      default:
+         return X86JITCompiler::getSettings();
+   }
+}
+
 void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, CompilingProcess& process,
    ErrorProcessor& errorProcessor, path_t appPath, bool& cleanMode)
 {
@@ -151,7 +153,8 @@ int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& err
 {
    bool cleanMode = false;
 
-   JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
+   ProcessSettings     defaultCoreSettings = getProcessSettings(/*platform*/CURRENT_PLATFORM);
+   JITCompilerSettings jitSettings = getJITCompilerSettings(/*platform*/CURRENT_PLATFORM);
    CompilingProcess process(appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
       &Presenter::getInstance(), &errorProcessor,
       VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
@@ -206,11 +209,7 @@ int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& err
    }
    else {
       // Building...
-      return process.build(project, linker,
-         DEFAULT_STACKALIGNMENT,
-         DEFAULT_RAW_STACKALIGNMENT,
-         DEFAULT_EHTABLE_ENTRY_SIZE,
-         MINIMAL_ARG_LIST,
+      return process.build(project, linker, jitSettings,
          *profile);
    }
 }

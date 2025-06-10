@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86COMPILER_H
@@ -21,10 +21,15 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings,
+         ProcessSettings& settings,
          bool virtualMode) override;
 
    public:
+      static JITCompilerSettings getSettings()
+      {
+         return { 1, 1, 4, 16 };
+      }
+
       void writeImm9(MemoryWriter* writer, int value, int type) override;
       void writeImm12(MemoryWriter* writer, int value, int type) override;
 

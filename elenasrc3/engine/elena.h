@@ -456,8 +456,8 @@ namespace elena_lang
       virtual void resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position) = 0;
    };
 
-   // --- JITSettings ---
-   struct JITSettings
+   // --- ProcessSettings ---
+   struct ProcessSettings
    {
       pos_t    mgSize;
       pos_t    ygSize;
@@ -466,15 +466,15 @@ namespace elena_lang
       bool     classSymbolAutoLoad;
       bool     withAlignedJump;
 
-      JITSettings() = default;
-      JITSettings(pos_t mgSize, pos_t ygSize, pos_t stackReserved, 
+      ProcessSettings() = default;
+      ProcessSettings(pos_t mgSize, pos_t ygSize, pos_t stackReserved,
          pos_t threadCounter, bool classSymbolAutoLoad, bool withAlignedJump)
          : mgSize(mgSize), ygSize(ygSize), stackReserved(stackReserved), threadCounter(threadCounter), 
            classSymbolAutoLoad(classSymbolAutoLoad), withAlignedJump(withAlignedJump)
       {
 
       }
-      JITSettings(pos_t mgSize, pos_t ygSize, pos_t stackReserved)
+      ProcessSettings(pos_t mgSize, pos_t ygSize, pos_t stackReserved)
          : mgSize(mgSize), ygSize(ygSize), stackReserved(stackReserved), threadCounter(1),
          classSymbolAutoLoad(false), withAlignedJump(false)
       {
@@ -517,6 +517,18 @@ namespace elena_lang
 
    typedef CachedList<Pair<mssg_t, ref_t>, 10> CachedOutputTypeList;
 
+   // --- JITCompilerSettings ---
+   struct JITCompilerSettings
+   {
+      int minimalStackLength;
+
+      int stackAlignment;
+
+      int rawStackAlignment;
+
+      int ehTableEntrySize;
+   };
+
    // --- JITCompilerBase ---
    class JITCompilerBase
    {
@@ -536,7 +548,7 @@ namespace elena_lang
          ImageProviderBase* imageProvider,
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings,
+         ProcessSettings& settings,
          bool virtualMode) = 0;
 
       virtual bool isWithDebugInfo() = 0;

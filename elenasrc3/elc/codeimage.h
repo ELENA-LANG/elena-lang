@@ -16,13 +16,13 @@ namespace elena_lang
    // --- TargetImageInfo ---
    struct TargetImageInfo
    {
-      PlatformType type;
-      pos_t        codeAlignment;
-      bool         autoClassSymbol;
-      bool         autoModuleExtension;
-      bool         withTLS;
-      JITSettings  coreSettings;
-      ustr_t       ns;
+      PlatformType      type;
+      pos_t             codeAlignment;
+      bool              autoClassSymbol;
+      bool              autoModuleExtension;
+      bool              withTLS;
+      ProcessSettings   coreSettings;
+      ustr_t            ns;
 
       TargetImageInfo()
       {

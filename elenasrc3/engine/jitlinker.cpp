@@ -1701,7 +1701,7 @@ void JITLinker :: copyPreloadedMetaList(ModuleInfo info, ModuleInfoList& output,
    }
 }
 
-void JITLinker :: prepare(JITSettings jitSettings)
+void JITLinker :: prepare(ProcessSettings& jitSettings)
 {
    assert(_compiler != nullptr);
 

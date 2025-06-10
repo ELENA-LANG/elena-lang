@@ -84,7 +84,7 @@ namespace elena_lang
       Parser*             _parser;
 
       pos_t               _codeAlignment;
-      JITSettings         _defaultCoreSettings;
+      ProcessSettings     _defaultCoreSettings;
 
       JITCompilerBase*(*_jitCompilerFactory)(PlatformType);
 
@@ -136,11 +136,7 @@ namespace elena_lang
 
       void configurate(Project& project);
       void cleanUp(ProjectBase& project);
-      void compile(ProjectBase& project, 
-         pos_t defaultStackAlignment, 
-         pos_t defaultRawStackAlignment,
-         pos_t defaultEHTableEntrySize,
-         int minimalArgList);
+      void compile(ProjectBase& project, JITCompilerSettings& jitSettings);
       void link(Project& project, LinkerBase& linker, bool withTLS);
 
    public:
@@ -153,10 +149,7 @@ namespace elena_lang
 
       int build(Project& project, 
          LinkerBase& linker, 
-         pos_t defaultStackAlignment, 
-         pos_t defaultRawStackAlignment,
-         pos_t defaultEHTableEntrySize,
-         int minimalArgList,
+         JITCompilerSettings& jitSettings,
          ustr_t profile);
       int clean(Project& project);
 
@@ -170,7 +163,7 @@ namespace elena_lang
          path_t modulePrologName, path_t prologName, path_t epilogName,
          PresenterBase* presenter, ErrorProcessor* errorProcessor,
          pos_t codeAlignment,
-         JITSettings defaultCoreSettings,
+         ProcessSettings& defaultCoreSettings,
          JITCompilerBase* (*compilerFactory)(PlatformType));
 
       virtual ~CompilingProcess()

@@ -129,6 +129,9 @@ clean_arm64: clean_elc_arm64 clean_og_arm64 clean_sg_arm64 clean_asmc_arm64 clea
 clean_elc_i386: 
 	$(MAKE) -C elenasrc3/elc/make clean -f elc_i386.mak
 
+clean_cross_elc_i386: 
+	$(MAKE) -C elenasrc3/elc/make clean -f cross_elc_i386.mak
+
 clean_sg_i386: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks clean -f sg_i386.mak
 
@@ -155,6 +158,9 @@ clean_elenavm_i386:
 
 clean_elc_amd64: 
 	$(MAKE) -C elenasrc3/elc/make clean -f elc_amd64.mak
+
+clean_cross_elc_amd64: 
+	$(MAKE) -C elenasrc3/elc/make clean -f cross_elc_amd64.mak
 
 clean_sg_amd64: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks clean -f sg_amd64.mak

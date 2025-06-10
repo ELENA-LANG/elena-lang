@@ -32,6 +32,11 @@ namespace elena_lang
       //friend void x86_64compileFreeI(JITCompilerScope* scope);
 
    public:
+      static JITCompilerSettings getSettings()
+      {
+         return { 2, 2, 16, 32 };
+      }
+
       void writeImm9(MemoryWriter* writer, int value, int type) override;
       void writeImm12(MemoryWriter* writer, int value, int type) override;
       void writeImm16Hi(MemoryWriter* writer, int value, int type) override

@@ -42,10 +42,10 @@ namespace elena_lang
    // --- JITLinkerSettings ---
    struct JITLinkerSettings
    {
-      pos_t       alignment;
-      JITSettings jitSettings;
-      bool        virtualMode;
-      bool        autoLoadMode;
+      pos_t           alignment;
+      ProcessSettings jitSettings;
+      bool            virtualMode;
+      bool            autoLoadMode;
    };
 
    // --- JITLinker ---
@@ -257,7 +257,7 @@ namespace elena_lang
       ref_t resolveAction(ustr_t actionName);
 
       void loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions);
-      void prepare(JITSettings jitSettings);
+      void prepare(ProcessSettings& jitSettings);
       void setCompiler(JITCompilerBase* compiler)
       {
          _compiler = compiler;

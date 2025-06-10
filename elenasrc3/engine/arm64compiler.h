@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: ARM64
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ARM64COMPILER_H
@@ -29,6 +29,11 @@ namespace elena_lang
       friend void ARM64compileOpenIN(JITCompilerScope* scope);
 
    public:
+      static JITCompilerSettings getSettings()
+      {
+         return { 2, 2, 16, 32 };
+      }
+
       void writeImm9(MemoryWriter* writer, int value, int type) override;
       void writeImm12(MemoryWriter* writer, int value, int type) override;
       void writeImm16(MemoryWriter* writer, int value, int type) override;

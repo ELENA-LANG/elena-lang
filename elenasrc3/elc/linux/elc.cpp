@@ -77,24 +77,12 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86_64;
 
 #endif
 
-constexpr int MINIMAL_ARG_LIST            = 2;
-
-constexpr auto DEFAULT_STACKALIGNMENT     = 2;
-constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
-constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
-
 typedef ElfAmd64Linker           LinuxLinker;
 typedef ElfAmd64ImageFormatter   LinuxImageFormatter;
 
 #elif defined(__i386__)
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86;
-
-constexpr int MINIMAL_ARG_LIST            = 1;
-
-constexpr auto DEFAULT_STACKALIGNMENT     = 1;
-constexpr auto DEFAULT_RAW_STACKALIGNMENT = 4;
-constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 16;
 
 typedef ElfI386Linker            LinuxLinker;
 typedef ElfI386ImageFormatter    LinuxImageFormatter;
@@ -103,12 +91,6 @@ typedef ElfI386ImageFormatter    LinuxImageFormatter;
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_PPC64le;
 
-constexpr int MINIMAL_ARG_LIST            = 2;
-
-constexpr auto DEFAULT_STACKALIGNMENT     = 2;
-constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
-constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
-
 typedef ElfPPC64leLinker         LinuxLinker;
 typedef ElfPPC64leImageFormatter LinuxImageFormatter;
 
@@ -116,20 +98,10 @@ typedef ElfPPC64leImageFormatter LinuxImageFormatter;
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
-constexpr int MINIMAL_ARG_LIST            = 2;
-
-constexpr auto DEFAULT_STACKALIGNMENT     = 2;
-constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
-constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
-
 typedef ElfARM64Linker         LinuxLinker;
 typedef ElfARM64ImageFormatter LinuxImageFormatter;
 
 #endif
-
-constexpr int DEFAULT_MGSIZE = 688128;
-constexpr int DEFAULT_YGSIZE = 204800;
-constexpr int DEFAULT_STACKRESERV = 0x100000;
 
 class Presenter : public LinuxConsolePresenter
 {
@@ -161,6 +133,28 @@ public:
    ~Presenter() = default;
 };
 
+PlatformType definePlatform(int argc, char** argv, PlatformType defaultPlatform)
+{
+   for (int i = 1; i < argc; i++) {
+      if (ustr_t(argv[i]).compare(WIN32_PLATFORM_OPTION)) {
+#if defined(__x86_64__) || defined(__i386__)
+         return PlatformType::Win_x86;
+#else
+         return PlatformType::None;
+#endif
+      }
+      else if (ustr_t(argv[i]).compare(WIN64_PLATFORM_OPTION)) {
+#if defined(__x86_64__) || defined(__i386__)
+         return PlatformType::Win_x86_64;
+#else
+         return PlatformType::None;
+#endif
+      }
+   }
+
+   return defaultPlatform;
+}
+
 JITCompilerBase* createJITCompiler(PlatformType platform)
 {
    switch (platform) {
@@ -189,6 +183,62 @@ JITCompilerBase* createJITCompiler(PlatformType platform)
    }
 }
 
+JITCompilerSettings getJITSettings(PlatformType platform)
+{
+   switch (platform) {
+#if defined(__i386__) || defined(__x86_64__)
+      case PlatformType::Linux_x86:
+      case PlatformType::Win_x86:
+         return X86JITCompiler::getJITSettings();
+#endif
+#if defined(__x86_64__)
+      case PlatformType::Linux_x86_64:
+      case PlatformType::FreeBSD_x86_64:
+      case PlatformType::Win_x86_64:
+         return X86_64JITCompiler::getJITSettings();
+#endif
+#if defined(__PPC64__)
+      case PlatformType::Linux_PPC64le:
+         return PPC64leJITCompiler::getJITSettings();
+#endif
+#if defined(__aarch64__)
+      case PlatformType::Linux_ARM64:
+         return ARM64JITCompiler::getJITSettings();
+#endif
+      default:
+         errorProcessor->raiseError(errNotSupportedPlatform);
+         return {};
+   }
+}
+
+ProcessSettings getProcessSettings(PlatformType platform)
+{
+   switch (platform) {
+#if defined(__i386__) || defined(__x86_64__)
+   case PlatformType::Linux_x86:
+   case PlatformType::Win_x86:
+      return { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
+#endif
+#if defined(__x86_64__)
+   case PlatformType::Linux_x86_64:
+   case PlatformType::FreeBSD_x86_64:
+   case PlatformType::Win_x86_64:
+      return { 344064, 86016, 0x200000, 1, true, true };
+#endif
+#if defined(__PPC64__)
+   case PlatformType::Linux_PPC64le:
+      return { 688128, 204800, 0x200000, 1, true, true };
+#endif
+#if defined(__aarch64__)
+   case PlatformType::Linux_ARM64:
+      return { 688128, 204800, 0x200000, 1, true, true };
+#endif
+   default:
+      errorProcessor->raiseError(errNotSupportedPlatform);
+      return {};
+   }
+}
+
 void handleOption(char* arg, IdentifierString& profile, Project& project, CompilingProcess& process,
    ErrorProcessor& errorProcessor, path_t dataPath, bool& cleanMode)
 {
@@ -212,28 +262,6 @@ void handleOption(char* arg, IdentifierString& profile, Project& project, Compil
          break;
       }
    }
-}
-
-PlatformType definePlatform(int argc, char** argv, PlatformType defaultPlatform)
-{
-   for (int i = 1; i < argc; i++) {
-      if (ustr_t(argv[i]).compare(WIN32_PLATFORM_OPTION)) {
-#if defined(__x86_64__) || defined(__i386__)
-         return PlatformType::Win_x86;
-#else
-         return PlatformType::None;
-#endif
-      }
-      else if (ustr_t(argv[i]).compare(WIN64_PLATFORM_OPTION)) {
-#if defined(__x86_64__) || defined(__i386__)
-         return PlatformType::Win_x86_64;
-#else
-         return PlatformType::None;
-#endif
-      }
-   }
-
-   return defaultPlatform;
 }
 
 LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessorBase* errorProcessor)
@@ -287,7 +315,8 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
 
    bool cleanMode = false;
 
-   JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
+   ProcessSettings     defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
+   JITCompilerSettings jitSettings = getJITCompilerSettings(platform);
    CompilingProcess process(dataPath, getDefaultExtension(platform), "<moduleProlog>", "<prolog>", "<epilog>",
       &Presenter::getInstance(), &errorProcessor,
       VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
@@ -350,11 +379,8 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
    }
    else {
       // Building...
-      return process.build(project, *linker,
-         DEFAULT_STACKALIGNMENT,
-         DEFAULT_RAW_STACKALIGNMENT,
-         DEFAULT_EHTABLE_ENTRY_SIZE,
-         MINIMAL_ARG_LIST,
+      return process.build(project, *linker, jitSettings,
+         getMinimalArgumentNumber(platform),
          *profile);
    }
 }

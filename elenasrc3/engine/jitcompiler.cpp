@@ -2915,7 +2915,7 @@ void JITCompiler :: loadCoreRoutines(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings,
+   ProcessSettings& settings,
    Map<ref_t, pos_t>& positions, bool declareMode, bool virtualMode)
 {
    // preload core data
@@ -2957,7 +2957,7 @@ void JITCompiler :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings,
+   ProcessSettings& settings,
    bool virtualMode)
 {
    if (settings.withAlignedJump) {
@@ -3167,7 +3167,7 @@ void JITCompiler32 :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings,
+   ProcessSettings& settings,
    bool virtualMode)
 {
    _constants.indexPower = 2;
@@ -3719,7 +3719,7 @@ void JITCompiler64 :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings,
+   ProcessSettings& settings,
    bool virtualMode)
 {
    _constants.indexPower = 3;
