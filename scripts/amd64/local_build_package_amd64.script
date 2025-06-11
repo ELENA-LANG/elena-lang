@@ -71,7 +71,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm ../..bin/amd64  core60_lnx_client.bin
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm ../../bin/amd64  core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
