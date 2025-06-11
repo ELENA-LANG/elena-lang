@@ -26,7 +26,7 @@ fi
 
 echo compiling lib60 files
 
- ../../bin/asm-cli -bc32 ../../src60/core/system.core_routines.esm ../../lib60_win
+ ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64_win
  ret=$?
  if [ $ret -eq 0 ]
  then
@@ -36,7 +36,7 @@ echo compiling lib60 files
    exit 1
  fi
 
- ../../bin/elena-cli -p../../lib60_win ../../src60/elena_api.prjcol
+ ../../bin/elena64-cli -xtwin64 ../../src60/elena_api.linux.prjcol
  ret=$?
  if [ $ret -eq 2 ]
  then
