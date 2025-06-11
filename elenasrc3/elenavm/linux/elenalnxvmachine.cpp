@@ -15,7 +15,7 @@ using namespace elena_lang;
 constexpr auto VA_ALIGNMENT = 0x08;
 
 ELENAUnixVMMachine :: ELENAUnixVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
-   int codeAlignment, JITSettings gcSettings,
+   int codeAlignment, ProcessSettings gcSettings,
    JITCompilerBase*(* jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
       : ELENAVMMachine(configPath, presenter, platform, codeAlignment, gcSettings, jitCompilerFactory),
          _text(TEXT_MAX_SIZE, false, true),

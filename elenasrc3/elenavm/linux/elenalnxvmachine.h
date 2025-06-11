@@ -50,7 +50,7 @@ public:
    addr_t resolveExternal(ustr_t dll, ustr_t function) override;
 
    ELENAUnixVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
-      int codeAlignment, JITSettings gcSettings,
+      int codeAlignment, ProcessSettings gcSettings,
       JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));
 };
 
