@@ -45,20 +45,14 @@ In development:
   - chat sample
   - amd64 refactore : merge core60_win.asm & core60_lnx.asm and corex60.asm & corex60_win.asm 
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
-  - #620 : backlog
   - Cross-compile on Windows for Linux #781
+  - #620 : backlog
   --------------------------------------
-  - Cross-compile from Unix to Windows #778
-  --------------------------------------
-  * Cross-compile from Unix to Windows fox x86-64
-
-  * Cross-compile from Unix 64 to Windows x86??
+  * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
   --------------------------------------
   * Cross-compile from Windows to Linux fox x86
   * Cross-compile from Windows to Linux fox x86-64
   * Cross-compile from Windows to FreeBSD fox x86-64
-  --------------------------------------
-  * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
   --------------------------------------
 
   === Iteration 42 ===
