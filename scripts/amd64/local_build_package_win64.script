@@ -1,6 +1,6 @@
 #!/bin/bash
 
-mkdir -p -m 775 ../../lib60_win
+mkdir -p ../../lib60_64_win
 
 echo compiling assembly files
 

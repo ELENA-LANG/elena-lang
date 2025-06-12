@@ -1,7 +1,7 @@
 #!/bin/bash
 
-mkdir -p -m 775 ../../lib60_64
-mkdir -p -m 775 ../../bin/amd64
+mkdir -p ../../lib60_64
+mkdir -p ../../bin/amd64
 
 echo compiling data files
 
