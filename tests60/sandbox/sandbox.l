@@ -2,5 +2,7 @@ import extensions;
 
 public program()
 {
-   Console.writeLine("Hello")
+   real r := (Pi_value/3).sin();
+
+   Console.writeLine("sin(π/3) = ", r)
 }
