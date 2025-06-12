@@ -350,7 +350,7 @@ bool AssemblerBase :: compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
 {
    switch (tokenInfo.token[0]) {
       case 'a':
-         return compileAOpCode(tokenInfo, writer);
+         return compileAOpCode(tokenInfo, writer, labelScope);
       case 'b':
          return compileBOpCode(tokenInfo, writer, labelScope);
       case 'c':

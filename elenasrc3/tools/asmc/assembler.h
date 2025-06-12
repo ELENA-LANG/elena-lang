@@ -125,7 +125,7 @@ namespace elena_lang
 
       virtual void declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) = 0;
 
-      virtual bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;
+      virtual bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) = 0;
       virtual bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) = 0;
       virtual bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) = 0;
       virtual bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) = 0;

@@ -1953,7 +1953,7 @@ void PPC64Assembler::compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& wr
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
-bool PPC64Assembler :: compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool PPC64Assembler :: compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope&)
 {
    if (tokenInfo.compare("addi")) {
       compileADDI(tokenInfo, writer);
