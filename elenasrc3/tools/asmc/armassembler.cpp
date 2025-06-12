@@ -1168,7 +1168,7 @@ bool Arm64Assembler :: compileFMADD(ScriptToken& tokenInfo, ARMOperand rd, ARMOp
    MemoryWriter& writer)
 {
    if (rd.isDR() && rn.isDR() && rm.isDR() && ra.isDR()) {
-      writer.writeDWord(ARMHelper::makeFTypeOpcode(0, 0x1F, 1, 0, rm.type, 1, ra.type, rn.type, rd.type));
+      writer.writeDWord(ARMHelper::makeFTypeOpcode(0, 0x1F, 1, 0, rm.type, 0, ra.type, rn.type, rd.type));
    }
    else return false;
 
