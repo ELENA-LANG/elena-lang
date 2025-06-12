@@ -23,7 +23,7 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings,
+         ProcessSettings& settings,
          bool virtualMode) override;
 
       friend void PPC64loadCallOp(JITCompilerScope* scope);

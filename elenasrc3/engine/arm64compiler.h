@@ -22,7 +22,7 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings,
+         ProcessSettings& settings,
          bool virtualMode) override;
 
       friend void ARM64loadCallOp(JITCompilerScope* scope);
