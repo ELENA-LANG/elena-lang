@@ -108,6 +108,6 @@ fi
  ln -s $(realpath ../../bin/libelenavm60_64.so) /usr/lib/elena/libelenavm60_64.so
  ln -s $(realpath ../../bin/libelenasm60_64.so) /usr/lib/elena/libelenasm60_64.so
 
- mkdir -p /usr/local/etc/elena/
+ mkdir -p /etc/elena/
  ln -s $(realpath ../../bin/elenart60.config) /etc/elena/elenart60.config
  ln -s $(realpath ../../bin/elenavm60.config) /etc/elena/elenavm60.config
