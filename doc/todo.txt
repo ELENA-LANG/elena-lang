@@ -48,6 +48,7 @@ In development:
   - Cross-compile on Windows for Linux #781
   - #620 : backlog
   --------------------------------------
+  * aarch64 : fix iteratorMethodTest
   * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
   --------------------------------------
   * Cross-compile from Windows to Linux fox x86
