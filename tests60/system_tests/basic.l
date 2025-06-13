@@ -1457,9 +1457,9 @@ public loopExpressionTest() : testCase()
 
     Console.write(".")    
 }
-
+*/
 A;
-
+/*
 class NilDispatcher
 {
     int value := 0;
