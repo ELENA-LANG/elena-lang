@@ -27,10 +27,10 @@ public program()
 
    Assert.ifTrue(e.next());
    Console.writeLine(*e);
-/*   Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 5);
    Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 7);
-   Assert.ifFalse(e.next());*/
+   Console.writeLine(*e);
+   Assert.ifTrue(e.next());
+   Console.writeLine(*e);
+   Assert.ifFalse(e.next());
    Console.write(".");
 }
