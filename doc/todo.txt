@@ -48,6 +48,7 @@ In development:
   - Cross-compile on Windows for Linux #781
   - #620 : backlog
   --------------------------------------
+  * aarch64 : raise an error if the argument more then expected
   * aarch64 : fix iteratorMethodTest
   * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
   --------------------------------------

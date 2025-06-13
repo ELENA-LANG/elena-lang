@@ -2228,10 +2228,15 @@ public iteratorMethodTest() : testCase()
 
    Assert.ifTrue(e.next());
    Assert.ifTrue(*e == 2);
+   Console.write(".");
    Assert.ifTrue(e.next());
+   Console.write(".");
    Assert.ifTrue(*e == 5);
+   Console.write(".");
    Assert.ifTrue(e.next());
+   Console.write(".");
    Assert.ifTrue(*e == 7);
+   Console.write(".");
    Assert.ifFalse(e.next());
    Console.write(".");
 }
