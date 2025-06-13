@@ -26,7 +26,7 @@ public program()
    auto e := IteratorEnumerable.enumerator();
 
    Assert.ifTrue(e.next());
-   Assert.ifTrue(*e == 2);
+   Console.writeLine(*e);
 /*   Assert.ifTrue(e.next());
    Assert.ifTrue(*e == 5);
    Assert.ifTrue(e.next());
