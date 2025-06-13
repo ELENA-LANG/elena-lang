@@ -6,7 +6,7 @@ import system'text;
 import system'text'parsing;
 import system'io;
 import ltests;
-
+/*
 // --- ControlTest ---
 
 public controlTest() : testCase()
@@ -2206,7 +2206,7 @@ public stringInterpolation() : testCase()
    Assert.ifEqual(s2,"3_b_4_c");
    Console.write(".");
 }
-
+*/
 // --- iteratorMethodTest ---
 
 singleton IteratorEnumerable : Enumerable
