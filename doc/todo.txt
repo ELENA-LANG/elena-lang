@@ -46,8 +46,10 @@ In development:
   - amd64 refactore : merge core60_win.asm & core60_lnx.asm and corex60.asm & corex60_win.asm 
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   - Cross-compile on Windows for Linux #781
+  - #778 : Cross-compile on BSD for Windows
   - #620 : backlog
   --------------------------------------
+  * aarch64 : fixing xlabel
   * aarch64 : raise an error if the argument more then expected
   * aarch64 : fix iteratorMethodTest
   * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
