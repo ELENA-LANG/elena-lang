@@ -187,9 +187,9 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       case mskDataRef32Lo:
       {
          unsigned int opcode = *(unsigned int*)address;
-         unsigned int addr = (unsigned int)(base + space->data) & 0xFFFF;
+         addr_t addr = (base + space->data) & 0xFFFF;
 
-         opcode |= (addr << 5);
+         opcode |= (((unsigned int)addr) << 5);
 
          *(unsigned int*)address = opcode;
          break;
@@ -197,13 +197,9 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       case mskCodeRef32Hi:
       {
          unsigned int opcode = *(unsigned int*)address;
-         unsigned int addr = (unsigned int)(base + space->code);
-         unsigned int patch = (addr >> 16) & 0xFFFF;
+         addr_t addr = (base + space->code >> 16) & 0xFFFF;
 
-         if (addr > 0x56FF00 && addr < 0x570100)
-            printf("arm64relocate %x hi:%x\n", addr, patch);
-
-         opcode |= (patch << 5);
+         opcode += ((unsigned int)addr) << 5;
 
          *(unsigned int*)address = opcode;
          break;
@@ -211,13 +207,9 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       case mskCodeRef32Lo:
       {
          unsigned int opcode = *(unsigned int*)address;
-         unsigned int addr = (unsigned int)(base + space->code);
-         unsigned int patch = addr & 0xFFFF;
+         addr_t addr = (base + space->code) & 0xFFFF;
 
-         if (addr > 0x56FE00 && addr < 0x570200)
-            printf("arm64relocate %x lo:%x\n", addr, patch);
-
-         opcode += (patch << 5);
+         opcode += (((unsigned int)addr) << 5);
 
          *(unsigned int*)address = opcode;
          break;
