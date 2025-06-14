@@ -49,7 +49,7 @@ In development:
   - #778 : Cross-compile on BSD for Windows
   - #620 : backlog
   --------------------------------------
-  * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
+  * new opcode : fcos - arm64
   * new opcode : pi -> arm64
   --------------------------------------
   * Cross-compile from Windows to Linux fox x86
