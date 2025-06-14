@@ -2967,7 +2967,7 @@ inline %0D6h
 
   add     x13, x29, __arg12_1
 
-  movk    x16,  __ptr32lo_2
+  movn    x16,  __ptr32lo_2
   movk    x16,  __ptr32hi_2, lsl #16
 
   str     x16, [x13]
