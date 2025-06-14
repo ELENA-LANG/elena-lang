@@ -49,10 +49,8 @@ In development:
   - #778 : Cross-compile on BSD for Windows
   - #620 : backlog
   --------------------------------------
-  * aarch64 : fixing xlabel
-  * aarch64 : raise an error if the argument more then expected
-  * aarch64 : fix iteratorMethodTest
   * new opcode : fsin / fcos - arm64 (FTSMUL, FTMAD, and FTSSEL)
+  * new opcode : pi -> arm64
   --------------------------------------
   * Cross-compile from Windows to Linux fox x86
   * Cross-compile from Windows to Linux fox x86-64

@@ -1695,7 +1695,7 @@ void Arm64Assembler::compileADR(ScriptToken& tokenInfo, MemoryWriter& writer, La
 
    checkComma(tokenInfo);
 
-   ARMOperand imm;
+   ARMOperand imm = { ARMOperandType::Imm };
 
    read(tokenInfo);
    if (!tokenInfo.compare(":")) {
