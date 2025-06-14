@@ -1545,6 +1545,15 @@ end
 
 // ; fpi
 inline %07Fh
+
+  add     x19, x29, __arg12_1 // ; dest (x19)
+
+  movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE
+  movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+
+  ldr     d0, [x20, #168] //; d1 <- PI
+  str     d0, [x19]
+
 end
 
 // ; setr
