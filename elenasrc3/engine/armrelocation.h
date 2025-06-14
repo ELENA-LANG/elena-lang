@@ -200,7 +200,7 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          unsigned int addr = (unsigned int)(base + space->code);
          unsigned int patch = (addr >> 16) & 0xFFFF;
 
-         if (addr > 0x560000)
+         if (addr > 0x560000 && addr < 0x580000)
             printf("arm64relocate %x hi:%x\n", addr, patch);
 
          opcode |= (patch << 5);
@@ -214,8 +214,8 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          unsigned int addr = (unsigned int)(base + space->code);
          unsigned int patch = addr & 0xFFFF;
 
-         if (addr > 0x560000)
-            printf("arm64relocate %x hi:%x\n", addr, patch);
+         if (addr > 0x560000 && addr < 0x580000)
+            printf("arm64relocate %x lo:%x\n", addr, patch);
 
          opcode += (patch << 5);
 
