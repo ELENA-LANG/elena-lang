@@ -1009,7 +1009,7 @@ bool Arm64Assembler :: compileFCMP(ARMOperand rn, ARMOperand rm, MemoryWriter& w
 bool Arm64Assembler :: compileFCVTAS(ARMOperand rd, ARMOperand rn, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isDR()) {
-      writer.writeDWord(ARMHelper::makeRModeOpcode(1, 0, 0x1E, 1, 1, 0, 3,
+      writer.writeDWord(ARMHelper::makeRModeOpcode(1, 0, 0x1E, 1, 1, 0, 4,
          rn.type, rd.type));
    }
    else return false;
