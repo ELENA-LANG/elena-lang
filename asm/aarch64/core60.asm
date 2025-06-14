@@ -1308,6 +1308,8 @@ inline %07Ch
 labStart:
   ldr     d0, [x0]           // ; x (d0)
 
+  add     x19, x29, __arg12_1 // ; dest (x19)
+
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
 
@@ -1394,6 +1396,7 @@ cos1a_neg:
   fmadd   d0,d2,d6,d0
   fmadd   d0,d3,d7,d0
   fneg    d0, d0
+  b       labEnd
 
 cos1a:
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE             // ; cos1a1
@@ -1412,6 +1415,7 @@ cos1a:
   fmadd   d0,d3,d7,d0
 
 labEnd:
+  str     d0, [x19]
 
 end
 
