@@ -209,6 +209,8 @@ void ARM64JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, p
       {
          offset >>= 16;
 
+         printf("resolveLabelAddress: hi %x\n", offset);
+
          MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
          writer->Memory()->addReference(mskCodeRef32Hi, position);
 
@@ -217,6 +219,8 @@ void ARM64JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, p
       case mskRef32Lo:
       {
          offset &= 0xFFFF;
+
+         printf("resolveLabelAddress: lo %x\n", offset);
 
          MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
          writer->Memory()->addReference(mskCodeRef32Lo, position);
