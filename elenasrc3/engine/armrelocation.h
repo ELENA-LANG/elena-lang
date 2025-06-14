@@ -199,6 +199,8 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          unsigned int opcode = *(unsigned int*)address;
          unsigned int addr = ((unsigned int)(base + space->code)) >> 16;
 
+         printf("arm64relocate %x hi:%x\n", base, addr);
+
          opcode |= addr << 5;
 
          *(unsigned int*)address = opcode;
@@ -209,7 +211,9 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          unsigned int opcode = *(unsigned int*)address;
          unsigned int addr = (unsigned int)(base + space->code) & 0xFFFF;
 
-         opcode += (addr << 5);
+         printf("arm64relocate %x lo:%x\n", base, addr);
+
+         opcode |= (addr << 5);
 
          *(unsigned int*)address = opcode;
          break;
