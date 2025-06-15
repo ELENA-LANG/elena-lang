@@ -49,6 +49,7 @@ In development:
   - rosetta code : moving to 6.7 : (Apply a callback to an array..)
   - #778 : Cross-compile on BSD for Windows
   --------------------------------------
+  * script : new config Win_x64_BSD
   * review the code - adding missing options
   * provide full script
   * build windows api for freebsd
