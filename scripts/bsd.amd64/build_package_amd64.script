@@ -77,7 +77,7 @@ cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm64-cli -freebsd -amd64 ../../asm/amd64/core60.asm /usr/lib/elena/core/amd64 core60_lnx.bin
+../../bin/asm64-cli -freebsd -amd64 ../../asm/amd64/core60.asm /usr/local/lib/elena/core/amd64 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -109,5 +109,3 @@ fi
 
  cp ../../lib60_64/*.nl /usr/local/lib/elena/lib60_64
  cp ../../lib60_64/*.dnl /usr/local/lib/elena/lib60_64 
-
-exit 0
