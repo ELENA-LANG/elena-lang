@@ -19,7 +19,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -windows -amd64 ../../asm/amd64/core60x.asm /usr/local/lib/elena/core/amd64 corex60_win.bin
+../../bin/asm64-cli -windows -amd64 ../../asm/amd64/corex60.asm /usr/local/lib/elena/core/amd64 corex60_win.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
