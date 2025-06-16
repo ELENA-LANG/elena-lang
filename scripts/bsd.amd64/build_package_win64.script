@@ -52,4 +52,4 @@ fi
  cp ../../lib60_64_win/*.nl /usr/local/lib/elena/lib60_64_win
  cp ../../lib60_64_win/*.dnl /usr/local/lib/elena/lib60_64_win
 
- cp ../../bin/winstub.ex_ /usr/local/shared/elena
+ cp ../../bin/winstub.ex_ /usr/local/share/elena
