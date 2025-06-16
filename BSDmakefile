@@ -66,7 +66,7 @@ clean_elc_amd64:
 	$(MAKE) -C elenasrc3/elc/make clean -f bsd.elc_amd64.mak
 
 clean_cross_elc_amd64: 
-	$(MAKE) -C elenasrc3/elc/make clean -f bsd.clang_elc_amd64.mak
+	$(MAKE) -C elenasrc3/elc/make clean -f bsd.clang_cross_elc_amd64.mak
 
 clean_sg_amd64: 
 	$(MAKE) -C elenasrc3/tools/sg/codeblocks clean -f bsd.sg_amd64.mak
