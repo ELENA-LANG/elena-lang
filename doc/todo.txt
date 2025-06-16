@@ -47,8 +47,11 @@ In development:
   - #783
   - amd64 refactore : merge core60_win.asm & core60_lnx.asm and corex60.asm & corex60_win.asm 
   - Cross-compile on Windows for Linux #781
+  - Rosetta code samples
   --------------------------------------
   * Averages/Arithmetic mean : fix an error
+  * functional test : real / int 
+  --------------------------------------
   * Averages/Median
   * Averages/Mode
   --------------------------------------

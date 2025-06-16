@@ -313,6 +313,12 @@ public realTests() : testCase()
    real absr := negr.Absolute;
    Assert.ifTrue(absr == 2.3);
    Console.write(".");
+
+   real r6 := 36.0;
+   int n6 := 8;
+   real res6 := r6 / n6;
+   Assert.ifTrue(res6 == 4.5);
+   Console.write(".");
 }
 
 // --- gcTests ---
