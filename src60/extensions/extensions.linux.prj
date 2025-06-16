@@ -34,6 +34,11 @@
         <output>../../lib60_64_win</output>
      </project>
   </platform>
+  <platform key="Win_x64_BSD">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
+  </platform>
   <project>
      <namespace>extensions</namespace>
      <template>lib60</template>

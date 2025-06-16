@@ -703,44 +703,53 @@ namespace elena_lang
 
    constexpr auto PROGRAM_ENTRY              = "$forwards'program";         // used by the linker to define the debug entry
 
-   constexpr auto SYSTEM_FORWARD             = "$system_entry";   // the system entry
-   constexpr auto SUPER_FORWARD              = "$super";          // the common class predecessor
-   constexpr auto NILVALUE_FORWARD           = "$nil";            // the nil value
-   constexpr auto INTLITERAL_FORWARD         = "$int";            // the int literal
-   constexpr auto LONGLITERAL_FORWARD        = "$long";           // the long literal
-   constexpr auto REALLITERAL_FORWARD        = "$real";           // the real literal
-   constexpr auto INT8LITERAL_FORWARD        = "$int8";           // the int literal
-   constexpr auto UINT8LITERAL_FORWARD       = "$uint8";          // the int literal
-   constexpr auto INT16LITERAL_FORWARD       = "$short";          // the int literal
-   constexpr auto UINT16LITERAL_FORWARD      = "$ushort";         // the int literal
-   constexpr auto LITERAL_FORWARD            = "$string";         // the string literal
-   constexpr auto WIDELITERAL_FORWARD        = "$wide";           // the wide string literal
-   constexpr auto CHAR_FORWARD               = "$char";           // the char literal
-   constexpr auto BOOL_FORWARD               = "$boolean";        // the boolean class
-   constexpr auto TRUE_FORWARD               = "$true";           // the true boolean value
-   constexpr auto FALSE_FORWARD              = "$false";          // the false boolean value
-   constexpr auto WRAPPER_FORWARD            = "$ref";            // the wrapper template
-   constexpr auto ARRAY_FORWARD              = "$array";          // the array template
-   constexpr auto VARIADIC_ARRAY_FORWARD     = "$varray";         // the array template
-   constexpr auto MESSAGE_FORWARD            = "$message";        // the message name class
-   constexpr auto PROPERTY_NAME_FORWARD      = "$prop_subject";   // the property message name class
-   constexpr auto MESSAGE_NAME_FORWARD       = "$subject";        // the message class
-   constexpr auto EXT_MESSAGE_FORWARD        = "$ext_message";    // the extension message class
-   constexpr auto CLOSURE_FORWARD            = "$closure";        // the closure template class
-   constexpr auto TUPLE_FORWARD              = "$tuple";          // the tuple template class
-   constexpr auto YIELDIT_FORWARD            = "$yieldit";        // the yield state machine iterator template class
-   constexpr auto ASYNCIT_FORWARD            = "$taskit";         // the async state machine iterator template class
-   constexpr auto UINT_FORWARD               = "$uint";           // the uint wrapper
-   constexpr auto PTR_FORWARD                = "$ptr";            // the ptr wrapper
-   constexpr auto TASK_FORWARD               = "$task";           // the ptr wrapper
-   constexpr auto LAZY_FORWARD               = "$lazy";
-   constexpr auto NULLABLE_FORWARD           = "$nullable";
-   constexpr auto PRELOADED_FORWARD          = "system@preloadedSymbols";
-   constexpr auto START_FORWARD              = "$symbol_entry";
+   constexpr auto SYSTEM_FORWARD                = "$system_entry";   // the system entry
+   constexpr auto SUPER_FORWARD                 = "$super";          // the common class predecessor
+   constexpr auto NILVALUE_FORWARD              = "$nil";            // the nil value
+   constexpr auto INTLITERAL_FORWARD            = "$int";            // the int literal
+   constexpr auto LONGLITERAL_FORWARD           = "$long";           // the long literal
+   constexpr auto REALLITERAL_FORWARD           = "$real";           // the real literal
+   constexpr auto INT8LITERAL_FORWARD           = "$int8";           // the int literal
+   constexpr auto UINT8LITERAL_FORWARD          = "$uint8";          // the int literal
+   constexpr auto INT16LITERAL_FORWARD          = "$short";          // the int literal
+   constexpr auto UINT16LITERAL_FORWARD         = "$ushort";         // the int literal
+   constexpr auto LITERAL_FORWARD               = "$string";         // the string literal
+   constexpr auto WIDELITERAL_FORWARD           = "$wide";           // the wide string literal
+   constexpr auto CHAR_FORWARD                  = "$char";           // the char literal
+   constexpr auto BOOL_FORWARD                  = "$boolean";        // the boolean class
+   constexpr auto TRUE_FORWARD                  = "$true";           // the true boolean value
+   constexpr auto FALSE_FORWARD                 = "$false";          // the false boolean value
+   constexpr auto WRAPPER_FORWARD               = "$ref";            // the wrapper template
+   constexpr auto ARRAY_FORWARD                 = "$array";          // the array template
+   constexpr auto VARIADIC_ARRAY_FORWARD        = "$varray";         // the array template
+   constexpr auto MESSAGE_FORWARD               = "$message";        // the message name class
+   constexpr auto PROPERTY_NAME_FORWARD         = "$prop_subject";   // the property message name class
+   constexpr auto MESSAGE_NAME_FORWARD          = "$subject";        // the message class
+   constexpr auto EXT_MESSAGE_FORWARD           = "$ext_message";    // the extension message class
+   constexpr auto CLOSURE_FORWARD               = "$closure";        // the closure template class
+   constexpr auto TUPLE_FORWARD                 = "$tuple";          // the tuple template class
+   constexpr auto YIELDIT_FORWARD               = "$yieldit";        // the yield state machine iterator template class
+   constexpr auto ASYNCIT_FORWARD               = "$taskit";         // the async state machine iterator template class
+   constexpr auto UINT_FORWARD                  = "$uint";           // the uint wrapper
+   constexpr auto PTR_FORWARD                   = "$ptr";            // the ptr wrapper
+   constexpr auto TASK_FORWARD                  = "$task";           // the ptr wrapper
+   constexpr auto LAZY_FORWARD                  = "$lazy";
+   constexpr auto NULLABLE_FORWARD              = "$nullable";
+   constexpr auto PRELOADED_FORWARD             = "system@preloadedSymbols";
+   constexpr auto START_FORWARD                 = "$symbol_entry";
 
    // --- Configuration xpaths ---
    constexpr auto WIN_X86_KEY                   = "Win_x86";
+#if defined(__FreeBSD__) 
+   // NOTE : for cross-platform support, FreeBDS has different config pathd (due to different system paths)
+   constexpr auto WIN_X86_64_KEY                = "Win_x64_BSD";
+
+#else
+
    constexpr auto WIN_X86_64_KEY                = "Win_x64";
+
+#endif
+
    constexpr auto LINUX_X86_KEY                 = "Linux_I386";
    constexpr auto LINUX_X86_64_KEY              = "Linux_AMD64";
    constexpr auto LINUX_PPC64le_KEY             = "Linux_PPC64le";
