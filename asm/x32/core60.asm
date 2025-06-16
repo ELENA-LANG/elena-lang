@@ -1761,8 +1761,8 @@ end
 inline %0ACh
 
   lea  edi, [ebp + __arg32_1]
-  mov  eax, dword ptr [ebx]
-  mov  edx, dword ptr [ebx+4]
+  mov  eax, dword ptr [edi]
+  mov  edx, dword ptr [edi+4]
 
 end
 
