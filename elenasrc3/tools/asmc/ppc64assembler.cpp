@@ -1358,7 +1358,6 @@ void PPC64Assembler :: compileLFIWAX(ScriptToken& tokenInfo, MemoryWriter& write
 
    checkComma(tokenInfo);
 
-   int d = 0;
    PPCOperand rb = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
    if (frt.isFPR() && rb.isGPR()) {

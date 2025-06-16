@@ -37,6 +37,7 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - rosetta code : moving to 6.7 : (Averages/Root mean square..)
   - IDE : output window - add a context menu to copy the output content to the clipboard
   - MTA support for Linux : test simple multithread sample
   - MTA support for Linux : signals, thread prolog / epilog (system commands)
@@ -46,12 +47,10 @@ In development:
   - #783
   - amd64 refactore : merge core60_win.asm & core60_lnx.asm and corex60.asm & corex60_win.asm 
   - Cross-compile on Windows for Linux #781
-  - rosetta code : moving to 6.7 : (Apply a callback to an array..)
-  - #778 : Cross-compile on BSD for Windows
   --------------------------------------
-  * provide full script
-  * build windows api for freebsd
-  * build windows example for freebsd
+  * Averages/Arithmetic mean : fix an error
+  * Averages/Median
+  * Averages/Mode
   --------------------------------------
   * Cross-compile from Windows to Linux fox x86
   * Cross-compile from Windows to Linux fox x86-64
