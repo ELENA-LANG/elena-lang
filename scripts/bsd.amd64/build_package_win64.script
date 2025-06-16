@@ -3,7 +3,7 @@
 mkdir -p ../../lib60_64_win
 mkdir -p /usr/local/lib/elena/lib60_64_win
 mkdir -p /usr/local/lib/elena/core/amd64/
-mkdir -p /usr/local/etc/elena/
+mkdir -p /usr/local/shared/elena
 
 cp ../../bin/elena64-cli /usr/local/bin/
 
@@ -52,4 +52,4 @@ fi
  cp ../../lib60_64_win/*.nl /usr/local/lib/elena/lib60_64_win
  cp ../../lib60_64_win/*.dnl /usr/local/lib/elena/lib60_64_win
 
- cp ../../bin/winstub.ex_ /usr/local/etc/elena
+ cp ../../bin/winstub.ex_ /usr/local/shared/elena
