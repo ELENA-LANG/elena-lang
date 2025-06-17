@@ -48,8 +48,7 @@ In development:
   - amd64 refactore : merge core60_win.asm & core60_lnx.asm and corex60.asm & corex60_win.asm 
   - Cross-compile on Windows for Linux #781
   --------------------------------------
-  * refactoring code to be ready for #781
-  * try to merge the code between windows\elc & linux\elc
+  * build cross-platform for windows
   * msbuild SlnFolders.sln -target:NotInSlnfolder:Rebuild;NewFolder\InSolutionFolder:Clean
   * add cross compile mode for VS elc 
   * Cross-compile from Windows to Linux fox x86

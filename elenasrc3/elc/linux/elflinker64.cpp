@@ -8,7 +8,16 @@
 
 #include "elflinker64.h"
 #include "elfcommon.h"
-#include "elf.h"
+
+#if defined __unix__
+
+#include <elf.h>
+
+#else
+
+#include "elfdeclaration.h"
+
+#endif
 
 #define MAGIC_NUMBER "\x07F""ELF"
 
@@ -126,7 +135,7 @@ void Elf64Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
 
       file->write((char*)&ph_header, ELF64_PH_SIZE);
 
-      offset += ph_header.p_filesz;
+      offset += (pos_t)ph_header.p_filesz;
    }
 
    // Dynamic

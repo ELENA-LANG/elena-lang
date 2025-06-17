@@ -13,7 +13,15 @@
 
 #include "x86relocation.h"
 
+#if defined __unix__
+
 #include <elf.h>
+
+#else
+
+#include "elfdeclaration.h"
+
+#endif
 
 using namespace elena_lang;
 
