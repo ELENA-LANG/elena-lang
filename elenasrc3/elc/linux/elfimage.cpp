@@ -637,12 +637,18 @@ pos_t ElfAmd64ImageFormatter :: writePLTEntry(MemoryWriter& codeWriter, pos_t sy
 
 // --- ElfFreeBSDAmd64ImageFormatter ---
 
+#ifndef R_X86_64_JMP_SLOT
+
+#define R_X86_64_JMP_SLOT R_X86_64_JUMP_SLOT
+
+#endif // R_X86_64_JMP_SLOT
+
 int ElfFreeBSDAmd64ImageFormatter :: getRelocationType()
 {
    return R_X86_64_JMP_SLOT;
 }
 
-void ElfFreeBSDAmd64ImageFormatter :: writeRELA(MemoryWriter& dynamicWriter, ref_t importRef, pos_t count)
+void ElfFreeBSDAmd64ImageFormatter :: writeRELA(MemoryWriter& dynamicWriter, ref_t importRef, pos_t reltabOffset, pos_t count)
 {
    dynamicWriter.writeQWord(DT_RELA);
    dynamicWriter.writeQReference(importRef, reltabOffset/*relatabOffset*/);

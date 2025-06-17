@@ -134,6 +134,7 @@ namespace elena_lang
    // --- ElfAmd64ImageFormatter ---
    class ElfAmd64ImageFormatter : public Elf64ImageFormatter
    {
+   protected:
       ElfAmd64ImageFormatter(ForwardResolverBase* resolver)
          : Elf64ImageFormatter(resolver)
       {

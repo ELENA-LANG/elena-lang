@@ -124,6 +124,8 @@
 		<Unit filename="../../engine/x86helper.h" />
 		<Unit filename="../../engine/xmlprojectbase.cpp" />
 		<Unit filename="../../engine/xmlprojectbase.h" />
+		<Unit filename="../cli.cpp" />
+		<Unit filename="../cli.h" />
 		<Unit filename="../clicommon.h" />
 		<Unit filename="../cliconst.h" />
 		<Unit filename="../codeimage.cpp" />

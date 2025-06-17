@@ -13,34 +13,6 @@
 
 //#define CROSS_COMPILE_MODE 1
 
-#if defined(__x86_64__)
-
-#include "elflinker32.h"
-#include "elflinker64.h"
-#include "x86compiler.h"
-#include "x86_64compiler.h"
-
-#if CROSS_COMPILE_MODE
-
-#include "windows/ntlinker32.h"
-#include "windows/ntlinker64.h"
-#include "windows/ntimage.h"
-
-#endif
-
-#elif defined(__i386__)
-
-#include "elflinker32.h"
-#include "x86compiler.h"
-
-#if CROSS_COMPILE_MODE
-
-#include "windows/ntlinker32.h"
-#include "windows/ntimage.h"
-
-#endif
-
-
 #include "constants.h"
 #include "messages.h"
 #include "linux/presenter.h"
@@ -62,29 +34,17 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86_64;
 
 #endif
 
-typedef ElfAmd64Linker           LinuxLinker;
-typedef ElfAmd64ImageFormatter   LinuxImageFormatter;
-
 #elif defined(__i386__)
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86;
-
-typedef ElfI386Linker            LinuxLinker;
-typedef ElfI386ImageFormatter    LinuxImageFormatter;
 
 #elif defined(__PPC64__)
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_PPC64le;
 
-typedef ElfPPC64leLinker         LinuxLinker;
-typedef ElfPPC64leImageFormatter LinuxImageFormatter;
-
 #elif defined(__aarch64__)
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
-
-typedef ElfARM64Linker         LinuxLinker;
-typedef ElfARM64ImageFormatter LinuxImageFormatter;
 
 #endif
 
@@ -150,7 +110,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
 
    PathString configPath(dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
 
-   return CompilerHelper::compileProject(argc, argv, 
+   return CLIHelper::compileProject(argc, argv,
       process,
       platform, jitSettings,
       Presenter::getInstance(), errorProcessor,
@@ -176,8 +136,8 @@ int main(int argc, char* argv[])
          return -2;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
-         return compileProjectCollection(argc, argv, argv[argc - 1],
-            *dataPath, errorProcessor);
+         return CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],
+            *dataPath, errorProcessor, Presenter::getInstance(), compileProject);
       }
       else return compileProject(argc, argv, *dataPath, errorProcessor);
    }

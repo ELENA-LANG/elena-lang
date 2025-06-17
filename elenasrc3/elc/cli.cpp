@@ -16,28 +16,32 @@
 
 #if defined(__x86_64__) || defined(_M_X64)
 
-#include "elflinker32.h"
-#include "elflinker64.h"
-#include "elfimage.h"
+#include "linux/elflinker32.h"
+#include "linux/elflinker64.h"
+#include "linux/elfimage.h"
+
 #include "x86compiler.h"
 #include "x86_64compiler.h"
 
 #elif defined(__i386__) || defined (_M_IX86)
 
-#include "elflinker32.h"
-#include "elfimage.h"
+#include "linux/elflinker32.h"
+#include "linux/elfimage.h"
+
 #include "x86compiler.h"
 
 #elif defined(__aarch64__)
 
-#include "elfarmlinker64.h"
-#include "arm64compiler.h"
-#include "elfarmimage.h"
+#include "linux/elfarmlinker64.h"
+#include "linux/arm64compiler.h"
+
+#include "linux/elfarmimage.h"
 
 #elif defined(__PPC64__)
 
-#include "elfppclinker64.h"
-#include "elfppcimage.h"
+#include "linux/elfppclinker64.h"
+#include "linux/elfppcimage.h"
+
 #include "ppc64compiler.h"
 
 #endif
@@ -296,8 +300,8 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
    }
 }
 
-int CLIHelper :: compileProject(int argc, path_c** argv, 
-   CompilingProcess& process, 
+int CLIHelper :: compileProject(int argc, path_c** argv,
+   CompilingProcess& process,
    PlatformType platform, JITCompilerSettings& jitSettings,
    PresenterBase& presenter, ErrorProcessor& errorProcessor,
    path_t dataPath, path_t basePath, path_t configPath,
@@ -395,7 +399,7 @@ int CLIHelper :: compileProjectCollection(int argc, path_c** argv, path_t path, 
       auto spec = *it;
 
       size_t destLen = FILENAME_MAX;
-      wchar_t projectPath[FILENAME_MAX];
+      path_c projectPath[FILENAME_MAX];
       StrConvertor::copy(projectPath, spec->path.str(), spec->path.length(), destLen);
       projectPath[destLen] = 0;
 
