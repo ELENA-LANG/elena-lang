@@ -74,12 +74,6 @@ using namespace elena_lang;
 
 // --- CommandHelper ---
 
-
-
-
-
-
-
 JITCompilerSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor)
 {
    switch (platform) {
@@ -101,7 +95,7 @@ JITCompilerSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, E
          return ARM64JITCompiler::getSettings();
 #endif
       default:
-         errorProcessor->raiseError(errNotSupportedPlatform);
+         errorProcessor->raiseError(errNotSupportedPlatform, getPlatformName(platform));
          return {};
    }
 }
@@ -177,7 +171,7 @@ LinkerBase* CLIHelper :: createLinker(PlatformType platform, Project* project, E
 
 #endif
    default:
-      errorProcessor->raiseError(errNotSupportedPlatform);
+      errorProcessor->raiseError(errNotSupportedPlatform, getPlatformName(platform));
       return nullptr;
    }
 }
@@ -318,12 +312,12 @@ int CLIHelper :: compileProject(int argc, path_c** argv,
 {
    // try to specify supported cross-compile platform
    if (platform == PlatformType::None)
-      errorProcessor.raiseError(errNotSupportedPlatform);
+      errorProcessor.raiseError(errNotSupportedPlatform, "<undefined>");
 
    Project          project(dataPath, platform, &presenter);
    LinkerBase* linker = createLinker(platform, &project, &errorProcessor);
    if (!linker)
-      errorProcessor.raiseError(errNotSupportedPlatform);
+      errorProcessor.raiseError(errNotSupportedPlatform, getPlatformName(platform));
 
    bool cleanMode = false;
 
