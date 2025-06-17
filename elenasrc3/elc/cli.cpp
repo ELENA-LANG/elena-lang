@@ -74,14 +74,20 @@ using namespace elena_lang;
 
 // --- CommandHelper ---
 
+
+
+
+
+
+
 JITCompilerSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor)
 {
    switch (platform) {
-#if defined(__x86_64__) || defined (_M_X64) || defined(CROSS_COMPILE_MODE)
+#if defined(__x86_64__) || defined (_M_X64)
       case PlatformType::Win_x86_64:
          return X86_64JITCompiler::getSettings();
 #endif
-#if defined(__i386__) || defined (_M_IX86) || defined(__x86_64__) || defined (_M_X64) || defined(CROSS_COMPILE_MODE)
+#if defined(__i386__) || defined (_M_IX86)
       case PlatformType::Win_x86:
       case PlatformType::Linux_x86:
          return X86JITCompiler::getSettings();
@@ -103,13 +109,13 @@ JITCompilerSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, E
 JITCompilerBase* CLIHelper :: createJITCompiler(PlatformType platform)
 {
    switch (platform) {
-#if defined(__x86_64__) || defined (_M_X64) || defined(CROSS_COMPILE_MODE)
+#if defined(__x86_64__) || defined (_M_X64)
       case PlatformType::Win_x86_64:
       case PlatformType::FreeBSD_x86_64:
       case PlatformType::Linux_x86_64:
          return new X86_64JITCompiler();
 #endif
-#if defined(__i386__) || defined (_M_IX86) || defined(__x86_64__) || defined (_M_X64) || defined(CROSS_COMPILE_MODE)
+#if defined(__i386__) || defined (_M_IX86)
       case PlatformType::Win_x86:
       case PlatformType::Linux_x86:
          return new X86JITCompiler();
