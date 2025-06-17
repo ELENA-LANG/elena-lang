@@ -98,7 +98,7 @@ int compileProject(int argc, path_c** argv, path_t appPath, ErrorProcessor& erro
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
    PlatformType platform = CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM);
-   JITCompilerSettings jitSettings = CLIHelper::getJITCompilerSettings(platform);
+   JITCompilerSettings jitSettings = CLIHelper::getJITCompilerSettings(platform, &errorProcessor);
 
    ProcessSettings defaultCoreSettings = CLIHelper::getProcessSettings(platform);
 

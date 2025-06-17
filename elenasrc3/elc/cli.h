@@ -72,7 +72,7 @@ namespace elena_lang
          }
       }
 
-      static JITCompilerSettings getJITCompilerSettings(PlatformType platform);
+      static JITCompilerSettings getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor);
       static JITCompilerBase* createJITCompiler(PlatformType platform);
       static LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessorBase* errorProcessor);
 
