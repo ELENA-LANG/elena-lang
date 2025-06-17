@@ -50,19 +50,19 @@
 
 #if (defined(_WIN32) || defined(__WIN32__)) || defined(CROSS_COMPILE_MODE)
 
-#include "ntimage.h"
+#include "windows/ntimage.h"
 
 #if defined(__x86_64__) || defined(_M_X64)
 
-#include "ntlinker32.h"
-#include "ntlinker64.h"
+#include "windows/ntlinker32.h"
+#include "windows/ntlinker64.h"
 #include "x86compiler.h"
 #include "x86_64compiler.h"
 
 #elif defined(__i386__) || defined (_M_IX86)
 
-#include "ntlinker32.h"
-#include "ntlinker64.h"
+#include "windows/ntlinker32.h"
+#include "windows/ntlinker64.h"
 #include "x86compiler.h"
 #include "x86_64compiler.h"
 
