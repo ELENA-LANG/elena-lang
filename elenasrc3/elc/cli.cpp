@@ -62,9 +62,7 @@
 #elif defined(__i386__) || defined (_M_IX86)
 
 #include "windows/ntlinker32.h"
-#include "windows/ntlinker64.h"
 #include "x86compiler.h"
-#include "x86_64compiler.h"
 
 #endif
 
@@ -134,13 +132,13 @@ LinkerBase* CLIHelper :: createLinker(PlatformType platform, Project* project, E
    switch (platform) {
 #if defined(_WIN32) || defined(__WIN32__) || defined(CROSS_COMPILE_MODE)
 
-#if defined(__i386__) || defined (_M_IX86) || defined(__x86_64__) || defined (_M_X64)
-
-   case PlatformType::Win_x86_64:
-      return new Win64NtLinker(errorProcessor, &Win64NtImageFormatter::getInstance(project));
-   case PlatformType::Win_x86:
-      return new Win32NtLinker(errorProcessor, &Win32NtImageFormatter::getInstance(project));
-
+#if defined(__x86_64__) || defined (_M_X64)
+      case PlatformType::Win_x86_64:
+         return new Win64NtLinker(errorProcessor, &Win64NtImageFormatter::getInstance(project));
+#endif
+#if defined(__i386__) || defined (_M_IX86)
+      case PlatformType::Win_x86:
+         return new Win32NtLinker(errorProcessor, &Win32NtImageFormatter::getInstance(project));
 #endif
 
 #endif
