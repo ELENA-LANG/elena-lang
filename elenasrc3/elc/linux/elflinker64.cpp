@@ -16,15 +16,8 @@ constexpr unsigned int HEADER_INTERPRETER_SIZE  = 0x200;
 constexpr unsigned int ELF64_HEADER_SIZE        = 0x40;
 constexpr unsigned int ELF64_PH_SIZE            = 0x38;
 
-#if defined(__FreeBSD__)
-
-constexpr auto INTERPRETER64_PATH = "/libexec/ld-elf.so.1";
-
-#else
-
-constexpr auto INTERPRETER64_PATH = "/lib64/ld-linux-x86-64.so.2";
-
-#endif
+constexpr auto FREEBSD_INTERPRETER64_PATH = "/libexec/ld-elf.so.1";
+constexpr auto INTERPRETER64_PATH         = "/lib64/ld-linux-x86-64.so.2";
 
 using namespace elena_lang;
 
@@ -160,4 +153,11 @@ void Elf64Linker :: writeInterpreter(FileWriter* file)
 int ElfAmd64Linker :: getMachine()
 {
    return EM_X86_64;
+}
+
+// --- ElfFreeBSDAmd64Linker ---
+
+ustr_t ElfFreeBSDAmd64Linker :: getInterpreter()
+{
+   return FREEBSD_INTERPRETER64_PATH;
 }

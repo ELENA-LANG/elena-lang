@@ -172,13 +172,6 @@ namespace elena_lang
          freeobj(_compiler);
       }
    };
-
-   class CommandHelper
-   {
-   public:
-      static void handleOption(ustr_t arg, IdentifierString& profile, Project& project, CompilingProcess& process, 
-         ErrorProcessor& errorProcessor, bool& cleanMode);
-   };
 }
 
 #endif // COMPLING_H

@@ -8,9 +8,7 @@
 
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "cliconst.h"
-#include "compiling.h"
-#include "project.h"
+#include "cli.h"
 #include "elfimage.h"
 
 //#define CROSS_COMPILE_MODE 1
@@ -42,19 +40,6 @@
 
 #endif
 
-#elif defined(__PPC64__)
-
-#include "elfppclinker64.h"
-#include "ppc64compiler.h"
-#include "elfppcimage.h"
-
-#elif defined(__aarch64__)
-
-#include "elfarmlinker64.h"
-#include "arm64compiler.h"
-#include "elfarmimage.h"
-
-#endif
 
 #include "constants.h"
 #include "messages.h"
@@ -133,164 +118,6 @@ public:
    ~Presenter() = default;
 };
 
-PlatformType definePlatform(int argc, char** argv, PlatformType defaultPlatform)
-{
-   for (int i = 1; i < argc; i++) {
-      if (ustr_t(argv[i]).compare(WIN32_PLATFORM_OPTION)) {
-#if defined(__x86_64__) || defined(__i386__)
-         return PlatformType::Win_x86;
-#else
-         return PlatformType::None;
-#endif
-      }
-      else if (ustr_t(argv[i]).compare(WIN64_PLATFORM_OPTION)) {
-#if defined(__x86_64__) || defined(__i386__)
-         return PlatformType::Win_x86_64;
-#else
-         return PlatformType::None;
-#endif
-      }
-   }
-
-   return defaultPlatform;
-}
-
-JITCompilerBase* createJITCompiler(PlatformType platform)
-{
-   switch (platform) {
-
-#if defined(__i386__) || defined(__x86_64__)
-      case PlatformType::Linux_x86:
-      case PlatformType::Win_x86:
-         return new X86JITCompiler();
-#endif
-#if defined(__x86_64__)
-      case PlatformType::Linux_x86_64:
-      case PlatformType::FreeBSD_x86_64:
-      case PlatformType::Win_x86_64:
-         return new X86_64JITCompiler();
-#endif
-#if defined(__PPC64__)
-      case PlatformType::Linux_PPC64le:
-         return new PPC64leJITCompiler();
-#endif
-#if defined(__aarch64__)
-      case PlatformType::Linux_ARM64:
-         return new ARM64JITCompiler();
-#endif
-      default:
-         return nullptr;
-   }
-}
-
-JITCompilerSettings getJITCompilerSettings(PlatformType platform)
-{
-   switch (platform) {
-#if defined(__i386__) || defined(__x86_64__)
-      case PlatformType::Linux_x86:
-      case PlatformType::Win_x86:
-         return X86JITCompiler::getSettings();
-#endif
-#if defined(__x86_64__)
-      case PlatformType::Linux_x86_64:
-      case PlatformType::FreeBSD_x86_64:
-      case PlatformType::Win_x86_64:
-         return X86_64JITCompiler::getSettings();
-#endif
-#if defined(__PPC64__)
-      case PlatformType::Linux_PPC64le:
-         return PPC64leJITCompiler::getSettings();
-#endif
-#if defined(__aarch64__)
-      case PlatformType::Linux_ARM64:
-         return ARM64JITCompiler::getSettings();
-#endif
-      default:
-         return {};
-   }
-}
-
-ProcessSettings getProcessSettings(PlatformType platform)
-{
-   switch (platform) {
-#if defined(__i386__) || defined(__x86_64__)
-   case PlatformType::Linux_x86:
-   case PlatformType::Win_x86:
-      return { 344064, 86016, 0x200000, 1, true, true };
-#endif
-#if defined(__x86_64__)
-   case PlatformType::Linux_x86_64:
-   case PlatformType::FreeBSD_x86_64:
-   case PlatformType::Win_x86_64:
-      return { 688128, 204800, 0x200000, 1, true, true };
-#endif
-#if defined(__PPC64__)
-   case PlatformType::Linux_PPC64le:
-      return { 688128, 204800, 0x200000, 1, true, true };
-#endif
-#if defined(__aarch64__)
-   case PlatformType::Linux_ARM64:
-      return { 688128, 204800, 0x200000, 1, true, true };
-#endif
-   default:
-      return {};
-   }
-}
-
-void handleOption(char* arg, IdentifierString& profile, Project& project, CompilingProcess& process,
-   ErrorProcessor& errorProcessor, path_t dataPath, bool& cleanMode)
-{
-   switch (arg[1]) {
-      case 't':
-      {
-         IdentifierString configName(arg + 2);
-
-         if(!project.loadConfigByName(dataPath, *configName, true))
-            errorProcessor.info(wrnInvalidConfig, *configName);;
-         break;
-      }
-      case 'p':
-         project.setBasePath(arg + 2);
-         break;
-      default:
-      {
-         IdentifierString argStr(arg);
-
-         CommandHelper::handleOption(*argStr, profile, project, process, errorProcessor, cleanMode);
-         break;
-      }
-   }
-}
-
-LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessorBase* errorProcessor)
-{
-   switch(platform) {
-#if CROSS_COMPILE_MODE && defined(__x86_64__)
-      case PlatformType::Win_x86_64:
-         return new Win64NtLinker(errorProcessor, &Win64NtImageFormatter::getInstance(project));
-#endif
-#if CROSS_COMPILE_MODE && (defined(__x86_64__) || defined(__i386__))
-      case PlatformType::Win_x86:
-         return new Win32NtLinker(errorProcessor, &Win32NtImageFormatter::getInstance(project));
-#endif
-#if defined(__x86_64__) && defined(__FreeBSD__)
-      case PlatformType::FreeBSD_x86_64:
-#elif defined(__x86_64__)
-      case PlatformType::Linux_x86_64:
-#elif defined(__i386__)
-      case PlatformType::Linux_x86:
-#elif defined(__aarch64__)
-      case PlatformType::Linux_ARM64:
-#elif defined(__PPC64__)
-      case PlatformType::Linux_PPC64le:
-#endif
-         return new LinuxLinker(errorProcessor, &LinuxImageFormatter::getInstance(project));
-      default:
-         errorProcessor->raiseError(errNotSupportedPlatform);
-         return nullptr;
-   }
-}
-
 ustr_t getDefaultExtension(PlatformType platform)
 {
    switch (platform)
@@ -306,25 +133,15 @@ ustr_t getDefaultExtension(PlatformType platform)
 int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
-   // try to specify supported cross-compile platform
-   PlatformType platform = definePlatform(argc, argv, CURRENT_PLATFORM);
-   if (platform == PlatformType::None)
-      errorProcessor.raiseError(errNotSupportedPlatform);
+   PlatformType platform = CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM);
 
-   bool cleanMode = false;
+   ProcessSettings defaultCoreSettings = CLIHelper::getProcessSettings(platform);
+   JITCompilerSettings jitSettings = CLIHelper::getJITCompilerSettings(platform);
 
-   ProcessSettings     defaultCoreSettings = getProcessSettings(platform);
-   JITCompilerSettings jitSettings = getJITCompilerSettings(platform);
    CompilingProcess process(dataPath, getDefaultExtension(platform), "<moduleProlog>", "<prolog>", "<epilog>",
       &Presenter::getInstance(), &errorProcessor,
-      VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
+      VA_ALIGNMENT, defaultCoreSettings, CLIHelper::createJITCompiler);
 
-   Project          project(dataPath, platform, &Presenter::getInstance());
-   LinkerBase*      linker = createLinker(platform, &project, &errorProcessor);
-   if (!linker)
-      errorProcessor.raiseError(errNotSupportedPlatform);
-
-   // Initializing...
    path_t defaultConfigPath = PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
    if (defaultConfigPath.compare(LOCAL_DEFAULT_CONFIG)) {
       // if the local config file was not found
@@ -332,91 +149,13 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
    }
 
    PathString configPath(dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
-   project.loadConfig(*configPath, nullptr, false);
 
-   IdentifierString profile(defaultProfile);
-   for (int i = 1; i < argc; i++) {
-      if (argv[i][0] == '-') {
-         handleOption(argv[i], profile, project, process,
-            errorProcessor, dataPath, cleanMode);
-      }
-      else if (PathUtil::checkExtension(argv[i], "prj")) {
-         PathString path(argv[i]);
-         if (!project.loadProject(*path, *profile)) {
-            return ERROR_RET_CODE;
-         }
-
-         if (profile.empty() && project.availableProfileList.count() != 0) {
-            IdentifierString profileList;
-            for (auto it = project.availableProfileList.start(); !it.eof(); ++it) {
-               if (profileList.length() != 0)
-                  profileList.append(", ");
-
-               profileList.append(*it);
-            }
-
-            Presenter::getInstance().printLine(ELC_PROFILE_WARNING, *profileList);
-         }
-      }
-      else if (PathUtil::checkExtension(argv[i], "prjcol")) {
-         Presenter::getInstance().printLine(ELC_PRJ_COLLECTION_WARNING);
-         return -2;
-      }
-      else {
-         FileNameString fileName(argv[i]);
-
-         project.addSource(*fileName, argv[i], nullptr, nullptr, true);
-      }
-   }
-
-   if (!basePath.empty())
-      project.setBasePath(basePath);
-
-   if (cleanMode) {
-      return process.clean(project);
-   }
-   else {
-      // Building...
-      return process.build(project, *linker, jitSettings,
-         *profile);
-   }
-}
-
-int compileProjectCollection(int argc, char** argv, path_t path, path_t dataPath,
-   ErrorProcessor& errorProcessor)
-{
-   Presenter* presenter = &Presenter::getInstance();
-
-   int retVal = 0;
-   ProjectCollection collection;
-
-   if (!collection.load(path)) {
-      presenter->printPath(presenter->getMessage(wrnInvalidConfig), path);
-
-      return ERROR_RET_CODE;
-   }
-
-   for (auto it = collection.projectSpecs.start(); !it.eof(); ++it) {
-      auto spec = *it;
-
-      size_t destLen = FILENAME_MAX;
-      char projectPath[FILENAME_MAX];
-      StrConvertor::copy(projectPath, spec->path.str(), spec->path.length(), destLen);
-      projectPath[destLen] = 0;
-
-      argv[argc - 1] = projectPath;
-      presenter->printPath(ELC_COMPILING_PROJECT, projectPath);
-
-      int result = compileProject(argc, argv, dataPath, errorProcessor, spec->basePath, spec->profile);
-      if (result == ERROR_RET_CODE) {
-         return ERROR_RET_CODE;
-      }
-      else if (result == WARNING_RET_CODE) {
-         retVal = WARNING_RET_CODE;
-      }
-   }
-
-   return retVal;
+   return CompilerHelper::compileProject(argc, argv, 
+      process,
+      platform, jitSettings,
+      Presenter::getInstance(), errorProcessor,
+      dataPath, basePath, *configPath,
+      defaultProfile);
 }
 
 const char* dataFileList[] = { BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE };

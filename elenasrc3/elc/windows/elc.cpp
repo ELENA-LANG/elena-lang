@@ -6,21 +6,17 @@
 //                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-//#define TIME_RECORDING 1
-
 #include <windows.h>
 
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "compiling.h"
-#include "project.h"
 #ifdef _M_IX86
 #include "ntlinker32.h"
 #elif _M_X64
 #include "ntlinker64.h"
 #endif
 #include "ntimage.h"
-#include "cliconst.h"
+#include "cli.h"
 #include "langcommon.h"
 #include "x86compiler.h"
 #include "x86_64compiler.h"
@@ -37,15 +33,9 @@ using namespace elena_lang;
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86;
 
-typedef Win32NtLinker             WinLinker;
-typedef Win32NtImageFormatter     WinImageFormatter;
-
 #elif _M_X64
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
-
-typedef Win64NtLinker             WinLinker;
-typedef Win64NtImageFormatter     WinImageFormatter;
 
 #endif
 
@@ -92,163 +82,38 @@ void getAppPath(PathString& appPath)
    appPath.lower();
 }
 
-JITCompilerBase* createJITCompiler(PlatformType platform)
+path_t getDefaultExtension(PlatformType platform)
 {
-   switch (platform) {
+   switch (platform)
+   {
       case PlatformType::Win_x86:
-         return new X86JITCompiler();
       case PlatformType::Win_x86_64:
-         return new X86_64JITCompiler();
+         return L"exe";
       default:
          return nullptr;
    }
 }
 
-ProcessSettings getProcessSettings(PlatformType platform)
-{
-   switch (platform) {
-      case PlatformType::Win_x86_64:
-         return { 688128, 204800, 0x200000, 1, true, true };
-      case PlatformType::Win_x86:
-      default:
-         return { 344064, 86016, 0x200000, 1, true, true };
-   }
-}
-
-JITCompilerSettings getJITCompilerSettings(PlatformType platform)
-{
-   switch (platform) {
-      case PlatformType::Win_x86_64:
-         return X86_64JITCompiler::getSettings();
-      case PlatformType::Win_x86:
-      default:
-         return X86JITCompiler::getSettings();
-   }
-}
-
-void handleOption(wchar_t* arg, IdentifierString& profile, Project& project, CompilingProcess& process,
-   ErrorProcessor& errorProcessor, path_t appPath, bool& cleanMode)
-{
-   switch(arg[1]) {
-      case 't':
-      {
-         IdentifierString configName(arg + 2);
-
-         if (!project.loadConfigByName(appPath, *configName, true))
-            errorProcessor.info(wrnInvalidConfig, *configName);
-         break;
-      }
-      default:
-      {
-         IdentifierString argStr(arg);
-
-         CommandHelper::handleOption(*argStr, profile, project, process, errorProcessor, cleanMode);
-         break;
-      }
-   }
-}
-
-int compileProject(int argc, wchar_t** argv, path_t appPath, ErrorProcessor& errorProcessor, 
+int compileProject(int argc, path_c** argv, path_t appPath, ErrorProcessor& errorProcessor, 
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
-   bool cleanMode = false;
+   PlatformType platform = CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM);
+   JITCompilerSettings jitSettings = CLIHelper::getJITCompilerSettings(platform);
 
-   ProcessSettings     defaultCoreSettings = getProcessSettings(/*platform*/CURRENT_PLATFORM);
-   JITCompilerSettings jitSettings = getJITCompilerSettings(/*platform*/CURRENT_PLATFORM);
-   CompilingProcess process(appPath, L"exe", L"<moduleProlog>", L"<prolog>", L"<epilog>",
+   ProcessSettings defaultCoreSettings = CLIHelper::getProcessSettings(platform);
+
+   CompilingProcess process(appPath, getDefaultExtension(platform), L"<moduleProlog>", L"<prolog>", L"<epilog>",
       &Presenter::getInstance(), &errorProcessor,
-      VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
+      VA_ALIGNMENT, defaultCoreSettings, CLIHelper::createJITCompiler);
 
-   Project          project(appPath, CURRENT_PLATFORM, &Presenter::getInstance());
-   WinLinker        linker(&errorProcessor, &WinImageFormatter::getInstance(&project));
-
-   // Initializing...
    PathString configPath(appPath, DEFAULT_CONFIG);
-   project.loadConfig(*configPath, nullptr, false);
 
-   IdentifierString profile(defaultProfile);
-   for (int i = 1; i < argc; i++) {
-      if (argv[i][0] == '-') {
-         handleOption(argv[i], profile, project, process,
-            errorProcessor, appPath, cleanMode);
-      }
-      else if (PathUtil::checkExtension(argv[i], "prj")) {
-         PathString path(argv[i]);
-         if (!project.loadProject(*path, *profile)) {
-            return ERROR_RET_CODE;
-         }
-
-         if (profile.empty() && project.availableProfileList.count() != 0) {
-            IdentifierString profileList;
-            for (auto it = project.availableProfileList.start(); !it.eof(); ++it) {
-               if (profileList.length() != 0)
-                  profileList.append(", ");
-
-               profileList.append(*it);
-            }
-
-            Presenter::getInstance().printLine(ELC_PROFILE_WARNING, *profileList);
-         }
-      }
-      else if (PathUtil::checkExtension(argv[i], "prjcol")) {
-         Presenter::getInstance().printLine(ELC_PRJ_COLLECTION_WARNING);
-         return -2;
-      }
-      else {
-         FileNameString fileName(argv[i]);
-         IdentifierString ns(*fileName);
-         project.addSource(*ns, argv[i], nullptr, nullptr, true);
-      }
-   }
-
-   if (!basePath.empty())
-      project.setBasePath(basePath);
-
-   if (cleanMode) {
-      return process.clean(project);
-   }
-   else {
-      // Building...
-      return process.build(project, linker, jitSettings,
-         *profile);
-   }
-}
-
-int compileProjectCollection(int argc, wchar_t** argv, path_t path, path_t appPath,
-   ErrorProcessor& errorProcessor)
-{
-   Presenter* presenter = &Presenter::getInstance();
-
-   int retVal = 0;
-   ProjectCollection collection;
-
-   if (!collection.load(path)) {
-      presenter->printPath(presenter->getMessage(wrnInvalidConfig), path);
-
-      return ERROR_RET_CODE;
-   }
-
-   for (auto it = collection.projectSpecs.start(); !it.eof(); ++it) {
-      auto spec = *it;
-
-      size_t destLen = FILENAME_MAX;
-      wchar_t projectPath[FILENAME_MAX];
-      StrConvertor::copy(projectPath, spec->path.str(), spec->path.length(), destLen);
-      projectPath[destLen] = 0;
-
-      argv[argc - 1] = projectPath;
-      presenter->printPath(ELC_COMPILING_PROJECT, projectPath);
-
-      int result = compileProject(argc, argv, appPath, errorProcessor, spec->basePath, spec->profile);
-      if (result == ERROR_RET_CODE) {
-         return ERROR_RET_CODE;
-      }
-      else if (result == WARNING_RET_CODE) {
-         retVal = WARNING_RET_CODE;
-      }
-   }
-
-   return retVal;
+   return CLIHelper::compileProject(argc, argv,
+      process, 
+      platform, jitSettings, 
+      Presenter::getInstance(), errorProcessor,
+      appPath, basePath, *configPath,
+      defaultProfile);
 }
 
 int main()
@@ -266,28 +131,16 @@ int main()
       int argc;
       wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
-#ifdef TIME_RECORDING
-      clock_t start, finish;
-      start = clock();
-#endif
-
       int retVal = 0;
       if (argc < 2) {
          Presenter::getInstance().printLine(ELC_HELP_INFO);
          return -2;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
-         retVal = compileProjectCollection(argc, argv, argv[argc - 1],
-            *appPath, errorProcessor);
+         retVal = CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],
+            *appPath, errorProcessor, Presenter::getInstance(), compileProject);
       }
       else retVal = compileProject(argc, argv, *appPath, errorProcessor);
-
-#ifdef TIME_RECORDING
-      finish = clock();
-
-      double duration = (double)(finish - start) / CLOCKS_PER_SEC;
-      printf("The compilation took %2.3f seconds\n", duration);
-#endif
 
       return retVal;
    }
