@@ -22,7 +22,7 @@ REM /m:2 is used to build using parallel compilation
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 IF "%1"=="-cross" (
-"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln -target:elc:ReleaseCross /p:Platform="x86" /m:2
+"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:Configuration=ReleaseCross /p:Platform="x86" /m:2
 )
 
 IF "%1"=="-build" GOTO End
