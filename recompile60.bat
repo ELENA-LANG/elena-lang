@@ -6,6 +6,11 @@ for /f "usebackq tokens=1* delims=: " %%i in (`"%ProgramFiles(x86)%\Microsoft Vi
   if /i "%%i"=="installationPath" set InstallDir=%%j
 )
 
+set configName=release
+IF "%1"=="-cross" (
+  configName=ReleaseCross
+)
+
 IF NOT EXIST %InstallDir%nul goto MissingMSBuildToolsPath
 IF NOT EXIST %InstallDir%\MSBuild\Current\Bin\MSBuild.exe goto MissingMSBuildExe
 
@@ -14,16 +19,12 @@ ECHO =========== Starting Release Compile ==================
 ECHO Command line Compiler compiling....
 ECHO -----------------------------------
 REM /m:2 is used to build using parallel compilation
-"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x86" /m:2
+"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=%configName% /p:Platform="x86" /m:2
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 
 REM /m:2 is used to build using parallel compilation
-"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=release /p:Platform="x64" /m:2 -restore -p:RestorePackagesConfig=true
+"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:configuration=%configName% /p:Platform="x64" /m:2 -restore -p:RestorePackagesConfig=true
 IF NOT %ERRORLEVEL%==0 GOTO CompilerError
-
-IF "%1"=="-cross" (
-"%InstallDir%\MSBuild\Current\Bin\MSBuild.exe" elenasrc3\elenasrc3.sln /p:Configuration=ReleaseCross /p:Platform="x86" /m:2
-)
 
 IF "%1"=="-build" GOTO End
 
