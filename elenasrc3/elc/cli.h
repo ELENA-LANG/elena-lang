@@ -40,6 +40,13 @@ namespace elena_lang
                return PlatformType::None;
 #endif
             }
+            else if ((*arg).compare(LNX64_PLATFORM_OPTION)) {
+#if defined(__x86_64__) || defined(_M_X64)
+               return PlatformType::Linux_x86_64;
+#else
+               return PlatformType::None;
+#endif
+            }
          }
 #endif
          return defaultPlatform;

@@ -57,6 +57,10 @@ IF NOT %ERRORLEVEL%==0 GOTO CompilerError
 ECHO ============== x64 build ======================
 CALL scripts\rebuild_lib60_x64.bat 
 
+IF "%1"=="-cross" (
+  CALL scripts\win.amd64\rebuild_lib60_x64_lnx.bat
+)
+
 goto:eof
 ::ERRORS
 ::---------------------
