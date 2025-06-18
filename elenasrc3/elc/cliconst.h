@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x00EE
+   #define ELC_REVISION_NUMBER               0x00EF
 
 #if defined _M_IX86 || _M_X64
 
@@ -64,6 +64,7 @@ namespace elena_lang
 
    constexpr auto WIN32_PLATFORM_OPTION      = "-xtwin32";
    constexpr auto WIN64_PLATFORM_OPTION      = "-xtwin64";
+   constexpr auto LNX64_PLATFORM_OPTION      = "-xtlnx64";
 
    constexpr auto VA_ALIGNMENT               = 0x08;
 

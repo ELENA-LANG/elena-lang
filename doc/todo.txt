@@ -13,10 +13,8 @@ In development:
   - upndown (connector - cmdSearch)
   - #748 : i386
   api:
-  - api refactoring : main program entry to be called - Program
   - #622 : api backlog
   ide:  
-  - compile in the separate thread  
   - debugger : watch list is not refreshed correctly  (see for example xml); sometimes not all old elements are removed
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - async method - auto watch : self and some variables are not displayed
@@ -24,7 +22,6 @@ In development:
   - nillable single dispatcher : use direct reference to nilValue symbol   
   - fix create release script - attach rpm file as well
   samples:
-  - fix warning for anonymrec sample
   - rosetta code : Program termination, Parallel calculations
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
   port:
@@ -37,23 +34,18 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
-  - rosetta code : moving to 6.7 : (Averages/Root mean square..)
-  - IDE : output window - add a context menu to copy the output content to the clipboard
   - MTA support for Linux : test simple multithread sample
   - MTA support for Linux : signals, thread prolog / epilog (system commands)
-  - api : UIntNumber
   - support hashCode for records (redesign current ones as well)
   - chat sample
   - #783
-  - amd64 refactore : merge core60_win.asm & core60_lnx.asm and corex60.asm & corex60_win.asm 
+  - IDE : output window - add a context menu to copy the output content to the clipboard
+  - rosetta code : moving to 6.7 : (Averages/Root mean square..)
+  - api : UIntNumber
+  - fix warning for anonymrec sample
   - Cross-compile on Windows for Linux #781
   --------------------------------------
-  * script for cross-platform compile
-  * msbuild SlnFolders.sln -target:NotInSlnfolder:Rebuild;NewFolder\InSolutionFolder:Clean
-  * add cross compile mode for VS elc 
-  * Cross-compile from Windows to Linux fox x86
   * Cross-compile from Windows to Linux fox x86-64
-  * Cross-compile from Windows to FreeBSD fox x86-64
   --------------------------------------
 
   === Iteration 42 ===
@@ -69,6 +61,7 @@ In development:
   api:
   - #35 : working on webapi
   ide:  
+  - compile in the separate thread  
   maint:
   - optimization : direct branching with nil
   - test all x86-64 examples
@@ -82,7 +75,7 @@ In development:
   --------------------------------------
   - #620 : backlog
   --------------------------------------
-  * new opcode : fpi - ppc64le, arm64
+  * new opcode : fpi - ppc64le
   * new opcode : fsin / fcos - ppc64le
   --------------------------------------
 
