@@ -8,7 +8,7 @@ for /f "usebackq tokens=1* delims=: " %%i in (`"%ProgramFiles(x86)%\Microsoft Vi
 
 set configName=release
 IF "%1"=="-cross" (
-  configName=ReleaseCross
+  set configName=ReleaseCross
 )
 
 IF NOT EXIST %InstallDir%nul goto MissingMSBuildToolsPath
