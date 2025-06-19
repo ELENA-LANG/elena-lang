@@ -432,3 +432,23 @@ public program()
 
    a!.testMe(); 
 }
+
+----------------------------------------------------------------------------
+ Platform attribute
+----------------------------------------------------------------------------
+
+In the project file:
+
+        <module name="winforms" platform="windows">
+            <include>winforms\win_common.l</include>
+            <include>winforms\win32_exceptions.l</include>
+            <include>winforms\win_handles.l</include>
+            <include>winforms\win_controls.l</include>
+            <include>winforms\win_windows.l</include>
+            <include>winforms\win_dialogs.l</include>
+            <include>winforms\win_app.l</include>
+        </module>
+
+In the project collection file:
+
+    <project platform="windows">forms\forms.prj</project>

@@ -14,16 +14,6 @@
 
 using namespace elena_lang;
 
-#if (defined(_WIN32) || defined(__WIN32__))
-
-#define ELC_PLATFORM    "windows"
-
-#elif defined (__unix__)
-
-#define ELC_PLATFORM    "unix"
-
-#endif
-
 PlatformType operator & (const PlatformType& l, const PlatformType& r)
 {
    return (PlatformType)((int)l & (int)r);
@@ -159,6 +149,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
    DynamicString<char> path;
    DynamicString<char> target;
    DynamicString<char> hints;
+   DynamicString<char> platform;
 
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
@@ -175,6 +166,8 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
          if (!moduleNode.readAttribute("hints", hints)) {
             hints.clear();
          }
+         if (moduleNode.readAttribute(PLATFORM_ATTR, platform) && (!ustr_t(platform.str()).compare(ELC_PLATFORM)))
+            continue;
 
          ReferenceName ns(Namespace(), subNs.str());
          ConfigFile::Collection files;

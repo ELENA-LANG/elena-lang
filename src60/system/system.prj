@@ -130,7 +130,7 @@
             <include>drawing\win_handles.l</include>
             <include>drawing\win_graphics.l</include>
         </module>
-        <module name="winforms">
+        <module name="winforms" platform="windows">
             <include>winforms\win_common.l</include>
             <include>winforms\win32_exceptions.l</include>
             <include>winforms\win_handles.l</include>

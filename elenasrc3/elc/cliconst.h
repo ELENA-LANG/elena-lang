@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x00F0
+   #define ELC_REVISION_NUMBER               0x00F1
 
 #if defined _M_IX86 || _M_X64
 
@@ -24,6 +24,16 @@ namespace elena_lang
 
    #define ERROR_RET_CODE     2
    #define WARNING_RET_CODE   1
+
+#endif
+
+#if (defined(_WIN32) || defined(__WIN32__))
+
+   #define ELC_PLATFORM    "windows"
+
+#elif defined (__unix__)
+
+   #define ELC_PLATFORM    "unix"
 
 #endif
 
