@@ -14,6 +14,16 @@
 
 using namespace elena_lang;
 
+#if (defined(_WIN32) || defined(__WIN32__))
+
+#define ELC_PLATFORM    "windows"
+
+#elif defined (__unix__)
+
+#define ELC_PLATFORM    "unix"
+
+#endif
+
 PlatformType operator & (const PlatformType& l, const PlatformType& r)
 {
    return (PlatformType)((int)l & (int)r);
@@ -505,6 +515,7 @@ inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& 
    DynamicString<char> pathStr;
    DynamicString<char> basePathStr;
    DynamicString<char> profileStr;
+   DynamicString<char> platformStr;
    for (auto it = modules.start(); !it.eof(); ++it) {
       ConfigFile::Node node = *it;
       node.readContent(pathStr);
@@ -528,6 +539,10 @@ inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& 
 
       if (node.readAttribute(PROFILE_ATTR, profileStr)) {
          spec->profile = ustr_t(profileStr.str()).clone();
+      }
+
+      if (node.readAttribute(PLATFORM_ATTR, platformStr) && !ustr_t(platformStr.str()).compare(ELC_PLATFORM)) {
+         continue;
       }
 
       projectSpecs.add(spec);

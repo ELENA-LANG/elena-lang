@@ -45,6 +45,7 @@ In development:
   - fix warning for anonymrec sample
   - Cross-compile on Windows for Linux #781
   --------------------------------------
+  * project collection : support "platform" attribute
   * Cross-compile from Windows to Linux fox x86-64
   --------------------------------------
 
