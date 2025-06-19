@@ -27,16 +27,6 @@ namespace elena_lang
 
 #endif
 
-#if (defined(_WIN32) || defined(__WIN32__))
-
-   #define ELC_PLATFORM    "windows"
-
-#elif defined (__unix__)
-
-   #define ELC_PLATFORM    "unix"
-
-#endif
-
    // --- Information messages ---
    constexpr auto ELC_GREETING               = "ELENA Command-line compiler %d.%d.%d (C)2005-2025 by Aleksey Rakov, ELENA-LANG Org\n";
    constexpr auto ELC_CROSS_COMPILE_GREETING = "Cross-comile version\n";

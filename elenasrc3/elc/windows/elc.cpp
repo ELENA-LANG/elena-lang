@@ -137,8 +137,10 @@ int main()
          return -2;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
-         retVal = CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],
-            *appPath, errorProcessor, Presenter::getInstance(), compileProject);
+         retVal = CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],            
+            *appPath, 
+            CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM),
+            errorProcessor, Presenter::getInstance(), compileProject);
       }
       else retVal = compileProject(argc, argv, *appPath, errorProcessor);
 

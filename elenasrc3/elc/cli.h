@@ -84,6 +84,7 @@ namespace elena_lang
       static LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessorBase* errorProcessor);
 
       static int compileProjectCollection(int argc, path_c** argv, path_t path, path_t appPath,
+         PlatformType platform,
          ErrorProcessor& errorProcessor, PresenterBase& presenter,
          int(*compileSingleProject)(int, path_c**, path_t, ErrorProcessor&, path_t, ustr_t));
 
