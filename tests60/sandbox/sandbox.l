@@ -1,11 +1,38 @@
+/// Anonymous recursion
+
 import extensions;
+
+fib(n)
+{
+   if (n < 0)
+      { InvalidArgumentException.raise() };
+        
+   ^ (n) {
+      if (n > 1)
+      { 
+         ^ this self(n - 2) + (this self(n - 1))
+      }
+      else
+      { 
+         ^ n 
+      }
+   }(n)
+}
 
 public program()
 {
-   real r := 36.0;
-   int n := 8;
-
-   real v := r / n;
-
-   Console.writeLine(v)
+   for (int i := -1; i <= 10; i += 1) 
+   {
+      Console.print("fib(",i,")=");
+      try
+      {
+         Console.printLine(fib(i))
+      }
+      catch(Exception e)
+      {
+         Console.printLine("invalid")
+      }
+   };
+    
+   Console.readChar()
 }

@@ -43,9 +43,9 @@ In development:
   - rosetta code : moving to 6.7 : (Averages/Root mean square..)
   - api : UIntNumber
   - fix warning for anonymrec sample
-  - Cross-compile on Windows for Linux #781
   --------------------------------------
-  * Cross-compile from Windows to Linux fox x86-64
+  * if the target is selflocal -> check if the parent method is equal -> make a weak call
+  * check the warning
   --------------------------------------
 
   === Iteration 42 ===

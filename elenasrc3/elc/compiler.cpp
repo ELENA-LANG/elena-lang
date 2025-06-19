@@ -15264,6 +15264,13 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
    if (found) {
       resolution.message = result.message;
    }
+   else if (target.kind == ObjectKind::SelfLocal && target.mode == TargetMode::None) {
+      MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
+      if (methodScope && methodScope->message == resolution.message) {
+         // HOTFIX : if the target is selflocal -> mark as a weak operation
+         target.mode = TargetMode::Weak;
+      }
+   }
 
    if (found) {
       if (result.throwOp)
