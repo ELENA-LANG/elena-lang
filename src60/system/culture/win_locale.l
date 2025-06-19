@@ -26,6 +26,9 @@ namespace culture
       get static ILocale Invariant()
          = new Locale();
 
+// !! temporal
+#if (__project["_Win"]) // Windows
+
       private strToUpper(short[] src, int length, short[] dest, ref int destLength)
       {
          int retVal := extern KERNEL32.LCMapStringEx(
@@ -57,6 +60,7 @@ namespace culture
                 
          destLength := retVal            
       }
+#endif
 
       string toUppercase(string s)
          <= toUppercase(cast wide(s));
