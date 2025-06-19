@@ -534,7 +534,7 @@ inline void loadModuleCollection(PlatformType platform, path_t collectionPath, C
          spec->profile = ustr_t(profileStr.str()).clone();
       }
 
-      if (node.readAttribute(PLATFORM_ATTR, platformStr) && Project::validatePlatform(platform, platformStr.str())) {
+      if (node.readAttribute(PLATFORM_ATTR, platformStr) && !Project::validatePlatform(platform, platformStr.str())) {
          continue;
       }
 
