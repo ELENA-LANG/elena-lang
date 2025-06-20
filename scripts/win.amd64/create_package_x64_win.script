@@ -1,0 +1,58 @@
+#!/bin/sh
+
+mkdir -p ../../build/x64
+mkdir -p ../../build/x64/bin
+mkdir -p ../../build/x64/bin\templates
+mkdir -p ../../build/x64/bin\scripts
+mkdir -p ../../build/x64/bin\amd64
+mkdir -p ../../build/x64/doc
+mkdir -p ../../build/x64/examples60 
+mkdir -p ../../build/x64/src60
+mkdir -p ../../build/x64/lib60_64
+
+cp ../../bin/asm64-cli.exe ../../build/x64/bin
+cp ../../bin/elena64-cli.exe ../../build/x64/bin
+cp ../../bin/elena64-ide.exe ../../build/x64/bin
+cp ../../bin/sg64-cli.exe ../../build/x64/bin
+cp ../../bin/og64-cli.exe ../../build/x64/bin
+cp ../../bin/ecv64-cli.exe ../../build/x64/bin
+cp ../../bin/elt64-cli.exe ../../build/x64/bin
+cp ../../bin/elenart60_64.dll ../../build/x64/bin
+cp ../../bin/elenasm60_64.dll ../../build/x64/bin
+cp ../../bin/elenavm60_64.dll ../../build/x64/bin
+cp ../../bin/winstub.ex_ ../../build/x64/bin
+cp ../../bin/elc60.cfg ../../build/x64/bin
+cp ../../bin/elenart60.cfg ../../build/x64/bin
+cp ../../bin/elenavm60.cfg ../../build/x64/bin
+
+cp ../../bin\*.dat ../../build/x64/bin/
+cp ../../bin/amd64\*.bin ../../build/x64/bin/amd64/
+
+cp ../../bin/templates\*.cfg ../../build/x64/bin/templates/
+cp ../../bin/scripts\*.es ../../build/x64/bin/scripts/
+cp ../../bin/scripts\*.elt ../../build/x64/bin/scripts/
+
+cp ../../doc/license ../../build/x64/doc/
+cp ../../doc/contributors ../../build/x64/doc/
+cp ../../readme.md ../../build/x64/
+cp ../../CHANGELOG.md ../../build/x64/
+cp ../../VERSION ../../build/x64/
+
+cp -r ../../src60\*.l ../../build/x64/src60/
+cp -r ../../src60\*.prj ../../build/x64/src60/
+
+cp  ../../src60/elena_api.prjcol ../../build/x64/src60/
+
+cp -r ../../lib60_64\*.nl ../../build/x64/lib60_64/
+cp -r ../../lib60_64\*.dnl ../../build/x64/lib60_64/
+
+cp -r ../../examples60\*.l ../../build/x64/examples60/
+cp -r ../../examples60\*.prj ../../build/x64/examples60/
+cp -r ../../examples60\*.txt ../../build/x64/examples60/
+cp -r ../../examples60\*.bmp ../../build/x64/examples60/
+cp -r ../../examples60\*.es ../../build/x64/examples60/
+cp -r ../../examples60\*.js ../../build/x64/examples60/
+cp -r ../../examples60\*.ls ../../build/x64/examples60/
+cp -r ../../examples60\*.xs ../../build/x64/examples60/
+
+goto:eof

@@ -40,10 +40,10 @@ In development:
   - support hashCode for records (redesign current ones as well)
   - MTA support for Linux : signals, thread prolog / epilog (system commands)
   - chat sample
-  - #783
-  - IDE : output window - add a context menu to copy the output content to the clipboard
+  - #783 : Add the shell scripts for MSYS2
   --------------------------------------
-  * add context menu
+  * full_build script
+  * test shell scripts for MSYS2
   --------------------------------------
 
   === Iteration 42 ===

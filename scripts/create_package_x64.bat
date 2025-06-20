@@ -12,13 +12,13 @@ md build\x64\bin\amd64
 md build\x64\doc
 md build\x64\examples60 
 md build\x64\src60
-md build\x64\lib60
+md build\x64\lib60_64
 
 copy bin\asm64-cli.exe build\x64\bin
 copy bin\elena64-cli.exe build\x64\bin
 copy bin\elena64-ide.exe build\x64\bin
 copy bin\sg64-cli.exe build\x64\bin
-copy bin\og64-cli.exe bindx64\bin
+copy bin\og64-cli.exe build\x64\bin
 copy bin\ecv64-cli.exe build\x64\bin
 copy bin\elt64-cli.exe build\x64\bin
 copy bin\elenart60_64.dll build\x64\bin
