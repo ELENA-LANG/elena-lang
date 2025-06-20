@@ -1649,7 +1649,7 @@ public const struct IntNumber : IntBaseNumber,
    }
 
    real divide(real n)
-            : info("Returns the result of integer division")
+            : info("Returns the result of the division as a real number")
    {
       real val := _value;
 
@@ -1798,26 +1798,31 @@ public sealed const struct UIntNumber : IntBaseNumber,
    embeddable __uint _value[4];
 
    constructor(byte b)
+      : info("converts the argument to UIntNumber")
    {
       _value := UIntConvertor.convert(b);
    }
 
    constructor(short s)
+      : info("converts the argument to UIntNumber")
    {
       _value := UIntConvertor.convert(s);
    }
 
    constructor(int n)
+      : info("converts the argument to UIntNumber")
    {
       _value := UIntConvertor.convert(n);
    }
 
    constructor(uint n)
+      : info("Creates the object with specified value")
    {
       _value := n
    }
 
    constructor()
+            : info("Returns the default value")
       = 0;
 
    cast u(string s)
@@ -1839,6 +1844,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = 0FFFFFFFFh;
 
    static uint Default
+            : info("Returns the default value (0)")
       = 0;
 
    string toPrintable()
@@ -1854,6 +1860,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = ByteConvertor.convert(self);
 
    int cast()
+            : info("Returns the signed integer")
       = self;
    
    long cast()
@@ -1865,6 +1872,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = new RealNumber(self);
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is uint n)
       {
@@ -1875,6 +1883,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
    }
 
    bool less(n)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type when it is possible and compared")
       <= less(cast uint(n));
 
    bool equal(uint n)
@@ -1922,27 +1931,35 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = new RealNumber(self).less(n);
 
    add(n)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= add(cast uint(n));
 
    subtract(n)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= subtract(cast uint(n));
 
    multiply(n)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= multiply(cast uint(n));
 
    divide(n)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= divide(cast uint(n));
 
    uint add(BaseVariable v)
+            : info("Returns the sum of the object and a variable value")
       <= add(*v);
 
    uint subtract(BaseVariable v)
+            : info("Returns the difference of the object and a variable value")
       <= subtract(*v);
 
    uint multiply(BaseVariable v)
+            : info("Returns the product of the object and a variable value")
       <= multiply(*v);
 
    uint divide(BaseVariable v)
+            : info("Returns the result of integer division")
       <= divide(*v);
 
    uint add(uint n)
@@ -2010,36 +2027,47 @@ public sealed const struct UIntNumber : IntBaseNumber,
       <= divide(cast uint(n));
 
    long add(long n)
+            : info("Returns the sum as a long integer")
       = new LongNumber(n).add(n);
 
    long subtract(long n)
+            : info("Returns the difference as a long integer")
       = new LongNumber(n).subtract(n);
 
    long multiply(long n)
+            : info("Returns the product as a long integer")
       = new LongNumber(n).multiply(n);
 
    long divide(long n)
+            : info("Returns the result of integer division as a long integer")
       = new LongNumber(n).divide(n);
 
    real add(real n)
+            : info("Returns the sum as a real number")
       = new RealNumber(n).add(n);
 
    real subtract(real n)
+            : info("Returns the difference as a real number")
       = new RealNumber(n).subtract(n);
 
    real multiply(real n)
+            : info("Returns the product as a real number")
       = new RealNumber(n).multiply(n);
 
    real divide(real n)
+            : info("Returns the result of the division as a real number")
       = new RealNumber(n).divide(n);
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= band(cast uint(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= bor(cast uint(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= bxor(cast uint(n));
 
    uint band(uint n)
@@ -2103,15 +2131,19 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = new LongNumber(n).bxor(n);
 
    uint shiftLeft(uint val)
+            : info("shifts an integer value to the left by a specified number of bits")
       = _value $shl val;
 
    uint shiftLeft(int val)
+            : info("shifts an integer value to the left by a specified number of bits")
       <= shiftLeft(cast uint(val));
 
    uint shiftRight(uint val)
+            : info("shifts an integer value to the right by a specified number of bits")
       = _value $shr val;
 
    uint shiftRight(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
       <= shiftRight(cast uint(val));
    
    get uint BInverted()
@@ -2119,6 +2151,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = ~_value;
 
    uint clone()
+            : info("Returns the value copy")
       = new UIntNumber(self);
 }
 
