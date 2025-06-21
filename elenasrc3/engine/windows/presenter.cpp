@@ -13,6 +13,8 @@ using namespace elena_lang;
 
 void print(const wchar_t* wstr, ...)
 {
+   wprintf(L" - %ls - \n", wstr);
+
    va_list argptr;
    va_start(argptr, wstr);
 
