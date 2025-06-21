@@ -20,7 +20,7 @@
 
 using namespace elena_lang;
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 void print(const wchar_t* wstr, ...)
 {
    va_list argptr;
@@ -39,7 +39,8 @@ void printLine(ustr_t mssg, path_t path)
 
    print(wmssg.str(), path.str());
 }
-#elif __GNUG__
+
+#elif defined(__unix__)
 
 void print(const char* msg, ...)
 {
@@ -64,7 +65,7 @@ void printLine(ustr_t mssg, path_t path)
 
 constexpr auto targetPlatform = ASM_FREEBSD_TARGET;
 
-#elif __unix__         
+#elif __unix__
 
 constexpr auto targetPlatform = ASM_LNX_TARGET;
 
@@ -181,7 +182,7 @@ int main(int argc, char* argv[])
          }
          else if (arg.compare(BC_32_MODE)) {
             mode = CompileMode::bc32;
-#ifdef WIN32
+#if (defined(_WIN32) || defined(__WIN32__))
             supportStdMode = true;
 #endif
          }
