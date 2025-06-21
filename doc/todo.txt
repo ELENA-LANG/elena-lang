@@ -42,8 +42,7 @@ In development:
   - chat sample
   - #783 : Add the shell scripts for MSYS2
   --------------------------------------
-  * full_build script
-  * test shell scripts for MSYS2
+  * _presenter->print for mingw
   --------------------------------------
 
   === Iteration 42 ===
