@@ -40,7 +40,7 @@ fi
    exit 1
  fi
 
- ../../bin/asm64-cli -bc64 ../../src60/core/system.win_core_routines.esm ../../lib60_64
+ ../../bin/asm64-cli -bc64 "..\..\src60\core\system.win_core_routines.esm" "..\..\lib60_64"
  ret=$?
  if [ $ret -eq 0 ]
  then
@@ -50,7 +50,7 @@ fi
    exit 1
  fi
 
- ../../bin/elena64-cli ../../src60/elena_api.prjcol
+ ../../bin/elena64-cli "..\..\src60\elena_api.prjcol"
  ret=$?
  if [ $ret -eq 2 ]
  then

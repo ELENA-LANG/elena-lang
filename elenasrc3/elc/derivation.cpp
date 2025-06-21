@@ -917,7 +917,7 @@ void SyntaxTreeBuilder :: flushDescriptor(SyntaxTreeWriter& writer, Scope& scope
          }
          else if (scope.withVariadicParameter) {
             int index = scope.parameters.get(current.identifier());
-            if (index == scope.parameters.count()) {
+            if (index == scope.parameters.count_int()) {
                key = SyntaxKey::VariadicNameArgParameter;
                attrRef = index + scope.nestedLevel;
             }
