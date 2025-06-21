@@ -68,7 +68,7 @@ void WinConsolePresenter :: print(ustr_t msg, ustr_t arg1, ustr_t arg2)
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage warg1(arg1);
@@ -81,7 +81,7 @@ void WinConsolePresenter :: print(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr_t a
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage warg1(arg1);
@@ -102,7 +102,7 @@ void WinConsolePresenter :: printPath(ustr_t msg, path_t arg1, int arg2, int arg
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage warg4(arg4);
@@ -128,7 +128,7 @@ void WinConsolePresenter :: printPath(ustr_t msg, path_t arg)
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    ::print(wstr.str(), arg.str());
@@ -160,7 +160,7 @@ void WinConsolePresenter :: print(ustr_t msg, ustr_t path, int col, int row, ust
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage wpath(path);
@@ -173,7 +173,7 @@ void WinConsolePresenter :: printLine(ustr_t msg, ustr_t arg)
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage warg(arg);
@@ -185,7 +185,7 @@ void WinConsolePresenter :: printLine(ustr_t msg, ustr_t arg1, ustr_t arg2)
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage warg1(arg1);
@@ -198,7 +198,7 @@ void WinConsolePresenter :: printLine(ustr_t msg, ustr_t arg1, ustr_t arg2, ustr
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage warg1(arg1);
@@ -219,7 +219,7 @@ void WinConsolePresenter::printLine(ustr_t msg, int arg1, int arg2, int arg3, us
 {
 	WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage warg4(arg4);
@@ -231,7 +231,7 @@ void WinConsolePresenter :: printPathLine(ustr_t msg, path_t arg1, int arg2, int
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage warg4(arg4);
@@ -271,7 +271,7 @@ void WinConsolePresenter :: printLine(ustr_t msg, ustr_t path, int col, int row,
 {
    WideMessage wstr(msg);
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
-   adjustConstantForGCC(wmsg);
+   adjustConstantForGCC(wstr);
 #endif
 
    WideMessage wpath(path);
