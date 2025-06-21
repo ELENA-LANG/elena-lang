@@ -128,7 +128,8 @@ void compileByteCode(path_t source, path_t target, bool mode64, int rawDataAlign
 
    FileWriter writer(target, FileEncoding::Raw, false);
    if(!targetModule.save(writer)) {
-      printf(ASM_CANNOTCREATE_OUTPUT);
+      printLine(ASM_CANNOTCREATE_OUTPUT, target);
+
       throw ExceptionBase();
    }
 }
