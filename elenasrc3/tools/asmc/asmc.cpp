@@ -150,6 +150,9 @@ int main(int argc, char* argv[])
    bool supportStdMode = false;
    int optionIndex = 0;
    for (int i = 1; i < argc; i++) {
+
+      printf("%x - %s\n", i, argv[i]);
+
       if (argv[i][0] == '-') {
          optionIndex = i;
 
