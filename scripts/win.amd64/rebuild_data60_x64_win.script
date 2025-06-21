@@ -1,6 +1,6 @@
 #!/bin/sh
 
-../../bin/sg64-cli dat/sg/syntax60.txt
+../../bin/sg64-cli ../../dat/sg/syntax60.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -10,7 +10,7 @@ else
   exit 1
 fi
 
-../../bin/sg64-cli dat/sg/syntax67.txt
+../../bin/sg64-cli ../../dat/sg/syntax67.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -20,7 +20,7 @@ else
   exit 1
 fi
 
-../../bin/sg64-cli dat/sg/syntax50.txt
+../../bin/sg64-cli ../../dat/sg/syntax50.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
