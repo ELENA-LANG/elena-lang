@@ -23,8 +23,6 @@ using namespace elena_lang;
 #if (defined(_WIN32) || defined(__WIN32__))
 void print(const wchar_t* wstr, ...)
 {
-   printf("test");
-
    va_list argptr;
    va_start(argptr, wstr);
 
