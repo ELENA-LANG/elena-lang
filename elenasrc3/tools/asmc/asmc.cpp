@@ -196,8 +196,8 @@ int main(int argc, char* argv[])
       else if (i == optionIndex + 1) {
          source.copy(argv[i]);
 
-         printLine("source %s \n", *source);
-         printf("%s \n", argv[i]);
+         printLine("source %s\n", *source);
+         printf("len %x\n", source.length_pos());
       }
       else if (i == optionIndex + 2) {
          target.copy(argv[i]);

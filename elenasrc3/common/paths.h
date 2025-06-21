@@ -172,8 +172,6 @@ namespace elena_lang
          size_t destLen = FILENAME_MAX;
          StrConvertor::copy(_string, path.str(), path.length(), destLen);
 
-         printf("copy %x\n", destLen);
-
          _string[destLen] = 0;
       }
       void copy(ustr_t path, size_t length)
