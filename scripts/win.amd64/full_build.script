@@ -1,0 +1,7 @@
+#!/bin/sh
+
+(cd ../.. && make clean_amd64 all_amd64)
+
+./rebuild_data60_x64_win.script 
+
+./rebuild_lib60_x64_win.script 
