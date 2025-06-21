@@ -1129,6 +1129,8 @@ namespace elena_lang
 
       pos_t count() const { return _count; }
 
+      int count_int() const { return (int)_count; }
+
       Iterator start() const
       {
          return Iterator(_top);
