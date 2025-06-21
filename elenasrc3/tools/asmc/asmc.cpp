@@ -151,8 +151,6 @@ int main(int argc, char* argv[])
    int optionIndex = 0;
    for (int i = 1; i < argc; i++) {
 
-      printf("%x - %s\n", i, argv[i]);
-
       if (argv[i][0] == '-') {
          optionIndex = i;
 
@@ -197,6 +195,8 @@ int main(int argc, char* argv[])
       }
       else if (i == optionIndex + 1) {
          source.copy(argv[i]);
+
+         printLine("source %s \n", *source);
       }
       else if (i == optionIndex + 2) {
          target.copy(argv[i]);
