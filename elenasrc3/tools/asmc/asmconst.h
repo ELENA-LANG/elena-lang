@@ -104,7 +104,7 @@ namespace elena_lang
    constexpr auto ASM_LABEL_EXISTS           = "Label with such a name already exists (%d)\n";
    constexpr auto BASM_ARGUMENTS_TOO_MANY    = "The externally callable function must have no more than 4 arguments (%d)\n";
 
-   constexpr auto ASM_CANNOTCREATE_OUTPUT    = "Cannot create an output file %s\n";
+   constexpr auto ASM_CANNOTCREATE_OUTPUT    = "Cannot create an output file \"%s\"\n";
    constexpr auto ASM_CANNOTOPEN_INPUT       = "Cannot open %s an input file\n";
 
 }
