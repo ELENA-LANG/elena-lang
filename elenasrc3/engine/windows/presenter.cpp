@@ -13,8 +13,6 @@ using namespace elena_lang;
 
 void print(const wchar_t* wstr, ...)
 {
-   wprintf(L" - %ls - \n", wstr);
-
    va_list argptr;
    va_start(argptr, wstr);
 
@@ -44,14 +42,6 @@ void WinConsolePresenter :: readLine(char* buffer, size_t length)
    fgets(buffer, maxSize, stdin);
 }
 
-void WinConsolePresenter :: print(ustr_t msg, ustr_t arg)
-{
-   WideMessage wstr(msg);
-   WideMessage warg(arg);
-
-   ::print(wstr.str(), warg.str());
-}
-
 #if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
 
 inline void adjustConstantForGCC(WideMessage& wstr)
@@ -65,6 +55,18 @@ inline void adjustConstantForGCC(WideMessage& wstr)
 }
 
 #endif
+
+
+void WinConsolePresenter :: print(ustr_t msg, ustr_t arg)
+{
+   WideMessage wstr(msg);
+#if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
+   adjustConstantForGCC(wstr);
+#endif
+   WideMessage warg(arg);
+
+   ::print(wstr.str(), warg.str());
+}
 
 void WinConsolePresenter :: print(ustr_t msg, ustr_t arg1, ustr_t arg2)
 {
