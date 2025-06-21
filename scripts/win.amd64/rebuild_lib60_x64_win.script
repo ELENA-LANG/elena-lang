@@ -30,7 +30,7 @@ else
   exit 1
 fi
 
- ../../bin/asm64-cli -bc64 "../../src60/core/system.core_routines.esm" "../../lib60_64"
+ ../../bin/asm64-cli -bc64 "..\..\src60\core\system.core_routines.esm" "..\..\lib60_64"
  ret=$?
  if [ $ret -eq 0 ]
  then
