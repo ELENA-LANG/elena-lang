@@ -46,7 +46,7 @@ void WinConsolePresenter :: readLine(char* buffer, size_t length)
 
 inline void adjustConstantForGCC(WideMessage& wstr)
 {
-   pos_t index = (*wstr).findStr(L"%s");
+   size_t index = (*wstr).findStr(L"%s");
    while (index != NOTFOUND_POS) {
       wstr.insert(L"l", index + 1);
 
