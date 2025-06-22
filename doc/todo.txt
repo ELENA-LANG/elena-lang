@@ -21,23 +21,20 @@ In development:
   maint:
   - nillable single dispatcher : use direct reference to nilValue symbol   
   - fix create release script - attach rpm file as well
-  samples:
-  - rosetta code : Program termination, Parallel calculations
-  - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
-  port:
   tools:
   - vs #2 : elena.tmLanguage.json  
   prom:
   - weekly posting
   --------------------------------------
+  - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
   - rosetta code - moving to 6.7 : (Calendar - for "REAL" programmers)
   - api : LongNumber
   - MTA support for Linux : test simple multithread sample
   - support hashCode for records (redesign current ones as well)
-  - MTA support for Linux : signals, thread prolog / epilog (system commands)
-  - chat sample
+  - MTA support for Linux
   --------------------------------------
-  * TcpRemoteClient, TcpServer
+  * signals
+  * thread prolog / epilog (system commands)
   --------------------------------------
 
   === Iteration 42 ===
@@ -61,6 +58,7 @@ In development:
   samples:
   - review pi performance (must < 6) : realOp.power[3] byte code
   - chat sample
+  - rosetta code : Program termination, Parallel calculations
   port:
   - linux elt - use rpath for linking elenavm
   - linux elt - migrate to amd64
