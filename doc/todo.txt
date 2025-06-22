@@ -28,11 +28,7 @@ In development:
   tools:
   - vs #2 : elena.tmLanguage.json  
   prom:
-  - post an article about records using meta programming
   - weekly posting
-  - post what's new in ELENA 6.7
-  - adding a text how uninstall ELENA
-  - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
   - rosetta code - moving to 6.7 : (Calendar - for "REAL" programmers)
   - api : LongNumber
@@ -40,9 +36,8 @@ In development:
   - support hashCode for records (redesign current ones as well)
   - MTA support for Linux : signals, thread prolog / epilog (system commands)
   - chat sample
-  - #783 : Add the shell scripts for MSYS2
   --------------------------------------
-  * _presenter->print for mingw
+  * TcpRemoteClient, TcpServer
   --------------------------------------
 
   === Iteration 42 ===
@@ -65,11 +60,17 @@ In development:
   - get rid of win_locale.l in system; refactor for cross-platform
   samples:
   - review pi performance (must < 6) : realOp.power[3] byte code
+  - chat sample
   port:
   - linux elt - use rpath for linking elenavm
   - linux elt - migrate to amd64
   tools:
   prom:
+  - post an article about records using meta programming
+  - weekly posting
+  - post what's new in ELENA 6.7
+  - adding a text how uninstall ELENA
+  - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
   - #620 : backlog
   --------------------------------------
