@@ -260,6 +260,9 @@ void WinConsolePresenter :: printLine(ustr_t msg, int arg1, int arg2)
 void WinConsolePresenter :: printPathLine(ustr_t msg, path_t arg)
 {
    WideMessage wstr(msg);
+#if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
+   adjustConstantForGCC(wstr);
+#endif
 
    ::printLine(wstr.str(), arg.str());
 }
