@@ -15,7 +15,57 @@
 #include <errno.h>
 #include <ctime>
 
+#include <pthread.h>
+
 using namespace elena_lang;
+
+class EventImpl
+{
+private:
+   bool              _signalled;
+   pthread_mutex_t   _mutex;
+   pthread_cond_t    _cond;
+
+public:
+   EventImpl()
+   {
+      _signalled = false;
+      _pthread_mutex_init(&_mutex, nullptr);
+      _pthread_cond_init(&_cond, nullptr);
+   }
+
+   virtual ~EventImpl()
+   {
+      pthread_mutex_destroy(&_mutex);
+      pthread_cond_destroy(&_cond);
+   }
+
+   void waitForSignal()
+   {
+      pthread_mutex_lock(&_mutex);
+      while (!_signalled) {
+         pthread_cond_wait(&_cond, &_mutex);
+      }
+      pthread_mutex_unlock(&_mutex);
+   }
+
+   void reset()
+   {
+      if (_signalled) {
+         pthread_mutex_lock(&_mutex);
+         _signalled = false;
+         pthread_mutex_unlock(&_mutex);
+      }
+   }
+
+   void signal()
+   {
+      pthread_mutex_lock(&_mutex);
+      _signalled = true;
+      pthread_mutex_unlock(&_mutex);
+      pthread_cond_broadcast(&_cond);
+   }
+};
 
 static uintptr_t CriticalHandler = 0;
 
@@ -88,14 +138,15 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
 
 void* SystemRoutineProvider :: CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
 {
-//   pthread_t th;
-//   pthread_create(&th, nullptr, threadProc, tt_index);
+   pthread_t th;
+   pthread_create(&th, nullptr, threadProc, tt_index);
 
-//   return (void*)th;
+   return (void*)th;
 }
 
 void SystemRoutineProvider::ExitThread(int exitCode)
 {
+   pthread_exit((void*)exitCode);
 }
 
 void SystemRoutineProvider :: RaiseError(int code)
@@ -282,38 +333,43 @@ long long SystemRoutineProvider :: GenerateSeed()
 
 void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 {
-   // NOTE : the thread context is followed by cond variable for Unix / Linux / FreeBSD
-//   pthread_cond_t* pcond = (pthread_cond_t*)((uintptr_t)env->th_table->slots[index].content + sizeof(ThreadContext));
+   EventImpl* event = new EventImpl();
 
-//   ::pthread_cond_init(pcond, nullptr);
-
-//   env->th_table->slots[index].content->tt_sync_event = (void*)pcond;
-//   env->th_table->slots[index].content->tt_flags = 0;
+   env->th_table->slots[index].content->tt_sync_event = (void*)event;
+   env->th_table->slots[index].content->tt_flags = 0;
 }
 
 void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
 {
-//   pthread_cond_t* pcond = (pthread_cond_t*)env->th_table->slots[index].content->tt_sync_event;
+   EventImpl* event = (EventImpl*)env->th_table->slots[index].content->tt_sync_event;
 
-//   pthread_cond_destroy(pcond);
+   delete event;
 
-//   env->th_table->slots[index].content->tt_sync_event = nullptr;
-//   env->th_table->slots[index].content->tt_flags = 0;
+   env->th_table->slots[index].content->tt_sync_event = nullptr;
+   env->th_table->slots[index].content->tt_flags = 0;
 }
 
 void SystemRoutineProvider::GCSignalStop(void* handle)
 {
-//   pthread_cond_broadcast((pthread_cond_t*)handle);
+   ((EventImpl*)handle)->signal();
 }
 
 void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
 {
+   if (count > 0) {
+      EventImpl** events = (EventImpl**)handles;
+      for (size_t i = 0; i < coun; i++) {
+         events[i]->waitForSignal();
+      }
+   }
 }
 
 void SystemRoutineProvider::GCWaitForSignal(void* handle)
 {
+   ((EventImpl*)handle)->waitForSignal();
 }
 
 void SystemRoutineProvider::GCSignalClear(void* handle)
 {
+   ((EventImpl*)handle)->reset();
 }

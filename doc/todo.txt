@@ -9,8 +9,6 @@ In development:
   --------------------------------------
   dev: 
   - #743
-  - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
-  - upndown (connector - cmdSearch)
   - #748 : i386
   api:
   - #622 : api backlog
@@ -26,15 +24,15 @@ In development:
   prom:
   - weekly posting
   --------------------------------------
+  - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
+  - MTA support for Linux : test simple multithread sample
   - rosetta code - moving to 6.7 : (Calendar - for "REAL" programmers)
   - api : LongNumber
-  - MTA support for Linux : test simple multithread sample
   - support hashCode for records (redesign current ones as well)
   - MTA support for Linux
   --------------------------------------
   * signals
-  * thread prolog / epilog (system commands)
   --------------------------------------
 
   === Iteration 42 ===
@@ -79,6 +77,7 @@ In development:
   === Iteration 43 ===
   --------------------------------------
   dev: 
+  - upndown (connector - cmdSearch)
   gen:
   api:
   - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
