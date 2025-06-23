@@ -2171,6 +2171,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       = 9223372036854775807l;
 
    static long Default
+            : info("Returns the default value (0)")
       = 0l;
 
    constructor()
@@ -2218,6 +2219,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       = RealConvertor.convert(self);
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is long n)
       {
@@ -2228,6 +2230,7 @@ public sealed const struct LongNumber : IntBaseNumber,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type when it is possible and compared")
       <= less(cast long(o));
 
    bool equal(long n)
@@ -2239,171 +2242,225 @@ public sealed const struct LongNumber : IntBaseNumber,
       = _value < n;
 
    bool equal(byte b)
+            : info("Compares the integer value")
       <= equal(cast long(b));
 
    bool less(byte b)
       <= less(cast long(b));
 
    bool equal(short s)
+            : info("Compares the integer value")
       <= equal(cast long(s));
 
    bool less(short s)
       <= less(cast long(s));
 
    bool equal(int n)
+            : info("Compares the integer value")
       <= equal(cast long(n));
 
    bool less(int n)
+            : info("Compares the integer value")
       <= less(cast long(n));
 
    bool equal(real n)
+            : info("Compares the integer value")
       = new RealNumber(self).equal(n);
 
    bool less(real n)
+            : info("Compares the integer value")
       = new RealNumber(self).less(n);
 
    add(n)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= add(cast long(n));
 
    subtract(n)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= subtract(cast long(n));
 
    multiply(n)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= multiply(cast long(n));
 
    divide(n)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= divide(cast long(n));
 
    long add(long n)
+            : info("Returns the sum")
       = _value + n;
 
    long subtract(long n)
+            : info("Returns the difference")
       = _value - n;
 
    long multiply(long n)
+            : info("Returns the product")
       = _value * n;
 
    long divide(long n)
+            : info("Returns the result of integer division")
       = _value / n;
 
    long add(byte n)
+            : info("Returns the sum")
       <= add(cast long(n));
 
    long subtract(byte n)
+            : info("Returns the difference")
       <= subtract(cast long(n));
 
    long multiply(byte n)
+            : info("Returns the product")
       <= multiply(cast long(n));
 
    long divide(byte n)
+            : info("Returns the result of integer division")
       <= divide(cast long(n));
 
    long add(short n)
+            : info("Returns the sum")
       <= add(cast long(n));
 
    long subtract(short n)
+            : info("Returns the difference")
       <= subtract(cast long(n));
 
    long multiply(short n)
+            : info("Returns the product")
       <= multiply(cast long(n));
 
    long divide(short n)
+            : info("Returns the result of integer division")
       <= divide(cast long(n));
 
    long add(int n)
+            : info("Returns the sum")
       <= add(cast long(n));
 
    long subtract(int n)
+            : info("Returns the difference")
       <= subtract(cast long(n));
 
    long multiply(int n)
+            : info("Returns the product")
       <= multiply(cast long(n));
 
    long divide(int n)
+            : info("Returns the result of integer division")
       <= divide(cast long(n));
 
    long add(uint n)
+            : info("Returns the sum")
       <= add(cast long(n));
 
    long subtract(uint n)
+            : info("Returns the difference")
       <= subtract(cast long(n));
 
    long multiply(uint n)
+            : info("Returns the product")
       <= multiply(cast long(n));
 
    long divide(uint n)
+            : info("Returns the result of integer division")
       <= divide(cast long(n));
 
    real add(real n)
+            : info("Returns the sum as a real number")
       = new RealNumber(self).add(n);
 
    real subtract(real n)
+            : info("Returns the difference as a real number")
       = new RealNumber(self).subtract(n);
 
    real multiply(real n)
+            : info("Returns the product as a real number")
       = new RealNumber(self).multiply(n);
 
    real divide(real n)
+            : info("Returns the result of a division as a real number")
       = new RealNumber(self).divide(n);
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= band(cast long(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= band(cast long(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= band(cast long(n));
 
    long band(long n)
+            : info("Returns the result of bitwise AND operation")
       = _value & n;
 
    long bor(long n)
+            : info("Returns the result of bitwise OR operation")
       = _value | n;
 
    long bxor(long n)
+            : info("Returns the result of bitwise XOR operation")
       = _value ^ n;
 
    long band(byte n)
+            : info("Returns the result of bitwise AND operation")
       <= band(cast long(n));
 
    long bor(byte n)
+            : info("Returns the result of bitwise OR operation")
       <= bor(cast long(n));
 
    long bxor(byte n)
+            : info("Returns the result of bitwise XOR operation")
       <= bxor(cast long(n));
 
    long band(short n)
+            : info("Returns the result of bitwise AND operation")
       <= band(cast long(n));
 
    long bor(short n)
+            : info("Returns the result of bitwise OR operation")
       <= bor(cast long(n));
 
    long bxor(short n)
+            : info("Returns the result of bitwise XOR operation")
       <= bxor(cast long(n));
 
    long band(int n)
+            : info("Returns the result of bitwise AND operation")
       <= band(cast long(n));
 
    long bor(int n)
+            : info("Returns the result of bitwise OR operation")
       <= bor(cast long(n));
 
    long bxor(int n)
+            : info("Returns the result of bitwise XOR operation")
       <= bxor(cast long(n));
 
    long band(uint n)
+            : info("Returns the result of bitwise AND operation")
       <= band(cast long(n));
 
    long bor(uint n)
+            : info("Returns the result of bitwise OR operation")
       <= bor(cast long(n));
 
    long bxor(uint n)
+            : info("Returns the result of bitwise XOR operation")
       <= bxor(cast long(n));
 
    long shiftLeft(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
       = _value $shl val;
    
    long shiftRight(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
       = _value $shr val;
 
    get long BInverted()
@@ -2411,12 +2468,15 @@ public sealed const struct LongNumber : IntBaseNumber,
       = ~_value;
 
    get long Negative()
+            : info("Returns the negated value")
       = -1l * _value;
 
    string toPrintable()
+            : info("Returns literal representation.")
       = StringConvertor.convert(self, 10);
 
    long clone()
+            : info("Returns the value copy")
       = new LongNumber(_value);
 }
 

@@ -10,11 +10,8 @@ In development:
   dev: 
   - #743
   - #748 : i386
-  api:
-  - #622 : api backlog
   ide:  
   - debugger : watch list is not refreshed correctly  (see for example xml); sometimes not all old elements are removed
-  - #184 : linux -  open project, new project, save project, save all, close project ...
   - async method - auto watch : self and some variables are not displayed
   maint:
   - nillable single dispatcher : use direct reference to nilValue symbol   
@@ -24,20 +21,29 @@ In development:
   prom:
   - weekly posting
   --------------------------------------
+  - api : RealNumber
+  - #184 : linux -  open project, new project, save project, save all, close project ...
+  - #622 : api backlog
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
-  - MTA support for Linux : test simple multithread sample
   - rosetta code - moving to 6.7 : (Calendar - for "REAL" programmers)
-  - api : LongNumber
-  - MTA support for Linux
   --------------------------------------
-  * signals
+  *
+  *
+  *
+  *
+  *
+  *
+  *
+  *
+  *
+  *
   --------------------------------------
 
   === Iteration 42 ===
   --------------------------------------
   dev: 
-  - MTA support for Linux : support MT routines in elenart
+  - MTA support for Linux : test simple multithread sample
   - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
   - #620 : backlog
   - genetic algorithms
