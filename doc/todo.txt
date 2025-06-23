@@ -29,7 +29,6 @@ In development:
   - MTA support for Linux : test simple multithread sample
   - rosetta code - moving to 6.7 : (Calendar - for "REAL" programmers)
   - api : LongNumber
-  - support hashCode for records (redesign current ones as well)
   - MTA support for Linux
   --------------------------------------
   * signals

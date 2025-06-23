@@ -30,8 +30,8 @@ public:
    EventImpl()
    {
       _signalled = false;
-      _pthread_mutex_init(&_mutex, nullptr);
-      _pthread_cond_init(&_cond, nullptr);
+      pthread_mutex_init(&_mutex, nullptr);
+      pthread_cond_init(&_cond, nullptr);
    }
 
    virtual ~EventImpl()
@@ -136,10 +136,12 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
    return !r ? 0 : (uintptr_t)allocPtr;
 }
 
+typedef void*(*thread_proc_t)(void*);
+
 void* SystemRoutineProvider :: CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
 {
    pthread_t th;
-   pthread_create(&th, nullptr, threadProc, tt_index);
+   pthread_create(&th, nullptr, (thread_proc_t)threadProc, (void*)tt_index);
 
    return (void*)th;
 }
@@ -358,7 +360,7 @@ void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
 {
    if (count > 0) {
       EventImpl** events = (EventImpl**)handles;
-      for (size_t i = 0; i < coun; i++) {
+      for (size_t i = 0; i < count; i++) {
          events[i]->waitForSignal();
       }
    }
