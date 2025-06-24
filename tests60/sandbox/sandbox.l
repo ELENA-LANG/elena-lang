@@ -1,38 +1,5 @@
-/// Anonymous recursion
+#let attributes["PUBLIC"]      := 80004001h;
 
-import extensions;
-
-fib(n)
+PUBLIC program()
 {
-   if (n < 0)
-      { InvalidArgumentException.raise() };
-        
-   ^ (n) {
-      if (n > 1)
-      { 
-         ^ this self(n - 2) + (this self(n - 1))
-      }
-      else
-      { 
-         ^ n 
-      }
-   }(n)
-}
-
-public program()
-{
-   for (int i := -1; i <= 10; i += 1) 
-   {
-      Console.print("fib(",i,")=");
-      try
-      {
-         Console.printLine(fib(i))
-      }
-      catch(Exception e)
-      {
-         Console.printLine("invalid")
-      }
-   };
-    
-   Console.readChar()
 }

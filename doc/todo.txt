@@ -21,23 +21,24 @@ In development:
   prom:
   - weekly posting
   --------------------------------------
+  - rosetta code - moving to 6.7 : (Combinations)
   - api : RealNumber
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - #622 : api backlog
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
-  - rosetta code - moving to 6.7 : (Calendar - for "REAL" programmers)
+  - rosetta code - moving to 6.7
   --------------------------------------
-  *
-  *
-  *
-  *
-  *
-  *
-  *
-  *
-  *
-  *
+  * Calendar - for "REAL" programmers  - move to UpperCase
+  * Call a function
+  * Call an object method
+  * Case-sensitivity of identifiers
+  * Catamorphism
+  * Character codes
+  * Check that file exists
+  * Classes
+  * Closures/Value capture
+  * Collections
   --------------------------------------
 
   === Iteration 42 ===
