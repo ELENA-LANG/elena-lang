@@ -1,3 +1,12 @@
+// --- auxiliary code to simulate UPPERCASE code ---
+
+public program = PROGRAM;
+
+CONSOLE = Console;
+
+READCHAR() { Console.readChar() }
+
+
 import system'text;
 import system'routines;
 import system'calendar;
@@ -8,6 +17,8 @@ import extensions'routines;
 
 const MonthNames = new string[]{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
 const DayNames = new string[]{"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
+
+// --- UPPERCASE CODE --
 
 class CalendarMonthPrinter
 {
@@ -155,11 +166,11 @@ class Calendar
 
 // --- program ---
 
-public program()
+PROGRAM()
 {
    var calender := Calendar.new(Console.write("ENTER THE YEAR:").readLine().toInt());
     
-   calender.printTo(Console);
+   calender.printTo(CONSOLE);
 
-   Console.readChar()
+   READCHAR();
 }

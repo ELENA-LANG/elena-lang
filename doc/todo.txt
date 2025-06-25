@@ -20,6 +20,7 @@ In development:
   - vs #2 : elena.tmLanguage.json  
   prom:
   - weekly posting
+  - post about implementing calendar in all uppercase
   --------------------------------------
   - rosetta code - moving to 6.7 : (Combinations)
   - api : RealNumber
@@ -27,6 +28,7 @@ In development:
   - #622 : api backlog
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
+  - #712
   - rosetta code - moving to 6.7
   --------------------------------------
   * Calendar - for "REAL" programmers  - move to UpperCase
@@ -39,6 +41,7 @@ In development:
   * Classes
   * Closures/Value capture
   * Collections
+  * test rosetta build batch
   --------------------------------------
 
   === Iteration 42 ===
