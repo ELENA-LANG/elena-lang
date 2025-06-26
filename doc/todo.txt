@@ -5,24 +5,20 @@ In development:
 [development]
   ### EPIC: elena 6.8 ###
 
-  === Iteration 41 (8.7) ===
+  === Iteration 41 ===
   --------------------------------------
   - debugger : watch list is not refreshed correctly  (see for example xml); sometimes not all old elements are removed
-  - nillable single dispatcher : use direct reference to nilValue symbol   
   - fix create release script - attach rpm file as well
   - vs #2 : elena.tmLanguage.json  
   - #743
-  - #748 : i386
   - api : RealNumber
   - #184 : linux -  open project, new project, save project, save all, close project ...
-  - #622 : api backlog
   - #708 : compile the project (elc, og, sg, asm, ecv)
   --------------------------------------
   * migrate the recent changes
   * create a script
   * run the script
   --------------------------------------
-
   === Iteration 42 ===
   --------------------------------------
   dev: 
@@ -30,11 +26,13 @@ In development:
   - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
   - #620 : backlog
   - genetic algorithms
+  - #748 : i386
   gen:
   - script : support ++ operator
   - work on REPL (elt), generate project template
   api:
   - #35 : working on webapi
+  - #622 : api backlog
   ide:  
   - compile in the separate thread  
   - async method - auto watch : self and some variables are not displayed

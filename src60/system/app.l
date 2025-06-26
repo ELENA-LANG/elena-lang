@@ -74,6 +74,7 @@ entry()
    {
       function(AbortException e)
       {
+         Console.writeLine("Program was aborted");
       }
 
       function(Exception err)
