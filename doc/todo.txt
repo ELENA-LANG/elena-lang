@@ -7,41 +7,20 @@ In development:
 
   === Iteration 41 (8.7) ===
   --------------------------------------
-  dev: 
-  - #743
-  - #748 : i386
-  ide:  
   - debugger : watch list is not refreshed correctly  (see for example xml); sometimes not all old elements are removed
-  - async method - auto watch : self and some variables are not displayed
-  maint:
   - nillable single dispatcher : use direct reference to nilValue symbol   
   - fix create release script - attach rpm file as well
-  tools:
   - vs #2 : elena.tmLanguage.json  
-  prom:
-  - weekly posting
-  - post about implementing calendar in all uppercase
-  --------------------------------------
-  - rosetta code - moving to 6.7 : (Combinations)
+  - #743
+  - #748 : i386
   - api : RealNumber
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - #622 : api backlog
   - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
   - #712
-  - rosetta code - moving to 6.7
   --------------------------------------
-  * Calendar - for "REAL" programmers  - move to UpperCase
-  * Call a function
-  * Call an object method
-  * Case-sensitivity of identifiers
-  * Catamorphism
-  * Character codes
-  * Check that file exists
-  * Classes
-  * Closures/Value capture
-  * Collections
-  * test rosetta build batch
+  * downloading deb package
   --------------------------------------
 
   === Iteration 42 ===
@@ -58,10 +37,12 @@ In development:
   - #35 : working on webapi
   ide:  
   - compile in the separate thread  
+  - async method - auto watch : self and some variables are not displayed
   maint:
   - optimization : direct branching with nil
   - test all x86-64 examples
   - get rid of win_locale.l in system; refactor for cross-platform
+  - rosetta code - moving to 6.7 : (Combinations)
   samples:
   - review pi performance (must < 6) : realOp.power[3] byte code
   - chat sample
