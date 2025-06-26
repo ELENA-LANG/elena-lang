@@ -25,7 +25,7 @@ OBJDIR_RELEASE = ../../temp/elena64-cli
 DEP_RELEASE = 
 OUT_RELEASE = ../../../bin/elena64-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o  $(OBJDIR_RELEASE)/__/__/common/xmltree.o $(OBJDIR_RELEASE)/__/__/engine/bcwriter.o $(OBJDIR_RELEASE)/__/__/engine/codescope.o $(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o $(OBJDIR_RELEASE)/__/__/engine/jitlinker.o $(OBJDIR_RELEASE)/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/engine/parsertable.o $(OBJDIR_RELEASE)/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/engine/x86_64compiler.o $(OBJDIR_RELEASE)/__/__/engine/x86compiler.o $(OBJDIR_RELEASE)/__/__/engine/x86helper.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/xmlprojectbase.o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o $(OBJDIR_RELEASE)/__/codeimage.o $(OBJDIR_RELEASE)/__/compiler.o $(OBJDIR_RELEASE)/__/compiling.o $(OBJDIR_RELEASE)/__/derivation.o $(OBJDIR_RELEASE)/__/linux/elc.o $(OBJDIR_RELEASE)/__/linux/elfimage.o $(OBJDIR_RELEASE)/__/linux/elflinker.o $(OBJDIR_RELEASE)/__/linux/elflinker32.o $(OBJDIR_RELEASE)/__/linux/elflinker64.o $(OBJDIR_RELEASE)/__/parser.o $(OBJDIR_RELEASE)/__/separser.o $(OBJDIR_RELEASE)/__/project.o $(OBJDIR_RELEASE)/__/source.o $(OBJDIR_RELEASE)/__/modulescope.o $(OBJDIR_RELEASE)/__/compilerlogic.o $(OBJDIR_RELEASE)/__/linux/elfsyslibloader.o $(OBJDIR_RELEASE)/__/linux/pathmanager.o $(OBJDIR_RELEASE)/__/__/engine/serializer.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o  $(OBJDIR_RELEASE)/__/cli.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o  $(OBJDIR_RELEASE)/__/__/common/xmltree.o $(OBJDIR_RELEASE)/__/__/engine/bcwriter.o $(OBJDIR_RELEASE)/__/__/engine/codescope.o $(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o $(OBJDIR_RELEASE)/__/__/engine/jitlinker.o $(OBJDIR_RELEASE)/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/engine/parsertable.o $(OBJDIR_RELEASE)/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/engine/x86_64compiler.o $(OBJDIR_RELEASE)/__/__/engine/x86compiler.o $(OBJDIR_RELEASE)/__/__/engine/x86helper.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/xmlprojectbase.o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o $(OBJDIR_RELEASE)/__/codeimage.o $(OBJDIR_RELEASE)/__/compiler.o $(OBJDIR_RELEASE)/__/compiling.o $(OBJDIR_RELEASE)/__/derivation.o $(OBJDIR_RELEASE)/__/macos/elc.o $(OBJDIR_RELEASE)/__/macos/machoimage.o $(OBJDIR_RELEASE)/__/macos/macholinker.o $(OBJDIR_RELEASE)/__/macos/macholinker64.o $(OBJDIR_RELEASE)/__/parser.o $(OBJDIR_RELEASE)/__/separser.o $(OBJDIR_RELEASE)/__/project.o $(OBJDIR_RELEASE)/__/source.o $(OBJDIR_RELEASE)/__/modulescope.o $(OBJDIR_RELEASE)/__/compilerlogic.o $(OBJDIR_RELEASE)/__/__/engine/serializer.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/cli.o
 
 all: release
 
@@ -35,13 +35,8 @@ before_release:
 	test -d ../../../bin || mkdir -p ../../../bin
 	test -d $(OBJDIR_RELEASE)/__ || mkdir -p $(OBJDIR_RELEASE)/__
 	test -d $(OBJDIR_RELEASE)/__/__/engine || mkdir -p $(OBJDIR_RELEASE)/__/__/engine
-ifeq ($(OS),Windows_NT)
-	test -d $(OBJDIR_RELEASE)/__/windows || mkdir -p $(OBJDIR_RELEASE)/__/windows
-	test -d $(OBJDIR_RELEASE)/__/__/engine/windows || mkdir -p $(OBJDIR_RELEASE)/__/__/engine/windows
-else
 	test -d $(OBJDIR_RELEASE)/__/__/engine/linux || mkdir -p $(OBJDIR_RELEASE)/__/__/engine/linux
-	test -d $(OBJDIR_RELEASE)/__/linux || mkdir -p $(OBJDIR_RELEASE)/__/linux
-endif
+	test -d $(OBJDIR_RELEASE)/__/macos || mkdir -p $(OBJDIR_RELEASE)/__/macos
 	test -d $(OBJDIR_RELEASE)/__/__/common || mkdir -p $(OBJDIR_RELEASE)/__/__/common
 
 after_release: 
@@ -138,26 +133,17 @@ $(OBJDIR_RELEASE)/__/modulescope.o: ../modulescope.cpp
 $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o: ../../engine/linux/presenter.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o
 
-$(OBJDIR_RELEASE)/__/linux/elc.o: ../linux/elc.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elc.cpp -o $(OBJDIR_RELEASE)/__/linux/elc.o
+$(OBJDIR_RELEASE)/__/macos/elc.o: ../macos/elc.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/elc.cpp -o $(OBJDIR_RELEASE)/__/macos/elc.o
 
-$(OBJDIR_RELEASE)/__/linux/elfimage.o: ../linux/elfimage.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elfimage.cpp -o $(OBJDIR_RELEASE)/__/linux/elfimage.o
+$(OBJDIR_RELEASE)/__/macos/machoimage.o: ../macos/machoimage.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/machoimage.cpp -o $(OBJDIR_RELEASE)/__/macos/machoimage.o
 
-$(OBJDIR_RELEASE)/__/linux/elflinker.o: ../linux/elflinker.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elflinker.cpp -o $(OBJDIR_RELEASE)/__/linux/elflinker.o
+$(OBJDIR_RELEASE)/__/macos/macholinker.o: ../macos/macholinker.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/macholinker.cpp -o $(OBJDIR_RELEASE)/__/macos/macholinker.o
 
-$(OBJDIR_RELEASE)/__/linux/elflinker32.o: ../linux/elflinker32.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elflinker32.cpp -o $(OBJDIR_RELEASE)/__/linux/elflinker32.o
-
-$(OBJDIR_RELEASE)/__/linux/elflinker64.o: ../linux/elflinker64.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elflinker64.cpp -o $(OBJDIR_RELEASE)/__/linux/elflinker64.o
-
-$(OBJDIR_RELEASE)/__/linux/elfsyslibloader.o: ../linux/elfsyslibloader.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/elfsyslibloader.cpp -o $(OBJDIR_RELEASE)/__/linux/elfsyslibloader.o
-
-$(OBJDIR_RELEASE)/__/linux/pathmanager.o: ../linux/pathmanager.cpp
-	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../linux/pathmanager.cpp -o $(OBJDIR_RELEASE)/__/linux/pathmanager.o
+$(OBJDIR_RELEASE)/__/macos/macholinker64.o: ../macos/macholinker64.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/macholinker64.cpp -o $(OBJDIR_RELEASE)/__/macos/macholinker64.o
 
 $(OBJDIR_RELEASE)/__/parser.o: ../parser.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../parser.cpp -o $(OBJDIR_RELEASE)/__/parser.o
@@ -178,7 +164,7 @@ clean_release:
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine
-	rm -rf $(OBJDIR_RELEASE)/__/linux
+	rm -rf $(OBJDIR_RELEASE)/__/macos
 	rm -rf $(OBJDIR_RELEASE)/__/engine/linux
 	rm -rf $(OBJDIR_RELEASE)/__/__/common
 
