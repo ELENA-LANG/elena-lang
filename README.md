@@ -53,7 +53,7 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 - **macOS** : arm64 (a64)
 
 ## Resources
-- **Nightly builds:** <https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml>
+- **Nightly builds:** <https://github.com/ELENA-LANG/elena-lang/releases/tag/nightly>
 - **ELENA Documentation** <https://github.com/ELENA-LANG/elena-lang/wiki/ELENA-Programming-Manual>
 - **ELENA API 6.0** <https://elena-lang.github.io/api/index.html>
 - **Git clone URL:** <git://github.com/ELENA-LANG/elena-lang.git>
