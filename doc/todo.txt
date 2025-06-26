@@ -20,6 +20,7 @@ In development:
   - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
   - #712
   --------------------------------------
+  * try to build for ubuntu 22.04
   * downloading deb package
   --------------------------------------
 
