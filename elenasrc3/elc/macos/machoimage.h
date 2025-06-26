@@ -72,6 +72,33 @@ namespace elena_lang
       //void fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment, RelocationMap& importMapping) override;
    public:
    };
+
+   // --- MachOAmd64ImageFormatter ---
+   class MachOAmd64ImageFormatter : public MachO64ImageFormatter
+   {
+   protected:
+      ElfAmd64ImageFormatter(ForwardResolverBase* resolver)
+         : Elf64ImageFormatter(resolver)
+      {
+      }
+
+/*      int getRelocationType() override;
+
+      void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t disp) override;
+      pos_t writePLTEntry(MemoryWriter& codeWriter, pos_t symbolIndex, ref_t gotReference,
+         pos_t gofOffset, int entryIndex) override;
+
+      void fixSection(MemoryBase* section, AddressSpace& map) override;
+      void fixImportSection(MemoryBase* section, AddressSpace& map) override;*/
+
+   public:
+      static MachOAmd64ImageFormatter& getInstance(ForwardResolverBase* resolver)
+      {
+         static MachOAmd64ImageFormatter instance(resolver);
+
+         return instance;
+      }
+   };
 }
 
 #endif

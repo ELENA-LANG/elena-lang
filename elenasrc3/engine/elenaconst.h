@@ -221,6 +221,7 @@ namespace elena_lang
       Linux_PPC64le  = 0x00025,
       Linux_PPC32le  = 0x00026,
 
+      MacOS_x86_64   = 0x00032,
       MacOS_ARM64    = 0x00034,
 
       FreeBSD_x86_64 = 0x00042,

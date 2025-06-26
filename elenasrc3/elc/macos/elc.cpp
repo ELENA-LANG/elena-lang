@@ -8,10 +8,8 @@
 
 #include "elena.h"
 // --------------------------------------------------------------------------
-#include "cliconst.h"
-#include "compiling.h"
-#include "project.h"
-//#include "elfimage.h"
+#include "cli.h"
+#include "machoimage.h"
 
 #if defined(__aarch64__)
 
@@ -30,24 +28,15 @@
 
 using namespace elena_lang;
 
-#if defined(__aarch64__)
+#if defined(__x86_64__)
+
+constexpr auto CURRENT_PLATFORM           = PlatformType::MacOS_x86_64;
+
+#elif defined(__aarch64__)
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::MacOS_ARM64;
 
-constexpr int MINIMAL_ARG_LIST            = 2;
-
-constexpr auto DEFAULT_STACKALIGNMENT     = 2;
-constexpr auto DEFAULT_RAW_STACKALIGNMENT = 16;
-constexpr auto DEFAULT_EHTABLE_ENTRY_SIZE = 32;
-
-typedef MachOARM64Linker         MacOSLinker;
-typedef MachOARM64ImageFormatter MacOSImageFormatter;
-
 #endif
-
-constexpr int DEFAULT_MGSIZE = 688128;
-constexpr int DEFAULT_YGSIZE = 204800;
-constexpr int DEFAULT_STACKRESERV = 0x100000;
 
 class Presenter : public LinuxConsolePresenter
 {
@@ -78,6 +67,18 @@ public:
 
    ~Presenter() = default;
 };
+
+ustr_t getDefaultExtension(PlatformType platform)
+{
+   switch (platform)
+   {
+      case PlatformType::Win_x86:
+      case PlatformType::Win_x86_64:
+         return "exe";
+      default:
+         return nullptr;
+   }
+}
 
 JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
 {
@@ -225,13 +226,9 @@ int main(int argc, char* argv[])
    {
       PathString dataPath(/*PathHelper::retrievePath(dataFileList, 3, */DATA_PATH/*)*/);
 
-      JITSettings      defaultCoreSettings = { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERV, 1, true, true };
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
-      CompilingProcess process(*dataPath, "o", "<moduleProlog>", "<prolog>", "<epilog>",
-         &Presenter::getInstance(), &errorProcessor,
-         VA_ALIGNMENT, defaultCoreSettings, createJITCompiler);
 
-      process.greeting();
+      CompilingProcess::greeting(&Presenter::getInstance());
 
       // Reading command-line arguments...
       if (argc < 2) {
@@ -239,10 +236,12 @@ int main(int argc, char* argv[])
          return -2;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
-         return compileProjectCollection(argc, argv, argv[argc - 1],
-            *dataPath, errorProcessor, process);
+         return CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],            
+            *dataPath, 
+            CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM),
+            errorProcessor, Presenter::getInstance(), compileProject);
       }
-      else return compileProject(argc, argv, *dataPath, errorProcessor, process);
+      else return compileProject(argc, argv, *dataPath, errorProcessor);
    }
    catch (CLIException)
    {

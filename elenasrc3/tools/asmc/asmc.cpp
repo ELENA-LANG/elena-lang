@@ -103,7 +103,7 @@ template<class AssemblyT> void compileAssembly(path_t source, path_t target, ust
 
    FileWriter writer(target, FileEncoding::Raw, false);
    if (!targetModule.save(writer)) {
-      printf(ASM_CANNOTCREATE_OUTPUT);
+      printLine(ASM_CANNOTCREATE_OUTPUT, target);
       throw ExceptionBase();
    }
 }

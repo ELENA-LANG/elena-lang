@@ -81,6 +81,7 @@ JITCompilerSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, E
       case PlatformType::Win_x86_64:
       case PlatformType::Linux_x86_64:
       case PlatformType::FreeBSD_x86_64:
+      case PlatformType::MacOS_x86_64:
          return X86_64JITCompiler::getSettings();
 #endif
 #if defined(__i386__) || defined (_M_IX86)
@@ -94,6 +95,7 @@ JITCompilerSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, E
 #endif
 #if defined(__aarch64__)
       case PlatformType::Linux_ARM64:
+      case PlatformType::MacOS_ARM64:
          return ARM64JITCompiler::getSettings();
 #endif
       default:
@@ -109,6 +111,7 @@ JITCompilerBase* CLIHelper :: createJITCompiler(PlatformType platform)
       case PlatformType::Win_x86_64:
       case PlatformType::FreeBSD_x86_64:
       case PlatformType::Linux_x86_64:
+      case PlatformType::MacOS_x86_64:
          return new X86_64JITCompiler();
 #endif
 #if defined(__i386__) || defined (_M_IX86)
@@ -122,6 +125,7 @@ JITCompilerBase* CLIHelper :: createJITCompiler(PlatformType platform)
 #endif
 #if defined(__aarch64__)
       case PlatformType::Linux_ARM64:
+      case PlatformType::MacOS_ARM64:
          return new ARM64JITCompiler();
 #endif
       default:
@@ -172,6 +176,24 @@ LinkerBase* CLIHelper :: createLinker(PlatformType platform, Project* project, E
 #endif
 
 #endif
+
+#if defined(__MACH__)
+
+#if defined(__x86_64__) || defined (_M_X64)
+
+   case PlatformType::FreeBSD_x86_64:
+      return new MachOAmd64Linker(errorProcessor, &MachOAmd64ImageFormatter::getInstance(project));
+
+#elif defined(__aarch64__)
+
+   case PlatformType::MacOS_ARM64:
+      errorProcessor->raiseError(errNotSupportedPlatform, getPlatformName(platform)); // !! temporally
+      return nullptr;
+
+#endif
+
+#endif
+
    default:
       errorProcessor->raiseError(errNotSupportedPlatform, getPlatformName(platform));
       return nullptr;

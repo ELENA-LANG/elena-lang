@@ -16,12 +16,11 @@ In development:
   - api : RealNumber
   - #184 : linux -  open project, new project, save project, save all, close project ...
   - #622 : api backlog
-  - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable  
-  - examples60.linux.prjcol  : find out why vm_helloworld64 is not generated for amd64  
-  - #712
+  - #708 : compile the project (elc, og, sg, asm, ecv)
   --------------------------------------
-  * try to build for ubuntu 22.04
-  * downloading deb package
+  * migrate the recent changes
+  * create a script
+  * run the script
   --------------------------------------
 
   === Iteration 42 ===
@@ -69,6 +68,7 @@ In development:
   --------------------------------------
   dev: 
   - upndown (connector - cmdSearch)
+  - #708 : compile library, compile executable, test executable  
   gen:
   api:
   - #34 : http client : support redirects, put, delete, support patch, head, options, web api  

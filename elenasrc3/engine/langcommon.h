@@ -756,6 +756,7 @@ namespace elena_lang
    constexpr auto LINUX_ARM64_KEY               = "Linux_ARM64";
 
    constexpr auto MACOS_ARM64_KEY               = "MacOS_ARM64";
+   constexpr auto MACOS_X86_64_KEY              = "MacOS_AMD64";
 
    constexpr auto FREEBSD_X86_64_KEY            = "FreeBSD_AMD64";
 
@@ -832,6 +833,8 @@ namespace elena_lang
             return LINUX_ARM64_KEY;
          case PlatformType::MacOS_ARM64:
             return MACOS_ARM64_KEY;
+         case PlatformType::MacOS_x86_64:
+            return MACOS_x86_64_KEY;
          case PlatformType::FreeBSD_x86_64:
             return FREEBSD_X86_64_KEY;
          default:
