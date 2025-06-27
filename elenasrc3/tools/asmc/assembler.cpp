@@ -16,13 +16,13 @@ using namespace elena_lang;
 // --- AssemblerBase ---
 
 AssemblerBase :: AssemblerBase(int tabSize, UStrReader* reader, ModuleBase* target)
-   : _reader(tabSize, reader), constants(0), _macros(false)
+   : _reader(tabSize, reader), _macros(false), constants(0)
 {
    _target = target;
 }
 
 AssemblerBase :: AssemblerBase(const char** dfa, int tabSize, UStrReader* reader, ModuleBase* target)
-   : _reader(dfa, tabSize, reader), constants(0), _macros(false)
+   : _reader(dfa, tabSize, reader), _macros(false), constants(0)
 {
    _target = target;
 }

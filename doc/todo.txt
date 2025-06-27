@@ -15,6 +15,9 @@ In development:
   --------------------------------------
   - #184 : IDE linux
   --------------------------------------
+  * create a library lcommon
+  * create a library ldebugger
+  * compile ide
   * project view
   * open project
   * save project
