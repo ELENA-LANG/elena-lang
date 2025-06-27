@@ -834,7 +834,7 @@ namespace elena_lang
          case PlatformType::MacOS_ARM64:
             return MACOS_ARM64_KEY;
          case PlatformType::MacOS_x86_64:
-            return MACOS_x86_64_KEY;
+            return MACOS_X86_64_KEY;
          case PlatformType::FreeBSD_x86_64:
             return FREEBSD_X86_64_KEY;
          default:
