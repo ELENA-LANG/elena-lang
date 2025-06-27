@@ -17,6 +17,7 @@ In development:
   --------------------------------------
   * create a library lcommon
   * create a library ldebugger
+  * use lcommon in IDE, remove common files from the IDE project
   * compile ide
   * project view
   * open project

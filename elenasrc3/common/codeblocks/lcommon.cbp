@@ -76,19 +76,19 @@
 			<Add option="-fexceptions" />
 			<Add directory=".." />
 		</Compiler>
-		<Unit filename="../common/config.cpp" />
-		<Unit filename="../common/config.h" />
-		<Unit filename="../common/dump.cpp" />
-		<Unit filename="../common/dump.h" />
-		<Unit filename="../common/files.cpp" />
-		<Unit filename="../common/files.h" />
-		<Unit filename="../common/paths.cpp" />
-		<Unit filename="../common/paths.h" />
-		<Unit filename="../common/tools.h" />
-		<Unit filename="../common/ustring.cpp" />
-		<Unit filename="../common/ustring.h" />
-		<Unit filename="../common/xmltree.cpp" />
-		<Unit filename="../common/xmltree.h" />
+		<Unit filename="../config.cpp" />
+		<Unit filename="../config.h" />
+		<Unit filename="../dump.cpp" />
+		<Unit filename="../dump.h" />
+		<Unit filename="../files.cpp" />
+		<Unit filename="../files.h" />
+		<Unit filename="../paths.cpp" />
+		<Unit filename="../paths.h" />
+		<Unit filename="../tools.h" />
+		<Unit filename="../ustring.cpp" />
+		<Unit filename="../ustring.h" />
+		<Unit filename="../xmltree.cpp" />
+		<Unit filename="../xmltree.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>
