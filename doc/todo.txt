@@ -15,9 +15,9 @@ In development:
   --------------------------------------
   - #184 : IDE linux
   --------------------------------------
-  * create a library lcommon
-  * create a library ldebugger
-  * use lcommon in IDE, remove common files from the IDE project
+  * use lcommon in ldebugger
+  * compile ldebugger
+  * use lcommon, ldebugger in IDE, remove common files from the IDE project
   * compile ide
   * project view
   * open project
