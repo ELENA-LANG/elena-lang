@@ -75,6 +75,7 @@
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
 			<Add directory=".." />
+			<Add directory="../../common" />
 		</Compiler>
                 <Unit filename="../debuginfoprovider.h" />
                 <Unit filename="../debuginfoprovider.cpp" />
