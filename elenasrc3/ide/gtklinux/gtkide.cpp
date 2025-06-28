@@ -152,7 +152,21 @@ GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model)
    _model = model;
    _controller = controller;
 
+   _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
+
    populateMenu();
+}
+
+void GTKIDEWindow :: populate(int counter, Gtk::Widget** children)
+{
+   SDIWindow::populate(counter, children);
+
+
+   // project tree
+   projectView->set_model(_projectTree);
+
+   projectView->append_column("module", _projectTreeColumns._caption);
+
 }
 
 void GTKIDEWindow :: populateMenu()
@@ -266,12 +280,89 @@ void GTKIDEWindow :: on_textframe_change(SelectionEvent event)
    _controller->onDocSelection(_model, event.Index());
 }
 
+void GTKIDEWindow :: on_projectview_row_activated(const Gtk::TreeModel::Path& path,
+    Gtk::TreeViewColumn*)
+{
+  /*Gtk::TreeModel::iterator iter = _projectTree->get_iter(path);
+  if(iter) {
+     Gtk::TreeModel::Row row = *iter;
+     int index = row[_projectTreeColumns._index];
+     if (index >= 0)
+        _controller->selectProjectFile(index);
+  }*/
+}
+
 void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
 {
 }
 
+void GTKIDEWindow :: onProjectChange(bool empty)
+{
+   Gtk::TreeView* projectView = dynamic_cast<Gtk::TreeView*>(_children[_model->ideScheme.projectView]);
+
+   _projectTree->clear();
+
+   if (!empty) {
+      for (auto it = _model->projectModel.sources.start(); !it.eof(); ++it) {
+         path_t src = *it;
+         Gtk::TreeModel::Children children = _projectTree->children();
+
+         int start = 0;
+         int end = 0;
+         while (end != -1) {
+            end = name.find(start, PATH_SEPARATOR, -1);
+
+            _ELENA_::IdentifierString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
+            Gtk::TreeModel::iterator it = children.begin();
+            while (it != children.end()) {
+               Gtk::TreeModel::Row row = *it;
+               Glib::ustring current = row[_projectTreeColumns._caption];
+
+               if (nodeName.compare(current.c_str()))
+                  break;
+  
+               it++;
+            }
+            if (it == children.end()) {
+               Gtk::TreeModel::Row row = *(_projectTree->append(children));
+               row[_projectTreeColumns._caption] = (const char*)nodeName;
+               row[_projectTreeColumns._index] = end == -1 ? index : -1;
+
+               children = row.children();
+            }
+            else children = (*it).children();
+
+            start = end + 1;
+         }
+
+      }
+   }
+
+   projectView->expand(root);
+/*
+   show_all_children();
+*/
+}
+
+void GTKIDEWindow :: onProjectRefresh(bool empty)
+{
+/*
+   updateCompileMenu(!empty, !empty, false);
+
+   enableMenuItemById(IDM_PROJECT_CLOSE, !empty, true);
+   enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
+*/
+}
+
 void GTKIDEWindow :: onIDEStatusChange(int status)
 {
+   if (test(status, STATUS_PROJECT_CHANGED)) {
+      onProjectChange(_model->projectModel.empty);
+   }
+   else if (test(status, STATUS_PROJECT_REFRESH)) {
+      onProjectRefresh(_model->projectModel.empty);
+   }
+
    //if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
    //   if (_model->sourceViewModel.isAssigned()) {
          //_children[_model->ideScheme.textFrameId]->show();
@@ -280,3 +371,4 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
       //else _children[_model->ideScheme.textFrameId]->hide();
    //}
 }
+

@@ -14,6 +14,19 @@
 namespace elena_lang
 {
 
+class ProjectTreeColumns : public Gtk::TreeModel::ColumnRecord
+{
+public:
+   Gtk::TreeModelColumn<Glib::ustring> _caption;
+   Gtk::TreeModelColumn<int>           _index;
+
+   ProjectTreeColumns()
+   {
+      add(_caption);
+      add(_index);
+   }
+};
+
 // --- GTKIDEView ---
 
 class GTKIDEWindow : public SDIWindow
@@ -25,6 +38,9 @@ protected:
    FileDialog        fileDialog;
    FileDialog        projectDialog;
    MessageDialog     messageDialog;
+
+   ProjectTreeColumns           _projectTreeColumns;
+   Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
    void populateMenu();
 
@@ -269,10 +285,17 @@ protected:
    {
    }
 
+   void on_projectview_row_activated(const Gtk::TreeModel::Path& path,
+        Gtk::TreeViewColumn*);
+
    void onDocumentUpdate(DocumentChangeStatus changeStatus);
+   void onProjectChange(bool empty);
+   void onProjectRefresh(bool empty);
    void onIDEStatusChange(int status);
 
 public:
+   void populate(int counter, Gtk::Widget** children);
+
    void on_text_model_change(TextViewModelEvent event);
    void on_textframe_change(SelectionEvent event);
 

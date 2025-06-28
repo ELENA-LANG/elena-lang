@@ -160,24 +160,65 @@ void IDEFactory :: styleControl(GUIControlBase* control)
 {
 }
 
+Gtk::Widget* IDEFactory :: createProjectView()
+{
+   Gtk::TreeView* projectView = new Gtk::TreeView();
+
+//   _projectView.signal_row_activated().connect(sigc::mem_fun(*this,
+//              &GTKIDEWindow::on_projectview_row_activated));
+
+   projectView->set_size_request(200, -1);
+
+   return projectView;
+}
+
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess)
 {
-   Gtk::Widget* children[1];
+   Gtk::Widget* children[2];
    int counter = 0;
 
    int textIndex = counter++;
+   int projectView = counter++;
    children[textIndex] = createTextControl();
+   children[projectView] = createProjectView();
 
    GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model);
 
    ideWindow->populate(counter, children);
-   ideWindow->setLayout(textIndex, -1, -1, -1, -1);
+   ideWindow->setLayout(textIndex, -1, -1, projectView, -1);
 
    _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
    _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
 
+   initializeScheme(textIndex, projectView);
+
    return new WindowWrapper(ideWindow);
+}
+
+
+void IDEFactory :: initializeScheme(int frameTextIndex, /*int tabBar, int compilerOutput, int errorList,*/
+   int projectView/*, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl, 
+   int toolBarControl, int contextEditor, int textIndex*/)
+{
+   _model->ideScheme.textFrameId = frameTextIndex;
+//   _model->ideScheme.resultControl = tabBar;
+//   _model->ideScheme.compilerOutputControl = compilerOutput;
+//   _model->ideScheme.errorListControl = errorList;
+   _model->ideScheme.projectView = projectView;
+//   _model->ideScheme.debugWatch = contextBrowser;
+//   _model->ideScheme.menu = menu;
+//   _model->ideScheme.statusBar = statusBar;
+//   _model->ideScheme.debugContextMenu = debugContextMenu;
+//   _model->ideScheme.vmConsoleControl = vmConsoleControl;
+//   _model->ideScheme.toolBarControl = toolBarControl;
+//   _model->ideScheme.editorContextMenu = contextEditor;
+//   _model->ideScheme.textControlId = textIndex;
+
+//   _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
+//   _model->ideScheme.captions.add(errorList, szErrorList);
+//   _model->ideScheme.captions.add(contextBrowser, szWatch);
+//   _model->ideScheme.captions.add(vmConsoleControl, szVMOutput);
 }
 
 GUIApp* IDEFactory :: createApp()
