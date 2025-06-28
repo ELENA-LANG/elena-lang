@@ -76,11 +76,11 @@
 			<Add option="-fexceptions" />
 			<Add directory=".." />
 			<Add directory="../../common" />
-			<Add directory="../../engine" />
+			<Add directory="../.." />
 		</Compiler>
-                <Unit filename="../debuginfoprovider.h" />
-                <Unit filename="../debuginfoprovider.cpp" />
-                <Unit filename="../ldbg_common.h" />
+		<Unit filename="../debuginfoprovider.cpp" />
+		<Unit filename="../debuginfoprovider.h" />
+		<Unit filename="../ldbg_common.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

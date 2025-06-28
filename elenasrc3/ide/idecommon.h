@@ -9,7 +9,7 @@
 
 #include "elena.h"
 #include "guieditor.h"
-#include "ldebugger\ldbg_common.h"
+#include "ldebugger/ldbg_common.h"
 
 namespace elena_lang
 {

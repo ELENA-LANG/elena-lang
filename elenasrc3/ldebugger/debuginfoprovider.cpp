@@ -7,8 +7,8 @@
 
 #include "common.h"
 // -------------------------------------------------------------------------
-#include "engine\elenacommon.h"
-#include "engine\module.h"
+#include "engine/elenacommon.h"
+#include "engine/module.h"
 #include "debuginfoprovider.h"
 
 #if (defined(_WIN32) || defined(__WIN32__))

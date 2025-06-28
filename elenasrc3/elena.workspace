@@ -10,5 +10,8 @@
 		<Project filename="ide/codeblocks/elide_gtk.cbp" />
 		<Project filename="tools/og/codeblocks/og_linux_x86.cbp" />
 		<Project filename="elenavm/codeblocks/elenavm_linux_x86.cbp" />
+		<Project filename="ldebugger/codeblocks/ldebugger.cbp" />
+		<Project filename="common/codeblocks/lcommon.cbp" />
+		<Project filename="engine/codeblocks/lengine.cbp" />
 	</Workspace>
 </CodeBlocks_workspace_file>
