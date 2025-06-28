@@ -38,7 +38,7 @@
 				</Linker>
 			</Target>
 			<Target title="Debug64">
-				<Option output="../../../bin/lcommon" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../bin/lcommon64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="../temp/lcommon64/" />
 				<Option type="2" />
@@ -54,7 +54,7 @@
 				</Linker>
 			</Target>
 			<Target title="Release64">
-				<Option output="../../../bin/lcommon" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../bin/lcommon64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
 				<Option object_output="../temp/release/lcommon64/" />
 				<Option type="2" />

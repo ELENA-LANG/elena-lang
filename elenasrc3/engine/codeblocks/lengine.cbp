@@ -2,14 +2,14 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="ldebugger" />
+		<Option title="lengine" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug32">
-				<Option output="../../../bin/ldebugger" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../bin/lengine" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="../temp/ldebugger/" />
+				<Option object_output="../temp/lengine/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -20,9 +20,9 @@
 				</Compiler>
 			</Target>
 			<Target title="Release32">
-				<Option output="../../../bin/ldebugger" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../bin/lengine" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="../temp/release/ldebugger/" />
+				<Option object_output="../temp/release/lengine/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -38,9 +38,9 @@
 				</Linker>
 			</Target>
 			<Target title="Debug64">
-				<Option output="../../../bin/ldebugger64" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../bin/lengine64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="../temp/ldebugger64/" />
+				<Option object_output="../temp/lengine64/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -54,9 +54,9 @@
 				</Linker>
 			</Target>
 			<Target title="Release64">
-				<Option output="../../../bin/ldebugger64" prefix_auto="1" extension_auto="1" />
+				<Option output="../../../bin/lengine64" prefix_auto="1" extension_auto="1" />
 				<Option working_dir="" />
-				<Option object_output="../temp/release/ldebugger64/" />
+				<Option object_output="../temp/release/lengine64/" />
 				<Option type="2" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -77,9 +77,10 @@
 			<Add directory=".." />
 			<Add directory="../../common" />
 		</Compiler>
-                <Unit filename="../debuginfoprovider.h" />
-                <Unit filename="../debuginfoprovider.cpp" />
-                <Unit filename="../ldbg_common.h" />
+		<Unit filename="../module.cpp" />
+		<Unit filename="../module.h" />
+		<Unit filename="../section.cpp" />
+		<Unit filename="../section.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

@@ -15,9 +15,10 @@ In development:
   --------------------------------------
   - #184 : IDE linux
   --------------------------------------
+  * lengine library
   * use lcommon in ldebugger
   * compile ldebugger
-  * use lcommon, ldebugger in IDE, remove common files from the IDE project
+  * use lcommon, ldebugger, lengine in IDE, remove common / engine / ldebugger files from the IDE project
   * compile ide
   * project view
   * open project
