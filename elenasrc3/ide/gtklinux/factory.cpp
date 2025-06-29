@@ -175,7 +175,7 @@ Gtk::Widget* IDEFactory :: createProjectView()
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess)
 {
-   Gtk::Widget* children[2];
+   Gtk::Widget** children = new Gtk::Widget*[2];
    int counter = 0;
 
    int textIndex = counter++;
@@ -185,20 +185,20 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
 
    GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model);
 
+   initializeScheme(textIndex, projectView);
+
    ideWindow->populate(counter, children);
-   ideWindow->setLayout(textIndex, -1, -1, projectView, -1);
+   ideWindow->setLayout(textIndex, -1, -1, -1, projectView);
 
    _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
    _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
-
-   initializeScheme(textIndex, projectView);
 
    return new WindowWrapper(ideWindow);
 }
 
 
 void IDEFactory :: initializeScheme(int frameTextIndex, /*int tabBar, int compilerOutput, int errorList,*/
-   int projectView/*, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl, 
+   int projectView/*, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
    int toolBarControl, int contextEditor, int textIndex*/)
 {
    _model->ideScheme.textFrameId = frameTextIndex;

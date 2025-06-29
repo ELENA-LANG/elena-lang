@@ -15,9 +15,7 @@ In development:
   --------------------------------------
   - #184 : IDE linux
   --------------------------------------
-  * project view : populate
   * project view : select a file
-
   * hide / select project view
   * open project
   * save project

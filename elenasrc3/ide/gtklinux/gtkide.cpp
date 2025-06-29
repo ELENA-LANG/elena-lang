@@ -161,6 +161,7 @@ void GTKIDEWindow :: populate(int counter, Gtk::Widget** children)
 {
    SDIWindow::populate(counter, children);
 
+   Gtk::TreeView* projectView = (Gtk::TreeView*)_children[_model->ideScheme.projectView];
 
    // project tree
    projectView->set_model(_projectTree);
@@ -302,17 +303,18 @@ void GTKIDEWindow :: onProjectChange(bool empty)
 
    _projectTree->clear();
 
+   int index = 0;
    if (!empty) {
       for (auto it = _model->projectModel.sources.start(); !it.eof(); ++it) {
-         path_t src = *it;
+         path_t name = *it;
          Gtk::TreeModel::Children children = _projectTree->children();
 
-         int start = 0;
-         int end = 0;
+         size_t start = 0;
+         size_t end = 0;
          while (end != -1) {
-            end = name.find(start, PATH_SEPARATOR, -1);
+            end = name.findSub(start, PATH_SEPARATOR);
 
-            _ELENA_::IdentifierString nodeName(name + start, (end == -1 ? _ELENA_::getlength(name) : end) - start);
+            IdentifierString nodeName(name + start, (end == NOTFOUND_POS ? getlength(name) : end) - start);
             Gtk::TreeModel::iterator it = children.begin();
             while (it != children.end()) {
                Gtk::TreeModel::Row row = *it;
@@ -320,13 +322,13 @@ void GTKIDEWindow :: onProjectChange(bool empty)
 
                if (nodeName.compare(current.c_str()))
                   break;
-  
+
                it++;
             }
             if (it == children.end()) {
                Gtk::TreeModel::Row row = *(_projectTree->append(children));
-               row[_projectTreeColumns._caption] = (const char*)nodeName;
-               row[_projectTreeColumns._index] = end == -1 ? index : -1;
+               row[_projectTreeColumns._caption] = nodeName.str();
+               row[_projectTreeColumns._index] = end == NOTFOUND_POS ? index : NOTFOUND_POS;
 
                children = row.children();
             }
@@ -334,14 +336,12 @@ void GTKIDEWindow :: onProjectChange(bool empty)
 
             start = end + 1;
          }
-
+         index++;
       }
    }
 
-   projectView->expand(root);
-/*
+//   projectView->expand(root);
    show_all_children();
-*/
 }
 
 void GTKIDEWindow :: onProjectRefresh(bool empty)
