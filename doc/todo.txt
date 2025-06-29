@@ -17,10 +17,10 @@ In development:
   --------------------------------------
   * project view : select a file
   * hide / select project view
-  * open project
-  * save project
+  * 
   * save all
   * close project
+  * exit menu
   --------------------------------------
   * migrate the recent changes
   * create a script
@@ -41,7 +41,8 @@ In development:
   - #35 : working on webapi
   - #622 : api backlog
   ide:  
-  - #184 : IDE linux - compile the project, project settings, new project, editor settings, debug settings
+  - #184 : IDE linux - project settings, new project, save project, editor settings, debug settings, compile the project
+  - #184 : IDE linux - toolbar
   - compile in the separate thread  
   - async method - auto watch : self and some variables are not displayed
   maint:

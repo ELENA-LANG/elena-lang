@@ -164,9 +164,6 @@ Gtk::Widget* IDEFactory :: createProjectView()
 {
    Gtk::TreeView* projectView = new Gtk::TreeView();
 
-//   _projectView.signal_row_activated().connect(sigc::mem_fun(*this,
-//              &GTKIDEWindow::on_projectview_row_activated));
-
    projectView->set_size_request(200, -1);
 
    return projectView;

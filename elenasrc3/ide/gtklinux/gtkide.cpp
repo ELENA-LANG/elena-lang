@@ -168,6 +168,8 @@ void GTKIDEWindow :: populate(int counter, Gtk::Widget** children)
 
    projectView->append_column("module", _projectTreeColumns._caption);
 
+   projectView->signal_row_activated().connect(sigc::mem_fun(*this,
+              &GTKIDEWindow::on_projectview_row_activated));
 }
 
 void GTKIDEWindow :: populateMenu()
@@ -284,13 +286,16 @@ void GTKIDEWindow :: on_textframe_change(SelectionEvent event)
 void GTKIDEWindow :: on_projectview_row_activated(const Gtk::TreeModel::Path& path,
     Gtk::TreeViewColumn*)
 {
-  /*Gtk::TreeModel::iterator iter = _projectTree->get_iter(path);
-  if(iter) {
-     Gtk::TreeModel::Row row = *iter;
-     int index = row[_projectTreeColumns._index];
-     if (index >= 0)
-        _controller->selectProjectFile(index);
-  }*/
+   Gtk::TreeModel::iterator iter = _projectTree->get_iter(path);
+   if(iter) {
+      Gtk::TreeModel::Row row = *iter;
+      int index = row[_projectTreeColumns._index];
+      if (index >= 0) {
+         _controller->doOpenProjectSourceByIndex(_model, index);
+
+        _children[_model->ideScheme.textFrameId]->grab_focus();
+      }
+   }
 }
 
 void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
