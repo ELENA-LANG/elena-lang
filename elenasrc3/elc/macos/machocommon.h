@@ -48,7 +48,7 @@ namespace elena_lang
 
    typedef List<Command*, freeobj> Commands;
 
-   typedef vm_prot_t int;
+   typedef int                     vm_prot_t ;
 
    constexpr int PROT_R = 1;
    constexpr int PROT_W = 2;
