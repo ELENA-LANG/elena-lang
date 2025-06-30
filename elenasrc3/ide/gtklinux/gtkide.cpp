@@ -265,6 +265,13 @@ void GTKIDEWindow :: populateMenu()
    loadUI(ui_info, "/MenuBar");
 }
 
+Glib::RefPtr<Gtk::Action> GTKIDEWindow :: getMenuItem(ustr_t name)
+{
+   IdentifierString path("/ui/MenuBar/", name);
+
+   return _refUIManager->get_action(path.str());
+}
+
 void GTKIDEWindow :: on_text_model_change(TextViewModelEvent event)
 {
 //   if (test(rec->status, STATUS_COLORSCHEME_CHANGED)) {

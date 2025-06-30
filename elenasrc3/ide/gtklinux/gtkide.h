@@ -44,6 +44,8 @@ protected:
 
    void populateMenu();
 
+   Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
+
    // event signals
    void on_menu_file_new_source()
    {
@@ -193,6 +195,8 @@ protected:
    }
    void on_menu_project_view()
    {
+      bool visible = toggleVisibility(_model->ideScheme.projectView);
+      checkMenuItemById("ViewMenu/ProjectView", visible);
    }
    void on_menu_project_output()
    {

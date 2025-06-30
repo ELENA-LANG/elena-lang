@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK SDI Control Header File
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKSDI_H
@@ -27,7 +27,26 @@ protected:
    int           _childCounter;
    Gtk::Widget** _children;
 
+   bool _skip; // HOTFIX : to prevent infinite checkmenuitem call
+
    void loadUI(Glib::ustring ui_info, const char* name);
+
+   bool toggleVisibility(int childIndex);
+
+   virtual Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) = 0;
+
+   virtual void checkMenuItemById(ustr_t name, bool doEnable)
+   {
+      Glib::RefPtr<Gtk::Action> menuItem = getMenuItem(name);
+
+      Glib::RefPtr<Gtk::ToggleAction> toggleItem =
+         Glib::RefPtr<Gtk::ToggleAction>::cast_static(menuItem);
+
+      if (toggleItem->get_active() != doEnable) {
+         _skip = true;
+         toggleItem->set_active(doEnable);
+      }
+   }
 
 public:
    void populate(int counter, Gtk::Widget** children);

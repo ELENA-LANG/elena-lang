@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK SDI Control Implementation File
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtksdi.h"
@@ -16,6 +16,7 @@ SDIWindow :: SDIWindow()
 {
    _children = nullptr;
    _childCounter = 0;
+   _skip = false;
 
    add(_box);
 
@@ -63,3 +64,14 @@ void SDIWindow :: loadUI(Glib::ustring ui_info, const char* name)
       _box.pack_start(*pMenubar, Gtk::PACK_SHRINK);
 }
 
+
+bool SDIWindow :: toggleVisibility(int childIndex)
+{
+   bool visible = _children[childIndex]->get_visible();
+
+   visible = !visible;
+
+   _children[childIndex]->set_visible(visible);
+
+   return visible;
+}
