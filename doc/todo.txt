@@ -15,7 +15,6 @@ In development:
   --------------------------------------
   - #184 : IDE linux
   --------------------------------------
-  * project view : select a file
   * hide / select project view
   * save all
   * close project

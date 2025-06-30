@@ -33,8 +33,8 @@ public:
    void makePathRelative(PathString& path, path_t rootPath) override
    {
       size_t len = getlength(rootPath);
-      if (path.str().compare(rootPath, len)) {
-         Path tempPath(path + len);
+      if ((*path).compare(rootPath, len)) {
+         PathString tempPath(path.str() + len);
 
          path.copy(tempPath.str());
       }
