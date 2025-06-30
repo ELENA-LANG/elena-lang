@@ -17,6 +17,8 @@
 #include "separser.h"
 #include "serializer.h"
 
+//#define SHOW_BREAKPOINTS 1
+
 using namespace elena_lang;
 
 // --- AddressMapper ---
@@ -159,7 +161,7 @@ bool CompilingProcess::TemplateGenerator :: importExpressionTemplate(ModuleScope
    return true;
 }
 
-bool CompilingProcess::TemplateGenerator :: importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+bool CompilingProcess::TemplateGenerator :: importParameterizedTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
    SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
@@ -168,7 +170,7 @@ bool CompilingProcess::TemplateGenerator :: importEnumTemplate(ModuleScopeBase& 
    if (!sectionInfo.section)
       return false;
 
-   _processor.importEnumTemplate(sectionInfo.section, target, arguments, parameters);
+   _processor.importParameterizedTemplate(sectionInfo.section, target, arguments, parameters);
 
    return true;
 }
@@ -308,14 +310,14 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
    path_t modulePrologName, path_t prologName, path_t epilogName,
    PresenterBase* presenter, ErrorProcessor* errorProcessor,
    pos_t codeAlignment,
-   JITSettings defaultCoreSettings,
+   ProcessSettings& defaultCoreSettings,
    JITCompilerBase* (*compilerFactory)(PlatformType)
 ) :
    _appPath(appPath),
-   _templateGenerator(this),
-   _forwards(nullptr),
    _parser(nullptr),
-   _traceMode(false)
+   _templateGenerator(this),
+   _traceMode(false),
+   _forwards(nullptr)
 {
    _exeExtension = exeExtension;
    _modulePrologName = modulePrologName;
@@ -577,15 +579,17 @@ void CompilingProcess :: printBuildTree(ModuleBase* module, BuildTree& buildTree
    List<BuildKey> filters(BuildKey::None);
    if (!_verbose) {
       filters.add(BuildKey::Path);
+#ifndef SHOW_BREAKPOINTS
       filters.add(BuildKey::Breakpoint);
       filters.add(BuildKey::VirtualBreakpoint);
       filters.add(BuildKey::EOPBreakpoint);
+      filters.add(BuildKey::OpenStatement);
+      filters.add(BuildKey::EndStatement);
+#endif
       filters.add(BuildKey::ClassName);
       filters.add(BuildKey::MethodName);
       filters.add(BuildKey::VariableInfo);
       filters.add(BuildKey::ArgumentsInfo);
-      filters.add(BuildKey::OpenStatement);
-      filters.add(BuildKey::EndStatement);
       filters.add(BuildKey::Idle);
    }
 
@@ -685,7 +689,27 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
 
 void CompilingProcess :: configurateParser(SyntaxVersion version)
 {
-   PathString syntaxPath(_appPath, version == SyntaxVersion::L5 ? SYNTAX50_FILE : SYNTAX60_FILE);
+   ustr_t syntaxDialect = SYNTAX67_FILE;
+   switch (version) {
+      case SyntaxVersion::L5:
+         syntaxDialect = SYNTAX50_FILE;
+         if (_verbose)
+            _presenter->printLine("EL5 Dialect");
+         break;
+      case SyntaxVersion::L6:
+         syntaxDialect = SYNTAX60_FILE;
+         if (_verbose)
+            _presenter->printLine("EL6 Dialect");
+         break;
+      default:
+      case SyntaxVersion::L7:
+         syntaxDialect = SYNTAX67_FILE;
+         if (_verbose)
+            _presenter->printLine("EL7 Dialect");
+         break;
+   }   
+
+   PathString syntaxPath(_appPath, syntaxDialect);
    FileReader syntax(*syntaxPath, FileRBMode, FileEncoding::Raw, false);
    if (syntax.isOpen()) {
       TerminalMap terminals(
@@ -737,6 +761,9 @@ void CompilingProcess :: configurate(Project& project)
    bool strictTypeFlag = project.BoolSetting(ProjectOption::StrictTypeEnforcing, DEFAULT_STRICT_TYPE_ENFORCING);
    _compiler->setStrictTypeFlag(strictTypeFlag);
 
+   bool nullableTypeWarning = project.BoolSetting(ProjectOption::NullableTypeWarning, DEFAULT_NULLABLE_TYPE_WARNING);
+   _compiler->setNullableTypeFlag(nullableTypeWarning);
+
    // load program forwards
    for (auto it = _forwards.start(); !it.eof(); ++it) {
       ustr_t f = *it;
@@ -750,11 +777,7 @@ void CompilingProcess :: configurate(Project& project)
    }
 }
 
-void CompilingProcess :: compile(ProjectBase& project,
-   pos_t defaultStackAlignment,
-   pos_t defaultRawStackAlignment,
-   pos_t defaultEHTableEntrySize,
-   int minimalArgList)
+void CompilingProcess :: compile(ProjectBase& project, JITCompilerSettings& jitSettings)
 {
    if (_parser == nullptr) {
       _errorProcessor->raiseInternalError(errParserNotInitialized);
@@ -774,9 +797,9 @@ void CompilingProcess :: compile(ProjectBase& project,
    while (!module_it->eof()) {
       ModuleSettings moduleSettings =
       {
-         project.UIntSetting(ProjectOption::StackAlignment, defaultStackAlignment),
-         project.UIntSetting(ProjectOption::RawStackAlignment, defaultRawStackAlignment),
-         project.UIntSetting(ProjectOption::EHTableEntrySize, defaultEHTableEntrySize),
+         project.UIntSetting(ProjectOption::StackAlignment, jitSettings.stackAlignment),
+         project.UIntSetting(ProjectOption::RawStackAlignment, jitSettings.rawStackAlignment),
+         project.UIntSetting(ProjectOption::EHTableEntrySize, jitSettings.ehTableEntrySize),
          project.BoolSetting(ProjectOption::DebugMode, true),
          {
             project.StringSetting(ProjectOption::ManifestName),
@@ -791,7 +814,7 @@ void CompilingProcess :: compile(ProjectBase& project,
          lexical_it,
          *module_it, &syntaxTree, &project, &project,
          moduleSettings,
-         minimalArgList,
+         jitSettings.minimalStackLength,
          sizeof(uintptr_t));
 
       ++(*module_it);
@@ -855,6 +878,10 @@ void CompilingProcess :: greeting(PresenterBase* presenter)
 {
    // Greetings
    presenter->print(ELC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELC_REVISION_NUMBER);
+
+#if CROSS_COMPILE_MODE
+   presenter->print(ELC_CROSS_COMPILE_GREETING);
+#endif
 }
 
 void CompilingProcess :: cleanUp(ProjectBase& project)
@@ -905,10 +932,7 @@ int CompilingProcess :: clean(Project& project)
 
 int CompilingProcess :: build(Project& project,
    LinkerBase& linker,
-   pos_t defaultStackAlignment,
-   pos_t defaultRawStackAlignment,
-   pos_t defaultEHTableEntrySize,
-   int minimalArgList,
+   JITCompilerSettings& jitSettings,
    ustr_t profile)
 {
    try
@@ -935,7 +959,7 @@ int CompilingProcess :: build(Project& project,
       _presenter->printLine(ELC_CLEANING);
       cleanUp(project);
 
-      compile(project, defaultStackAlignment, defaultRawStackAlignment, defaultEHTableEntrySize, minimalArgList);
+      compile(project, jitSettings);
 
       // generating target when required
       switch (targetType) {
@@ -1002,109 +1026,5 @@ int CompilingProcess :: build(Project& project,
       _presenter->print(ELC_UNSUCCESSFUL);
 
       return ERROR_RET_CODE;
-   }
-}
-
-// --- CommandHelper ---
-
-void CommandHelper :: handleOption(ustr_t arg, IdentifierString& profile, Project& project, CompilingProcess& process,
-   ErrorProcessor& errorProcessor, bool& cleanMode)
-{
-   switch (arg[1]) {
-      case 'e':
-         if (arg.compare("-el5")) {
-            project.setSyntaxVersion(SyntaxVersion::L5);
-         }
-         else if (arg.compare("-el6")) {
-            project.setSyntaxVersion(SyntaxVersion::L6);
-         }
-         break;
-      case 'f':
-         process.addForward(arg + 2);
-         break;
-      case 'l':
-         profile.copy(arg + 2);
-         break;
-      case 'm':
-         project.addBoolSetting(ProjectOption::MappingOutputMode, true);
-         break;
-      case 'o':
-         if (arg[2] == '0') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optNone);
-         }
-         else if (arg[2] == '1') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optLow);
-         }
-         else if (arg[2] == '2') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optMiddle);
-         }
-         else if (arg[2] == '3') {
-            project.addIntSetting(ProjectOption::OptimizationMode, optHigh);
-         }
-         break;
-      case 'p':
-      {
-         PathString path(arg + 2);
-
-         project.setBasePath(*path);
-         break;
-      }
-      case 'r':
-         cleanMode = true;
-         break;
-      case 's':
-      {
-         ustr_t setting = arg + 2;
-         if (setting.compareSub("stackReserv:", 0, 12)) {
-            ustr_t valStr = setting + 12;
-            int val = StrConvertor::toInt(valStr, 10);
-            project.addIntSetting(ProjectOption::StackReserved, val);
-         }
-         break;
-      }
-      case 'v':
-         process.setVerboseOn();
-         break;
-      case 'w':
-         if (arg[2] == '0') {
-            errorProcessor.setWarningLevel(WarningLevel::Level0);
-         }
-         else if (arg[2] == '1') {
-            errorProcessor.setWarningLevel(WarningLevel::Level1);
-         }
-         else if (arg[2] == '2') {
-            errorProcessor.setWarningLevel(WarningLevel::Level2);
-         }
-         else if (arg[2] == '3') {
-            errorProcessor.setWarningLevel(WarningLevel::Level3);
-         }
-         break;
-      case 'x':
-         if (arg[2] == 'b') {
-            project.addBoolSetting(ProjectOption::ConditionalBoxing, arg[3] != '-');
-         }
-         else if (arg[2] == 'e') {
-            project.addBoolSetting(ProjectOption::EvaluateOp, arg[3] != '-');
-         }
-         else if (arg[2] == 'j') {
-            project.addBoolSetting(ProjectOption::WithJumpAlignment, arg[3] != '-');
-         }
-         else if (arg[2] == 'm') {
-            project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, arg[3] != '-');
-         }
-         else if (arg[2] == 'p') {
-            project.addBoolSetting(ProjectOption::GenerateParamNameInfo, arg[3] != '-');
-         }
-         else if (arg[2] == 's') {
-            project.addBoolSetting(ProjectOption::StrictTypeEnforcing, arg[3] != '-');
-         }
-         break;
-      case '-':
-         if (arg.compare("--tracing")) {
-            project.addBoolSetting(ProjectOption::TracingMode, true);
-         }
-         break;
-      default:
-         break;
    }
 }

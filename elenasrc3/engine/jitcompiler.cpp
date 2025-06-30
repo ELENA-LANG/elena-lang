@@ -2915,7 +2915,7 @@ void JITCompiler :: loadCoreRoutines(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings,
+   ProcessSettings& settings,
    Map<ref_t, pos_t>& positions, bool declareMode, bool virtualMode)
 {
    // preload core data
@@ -2957,7 +2957,7 @@ void JITCompiler :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings,
+   ProcessSettings& settings,
    bool virtualMode)
 {
    if (settings.withAlignedJump) {
@@ -3101,6 +3101,13 @@ void JITCompiler :: allocateThreadContent(MemoryWriter* tlsWriter)
 
    // allocate tls section
    tlsWriter->write(&content, (pos_t)sizeof(ThreadContent));
+
+#if defined(__unix__)
+   // NOTE : the thread context is followed by cond variable for Unix / Linux / FreeBSD
+//   pthread_cond_t cond = {};
+//   tlsWriter->write(&cond, (pos_t)sizeof(pthread_cond_t));
+#endif
+
 }
 
 void JITCompiler :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo)
@@ -3131,6 +3138,7 @@ void JITCompiler :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer,
 
          switch (currentMask) {
             case mskMssgNameLiteralRef:
+            case mskPropNameLiteralRef:
                writer.writeDWord(helper->importMessage(
                   ByteCodeUtil::resolveMessageName(
                      sectionInfo->module->resolveAction(currentRef, dummy), sectionInfo->module, true)));
@@ -3159,7 +3167,7 @@ void JITCompiler32 :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings,
+   ProcessSettings& settings,
    bool virtualMode)
 {
    _constants.indexPower = 2;
@@ -3711,7 +3719,7 @@ void JITCompiler64 :: prepare(
    ImageProviderBase* imageProvider,
    ReferenceHelperBase* helper,
    LabelHelperBase* lh,
-   JITSettings settings,
+   ProcessSettings& settings,
    bool virtualMode)
 {
    _constants.indexPower = 3;

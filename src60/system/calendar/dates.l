@@ -352,7 +352,7 @@ namespace calendar
             
          int months := val;        
          int years := months / 12;        
-         months := months -  months / 12 * 12;
+         months := months - months / 12 * 12;
     
          int n := st.Month;
          months := months + n;

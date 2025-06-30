@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x0010
+   #define ASM_REVISION_NUMBER               0x0015
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -54,7 +54,7 @@ namespace elena_lang
    constexpr auto RDATA64_ARGUMENT1          = "rdata64";
    constexpr auto QWORD_ARGUMENT2            = "__arg64_2";
 
-   constexpr auto ASM_GREETING               = "ELENA Assembler Compiler %d.%d.%d (C)2011-2025 by Alexei Rakov\n";
+   constexpr auto ASM_GREETING               = "ELENA Assembler Compiler %d.%d.%d (C)2011-2025 by Aleksey Rakov\n";
    constexpr auto ASM_HELP                   = "asmc-cli [-amd64 | -x86] [-windows | -linux] <file> <output path> [<output_name>]\n";
 
    constexpr auto ASM_COMPILE_X86            = "X86 Assembler : compiling %s\n";
@@ -104,7 +104,7 @@ namespace elena_lang
    constexpr auto ASM_LABEL_EXISTS           = "Label with such a name already exists (%d)\n";
    constexpr auto BASM_ARGUMENTS_TOO_MANY    = "The externally callable function must have no more than 4 arguments (%d)\n";
 
-   constexpr auto ASM_CANNOTCREATE_OUTPUT    = "Cannot create an output file\n";
+   constexpr auto ASM_CANNOTCREATE_OUTPUT    = "Cannot create an output file \"%s\"\n";
    constexpr auto ASM_CANNOTOPEN_INPUT       = "Cannot open %s an input file\n";
 
 }

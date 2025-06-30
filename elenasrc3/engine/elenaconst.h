@@ -13,11 +13,11 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION              6                    // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              6
+   #define ENGINE_MINOR_VERSION              7
 
    constexpr auto LINE_LEN                   = 0x1000;            // the maximal source line length
    constexpr auto IDENTIFIER_LEN             = 0x0300;            // the maximal identifier length
-   constexpr auto MESSAGE_LEN                = 0x400;             // the maximal message length
+   constexpr auto MESSAGE_LEN                = 0x500;             // the maximal message length
 
   // --- ELENA Standart message constants ---
    constexpr auto ACTION_ORDER               = 9;
@@ -56,7 +56,6 @@ namespace elena_lang
    constexpr auto TEMPLATE_MAPPING           = "#templates";
 
    constexpr auto WEAK_POSTFIX               = "#weak";
-   constexpr auto ENUM_POSTFIX               = "#enum";
    constexpr auto BYREF_POSTFIX              = "#byref";
 
    constexpr auto NAMESPACE_REF              = "$namespace";
@@ -198,7 +197,8 @@ namespace elena_lang
    enum class SyntaxVersion
    {
       L6 = 0,
-      L5 = 1
+      L5 = 1,
+      L7 = 2
    };
 
    // --- ELENA Platform type ---
@@ -221,6 +221,7 @@ namespace elena_lang
       Linux_PPC64le  = 0x00025,
       Linux_PPC32le  = 0x00026,
 
+      MacOS_x86_64   = 0x00032,
       MacOS_ARM64    = 0x00034,
 
       FreeBSD_x86_64 = 0x00042,
@@ -364,6 +365,7 @@ namespace elena_lang
    constexpr ref_t mskDistrTypeListRef    = 0x28000000u;
    constexpr ref_t mskTLSVariable         = 0x29000000u;
    constexpr ref_t mskMetaInfo            = 0x2A000000u;
+   constexpr ref_t mskPropNameLiteralRef  = 0x2B000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef             = 0x01000000u;

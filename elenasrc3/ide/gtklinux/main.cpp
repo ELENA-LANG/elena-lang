@@ -27,16 +27,32 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
 #endif
 
+class PathHelper : public PathHelperBase
+{
+public:
+   void makePathRelative(PathString& path, path_t rootPath) override
+   {
+      size_t len = getlength(rootPath);
+      if ((*path).compare(rootPath, len)) {
+         PathString tempPath(path.str() + len);
+
+         path.copy(tempPath.str());
+      }
+   }
+};
+
 int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);
 
    TextViewSettings textViewSettings = { EOLMode::LF, false, 3 };
 
+   PathHelper    pathHelper;
+
    IDEModel      ideModel(textViewSettings);
    GUISettinngs  settings = { true };
-   IDEController     ideController(/*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr, /*&debugProcess*/nullptr, &ideModel,
-                        CURRENT_PLATFORM, /*&pathHelper*/nullptr, /*compareFileModifiedTime*/nullptr);
+   IDEController ideController(/*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr, /*&debugProcess*/nullptr, &ideModel,
+                        CURRENT_PLATFORM, &pathHelper, /*compareFileModifiedTime*/nullptr);
    IDEFactory    factory(&ideModel, &ideController, settings);
 
    GUIApp* app = factory.createApp();

@@ -79,7 +79,7 @@ void PathUtil :: makeCorrectExePath(PathString& target)
    }
 }
 
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__MACH__)
 
 #include <unistd.h>
 #include <sys/stat.h>

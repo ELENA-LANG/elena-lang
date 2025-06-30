@@ -24,6 +24,21 @@
             <output>../../lib60_64</output>
         </project>
     </platform>
+    <platform key="Win_x86">
+        <project>
+            <output>../../lib60_win</output>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <output>../../lib60_64_win</output>
+        </project>
+    </platform>
+    <platform key="Win_x64_BSD">
+        <project>
+            <output>../../lib60_64_win</output>
+        </project>
+    </platform>
     <files>
         <module>
             <file>xmlnode.l</file>
@@ -34,7 +49,7 @@
     </files>
     <manifest>
        <name>ELENA XML Library</name>
-       <version>6.6.1</version>
+       <version>6.7.3</version>
        <author>Aleksey Rakov</author>
     </manifest>
     <project>

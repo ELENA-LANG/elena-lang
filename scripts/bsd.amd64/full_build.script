@@ -1,0 +1,48 @@
+#!/bin/sh
+
+read -p "Rebuild the project (y/n)? " -r CONT
+echo    # (optional) move to a new line
+if [ $CONT = "y" ];
+then
+
+	(cd ../.. && make clean_amd64 all_amd64)
+
+fi
+
+read -p "Install locally (in bin directory) (y/n)? " -r CONT
+echo    # (optional) move to a new line
+if [ $CONT = "y" ];
+then
+
+	. local_build_package_amd64.script 
+
+	read -p "Build cross-compile version (y/n)?" -r CONT
+	echo    # (optional) move to a new line
+	if [ $CONT = "y" ];
+	then
+
+		(cd ../.. && make clean_cross_elc_amd64 clang_cross_elc_amd64)
+
+		. local_build_package_win64.script 
+
+	fi
+
+	. local_runtests.script 
+
+else
+
+	. build_package_amd64.script
+
+	read -p "Build cross-compile version (y/n)? " -r CONT
+	echo    # (optional) move to a new line
+	if [ $CONT = "y" ];
+	then
+
+		(cd ../.. && make clean_cross_elc_amd64 clang_cross_elc_amd64)
+
+		. build_package_win64.script 
+	fi
+
+fi
+
+exit 0

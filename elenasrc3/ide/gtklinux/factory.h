@@ -43,17 +43,18 @@ namespace elena_lang
       StyleInfo*     _schemes[3];
       GUISettinngs   _settings;
 
-      //HINSTANCE      _instance;
-      //int            _cmdShow;
-
       IDEModel*      _model;
       IDEController* _controller;
 
       //void registerClasses();
 
       Gtk::Widget* createTextControl();
+      Gtk::Widget* createProjectView();
 
       //void initializeModel(IDEModel* ideView);
+
+      void initializeScheme(int frameTextIndex,
+         int projectView);
 
    public:
       void reloadStyles(TextViewModelBase* viewModel) override;

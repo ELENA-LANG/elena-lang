@@ -122,6 +122,8 @@ namespace elena_lang
 
       virtual int getRelocationType() = 0;
 
+      virtual void writeRELA(MemoryWriter& dynamicWriter, ref_t importRef, pos_t reltabOffset, pos_t count);
+
       pos_t fillElfHashTable(ElfData& elfData, MemoryBase* image, int nbucket, int nchain);
       void fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment, RelocationMap& importMapping) override;
 
@@ -132,6 +134,7 @@ namespace elena_lang
    // --- ElfAmd64ImageFormatter ---
    class ElfAmd64ImageFormatter : public Elf64ImageFormatter
    {
+   protected:
       ElfAmd64ImageFormatter(ForwardResolverBase* resolver)
          : Elf64ImageFormatter(resolver)
       {
@@ -150,6 +153,27 @@ namespace elena_lang
       static ElfAmd64ImageFormatter& getInstance(ForwardResolverBase* resolver)
       {
          static ElfAmd64ImageFormatter instance(resolver);
+
+         return instance;
+      }
+   };
+
+   // --- ElfAmd64ImageFormatter ---
+   class ElfFreeBSDAmd64ImageFormatter : public ElfAmd64ImageFormatter
+   {
+      ElfFreeBSDAmd64ImageFormatter(ForwardResolverBase* resolver)
+         : ElfAmd64ImageFormatter(resolver)
+      {
+      }
+
+      int getRelocationType() override;
+
+      void writeRELA(MemoryWriter& dynamicWriter, ref_t importRef, pos_t reltabOffset, pos_t count) override;
+
+   public:
+      static ElfFreeBSDAmd64ImageFormatter& getInstance(ForwardResolverBase* resolver)
+      {
+         static ElfFreeBSDAmd64ImageFormatter instance(resolver);
 
          return instance;
       }

@@ -171,10 +171,10 @@ public singleton ByteArrayExConvertor
 {
    byte[] convert(string s)
    {
-      int    i := 0;
-      byte[] retVal := nil;
-      int    length := s.Length; 
-      int    remaining := length;
+      int     i := 0;
+      byte[]? retVal := nil;
+      int     length := s.Length; 
+      int     remaining := length;
             
       while (i < length)
       {
@@ -199,7 +199,7 @@ public singleton ByteArrayExConvertor
          remaining := remaining - len
       };
             
-      ^ retVal
+      ^ retVal ?? Array<byte>.MinValue
    }  
 }
 

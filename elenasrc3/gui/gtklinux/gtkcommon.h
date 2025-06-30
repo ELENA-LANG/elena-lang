@@ -54,6 +54,8 @@ namespace elena_lang
 
       void refresh() override {}
 
+      void invalidate() override {}
+
       WindowWrapper(Gtk::Window* window)
       {
          _window = window;

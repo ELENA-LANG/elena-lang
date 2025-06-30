@@ -3,14 +3,14 @@
 //
 //		Copmpiler messages 
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "errors.h"
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 104;
+   constexpr auto MessageLength = 107;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -57,6 +57,7 @@ namespace elena_lang
       {errDuplicatedField, errMsgDuplicatedField},
       {errEmptyStructure, errMsgEmptyStructure},
       {errUnknownClass, errMsgUnknownClass},
+      {wrnNillableTarget, wrnMsgNillableTarget},
       {wrnUnknownModule, wrnMsgUnknownModule},
       {wrnDuplicateInclude, wrnMsgDuplicateInclude},
       {errUnknownVariableType, errMsgUnknownVariableType},
@@ -68,6 +69,7 @@ namespace elena_lang
       {infoNewMethod, infoMsgNewMethod},
       {infoCurrentMethod, infoMsgCurrentMethod},
       {infoUnknownMessage, infoMsgUnknownMessage},
+      {infoMessageInfo, infoMsgMessageInfo},
       {infoTargetClass, infoMsgTargetClass},
       {infoScopeMethod, infoMsgScopeMethod},
       {infoCurrentClass, infoMsgCurrentClass},
@@ -111,12 +113,13 @@ namespace elena_lang
       {errIllegalStaticMethod, errMsgIllegalStaticMethod },
       {errAssigningRealOnly, errMssgAssigningRealOnly },
       {infoExptectedType, infoMssgExptectedType },
-      {errCBrExpectedSyntax, errMssgCBrExpectedSyntax},
-      {wrnAssigningNillable, wrnMssgAssigningNillable},
-      {wrnReturningNillable, wrnMssgReturningNillable},
+      {errCBrExpectedSyntax, errMsgCBrExpectedSyntax},
+      {wrnAssigningNillable, wrnMsgAssigningNillable},
+      {wrnReturningNillable, wrnMsgReturningNillable},
       {errFailedMemoryAllocation, errMssgFailedMemoryAllocation},
       {errMissingNamespace , errMsgMissingNamespace },
-      { infoInternalDefConstructor , infoMsgInternalDefConstructor },
+      {infoInternalDefConstructor ,infoMsgInternalDefConstructor},
+      {errNotSupportedPlatform ,errMsgNotSupportedPlatform},
    };
 
 }

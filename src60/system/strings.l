@@ -4,7 +4,7 @@ public sealed Array<T> : Indexable<T>
 {
    embeddable __string T[] array;
 
-   static Array<T> Default
+   static Array<T>? Default
       = nil;
 
    static Array<T> MinValue
@@ -105,9 +105,7 @@ public sealed Array<T> : Indexable<T>
          ^ array[n] 
       };
 
-      system'InvalidArgumentException.raise();
-
-      ^ default
+      ^ system'InvalidArgumentException.raise();
    }
 
    setAt(int n, T item)
@@ -174,6 +172,17 @@ public sealed Array<T> : Indexable<T>
         
       ^ copy
    }
+   
+   Array cast()
+   {
+      int len := self.Length;
+      auto clone := Array.allocate(len);
+      for (int i := 0; i < len; i++) {
+         clone[i] := array[i];
+      };
+      
+      ^ clone
+   }   
 }
 
 // --- Variadic Array template ---
@@ -797,7 +806,7 @@ public const struct String : BaseValue,
       int len := args.Length;
       int bufLen := 0;
 
-      string retVal := nil;
+      string? retVal := nil;
       for(int i := 0; i < len; i++) {
          string arg := args[i].toPrintable();
          int argLen := arg.Length;
@@ -822,7 +831,7 @@ public const struct String : BaseValue,
       }
       else retVal := retVal + tempStr;
 
-      ^ retVal;      
+      ^ retVal!;      
    }
 
    wide cast()
@@ -2068,3 +2077,15 @@ class BitArray32Enumerator : Enumerator<bool>
     
    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
+
+#if (__project["_Win"]) // Windows
+
+public const String NewLineConstant
+    = $13$10;
+
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+public const string NewLineConstant
+    = ""$10;
+
+#endif

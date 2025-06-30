@@ -241,6 +241,7 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr, bool wit
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
       case mskMssgNameLiteralRef:
+      case mskPropNameLiteralRef:
          referenceName = arg ? _module->resolveConstant(arg & ~mskAnyRef) : nullptr;
          break;
       default:
@@ -300,6 +301,9 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr, bool wit
          break;
       case mskMssgNameLiteralRef:
          appendPrefix(commandStr, "mssgname:", withTabbing);
+         break;
+      case mskPropNameLiteralRef:
+         appendPrefix(commandStr, "propname:", withTabbing);
          break;
       default:
          commandStr.append(":");
@@ -947,6 +951,9 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
          if (methodInfo.outputRef) {
             line.append("->");
             line.append(_module->resolveReference(methodInfo.outputRef));
+            if (test(methodInfo.hints, (ref_t)MethodHint::Nillable)) {
+               line.append("?");
+            }
          }
          if (_showMethodInfo && _showBytecodes) {
             line.append(" [");

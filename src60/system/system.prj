@@ -9,6 +9,11 @@
             <output>..\..\lib60_64</output>
         </project>
     </platform>
+    <platform key="Linux_AMD64">
+        <project>
+            <output>..\..\lib60_64_lnx</output>
+        </project>
+    </platform>
     <project>
         <executable></executable>
         <options>-v</options>
@@ -18,7 +23,7 @@
     </project>
     <manifest>
         <name>ELENA Standard Library</name>
-        <version>6.6.9</version>
+        <version>6.7.7</version>
         <author>Aleksey Rakov</author>
     </manifest>
     <files>
@@ -49,14 +54,11 @@
             <include>closures.l</include>
             <include>convertors.l</include>
             <include>pointers.l</include>
-            <include>win_primitives.l</include>
             <include>dynamic.l</include>
             <include>exceptions.l</include>
             <include>events.l</include>
             <include>console.l</include>
             <include>app.l</include>
-            <include>win_app.l</include>
-            <include>win_strings.l</include>
             <include>template_tests.l</include>
             <include>collections\list.l</include>
             <include>collections\queues.l</include>
@@ -65,23 +67,21 @@
             <include>collections\sorted_list.l</include>
             <include>collections\template_tests.l</include>
             <include>math\math.l</include>
-            <include>calendar\win_datetime.l</include>
+            <include>calendar\date_routines.l</include>
             <include>calendar\dates.l</include>
             <include>culture\common.l</include>
             <include>culture\win_locale.l</include>
             <include>text\encoding.l</include>
-            <include>text\win_encoding.l</include>
             <include>text\textbuffer.l</include>
             <include>text\base64.l</include>
             <include>io\common.l</include>
             <include>io\streamreader.l</include>
             <include>io\streamwriter.l</include>
             <include>io\memorystream.l</include>
-            <include>io\win_console.l</include>
+            <include>io\console.l</include>
             <include>io\files.l</include>
             <include>io\ioexceptions.l</include>
-            <include>io\win_files.l</include>
-            <include>io\win_getfiles.l</include>
+            <include>io\getfiles.l</include>
         </module>
         <module name="collections'threadsafe">
             <include>collections\threadsafe\queues.l</include>
@@ -100,15 +100,13 @@
             <include>runtime\common.l</include>
             <include>runtime\gc_routines.l</include>
             <include>runtime\vectortable.l</include>
-            <include>runtime\win32_env.l</include>
             <include>runtime\env.l</include>
         </module>
         <module name="threading">
             <include>threading\common.l</include>
-            <include>threading\win32_handlers.l</include>
+            <include>threading\handlers.l</include>
             <include>threading\thread.l</include>
-            <include>threading\win32_semaphores.l</include>
-            <include>threading\win32_events.l</include>
+            <include>threading\semaphores.l</include>
             <include>threading\events.l</include>
             <include>threading\blockinglists.l</include>
             <include>threading\threadpool.l</include>
@@ -132,7 +130,7 @@
             <include>drawing\win_handles.l</include>
             <include>drawing\win_graphics.l</include>
         </module>
-        <module name="winforms">
+        <module name="winforms" platform="windows">
             <include>winforms\win_common.l</include>
             <include>winforms\win32_exceptions.l</include>
             <include>winforms\win_handles.l</include>

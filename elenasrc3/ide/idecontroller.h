@@ -143,7 +143,7 @@ namespace elena_lang
             _notifier->notify(event);
       }
 
-      ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* debugProcess, 
+      ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, IDEDebugProcessBase* debugProcess, 
          ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer)
          : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, sourceController),
@@ -286,7 +286,7 @@ namespace elena_lang
 
       void autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
 
-      IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, DebugProcessBase* process,
+      IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, IDEDebugProcessBase* process,
          IDEModel* model, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer
       ) :
          sourceController(),

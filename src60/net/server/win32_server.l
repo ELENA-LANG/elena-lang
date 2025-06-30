@@ -1,7 +1,7 @@
 import system'collections;
 import system'net;
-//import system'text;
-//import system'io;
+////import system'text;
+////import system'io;
 import system'threading;
 
 import net;
@@ -17,9 +17,9 @@ public sealed class EventBasedTcpServer
    List<TcpClient>   _clients;
 
    Action<TcpClient> OnConnect               : event;
-//   Func<TcpRemoteClient,object> OnLeave                 : event;
+////   Func<TcpRemoteClient,object> OnLeave                 : event;
    Action<TcpClient,byte[],int> OnReceived   : event;
-//   Func<TcpRemoteClient,SocketException,object> OnError : event;
+////   Func<TcpRemoteClient,SocketException,object> OnError : event;
     
    constructor new(int port)
    {
@@ -66,18 +66,18 @@ public sealed class EventBasedTcpServer
 
    private readClients()
    {
-//      int counter := _clients.Length;
-//      for (int i := 0; i < counter; i += 1) {
-//         TcpClient client := _clients[i];
-//
-//         NetworkStream stream := client.stream();
-//         if (stream.isDataAvailable) {
-//            byte buffer[BUFFER_SIZE];
-//            int bytesRead := stream.read(buffer, BUFFER_SIZE);
-//
-//            OnReceived?.(client,buffer,bytesRead)
-//         }
-//      }
+      int counter := _clients.Length;
+      for (int i := 0; i < counter; i += 1) {
+         TcpClient client := _clients[i];
+
+         NetworkStream stream := client.stream();
+         if (stream.isDataAvailable) {
+            byte buffer[BUFFER_SIZE];
+            int bytesRead := stream.read(buffer, BUFFER_SIZE);
+
+            OnReceived?.(client,buffer,bytesRead)
+         }
+      }
    }
 
    private proceed()
@@ -100,18 +100,18 @@ public sealed class EventBasedTcpServer
       _listener.start()
    }
 
-   broadcast(byte[] buffer, int length)
-   {
-//      int counter := _clients.Length;
-//        
-//      for(int i := 0; i < counter; i += 1)
-//      {
-//         TcpClient client := _clients[i];
-//         auto stream := client.stream();
-//            
-//         stream.write(buffer, length)
-//      }
-   }
+//   broadcast(byte[] buffer, int length)
+//   {
+////      int counter := _clients.Length;
+////        
+////      for(int i := 0; i < counter; i += 1)
+////      {
+////         TcpClient client := _clients[i];
+////         auto stream := client.stream();
+////            
+////         stream.write(buffer, length)
+////      }
+//   }
     
    close()
    {

@@ -9,13 +9,18 @@
         <output>..\..\lib60_64</output>
      </project>
   </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <output>..\..\lib60_64_lnx</output>
+     </project>
+  </platform>
   <project>
      <namespace>extensions</namespace>
      <template>lib60</template>
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.6.2</version>
+    <version>6.7.3</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -26,7 +31,6 @@
         <include>basic.l</include>
         <include>tests.l</include>
         <include>random.l</include>
-        <include>win_args.l</include>
         <include>app.l</include>
         <include>formatter.l</include>
         <include>text\strings.l</include>

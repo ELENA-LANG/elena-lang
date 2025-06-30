@@ -14,6 +14,19 @@
 namespace elena_lang
 {
 
+class ProjectTreeColumns : public Gtk::TreeModel::ColumnRecord
+{
+public:
+   Gtk::TreeModelColumn<Glib::ustring> _caption;
+   Gtk::TreeModelColumn<int>           _index;
+
+   ProjectTreeColumns()
+   {
+      add(_caption);
+      add(_index);
+   }
+};
+
 // --- GTKIDEView ---
 
 class GTKIDEWindow : public SDIWindow
@@ -26,7 +39,12 @@ protected:
    FileDialog        projectDialog;
    MessageDialog     messageDialog;
 
+   ProjectTreeColumns           _projectTreeColumns;
+   Glib::RefPtr<Gtk::TreeStore> _projectTree;
+
    void populateMenu();
+
+   Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
 
    // event signals
    void on_menu_file_new_source()
@@ -49,7 +67,9 @@ protected:
    }
    void on_menu_file_quit()
    {
-      //_controller->doExit();
+      if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
+         SDIWindow::exit();
+      }
    }
    void on_menu_file_save()
    {
@@ -177,6 +197,8 @@ protected:
    }
    void on_menu_project_view()
    {
+      bool visible = toggleVisibility(_model->ideScheme.projectView);
+      checkMenuItemById("ViewMenu/ProjectView", visible);
    }
    void on_menu_project_output()
    {
@@ -269,10 +291,17 @@ protected:
    {
    }
 
+   void on_projectview_row_activated(const Gtk::TreeModel::Path& path,
+        Gtk::TreeViewColumn*);
+
    void onDocumentUpdate(DocumentChangeStatus changeStatus);
+   void onProjectChange(bool empty);
+   void onProjectRefresh(bool empty);
    void onIDEStatusChange(int status);
 
 public:
+   void populate(int counter, Gtk::Widget** children);
+
    void on_text_model_change(TextViewModelEvent event);
    void on_textframe_change(SelectionEvent event);
 

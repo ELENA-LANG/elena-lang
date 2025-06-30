@@ -24,7 +24,7 @@ namespace elena_lang
       void* (*_InterpretScript)(const char* script);
       void* (*_InterpretFile)(const char* path, int encoding, bool autoDetect);
       size_t(*_GetStatus)(char* error, size_t maxLength);
-      void(*_Release)(void* tape);
+      void(*_Release)(int id);
       void(*_ClearStack)();
 
    public:

@@ -51,6 +51,11 @@ namespace elena_lang
 
       void loadProfileList(ConfigFile& config);
 
+      bool validatePlatform(ustr_t givenPlatformName)
+      {
+         return validatePlatform(_platform, givenPlatformName);
+      }
+
    public:
       IdentifierList availableProfileList;
 
@@ -59,6 +64,23 @@ namespace elena_lang
       PlatformType TargetType();
       PlatformType UITargetType();
       PlatformType ThreadModeType();
+
+      static bool validatePlatform(PlatformType platform, ustr_t givenPlatformName)
+      {
+         switch (platform) {
+            case PlatformType::Win_x86:
+            case PlatformType::Win_x86_64:
+               return givenPlatformName.compare("windows");
+            case PlatformType::Linux_x86_64:
+            case PlatformType::Linux_x86:
+            case PlatformType::Linux_PPC64le:
+            case PlatformType::Linux_ARM64:
+            case PlatformType::FreeBSD_x86_64:
+               return givenPlatformName.compare("unix");
+            default:
+               return false;
+         }
+      }
 
       void setSyntaxVersion(SyntaxVersion version)
       {
@@ -106,7 +128,7 @@ namespace elena_lang
          : XmlProjectBase(platform), _basePath(path), availableProfileList(DEFAULT_STR)
       {
          _encoding = FileEncoding::UTF8;
-         _syntaxVersion = SyntaxVersion::L6;
+         _syntaxVersion = SyntaxVersion::L7;
 
          _platform = platform;
 
@@ -146,7 +168,7 @@ namespace elena_lang
 
       ProjectSpecs  projectSpecs;
 
-      bool load(path_t path);
+      bool load(PlatformType platform, path_t path);
 
       ProjectCollection()
          : projectSpecs(nullptr)

@@ -3,7 +3,7 @@
 //
 //		This is a main file containing VM terminal
 //
-//                                              (C)2021-2024, by Aleksey Rakov
+//                                              (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -44,17 +44,26 @@ void startInDefaultMode(VMSession& session)
    session.loadScript(ELT_LSCRIPT_CONFIG);
 }
 
+inline void loadTemplate(ELTPresenter& presenter, VMSession& session, TemplateType type, ustr_t name)
+{
+   if (!session.loadTemplate(type, name))
+      presenter.printLine(ELT_CANNOT_LOAD_TEMPLATE, name);
+}
+
 int main(int argc, char* argv[])
 {
    printf(ELT_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_REVISION_NUMBER);
 
-   ELTPresenter presenter;
-   VMSession session(&presenter);
+   PathString appPath;
+   getAppPath(appPath);
 
-   PathString commandPath;
-   getAppPath(commandPath);
-   commandPath.combine(COMMAMD_TEMPLATE);
-   session.loadTemplate(*commandPath);
+   ELTPresenter presenter;
+   VMSession session(*appPath, &presenter);
+
+   loadTemplate(presenter, session, TemplateType::REPL, REPL_TEMPLATE_NAME);
+   loadTemplate(presenter, session, TemplateType::Multiline, MULTILINE_TEMPLATE_NAME);
+   loadTemplate(presenter, session, TemplateType::GetVar, GETVAR_TEMPLATE_NAME);
+   loadTemplate(presenter, session, TemplateType::SetVar, SETVAR_TEMPLATE_NAME);
 
    session.loadScript(ELT_CONFIG);
 

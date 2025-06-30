@@ -10,7 +10,16 @@
 
 using namespace elena_lang;
 
-void MachOLinker::writeSegments(ElfExecutableImage& image, FileWriter* file)
+void MachOLinker :: writeSection(FileWriter* file, MemoryBase* section)
+{
+   if (section != nullptr) {
+      MemoryReader reader(section);
+      file->copyFrom(&reader, section->length());
+   }
+}
+
+
+void MachOLinker :: writeSegments(MachOExecutableImage& image, FileWriter* file)
 {
    for (auto it = image.imageSections.items.start(); !it.eof(); ++it) {
       writeSection(file, (*it).section);
@@ -38,11 +47,11 @@ bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath
    for (auto command_it = image.commands.start(); !command_it.eof(); ++command_it) {
       Command* command = *command_it;
 
-      file->write((char*)command, command->commandSize);
+      executable.write((char*)command, command->commandSize);
    }   
 
    // write sections
-   writeSegments(image, file);
+   writeSegments(image, &executable);
 
    return true;
 }
@@ -50,7 +59,7 @@ bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath
 void MachOLinker :: prepareCommands(MachOExecutableImage& image)
 {
    pos_t fileOffset = 0;
-   for (auto it = image.addressMap.sections.headers.start(); !it.eof(); ++it) {
+   for (auto it = image.imageSections.headers.start(); !it.eof(); ++it) {
       ImageSectionHeader header = *it;
 
       Command* command = createSegmentCommand(header, fileOffset);
@@ -60,13 +69,13 @@ void MachOLinker :: prepareCommands(MachOExecutableImage& image)
    }
 }
 
-void MachOLinker :: prepareMachOImage(MachOExecutableImage& image)
+void MachOLinker :: prepareMachOImage(ImageProviderBase& provider, MachOExecutableImage& image)
 {
    image.flags |= Flags_NoUndefs;
    //image.flags |= Flags_DyldLink;
    //image.flags |= Flags_TwoLevel;
 
-   NoUndefs, DyldLink, TwoLevel, PIE
+   //NoUndefs, DyldLink, TwoLevel, PIE
 
    if (!image.sectionAlignment)
       image.sectionAlignment = SECTION_ALIGNMENT;
@@ -84,11 +93,12 @@ void MachOLinker :: prepareMachOImage(MachOExecutableImage& image)
    prepareCommands(image);
 }
 
-LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, path_t exeExtension)
+LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType osType, PlatformType, path_t exeExtension)
 {
+   bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
    MachOExecutableImage image(withDebugMode);
 
-   prepareMachOImage(/*provider, */image/*, calcHeaderSize()*/);
+   prepareMachOImage(provider, image/*, calcHeaderSize()*/);
 
    PathString exePath(project.PathSetting(ProjectOption::TargetPath));
    exePath.changeExtension(exeExtension);

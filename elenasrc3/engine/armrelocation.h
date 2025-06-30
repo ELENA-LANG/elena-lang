@@ -189,7 +189,7 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          unsigned int opcode = *(unsigned int*)address;
          addr_t addr = (base + space->data) & 0xFFFF;
 
-         opcode |= (addr << 5);
+         opcode |= (((unsigned int)addr) << 5);
 
          *(unsigned int*)address = opcode;
          break;
@@ -197,9 +197,9 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
       case mskCodeRef32Hi:
       {
          unsigned int opcode = *(unsigned int*)address;
-         addr_t addr = base + space->code >> 16;
+         addr_t addr = (base + space->code >> 16) & 0xFFFF;
 
-         opcode |= addr << 5;
+         opcode += ((unsigned int)addr) << 5;
 
          *(unsigned int*)address = opcode;
          break;
@@ -209,7 +209,7 @@ inline void arm64relocate(pos_t pos, ref_t mask, ref_t reference, void* address,
          unsigned int opcode = *(unsigned int*)address;
          addr_t addr = (base + space->code) & 0xFFFF;
 
-         opcode += (addr << 5);
+         opcode += (((unsigned int)addr) << 5);
 
          *(unsigned int*)address = opcode;
          break;

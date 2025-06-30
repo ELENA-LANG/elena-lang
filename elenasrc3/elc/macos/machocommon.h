@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//		This header contains Common ELF types
+//		This header contains Common MachO types
 //                                              (C)2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
@@ -20,13 +20,15 @@ namespace elena_lang
    enum class CPUType : int32_t
    {
       None     = 0,
-      AARCH64  = 0x1000000C;
+      AARCH64  = 0x1000000C,
+      x86      = 0x00000007,
    };
 
    enum class CPUSubType : int32_t
    {
       None    = 0,
-      ARM_ALL = 0
+      ARM_ALL = 0,
+      X86_ALL = 3,
    };
 
    constexpr auto __PAGEZERO_SEGMENT = "__PAGEZERO";
@@ -48,7 +50,7 @@ namespace elena_lang
 
    typedef List<Command*, freeobj> Commands;
 
-   typedef vm_prot_t int;
+   typedef int                     vm_prot_t ;
 
    constexpr int PROT_R = 1;
    constexpr int PROT_W = 2;

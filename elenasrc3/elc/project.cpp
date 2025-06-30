@@ -149,6 +149,7 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
    DynamicString<char> path;
    DynamicString<char> target;
    DynamicString<char> hints;
+   DynamicString<char> platform;
 
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {
@@ -165,6 +166,8 @@ void Project :: loadSourceFiles(ConfigFile& config, ConfigFile::Node& configRoot
          if (!moduleNode.readAttribute("hints", hints)) {
             hints.clear();
          }
+         if (moduleNode.readAttribute(PLATFORM_ATTR, platform) && !validatePlatform(platform.str()))
+            continue;
 
          ReferenceName ns(Namespace(), subNs.str());
          ConfigFile::Collection files;
@@ -499,12 +502,13 @@ void Project :: loadProfileList(ConfigFile& config)
 
 // --- ProjectCollection ---
 
-inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& modules, 
+inline void loadModuleCollection(PlatformType platform, path_t collectionPath, ConfigFile::Collection& modules, 
    ProjectCollection::ProjectSpecs& projectSpecs)
 {
    DynamicString<char> pathStr;
    DynamicString<char> basePathStr;
    DynamicString<char> profileStr;
+   DynamicString<char> platformStr;
    for (auto it = modules.start(); !it.eof(); ++it) {
       ConfigFile::Node node = *it;
       node.readContent(pathStr);
@@ -530,11 +534,15 @@ inline void loadModuleCollection(path_t collectionPath, ConfigFile::Collection& 
          spec->profile = ustr_t(profileStr.str()).clone();
       }
 
+      if (node.readAttribute(PLATFORM_ATTR, platformStr) && !Project::validatePlatform(platform, platformStr.str())) {
+         continue;
+      }
+
       projectSpecs.add(spec);
    }
 }
 
-bool ProjectCollection :: load(path_t path)
+bool ProjectCollection :: load(PlatformType platform, path_t path)
 {
    PathString collectionPath;
    collectionPath.copySubPath(path, false);
@@ -543,7 +551,7 @@ bool ProjectCollection :: load(path_t path)
    if (config.load(path, _encoding)) {
       ConfigFile::Collection modules;
       if (config.select(COLLECTION_CATEGORY, modules)) {
-         loadModuleCollection(*collectionPath, modules, projectSpecs);
+         loadModuleCollection(platform, *collectionPath, modules, projectSpecs);
       }
       else {
          ConfigFile::Collection collections;
@@ -551,7 +559,7 @@ bool ProjectCollection :: load(path_t path)
             for (auto it = collections.start(); !it.eof(); ++it) {
                ConfigFile::Collection subModules;
                if (config.select(*it, "*", subModules)) {
-                  loadModuleCollection(*collectionPath, subModules, projectSpecs);
+                  loadModuleCollection(platform, *collectionPath, subModules, projectSpecs);
                }
             }
          }

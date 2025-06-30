@@ -149,7 +149,6 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 
 LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
-   int r = 0;
    switch (ExceptionInfo->ExceptionRecord->ExceptionCode) {
       case EXCEPTION_BREAKPOINT:
       case EXCEPTION_SINGLE_STEP:

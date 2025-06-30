@@ -29,13 +29,13 @@ namespace elena_lang
       ImageSections   imageSections;
 
       ElfExecutableImage(bool withDebugInfo, PlatformType platformType)
-         : imageSections(ImageSections()), platformType(platformType)
+         : platformType(platformType), imageSections(ImageSections())
       {
          this->fileAlignment = this->sectionAlignment = 0;
          this->flags = 0;
          this->withDebugInfo = withDebugInfo;
          this->withTLS = false;
-      }      
+      }
    };
 
    // --- ElfLinker ---

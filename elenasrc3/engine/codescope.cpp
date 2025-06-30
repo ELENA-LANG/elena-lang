@@ -61,6 +61,8 @@ addr_t ReferenceMapper :: resolveReference(ustr_t referenceName, ref_t sectionMa
          return _statReferences.get(referenceName);
       case mskMssgNameLiteralRef:
          return _subjReferences.get(referenceName);
+      case mskPropNameLiteralRef:
+         return _propSubjReferences.get(referenceName);
       case mskMssgLiteralRef:
       case mskExtMssgLiteralRef:
          return _mssgReferences.get(referenceName);
@@ -108,6 +110,9 @@ void ReferenceMapper :: mapReference(ustr_t referenceName, addr_t address, ref_t
          break;
       case mskMssgNameLiteralRef:
          _subjReferences.add(referenceName, address);
+         break;
+      case mskPropNameLiteralRef:
+         _propSubjReferences.add(referenceName, address);
          break;
       case mskVMTRef:
          _dataReferences.add(referenceName, address);

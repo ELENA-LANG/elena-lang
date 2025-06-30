@@ -18,14 +18,14 @@ namespace elena_lang
    typedef EventManager<int, MAX_DEBUG_EVENT> DebugEventManager;
 
    // --- Win32DebugAdapter ---
-   class Win32DebugAdapter : public DebugProcessBase
+   class Win32DebugAdapter : public IDEDebugProcessBase
    {
-      Win32DebugProcess    _debugProcess;
-      DebugEventManager    _events;
+      Win32DebugProcess       _debugProcess;
+      DebugEventManager       _events;
 
-      ExceptionInfo        _exception;
+      DebugProcessException   _exception;
 
-      DWORD                _threadId;
+      DWORD                   _threadId;
 
    public:
       void initEvents() override
@@ -55,7 +55,7 @@ namespace elena_lang
 
       void resetException() override;
 
-      ExceptionInfo* Exception() override
+      DebugProcessException* Exception() override
       {
          auto debugException = _debugProcess.getException();
          if (debugException) {

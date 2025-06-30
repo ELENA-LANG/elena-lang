@@ -15,6 +15,16 @@ else
   exit 1
 fi
 
+../../bin/sg64-cli ../../dat/sg/syntax67.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 ../../bin/og64-cli ../../dat/og/bc_rules60.txt
 ret=$?
 if [ $ret -eq 0 ]
@@ -47,10 +57,11 @@ fi
 
 cp ../../dat/og/*.dat ../../bin
 cp ../../dat/sg/syntax60.dat ../../bin
+cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm64-cli -amd64 ../../asm/amd64/core60.asm ../../bin/amd64
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60.asm ../../bin/amd64 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -60,7 +71,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -amd64 ../../asm/amd64/core60_lnx.asm ../../bin/amd64
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm ../../bin/amd64  core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -94,5 +105,9 @@ fi
 
  mkdir -p /usr/lib/elena/
  ln -s $(realpath ../../bin/libelenart60_64.so) /usr/lib/elena/libelenart60_64.so
+ ln -s $(realpath ../../bin/libelenavm60_64.so) /usr/lib/elena/libelenavm60_64.so
+ ln -s $(realpath ../../bin/libelenasm60_64.so) /usr/lib/elena/libelenasm60_64.so
 
-exit 0
+ mkdir -p /etc/elena/
+ ln -s $(realpath ../../bin/elenart60.config) /etc/elena/elenart60.config
+ ln -s $(realpath ../../bin/elenavm60.config) /etc/elena/elenavm60.config

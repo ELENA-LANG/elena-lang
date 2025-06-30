@@ -42,8 +42,8 @@ namespace elena_lang
       //virtual pos_t fillImportTable(AddressMap::Iterator it, ElfData& elfData);
       //virtual void fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment, RelocationMap& importMapping) = 0;
 
-      //virtual void fixSection(MemoryBase* section, AddressSpace& map) = 0;
-      //virtual void fixImportSection(MemoryBase* section, AddressSpace& map) = 0;
+      virtual void fixSection(MemoryBase* section, AddressSpace& map) = 0;
+      virtual void fixImportSection(MemoryBase* section, AddressSpace& map) = 0;
 
       void mapImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections, pos_t sectionAlignment,
         pos_t fileAlignment/*, ElfData& elfData*/);
@@ -71,6 +71,33 @@ namespace elena_lang
 
       //void fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment, RelocationMap& importMapping) override;
    public:
+   };
+
+   // --- MachOAmd64ImageFormatter ---
+   class MachOAmd64ImageFormatter : public MachO64ImageFormatter
+   {
+   protected:
+      MachOAmd64ImageFormatter(ForwardResolverBase* resolver)
+         : MachO64ImageFormatter(resolver)
+      {
+      }
+
+/*      int getRelocationType() override;
+
+      void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t disp) override;
+      pos_t writePLTEntry(MemoryWriter& codeWriter, pos_t symbolIndex, ref_t gotReference,
+         pos_t gofOffset, int entryIndex) override;
+*/
+      void fixSection(MemoryBase* section, AddressSpace& map) override;
+      void fixImportSection(MemoryBase* section, AddressSpace& map) override;
+
+   public:
+      static MachOAmd64ImageFormatter& getInstance(ForwardResolverBase* resolver)
+      {
+         static MachOAmd64ImageFormatter instance(resolver);
+
+         return instance;
+      }
    };
 }
 

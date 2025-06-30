@@ -3,9 +3,9 @@ namespace collections
    // --- SortedList ---
    sealed class SortedListItem
    {
-      object         Key  : rprop;
-      object         Item : prop;
-      SortedListItem Next : prop;
+      object          Key  : rprop;
+      object          Item : prop;
+      SortedListItem? Next : prop;
    
       constructor(object key, object item)
       {
@@ -17,13 +17,13 @@ namespace collections
 
    public sealed class SortedList : Enumerable
    {
-      SortedListItem _top;
-      Reference<int> _length;
+      SortedListItem? _top;
+      Reference<int>  _length;
    
       Func<object,object,int> _comparator;
    
       constructor new()
-         <= new((object l,object r => l < r ? -1 : (l == r ? 0 : 1)))
+         <= new((object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1)))
       {
       }
    
@@ -36,15 +36,15 @@ namespace collections
       int Length
          = *_length;
 
-      internal SortedListItem FirstItem
+      internal SortedListItem? FirstItem
          = _top;
 
       append(object key, object item)
       {
          auto item := new SortedListItem(key, item);
    
-         SortedListItem prev := nil;
-         SortedListItem current := _top;
+         SortedListItem? prev := nil;
+         SortedListItem? current := _top;
          while (current != nil && _comparator(current.Key, key) < 0) {
             prev := current;
             current := current.Next;
@@ -65,20 +65,20 @@ namespace collections
       private SortedListItem retrieve(int index)
       {
          int n := index;
-         SortedListItem current := _top;
+         SortedListItem? current := _top;
          while (n > 1) {
-            current := current.Next;
+            current := current!.Next;
             n--;
          };
    
-         ^ current
+         ^ current!
       }
    
       object at(int index)
       {
          SortedListItem current := retrieve(index);
    
-         ^ current?.Item;
+         ^ current.Item;
       }   
    
       setAt(int index, object item)
@@ -91,7 +91,7 @@ namespace collections
       int indexOfKey(object key)
       {
          int index := 1;
-         SortedListItem current := _top;
+         SortedListItem? current := _top;
          while (current != nil) {
             if (current.Key == key) {
                ^ index;
@@ -105,19 +105,19 @@ namespace collections
       removeAt(int index)
       {
          int n := index;
-         SortedListItem prev := nil;
-         SortedListItem current := _top;
+         SortedListItem? prev := nil;
+         SortedListItem? current := _top;
          while (n > 1) {
             prev := current;
-            current := current.Next;
+            current := current!.Next;
             n--;
          };
 
          if (prev == nil) {
-            _top := _top.Next;
+            _top := _top!.Next;
          }
          else {
-            prev.Next := current.Next
+            prev.Next := current!.Next
          };
 
          _length--
@@ -131,9 +131,9 @@ namespace collections
    // --- SortedListEnumerator ---
    public class SortedListEnumerator : Enumerator
    {
-      SortedList     _list;
-      SortedListItem _current;
-      bool           _started; 
+      SortedList      _list;
+      SortedListItem? _current;
+      bool            _started; 
 
       constructor(SortedList list)
       {
@@ -142,14 +142,14 @@ namespace collections
       }
 
       Value
-         = _current.Item;
+         = _current?.Item;
 
       bool next()
       {
          if (!_started) {
             _current := _list.FirstItem
          }
-         else _current := _current.Next;
+         else _current := _current?.Next;
 
          ^ _current != nil
       }
@@ -221,7 +221,7 @@ namespace collections
       {
          _length := 0;
          _capacity := 0;
-         _comparator := (object l,object r => l < r ? -1 : (l == r ? 0 : 1));
+         _comparator := (object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1));
       }
 
       constructor(Func<object,object,int> comparator)
@@ -232,7 +232,7 @@ namespace collections
       }
 
       constructor allocate(int capacity)
-         <= allocate(capacity, (object l,object r => l < r ? -1 : (l == r ? 0 : 1)));
+         <= allocate(capacity, (object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1)));
 
       constructor allocate(int capacity, Func<object,object,int> comparator)
       {
@@ -406,7 +406,7 @@ namespace collections
       {
          _length := 0;
          _capacity := 0;
-         _comparator := (TKey l,TKey r => l < r ? -1 : (l == r ? 0 : 1));
+         _comparator := (TKey l,TKey r => (l < r) ? -1 : ((l == r) ? 0 : 1));
       }
 
       constructor(Func<TKey,TKey,int> comparator)
@@ -417,7 +417,7 @@ namespace collections
       }
 
       constructor allocate(int capacity)
-         <= allocate(capacity, (TKey l,TKey r => l < r ? -1 : (l == r ? 0 : 1)));
+         <= allocate(capacity, (TKey l,TKey r => (l < r) ? -1 : ((l == r) ? 0 : 1)));
 
       constructor allocate(int capacity, Func<TKey,TKey,int> comparator)
       {

@@ -100,6 +100,9 @@ namespace elena_lang
       virtual ~ELENAMachine() = default;
    };
 
+   DISABLE_WARNING_PUSH
+   DISABLE_WARNING_UNUSEDVARIABLE
+
    // --- SystemRoutineProvider ---
    static class SystemRoutineProvider
    {
@@ -162,6 +165,7 @@ namespace elena_lang
 
    } __routineProvider;
 
+   DISABLE_WARNING_POP
 }
 
 #endif

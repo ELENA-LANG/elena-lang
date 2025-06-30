@@ -20,7 +20,7 @@
 
 using namespace elena_lang;
 
-#ifdef _MSC_VER
+#if (defined(_WIN32) || defined(__WIN32__))
 void print(const wchar_t* wstr, ...)
 {
    va_list argptr;
@@ -39,7 +39,8 @@ void printLine(ustr_t mssg, path_t path)
 
    print(wmssg.str(), path.str());
 }
-#elif __GNUG__
+
+#elif defined(__unix__)
 
 void print(const char* msg, ...)
 {
@@ -64,7 +65,7 @@ void printLine(ustr_t mssg, path_t path)
 
 constexpr auto targetPlatform = ASM_FREEBSD_TARGET;
 
-#elif __unix__         
+#elif __unix__
 
 constexpr auto targetPlatform = ASM_LNX_TARGET;
 
@@ -102,7 +103,7 @@ template<class AssemblyT> void compileAssembly(path_t source, path_t target, ust
 
    FileWriter writer(target, FileEncoding::Raw, false);
    if (!targetModule.save(writer)) {
-      printf(ASM_CANNOTCREATE_OUTPUT);
+      printLine(ASM_CANNOTCREATE_OUTPUT, target);
       throw ExceptionBase();
    }
 }
@@ -128,7 +129,8 @@ void compileByteCode(path_t source, path_t target, bool mode64, int rawDataAlign
 
    FileWriter writer(target, FileEncoding::Raw, false);
    if(!targetModule.save(writer)) {
-      printf(ASM_CANNOTCREATE_OUTPUT);
+      printLine(ASM_CANNOTCREATE_OUTPUT, target);
+
       throw ExceptionBase();
    }
 }
@@ -179,7 +181,7 @@ int main(int argc, char* argv[])
          }
          else if (arg.compare(BC_32_MODE)) {
             mode = CompileMode::bc32;
-#ifdef WIN32
+#if (defined(_WIN32) || defined(__WIN32__))
             supportStdMode = true;
 #endif
          }

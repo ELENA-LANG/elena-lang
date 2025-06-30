@@ -183,10 +183,10 @@ namespace elena_lang
       LoadingAccToLongIndex = 0x0091,
       ExternalVarReference = 0x0092,
       ByteConstOp          = 0x0093,
+      PropNameLiteral      = 0x0094,
 
-      MaxOperationalKey    = 0x0093,      
+      MaxOperationalKey    = 0x0094,      
       
-      DeclOp               = 0x0094,
       DeclDictionaryOp     = 0x0095,
       LoopOp               = 0x0096,
       CatchOp              = 0x0097,
@@ -212,6 +212,7 @@ namespace elena_lang
       ProjectInfoOp        = 0x00AB,
       ObjOp                = 0x00AC,
       AttrDictionaryOp     = 0x00AD,
+      DeclOp               = 0x00AE,
 
       VariableInfo         = 0x00B0,
       Variable             = 0x00B1,
@@ -373,6 +374,7 @@ namespace elena_lang
          map.add("byrefmark", BuildKey::ByRefOpMark);
          map.add("inplacemark", BuildKey::InplaceCall);
          map.add("int_literal", BuildKey::IntLiteral);
+         map.add("string_literal", BuildKey::StringLiteral);
          map.add("copying", BuildKey::Copying);
          map.add("local_address", BuildKey::LocalAddress);
          map.add("saving_stack", BuildKey::SavingInStack);
@@ -452,6 +454,11 @@ namespace elena_lang
          map.add("procedure_ref", BuildKey::ProcedureReference);
          map.add("break_op", BuildKey::BreakOp);
          map.add("bytearray_op", BuildKey::ByteArrayOp);
+         map.add("loop_op", BuildKey::LoopOp);
+         map.add("virtual_breakpoint", BuildKey::VirtualBreakpoint);
+         map.add("eop_breakpoint", BuildKey::EOPBreakpoint);
+         map.add("int_sop", BuildKey::IntSOp);
+         map.add("const_param", BuildKey::Const);
       }
    };
 

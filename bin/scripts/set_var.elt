@@ -1,0 +1,1 @@
+extensions'scripting'Globals.setAt($1);

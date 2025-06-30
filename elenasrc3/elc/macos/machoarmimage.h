@@ -6,14 +6,14 @@
 //                                             (C)2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#ifndef ELFPPCIMAGE_H
-#define ELFPPCIMAGE_H
+#ifndef MACHOPPCIMAGE_H
+#define MACHOPPCIMAGE_H
 
 #include "machoimage.h"
 
 namespace elena_lang
 {
-   // --- ElfARM64ImageFormatter ---
+   // --- MachOARM64ImageFormatter ---
    class MachOARM64ImageFormatter : public MachO64ImageFormatter
    {
       MachOARM64ImageFormatter(ForwardResolverBase* resolver)

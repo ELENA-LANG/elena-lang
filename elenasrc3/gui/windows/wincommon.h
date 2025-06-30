@@ -168,7 +168,7 @@ namespace elena_lang
 
       void setFocus() override;
       void refresh() override;
-      void invalidate();
+      void invalidate() override;;
 
       virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
       virtual void onSelChanged() {}

@@ -12,6 +12,7 @@
 namespace elena_lang
 {
    typedef Map<int, ScriptEngineParserBase*, nullptr, nullptr, freeobj> ParserMap;
+   typedef Map<int, MemoryDump*, nullptr, nullptr, freeobj> TapeMap;
 
    // --- ScriptEngine ---
    class ScriptEngine
@@ -32,8 +33,7 @@ namespace elena_lang
 
       int               _lastId;
       ParserMap         _parsers;
-
-      MemoryDump        _tape;
+      TapeMap           _tapes;
 
       String<char, 512> _lastError;
 
@@ -45,15 +45,17 @@ namespace elena_lang
 
       void* translate(int id, UStrReader* source);
 
+      MemoryDump* getTape(int id);
+
    public:
       int newScope();
 
       void* translate(int id, path_t path, FileEncoding encoding, bool autoDetect);
       void* translate(int id, ustr_t script);
 
-      void free(void* tape);
+      void freeTape(int id);
 
-      pos_t getLength(void* tape);
+      pos_t getLength(int id);
 
       ustr_t getLastError()
       {

@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree class implementation
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -87,6 +87,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("source_path", SyntaxKey::SourcePath);
    map.add("parent", SyntaxKey::Parent);
    map.add("no_body", SyntaxKey::WithoutBody);
+   map.add("inline_template", SyntaxKey::InlineTemplate);
    map.add("redirect", SyntaxKey::Redirect);
 
    map.add("attribute", SyntaxKey::Attribute);
@@ -101,7 +102,10 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("EOP", SyntaxKey::EOP);
    map.add("template_arg", SyntaxKey::TemplateArg);
    map.add("template_type", SyntaxKey::TemplateType);
-
+   map.add("size_op", SyntaxKey::SizeOperation);
+   map.add("shl_op", SyntaxKey::ShlOperation);
+   map.add("shr_op", SyntaxKey::ShrOperation);
+   map.add("band_op", SyntaxKey::BAndOperation);
 }
 
 bool SyntaxTree :: save(MemoryBase* section)

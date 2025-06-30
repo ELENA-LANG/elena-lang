@@ -111,3 +111,41 @@ public sealed const struct MessageName
       info("Qualifies incoming messages and redirects to the target");
 }
 
+// --- PropertyMessageName ---
+public sealed const struct PropertyMessageName
+{
+   embeddable __subj value[4];
+
+   private loadMessageName(Message mssg) : external(system'core_routines'__mssgname_load);
+
+   private load(string name) : external(system'core_routines'__messagename_loadbystr);
+
+   static MessageName Default
+      = default;
+
+   /// Creates a dynamic signature
+   constructor(string s)
+   {
+      self.load(s);
+   }
+
+   internal constructor load(Message mssg)
+   {
+      self.loadMessageName(mssg);
+   }
+
+   bool equal(MessageName subject)
+      = value == subject;
+
+   string toPrintable()
+   {
+      byte buffer[256];
+      int  length := extern LoadActionNameLA(self, buffer, 255);
+        
+      ^ String.fromByteArray(0, length, buffer)
+   }
+
+   dispatch() : external(system'core_routines'__propname_dispatcher),
+      info("Qualifies incoming messages and redirects to the target");
+}
+

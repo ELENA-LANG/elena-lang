@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86-64
-//                                              (C)2021-2024 by Aleksey Rakov
+//                                              (C)2021-2025 by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -156,7 +156,7 @@ void X86_64JITCompiler :: prepare(
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
    LabelHelperBase*,
-   JITSettings _settings,
+   ProcessSettings& _settings,
    bool virtualMode)
 {
    _constants.inlineMask = mskCodeRelRef32;

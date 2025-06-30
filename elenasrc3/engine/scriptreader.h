@@ -32,7 +32,7 @@ namespace elena_lang
    };
 
    // --- ScriptReader ---
-   class ScriptReader : protected TextParser<char, LINE_LEN>
+   class ScriptReader : protected TextParser<char, LINE_LEN, dfaStart, dfaMaxChar, quote_matcher>
    {
       void copyToken(ScriptToken& tokenInfo)
       {

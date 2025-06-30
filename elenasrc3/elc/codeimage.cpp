@@ -64,7 +64,8 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 
    if (_systemTarget == PlatformType::VMClient) {
       MemoryDump tape;
-      createVMTape(&tape, loader->Namespace(), loader->OutputPath(), resolver);
+      // !! we are presuming the compiled module must be located in the same folder as an executable
+      createVMTape(&tape, loader->Namespace(), /*loader->OutputPath()*/nullptr, resolver);
 
       linker.resolveTape(VM_TAPE, &tape);
 

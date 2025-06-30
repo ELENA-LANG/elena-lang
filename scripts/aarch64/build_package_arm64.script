@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.7.0.aarch64-linux
+RELEASE=elena-6.7.1.aarch64-linux
 
 mkdir -p ../lib60_64
 mkdir -p /usr/share/elena
@@ -20,6 +20,16 @@ cp ../../bin/templates/*.config /etc/elena/templates/
 echo compiling data files
 
 ../../bin/sg64-cli ../../dat/sg/syntax60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/sg64-cli ../../dat/sg/syntax67.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -61,6 +71,7 @@ fi
 
 cp ../../dat/og/*.dat /usr/share/elena/
 cp ../../dat/sg/syntax60.dat /usr/share/elena
+cp ../../dat/sg/syntax67.dat /usr/share/elena
 
 echo compiling assembly files
 
@@ -75,6 +86,16 @@ else
 fi
 
 ../../bin/asm64-cli -arm64 ../../asm/aarch64/core60_lnx.asm /usr/lib/elena/core/aarch64
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/asm64-cli -linux -arm64 ../../asm/aarch64/core60_client.asm /usr/lib/elena/core/aarch64 core60_lnx_client.bin 
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -168,6 +189,7 @@ fi
  cp ../../dat/og/bt_xrules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/og/bc_rules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
+ cp ../../dat/sg/syntax67.dat ./$RELEASE/usr/share/elena
 
  echo copying binaries
 

@@ -11,6 +11,7 @@
 #include "idecommon.h"
 #include "ideview.h"
 #include "elena.h"
+#include "ldebugger/debuginfoprovider.h"
 
 namespace elena_lang
 {
@@ -33,36 +34,13 @@ namespace elena_lang
    };
 
    // --- DebugInfoProvider ---
-   class DebugInfoProvider
+   class DebugInfoProvider : public DebugInfoProviderBase
    {
-      typedef MemoryMap<addr_t, addr_t, Map_StoreAddr, Map_GetAddr> ClassInfoMap;
-      typedef MemoryMap<ustr_t, addr_t, Map_StoreUStr, Map_GetUStr> SymbolMap;
-
       ProjectModel*     _model;
 
-      addr_t            _entryPoint;
-      pos_t             _debugInfoSize;
-      addr_t            _debugInfoPtr;
-
-      ModuleMap         _modules;
-      ClassInfoMap      _classes;
-      SymbolMap         _classNames;
-
-      ModuleBase* loadDebugModule(ustr_t reference);
-
-      bool loadSymbol(ustr_t reference, StreamReader& addressReader, DebugProcessBase* process);
-
-      void retrievePath(ustr_t name, PathString& path, path_t extension);
-
-      ModuleBase* getDebugModule(addr_t address);
+      void retrievePath(ustr_t name, PathString& path, path_t extension) override;
 
    public:
-      static void defineModulePath(ustr_t name, PathString& path, path_t projectPath, path_t outputPath, path_t extension);
-
-      addr_t getEntryPoint()
-      {
-         return _entryPoint;
-      }
       addr_t getDebugInfoPtr()
       {
          return _debugInfoPtr;
@@ -72,55 +50,19 @@ namespace elena_lang
          return _debugInfoSize;
       }
 
-      void setEntryPoint(addr_t address)
-      {
-         _entryPoint = address;
-      }
-      void setDebugInfoSize(pos_t size)
-      {
-         _debugInfoSize = size;
-      }
-      void setDebugInfo(pos_t size, addr_t debugInfoPtr)
-      {
-         _debugInfoSize = size;
-         _debugInfoPtr = debugInfoPtr;
-      }
-
       addr_t getClassAddress(ustr_t name);
-
-      bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
 
       ModuleBase* resolveModule(ustr_t ns);
 
       addr_t findNearestAddress(ModuleBase* module, ustr_t path, int row);
 
-      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath);
-      DebugLineInfo* seekDebugLineInfo(size_t lineInfoAddress)
-      {
-         return (DebugLineInfo*)lineInfoAddress;
-      }
       DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
 
       DebugLineInfo* seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags);
 
       void fixNamespace(NamespaceString& str);
 
-      void clear()
-      {
-         _entryPoint = 0;
-         _debugInfoSize = 0;
-         _debugInfoPtr = 0;
-
-         _classes.clear();
-         _modules.clear();
-         _classNames.clear();
-
-         //_tape.clear();
-         //_tapeBookmarks.clear();
-      }
-
       DebugInfoProvider(ProjectModel* model)
-         : _modules(nullptr), _classes(INVALID_ADDR), _classNames(INVALID_ADDR)
       {
          _model = model;
 
@@ -228,7 +170,7 @@ namespace elena_lang
       PathString              _arguments;
       StartUpSettings         _startUpSettings;
 
-      DebugProcessBase*       _process;
+      IDEDebugProcessBase*    _process;
       DebugInfoProvider       _provider;
       PostponedStart          _postponed;
 
@@ -245,8 +187,6 @@ namespace elena_lang
       bool startThread();
 
       void onInitBreakpoint();
-      void loadDebugSection(StreamReader& reader, bool starting);
-      bool loadDebugData(StreamReader& reader, bool setEntryAddress = false);
 
       void onCurrentStep(DebugLineInfo* lineInfo, ustr_t moduleName, ustr_t sourcePath);
       void onStop();
@@ -305,7 +245,7 @@ namespace elena_lang
          clearDebugInfo();
       }
 
-      DebugController(DebugProcessBase* process, ProjectModel* model, 
+      DebugController(IDEDebugProcessBase* process, ProjectModel* model,
          SourceViewModel* sourceModel, DebugSourceController* sourceController);
    };
    

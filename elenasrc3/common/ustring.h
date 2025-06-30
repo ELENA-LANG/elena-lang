@@ -264,6 +264,10 @@ namespace elena_lang
          size_t pos = 0;
          size_t start = 0;
          if (n < 0) {
+            if ((unsigned)n == 0x80000000) {
+               // HOTFIX : using a long number
+               return longToStr(-2147483648ll, s, radix, maxLength);
+            }
             start++;
             n = -n;
             s[pos++] = '-';

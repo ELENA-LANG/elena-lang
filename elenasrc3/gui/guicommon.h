@@ -139,6 +139,7 @@ namespace elena_lang
       virtual void setFocus() = 0;
 
       virtual void refresh() = 0;
+      virtual void invalidate() = 0;
 
       virtual ~GUIControlBase() = default;
    };

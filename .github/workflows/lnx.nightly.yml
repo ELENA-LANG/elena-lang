@@ -7,7 +7,7 @@ name: Linux Nightly Build
 
 on:
   schedule:
-    - cron: '0 4 */6 * *'  # Run once per day
+    - cron: '0 4 * * *'  # Run once per day
   workflow_dispatch: # Put here!!
 
 permissions: write-all
@@ -51,12 +51,19 @@ jobs:
         cd scripts/${{ matrix.platform }}
         sudo ./local_create_package.script
           
+    - name: Delete old release assets
+      uses: mknejp/delete-release-assets@v1
+      with:
+        token: ${{ github.token }}
+        tag: nightly
+        assets: '*amd64-linux.deb'
+        fail-if-no-assets : false
+
     - name: Upload Release
       uses: softprops/action-gh-release@v2
       with:
-        tag_name: v${{ env.BUILD_TAG }}
+        tag_name: nightly
         draft: false
         prerelease: true
         files: |
-          ./build/*.rpm
           ./build/*.deb

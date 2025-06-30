@@ -166,7 +166,7 @@ void PPC64leJITCompiler:: prepare(
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
    LabelHelperBase*,
-   JITSettings settings,
+   ProcessSettings& settings,
    bool virtualMode)
 {
    //_inlineMask = mskCodeRelRef32;

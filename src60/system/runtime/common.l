@@ -34,4 +34,4 @@ public extension commonOp
 
 // --- ProcessorType ---
 
-public const struct ProcessorType : enum<int>(x86 ::= 0, AMD64 ::= 1, ARM ::= 2, ARM64 ::= 2, IA64 ::= 3, Unknown ::= 255);
+public const struct ProcessorType : enum<int>(x86 = 0, AMD64 = 1, ARM = 2, ARM64 = 2, IA64 = 3, Unknown = 255);

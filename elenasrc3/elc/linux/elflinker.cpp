@@ -10,8 +10,16 @@
 #include "elfcommon.h"
 #include "linux/lnxconsts.h"
 
+#if defined __unix__
+
 #include <elf.h>
 #include <sys/stat.h>
+
+#else
+
+#include "elfdeclaration.h"
+
+#endif
 
 using namespace elena_lang;
 
@@ -127,7 +135,11 @@ LinkResult ElfLinker :: run(ProjectBase& project, ImageProviderBase& provider, P
       _errorProcessor->raisePathError(errCannotCreate, project.PathSetting(ProjectOption::TargetPath));
    }
 
+#if defined __unix__
+
    chmod(*exePath, S_IXOTH | S_IXUSR | S_IRUSR | S_IWUSR | S_IROTH | S_IWOTH);
+
+#endif
 
    if (withDebugMode) {
       PathString debugFilePath(*exePath);

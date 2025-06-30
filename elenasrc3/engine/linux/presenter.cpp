@@ -36,7 +36,12 @@ void printLine(const char* msg, ...)
 
 void LinuxConsolePresenter :: readLine(char* buffer, size_t length)
 {
-   fgets(buffer, length, stdin);
+   DISABLE_WARNING_PUSH
+   DISABLE_WARNING_UNUSEDVARIABLE
+
+   auto idle = fgets(buffer, length, stdin);
+
+   DISABLE_WARNING_POP
 }
 
 void LinuxConsolePresenter :: print(ustr_t msg, ustr_t arg)

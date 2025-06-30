@@ -1,0 +1,57 @@
+#!/bin/bash
+
+mkdir -p ../../lib60_64_win
+mkdir -p /usr/lib/elena/lib60_64_win
+mkdir -p /usr/lib/elena/core/amd64/
+
+cp ../../bin/elena64-cli /usr/bin/
+
+echo compiling assembly files
+
+../../bin/asm64-cli -windows -amd64 ../../asm/amd64/core60.asm /usr/lib/elena/core/amd64 core60_win.bin
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/asm64-cli -windows -amd64 ../../asm/amd64/corex60.asm /usr/lib/elena/core/amd64 corex60_win.bin
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+echo compiling lib60 files
+
+ ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64_win
+ ret=$?
+ if [ $ret -eq 0 ]
+ then
+   echo .
+ else
+   echo "Failure" >&2
+   exit 1
+ fi
+
+ ../../bin/elena64-cli -xtwin64 ../../src60/elena_api.linux.prjcol
+ ret=$?
+ if [ $ret -eq 2 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ cp ../../lib60_64_win/*.nl /usr/lib/elena/lib60_64_win
+ cp ../../lib60_64_win/*.dnl /usr/lib/elena/lib60_64_win
+
+ cp ../../bin/winstub.ex_ /usr/share/elena
+

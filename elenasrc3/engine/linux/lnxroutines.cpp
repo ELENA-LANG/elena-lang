@@ -15,7 +15,57 @@
 #include <errno.h>
 #include <ctime>
 
+#include <pthread.h>
+
 using namespace elena_lang;
+
+class EventImpl
+{
+private:
+   bool              _signalled;
+   pthread_mutex_t   _mutex;
+   pthread_cond_t    _cond;
+
+public:
+   EventImpl()
+   {
+      _signalled = false;
+      pthread_mutex_init(&_mutex, nullptr);
+      pthread_cond_init(&_cond, nullptr);
+   }
+
+   virtual ~EventImpl()
+   {
+      pthread_mutex_destroy(&_mutex);
+      pthread_cond_destroy(&_cond);
+   }
+
+   void waitForSignal()
+   {
+      pthread_mutex_lock(&_mutex);
+      while (!_signalled) {
+         pthread_cond_wait(&_cond, &_mutex);
+      }
+      pthread_mutex_unlock(&_mutex);
+   }
+
+   void reset()
+   {
+      if (_signalled) {
+         pthread_mutex_lock(&_mutex);
+         _signalled = false;
+         pthread_mutex_unlock(&_mutex);
+      }
+   }
+
+   void signal()
+   {
+      pthread_mutex_lock(&_mutex);
+      _signalled = true;
+      pthread_mutex_unlock(&_mutex);
+      pthread_cond_broadcast(&_cond);
+   }
+};
 
 static uintptr_t CriticalHandler = 0;
 
@@ -86,12 +136,19 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
    return !r ? 0 : (uintptr_t)allocPtr;
 }
 
-void* SystemRoutineProvider::CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
+typedef void*(*thread_proc_t)(void*);
+
+void* SystemRoutineProvider :: CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc)
 {
+   pthread_t th;
+   pthread_create(&th, nullptr, (thread_proc_t)threadProc, (void*)tt_index);
+
+   return (void*)th;
 }
 
 void SystemRoutineProvider::ExitThread(int exitCode)
 {
+   pthread_exit((void*)exitCode);
 }
 
 void SystemRoutineProvider :: RaiseError(int code)
@@ -278,24 +335,43 @@ long long SystemRoutineProvider :: GenerateSeed()
 
 void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 {
+   EventImpl* event = new EventImpl();
+
+   env->th_table->slots[index].content->tt_sync_event = (void*)event;
+   env->th_table->slots[index].content->tt_flags = 0;
 }
 
 void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
 {
+   EventImpl* event = (EventImpl*)env->th_table->slots[index].content->tt_sync_event;
+
+   delete event;
+
+   env->th_table->slots[index].content->tt_sync_event = nullptr;
+   env->th_table->slots[index].content->tt_flags = 0;
 }
 
 void SystemRoutineProvider::GCSignalStop(void* handle)
 {
+   ((EventImpl*)handle)->signal();
 }
 
 void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
 {
+   if (count > 0) {
+      EventImpl** events = (EventImpl**)handles;
+      for (size_t i = 0; i < count; i++) {
+         events[i]->waitForSignal();
+      }
+   }
 }
 
 void SystemRoutineProvider::GCWaitForSignal(void* handle)
 {
+   ((EventImpl*)handle)->waitForSignal();
 }
 
 void SystemRoutineProvider::GCSignalClear(void* handle)
 {
+   ((EventImpl*)handle)->reset();
 }

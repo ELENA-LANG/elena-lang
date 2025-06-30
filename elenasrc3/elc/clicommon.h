@@ -147,7 +147,7 @@ enum class TemplateType
    Class,
    Statement,
    Expression,
-   Enumeration,
+   VariadicParameterized,
    ClassBlock
 };
 
@@ -448,6 +448,9 @@ enum class ExpressionAttribute : pos64_t
    NoDebugInfo          = 0x040000000000,
    NoExtension          = 0x080000000000,
    TryMode              = 0x100000000000,
+   GetterMode           = 0x200000000000,
+   ShortcutMode         = 0x400000000000,
+   NotNil               = 0x800000000000,
 };
 
 struct ExpressionAttributes
@@ -551,7 +554,7 @@ public:
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
    virtual bool importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
-   virtual bool importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+   virtual bool importParameterizedTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
       SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
    virtual bool importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target) = 0;
 };

@@ -10,17 +10,9 @@
 #define LISTS_H
 #include <assert.h>
 
-#ifdef __GNUC__
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Waddress"
-
-#elif _MSC_VER
-
-#pragma warning( push )
-#pragma warning( disable:4127 )
-
-#endif
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_NULLCONVERSION
+DISABLE_WARNING_ADDRESS
 
 namespace elena_lang
 {
@@ -1128,6 +1120,8 @@ namespace elena_lang
       T DefaultValue() const { return _defaultItem; }
 
       pos_t count() const { return _count; }
+
+      int count_int() const { return (int)_count; }
 
       Iterator start() const
       {
@@ -3138,6 +3132,20 @@ namespace elena_lang
          else return _allocated[index - cacheSize];
       }
 
+      bool exist(T& item)
+      {
+         for (size_t i = 0; i < _length; i++) {
+            if (i < cacheSize && _cached[i] == item) {
+               return true;
+            }
+            else if (i >= cacheSize && _allocated[i - cacheSize] == item) {
+               return true;
+            }
+         }
+
+         return false;
+      }
+
       void add(T item)
       {
          if (_length < cacheSize) {
@@ -3661,14 +3669,6 @@ DISABLE_WARNING_POP
    }
 }
 
-#ifdef __GNUC__
-
-#pragma GCC diagnostic pop
-
-#elif _MSC_VER
-
-#pragma warning( pop )
-
-#endif
+DISABLE_WARNING_POP
 
 #endif

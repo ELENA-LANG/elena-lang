@@ -1,0 +1,49 @@
+#!/bin/bash
+
+read -p "Rebuild the project (y/n)? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+
+	(cd ../.. && make clean_i386 all_i386)
+
+fi
+
+read -p "Install locally (in bin directory) (y/n)? " -n 1 -r
+echo    # (optional) move to a new line
+if [[ $REPLY =~ ^[Yy]$ ]]
+then
+
+	. local_build_package_i386.script 
+
+	read -p "Build cross-compile version (y/n)?" -n 1 -r
+	echo    # (optional) move to a new line
+	if [[ $REPLY =~ ^[Yy]$ ]]
+	then
+
+		(cd ../.. && make clean_cross_elc_i386 cross_elc_i386)
+
+		. local_build_package_win32.script 
+
+	fi
+
+	. local_runtests.script 
+
+else
+
+	. build_package_i386.script
+
+	read -p "Build cross-compile version (y/n)? " -n 1 -r
+	echo    # (optional) move to a new line
+	if [[ $REPLY =~ ^[Yy]$ ]]
+	then
+
+		(cd ../.. && make clean_cross_elc_i386 cross_elc_i386)
+
+		. build_package_win32.script 
+
+	fi
+
+fi
+
+exit 0

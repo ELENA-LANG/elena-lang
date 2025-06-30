@@ -3,17 +3,17 @@ mkdir -p ../../lib60_64
 mkdir -p /usr/share/elena
 mkdir -p /etc/elena/
 mkdir -p /etc/elena/templates/
-mkdir -p /usr/lib/elena/core/x32/
 mkdir -p /usr/lib/elena/core/amd64/
 mkdir -p /usr/lib/elena/lib60_64
 
 cp ../../bin/libelenart60_64.so /usr/lib/elena/
 cp ../../bin/libelenasm60_64.so /usr/lib/elena/
-# cp ../bin/libelenavm.so /usr/lib/elena/
+cp ../../bin/libelenavm60_64.so /usr/lib/elena/
 cp ../../bin/elena64-cli /usr/bin/
 
 cp ../../bin/elc60.config /etc/elena/
-# cp ../bin/elenavm.config /etc/elena/
+cp ../../bin/elenavm60.config /etc/elena/
+cp ../../bin/elenart60.config /etc/elena/
 cp ../../bin/templates/*.config /etc/elena/templates/
 
 echo compiling data files
@@ -28,15 +28,15 @@ else
   exit 1
 fi
 
-# ../bin/elena-og ../dat/og/rules.txt
-# ret=$?
-# if [ $ret -eq 0 ]
-# then
-#   echo .
-# else
-#   echo "Failure" >&2
-#   exit 1
-# fi
+../../bin/sg64-cli ../../dat/sg/syntax67.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
 
 ../../bin/og64-cli ../../dat/og/bc_rules60.txt
 ret=$?
@@ -69,11 +69,15 @@ else
 fi
 
 cp ../../dat/og/*.dat /usr/share/elena/
+cp ../../dat/og/*.dat ../../bin
 cp ../../dat/sg/syntax60.dat /usr/share/elena
+cp ../../dat/sg/syntax60.dat ../../bin
+cp ../../dat/sg/syntax67.dat /usr/share/elena
+cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm64-cli -amd64 ../../asm/amd64/core60.asm /usr/lib/elena/core/amd64
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60.asm /usr/lib/elena/core/amd64 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -83,7 +87,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -amd64 ../../asm/amd64/core60_lnx.asm /usr/lib/elena/core/amd64
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm /usr/lib/elena/core/amd64  core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -92,18 +96,6 @@ else
   echo "Failure" >&2
   exit 1
 fi
-
-# ../bin/elena-asm2binx ../asm/x32/coreapi.asm /usr/lib/elena/core/x32
-# ret=$?
-# if [ $ret -eq 0 ]
-# then
-#   echo .
-# else
-#   echo "Failure" >&2
-#   exit 1
-# fi
-#
-# echo compiling lib50 files
 
  ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
  ret=$?
@@ -127,5 +119,3 @@ fi
 
  cp ../../lib60_64/*.nl /usr/lib/elena/lib60_64
  cp ../../lib60_64/*.dnl /usr/lib/elena/lib60_64 
-
-exit 0

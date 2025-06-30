@@ -2557,7 +2557,7 @@ void X86Assembler :: compileExternCall(ScriptToken& tokenInfo, MemoryWriter& wri
    }
 }
 
-bool X86Assembler::compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool X86Assembler::compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope&)
 {
    if (tokenInfo.compare("adc")) {
       compileAdc(tokenInfo, writer);

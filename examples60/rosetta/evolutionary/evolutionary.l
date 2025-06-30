@@ -19,10 +19,10 @@ extension evoHelper
         = 0.repeatTill(self).selectBy::(x => randomChar).summarize(new StringWriter());
         
     fitnessOf(s)
-        = self.zipBy(s, (a,b => a==b ? 1 : 0)).summarize(new Integer()).toInt();
+        = self.zipBy(s, (a,b => (a==b) ? 1 : 0)).summarize(new Integer()).toInt();
         
     mutate(p)
-        = self.selectBy::(ch => rnd.nextReal() <= p ? randomChar : ch).summarize(new StringWriter());
+        = self.selectBy::(ch => (rnd.nextReal() <= p) ? randomChar : ch).summarize(new StringWriter());
 }
 
 class EvoAlgorithm : Enumerator

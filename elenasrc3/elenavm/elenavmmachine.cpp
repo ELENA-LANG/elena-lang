@@ -65,6 +65,11 @@ bool ELENAVMConfiguration :: loadConfig(path_t path)
 
       return true;
    }
+   else {
+#ifdef DEBUG_OUTPUT
+      printf("cannot load config file %s\n", path.str());
+#endif
+   }
 
    return false;
 }
@@ -92,7 +97,7 @@ void ELENAVMConfiguration :: forEachForward(void* arg, void (*feedback)(void* ar
 // --- ELENAVMMachine ---
 
 ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
-   int codeAlignment, JITSettings gcSettings,
+   int codeAlignment, ProcessSettings gcSettings,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
       : _mapper(this), _rootPath(configPath), _preloadedList({})
 {
@@ -133,11 +138,11 @@ void ELENAVMMachine :: init(SystemEnv* exeEnv)
 
    _configuration->initLoader(_libraryProvider);
 
-   if (_standAloneMode) {
-      _compiler->populatePreloaded(
-         (uintptr_t)exeEnv->th_table,
-         (uintptr_t)exeEnv->th_single_content);
-   }
+   //if (_standAloneMode) {
+   //   _compiler->populatePreloaded(
+   //      (uintptr_t)exeEnv->th_table,
+   //      (uintptr_t)exeEnv->th_single_content);
+   //}
 
    _jitLinker = new JITLinker(&_mapper, &_libraryProvider, _configuration, dynamic_cast<ImageProviderBase*>(this),
       &_settings, nullptr);
@@ -146,6 +151,12 @@ void ELENAVMMachine :: init(SystemEnv* exeEnv)
    _jitLinker->prepare(_settings.jitSettings);
 
    _env = (SystemEnv*)_compiler->getSystemEnv();
+
+   if (_standAloneMode) {
+      _env->th_single_content->tt_stack_root = exeEnv->th_single_content->tt_stack_root;
+      _env->th_single_content->eh_critical = exeEnv->th_single_content->eh_critical;
+      _env->th_single_content->eh_current = exeEnv->th_single_content->eh_current;
+   }
 
    // setting up system
    __routineProvider.InitApp(_env);
@@ -717,7 +728,7 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 
    // search message dispatcher
    IdentifierString messageRef;
-   size_t listLen = getlength(moduleList);
+   //size_t listLen = getlength(moduleList);
    size_t i = 0;
    while (moduleList[i]) {
       ustr_t ns = moduleList + i;

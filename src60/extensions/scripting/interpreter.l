@@ -37,9 +37,9 @@ public sealed class ScriptEngine
       if (tape.isUnassigned())
          {   ScriptEngineException.raise(self.lastScriptError()) };
 
-      auto retVal := cast string(tape);    
+      auto retVal := cast string(tape);
 
-      extern elenasm.ReleaseSMLA(tape);
+      extern elenasm.ReleaseSMLA(_scopeId);
 
       ^ retVal
    }
@@ -52,7 +52,7 @@ public sealed class ScriptEngine
       if (ptr.isUnassigned())
          {   ScriptEngineException.raise(self.lastScriptError()) };
       
-      extern elenasm.ReleaseSMLA(ptr)
+      extern elenasm.ReleaseSMLA(_scopeId)
    }
 
    buildScriptFile(string path, int encoding, int autoDetect)
@@ -70,7 +70,7 @@ public sealed class ScriptEngine
    {
       var retVal := nil;
       byte temp[1024];
-      int len := extern elenasm.GetLengthSMLA(tape);
+      int len := extern elenasm.GetLengthSMLA(_scopeId);
 
       if (len <= 1024) {
          tape.copyTo(temp, len);
@@ -85,7 +85,7 @@ public sealed class ScriptEngine
          retVal := StreamTapeInterpreter.build(dump, len);
       };
                                                                                                             
-      extern elenasm.ReleaseSMLA(tape);
+      extern elenasm.ReleaseSMLA(_scopeId);
         
       ^ retVal
    }
@@ -106,7 +106,7 @@ public sealed class ScriptEngine
       if (ptr.isUnassigned())
          {   ScriptEngineException.raise(self.lastScriptError()) };
       
-      extern elenasm.ReleaseSMLA(ptr)      
+      extern elenasm.ReleaseSMLA(_scopeId)
    }
 
    buildScriptFile(string path)

@@ -28,8 +28,6 @@
 
 using namespace elena_lang;
 
-#pragma warning(disable:4996)
-
 // --- Unicode coversion routines ---
 
 static const int halfShift = 10; /* used for shifting by 10 bits */

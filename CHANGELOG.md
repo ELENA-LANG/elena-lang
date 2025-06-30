@@ -1,3 +1,52 @@
+## ELENA 6.8.0
+
+- ELENA
+  - [!ADDED] a new dialect EL7
+  - [ADDED] direct extension template call
+  - [ADDED] the explicit lambda function returning value
+  - [ADDED] #606 : parameterized templates
+  - [ADDED] meta programming : supporting #for / #endfor statement
+  - [ADDED] invoking get property with a message name literal
+  - [ADDED] intermediate local variables (aka object shortcuts)
+  - [ADDED] #562 : nullable
+
+- ELC
+  - [ADDED] option "-xn-" to turn off nullable types
+  - [ADDED] option "-xtwin32" to support cross-platform compilation
+  - [ADDED] option "-xtwin64" to support cross-platform compilation
+  - [FIXED] aarch64 : xlabeldp opcode
+  - [ADDED] aarch64 : fsindp / fcosdp / fp opcodes
+  - [FIXED][CRITICAL] x86 : lloaddp opcode
+  - [FIXED] suppress a method not found warning when calling itself
+  - [ADDED] #781 : Cross-compile on Windows for Linux 
+  - [ADDED] #778 : Cross-compile from Unix to Windows 
+
+- API
+  - [FIXED] textgen : support {{ }} special symbols 
+  - [ADDED] new inline operator - ":sizeof"
+  - [FIXED] int to string conversion routine for IntNumber.MinValue
+  - [ADDED] stringListOp.splitByNewLine
+  - [ADDED] wideListOp.splitByNewLine
+  - [ADDED] system'PropertyMessageName
+  - [ADDED] record template
+
+- SM
+
+- Scripts
+
+- SAMPLES
+
+- IDE
+  - [FIXED] an issue with a vertical splitter
+  - [FIXED] breakpoint must be inside the loop
+  - [FIXED] step over the loop
+
+- Tools
+  - [ADDED] elt-cli : supporting textgen
+
+- Misc
+  - [ADDED] #763 : freebsd nightly build
+
 ## ELENA 6.7.0
 
 - ELENA

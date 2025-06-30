@@ -471,7 +471,7 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
          while (table->gc_end - table->gc_mg_current < size) {
             // ; bad luck, we have to expand GC
             size_t inc = AlignHeapSize(size - (table->gc_end - table->gc_mg_current));
-            size_t header_inc = AlignHeapSize(inc >> page_size_order_minus2);
+            //size_t header_inc = AlignHeapSize(inc >> page_size_order_minus2);
 
             if (ExpandHeap((void*)table->gc_end, inc)) {
                ExpandHeap((void*)(table->gc_header + ((inc) >> page_size_order_minus2)), heapheader_inc);

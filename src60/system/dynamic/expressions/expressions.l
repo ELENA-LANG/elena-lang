@@ -8,7 +8,7 @@ namespace expressions
    const int mode_lcl   = 1;
    const int mode_class = 4;
 
-   symbol used : preloaded = new object[]{Expression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
+   symbol used : preloaded = new object[]{Expression, CondMessageCallExpression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
 
    public class ScopeIdentifier
    {
@@ -79,10 +79,10 @@ namespace expressions
          NotSupportedException.raise();
       }
 
-      TapeFunction resolveExtension(Message message)
+      TapeFunction? resolveExtension(Message message)
          = nil;    
 
-      TapeFunction resolve(ScopeIdentifier ident, bool assignMode)
+      TapeFunction? resolve(ScopeIdentifier ident, bool assignMode)
          = nil; 
    }
 
@@ -124,8 +124,16 @@ namespace expressions
          ^ *reserved;
       }
         
-      TapeFunction resolve(ScopeIdentifier variable, bool assignMode) 
+      TapeFunction? resolve(ScopeIdentifier variable, bool assignMode) 
       {
+         string refName := variable.Name;
+         int mode := variable.Mode;
+                    
+         if ((mode == 0 || mode == mode_class) && refName == "nil")
+         {
+            ^ ConstantFunction.load(nilValue);
+         };
+         
          ^ parent?.resolve(variable, assignMode)
       }
     
@@ -134,7 +142,7 @@ namespace expressions
          declared.append(1);
       }
 
-      TapeFunction resolveExtension(Message message)
+      TapeFunction? resolveExtension(Message message)
          => parent;    
    }
 
@@ -203,6 +211,9 @@ namespace expressions
       static Expression ClassIdentifier(string s)
          = new ClassIdentifierExpression(s);
 
+      static Expression Identifier(string s)
+         = new IdentifierExpression(new ScopeIdentifier(s));
+
       static Expression New(Expression t)
          = new NewExpression(t);
            
@@ -224,7 +235,7 @@ namespace expressions
       static Expression ActionMethod(Expression body)
          = new ActionMethodExpression(body);        
 
-      object Key = nil;
+      Key = nil;
 
       get abstract bool IsOperation();
 
@@ -236,7 +247,7 @@ namespace expressions
                                             Expression[] arguments, TapeFunction operation)        
       {
          int len := arguments.Length;
-         Queue<Expression> tempVariables := nil;
+         Queue<Expression>? tempVariables := nil;
 
          // first pass - preallocating sub expr 
          if (target.IsOperation && len > 0) {
@@ -245,7 +256,7 @@ namespace expressions
             target.saveTo(list, scope, 0);
             list.append(new AssigningFunction(tempVar));
                 
-            tempVariables!.push(Expression.VariableByIndex(tempVar));                
+            (tempVariables ?? tempVariables := new Queue<Expression>()).push(Expression.VariableByIndex(tempVar));                
          };
 
          for (int i := 0; i < len; i += 1) {
@@ -255,19 +266,19 @@ namespace expressions
                arguments[i].saveTo(list, scope, 0);
                list.append(new AssigningFunction(tempVar));
                 
-               tempVariables!.push(Expression.VariableByIndex(tempVar));
+               (tempVariables ?? tempVariables := new Queue<Expression>()).push(Expression.VariableByIndex(tempVar));
             }
          };
             
          // second pass - the operation
          Expression firstArg := target;
          if (target.IsOperation && len > 0) {
-            firstArg := tempVariables.pop() 
+            firstArg := tempVariables!.pop() 
          };
 
          for (int i := 0; i < len; i += 1) {
             if (arguments[i].IsOperation) {
-               tempVariables.pop().saveTo(list, scope, i + 1) 
+               tempVariables!.pop().saveTo(list, scope, i + 1) 
             }
             else {
                arguments[i].saveTo(list, scope, i + 1) 
@@ -283,7 +294,7 @@ namespace expressions
                                             Expression[] arguments, TapeFunction operation)        
       {
          int len := arguments.Length;
-         Queue<Expression> tempVariables := nil;
+         Queue<Expression>? tempVariables := nil;
 
          // first pass - preallocating sub expr 
          for (int i := 0; i < len; i += 1) {
@@ -293,14 +304,14 @@ namespace expressions
                arguments[i].saveTo(list, scope, 0);
                list.append(new AssigningFunction(tempVar));
                 
-               tempVariables!.push(Expression.VariableByIndex(tempVar));
+               (tempVariables ?? tempVariables := new Queue<Expression>()).push(Expression.VariableByIndex(tempVar));
             }
          };
             
          // second pass - the operation
          for (int i := len - 1; i >= 0; i -= 1) {
             if (arguments[i].IsOperation) {
-               tempVariables.pop().saveTo(list, scope, i) 
+               tempVariables!.pop().saveTo(list, scope, i) 
             }
             else {
                arguments[i].saveTo(list, scope, i) 
@@ -680,6 +691,32 @@ namespace expressions
          if (index > 0) {
             list.append(new SavingFunction(index));
          }
+      }
+   }
+
+   public class CondMessageCallExpression : MessageCallExpression
+   {
+      constructor(Expression t, string message, Expression p1)
+         <= load(new Message(message + "[2]"), t, p1);
+
+      indexed internal bool checkIfNilExpression(argument)
+         = false;
+
+      indexed internal bool checkIfNilExpression(IdentifierExpression argument)
+         = argument.Identifier == "nil";
+
+      constructor load(Message message, Expression t, Expression argument)
+      {
+         _message := message;
+         if (checkIfNilExpression(argument)) {
+         // if it is a comparison with nil - reverse the arguments
+            _target := argument;
+            _arguments := new Expression[]{ t };
+         }
+         else {
+            _target := t;
+            _arguments := new Expression[]{ argument };
+         }         
       }
    }
 
@@ -1637,6 +1674,9 @@ namespace expressions
 
       bool IsOperation = false;
 
+      indexed internal string Identifier
+         = ident.Name;
+
       declare(ExpressionScope parentScope)
       {
       }
@@ -1896,7 +1936,7 @@ namespace expressions
             imports := imports + subarr
          }
                 
-         TapeFunction resolveExtension(Message message)
+         TapeFunction? resolveExtension(Message message)
          {
             var op := ExtensionDispatcher.load(message, imports);
             if (op != nil)
@@ -1915,7 +1955,7 @@ namespace expressions
             ^ nil
          }
 
-         TapeFunction resolve(ScopeIdentifier variable, bool assignModemode) 
+         TapeFunction? resolve(ScopeIdentifier variable, bool assignModemode) 
          {
             string refName := variable.Name;
             int mode := variable.Mode;

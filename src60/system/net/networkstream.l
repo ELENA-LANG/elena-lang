@@ -22,13 +22,14 @@ public class NetworkStream : Stream
       _ownStream := socketStream;
    }
 
+   constructor assign(NativeSocket socket, bool socketStream)
+      <= assign(NetSocket.assign(socket), socketStream);
+
    int Length
    {
       get()
       {
-         NotSupportedException.raise();
-
-         ^ 0 // to make compiler happy
+         ^ NotSupportedException.raise();
       }
    }
      
@@ -36,9 +37,7 @@ public class NetworkStream : Stream
    {
       get()
       {
-         NotSupportedException.raise();
-
-         ^ 0 // to make compiler happy
+         ^ NotSupportedException.raise();
       }
          
       set(retVal)

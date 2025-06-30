@@ -13,7 +13,15 @@
 
 #include "x86relocation.h"
 
+#if defined __unix__
+
 #include <elf.h>
+
+#else
+
+#include "elfdeclaration.h"
+
+#endif
 
 using namespace elena_lang;
 
@@ -24,7 +32,7 @@ unsigned long elf_hash(const unsigned char* name)
    while (*name)
    {
       h = (h << 4) + *name++;
-      if (g = h & 0xf0000000)
+      if (g = (h & 0xf0000000))
          h ^= g >> 24;
       h &= ~g;
    }
@@ -521,38 +529,6 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
       pltIndex++;
    }
 
-   //// globals
-   //if (global_count > 0) {
-   //   gotWriter.seek(gotStartVar);
-   //   for (auto glob = elfData.variables.start(); !glob.eof(); ++glob) {
-   //      pos_t gotPosition = gotWriter.position();
-
-   //      ref_t globalRef = *glob & ~mskAnyRef;
-   //      importMapping.add(globalRef | mskImportRelRef32, gotPosition);
-
-   //      pos_t strIndex = strWriter.position() - strOffset;
-
-   //      // symbol table entry
-   //      symtabWriter.writeDWord(strIndex);
-   //      symtabWriter.writeByte(0x11);
-   //      symtabWriter.writeByte(0);
-   //      symtabWriter.writeWord(0x1B); // R_X86_64_GOT64
-   //      symtabWriter.writeQReference(importRef, gotPosition);
-   //      symtabWriter.writeQWord(0);
-
-        // relocation table entry
-         //relatabWriter.writeQReference(importRef, gotPosition);
-         //relatabWriter.writeQWord((symbolIndex << 32) + /*relocateType*/6);
-         //relatabWriter.writeQWord(0);
-
-   //      // string table entry
-   //      strWriter.writeString(glob.key());
-
-   //      gotWriter.writeQWord(0);
-   //      symbolIndex++;
-   //   }
-   //}
-
    // == write dynamic segment ==
 
    // write libraries needed to be loaded
@@ -602,19 +578,7 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
 
    assert(global_count == 0); // !! temporally globals are not supported
 
-#if defined(__FreeBSD__)
-   dynamicWriter.writeQWord(DT_RELA);
-   dynamicWriter.writeQReference(importRef, reltabOffset/*relatabOffset*/);
-
-   dynamicWriter.writeQWord(DT_RELASZ);
-   dynamicWriter.writeQWord(/*global_count * 24*/0);
-#else
-   dynamicWriter.writeQWord(DT_RELA);
-   dynamicWriter.writeQReference(importRef, reltabOffset);
-
-   dynamicWriter.writeQWord(DT_RELASZ);
-   dynamicWriter.writeQWord(count * 24);
-#endif
+   writeRELA(dynamicWriter, importRef, reltabOffset, count);
 
    dynamicWriter.writeQWord(DT_RELAENT);
    dynamicWriter.writeQWord(24);
@@ -627,15 +591,20 @@ void Elf64ImageFormatter :: fillElfData(ImageProviderBase& provider, ElfData& el
    elfData.dynamicSize = dynamicWriter.position() - elfData.dynamicOffset;
 }
 
+void Elf64ImageFormatter :: writeRELA(MemoryWriter& dynamicWriter, ref_t importRef, pos_t reltabOffset, pos_t count)
+{
+   dynamicWriter.writeQWord(DT_RELA);
+   dynamicWriter.writeQReference(importRef, reltabOffset);
+
+   dynamicWriter.writeQWord(DT_RELASZ);
+   dynamicWriter.writeQWord(count * 24);
+}
+
 // --- ElfAmd64ImageFormatter ---
 
 int ElfAmd64ImageFormatter:: getRelocationType()
 {
-#if defined(__FreeBSD__)
-   return R_X86_64_JMP_SLOT;
-#else
    return R_X86_64_JUMP_SLOT;
-#endif
 }
 
 void ElfAmd64ImageFormatter :: fixSection(MemoryBase* section, AddressSpace& map)
@@ -672,4 +641,26 @@ pos_t ElfAmd64ImageFormatter :: writePLTEntry(MemoryWriter& codeWriter, pos_t sy
    codeWriter.writeDWord(0x10 * (-1 - entryIndex));
 
    return position;
+}
+
+// --- ElfFreeBSDAmd64ImageFormatter ---
+
+#ifndef R_X86_64_JMP_SLOT
+
+#define R_X86_64_JMP_SLOT R_X86_64_JUMP_SLOT
+
+#endif // R_X86_64_JMP_SLOT
+
+int ElfFreeBSDAmd64ImageFormatter :: getRelocationType()
+{
+   return R_X86_64_JMP_SLOT;
+}
+
+void ElfFreeBSDAmd64ImageFormatter :: writeRELA(MemoryWriter& dynamicWriter, ref_t importRef, pos_t reltabOffset, pos_t count)
+{
+   dynamicWriter.writeQWord(DT_RELA);
+   dynamicWriter.writeQReference(importRef, reltabOffset/*relatabOffset*/);
+
+   dynamicWriter.writeQWord(DT_RELASZ);
+   dynamicWriter.writeQWord(/*global_count * 24*/0);
 }

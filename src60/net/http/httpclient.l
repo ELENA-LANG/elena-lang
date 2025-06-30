@@ -29,7 +29,7 @@ public class SocketFactory
 
    static INetSocket openSocket(Uri uri)
    {
-      INetSocket socket := nil;
+      INetSocket socket;
       string scheme := uri.Scheme;
       short port := uri.Port;
       scheme =>

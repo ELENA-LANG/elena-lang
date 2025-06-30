@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Engine
-//             Linux Shared Library Declaration
-//                                             (C)2022-2023, by Aleksey Rakov
+//             Shared Library Declaration
+//                                             (C)2022-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELT_ELENASM_H
@@ -23,7 +23,7 @@ extern "C"
    DLL_PUBLIC void* InterpretFileSMLA(const char* pathStr, int encoding, bool autoDetect);
    DLL_PUBLIC void* InterpretScriptSMLA(const char* script);
    DLL_PUBLIC size_t GetStatusSMLA(char* buffer, size_t maxLength);
-   DLL_PUBLIC void ReleaseSMLA(void* tape);
+   DLL_PUBLIC void ReleaseSMLA(int id);
 }
 
 #endif // ELENART_H_INCLUDED

@@ -232,9 +232,19 @@ labYGNextFrame:
 
   mov [rbp-8], rsp      // ; save position for roots
 
+#if _WIN
+
   mov  r8,  [rbp+8]
   mov  rdx, [rbp]
   mov  rcx, rsp
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, [rbp+8]
+  mov  rsi, [rbp]
+  mov  rdi, rsp
+
+#endif
 
   // ; restore frame to correctly display a call stack
   mov  rax, rbp
@@ -299,6 +309,13 @@ labPERMCollect:
 end
 
 procedure %PREPARE
+
+#if (_LNX || _FREEBSD)
+
+  mov  rdi, rax
+  call extern "$rt.PrepareLA"
+
+#endif
 
   ret
 
@@ -1997,9 +2014,19 @@ inline %0CAh
   pop  r13
   pop  r12
   pop  rbx
+
+#if _WIN
+
   pop  rdi
   pop  rsi
   add  rsp, 8
+
+
+#elif (_LNX || _FREEBSD)
+
+  add  rsp, 40
+
+#endif
 
 end
 
@@ -2019,9 +2046,19 @@ inline %1CAh
   pop  r13
   pop  r12
   pop  rbx
+
+#if _WIN
+
   pop  rdi
   pop  rsi
   add  rsp, 8
+
+
+#elif (_LNX || _FREEBSD)
+
+  add  rsp, 40
+
+#endif
   
 end
 
@@ -2119,10 +2156,33 @@ end
 inline %4CFh
 
   finit
+
+#if _FREEBSD
+
+  push 0 
+  mov  rax, rdi
+
+#elif _LNX
+
+  mov  rax, rsp
+
+#endif
+
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_root], rsp
+
+#if _WIN
 
   mov  rax, rsp
   call %PREPARE
+
+#elif (_LNX || _FREEBSD)
+
+  call %PREPARE
+
+  xor  rbp, rbp
+  push rbp                 // ; note an extra push to simulate the function entry
+
+#endif
 
 end
 
@@ -3017,6 +3077,8 @@ end
 // ; extopenin
 inline %0F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3026,6 +3088,18 @@ inline %0F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3060,6 +3134,8 @@ end
 // ; extopenin 0, n
 inline %1F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3069,6 +3145,18 @@ inline %1F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3099,6 +3187,8 @@ end
 // ; extopenin 1, n
 inline %2F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3108,6 +3198,18 @@ inline %2F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3140,6 +3242,8 @@ end
 // ; extopenin 2, n
 inline %3F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3149,6 +3253,18 @@ inline %3F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3181,6 +3297,8 @@ end
 // ; extopenin 3, n
 inline %4F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3190,6 +3308,18 @@ inline %4F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3224,6 +3354,8 @@ end
 // ; extopenin 4, n
 inline %5F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3233,6 +3365,18 @@ inline %5F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3267,6 +3411,8 @@ end
 // ; extopenin i, 0
 inline %6F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3276,6 +3422,18 @@ inline %6F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3306,6 +3464,8 @@ end
 // ; extopenin 0, 0
 inline %7F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3315,6 +3475,18 @@ inline %7F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3340,6 +3512,8 @@ end
 // ; extopenin 1, 0
 inline %8F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3349,6 +3523,18 @@ inline %8F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3376,6 +3562,8 @@ end
 // ; extopenin 2, 0
 inline %9F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3385,6 +3573,18 @@ inline %9F2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3413,6 +3613,8 @@ end
 // ; extopenin 3, 0
 inline %0AF2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3422,6 +3624,18 @@ inline %0AF2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -3452,6 +3666,8 @@ end
 // ; extopenin 4, 0
 inline %0BF2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
@@ -3461,6 +3677,18 @@ inline %0BF2h
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  push 0 
+  push rcx
+  push rdx
+  push rsi  
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -4387,11 +4615,138 @@ end
 // ; callext
 inline %0FEh
 
-  mov  rcx, r10
-  mov  rdx, r11
-  mov  r8, [rsp+16]
+#if _WIN
+
   mov  r9, [rsp+24]
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  r9, [rsp+40]
+  mov  r8,  [rsp+32]
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
   call extern __relptr32_1
   mov  rdx, rax
+
+end
+
+// ; callext
+inline %1FEh
+
+  call extern __relptr32_1
+  mov  rdx, rax
+
+end
+
+// ; callext
+inline %2FEh
+
+#if _WIN
+
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdi, r10
+
+#endif
+
+  call extern __relptr32_1
+  mov  rdx, rax
+
+end
+
+// ; callext
+inline %3FEh
+
+#if _WIN
+
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call extern __relptr32_1
+  mov  rdx, rax
+
+end
+
+// ; callext
+inline %4FEh
+
+#if _WIN
+
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call extern __relptr32_1
+  mov  rdx, rax
+
+end
+
+// ; callext
+inline %5FEh
+
+#if _WIN
+
+  mov  r9, [rsp+24]
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call extern __relptr32_1
+  mov  rdx, rax
+
+end
+
+// VEH_HANDLER() 
+procedure % VEH_HANDLER
+
+#if _WIN
+
+  mov  r10, rdx
+  mov  rdx, rax   // ; set exception code
+  mov  rax, [data : % CORE_SINGLE_CONTENT]
+  jmp  rax
+
+#elif (_LNX || _FREEBSD)
+
+  mov  r10, rdx
+  mov  rdx, rax   // ; set exception code
+  mov  rax, [data : % CORE_SINGLE_CONTENT]
+  jmp  rax
+
+#endif
 
 end

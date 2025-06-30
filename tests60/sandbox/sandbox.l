@@ -1,7 +1,5 @@
-import extensions;
+#let attributes["PUBLIC"]      := 80004001h;
 
-const byte[] base_map = new byte[] { 65, 66, 67 };
-
-public program()
+PUBLIC program()
 {
 }

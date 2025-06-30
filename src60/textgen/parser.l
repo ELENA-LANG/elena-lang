@@ -8,7 +8,22 @@ singleton ScriptGenerator
          :break;
       
       fullScript.write("output.write(""");   
-      fullScript.writeSubstring(script, start, index - start);
+      
+      int cbIndex := script.indexOf(start, "}}");
+      if (cbIndex > 0 && cbIndex <= index) {
+         fullScript.writeSubstring(script, start, cbIndex - start + 1);
+         int next := cbIndex + 2;
+         cbIndex := script.indexOf(next, "}}");
+         while (cbIndex > 0 && cbIndex <= index) {
+            fullScript.writeSubstring(script, next, cbIndex - next + 1);
+            next := cbIndex + 2;
+            cbIndex := script.indexOf(next, "}}");
+         };
+         
+         fullScript.writeSubstring(script, next, index - next);
+      }
+      else fullScript.writeSubstring(script, start, index - start);
+      
       fullScript.write(""");");      
    }
    
@@ -39,9 +54,20 @@ singleton ScriptGenerator
             if (index >= 0) {
                int injectIndex := script.indexOf(start, "{");
                while (injectIndex > 0 && injectIndex < index) {
-                  if (injectIndex > start) {
+                  if (injectIndex < index) {
+                     if (script[injectIndex + 1] == "{") {
+                        writeOutput(fullScript, script, start, injectIndex + 1);
+                        
+                        start := injectIndex + 2;
+                        injectIndex := script.indexOf(start, "{");
+                        :continue;
+                     };
+                     
                      writeOutput(fullScript, script, start, injectIndex);
-                  };
+                  }
+                  else {
+                     :break;
+                  };                  
                   
                   start := script.indexOf(start, "}");
                   if (start == -1 || start > index)
