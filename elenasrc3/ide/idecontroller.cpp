@@ -360,7 +360,7 @@ bool ProjectController :: isOutaged(ProjectModel& projectModel, SourceViewModel&
    return false;
 }
 
-bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
+bool ProjectController :: onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action,
    DebugActionResult& result, bool withoutPostponeAction)
 {
    if (!_debugController.isStarted()) {
@@ -450,7 +450,8 @@ bool ProjectController :: startVMConsole(ProjectModel& model)
 
 void ProjectController :: stopVMConsole()
 {
-   _vmProcess->stop(0);
+   if (_vmProcess)
+      _vmProcess->stop(0);
 }
 
 bool ProjectController :: compileProject(ProjectModel& model, int postponedAction)
@@ -1064,7 +1065,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path, GUISettinngs& gui
       model->sourceViewModel.scrollOffset = loadSetting(config, VSCROLL_SETTINGS, 1);
       model->sourceViewModel.settings.tabSize = loadSetting(config, TABSIZE_SETTINGS, 3);
       model->projectModel.autoRecompile = loadSetting(config, AUTO_RECOMPILE_SETTING, -1) != 0;
-      model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;      
+      model->autoSave = loadSetting(config, AUTO_SAVE_SETTING, -1) != 0;
 
       guiSettings.withLargeToolbar = loadSetting(config, LARGETOOLBAR_SETTINGS, -1) != 0;
       guiSettings.withTabAboverscore = loadSetting(config, TABABOVESCORE_SETTINGS, -1) != 0;
@@ -1661,15 +1662,15 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
    else return nullptr;
 }
 
-void IDEController :: doDebugAction(IDEModel* model, DebugAction action, 
+void IDEController :: doDebugAction(IDEModel* model, DebugAction action,
    MessageDialogBase& mssgDialog, bool withoutPostponeAction)
 {
    if (model->running)
       return;
 
    DebugActionResult result = {};
-   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel, 
-      action, result, withoutPostponeAction)) 
+   if (projectController.onDebugAction(model->projectModel, model->sourceViewModel,
+      action, result, withoutPostponeAction))
    {
       model->running = true;
 

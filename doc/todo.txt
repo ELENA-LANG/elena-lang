@@ -13,10 +13,6 @@ In development:
   - api : RealNumber
   - #708 : compile the project (elc, og, sg, asm, ecv)
   --------------------------------------
-  - #184 : IDE linux
-  --------------------------------------
-  * exit menu
-  --------------------------------------
   * migrate the recent changes
   * create a script
   * run the script

@@ -17,7 +17,7 @@ namespace elena_lang
 
    typedef wstr_t path_t;
 
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__MACH__)
 
    typedef ustr_t path_t;
 
