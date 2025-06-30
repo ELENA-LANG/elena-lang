@@ -59,7 +59,7 @@ bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath
 void MachOLinker :: prepareCommands(MachOExecutableImage& image)
 {
    pos_t fileOffset = 0;
-   for (auto it = image.addressMap.sections.headers.start(); !it.eof(); ++it) {
+   for (auto it = image.imageSections.headers.start(); !it.eof(); ++it) {
       ImageSectionHeader header = *it;
 
       Command* command = createSegmentCommand(header, fileOffset);
@@ -93,7 +93,7 @@ void MachOLinker :: prepareMachOImage(ImageProviderBase& provider, MachOExecutab
    prepareCommands(image);
 }
 
-LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType osType, PlatformType, path_t)
+LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType osType, PlatformType, path_t exeExtension)
 {
    bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
    MachOExecutableImage image(withDebugMode);
