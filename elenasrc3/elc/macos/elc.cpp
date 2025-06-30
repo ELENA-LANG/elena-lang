@@ -105,7 +105,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       VA_ALIGNMENT, defaultCoreSettings, CLIHelper::createJITCompiler);
 
    path_t defaultConfigPath = DEFAULT_CONFIG;
-   PathString configPath(dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
+   PathString configPath(dataPath, defaultConfigPath);
 
    return CLIHelper::compileProject(argc, argv,
       process,
