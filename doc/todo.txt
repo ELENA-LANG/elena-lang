@@ -15,8 +15,6 @@ In development:
   --------------------------------------
   - #184 : IDE linux
   --------------------------------------
-  * save all
-  * close project
   * exit menu
   --------------------------------------
   * migrate the recent changes
@@ -38,7 +36,7 @@ In development:
   - #35 : working on webapi
   - #622 : api backlog
   ide:  
-  - #184 : IDE linux - project settings, new project, save project, editor settings, debug settings, compile the project
+  - #184 : IDE linux - project settings, new project, save project, save all, close project, editor settings, debug settings, compile the project
   - #184 : IDE linux - toolbar
   - #184 : IDE linux - last files / projects
   - #184 : IDE linux - remember last open project / file

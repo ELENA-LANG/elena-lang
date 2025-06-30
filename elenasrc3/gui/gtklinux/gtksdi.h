@@ -48,6 +48,11 @@ protected:
       }
    }
 
+   void exit()
+   {
+      Gtk::Main::quit();
+   }
+
 public:
    void populate(int counter, Gtk::Widget** children);
    void setLayout(int center, int top, int bottom, int right, int left);

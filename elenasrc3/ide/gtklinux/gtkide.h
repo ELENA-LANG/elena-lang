@@ -67,7 +67,9 @@ protected:
    }
    void on_menu_file_quit()
    {
-      //_controller->doExit();
+      if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
+         SDIWindow::exit();
+      }
    }
    void on_menu_file_save()
    {
