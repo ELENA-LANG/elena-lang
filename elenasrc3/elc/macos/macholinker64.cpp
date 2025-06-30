@@ -37,7 +37,7 @@ Command* MachOLinker64 :: createSegmentCommand(ImageSectionHeader& header, pos_t
    command->vmaddr = header.vaddress;
    command->vmsize = header.memorySize;
    command->fileoff = fileOffset;
-   command->filesize = fileSize;
+   command->filesize = header.fileSize;
    switch (header.type) {
       case ImageSectionHeader::SectionType::Text:
          command->initprot = command->maxprot = PROT_X | PROT_R;         
