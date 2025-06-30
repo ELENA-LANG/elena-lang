@@ -92,130 +92,27 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
    }
 }
 
-void handleOption(char* arg, IdentifierString& profile, Project& project, CompilingProcess& process,
-   ErrorProcessor& errorProcessor, path_t dataPath, bool& cleanMode)
-{
-   switch (arg[1]) {
-      case 't':
-      {
-         IdentifierString configName(arg + 2);
-
-         project.loadConfigByName(dataPath, *configName, true);
-         break;
-      }
-      case 'p':
-         project.setBasePath(arg + 2);
-         break;
-      default:
-      {
-         IdentifierString argStr(arg);
-
-         CommandHelper::handleOption(*argStr, profile, project, process, errorProcessor, cleanMode);
-         break;
-      }
-   }
-}
-
 int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
-   CompilingProcess& process)
+   path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
-   bool cleanMode = false;
+   PlatformType platform = CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM);
 
-   Project          project(dataPath, CURRENT_PLATFORM, &Presenter::getInstance());
-   MacOSLinker      linker(&errorProcessor, &MacOSImageFormatter::getInstance(&project));
+   ProcessSettings defaultCoreSettings = CLIHelper::getProcessSettings(platform);
+   JITCompilerSettings jitSettings = CLIHelper::getJITCompilerSettings(platform, &errorProcessor);
 
-   // Initializing...
-   path_t defaultConfigPath /*= PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG)*/;
-//   if (defaultConfigPath.compare(LOCAL_DEFAULT_CONFIG)) {
-      // if the local config file was not found
-      defaultConfigPath = DEFAULT_CONFIG;
-//   }
+   CompilingProcess process(dataPath, getDefaultExtension(platform), "<moduleProlog>", "<prolog>", "<epilog>",
+      &Presenter::getInstance(), &errorProcessor,
+      VA_ALIGNMENT, defaultCoreSettings, CLIHelper::createJITCompiler);
 
-   PathString configPath(dataPath, /*PathHelper::retrieveFilePath(*/defaultConfigPath/*)*/);
-   project.loadConfig(*configPath, nullptr, false);
+   path_t defaultConfigPath = DEFAULT_CONFIG;
+   PathString configPath(dataPath, PathHelper::retrieveFilePath(defaultConfigPath));
 
-   IdentifierString profile;
-   for (int i = 1; i < argc; i++) {
-      if (argv[i][0] == '-') {
-         handleOption(argv[i], profile, project, process,
-            errorProcessor, dataPath, cleanMode);
-      }
-      else if (PathUtil::checkExtension(argv[i], "prj")) {
-         PathString path(argv[i]);
-         if (!project.loadProject(*path, *profile)) {
-            return ERROR_RET_CODE;
-         }
-
-         if (profile.empty() && project.availableProfileList.count() != 0) {
-            IdentifierString profileList;
-            for (auto it = project.availableProfileList.start(); !it.eof(); ++it) {
-               if (profileList.length() != 0)
-                  profileList.append(", ");
-
-               profileList.append(*it);
-            }
-
-            Presenter::getInstance().printLine(ELC_PROFILE_WARNING, *profileList);
-         }
-      }
-      else if (PathUtil::checkExtension(argv[i], "prjcol")) {
-         Presenter::getInstance().printLine(ELC_PRJ_COLLECTION_WARNING);
-         return -2;
-      }
-      else {
-         FileNameString fileName(argv[i]);
-
-         project.addSource(*fileName, argv[i], nullptr, nullptr);
-      }
-   }
-
-   if (cleanMode) {
-      return process.clean(project);
-   }
-   else {
-      // Building...
-      return process.build(project, linker,
-         DEFAULT_STACKALIGNMENT,
-         DEFAULT_RAW_STACKALIGNMENT,
-         DEFAULT_EHTABLE_ENTRY_SIZE,
-         MINIMAL_ARG_LIST,
-         *profile);
-   }
-}
-
-int compileProjectCollection(int argc, char** argv, path_t path, path_t dataPath,
-   ErrorProcessor& errorProcessor, CompilingProcess& process)
-{
-   Presenter* presenter = &Presenter::getInstance();
-
-   int retVal = 0;
-   ProjectCollection collection;
-
-   if (!collection.load(path)) {
-      presenter->printPath(presenter->getMessage(wrnInvalidConfig), path);
-
-      return ERROR_RET_CODE;
-   }
-
-   for (auto it = collection.paths.start(); !it.eof(); ++it) {
-      size_t destLen = FILENAME_MAX;
-      char projectPath[FILENAME_MAX];
-      StrConvertor::copy(projectPath, (*it).str(), (*it).length(), destLen);
-      projectPath[destLen] = 0;
-
-      argv[argc - 1] = projectPath;
-      presenter->printPath(ELC_COMPILING_PROJECT, projectPath);
-
-      int result = compileProject(argc, argv, dataPath, errorProcessor, process);
-      if (result == ERROR_RET_CODE) {
-         return ERROR_RET_CODE;
-      }
-      else if (result == WARNING_RET_CODE) {
-         retVal = WARNING_RET_CODE;
-      }
-   }
-
-   return retVal;
+   return CLIHelper::compileProject(argc, argv,
+      process,
+      platform, jitSettings,
+      Presenter::getInstance(), errorProcessor,
+      dataPath, basePath, *configPath,
+      defaultProfile);
 }
 
 //const char* dataFileList[] = { BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE };
