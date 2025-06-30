@@ -47,11 +47,11 @@ bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath
    for (auto command_it = image.commands.start(); !command_it.eof(); ++command_it) {
       Command* command = *command_it;
 
-      executable->write((char*)command, command->commandSize);
+      executable.write((char*)command, command->commandSize);
    }   
 
    // write sections
-   writeSegments(image, file);
+   writeSegments(image, &executable);
 
    return true;
 }
@@ -95,6 +95,7 @@ void MachOLinker :: prepareMachOImage(ImageProviderBase& provider, MachOExecutab
 
 LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType osType, PlatformType, path_t)
 {
+   bool withDebugMode = project.BoolSetting(ProjectOption::DebugMode, true);
    MachOExecutableImage image(withDebugMode);
 
    prepareMachOImage(provider, image/*, calcHeaderSize()*/);
