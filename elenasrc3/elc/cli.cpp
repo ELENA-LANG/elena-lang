@@ -68,6 +68,24 @@
 
 #endif
 
+#if defined(__MACH__)
+
+#if defined(__x86_64__) || defined(_M_X64)
+
+
+#include "macos/macholinker64.h"
+#include "macos/machoimage.h"
+
+#include "x86compiler.h"
+#include "x86_64compiler.h"
+
+#endif
+
+#endif
+
+
+
+
 //#define TIME_RECORDING 1
 
 using namespace elena_lang;
