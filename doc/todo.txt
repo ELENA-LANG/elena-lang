@@ -17,7 +17,6 @@ In development:
   --------------------------------------
   * project view : select a file
   * hide / select project view
-  * 
   * save all
   * close project
   * exit menu

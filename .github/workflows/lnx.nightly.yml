@@ -7,7 +7,7 @@ name: Linux Nightly Build
 
 on:
   schedule:
-    - cron: '0 4 */6 * *'  # Run once per day
+    - cron: '0 4 * * *'  # Run once per day
   workflow_dispatch: # Put here!!
 
 permissions: write-all
