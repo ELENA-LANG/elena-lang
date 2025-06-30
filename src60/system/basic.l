@@ -2496,6 +2496,7 @@ public sealed const struct RealNumber : BaseNumber,
       = 1.7976931348623157e+308r;
 
    static real Default
+            : info("Returns the default value (0)")
       = 0.0;
 
    static real NegativeInfinity 
@@ -2511,15 +2512,19 @@ public sealed const struct RealNumber : BaseNumber,
       = 0.0 / 0.0;   
 
    static real Pi
+            : info("Returns Pi value")
       = Pi_value;
 
    constructor(int n)
+            : info("Converts the value")
       = RealConvertor.convert(n);
    
    constructor(byte n)
+            : info("Converts the value")
       = RealConvertor.convert(n);
    
    constructor(short n)
+            : info("Converts the value")
       = RealConvertor.convert(n);
 
    constructor()
@@ -2539,6 +2544,7 @@ public sealed const struct RealNumber : BaseNumber,
       = RealConvertor.convert(n);
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is real r)
       {
@@ -2549,6 +2555,7 @@ public sealed const struct RealNumber : BaseNumber,
    }
 
    bool less(n)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type when it is possible and compared")
       <= less(cast real(n));
 
    bool equal(real n)
@@ -2560,15 +2567,19 @@ public sealed const struct RealNumber : BaseNumber,
       = _value < n;
 
    add(n)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type")
       <= add(cast real(n));
 
    subtract(n)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type")
       <= subtract(cast real(n));
 
    multiply(n)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type")
       <= multiply(cast real(n));
 
    divide(n)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type")
       <= divide(cast real(n));
 
    real add(real n)
