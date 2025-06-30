@@ -88,7 +88,7 @@ namespace elena_lang
          _used = 0;
       }
 
-      void trim(pos_t position)
+      void trim(pos_t position) override
       {
          if (position < _used) {
             _used = position;

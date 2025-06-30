@@ -476,7 +476,7 @@ namespace elena_lang
          {
             return {};
          }
-         virtual ObjectInfo mapGlobal(ustr_t)
+         virtual ObjectInfo mapGlobal(ustr_t, ExpressionAttribute = ExpressionAttribute::None)
          {
             return {};
          }
@@ -606,7 +606,7 @@ namespace elena_lang
          ref_t mapNewIdentifier(ustr_t identifier, Visibility visibility) override;
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
-         ObjectInfo mapGlobal(ustr_t identifier, ExpressionAttribute mode);
+         ObjectInfo mapGlobal(ustr_t identifier, ExpressionAttribute mode) override;
          ObjectInfo mapWeakReference(ustr_t identifier, bool directResolved);
          ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
 
@@ -1191,7 +1191,7 @@ namespace elena_lang
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
          ObjectInfo mapMember(ustr_t identifier) override;
-         ObjectInfo mapGlobal(ustr_t globalReference) override;
+         ObjectInfo mapGlobal(ustr_t globalReference, ExpressionAttribute mode = ExpressionAttribute::None) override;
 
          void markAsAssigned(ObjectInfo object) override
          {

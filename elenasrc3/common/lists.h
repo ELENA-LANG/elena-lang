@@ -10,17 +10,9 @@
 #define LISTS_H
 #include <assert.h>
 
-#ifdef __GNUC__
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Waddress"
-
-#elif _MSC_VER
-
-#pragma warning( push )
-#pragma warning( disable:4127 )
-
-#endif
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_NULLCONVERSION
+DISABLE_WARNING_ADDRESS
 
 namespace elena_lang
 {
@@ -3677,14 +3669,6 @@ DISABLE_WARNING_POP
    }
 }
 
-#ifdef __GNUC__
-
-#pragma GCC diagnostic pop
-
-#elif _MSC_VER
-
-#pragma warning( pop )
-
-#endif
+DISABLE_WARNING_POP
 
 #endif

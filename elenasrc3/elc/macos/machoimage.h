@@ -77,8 +77,8 @@ namespace elena_lang
    class MachOAmd64ImageFormatter : public MachO64ImageFormatter
    {
    protected:
-      ElfAmd64ImageFormatter(ForwardResolverBase* resolver)
-         : Elf64ImageFormatter(resolver)
+      MachOAmd64ImageFormatter(ForwardResolverBase* resolver)
+         : MachO64ImageFormatter(resolver)
       {
       }
 

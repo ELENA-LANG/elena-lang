@@ -1858,11 +1858,11 @@ ObjectInfo Compiler::ExprScope :: mapIdentifier(ustr_t identifier, bool referenc
    return info;
 }
 
-ObjectInfo Compiler::ExprScope::mapGlobal(ustr_t globalReference)
+ObjectInfo Compiler::ExprScope::mapGlobal(ustr_t globalReference, ExpressionAttribute mode)
 {
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
 
-   return nsScope->mapGlobal(globalReference, EAttr::None);
+   return nsScope->mapGlobal(globalReference, mode);
 }
 
 ObjectInfo Compiler::ExprScope::mapMember(ustr_t identifier)

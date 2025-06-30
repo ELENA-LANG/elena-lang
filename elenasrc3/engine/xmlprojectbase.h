@@ -35,7 +35,7 @@ namespace elena_lang
          XmlProjectBase* _project;
          ProjectNode     _node;
 
-         path_t path()
+         path_t path() override
          {
             return _project->_paths.get(_node.arg.value);
          }
