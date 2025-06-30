@@ -21,12 +21,14 @@ namespace elena_lang
    {
       None     = 0,
       AARCH64  = 0x1000000C
+      x86      =  0x00000007;
    };
 
    enum class CPUSubType : int32_t
    {
       None    = 0,
-      ARM_ALL = 0
+      ARM_ALL = 0,
+      X86_ALL = 3,
    };
 
    constexpr auto __PAGEZERO_SEGMENT = "__PAGEZERO";

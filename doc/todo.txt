@@ -11,11 +11,8 @@ In development:
   - fix create release script - attach rpm file as well
   - #743
   - api : RealNumber
-  - #708 : compile the project (elc, og, sg, asm, ecv)
+  - #708 : compile the project - elc
   --------------------------------------
-  * migrate the recent changes
-  * create a script
-  * run the script
   --------------------------------------
   === Iteration 42 ===
   --------------------------------------
@@ -25,6 +22,7 @@ In development:
   - #620 : backlog
   - genetic algorithms
   - #748 : i386
+  - #708 : compile the project (elenart, elenavm, og, sg, asm, ecv); run scripts
   gen:
   - script : support ++ operator
   - work on REPL (elt), generate project template

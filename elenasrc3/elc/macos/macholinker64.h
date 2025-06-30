@@ -77,6 +77,15 @@ namespace elena_lang
    class MachOAmd64Linker : public MachOLinker64
    {
    protected:
+      CPUType getCPUType() override
+      {
+         return CPUType::x86;
+      }
+
+      CPUSubType getCPUSubType() override
+      {
+         return CPUSubType::X86_ALL;
+      }
 
    public:
       MachOAmd64Linker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
