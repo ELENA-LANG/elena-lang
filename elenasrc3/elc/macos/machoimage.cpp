@@ -8,8 +8,8 @@
 
 #include "clicommon.h"
 // --------------------------------------------------------------------------
-#include "elfimage.h"
-#include "elfcommon.h"
+#include "machoimage.h"
+#include "machocommon.h"
 
 using namespace elena_lang;
 

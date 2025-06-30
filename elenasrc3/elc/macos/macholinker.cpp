@@ -10,7 +10,7 @@
 
 using namespace elena_lang;
 
-void MachOLinker::writeSegments(ElfExecutableImage& image, FileWriter* file)
+void MachOLinker::writeSegments(MachOExecutableImage& image, FileWriter* file)
 {
    for (auto it = image.imageSections.items.start(); !it.eof(); ++it) {
       writeSection(file, (*it).section);

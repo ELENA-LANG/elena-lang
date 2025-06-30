@@ -14,7 +14,7 @@
 
 namespace elena_lang
 {
-   struct Mach0ExecutableImage
+   struct MachOExecutableImage
    {
       unsigned int    sectionAlignment;
       unsigned int    fileAlignment;
@@ -28,7 +28,7 @@ namespace elena_lang
       int             totalCommandSize;
       Commands        commands;
 
-      ElfExecutableImage(bool withDebugInfo)
+      MachOExecutableImage(bool withDebugInfo)
          : imageSections({})
       {
          this->fileAlignment = this->sectionAlignment = 0;
@@ -38,7 +38,7 @@ namespace elena_lang
       }
    };
 
-   // --- ElfLinker ---
+   // --- MachOLinker ---
    class MachOLinker : public LinkerBase
    {
    protected:
@@ -55,7 +55,7 @@ namespace elena_lang
       virtual void prepareCommands(MachOExecutableImage& image);
 
       virtual void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) = 0;
-      virtual void writeSegments(ElfExecutableImage& image, FileWriter* file);
+      virtual void writeSegments(MachOExecutableImage& image, FileWriter* file);
 
       bool createExecutable(MachOExecutableImage image, path_t exePath);
 

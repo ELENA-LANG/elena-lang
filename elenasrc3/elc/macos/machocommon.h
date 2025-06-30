@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
-//		This header contains Common ELF types
+//		This header contains Common MachO types
 //                                              (C)2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
