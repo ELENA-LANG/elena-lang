@@ -20,8 +20,8 @@ namespace elena_lang
    enum class CPUType : int32_t
    {
       None     = 0,
-      AARCH64  = 0x1000000C
-      x86      =  0x00000007;
+      AARCH64  = 0x1000000C,
+      x86      = 0x00000007,
    };
 
    enum class CPUSubType : int32_t
