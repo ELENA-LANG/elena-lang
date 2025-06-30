@@ -43,7 +43,7 @@ namespace elena_lang
       //virtual void fillElfData(ImageProviderBase& provider, ElfData& elfData, pos_t fileAlignment, RelocationMap& importMapping) = 0;
 
       virtual void fixSection(MemoryBase* section, AddressSpace& map) = 0;
-      //virtual void fixImportSection(MemoryBase* section, AddressSpace& map) = 0;
+      virtual void fixImportSection(MemoryBase* section, AddressSpace& map) = 0;
 
       void mapImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections, pos_t sectionAlignment,
         pos_t fileAlignment/*, ElfData& elfData*/);
@@ -89,7 +89,7 @@ namespace elena_lang
          pos_t gofOffset, int entryIndex) override;
 */
       void fixSection(MemoryBase* section, AddressSpace& map) override;
-/*      void fixImportSection(MemoryBase* section, AddressSpace& map) override;*/
+      void fixImportSection(MemoryBase* section, AddressSpace& map) override;
 
    public:
       static MachOAmd64ImageFormatter& getInstance(ForwardResolverBase* resolver)

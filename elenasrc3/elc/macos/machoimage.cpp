@@ -125,3 +125,9 @@ void MachOAmd64ImageFormatter :: fixSection(MemoryBase* section, AddressSpace& m
    // !! temporally
    dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocate64);
 }
+
+void ElfAmd64ImageFormatter :: fixImportSection(MemoryBase* section, AddressSpace& map)
+{
+   // !! temporally commented out
+//   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocateElf64Import);
+}
