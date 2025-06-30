@@ -641,7 +641,7 @@ namespace elena_lang
       pos_t    _length;
 
    public:
-      bool isOpen() const { return _text != nullptr; }
+      bool isOpen() const override { return _text != nullptr; }
 
       pos_t position() const override { return _offset; }
 
