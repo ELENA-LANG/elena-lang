@@ -68,9 +68,8 @@ namespace elena_lang
 
    public:
       MachOLinker64(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
-         : MachOLinker(errorProcessor)
+         : MachOLinker(errorProcessor, imageFormatter)
       {
-         _imageFormatter = imageFormatter;
       }
    };
 

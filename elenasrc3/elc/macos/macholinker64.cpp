@@ -20,7 +20,7 @@ void MachOLinker64 :: writeMachOHeader(MachOExecutableImage& image, FileWriter* 
    header.cputype = getCPUType();
    header.cpusubtype = getCPUSubType();
    header.filetype = FILE_EXECUTABLE;
-   header.ncmds = image.commands.count_pos();
+   header.ncmds = image.commands.count();
    header.sizeofcmds = image.totalCommandSize;
    header.flags = image.flags;
 
@@ -39,16 +39,19 @@ Command* MachOLinker64 :: createSegmentCommand(ImageSectionHeader& header, pos_t
    command->fileoff = fileOffset;
    command->filesize = fileSize;
    switch (header.type) {
-      case SectionType::Text:
-         command->intprot = command->maxprot = PROT_X | PROT_R;         
+      case ImageSectionHeader::SectionType::Text:
+         command->initprot = command->maxprot = PROT_X | PROT_R;         
          break;
-      case SectionType::Data:
-      case SectionType::UninitializedData:
-         command->intprot = command->maxprot = PROT_R | PROT_W;
+      case ImageSectionHeader::SectionType::Data:
+      case ImageSectionHeader::SectionType::UninitializedData:
+         command->initprot = command->maxprot = PROT_R | PROT_W;
          break;
-      case SectionType::RData:
-         command->intprot = command->maxprot = PROT_R;
+      case ImageSectionHeader::SectionType::RData:
+         command->initprot = command->maxprot = PROT_R;
          break;
+      default:
+        assert(false);
+        break;
    }
    command->nsects = 0;
    command->flags = 0;
