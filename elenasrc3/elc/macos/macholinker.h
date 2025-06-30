@@ -29,7 +29,7 @@ namespace elena_lang
       Commands        commands;
 
       MachOExecutableImage(bool withDebugInfo)
-         : imageSections({})
+         : imageSections({}), commands(nullptr)
       {
          this->fileAlignment = this->sectionAlignment = 0;
          this->flags = 0;
@@ -51,16 +51,17 @@ namespace elena_lang
 
       virtual Command* createSegmentCommand(ImageSectionHeader& header, pos_t& fileOffset) = 0;
 
-      virtual void prepareMachOImage(MachOExecutableImage& image);
+      virtual void prepareMachOImage(ImageProviderBase& provider, MachOExecutableImage& image);
       virtual void prepareCommands(MachOExecutableImage& image);
 
       virtual void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) = 0;
       virtual void writeSegments(MachOExecutableImage& image, FileWriter* file);
+      void writeSection(FileWriter* file, MemoryBase* section);
 
-      bool createExecutable(MachOExecutableImage image, path_t exePath);
+      bool createExecutable(MachOExecutableImage& image, path_t exePath);
 
    public:
-      LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType uiType,
+      LinkResult run(ProjectBase& project, ImageProviderBase& code, PlatformType osType, PlatformType uiType,
          path_t exeExtension) override;
 
       MachOLinker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)

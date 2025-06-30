@@ -10,7 +10,16 @@
 
 using namespace elena_lang;
 
-void MachOLinker::writeSegments(MachOExecutableImage& image, FileWriter* file)
+void MachOLinker :: writeSection(FileWriter* file, MemoryBase* section)
+{
+   if (section != nullptr) {
+      MemoryReader reader(section);
+      file->copyFrom(&reader, section->length());
+   }
+}
+
+
+void MachOLinker :: writeSegments(MachOExecutableImage& image, FileWriter* file)
 {
    for (auto it = image.imageSections.items.start(); !it.eof(); ++it) {
       writeSection(file, (*it).section);
@@ -38,7 +47,7 @@ bool MachOLinker :: createExecutable(MachOExecutableImage& image, path_t exePath
    for (auto command_it = image.commands.start(); !command_it.eof(); ++command_it) {
       Command* command = *command_it;
 
-      file->write((char*)command, command->commandSize);
+      executable->write((char*)command, command->commandSize);
    }   
 
    // write sections
@@ -60,13 +69,13 @@ void MachOLinker :: prepareCommands(MachOExecutableImage& image)
    }
 }
 
-void MachOLinker :: prepareMachOImage(MachOExecutableImage& image)
+void MachOLinker :: prepareMachOImage(ImageProviderBase& provider, MachOExecutableImage& image)
 {
    image.flags |= Flags_NoUndefs;
    //image.flags |= Flags_DyldLink;
    //image.flags |= Flags_TwoLevel;
 
-   NoUndefs, DyldLink, TwoLevel, PIE
+   //NoUndefs, DyldLink, TwoLevel, PIE
 
    if (!image.sectionAlignment)
       image.sectionAlignment = SECTION_ALIGNMENT;
@@ -84,11 +93,11 @@ void MachOLinker :: prepareMachOImage(MachOExecutableImage& image)
    prepareCommands(image);
 }
 
-LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType, path_t exeExtension)
+LinkResult MachOLinker :: run(ProjectBase& project, ImageProviderBase& provider, PlatformType osType, PlatformType, path_t)
 {
    MachOExecutableImage image(withDebugMode);
 
-   prepareMachOImage(/*provider, */image/*, calcHeaderSize()*/);
+   prepareMachOImage(provider, image/*, calcHeaderSize()*/);
 
    PathString exePath(project.PathSetting(ProjectOption::TargetPath));
    exePath.changeExtension(exeExtension);
