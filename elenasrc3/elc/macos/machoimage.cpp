@@ -11,6 +11,8 @@
 #include "machoimage.h"
 #include "machocommon.h"
 
+#include "x86relocation.h"
+
 using namespace elena_lang;
 
 // --- MachOImageFormatter ---
@@ -62,7 +64,7 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    map.rdata = fileOffset;
 
    fileOffset += align(rdata->length(), fileAlignment);
-   sectionSize = fileSize = fileOfset;
+   sectionSize = fileSize = fileOffset;
 
    sections.headers.add(ImageSectionHeader::get(__TEXT_SEGMENT, map.code, ImageSectionHeader::SectionType::Text,
       sectionSize, fileSize));
@@ -83,7 +85,7 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    map.stat = map.data + align(data->length(), fileAlignment);
 
    fileSize = 0;
-   sectionSize = align(stat->length(), fileAlignment) + align(data->length(), fileAlignment)
+   sectionSize = align(stat->length(), fileAlignment) + align(data->length(), fileAlignment);
 
    sections.headers.add(ImageSectionHeader::get(__DATA_SEGMENT, map.data, ImageSectionHeader::SectionType::Data,
       sectionSize, fileSize));
@@ -114,4 +116,12 @@ void MachOImageFormatter :: fixImage(ImageProviderBase& provider, AddressSpace& 
    if (withDebugInfo) {
       fixSection(provider.getTargetDebugSection(), map);
    }
+}
+
+// --- MachOAmd64ImageFormatter ---
+
+void MachOAmd64ImageFormatter :: fixSection(MemoryBase* section, AddressSpace& map)
+{
+   // !! temporally
+   dynamic_cast<Section*>(section)->fixupReferences<AddressSpace*>(&map, relocate64);
 }
