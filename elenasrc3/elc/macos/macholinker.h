@@ -46,6 +46,9 @@ namespace elena_lang
 
       virtual unsigned long getMagicNumber() = 0;
 
+      virtual CPUType getCPUType() = 0;
+      virtual CPUSubType getCPUSubType() = 0;
+
       virtual Command* createSegmentCommand(ImageSectionHeader& header, pos_t& fileOffset) = 0;
 
       virtual void prepareMachOImage(ImageProviderBase& provider, MachOExecutableImage& image);
