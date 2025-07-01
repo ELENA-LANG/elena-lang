@@ -2971,7 +2971,13 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
    if (byRefMethod)
       methodInfo.byRefHandler = byRefMethod;
 
-   methodInfo.nillableArgs = node.findChild(SyntaxKey::NillableInfo).arg.reference;
+   ref_t nodeNillableArgs = node.findChild(SyntaxKey::NillableInfo).arg.reference;
+   // validate if the nullable signatures matche each other
+   if (methodInfo.nillableArgs != 0 && methodInfo.nillableArgs != nodeNillableArgs) {
+      scope.raiseWarning(WARNING_LEVEL_1, wrnNillableRedefined, node);
+   }
+
+   methodInfo.nillableArgs = nodeNillableArgs;
 
    // check duplicates with different visibility scope
    if (MethodInfo::checkVisibility(methodInfo, MethodHint::Private)) {

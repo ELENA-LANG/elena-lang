@@ -16,6 +16,7 @@ In development:
   - #748 : i386
   - #708 : fix invalid linker name in argument '-fuse-ld=lld'
   - #708 : compile the project (elc, elenart, elenavm, og, sg, asm, ecv); run scripts
+  - ppc : fpi, fsin, fcos
   gen:
   - script : support ++ operator
   - work on REPL (elt), generate project template
@@ -31,13 +32,10 @@ In development:
   - compile in the separate thread  
   - async method - auto watch : self and some variables are not displayed
   maint:
-  - optimization : direct branching with nil
   - test all x86-64 examples
   - get rid of win_locale.l in system; refactor for cross-platform
-  - rosetta code - moving to 6.7 : (Combinations)
   samples:
   - review pi performance (must < 6) : realOp.power[3] byte code
-  - chat sample
   - rosetta code : Program termination, Parallel calculations
   port:
   - linux elt - use rpath for linking elenavm
@@ -51,10 +49,15 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - rosetta code - moving to 6.7 : (Combinations)
+  - #184 : IDE linux - project settings
+  - chat sample
+  - optimization : direct branching with nil
+  - docs : Pi_value
   - #620 : backlog
   --------------------------------------
-  * new opcode : fpi - ppc64le
-  * new opcode : fsin / fcos - ppc64le
+  * warn if the variable is not assigned at all (special case switch and branching)
+  * warn if nullable argument is passed to the method, not supporting nullable
   --------------------------------------
 
   === Iteration 43 ===

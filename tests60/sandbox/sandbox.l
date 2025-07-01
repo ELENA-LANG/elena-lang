@@ -1,5 +1,19 @@
-#let attributes["PUBLIC"]      := 80004001h;
+B;
 
-PUBLIC program()
+A
+{
+   test(B? b) {}
+
+//   B? test() = nil;  
+}
+
+C : A
+{
+   test(B? b) {}
+
+//   B test() = new B();
+}
+
+public program()
 {
 }
