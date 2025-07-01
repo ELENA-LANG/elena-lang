@@ -15,6 +15,7 @@
     
 [![MSBuild](https://github.com/ELENA-LANG/elena-lang/actions/workflows/msbuild.yml/badge.svg?branch=master)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/msbuild.yml)
 [![Nightly MSBuild](https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml/badge.svg)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/nightly.yml)
+[![Linux Nightly Build](https://github.com/ELENA-LANG/elena-lang/actions/workflows/lnx.nightly.yml/badge.svg)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/lnx.nightly.yml)
 [![Nightly FreeBSD Build](https://github.com/ELENA-LANG/elena-lang/actions/workflows/bsd.nightly.yml/badge.svg)](https://github.com/ELENA-LANG/elena-lang/actions/workflows/bsd.nightly.yml)
 [![Sponsor](https://img.shields.io/badge/patreon-donate-green.svg)](https://www.patreon.com/elena_lang)
 [![Sponsor](https://img.shields.io/static/v1?label=Sponsor&message=%E2%9D%A4&logo=GitHub&link=https://github.com/sponsors/arakov)](https://github.com/sponsors/arakov)
