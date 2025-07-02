@@ -168,11 +168,11 @@ singleton startState
 
 class Scope
 {
-   object _state;
-   int    _level;
-   object _parser;
-   object _token;
-   object _expression;
+   object  _state;
+   int     _level;
+   object  _parser;
+   object? _token;
+   object  _expression;
     
    constructor new(parser)
    {
