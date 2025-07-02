@@ -403,6 +403,7 @@ namespace elena_lang
    constexpr auto wrnReturningNillable       = 412;
    constexpr auto wrnNillableTarget          = 413;
    constexpr auto wrnNillableRedefined       = 414;
+   constexpr auto wrnNillableOutputRedefined = 415;
    constexpr auto wrnTypeInherited           = 420;
    constexpr auto wrnDuplicateInclude        = 425;
    constexpr auto wrnUnknownTypecast         = 426;

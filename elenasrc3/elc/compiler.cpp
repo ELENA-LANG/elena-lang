@@ -3038,6 +3038,9 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
 
          scope.raiseError(errTypeAlreadyDeclared, node);
       }
+      if (MethodInfo::checkVisibility(methodInfo, MethodHint::Nillable) != outputInfo.nillable) {
+         scope.raiseWarning(WARNING_LEVEL_1, wrnNillableOutputRedefined, node);
+      }
 
       methodInfo.outputRef = outputRef;
       methodInfo.hints |= outputInfo.nillable ? (ref_t)MethodHint::Nillable : 0;

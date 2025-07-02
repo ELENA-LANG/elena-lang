@@ -271,7 +271,7 @@ void SystemRoutineProvider :: InitRandomSeed(SeedStruct& seed, long long seedNum
    seed.z1 = low;
    seed.z2 = hi;
    seed.z3 = low * (low & 0xFF);
-   seed.z3 = hi * (low & 0xFF00);
+   seed.z4 = hi * (low & 0xFF00);
 }
 
 unsigned int SystemRoutineProvider :: GetRandomNumber(SeedStruct& seed)

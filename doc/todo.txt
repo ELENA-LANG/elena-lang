@@ -53,9 +53,11 @@ In development:
   - #184 : IDE linux - project settings
   - chat sample
   - optimization : direct branching with nil
+  - #789
   - docs : Pi_value
   - #620 : backlog
   --------------------------------------
+  * check nullable output
   * warn if the variable is not assigned at all (special case switch and branching)
   * warn if nullable argument is passed to the method, not supporting nullable
   --------------------------------------
