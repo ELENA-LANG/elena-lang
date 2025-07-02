@@ -2,16 +2,16 @@ B;
 
 A
 {
-//   test(B? b) {}
+   test(B? b) {}
 
    B? test() = nil;  
 }
 
 C : A
 {
-//   test(B? b) {}
+   test(B b) {}
 
-   B test() = new B();
+   B? test() = new B();
 }
 
 public program()

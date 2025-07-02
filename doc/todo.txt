@@ -58,6 +58,7 @@ In development:
   - #620 : backlog
   --------------------------------------
   * check nullable output
+  * chcek warnings : system, xml
   * warn if the variable is not assigned at all (special case switch and branching)
   * warn if nullable argument is passed to the method, not supporting nullable
   --------------------------------------
