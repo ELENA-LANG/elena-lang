@@ -197,7 +197,7 @@ public abstract class BaseWinContainer : BaseWinControl
       _controls := new List<IControl>();
    }
 
-   IControl retrieve(Handle handle)
+   IControl? retrieve(Handle handle)
    {
       if(_handle == handle)
             { ^ weak self as:IControl };

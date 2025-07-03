@@ -459,8 +459,10 @@ bool ProjectController :: compileProject(ProjectModel& model, int postponedActio
    PathString appPath(model.paths.appPath);
    appPath.combine(*model.paths.compilerPath);
 
-   PathString cmdLine(*model.paths.compilerPath);
-   cmdLine.append(" -w3 "); // !! temporal
+   PathString cmdLine(*model.paths.compilerPath);   
+   cmdLine.append(" -w");
+   cmdLine.appendInt(model.warningLevel);
+   cmdLine.append(" ");
 
    if (!model.profile.empty()) {
       cmdLine.append(" -l");
@@ -484,7 +486,9 @@ bool ProjectController :: compileSingleFile(ProjectModel& model, int postponedAc
    appPath.combine(*model.paths.compilerPath);
 
    PathString cmdLine(*model.paths.compilerPath);
-   cmdLine.append(" -w3 "); // !! temporal
+   cmdLine.append(" -w");
+   cmdLine.appendInt(model.warningLevel);
+   cmdLine.append(" ");
    cmdLine.append(singleProjectFile);
 
    if (!model.templateName.empty()) {
@@ -514,6 +518,15 @@ bool ProjectController :: doCompileProject(ProjectModel& model, DebugAction post
       return compileProject(model, (int)postponedAction);
    }
    else return false;
+}
+
+inline void validateValue(int& value, int minValue, int maxValue)
+{
+   if (value < minValue) {
+      value = minValue;
+   }
+   else if (value > maxValue)
+      value = maxValue;
 }
 
 void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node configRoot)
@@ -546,6 +559,16 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
       optionsOption.readContent(value);
 
       model.options.copy(value.str());
+
+      // by loading options, extract warning info
+      size_t wIndex = (*model.options).findStr("-w");
+      if (wIndex != NOTFOUND_POS) {
+         model.warningLevel = model.options[wIndex + 2] - '0';
+         validateValue(model.warningLevel, 0, 3);
+
+         model.options.cut(wIndex, 3);
+      }
+      else model.warningLevel = 1;
    }
 
    auto outputOption = config.selectNode(configRoot, OUTPUT_SUB_CATEGORY);
@@ -655,14 +678,23 @@ void ProjectController :: saveConfig(ProjectModel& model, ConfigFile& config, Co
       else config.appendSetting(NAMESPACE_CATEGORY, *model.package);
    }
 
+   IdentifierString options(*model.options);
+   if (model.warningLevel != 1) {
+      if (options.length() > 0)
+         options.append(" ");
+
+      options.append("-w");
+      options.appendInt(model.warningLevel);
+   }
+
    auto optionsOption = config.selectNode(platformRoot, OPTIONS_SUB_CATEGORY);
    if (!optionsOption.isNotFound()) {
-      optionsOption.saveContent(*model.options);
+      optionsOption.saveContent(*options);
    }
    else {
       optionsOption = config.selectNode(root, OPTIONS_SUB_CATEGORY);
       if (!optionsOption.isNotFound()) {
-         optionsOption.saveContent(*model.options);
+         optionsOption.saveContent(*options);
       }
       else config.appendSetting(OPTIONS_CATEGORY, *model.options);
    }

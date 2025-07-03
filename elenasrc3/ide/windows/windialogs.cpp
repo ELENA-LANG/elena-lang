@@ -385,6 +385,12 @@ void ProjectSettings :: onCreate()
    addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Disabled"));
    addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Enabled"));
 
+   addComboBoxItem(IDC_SETTINGS_WARNINGS, _T(" None"));
+   addComboBoxItem(IDC_SETTINGS_WARNINGS, _T(" Level 1"));
+   addComboBoxItem(IDC_SETTINGS_WARNINGS, _T(" Level 2"));
+   addComboBoxItem(IDC_SETTINGS_WARNINGS, _T(" Level 3"));
+   setComboBoxIndex(IDC_SETTINGS_WARNINGS, _model->warningLevel);
+
    //int mode = _project->getDebugMode();
    //if (mode != 0) {
       setComboBoxIndex(IDC_SETTINGS_DEBUG, 1);
@@ -452,6 +458,8 @@ void ProjectSettings :: onOK()
       _model->strictType = -1;
    }
    else _model->strictType = 0;
+
+   _model->warningLevel = getComboBoxIndex(IDC_SETTINGS_WARNINGS);
 
    if (!_model->singleSourceProject)
       _model->notSaved = true;

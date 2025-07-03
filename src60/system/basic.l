@@ -2728,6 +2728,7 @@ public const struct CharValue : BaseValue,
       = $1114111;
 
    static char Default
+            : info("Returns the default value (0)")
       = $0;
 
    constructor()
@@ -2767,6 +2768,7 @@ public const struct CharValue : BaseValue,
    }
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the CharValue type when it is possible and compared; otherwise returns false")
    {
       var ch := cast char(o) ?? nil;
       if (ch == nil) {
@@ -2777,18 +2779,23 @@ public const struct CharValue : BaseValue,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the CharValue type when it is possible and compared")
       <= less(cast char(o));
 
    bool equal(char val)
+            : info("Compares the value")
       = _value == val;
 
    bool less(char val)
+            : info("Returns the true if the object value is less than an argument one;<br/>otherwise returns false")
       = _value < val;
 
    bool equal(int n)
+            : info("Compares the value with a character numeric value")
       = _value == n;
 
    bool equal(string s)
+            : info("If the UTF8 string contains a single character, compares the value with an object value;<br/>otherwise returns false")
    {
       int sLen := s.Length;
       int chLen := self.Length;
@@ -2804,6 +2811,7 @@ public const struct CharValue : BaseValue,
    }
 
    bool equal(wide s)
+            : info("If the UTF16 string contains a single character, compares the value with an object value;<br/>otherwise returns false")
    {
       int sLen := s.Length;
       int chLen := self.WideLength;
@@ -2819,9 +2827,11 @@ public const struct CharValue : BaseValue,
    }
 
    bool less(string s)
+            : info("If the UTF8 string contains a single character, compares the value with an object value;<br/>otherwise returns false")
          => cast string(s);
 
    bool less(wide s)
+            : info("If the UTF16 string contains a single character, compares the value with an object value;<br/>otherwise returns false")
          => cast wide(s);
 
    char clone()
@@ -2829,18 +2839,21 @@ public const struct CharValue : BaseValue,
       = new CharValue(self);
 
    string toPrintable()
+            : info("returns the literal presentation")
       = StringConvertor.convert(self);
 
    string cast()
+            : info("converts the character value to the UTF8 string")
       = StringConvertor.convert(self); 
 
    wide cast()
+            : info("converts the character value to the UTF16 string")
       = WideConvertor.convert(self); 
 }
 
 // --- nil constant ---
 
-public singleton nilValue
+public singleton NilValue
    : info("A nil value")
 {
    bool equal(object)
@@ -2863,6 +2876,9 @@ public singleton nilValue
             : info("Returns nil<br/>Any typecasting message will be handled and nil value returned")
       = nil;
 }
+
+// !! obsolete
+public symbol nilValue = NilValue;
 
 // --- KeyValue ---
 

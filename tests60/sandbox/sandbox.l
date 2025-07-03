@@ -1,19 +1,11 @@
-B;
-
-A
+B
 {
-   test(B? b) {}
-
-   B? test() = nil;  
-}
-
-C : A
-{
-   test(B b) {}
-
-   B? test() = new B();
+   test() {}
 }
 
 public program()
 {
+   B b;
+
+   b.test()
 }

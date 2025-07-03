@@ -1606,7 +1606,7 @@ public stackSafeExtensions() : testCase()
 
 public genericTest() : testCase()
 {
-    var r := cast int(nilValue);
+    var r := cast int(NilValue);
     Assert.ifTrue(r == nil);
     Console.write(".")
 }

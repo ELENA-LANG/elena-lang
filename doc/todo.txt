@@ -49,18 +49,16 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - docs : NilValue
   - rosetta code - moving to 6.7 : (Combinations)
   - #184 : IDE linux - project settings
   - chat sample
   - optimization : direct branching with nil
   - #789
-  - docs : Pi_value
-  - #620 : backlog
+  - rename nilValue to NilValue
   --------------------------------------
-  * check nullable output
-  * chcek warnings : system, xml
-  * warn if the variable is not assigned at all (special case switch and branching)
-  * warn if nullable argument is passed to the method, not supporting nullable
+  * rename nilValue to NilValue
+  * place nilValue as symbol refering to NilValue
   --------------------------------------
 
   === Iteration 43 ===
