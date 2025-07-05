@@ -9,7 +9,6 @@ In development:
   === Iteration 42 ===
   --------------------------------------
   dev: 
-  - MTA support for Linux : test simple multithread sample
   - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
   - #620 : backlog
   - genetic algorithms
@@ -17,6 +16,7 @@ In development:
   - #708 : fix invalid linker name in argument '-fuse-ld=lld'
   - #708 : compile the project (elc, elenart, elenavm, og, sg, asm, ecv); run scripts
   - ppc : fpi, fsin, fcos
+  - #789
   gen:
   - script : support ++ operator
   - work on REPL (elt), generate project template
@@ -35,6 +35,7 @@ In development:
   - test all x86-64 examples
   - get rid of win_locale.l in system; refactor for cross-platform
   samples:
+  - chat sample
   - review pi performance (must < 6) : realOp.power[3] byte code
   - rosetta code : Program termination, Parallel calculations
   port:
@@ -49,21 +50,26 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - rosetta code : Create a two-dimensional array at runtime
+  - MTA support for Linux : test simple multithread sample
   - docs : NilValue
-  - rosetta code - moving to 6.7 : (Combinations)
-  - #184 : IDE linux - project settings
-  - chat sample
-  - optimization : direct branching with nil
-  - #789
-  - rename nilValue to NilValue
   --------------------------------------
-  * rename nilValue to NilValue
-  * place nilValue as symbol refering to NilValue
+  - #184 : IDE linux - project settings
+  --------------------------------------
+  * new control project settings
+  * load from the model
+  * save to the model
+  --------------------------------------
+  * fix threadpoolsamples
+  * Concurrent computing - fix example
   --------------------------------------
 
   === Iteration 43 ===
   --------------------------------------
   dev: 
+  - MTA support for Linux : support socket
+  - MTA support for Linux : support http
+  - MTA support for Linux : tests threads / tasks examples
   - upndown (connector - cmdSearch)
   - #708 : compile library, compile executable, test executable  
   gen:
