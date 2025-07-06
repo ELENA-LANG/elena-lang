@@ -15497,7 +15497,11 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
       assert(codeScope != nullptr);
 
       if (!isSingleObject(exprVal.kind)) {
+         // HOTFIX : the temporal variable must be presaved
          ObjectInfo tempLocal = declareTempLocal(compiler->resolveStrongType(scope, exprVal.typeInfo));
+         scope.syncStack();
+         int temp1, temp2;
+         scope.commitTempStack(temp1, temp2);
 
          codeScope->mapShortcut(target.reference, tempLocal);
 

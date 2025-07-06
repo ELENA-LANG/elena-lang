@@ -10,7 +10,7 @@ async public program()
    :await Task.whenAllArgs(t1, t2, t3);
 }
 */
-
+/*
 import system'threading;
 import extensions;
 import extensions'threading;
@@ -39,4 +39,16 @@ public program()
    event.wait();
 
    Console.writeLine("Main thread exits")
+}
+*/
+
+import extensions;
+
+static sync = new object();
+
+public program()
+{
+   lock(sync) {
+//      Console.printLine("Test");
+   }
 }
