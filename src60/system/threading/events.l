@@ -121,7 +121,7 @@ public sealed class CountDownEvent
 
    signal()
    {
-      lock(_handle)
+      lock(self)
       {
          if (_counter > 0) {
             _counter--;

@@ -60,13 +60,7 @@ In development:
   * load from the model
   * save to the model
   --------------------------------------
-  * find out the problem with temporal variables allocating
-  * fix lock
-
   * create a unit test   
-
-  * fix threadpoolsamples
-  * Concurrent computing - fix example
   --------------------------------------
 
   === Iteration 43 ===
