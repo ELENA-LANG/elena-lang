@@ -43,7 +43,7 @@ public program()
 }
 */
 
-/*
+
 import system'threading;
 
 public sealed struct CountDownEvent
@@ -57,10 +57,7 @@ public sealed struct CountDownEvent
       }
    }  
 }
-*/
 
 public program()
 {
-   var n := 0;
-   var o := __nonboxable n; // !! must raise an error : "Heap allocated object is expected"
 }

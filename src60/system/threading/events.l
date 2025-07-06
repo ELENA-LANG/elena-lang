@@ -102,7 +102,7 @@ public sealed class AutoResetEvent : BaseEvent
    }
 }
 
-public sealed struct CountDownEvent
+public sealed class CountDownEvent
 {
    EventHandle _handle;
    int         _counter;
@@ -121,7 +121,7 @@ public sealed struct CountDownEvent
 
    signal()
    {
-      lock(self)
+      lock(_handle)
       {
          if (_counter > 0) {
             _counter--;
