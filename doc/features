@@ -452,3 +452,14 @@ In the project file:
 In the project collection file:
 
     <project platform="windows">forms\forms.prj</project>
+
+----------------------------------------------------------------------------
+   __nonboxable attribute
+----------------------------------------------------------------------------
+
+Raise an error if the expression is not memory allocated
+
+e.g.
+
+   int n := 0;
+   var o := __nonboxable n; // !! must raise an error : "Heap allocated object is expected"

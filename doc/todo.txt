@@ -60,6 +60,23 @@ In development:
   * load from the model
   * save to the model
   --------------------------------------
+  * "nonboxable" attribute - raise an error if the expression is boxable / cond boxable
+
+  * lock template operator - expr cannot be boxable / cond boxable
+
+       __intermediate v := __nonboxable expr;   
+
+  * find out the problem with temporal variables allocating
+  * create a unit test   
+  * lock self of boxable object must be not allowed
+  * CountDownEvent : lock handle
+
+  * fix sync temporal object
+
+  * __intermediate implementation??
+
+  * find out why threadpoolsamples fails
+  * lock cannot be used with self pointing to singleton / constant
   * fix threadpoolsamples
   * Concurrent computing - fix example
   --------------------------------------

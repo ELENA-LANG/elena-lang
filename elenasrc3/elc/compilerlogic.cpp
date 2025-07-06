@@ -1158,6 +1158,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_NOTNILLABLE:
          attrs |= ExpressionAttribute::NotNil;
          return true;
+      case V_HEAPALLOCATED:
+         attrs |= ExpressionAttribute::HeapAllocated;
+         return true;
       default:
          return false;
    }

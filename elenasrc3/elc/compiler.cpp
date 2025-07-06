@@ -7847,6 +7847,7 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
    bool probeMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ProbeMode);
    bool shortcutMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::ShortcutMode);
    bool notNil = EAttrs::testAndExclude(attrs, ExpressionAttribute::NotNil);
+   bool heapAllocated = EAttrs::testAndExclude(attrs, ExpressionAttribute::HeapAllocated);
 
    TerminalAttributes attributeMap = {
       EAttrs::testAndExclude(attrs, ExpressionAttribute::NewVariable),
@@ -7920,6 +7921,9 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
 
    if (invalid)
       scope.raiseError(errInvalidOperation, node);
+
+   if (heapAllocated && isBoxingRequired(retVal, false))
+      scope.raiseError(errHeapObjectRequired, node);
 
    if (probeMode)
       retVal.mode = TargetMode::Probe;

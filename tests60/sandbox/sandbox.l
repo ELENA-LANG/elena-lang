@@ -11,6 +11,7 @@ async public program()
 }
 */
 
+/*
 import system'threading;
 import extensions;
 import extensions'threading;
@@ -39,4 +40,27 @@ public program()
    event.wait();
 
    Console.writeLine("Main thread exits")
+}
+*/
+
+/*
+import system'threading;
+
+public sealed struct CountDownEvent
+{
+   int         _counter;
+
+   signal()
+   {
+      lock2(self)
+      {
+      }
+   }  
+}
+*/
+
+public program()
+{
+   var n := 0;
+   var o := __nonboxable n; // !! must raise an error : "Heap allocated object is expected"
 }

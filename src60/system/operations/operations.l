@@ -209,6 +209,22 @@ public template lock<expr>(block) : __included(statements)
    block $fnl (v.leaveCriticalSection());
 }
 
+// ==== temporal =================================================================
+
+// --- lock statement ---
+
+public template lock2<expr>(block) : __included(statements)
+{
+   __intermediate v := weak expr;
+
+   v.enterCriticalSection();
+    
+   block $fnl (v.leaveCriticalSection());
+}
+
+// ===============================================================================
+
+
 // --- operator templates ---
 
 // :break
