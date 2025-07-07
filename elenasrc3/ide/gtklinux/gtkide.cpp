@@ -147,7 +147,7 @@ const char* PROJECT_FILE_FILTER[] =
 GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model)
    : fileDialog(this, SOURCE_FILE_FILTER, 4, OPEN_FILE_CAPTION, *model->projectModel.paths.lastPath),
      projectDialog(this, PROJECT_FILE_FILTER, 4, OPEN_PROJECT_CAPTION, *model->projectModel.paths.lastPath),
-     messageDialog(this)
+     messageDialog(this), projectSettingsDialog(model->projectModel)
 {
    _model = model;
    _controller = controller;

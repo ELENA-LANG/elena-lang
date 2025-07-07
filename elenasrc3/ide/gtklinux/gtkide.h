@@ -39,6 +39,8 @@ protected:
    FileDialog        projectDialog;
    MessageDialog     messageDialog;
 
+   ProjectSettings   projectSettingsDialog;
+
    ProjectTreeColumns           _projectTreeColumns;
    Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
@@ -187,7 +189,7 @@ protected:
    }
    void on_menu_project_options()
    {
-      //_controller->doSetProjectSettings();
+      _controller->doChangeProject(projectSettingsDialog, _model);
    }
    void on_menu_file_clearfilehistory()
    {

@@ -166,152 +166,44 @@ void MessageDialog :: info(text_str message)
    show(message, Gtk::MessageType::MESSAGE_INFO, Gtk::ButtonsType::BUTTONS_OK, false);
 }
 
-//// --- WinDialog ---
-//
-//BOOL CALLBACK WinDialog::DialogProc(HWND hWnd, size_t message, WPARAM wParam, LPARAM lParam)
-//{
-//   WinDialog* dialog = (WinDialog*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
-//   switch (message) {
-//      case WM_INITDIALOG:
-//         dialog = (WinDialog*)lParam;
-//         dialog->_handle = hWnd;
-//         ::SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)lParam);
-//
-//         dialog->onCreate();
-//
-//         return 0;
-//      case WM_COMMAND:
-//         dialog->doCommand(LOWORD(wParam), HIWORD(wParam));
-//         return TRUE;
-//      default:
-//         return FALSE;
-//   }
-//}
-//
-//void WinDialog :: doCommand(int id, int command)
-//{
-//   switch (id) {
-//      case IDOK:
-//         onOK();
-//         ::EndDialog(_handle, IDOK);
-//         break;
-//      case IDCANCEL:
-//         ::EndDialog(_handle, IDCANCEL);
-//         break;
-//   }
-//}
-//
-//int WinDialog :: show()
-//{
-//   return (int)::DialogBoxParam(_instance, MAKEINTRESOURCE(_dialogId),
-//      _owner->handle(), (DLGPROC)DialogProc, (LPARAM)this);
-//}
-//
-//void WinDialog :: clearComboBoxItem(int id)
-//{
-//   LRESULT counter = ::SendDlgItemMessage(_handle, id, CB_GETCOUNT, 0, 0);
-//   while (counter > 0) {
-//      ::SendDlgItemMessage(_handle, id, CB_DELETESTRING, 0, 0);
-//
-//      counter--;
-//   }
-//}
-//
-//void WinDialog :: addComboBoxItem(int id, const wchar_t* text)
-//{
-//   ::SendDlgItemMessage(_handle, id, CB_ADDSTRING, 0, (LPARAM)text);
-//}
-//
-//void WinDialog :: setComboBoxIndex(int id, int index)
-//{
-//   ::SendDlgItemMessage(_handle, id, CB_SETCURSEL, index, 0);
-//}
-//
-//int WinDialog :: getComboBoxIndex(int id)
-//{
-//   return (int)::SendDlgItemMessage(_handle, id, CB_GETCURSEL, 0, 0);
-//}
-//
-//void WinDialog :: addListItem(int id, const wchar_t* text)
-//{
-//   ::SendDlgItemMessage(_handle, id, LB_ADDSTRING, 0, (LPARAM)text);
-//}
-//
-//int WinDialog :: getListSelCount(int id)
-//{
-//   return (int)::SendDlgItemMessage(_handle, id, LB_GETSELCOUNT, 0, 0);
-//}
-//
-//int WinDialog :: getListIndex(int id)
-//{
-//   return (int)::SendDlgItemMessage(_handle, id, LB_GETCURSEL, 0, 0);
-//}
-//
-//void WinDialog :: setText(int id, const wchar_t* text)
-//{
-//   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)text);
-//}
-//
-//void WinDialog :: setIntText(int id, int value)
-//{
-//   String<text_c, 15> s;
-//   s.appendInt(value);
-//
-//   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)(s.str()));
-//}
-//
-//void WinDialog :: setTextLimit(int id, int maxLength)
-//{
-//   ::SendDlgItemMessage(_handle, id, EM_SETLIMITTEXT, maxLength, 0);
-//}
-//
-//void WinDialog :: getText(int id, wchar_t** text, int length)
-//{
-//   ::SendDlgItemMessage(_handle, id, WM_GETTEXT, length, (LPARAM)text);
-//}
-//
-//int WinDialog :: getIntText(int id)
-//{
-//   wchar_t s[13];
-//
-//   ::SendDlgItemMessage(_handle, id, WM_GETTEXT, 12, (LPARAM)s);
-//
-//   return StrConvertor::toInt(s, 10);
-//}
-//
-//void WinDialog :: setCheckState(int id, bool value)
-//{
-//   ::SendDlgItemMessage(_handle, id, BM_SETCHECK, value ? BST_CHECKED : BST_UNCHECKED, 0);
-//}
-//
-//void WinDialog :: setUndefinedCheckState(int id)
-//{
-//   ::SendDlgItemMessage(_handle, id, BM_SETCHECK, BST_INDETERMINATE, 0);
-//}
-//
-//bool WinDialog :: getCheckState(int id)
-//{
-//   return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_CHECKED);
-//}
-//
-//bool WinDialog :: isUndefined(int id)
-//{
-//   return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_INDETERMINATE);
-//}
-//
-//void WinDialog :: enable(int id, bool enabled)
-//{
-//   ::EnableWindow(::GetDlgItem(_handle, id), enabled ? TRUE : FALSE);
-//}
-//
-//// --- ProjectSettings ---
-//
-//ProjectSettings :: ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model)
-//   : WinDialog(instance, owner, IDD_SETTINGS)
-//{
-//   _model = model;
-//}
-//
+// --- ProjectSettings ---
+
+ProjectSettings :: ProjectSettings(ProjectModel* model)
+   : _projectFrame("Project"), _compilerFrame("Compiler"),
+     _linkerFrame("Linker"), _debuggerFrame("Debugger")
+{
+   _model = model;
+
+   Gtk::Box *box = get_vbox();
+
+   box->pack_start(_projectFrame, Gtk::PACK_SHRINK);
+
+   _projectFrame.add(_projectGrid);
+   _projectGrid.set_row_homogeneous(true);
+   _projectGrid.set_column_homogeneous(true);
+
+   box->pack_start(_compilerFrame);
+
+   _compilerFrame.add(_compilerGrid);
+   _compilerGrid.set_row_homogeneous(true);
+   _compilerGrid.set_column_homogeneous(true);
+
+   box->pack_start(_linkerFrame);
+
+   _linkerFrame.add(_linkerrGrid);
+   _linkerrGrid.set_row_homogeneous(true);
+   _linkerrGrid.set_column_homogeneous(true);
+
+   box->pack_start(_debuggerFrame);
+
+   _debuggerFrame.add(_debuggerGrid);
+   _debuggerGrid.set_row_homogeneous(true);
+
+   populate();
+
+   show_all_children();
+}
+
 //void ProjectSettings :: loadTemplateList()
 //{
 //   int selected = 0;
@@ -347,9 +239,9 @@ void MessageDialog :: info(text_str message)
 //
 //   setComboBoxIndex(IDC_SETTINGS_PROFILE, selected);
 //}
-//
-//void ProjectSettings :: onCreate()
-//{
+
+void ProjectSettings :: populate()
+{
 //   setTextLimit(IDC_SETTINGS_PACKAGE, IDENTIFIER_LEN);
 //
 //   WideMessage caption(*_model->package);
@@ -381,8 +273,8 @@ void MessageDialog :: info(text_str message)
 //
 //   loadTemplateList();
 //   loadProfileList();
-//}
-//
+}
+
 //void ProjectSettings :: onOK()
 //{
 //   wchar_t name[IDENTIFIER_LEN + 1];
@@ -439,12 +331,15 @@ void MessageDialog :: info(text_str message)
 //   if (!_model->singleSourceProject)
 //      _model->notSaved = true;
 //}
-//
-//bool ProjectSettings :: showModal()
-//{
-//   return show() == IDOK;
-//}
-//
+
+bool ProjectSettings :: showModal()
+{
+   if(run() == Gtk::RESPONSE_OK) {
+      return true;
+   }
+   return false;
+}
+
 //// --- EditorSettings ---
 //
 //EditorSettings :: EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model)

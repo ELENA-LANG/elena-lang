@@ -72,72 +72,34 @@ namespace elena_lang
       }
    };
 
-//   class WinDialog
-//   {
-//   protected:
-//      HINSTANCE   _instance;
-//      HWND        _handle;
-//
-//      WindowBase* _owner;
-//      int         _dialogId;
-//
-//      virtual void onCreate() = 0;
-//      virtual void onOK() = 0;
-//
-//      virtual void doCommand(int id, int command);
-//
-//      void enable(int id, bool enabled);
-//
-//      void addComboBoxItem(int id, const wchar_t* text);
-//      void setComboBoxIndex(int id, int index);
-//      int  getComboBoxIndex(int id);
-//      void clearComboBoxItem(int id);
-//
-//      void addListItem(int id, const wchar_t* text);
-//      int  getListSelCount(int id);
-//      int  getListIndex(int id);
-//
-//      void setText(int id, const wchar_t* text);
-//      void setIntText(int id, int value);
-//      void getText(int id, wchar_t** text, int length);
-//      int  getIntText(int id);
-//      void setTextLimit(int id, int maxLength);
-//
-//      void setCheckState(int id, bool value);
-//      void setUndefinedCheckState(int id);
-//      bool getCheckState(int id);
-//      bool isUndefined(int id);
-//
-//   public:
-//      static BOOL CALLBACK DialogProc(HWND hwnd, size_t message, WPARAM wParam, LPARAM lParam);
-//
-//      int show();
-//
-//      WinDialog(HINSTANCE instance, WindowBase* owner, int dialogId)
-//         : _handle(nullptr)
-//      {
-//         _instance = instance;
-//         _owner = owner;
-//         _dialogId = dialogId;
-//      }
-//   };
-//
-//   class ProjectSettings : public WinDialog, public ProjectSettingsBase
-//   {
-//      ProjectModel* _model;
-//
+   class ProjectSettings : public Gtk::Dialog, public ProjectSettingsBase
+   {
+      Gtk::Frame _projectFrame;
+      Gtk::Grid  _projectGrid;
+
+      Gtk::Frame _compilerFrame;
+      Gtk::Grid  _compilerGrid;
+
+      Gtk::Frame _linkerFrame;
+      Gtk::Grid  _linkerrGrid;
+
+      Gtk::Frame _debuggerFrame;
+      Gtk::Grid  _debuggerGrid;
+
+      ProjectModel* _model;
+
 //      void loadTemplateList();
 //      void loadProfileList();
-//
-//      void onCreate() override;
+
+      void populate();
 //      void onOK() override;
-//
-//   public:
+
+   public:
 //      bool showModal() override;
-//
-//      ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model);
-//   };
-//
+
+      ProjectSettings(ProjectModel* model);
+   };
+
 //   class EditorSettings : public WinDialog, public EditorSettingsBase
 //   {
 //      TextViewModelBase* _model;
