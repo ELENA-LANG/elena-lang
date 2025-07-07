@@ -27,7 +27,20 @@
 #define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(4127)
 // other warnings you want to deactivate...
 
-#elif defined(__GNUC__) || defined(__clang__)
+#elif defined(__GNUC__)
+#define DO_PRAGMA(X) _Pragma(#X)
+#define DISABLE_WARNING_PUSH           DO_PRAGMA(GCC diagnostic push)
+#define DISABLE_WARNING_POP            DO_PRAGMA(GCC diagnostic pop) 
+#define DISABLE_WARNING(warningName)   DO_PRAGMA(GCC diagnostic ignored #warningName)
+
+#define DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER    DISABLE_WARNING(-Wunused-parameter)
+#define DISABLE_WARNING_UNREFERENCED_FUNCTION            DISABLE_WARNING(-Wunused-function)
+#define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(-Wunused-variable)
+#define DISABLE_WARNING_UNUSEDVARIABLE                   DISABLE_WARNING(-Wunused-variable)
+#define DISABLE_WARNING_NULLCONVERSION                   
+#define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(-Waddress)
+
+#elif defined(__clang__)
 #define DO_PRAGMA(X) _Pragma(#X)
 #define DISABLE_WARNING_PUSH           DO_PRAGMA(GCC diagnostic push)
 #define DISABLE_WARNING_POP            DO_PRAGMA(GCC diagnostic pop) 
