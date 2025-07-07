@@ -54,6 +54,10 @@
 * --------------------
 * 
 * ByteArrayOp
+* -----------
+* 
+* IntermediateVar
+* ---------------
 */
 
 
@@ -162,6 +166,11 @@ TEST_F(ByteArrayOperation, BuildTest)
 }
 
 TEST_F(ByteArrayOperation2, BuildTest)
+{
+   runTest();
+}
+
+TEST_F(IntermediateVar, BuildTest)
 {
    runTest();
 }

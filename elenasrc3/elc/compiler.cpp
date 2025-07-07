@@ -12683,7 +12683,7 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, EAttr
          retVal = compileCatchOperation(current);
          break;
       case SyntaxKey::FinalOperation:
-         retVal = compileFinalOperation(current);
+         retVal = compileFinalOperation(current, mode);
          break;
       case SyntaxKey::AltOperation:
          retVal = compileAltOperation(current);
@@ -13865,7 +13865,7 @@ ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
    return { ObjectKind::Object };
 }
 
-ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node)
+ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node, ExpressionAttribute mode)
 {
    ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
 
@@ -13880,7 +13880,7 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node)
    writer->appendNode(BuildKey::StackIndex, index1);
 
    writer->newNode(BuildKey::Tape);
-   compile(opNode, 0, EAttr::TryMode, nullptr);
+   compile(opNode, 0, mode | EAttr::TryMode, nullptr);
    writer->closeNode();
 
    scope.syncStack();
@@ -13893,7 +13893,7 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node)
       finallyNode = finallyNode.findChild(SyntaxKey::ClosureBlock);
 
    writer->newNode(BuildKey::Tape);
-   compile(finallyNode, 0, EAttr::None, nullptr);
+   compile(finallyNode, 0, mode, nullptr);
    writer->closeNode();
 
    if (finallyNode != SyntaxKey::None)

@@ -395,6 +395,7 @@ namespace elena_lang
          map.add("conversion_op", BuildKey::ConversionOp);
          map.add("int_real_op", BuildKey::IntRealOp);
          map.add("real_int_op", BuildKey::RealIntOp);
+         map.add("symbol_call_op", BuildKey::SymbolCall);
          map.add("direct_call_op", BuildKey::DirectCallOp);
          map.add("semi_direct_call_op", BuildKey::SemiDirectCallOp);
          map.add("addingint", BuildKey::AddingInt);
@@ -416,6 +417,7 @@ namespace elena_lang
          map.add("exit", BuildKey::Exit);
          map.add("parameter", BuildKey::Parameter);
          map.add("call_op", BuildKey::CallOp);
+         map.add("final_op", BuildKey::FinalOp);
          map.add("terminator", BuildKey::TerminatorReference);
          map.add("free_varstack", BuildKey::FreeVarStack);
          map.add("going_to_eop", BuildKey::goingToEOP);
@@ -459,6 +461,7 @@ namespace elena_lang
          map.add("eop_breakpoint", BuildKey::EOPBreakpoint);
          map.add("int_sop", BuildKey::IntSOp);
          map.add("const_param", BuildKey::Const);
+         map.add("stack_index", BuildKey::StackIndex);
       }
    };
 

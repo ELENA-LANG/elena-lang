@@ -738,3 +738,15 @@ void IntAssigningNil :: SetUp()
    targetRef = 3;
    expectedError = 0x6b;
 }
+
+// ---- IntermediateVar ----
+void IntermediateVar :: SetUp()
+{
+   ScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_2, S2_Scenario_Sync, S2_Scenario_IntermediateVar);
+
+   BuildTreeSerializer::load(B_IntermediateVar, controlOutputNode);
+
+   targetRef = 3;
+}

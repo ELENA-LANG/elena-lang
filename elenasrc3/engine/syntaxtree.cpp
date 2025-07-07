@@ -60,6 +60,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("div_operation", SyntaxKey::DivOperation);
    map.add("assign_operation", SyntaxKey::AssignOperation);
    map.add("index_operation", SyntaxKey::IndexerOperation);
+   map.add("final_operation", SyntaxKey::FinalOperation);
 
    map.add("if_operation", SyntaxKey::IfOperation);
    map.add("branch_operation", SyntaxKey::BranchOperation);
@@ -106,6 +107,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("shl_op", SyntaxKey::ShlOperation);
    map.add("shr_op", SyntaxKey::ShrOperation);
    map.add("band_op", SyntaxKey::BAndOperation);
+   map.add("final_block", SyntaxKey::FinallyBlock);
 }
 
 bool SyntaxTree :: save(MemoryBase* section)

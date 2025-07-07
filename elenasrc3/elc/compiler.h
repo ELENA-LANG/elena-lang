@@ -1538,7 +1538,7 @@ namespace elena_lang
          ObjectInfo compileIndexerOperation(SyntaxNode node, int operatorId, ref_t expectedRef);
          ObjectInfo compileBranchingOperation(SyntaxNode node, int operatorId, bool retValExpected, bool withoutDebugInfo);
          ObjectInfo compileCatchOperation(SyntaxNode node);
-         ObjectInfo compileFinalOperation(SyntaxNode node);
+         ObjectInfo compileFinalOperation(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileAltOperation(SyntaxNode node);
          ObjectInfo compileIsNilOperation(SyntaxNode node);
          ObjectInfo compileTupleAssigning(SyntaxNode node);

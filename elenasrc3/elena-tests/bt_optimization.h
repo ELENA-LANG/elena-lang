@@ -248,6 +248,12 @@ namespace elena_lang
    protected:
       void SetUp() override;
    }; 
+
+   class IntermediateVar : public MethodScenarioTest
+   {
+   protected:
+      void SetUp() override;
+   };
 }
 
 #endif
