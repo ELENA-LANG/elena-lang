@@ -2857,7 +2857,7 @@ public singleton NilValue
    : info("A nil value")
 {
    bool equal(object)
-      : info("Returns true if the specified object is nil.")
+      : info("Returns true if the specified object is nil. Otherwise the result is false")
    {
       if (nil == object)
       {
@@ -2883,13 +2883,13 @@ public symbol nilValue = NilValue;
 // --- KeyValue ---
 
 public sealed class KeyValue
-   : info("A key - object pair<br/>Extends the object with a key property")
+   : info("A key - value pair<br/>Extends the object with a key property")
 {
    object key;
    object value;
 
    constructor new(key, value)
-      : info("Creates a new object")
+      : info("Creates a new key-value pair")
    {
       this key := key;
       this value := value
@@ -2902,16 +2902,19 @@ public sealed class KeyValue
       = value;
 
    set Value(value)
+          : info("Set the key")
    {
       this value := value
    }
 
    bool equal(o)
+            : info("Compares the argument with the object value field")
       => value;
 
    string toPrintable()
+            : info("returns the literal presentation of the value")
       => value;
 
-   dispatch() : info("Redirects the incoming messages to the object")
+   dispatch() : info("Redirects the incoming messages to the value")
      => value;
 }

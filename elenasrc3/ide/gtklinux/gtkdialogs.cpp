@@ -323,12 +323,12 @@ void ProjectSettings :: save()
    }
    else _model->package.clear();
 
-   if (_typeCombobox.get_active_id() != -1) {
+   if (_typeCombobox.get_active_row_number() != -1) {
       name = _typeCombobox.get_active_text();
       _model->templateName.copy(name.c_str());
    }
 
-   if (_profileCombobox.get_active_id() != -1) {
+   if (_profileCombobox.get_active_row_number() != -1) {
       name = _profileCombobox.get_active_text();
       _model->profile.copy(name.c_str());
    }

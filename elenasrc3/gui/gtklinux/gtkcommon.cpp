@@ -14,8 +14,8 @@ int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, EventBase* star
 {
    Gtk::Window* window = dynamic_cast<WindowWrapper*>(mainWindow)->getHandle();
 
-//      if (maximized)
-//         maximize();
+   if (maximized)
+      window->maximize();
 
    window->show();
 

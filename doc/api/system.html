@@ -10159,7 +10159,7 @@ system'</DIV>
 <HR>
 <PRE STYLE="padding-top: 15px;">
 public class <SPAN CLASS="typeNameLabel">KeyValue</SPAN><BR/>
-<I>A key - object pair<br/>Extends the object with a key property</I></PRE>
+<I>A key - value pair<br/>Extends the object with a key property</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -10217,7 +10217,7 @@ system'KeyValue</LI>
 <CODE>new(key, value)
 </CODE>
 <div class="block">
-Creates a new object</div>
+Creates a new key-value pair</div>
 </TD>
 </TR>
 </TABLE>
@@ -10259,6 +10259,8 @@ Returns the value</div>
 <TD CLASS="colLast">
 <CODE>Value(value)
 </CODE>
+<div class="block">
+Set the key</div>
 </TD>
 </TR>
 </TABLE>
@@ -10280,6 +10282,8 @@ Returns the value</div>
 <TD CLASS="colLast">
 <CODE>equal(o)
 </CODE>
+<div class="block">
+Compares the argument with the object value field</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10289,6 +10293,8 @@ Returns the value</div>
 <TD CLASS="colLast">
 <CODE>toPrintable()
 </CODE>
+<div class="block">
+returns the literal presentation of the value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10299,7 +10305,7 @@ Returns the value</div>
 <CODE><i>dispatch</i>()
 </CODE>
 <div class="block">
-Redirects the incoming messages to the object</div>
+Redirects the incoming messages to the value</div>
 </TD>
 </TR>
 </TABLE>
@@ -12231,20 +12237,20 @@ system'NilReferenceException</LI>
 </UL>
 <HR>
 </DIV>
-<A NAME="nilValue">
+<A NAME="NilValue">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'</DIV>
-<H2 title="nilValue" class="title">nilValue</H2>
+<H2 title="NilValue" class="title">NilValue</H2>
 </DIV>
 <DIV CLASS="contentContainer">
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public singleton <SPAN CLASS="typeNameLabel">nilValue</SPAN><BR/>
+public singleton <SPAN CLASS="typeNameLabel">NilValue</SPAN><BR/>
 <I>A nil value</I></PRE>
 <BR>
 </DIV>
@@ -12254,7 +12260,7 @@ public singleton <SPAN CLASS="typeNameLabel">nilValue</SPAN><BR/>
 <LI>
 <UL CLASS="inheritance">
 <LI>
-system'nilValue</LI>
+system'NilValue</LI>
 </UL>
 </LI>
 </UL>
@@ -12275,7 +12281,7 @@ system'nilValue</LI>
 <CODE>equal(object)
 </CODE>
 <div class="block">
-Returns true if the specified object is nil.</div>
+Returns true if the specified object is nil. Otherwise the result is false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22302,6 +22308,43 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>NewLineConstant</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="nilValue">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="nilValue" class="title">nilValue</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>nilValue</CODE>
 </TD>
 </TABLE>
 </LI>

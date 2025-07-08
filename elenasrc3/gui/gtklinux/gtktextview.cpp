@@ -264,7 +264,7 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
             lineNumber.appendInt(reader.row + 1);
 
             canvas.drawText(
-                x - marginStyle.avgCharWidth * _ELENA_::getlength(lineNumber) - 4,
+                x - marginStyle->avgCharWidth * lineNumber.length() - 4,
                 y,
                 lineNumber.str(),
                 marginStyle);

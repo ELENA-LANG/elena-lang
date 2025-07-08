@@ -79,7 +79,9 @@ int main(int argc, char* argv[])
 
    ideController.setNotifier(app);
 
-   int retVal = app->run(ideWindow, false, nullptr); // !! temporal
+   int retVal = app->run(ideWindow, ideModel.appMaximized, nullptr); // !! temporal
+
+   ideController.onIDEStop(&ideModel, guiSettings);
 
    delete app;
 

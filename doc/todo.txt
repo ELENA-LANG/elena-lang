@@ -47,15 +47,14 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - docs : Reference<T>
   - #708 : fix invalid linker name in argument '-fuse-ld=lld'
+  - #184 : IDE linux - menu opttion - recent files / prjects
   - MTA support for Linux : test simple multithread sample
   - #184 : IDE linux - last files / projects
   - rosetta code : Create a two-dimensional array at runtime - ...
   - #184 : IDE linux - remember last open project / file
-  - docs : NilValue
-  - #184 : IDE linux - line numbers
   --------------------------------------
-  * print line numbers
   --------------------------------------
 
   === Iteration 43 ===
