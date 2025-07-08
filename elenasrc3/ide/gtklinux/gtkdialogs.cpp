@@ -169,9 +169,10 @@ void MessageDialog :: info(text_str message)
 // --- ProjectSettings ---
 
 ProjectSettings :: ProjectSettings(ProjectModel* model)
-   : _projectFrame("Project"), _typeLabel("Type"),
-     _compilerFrame("Compiler"), _namespaceLabel("Namespace"), _profileLabel("Profile"),
-     _linkerFrame("Linker"), _debuggerFrame("Debugger")
+   : _projectFrame("Project"), _typeLabel("Type"), _namespaceLabel("Namespace"), _profileLabel("Profile"),
+     _compilerFrame("Compiler"), _strictTypeLabel("Strict type enforcing"), _optionsLabel("Additional options"), _warningLabel("Warning level"),
+     _linkerFrame("Linker"), _targetLabel("Target file name"), _outputLabel("Output path"),
+     _debuggerFrame("Debugger"), _modeLabel("Debug mode"), _argumentsLabel("Command arguments")
 {
    _model = model;
 
@@ -194,17 +195,31 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
    _compilerFrame.add(_compilerGrid);
    _compilerGrid.set_row_homogeneous(true);
    _compilerGrid.set_column_homogeneous(true);
+   _compilerGrid.attach(_strictTypeLabel, 0, 0, 1, 1);
+   _compilerGrid.attach(_strictTypeCheckbox, 1, 0, 1, 1);
+   _compilerGrid.attach(_optionsLabel, 0, 1, 1, 1);
+   _compilerGrid.attach(_optionsText, 1, 1, 1, 1);
+   _compilerGrid.attach(_warningLabel, 0, 2, 1, 1);
+   _compilerGrid.attach(_warningCombobox, 1, 2, 1, 1);
 
    box->pack_start(_linkerFrame);
 
    _linkerFrame.add(_linkerrGrid);
    _linkerrGrid.set_row_homogeneous(true);
    _linkerrGrid.set_column_homogeneous(true);
+   _linkerrGrid.attach(_targetLabel, 0, 0, 1, 1);
+   _linkerrGrid.attach(_targetText, 1, 0, 1, 1);
+   _linkerrGrid.attach(_outputLabel, 0, 1, 1, 1);
+   _linkerrGrid.attach(_outputText, 1, 1, 1, 1);
 
    box->pack_start(_debuggerFrame);
 
    _debuggerFrame.add(_debuggerGrid);
    _debuggerGrid.set_row_homogeneous(true);
+   _debuggerGrid.attach(_modeLabel, 0, 0, 1, 1);
+   _debuggerGrid.attach(_modeCombobox, 1, 0, 1, 1);
+   _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
+   _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
 
    add_button("OK", Gtk::RESPONSE_OK);
    add_button("Cancel", Gtk::RESPONSE_CANCEL);

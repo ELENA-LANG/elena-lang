@@ -85,9 +85,19 @@ namespace elena_lang
 
       Gtk::Frame        _compilerFrame;
       Gtk::Grid         _compilerGrid;
+      Gtk::Label        _strictTypeLabel;
+      Gtk::CheckButton  _strictTypeCheckbox;
+      Gtk::Label        _optionsLabel;
+      Gtk::Entry        _optionsText;
+      Gtk::Label        _warningLabel;
+      Gtk::ComboBoxText _warningCombobox;
 
       Gtk::Frame _linkerFrame;
       Gtk::Grid  _linkerrGrid;
+      Gtk::Label _targetLabel;
+      Gtk::Entry _targetText;
+      Gtk::Label _outputLabel;
+      Gtk::Entry _outputText;
 
       Gtk::Frame _debuggerFrame;
       Gtk::Grid  _debuggerGrid;
