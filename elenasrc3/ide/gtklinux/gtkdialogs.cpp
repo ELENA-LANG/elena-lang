@@ -181,6 +181,8 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
    _projectFrame.add(_projectGrid);
    _projectGrid.set_row_homogeneous(true);
    _projectGrid.set_column_homogeneous(true);
+   _projectGrid.attach(_typeLabel, 0, 0, 1, 1);
+   _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
 
    box->pack_start(_compilerFrame);
 
@@ -199,29 +201,31 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
    _debuggerFrame.add(_debuggerGrid);
    _debuggerGrid.set_row_homogeneous(true);
 
+   add_button("OK", Gtk::RESPONSE_OK);
+   add_button("Cancel", Gtk::RESPONSE_CANCEL);
+
    populate();
 
    show_all_children();
 }
 
-//void ProjectSettings :: loadTemplateList()
-//{
-//   int selected = 0;
-//   int current = 0;
-//   for (auto it = _model->projectTypeList.start(); !it.eof(); ++it) {
-//      ustr_t key = *it;
-//      if (_model->templateName.compare(key)) {
-//         selected = current;
-//      }
-//
-//      WideMessage caption(key);
-//      addComboBoxItem(IDC_SETTINGS_TEPMPLATE, *caption);
-//      current++;
-//   }
-//
-//   setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, selected);
-//}
-//
+void ProjectSettings :: loadTemplateList()
+{
+   int selected = 0;
+   int current = 0;
+   for (auto it = _model->projectTypeList.start(); !it.eof(); ++it) {
+      ustr_t key = *it;
+      if (_model->templateName.compare(key)) {
+         selected = current;
+      }
+
+      _typeCombobox.append(it.key().c_str());
+      current++;
+   }
+
+   _typeCombobox.set_active(selected);
+}
+
 //void ProjectSettings :: loadProfileList()
 //{
 //   int selected = 0;
@@ -271,7 +275,7 @@ void ProjectSettings :: populate()
 //   }
 //   else setCheckState(IDC_SETTINGS_STRICTTYPE, _model->strictType == -1);
 //
-//   loadTemplateList();
+   loadTemplateList();
 //   loadProfileList();
 }
 

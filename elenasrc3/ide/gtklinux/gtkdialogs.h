@@ -11,7 +11,7 @@
 #include "gtklinux/gtkcommon.h"
 //#include "editcontrol.h"
 //#include "ideproject.h"
-//#include "ideview.h"
+#include "ideview.h"
 
 namespace elena_lang
 {
@@ -74,11 +74,13 @@ namespace elena_lang
 
    class ProjectSettings : public Gtk::Dialog, public ProjectSettingsBase
    {
-      Gtk::Frame _projectFrame;
-      Gtk::Grid  _projectGrid;
+      Gtk::Frame        _projectFrame;
+      Gtk::Grid         _projectGrid;
+      Gtk::Label        _typeLabel;
+      Gtk::ComboBoxText _typeCombobox;
 
-      Gtk::Frame _compilerFrame;
-      Gtk::Grid  _compilerGrid;
+      Gtk::Frame        _compilerFrame;
+      Gtk::Grid         _compilerGrid;
 
       Gtk::Frame _linkerFrame;
       Gtk::Grid  _linkerrGrid;
@@ -88,14 +90,14 @@ namespace elena_lang
 
       ProjectModel* _model;
 
-//      void loadTemplateList();
+      void loadTemplateList();
 //      void loadProfileList();
 
       void populate();
 //      void onOK() override;
 
    public:
-//      bool showModal() override;
+      bool showModal() override;
 
       ProjectSettings(ProjectModel* model);
    };

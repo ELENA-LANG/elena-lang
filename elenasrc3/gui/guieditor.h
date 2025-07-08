@@ -159,7 +159,7 @@ namespace elena_lang
       }
 
       TextViewModelBase(TextViewSettings settings)
-         : fontInfo(10), settings(settings)
+         : settings(settings), fontInfo(10)
       {
          this->_currentView = nullptr;
          this->lineNumbersVisible = true; // !! temporal hard-coded
