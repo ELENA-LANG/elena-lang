@@ -78,6 +78,10 @@ namespace elena_lang
       Gtk::Grid         _projectGrid;
       Gtk::Label        _typeLabel;
       Gtk::ComboBoxText _typeCombobox;
+      Gtk::Label        _namespaceLabel;
+      Gtk::Entry        _namespaceText;
+      Gtk::Label        _profileLabel;
+      Gtk::ComboBoxText _profileCombobox;
 
       Gtk::Frame        _compilerFrame;
       Gtk::Grid         _compilerGrid;

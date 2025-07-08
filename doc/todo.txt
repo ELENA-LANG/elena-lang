@@ -56,7 +56,7 @@ In development:
   --------------------------------------
   - #184 : IDE linux - project settings
   --------------------------------------
-  * new control project settings
+  * add all required controls
   * load from the model
   * save to the model
   --------------------------------------

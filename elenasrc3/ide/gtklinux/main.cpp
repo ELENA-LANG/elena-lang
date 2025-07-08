@@ -9,13 +9,18 @@
 
 using namespace elena_lang;
 
+constexpr auto DEFAULT_CONFIG = "/etc/elena/elc60.config";
+constexpr auto IDE_CONFIG = "/var/elena/ide60.config";
+
 #if defined(__x86_64__)
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86_64;
+constexpr auto TARGET_XPATH               = "Win_x64";
 
 #elif defined(__i386__)
 
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_x86;
+constexpr auto TARGET_XPATH               = "Win_x86";
 
 #elif defined(__PPC64__)
 
@@ -26,6 +31,8 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_PPC64le;
 constexpr auto CURRENT_PLATFORM           = PlatformType::Linux_ARM64;
 
 #endif
+
+constexpr auto TEMPLATE_XPATH = "templates/*";
 
 class PathHelper : public PathHelperBase
 {
@@ -45,15 +52,27 @@ int main(int argc, char* argv[])
 {
    Gtk::Main kit(argc, argv);
 
-   TextViewSettings textViewSettings = { EOLMode::LF, false, 3 };
-
    PathHelper    pathHelper;
 
+   GUISettinngs  guiSettings = { true };
+   TextViewSettings textViewSettings = { EOLMode::LF, false, 3 };
+
    IDEModel      ideModel(textViewSettings);
-   GUISettinngs  settings = { true };
    IDEController ideController(/*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr, /*&debugProcess*/nullptr, &ideModel,
                         CURRENT_PLATFORM, &pathHelper, /*compareFileModifiedTime*/nullptr);
-   IDEFactory    factory(&ideModel, &ideController, settings);
+
+   // NOTE : it must be initialized before factory / controller
+   IDEFactory::initPathSettings(&ideModel);
+
+   ideModel.sourceViewModel.refreshSettings();
+
+   PathString configPath(IDE_CONFIG);
+   ideController.loadConfig(&ideModel, *configPath, guiSettings);
+
+   PathString sysConfigPath(DEFAULT_CONFIG);
+   ideController.loadSystemConfig(&ideModel, *sysConfigPath, TEMPLATE_XPATH, TARGET_XPATH);
+
+   IDEFactory    factory(&ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
    GUIControlBase* ideWindow = factory.createMainWindow(app, /*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr);

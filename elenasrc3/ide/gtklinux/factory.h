@@ -57,6 +57,8 @@ namespace elena_lang
          int projectView);
 
    public:
+      static void initPathSettings(IDEModel* ideModel);
+
       void reloadStyles(TextViewModelBase* viewModel) override;
 
       void styleControl(GUIControlBase* control) override;

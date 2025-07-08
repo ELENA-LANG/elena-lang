@@ -104,6 +104,13 @@ IDEFactory :: IDEFactory(IDEModel* ideModel, IDEController* controller,
    //initializeModel(ideModel);
 }
 
+void IDEFactory :: initPathSettings(IDEModel* ideModel)
+{
+//   _pathSettings.appPath.copy(appPath);
+
+//   ideModel->projectModel.paths.appPath.copy(*_pathSettings.appPath);
+}
+
 Gtk::Widget* IDEFactory :: createTextControl()
 {
    auto viewModel = _model->viewModel();

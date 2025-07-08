@@ -170,7 +170,7 @@ void MessageDialog :: info(text_str message)
 
 ProjectSettings :: ProjectSettings(ProjectModel* model)
    : _projectFrame("Project"), _typeLabel("Type"),
-     _compilerFrame("Compiler"),
+     _compilerFrame("Compiler"), _namespaceLabel("Namespace"), _profileLabel("Profile"),
      _linkerFrame("Linker"), _debuggerFrame("Debugger")
 {
    _model = model;
@@ -184,6 +184,10 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
    _projectGrid.set_column_homogeneous(true);
    _projectGrid.attach(_typeLabel, 0, 0, 1, 1);
    _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
+   _projectGrid.attach(_namespaceLabel, 0, 1, 1, 1);
+   _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
+   _projectGrid.attach(_profileLabel, 0, 1, 1, 1);
+   _projectGrid.attach(_profileCombobox, 1, 1, 1, 1);
 
    box->pack_start(_compilerFrame);
 
@@ -212,6 +216,8 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
 
 void ProjectSettings :: loadTemplateList()
 {
+   _typeCombobox.remove_all();
+
    int selected = 0;
    int current = 0;
    for (auto it = _model->projectTypeList.start(); !it.eof(); ++it) {
@@ -220,7 +226,7 @@ void ProjectSettings :: loadTemplateList()
          selected = current;
       }
 
-      _typeCombobox.append(it.key().c_str());
+      _typeCombobox.append(key.str());
       current++;
    }
 
@@ -339,10 +345,11 @@ void ProjectSettings :: populate()
 
 bool ProjectSettings :: showModal()
 {
-   if(run() == Gtk::RESPONSE_OK) {
-      return true;
-   }
-   return false;
+   bool retVal = run() == Gtk::RESPONSE_OK;
+
+   close();
+
+   return retVal;
 }
 
 //// --- EditorSettings ---
