@@ -186,8 +186,8 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
    _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
    _projectGrid.attach(_namespaceLabel, 0, 1, 1, 1);
    _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
-   _projectGrid.attach(_profileLabel, 0, 1, 1, 1);
-   _projectGrid.attach(_profileCombobox, 1, 1, 1, 1);
+   _projectGrid.attach(_profileLabel, 0, 2, 1, 1);
+   _projectGrid.attach(_profileCombobox, 1, 2, 1, 1);
 
    box->pack_start(_compilerFrame);
 
