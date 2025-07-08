@@ -92,23 +92,27 @@ namespace elena_lang
       Gtk::Label        _warningLabel;
       Gtk::ComboBoxText _warningCombobox;
 
-      Gtk::Frame _linkerFrame;
-      Gtk::Grid  _linkerrGrid;
-      Gtk::Label _targetLabel;
-      Gtk::Entry _targetText;
-      Gtk::Label _outputLabel;
-      Gtk::Entry _outputText;
+      Gtk::Frame        _linkerFrame;
+      Gtk::Grid         _linkerrGrid;
+      Gtk::Label        _targetLabel;
+      Gtk::Entry        _targetText;
+      Gtk::Label        _outputLabel;
+      Gtk::Entry        _outputText;
 
-      Gtk::Frame _debuggerFrame;
-      Gtk::Grid  _debuggerGrid;
+      Gtk::Frame        _debuggerFrame;
+      Gtk::Grid         _debuggerGrid;
+      Gtk::Label        _modeLabel;
+      Gtk::ComboBoxText _modeCombobox;
+      Gtk::Label        _argumentsLabel;
+      Gtk::Entry        _argumentsText;
 
       ProjectModel* _model;
 
       void loadTemplateList();
-//      void loadProfileList();
+      void loadProfileList();
 
       void populate();
-//      void onOK() override;
+      void save();
 
    public:
       bool showModal() override;

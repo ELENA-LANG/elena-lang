@@ -28,6 +28,7 @@ In development:
   - #184 : IDE linux - toolbar
   - #184 : IDE linux - last files / projects
   - #184 : IDE linux - remember last open project / file
+  - #184 : IDE linux - line numbers
   - compile in the separate thread  
   - async method - auto watch : self and some variables are not displayed
   maint:
@@ -56,9 +57,9 @@ In development:
   --------------------------------------
   - #184 : IDE linux - project settings
   --------------------------------------
-  * add all required controls
   * load from the model
   * save to the model
+  * make margin more light for default color scheme??
   --------------------------------------
 
   === Iteration 43 ===

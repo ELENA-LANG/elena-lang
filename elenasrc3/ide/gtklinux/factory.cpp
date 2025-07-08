@@ -24,7 +24,7 @@ using namespace elena_lang;
 // --- Styles ---
 StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Color(0,0,0), Color(1, 1, 1), "Monospace", 10, false, false},
-   {Color(0,0,0), Color(0.84, 0.84, 0.84), "Monospace", 10, false, false},
+   {Color(0,0,0), Color(0.87, 0.88, 0.89), "Monospace", 10, false, false},
    {Color(0,0,0), Color(0.75, 0.75, 0.75), "Monospace", 10, false, false},
    {Color(0.35, 0.35, 0.35), Color(0, 1, 1), "Monospace", 10, true, false},
    {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},

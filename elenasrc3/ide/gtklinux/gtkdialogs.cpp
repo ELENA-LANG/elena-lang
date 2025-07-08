@@ -224,7 +224,13 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
    add_button("OK", Gtk::RESPONSE_OK);
    add_button("Cancel", Gtk::RESPONSE_CANCEL);
 
-   populate();
+   _modeCombobox.append("Disabled");
+   _modeCombobox.append("Enabled");
+
+   _warningCombobox.append(" None");
+   _warningCombobox.append(" Level 1");
+   _warningCombobox.append(" Level 2");
+   _warningCombobox.append(" Level 3");
 
    show_all_children();
 }
@@ -248,62 +254,70 @@ void ProjectSettings :: loadTemplateList()
    _typeCombobox.set_active(selected);
 }
 
-//void ProjectSettings :: loadProfileList()
-//{
-//   int selected = 0;
-//   int current = 0;
-//   for (auto it = _model->profileList.start(); !it.eof(); ++it) {
-//      ustr_t key = *it;
-//      if (_model->profile.compare(key)) {
-//         selected = current;
-//      }
-//
-//      WideMessage caption(key);
-//      addComboBoxItem(IDC_SETTINGS_PROFILE, *caption);
-//      current++;
-//   }
-//
-//   setComboBoxIndex(IDC_SETTINGS_PROFILE, selected);
-//}
+void ProjectSettings :: loadProfileList()
+{
+   _profileCombobox.remove_all();
+
+   int selected = 0;
+   int current = 0;
+   for (auto it = _model->profileList.start(); !it.eof(); ++it) {
+      ustr_t key = *it;
+      if (_model->profile.compare(key)) {
+         selected = current;
+      }
+
+      _profileCombobox.append(key.str());
+      current++;
+   }
+
+   _profileCombobox.set_active(selected);
+}
+
+inline void setText(Gtk::Entry& control, const char* value)
+{
+   if (!_ELENA_::emptystr(value)) {
+      control.set_text(value);
+   }
+   else control.set_text("");
+}
 
 void ProjectSettings :: populate()
 {
-//   setTextLimit(IDC_SETTINGS_PACKAGE, IDENTIFIER_LEN);
-//
-//   WideMessage caption(*_model->package);
-//   setText(IDC_SETTINGS_PACKAGE, caption.str());
-//
-//   WideMessage optionCaption(*_model->options);
-//   setText(IDC_SETTINGS_OPTIONS, optionCaption.str());
-//
-//   WideMessage targetCaption(*_model->target);
-//   setText(IDC_SETTINGS_TARGET, targetCaption.str());
-//
-//   setText(IDC_SETTINGS_OUTPUT, *_model->outputPath);
-//
-//   setText(IDC_SETTINGS_ARGUMENT, *_model->debugArguments);
-//
-//   addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Disabled"));
-//   addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Enabled"));
-//
-//   //int mode = _project->getDebugMode();
-//   //if (mode != 0) {
-//      setComboBoxIndex(IDC_SETTINGS_DEBUG, 1);
-//   //}
-//   //else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
-//
-//   if (_model->strictType == FLAG_UNDEFINED) {
-//      setUndefinedCheckState(IDC_SETTINGS_STRICTTYPE);
-//   }
-//   else setCheckState(IDC_SETTINGS_STRICTTYPE, _model->strictType == -1);
-//
+   setText(_namespaceText, _model->package.str());
+
+   setText(_optionsText, _model->options.str());
+
+   setText(_targetText, _model->target.str());
+
+   setText(_outputText, _model->outputPath.str());
+
+   setText(_argumentsText, _model->debugArguments.str());
+
+   //int mode = _project->getDebugMode();
+   //if (mode != 0) {
+      _modeCombobox.set_active(1);
+   //}
+   //else _modeCombobox.set_active(0);
+
+   _strictTypeCheckbox.set_active();
+
+   if (_model->strictType == FLAG_UNDEFINED) {
+      _strictTypeCheckbox.set_inconsistent(true);
+   }
+   else {
+      _strictTypeCheckbox.set_inconsistent(false);
+      _strictTypeCheckbox.set_active(_model->strictType == -1);
+   }
+
+   _warningCombobox.set_active(_model->warningLevel);
+
    loadTemplateList();
-//   loadProfileList();
+   loadProfileList();
 }
 
-//void ProjectSettings :: onOK()
-//{
-//   wchar_t name[IDENTIFIER_LEN + 1];
+void ProjectSettings :: save()
+{
+//  wchar_t name[IDENTIFIER_LEN + 1];
 //
 //   if (getComboBoxIndex(IDC_SETTINGS_TEPMPLATE) != -1) {
 //      getText(IDC_SETTINGS_TEPMPLATE, (wchar_t**)(&name), IDENTIFIER_LEN);
@@ -356,11 +370,15 @@ void ProjectSettings :: populate()
 //
 //   if (!_model->singleSourceProject)
 //      _model->notSaved = true;
-//}
+}
 
 bool ProjectSettings :: showModal()
 {
+   populate();
+
    bool retVal = run() == Gtk::RESPONSE_OK;
+   if (retVal)
+      save();
 
    close();
 
