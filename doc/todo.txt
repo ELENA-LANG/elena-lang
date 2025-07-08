@@ -24,11 +24,10 @@ In development:
   - #622 : api backlog
   - docs : Pi_value
   ide:  
-  - #184 : IDE linux - project settings, new project, save project, save all, close project, editor settings, debug settings, compile the project
+  - #184 : IDE linux - new project, save project, save all, close project, editor settings, debug settings, compile the project
   - #184 : IDE linux - toolbar
   - #184 : IDE linux - last files / projects
   - #184 : IDE linux - remember last open project / file
-  - #184 : IDE linux - line numbers
   - compile in the separate thread  
   - async method - auto watch : self and some variables are not displayed
   maint:
@@ -54,12 +53,11 @@ In development:
   - rosetta code : Create a two-dimensional array at runtime - ...
   - MTA support for Linux : test simple multithread sample
   - docs : NilValue
+  - #184 : IDE linux - line numbers
   --------------------------------------
   - #184 : IDE linux - project settings
   --------------------------------------
-  * load from the model
   * save to the model
-  * make margin more light for default color scheme??
   --------------------------------------
 
   === Iteration 43 ===

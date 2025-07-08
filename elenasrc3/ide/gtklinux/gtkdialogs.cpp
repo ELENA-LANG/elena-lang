@@ -275,7 +275,7 @@ void ProjectSettings :: loadProfileList()
 
 inline void setText(Gtk::Entry& control, const char* value)
 {
-   if (!_ELENA_::emptystr(value)) {
+   if (!emptystr(value)) {
       control.set_text(value);
    }
    else control.set_text("");
@@ -317,59 +317,52 @@ void ProjectSettings :: populate()
 
 void ProjectSettings :: save()
 {
-//  wchar_t name[IDENTIFIER_LEN + 1];
-//
-//   if (getComboBoxIndex(IDC_SETTINGS_TEPMPLATE) != -1) {
-//      getText(IDC_SETTINGS_TEPMPLATE, (wchar_t**)(&name), IDENTIFIER_LEN);
-//
-//      IdentifierString value(name);
-//      _model->templateName.copy(*value);
-//   }
-//
-//   if (getComboBoxIndex(IDC_SETTINGS_PROFILE) != -1) {
-//      getText(IDC_SETTINGS_PROFILE, (wchar_t**)(&name), IDENTIFIER_LEN);
-//
-//      IdentifierString value(name);
-//      _model->profile.copy(*value);
-//   }
-//
-//   getText(IDC_SETTINGS_PACKAGE, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   if (getlength(name) > 0) {
-//      IdentifierString value(name);
-//      _model->package.copy(*value);
-//   }
-//   else _model->package.clear();
-//
-//   getText(IDC_SETTINGS_OPTIONS, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   if (getlength(name) > 0) {
-//      IdentifierString value(name);
-//      _model->options.copy(*value);
-//   }
-//   else _model->options.clear();
-//
-//   getText(IDC_SETTINGS_TARGET, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   if (getlength(name) > 0) {
-//      IdentifierString value(name);
-//      _model->target.copy(*value);
-//   }
-//   else _model->target.clear();
-//
-//   getText(IDC_SETTINGS_OUTPUT, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   _model->outputPath.copy(name);
-//
-//   getText(IDC_SETTINGS_ARGUMENT, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   _model->debugArguments.copy(name);
-//
-//   if (isUndefined(IDC_SETTINGS_STRICTTYPE)) {
-//      _model->strictType = FLAG_UNDEFINED;
-//   }
-//   else if (getCheckState(IDC_SETTINGS_STRICTTYPE)) {
-//      _model->strictType = -1;
-//   }
-//   else _model->strictType = 0;
-//
-//   if (!_model->singleSourceProject)
-//      _model->notSaved = true;
+   Glib::ustring name = _namespaceText.get_text();
+   if (!name.empty()) {
+      _model->package.copy(name.c_str());
+   }
+   else _model->package.clear();
+
+   if (_typeCombobox.get_active_id() != -1) {
+      name = _typeCombobox.get_active_text();
+      _model->templateName.copy(name.c_str());
+   }
+
+   if (_profileCombobox.get_active_id() != -1) {
+      name = _profileCombobox.get_active_text();
+      _model->profile.copy(name.c_str());
+   }
+
+   Glib::ustring path = _targetText.get_text();
+   if (!path.empty()) {
+      _model->target.copy(path.c_str());
+   }
+   else _model->target.clear();
+
+   path = _outputText.get_text();
+   _model->outputPath.copy(path.c_str());
+
+   path = _argumentsText.get_text();
+   _model->debugArguments.copy(path.c_str());
+
+   path = _optionsText.get_text();
+   if (!path.empty()) {
+      _model->options.copy(path.c_str());
+   }
+   else _model->options.clear();
+
+   if (_strictTypeCheckbox.get_inconsistent()) {
+      _model->strictType = FLAG_UNDEFINED;
+   }
+   else if (_strictTypeCheckbox.get_active()) {
+      _model->strictType = -1;
+   }
+   else _model->strictType = 0;
+
+   _model->warningLevel = _warningCombobox.get_active_row_number();
+
+   if (!_model->singleSourceProject)
+      _model->notSaved = true;
 }
 
 bool ProjectSettings :: showModal()
