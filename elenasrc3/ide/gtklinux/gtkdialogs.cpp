@@ -169,7 +169,8 @@ void MessageDialog :: info(text_str message)
 // --- ProjectSettings ---
 
 ProjectSettings :: ProjectSettings(ProjectModel* model)
-   : _projectFrame("Project"), _compilerFrame("Compiler"),
+   : _projectFrame("Project"), _typeLabel("Type"),
+     _compilerFrame("Compiler"),
      _linkerFrame("Linker"), _debuggerFrame("Debugger")
 {
    _model = model;
