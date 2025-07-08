@@ -231,6 +231,8 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
    // draw margin
    canvas.fillRectangle(0, 0, marginWidth, viewHeight, marginStyle);
 
+   String<char, 6>             lineNumber;
+
    // draw text
    int x = marginWidth;
    int y = 1 - lineHeight;
@@ -255,6 +257,18 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
 
          x = marginWidth;
          y += lineHeight;
+
+
+         if (_model->lineNumbersVisible) {
+            lineNumber.clear();
+            lineNumber.appendInt(reader.row + 1);
+
+            canvas.drawText(
+                x - marginStyle.avgCharWidth * _ELENA_::getlength(lineNumber) - 4,
+                y,
+                lineNumber.str(),
+                marginStyle);
+         }
       }
       if (reader.bandStyle) {
          canvas.fillRectangle(x, y, viewWidth, lineHeight + 1, marginStyle);

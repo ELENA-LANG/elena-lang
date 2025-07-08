@@ -26,8 +26,6 @@ In development:
   ide:  
   - #184 : IDE linux - new project, save project, save all, close project, editor settings, debug settings, compile the project
   - #184 : IDE linux - toolbar
-  - #184 : IDE linux - last files / projects
-  - #184 : IDE linux - remember last open project / file
   - compile in the separate thread  
   - async method - auto watch : self and some variables are not displayed
   maint:
@@ -50,14 +48,14 @@ In development:
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
   - #708 : fix invalid linker name in argument '-fuse-ld=lld'
-  - rosetta code : Create a two-dimensional array at runtime - ...
   - MTA support for Linux : test simple multithread sample
+  - #184 : IDE linux - last files / projects
+  - rosetta code : Create a two-dimensional array at runtime - ...
+  - #184 : IDE linux - remember last open project / file
   - docs : NilValue
   - #184 : IDE linux - line numbers
   --------------------------------------
-  - #184 : IDE linux - project settings
-  --------------------------------------
-  * save to the model
+  * print line numbers
   --------------------------------------
 
   === Iteration 43 ===
