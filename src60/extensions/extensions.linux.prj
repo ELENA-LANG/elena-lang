@@ -70,8 +70,8 @@
        <include>scripting/interpreter.l</include>
      </module>
      <module name="threading">
-       <include>threading\threading.l</include>
-       <include>threading\console.l</include>
+       <include>threading/threading.l</include>
+       <include>threading/console.l</include>
      </module>
   </files>
 </configuration>
