@@ -1,18 +1,47 @@
-import system'routines;
 import extensions;
+import system'routines;
+
+class Operable
+{
+    Operable = self;
+    
+    operate()
+        = "delegate implementation";
+}
+ 
+class Delegator
+{
+    object Delegate : prop;
+ 
+    constructor()
+    {
+        Delegate := nil
+    }
+ 
+    operate()
+    {
+        // if the object does not support "Operable" message - returns nil
+        var operable := Delegate.Operable \ back(nil);
+        
+        if (nil == operable)
+        {
+            ^ "default implementation"
+        }
+        else
+        {
+            ^ operable.operate()
+        }
+    }
+}
  
 public program()
 {
-    auto n := new Integer();
-    auto m := new Integer();
+    var delegator := new Delegator();
  
-    Console.write("Enter two space delimited integers:");
-    Console.loadLine(n,m);
+    new object[]{nil, new Object(), new Operable()}.forEach::(o)
+    {
+       delegator.Delegate := o;
  
-    auto myArray2 := new object[][](n.Value).populate::(int i => (new object[](m.Value)) );
-    myArray2[0][0] := 2;
-    myArray2[1][0] := "Hello";
- 
-    Console.printLine(myArray2[0][0]);                
-    Console.printLine(myArray2[1][0]);                
+       Console.printLine(delegator.operate())
+    }
 }

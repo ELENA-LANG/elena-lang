@@ -56,8 +56,6 @@ In development:
   - MTA support for Linux : test simple multithread sample
   - rosetta code
   --------------------------------------
-  * Create a two-dimensional array at runtime
-  * Define a primitive data type
   * Delegates
   * Delete a file
   * Digital root
