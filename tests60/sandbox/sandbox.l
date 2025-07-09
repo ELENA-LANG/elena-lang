@@ -1,47 +1,42 @@
-import extensions;
+import system'math;
+import system'collections;
 import system'routines;
-
-class Operable
+import extensions;
+ 
+extension op
 {
-    Operable = self;
-    
-    operate()
-        = "delegate implementation";
-}
- 
-class Delegator
-{
-    object Delegate : prop;
- 
-    constructor()
-    {
-        Delegate := nil
-    }
- 
-    operate()
-    {
-        // if the object does not support "Operable" message - returns nil
-        var operable := Delegate.Operable \ back(nil);
-        
-        if (nil == operable)
-        {
-            ^ "default implementation"
-        }
-        else
-        {
-            ^ operable.operate()
-        }
-    }
+    logTwo()
+        = self.ln() / 2.ln();
 }
  
 public program()
 {
-    var delegator := new Delegator();
+    var input := console.readLine();
+    var infoC := 0.0r;
+    var table := Dictionary.new();
  
-    new object[]{nil, new Object(), new Operable()}.forEach::(o)
+    input.forEach::(ch)
     {
-       delegator.Delegate := o;
+        var n := table[ch];
+        if (nil == n)
+        {
+            table[ch] := 1
+        }
+        else
+        {
+            table[ch] := n + 1
+        }
+    };
  
-       Console.printLine(delegator.operate())
-    }
+    var freq := 0;
+    table.forEach::(letter)
+    {
+        freq := letter.toInt().realDiv(input.Length);
+ 
+        infoC += (freq * freq.logTwo())
+    };
+ 
+    infoC *= -1;
+ 
+    Console.printLine("The Entropy of ", input, " is ", infoC)
 }

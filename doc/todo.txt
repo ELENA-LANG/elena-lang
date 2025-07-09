@@ -54,16 +54,7 @@ In development:
   - docs : Reference<T>
   - #708 : fix invalid linker name in argument '-fuse-ld=lld'
   - MTA support for Linux : test simple multithread sample
-  - rosetta code
   --------------------------------------
-  * Delegates
-  * Delete a file
-  * Digital root
-  * Dot product
-  * Dynamic variable names
-  * Empty program
-  * Empty string
-  * Entropy
   --------------------------------------
 
   === Iteration 43 ===

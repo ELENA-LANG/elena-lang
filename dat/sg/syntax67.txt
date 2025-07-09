@@ -929,8 +929,8 @@ L4_EXPRESSION ::=
 		| I8_OP
 		| eps ^OBJECT
 	}
-	| { reference | global } ^OBJECT
-	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT
+	| { reference | global } ^OBJECT L3_F4
+	| { string | integer | hexinteger | long | real | constant | character | wide } ^OBJECT L3_F4
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR
 	| BRACKET SUB_EXPRESSION L3_F4
 	| "*" SINGLE_EXPRESSION ^VALUE_OPERATION
