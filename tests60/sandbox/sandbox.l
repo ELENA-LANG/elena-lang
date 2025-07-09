@@ -1,9 +1,18 @@
-static sync = new object();
-
+import system'routines;
+import extensions;
+ 
 public program()
 {
-   sync.test();
-
-   lock(sync) {
-   }
+    auto n := new Integer();
+    auto m := new Integer();
+ 
+    Console.write("Enter two space delimited integers:");
+    Console.loadLine(n,m);
+ 
+    auto myArray2 := new object[][](n.Value).populate::(int i => (new object[](m.Value)) );
+    myArray2[0][0] := 2;
+    myArray2[1][0] := "Hello";
+ 
+    Console.printLine(myArray2[0][0]);                
+    Console.printLine(myArray2[1][0]);                
 }

@@ -24,6 +24,8 @@ In development:
   - #622 : api backlog
   - docs : Pi_value
   ide:  
+  - #184 : IDE linux - menu opttion - recent files / prjects
+  - #184 : IDE linux - last files / projects
   - #184 : IDE linux - new project, save project, save all, close project, editor settings, debug settings, compile the project
   - #184 : IDE linux - toolbar
   - compile in the separate thread  
@@ -47,14 +49,23 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - rosetta code : Equilibrium index - ...
+  - #35 : starting planning
   - docs : Reference<T>
   - #708 : fix invalid linker name in argument '-fuse-ld=lld'
-  - #184 : IDE linux - menu opttion - recent files / prjects
   - MTA support for Linux : test simple multithread sample
-  - #184 : IDE linux - last files / projects
-  - rosetta code : Create a two-dimensional array at runtime - ...
-  - #184 : IDE linux - remember last open project / file
+  - rosetta code
   --------------------------------------
+  * Create a two-dimensional array at runtime
+  * Define a primitive data type
+  * Delegates
+  * Delete a file
+  * Digital root
+  * Dot product
+  * Dynamic variable names
+  * Empty program
+  * Empty string
+  * Entropy
   --------------------------------------
 
   === Iteration 43 ===
