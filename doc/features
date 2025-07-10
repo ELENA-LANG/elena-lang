@@ -305,7 +305,7 @@ public program()
  Enumerations
 ----------------------------------------------------------------------------
 
-public const struct Color : enum<int>(Red ::= 1,Green ::= 2,Blue ::= 3);
+public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
 
 public program()
 {

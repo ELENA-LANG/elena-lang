@@ -54,6 +54,13 @@ In development:
   - docs : Reference<T>
   - #708 : fix invalid linker name in argument '-fuse-ld=lld'
   - MTA support for Linux : test simple multithread sample
+  - system'threading'ThreadHandle
+  --------------------------------------
+  * constructor[0]
+  * getPriority
+  * setPriority
+  * join[1]
+  * checkIfAlive
   --------------------------------------
   * test sample2
   --------------------------------------
