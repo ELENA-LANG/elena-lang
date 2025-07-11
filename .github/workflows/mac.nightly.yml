@@ -29,5 +29,9 @@ jobs:
         VER=$(cat VERSION)
         echo "BUILD_TAG=$VER" >> $GITHUB_ENV
 
+    - name: Install dependencies
+      run: |
+        brew install llvm
+
     - name: Build
       run: make all_mac_${{ matrix.platform }}
