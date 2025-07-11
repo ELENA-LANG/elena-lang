@@ -32,6 +32,7 @@ jobs:
     - name: Install dependencies
       run: |
         brew install llvm
+        brew install lld
 
     - name: Build
       run: make all_mac_${{ matrix.platform }}
