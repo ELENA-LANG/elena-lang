@@ -48,16 +48,15 @@ In development:
   - adding a text how uninstall ELENA
   - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
+  - MTA support for Linux : test sample2
   - chat sample
   - rosetta code : Equilibrium index - ...
   - #35 : starting planning
   - docs : Reference<T>
+  --------------------------------------
   - #708 : fix invalid linker name in argument '-fuse-ld=lld'
   --------------------------------------
-  - MTA support for Linux : test simple multithread sample
-  --------------------------------------
-  * ThreadHandle.createThreadHandle return 0, check why
-  * test sample2
+  * build script - linker option
   --------------------------------------
 
   === Iteration 43 ===
@@ -74,6 +73,7 @@ In development:
   ide:  
   maint:
   samples:
+  - MTA support for Linux : test simple multithread sample
   - optimization : pi (used classes byte code)
   port:
   tools:

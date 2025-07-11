@@ -12,7 +12,7 @@ WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
 CFLAGS = -Wall -std=c++20 -m64
-LDFLAGS = -m64 -ldl -fuse-ld=lld
+LDFLAGS = -m64 -ldl -fuse-ld=ld64
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O3
