@@ -54,9 +54,14 @@ In development:
   - #35 : starting planning
   - docs : Reference<T>
   --------------------------------------
-  - #708 : fix invalid linker name in argument '-fuse-ld=lld'
+  - #708 : fix build
   --------------------------------------
-  * build script - linker option
+  * build error:
+
+      ld64.lld: warning: Option `-s' is obsolete. Please modernize your usage.
+      ld64.lld: error: undefined symbol: elena_lang::ElfSysLibraryLoader::ElfSysLibraryLoader(elena_lang::ustr_t)
+      >>> referenced by ../../temp/elena64-cli/__/separser.o:(symbol elena_lang::ScriptParser::ScriptParser()+0x29)
+      clang: error: linker command failed with exit code 1 (use -v to see invocation)
   --------------------------------------
 
   === Iteration 43 ===
