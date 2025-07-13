@@ -42,6 +42,7 @@ In development:
   tools:
   - vs #2 : elena.tmLanguage.json  
   --------------------------------------
+  - WebApi
   - rosetta code - First-class functions/Use numbers analogously
   - #658 :  debug elena program in VSCode : start single file
   - chat sample
@@ -52,6 +53,8 @@ In development:
   * simple http server; using example https://medium.com/@antoharyanto/creating-an-http-server-using-tcp-socket-in-c-without-third-party-libraries-for-a-better-a68d2102b1d0
   * simple http server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   * combining into a generic httpserver
+  --------------------------------------
+  * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   --------------------------------------
 
   === Iteration 43 ===

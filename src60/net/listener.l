@@ -104,6 +104,11 @@ public class TcpListener
       _listenSocket.listen(SOMAXCONN)
    }
 
+   start(int backLog)
+   {
+      _listenSocket.listen(backLog)
+   }
+
    close()
       <= stop();
 

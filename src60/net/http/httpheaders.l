@@ -1,6 +1,16 @@
 import system'text;
 import system'collections;
 
+// !! must be internal
+public sealed class HttpFirstHeader
+{
+   string Argument1 : prop;
+   
+   string Argument2 : prop;
+   
+   string Argument3 : prop;
+}
+
 public sealed class HttpHeaders
 {
    List<Tuple<string, string>> _headers;
