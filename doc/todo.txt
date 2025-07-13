@@ -45,20 +45,13 @@ In development:
   - rosetta code - First-class functions/Use numbers analogously
   - #658 :  debug elena program in VSCode : start single file
   - chat sample
-  - #35 : starting planning
+  - tcp server example : https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_server
   --------------------------------------
-  - rosetta code
+  - #35 : first draft
   --------------------------------------
-  * Equilibrium index
-  * Evolutionary algorithm
-  * Exceptions
-  * Exceptions/Catch an exception thrown in a nested call
-  * Execute Brain****
-  * Fibonacci sequence
-  * File input/output
-  * File size
-  * Filter
-  * First-class functions
+  * simple http server; using example https://medium.com/@antoharyanto/creating-an-http-server-using-tcp-socket-in-c-without-third-party-libraries-for-a-better-a68d2102b1d0
+  * simple http server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
+  * combining into a generic httpserver
   --------------------------------------
 
   === Iteration 43 ===

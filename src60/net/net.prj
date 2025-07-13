@@ -15,7 +15,7 @@
   </project>
   <manifest>
      <name>ELENA Network Provider Library</name>
-     <version>6.7.3</version>
+     <version>6.7.4</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -24,6 +24,9 @@
         <include>win32_client.l</include>
         <include>win32_listener.l</include>
      </module>
+     <module name="tcpserver">
+       <include>tcpserver\server.l</include>
+     </module>
      <module name="http">
        <include>http\common.l</include>
        <include>http\httpheaders.l</include>
@@ -31,8 +34,9 @@
        <include>http\httprequest.l</include>
        <include>http\httpclient.l</include>
      </module>
-     <module name="server">
-       <include>server\win32_server.l</include>
+     <module name="http'server">
+       <include>http\server\httpsimpleserver.l</include>
+       <include>http\server\httpssimpleserver.l</include>
      </module>
   </files>
 </configuration>
