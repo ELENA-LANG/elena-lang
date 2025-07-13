@@ -13,7 +13,7 @@ In development:
   - #620 : backlog
   - genetic algorithms
   - #748 : i386
-  - #708 : compile the project (elc, elenart, elenavm, og, sg, asm, ecv); run scripts
+  - #708 : compile the project (elenart, og, sg, asm, ecv); run scripts
   - ppc : fpi, fsin, fcos
   - #789
   gen:
@@ -41,35 +41,29 @@ In development:
   - linux elt - migrate to amd64
   tools:
   - vs #2 : elena.tmLanguage.json  
-  prom:
-  - post an article about records using meta programming
-  - weekly posting
-  - post what's new in ELENA 6.7
-  - adding a text how uninstall ELENA
-  - post how to implement comma quibling using elt-cli / textgen
   --------------------------------------
-  - MTA support for Linux : test sample2
+  - rosetta code - First-class functions/Use numbers analogously
+  - #658 :  debug elena program in VSCode : start single file
   - chat sample
-  - rosetta code : Equilibrium index - ...
   - #35 : starting planning
-  - docs : Reference<T>
   --------------------------------------
-  - #708 : fix build
+  - rosetta code
   --------------------------------------
-  * build error:
-
-      ld64.lld: warning: Option `-s' is obsolete. Please modernize your usage.
-      ld64.lld: error: undefined symbol: elena_lang::ElfSysLibraryLoader::ElfSysLibraryLoader(elena_lang::ustr_t)
-      >>> referenced by ../../temp/elena64-cli/__/separser.o:(symbol elena_lang::ScriptParser::ScriptParser()+0x29)
-      clang: error: linker command failed with exit code 1 (use -v to see invocation)
+  * Equilibrium index
+  * Evolutionary algorithm
+  * Exceptions
+  * Exceptions/Catch an exception thrown in a nested call
+  * Execute Brain****
+  * Fibonacci sequence
+  * File input/output
+  * File size
+  * Filter
+  * First-class functions
   --------------------------------------
 
   === Iteration 43 ===
   --------------------------------------
   dev: 
-  - MTA support for Linux : support socket
-  - MTA support for Linux : support http
-  - MTA support for Linux : tests threads / tasks examples
   - upndown (connector - cmdSearch)
   - #708 : compile library, compile executable, test executable  
   gen:
@@ -78,16 +72,35 @@ In development:
   ide:  
   maint:
   samples:
-  - MTA support for Linux : test simple multithread sample
   - optimization : pi (used classes byte code)
   port:
+  - MTA support for Linux : test sample2 (events)
+  - MTA support for Linux : test simple multithread sample
   tools:
-  prom:
   --------------------------------------
+  - docs : Reference<T>
   --------------------------------------
   --------------------------------------
 
   === Iteration 44 ===
+  --------------------------------------
+  dev: 
+  - MTA support for Linux : support socket
+  - MTA support for Linux : support http
+  - MTA support for Linux : tests threads / tasks examples
+  gen:
+  api:
+  ide:  
+  maint:
+  samples:
+  port:
+  tools:
+  --------------------------------------
+  - rosetta code
+  --------------------------------------
+  --------------------------------------
+
+  === Iteration 45 ===
   --------------------------------------
   dev: 
   gen:
@@ -97,7 +110,24 @@ In development:
   samples:
   port:
   tools:
-  prom:
   --------------------------------------
+  - docs
+  --------------------------------------
+  --------------------------------------
+
+  === Iteration 46 ===
+  --------------------------------------
+  dev: 
+  gen:
+  api:
+  ide:  
+  maint:
+  samples:
+  port:
+  tools:
+  --------------------------------------
+  - docs
+  --------------------------------------
+  - rosetta code
   --------------------------------------
   --------------------------------------

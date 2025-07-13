@@ -1,42 +1,68 @@
-import system'math;
-import system'collections;
-import system'routines;
 import extensions;
+import system'routines;
+import system'collections;
+import extensions'routines;
  
-extension op
+class EquilibriumEnumerator : Enumerator
 {
-    logTwo()
-        = self.ln() / 2.ln();
+    int        left;
+    int        right;
+    int        index;
+    Enumerator en;
+ 
+    constructor new(Enumerator en)
+    {
+        this en := en;
+ 
+        self.reset()
+    }
+ 
+    constructor new(Enumerable list)
+        <= new(list.enumerator());
+ 
+    constructor new(o)
+        <= new(cast Enumerable(o)); 
+ 
+    bool next()
+    {
+        index += 1;
+ 
+        while(en.next())
+        {
+            var element := *en;            
+            right -= element;
+            bool found := (left == right);
+            left += element;
+ 
+            if (found)
+            {
+                ^ true
+            };
+ 
+            index += 1
+        };
+ 
+        ^ false
+    }
+ 
+    reset()
+    {
+        en.reset();
+ 
+        left := 0;
+        right := en.summarize();
+        index := -1;
+ 
+        en.reset();
+    }
+ 
+    get Value() = index;
+ 
+    enumerable() => en;
 }
  
 public program()
 {
-    var input := console.readLine();
-    var infoC := 0.0r;
-    var table := Dictionary.new();
- 
-    input.forEach::(ch)
-    {
-        var n := table[ch];
-        if (nil == n)
-        {
-            table[ch] := 1
-        }
-        else
-        {
-            table[ch] := n + 1
-        }
-    };
- 
-    var freq := 0;
-    table.forEach::(letter)
-    {
-        freq := letter.toInt().realDiv(input.Length);
- 
-        infoC += (freq * freq.logTwo())
-    };
- 
-    infoC *= -1;
- 
-    Console.printLine("The Entropy of ", input, " is ", infoC)
+    EquilibriumEnumerator.new(new int[]{ -7, 1, 5, 2, -4, 3, 0 })
+        .forEach(PrintingLn)
 }
