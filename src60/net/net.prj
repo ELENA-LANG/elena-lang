@@ -21,11 +21,11 @@
   <files>
      <module>
         <include>common.l</include>
-        <include>win32_client.l</include>
-        <include>win32_listener.l</include>
+        <include>client.l</include>
+        <include>listener.l</include>
      </module>
      <module name="tcpserver">
-       <include>tcpserver\server.l</include>
+       <include>tcpserver\eventbasedtcpserver.l</include>
      </module>
      <module name="http">
        <include>http\common.l</include>
