@@ -1,21 +1,14 @@
 <configuration>
+  <files>
+     <module>
+        <file>bootstrap.l</file>
+     </module>
+  </files>
 
-      <project>
-        <executable>sampleapi1</executable>
-      </project>
-      <files>
-        <module>
-            <file>bootstrap.l</file>
-        </module>
-      </files>
-
-    <project>
-        <options></options>
-        <template>mt_console</template>
-        <namespace>httpget</namespace>
-    </project>
-
-  <forwards>
-     <forward key="program">webapi'Program</forward>
-  </forwards>
+  <project>
+     <executable>sampleapi1</executable>
+     <options></options>
+     <template>webapi</template>
+     <namespace>httpget</namespace>
+  </project>
 </configuration>

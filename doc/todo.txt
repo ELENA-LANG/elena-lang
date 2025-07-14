@@ -52,7 +52,7 @@ In development:
   --------------------------------------
   * simple web api - GET
   * simple web api client - GET
-  * fix an issue with internal interface method
+  * fix an issue with internal interface method (see IBootstap interface)
   * simple web api - POST
   * simple web api client - POST
 
