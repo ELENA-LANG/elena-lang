@@ -12,7 +12,7 @@ public sealed class ThreadPool
    {
       int cpuCount := Environment.ProcessorCount;
       for(int i := 0; i < cpuCount; i++) {
-         Thread.new(
+         Thread.start(
          {
             while (true) {
                Func f := _actions.pop();

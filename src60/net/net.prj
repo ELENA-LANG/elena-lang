@@ -36,11 +36,13 @@
      </module>
      <module name="http'server">
        <include>http\server\httpserverrequest.l</include>
+       <include>http\server\httpserverresponse.l</include>
        <include>http\server\ihttphandler.l</include>
        <include>http\server\ihttpserver.l</include>
-       <include>http\server\httpsimplehandler.l</include>
-       <include>http\server\httpsimpleserver.l</include>
-       <include>http\server\httpssimpleserver.l</include>
+       <include>http\server\ihttperrorhandler.l</include>
+       <include>http\server\dummyhttphandler.l</include>
+       <include>http\server\httpserver.l</include>
+       <include>http\server\httpsserver.l</include>
      </module>
   </files>
 </configuration>

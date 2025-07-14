@@ -5,5 +5,7 @@ public interface IHttpHandlerFactory
 
 public interface IHttpHandler
 {
+   abstract HttpServerResponse proceed(HttpServerRequest request);
    
+   abstract HttpServerResponse getErrorHandler();
 }

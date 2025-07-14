@@ -56,17 +56,22 @@ public sealed class HttpHeaders
       ^ String.MinValue
    }
 
-   get string Value()
+   saveTo(StringBuilder content)
    {
-      auto content := new StringBuilder();
       foreach(auto p; in _headers) {
          content
             .write(p.Item1)
             .write(":")
             .write(p.Item2)
             .write($13$10);         
-      };
+      };      
+   }
 
+   get string Value()
+   {
+      auto content := new StringBuilder();
+      saveTo(content);
+      
       ^ content.Value
    }
 }

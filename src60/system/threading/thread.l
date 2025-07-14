@@ -56,19 +56,19 @@ public sealed class Thread
       _handle := new ThreadHandle(_startArg, stackSize);
    }
 
-   constructor new(Func f) : info("Creates and starts a new thread")
+   constructor start(Func f) : info("Creates and starts a new thread")
       <= assign(f)
    {
       start();
    }
 
-   constructor new(Func f, int stackSize)
+   constructor start(Func f, int stackSize)
       <= assign(f, stackSize)
    {
       start();
    }
 
-   constructor new(Func1 f)
+   constructor start(Func1 f)
       <= assign(f)
    {
       start();
