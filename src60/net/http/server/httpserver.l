@@ -3,7 +3,7 @@ import net;
 import net'http;
 import system'threading;
 
-public class HttpServer : IHttpServer
+public sealed class HttpServer : interface<IHttpServer>
 {
    Thread               _listenThread;  
 
@@ -27,7 +27,7 @@ public class HttpServer : IHttpServer
       });
    }
 
-   run()
+   protected run()
    {
       _listener.start(_backLog);
       

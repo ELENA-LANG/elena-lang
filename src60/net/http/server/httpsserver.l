@@ -1,6 +1,6 @@
-public class HttpsServer : IHttpServer
+public class HttpsServer: interface<IHttpServer>
 {
-   run()
+   protected run()
    {
       NotSupportedException.raise()
    }
@@ -8,5 +8,10 @@ public class HttpsServer : IHttpServer
    start()
    {
       NotSupportedException.raise()
+      
+//      _listenThread := Thread.start(
+//      {
+//         run();
+//      });
    }
 }
