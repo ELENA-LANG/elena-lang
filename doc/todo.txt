@@ -51,8 +51,11 @@ In development:
   - #35 : first draft
   --------------------------------------
   * simple web api - GET
+  * create web api app using textget
+  * create web api app using textget from IDE
   * simple web api client - GET
-  * fix an issue with internal interface method (see IBootstap interface)
+  * create web api client using textget
+  * create web api client using textget from IDE
   * simple web api - POST
   * simple web api client - POST
 
@@ -66,6 +69,7 @@ In development:
   dev: 
   - upndown (connector - cmdSearch)
   - #708 : compile library, compile executable, test executable  
+  - fix an issue with internal interface method (see IBootstap interface)??
   gen:
   api:
   - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
