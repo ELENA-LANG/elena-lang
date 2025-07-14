@@ -37,28 +37,31 @@ public class HttpServer : IHttpServer
             {
                try
                {
-                  auto acceptor := new HttpAcceptor(client);
+                  auto acceptor := new HttpAcceptor(client, _handleFactory);
                   acceptor.acceptClient();
                }
                catch(Exception ex)
                {
                   // !! temporal
-                  Console.printLineConcurrent(ex)
+                  Console.printLineConcurrent(ex);
+                  
+                  auto acceptor := new HttpAcceptor(client, _handleFactory);
+                  acceptor.returnError(ex);
                }
             });
       }
    }
 }
 
-public class BaseHttpErrorHandler : IHttpErrorHandler
+public abstract class BaseHttpErrorHandler : IHttpErrorHandler
 {
-   HttpServerResponse handle(Exception ex)
-      = getInternalErrorResponse(ex);
-   
-   
    HttpServerResponse getNotFoundResponse()
    {
-      HttpServerResponse response;
+      HttpServerResponse response := HttpServerResponse.new("File Not Found");
+      response.Protocol := "HTTP/1.1";
+      response.StatusCode := 404;
+      response.StatusText := "Not Found";
+      response.Headers.add("Content-Type", "text/html");
       
       ^ response;
    }
@@ -66,10 +69,23 @@ public class BaseHttpErrorHandler : IHttpErrorHandler
    
    HttpServerResponse getInternalErrorResponse(Exception ex)
    {
-      HttpServerResponse response;
+      HttpServerResponse response := HttpServerResponse.new(ex.toPrintable());
+      response.Protocol := "HTTP/1.1";
+      response.StatusCode := 500;
+      response.StatusText := "Internal Server Error";
+      response.Headers.add("Content-Type", "text/html");
       
       ^ response;
    }
+}
+
+public singleton HttpErrorHandler : BaseHttpErrorHandler
+{
+   HttpServerResponse handle(Exception ex)
+      = getInternalErrorResponse(ex);
+      
+   Task<HttpServerResponse> handleAsync(Exception ex)
+      = ::Task<HttpServerResponse>.assign({ ^ handle(ex) });
 }
 
 class HttpAcceptor
@@ -81,6 +97,22 @@ class HttpAcceptor
    {
       _client := client;
       _handleFactory := handleFactory
+   }
+   
+   returnError(Exception ex)
+   {
+      returnErrorAsync(ex).Result
+   }
+   
+   async Task returnErrorAsync(Exception ex)
+   {
+      auto stream := _client.stream();
+      
+      auto handler := _handleFactory.getErrorHandler();
+      
+      HttpServerResponse response := :await handler.handleAsync(ex);
+      
+      :await response.saveContentAsync(stream);
    }
    
    acceptClient()

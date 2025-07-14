@@ -1,3 +1,8 @@
+import net'http;
+import system'io;
+import system'net;
+import system'text;
+import system'threading;
 
 public sealed class HttpServerResponse
 {
@@ -10,6 +15,9 @@ public sealed class HttpServerResponse
    HttpHeaders Headers : rprop(_headers);
    
    MemoryBuffer  _buffer;
+   
+   constructor new(string content)
+      <= new(UTF8Encoding.toByteArray(content), content.Length);
    
    constructor new(byte[] body, int length)
    {
@@ -33,8 +41,8 @@ public sealed class HttpServerResponse
       _headers.saveTo(output);
       output.write($13$10);
       
-      _await stream.writeAsync(*output);
+      :await stream.writeAsync(*output);
       
-      _await stream.writeAsync(_buffer.Content, _buffer.Length);
+      :await stream.writeAsync(_buffer.Content, _buffer.Length);
    }
 }

@@ -20,6 +20,11 @@
   </manifest>
   <files>
      <module>
+        <include>engine.l</include>
+        <include>program.l</include>
+     </module>
+     <module name="bootstrap">
+       <include>bootstrap\bootstrap.l</include>
      </module>
   </files>
 </configuration>

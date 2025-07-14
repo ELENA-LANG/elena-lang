@@ -1,0 +1,7 @@
+public singleton Bootstrap
+{
+   initDummy()
+   {
+      
+   }
+}
