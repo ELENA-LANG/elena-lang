@@ -416,6 +416,7 @@ namespace elena_lang
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;
    constexpr auto wrnInvalidPrjCollection    = 502;
+   constexpr auto wrnInvalidTemplateName     = 503;
 
    constexpr auto errCommandSetAbsent        = 600;
    constexpr auto errReadOnlyModule          = 601;

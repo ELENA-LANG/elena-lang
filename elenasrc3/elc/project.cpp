@@ -305,7 +305,8 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
          DynamicString<char> key;
          baseConfig.readContent(key);
 
-         loadConfigByName(configPath, key.str(), false);
+         if (!loadConfigByName(configPath, key.str(), false))
+            _presenter->print(_presenter->getMessage(wrnInvalidTemplateName), key.str());
       }
 
       loadSetting(config, root, NAMESPACE_KEY, _defaultNs);
