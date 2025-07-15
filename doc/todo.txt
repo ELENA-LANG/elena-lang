@@ -16,52 +16,50 @@ In development:
   - #708 : compile the project (elenart, og, sg, asm, ecv); run scripts
   - ppc : fpi, fsin, fcos
   - #789
+  - #35 : WebApi
   gen:
   - script : support ++ operator
   - work on REPL (elt), generate project template
+  - textgen : create web api controller / client from IDE
   api:
   - #35 : working on webapi
   - #622 : api backlog
   - docs : Pi_value
   ide:  
-  - #184 : IDE linux - menu opttion - recent files / prjects
-  - #184 : IDE linux - last files / projects
-  - #184 : IDE linux - new project, save project, save all, close project, editor settings, debug settings, compile the project
   - #184 : IDE linux - toolbar
   - compile in the separate thread  
   - async method - auto watch : self and some variables are not displayed
+  - #184 : IDE linux - editor settings, debug settings, compile the project
+  - #184 : IDE linux - compile the project
   maint:
   - test all x86-64 examples
   - get rid of win_locale.l in system; refactor for cross-platform
   samples:
   - review pi performance (must < 6) : realOp.power[3] byte code
   - rosetta code : Program termination, Parallel calculations
+  - chat sample
   port:
   - linux elt - use rpath for linking elenavm
   - linux elt - migrate to amd64
   tools:
-  - vs #2 : elena.tmLanguage.json  
-  --------------------------------------
-  - #35 : WebApi
-  - rosetta code - First-class functions/Use numbers analogously
   - #658 :  debug elena program in VSCode : start single file
-  - chat sample
+  --------------------------------------
+  - rosetta code - First-class functions/Use numbers analogously  
+  - webapi phone book example : add, delete, update, search
   - tcp server example : https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_server
   --------------------------------------
   - #35 : first draft
   --------------------------------------
   * simple web api - GET
-  * create web api app using textget
-  * create web api app using textget from IDE
   * simple web api client - GET
-  * create web api client using textget
-  * create web api client using textget from IDE
   * simple web api - POST
   * simple web api client - POST
 
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
+  --------------------------------------
+  - #184 : IDE linux - new project, save project, save all, close project, editor settings, debug settings, compile the project
   --------------------------------------
 
   === Iteration 43 ===
@@ -81,6 +79,7 @@ In development:
   - MTA support for Linux : test sample2 (events)
   - MTA support for Linux : test simple multithread sample
   tools:
+  - vs #2 : elena.tmLanguage.json  
   --------------------------------------
   - docs : Reference<T>
   --------------------------------------

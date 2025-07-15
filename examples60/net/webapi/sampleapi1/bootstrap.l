@@ -1,6 +1,5 @@
-import webapi'bootstap;
+import webapi'bootstrap;
 
 public SampleApi1Bootstap : preloaded =
-   Bootstap
+   Bootstrap
       .initDummy();
-   

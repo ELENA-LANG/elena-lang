@@ -55,6 +55,7 @@ protected:
    }
    void on_menu_file_new_project()
    {
+      _controller->doNewProject(fileDialog, projectDialog, messageDialog, projectSettingsDialog, _model);
    }
    void on_menu_file_open_source()
    {

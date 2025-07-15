@@ -4,11 +4,10 @@
         <file>bootstrap.l</file>
      </module>
   </files>
-
   <project>
      <executable>sampleapi1</executable>
      <options></options>
      <template>webapi</template>
-     <namespace>httpget</namespace>
+     <namespace>sampleapi1</namespace>
   </project>
 </configuration>
