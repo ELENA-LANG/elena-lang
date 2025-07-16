@@ -36,6 +36,8 @@ namespace elena_lang
 
       void renameTab(int index, const char* title);
 
+      void deleteTab(int index);
+
       Gtk::Widget* getCurrentControl();
 
       TabBar();

@@ -53,6 +53,11 @@ void TabBar :: renameTab(int index, const char* title)
    set_tab_label_text(*get_nth_page(index), title);
 }
 
+void TabBar :: deleteTab(int index)
+{
+   remove_page(index);
+}
+
 /*Gtk::Widget* TabBar :: getTabControl(int index) const
 {
    if (index == -1)

@@ -142,10 +142,31 @@ const char* PROJECT_FILE_FILTER[] =
    "Any files"
 };
 
+// --- GTKIDEWindow::Clipboard ---
+
+bool GTKIDEWindow::Clipboard :: copyToClipboard(DocumentView* docView, bool selectionMode)
+{
+   docView->copySelection(text);
+
+   _owner->get_clipboard()->set_text(_strData);
+
+   return true;
+}
+
+void GTKIDEWindow::Clipboard :: pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView)
+{
+   Glib::ustring text = _owner->get_clipboard()->wait_for_text();
+
+   char* s = text.c_str();
+   
+   docView->insertLine(status, s, getlength(s));
+}
+
 // --- GTKIDEWindow ---
 
 GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model)
-   : fileDialog(this, SOURCE_FILE_FILTER, 4, OPEN_FILE_CAPTION, *model->projectModel.paths.lastPath),
+   : _clipboard(this),
+     fileDialog(this, SOURCE_FILE_FILTER, 4, OPEN_FILE_CAPTION, *model->projectModel.paths.lastPath),
      projectDialog(this, PROJECT_FILE_FILTER, 4, OPEN_PROJECT_CAPTION, *model->projectModel.paths.lastPath),
      messageDialog(this), projectSettingsDialog(&model->projectModel)
 {
@@ -377,12 +398,12 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
       onProjectRefresh(_model->projectModel.empty);
    }
 
-   //if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
+   if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
    //   if (_model->sourceViewModel.isAssigned()) {
          //_children[_model->ideScheme.textFrameId]->show();
          //_children[_model->ideScheme.textFrameId]->setFocus();
     //  }
       //else _children[_model->ideScheme.textFrameId]->hide();
-   //}
+   }
 }
 

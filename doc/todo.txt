@@ -59,7 +59,10 @@ In development:
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   --------------------------------------
-  - #184 : IDE linux - new project, save project, save all, close project, editor settings, debug settings, compile the project
+  - #184 : IDE linux - clipboard
+  - #184 : IDE linux - edit menus
+  - #184 : IDE linux - mark modified file
+  - #184 : IDE linux - include / exclude
   --------------------------------------
 
   === Iteration 43 ===

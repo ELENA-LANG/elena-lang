@@ -32,8 +32,25 @@ public:
 class GTKIDEWindow : public SDIWindow
 {
 protected:
+   class Clipboard : public ClipboardBase
+   {
+      GTKIDEWindow* _owner;
+      Glib::ustring _strData;
+
+   public:
+      bool copyToClipboard(DocumentView* docView, bool selectionMode) override;
+      void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) override;
+
+      Clipboard(GTKIDEWindow* owner)
+      {
+         _owner = owner;
+      }
+   }
+
    IDEModel*         _model;
    IDEController*    _controller;
+
+   Clipboard         _clipboard;
 
    FileDialog        fileDialog;
    FileDialog        projectDialog;
@@ -47,6 +64,11 @@ protected:
    void populateMenu();
 
    Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
+
+   bool copyToClipboard()
+   {
+      return _controller->sourceController.copyToClipboard(_model->viewModel(), &clipboard);
+   }
 
    // event signals
    void on_menu_file_new_source()
@@ -84,11 +106,11 @@ protected:
    }
    void on_menu_project_saveas()
    {
-      //_controller->doSaveProject(true);
+      _controller->doSaveProject(projectDialog, _model, true);
    }
    void on_menu_file_saveall()
    {
-      //_controller->doSave(true);
+      _controller->doSaveAll(fileDialog, projectDialog, _model);
    }
    void on_menu_file_close()
    {
@@ -96,77 +118,77 @@ protected:
    }
    void on_menu_file_closeall()
    {
-      //_controller->doCloseAll(false);
+      _controller->doCloseAll(fileDialog, projectDialog, messageDialog, _model, false);
    }
    void on_menu_file_closeproject()
    {
-      //_controller->doCloseAll(true);
+      _controller->doCloseProject(fileDialog, projectDialog, messageDialog, _model);
    }
    void on_menu_file_closeallbutactive()
    {
-      //_controller->doCloseAllButActive();
+      _controller->doCloseAllButActive(fileDialog, messageDialog, _model);
    }
 
    void on_menu_edit_undo()
    {
-      //_controller->doUndo();
+      _controller->sourceController.undo(_model->viewModel());
    }
    void on_menu_edit_redo()
    {
-      //_controller->doRedo();
+      _controller->sourceController.redo(_model->viewModel());
    }
    void on_menu_edit_cut()
    {
-//      if (_controller->doEditCopy())
-//         _controller->doEditDelete();
+      if (copyToClipboard())
+         on_menu_edit_delete();
    }
    void on_menu_edit_copy()
    {
-      //_controller->doEditCopy();
+      copyToClipboard();
    }
    void on_menu_edit_paste()
    {
-      //_controller->doEditPaste();
+      _controller->sourceController.pasteFromClipboard(_model->viewModel(), &clipboard);
    }
    void on_menu_edit_delete()
    {
-      //_controller->doEditDelete();
+      _controller->sourceController.deleteText(_model->viewModel());
    }
    void on_menu_edit_select_all()
    {
-      //_controller->doSelectAll();
+      _controller->sourceController.selectAll(_model->viewModel());
    }
    void on_menu_edit_indent()
    {
-      //_controller->doIndent();
+      _controller->doIndent(_model);
    }
    void on_menu_edit_outdent()
    {
-      //_controller->doOutdent();
+      _controller->doOutdent(_model);
    }
    void on_menu_edit_trim()
    {
-      //_controller->doTrim();
+      _controller->sourceController.trim(_model->viewModel());
    }
    void on_menu_edit_erase_line()
    {
-      //_controller->doEraseLine();
+      _controller->sourceController.eraseLine(_model->viewModel());
    }
    void on_menu_edit_upper()
    {
-      //_controller->doUpperCase();
+      _controller->sourceController.upperCase(_model->viewModel());
    }
    void on_menu_edit_lower()
    {
-      //_controller->doLowerCase();
+      _controller->sourceController.lowerCase(_model->viewModel());
    }
    void on_menu_edit_comment()
    {
-      //_controller->doComment();
+      _controller->sourceController.insertBlockText(_model->viewModel(), "//", 2);
    }
    void on_menu_edit_uncomment()
    {
-      //_controller->doUnComment();
+      _controller->sourceController.deleteBlockText(_model->viewModel(), "//", 2);
    }
    void on_menu_project_include()
    {
