@@ -1327,25 +1327,24 @@ int IDEController :: openProject(IDEModel* model, path_t projectFile)
    return retVal;
 }
 
-void IDEController :: doOpenFile(FileDialogBase& dialog, IDEModel* model)
+bool IDEController :: doOpenFile(IDEModel* model, PathList& files)
 {
    int projectStatus = STATUS_NONE;
 
-   List<path_t, freepath> files(nullptr);
-   if (dialog.openFiles(files)) {
-      for (auto it = files.start(); !it.eof(); ++it) {
-         if(openFile(model, *it, projectStatus)) {
-            removeDuplicate(model->projectModel.lastOpenFiles, *it);
+   for (auto it = files.start(); !it.eof(); ++it) {
+      if(openFile(model, *it, projectStatus)) {
+         removeDuplicate(model->projectModel.lastOpenFiles, *it);
 
-            while (model->projectModel.lastOpenFiles.count() >= MAX_RECENT_FILES)
-               model->projectModel.lastOpenFiles.cut(model->projectModel.lastOpenFiles.end());
+         while (model->projectModel.lastOpenFiles.count() >= MAX_RECENT_FILES)
+            model->projectModel.lastOpenFiles.cut(model->projectModel.lastOpenFiles.end());
 
-            model->projectModel.lastOpenFiles.insert((*it).clone());
-         }
+         model->projectModel.lastOpenFiles.insert((*it).clone());
       }
-
-      notifyOnModelChange(projectStatus);
    }
+
+   notifyOnModelChange(projectStatus);
+
+   return projectStatus != 0;
 }
 
 void IDEController :: doOpenFile(IDEModel* model, path_t path)

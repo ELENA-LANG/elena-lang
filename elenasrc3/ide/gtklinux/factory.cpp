@@ -89,9 +89,13 @@ void IDEBroadcaster :: sendMessage(EventBase* event)
 
 // --- IDEFactory ---
 
-IDEFactory :: IDEFactory(IDEModel* ideModel, IDEController* controller,
+IDEFactory :: IDEFactory(int argc, char** argv,
+   IDEModel* ideModel, IDEController* controller,
    GUISettinngs   settings)
 {
+   _argc = argc;
+   _argv = argv;
+
    _schemes[0] = defaultStyles;
    _schemes[1] = classicStyles;
    _schemes[2] = darkStyles;
@@ -180,36 +184,36 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
          ProcessBase* vmConsoleProcess)
 {
    Gtk::Widget** children = new Gtk::Widget*[2];
-   int counter = 0;
+   int counter = 1;
 
    int textIndex = counter++;
-   int projectView = counter++;
+//   int projectView = counter++;
    children[textIndex] = createTextControl();
-   children[projectView] = createProjectView();
+//   children[projectView] = createProjectView();
 
-   GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model);
+   GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model, nullptr);
 
-   initializeScheme(textIndex, projectView);
+   initializeScheme(textIndex/*, projectView*/);
 
    ideWindow->populate(counter, children);
-   ideWindow->setLayout(textIndex, -1, -1, -1, projectView);
+   ideWindow->setLayout(textIndex, -1, -1, -1, /*projectView*/-1);
 
-   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
-   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
+//   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
+//   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
 
    return new WindowWrapper(ideWindow);
 }
 
 
-void IDEFactory :: initializeScheme(int frameTextIndex, /*int tabBar, int compilerOutput, int errorList,*/
-   int projectView/*, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
+void IDEFactory :: initializeScheme(int frameTextIndex/*, int tabBar, int compilerOutput, int errorList,*/
+   /*int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
    int toolBarControl, int contextEditor, int textIndex*/)
 {
    _model->ideScheme.textFrameId = frameTextIndex;
 //   _model->ideScheme.resultControl = tabBar;
 //   _model->ideScheme.compilerOutputControl = compilerOutput;
 //   _model->ideScheme.errorListControl = errorList;
-   _model->ideScheme.projectView = projectView;
+//   _model->ideScheme.projectView = projectView;
 //   _model->ideScheme.debugWatch = contextBrowser;
 //   _model->ideScheme.menu = menu;
 //   _model->ideScheme.statusBar = statusBar;
@@ -227,7 +231,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, /*int tabBar, int compil
 
 GUIApp* IDEFactory :: createApp()
 {
-   WindowApp* app = new WindowApp(&_broadcaster);
+   GtkApp* app = new GtkApp(_argc, _argv, &_broadcaster);
 
    return app;
 }

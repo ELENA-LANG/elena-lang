@@ -40,7 +40,7 @@ FileDialog :: FileDialog(Gtk::Window* owner, const char** filter, int filterCoun
 
 bool FileDialog :: openFile(PathString& path)
 {
-   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_OPEN);
+   Gtk::FileChooserDialog dialog(_caption, Gtk::FileChooser::Action::OPEN);
    dialog.set_transient_for(*_owner);
 
    if (!emptystr(_initialDir))
@@ -70,61 +70,61 @@ bool FileDialog :: openFile(PathString& path)
 
 bool FileDialog :: openFiles(List<path_t, freepath>& files)
 {
-   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_OPEN);
-   dialog.set_transient_for(*_owner);
-
-   if (!emptystr(_initialDir))
-      dialog.set_current_folder (_initialDir);
-
-   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-   dialog.add_button("_Open", Gtk::RESPONSE_OK);
-
-   for (int i = 0; i < _filterCounter; i += 2) {
-      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
-
-      filter_l->set_name(_filter[i + 1]);
-      filter_l->add_pattern(_filter[i]);
-      dialog.add_filter(filter_l);
-   }
-
-   int result = dialog.run();
-   if (result == Gtk::RESPONSE_OK) {
-      std::string filename = dialog.get_filename();
-
-      files.add(StrUtil::clone(filename.c_str()));
-
-      return true;
-   }
+//   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_OPEN);
+//   dialog.set_transient_for(*_owner);
+//
+//   if (!emptystr(_initialDir))
+//      dialog.set_current_folder (_initialDir);
+//
+//   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+//   dialog.add_button("_Open", Gtk::RESPONSE_OK);
+//
+//   for (int i = 0; i < _filterCounter; i += 2) {
+//      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+//
+//      filter_l->set_name(_filter[i + 1]);
+//      filter_l->add_pattern(_filter[i]);
+//      dialog.add_filter(filter_l);
+//   }
+//
+//   int result = dialog.run();
+//   if (result == Gtk::RESPONSE_OK) {
+//      std::string filename = dialog.get_filename();
+//
+//      files.add(StrUtil::clone(filename.c_str()));
+//
+//      return true;
+//   }
    return false;
 }
 
 bool FileDialog :: saveFile(path_t ext, PathString& path)
 {
-   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_SAVE);
-   dialog.set_transient_for(*_owner);
-
-   if (!emptystr(_initialDir))
-      dialog.set_current_folder (_initialDir);
-
-   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-   dialog.add_button("_Save", Gtk::RESPONSE_OK);
-
-   for (int i = 0; i < _filterCounter; i += 2) {
-      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
-
-      filter_l->set_name(_filter[i + 1]);
-      filter_l->add_pattern(_filter[i]);
-      dialog.add_filter(filter_l);
-   }
-
-   int result = dialog.run();
-   if (result == Gtk::RESPONSE_OK) {
-      std::string filename = dialog.get_filename();
-
-      path.copy(filename.c_str());
-
-      return true;
-   }
+//   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_SAVE);
+//   dialog.set_transient_for(*_owner);
+//
+//   if (!emptystr(_initialDir))
+//      dialog.set_current_folder (_initialDir);
+//
+//   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+//   dialog.add_button("_Save", Gtk::RESPONSE_OK);
+//
+//   for (int i = 0; i < _filterCounter; i += 2) {
+//      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+//
+//      filter_l->set_name(_filter[i + 1]);
+//      filter_l->add_pattern(_filter[i]);
+//      dialog.add_filter(filter_l);
+//   }
+//
+//   int result = dialog.run();
+//   if (result == Gtk::RESPONSE_OK) {
+//      std::string filename = dialog.get_filename();
+//
+//      path.copy(filename.c_str());
+//
+//      return true;
+//   }
    return false;
 }
 
@@ -132,13 +132,16 @@ bool FileDialog :: saveFile(path_t ext, PathString& path)
 
 int MessageDialog :: show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel)
 {
-   Gtk::MessageDialog dialog(message, false, messageType, buttonTypes, true);
-   dialog.set_transient_for(*_owner);
+//   Gtk::MessageDialog dialog(message, false, messageType, buttonTypes, true);
+//   dialog.set_transient_for(*_owner);
+//
+////   if (withCancel)
+////      dialog.add_button("Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
+//
+//   return dialog.run();
 
-   if (withCancel)
-      dialog.add_button("Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
 
-   return dialog.run();
+    return 0; // !! temporal
 }
 
 MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str param)
@@ -150,20 +153,20 @@ MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str p
 
 MessageDialogBase::Answer MessageDialog :: question(text_str message)
 {
-   int retVal = show(message, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+   int retVal = show(message, Gtk::MessageType::QUESTION, Gtk::ButtonsType::YES_NO, true);
 
-   if (retVal == Gtk::ResponseType::RESPONSE_YES) {
+/*   if (retVal == Gtk::ResponseType::RESPONSE_YES) {
       return Answer::Yes;
    }
    else if (retVal == Gtk::ResponseType::RESPONSE_CANCEL) {
       return Answer::Cancel;
    }
-   else return Answer::No;
+   else*/ return Answer::No;
 }
 
 void MessageDialog :: info(text_str message)
 {
-   show(message, Gtk::MessageType::MESSAGE_INFO, Gtk::ButtonsType::BUTTONS_OK, false);
+//   show(message, Gtk::MessageType::MESSAGE_INFO, Gtk::ButtonsType::BUTTONS_OK, false);
 }
 
 // --- ProjectSettings ---
@@ -174,65 +177,65 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
      _linkerFrame("Linker"), _targetLabel("Target file name"), _outputLabel("Output path"),
      _debuggerFrame("Debugger"), _modeLabel("Debug mode"), _argumentsLabel("Command arguments")
 {
-   _model = model;
-
-   Gtk::Box *box = get_vbox();
-
-   box->pack_start(_projectFrame, Gtk::PACK_SHRINK);
-
-   _projectFrame.add(_projectGrid);
-   _projectGrid.set_row_homogeneous(true);
-   _projectGrid.set_column_homogeneous(true);
-   _projectGrid.attach(_typeLabel, 0, 0, 1, 1);
-   _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
-   _projectGrid.attach(_namespaceLabel, 0, 1, 1, 1);
-   _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
-   _projectGrid.attach(_profileLabel, 0, 2, 1, 1);
-   _projectGrid.attach(_profileCombobox, 1, 2, 1, 1);
-
-   box->pack_start(_compilerFrame);
-
-   _compilerFrame.add(_compilerGrid);
-   _compilerGrid.set_row_homogeneous(true);
-   _compilerGrid.set_column_homogeneous(true);
-   _compilerGrid.attach(_strictTypeLabel, 0, 0, 1, 1);
-   _compilerGrid.attach(_strictTypeCheckbox, 1, 0, 1, 1);
-   _compilerGrid.attach(_optionsLabel, 0, 1, 1, 1);
-   _compilerGrid.attach(_optionsText, 1, 1, 1, 1);
-   _compilerGrid.attach(_warningLabel, 0, 2, 1, 1);
-   _compilerGrid.attach(_warningCombobox, 1, 2, 1, 1);
-
-   box->pack_start(_linkerFrame);
-
-   _linkerFrame.add(_linkerrGrid);
-   _linkerrGrid.set_row_homogeneous(true);
-   _linkerrGrid.set_column_homogeneous(true);
-   _linkerrGrid.attach(_targetLabel, 0, 0, 1, 1);
-   _linkerrGrid.attach(_targetText, 1, 0, 1, 1);
-   _linkerrGrid.attach(_outputLabel, 0, 1, 1, 1);
-   _linkerrGrid.attach(_outputText, 1, 1, 1, 1);
-
-   box->pack_start(_debuggerFrame);
-
-   _debuggerFrame.add(_debuggerGrid);
-   _debuggerGrid.set_row_homogeneous(true);
-   _debuggerGrid.attach(_modeLabel, 0, 0, 1, 1);
-   _debuggerGrid.attach(_modeCombobox, 1, 0, 1, 1);
-   _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
-   _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
-
-   add_button("OK", Gtk::RESPONSE_OK);
-   add_button("Cancel", Gtk::RESPONSE_CANCEL);
-
-   _modeCombobox.append("Disabled");
-   _modeCombobox.append("Enabled");
-
-   _warningCombobox.append(" None");
-   _warningCombobox.append(" Level 1");
-   _warningCombobox.append(" Level 2");
-   _warningCombobox.append(" Level 3");
-
-   show_all_children();
+//   _model = model;
+//
+//   Gtk::Box *box = get_vbox();
+//
+//   box->pack_start(_projectFrame, Gtk::PACK_SHRINK);
+//
+//   _projectFrame.add(_projectGrid);
+//   _projectGrid.set_row_homogeneous(true);
+//   _projectGrid.set_column_homogeneous(true);
+//   _projectGrid.attach(_typeLabel, 0, 0, 1, 1);
+//   _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
+//   _projectGrid.attach(_namespaceLabel, 0, 1, 1, 1);
+//   _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
+//   _projectGrid.attach(_profileLabel, 0, 2, 1, 1);
+//   _projectGrid.attach(_profileCombobox, 1, 2, 1, 1);
+//
+//   box->pack_start(_compilerFrame);
+//
+//   _compilerFrame.add(_compilerGrid);
+//   _compilerGrid.set_row_homogeneous(true);
+//   _compilerGrid.set_column_homogeneous(true);
+//   _compilerGrid.attach(_strictTypeLabel, 0, 0, 1, 1);
+//   _compilerGrid.attach(_strictTypeCheckbox, 1, 0, 1, 1);
+//   _compilerGrid.attach(_optionsLabel, 0, 1, 1, 1);
+//   _compilerGrid.attach(_optionsText, 1, 1, 1, 1);
+//   _compilerGrid.attach(_warningLabel, 0, 2, 1, 1);
+//   _compilerGrid.attach(_warningCombobox, 1, 2, 1, 1);
+//
+//   box->pack_start(_linkerFrame);
+//
+//   _linkerFrame.add(_linkerrGrid);
+//   _linkerrGrid.set_row_homogeneous(true);
+//   _linkerrGrid.set_column_homogeneous(true);
+//   _linkerrGrid.attach(_targetLabel, 0, 0, 1, 1);
+//   _linkerrGrid.attach(_targetText, 1, 0, 1, 1);
+//   _linkerrGrid.attach(_outputLabel, 0, 1, 1, 1);
+//   _linkerrGrid.attach(_outputText, 1, 1, 1, 1);
+//
+//   box->pack_start(_debuggerFrame);
+//
+//   _debuggerFrame.add(_debuggerGrid);
+//   _debuggerGrid.set_row_homogeneous(true);
+//   _debuggerGrid.attach(_modeLabel, 0, 0, 1, 1);
+//   _debuggerGrid.attach(_modeCombobox, 1, 0, 1, 1);
+//   _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
+//   _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
+//
+//   add_button("OK", Gtk::RESPONSE_OK);
+//   add_button("Cancel", Gtk::RESPONSE_CANCEL);
+//
+//   _modeCombobox.append("Disabled");
+//   _modeCombobox.append("Enabled");
+//
+//   _warningCombobox.append(" None");
+//   _warningCombobox.append(" Level 1");
+//   _warningCombobox.append(" Level 2");
+//   _warningCombobox.append(" Level 3");
+//
+//   show_all_children();
 }
 
 void ProjectSettings :: loadTemplateList()
@@ -367,9 +370,9 @@ void ProjectSettings :: save()
 
 bool ProjectSettings :: showModal()
 {
-   populate();
+//   populate();
 
-   bool retVal = run() == Gtk::RESPONSE_OK;
+   bool retVal = /*run() == Gtk::RESPONSE_OK*/false;
    if (retVal)
       save();
 

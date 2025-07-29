@@ -52,7 +52,7 @@ fi
 
  ../../bin/elena64-cli "..\..\src60\elena_api.prjcol"
  ret=$?
- if [ $ret -eq 2 ]
+ if [ $ret -eq -2 ]
  then
    echo "Failure" >&2
    exit 1

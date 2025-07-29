@@ -37,11 +37,7 @@ namespace elena_lang
 
       const char** _filter;
       int          _filterCounter;
-//
-//      OPENFILENAME _struct;
-//      wchar_t      _fileName[MAX_PATH * 8];        // ??
-//      int          _defaultFlags;
-//
+
    public:
 //      static const wchar_t* ProjectFilter;
 //      static const wchar_t* SourceFilter;

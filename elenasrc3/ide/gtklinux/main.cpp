@@ -50,8 +50,6 @@ public:
 
 int main(int argc, char* argv[])
 {
-   Gtk::Main kit(argc, argv);
-
    PathHelper    pathHelper;
 
    GUISettinngs  guiSettings = { true };
@@ -72,7 +70,7 @@ int main(int argc, char* argv[])
    PathString sysConfigPath(DEFAULT_CONFIG);
    ideController.loadSystemConfig(&ideModel, *sysConfigPath, TEMPLATE_XPATH, TARGET_XPATH);
 
-   IDEFactory    factory(&ideModel, &ideController, guiSettings);
+   IDEFactory    factory(argc, argv, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
    GUIControlBase* ideWindow = factory.createMainWindow(app, /*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr);

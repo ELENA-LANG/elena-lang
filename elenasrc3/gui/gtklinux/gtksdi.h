@@ -14,18 +14,19 @@ namespace elena_lang
 
 // --- SDIWindow ---
 
-class SDIWindow : public Gtk::Window
+class SDIWindow : public Gtk::ApplicationWindow
 {
 protected:
    Gtk::Box      _box;
+
+   Gtk::Box      _tbox;
    Gtk::Box      _hbox;
-   Gtk::Box      _vbox;
+   Gtk::Box      _bbox;
 
-   Glib::RefPtr<Gtk::UIManager>   _refUIManager;
-   Glib::RefPtr<Gtk::ActionGroup> _refActionGroup;
+   Glib::RefPtr<Gtk::Builder>       _refBuilder;
 
-   int           _childCounter;
-   Gtk::Widget** _children;
+   int                              _childCounter;
+   Gtk::Widget**                    _children;
 
    bool _skip; // HOTFIX : to prevent infinite checkmenuitem call
 
@@ -33,11 +34,11 @@ protected:
 
    bool toggleVisibility(int childIndex);
 
-   virtual Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) = 0;
+   //virtual Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) = 0;
 
    virtual void checkMenuItemById(ustr_t name, bool doEnable)
    {
-      Glib::RefPtr<Gtk::Action> menuItem = getMenuItem(name);
+      /*Glib::RefPtr<Gtk::Action> menuItem = getMenuItem(name);
 
       Glib::RefPtr<Gtk::ToggleAction> toggleItem =
          Glib::RefPtr<Gtk::ToggleAction>::cast_static(menuItem);
@@ -45,12 +46,7 @@ protected:
       if (toggleItem->get_active() != doEnable) {
          _skip = true;
          toggleItem->set_active(doEnable);
-      }
-   }
-
-   void exit()
-   {
-      Gtk::Main::quit();
+      }*/
    }
 
 public:

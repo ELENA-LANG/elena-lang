@@ -304,9 +304,11 @@ void IDEWindow :: newProject()
 
 void IDEWindow :: openFile()
 {
-   _controller->doOpenFile(fileDialog, _model);
-   _recentFileList.reload();
-   _recentProjectList.reload();
+   List<path_t, freepath> files(nullptr);
+   if (fileDialog.openFiles(files) && _controller->doOpenFile(_model, files)) {
+      _recentFileList.reload();
+      _recentProjectList.reload();
+   }
 }
 
 void IDEWindow :: saveFile()

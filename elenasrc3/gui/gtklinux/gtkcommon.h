@@ -66,19 +66,43 @@ namespace elena_lang
       }
    };
 
-   // --- WindowApp ---
-   class WindowApp : public GUIApp
+   // --- GtkApp ---
+   class GtkApp : public GUIApp
    {
-      BroadcasterBase*  _eventBroadcaster;
+      int                            _argc;
+      char**                         _argv;
+
+      Gtk::Window*                   _appWindow;
+
+      BroadcasterBase*               _eventBroadcaster;
+      Glib::RefPtr<Gtk::Application> _app;
+
+      void on_my_startup();
 
    public:
       int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) override;
 
+      void quit()
+      {
+         _app->quit();
+
+         //_appWindow->set_visible(false);
+      }
+
       void notify(EventBase* event) override;
 
-      WindowApp(BroadcasterBase* eventBroadcaster)
+      GtkApp(int argc, char** argv, BroadcasterBase* eventBroadcaster)
       {
+         _argc = argc;
+         _argv = argv;
+
          _eventBroadcaster = eventBroadcaster;
+
+         _app = Gtk::Application::create();
+         _appWindow = nullptr;
+
+         _app->signal_startup().connect(sigc::mem_fun(*this,
+              &GtkApp::on_my_startup));
       }
    };
 }

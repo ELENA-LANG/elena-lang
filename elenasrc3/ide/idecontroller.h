@@ -57,6 +57,8 @@ namespace elena_lang
 
    typedef bool(*CompareFileDateTime)(path_t, path_t);
 
+   typedef List<path_t, freepath> PathList;
+
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
@@ -216,7 +218,7 @@ namespace elena_lang
       void highlightError(IDEModel* model, int row, int column, path_t path);
 
       void doNewFile(IDEModel* model);
-      void doOpenFile(FileDialogBase& dialog, IDEModel* model);
+      bool doOpenFile(IDEModel* model, PathList& files);
       void doOpenFile(IDEModel* model, path_t path);
       bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
       bool doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);

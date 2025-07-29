@@ -5,51 +5,11 @@ In development:
 [development]
   ### EPIC: elena 6.8 ###
 
-  --------------------------------------
   === Iteration 42 ===
   --------------------------------------
-  dev: 
-  - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
-  - #620 : backlog
-  - genetic algorithms
-  - #748 : i386
-  - #708 : compile the project (elenart, og, sg, asm, ecv); run scripts
-  - ppc : fpi, fsin, fcos
-  - #789
-  - #35 : WebApi
-  gen:
-  - script : support ++ operator
-  - work on REPL (elt), generate project template
-  - textgen : create web api controller / client from IDE
-  api:
-  - #35 : working on webapi
-  - #622 : api backlog
-  - docs : Pi_value
-  ide:  
-  - #184 : IDE linux - toolbar
-  - compile in the separate thread  
-  - async method - auto watch : self and some variables are not displayed
-  - #184 : IDE linux - editor settings, debug settings, compile the project
-  - #184 : IDE linux - compile the project
-  maint:
-  - test all x86-64 examples
-  - get rid of win_locale.l in system; refactor for cross-platform
-  samples:
-  - review pi performance (must < 6) : realOp.power[3] byte code
-  - rosetta code : Program termination, Parallel calculations
-  - chat sample
-  port:
-  - linux elt - use rpath for linking elenavm
-  - linux elt - migrate to amd64
-  tools:
-  - #658 :  debug elena program in VSCode : start single file
+  webapi phone book example : add, delete, update, search
   --------------------------------------
-  - rosetta code - First-class functions/Use numbers analogously  
-  - webapi phone book example : add, delete, update, search
-  - tcp server example : https://developer.mozilla.org/en-US/docs/Web/API/WebSockets_API/Writing_WebSocket_server
-  --------------------------------------
-  - #35 : first draft
-  --------------------------------------
+  #35 : first draft
   * simple web api - GET
   * simple web api client - GET
   * simple web api - POST
@@ -59,81 +19,38 @@ In development:
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   --------------------------------------
-  - #184 : IDE linux - clipboard
-  - #184 : IDE linux - edit menus
-  - #184 : IDE linux - mark modified file
-  - #184 : IDE linux - include / exclude
+  #184 : IDE linux - migrate to gtkmm4
+  + redesign controller to support async open file workflow
+  * #184 : IDE linux - clipboard
+  * #184 : IDE linux - edit menus
+  * #184 : IDE linux - mark modified file
+  * #184 : IDE linux - include / exclude
+  * #184 : uncomment checkMenuItemById
+  * #184 : exit
   --------------------------------------
 
   === Iteration 43 ===
   --------------------------------------
-  dev: 
-  - upndown (connector - cmdSearch)
+  --------------------------------------
+  - ppc : fpi, fsin, fcos
+  - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
   - #708 : compile library, compile executable, test executable  
-  - fix an issue with internal interface method (see IBootstap interface)??
-  gen:
-  api:
   - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
-  ide:  
-  maint:
-  samples:
-  - optimization : pi (used classes byte code)
-  port:
   - MTA support for Linux : test sample2 (events)
   - MTA support for Linux : test simple multithread sample
-  tools:
-  - vs #2 : elena.tmLanguage.json  
-  --------------------------------------
-  - docs : Reference<T>
-  --------------------------------------
   --------------------------------------
 
   === Iteration 44 ===
   --------------------------------------
-  dev: 
   - MTA support for Linux : support socket
   - MTA support for Linux : support http
   - MTA support for Linux : tests threads / tasks examples
-  gen:
-  api:
-  ide:  
-  maint:
-  samples:
-  port:
-  tools:
-  --------------------------------------
-  - rosetta code
-  --------------------------------------
   --------------------------------------
 
   === Iteration 45 ===
   --------------------------------------
-  dev: 
-  gen:
-  api:
-  ide:  
-  maint:
-  samples:
-  port:
-  tools:
-  --------------------------------------
-  - docs
-  --------------------------------------
   --------------------------------------
 
   === Iteration 46 ===
-  --------------------------------------
-  dev: 
-  gen:
-  api:
-  ide:  
-  maint:
-  samples:
-  port:
-  tools:
-  --------------------------------------
-  - docs
-  --------------------------------------
-  - rosetta code
   --------------------------------------
   --------------------------------------

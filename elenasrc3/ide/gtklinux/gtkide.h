@@ -34,6 +34,8 @@ class GTKIDEWindow : public SDIWindow
 protected:
    class Clipboard : public ClipboardBase
    {
+      Glib::RefPtr<Gdk::Clipboard> _clipboard;
+
       GTKIDEWindow* _owner;
       Glib::ustring _strData;
 
@@ -44,30 +46,35 @@ protected:
       Clipboard(GTKIDEWindow* owner)
       {
          _owner = owner;
+
+         _clipboard = owner->get_clipboard();
       }
-   }
+   };
 
-   IDEModel*         _model;
-   IDEController*    _controller;
+   GtkApp*                      _app;
 
-   Clipboard         _clipboard;
+   IDEModel*                    _model;
+   IDEController*               _controller;
 
-   FileDialog        fileDialog;
-   FileDialog        projectDialog;
-   MessageDialog     messageDialog;
-
-   ProjectSettings   projectSettingsDialog;
+   Clipboard                    _clipboard;
 
    ProjectTreeColumns           _projectTreeColumns;
    Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
-   void populateMenu();
+   // dialogs
+   FileDialog                   fileDialog;
+   FileDialog                   projectDialog;
+   MessageDialog                messageDialog;
 
-   Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
+   ProjectSettings              projectSettingsDialog;
+
+   void populateUI();
+
+   //Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
 
    bool copyToClipboard()
    {
-      return _controller->sourceController.copyToClipboard(_model->viewModel(), &clipboard);
+      return _controller->sourceController.copyToClipboard(_model->viewModel(), &_clipboard);
    }
 
    // event signals
@@ -93,7 +100,7 @@ protected:
    void on_menu_file_quit()
    {
       if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
-         SDIWindow::exit();
+         _app->quit();
       }
    }
    void on_menu_file_save()
@@ -148,7 +155,7 @@ protected:
    }
    void on_menu_edit_paste()
    {
-      _controller->sourceController.pasteFromClipboard(_model->viewModel(), &clipboard);
+      _controller->sourceController.pasteFromClipboard(_model->viewModel(), &_clipboard);
    }
    void on_menu_edit_delete()
    {
@@ -330,7 +337,7 @@ public:
    void on_text_model_change(TextViewModelEvent event);
    void on_textframe_change(SelectionEvent event);
 
-   GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model);
+   GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model, GtkApp* app);
 };
 
 } // _GUI_
