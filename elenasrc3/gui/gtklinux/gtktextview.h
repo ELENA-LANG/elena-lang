@@ -100,8 +100,8 @@ namespace elena_lang
 //         void on_realize() override;
 //         void on_unrealize() override;
          void on_draw(const Cairo::RefPtr<Cairo::Context>& cr, int width, int height);
-//
-//         bool on_key_press_event(GdkEventKey* event) override;
+
+         bool on_key_press_event(const guint keyval, const guint keycode, const Gdk::ModifierType state);
 //         bool on_button_press_event(GdkEventButton* event) override;
 //         bool on_button_release_event (GdkEventButton* event) override;
 //         bool on_scroll_event (GdkEventScroll* scroll_event) override;

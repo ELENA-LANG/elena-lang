@@ -27,8 +27,10 @@ namespace elena_lang
 //      static bool isNo(int result) { return result == IDNO; }
 //   };
 
+   typedef void(*FileDialogCallback)(void*, PathList*);
+
    // --- FileDialog ---
-   class FileDialog : public FileDialogBase
+   class FileDialog// : public FileDialogBase
    {
       Gtk::Window* _owner;
 
@@ -38,13 +40,19 @@ namespace elena_lang
       const char** _filter;
       int          _filterCounter;
 
+      FileDialogCallback _listCallback;
+      void*              _callbackArg;
+
+      void on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+          const Glib::RefPtr<Gtk::FileDialog>& dialog);
+
    public:
 //      static const wchar_t* ProjectFilter;
 //      static const wchar_t* SourceFilter;
 
-      bool openFile(PathString& path) override;
-      bool openFiles(List<path_t, freepath>& files) override;
-      bool saveFile(path_t ext, PathString& path) override;
+      bool openFile(PathString& path)/* override*/;
+      bool openFiles(void* arg, FileDialogCallback callback);
+      bool saveFile(path_t ext, PathString& path)/* override*/;
 
       FileDialog(Gtk::Window* owner, const char** filter, int filterCounter, const char* caption,
          const char* initialDir = nullptr);

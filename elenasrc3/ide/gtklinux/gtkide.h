@@ -84,56 +84,65 @@ protected:
    }
    void on_menu_file_new_project()
    {
-      _controller->doNewProject(fileDialog, projectDialog, messageDialog, projectSettingsDialog, _model);
+      //_controller->doNewProject(fileDialog, projectDialog, messageDialog, projectSettingsDialog, _model);
    }
+
    void on_menu_file_open_source()
    {
-      _controller->doOpenFile(fileDialog, _model);
+      fileDialog.openFiles((void*)this, [](void* arg, PathList* list)
+      {
+         static_cast<GTKIDEWindow*>(arg)->on_menu_file_open_source_finish(list);
+      });
+   }
+   void on_menu_file_open_source_finish(PathList* files)
+   {
+      _controller->doOpenFile(_model, *files);
       //_recentFileList.reload();
       //_recentProjectList.reload();
    }
+
    void on_menu_file_open_project()
    {
-      _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model);
+      //_controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model);
       //_recentProjectList.reload();
    }
    void on_menu_file_quit()
    {
-      if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
+      //if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
          _app->quit();
-      }
+      //}
    }
    void on_menu_file_save()
    {
-      _controller->doSaveFile(fileDialog, _model, false, true);
+      //_controller->doSaveFile(fileDialog, _model, false, true);
    }
    void on_menu_file_saveas()
    {
-      _controller->doSaveFile(fileDialog, _model, true, true);
+      //_controller->doSaveFile(fileDialog, _model, true, true);
    }
    void on_menu_project_saveas()
    {
-      _controller->doSaveProject(projectDialog, _model, true);
+      //_controller->doSaveProject(projectDialog, _model, true);
    }
    void on_menu_file_saveall()
    {
-      _controller->doSaveAll(fileDialog, projectDialog, _model);
+      //_controller->doSaveAll(fileDialog, projectDialog, _model);
    }
    void on_menu_file_close()
    {
-      _controller->doCloseFile(fileDialog, messageDialog, _model);
+      //_controller->doCloseFile(fileDialog, messageDialog, _model);
    }
    void on_menu_file_closeall()
    {
-      _controller->doCloseAll(fileDialog, projectDialog, messageDialog, _model, false);
+      //_controller->doCloseAll(fileDialog, projectDialog, messageDialog, _model, false);
    }
    void on_menu_file_closeproject()
    {
-      _controller->doCloseProject(fileDialog, projectDialog, messageDialog, _model);
+      //_controller->doCloseProject(fileDialog, projectDialog, messageDialog, _model);
    }
    void on_menu_file_closeallbutactive()
    {
-      _controller->doCloseAllButActive(fileDialog, messageDialog, _model);
+      //_controller->doCloseAllButActive(fileDialog, messageDialog, _model);
    }
 
    void on_menu_edit_undo()

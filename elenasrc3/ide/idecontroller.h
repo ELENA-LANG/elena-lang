@@ -57,8 +57,6 @@ namespace elena_lang
 
    typedef bool(*CompareFileDateTime)(path_t, path_t);
 
-   typedef List<path_t, freepath> PathList;
-
    // --- ProjectController ---
    class ProjectController : public NotifierBase
    {
@@ -120,7 +118,7 @@ namespace elena_lang
       bool startVMConsole(ProjectModel& model);
       void stopVMConsole();
 
-      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action, 
+      bool onDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action,
          DebugActionResult& result, bool withoutPostponeAction);
 
       void doDebugAction(ProjectModel& model, SourceViewModel& sourceModel, DebugAction action);
@@ -145,7 +143,7 @@ namespace elena_lang
             _notifier->notify(event);
       }
 
-      ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, IDEDebugProcessBase* debugProcess, 
+      ProjectController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, IDEDebugProcessBase* debugProcess,
          ProjectModel* model, SourceViewModel* sourceModel,
          DebugSourceController* sourceController, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer)
          : _outputProcess(outputProcess), _vmProcess(vmConsoleProcess), _debugController(debugProcess, model, sourceModel, sourceController),
@@ -166,13 +164,13 @@ namespace elena_lang
       bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, int& status);
       bool openFile(IDEModel* model, path_t sourceFile, int& status);
       int openProject(IDEModel* model, path_t projectFile);
-      bool closeProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, 
+      bool closeProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog,
          IDEModel* model, int& status);
 
-      bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+      bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
          int index, int& status);
       bool saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode);
-      bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, 
+      bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
          int& status);
       bool closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
          int& status);
@@ -240,7 +238,7 @@ namespace elena_lang
 
       bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
-      void doDebugAction(IDEModel* model, DebugAction action, 
+      void doDebugAction(IDEModel* model, DebugAction action,
          MessageDialogBase& mssgDialog, bool withoutPostponeAction);
       void doDebugStop(IDEModel* model);
 
@@ -264,10 +262,10 @@ namespace elena_lang
       void doSelectPrevWindow(IDEModel* model);
       void doSelectWindow(TextViewModelBase* viewModel, path_t path);
 
-      void doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog, 
+      void doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog,
          IDEModel* model);
 
-      void onCompilationCompletion(IDEModel* model, int exitCode, 
+      void onCompilationCompletion(IDEModel* model, int exitCode,
          text_str output, ErrorLogBase* log);
       void onDebuggerHook(ProjectModel* model);
       void onDebuggerStep(IDEModel* model);

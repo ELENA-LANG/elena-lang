@@ -51,6 +51,12 @@ TextViewWindow::TextDrawingArea :: TextDrawingArea(TextViewWindow* view, TextVie
    _styles = styles;
 
    set_draw_func(sigc::mem_fun(*this, &TextViewWindow::TextDrawingArea::on_draw));
+
+   auto kb_controller = Gtk::EventControllerKey::create();
+   //kb_controller->set_propagation_phase(Gtk::PropagationPhase::CAPTURE);
+   kb_controller->signal_key_pressed().connect(
+     sigc::mem_fun(*this, &TextViewWindow::TextDrawingArea::on_key_press_event), false);
+   add_controller(kb_controller);
 }
 
 //Gtk::SizeRequestMode TextViewWindow::TextDrawingArea :: get_request_mode_vfunc() const
@@ -354,19 +360,18 @@ void TextViewWindow::TextDrawingArea :: update(bool resized)
    queue_draw();
 }
 
-//bool TextViewWindow::TextDrawingArea :: on_key_press_event(GdkEventKey* event)
-//{
-//   auto docView = _model->DocView();
-//   if (!docView || docView->isReadOnly())
-//      return Gtk::DrawingArea::on_key_press_event(event);
-//
-//   if (event->type == GDK_KEY_PRESS) {
-//      bool shift = elena_lang::test(event->state, (unsigned int)GDK_SHIFT_MASK);
-//      bool ctrl = elena_lang::test(event->state, (unsigned int)GDK_CONTROL_MASK);
-//      switch (event->keyval) {
-//         case GDK_KEY_Right:
-//            _controller->moveCaretRight(_model, shift, ctrl);
-//            break;
+bool TextViewWindow::TextDrawingArea :: on_key_press_event(const guint keyval, const guint keycode, const Gdk::ModifierType state)
+{
+   auto docView = _model->DocView();
+   if (!docView || docView->isReadOnly())
+      return false;
+
+   bool shift = elena_lang::test((unsigned int)state, (unsigned int)GDK_SHIFT_MASK);
+   bool ctrl = elena_lang::test((unsigned int)state, (unsigned int)GDK_CONTROL_MASK);
+   switch (keyval) {
+      case GDK_KEY_Right:
+         _controller->moveCaretRight(_model, shift, ctrl);
+         break;
 //         case GDK_KEY_Left:
 //            _controller->moveCaretLeft(_model, shift, ctrl);
 //            break;
@@ -423,14 +428,13 @@ void TextViewWindow::TextDrawingArea :: update(bool resized)
 //               else return Gtk::DrawingArea::on_key_press_event(event);
 //            }
 //            else return Gtk::DrawingArea::on_key_press_event(event);
-//      }
-//      //onEditorChange();
-//
-//      return true;
-//   }
+   }
+
+   return true;
+
 //   else return Gtk::DrawingArea::on_key_press_event(event);
-//}
-//
+}
+
 //bool TextViewWindow::TextDrawingArea :: on_button_press_event(GdkEventButton* event)
 //{
 //   if (event->type == GDK_BUTTON_PRESS/* && event->window == text_view->text_area*/) {
@@ -511,8 +515,10 @@ bool TextViewWindow::TextDrawingArea :: mouseToScreen(Point point, int& col, int
 TextViewWindow :: TextViewWindow(TextViewModelBase* model, TextViewControllerBase* controller, ViewStyles* styles)
    : _area(this, model, controller, styles)
 {
+   set_policy(Gtk::PolicyType::AUTOMATIC, Gtk::PolicyType::ALWAYS);
+   set_expand();
+
    set_child(_area);
-   //attach(_area, 0, 1, 0, 1, Gtk::EXPAND | Gtk::FILL, Gtk::EXPAND | Gtk::FILL, 0, 0);
 }
 
 void TextViewWindow :: updateVScroller(bool resized)

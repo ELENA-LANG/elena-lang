@@ -20,7 +20,9 @@ In development:
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   --------------------------------------
   #184 : IDE linux - migrate to gtkmm4
-  + redesign controller to support async open file workflow
+  + keypress event
+  * redesign controller to support async open file workflow
+  * get rid of FileDialogBase
   * #184 : IDE linux - clipboard
   * #184 : IDE linux - edit menus
   * #184 : IDE linux - mark modified file

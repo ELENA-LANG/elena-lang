@@ -12,6 +12,8 @@
 
 namespace elena_lang
 {
+   typedef List<path_t, freepath> PathList;
+
    // --- FileDialogBase ---
    class FileDialogBase
    {
@@ -98,7 +100,7 @@ namespace elena_lang
    // --- TextViewController ---
    class TextViewController : public TextViewControllerBase
    {
-   protected:      
+   protected:
       NotifierBase*    _notifier;
 
       //void onTextChanged(TextViewModelBase* model, DocumentView* view);

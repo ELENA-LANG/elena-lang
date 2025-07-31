@@ -36,45 +36,82 @@ FileDialog :: FileDialog(Gtk::Window* owner, const char** filter, int filterCoun
    _filter = filter;
    _filterCounter = filterCounter;
    _initialDir = initialDir;
+   _listCallback = nullptr;
 }
 
 bool FileDialog :: openFile(PathString& path)
 {
-   Gtk::FileChooserDialog dialog(_caption, Gtk::FileChooser::Action::OPEN);
-   dialog.set_transient_for(*_owner);
-
-   if (!emptystr(_initialDir))
-      dialog.set_current_folder (_initialDir);
-
-   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-   dialog.add_button("_Open", Gtk::RESPONSE_OK);
-
-   for (int i = 0; i < _filterCounter; i += 2) {
-      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
-
-      filter_l->set_name(_filter[i + 1]);
-      filter_l->add_pattern(_filter[i]);
-      dialog.add_filter(filter_l);
-   }
-
-   int result = dialog.run();
-   if (result == Gtk::RESPONSE_OK) {
-      std::string filename = dialog.get_filename();
-
-      path.copy(filename.c_str());
-
-      return true;
-   }
-   return false;
-}
-
-bool FileDialog :: openFiles(List<path_t, freepath>& files)
-{
-//   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_OPEN);
+//   Gtk::FileChooserDialog dialog(_caption, Gtk::FileChooser::Action::OPEN);
 //   dialog.set_transient_for(*_owner);
 //
 //   if (!emptystr(_initialDir))
 //      dialog.set_current_folder (_initialDir);
+//
+//   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
+//   dialog.add_button("_Open", Gtk::RESPONSE_OK);
+//
+//   for (int i = 0; i < _filterCounter; i += 2) {
+//      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+//
+//      filter_l->set_name(_filter[i + 1]);
+//      filter_l->add_pattern(_filter[i]);
+//      dialog.add_filter(filter_l);
+//   }
+//
+//   int result = dialog.run();
+//   if (result == Gtk::RESPONSE_OK) {
+//      std::string filename = dialog.get_filename();
+//
+//      path.copy(filename.c_str());
+//
+//      return true;
+//   }
+   return false;
+}
+
+void FileDialog :: on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+  const Glib::RefPtr<Gtk::FileDialog>& dialog)
+{
+    PathList files(nullptr);
+
+    auto file = dialog->open_finish(result);
+    files.add(StrUtil::clone(file->get_path().c_str()));
+
+   _listCallback(_callbackArg, &files);
+
+   _listCallback = nullptr;
+   _callbackArg = nullptr;
+}
+
+bool FileDialog :: openFiles(void* arg, FileDialogCallback callback)
+{
+   assert(_listCallback == nullptr);
+
+   _listCallback = callback;
+   _callbackArg = arg;
+
+   auto dialog = Gtk::FileDialog::create();
+
+   auto filters = Gio::ListStore<Gtk::FileFilter>::create();
+   for (int i = 0; i < _filterCounter; i += 2) {
+      auto filter = Gtk::FileFilter::create();
+      filter->set_name(_filter[i + 1]);
+      filter->add_pattern(_filter[i]);
+
+      filters->append(filter);
+   }
+
+   dialog->set_filters(filters);
+
+//   dialog.set_transient_for(*_owner);
+//
+   if (!emptystr(_initialDir)) {
+      auto file = Gio::File::create_for_path(_initialDir);
+      dialog->set_initial_folder(file);
+   }
+
+   dialog->open(sigc::bind(sigc::mem_fun(
+      *this, &FileDialog::on_file_dialog_finish), dialog));
 //
 //   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
 //   dialog.add_button("_Open", Gtk::RESPONSE_OK);
