@@ -66,7 +66,7 @@ inline bool isAssignOp(int operatorId)
    }
 }
 
-void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void openFrame(CommandTape& tape, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    if (tapeScope.classMode) {
       for (int i = 0; i < tapeScope.scope->minimalArgList; i++) {
@@ -81,7 +81,7 @@ void openFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::OpenIN, reservedManaged, reservedUnmanaged);
 }
 
-void extOpenFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void extOpenFrame(CommandTape& tape, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    int reservedManaged = tapeScope.reserved;
    int reservedUnmanaged = tapeScope.reservedN;
@@ -104,7 +104,7 @@ void closeFrame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    }
 }
 
-void close_ext_frame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void close_ext_frame(CommandTape& tape, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    int reservedUnmanaged = tapeScope.reservedN;
 
@@ -117,12 +117,12 @@ void close_ext_frame(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::ExtCloseN, reservedUnmanaged);
 }
 
-void nilReference(CommandTape& tape, BuildNode& node, TapeScope&)
+void nilReference(CommandTape& tape, BuildNode&/* node*/, TapeScope&)
 {
    tape.write(ByteCode::SetR, 0);
 }
 
-void terminatorReference(CommandTape& tape, BuildNode& node, TapeScope&)
+void terminatorReference(CommandTape& tape, BuildNode&/* node*/, TapeScope&)
 {
    tape.write(ByteCode::SetR, -1);
 }
@@ -163,14 +163,14 @@ void sendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
 //   tape.write(ByteCode::CallVI, vmtIndex);
 //}
 
-void strongResendOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void strongResendOp(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    ref_t targetRef = node.findChild(BuildKey::Type).arg.reference;
 
    tape.write(ByteCode::CallMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
-void redirectOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void redirectOp(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    if (node.arg.reference)
       tape.write(ByteCode::MovM, node.arg.reference);
@@ -375,13 +375,13 @@ void creatingStruct(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::NewNR, node.arg.value, typeRef ? typeRef | mskVMTRef : 0);
 }
 
-void openStatement(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void openStatement(CommandTape&/* tape*/, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    DebugLineInfo symbolInfo = { DebugSymbol::Statement };
    tapeScope.scope->debug->write(&symbolInfo, sizeof(DebugLineInfo));
 }
 
-void closeStatement(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void closeStatement(CommandTape&/* tape*/, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    DebugLineInfo symbolInfo = { DebugSymbol::EndOfStatement };
    tapeScope.scope->debug->write(&symbolInfo, sizeof(DebugLineInfo));
@@ -426,7 +426,7 @@ void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
 }
 
-void mssgNameLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void mssgNameLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgNameLiteralRef);
 }
@@ -436,52 +436,52 @@ void propNameLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SetR, node.arg.reference | mskPropNameLiteralRef);
 }
 
-void extMssgLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void extMssgLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskExtMssgLiteralRef);
 }
 
-void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScop*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
 }
 
-void wideLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void wideLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskWideLiteralRef);
 }
 
-void charLiteral(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void charLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskCharacterRef);
 }
 
-void constant(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void constant(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskConstant);
 }
 
-void distrConstant(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void distrConstant(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskDistrTypeListRef);
 }
 
-void constantArray(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void constantArray(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskConstArray);
 }
 
-void procedure_ref(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void procedure_ref(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskProcedureRef);
 }
 
-void externalvar_ref(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void externalvar_ref(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskExternalRef);
 }
 
-void goingToEOP(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void goingToEOP(CommandTape& tape, BuildNode&/* node*/, TapeScope&/* tapeScope*/)
 {
    //gotoEnd(tape, baFirstLabel);
    tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
@@ -1773,7 +1773,7 @@ void semiDirectResend(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::VJumpMR, node.arg.reference, targetRef | mskVMTRef);
 }
 
-void boolSOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void boolSOp(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
    ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
@@ -1782,7 +1782,7 @@ void boolSOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::SelEqRR, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
-void nilOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void nilOp(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    switch (node.arg.value) {
       case ISNIL_OPERATOR_ID:
@@ -1793,39 +1793,39 @@ void nilOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    }
 }
 
-void assignSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void assignSPField(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    // !! temporally - assigni should be used instead
    tape.write(ByteCode::AssignI, node.arg.value);
 }
 
-void swapSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void swapSPField(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::XSwapSI, node.arg.value);
 }
 
-void accSwapSPField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void accSwapSPField(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SwapSI, node.arg.value);
 }
 
-void getField(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void getField(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    // !! temporally - assigni should be used instead
    tape.write(ByteCode::GetI, node.arg.value);
 }
 
-void staticVarOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void staticVarOp(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::PeekR, node.arg.reference | mskStaticVariable);
 }
 
-void threadVarOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void threadVarOp(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::PeekTLS, node.arg.reference | mskTLSVariable);
 }
 
-void staticBegin(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void staticBegin(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.newLabel();     // declare symbol-end label
    tape.write(ByteCode::PeekR, node.arg.reference | mskStaticVariable);
@@ -1833,14 +1833,14 @@ void staticBegin(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
 }
 
-void staticEnd(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void staticEnd(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::StoreR, node.arg.reference | mskStaticVariable);
 
    tape.setLabel();
 }
 
-void threadVarBegin(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void threadVarBegin(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.newLabel();     // declare symbol-end label
    tape.write(ByteCode::PeekTLS, node.arg.reference | mskTLSVariable);
@@ -1848,7 +1848,7 @@ void threadVarBegin(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    tape.write(ByteCode::Jne, PseudoArg::CurrentLabel);
 }
 
-void threadVarEnd(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void threadVarEnd(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::StoreTLS, node.arg.reference | mskTLSVariable);
 
@@ -1932,7 +1932,7 @@ void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void breakOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void breakOp(CommandTape& tape, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    tape.write(ByteCode::SetR, 0);
 
@@ -1949,7 +1949,7 @@ void breakOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
    else tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
 }
 
-void continueOp(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+void continueOp(CommandTape& tape, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    int bolLabel = 0;
    if (tapeScope.loopLabels.count() > 0) {
@@ -2159,7 +2159,7 @@ void threadVarAssigning(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::StoreTLS, node.arg.value | mskTLSVariable);
 }
 
-void freeStack(CommandTape& tape, BuildNode& node, TapeScope&)
+void freeStack(CommandTape& tape, BuildNode&/* node*/, TapeScope&)
 {
    tape.write(ByteCode::DFree);
 }
@@ -2177,17 +2177,17 @@ inline void savingInt(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::NSaveDPN, node.arg.value, value.arg.value);
 }
 
-inline void loadingAccToIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+inline void loadingAccToIndex(CommandTape& tape, BuildNode&/* node*/, TapeScope&)
 {
    tape.write(ByteCode::Load);
 }
 
-inline void loadingAccToLongIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+inline void loadingAccToLongIndex(CommandTape& tape, BuildNode&/* node*/, TapeScope&)
 {
    tape.write(ByteCode::LLoad);
 }
 
-inline void savingIndexToAcc(CommandTape& tape, BuildNode& node, TapeScope&)
+inline void savingIndexToAcc(CommandTape& tape, BuildNode&/* node*/, TapeScope&)
 {
    tape.write(ByteCode::Save);
 }
@@ -2219,7 +2219,7 @@ inline void indexOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-inline void loadingStackDump(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+inline void loadingStackDump(CommandTape& tape, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    // store sp:0
    // len
@@ -2236,7 +2236,7 @@ inline void loadingStackDump(CommandTape& tape, BuildNode& node, TapeScope& tape
    tape.write(ByteCode::PeekSI);
 }
 
-inline void savingStackDump(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+inline void savingStackDump(CommandTape& tape, BuildNode&/* node*/, TapeScope& tapeScope)
 {
    // store sp:0
    // nlen ptr_size_order
@@ -2902,7 +2902,7 @@ ByteCodeWriter :: ByteCodeWriter(LibraryLoaderBase* loader, bool threadFriendly)
 {
    _commands = commands;
    _loader = loader;
-   _threadFriendly = true;
+   _threadFriendly = threadFriendly;
 }
 
 void ByteCodeWriter :: openSymbolDebugInfo(Scope& scope, ustr_t symbolName)
@@ -3565,8 +3565,8 @@ void ByteCodeWriter :: saveYielding(CommandTape& tape, BuildNode node, TapeScope
    tape.setLabel();
 }
 
-void ByteCodeWriter :: saveYieldDispatch(CommandTape& tape, BuildNode node, TapeScope& tapeScope,
-   ReferenceMap& paths, bool tapeOptMode)
+void ByteCodeWriter :: saveYieldDispatch(CommandTape& tape/*, BuildNode node, TapeScope& tapeScope,
+   ReferenceMap& paths, bool tapeOptMode*/)
 {
    // get i:0
    // cmp r:0
@@ -3668,7 +3668,7 @@ inline void saveParameterDebugSymbol(DebugSymbol symbol, int offset, ustr_t name
    }
 }
 
-void ByteCodeWriter :: saveArgumentsInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
+void ByteCodeWriter :: saveArgumentsInfo(/*CommandTape& tape, */BuildNode node, TapeScope& tapeScope)
 {
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
@@ -3709,7 +3709,7 @@ void ByteCodeWriter :: saveArgumentsInfo(CommandTape& tape, BuildNode node, Tape
    }
 }
 
-void ByteCodeWriter :: saveMethodInfo(CommandTape& tape, BuildNode node, TapeScope& tapeScope)
+void ByteCodeWriter :: saveMethodInfo(/*CommandTape& tape, */BuildNode node, TapeScope& tapeScope)
 {
    DebugLineInfo methodInfo = { DebugSymbol::MessageInfo };
    methodInfo.addresses.source.nameRef = tapeScope.scope->debugStrings->position();
@@ -3741,11 +3741,11 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             break;
          case BuildKey::ArgumentsInfo:
             // declaring variables / setting array size
-            saveArgumentsInfo(tape, current, tapeScope);
+            saveArgumentsInfo(/*tape, */current, tapeScope);
             break;
          case BuildKey::MethodName:
             // declaring variables / setting array size
-            saveMethodInfo(tape, current, tapeScope);
+            saveMethodInfo(/*tape, */current, tapeScope);
             break;
          case BuildKey::Import:
             tape.write(ByteCode::ImportOn);
@@ -3791,7 +3791,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             saveYielding(tape, current, tapeScope, paths, tapeOptMode);
             break;
          case BuildKey::YieldDispatch:
-            saveYieldDispatch(tape, current, tapeScope, paths, tapeOptMode);
+            saveYieldDispatch(tape/*, current, tapeScope, paths, tapeOptMode*/);
             break;
          case BuildKey::TernaryOp:
             saveTernaryOp(tape, current, tapeScope, paths, tapeOptMode);

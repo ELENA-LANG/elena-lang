@@ -468,7 +468,7 @@ struct ExpressionAttributes
       else return false;
    }
 
-   bool test(ExpressionAttribute mask)
+   bool test(ExpressionAttribute mask) const
    {
       return test(attrs, mask);
    }
@@ -531,7 +531,7 @@ public:
       TypeInfo typeInfo, bool declarationMode = false) = 0;
 
    virtual ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen,
-      ref_t* arguments, ustr_t ns, ExtensionMap* outerExtensionList) = 0;
+      ref_t* arguments, /*ustr_t ns, */ExtensionMap* outerExtensionList) = 0;
 
    virtual ~CompilerBase() = default;
 

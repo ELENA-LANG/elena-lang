@@ -188,7 +188,7 @@ bool CompilingProcess::TemplateGenerator :: importTextblock(ModuleScopeBase& mod
    return true;
 }
 
-size_t getLengthSkipPostfix(ustr_t name)
+static inline size_t getLengthSkipPostfix(ustr_t name)
 {
    size_t len = name.length();
 
@@ -473,8 +473,8 @@ void CompilingProcess :: parseFile(path_t projectPath,
 
 void CompilingProcess :: parseModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it,
-   SyntaxTreeBuilder& builder,
-   ModuleScopeBase& moduleScope)
+   SyntaxTreeBuilder& builder/*,
+   ModuleScopeBase& moduleScope*/)
 {
    IdentifierString target;
 
@@ -542,7 +542,7 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    }
 }
 
-inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>* filters)
+static inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>* filters)
 {
    DynamicUStr target;
 
@@ -551,7 +551,7 @@ inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>
    presenter->print(target.str());
 }
 
-inline void printTree(PresenterBase* presenter, BuildNode node, List<BuildKey>* filters)
+static inline void printTree(PresenterBase* presenter, BuildNode node, List<BuildKey>* filters)
 {
    DynamicUStr target;
 
@@ -680,7 +680,7 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
-   parseModule(env, module_it, builder, moduleScope);
+   parseModule(env, module_it, builder/*, moduleScope*/);
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 

@@ -17,7 +17,7 @@
 
 using namespace elena_lang;
 
-inline int getLoadError(LoadResult result)
+static inline int getLoadError(LoadResult result)
 {
    switch (result) {
       //case LoadResult::lrDuplicate:
@@ -73,7 +73,7 @@ bool LibraryProvider :: loadCore(LoadResult& result)
       if (it.key().empty()) {
          FileReader reader(*it, FileRBMode, FileEncoding::Raw, false);
 
-         LoadResult result = LoadResult::NotFound;
+         result = LoadResult::NotFound;
          auto module = new ROModule(reader, result);
          if (result != LoadResult::Successful) {
             delete module;

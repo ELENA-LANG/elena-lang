@@ -421,7 +421,7 @@ namespace elena_lang
 
       virtual void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
          ref_t addressMask, ModuleBase* module = nullptr) = 0;
-      virtual void writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
+      virtual void writeVMTMethodReference(/*MemoryBase& target, */pos_t position, ref_t reference, pos_t disp, mssg_t message,
          ref_t addressMask, ModuleBase* module = nullptr) = 0;
 
       virtual void writeRelAddress32(MemoryBase& target, pos_t position, addr_t vaddress,

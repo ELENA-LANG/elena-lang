@@ -23,12 +23,12 @@ using namespace elena_lang;
 //   }
 //}
 
-inline bool testNodeMask(SyntaxKey key, SyntaxKey mask)
+static inline bool testNodeMask(SyntaxKey key, SyntaxKey mask)
 {
    return test((unsigned int)key, (unsigned int)mask);
 }
 
-inline ustr_t retrievePath(SyntaxNode node)
+static inline ustr_t retrievePath(SyntaxNode node)
 {
    while (node != SyntaxKey::None) {
       if (node == SyntaxKey::Namespace) {
@@ -1043,7 +1043,7 @@ void SyntaxTreeBuilder :: flushTemplateArg(SyntaxTreeWriter& writer, Scope& scop
 
       ref_t attributeCategory = V_CATEGORY_MAX;
       while (current != nameNode) {
-         bool allowType = current.nextNode() == nameNode;
+         allowType = current.nextNode() == nameNode;
          flushAttribute(writer, scope, current, attributeCategory, allowType);
 
          current = current.nextNode();
@@ -1361,12 +1361,12 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
    }
 }
 
-inline bool isTypeRelated(SyntaxNode current)
+static inline bool isTypeRelated(SyntaxNode current)
 {
    return current.key == SyntaxKey::Type || current.key == SyntaxKey::ArrayType || current.key == SyntaxKey::TemplateType || current.key == SyntaxKey::NullableType;
 }
 
-bool ifTypeRelatedExists(SyntaxNode node)
+static inline bool ifTypeRelatedExists(SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -1449,7 +1449,7 @@ void SyntaxTreeBuilder :: flushSubScope(SyntaxTreeWriter& writer, Scope& scope, 
    }
 }
 
-inline void copyFunctionAttributes(SyntaxTreeWriter& writer, SyntaxNode node)
+static inline void copyFunctionAttributes(SyntaxTreeWriter& writer, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -1567,8 +1567,8 @@ void SyntaxTreeBuilder :: flushClass(SyntaxTreeWriter& writer, Scope& scope, Syn
             case SyntaxKey::ElseCondStatement:
             case SyntaxKey::EndCondStatement:
             {
-               Scope scope;
-               flushStatement(writer, scope, current);
+               Scope statementScope;
+               flushStatement(writer, statementScope, current);
                break;
             }
             case SyntaxKey::Declaration:
@@ -1753,8 +1753,8 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
          case SyntaxKey::ElseCondStatement:
          case SyntaxKey::EndCondStatement:
          {
-            Scope scope;
-            flushStatement(writer, scope, current);
+            Scope statementScope;
+            flushStatement(writer, statementScope, current);
             break;
          }
          case SyntaxKey::ForStatement:
@@ -1786,7 +1786,7 @@ enum DeclarationType
    Namespace
 };
 
-inline DeclarationType defineDeclarationType(SyntaxNode node)
+static inline DeclarationType defineDeclarationType(SyntaxNode node)
 {
    DeclarationType type = DeclarationType::Class;
 
@@ -1814,7 +1814,7 @@ inline DeclarationType defineDeclarationType(SyntaxNode node)
    return type;
 }
 
-inline bool isTemplate(SyntaxNode node)
+static inline bool isTemplate(SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
@@ -1827,7 +1827,7 @@ inline bool isTemplate(SyntaxNode node)
    return false;
 }
 
-inline bool isTextblock(SyntaxNode node)
+static inline bool isTextblock(SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
    while (current == SyntaxKey::Attribute) {
@@ -1840,7 +1840,7 @@ inline bool isTextblock(SyntaxNode node)
    return false;
 }
 
-inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration, bool& withComplexName)
+static inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration, bool& withComplexName)
 {
    bool withPostfix = false;
 

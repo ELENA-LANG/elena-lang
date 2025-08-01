@@ -305,7 +305,7 @@ void elena_lang :: writeMDataReference(JITCompilerScope* scope, ref_t mask,
    }
 }
 
-inline int getFPOffset(int argument, int argOffset)
+static inline int getFPOffset(int argument, int argOffset)
 {
    return -(argument - (argument < 0 ? argOffset : 0));
 }
@@ -396,12 +396,12 @@ void elena_lang :: loadSysOp(JITCompilerScope* scope)
    loadCode(scope, scope->compiler->_inlines[index][scope->code()], nullptr);
 }
 
-inline int retrieveFrameOpIndex(int frameIndex, bool noNegative)
+static inline int retrieveFrameOpIndex(int frameIndex, bool noNegative)
 {
    return (noNegative && frameIndex < 0) ? 5 : 0;
 }
 
-inline int retrieveStackOpIndex(int stackIndex, int baseIndex)
+static inline int retrieveStackOpIndex(int stackIndex, int baseIndex)
 {
    int index = 0;
    switch(stackIndex) {
@@ -1462,7 +1462,7 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
             break;
          case PTR32_2:
             if (scope->command.arg2 == -1) {
-               writer->writeDWord(-1);
+               writer->writeInt(-1);
             }
             else if (scope->command.arg2) {
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
@@ -2205,7 +2205,7 @@ inline void* elena_lang :: retrieveIRCode(JITCompilerScope* scope, int arg1, int
    return scope->compiler->_inlines[code][scope->code()];
 }
 
-inline int retrieveNOpIndex(int arg, unsigned extendedForm, int baseIndex)
+static inline int retrieveNOpIndex(int arg, unsigned extendedForm, int baseIndex)
 {
    return (unsigned)abs(arg) > extendedForm ? baseIndex + 1 : baseIndex;
 }
@@ -2594,7 +2594,7 @@ void elena_lang::compileHookDPR(JITCompilerScope* scope)
    else loadDPROp(scope);
 }
 
-inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, size_t length,
+static inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, size_t length,
    const ref_t* functions, JITCompiler::PreloadedMap& map, Map<ref_t, pos_t>& positions,
    ref_t mask, bool declarating, bool virtualMode)
 {
@@ -2628,7 +2628,7 @@ inline void loadPreloaded(JITCompilerScope& scope, LibraryLoaderBase* loader, si
    }
 }
 
-inline void loadInline(ref_t index, void* inlines[][0x100], LibraryLoaderBase* loader)
+static inline void loadInline(ref_t index, void* inlines[][0x100], LibraryLoaderBase* loader)
 {
    for (size_t i = 0; i < bcCommandNumber; i++) {
       auto info = loader->getCoreSection((ref_t)bcCommands[i] | (index << 8), false);
@@ -2999,7 +2999,7 @@ void JITCompiler :: writeArgAddress(JITCompilerScope* scope, ref_t arg, pos_t of
 
 void JITCompiler :: writeVMTMethodArg(JITCompilerScope* scope, ref_t arg, pos_t offset, mssg_t message, ref_t addressMask)
 {
-   scope->helper->writeVMTMethodReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+   scope->helper->writeVMTMethodReference(/**scope->codeWriter->Memory(), */scope->codeWriter->position(),
       arg, offset, message, addressMask);
 }
 
@@ -3155,7 +3155,7 @@ void JITCompiler :: writeDump(ReferenceHelperBase* helper, MemoryWriter& writer,
 
 // --- JITCompiler32 ---
 
-inline void insertVMTEntry32(VMTEntry32* entries, pos_t count, pos_t index)
+static inline void insertVMTEntry32(VMTEntry32* entries, pos_t count, pos_t index)
 {
    for (pos_t i = count; i > index; i--) {
       entries[i] = entries[i - 1];
@@ -3373,7 +3373,7 @@ void JITCompiler32 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = (pos_t)codeAddress;
 }
 
-inline addr_t findEntryAddress(VMTEntry32* entries, mssg_t message, pos_t counter)
+static inline addr_t findEntryAddress(VMTEntry32* entries, mssg_t message, pos_t counter)
 {
    for (pos_t i = 0; i < counter; i++) {
       if (entries[i].message == message)
@@ -3707,7 +3707,7 @@ void JITCompiler32 :: allocateVariable(MemoryWriter& writer)
 
 // --- JITCompiler64 ---
 
-inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
+static inline void insertVMTEntry64(VMTEntry64* entries, pos_t count, pos_t index)
 {
    for (pos_t i = count; i > index; i--) {
       entries[i] = entries[i - 1];
@@ -3906,7 +3906,7 @@ void JITCompiler64 :: addVMTEntry(mssg_t message, addr_t codeAddress, void* targ
    entries[index].address = codeAddress;
 }
 
-inline addr_t findEntryAddress(VMTEntry64* entries, mssg_t message, pos_t counter)
+static inline addr_t findEntryAddress(VMTEntry64* entries, mssg_t message, pos_t counter)
 {
    for (pos_t i = 0; i < counter; i++) {
       if (entries[i].message == message)

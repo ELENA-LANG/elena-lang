@@ -783,7 +783,7 @@ void CommandTape :: import(ModuleBase* sourceModule, MemoryBase* source, bool wi
 
 void CommandTape :: saveTo(MemoryWriter* writer)
 {
-   Map<int, int> labels(0);
+   Map<int, int> labelPos(0);
    Map<int, int> fwdJumps(0);
    bool importMode = false;
 
@@ -801,7 +801,7 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          //   break;
          case ByteCode::Label:
             fixJumps(writer->Memory(), writer->position(), fwdJumps, command.arg1);
-            labels.add(command.arg1, writer->position());
+            labelPos.add(command.arg1, writer->position());
 
             // JIT compiler interprets nop command as a label mark
             ByteCodeUtil::write(*writer, { ByteCode::Nop });
@@ -817,13 +817,13 @@ void CommandTape :: saveTo(MemoryWriter* writer)
             writer->writeByte((char)command.code);
             if (!importMode) {
                // if forward jump, it should be resolved later
-               if (!labels.exist(command.arg1)) {
+               if (!labelPos.exist(command.arg1)) {
                   fwdJumps.add(command.arg1, writer->position());
                   // put jump offset place holder
                   writer->writeDWord(0);
                }
                // if backward jump
-               else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
+               else writer->writeDWord(labelPos.get(command.arg1) - writer->position() - 4);
             }
             else writer->writeDWord(command.arg1);
 
@@ -838,13 +838,13 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 
             if ((command.arg2 & mskAnyRef) == mskLabelRef) {
                // if forward jump, it should be resolved later
-               if (!labels.exist(command.arg2)) {
+               if (!labelPos.exist(command.arg2)) {
                   fwdJumps.add(command.arg2, writer->position());
                   // put jump offset place holder
                   writer->writeDWord(mskLabelRef);
                }
                // if backward jump
-               else writer->writeDWord(labels.get(command.arg2) - writer->position() - 4);
+               else writer->writeDWord(labelPos.get(command.arg2) - writer->position() - 4);
             }
             else writer->write(&command.arg2, sizeof(arg_t));
 

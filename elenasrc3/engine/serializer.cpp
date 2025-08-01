@@ -15,7 +15,7 @@ using namespace elena_lang;
 
 // --- SyntaxTreeReader ---
 
-void syntaxTreeEncoder(int level, TextWriter<char>& writer, SyntaxKey key, ustr_t strArg, int arg, void* extraArg)
+static inline void syntaxTreeEncoder(int level, TextWriter<char>& writer, SyntaxKey key, ustr_t strArg, int arg, void* extraArg)
 {
    if (key == SyntaxKey::None) {
       writer.writeText(")");
@@ -25,7 +25,7 @@ void syntaxTreeEncoder(int level, TextWriter<char>& writer, SyntaxKey key, ustr_
 
    TokenMap* map = static_cast<TokenMap*>(extraArg);
 
-   ustr_t keyName = map->retrieve<SyntaxKey>(nullptr, key, [](SyntaxKey arg, ustr_t value, SyntaxKey current)
+   ustr_t keyName = map->retrieve<SyntaxKey>(nullptr, key, [](SyntaxKey arg, ustr_t/* value*/, SyntaxKey current)
       {
          return current == arg;
       });
@@ -82,7 +82,7 @@ struct LoadScope
    }
 };
 
-bool syntaxTreeReader(SyntaxKey& key, IdentifierString& strValue, int& value, void* arg)
+static inline bool syntaxTreeReader(SyntaxKey& key, IdentifierString& strValue, int& value, void* arg)
 {
    LoadScope* scope = static_cast<LoadScope*>(arg);
 
@@ -129,7 +129,7 @@ void SyntaxTreeSerializer :: load(ustr_t source, SyntaxNode& target)
 
 // --- BuildTreeSerializer ---
 
-void buildTreeEncoder(int level, TextWriter<char>& writer, BuildKey key, ustr_t, int arg, void* extraArg)
+static void buildTreeEncoder(int level, TextWriter<char>& writer, BuildKey key, ustr_t, int arg, void* extraArg)
 {
    if (key == BuildKey::None) {
       writer.writeText(")");
@@ -190,7 +190,7 @@ struct BuildLoadScope
    }
 };
 
-bool buildTreeReader(BuildKey& key, IdentifierString&, int& value, void* arg)
+static inline bool buildTreeReader(BuildKey& key, IdentifierString&, int& value, void* arg)
 {
    BuildLoadScope* scope = static_cast<BuildLoadScope*>(arg);
 

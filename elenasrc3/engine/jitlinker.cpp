@@ -21,13 +21,13 @@ constexpr ref_t SIGNATURE_MASK = 0x80000000;
 
 // --- JITLinkerReferenceHelper ---
 
-inline void writeVOffset32(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp)
+static inline void writeVOffset32(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp)
 {
    vaddress += disp;
    image->write(position, &vaddress, 4);
 }
 
-inline void writeVAddress32(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp, 
+static inline void writeVAddress32(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
    if (virtualMode) {
@@ -49,7 +49,7 @@ inline void writeVAddress32(MemoryBase* image, pos_t position, addr_t vaddress, 
    }
 }
 
-inline void writeRelAddress32(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+static inline void writeRelAddress32(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
    if (virtualMode) {
@@ -65,7 +65,7 @@ inline void writeRelAddress32(MemoryBase* image, pos_t position, addr_t vaddress
    }
 }
 
-inline void writeVAddress64(MemoryBase* image, pos_t position, addr_t vaddress, pos64_t disp,
+static inline void writeVAddress64(MemoryBase* image, pos_t position, addr_t vaddress, pos64_t disp,
    ref_t addressMask, bool virtualMode)
 {
    if (virtualMode) {
@@ -87,7 +87,7 @@ inline void writeVAddress64(MemoryBase* image, pos_t position, addr_t vaddress, 
    }
 }
 
-inline void writeDisp32Hi(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+static inline void writeDisp32Hi(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
    if (virtualMode) {
@@ -105,7 +105,7 @@ inline void writeDisp32Hi(MemoryBase* image, pos_t position, addr_t vaddress, po
    }
 }
 
-inline void writeDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+static inline void writeDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
    if (virtualMode) {
@@ -123,7 +123,7 @@ inline void writeDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, po
    }
 }
 
-inline void writeXDisp32Hi(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+static inline void writeXDisp32Hi(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
    if (virtualMode) {
@@ -141,7 +141,7 @@ inline void writeXDisp32Hi(MemoryBase* image, pos_t position, addr_t vaddress, p
    }
 }
 
-inline void writeXDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+static inline void writeXDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
    if (virtualMode) {
@@ -159,7 +159,7 @@ inline void writeXDisp32Lo(MemoryBase* image, pos_t position, addr_t vaddress, p
    }
 }
 
-inline void writeRef32Lo(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+static inline void writeRef32Lo(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
    MemoryWriter writer(image, position);
@@ -179,7 +179,7 @@ inline void writeRef32Lo(JITCompilerBase* compiler, MemoryBase* image, pos_t pos
    }
 }
 
-inline void writeRef32Hi(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+static inline void writeRef32Hi(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask, bool virtualMode)
 {
    MemoryWriter writer(image, position);
@@ -227,7 +227,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
 
    if (currentMask == 0) {
       MemoryBase::writeDWord(image, imageOffset,
-         _owner->createMessage(_module, MemoryBase::getDWord(section, sectionOffset), *_references));
+         _owner->createMessage(_module, MemoryBase::getDWord(section, sectionOffset)/*, *_references*/));
    }
    else if (currentMask == mskVMTMethodOffset) {
       _owner->resolve(
@@ -236,7 +236,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
 
       // message id should be replaced with an appropriate method address
       mssg_t message = _owner->createMessage(sectionInfo->module, 
-         MemoryBase::getDWord(section, sectionOffset), *_references);
+         MemoryBase::getDWord(section, sectionOffset)/*, *_references*/);
 
       pos_t offset = _owner->resolveVMTMethodOffset(sectionInfo->module, currentRef, message);
       _owner->fixOffset(imageOffset, addressMask, offset, image);
@@ -248,7 +248,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
 
       // message id should be replaced with an appropriate method address
       mssg_t message = _owner->createMessage(sectionInfo->module,
-         MemoryBase::getDWord(section, sectionOffset), *_references);
+         MemoryBase::getDWord(section, sectionOffset)/*, *_references*/);
 
       pos_t offset = _owner->resolveHiddenMTMethodOffset(sectionInfo->module, currentRef, message);
       _owner->fixOffset(imageOffset, addressMask, offset, image);
@@ -260,7 +260,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
 
       // message id should be replaced with an appropriate method address
       mssg_t message = _owner->createMessage(sectionInfo->module,
-         MemoryBase::getDWord(section, sectionOffset), *_references);
+         MemoryBase::getDWord(section, sectionOffset)/*, *_references*/);
 
       addr_t vaddress = _owner->resolveVMTMethodAddress(sectionInfo->module, currentRef, message);
 
@@ -294,7 +294,7 @@ void JITLinker::JITLinkerReferenceHelper :: writeSectionReference(MemoryBase* im
    }
 }
 
-void JITLinker::JITLinkerReferenceHelper :: writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
+void JITLinker::JITLinkerReferenceHelper :: writeVMTMethodReference(/*MemoryBase& target, */pos_t position, ref_t reference, pos_t disp, mssg_t message,
    ref_t addressMask, ModuleBase* module)
 {
    if (module == nullptr)
@@ -451,7 +451,7 @@ mssg_t JITLinker::JITLinkerReferenceHelper :: importMessage(mssg_t message, Modu
    if (!module)
       module = _module;
 
-   return _owner->createMessage(module, message, *_references);
+   return _owner->createMessage(module, message/*, *_references*/);
 }
 
 void JITLinker::JITLinkerReferenceHelper :: resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position)
@@ -755,8 +755,8 @@ ref_t JITLinker :: createAction(ustr_t actionName, ref_t weakActionRef, ref_t si
    return actionRef;
 }
 
-ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, bool variadicOne, 
-   VAddressMap& references)
+ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, bool variadicOne/*,
+   VAddressMap& references*/)
 {
    if (!signature)
       return 0;
@@ -816,7 +816,7 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, bool var
    return resolvedSignature;
 }
 
-mssg_t JITLinker :: createMessage(ModuleBase* module, mssg_t message, VAddressMap& references)
+mssg_t JITLinker :: createMessage(ModuleBase* module, mssg_t message/*, VAddressMap& references*/)
 {
    ref_t actionRef, flags;
    pos_t argCount = 0;
@@ -828,7 +828,7 @@ mssg_t JITLinker :: createMessage(ModuleBase* module, mssg_t message, VAddressMa
    ustr_t actionName = module->resolveAction(actionRef, signature);
 
    bool variadic = (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
-   ref_t importedSignature = createSignature(module, signature, variadic, references);
+   ref_t importedSignature = createSignature(module, signature, variadic/*, references*/);
    ref_t importedAction = _mapper->resolveAction(actionName, importedSignature);
    if (!importedAction) {
       importedAction = createAction(actionName, resolveWeakAction(actionName), importedSignature);
@@ -1402,21 +1402,21 @@ addr_t JITLinker :: resolvePackage(ReferenceInfo referenceInfo)
    return resolve({ referenceInfo.module, *packageInfo }, mskConstArray, false);
 }
 
-mssg_t JITLinker :: parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
+mssg_t JITLinker :: parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module/*, VAddressMap& references*/)
 {
    mssg_t message = ByteCodeUtil::resolveMessage(messageLiteral, module, true);
 
-   return createMessage(module, message, references);
+   return createMessage(module, message/*, references*/);
 }
 
-mssg_t JITLinker :: parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
+mssg_t JITLinker :: parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module/*, VAddressMap& references*/)
 {
    mssg_t message = ByteCodeUtil::resolveMessageName(messageLiteral, module, true);
 
-   return createMessage(module, message, references);
+   return createMessage(module, message/*, references*/);
 }
 
-Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references)
+Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module/*, VAddressMap& references*/)
 {
    Pair<mssg_t, addr_t> retVal = {};
 
@@ -1432,7 +1432,7 @@ Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, 
 
    //vextAddress = resolve(*extensionReferenceName, mskVMTRef, false);
 
-   retVal.value1 = createMessage(module, ByteCodeUtil::resolveMessage(*messageName, module, true), references);
+   retVal.value1 = createMessage(module, ByteCodeUtil::resolveMessage(*messageName, module, true)/*, references*/);
    // HOTFIX : extension message should be a function one
    retVal.value1 |= FUNCTION_MESSAGE;
 
@@ -1546,11 +1546,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          _compiler->writeChar32(writer, value);
          break;
       case mskMssgLiteralRef:
-         _compiler->writeMessage(writer, parseMessageLiteral(value, referenceInfo.module, messageReferences));
+         _compiler->writeMessage(writer, parseMessageLiteral(value, referenceInfo.module/*, messageReferences*/));
          break;
       case mskMssgNameLiteralRef:
       case mskPropNameLiteralRef:
-         _compiler->writeMessage(writer, parseMessageNameLiteral(value, referenceInfo.module, messageReferences));
+         _compiler->writeMessage(writer, parseMessageNameLiteral(value, referenceInfo.module/*, messageReferences*/));
          break;
       case mskExtMssgLiteralRef:
       {
@@ -1558,7 +1558,7 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          _compiler->allocateBody(writer, size);
          writer.seek(position);
 
-         auto extensionInfo = parseExtMessageLiteral(value, referenceInfo.module, messageReferences);
+         auto extensionInfo = parseExtMessageLiteral(value, referenceInfo.module/*, messageReferences*/);
 
          _compiler->writeExtMessage(writer, extensionInfo, _virtualMode);
          break;

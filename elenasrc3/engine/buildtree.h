@@ -539,8 +539,8 @@ namespace elena_lang
 
    struct BuildPatternContext
    {
-      BuildCodeTrieNode node;
-      BuildPatternArg   args;
+      BuildCodeTrieNode node = {};
+      BuildPatternArg   args = {};
 
       BuildPatternContext() = default;
       BuildPatternContext(BuildCodeTrieNode node, BuildPatternArg args)

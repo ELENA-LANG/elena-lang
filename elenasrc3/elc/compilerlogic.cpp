@@ -15,27 +15,27 @@
 
 using namespace elena_lang;
 
-inline MethodHint operator | (const MethodHint& l, const MethodHint& r)
+static inline MethodHint operator | (const MethodHint& l, const MethodHint& r)
 {
    return (MethodHint)((unsigned int)l | (unsigned int)r);
 }
 
-inline MethodHint operator & (const MethodHint& l, const MethodHint& r)
+static inline MethodHint operator & (const MethodHint& l, const MethodHint& r)
 {
    return (MethodHint)((unsigned int)l & (unsigned int)r);
 }
 
-inline MethodHint operator & (const ref_t& l, const MethodHint& r)
+static inline MethodHint operator & (const ref_t& l, const MethodHint& r)
 {
    return (MethodHint)(l & (unsigned int)r);
 }
 
-bool testMethodHint(MethodHint hint, MethodHint mask)
+static inline bool testMethodHint(MethodHint hint, MethodHint mask)
 {
    return test((ref_t)hint, (ref_t)mask);
 }
 
-bool testMethodHint(ref_t hint, MethodHint mask)
+static inline bool testMethodHint(ref_t hint, MethodHint mask)
 {
    return test(hint, (ref_t)mask);
 }
@@ -1251,7 +1251,7 @@ bool CompilerLogic :: validateMessage(ModuleScopeBase& scope, ref_t hints, mssg_
    return true;
 }
 
-inline bool existsNormalMethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t variadicMssg)
+static inline bool existsNormalMethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t variadicMssg)
 {
    ref_t dummy = 0;
    ref_t actionRef = getAction(variadicMssg);
@@ -1336,7 +1336,7 @@ bool CompilerLogic:: isTryDispatchAllowed(ModuleScopeBase& scope, mssg_t message
    return message == overwriteArgCount(scope.buildins.invoke_message, 1);
 }
 
-mssg_t CompilerLogic :: defineTryDispatcher(ModuleScopeBase& scope, mssg_t message)
+mssg_t CompilerLogic :: defineTryDispatcher(ModuleScopeBase& scope/*, mssg_t message*/)
 {
    return encodeMessage(scope.module->mapAction(TRY_INVOKE_MESSAGE, 0, false), 2, FUNCTION_MESSAGE);
 }
@@ -1554,7 +1554,7 @@ bool CompilerLogic :: isClosedClass(ClassInfo& info)
    return test(info.header.flags, elClosed);
 }
 
-bool CompilerLogic :: isMultiMethod(ClassInfo& info, MethodInfo& methodInfo)
+bool CompilerLogic :: isMultiMethod(/*ClassInfo& info, */MethodInfo& methodInfo)
 {
    return test(methodInfo.hints, (ref_t)MethodHint::Multimethod);
 }
@@ -1669,7 +1669,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
    }
 }
 
-void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef)
+void CompilerLogic :: tweakPrimitiveClassFlags(ClassInfo&/* info*/, ref_t/* classRef*/)
 {
 
 }
@@ -2118,7 +2118,7 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
    return false;
 }
 
-inline ref_t getSignature(ModuleScopeBase& scope, mssg_t message)
+static inline ref_t getSignature(ModuleScopeBase& scope, mssg_t message)
 {
    ref_t actionRef = getAction(message);
    ref_t signRef = 0;
@@ -2235,7 +2235,7 @@ void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* 
    }
 }
 
-inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCall, bool isInternalOp)
+static inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCall, bool isInternalOp)
 {
    ref_t nonpublicMessage = 0;
    if (selfCall && !test(weakMessage, STATIC_MESSAGE) && info.methods.exist(weakMessage | STATIC_MESSAGE)) {
@@ -2257,7 +2257,7 @@ inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCal
    return nonpublicMessage;
 }
 
-inline ref_t mapWeakSignature(ModuleScopeBase& scope, int counter)
+static inline ref_t mapWeakSignature(ModuleScopeBase& scope, int counter)
 {
    ref_t signatures[ARG_COUNT] = { 0 };
    ref_t signatureLen = counter;
@@ -2375,7 +2375,7 @@ mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_
    return 0;
 }
 
-ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns,
+ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope/*, ustr_t ns*/,
    ref_t targetRef, TypeInfo sourceInfo, bool directConversion)
 {
    ClassInfo info;
@@ -2438,7 +2438,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
 
       if (!sourceRef || sourceRef == scope.buildins.superReference) {
          // if it is a weak argument / check dynamic convertor
-         mssg_t messageRef = retrieveDynamicConvertor(scope, targetRef);
+         messageRef = retrieveDynamicConvertor(scope, targetRef);
          if (messageRef)
             return { ConversionResult::DynamicConversion, messageRef, stackSafeAttrs };
       }
@@ -2623,7 +2623,7 @@ bool CompilerLogic :: verifyMultimethod(ModuleScopeBase& scope, ClassInfo& info,
    return true;
 }
 
-inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
+static inline ustr_t resolveActionName(ModuleBase* module, mssg_t message)
 {
    ref_t signRef = 0;
    return module->resolveAction(getAction(message), signRef);
@@ -2665,7 +2665,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
    return listRef;
 }
 
-ref_t paramFeedback(void* param, ref_t)
+static inline ref_t paramFeedback(void* param, ref_t)
 {
 #if defined(__LP64__)
    size_t val = (size_t)param;
@@ -2691,7 +2691,7 @@ void CompilerLogic :: injectOverloadList(CompilerBase* compiler, ModuleScopeBase
 {
    for (auto it = info.methods.start(); !it.eof(); ++it) {
       auto methodInfo = *it;
-      if (!methodInfo.inherited && isMultiMethod(info, methodInfo)) {
+      if (!methodInfo.inherited && isMultiMethod(/*info, */methodInfo)) {
          // create a new overload list
          mssg_t message = it.key();
 
@@ -2766,7 +2766,7 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
    else return 0;
 }
 
-mssg_t CompilerLogic :: resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference, int& nillableArgs)
+mssg_t CompilerLogic :: resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference/*, int& nillableArgs*/)
 {
    if (!reference)
       return 0;
@@ -2784,7 +2784,7 @@ mssg_t CompilerLogic :: resolveFunctionSingleDispatch(ModuleScopeBase& scope, re
    return 0;
 }
 
-inline size_t readSignatureMember(ustr_t signature, size_t index)
+static inline size_t readSignatureMember(ustr_t signature, size_t index)
 {
    int level = 0;
    size_t len = getlength(signature);
@@ -2806,7 +2806,7 @@ inline size_t readSignatureMember(ustr_t signature, size_t index)
    return len;
 }
 
-inline void decodeClassName(IdentifierString& signature)
+static inline void decodeClassName(IdentifierString& signature)
 {
    ustr_t ident = *signature;
 
@@ -2822,7 +2822,7 @@ inline void decodeClassName(IdentifierString& signature)
 }
 
 ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, ref_t signatureRef,
-   ustr_t ns, ExtensionMap* outerExtensionList)
+   /*ustr_t ns, */ExtensionMap* outerExtensionList)
 {
    size_t argumentLen = 0;
    ref_t parameters[ARG_COUNT] = { 0 };
@@ -2947,14 +2947,14 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
    }
 
    if (matched) {
-      return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, parameters, ns, outerExtensionList);
+      return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, parameters, /*ns, */outerExtensionList);
    }
 
    return 0;
 }
 
 ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, 
-   ustr_t ns, size_t argumentLen, ref_t* arguments, ExtensionMap* outerExtensionList)
+   /*ustr_t ns, */size_t argumentLen, ref_t* arguments, ExtensionMap* outerExtensionList)
 {
    // matching pattern with the provided signature
    size_t i = pattern.find('.');
@@ -2975,7 +2975,7 @@ ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& s
    IdentifierString templateName(pattern, i - 2);
    ref_t templateRef = scope.mapFullReference(*templateName, true);
 
-   return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, arguments, ns, outerExtensionList);
+   return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, arguments, /*ns, */outerExtensionList);
 }
 
 bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
