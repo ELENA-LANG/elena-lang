@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Windows VM Implementation
 //
-//                                             (C)2022-2024, by Aleksey Rakov
+//                                             (C)2022-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -14,9 +14,9 @@ using namespace elena_lang;
 constexpr auto VA_ALIGNMENT = 0x08;
 
 ELENAWinVMMachine :: ELENAWinVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
-   int codeAlignment, ProcessSettings gcSettings,
+   int codeAlignment/*, ProcessSettings gcSettings*/,
    JITCompilerBase*(* jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
-      : ELENAVMMachine(configPath, presenter, platform, codeAlignment, gcSettings, jitCompilerFactory),
+      : ELENAVMMachine(configPath, presenter, platform, codeAlignment, /*gcSettings, */jitCompilerFactory),
          _text(TEXT_MAX_SIZE, false, true),
          _rdata(RDATA_MAX_SIZE, false, false),
          _data(DATA_MAX_SIZE, true, false),
@@ -92,6 +92,8 @@ bool ELENAWinVMMachine :: exportFunction(path_t rootPath, size_t position, path_
       dllPath.combine(dllName);
 
       handle = ::LoadLibrary(*dllPath);
+      if (handle == nullptr)
+         return false;
    }
 
    String<char, 200> lpFunName(funName);

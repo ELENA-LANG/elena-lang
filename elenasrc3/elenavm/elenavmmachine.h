@@ -95,7 +95,7 @@ namespace elena_lang
 
       addr_t loadReference(ustr_t name, int command);
 
-      void resolvePreloaded();
+      //void resolvePreloaded();
 
       bool loadModule(ustr_t ns);
 
@@ -105,7 +105,7 @@ namespace elena_lang
       }
 
    public:
-      bool isStandAlone() { return _standAloneMode; }
+      bool isStandAlone() const { return _standAloneMode; }
 
       addr_t resolveExternal(ustr_t reference) override;
 
@@ -168,7 +168,7 @@ namespace elena_lang
       }
 
       ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform,
-         int codeAlignment, ProcessSettings gcSettings,
+         int codeAlignment/*, ProcessSettings gcSettings*/,
          JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType));
       virtual ~ELENAVMMachine()
       {

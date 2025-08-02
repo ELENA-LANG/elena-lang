@@ -50,12 +50,14 @@ namespace elena_lang
       class SaverBase
       {
       public:
-         virtual bool isMatched(ustr_t token, char state)
+         virtual bool isMatched(ustr_t/* token*/, char/* state*/)
          {
             return true;
          }
 
          virtual void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) = 0;
+
+         virtual ~SaverBase() = default;
       };
 
       struct Rule

@@ -345,8 +345,8 @@ size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPt
       else if (counter < maxLength) {
          mssg_t weakMessage = (mssg_t)((VMTEntry*)classPtr)[i].message;
          bool duplicate = false;
-         for (size_t i = 0; i < counter; i++) {
-            if (output[i] == weakMessage) {
+         for (size_t j = 0; j < counter; j++) {
+            if (output[j] == weakMessage) {
                duplicate = true;
                break;
             }              

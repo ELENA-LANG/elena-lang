@@ -21,7 +21,7 @@ constexpr unsigned int DEFAULT_STACKRESERVED = 0x200000;
 
 constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86;
 
-JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
+JITCompilerBase* createJITCompiler(LibraryLoaderBase*/* loader*/, PlatformType platform)
 {
    switch (platform) {
       case PlatformType::Win_x86:
@@ -71,7 +71,7 @@ private:
    Presenter() = default;
 
 public:
-   ustr_t getMessage(int code) override
+   ustr_t getMessage(int/* code*/) override
    {
       // !!temporal : not used
       return nullptr;
@@ -97,7 +97,7 @@ void init(HMODULE hModule)
    rootPath.combine(CONFIG_FILE);
 
    machine = new ELENAWinVMMachine(*rootPath, &Presenter::getInstance(), CURRENT_PLATFORM,
-      VA_ALIGNMENT, { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED }, createJITCompiler);
+      VA_ALIGNMENT, /*{DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED}, */createJITCompiler);
 }
 
 void printError(int errCode)
@@ -451,7 +451,7 @@ EXTERN_DLL_EXPORT void ResetGCStatisticsLA()
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+                       LPVOID/* lpReserved*/
                      )
 {
     switch (ul_reason_for_call)

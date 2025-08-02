@@ -74,7 +74,7 @@ bool ELENAVMConfiguration :: loadConfig(path_t path)
    return false;
 }
 
-ustr_t ELENAVMConfiguration :: resolveWinApi(ustr_t forward)
+ustr_t ELENAVMConfiguration :: resolveWinApi(ustr_t/* forward*/)
 {
    throw InternalError(errVMBroken);
 }
@@ -90,14 +90,14 @@ bool ELENAVMConfiguration :: loadConfigByName(path_t configPath, ustr_t name)
    return false;
 }
 
-void ELENAVMConfiguration :: forEachForward(void* arg, void (*feedback)(void* arg, ustr_t key, ustr_t value))
+void ELENAVMConfiguration :: forEachForward(void*/* arg*/, void (*/*feedback*/)(void* arg, ustr_t key, ustr_t value))
 {
 }
 
 // --- ELENAVMMachine ---
 
 ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, PlatformType platform, 
-   int codeAlignment, ProcessSettings gcSettings,
+   int codeAlignment/*, ProcessSettings gcSettings*/,
    JITCompilerBase* (*jitCompilerFactory)(LibraryLoaderBase*, PlatformType))
       : _mapper(this), _rootPath(configPath), _preloadedList({})
 {
