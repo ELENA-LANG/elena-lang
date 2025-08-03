@@ -186,7 +186,7 @@ namespace elena_lang
       ModuleBase* module;
       ustr_t      referenceName; // when module is not null - referenceName is weak one
 
-      bool isRelative()
+      bool isRelative() const
       {
          return module != nullptr && isWeakReference(referenceName);
       }
