@@ -297,10 +297,6 @@ namespace elena_lang
       {
          return write(&value, sizeof(value));
       }
-      bool writeQWord(intptr_t value)
-      {
-         return write(&value, 8);
-      }
       bool writeQWord(unsigned long long value)
       {
          return write(&value, 8);

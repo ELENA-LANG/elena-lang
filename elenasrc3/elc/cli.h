@@ -20,6 +20,10 @@ namespace elena_lang
    class CLIHelper
    {
    public:
+
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER
+
       static PlatformType definePlatform(int argc, path_c** argv, PlatformType defaultPlatform)
       {
 #if defined(CROSS_COMPILE_MODE)
@@ -51,6 +55,8 @@ namespace elena_lang
 #endif
          return defaultPlatform;
       }
+
+DISABLE_WARNING_POP
 
       static ProcessSettings getProcessSettings(PlatformType platform)
       {
