@@ -4020,7 +4020,7 @@ pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    // signature or action name for weak message
    if (signature) {
       if (!virtualMode) {
-         messageWriter.writeQWord((intptr_t)messageBodyWriter.Memory()->get(signature));
+         messageWriter.writeQWord((unsigned long long)messageBodyWriter.Memory()->get(signature));
       }
       else messageWriter.writeQReference(mskMBDataRef64 | signature, 0u);
    }
