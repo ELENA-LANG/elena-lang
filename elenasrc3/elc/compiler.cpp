@@ -20,6 +20,9 @@ using namespace elena_lang;
 typedef ExpressionAttribute   EAttr;
 typedef ExpressionAttributes  EAttrs;
 
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_EXPENSIVE_COPY
+
 // --- helper routines ---
 
 static inline EAttr operator | (const EAttr& l, const EAttr& r)
@@ -1749,7 +1752,7 @@ void Compiler::CodeScope::syncStack(MethodScope* methodScope) const
       methodScope->reserved2 = reserved2;
 }
 
-void Compiler::CodeScope::syncStack(SymbolScope* methodScope)
+void Compiler::CodeScope::syncStack(SymbolScope* methodScope) const
 {
    if (methodScope->reserved1 < reserved1)
       methodScope->reserved1 = reserved1;
@@ -13135,6 +13138,11 @@ ObjectInfo Compiler::Expression :: compileNotNilMessageOperation(SyntaxNode node
    current = current.firstChild();
 
    ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   if (isBoxingRequired(source, false)) {
+      // if it is stack-allocated object - the operation is pointless
+      scope.raiseWarning(WARNING_LEVEL_1, wrnCannotBeNil, current);
+   }
+
    if (!isSingleObject(source.kind)) {
       bool dummy = false;
       ObjectInfo tempLocal = declareTempLocal(compiler->resolveStrongType(scope, source.typeInfo));
@@ -13169,6 +13177,11 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
    current = current.firstChild();
 
    ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   if (isBoxingRequired(source, false)) {
+      // if it is stack-allocated object - the operation is pointless
+      scope.raiseWarning(WARNING_LEVEL_1, wrnCannotBeNil, current);
+   }
+
    if (!isSingleObject(source.kind)) {
       bool dummy = false;
       ObjectInfo tempLocal = declareTempLocal(compiler->resolveStrongType(scope, source.typeInfo));
@@ -17769,3 +17782,5 @@ ref_t Compiler::LambdaClosure::declareClosureParameters(MethodScope& methodScope
 
    return encodeMessage(actionRef, paramCount, flags);
 }
+
+DISABLE_WARNING_POP

@@ -1117,7 +1117,7 @@ namespace elena_lang
 
          void syncStack(MethodScope* methodScope) const;
          void syncStack(CodeScope* parentScope);
-         void syncStack(SymbolScope* methodScope);
+         void syncStack(SymbolScope* methodScope) const;
 
          CodeScope(SymbolScope* scope);
          CodeScope(MethodScope* scope);

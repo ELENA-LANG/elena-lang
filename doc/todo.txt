@@ -7,12 +7,10 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  - backlog: ?. : warn if the argument is a structure
-  ======================================
   webapi phone book example : add, delete, update, search
   --------------------------------------
   #35 : first draft
-  * simple web api - GET
+  + simple web api - GET
   * simple web api client - GET
   * simple web api - POST
   * simple web api client - POST
@@ -25,7 +23,7 @@ In development:
   -
   ======================================
   #184 : IDE linux - migrate to gtkmm4
-  + keypress event
+  * keypress event
   * redesign controller to support async open file workflow
   * get rid of FileDialogBase
   * #184 : IDE linux - clipboard

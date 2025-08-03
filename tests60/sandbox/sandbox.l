@@ -11,7 +11,7 @@ struct XY
  
 public program()
 {
-   XY r := new XY();
+   XY? r := new XY();
 
    r?.printMe()
 }

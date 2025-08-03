@@ -94,7 +94,7 @@ void SystemRoutineProvider :: ExitThread(int exitCode)
 
 #if _M_IX86 || __i386__
 
-LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
+static LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
    switch (ExceptionInfo->ExceptionRecord->ExceptionCode) {
       case EXCEPTION_BREAKPOINT:
@@ -144,7 +144,7 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 
 #elif _M_X64
 
-LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
+static LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
    switch (ExceptionInfo->ExceptionRecord->ExceptionCode) {
       case EXCEPTION_BREAKPOINT:
@@ -182,8 +182,6 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 
          return EXCEPTION_CONTINUE_EXECUTION;
    }
-
-   return EXCEPTION_CONTINUE_SEARCH;
 }
 
 #endif

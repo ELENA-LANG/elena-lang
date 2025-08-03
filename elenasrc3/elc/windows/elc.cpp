@@ -39,6 +39,16 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
 
 #endif
 
+//#define MEMORY_LEAK_DETECTION 1
+
+#if defined(MEMORY_LEAK_DETECTION)
+
+#define _CRTDBG_MAP_ALLOC //to get more details
+#include <stdlib.h>  
+#include <crtdbg.h>   //for malloc and free
+
+#endif
+
 // --- Presenter ---
 
 class Presenter : public WinConsolePresenter
@@ -118,6 +128,13 @@ int compileProject(int argc, path_c** argv, path_t appPath, ErrorProcessor& erro
 
 int main()
 {
+#if defined(MEMORY_LEAK_DETECTION)
+   _CrtMemState sOld;
+   _CrtMemState sNew;
+   _CrtMemState sDiff;
+   _CrtMemCheckpoint(&sOld); //take a snapshot
+#endif
+
    try
    {
       PathString appPath;
@@ -143,6 +160,19 @@ int main()
             errorProcessor, Presenter::getInstance(), compileProject);
       }
       else retVal = compileProject(argc, argv, *appPath, errorProcessor);
+
+#if defined(MEMORY_LEAK_DETECTION)
+      _CrtMemCheckpoint(&sNew); //take a snapshot 
+      if (_CrtMemDifference(&sDiff, &sOld, &sNew)) // if there is a difference
+      {
+         OutputDebugString(L"-----------_CrtMemDumpStatistics ---------");
+         _CrtMemDumpStatistics(&sDiff);
+         OutputDebugString(L"-----------_CrtMemDumpAllObjectsSince ---------");
+         _CrtMemDumpAllObjectsSince(&sOld);
+         OutputDebugString(L"-----------_CrtDumpMemoryLeaks ---------");
+         _CrtDumpMemoryLeaks();
+      }
+#endif
 
       return retVal;
    }

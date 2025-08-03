@@ -17,7 +17,7 @@ constexpr int INDENT  = 11;
 
 // --- trim ---
 
-inline ustr_t trim(ustr_t s)
+static inline ustr_t trim(ustr_t s)
 {
    while (s[0] == ' ')
       s += 1;
@@ -110,8 +110,7 @@ mssg_t ByteCodeViewer :: resolveMessageByIndex(MemoryBase* vmt, int index)
    MethodEntry entry = {};
 
    size -= sizeof(ClassHeader);
-   IdentifierString prefix;
-   IdentifierString line;
+   //IdentifierString prefix;
    while (size > 0) {
       vmtReader.read((void*)&entry, sizeof(MethodEntry));
 
@@ -225,7 +224,7 @@ void ByteCodeViewer :: printLineAndCount(ustr_t arg1, ustr_t arg2, int& row, int
    nextRow(row, pageSize);
 }
 
-inline void appendPrefix(IdentifierString& commandStr, ustr_t prefix, bool withTabbing)
+static inline void appendPrefix(IdentifierString& commandStr, ustr_t prefix, bool withTabbing)
 {
    if (withTabbing && commandStr.length() > prefix.length()) {
       commandStr.truncate(commandStr.length() - prefix.length() + 1);      
@@ -386,7 +385,7 @@ void ByteCodeViewer :: addSecondSPArg(arg_t arg, IdentifierString& commandStr)
    addSPArg(arg, commandStr);
 }
 
-inline int getLabelIndex(pos_t label, List<pos_t>& labels)
+static inline int getLabelIndex(pos_t label, List<pos_t>& labels)
 {
    int index = 0;
    auto it = labels.start();
@@ -532,7 +531,7 @@ void ByteCodeViewer :: addMessage(IdentifierString& commandStr, mssg_t message, 
    commandStr.appendUInt(message);
 }
 
-inline void appendHex32(IdentifierString& command, unsigned int hex)
+static inline void appendHex32(IdentifierString& command, unsigned int hex)
 {
    unsigned int n = hex / 0x10;
    int len = 7;
@@ -879,7 +878,7 @@ void ByteCodeViewer :: printClassAttributes(ClassInfo& classInfo, int& row, int 
    }
 }
 
-inline ustr_t getMethodPrefix(bool isFunction)
+static inline ustr_t getMethodPrefix(bool isFunction)
 {
    if (isFunction) {
       return "@function";
@@ -933,8 +932,7 @@ void ByteCodeViewer::printMethod(ustr_t name, bool fullInfo)
    MethodEntry entry = {};
 
    size -= sizeof(ClassHeader);
-   IdentifierString prefix;
-   IdentifierString line;
+   //IdentifierString prefix;
    while (size > 0) {
       vmtReader.read((void*)&entry, sizeof(MethodEntry));
 

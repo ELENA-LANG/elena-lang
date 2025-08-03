@@ -159,7 +159,7 @@ namespace elena_lang
          loadableInRuntime = reader->getBool();
       }
 
-      void save(StreamWriter* writer)
+      void save(StreamWriter* writer) const
       {
          writer->writeDWord((unsigned int)symbolType);
          writer->writeRef(valueRef);
@@ -405,6 +405,7 @@ namespace elena_lang
    constexpr auto wrnNillableTarget          = 413;
    constexpr auto wrnNillableRedefined       = 414;
    constexpr auto wrnNillableOutputRedefined = 415;
+   constexpr auto wrnCannotBeNil             = 416;
    constexpr auto wrnTypeInherited           = 420;
    constexpr auto wrnDuplicateInclude        = 425;
    constexpr auto wrnUnknownTypecast         = 426;

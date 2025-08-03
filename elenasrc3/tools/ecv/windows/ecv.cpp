@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                              (C)2021-2023, by Aleksey Rakov
+//                                              (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <windows.h>
@@ -30,7 +30,7 @@ class ConsoleHelper : public ConsoleHelperBase
    TextFileWriter* _writer;
 
 public:
-   void readLine(char* buffer, size_t length) override
+   void readLine(char* buffer, size_t/* length*/) override
    {
       // !! fgets is used instead of fgetws, because there is a strange bug in fgetws implementation
       fgets(buffer, LINE_LEN, stdin);
@@ -86,7 +86,7 @@ public:
    }
 };
 
-bool getConsoleSize(int& columns, int& rows)
+static inline bool getConsoleSize(int& columns, int& rows)
 {
    CONSOLE_SCREEN_BUFFER_INFO csbi;
 
@@ -99,7 +99,7 @@ bool getConsoleSize(int& columns, int& rows)
    else return false;
 }
 
-void getAppPath(PathString& appPath)
+static inline void getAppPath(PathString& appPath)
 {
    wchar_t path[MAX_PATH + 1];
 

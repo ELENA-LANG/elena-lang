@@ -96,6 +96,7 @@ namespace elena_lang
    constexpr auto wrnMsgNillableTarget          = "\n%s(%d:%d): warning 413: Sending a message to a nillable object can lead to nil reference exception.\nPlease use nil-coalescing operators or check if the value is not nil\n";
    constexpr auto wrnMsgNillableRedefined       = "\n%s(%d:%d): warning 414: The method nullable signature mismatches with the previously declared one\n";
    constexpr auto wrnMsgNillableOutputRedefined = "\n%s(%d:%d): warning 415: The method nullable attribute of an output type mismatches with the previously declared one\n";
+   constexpr auto wrnMsgCannotBeNil             = "\n%s(%d:%d): warning 416: The object %s cannot be nil\n";
 
    constexpr auto wrnMsgTypeInherited           = "\n%s(%d:%d): warning 420: Type attribute is inherited\n";
    constexpr auto wrnMsgDuplicateInclude        = "\n%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
