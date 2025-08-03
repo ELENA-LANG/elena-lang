@@ -3749,7 +3749,7 @@ void JITCompiler64 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 {
    size_t len = outputTypeList.count();
 
-   writer.writeQWord(len);
+   writer.writeQWord((unsigned long long)len);
    for (size_t i = 0; i < len; i++) {
       auto info = outputTypeList.get(i);
 

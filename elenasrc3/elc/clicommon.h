@@ -692,7 +692,7 @@ public:
       }
    }
 
-   bool hasWarnings() { return _numberOfWarnings > 0; }
+   bool hasWarnings() const { return _numberOfWarnings > 0; }
 
    void setWarningLevel(WarningLevel level)
    {

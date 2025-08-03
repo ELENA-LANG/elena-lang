@@ -1,68 +1,17 @@
 import extensions;
-import system'routines;
-import system'collections;
-import extensions'routines;
- 
-class EquilibriumEnumerator : Enumerator
+
+struct XY
 {
-    int        left;
-    int        right;
-    int        index;
-    Enumerator en;
- 
-    constructor new(Enumerator en)
-    {
-        this en := en;
- 
-        self.reset()
-    }
- 
-    constructor new(Enumerable list)
-        <= new(list.enumerator());
- 
-    constructor new(o)
-        <= new(cast Enumerable(o)); 
- 
-    bool next()
-    {
-        index += 1;
- 
-        while(en.next())
-        {
-            var element := *en;            
-            right -= element;
-            bool found := (left == right);
-            left += element;
- 
-            if (found)
-            {
-                ^ true
-            };
- 
-            index += 1
-        };
- 
-        ^ false
-    }
- 
-    reset()
-    {
-        en.reset();
- 
-        left := 0;
-        right := en.summarize();
-        index := -1;
- 
-        en.reset();
-    }
- 
-    get Value() = index;
- 
-    enumerable() => en;
+   int X : prop(_x);
+
+   int Y : prop(_y);
+
+   printMe() { Console.printLine("{X:",_x,",Y:",_y) }
 }
  
 public program()
 {
-    EquilibriumEnumerator.new(new int[]{ -7, 1, 5, 2, -4, 3, 0 })
-        .forEach(PrintingLn)
+   XY r := new XY();
+
+   r?.printMe()
 }

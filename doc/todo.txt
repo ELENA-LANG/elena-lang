@@ -7,9 +7,7 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  - warnings:
-  ======================================
-  - backlog:
+  - backlog: ?. : warn if the argument is a structure
   ======================================
   webapi phone book example : add, delete, update, search
   --------------------------------------
@@ -22,6 +20,9 @@ In development:
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
+  ======================================
+  -
+  -
   ======================================
   #184 : IDE linux - migrate to gtkmm4
   + keypress event
