@@ -4029,7 +4029,7 @@ pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter&
    }
    else {
       if (!virtualMode) {
-         messageWriter.writeQWord((intptr_t)messageBodyWriter.Memory()->get(messageBodyWriter.position()));
+         messageWriter.writeQWord((unsigned long long)messageBodyWriter.Memory()->get(messageBodyWriter.position()));
       }
       else messageWriter.writeQReference(mskMBDataRef64 | messageBodyWriter.position(), 0u);
 
