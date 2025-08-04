@@ -17,7 +17,7 @@ namespace elena_lang
    {
    protected:
       typedef MemoryMap<addr_t, addr_t, Map_StoreAddr, Map_GetAddr> ClassInfoMap;
-      typedef MemoryMap<ustr_t, addr_t, Map_StoreUStr, Map_GetUStr> SymbolMap;
+      typedef MemoryMap<ustr_t, addr_t, Map_StoreUStrAligned4, Map_GetUStr> SymbolMap;
 
       addr_t            _entryPoint;
       pos_t             _debugInfoSize;

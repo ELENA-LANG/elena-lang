@@ -23,7 +23,7 @@ namespace elena_lang
    class ScriptEngineCFParser : public ScriptEngineParserBase
    {
    public:
-      typedef MemoryMap<ustr_t, ref_t, Map_StoreUStr, Map_GetUStr> NameMap;
+      typedef MemoryMap<ustr_t, ref_t, Map_StoreUStrAligned4, Map_GetUStr> NameMap;
 
       enum RuleType
       {
