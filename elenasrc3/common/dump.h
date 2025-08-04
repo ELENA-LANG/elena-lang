@@ -37,7 +37,7 @@ namespace elena_lang
 
       void* get(pos_t position) const override;
 
-      ref_t getRef(pos_t position)
+      ref_t getRef(pos_t position) const
       {
          ref_t retVal = 0;
          read(position, &retVal, sizeof(ref_t));

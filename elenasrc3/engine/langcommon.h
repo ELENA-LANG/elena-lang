@@ -208,8 +208,8 @@ namespace elena_lang
    struct ClassInfo
    {
       typedef MemoryMap<mssg_t, MethodInfo, Map_StoreUInt, Map_GetUInt> MethodMap;
-      typedef MemoryMap<ustr_t, FieldInfo, Map_StoreUStr, Map_GetUStr> FieldMap;
-      typedef MemoryMap<ustr_t, StaticFieldInfo, Map_StoreUStr, Map_GetUStr> StaticFieldMap;
+      typedef MemoryMap<ustr_t, FieldInfo, Map_StoreUStrAligned4, Map_GetUStr> FieldMap;
+      typedef MemoryMap<ustr_t, StaticFieldInfo, Map_StoreUStrAligned4, Map_GetUStr> StaticFieldMap;
 
       pos_t           inheritLevel;
       ClassHeader     header;

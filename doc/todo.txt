@@ -19,7 +19,7 @@ In development:
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   ======================================
-  -
+  - refactoring : ParserTable - use MemoryHashTable instead of Map
   -
   ======================================
   #184 : IDE linux - migrate to gtkmm4

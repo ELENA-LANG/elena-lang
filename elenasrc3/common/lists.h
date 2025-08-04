@@ -1634,6 +1634,17 @@ namespace elena_lang
       return position;
    }
 
+   inline pos_t Map_StoreUStrAligned4(MemoryDump* dump, ustr_t s)
+   {
+      pos_t position = dump->length();
+      pos_t size = getlength_pos(s) + 1;
+
+      dump->write(position, s.str(), size);
+      dump->writeBytes(position + size, 0, (pos_t)(alignSize(size, 4) - size));
+
+      return position;
+   }
+
    inline ustr_t Map_GetUStr(MemoryDump* dump, pos_t position)
    {
       const char* s = (const char*)dump->get(position);

@@ -51,7 +51,7 @@ namespace elena_lang
          return (DebugLineInfo*)lineInfoAddress;
       }
 
-      addr_t getEntryPoint()
+      addr_t getEntryPoint() const
       {
          return _entryPoint;
       }

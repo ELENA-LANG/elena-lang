@@ -394,7 +394,7 @@ namespace elena_lang
    class Compiler : public CompilerBase
    {
    public:
-      typedef MemoryMap<ustr_t, Parameter, Map_StoreUStr, Map_GetUStr>  LocalMap;
+      typedef MemoryMap<ustr_t, Parameter, Map_StoreUStrAligned4, Map_GetUStr>  LocalMap;
 
       // InheritResult
       enum class InheritResult
@@ -800,7 +800,7 @@ namespace elena_lang
             else return ClassScope::getScope(level);
          }
 
-         ref_t getProperClassRef() { return classInfoRef; }
+         ref_t getProperClassRef() const { return classInfoRef; }
 
          ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr) override;
 
@@ -876,22 +876,22 @@ namespace elena_lang
          {
             return testany(methodInfo.hints, (ref_t)hint1 | (ref_t)hint2);
          }
-         bool checkHint(MethodHint hint)
+         bool checkHint(MethodHint hint) const
          {
             return test(info.hints, (ref_t)hint);
          }
 
          bool checkType(MethodHint type);
 
-         bool isGeneric()
+         bool isGeneric() const
          {
             return checkHint(MethodHint::Generic);
          }
-         bool isYieldable()
+         bool isYieldable() const
          {
             return checkHint(MethodHint::Yieldable);
          }
-         bool isAsync()
+         bool isAsync() const
          {
             return checkHint(MethodHint::Async);
          }
@@ -1357,7 +1357,7 @@ namespace elena_lang
          bool mssgOp;
          bool memberMode;
 
-         bool isAnySet()
+         bool isAnySet() const
          {
             return forwardMode || variableMode || refOp || outRefOp || mssgOp || memberMode;
          }
@@ -2160,7 +2160,7 @@ namespace elena_lang
          _evaluateOp = flag;
       }
 
-      bool checkStrictTypeFlag()
+      bool checkStrictTypeFlag() const
       {
          return _strictTypeEnforcing;
       }
@@ -2169,7 +2169,7 @@ namespace elena_lang
          _strictTypeEnforcing = flag;
       }
 
-      bool checkNullableTypeFlag()
+      bool checkNullableTypeFlag() const
       {
          return _nullableTypeWarning;
       }
