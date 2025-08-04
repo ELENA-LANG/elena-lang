@@ -24,8 +24,10 @@
 #define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(26495)
 #define DISABLE_WARNING_EXPENSIVE_COPY                   DISABLE_WARNING(26820)
 #define DISABLE_WARNING_UNUSEDVARIABLE                   DISABLE_WARNING(4189)
+#define DISABLE_WARNING_HIDE_CLASSMEMBER                 DISABLE_WARNING(4458)
 #define DISABLE_WARNING_NULLCONVERSION
 #define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(4127)
+#define DISABLE_WARNING_NONNULL
 // other warnings you want to deactivate...
 
 #elif defined(__GNUC__)
@@ -41,6 +43,8 @@
 #define DISABLE_WARNING_EXPENSIVE_COPY
 #define DISABLE_WARNING_NULLCONVERSION                   
 #define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(-Waddress)
+#define DISABLE_WARNING_HIDE_CLASSMEMBER                 
+#define DISABLE_WARNING_NONNULL                          DISABLE_WARNING(-Wnonnull)
 
 #elif defined(__clang__)
 #define DO_PRAGMA(X) _Pragma(#X)
@@ -55,6 +59,8 @@
 #define DISABLE_WARNING_EXPENSIVE_COPY
 #define DISABLE_WARNING_NULLCONVERSION                   DISABLE_WARNING(-Wnull-conversion)
 #define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(-Waddress)
+#define DISABLE_WARNING_HIDE_CLASSMEMBER                 
+#define DISABLE_WARNING_NONNULL
 
 // other warnings you want to deactivate... 
 
@@ -65,6 +71,9 @@
 #define DISABLE_WARNING_UNREFERENCED_FUNCTION
 #define DISABLE_WARNING_UNUSEDVARIABLE
 #define DISABLE_WARNING_NULLCONVERSION
+#define DISABLE_WARNING_HIDE_CLASSMEMBER
+#define DISABLE_WARNING_EXPENSIVE_COPY
+#define DISABLE_WARNING_NONNULL
 // other warnings you want to deactivate... 
 
 #endif

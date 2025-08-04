@@ -11,6 +11,9 @@
 
 #include "lbhelper.h"
 
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_NONNULL
+
 namespace elena_lang
 {
    // --- PPCOperand ---
@@ -404,5 +407,7 @@ namespace elena_lang
    };
 
 }
+
+DISABLE_WARNING_POP
 
 #endif

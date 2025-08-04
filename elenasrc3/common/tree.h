@@ -9,12 +9,8 @@
 #ifndef TREE_H
 #define TREE_H
 
-#ifdef _MSC_VER
-
-#pragma warning( push )
-#pragma warning( disable : 4458 )
-
-#endif
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_HIDE_CLASSMEMBER
 
 namespace elena_lang
 {
@@ -924,10 +920,6 @@ namespace elena_lang
    };
 }
 
-#ifdef _MSC_VER
-
-#pragma warning( pop )
-
-#endif
+DISABLE_WARNING_POP
 
 #endif
