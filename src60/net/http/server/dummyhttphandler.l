@@ -18,6 +18,11 @@ public class DummyHttpGetHandler : IHttpHandler
       else {
          response := _errorHandler.getNotFoundResponse();
       };      
+
+      response.Protocol := "HTTP/1.1";
+      response.StatusCode := 200;
+      response.StatusText := "OK";
+      response.Headers.add("Content-Type", "text/html");
       
       ^ response
    }
@@ -27,7 +32,7 @@ public class DummyHttpGetHandler : IHttpHandler
    
 }
 
-public class DummyHttpHandlerFactory : IHttpHandlerFactory
+public singleton DummyHttpHandlerFactory : IHttpHandlerFactory
 {
    IHttpHandler? create(string method)
    {

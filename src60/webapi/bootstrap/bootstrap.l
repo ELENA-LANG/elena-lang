@@ -11,6 +11,6 @@ public singleton Bootstrap : IBootstap
    
    initDummy()
    {
-      
+      _server := HttpServer.create(DummyHttpHandlerFactory);
    }
 }
