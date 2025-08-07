@@ -662,6 +662,8 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
       minimalArgList, ptrSize,
       module_it.hints());
 
+   _libraryProvider.addListener(&moduleScope);
+
    // Validation : standart module must be named "system"
    if (moduleScope.isStandardOne())
       assert(module_it.name().compare(STANDARD_MODULE));
@@ -684,7 +686,11 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
-   return buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
+   bool retVal = buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
+
+   _libraryProvider.removeListener(&moduleScope);
+
+   return retVal;
 }
 
 void CompilingProcess :: configurateParser(SyntaxVersion version)

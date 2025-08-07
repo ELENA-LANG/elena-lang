@@ -3,7 +3,7 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LISTS_H
@@ -392,6 +392,71 @@ namespace elena_lang
          _length = length;
       }
       MemoryListIterator()
+      {
+         _buffer = nullptr;
+         _position = 0;
+         _length = 0;
+      }
+   };
+
+   // --- SerializableMemoryListIterator ---
+   template <class T, T(*GetItem)(MemoryDump*, pos_t)> class SerializableMemoryListIterator
+   {
+      MemoryDump* _buffer;
+      pos_t       _position, _length;
+      T           _current;
+
+   public:
+      bool operator ==(const SerializableMemoryListIterator& it)
+      {
+         return _position == it._position;
+      }
+      bool operator !=(const SerializableMemoryListIterator& it)
+      {
+         return _position != it._position;
+      }
+
+      SerializableMemoryListIterator& operator =(const SerializableMemoryListIterator& it)
+      {
+         this->_position = it._position;
+         this->_length = it._length;
+         this->_buffer = it._buffer;
+
+         return *this;
+      }
+
+      SerializableMemoryListIterator& operator ++()
+      {
+         if (_position < _length) {
+            _position = MemoryBase::getDWord(_buffer, _position + 4);
+         }
+
+         return *this;
+      }
+      SerializableMemoryListIterator operator ++(int)
+      {
+         MemoryListIterator tmp = *this;
+         ++*this;
+
+         return tmp;
+      }
+
+      T& operator*()
+      {
+         _current = GetItem(_buffer, MemoryBase::getDWord(_buffer, _position));
+
+         return _current;
+      }
+
+      bool eof() const { return _position >= _length; }
+
+      SerializableMemoryListIterator(MemoryDump* buffer, pos_t length)
+      {
+         _buffer = buffer;
+         _position = 0;
+         _length = length;
+      }
+      SerializableMemoryListIterator()
       {
          _buffer = nullptr;
          _position = 0;
@@ -3273,6 +3338,62 @@ DISABLE_WARNING_POP
          _position = 0;
       }
       ~MemoryList() = default;
+   };
+
+   // --- MemoryList ---
+   /// NOTE : the serialized objects are stored in the memory, so they can become invlaid after an add operation
+   template <class T, pos_t(*StoreItem)(MemoryDump*, T), T(*GetItem)(MemoryDump*, pos_t)> class SerializableMemoryList
+   {
+      MemoryDump _buffer;
+      T          _defValue;
+      pos_t      _position;
+
+   public:
+      typedef SerializableMemoryListIterator<T, GetItem> Iterator;
+
+      Iterator start() const { return Iterator((MemoryDump*)&_buffer, _position); }
+
+      void add(T item)
+      {
+         MemoryBase::writeQWord(&_buffer, _position, 0);
+
+         pos_t itemPos = StoreItem(&_buffer, item);
+
+         MemoryBase::writeDWord(&_buffer, _position, itemPos);
+         MemoryBase::writeDWord(&_buffer, _position + 4, _buffer.length());
+
+         _position = _buffer.length();
+      }
+
+      void clear()
+      {
+         _position = 0;
+         _buffer.clear();
+      }
+
+      void save(StreamWriter* writer)
+      {
+         writer->writePos(_buffer.length());
+
+         MemoryReader reader(&_buffer);
+         writer->copyFrom(&reader, _buffer.length());
+      }
+
+      void load(StreamReader* reader)
+      {
+         pos_t length = reader->getPos();
+         _buffer.reserve(length);
+
+         MemoryWriter writer(&_buffer);
+         writer.copyFrom(reader, length);
+      }
+
+      SerializableMemoryList(T defValue)
+      {
+         _defValue = defValue;
+         _position = 0;
+      }
+      ~SerializableMemoryList() = default;
    };
 
    // --- MemoryTrie ---

@@ -7,6 +7,11 @@ In development:
 
   === Iteration 42 ===
   ======================================
+  - create a list of imported modules for every module (using onModuleLoad) - dependencies; goes through the list if a weak reference cannot be resolved and
+    there is a weak reference registered for this module
+  - sampleapi1 : system@Enumerator#1&system@threading@Task is not found
+  - why in net.http.nl system@Enumerator#1&system@threading@Task is declared twice
+  ======================================
   webapi phone book example : add, delete, update, search
   --------------------------------------
   #35 : first draft

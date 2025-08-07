@@ -358,8 +358,11 @@ int CLIHelper :: compileProject(int argc, path_c** argv,
 
    Project          project(dataPath, platform, &presenter);
    LinkerBase* linker = createLinker(platform, &project, &errorProcessor);
-   if (!linker)
+   if (!linker) {
       errorProcessor.raiseError(errNotSupportedPlatform, getPlatformName(platform));
+
+      return -1; // !! never reached
+   }      
 
    bool cleanMode = false;
 

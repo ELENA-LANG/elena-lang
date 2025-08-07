@@ -615,6 +615,8 @@ static inline size_t util_find_str(const char* s, const char* subs, size_t defVa
    else return p - s;
 }
 
+#if !defined(__FreeBSD__)
+
 static inline const char* strnstr(const char* haystack, const char* needle, size_t length)
 {
    size_t needle_length = strlen(needle);
@@ -629,6 +631,8 @@ static inline const char* strnstr(const char* haystack, const char* needle, size
    }
    return nullptr;
 }
+
+#endif
 
 static inline size_t util_find_str(const char* s, size_t index, size_t length, const char* subs, size_t defValue)
 {

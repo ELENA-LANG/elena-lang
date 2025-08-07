@@ -82,7 +82,7 @@ public:
 
 // --- getAppPath ---
 
-void getAppPath(PathString& appPath)
+static inline void getAppPath(PathString& appPath)
 {
    wchar_t path[MAX_PATH + 1];
 
@@ -92,7 +92,7 @@ void getAppPath(PathString& appPath)
    appPath.lower();
 }
 
-path_t getDefaultExtension(PlatformType platform)
+static inline path_t getDefaultExtension(PlatformType platform)
 {
    switch (platform)
    {
@@ -104,7 +104,7 @@ path_t getDefaultExtension(PlatformType platform)
    }
 }
 
-int compileProject(int argc, path_c** argv, path_t appPath, ErrorProcessor& errorProcessor, 
+static inline int compileProject(int argc, path_c** argv, path_t appPath, ErrorProcessor& errorProcessor,
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
    PlatformType platform = CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM);

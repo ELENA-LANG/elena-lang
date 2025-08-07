@@ -54,6 +54,7 @@ namespace elena_lang
    constexpr auto INITIALIZER_SECTION        = "#initializer";
    constexpr auto PACKAGE_SECTION            = "#package";
    constexpr auto TEMPLATE_MAPPING           = "#templates";
+   constexpr auto DEPENDENCY_LIST            = "#dependencies";
 
    constexpr auto WEAK_POSTFIX               = "#weak";
    constexpr auto BYREF_POSTFIX              = "#byref";

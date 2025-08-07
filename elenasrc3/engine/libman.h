@@ -123,6 +123,11 @@ namespace elena_lang
          }
       }
 
+      void removeListener(LibraryLoaderListenerBase* listener)
+      {
+         _listeners.cut(listener);
+      }
+
       void loadDistributedSymbols(ModuleBase* module, ustr_t virtualSymbolName, ModuleInfoList& list);
 
       LibraryProvider();

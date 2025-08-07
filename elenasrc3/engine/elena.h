@@ -120,18 +120,19 @@ namespace elena_lang
    typedef Pair<ref_t, mssg_t>   ExtensionInfo;
 
    // --- Maps ---
-   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>                         ReferenceMap;
-   typedef Map<ref64_t, ref_t>                                             ActionMap;
-   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>                        AddressMap;
-   typedef Map<mssg_t, ExtensionInfo>                                      ExtensionMap;
-   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>                 ExtensionTemplateMap;
-   typedef Map<ref_t, ref_t>                                               ResolvedMap;
-   typedef Map<int, addr_t>                                                FieldAddressMap;
-   typedef MemoryMap<ustr_t, ustr_t, Map_StoreUStr, Map_GetUStr, freeUStr> Forwards;
-   typedef Map<ustr_t, bool, allocUStr, freeUStr>                          Variables;
+   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>                            ReferenceMap;
+   typedef Map<ref64_t, ref_t>                                                ActionMap;
+   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>                           AddressMap;
+   typedef Map<mssg_t, ExtensionInfo>                                         ExtensionMap;
+   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>                    ExtensionTemplateMap;
+   typedef Map<ref_t, ref_t>                                                  ResolvedMap;
+   typedef Map<int, addr_t>                                                   FieldAddressMap;
+   typedef MemoryMap<ustr_t, ustr_t, Map_StoreUStr, Map_GetUStr, freeUStr>    Forwards;
+   typedef Map<ustr_t, bool, allocUStr, freeUStr>                             Variables;
 
    // --- Lists ---
-   typedef List<ustr_t, freeUStr>                           IdentifierList;
+   typedef List<ustr_t, freeUStr>                                             IdentifierList;
+   typedef SerializableMemoryList<ustr_t, Map_StoreUStrAligned4, Map_GetUStr> DependecyList;
 
    // --- Tuples ---
 
