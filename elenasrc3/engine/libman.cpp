@@ -239,14 +239,51 @@ ModuleBase* LibraryProvider :: resolveModule(ustr_t referenceName, ref_t& refere
    return nullptr;
 }
 
-ModuleBase* LibraryProvider :: resolveWeakModule(ustr_t weakName, ref_t& reference, bool silentMode)
+ModuleBase* LibraryProvider :: resolveTemplateIndirectly(ModuleBase* module, ustr_t templateName, ref_t& reference)
 {
-   IdentifierString fullName("'", weakName);
+   ref_t dependecyRef = module->mapReference(DEPENDENCY_LIST, true);
+   MemoryBase* section = dependecyRef ? module->mapSection(dependecyRef | mskMetaInfo, true) : nullptr;
+   if (!section)
+      return nullptr;
+
+   DependecyList dependencies(nullptr);
+   MemoryReader reader(section);
+   dependencies.load(&reader);
+
+   IdentifierString fullName("'", templateName);
+   for (auto it = dependencies.start(); !it.eof(); ++it) {
+      if (!_modules.exist(*it)) {
+         auto extModule = loadModule(*it);
+
+         // if we found a module containing the template implementation - stop the search
+         reference = extModule->mapReference(*fullName, true);
+         if (reference)
+            return extModule;
+      }
+   }
+
+   return nullptr;
+}
+
+ModuleBase* LibraryProvider :: resolveWeakModule(ustr_t name, ref_t& reference, bool silentMode)
+{
+   IdentifierString fullName("'", name);
 
    for (auto it = _modules.start(); !it.eof(); ++it) {
       reference = (*it)->mapReference(*fullName, true);
       if (reference)
          return *it;
+   }
+
+   // bad luck, we need to try to resolve it indirectly
+   IdentifierString weakName(TEMPLATE_PREFIX_NS, name);
+   for (auto it = _modules.start(); !it.eof(); ++it) {
+      reference = (*it)->mapReference(*weakName, true);
+      if (reference) {
+         auto templateModule = resolveTemplateIndirectly(*it, name, reference);
+         if (templateModule)
+            return templateModule;
+      }
    }
 
    if (!silentMode)

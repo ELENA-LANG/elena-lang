@@ -3386,6 +3386,8 @@ DISABLE_WARNING_POP
 
          MemoryWriter writer(&_buffer);
          writer.copyFrom(reader, length);
+
+         _position = _buffer.length();
       }
 
       SerializableMemoryList(T defValue)
