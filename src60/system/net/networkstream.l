@@ -16,6 +16,11 @@ public class NetworkStream : Stream
       _buffer := new byte[](512);
    }
 
+   constructor()
+   {
+      _buffer := new byte[](512);
+   }
+
    constructor assign(INetSocket socket, bool socketStream)
    {
       _socket := socket;

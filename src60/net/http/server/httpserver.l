@@ -25,7 +25,9 @@ public sealed class HttpServer : interface<IHttpServer>
       {
          run();
       });
-   }
+      
+      _listenThread.join();
+   }   
 
    protected run()
    {
