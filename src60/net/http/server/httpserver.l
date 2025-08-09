@@ -145,5 +145,7 @@ class HttpAcceptor
       else response := _handleFactory.getErrorHandler().getNotFoundResponse();
       
       :await response.saveContentAsync(stream);
+
+      _client.close();
    }
 }
