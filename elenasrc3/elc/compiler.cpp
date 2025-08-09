@@ -3223,7 +3223,7 @@ void Compiler::injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool i
 
             injectVirtualReturningMethod(scope, classNode,
                encodeMessage(actionRef, 1, CONVERSION_MESSAGE),
-               *scope.moduleScope->selfVar, scope.reference);
+               *scope.moduleScope->selfVar, reference);
          }
       }
    }

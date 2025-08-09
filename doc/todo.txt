@@ -7,8 +7,6 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  - why in net.http.nl system@Enumerator#1&system@threading@Task is declared twice
-  ======================================
   webapi phone book example : add, delete, update, search
   --------------------------------------
   #35 : first draft

@@ -13,12 +13,12 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x00FC
+   #define ELC_REVISION_NUMBER               0x00FD
 
 #if defined _M_IX86 || _M_X64
 
-   #define ERROR_RET_CODE     -2
-   #define WARNING_RET_CODE   -1
+   constexpr auto ERROR_RET_CODE          = -2;
+   constexpr auto WARNING_RET_CODE        = -1;
 
 #elif defined __i386__ || __x86_64__ || __PPC64__ || __aarch64__
 
