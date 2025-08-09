@@ -1,6 +1,18 @@
+public abstract class BootstrapFactoryBase
+{
+   protected abstract IBootstap create();
+   
+   internal start()
+   {
+      IBootstap bootstrap := create();
+      
+      bootstrap.start();
+   }
+}
+
 public Program()
 {
-   IBootstap bootstrap := webapi'bootstrap'Bootstrap;
+   BootstrapFactoryBase factory := webapi'bootstrap'WebApiFactory;
    
-   bootstrap.Server.start();
+   factory.start();
 }

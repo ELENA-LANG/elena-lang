@@ -2,7 +2,14 @@ import net'http'server;
 
 public interface IBootstap
 {
-   get /*internal*/ abstract IHttpServer Server();
-   
    abstract initDummy();
+   
+   protected abstract IHttpServer getServer();
+   
+   internal start()
+   {
+      IHttpServer server := getServer();
+      
+      server.start();
+   }
 }

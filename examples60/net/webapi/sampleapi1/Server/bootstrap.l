@@ -1,5 +1,5 @@
 import webapi'bootstrap;
 
 public SampleApi1Bootstap : preloaded =
-   Bootstrap
-      .initDummy();
+   WebApiFactory
+      .registerServer(x => x.initDummy());
