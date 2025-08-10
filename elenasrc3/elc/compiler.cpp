@@ -17685,7 +17685,8 @@ void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& methodScope, S
 
    codeScope.syncStack(&methodScope);
 
-   compiler->appendSpecialArgumentInfo(*writer, methodScope);
+   if(compiler->_withDebugInfo)
+      compiler->appendSpecialArgumentInfo(*writer, methodScope);
 
    compiler->endMethod(*writer, methodScope);
 }
