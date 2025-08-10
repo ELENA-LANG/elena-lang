@@ -8372,6 +8372,11 @@ void Compiler::compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
    }
 }
 
+void Compiler :: appendSpecialArgumentInfo(BuildTreeWriter& writer, MethodScope& scope)
+{
+   writeMethodDebugInfo(writer, scope, false, true);
+}
+
 void Compiler::beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, BuildKey scopeKey, bool withDebugInfo)
 {
    writer.newNode(scopeKey, scope.message);
@@ -8383,7 +8388,7 @@ void Compiler::beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNo
 
       writer.newNode(BuildKey::Tape);
 
-      writeMethodDebugInfo(writer, scope);
+      writeMethodDebugInfo(writer, scope, !scope.functionMode || scope.constructorMode, false);
       writeMessageInfo(writer, scope);
    }
    else writer.newNode(BuildKey::Tape);
@@ -9473,6 +9478,13 @@ void Compiler::writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope)
    writer.appendNode(BuildKey::MethodName, *methodName);
 }
 
+void Compiler :: writeInlineFieldDebugInfo(BuildTreeWriter& writer, int fieldIndex, int selfIndex)
+{
+   writer.newNode(BuildKey::InlineField, fieldIndex);
+   writer.appendNode(BuildKey::StackIndex, selfIndex);
+   writer.closeNode();
+}
+
 void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo,
    ustr_t name, int index)
 {
@@ -9524,11 +9536,11 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
    writer.closeNode();
 }
 
-void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
+void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope, bool withSelf, bool withInlineFields)
 {
    writer.newNode(BuildKey::ArgumentsInfo);
 
-   if (!scope.functionMode || scope.constructorMode) {
+   if (withSelf) {
       ref_t classRef = scope.getClassRef();
       int classSize = _logic->defineStructSize(*scope.moduleScope, classRef).size;
 
@@ -9553,6 +9565,16 @@ void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope)
 
       writeParameterDebugInfo(writer, scope, paramInfo.size, paramInfo.typeInfo,
          it.key(), prefix - paramInfo.offset);
+   }
+
+   if (withInlineFields) {
+      InlineClassScope* nested = Scope::getScope<InlineClassScope>(scope, Scope::ScopeLevel::Class);
+
+      for (auto it = nested->outers.start(); !it.eof(); ++it) {
+         auto fieldInfo = nested->info.fields.get(it.key());
+
+         writeInlineFieldDebugInfo(writer, fieldInfo.offset, -1);
+      }
    }
 
    writer.closeNode();
@@ -17662,6 +17684,8 @@ void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& methodScope, S
    }
 
    codeScope.syncStack(&methodScope);
+
+   compiler->appendSpecialArgumentInfo(*writer, methodScope);
 
    compiler->endMethod(*writer, methodScope);
 }

@@ -286,6 +286,8 @@ namespace elena_lang
       IntArrayParameter    = 0x0208,
       RealArrayParameter   = 0x0209,
 
+      InlineField          = 0x0301,
+
       FrameInfo            = 0x0301,
       ParameterInfo        = 0x0302,
       MessageInfo          = 0x0303,

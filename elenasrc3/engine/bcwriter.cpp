@@ -3668,6 +3668,18 @@ inline void saveParameterDebugSymbol(DebugSymbol symbol, int offset, ustr_t name
    }
 }
 
+inline void saveInlineFieldDebugSymbol(DebugSymbol symbol, int offset, int index, TapeScope& tapeScope)
+{
+   DebugLineInfo info = { symbol };
+   info.addresses.inlineField.index = index;
+   info.addresses.inlineField.offset = offset;
+   tapeScope.scope->debug->write(&info, sizeof(info));
+
+   DebugLineInfo frameInfo = { DebugSymbol::FrameInfo };
+   frameInfo.addresses.offset.disp = tapeScope.reservedN;
+   tapeScope.scope->debug->write(&frameInfo, sizeof(frameInfo));
+}
+
 void ByteCodeWriter :: saveArgumentsInfo(/*CommandTape& tape, */BuildNode node, TapeScope& tapeScope)
 {
    BuildNode current = node.firstChild();
@@ -3700,6 +3712,9 @@ void ByteCodeWriter :: saveArgumentsInfo(/*CommandTape& tape, */BuildNode node, 
             break;
          case BuildKey::RealArrayParameter:
             saveDebugSymbol(DebugSymbol::RealArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            break;
+         case BuildKey::InlineField:
+            saveInlineFieldDebugSymbol(DebugSymbol::InlineField, current.findChild(BuildKey::StackIndex).arg.value, current.arg.value, tapeScope);
             break;
          default:
             break;

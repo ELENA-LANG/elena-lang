@@ -1826,6 +1826,8 @@ namespace elena_lang
 
       void injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, ClassScope* classScope, CodeScope& codeScope);
 
+      void appendSpecialArgumentInfo(BuildTreeWriter& writer, MethodScope& scope);
+
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 
       static int allocateLocalAddress(Scope& scope, int size, bool binaryArray);
@@ -1978,7 +1980,8 @@ namespace elena_lang
 
       void writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo,
          ustr_t name, int index);
-      void writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope);
+      void writeInlineFieldDebugInfo(BuildTreeWriter& writer, int fieldIndex, int selfIndex);
+      void writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope, bool withSelf, bool withInlineFields);
       void writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope);
 
       void compileInlineInitializing(BuildTreeWriter& writer, ClassScope& classScope, SyntaxNode node);
