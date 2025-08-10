@@ -46,9 +46,10 @@ A
    
    testMe()
    {
+      var off := 5;
       auto f := (int arg) 
          {
-            int n := arg + x;
+            int n := arg + x + off;
             
             Console.writeLine(n)
          };

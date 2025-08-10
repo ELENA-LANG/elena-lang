@@ -1826,7 +1826,7 @@ namespace elena_lang
 
       void injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, ClassScope* classScope, CodeScope& codeScope);
 
-      void appendSpecialArgumentInfo(BuildTreeWriter& writer, MethodScope& scope);
+      void injectSpecialArgumentInfo(BuildTreeWriter& writer, MethodScope& scope);
 
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 

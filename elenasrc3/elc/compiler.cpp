@@ -8372,9 +8372,12 @@ void Compiler::compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
    }
 }
 
-void Compiler :: appendSpecialArgumentInfo(BuildTreeWriter& writer, MethodScope& scope)
+void Compiler :: injectSpecialArgumentInfo(BuildTreeWriter& writer, MethodScope& scope)
 {
-   writeMethodDebugInfo(writer, scope, false, true);
+   BuildNode argInfoNode = writer.CurrentNode().findChild(BuildKey::ArgumentsInfo);
+   BuildTreeWriter argWriter(argInfoNode);
+
+   writeMethodDebugInfo(argWriter, scope, false, true);
 }
 
 void Compiler::beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, BuildKey scopeKey, bool withDebugInfo)
@@ -8388,7 +8391,10 @@ void Compiler::beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNo
 
       writer.newNode(BuildKey::Tape);
 
+      writer.newNode(BuildKey::ArgumentsInfo);
       writeMethodDebugInfo(writer, scope, !scope.functionMode || scope.constructorMode, false);
+      writer.closeNode();
+
       writeMessageInfo(writer, scope);
    }
    else writer.newNode(BuildKey::Tape);
@@ -9480,7 +9486,7 @@ void Compiler::writeMessageInfo(BuildTreeWriter& writer, MethodScope& scope)
 
 void Compiler :: writeInlineFieldDebugInfo(BuildTreeWriter& writer, int fieldIndex, int selfIndex)
 {
-   writer.newNode(BuildKey::InlineField, fieldIndex);
+   writer.newNode(BuildKey::InlineField, fieldIndex + 1);
    writer.appendNode(BuildKey::StackIndex, selfIndex);
    writer.closeNode();
 }
@@ -9538,8 +9544,6 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
 
 void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope, bool withSelf, bool withInlineFields)
 {
-   writer.newNode(BuildKey::ArgumentsInfo);
-
    if (withSelf) {
       ref_t classRef = scope.getClassRef();
       int classSize = _logic->defineStructSize(*scope.moduleScope, classRef).size;
@@ -9576,8 +9580,6 @@ void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope,
          writeInlineFieldDebugInfo(writer, fieldInfo.offset, -1);
       }
    }
-
-   writer.closeNode();
 }
 
 void Compiler :: compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
@@ -17671,6 +17673,9 @@ void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& methodScope, S
 
    compiler->beginMethod(*writer, methodScope, node, BuildKey::Method, false);
 
+   if (compiler->_withDebugInfo)
+      writer->appendNode(BuildKey::ArgumentsInfo);
+
    CodeScope codeScope(&methodScope);
 
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
@@ -17686,7 +17691,7 @@ void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& methodScope, S
    codeScope.syncStack(&methodScope);
 
    if(compiler->_withDebugInfo)
-      compiler->appendSpecialArgumentInfo(*writer, methodScope);
+      compiler->injectSpecialArgumentInfo(*writer, methodScope);
 
    compiler->endMethod(*writer, methodScope);
 }
