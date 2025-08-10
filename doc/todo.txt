@@ -7,7 +7,8 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * async method : display variables / self variable
+  * yield method : display variables / parameters / self variable
+  * async method : display variables / parameters / self variable
   * async method : step over async operation
   * async method : step into async operation
   ======================================
