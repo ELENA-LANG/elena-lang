@@ -526,7 +526,7 @@ void DebugController :: stepOver()
             _postponed.autoNextLine = true;
             _postponed.row = lineInfo->row;
 
-            if (nextStep->symbol == DebugSymbol::VirtualBreakpoint) {
+            if (nextStep->symbol == DebugSymbol::VirtualBreakpoint && nextStep->addresses.step.address != lineInfo->addresses.step.address) {
                _process->setBreakpoint(nextStep->addresses.step.address, true);
             }
             else _process->setStepMode();
