@@ -2961,7 +2961,12 @@ void ByteCodeWriter :: saveFieldDebugInfo(Scope& scope, ClassInfo& info)
       fieldInfo.addresses.field.nameRef = scope.debugStrings->position();
       fieldInfo.addresses.field.offset = (*it).offset;
 
-      scope.debugStrings->writeString(it.key());
+      ustr_t name = it.key();
+      if (name.compare(PARENT_VAR)) {
+         name = "self";
+      }
+
+      scope.debugStrings->writeString(name);
       scope.debug->write(&fieldInfo, sizeof(DebugLineInfo));
 
       ref_t typeRef = (*it).typeInfo.typeRef;
@@ -3674,10 +3679,6 @@ inline void saveInlineFieldDebugSymbol(DebugSymbol symbol, int offset, int index
    info.addresses.inlineField.index = index;
    info.addresses.inlineField.offset = offset;
    tapeScope.scope->debug->write(&info, sizeof(info));
-
-   DebugLineInfo frameInfo = { DebugSymbol::FrameInfo };
-   frameInfo.addresses.offset.disp = tapeScope.reservedN;
-   tapeScope.scope->debug->write(&frameInfo, sizeof(frameInfo));
 }
 
 void ByteCodeWriter :: saveArgumentsInfo(/*CommandTape& tape, */BuildNode node, TapeScope& tapeScope)

@@ -9577,7 +9577,7 @@ void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope,
       for (auto it = nested->outers.start(); !it.eof(); ++it) {
          auto fieldInfo = nested->info.fields.get(it.key());
 
-         writeInlineFieldDebugInfo(writer, fieldInfo.offset, -1);
+         writeInlineFieldDebugInfo(writer, fieldInfo.offset, 1);
       }
    }
 }

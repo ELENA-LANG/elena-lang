@@ -7,7 +7,6 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * closure : should display captured variables / self
   * yield method : display parameters
   * async method : display variables / parameters / self variable
   * async method : step over async operation

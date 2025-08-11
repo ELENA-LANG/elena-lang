@@ -1095,8 +1095,8 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
             }
             case DebugSymbol::InlineField:
             {
-               item = readInlineField(watch, nullptr, _process->getStackItem(
-                  lineInfo[index].addresses.inlineField.offset, -getFrameDisp(lineInfo[index + 1], _process->getDataOffset() * 2) - _process->getDataOffset()), lineInfo[index].addresses.inlineField.index, level - 1);
+               item = readInlineField(watch, nullptr, _process->getStackItem(lineInfo[index].addresses.local.offset),
+                  lineInfo[index].addresses.inlineField.index, level - 1);
                break;
             }               
             default:
