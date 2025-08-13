@@ -10419,6 +10419,9 @@ void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope
 
    beginMethod(writer, scope, node, BuildKey::Method, false);
 
+   if (_withDebugInfo)
+      writer.appendNode(BuildKey::ArgumentsInfo);
+
    CodeScope codeScope(&scope);
 
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
@@ -10432,6 +10435,9 @@ void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope
    }
 
    codeScope.syncStack(&scope);
+
+   if (_withDebugInfo)
+      injectSpecialArgumentInfo(writer, scope);
 
    endMethod(writer, scope);
 
