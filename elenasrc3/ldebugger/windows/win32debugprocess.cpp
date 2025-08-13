@@ -556,10 +556,11 @@ void Win32DebugProcess :: processException(EXCEPTION_DEBUG_INFO* exception)
          break;
       case EXCEPTION_BREAKPOINT:
          if (_breakpoints.processBreakpoint(_current)) {
-            _current->state = _steps.get(getIP(_current->context));
-            _trapped = true;
-            _stepMode = false;
             _current->setTrapFlag();
+
+            if (getIP(_current->context) >= _minAddress && getIP(_current->context) <= _maxAddress) {
+               processStep();
+            }
          }
          else if (_init_breakpoint != 0 && _init_breakpoint != INVALID_ADDR) {
             _trapped = true;
