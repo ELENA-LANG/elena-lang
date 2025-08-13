@@ -624,6 +624,9 @@ void Win32DebugProcess :: stop()
 
 void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelControl)
 {
+   _stepMode = false;
+   _current->resetTrapFlag();
+
    _breakpoints.setTempBreakpoint(address, _current);
 }
 
