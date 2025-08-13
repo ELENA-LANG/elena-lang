@@ -20,24 +20,39 @@ namespace elena_lang
    {         
    };
 
-   // --- Win32ThreadBreakpoint ---
-   struct Win32ThreadBreakpoint
+   // --- Win32TempBreakpoint ---
+   struct Win32TempBreakpoint
    {
-      bool   software;
-      bool   hardware;
-      addr_t next;
-      addr_t stackLevel;
-
-      void clearSoftware()
+      enum class Mode
       {
-         software = false;
-         next = 0;
+         None     = 0,
+         Software = 1,
+         Hardware = 2,
+         Reset    = 3,
+      };
+
+      Mode   mode;
+      addr_t address;
+      char   substitute;
+
+      bool isAssigned() const { return mode != Mode::None; }
+
+      void reset()
+      {
+         mode = Mode::None;
       }
 
-      Win32ThreadBreakpoint()
+      Win32TempBreakpoint()
+         : mode(Mode::None), address(0), substitute(0)
       {
-         hardware = software = false;
-         stackLevel = next = 0;
+      }
+      Win32TempBreakpoint(addr_t address)
+         : mode(Mode::None), address(address), substitute(0)
+      {
+      }
+      Win32TempBreakpoint(addr_t address, Mode mode)
+         : mode(mode), address(address), substitute(0)
+      {
       }
    };
 
@@ -52,9 +67,9 @@ namespace elena_lang
       HANDLE  hThread;
       CONTEXT context;
    
+      Win32TempBreakpoint resetBreakpoint;
+
    public:
-      Win32ThreadBreakpoint breakpoint;
-   
       bool readDump(addr_t address, char* dump, size_t length);
       void writeDump(addr_t address, char* dump, size_t length);
    
@@ -73,17 +88,23 @@ namespace elena_lang
       Win32ThreadContext(HANDLE hProcess, HANDLE hThread);
    };
    
+   typedef CachedList<Win32TempBreakpoint, 5> TempBreakpoints;
+
    // --- BreakpointContext ---
    struct Win32BreakpointContext
    {
+      TempBreakpoints   tempBreakpoints;
       Map<size_t, char> breakpoints;
+
+      void setTempBreakpoint(addr_t address, Win32ThreadContext* context);
+      bool clearTempBreakpoint(addr_t address, Win32ThreadContext* context);
+
+      bool processStep(Win32ThreadContext* context, bool stepMode);
    
       void addBreakpoint(addr_t address, Win32ThreadContext* context, bool started);
       void removeBreakpoint(addr_t address, Win32ThreadContext* context, bool started);
       void setSoftwareBreakpoints(Win32ThreadContext* context);
-      void setHardwareBreakpoint(addr_t address, Win32ThreadContext* context, bool withStackLevelControl);
    
-      bool processStep(Win32ThreadContext* context, bool stepMode);
       bool processBreakpoint(Win32ThreadContext* context);
    
       void clear();

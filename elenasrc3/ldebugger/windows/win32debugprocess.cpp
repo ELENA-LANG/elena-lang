@@ -24,17 +24,17 @@ constexpr auto elVMTFlagOffset   = elVMTFlagOffset32;
 constexpr auto elObjectOffset    = elObjectOffset32;
 constexpr auto elStructMask      = elStructMask32;
 
-inline addr_t getIP(CONTEXT& context)
+static inline addr_t getIP(CONTEXT& context)
 {
    return context.Eip;
 }
 
-inline addr_t getBP(CONTEXT& context)
+static inline addr_t getBP(CONTEXT& context)
 {
    return context.Ebp;
 }
 
-inline void setIP(CONTEXT& context, addr_t address)
+static inline void setIP(CONTEXT& context, addr_t address)
 {
    context.Eip = address;
 }
@@ -49,17 +49,17 @@ constexpr auto elVMTFlagOffset   = elVMTFlagOffset64;
 constexpr auto elObjectOffset    = elObjectOffset64;
 constexpr auto elStructMask      = elStructMask64;
 
-inline void setIP(CONTEXT& context, addr_t address)
+static inline void setIP(CONTEXT& context, addr_t address)
 {
    context.Rip = address;
 }
 
-inline addr_t getIP(CONTEXT& context)
+static inline addr_t getIP(CONTEXT& context)
 {
    return context.Rip;
 }
 
-inline addr_t getBP(CONTEXT& context)
+static inline addr_t getBP(CONTEXT& context)
 {
    return context.Rbp;
 }
@@ -97,8 +97,57 @@ BOOL CALLBACK EnumThreadWndProc(HWND hwnd, LPARAM lParam)
 
 Win32BreakpointContext :: Win32BreakpointContext()
    : breakpoints(0)
+{   
+}
+
+bool Win32BreakpointContext :: processStep(Win32ThreadContext* context, bool stepMode)
 {
-   
+   if (context->resetBreakpoint.mode == Win32TempBreakpoint::Mode::Reset) {
+      // reset the breakpoint if required
+      context->setSoftwareBreakpoint(context->resetBreakpoint.address);
+
+      if (stepMode)
+         context->setTrapFlag();
+
+      context->resetBreakpoint.mode = Win32TempBreakpoint::Mode::None;
+   }
+   else return false;
+
+   return true;
+}
+
+void Win32BreakpointContext :: setTempBreakpoint(addr_t address, Win32ThreadContext* context)
+{
+   Win32TempBreakpoint breakpoint = { address };
+   breakpoint.substitute = context->setSoftwareBreakpoint(address);
+   breakpoint.mode = Win32TempBreakpoint::Mode::Software;
+
+   for (size_t i = 0; i < tempBreakpoints.count(); i++) {
+      if (!tempBreakpoints[i].isAssigned()) {
+         tempBreakpoints[i] = breakpoint;
+
+         return;
+      }
+   }
+
+   tempBreakpoints.add(breakpoint);
+}
+
+bool Win32BreakpointContext :: clearTempBreakpoint(addr_t address, Win32ThreadContext* context)
+{
+   bool proceeded = false;
+
+   for (size_t i = 0; i < tempBreakpoints.count(); i++) {
+      if (tempBreakpoints[i].isAssigned() && tempBreakpoints[i].address == address) {
+         context->clearSoftwareBreakpoint(address, tempBreakpoints[i].substitute);
+
+         tempBreakpoints[i].reset();
+
+         proceeded = true;
+      }
+   }
+
+   return proceeded;
 }
 
 void Win32BreakpointContext :: addBreakpoint(addr_t address, Win32ThreadContext* context, bool started)
@@ -113,9 +162,8 @@ void Win32BreakpointContext :: removeBreakpoint(addr_t address, Win32ThreadConte
 {
    if (started) {
       context->clearSoftwareBreakpoint(address, breakpoints.get(address));
-      if (context->breakpoint.software && context->breakpoint.next == address) {
-
-         context->breakpoint.clearSoftware();
+      if (context->resetBreakpoint.mode == Win32TempBreakpoint::Mode::Reset && context->resetBreakpoint.address == address) {
+         context->resetBreakpoint.reset();
          context->resetTrapFlag();
       }
    }
@@ -132,70 +180,36 @@ void Win32BreakpointContext :: setSoftwareBreakpoints(Win32ThreadContext* contex
    }
 }
 
-bool Win32BreakpointContext :: processStep(Win32ThreadContext* context, bool stepMode)
-{
-   Win32ThreadBreakpoint breakpoint = context->breakpoint;
-
-   if (breakpoint.next != 0) {
-      if (breakpoint.software) {
-         context->setSoftwareBreakpoint(breakpoint.next);
-         context->breakpoint.software = false;
-      }
-      else context->setHardwareBreakpoint(breakpoint.next);
-      context->breakpoint.next = 0;
-      if (stepMode)
-         context->setTrapFlag();
-
-      return true;
-   }
-
-   if (breakpoint.hardware) {
-      context->clearHardwareBreakpoint();
-
-      // check stack level to skip recursive entries
-      if (getBP(context->context) < breakpoint.stackLevel) {
-         context->breakpoint.next = getIP(context->context);
-         context->setTrapFlag();
-         return true;
-      }
-   }
-
-   return false;
-}
-
 bool Win32BreakpointContext :: processBreakpoint(Win32ThreadContext* context)
 {
-   if (breakpoints.exist(getIP(context->context) - 1)) {
-      context->breakpoint.next = getIP(context->context) - 1;
+   bool proceeded = false;
 
-      context->setIP(context->breakpoint.next);
-      char substitute = breakpoints.get(context->breakpoint.next);
-      context->writeDump(context->breakpoint.next, &substitute, 1);
+   addr_t address = getIP(context->context) - 1;
 
-      context->breakpoint.software = true;
+   if (clearTempBreakpoint(address, context)) {
+      proceeded = true;
+   }
+
+   if (breakpoints.exist(address)) {
+      Win32TempBreakpoint resetBreakpoint(address, Win32TempBreakpoint::Mode::Reset);
+      context->resetBreakpoint = resetBreakpoint;
+
+      if (!proceeded) {
+         char substitute = breakpoints.get(resetBreakpoint.address);
+         context->clearSoftwareBreakpoint(resetBreakpoint.address, substitute);
+
+         proceeded = true;
+      }
+   }
+
+   if (proceeded) {
+      context->setIP(address);
 
       return true;
    }
-   else return false;
-
+   
+   return false;
 }
-
-void Win32BreakpointContext :: setHardwareBreakpoint(addr_t address, Win32ThreadContext* context, bool withStackControl)
-{
-   if (address == getIP(context->context)) {
-      context->setTrapFlag();
-      context->breakpoint.next = address;
-   }
-   else {
-      context->setHardwareBreakpoint(address);
-   }
-
-   if (withStackControl) {
-      context->breakpoint.stackLevel = getBP(context->context);
-   }
-   else context->breakpoint.stackLevel = 0;
-}
-
 
 void Win32BreakpointContext :: clear()
 {
@@ -205,7 +219,7 @@ void Win32BreakpointContext :: clear()
 // --- Win32ThreadContext ---
 
 Win32ThreadContext :: Win32ThreadContext(HANDLE hProcess, HANDLE hThread)
-   : context({})
+   : context({}), resetBreakpoint()
 {
    this->hProcess = hProcess;
    this->hThread = hThread;
@@ -260,7 +274,6 @@ void Win32ThreadContext :: setHardwareBreakpoint(addr_t breakpoint)
    context.Dr0 = breakpoint;
    context.Dr7 = 0x000001;
    SetThreadContext(hThread, &context);
-   this->breakpoint.hardware = true;
 }
 
 void Win32ThreadContext :: clearHardwareBreakpoint()
@@ -269,7 +282,6 @@ void Win32ThreadContext :: clearHardwareBreakpoint()
    context.Dr0 = 0x0;
    context.Dr7 = 0x0;
    SetThreadContext(hThread, &context);
-   breakpoint.hardware = false;
 }
 
 void Win32ThreadContext::resetTrapFlag()
@@ -611,7 +623,7 @@ void Win32DebugProcess :: stop()
 
 void Win32DebugProcess :: setBreakpoint(addr_t address, bool withStackLevelControl)
 {
-   _breakpoints.setHardwareBreakpoint(address, _current, withStackLevelControl);
+   _breakpoints.setTempBreakpoint(address, _current);
 }
 
 void Win32DebugProcess :: addBreakpoint(addr_t address)
