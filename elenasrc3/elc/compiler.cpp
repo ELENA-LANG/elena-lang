@@ -1316,17 +1316,18 @@ ObjectInfo Compiler::MetaScope::mapIdentifier(ustr_t identifier, bool referenceO
 
 // --- Compiler::SourceScope ---
 
-Compiler::SourceScope::SourceScope(Scope* parent, ref_t reference, Visibility visibility)
+Compiler::SourceScope::SourceScope(Scope* parent, ref_t reference, Visibility visibility, bool debugInfo)
    : Scope(parent)
 {
    this->reference = reference;
    this->visibility = visibility;
+   this->withDebugInfo = debugInfo;
 }
 
 // --- Compiler::SymbolScope ---
 
-Compiler::SymbolScope::SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility)
-   : SourceScope(ns, reference, visibility), info({})
+Compiler::SymbolScope :: SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility, bool withDebugInfo)
+   : SourceScope(ns, reference, visibility, withDebugInfo), info({})
 {
    type = SymbolKind::Normal;
    reserved1 = reserved2 = 0;
@@ -1354,16 +1355,16 @@ void Compiler::SymbolScope::save()
 
 // --- Compiler::TemplateScope ---
 
-Compiler::TemplateScope::TemplateScope(Scope* parent, ref_t reference, Visibility visibility)
-   : SourceScope(parent, reference, visibility)
+Compiler::TemplateScope::TemplateScope(Scope* parent, ref_t reference, Visibility visibility, bool withDebugInfo)
+   : SourceScope(parent, reference, visibility, withDebugInfo)
 {
    type = TemplateType::None;
 }
 
 // --- Compiler::ClassScope ---
 
-Compiler::ClassScope::ClassScope(Scope* ns, ref_t reference, Visibility visibility)
-   : SourceScope(ns, reference, visibility)
+Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibility, bool debugInfo)
+   : SourceScope(ns, reference, visibility, debugInfo)
 {
    info.header.flags = elStandartVMT;
    info.header.parentRef = moduleScope->buildins.superReference;
@@ -1508,8 +1509,8 @@ void Compiler::ClassScope::save()
 
 // --- ClassClassScope ---
 
-Compiler::ClassClassScope::ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo, ref_t classInfoRef)
-   : ClassScope(parent, reference, visibility),
+Compiler::ClassClassScope::ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo, ref_t classInfoRef, bool debugInfo)
+   : ClassScope(parent, reference, visibility, debugInfo),
    classInfo(classInfo), classInfoRef(classInfoRef)
 {
 }
@@ -1939,8 +1940,8 @@ void Compiler::ExprScope :: freeTempStack(int prevAllocated1, int prevAllocated2
 }
 // --- Compiler::InlineClassScope ---
 
-Compiler::InlineClassScope::InlineClassScope(ExprScope* owner, ref_t reference)
-   : ClassScope(owner, reference, Visibility::Internal),
+Compiler::InlineClassScope::InlineClassScope(ExprScope* owner, ref_t reference, bool debugInfo)
+   : ClassScope(owner, reference, Visibility::Internal, debugInfo),
    outers({}), expectedRef(0)
 {
 }
@@ -2128,8 +2129,8 @@ bool Compiler::InlineClassScope::markAsPresaved(ObjectInfo object)
 
 // --- Compiler::StatemachineClassScope ---
 
-Compiler::StatemachineClassScope::StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode)
-   : InlineClassScope(owner, reference), contextSize(0), typeRef(0), resultRef(0), asyncMode(asyncMode), localMappings(-1)
+Compiler::StatemachineClassScope::StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode, bool withDebugInfo)
+   : InlineClassScope(owner, reference, withDebugInfo), contextSize(0), typeRef(0), resultRef(0), asyncMode(asyncMode), localMappings(-1)
 {
 }
 
@@ -7225,10 +7226,10 @@ static inline ref_t targetResolver(void* param, mssg_t mssg)
 }
 
 ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage,
-   ref_t outputRef)
+   ref_t outputRef, bool withDebugInfo)
 {
    ref_t extRef = scope.moduleScope->mapAnonymous();
-   ClassScope classScope(&scope, extRef, Visibility::Private);
+   ClassScope classScope(&scope, extRef, Visibility::Private, withDebugInfo);
    declareClassParent(classScope.info.header.parentRef, classScope, {});
    classScope.extensionDispatcher = true;
    classScope.info.header.classRef = classScope.reference;
@@ -7281,7 +7282,7 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
 }
 
 ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCallContext& context,
-   ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr, bool singleDispatchMode)
+   ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr, bool withDebugInfo, bool singleDispatchMode)
 {
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
@@ -7395,7 +7396,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
       context.implicitSignatureRef = 0;
       ref_t extRef = nsScope->extensionDispatchers.get(context.weakMessage);
       if (extRef == INVALID_REF) {
-         extRef = compileExtensionDispatcher(writer, *nsScope, context.weakMessage, 0);
+         extRef = compileExtensionDispatcher(writer, *nsScope, context.weakMessage, 0, withDebugInfo);
 
          nsScope->extensionDispatchers.add(context.weakMessage, extRef);
       }
@@ -8183,7 +8184,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 {
    ObjectInfo retVal = {};
 
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, !EAttrs::test(mode, EAttr::NoDebugInfo));
 
    MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
    if (methodScope && methodScope->isYieldable()) {
@@ -8227,7 +8228,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
 ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ExpressionAttribute mode)
 {
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, EAttrs::test(mode, EAttr::NoDebugInfo));
 
    return expression.compileRoot(node, mode);
 }
@@ -8548,7 +8549,8 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
             exprRetVal = compileRootExpression(writer, codeScope, current, mode);
             break;
          case SyntaxKey::ReturnExpression:
-            exprRetVal = retVal = compileRetExpression(writer, codeScope, current, EAttr::None);
+            exprRetVal = retVal = compileRetExpression(writer, codeScope, current,
+               noDebugInfoMode ? EAttr::NoDebugInfo : EAttr::None);
             break;
          case SyntaxKey::CodeBlock:
          {
@@ -8560,7 +8562,7 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
             }
 
             CodeScope subScope(&codeScope);
-            exprRetVal = compileCode(writer, subScope, current, false, autoGenerated || !_withDebugInfo);
+            exprRetVal = compileCode(writer, subScope, current, false, autoGenerated || noDebugInfoMode);
             subScope.syncStack(&codeScope);
 
             if (!noDebugInfoMode && autoGenerated)
@@ -8568,7 +8570,8 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
             break;
          }
          case SyntaxKey::EOP:
-            addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
+            if(!noDebugInfoMode)
+               addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
             break;
          case SyntaxKey::ElseCondStatement:
          case SyntaxKey::CondStatement:
@@ -8630,7 +8633,7 @@ void Compiler :: injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, Class
    BuildTreeWriter tmpWriter(tmp);
    tmpWriter.newNode(BuildKey::Root);
 
-   Expression expression(this, codeScope, tmpWriter);
+   Expression expression(this, codeScope, tmpWriter, false);
    for (auto local_it = smScope->localMappings.start(); !local_it.eof(); ++local_it) {
       bool dummy = false;
       expression.compileAssigningOp({ ObjectKind::Local, (ref_t)local_it.key() }, { ObjectKind::Field, (ref_t)*local_it }, dummy);
@@ -8642,7 +8645,7 @@ void Compiler :: injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, Class
 }
 
 void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
-   SyntaxNode node, bool newFrame)
+   SyntaxNode node, bool newFrame, bool withDebugInfo)
 {
    if (!newFrame) {
       if (scope.checkHint(MethodHint::Multimethod)) {
@@ -8662,7 +8665,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    if (scope.isYieldable()) {
       StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(*classScope, Scope::ScopeLevel::Statemachine);
 
-      Expression expression(this, codeScope, writer);
+      Expression expression(this, codeScope, writer, withDebugInfo);
 
       // reserve the place for the next step
       int offset = allocateLocalAddress(codeScope, sizeof(addr_t), false);
@@ -8687,7 +8690,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    SyntaxNode bodyNode = node.firstChild(SyntaxKey::ScopeMask);
    switch (bodyNode.key) {
       case SyntaxKey::CodeBlock:
-         retVal = compileCode(writer, codeScope, bodyNode, scope.closureMode, !_withDebugInfo);
+         retVal = compileCode(writer, codeScope, bodyNode, scope.closureMode, !withDebugInfo);
          break;
       case SyntaxKey::ReturnExpression:
          retVal = compileRetExpression(writer, codeScope, bodyNode, EAttr::None);
@@ -8695,22 +8698,22 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       case SyntaxKey::ResendDispatch:
          retVal = compileResendCode(writer, codeScope,
             scope.constructorMode ? mapConstructorTarget(scope) : scope.mapSelf(),
-            bodyNode);
+            bodyNode, withDebugInfo);
 
          if (codeScope.isByRefHandler() && retVal.kind != ObjectKind::Unknown) {
-            Expression expression(this, codeScope, writer);
+            Expression expression(this, codeScope, writer, withDebugInfo);
 
             expression.compileAssigning(node, codeScope.mapByRefReturnArg(), retVal);
          }
          else if (scope.info.outputRef != 0 && !scope.constructorMode) {
-            Expression expression(this, codeScope, writer);
+            Expression expression(this, codeScope, writer, withDebugInfo);
 
             expression.compileConverting(node, retVal, scope.info.outputRef,
                scope.checkHint(MethodHint::Stacksafe));
          }
          break;
       case SyntaxKey::Redirect:
-         retVal = compileRedirect(writer, codeScope, bodyNode, scope.info.outputRef);
+         retVal = compileRedirect(writer, codeScope, bodyNode, scope.info.outputRef, withDebugInfo);
          break;
       default:
          break;
@@ -8733,13 +8736,13 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       injectLocalLoadingForYieldMethod(writer, classScope, codeScope);
       writer.removeBookmark();
 
-      Expression expression(this, codeScope, writer);
+      Expression expression(this, codeScope, writer, false);
 
       expression.writeObjectInfo({ ObjectKind::Singleton, { scope.moduleScope->branchingInfo.typeRef }, scope.moduleScope->branchingInfo.falseRef });
    }
    // if the method returns itself
    else if (retVal.kind == ObjectKind::Unknown && !codeScope.withRetStatement) {
-      Expression expression(this, codeScope, writer);
+      Expression expression(this, codeScope, writer, withDebugInfo);
 
       // NOTE : extension should re
       retVal = scope.mapSelf(!scope.isExtension);
@@ -8913,9 +8916,9 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    }
 }
 
-ObjectInfo Compiler::compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef)
+ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef, bool withDebugInfo)
 {
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, withDebugInfo);
    ArgumentsInfo arguments;
    ArgumentsInfo updatedOuterArgs;
 
@@ -8948,7 +8951,7 @@ ObjectInfo Compiler::compileRedirect(BuildTreeWriter& writer, CodeScope& codeSco
    return retVal;
 }
 
-ObjectInfo Compiler::compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node)
+ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node, bool withDebugInfo)
 {
    ObjectInfo retVal = {};
 
@@ -8999,7 +9002,7 @@ ObjectInfo Compiler::compileResendCode(BuildTreeWriter& writer, CodeScope& codeS
       }
 
       MessageCallContext context = {};
-      Expression expression(this, codeScope, writer);
+      Expression expression(this, codeScope, writer, withDebugInfo);
       ArgumentsInfo arguments;
       ArgumentsInfo updatedOuterArgs;
 
@@ -9204,17 +9207,17 @@ mssg_t Compiler::compileInplaceConstructorHandler(BuildTreeWriter& writer, Metho
    privateScope.selfLocal = -1;
 
    CodeScope codeScope(&privateScope);
-   beginMethod(writer, privateScope, methodNode, BuildKey::Method, _withDebugInfo);
+   beginMethod(writer, privateScope, methodNode, BuildKey::Method, classScope->withDebugInfo);
    writer.appendNode(BuildKey::OpenFrame);
 
    if (methodNode.existChild(SyntaxKey::FillingAttr)) {
-      Expression expression(this, codeScope, writer);
+      Expression expression(this, codeScope, writer, false);
 
       expression.writeObjectInfo(privateScope.mapSelf());
       fillObject(writer, classScope->info, invokerScope.moduleScope->ptrSize);
    }
    if (classScope->info.methods.exist(invokerScope.moduleScope->buildins.init_message)) {
-      Expression expression(this, codeScope, writer);
+      Expression expression(this, codeScope, writer, false);
 
       expression.writeObjectInfo(privateScope.mapSelf());
 
@@ -9222,14 +9225,14 @@ mssg_t Compiler::compileInplaceConstructorHandler(BuildTreeWriter& writer, Metho
    }
 
    switch (current.key) {
-   case SyntaxKey::CodeBlock:
-      compileCode(writer, codeScope, current, false);
-      break;
-   case SyntaxKey::None:
-      break;
-   default:
-      assert(false);
-      break;
+      case SyntaxKey::CodeBlock:
+         compileCode(writer, codeScope, current, false, !classScope->withDebugInfo);
+         break;
+      case SyntaxKey::None:
+         break;
+      default:
+         assert(false);
+         break;
    }
 
    codeScope.syncStack(&privateScope);
@@ -9264,7 +9267,7 @@ void Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& invok
    privateScope.functionMode = invokerScope.functionMode;
    privateScope.isEmbeddable = invokerScope.isEmbeddable;
 
-   compileMethod(writer, privateScope, node);
+   compileMethod(writer, privateScope, node, classScope->withDebugInfo);
 }
 
 void Compiler::compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,
@@ -9298,10 +9301,10 @@ void Compiler::compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope&
    classScope->info.methods.add(redirectScope.message, redirectScope.info);
    classScope->save();
 
-   compileMethod(writer, redirectScope, node);
+   compileMethod(writer, redirectScope, node, classScope->withDebugInfo);
 }
 
-void Compiler::compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& methodScope, CodeScope& codeScope, mssg_t handler, ref_t targetRef)
+void Compiler::compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& methodScope, CodeScope& codeScope, mssg_t handler, ref_t targetRef, bool withDebugInfo)
 {
    writer.appendNode(BuildKey::OpenFrame);
 
@@ -9311,7 +9314,7 @@ void Compiler::compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& 
    writer.appendNode(BuildKey::Assigning, methodScope.selfLocal);
 
    // calling the byref handler
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, withDebugInfo);
    ArgumentsInfo arguments;
 
    ObjectInfo tempRetVal = expression.declareTempLocal(targetRef, false);
@@ -9353,7 +9356,7 @@ void Compiler :: compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& metho
    writer.appendNode(BuildKey::Assigning, methodScope.selfLocal);
 
    // calling the byref handler
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, false);
    ArgumentsInfo arguments;
 
    ObjectInfo target = methodScope.mapSelf();
@@ -9451,7 +9454,7 @@ void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& s
    SyntaxNode bodyNode = node.firstChild(SyntaxKey::ScopeMask);
    switch (bodyNode.key) {
       case SyntaxKey::CodeBlock:
-         retVal = compileCode(writer, codeScope, bodyNode, true, !_withDebugInfo);
+         retVal = compileCode(writer, codeScope, bodyNode, true, !scope.withDebugInfo);
          break;
       default:
          scope.raiseError(errInvalidOperation, bodyNode);
@@ -9582,7 +9585,7 @@ void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope,
    }
 }
 
-void Compiler :: compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+void Compiler :: compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo)
 {
    CodeScope codeScope(&scope);
 
@@ -9590,7 +9593,7 @@ void Compiler :: compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scop
       compileByRefHandler(writer, scope, node, scope.info.byRefHandler);
 
       beginMethod(writer, scope, node, BuildKey::Method, false);
-      compileByRefHandlerInvoker(writer, scope, codeScope, scope.info.byRefHandler, scope.info.outputRef);
+      compileByRefHandlerInvoker(writer, scope, codeScope, scope.info.byRefHandler, scope.info.outputRef, withDebugInfo);
       codeScope.syncStack(&scope);
       endMethod(writer, scope);
    }
@@ -9601,7 +9604,7 @@ void Compiler :: compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scop
       mssg_t functionInvoker = scope.message;
       scope.message = asyncFunction;
       scope.info.outputRef = scope.moduleScope->buildins.taskReference;
-      compileAsyncMethod(writer, scope, node);
+      compileAsyncMethod(writer, scope, node, withDebugInfo);
       scope.message = functionInvoker;
       scope.info.outputRef = outputRef;
 
@@ -9613,7 +9616,7 @@ void Compiler :: compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scop
    else assert(false); // should never reach this point
 }
 
-void Compiler::compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+void Compiler::compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
@@ -9621,14 +9624,14 @@ void Compiler::compileMethod(BuildTreeWriter& writer, MethodScope& scope, Syntax
 
    CodeScope codeScope(&scope);
 
-   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
+   beginMethod(writer, scope, node, BuildKey::Method, withDebugInfo);
 
    switch (current.key) {
       case SyntaxKey::CodeBlock:
       case SyntaxKey::ReturnExpression:
       case SyntaxKey::ResendDispatch:
       case SyntaxKey::Redirect:
-         compileMethodCode(writer, classScope, scope, codeScope, node, false);
+         compileMethodCode(writer, classScope, scope, codeScope, node, false, withDebugInfo);
          break;
       case SyntaxKey::DirectResend:
          compileDirectResendCode(writer, /*codeScope, */current);
@@ -9696,10 +9699,10 @@ ref_t Compiler :: declareAsyncStatemachine(StatemachineClassScope& scope, Syntax
    }
 }
 
-void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo)
 {
    // create a async method
-   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
+   beginMethod(writer, scope, node, BuildKey::Method, withDebugInfo);
 
    // new stack frame
    writer.appendNode(BuildKey::OpenFrame);
@@ -9711,11 +9714,11 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, withDebugInfo);
 
    // declare a state machine enumerator
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
-   StatemachineClassScope smScope(&expression.scope, nestedRef, true);
+   StatemachineClassScope smScope(&expression.scope, nestedRef, true, withDebugInfo);
    ref_t baseRef = declareAsyncStatemachine(smScope, node);
 
    BuildNode buildNode = writer.CurrentNode();
@@ -9723,7 +9726,7 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
       buildNode = buildNode.parentNode();
 
    BuildTreeWriter nestedWriter(buildNode);
-   compileStatemachineClass(nestedWriter, smScope, node, baseRef);
+   compileStatemachineClass(nestedWriter, smScope, node, baseRef, withDebugInfo);
 
    //   create a state machine enumerator
    int preservedContext = 0;
@@ -9779,9 +9782,9 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
    endMethod(writer, scope);
 }
 
-void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo)
 {
-   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
+   beginMethod(writer, scope, node, BuildKey::Method, withDebugInfo);
 
    // new stack frame
    writer.appendNode(BuildKey::OpenFrame);
@@ -9793,11 +9796,11 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, withDebugInfo);
 
    // create yield state machine
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
-   StatemachineClassScope smScope(&expression.scope, nestedRef, false);
+   StatemachineClassScope smScope(&expression.scope, nestedRef, false, withDebugInfo);
    smScope.typeRef = resolveYieldType(scope, node);
 
    BuildNode buildNode = writer.CurrentNode();
@@ -9806,7 +9809,7 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    BuildTreeWriter nestedWriter(buildNode);
    compileStatemachineClass(nestedWriter, smScope, node,
-      resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, smScope.typeRef));
+      resolveStateMachine(scope, scope.moduleScope->buildins.yielditTemplateReference, smScope.typeRef), withDebugInfo);
 
    ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
@@ -9940,7 +9943,7 @@ void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, Synta
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
    // calling the byref handler
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, classScope->withDebugInfo);
    ArgumentsInfo arguments;
 
    scope.selfLocal = codeScope.newLocal();
@@ -9996,7 +9999,7 @@ void Compiler::compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node, 
          if (scope.message == scope.moduleScope->buildins.constructor_message || scope.message == scope.moduleScope->buildins.protected_constructor_message)
             scope.raiseError(errInvalidOperation, node);
       case SyntaxKey::CodeBlock:
-         compileMethodCode(writer, &classClassScope, scope, codeScope, node, newFrame);
+         compileMethodCode(writer, &classClassScope, scope, codeScope, node, newFrame, classClassScope.withDebugInfo);
          break;
       case SyntaxKey::ReturnExpression:
          compileRetExpression(writer, codeScope, current, EAttr::DynamicObject);
@@ -10019,7 +10022,7 @@ void Compiler::compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node, 
    }
 }
 
-void Compiler::compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
+void Compiler :: compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    ClassScope& classClassScope, SyntaxNode node, bool abstractMode)
 {
    bool isProtectedDefConst = false;
@@ -10040,7 +10043,7 @@ void Compiler::compileConstructor(BuildTreeWriter& writer, MethodScope& scope,
    // NOTE : special case - abstract class with a protected constructor
    bool protectedAbstractMode = scope.isProtected() && abstractMode;
 
-   beginMethod(writer, scope, node, BuildKey::Method, _withDebugInfo);
+   beginMethod(writer, scope, node, BuildKey::Method, classClassScope.withDebugInfo);
 
    CodeScope codeScope(&scope);
    ref_t classFlags = codeScope.getClassFlags();
@@ -10180,26 +10183,26 @@ void Compiler::compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeSc
    // NOTE : the redirect target must be a simple variable
    assert(objNode == SyntaxKey::Object);
 
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, false);
 
    ObjectInfo target = expression.compile(objNode, 0, EAttr::None, nullptr);
    switch (target.kind) {
       // NOTE : the redirect operation must be done without creating a new frame
-   case ObjectKind::OuterSelf:
-   case ObjectKind::Outer:
-      writer.appendNode(BuildKey::Argument);
-      writer.appendNode(BuildKey::Field, target.reference);
-      break;
-   default:
-      codeScope.raiseError(errInvalidOperation, node);
-      break;
+      case ObjectKind::OuterSelf:
+      case ObjectKind::Outer:
+         writer.appendNode(BuildKey::Argument);
+         writer.appendNode(BuildKey::Field, target.reference);
+         break;
+      default:
+         codeScope.raiseError(errInvalidOperation, node);
+         break;
    }
 
    writer.appendNode(BuildKey::RedirectOp);
 }
 
-void Compiler::compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
-   bool withGenerics)
+void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
+   bool withGenerics, bool withDebugInfo)
 {
    writer.appendNode(BuildKey::DispatchingOp);
    if (withGenerics) {
@@ -10217,7 +10220,7 @@ void Compiler::compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& s
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
-   Expression expression(this, codeScope, writer);
+   Expression expression(this, codeScope, writer, withDebugInfo);
 
    ObjectInfo mssgVar = expression.declareTempStructure({ sizeof(mssg_t) });
    writer.appendNode(BuildKey::SavingIndex, mssgVar.reference);
@@ -10226,12 +10229,12 @@ void Compiler::compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& s
 
    SyntaxNode bodyNode = node.firstChild(SyntaxKey::ScopeMask);
    switch (bodyNode.key) {
-   case SyntaxKey::Expression:
-      retVal = expression.compile(bodyNode, 0, EAttr::None, nullptr);
-      break;
-   default:
-      scope.raiseError(errInvalidOperation, node);
-      break;
+      case SyntaxKey::Expression:
+         retVal = expression.compile(bodyNode, 0, EAttr::None, nullptr);
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
    }
 
    retVal = expression.boxArgument(retVal, false, true, false);
@@ -10290,7 +10293,7 @@ void Compiler::compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& sco
          if (node.existChild(SyntaxKey::ProxyDispatcher)) {
             compileProxyDispatcher(writer, codeScope, current);
          }
-         else compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics);
+         else compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics, classScope->withDebugInfo);
          break;
       default:
          scope.raiseError(errInvalidOperation, node);
@@ -10316,7 +10319,7 @@ void Compiler::compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& sco
       }
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
-         Expression expression(this, codeScope, writer);
+         Expression expression(this, codeScope, writer, false);
 
          ref_t mask = VARIADIC_MESSAGE;
          bool mixedDispatcher = false;
@@ -10411,7 +10414,7 @@ static inline void mapUninqueField(ClassInfo::FieldMap& fields, IdentifierString
    }
 }
 
-void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+void Compiler :: compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo)
 {
    StatemachineClassScope* classScope = Scope::getScope<StatemachineClassScope>(scope, Scope::ScopeLevel::Statemachine);
 
@@ -10419,7 +10422,7 @@ void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope
 
    beginMethod(writer, scope, node, BuildKey::Method, false);
 
-   if (_withDebugInfo)
+   if (withDebugInfo)
       writer.appendNode(BuildKey::ArgumentsInfo);
 
    CodeScope codeScope(&scope);
@@ -10428,7 +10431,7 @@ void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope
    switch (current.key) {
       case SyntaxKey::CodeBlock:
       case SyntaxKey::ReturnExpression:
-         compileMethodCode(writer, classScope, scope, codeScope, node, false);
+         compileMethodCode(writer, classScope, scope, codeScope, node, false, withDebugInfo);
          break;
       default:
          break;
@@ -10436,7 +10439,7 @@ void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope
 
    codeScope.syncStack(&scope);
 
-   if (_withDebugInfo)
+   if (withDebugInfo)
       injectSpecialArgumentInfo(writer, scope);
 
    endMethod(writer, scope);
@@ -10447,7 +10450,7 @@ void Compiler::compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope
       checkUnassignedVariables(scope, node);
 }
 
-void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node, ref_t parentRef)
+void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node, ref_t parentRef, bool withDebugInfo)
 {
    declareClassParent(parentRef, scope, node);
    generateClassFlags(scope, elNestedClass | elSealed);
@@ -10457,13 +10460,13 @@ void Compiler :: compileStatemachineClass(BuildTreeWriter& writer, StatemachineC
    writer.newNode(BuildKey::Class, scope.reference);
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   if (_withDebugInfo)
+   if (withDebugInfo)
       writer.appendNode(BuildKey::Path, *ns->sourcePath);
 
    MethodScope methodScope(&scope);
    declareIteratorMessage(methodScope/*, node*/);
 
-   compileIteratorMethod(writer, methodScope, node);
+   compileIteratorMethod(writer, methodScope, node, withDebugInfo);
 
    // handle the abstract flag
    if (test(scope.info.header.flags, elAbstract)) {
@@ -10840,7 +10843,7 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
          }
          case SyntaxKey::Symbol:
          {
-            SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility);
+            SymbolScope symbolScope(&ns, current.arg.reference, ns.defaultVisibility, _withDebugInfo);
             if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_STATIC)) {
                symbolScope.type = SymbolKind::Static;
             }
@@ -10855,14 +10858,15 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
          }
          case SyntaxKey::Class:
          {
-            Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility);
+            Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility, _withDebugInfo);
             classHelper.load();
 
             compileClass(writer, classHelper.scope, current);
 
             // compile class class if it available
             if (classHelper.scope.info.header.classRef != classHelper.scope.reference && classHelper.scope.info.header.classRef != 0) {
-               ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility, &classHelper.scope.info, classHelper.scope.reference);
+               ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility,
+                  &classHelper.scope.info, classHelper.scope.reference, classHelper.scope.withDebugInfo);
                ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
 
                if (test(classHelper.scope.info.header.flags, elTemplatebased))
@@ -10874,7 +10878,7 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
          }
          case SyntaxKey::ExternalFunction:
          {
-            SymbolScope procedureScope(&ns, current.arg.reference, ns.defaultVisibility);
+            SymbolScope procedureScope(&ns, current.arg.reference, ns.defaultVisibility, _withDebugInfo);
             compileExternalCallback(writer, procedureScope, current.findChild(SyntaxKey::Method));
 
             break;
@@ -11777,7 +11781,7 @@ void Compiler::declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNod
    if (genericMethods.count() > 0) {
       // if there are extension methods in the namespace
       ref_t extRef = scope.moduleScope->mapAnonymous();
-      ClassScope classScope(&scope, extRef, Visibility::Private);
+      ClassScope classScope(&scope, extRef, Visibility::Private, false);
       declareClassParent(classScope.info.header.parentRef, classScope, {});
       classScope.extensionDispatcher = true;
       classScope.info.header.classRef = classScope.reference;
@@ -11898,7 +11902,7 @@ void Compiler::Namespace::declareMemberIdentifiers(SyntaxNode node)
          }
          case SyntaxKey::Symbol:
          {
-            SymbolScope symbolScope(&scope, 0, scope.defaultVisibility);
+            SymbolScope symbolScope(&scope, 0, scope.defaultVisibility, compiler->_withDebugInfo);
             compiler->declareSymbolAttributes(symbolScope, current, true);
 
             SyntaxNode name = current.findChild(SyntaxKey::Name);
@@ -11911,7 +11915,7 @@ void Compiler::Namespace::declareMemberIdentifiers(SyntaxNode node)
          }
          case SyntaxKey::Class:
          {
-            ClassScope classScope(&scope, 0, scope.defaultVisibility);
+            ClassScope classScope(&scope, 0, scope.defaultVisibility, compiler->_withDebugInfo);
 
             ref_t flags = classScope.info.header.flags;
             bool externalOp = false;
@@ -11975,7 +11979,7 @@ bool Compiler::Namespace::declareMembers(SyntaxNode node, bool& repeatMode, bool
          }
          case SyntaxKey::Class:
          {
-            Class classHelper(compiler, &scope, current.arg.reference, scope.defaultVisibility);
+            Class classHelper(compiler, &scope, current.arg.reference, scope.defaultVisibility, compiler->_withDebugInfo);
             if (!classHelper.isDeclared()) {
                if (classHelper.isParentDeclared(current) || forced) {
                   classHelper.declare(current);
@@ -11997,14 +12001,14 @@ bool Compiler::Namespace::declareMembers(SyntaxNode node, bool& repeatMode, bool
          case SyntaxKey::Template:
          case SyntaxKey::ExtensionTemplate:
          {
-            TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
+            TemplateScope templateScope(&scope, 0, scope.defaultVisibility, compiler->_withDebugInfo);
             compiler->declareTemplateClass(templateScope, current);
             break;
          }
          case SyntaxKey::TemplateCode:
          case SyntaxKey::InlineTemplateExpr:
          {
-            TemplateScope templateScope(&scope, 0, scope.defaultVisibility);
+            TemplateScope templateScope(&scope, 0, scope.defaultVisibility, compiler->_withDebugInfo);
             compiler->declareTemplateCode(templateScope, current);
             break;
          }
@@ -12044,18 +12048,18 @@ Compiler::Symbol::Symbol(Namespace& ns, ref_t reference, Visibility visibility)
 }
 
 Compiler::Symbol::Symbol(Compiler* compiler, NamespaceScope* parent, ref_t reference, Visibility visibility)
-   : CommonHelper(compiler), scope(parent, reference, visibility)
+   : CommonHelper(compiler), scope(parent, reference, visibility, compiler->_withDebugInfo)
 {
 }
 
 // --- Compiler::Class ---
-Compiler::Class::Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility)
-   : CommonHelper(compiler), scope(parent, reference, visibility)
+Compiler::Class::Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility, bool debugInfo)
+   : CommonHelper(compiler), scope(parent, reference, visibility, debugInfo)
 {
 }
 
-Compiler::Class::Class(Namespace& ns, ref_t reference, Visibility visibility)
-   : CommonHelper(ns.compiler), scope(&ns.scope, reference, visibility)
+Compiler::Class::Class(Namespace& ns, ref_t reference, Visibility visibility, bool debugInfo)
+   : CommonHelper(ns.compiler), scope(&ns.scope, reference, visibility, debugInfo)
 {
 }
 
@@ -12135,7 +12139,7 @@ void Compiler::Class::declare(SyntaxNode node)
 
    // declare class class if it available
    if (scope.info.header.classRef != scope.reference && scope.info.header.classRef != 0) {
-      ClassScope classClassScope((NamespaceScope*)scope.parent, scope.info.header.classRef, scope.visibility);
+      ClassScope classClassScope((NamespaceScope*)scope.parent, scope.info.header.classRef, scope.visibility, scope.withDebugInfo);
 
       if (!withDefConstructor && !scope.abstractMode && !test(scope.info.header.flags, elDynamicRole)) {
          // if default constructor has to be created
@@ -12289,7 +12293,7 @@ void Compiler::Class::load()
 Compiler::ClassClass::ClassClass(Class& classHelper)
    : CommonHelper(classHelper.compiler),
    scope(classHelper.scope.parent, classHelper.scope.info.header.classRef, classHelper.scope.visibility,
-      &classHelper.scope.info, classHelper.scope.reference)
+      &classHelper.scope.info, classHelper.scope.reference, classHelper.scope.withDebugInfo)
 {
 }
 
@@ -12350,16 +12354,16 @@ void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
       compiler->compileInitializerMethod(writer, scope, current.parentNode());
    }
    else if (scope.checkHint(MethodHint::Yieldable)) {
-      compiler->compileYieldMethod(writer, scope, current);
+      compiler->compileYieldMethod(writer, scope, current, classScope->withDebugInfo);
    }
    else if (scope.checkHint(MethodHint::Async)) {
-      compiler->compileAsyncMethod(writer, scope, current);
+      compiler->compileAsyncMethod(writer, scope, current, classScope->withDebugInfo);
    }
    else if (isMethodInvoker(current)) {
-      compiler->compileMethodInvoker(writer, scope, current);
+      compiler->compileMethodInvoker(writer, scope, current, classScope->withDebugInfo);
    }
    // if it is a normal method
-   else compiler->compileMethod(writer, scope, current);
+   else compiler->compileMethod(writer, scope, current, classScope->withDebugInfo);
 }
 
 void Compiler::Method::compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassScope& classClassScope)
@@ -12393,24 +12397,28 @@ Compiler::Code::Code(Method& method)
 
 // --- Compiler::Expression ---
 
-Compiler::Expression::Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer)
+Compiler::Expression::Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer, bool debugInfo)
    : CommonHelper(compiler), scope(&codeScope), writer(&writer), branchVerification(nullptr)
 {
+   withDebugInfo = debugInfo;
 }
 
 Compiler::Expression::Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer)
    : CommonHelper(compiler), scope(&symbolScope), writer(&writer), branchVerification(nullptr)
 {
+   withDebugInfo = symbolScope.withDebugInfo;
 }
 
 Compiler::Expression::Expression(Symbol& symbol, BuildTreeWriter& writer)
    : CommonHelper(symbol.compiler), scope(&symbol.scope), writer(&writer), branchVerification(nullptr)
 {
+   withDebugInfo = symbol.scope.withDebugInfo;
 }
 
-Compiler::Expression::Expression(Code& code, BuildTreeWriter& writer)
+Compiler::Expression::Expression(Code& code, BuildTreeWriter& writer, bool debugInfo)
    : CommonHelper(code.compiler), scope(&code.scope), writer(&writer), branchVerification(nullptr)
 {
+   withDebugInfo = debugInfo;
 }
 
 ObjectInfo Compiler::Expression::compileSymbolRoot(SyntaxNode bodyNode, ExpressionAttribute mode, ref_t targetRef)
@@ -12515,7 +12523,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionA
       return {};
    }
 
-   if (compiler->_withDebugInfo) {
+   if (withDebugInfo) {
       writer->appendNode(BuildKey::OpenStatement);
       addBreakpoint(*writer, findObjectNode(node), BuildKey::Breakpoint);
    }
@@ -12580,7 +12588,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionA
       scope.resolveAutoOutput(outputInfo);
    }
 
-   if (compiler->_withDebugInfo) {
+   if (withDebugInfo) {
       writer->appendNode(BuildKey::EndStatement);
       writer->appendNode(BuildKey::VirtualBreakpoint);
    }
@@ -13240,7 +13248,7 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
    CodeScope codeScope(parentCodeScope);
    codeScope.verifiedObjects.add(source);
 
-   Expression subExpr(compiler, codeScope, *writer);
+   Expression subExpr(compiler, codeScope, *writer, withDebugInfo);
 
    retVal = subExpr.compileMessageOperationR(node, current, source, arguments,
       &updatedOuterArgs, expectedRef, propMode, false, false, attrs);   
@@ -14115,7 +14123,7 @@ ObjectInfo Compiler::Expression::compileNested(SyntaxNode node, ExpressionAttrib
    //   ownerScope.raiseError(errInvalidOperation, node);
 
    ref_t nestedRef = mapNested(mode);
-   InlineClassScope classScope(&scope, nestedRef);
+   InlineClassScope classScope(&scope, nestedRef, withDebugInfo);
 
    compiler->compileNestedClass(*writer, classScope, node, parentInfo.typeRef);
 
@@ -16637,7 +16645,7 @@ void Compiler::Expression :: resolvedExtensionTemplate(ObjectInfo target, Messag
    int resolvedStackSafeAttr = 0;
    ref_t resolvedMessage = messageContext.weakMessage;
    ref_t extensionRef = compiler->mapExtension(*writer, scope, messageContext,
-      target, resolvedMessage, resolvedStackSafeAttr, true);
+      target, resolvedMessage, resolvedStackSafeAttr, withDebugInfo, true);
 
    if (extensionRef) {
       scope.module->resolveAction(getAction(resolvedMessage), messageContext.implicitSignatureRef);
@@ -16702,7 +16710,7 @@ Compiler::MessageResolution Compiler::Expression :: resolveMessageAtCompileTime(
       resolvedStackSafeAttr = 0;
       resolution.message = messageContext.weakMessage;
       ref_t extensionRef = compiler->mapExtension(*writer, scope, messageContext,
-         target, resolution.message, resolvedStackSafeAttr);
+         target, resolution.message, resolvedStackSafeAttr, withDebugInfo);
       if (extensionRef != 0) {
          // if there is an extension to handle the compile-time resolved message - use it
          resolution.resolved = true;
@@ -16722,7 +16730,7 @@ Compiler::MessageResolution Compiler::Expression :: resolveMessageAtCompileTime(
       MessageCallContext variadicContext = { resolveVariadicMessage(scope, messageContext.weakMessage), messageContext.implicitSignatureRef };
       resolvedStackSafeAttr = 0;
       extensionRef = compiler->mapExtension(*writer, scope, variadicContext,
-         target, resolution.message, resolvedStackSafeAttr);
+         target, resolution.message, resolvedStackSafeAttr, withDebugInfo);
       if (extensionRef != 0) {
          // if there is an extension to handle the compile-time resolved message - use it
          resolution.resolved = true;
@@ -17470,7 +17478,7 @@ ObjectInfo Compiler::MetaExpression::generateNestedConstant(SyntaxNode node)
 // --- Compiler::NestedClass ---
 
 Compiler::NestedClass::NestedClass(Compiler* compiler, Expression& expr, ref_t nestedRef, BuildTreeWriter& writer)
-   : CommonHelper(compiler), writer(&writer), scope(&expr.scope, nestedRef)
+   : CommonHelper(compiler), writer(&writer), scope(&expr.scope, nestedRef, expr.withDebugInfo)
 {
 }
 
@@ -17483,7 +17491,7 @@ Compiler::LambdaClosure::LambdaClosure(Compiler* compiler, Expression& expr, ref
    scope.info.header.flags |= elNestedClass;
 }
 
-void Compiler::LambdaClosure::compile(SyntaxNode node)
+void Compiler::LambdaClosure :: compile(SyntaxNode node)
 {
    ref_t parentRef = scope.expectedRef ? scope.expectedRef : scope.info.header.parentRef;
 
@@ -17492,7 +17500,7 @@ void Compiler::LambdaClosure::compile(SyntaxNode node)
    writer->newNode(BuildKey::Class, scope.reference);
 
    NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-   if (compiler->_withDebugInfo)
+   if (scope.withDebugInfo)
       writer->appendNode(BuildKey::Path, *ns->sourcePath);
 
    MethodScope methodScope(&scope);
@@ -17679,7 +17687,7 @@ void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& methodScope, S
 
    compiler->beginMethod(*writer, methodScope, node, BuildKey::Method, false);
 
-   if (compiler->_withDebugInfo)
+   if (classScope->withDebugInfo)
       writer->appendNode(BuildKey::ArgumentsInfo);
 
    CodeScope codeScope(&methodScope);
@@ -17688,7 +17696,7 @@ void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& methodScope, S
    switch (current.key) {
       case SyntaxKey::CodeBlock:
       case SyntaxKey::ReturnExpression:
-         compiler->compileMethodCode(*writer, classScope, methodScope, codeScope, node, false);
+         compiler->compileMethodCode(*writer, classScope, methodScope, codeScope, node, false, classScope->withDebugInfo);
          break;
       default:
          break;
@@ -17696,7 +17704,7 @@ void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& methodScope, S
 
    codeScope.syncStack(&methodScope);
 
-   if(compiler->_withDebugInfo)
+   if(classScope->withDebugInfo)
       compiler->injectSpecialArgumentInfo(*writer, methodScope);
 
    compiler->endMethod(*writer, methodScope);

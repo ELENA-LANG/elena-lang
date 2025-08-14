@@ -658,8 +658,9 @@ namespace elena_lang
       {
          Visibility visibility;
          ref_t      reference;
+         bool       withDebugInfo;
 
-         SourceScope(Scope* parent, ref_t reference, Visibility visibility);
+         SourceScope(Scope* parent, ref_t reference, Visibility visibility, bool debugInfo);
       };
 
       struct TemplateScope : SourceScope
@@ -674,7 +675,7 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
-         TemplateScope(Scope* parent, ref_t reference, Visibility visibility);
+         TemplateScope(Scope* parent, ref_t reference, Visibility visibility, bool TemplateScope);
       };
 
       struct SymbolScope : SourceScope
@@ -708,7 +709,7 @@ namespace elena_lang
 
          static void saveSymbolInfo(ModuleBase* module, SymbolInfo& info, ref_t reference);
 
-         SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility);
+         SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility, bool withDebugInfo);
       };
 
       struct ClassScope : SourceScope
@@ -720,6 +721,7 @@ namespace elena_lang
          bool        extensionDispatcher;
          bool        withPrivateField;
          bool        withStaticConstructor;
+         bool        withDebugInfo;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -782,7 +784,7 @@ namespace elena_lang
 
          void save();
 
-         ClassScope(Scope* parent, ref_t reference, Visibility visibility);
+         ClassScope(Scope* parent, ref_t reference, Visibility visibility, bool debugInfo);
       };
 
       class ClassClassScope : public ClassScope
@@ -804,7 +806,7 @@ namespace elena_lang
 
          ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr) override;
 
-         ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo, ref_t classInfoRef);
+         ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo, ref_t classInfoRef, bool debugInfo);
       };
 
       struct MethodScope : Scope
@@ -1254,7 +1256,7 @@ namespace elena_lang
             return false;
          }
 
-         InlineClassScope(ExprScope* owner, ref_t reference);
+         InlineClassScope(ExprScope* owner, ref_t reference, bool debugInfo);
       };
 
       struct StatemachineClassScope : InlineClassScope
@@ -1292,7 +1294,7 @@ namespace elena_lang
             return mapSelf();
          }
 
-         StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode);
+         StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode, bool withDebugInfo);
       };
 
       struct MessageResolution
@@ -1450,8 +1452,8 @@ namespace elena_lang
 
          void load();
 
-         Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility);
-         Class(Namespace& ns, ref_t reference, Visibility visibility);
+         Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility, bool debugInfo);
+         Class(Namespace& ns, ref_t reference, Visibility visibility, bool debugInfo);
       };
 
       class ClassClass : public CommonHelper
@@ -1509,6 +1511,8 @@ namespace elena_lang
          BuildTreeWriter*     writer;
 
          BranchVerification*  branchVerification;
+
+         bool                 withDebugInfo;
 
          bool isDirectMethodCall(SyntaxNode& node);
 
@@ -1671,8 +1675,8 @@ namespace elena_lang
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false, VerifiedMap* verified = nullptr);
 
          Expression(Symbol& symbol, BuildTreeWriter& writer);
-         Expression(Code& code, BuildTreeWriter& writer);
-         Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer);
+         Expression(Code& code, BuildTreeWriter& writer, bool debugInfo);
+         Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer, bool debugInfo);
          Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer);
       };
 
@@ -1761,7 +1765,7 @@ namespace elena_lang
       ref_t mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t parameterCount);
 
       ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCallContext& context,
-         ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr, bool singleDispatchMode = false);
+         ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr, bool withDebugInfo, bool singleDispatchMode = false);
 
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 
@@ -1976,7 +1980,7 @@ namespace elena_lang
       bool evalAccumClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode node, ObjectInfo& constInfo);
 
       ref_t compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceScope& scope, mssg_t genericMessage,
-         ref_t outputRef);
+         ref_t outputRef, bool withDebugInfo);
 
       void writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, int size, TypeInfo typeInfo,
          ustr_t name, int index);
@@ -2022,15 +2026,15 @@ namespace elena_lang
       void compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
       void compileConstructorDispatchCode(BuildTreeWriter& writer, CodeScope& codeScope, ClassScope& classClassScope, SyntaxNode node);
       void compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope,
-         mssg_t handler, ref_t targetRef);
+         mssg_t handler, ref_t targetRef, bool withDebugInfo);
       void compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& methodScope, CodeScope& codeScope, mssg_t asyncFunction);
 
       void compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope& scope, CodeScope& codeScope, SyntaxNode node,
-         bool withGenerics);
+         bool withGenerics, bool withDebugInfo);
       void compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node);
 
-      ObjectInfo compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node);
-      ObjectInfo compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef);
+      ObjectInfo compileResendCode(BuildTreeWriter& writer, CodeScope& codeScope, ObjectInfo source, SyntaxNode node, bool withDebugInfo);
+      ObjectInfo compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef, bool withDebugInfo);
       ObjectInfo compileCode(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, bool closureMode, bool noDebugInfoMode = false);
 
       void beginMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, BuildKey scopeKey,
@@ -2038,7 +2042,7 @@ namespace elena_lang
       void endMethod(BuildTreeWriter& writer, MethodScope& scope);
 
       void compileMethodCode(BuildTreeWriter& writer, ClassScope* classScope, MethodScope& scope, CodeScope& codeScope,
-         SyntaxNode node, bool newFrame);
+         SyntaxNode node, bool newFrame, bool withDebugInfo);
       void compileConstructorCode(BuildTreeWriter& writer, SyntaxNode node, SyntaxNode current, MethodScope& scope,
          CodeScope& codeScope, ClassScope& classClassScope, bool isDefConvConstructor, ref_t classFlags, bool newFrame);
       void compileInplaceDefConstructorCode(BuildTreeWriter& writer, SyntaxNode current, SyntaxNode methodNode, MethodScope& scope,
@@ -2059,18 +2063,18 @@ namespace elena_lang
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode classNode);
       //void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
-      void compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
+      void compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo);
       //void compileExpressionMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileAbstractMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool abstractMode);
-      void compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
-      void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
-      void compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
-      void compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
+      void compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo);
+      void compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo);
+      void compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo);
+      void compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo);
       void compileConstructor(BuildTreeWriter& writer, MethodScope& scope, ClassScope& classClassScope,
          SyntaxNode node, bool abstractMode);
       void compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scope);
       void compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode node, ref_t parentRef);
-      void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node, ref_t parentRef);
+      void compileStatemachineClass(BuildTreeWriter& writer, StatemachineClassScope& scope, SyntaxNode node, ref_t parentRef, bool withDebugInfo);
 
       void compileExternalCallback(BuildTreeWriter& writer, SymbolScope& symbolScope, SyntaxNode node);
 

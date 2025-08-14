@@ -7,26 +7,9 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * step over 
-  * step in
-  * go to
-  * breakpoint
-
-
-  * redesign breakpoint routines : step over implementation (with stack level control?) using temp breakpoints; 
-    normal breakpoints - resetting breakpoint after triggering; situation when both step and breakpoint refers to the same place
-
-  - normal breakpoint fired - set ip one byte back; restore the code; (a)set trap mode on; mark in the current context - restore breakpoint mode;
-  so when trap mode fires - reset break point;
-
-  - step over fired - set ip one byte back; restore the code; if there is a breakpoint for the same address - see (a)
-
-
-  * debugger : step over is possible from one thread to another; so special list of step breakpoints must be arranged; removing them
-    when they are no longer is required
-  * debugger : use software breakpoint instead of hardware one
-  * goto must be implemented as software breakpoint
-  * async method : step over async operation
+  * prepare the code to make possible no debug info setting
+  * option to turn off debug info generation for the class
+  * async method : returning from the operation
   * async method : step into async operation
   ======================================
   webapi phone book example : add, delete, update, search
