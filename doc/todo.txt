@@ -7,7 +7,7 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * prepare the code to make possible no debug info setting
+  * compiler hint : #hint debug=false
   * option to turn off debug info generation for the class
   * async method : returning from the operation
   * async method : step into async operation
