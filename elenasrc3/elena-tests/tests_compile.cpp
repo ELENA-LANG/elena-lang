@@ -109,7 +109,7 @@ void CompileScenarioTest :: runTest(ref_t targetRef, int exptectedError)
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 

@@ -428,7 +428,7 @@ void ScenarioTest :: run(ModuleScopeBase* moduleScope, int scenario)
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
@@ -493,7 +493,7 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
@@ -571,7 +571,7 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
    BuildTreeWriter writer(output);
    Compiler::Namespace nsScope(compiler, moduleScope, nullptr, nullptr, nullptr);
 
-   Compiler::Class cls(nsScope, 0, Visibility::Internal);
+   Compiler::Class cls(nsScope, 0, Visibility::Internal, false);
    Compiler::Method method(cls);
    Compiler::Code code(method);
 
@@ -583,7 +583,7 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
 
    writer.newNode(BuildKey::Root);
    writer.newNode(BuildKey::Tape);
-   Compiler::Expression expression(code, writer);
+   Compiler::Expression expression(code, writer, false);
    expression.compileRoot(exprNode.firstChild(), ExpressionAttribute::NoDebugInfo);
    writer.closeNode();
    writer.closeNode();

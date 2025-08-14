@@ -617,7 +617,7 @@ void LambdaTest :: runTest(int scenario)
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
@@ -683,7 +683,7 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
