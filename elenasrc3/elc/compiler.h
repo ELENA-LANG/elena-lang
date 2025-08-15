@@ -721,7 +721,6 @@ namespace elena_lang
          bool        extensionDispatcher;
          bool        withPrivateField;
          bool        withStaticConstructor;
-         bool        withDebugInfo;
 
          Scope* getScope(ScopeLevel level) override
          {

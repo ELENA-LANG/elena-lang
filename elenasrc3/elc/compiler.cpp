@@ -8228,7 +8228,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
 ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ExpressionAttribute mode)
 {
-   Expression expression(this, codeScope, writer, EAttrs::test(mode, EAttr::NoDebugInfo));
+   Expression expression(this, codeScope, writer, !EAttrs::test(mode, EAttr::NoDebugInfo));
 
    return expression.compileRoot(node, mode);
 }
@@ -8693,7 +8693,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          retVal = compileCode(writer, codeScope, bodyNode, scope.closureMode, !withDebugInfo);
          break;
       case SyntaxKey::ReturnExpression:
-         retVal = compileRetExpression(writer, codeScope, bodyNode, EAttr::None);
+         retVal = compileRetExpression(writer, codeScope, bodyNode, withDebugInfo ? EAttr::None : EAttr::NoDebugInfo);
          break;
       case SyntaxKey::ResendDispatch:
          retVal = compileResendCode(writer, codeScope,
@@ -10293,7 +10293,7 @@ void Compiler::compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& sco
          if (node.existChild(SyntaxKey::ProxyDispatcher)) {
             compileProxyDispatcher(writer, codeScope, current);
          }
-         else compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics, classScope->withDebugInfo);
+         else compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics, false);
          break;
       default:
          scope.raiseError(errInvalidOperation, node);
