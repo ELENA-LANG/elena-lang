@@ -7,8 +7,14 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * compiler hint : #hint debug=false
+  * async operation : boxing / unboxing
+  ======================================
+  * debugger : array of bytes
+  * compiler hint : @hints[1] := 0
   * option to turn off debug info generation for the class
+  * compiler option to ignore this hints
+  * AsyncStateEnumerator<TResult> must contain no debug info
+  * step into : turn on for all threads; by step over - turn it off (except when reset breakpoint is expected)
   * async method : returning from the operation
   * async method : step into async operation
   ======================================
@@ -16,6 +22,8 @@ In development:
   --------------------------------------
   #35 : first draft
   + dummy web server - GET
+
+  * test http get / https get samples
 
   * dummy https web server - GET
 
@@ -32,7 +40,7 @@ In development:
   ======================================
   - Map_StoreUStrAligned4 - probably better to extend MemoryDump with align method for this
   - refactoring : ParserTable - use MemoryHashTable instead of Map
-  -
+  - extensions'runtime for Linux
   ======================================
   #184 : IDE linux - migrate to gtkmm4
   * set focus on textview
@@ -45,9 +53,6 @@ In development:
   * #184 : IDE linux - include / exclude
   * #184 : uncomment checkMenuItemById
   * #184 : exit
-  * #184 : compile
-  * #184 : debug
-  * #798
   --------------------------------------
 
   === Iteration 43 ===

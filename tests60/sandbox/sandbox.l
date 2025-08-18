@@ -1,5 +1,5 @@
 import extensions;
-
+/*
 singleton FibonacciEnumerable : Enumerable
 {
    Enumerator enumerator()
@@ -38,4 +38,35 @@ public program()
     };
     
     Console.readChar()
+}
+*/
+import extensions;
+import system'threading;
+
+singleton Tester
+{
+   async Task<int> getValueAsync(byte[] tmp)
+   {
+      tmp[1] := 2;
+
+      ^ 3
+   }
+
+   async Task<int> addValueAsync()
+   {
+      byte tmp[512];
+      int val := :await getValueAsync(tmp);
+
+      int n := tmp[1];
+
+      val := val + n;
+
+      ^ val
+   }
+}
+
+public program()
+{
+   int n := Tester.addValueAsync(2).Result;
+   Console.printLine("the result is ", n);
 }

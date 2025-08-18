@@ -33,7 +33,7 @@ public sealed class HttpServer : interface<IHttpServer>
    {
       _listener.start(_backLog);
       
-      while(true) {
+//      while(true) {
          auto client := _listener.acceptTcpClient();
          auto thread := Thread.start(
             {
@@ -51,7 +51,8 @@ public sealed class HttpServer : interface<IHttpServer>
                   acceptor.returnError(ex);
                }
             });
-      }
+//      }
+       Console.readLine()
    }
 }
 

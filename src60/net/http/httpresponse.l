@@ -21,15 +21,28 @@ public sealed class HttpBody
    // !! must be internal
    async /*internal*/ Task readHeaderAsync(HttpFirstHeader firstLine, HttpHeaders headers)
    {
+      byte dump[512];
+      
+      Console.writeLine("readHeaderAsync:");
+
       int eoh := 0;
-      int received := :await _stream.readAsync(_buffer, 512);
+      int received := :await _stream.readAsync(dump, 512);
+         
       while (received > 0) {
+         _buffer.write(0, received, dump);
+
          eoh := seekHeaderEnd();
          if (eoh > 0)
             :break;
 
-         received := :await _stream.readAsync(_buffer, 512);
+         received := 0;
+         if (_stream.isDataAvailable) 
+            received := :await _stream.readAsync(dump, 512);
       };
+
+      // !! temporal
+      var s := UTF8Encoding.toString(0, _buffer.Length, _buffer.Content);
+      Console.writeLine(s);      
 
       parseHeaders(firstLine, headers, eoh)
    }
@@ -37,14 +50,25 @@ public sealed class HttpBody
    // !! must be internal
    /*internal*/ readHeader(HttpFirstHeader firstLine, HttpHeaders headers)
    {
+      byte dump[512];
+      
+      Console.writeLine("readHeaderAsync:");
+
       int eoh := 0;
-      int received := _stream.readToBuffer(_buffer, 512);
+      int received := 0;
+      if (_stream.isDataAvailable) 
+         received := _stream.read(dump, 512);
+         
       while (received > 0) {
+         _buffer.write(0, received, dump);
+
          eoh := seekHeaderEnd();
          if (eoh > 0)
             :break;
 
-         received := _stream.readToBuffer(_buffer, 512);
+         received := 0;
+         if (_stream.isDataAvailable) 
+            received := _stream.read(dump, 512);
       };
 
       parseHeaders(firstLine, headers, eoh)
@@ -53,9 +77,17 @@ public sealed class HttpBody
    // !! must be internal
    async /*internal*/ Task<string> readAsStringAsync(HttpHeaders headers)
    {
-      int received := :await _stream.readAsync(_buffer, 512);
+      byte dump[512];
+      int received := 0;
+      if (_stream.isDataAvailable) 
+         received := :await _stream.readAsync(dump, 512);
+         
       while (received > 0) {
-         received := :await _stream.readAsync(_buffer, 512);
+         _buffer.write(0, received, dump);
+
+         received := 0;
+         if (_stream.isDataAvailable) 
+            received := :await _stream.readAsync(dump, 512);
       };
 
       ^ returnContentAsString(headers);
@@ -64,14 +96,21 @@ public sealed class HttpBody
    // !! must be internal
    /*internal*/ string readAsString(HttpHeaders headers)
    {
-      int received := _stream.readToBuffer(_buffer, 512);
+      byte dump[512];
+      int received := 0;
+      if (_stream.isDataAvailable) 
+         received := _stream.read(dump, 512);
+         
       while (received > 0) {
-         received := _stream.readToBuffer(_buffer, 512);
+         _buffer.write(0, received, dump);
+
+         received := 0;
+         if (_stream.isDataAvailable) 
+            received := _stream.read(dump, 512);
       };
 
       ^ returnContentAsString(headers);
-   }
-   
+   }   
    
    private string returnContentAsString(HttpHeaders headers)
    {

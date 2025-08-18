@@ -98,7 +98,7 @@ public class HttpClient
       string headers := _headers.Value;
       string request := $"GET {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
 
-      :await stream.writeAsync(request);
+      :await stream.writeStringAsync(request);
 
       HttpResponse response := HttpResponse.assign(stream);
 
@@ -127,7 +127,7 @@ public class HttpClient
       
       string request := $"POST {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"Content-Length:{length}"$13$10"Content-Type:application/x-www-form-urlencoded"$13$10"{headers}"$13$10"{content}";
 
-      :await stream.writeAsync(request);
+      :await stream.writeStringAsync(request);
 
       HttpResponse response := HttpResponse.assign(stream);
 
@@ -147,7 +147,7 @@ public class HttpClient
       string headers := _headers.Value;
       string request := $"GET {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
 
-      stream.write(request);
+      stream.writeString(request);
 
       HttpResponse response := HttpResponse.assign(stream);
 
@@ -180,7 +180,7 @@ public class HttpClient
       
       string request := $"POST {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"Content-Length:{length}"$13$10"Content-Type:application/x-www-form-urlencoded"$13$10"{headers}"$13$10"{content}";
 
-      stream.write(request);
+      stream.writeString(request);
 
       HttpResponse response := HttpResponse.assign(stream);
 

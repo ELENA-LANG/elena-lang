@@ -41,7 +41,7 @@ public sealed class HttpServerResponse
       _headers.saveTo(output);
       output.write($13$10);
       
-      :await stream.writeAsync(*output);
+      :await stream.writeStringAsync(*output);
       
       :await stream.writeAsync(_buffer.Content, _buffer.Length);
    }

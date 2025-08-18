@@ -45,6 +45,8 @@ public class Task
          ThreadPool.queueAction({ action(self) });
       }
       else if:not:nil(_continuation) {
+         Console.writeLine("Only a single continuation is supported currently");
+
          InvalidOperationException.raise("Only a single continuation is supported currently")
       }
       else {
@@ -63,6 +65,8 @@ public class Task
    {
       lock(self) {
          if (_completed) {
+            Console.writeLine("The task is already completed");
+
             InvalidOperationException.raise("The task is already completed")
          };
 
@@ -212,6 +216,8 @@ public class Task
            }
            catch (Exception e)
            {
+               Console.writeLine(e);
+              
                t.setException(e);
            }
        });

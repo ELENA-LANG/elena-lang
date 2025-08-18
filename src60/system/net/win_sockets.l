@@ -338,8 +338,11 @@ public sealed const struct NativeSocket
 
    int receive(byte[] buffer, int maxLength, int flags)
    {
+      Console.writeLine("[");
       int retVal := extern WS2_32.recv(_handle,buffer,maxLength,flags);
         
+      Console.writeLine(retVal);
+
       if (retVal == SOCKET_ERROR)
       {
          int err := extern WS2_32.WSAGetLastError();
@@ -347,6 +350,8 @@ public sealed const struct NativeSocket
             { SocketException.new("Error at socket").raise() }
       };
             
+      Console.writeLine("]");
+
       ^ retVal
    }
 
