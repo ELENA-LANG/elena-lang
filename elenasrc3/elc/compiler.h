@@ -1845,7 +1845,7 @@ namespace elena_lang
 
       void declareTemplateAttributes(TemplateScope& scope, SyntaxNode node, IdentifierString& postfix);
       void declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool identifierDeclarationMode);
-      void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode);
+      void declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& mode, bool declarationMode);
       void declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode);
       void declareArgumentAttributes(MethodScope& scope, SyntaxNode node, TypeInfo& typeInfo, bool declarationMode);
       void declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeInfo& typeInfo, bool& superMode);
