@@ -3832,8 +3832,7 @@ void Compiler::generateClassFields(ClassScope& scope, SyntaxNode node, bool sing
    while (current != SyntaxKey::None) {
       if (current.key == SyntaxKey::Field) {
          FieldAttributes attrs = {};
-         // HOTFIX : we have to resolve a field type immediately for the structures
-         declareFieldAttributes(scope, current, attrs, !test(scope.info.header.flags, elStructureRole));
+         declareFieldAttributes(scope, current, attrs);
 
          if ((attrs.isConstant && !isClassClassMode) || attrs.isStatic || attrs.isThreadStatic) {
             generateClassStaticField(scope, current, attrs);
@@ -6371,7 +6370,8 @@ void Compiler::readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttr
             if (!attrs.typeInfo.typeRef) {
                TypeAttributes typeAttributes = {};
 
-               attrs.typeInfo = resolveTypeAttribute(scope, current, typeAttributes, declarationMode, false);
+               // HOTFIX : we have to resolve a field type immediately for the structures even in declaration mode
+               attrs.typeInfo = resolveTypeAttribute(scope, current, typeAttributes, declarationMode && !test(scope.info.header.flags, elStructureRole), false);
                if (typeAttributes.isNonempty())
                   scope.raiseError(errInvalidHint, current);
             }
@@ -6417,9 +6417,9 @@ void Compiler::readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttr
    }
 }
 
-void Compiler::declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode)
+void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs)
 {
-   readFieldAttributes(scope, node, attrs, declarationMode);
+   readFieldAttributes(scope, node, attrs, true);
 
    //HOTFIX : recognize raw data
    if (attrs.typeInfo.isPrimitive()) {
