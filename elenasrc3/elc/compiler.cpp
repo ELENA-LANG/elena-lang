@@ -4667,6 +4667,7 @@ ObjectInfo Compiler::evalSizeOperation(Interpreter& interpreter, Scope& scope, S
          break;
       }
       case ObjectKind::Class:
+      case ObjectKind::Symbol:
          sizeInfo = _logic->defineStructSize(*scope.moduleScope, loperand.reference);
          break;
       default:

@@ -7,6 +7,8 @@ In development:
 
   === Iteration 42 ===
   ======================================
+  * support : pointer item_ptr := _pointer + index * :sizeof pointer;
+  ======================================
   * two boxing argument : box only once and unbox only once
     - keep list of boxed arguments inside the expression
     - unbox the agrument list on the end

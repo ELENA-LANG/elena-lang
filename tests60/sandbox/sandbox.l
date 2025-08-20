@@ -103,32 +103,7 @@ public program()
 }
 */
 
-struct A
-{
-   int x : prop(_x);
-   
-   int y : prop(_y);
-}
-
-struct B
-{
-   UnsafePointer<A> _a;
-   
-   int b : prop(_b);
-   
-   A a
-      = _a.Value;
-}
-
-use extern dll : importing("extdll");
-
 public program()
 {
-   UnsafePointer<B> ptr := dll.get_func_pointer(/*foo, bar*/);
-   
-   B st := *ptr;
-   
-   Console.printLine("B.a.x=",st.a.x);
-   Console.printLine("B.a.x=",st.a.y);
-   Console.printLine("B.b=",st.b);
+   int s := :sizeof UnsafePointer;
 }

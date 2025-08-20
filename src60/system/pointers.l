@@ -165,6 +165,11 @@ public sealed const struct UnsafePointer<T>
       _pointer := ptr
    }
 
+   constructor(UnsafePointer ptr)
+   {
+      _pointer := ptr
+   }
+
    constructor(T obj)
    {
       self.assignPtr(obj);
@@ -200,6 +205,58 @@ public sealed const struct UnsafePointer<T>
 
 #endif      
    }
+}
+
+// --- UnsafeArray ---
+
+public sealed const struct UnsafeArray
+{
+   embeddable __ptr _pointer;
+
+   private clear() : external(system'core_routines'__clearPtr);
+   
+   constructor()
+   {
+      self.clear();
+   }
+
+   constructor(pointer ptr)
+   {
+      _pointer := ptr
+   }
+
+   UnsafePointer at(int index)
+   {
+      pointer item_ptr := _pointer + index * (:sizeof pointer);
+      
+      ^ item_ptr
+   }   
+}
+
+// --- UnsafeArray<T> ---
+
+public sealed const struct UnsafeArray<T>
+{
+   embeddable __ptr _pointer;
+
+   private clear() : external(system'core_routines'__clearPtr);
+   
+   constructor()
+   {
+      self.clear();
+   }
+
+   constructor(pointer ptr)
+   {
+      _pointer := ptr
+   }
+
+   UnsafePointer<T> at(int index)
+   {
+      pointer item_ptr := _pointer + index * (:sizeof T);
+      
+      ^ item_ptr
+   }   
 }
 
 // --- CallStack ---
