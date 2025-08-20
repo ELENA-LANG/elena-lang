@@ -1,13 +1,13 @@
-struct A
+struct DeclA
 {
    int x : prop(_x);
    
    int y : prop(_y);
 }
 
-struct B
+struct DeclB
 {
-   UnsafePointer<A> _a;
+   UnsafePointer<DeclA> _a;
    
    int b : prop(_b);
    
