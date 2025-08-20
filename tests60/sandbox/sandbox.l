@@ -103,7 +103,18 @@ public program()
 }
 */
 
+use extern dll : importing("libobjc-4.6");
+
 public program()
 {
-   int s := :sizeof UnsafePointer;
+   UnsafeArray ptr := dll.get_func_pointer();
+   
+   int i := 0;
+   while (!ptr[i].isUnassigned()) {
+      pointer item := ptr[i];
+      
+      Console.writeLine(item as:string);
+      
+      i++
+   }
 }
