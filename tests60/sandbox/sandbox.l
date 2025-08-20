@@ -107,14 +107,5 @@ use extern dll : importing("libobjc-4.6");
 
 public program()
 {
-   UnsafeArray ptr := dll.get_func_pointer();
-   
-   int i := 0;
-   while (!ptr[i].isUnassigned()) {
-      pointer item := ptr[i];
-      
-      Console.writeLine(item as:string);
-      
-      i++
-   }
+   UnsafeArray<UnsafeArray> ptr := dll.get_func_pointer();
 }
