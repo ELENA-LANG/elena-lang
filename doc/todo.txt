@@ -7,9 +7,6 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * fixing an issue with a template field of the structure
-  * a new functional test - a structure with template-based field
-  ======================================
   * two boxing argument : box only once and unbox only once
     - keep list of boxed arguments inside the expression
     - unbox the agrument list on the end
