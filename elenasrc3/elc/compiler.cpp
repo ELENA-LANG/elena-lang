@@ -12899,6 +12899,8 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
       if (updatedOuterArgs)
          updatedOuterArgs->clear();
 
+      scope.tempLocals.clear();
+
       lastNode = lastNode.nextNode();
       while (lastNode != BuildKey::None) {
          lastNode.setKey(BuildKey::Idle);
