@@ -8186,7 +8186,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 {
    ObjectInfo retVal = {};
 
-   Expression expression(this, codeScope, writer, !EAttrs::test(mode, EAttr::NoDebugInfo));
+   Expression expression(this, codeScope, writer, !EAttrs::test(mode, EAttr::NoDebugInfo), nullptr);
 
    MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
    if (methodScope && methodScope->isYieldable()) {
@@ -8230,9 +8230,17 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
 
 ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ExpressionAttribute mode)
 {
-   Expression expression(this, codeScope, writer, !EAttrs::test(mode, EAttr::NoDebugInfo));
+   ArgumentsInfo updatedOuterArgs;
+   Expression expression(this, codeScope, writer, !EAttrs::test(mode, EAttr::NoDebugInfo), &updatedOuterArgs);
 
-   return expression.compileRoot(node, mode);
+   ObjectInfo retVal = expression.compileRoot(node, mode);
+
+   if (EAttrs::test(mode, EAttr::RetValExpected)) {
+      retVal = expression.unboxArguments(retVal, &updatedOuterArgs);
+   }
+   else expression.unboxArguments({}, &updatedOuterArgs);
+
+   return retVal;
 }
 
 void Compiler::saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN)
@@ -8635,7 +8643,7 @@ void Compiler :: injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, Class
    BuildTreeWriter tmpWriter(tmp);
    tmpWriter.newNode(BuildKey::Root);
 
-   Expression expression(this, codeScope, tmpWriter, false);
+   Expression expression(this, codeScope, tmpWriter, false, nullptr);
    for (auto local_it = smScope->localMappings.start(); !local_it.eof(); ++local_it) {
       bool dummy = false;
       expression.compileAssigningOp({ ObjectKind::Local, (ref_t)local_it.key() }, { ObjectKind::Field, (ref_t)*local_it }, dummy);
@@ -8667,7 +8675,7 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
    if (scope.isYieldable()) {
       StatemachineClassScope* smScope = Scope::getScope<StatemachineClassScope>(*classScope, Scope::ScopeLevel::Statemachine);
 
-      Expression expression(this, codeScope, writer, withDebugInfo);
+      Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
 
       // reserve the place for the next step
       int offset = allocateLocalAddress(codeScope, sizeof(addr_t), false);
@@ -8703,12 +8711,12 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
             bodyNode, withDebugInfo);
 
          if (codeScope.isByRefHandler() && retVal.kind != ObjectKind::Unknown) {
-            Expression expression(this, codeScope, writer, withDebugInfo);
+            Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
 
             expression.compileAssigning(node, codeScope.mapByRefReturnArg(), retVal);
          }
          else if (scope.info.outputRef != 0 && !scope.constructorMode) {
-            Expression expression(this, codeScope, writer, withDebugInfo);
+            Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
 
             expression.compileConverting(node, retVal, scope.info.outputRef,
                scope.checkHint(MethodHint::Stacksafe));
@@ -8738,13 +8746,13 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
       injectLocalLoadingForYieldMethod(writer, classScope, codeScope);
       writer.removeBookmark();
 
-      Expression expression(this, codeScope, writer, false);
+      Expression expression(this, codeScope, writer, false, nullptr);
 
       expression.writeObjectInfo({ ObjectKind::Singleton, { scope.moduleScope->branchingInfo.typeRef }, scope.moduleScope->branchingInfo.falseRef });
    }
    // if the method returns itself
    else if (retVal.kind == ObjectKind::Unknown && !codeScope.withRetStatement) {
-      Expression expression(this, codeScope, writer, withDebugInfo);
+      Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
 
       // NOTE : extension should re
       retVal = scope.mapSelf(!scope.isExtension);
@@ -8832,7 +8840,7 @@ void Compiler::compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScop
       MessageResolution resolution = { true, scope.moduleScope->buildins.static_init_message };
 
       expression.compileMessageCall(node, mapClassSymbol(scope, scope.reference), context, resolution,
-         args, EAttr::None, nullptr);
+         args, EAttr::None);
    }
 
    nestedWriter.appendNode(BuildKey::CloseFrame);
@@ -8920,11 +8928,10 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
 
 ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef, bool withDebugInfo)
 {
-   Expression expression(this, codeScope, writer, withDebugInfo);
+   Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
    ArgumentsInfo arguments;
-   ArgumentsInfo updatedOuterArgs;
 
-   ObjectInfo target = expression.compile(node.firstChild(), 0, EAttr::Parameter, &updatedOuterArgs);
+   ObjectInfo target = expression.compile(node.firstChild(), 0, EAttr::Parameter);
 
    mssg_t messageRef = codeScope.getMessageID();
 
@@ -8942,7 +8949,7 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
    _logic->setSignatureStacksafe(*codeScope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
 
    ObjectInfo retVal = expression.compileMessageCall({}, target, context, resolution,
-      arguments, EAttr::None, &updatedOuterArgs);
+      arguments, EAttr::None);
 
    if (outputRef) {
       expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false, false, false);
@@ -9004,7 +9011,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       }
 
       MessageCallContext context = {};
-      Expression expression(this, codeScope, writer, withDebugInfo);
+      Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
       ArgumentsInfo arguments;
       ArgumentsInfo updatedOuterArgs;
 
@@ -9023,7 +9030,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
 
       Expression::ArgumentListType argListType = Expression::ArgumentListType::Normal;
       context.implicitSignatureRef = expression.compileMessageArguments(current, arguments, expectedSignRef,
-         EAttr::NoPrimitives, &updatedOuterArgs, argListType, resolvedNillableArgs);
+         EAttr::NoPrimitives, argListType, resolvedNillableArgs);
 
       EAttr opMode = EAttr::CheckShortCircle;
       if (argListType == Expression::ArgumentListType::VariadicArgList || argListType == Expression::ArgumentListType::VariadicArgListWithTypecasting) {
@@ -9037,7 +9044,7 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
       }
 
       retVal = expression.compileMessageCall(node, target, context, { context.weakMessage },
-         arguments, opMode, &updatedOuterArgs);
+         arguments, opMode);
 
       expression.scope.syncStack();
    }
@@ -9213,13 +9220,13 @@ mssg_t Compiler::compileInplaceConstructorHandler(BuildTreeWriter& writer, Metho
    writer.appendNode(BuildKey::OpenFrame);
 
    if (methodNode.existChild(SyntaxKey::FillingAttr)) {
-      Expression expression(this, codeScope, writer, false);
+      Expression expression(this, codeScope, writer, false, nullptr);
 
       expression.writeObjectInfo(privateScope.mapSelf());
       fillObject(writer, classScope->info, invokerScope.moduleScope->ptrSize);
    }
    if (classScope->info.methods.exist(invokerScope.moduleScope->buildins.init_message)) {
-      Expression expression(this, codeScope, writer, false);
+      Expression expression(this, codeScope, writer, false, nullptr);
 
       expression.writeObjectInfo(privateScope.mapSelf());
 
@@ -9316,7 +9323,7 @@ void Compiler::compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& 
    writer.appendNode(BuildKey::Assigning, methodScope.selfLocal);
 
    // calling the byref handler
-   Expression expression(this, codeScope, writer, withDebugInfo);
+   Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
    ArgumentsInfo arguments;
 
    ObjectInfo tempRetVal = expression.declareTempLocal(targetRef, false);
@@ -9338,7 +9345,7 @@ void Compiler::compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& 
    _logic->setSignatureStacksafe(*codeScope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
 
    /*ObjectInfo retVal = */expression.compileMessageCall({}, target, context, resolution,
-      arguments, EAttr::AllowPrivateCall, nullptr);
+      arguments, EAttr::AllowPrivateCall);
 
    // return temp variable
    expression.writeObjectInfo(expression.boxArgument(tempRetVal, false, true, false));
@@ -9358,7 +9365,7 @@ void Compiler :: compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& metho
    writer.appendNode(BuildKey::Assigning, methodScope.selfLocal);
 
    // calling the byref handler
-   Expression expression(this, codeScope, writer, false);
+   Expression expression(this, codeScope, writer, false, nullptr);
    ArgumentsInfo arguments;
 
    ObjectInfo target = methodScope.mapSelf();
@@ -9373,7 +9380,7 @@ void Compiler :: compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& metho
    _logic->setSignatureStacksafe(*codeScope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
 
    ObjectInfo retVal = expression.compileMessageCall({}, target, context, resolution,
-      arguments, EAttr::AllowPrivateCall, nullptr);
+      arguments, EAttr::AllowPrivateCall);
 
    mssg_t resultMessage = encodeMessage(codeScope.module->mapAction(RESULT_MESSAGE, 0, false),
       1, PROPERTY_MESSAGE);
@@ -9382,7 +9389,7 @@ void Compiler :: compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& metho
    arguments.add(retVal);
    context = { resultMessage, 0 };
    expression.compileMessageCall({}, retVal, context, resultMessage,
-      arguments, EAttr::None, nullptr);
+      arguments, EAttr::None);
 
    expression.scope.syncStack();
 
@@ -9716,7 +9723,7 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
-   Expression expression(this, codeScope, writer, withDebugInfo);
+   Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
 
    // declare a state machine enumerator
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
@@ -9732,7 +9739,7 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
 
    //   create a state machine enumerator
    int preservedContext = 0;
-   expression.compileNestedInitializing(smScope, nestedRef, preservedContext, nullptr);
+   expression.compileNestedInitializing(smScope, nestedRef, preservedContext);
 
    ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
@@ -9770,7 +9777,7 @@ void Compiler :: compileAsyncMethod(BuildTreeWriter& writer, MethodScope& scope,
       resolution.resolved = true;
 
    retVal = expression.compileMessageCall(node, args[0], context, resolution,
-      args, EAttr::None, nullptr);
+      args, EAttr::None);
 
    //   return a result
    expression.compileConverting(node, retVal, scope.info.outputRef,
@@ -9798,7 +9805,7 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
-   Expression expression(this, codeScope, writer, withDebugInfo);
+   Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
 
    // create yield state machine
    ref_t nestedRef = scope.moduleScope->mapAnonymous();
@@ -9816,7 +9823,7 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
    ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
    int preservedContext = 0;
-   expression.compileNestedInitializing(smScope, nestedRef, preservedContext, nullptr);
+   expression.compileNestedInitializing(smScope, nestedRef, preservedContext);
 
    retVal = expression.saveToTempLocal(retVal);
 
@@ -9909,7 +9916,7 @@ void Compiler::callInitMethod(Expression& expression, SyntaxNode node, ClassInfo
       _logic->setSignatureStacksafe(*expression.scope.moduleScope, 0, resolution.stackSafeAttr);
 
       expression.compileMessageCall(node, args[0], context, resolution,
-         args, EAttr::None, nullptr);
+         args, EAttr::None);
    }
 }
 
@@ -9945,7 +9952,7 @@ void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, Synta
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
    // calling the byref handler
-   Expression expression(this, codeScope, writer, classScope->withDebugInfo);
+   Expression expression(this, codeScope, writer, classScope->withDebugInfo, nullptr);
    ArgumentsInfo arguments;
 
    scope.selfLocal = codeScope.newLocal();
@@ -9964,7 +9971,7 @@ void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, Synta
    _logic->setSignatureStacksafe(*scope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
    
    expression.compileMessageCall({}, target, context, resolution,
-      arguments, EAttr::AllowPrivateCall, nullptr);
+      arguments, EAttr::AllowPrivateCall);
 
    // return the created object
    expression.writeObjectInfo(scope.mapSelf(), current);
@@ -10185,9 +10192,9 @@ void Compiler::compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeSc
    // NOTE : the redirect target must be a simple variable
    assert(objNode == SyntaxKey::Object);
 
-   Expression expression(this, codeScope, writer, false);
+   Expression expression(this, codeScope, writer, false, nullptr);
 
-   ObjectInfo target = expression.compile(objNode, 0, EAttr::None, nullptr);
+   ObjectInfo target = expression.compile(objNode, 0, EAttr::None);
    switch (target.kind) {
       // NOTE : the redirect operation must be done without creating a new frame
       case ObjectKind::OuterSelf:
@@ -10222,7 +10229,7 @@ void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope&
    scope.selfLocal = codeScope.newLocal();
    writer.appendNode(BuildKey::Assigning, scope.selfLocal);
 
-   Expression expression(this, codeScope, writer, withDebugInfo);
+   Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
 
    ObjectInfo mssgVar = expression.declareTempStructure({ sizeof(mssg_t) });
    writer.appendNode(BuildKey::SavingIndex, mssgVar.reference);
@@ -10232,7 +10239,7 @@ void Compiler :: compileRedirectDispatcher(BuildTreeWriter& writer, MethodScope&
    SyntaxNode bodyNode = node.firstChild(SyntaxKey::ScopeMask);
    switch (bodyNode.key) {
       case SyntaxKey::Expression:
-         retVal = expression.compile(bodyNode, 0, EAttr::None, nullptr);
+         retVal = expression.compile(bodyNode, 0, EAttr::None);
          break;
       default:
          scope.raiseError(errInvalidOperation, node);
@@ -10321,7 +10328,7 @@ void Compiler::compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& sco
       }
       // if it is open arg generic without redirect statement
       else if (withOpenArgGenerics) {
-         Expression expression(this, codeScope, writer, false);
+         Expression expression(this, codeScope, writer, false, nullptr);
 
          ref_t mask = VARIADIC_MESSAGE;
          bool mixedDispatcher = false;
@@ -12399,26 +12406,26 @@ Compiler::Code::Code(Method& method)
 
 // --- Compiler::Expression ---
 
-Compiler::Expression::Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer, bool debugInfo)
-   : CommonHelper(compiler), scope(&codeScope), writer(&writer), branchVerification(nullptr)
+Compiler::Expression::Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer, bool debugInfo, ArgumentsInfo* updatedOuterArgs)
+   : CommonHelper(compiler), scope(&codeScope), writer(&writer), branchVerification(nullptr), updatedOuterArgs2(updatedOuterArgs)
 {
    withDebugInfo = debugInfo;
 }
 
 Compiler::Expression::Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer)
-   : CommonHelper(compiler), scope(&symbolScope), writer(&writer), branchVerification(nullptr)
+   : CommonHelper(compiler), scope(&symbolScope), writer(&writer), branchVerification(nullptr), updatedOuterArgs2(nullptr)
 {
    withDebugInfo = symbolScope.withDebugInfo;
 }
 
 Compiler::Expression::Expression(Symbol& symbol, BuildTreeWriter& writer)
-   : CommonHelper(symbol.compiler), scope(&symbol.scope), writer(&writer), branchVerification(nullptr)
+   : CommonHelper(symbol.compiler), scope(&symbol.scope), writer(&writer), branchVerification(nullptr), updatedOuterArgs2(nullptr)
 {
    withDebugInfo = symbol.scope.withDebugInfo;
 }
 
 Compiler::Expression::Expression(Code& code, BuildTreeWriter& writer, bool debugInfo)
-   : CommonHelper(code.compiler), scope(&code.scope), writer(&writer), branchVerification(nullptr)
+   : CommonHelper(code.compiler), scope(&code.scope), writer(&writer), branchVerification(nullptr), updatedOuterArgs2(nullptr)
 {
    withDebugInfo = debugInfo;
 }
@@ -12428,7 +12435,7 @@ ObjectInfo Compiler::Expression::compileSymbolRoot(SyntaxNode bodyNode, Expressi
    writer->appendNode(BuildKey::OpenStatement);
    addBreakpoint(*writer, findObjectNode(bodyNode), BuildKey::Breakpoint);
 
-   ObjectInfo retVal = compile(bodyNode.firstChild(), targetRef, mode, nullptr);
+   ObjectInfo retVal = compile(bodyNode.firstChild(), targetRef, mode);
 
    writeObjectInfo(boxArgument(retVal, false, true, false));
 
@@ -12480,7 +12487,7 @@ static inline bool isClosureConflictExpected(SyntaxNode node)
    }
 }
 
-ObjectInfo Compiler::Expression::compileRoot(SyntaxNode node, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression :: compileRoot(SyntaxNode node, ExpressionAttribute mode)
 {
    SyntaxNode current = node.firstChild();
    if (current == SyntaxKey::CodeBlock) {
@@ -12500,7 +12507,7 @@ ObjectInfo Compiler::Expression::compileRoot(SyntaxNode node, ExpressionAttribut
       mode = mode | EAttr::LookaheadExprMode;
    }
 
-   auto retVal = compile(node, 0, mode, nullptr);
+   auto retVal = compile(node, 0, mode);
 
    //if (isBoxingRequired(retVal)) {
    //   retVal = boxArgumentInPlace(writer, scope, retVal);
@@ -12538,7 +12545,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionA
             mode = mode | EAttr::Nillable;
 
          retVal = compile(node.findChild(SyntaxKey::Expression), outputInfo.typeRef,
-            mode | EAttr::Root | EAttr::RetValExpected, nullptr);
+            mode | EAttr::Root | EAttr::RetValExpected);
          break;
       case SyntaxKey::CodeBlock:
          retVal = compiler->compileCode(*writer, *codeScope, exprNode, true);
@@ -12602,8 +12609,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionA
    return retVal;
 }
 
-ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode,
-   ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode)
 {
    bool paramMode = EAttrs::testAndExclude(mode, EAttr::Parameter);
    bool noPrimitives = EAttrs::testAndExclude(mode, EAttr::NoPrimitives);
@@ -12725,23 +12731,23 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, Expre
          retVal = compileIsNilOperation(current);
          break;
       case SyntaxKey::ReturnExpression:
-         retVal = compile(current.firstChild(), 0, mode, updatedOuterArgs);
+         retVal = compile(current.firstChild(), 0, mode);
          break;
       case SyntaxKey::Expression:
-         retVal = compile(current, targetRef, mode, updatedOuterArgs);
+         retVal = compile(current, targetRef, mode);
          targetRef = 0;
          break;
       case SyntaxKey::Object:
-         retVal = compileObject(current, mode, updatedOuterArgs);
+         retVal = compileObject(current, mode);
          break;
       case SyntaxKey::NestedBlock:
-         retVal = compileNested(current, mode, updatedOuterArgs);
+         retVal = compileNested(current, mode);
          break;
       case SyntaxKey::ClosureBlock:
-         retVal = compileClosure(current, targetRef, mode, updatedOuterArgs);
+         retVal = compileClosure(current, targetRef, mode);
          break;
       case SyntaxKey::LazyOperation:
-         retVal = compileClosure(current, 0, mode, updatedOuterArgs);
+         retVal = compileClosure(current, 0, mode);
          break;
       case SyntaxKey::CodeBlock:
          retVal = compileSubCode(current, mode, true);
@@ -12765,7 +12771,7 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, Expre
          if (!compiler->_logic->validateExpressionAttribute(current.arg.reference, exprAttr))
             scope.raiseError(errInvalidHint, current);;
 
-         return compile(current.nextNode(), targetRef, exprAttr.attrs, updatedOuterArgs);
+         return compile(current.nextNode(), targetRef, exprAttr.attrs);
          break;
       }
       case SyntaxKey::TupleCollection:
@@ -12784,7 +12790,7 @@ ObjectInfo Compiler::Expression::compile(SyntaxNode node, ref_t targetRef, Expre
          assert(false);
          break;
       default:
-         retVal = compileObject(node, mode, updatedOuterArgs);
+         retVal = compileObject(node, mode);
          break;
    }
 
@@ -12803,7 +12809,7 @@ ObjectInfo Compiler::Expression::compileInterpolation(SyntaxNode node)
       if (current == SyntaxKey::interpolate) {
          arg = compiler->mapTerminal(scope, current, {}, EAttr::None);
       }
-      else arg = compile(current, 0, EAttr::None, nullptr);
+      else arg = compile(current, 0, EAttr::None);
 
       arguments.add(arg);
 
@@ -12825,10 +12831,10 @@ ObjectInfo Compiler::Expression::compileInterpolation(SyntaxNode node)
    else scope.raiseError(errInvalidOperation, node);
 
    MessageCallContext context = { messageRef, 0 };
-   return compileMessageCall(node, source, context, messageRef, arguments, EAttr::StrongResolved | EAttr::NoExtension, nullptr);
+   return compileMessageCall(node, source, context, messageRef, arguments, EAttr::StrongResolved | EAttr::NoExtension);
 }
 
-ObjectInfo Compiler::Expression :: compileObject(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: compileObject(SyntaxNode node, ExpressionAttribute mode)
 {
    if (node == SyntaxKey::Object) {
       ObjectInfo retVal = compiler->mapObject(scope, node, mode);
@@ -12850,7 +12856,7 @@ ObjectInfo Compiler::Expression :: compileObject(SyntaxNode node, ExpressionAttr
 
       return retVal;
    }
-   else return compile(node, 0, mode, updatedOuterArgs);
+   else return compile(node, 0, mode);
 }
 
 void Compiler::Expression :: prepareConflictResolution()
@@ -12986,7 +12992,7 @@ static inline bool isFunctionCall(ModuleBase* module, mssg_t message, pos_t argC
 }
 
 ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
-   ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs)
+   ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = {};
 
@@ -13058,7 +13064,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
 
    ArgumentListType argListType = ArgumentListType::Normal;
    callContext.implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, paramMode,
-      updatedOuterArgs, argListType, resolvedNillableArgs);
+      argListType, resolvedNillableArgs);
 
    if (!resolvedMessage && source.kind == ObjectKind::PropertyNameLiteral && isFunctionCall(scope.module, callContext.weakMessage, 1)) {
       // HOTFIX : recognize a property call and replace it with a direct operation
@@ -13085,12 +13091,12 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
          writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
 
       compileMessageCall(node, source, callContext, byRefResolution,
-         arguments, opMode, updatedOuterArgs);
+         arguments, opMode);
 
       retVal = tempRetVal;
    }
    else retVal = compileMessageCall(node, source, callContext, callContext.weakMessage,
-      arguments, opMode, updatedOuterArgs);
+      arguments, opMode);
 
    return retVal;
 }
@@ -13132,15 +13138,13 @@ bool Compiler::Expression::isDirectMethodCall(SyntaxNode& node)
 
 ObjectInfo Compiler::Expression :: compileAltMessageOperation(SyntaxNode node/*, ref_t expectedRef, ExpressionAttribute attrs*/)
 {
-   ArgumentsInfo updatedOuterArgs;
-
    ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
 
    SyntaxNode current = node.firstChild();
    bool propMode = current.key == SyntaxKey::PropertyOperation;
    current = current.firstChild();
 
-   ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   ObjectInfo source = compileObject(current, EAttr::Parameter);
    if (!isSingleObject(source.kind)) {
       bool dummy = false;
       ObjectInfo tempLocal = declareTempLocal(compiler->resolveStrongType(scope, source.typeInfo));
@@ -13170,14 +13174,13 @@ ObjectInfo Compiler::Expression :: compileNotNilMessageOperation(SyntaxNode node
 {
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
 
-   ArgumentsInfo updatedOuterArgs;
    ArgumentsInfo arguments;
 
    SyntaxNode current = node.firstChild();
    bool propMode = current.key == SyntaxKey::PropertyOperation;
    current = current.firstChild();
 
-   ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   ObjectInfo source = compileObject(current, EAttr::Parameter);
    if (isBoxingRequired(source, false)) {
       // if it is stack-allocated object - the operation is pointless
       scope.raiseWarning(WARNING_LEVEL_1, wrnCannotBeNil, current);
@@ -13197,7 +13200,7 @@ ObjectInfo Compiler::Expression :: compileNotNilMessageOperation(SyntaxNode node
    current = current.nextNode();
 
    ObjectInfo retVal = compileMessageOperationR(node, current, source, arguments,
-      &updatedOuterArgs, expectedRef, propMode, false, false, attrs);
+      expectedRef, propMode, false, false, attrs);
 
    retVal.typeInfo.nillable = false;
 
@@ -13209,14 +13212,13 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
 {
    ObjectInfo retVal = { };
 
-   ArgumentsInfo updatedOuterArgs;
    ArgumentsInfo arguments;
 
    SyntaxNode current = node.firstChild();
    bool propMode = current.key == SyntaxKey::PropertyOperation;
    current = current.firstChild();
 
-   ObjectInfo source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   ObjectInfo source = compileObject(current, EAttr::Parameter);
    if (isBoxingRequired(source, false)) {
       // if it is stack-allocated object - the operation is pointless
       scope.raiseWarning(WARNING_LEVEL_1, wrnCannotBeNil, current);
@@ -13234,7 +13236,7 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
    ArgumentsInfo condArguments;
    condArguments.add(source);
    condArguments.add({ ObjectKind::Nil, { V_NIL }, 0 });
-   ObjectInfo loperand = compileOperation({}, condArguments, NOTEQUAL_OPERATOR_ID, scope.moduleScope->branchingInfo.typeRef, &updatedOuterArgs);
+   ObjectInfo loperand = compileOperation({}, condArguments, NOTEQUAL_OPERATOR_ID, scope.moduleScope->branchingInfo.typeRef);
 
    writeObjectInfo(loperand);
    writer->appendNode(BuildKey::SavingInStack, 0);
@@ -13250,10 +13252,10 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
    CodeScope codeScope(parentCodeScope);
    codeScope.verifiedObjects.add(source);
 
-   Expression subExpr(compiler, codeScope, *writer, withDebugInfo);
+   Expression subExpr(compiler, codeScope, *writer, withDebugInfo, updatedOuterArgs2);
 
    retVal = subExpr.compileMessageOperationR(node, current, source, arguments,
-      &updatedOuterArgs, expectedRef, propMode, false, false, attrs);   
+      expectedRef, propMode, false, false, attrs);   
 
    retVal.typeInfo.nillable = true;
 
@@ -13275,7 +13277,6 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
    ObjectInfo source = {};
 
    ArgumentsInfo arguments;
-   ArgumentsInfo updatedOuterArgs;
    ArgumentListType argListType = ArgumentListType::Normal;
 
    SyntaxNode current = node.firstChild();
@@ -13284,15 +13285,15 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       source = scope.mapSelf(true);
 
       return compileMessageOperationR(node, current, source, arguments,
-         &updatedOuterArgs, expectedRef, false, false, false, attrs);
+         expectedRef, false, false, false, attrs);
    }
-   else source = compileObject(current, EAttr::Parameter, &updatedOuterArgs);
+   else source = compileObject(current, EAttr::Parameter);
 
    bool probeMode = source.mode == TargetMode::Probe;
    switch (source.mode) {
       case TargetMode::External:
       {
-         compileMessageArguments(current, arguments, 0, EAttr::None, nullptr, argListType, 0);
+         compileMessageArguments(current, arguments, 0, EAttr::None, argListType, 0);
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
@@ -13301,7 +13302,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       }
       case TargetMode::CreatingArray:
       {
-         compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, argListType, 0);
+         compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, argListType, 0);
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
@@ -13310,7 +13311,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       }
       case TargetMode::Creating:
       {
-         ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, nullptr, argListType, 0);
+         ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, argListType, 0);
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
@@ -13331,7 +13332,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
          current = current.nextNode();
 
          retVal = compileMessageOperationR(node, current, source, arguments,
-            &updatedOuterArgs, expectedRef, false, probeMode, false, attrs);
+            expectedRef, false, probeMode, false, attrs);
 
          break;
       }
@@ -13344,10 +13345,9 @@ ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t
 {
    ObjectInfo retVal = { };
    ArgumentsInfo arguments;
-   ArgumentsInfo outerArgsToUpdate;
 
    SyntaxNode current = node.firstChild();
-   ObjectInfo source = compileObject(current, EAttr::Parameter, &outerArgsToUpdate);
+   ObjectInfo source = compileObject(current, EAttr::Parameter);
    if (invalidObjectMode(source))
       scope.raiseError(errInvalidOperation, node);
 
@@ -13357,7 +13357,7 @@ ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t
    current = current.nextNode();
 
    retVal = compileMessageOperationR(node, current, source, arguments,
-      &outerArgsToUpdate, expectedRef, true, false, true, attrs);
+      expectedRef, true, false, true, attrs);
 
    return retVal;
 }
@@ -13418,7 +13418,7 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
 
-   ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef: currentField.typeInfo.typeRef, EAttr::AsyncOp, nullptr);
+   ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef: currentField.typeInfo.typeRef, EAttr::AsyncOp);
 
    bool nillableOp = false;
    if (!compileAssigningOp(currentField, exprVal, nillableOp))
@@ -13476,7 +13476,7 @@ void Compiler::Expression :: compileYieldOperation(SyntaxNode node)
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
 
-   ObjectInfo retVal = compile(node.firstChild(), 0, EAttr::None, nullptr);
+   ObjectInfo retVal = compile(node.firstChild(), 0, EAttr::None);
 
    bool nillableOp = false;
    if (!compileAssigningOp(currentField, retVal, nillableOp))
@@ -13508,22 +13508,20 @@ ObjectInfo Compiler::Expression::compileIndexAssignOperation(SyntaxNode node, Sy
    SyntaxNode lnode = node.firstChild();
    SyntaxNode inode = lnode.nextNode();
 
-   ArgumentsInfo  updatedOuterArgs;
-
    //BuildKey   op = BuildKey::None;
    ObjectInfo loperand = compile(lnode, 0,
-      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
    ObjectInfo ioperand = compile(inode, 0,
-      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
    ObjectInfo roperand = compile(rnode, 0,
-      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
 
    // get the array item
    ArgumentsInfo arguments;
    arguments.add(loperand);
    arguments.add(ioperand);
 
-   ObjectInfo tempInfo = compileOperation(node, arguments, INDEX_OPERATOR_ID, 0, &updatedOuterArgs);
+   ObjectInfo tempInfo = compileOperation(node, arguments, INDEX_OPERATOR_ID, 0);
 
    // make an operation with it
    switch (operatorId) {
@@ -13546,7 +13544,7 @@ ObjectInfo Compiler::Expression::compileIndexAssignOperation(SyntaxNode node, Sy
    arguments.clear();
    arguments.add(tempInfo);
    arguments.add(roperand);
-   tempInfo = compileOperation(node, arguments, operatorId, 0, &updatedOuterArgs);
+   tempInfo = compileOperation(node, arguments, operatorId, 0);
 
    // set the updated array item
    arguments.clear();
@@ -13554,7 +13552,7 @@ ObjectInfo Compiler::Expression::compileIndexAssignOperation(SyntaxNode node, Sy
    arguments.add(tempInfo);
    arguments.add(ioperand);
 
-   return compileOperation(node, arguments, SET_INDEXER_OPERATOR_ID, expectedRef, &updatedOuterArgs);
+   return compileOperation(node, arguments, SET_INDEXER_OPERATOR_ID, expectedRef);
 }
 
 ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int operatorId, ref_t expectedRef)
@@ -13567,8 +13565,7 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
       return compileIndexAssignOperation(lnode, rnode, operatorId, expectedRef);
    }
 
-   ArgumentsInfo updatedOuterArgs;
-   ObjectInfo loperand = compile(lnode, 0, EAttr::Parameter, &updatedOuterArgs);
+   ObjectInfo loperand = compile(lnode, 0, EAttr::Parameter);
    ObjectInfo roperand = {};
 
    size_t     argLen = 1;
@@ -13576,7 +13573,7 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
    arguments[0] = loperand.typeInfo.typeRef;
 
    if (rnode != SyntaxKey::None) {
-      roperand = compile(rnode, 0, EAttr::Parameter, &updatedOuterArgs);
+      roperand = compile(rnode, 0, EAttr::Parameter);
       arguments[1] = roperand.typeInfo.typeRef;
       argLen++;
    }
@@ -13598,8 +13595,6 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
       writer->newNode(op, loperand.argument);
       writer->appendNode(BuildKey::OperatorId, operatorId);
       writer->closeNode();
-
-      unboxArguments({}, &updatedOuterArgs);
 
       scope.reserveArgs(2);
    }
@@ -13637,7 +13632,7 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
          messageArguments.add(roperand);
 
       ObjectInfo opVal = compileWeakOperation(node, arguments, 2, loperand,
-         messageArguments, message, expectedRef, &updatedOuterArgs);
+         messageArguments, message, expectedRef);
 
       bool nillableOp = false;
       if (!compileAssigningOp(loperand, opVal, nillableOp))
@@ -13662,7 +13657,7 @@ ObjectInfo Compiler::Expression::compileBoolOperation(SyntaxNode node, int opera
    if (!condOp) {
       // If it is not a comparison operation
       // we have to define if native short-circuit evaluation can be used
-      loperand = compile(lnode, 0, EAttr::Parameter, nullptr);
+      loperand = compile(lnode, 0, EAttr::Parameter);
 
       nativeOp = compiler->_logic->isCompatible(*scope.moduleScope,
          { scope.moduleScope->branchingInfo.typeRef }, loperand.typeInfo, true);
@@ -13677,7 +13672,7 @@ ObjectInfo Compiler::Expression::compileBoolOperation(SyntaxNode node, int opera
 
       writer->newNode(BuildKey::Tape);
       if (loperand.kind == ObjectKind::Unknown)
-         loperand = compile(lnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None, nullptr);
+         loperand = compile(lnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None);
 
       writeObjectInfo(loperand, node);
 
@@ -13689,7 +13684,7 @@ ObjectInfo Compiler::Expression::compileBoolOperation(SyntaxNode node, int opera
       }
 
       writer->newNode(BuildKey::Tape);
-      writeObjectInfo(compile(rnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None, nullptr), node);
+      writeObjectInfo(compile(rnode, scope.moduleScope->branchingInfo.typeRef, EAttr::None), node);
       writer->closeNode();
 
       writer->closeNode();
@@ -13705,7 +13700,7 @@ ObjectInfo Compiler::Expression::compileBoolOperation(SyntaxNode node, int opera
       SyntaxTree::copyNode(treeWriter, rnode, true);
       treeWriter.closeNode();
 
-      ObjectInfo roperand = compileClosure(tempTree.readRoot(), 0, EAttr::Parameter, nullptr);
+      ObjectInfo roperand = compileClosure(tempTree.readRoot(), 0, EAttr::Parameter);
       ref_t      arguments[2] =
       {
          compiler->retrieveType(scope, loperand),
@@ -13719,7 +13714,7 @@ ObjectInfo Compiler::Expression::compileBoolOperation(SyntaxNode node, int opera
       mssg_t message = compiler->resolveOperatorMessage(scope.moduleScope, operatorId);
 
       return compileWeakOperation(node, arguments, 2, loperand,
-         messageArguments, message, 0, nullptr);
+         messageArguments, message, 0);
    }
 }
 
@@ -13755,7 +13750,7 @@ ObjectInfo Compiler::Expression::typecastObject(SyntaxNode node, ObjectInfo sour
 
    MessageCallContext context = { typecastMssg, 0 };
    ObjectInfo retVal = compileMessageCall(node, source, context, typecastMssg,
-      arguments, EAttr::None, nullptr);
+      arguments, EAttr::None);
    // NOTE : typecasting message is guaranteed to return the instance of the target type
    retVal.typeInfo = { targetRef };
 
@@ -13801,7 +13796,6 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, in
    if (operatorId == IF_ELSE_OPERATOR_ID)
       r2node = rnode.nextNode();
 
-   ArgumentsInfo updatedOuterArgs;
    BranchVerification verificationArg;
    branchVerification = &verificationArg;
    if (oldVerification) {
@@ -13809,7 +13803,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, in
       copyVerifications(verificationArg.notTrueOnes, *oldVerification->forFalseBranch());
    }
 
-   ObjectInfo loperand = compile(lnode, 0, EAttr::Parameter, &updatedOuterArgs);
+   ObjectInfo loperand = compile(lnode, 0, EAttr::Parameter);
 
    if (!withoutDebugInfo) {
       // HOTFIX : to allow correct step over the branching statement
@@ -13817,7 +13811,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, in
       writer->appendNode(BuildKey::VirtualBreakpoint);
    }
 
-   auto retVal = compileBranchingOperation(node, loperand, rnode, r2node, operatorId, &updatedOuterArgs,
+   auto retVal = compileBranchingOperation(node, loperand, rnode, r2node, operatorId,
       retValExpected, withoutDebugInfo);
 
    branchVerification = oldVerification;
@@ -13843,7 +13837,7 @@ ObjectInfo Compiler::Expression::compileLoop(SyntaxNode node, ExpressionAttribut
       }
    }
 
-   compile(node, 0, mode, nullptr);
+   compile(node, 0, mode);
 
    writer->appendNode(BuildKey::VirtualBreakpoint);
 
@@ -13856,7 +13850,7 @@ ObjectInfo Compiler::Expression::compileExtern(SyntaxNode node, ExpressionAttrib
 {
    writer->newNode(BuildKey::ExternOp);
 
-   compile(node, 0, mode, nullptr);
+   compile(node, 0, mode);
 
    writer->closeNode();
 
@@ -13879,7 +13873,7 @@ ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
       writer->appendNode(BuildKey::StackIndex, scope.newTempLocal());
 
    writer->newNode(BuildKey::Tape);
-   compile(opNode, 0, EAttr::TryMode, nullptr);
+   compile(opNode, 0, EAttr::TryMode);
    writer->closeNode();
 
    writer->newNode(BuildKey::Tape);
@@ -13897,7 +13891,7 @@ ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
       scope.commitTempStack(prevAllocated1, prevAllocated2); // HOTFIX : to prevent overwritting temporal variables
 
       writer->newNode(BuildKey::Tape);
-      compile(finallyNode, 0, EAttr::None, nullptr);
+      compile(finallyNode, 0, EAttr::None);
       writer->closeNode();
 
       scope.freeTempStack(prevAllocated1, prevAllocated2);
@@ -13923,7 +13917,7 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node, Expressi
    writer->appendNode(BuildKey::StackIndex, index1);
 
    writer->newNode(BuildKey::Tape);
-   compile(opNode, 0, mode | EAttr::TryMode, nullptr);
+   compile(opNode, 0, mode | EAttr::TryMode);
    writer->closeNode();
 
    scope.syncStack();
@@ -13936,7 +13930,7 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node, Expressi
       finallyNode = finallyNode.findChild(SyntaxKey::ClosureBlock);
 
    writer->newNode(BuildKey::Tape);
-   compile(finallyNode, 0, mode, nullptr);
+   compile(finallyNode, 0, mode);
    writer->closeNode();
 
    if (finallyNode != SyntaxKey::None)
@@ -13959,7 +13953,7 @@ ObjectInfo Compiler::Expression::compileAltOperation(SyntaxNode node)
       {
          SyntaxNode objNode = current.firstChild();
 
-         target = compileObject(objNode, EAttr::Parameter, nullptr);
+         target = compileObject(objNode, EAttr::Parameter);
 
          writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
@@ -13974,7 +13968,7 @@ ObjectInfo Compiler::Expression::compileAltOperation(SyntaxNode node)
          writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
          writer->newNode(BuildKey::Tape);
-         compile(current, 0, EAttr::Parameter, nullptr);
+         compile(current, 0, EAttr::Parameter);
          writer->closeNode();
 
          target = { ObjectKind::Nil };
@@ -13991,7 +13985,7 @@ ObjectInfo Compiler::Expression::compileAltOperation(SyntaxNode node)
    if (target.mode == TargetMode::Casting) {
       // HOTFIX : for the cast, the argument is a target
       target = compile(current.findChild(SyntaxKey::Expression),
-         0, EAttr::Parameter, nullptr);
+         0, EAttr::Parameter);
    }
 
    compileMessageOperationR(target, altNode.firstChild(), false);
@@ -14027,7 +14021,7 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
 
       SyntaxNode objNode = current.firstChild();
 
-      loperand = compileObject(objNode, EAttr::Parameter, nullptr);
+      loperand = compileObject(objNode, EAttr::Parameter);
 
       writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
@@ -14045,7 +14039,7 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
       loperand = saveToTempLocal({ ObjectKind::Object });
    }
    else if (current == SyntaxKey::Object) {
-      loperand = compileObject(current, EAttr::Parameter, nullptr);
+      loperand = compileObject(current, EAttr::Parameter);
    }
    else {
       ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
@@ -14053,7 +14047,7 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
       writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
       writer->newNode(BuildKey::Tape);
-      loperand = compile(current, 0, EAttr::Parameter | EAttr::RetValExpected, nullptr);
+      loperand = compile(current, 0, EAttr::Parameter | EAttr::RetValExpected);
       writer->closeNode();
 
       writer->newNode(BuildKey::Tape);
@@ -14071,7 +14065,7 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
    // if non-branching operation is possible
    if (compiler->checkifSingleObject(scope, altNode)) {
       // COALESCE operation is used
-      roperand = compile(altNode, 0, EAttr::Parameter, nullptr);
+      roperand = compile(altNode, 0, EAttr::Parameter);
 
       writeObjectInfo(roperand, node);
       writer->appendNode(BuildKey::SavingInStack);
@@ -14085,7 +14079,7 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
       writeObjectInfo(loperand, node);
       writer->closeNode();
       writer->newNode(BuildKey::Tape);
-      roperand = compile(altNode, 0, EAttr::Parameter, nullptr);
+      roperand = compile(altNode, 0, EAttr::Parameter);
       writeObjectInfo(roperand, node);
       writer->closeNode();
 
@@ -14113,8 +14107,7 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
    return { ObjectKind::Object, typeInfo, 0 };
 }
 
-ObjectInfo Compiler::Expression::compileNested(SyntaxNode node, ExpressionAttribute mode,
-   ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: compileNested(SyntaxNode node, ExpressionAttribute mode)
 {
    TypeInfo parentInfo = { scope.moduleScope->buildins.superReference };
    EAttrs nestedMode = { EAttr::NestedDecl };
@@ -14129,11 +14122,10 @@ ObjectInfo Compiler::Expression::compileNested(SyntaxNode node, ExpressionAttrib
 
    compiler->compileNestedClass(*writer, classScope, node, parentInfo.typeRef);
 
-   return compileNested(classScope, mode, updatedOuterArgs);
+   return compileNested(classScope, mode);
 }
 
-ObjectInfo Compiler::Expression::compileClosure(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode,
-   ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: compileClosure(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode)
 {
    BuildNode buildNode = writer->CurrentNode();
    while (buildNode != BuildKey::Root)
@@ -14145,7 +14137,7 @@ ObjectInfo Compiler::Expression::compileClosure(SyntaxNode node, ref_t targetRef
 
    helper.compile(node);
 
-   return compileNested(helper.scope, mode, updatedOuterArgs);
+   return compileNested(helper.scope, mode);
 }
 
 static inline CodeFlowMode defineTryMode(SyntaxNode node)
@@ -14203,7 +14195,7 @@ void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withou
 
    SyntaxNode current = node.firstChild();
 
-   ObjectInfo loperand = compileObject(current, EAttr::Parameter, nullptr);
+   ObjectInfo loperand = compileObject(current, EAttr::Parameter);
 
    if (!withoutDebugInfo) {
       writer->appendNode(BuildKey::EndStatement);
@@ -14226,9 +14218,9 @@ void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withou
             arguments.clear();
             arguments.add(loperand);
             arguments.add(value);
-            ObjectInfo retVal = compileOperation(node, arguments, operator_id, 0, nullptr);
+            ObjectInfo retVal = compileOperation(node, arguments, operator_id, 0);
 
-            compileBranchingOperation(node, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, nullptr, false, false);
+            compileBranchingOperation(node, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, false, false);
 
             writer->closeNode();
 
@@ -14261,7 +14253,7 @@ ObjectInfo Compiler::Expression::compileCollection(SyntaxNode node, ExpressionAt
 
    SyntaxNode current = node.firstChild();
 
-   ObjectInfo objectInfo = compileObject(node.firstChild(), EAttr::NestedDecl, nullptr);
+   ObjectInfo objectInfo = compileObject(node.firstChild(), EAttr::NestedDecl);
    if (objectInfo.kind != ObjectKind::Class)
       scope.raiseError(errInvalidOperation, node);
 
@@ -14287,8 +14279,7 @@ ObjectInfo Compiler::Expression::compileCollection(SyntaxNode node, ExpressionAt
    EAttr paramMode = EAttr::Parameter;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
-         auto argInfo = compile(current, elementTypeRef,
-            paramMode, nullptr);
+         auto argInfo = compile(current, elementTypeRef, paramMode);
          //ref_t argRef = retrieveStrongType(scope, argInfo);
          //if (signatureLen >= ARG_COUNT) {
          //   signatureLen++;
@@ -14410,7 +14401,7 @@ ObjectInfo Compiler::Expression::compileClosureOperation(SyntaxNode node, ref_t 
 
    classWriter.closeNode();
 
-   return compileClosure(rootNode.firstChild(), targetRef, EAttr::None, nullptr);
+   return compileClosure(rootNode.firstChild(), targetRef, EAttr::None);
 }
 
 ObjectInfo Compiler::Expression::compileTupleCollection(SyntaxNode node, ref_t targetRef)
@@ -14421,7 +14412,7 @@ ObjectInfo Compiler::Expression::compileTupleCollection(SyntaxNode node, ref_t t
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
-         auto argInfo = compile(current, 0, paramMode, nullptr);
+         auto argInfo = compile(current, 0, paramMode);
 
          arguments.add(argInfo);
       }
@@ -14467,7 +14458,7 @@ ObjectInfo Compiler::Expression::compileKeyValue(SyntaxNode node/*, ExpressionAt
    treeWriter.closeNode();
    treeWriter.closeNode();
 
-   return compileNested(tempTree.readRoot(), EAttr::None, nullptr);
+   return compileNested(tempTree.readRoot(), EAttr::None);
 }
 
 ObjectInfo Compiler::Expression::compileTupleAssigning(SyntaxNode node)
@@ -14504,7 +14495,7 @@ ObjectInfo Compiler::Expression::compileTupleAssigning(SyntaxNode node)
       }
    }
 
-   ObjectInfo exprVal = compile(current, 0, EAttr::Parameter, nullptr);
+   ObjectInfo exprVal = compile(current, 0, EAttr::Parameter);
    for (pos_t i = 0; i < targets.count_pos(); i++) {
       arguments.clear();
       arguments.add(exprVal);
@@ -14517,7 +14508,7 @@ ObjectInfo Compiler::Expression::compileTupleAssigning(SyntaxNode node)
 
       MessageCallContext context = { getter, 0 };
       ObjectInfo sourceVar = compileMessageCall(node, exprVal, context, getter,
-         arguments, EAttr::None, nullptr);
+         arguments, EAttr::None);
 
       bool nillableOp = false;
       compileAssigningOp(targetVar, sourceVar, nillableOp);
@@ -14583,7 +14574,7 @@ ObjectInfo Compiler::Expression::compileNewOp(SyntaxNode node, ObjectInfo source
    }
    else context.weakMessage = overwriteArgCount(scope.moduleScope->buildins.constructor_message, arguments.count_pos());
 
-   ObjectInfo retVal = compileMessageCall(node, source, context, context.weakMessage, arguments, EAttr::StrongResolved | EAttr::NoExtension | EAttr::CheckShortCircle, nullptr);
+   ObjectInfo retVal = compileMessageCall(node, source, context, context.weakMessage, arguments, EAttr::StrongResolved | EAttr::NoExtension | EAttr::CheckShortCircle);
 
    if (arguments.count_pos() < 2 && (source.kind == ObjectKind::Class || source.kind == ObjectKind::ClassSelf)) {
       pos_t argCount = arguments.count_pos() + 1;
@@ -14609,8 +14600,8 @@ ObjectInfo Compiler::Expression::compileNewOp(SyntaxNode node, ObjectInfo source
    return retVal;
 }
 
-ref_t Compiler::Expression::compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode,
-   ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType, int nillableArgs)
+ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode,
+   ArgumentListType& argListType, int nillableArgs)
 {
    bool variadicArg = EAttrs::testAndExclude(mode, EAttr::WithVariadicArg);
    bool allowGenericSignature = EAttrs::testAndExclude(mode, EAttr::AllowGenericSignature);
@@ -14641,7 +14632,7 @@ ref_t Compiler::Expression::compileMessageArguments(SyntaxNode current, Argument
          // NOTE : signatures[signatureLen] contains expected parameter type if expectedSignRef is provided
          bool isNillable = test(nillableArgs, argMask);
          auto argInfo = compile(current, signatures[signatureLen],
-            paramMode | (isNillable ? EAttr::Nillable : EAttr::None), updatedOuterArgs);
+            paramMode | (isNillable ? EAttr::Nillable : EAttr::None));
 
          if ((argInfo.mode == TargetMode::UnboxingVarArgument || argInfo.mode == TargetMode::UnboxingAndTypecastingVarArgument) && signatureLen < ARG_COUNT) {
             if (argInfo.typeInfo.elementRef) {
@@ -14797,8 +14788,7 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRe
    return { ObjectKind::Extern, retType, 0 };
 }
 
-void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedContext,
-   ArgumentsInfo* updatedOuterArgs)
+void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedContext)
 {
    ArgumentsInfo list;
    // first pass : box an argument if required
@@ -14870,16 +14860,16 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
          scope.trackingLocals.add(key, { arg.typeInfo, (*it).updated ? TrackingMode::Updated : TrackingMode::Captched });
       }
 
-      if (updatedOuterArgs && (*it).updated) {
+      if (updatedOuterArgs2 && (*it).updated) {
          if (!preservedContext) {
-            updatedOuterArgs->add({ ObjectKind::ContextInfo });
+            updatedOuterArgs2->add({ ObjectKind::ContextInfo });
             // reserve place for the context info
-            preservedContext = updatedOuterArgs->count_pos();
-            updatedOuterArgs->add({ });
+            preservedContext = updatedOuterArgs2->count_pos();
+            updatedOuterArgs2->add({ });
          }
 
-         updatedOuterArgs->add({ ObjectKind::MemberInfo, (*it).reference });
-         updatedOuterArgs->add(source);
+         updatedOuterArgs2->add({ ObjectKind::MemberInfo, (*it).reference });
+         updatedOuterArgs2->add(source);
       }
 
       argIndex++;
@@ -14963,7 +14953,7 @@ ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo sourc
                arguments.add(classSymbol);
 
                return compileWeakOperation(node, nullptr, 0, classSymbol,
-                  arguments, scope.moduleScope->buildins.default_message, targetRef, nullptr);
+                  arguments, scope.moduleScope->buildins.default_message, targetRef);
             }
          }
          else return { ObjectKind::Nil, { V_NIL } };
@@ -15285,7 +15275,7 @@ void Compiler::Expression::handleNillableAssign(SyntaxNode node, ObjectInfo targ
 }
 
 ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
-   ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs)
+   ArgumentsInfo& arguments, ExpressionAttributes mode)
 {
    bool vargCastingRequired = EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArgCast);
    bool argUnboxingRequired = vargCastingRequired || EAttrs::testAndExclude(mode.attrs, EAttr::WithVariadicArg);
@@ -15421,8 +15411,6 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
 
       writer->closeNode();
 
-      retVal = unboxArguments(retVal, updatedOuterArgs);
-
       if (argUnboxingRequired) {
          writer->appendNode(BuildKey::LoadingIndex, lenLocal.argument);
          writer->appendNode(BuildKey::FreeVarStack);
@@ -15471,7 +15459,6 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rn
    }
 
    ObjectInfo     retVal;
-   ArgumentsInfo  updatedOuterArgs;
 
    SyntaxNode lnode = node;
    SyntaxNode inode;
@@ -15482,7 +15469,7 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rn
    }
 
    ObjectInfo loperand = compile(lnode, 0,
-      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
    ObjectInfo roperand = {};
 
    ArgumentsInfo arguments;
@@ -15495,17 +15482,17 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rn
          rTargetRef = compiler->retrieveType(scope, loperand);
 
       roperand = compile(rnode, rTargetRef,
-         EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs);
+         EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
 
       arguments.add(roperand);
    }
 
    if (inode != SyntaxKey::None) {
       arguments.add(compile(inode, 0,
-         EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode, &updatedOuterArgs));
+         EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode));
    }
 
-   return compileOperation(node, arguments, operatorId, expectedRef, &updatedOuterArgs);
+   return compileOperation(node, arguments, operatorId, expectedRef);
 }
 
 ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNode roperand, ExpressionAttribute mode)
@@ -15525,7 +15512,7 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
       ? target.typeInfo.elementRef : compiler->resolveStrongType(scope, target.typeInfo);
    if (targetRef == V_AUTO) {
       // support auto attribute
-      exprVal = compile(roperand, 0, EAttr::RetValExpected, nullptr);
+      exprVal = compile(roperand, 0, EAttr::RetValExpected);
 
       if (resolveAutoType(exprVal, target)) {
          targetRef = compiler->resolveStrongType(scope, exprVal.typeInfo);
@@ -15533,7 +15520,7 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
       }
       else scope.raiseError(errInvalidOperation, roperand.parentNode());
    }
-   else exprVal = compile(roperand, targetRef, EAttr::RetValExpected, nullptr);
+   else exprVal = compile(roperand, targetRef, EAttr::RetValExpected);
 
    if (target.kind == ObjectKind::Shortcut) {
       CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
@@ -15858,8 +15845,8 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsIn
    return retVal;
 }
 
-ObjectInfo Compiler::Expression::compileWeakOperation(SyntaxNode node, ref_t* arguments, pos_t argLen,
-   ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: compileWeakOperation(SyntaxNode node, ref_t* arguments, pos_t argLen,
+   ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef)
 {
    ObjectInfo retVal = {};
 
@@ -15888,12 +15875,12 @@ ObjectInfo Compiler::Expression::compileWeakOperation(SyntaxNode node, ref_t* ar
          writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
 
       compileMessageCall(node, loperand, context, byRefResolution,
-         messageArguments, EAttr::None, updatedOuterArgs);
+         messageArguments, EAttr::None);
 
       retVal = tempRetVal;
    }
    else retVal = compileMessageCall(node, loperand, context, { context.weakMessage },
-      messageArguments, EAttr::NoExtension | EAttr::CheckShortCircle, updatedOuterArgs);
+      messageArguments, EAttr::NoExtension | EAttr::CheckShortCircle);
 
    return retVal;
 }
@@ -16078,8 +16065,8 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
    return true;
 }
 
-ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, ObjectInfo loperand, SyntaxNode rnode,
-   SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected, bool withoutDebugInfo)
+ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, ObjectInfo loperand, SyntaxNode rnode,
+   SyntaxNode r2node, int operatorId, bool retValExpected, bool withoutDebugInfo)
 {
    ObjectInfo retVal = {};
    BuildKey   op = BuildKey::None;
@@ -16138,8 +16125,8 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
       if (rnode != SyntaxKey::ClosureBlock && r2node != SyntaxKey::None) {
          context.weakMessage = scope.moduleScope->buildins.iif_message;
 
-         roperand = compile(rnode, 0, EAttr::Parameter, updatedOuterArgs);
-         roperand2 = compile(r2node, 0, EAttr::Parameter, updatedOuterArgs);
+         roperand = compile(rnode, 0, EAttr::Parameter);
+         roperand2 = compile(r2node, 0, EAttr::Parameter);
       }
       else {
          context.weakMessage = compiler->resolveOperatorMessage(scope.moduleScope, operatorId);
@@ -16148,8 +16135,8 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
          scope.trackingClosureLocals = true;
          BuildNode lastNode = writer->CurrentNode().lastChild();
 
-         roperand = compileClosure(rnode, 0, EAttr::None, updatedOuterArgs);
-         roperand2 = compileClosure(r2node, 0, EAttr::None, updatedOuterArgs);
+         roperand = compileClosure(rnode, 0, EAttr::None);
+         roperand2 = compileClosure(r2node, 0, EAttr::None);
 
          scope.trackingClosureLocals = false;
          if (scope.unboxingConflictFound) {
@@ -16162,10 +16149,10 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
             }
 
             prepareConflictResolution();
-            updatedOuterArgs->clear();
+            updatedOuterArgs2->clear();
 
-            roperand = compileClosure(rnode, 0, EAttr::None, updatedOuterArgs);
-            roperand2 = compileClosure(r2node, 0, EAttr::None, updatedOuterArgs);
+            roperand = compileClosure(rnode, 0, EAttr::None);
+            roperand2 = compileClosure(r2node, 0, EAttr::None);
 
             scope.unboxingConflictFound = false;
          }
@@ -16180,7 +16167,7 @@ ObjectInfo Compiler::Expression::compileBranchingOperation(SyntaxNode node, Obje
 
       context.implicitSignatureRef = scope.module->mapSignature(arguments, argLen, false);
 
-      retVal = compileMessageCall(node, loperand, context, context.weakMessage, messageArguments, EAttr::NoExtension, updatedOuterArgs);
+      retVal = compileMessageCall(node, loperand, context, context.weakMessage, messageArguments, EAttr::NoExtension);
    }
 
    return retVal;
@@ -16203,7 +16190,7 @@ ObjectInfo Compiler::Expression::compileBranchingOperands(SyntaxNode rnode, Synt
 
       subRetCode = compileSubCode(rnode.firstChild(), mode, false, branchVerification ? branchVerification->forTrueBranch() : nullptr);
    }
-   else subRetCode = compile(rnode, 0, mode, nullptr);
+   else subRetCode = compile(rnode, 0, mode);
 
    if (retValExpected) {
       writeObjectInfo(subRetCode);
@@ -16228,7 +16215,7 @@ ObjectInfo Compiler::Expression::compileBranchingOperands(SyntaxNode rnode, Synt
             codeScope->withRetStatement = oldWithRet;
          }
       }
-      else elseSubRetCode = compile(r2node, 0, mode, nullptr);
+      else elseSubRetCode = compile(r2node, 0, mode);
 
       if (retValExpected) {
          writeObjectInfo(elseSubRetCode, r2node);
@@ -16256,7 +16243,7 @@ ObjectInfo Compiler::Expression::compileTernaryOperands(SyntaxNode rnode, Syntax
 
    EAttr mode = (withoutDebugInfo ? EAttr::NoDebugInfo : EAttr::None) | EAttr::RetValExpected;
 
-   ObjectInfo lexpr = compile(rnode, 0, mode, nullptr);
+   ObjectInfo lexpr = compile(rnode, 0, mode);
 
    writeObjectInfo(lexpr);
 
@@ -16266,7 +16253,7 @@ ObjectInfo Compiler::Expression::compileTernaryOperands(SyntaxNode rnode, Syntax
 
    // NOTE : it should immediately follow if-block
    writer->newNode(BuildKey::Tape);
-   ObjectInfo rexpr = compile(r2node, 0, mode, nullptr);
+   ObjectInfo rexpr = compile(r2node, 0, mode);
 
    writeObjectInfo(rexpr, r2node);
 
@@ -16292,7 +16279,7 @@ ObjectInfo Compiler::Expression::compileMessageOperationR(ObjectInfo target, Syn
       case TargetMode::Casting:
       {
          ArgumentListType argListType = ArgumentListType::Normal;
-         compileMessageArguments(messageNode, arguments, 0, EAttr::NoPrimitives, nullptr, argListType, 0);
+         compileMessageArguments(messageNode, arguments, 0, EAttr::NoPrimitives, argListType, 0);
          if (arguments.count() == 1) {
             ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
 
@@ -16309,12 +16296,10 @@ ObjectInfo Compiler::Expression::compileMessageOperationR(ObjectInfo target, Syn
       }
       default:
       {
-         ArgumentsInfo updatedOuterArgs;
-
          // NOTE : the operation target shouldn't be a primitive type
          ObjectInfo source = validateObject(messageNode, target, 0, true, true, false, false);
 
-         return compileMessageOperationR(messageNode, messageNode, source, arguments, &updatedOuterArgs, 0,
+         return compileMessageOperationR(messageNode, messageNode, source, arguments, 0,
             propertyMode, false, false, EAttr::None);
       }
    }
@@ -16397,7 +16382,7 @@ ref_t Compiler::Expression::mapNested(ExpressionAttribute mode)
    return nestedRef;
 }
 
-ObjectInfo Compiler::Expression::compileNested(InlineClassScope& classScope, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: compileNested(InlineClassScope& classScope, ExpressionAttribute mode)
 {
    bool paramMode = EAttrs::test(mode, EAttr::Parameter);
    ref_t nestedRef = classScope.reference;
@@ -16413,7 +16398,7 @@ ObjectInfo Compiler::Expression::compileNested(InlineClassScope& classScope, Exp
       ObjectInfo retVal = { ObjectKind::Object, { nestedRef }, 0 };
 
       int preservedClosure = 0;
-      compileNestedInitializing(classScope, nestedRef, preservedClosure, updatedOuterArgs);
+      compileNestedInitializing(classScope, nestedRef, preservedClosure);
 
       // call init handler if is available
       if (classScope.info.methods.exist(scope.moduleScope->buildins.init_message)) {
@@ -16423,8 +16408,8 @@ ObjectInfo Compiler::Expression::compileNested(InlineClassScope& classScope, Exp
       if (paramMode || preservedClosure) {
          retVal = saveToTempLocal(retVal);
 
-         if (preservedClosure)
-            (*updatedOuterArgs)[preservedClosure] = retVal;
+         if (updatedOuterArgs2 && preservedClosure)
+            (*updatedOuterArgs2)[preservedClosure] = retVal;
       }
 
       return retVal;
@@ -16432,7 +16417,7 @@ ObjectInfo Compiler::Expression::compileNested(InlineClassScope& classScope, Exp
 }
 
 ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsInfo& messageArguments,
-   int operatorId, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs)
+   int operatorId, ref_t expectedRef)
 {
    if (messageArguments.count() > 1 && messageArguments[1].kind == ObjectKind::IntLiteral) {
       // try to typecast int literal if possible
@@ -16539,8 +16524,6 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
 
       writer->closeNode();
 
-      retVal = unboxArguments(retVal, updatedOuterArgs);
-
       scope.reserveArgs(argLen);
 
       if (op == BuildKey::NilCondOp && branchVerification) {
@@ -16569,7 +16552,7 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
       }
 
       retVal = compileWeakOperation(node, arguments, argLen, loperand,
-         messageArguments, message, expectedRef, updatedOuterArgs);
+         messageArguments, message, expectedRef);
    }
 
    return retVal;

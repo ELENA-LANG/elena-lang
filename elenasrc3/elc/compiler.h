@@ -1511,6 +1511,8 @@ namespace elena_lang
 
          BranchVerification*  branchVerification;
 
+         ArgumentsInfo*       updatedOuterArgs2;
+
          bool                 withDebugInfo;
 
          bool isDirectMethodCall(SyntaxNode& node);
@@ -1550,17 +1552,17 @@ namespace elena_lang
 
          ObjectInfo compileMessageOperationR(ObjectInfo target, SyntaxNode node, bool propertyMode);
          ObjectInfo compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
-            ArgumentsInfo* updatedOuterArgs, ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs);
+            ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs);
 
          ObjectInfo compileLoop(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileExtern(SyntaxNode node, ExpressionAttribute mode);
 
-         ObjectInfo compileNested(InlineClassScope& classCcope, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
+         ObjectInfo compileNested(InlineClassScope& classCcope, ExpressionAttribute mode);
 
-         ObjectInfo compileNested(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
-         ObjectInfo compileClosure(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
+         ObjectInfo compileNested(SyntaxNode node, ExpressionAttribute mode);
+         ObjectInfo compileClosure(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode);
          ObjectInfo compileWeakOperation(SyntaxNode node, ref_t* arguments, pos_t argLen,
-            ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs);
+            ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef);
 
          ObjectInfo compileNewOp(SyntaxNode node, ObjectInfo source, ref_t signRef, ArgumentsInfo& arguments);
 
@@ -1582,17 +1584,17 @@ namespace elena_lang
          void handleNillableAssign(SyntaxNode node, ObjectInfo target);
 
          ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
-            ArgumentsInfo& arguments, ExpressionAttributes mode, ArgumentsInfo* updatedOuterArgs);
+            ArgumentsInfo& arguments, ExpressionAttributes mode);
          ObjectInfo compileOperation(SyntaxNode loperand, SyntaxNode roperand,
             int operatorId, ref_t expectedRef);
          ObjectInfo compileOperation(SyntaxNode node, ArgumentsInfo& messageArguments,
-            int operatorId, ref_t expectedRef, ArgumentsInfo* updatedOuterArgs);
+            int operatorId, ref_t expectedRef);
 
          ObjectInfo compileBranchingOperation(SyntaxNode node, ObjectInfo loperand, SyntaxNode rnode,
-            SyntaxNode r2node, int operatorId, ArgumentsInfo* updatedOuterArgs, bool retValExpected, bool withoutDebugInfo);
+            SyntaxNode r2node, int operatorId, bool retValExpected, bool withoutDebugInfo);
 
          ref_t compileMessageArguments(SyntaxNode current, ArgumentsInfo& arguments, ref_t expectedSignRef, ExpressionAttribute mode,
-            ArgumentsInfo* updatedOuterArgs, ArgumentListType& argListType, int nillableArgs);
+            ArgumentListType& argListType, int nillableArgs);
 
          void resolvedExtensionTemplate(ObjectInfo source, MessageCallContext& messageContext);
 
@@ -1625,8 +1627,7 @@ namespace elena_lang
 
          ObjectInfo allocateResult(ref_t resultRef);
 
-         void compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedContext,
-            ArgumentsInfo* updatedOuterArgs);
+         void compileNestedInitializing(InlineClassScope& classScope, ref_t nestedRef, int& preservedContext);
 
          void compileYieldOperation(SyntaxNode node);
          ObjectInfo compileAsyncOperation(SyntaxNode node, ref_t targetRef, bool valueExpected, bool dynamicRequired, bool retMode);
@@ -1662,9 +1663,8 @@ namespace elena_lang
          ObjectInfo compileRoot(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileReturning(SyntaxNode node, ExpressionAttribute mode, TypeInfo outputInfo);
 
-         ObjectInfo compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode,
-            ArgumentsInfo* updatedOuterArgs);
-         ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
+         ObjectInfo compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode);
+         ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node/*, ExpressionAttribute mode*/);
@@ -1675,7 +1675,7 @@ namespace elena_lang
 
          Expression(Symbol& symbol, BuildTreeWriter& writer);
          Expression(Code& code, BuildTreeWriter& writer, bool debugInfo);
-         Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer, bool debugInfo);
+         Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer, bool debugInfo, ArgumentsInfo* updatedOuterArgs/* = nullptr*/);
          Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer);
       };
 
