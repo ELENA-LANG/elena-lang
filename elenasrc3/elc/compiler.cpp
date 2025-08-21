@@ -12896,7 +12896,8 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
          targetRef = retVal.typeInfo.typeRef;
 
       // bad luck, we must rollback the changes and compile again
-      updatedOuterArgs->clear();
+      if (updatedOuterArgs)
+         updatedOuterArgs->clear();
 
       lastNode = lastNode.nextNode();
       while (lastNode != BuildKey::None) {
