@@ -14853,13 +14853,13 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
             writer->appendNode(BuildKey::SetImmediateField, fieldInfo.offset);
             break;
          default:
-            // NOTE : should neve be hit
+            // NOTE : should never be hit
             assert(false);
             break;
       }
 
       // HOTFIX : tracking possible conflict with closure unwrapping
-      bool needToBeTracked = arg.kind == ObjectKind::Local && scope.trackingClosureLocals;
+      bool needToBeTracked = (arg.kind == ObjectKind::Local || arg.kind == ObjectKind::LocalAddress) && scope.trackingClosureLocals;
       if (needToBeTracked) {
          ObjectKey key = { arg.kind, arg.reference };
 
