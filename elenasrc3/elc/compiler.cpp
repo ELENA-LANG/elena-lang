@@ -14859,7 +14859,7 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
       }
 
       // HOTFIX : tracking possible conflict with closure unwrapping
-      bool needToBeTracked = (arg.kind == ObjectKind::Local || arg.kind == ObjectKind::LocalAddress) && scope.trackingClosureLocals;
+      bool needToBeTracked = (arg.kind == ObjectKind::Local || arg.kind == ObjectKind::TempLocal) && scope.trackingClosureLocals;
       if (needToBeTracked) {
          ObjectKey key = { arg.kind, arg.reference };
 
