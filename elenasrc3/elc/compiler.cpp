@@ -12867,7 +12867,8 @@ void Compiler::Expression :: prepareConflictResolution()
       if ((*it).mode == TrackingMode::Updated) {
          ObjectInfo local = { it.key().value1, (*it).typeInfo, it.key().value2 };
 
-         scope.tempLocals.add(it.key(), boxRefArgumentInPlace(local));
+         scope.tempLocals.add(it.key(),
+            local.kind == ObjectKind::LocalAddress ? boxArgument(local, false, false, false) : boxRefArgumentInPlace(local));
       }
    }
 }
@@ -14858,20 +14859,32 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
             break;
       }
 
-      // HOTFIX : tracking possible conflict with closure unwrapping
-      bool needToBeTracked = (arg.kind == ObjectKind::Local || arg.kind == ObjectKind::TempLocal) && scope.trackingClosureLocals;
-      if (needToBeTracked) {
-         ObjectKey key = { arg.kind, arg.reference };
+      if (scope.trackingClosureLocals) {
+         if (arg.kind == ObjectKind::TempLocal) {
+            // find the original variable
+            auto key = scope.tempLocals.retrieve<ref_t>({}, arg.reference, [](ref_t reference, ObjectKey, ObjectInfo info)
+               {
+                  return info.reference == reference;
+               });
 
-         TrackingMode trackInfo = scope.trackingLocals.get(key).mode;
-         if (((*it).updated && trackInfo != TrackingMode::None) 
-            || trackInfo == TrackingMode::Updated) 
-         {
-            scope.unboxingConflictFound = true;
+            arg = { key.value1, arg.typeInfo, key.value2 };
          }
 
-         scope.trackingLocals.erase(key);
-         scope.trackingLocals.add(key, { arg.typeInfo, (*it).updated ? TrackingMode::Updated : TrackingMode::Captched });
+         // HOTFIX : tracking possible conflict with closure unwrapping
+         bool needToBeTracked = (arg.kind == ObjectKind::Local || arg.kind == ObjectKind::LocalAddress);
+         if (needToBeTracked) {
+            ObjectKey key = { arg.kind, arg.reference };
+
+            TrackingMode trackInfo = scope.trackingLocals.get(key).mode;
+            if (((*it).updated && trackInfo != TrackingMode::None)
+               || trackInfo == TrackingMode::Updated)
+            {
+               scope.unboxingConflictFound = true;
+            }
+
+            scope.trackingLocals.erase(key);
+            scope.trackingLocals.add(key, { arg.typeInfo, (*it).updated ? TrackingMode::Updated : TrackingMode::Captched });
+         }
       }
 
       if (updatedOuterArgs && (*it).updated) {
