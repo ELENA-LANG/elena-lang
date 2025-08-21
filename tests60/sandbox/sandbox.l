@@ -103,21 +103,44 @@ public program()
 }
 */
 
-singleton Tester
-{
-   ifNotFailed(Func f)
-   {
-      var failed := true;
-      f() \\ 
-         on::(e)
-         {
-            failed := false;
-         };
-            
-      Assert.ifTrue(failed);
-   }
-}
-
 public program()
 {
+    var t := 0;
+//    int t2 := 0;
+    Console.then(
+    {
+//        Assert.ifTrue(t == 0);
+//        Assert.ifTrue(t2 == 0);
+        
+        t := 1;
+//        t2 += 1;
+    }).then(
+    {
+//        Assert.ifTrue(t == 1);
+//        Assert.ifTrue(t2 == 1);
+        
+        t := 2;
+//        t2 += 1;
+    });
+    Console.write(".");
+/*
+    Assert.ifTrue(t == 2);
+    Assert.ifTrue(t2 == 2);
+    Console.write(".");
+
+    var mode := -1;
+    var value := false;
+    (value) ? { mode := 0 } ! { mode := 1 };
+    
+    Assert.ifTrue(mode == 1);
+    Console.write(".");
+    
+    mode := -1;
+    value := true;
+    (value) ? { mode := 0 } ! { mode := 1 };
+    
+    Assert.ifTrue(mode == 0);
+
+    Console.write(".")
+*/
 }
