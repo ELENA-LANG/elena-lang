@@ -103,9 +103,21 @@ public program()
 }
 */
 
-use extern dll : importing("libobjc-4.6");
+singleton Tester
+{
+   ifNotFailed(Func f)
+   {
+      var failed := true;
+      f() \\ 
+         on::(e)
+         {
+            failed := false;
+         };
+            
+      Assert.ifTrue(failed);
+   }
+}
 
 public program()
 {
-   UnsafeArray<UnsafeArray> ptr := dll.get_func_pointer();
 }

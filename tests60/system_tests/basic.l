@@ -1237,7 +1237,7 @@ public tryFinallyTest() : testCase()
          passed2 := true
       }
    });
-   Assert.ifTrue(passed);    
+   Assert.ifTrue(passed2);    
    Console.write(".");
 }
 

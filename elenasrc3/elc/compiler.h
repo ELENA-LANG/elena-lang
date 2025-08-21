@@ -1511,7 +1511,7 @@ namespace elena_lang
 
          BranchVerification*  branchVerification;
 
-         ArgumentsInfo*       updatedOuterArgs2;
+         ArgumentsInfo*       updatedOuterArgs;
 
          bool                 withDebugInfo;
 
@@ -1614,9 +1614,9 @@ namespace elena_lang
          ObjectInfo boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxVariadicArgument(ObjectInfo info);
 
-         ObjectInfo unboxArguments(ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs);
+         ObjectInfo unboxArguments(ObjectInfo retVal);
          void unboxArgumentLocaly(ObjectInfo tempLocal, ObjectKey targetKey);
-         void unboxOuterArgs(ArgumentsInfo* updatedOuterArgs);
+         void unboxOuterArgs();
 
          ObjectInfo saveToTempLocal(ObjectInfo object);
 

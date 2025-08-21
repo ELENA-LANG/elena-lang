@@ -4266,7 +4266,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
       }
       else if (scope.checkHint(MethodHint::Conversion)) {
          if (paramCount == 0 && unnamedMessage) {
-            if (scope.checkHint(MethodHint::Generic) && scope.checkHint(MethodHint::Generic)) {
+            if (scope.checkHint(MethodHint::Generic)/* && scope.checkHint(MethodHint::Generic)*/) {
                if (signatureLen > 0 || !unnamedMessage || scope.checkHint(MethodHint::Function))
                   scope.raiseError(errInvalidHint, node);
 
@@ -4331,7 +4331,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             scope.raiseError(errIllegalConstructor, node);
          }
       }
-      else if (scope.checkHint(MethodHint::Generic) && scope.checkHint(MethodHint::Generic)) {
+      else if (scope.checkHint(MethodHint::Generic)/* && scope.checkHint(MethodHint::Generic)*/) {
          if (signatureLen > 0 || !unnamedMessage || scope.checkHint(MethodHint::Function))
             scope.raiseError(errInvalidHint, node);
 
@@ -8236,9 +8236,9 @@ ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& c
    ObjectInfo retVal = expression.compileRoot(node, mode);
 
    if (EAttrs::test(mode, EAttr::RetValExpected)) {
-      retVal = expression.unboxArguments(retVal, &updatedOuterArgs);
+      retVal = expression.unboxArguments(retVal);
    }
-   else expression.unboxArguments({}, &updatedOuterArgs);
+   else expression.unboxArguments({});
 
    return retVal;
 }
@@ -12407,25 +12407,25 @@ Compiler::Code::Code(Method& method)
 // --- Compiler::Expression ---
 
 Compiler::Expression::Expression(Compiler* compiler, CodeScope& codeScope, BuildTreeWriter& writer, bool debugInfo, ArgumentsInfo* updatedOuterArgs)
-   : CommonHelper(compiler), scope(&codeScope), writer(&writer), branchVerification(nullptr), updatedOuterArgs2(updatedOuterArgs)
+   : CommonHelper(compiler), scope(&codeScope), writer(&writer), branchVerification(nullptr), updatedOuterArgs(updatedOuterArgs)
 {
    withDebugInfo = debugInfo;
 }
 
 Compiler::Expression::Expression(Compiler* compiler, SourceScope& symbolScope, BuildTreeWriter& writer)
-   : CommonHelper(compiler), scope(&symbolScope), writer(&writer), branchVerification(nullptr), updatedOuterArgs2(nullptr)
+   : CommonHelper(compiler), scope(&symbolScope), writer(&writer), branchVerification(nullptr), updatedOuterArgs(nullptr)
 {
    withDebugInfo = symbolScope.withDebugInfo;
 }
 
 Compiler::Expression::Expression(Symbol& symbol, BuildTreeWriter& writer)
-   : CommonHelper(symbol.compiler), scope(&symbol.scope), writer(&writer), branchVerification(nullptr), updatedOuterArgs2(nullptr)
+   : CommonHelper(symbol.compiler), scope(&symbol.scope), writer(&writer), branchVerification(nullptr), updatedOuterArgs(nullptr)
 {
    withDebugInfo = symbol.scope.withDebugInfo;
 }
 
 Compiler::Expression::Expression(Code& code, BuildTreeWriter& writer, bool debugInfo)
-   : CommonHelper(code.compiler), scope(&code.scope), writer(&writer), branchVerification(nullptr), updatedOuterArgs2(nullptr)
+   : CommonHelper(code.compiler), scope(&code.scope), writer(&writer), branchVerification(nullptr), updatedOuterArgs(nullptr)
 {
    withDebugInfo = debugInfo;
 }
@@ -13252,7 +13252,7 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
    CodeScope codeScope(parentCodeScope);
    codeScope.verifiedObjects.add(source);
 
-   Expression subExpr(compiler, codeScope, *writer, withDebugInfo, updatedOuterArgs2);
+   Expression subExpr(compiler, codeScope, *writer, withDebugInfo, updatedOuterArgs);
 
    retVal = subExpr.compileMessageOperationR(node, current, source, arguments,
       expectedRef, propMode, false, false, attrs);   
@@ -13857,7 +13857,7 @@ ObjectInfo Compiler::Expression::compileExtern(SyntaxNode node, ExpressionAttrib
    return { };
 }
 
-ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
+ObjectInfo Compiler::Expression :: compileCatchOperation(SyntaxNode node)
 {
    ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
 
@@ -13874,14 +13874,22 @@ ObjectInfo Compiler::Expression::compileCatchOperation(SyntaxNode node)
 
    writer->newNode(BuildKey::Tape);
    compile(opNode, 0, EAttr::TryMode);
+   unboxArguments({});
    writer->closeNode();
 
    writer->newNode(BuildKey::Tape);
-   compileMessageOperationR({ ObjectKind::Object },
+   compileMessageOperationR({ObjectKind::Object},
       catchNode.firstChild().firstChild(), false);
+   unboxArguments({});
    writer->closeNode();
 
    scope.syncStack();
+
+   // NOTE : the unboxing operation was already done in both cases - the information must be cleared
+   if (updatedOuterArgs)
+      updatedOuterArgs->clear();
+
+   scope.tempLocals.clear();
 
    if (finallyNode != SyntaxKey::None) {
       if (finallyNode.existChild(SyntaxKey::ClosureBlock))
@@ -13918,9 +13926,14 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node, Expressi
 
    writer->newNode(BuildKey::Tape);
    compile(opNode, 0, mode | EAttr::TryMode);
+   unboxArguments({});
    writer->closeNode();
 
    scope.syncStack();
+
+   // NOTE : the unboxing operation was already done in both cases - the information must be cleared
+   if (updatedOuterArgs)
+      updatedOuterArgs->clear();
 
    int prevAllocated1 = 0, prevAllocated2 = 0;
    if (finallyNode != SyntaxKey::None)
@@ -14860,16 +14873,16 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
          scope.trackingLocals.add(key, { arg.typeInfo, (*it).updated ? TrackingMode::Updated : TrackingMode::Captched });
       }
 
-      if (updatedOuterArgs2 && (*it).updated) {
+      if (updatedOuterArgs && (*it).updated) {
          if (!preservedContext) {
-            updatedOuterArgs2->add({ ObjectKind::ContextInfo });
+            updatedOuterArgs->add({ ObjectKind::ContextInfo });
             // reserve place for the context info
-            preservedContext = updatedOuterArgs2->count_pos();
-            updatedOuterArgs2->add({ });
+            preservedContext = updatedOuterArgs->count_pos();
+            updatedOuterArgs->add({ });
          }
 
-         updatedOuterArgs2->add({ ObjectKind::MemberInfo, (*it).reference });
-         updatedOuterArgs2->add(source);
+         updatedOuterArgs->add({ ObjectKind::MemberInfo, (*it).reference });
+         updatedOuterArgs->add(source);
       }
 
       argIndex++;
@@ -15766,7 +15779,7 @@ ObjectInfo Compiler::Expression::boxArgumentLocally(ObjectInfo info,
    }
 }
 
-ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsInfo* updatedOuterArgs)
+ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal)
 {
    // unbox the arguments if required
    bool resultSaved = false;
@@ -15837,7 +15850,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, ArgumentsIn
          }
       }
 
-      unboxOuterArgs(updatedOuterArgs);
+      unboxOuterArgs();
    }
 
    scope.tempLocals.clear();
@@ -16149,7 +16162,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, Ob
             }
 
             prepareConflictResolution();
-            updatedOuterArgs2->clear();
+            updatedOuterArgs->clear();
 
             roperand = compileClosure(rnode, 0, EAttr::None);
             roperand2 = compileClosure(r2node, 0, EAttr::None);
@@ -16408,8 +16421,8 @@ ObjectInfo Compiler::Expression :: compileNested(InlineClassScope& classScope, E
       if (paramMode || preservedClosure) {
          retVal = saveToTempLocal(retVal);
 
-         if (updatedOuterArgs2 && preservedClosure)
-            (*updatedOuterArgs2)[preservedClosure] = retVal;
+         if (updatedOuterArgs && preservedClosure)
+            (*updatedOuterArgs)[preservedClosure] = retVal;
       }
 
       return retVal;
@@ -17044,7 +17057,7 @@ void Compiler::Expression::unboxArgumentLocaly(ObjectInfo temp, ObjectKey key)
    else compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
 }
 
-void Compiler::Expression::unboxOuterArgs(ArgumentsInfo* updatedOuterArgs)
+void Compiler::Expression::unboxOuterArgs()
 {
    // first argument is a closure
    ObjectInfo closure;
