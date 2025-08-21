@@ -508,18 +508,18 @@ void load_long_index(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::LLoadDP, node.arg.value);
 }
 
-void save_long_index(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void save_long_index(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::LSaveDP, node.arg.value);
 }
 
-void savingLInStack(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void savingLInStack(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::LLoad);
    tape.write(ByteCode::LSaveSI, node.arg.value);
 }
 
-void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int arg2 = node.findChild(BuildKey::Count).arg.value;
    // HOTFIX : special case - long call
@@ -529,12 +529,12 @@ void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::CallExtR, node.arg.reference | mskExternalRef, arg2);
 }
 
-void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SaveDP, node.arg.value);
 }
 
-void savingLongIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void savingLongIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::LSaveDP, node.arg.value);
 }

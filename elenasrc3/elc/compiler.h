@@ -1614,7 +1614,7 @@ namespace elena_lang
          ObjectInfo boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxVariadicArgument(ObjectInfo info);
 
-         ObjectInfo unboxArguments(ObjectInfo retVal);
+         ObjectInfo unboxArguments(ObjectInfo retVal, bool clearInfo);
          void unboxArgumentLocaly(ObjectInfo tempLocal, ObjectKey targetKey);
          void unboxOuterArgs();
 

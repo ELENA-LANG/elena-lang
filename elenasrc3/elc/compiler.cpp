@@ -8236,9 +8236,9 @@ ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& c
    ObjectInfo retVal = expression.compileRoot(node, mode);
 
    if (EAttrs::test(mode, EAttr::RetValExpected)) {
-      retVal = expression.unboxArguments(retVal);
+      retVal = expression.unboxArguments(retVal, false);
    }
-   else expression.unboxArguments({});
+   else expression.unboxArguments({}, false);
 
    return retVal;
 }
@@ -13874,22 +13874,16 @@ ObjectInfo Compiler::Expression :: compileCatchOperation(SyntaxNode node)
 
    writer->newNode(BuildKey::Tape);
    compile(opNode, 0, EAttr::TryMode);
-   unboxArguments({});
+   unboxArguments({}, false);
    writer->closeNode();
 
    writer->newNode(BuildKey::Tape);
    compileMessageOperationR({ObjectKind::Object},
       catchNode.firstChild().firstChild(), false);
-   unboxArguments({});
+   unboxArguments({}, true);
    writer->closeNode();
 
    scope.syncStack();
-
-   // NOTE : the unboxing operation was already done in both cases - the information must be cleared
-   if (updatedOuterArgs)
-      updatedOuterArgs->clear();
-
-   scope.tempLocals.clear();
 
    if (finallyNode != SyntaxKey::None) {
       if (finallyNode.existChild(SyntaxKey::ClosureBlock))
@@ -13926,14 +13920,10 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node, Expressi
 
    writer->newNode(BuildKey::Tape);
    compile(opNode, 0, mode | EAttr::TryMode);
-   unboxArguments({});
+   unboxArguments({}, true);
    writer->closeNode();
 
    scope.syncStack();
-
-   // NOTE : the unboxing operation was already done in both cases - the information must be cleared
-   if (updatedOuterArgs)
-      updatedOuterArgs->clear();
 
    int prevAllocated1 = 0, prevAllocated2 = 0;
    if (finallyNode != SyntaxKey::None)
@@ -13954,7 +13944,7 @@ ObjectInfo Compiler::Expression::compileFinalOperation(SyntaxNode node, Expressi
    return {};
 }
 
-ObjectInfo Compiler::Expression::compileAltOperation(SyntaxNode node)
+ObjectInfo Compiler::Expression :: compileAltOperation(SyntaxNode node)
 {
    ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
 
@@ -13971,7 +13961,10 @@ ObjectInfo Compiler::Expression::compileAltOperation(SyntaxNode node)
          writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
          writer->newNode(BuildKey::Tape);
-         compileMessageOperationR(target, objNode.nextNode(), current == SyntaxKey::PropertyOperation);
+         ObjectInfo retVal = compileMessageOperationR(target, objNode.nextNode(), current == SyntaxKey::PropertyOperation);
+         retVal = unboxArguments(retVal, true);
+         writeObjectInfo(retVal);
+
          writer->closeNode();
          break;
       }
@@ -13981,7 +13974,8 @@ ObjectInfo Compiler::Expression::compileAltOperation(SyntaxNode node)
          writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
          writer->newNode(BuildKey::Tape);
-         compile(current, 0, EAttr::Parameter);
+         ObjectInfo retVal = compile(current, 0, EAttr::Parameter);
+         unboxArguments({}, true);
          writer->closeNode();
 
          target = { ObjectKind::Nil };
@@ -14001,7 +13995,9 @@ ObjectInfo Compiler::Expression::compileAltOperation(SyntaxNode node)
          0, EAttr::Parameter);
    }
 
-   compileMessageOperationR(target, altNode.firstChild(), false);
+   ObjectInfo retVal = compileMessageOperationR(target, altNode.firstChild(), false);
+   retVal = unboxArguments(retVal, true);
+   writeObjectInfo(retVal);
 
    writer->closeNode();
 
@@ -15779,7 +15775,7 @@ ObjectInfo Compiler::Expression::boxArgumentLocally(ObjectInfo info,
    }
 }
 
-ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal)
+ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, bool clearInfo)
 {
    // unbox the arguments if required
    bool resultSaved = false;
@@ -15851,9 +15847,13 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal)
       }
 
       unboxOuterArgs();
+
+      if (clearInfo)
+         updatedOuterArgs->clear();
    }
 
-   scope.tempLocals.clear();
+   if (clearInfo)
+      scope.tempLocals.clear();
 
    return retVal;
 }
