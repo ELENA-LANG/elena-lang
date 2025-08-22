@@ -117,6 +117,7 @@ namespace elena_lang
       Casting,
       UnboxingRequired,
       RefUnboxingRequired,
+      LocalAddressUnboxingRequired,
       LocalUnboxingRequired,
       ArrayContent,
       UnboxingVarArgument,

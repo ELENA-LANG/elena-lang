@@ -1854,8 +1854,12 @@ ObjectInfo Compiler::ExprScope :: mapIdentifier(ustr_t identifier, bool referenc
       ObjectKey key = { info.kind, info.reference };
 
       ObjectInfo temp = tempLocals.get(key);
-      if (temp.mode == TargetMode::RefUnboxingRequired) {
-         return temp;
+      switch (temp.mode) {
+         case TargetMode::RefUnboxingRequired:
+         case TargetMode::LocalAddressUnboxingRequired:
+            return temp;
+         default:
+            break;
       }
    }
 
@@ -2035,6 +2039,10 @@ ObjectInfo Compiler::InlineClassScope::mapIdentifier(ustr_t identifier, bool ref
          if (outer.outerObject.kind == ObjectKind::TempLocal && outer.outerObject.mode == TargetMode::RefUnboxingRequired) {
             return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference, TargetMode::RefUnboxingRequired };
          }
+         else if (outer.outerObject.kind == ObjectKind::TempLocal && outer.outerObject.mode == TargetMode::LocalAddressUnboxingRequired) {
+            // NOTE : recognize the updatable captured variable
+            return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference, TargetMode::LocalAddressUnboxingRequired };
+         }
          else return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference, outer.outerObject.reference };
       }
       else {
@@ -2073,6 +2081,10 @@ ObjectInfo Compiler::InlineClassScope::mapIdentifier(ustr_t identifier, bool ref
                else if (outer.outerObject.kind == ObjectKind::TempLocal && outer.outerObject.mode == TargetMode::RefUnboxingRequired) {
                   // NOTE : recognize the updatable captured variable
                   return { ObjectKind::OuterField, outer.outerObject.typeInfo, outer.reference, TargetMode::RefUnboxingRequired };
+               }
+               else if (outer.outerObject.kind == ObjectKind::TempLocal && outer.outerObject.mode == TargetMode::LocalAddressUnboxingRequired) {
+                  // NOTE : recognize the updatable captured variable
+                  return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference, TargetMode::LocalAddressUnboxingRequired };
                }
                else return { ObjectKind::Outer, outer.outerObject.typeInfo, outer.reference };
             }
@@ -12867,8 +12879,13 @@ void Compiler::Expression :: prepareConflictResolution()
       if ((*it).mode == TrackingMode::Updated) {
          ObjectInfo local = { it.key().value1, (*it).typeInfo, it.key().value2 };
 
-         scope.tempLocals.add(it.key(),
-            local.kind == ObjectKind::LocalAddress ? boxArgument(local, false, false, false) : boxRefArgumentInPlace(local));
+         if (local.kind == ObjectKind::LocalAddress) {
+            local = boxArgument(local, false, true, false);
+            local.mode = TargetMode::LocalAddressUnboxingRequired;
+
+            scope.tempLocals.add(it.key(), local);
+         }
+         else scope.tempLocals.add(it.key(), boxRefArgumentInPlace(local));
       }
    }
 }
@@ -13586,7 +13603,8 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
 
    ref_t dummy = 0;
    BuildKey op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, dummy);
-   if (op != BuildKey::None) {
+   // !! temporal : use weak operation when assigning outer variable requiring a special type of unboxing (to avoid duplicate boxing)
+   if (op != BuildKey::None && loperand.mode != TargetMode::LocalAddressUnboxingRequired) {
       // box argument locally if required
       loperand = boxArgumentLocally(loperand, true, true);
 
@@ -15802,7 +15820,8 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, bool clearI
       ObjectInfo temp = *it;
 
       if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired
-         || temp.mode == TargetMode::LocalUnboxingRequired || temp.mode == TargetMode::ConditionalUnboxingRequired)
+         || temp.mode == TargetMode::LocalUnboxingRequired || temp.mode == TargetMode::LocalAddressUnboxingRequired
+         || temp.mode == TargetMode::ConditionalUnboxingRequired)
       {
          if (!resultSaved && retVal.kind != ObjectKind::Unknown) {
             // presave the result
@@ -15815,7 +15834,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, bool clearI
 
          // unbox the temporal variable
          auto key = it.key();
-         if (temp.mode == TargetMode::LocalUnboxingRequired) {
+         if (temp.mode == TargetMode::LocalUnboxingRequired || temp.mode == TargetMode::LocalAddressUnboxingRequired) {
             unboxArgumentLocaly(temp, key);
          }
          else if (temp.mode == TargetMode::RefUnboxingRequired) {
@@ -16039,8 +16058,16 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          if (/*!method->subCodeMode || */!closure->markAsPresaved(target))
             return false;
 
-         operationType = BuildKey::FieldAssigning;
-         operand = target.reference;
+         if (target.mode == TargetMode::LocalAddressUnboxingRequired) {
+            fieldFieldMode = true;
+            operationType = BuildKey::CopyingToAcc;
+            size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+            operand = 0;
+         }
+         else {
+            operationType = BuildKey::FieldAssigning;
+            operand = target.reference;
+         }         
          fieldMode = true;
 
          break;
@@ -17099,7 +17126,7 @@ void Compiler::Expression::unboxOuterArgs()
             closure.extra = info.reference;
             compileAssigningOp(source, closure, dummy);
          }
-         else if (source.kind == ObjectKind::Outer || (source.kind == ObjectKind::TempLocal && source.mode == TargetMode::RefUnboxingRequired)) {
+         else if (source.kind == ObjectKind::Outer || (source.kind == ObjectKind::TempLocal && (source.mode == TargetMode::RefUnboxingRequired || source.mode == TargetMode::LocalAddressUnboxingRequired))) {
             // ignore outer fields
          }
          else assert(false);

@@ -10,6 +10,7 @@ In development:
   * two boxing argument : box only once and unbox only once
     - keep list of boxed arguments inside the expression
     - unbox the agrument list on the end
+    - do not unbox the same target twice
   * special case - assigning a variable which is boxed (the latest result must not be overwritten with a previous result)
   * check several examples 
   ======================================
