@@ -40,76 +40,34 @@ public program()
     Console.readChar()
 }
 */
+
 import extensions;
-//import system'threading;
-//
-//singleton Tester
-//{
-//   async Task<int> getValueAsync(byte[] tmp)
-//   {
-//      tmp[1] := 2;
-//
-//      ^ 3
-//   }
-//
-//   async Task<int> addValueAsync()
-//   {
-//      byte tmp[512];
-//      int val := :await getValueAsync(tmp);
-//
-//      int n := tmp[1];
-//
-//      val := val + n;
-//
-//      ^ val
-//   }
-//}
-//
-//public program()
-//{
-//   int n := Tester.addValueAsync().Result;
-//   Console.printLine("the result is ", n);
-//}
+import system'threading;
 
-/*
-struct XY
+singleton Tester
 {
-   int X : prop(_x);
-   
-   int Y : prop(_y);
-}
-
-singleton XYSetter
-{
-   setX(o, arg)
+   async Task<int> getValueAsync(byte[] tmp)
    {
-      o.X := arg
+      tmp[1] := 2;
+
+      ^ 3
    }
-   
-   
-   setY(o, arg)
+
+   async Task<int> addValueAsync()
    {
-      o.Y := arg
+      byte tmp[512];
+      int val := :await getValueAsync(tmp);
+
+      int n := tmp[1];
+
+      val := val + n;
+
+      ^ val
    }
 }
 
 public program()
 {
-   XY xy := default;
-   
-   XYSetter.setX(xy, 1).setY(xy, 2);
-   
-   Console.printLine("xy (", xy.X, ",", xy.Y);   
-}
-*/
-
-use extern cxx : importing("libc++");
-
-public program()
-{
-    var mangled := "_Z3fooi";
-    int status;
-    pointer demangled := cxx.__cxa_demangle(mangled, nil, nil, ref status);
-    
-    Console.printLine(demangled as:string);
+   int n := Tester.addValueAsync().Result;
+   Console.printLine("the result is ", n);
 }
