@@ -7,6 +7,7 @@ In development:
 
   === Iteration 42 ===
   ======================================
+  * new attribute : stackunsafe; must overwrite the method stacksafe attribute with 0
   * async operation : boxing arguments before the operation and unbox after returning result
   * NetworkStream : an extension method to pass a memorybuffer
   * net : using a dynamic array instead of stack allocated

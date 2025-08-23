@@ -13096,7 +13096,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
       source = arguments[0];
    }
 
-   EAttr opMode = EAttr::None;
+   EAttr opMode = EAttrs::testAndExclude(attrs, EAttr::StackUnsafe) ? EAttr::StackUnsafe : EAttr::None;
    if (argListType == ArgumentListType::VariadicArgList || argListType == ArgumentListType::VariadicArgListWithTypecasting) {
       callContext.weakMessage |= VARIADIC_MESSAGE;
 
@@ -13441,7 +13441,7 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
 
-   ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef: currentField.typeInfo.typeRef, EAttr::AsyncOp);
+   ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef: currentField.typeInfo.typeRef, EAttr::AsyncOp | EAttr::StackUnsafe);
 
    bool nillableOp = false;
    if (!compileAssigningOp(currentField, exprVal, nillableOp))
@@ -15409,6 +15409,9 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
          if (result.stackSafe && !functionMode)
             resolution.stackSafeAttr |= 1;
       }
+
+      if (EAttrs::testAndExclude(mode.attrs, EAttr::StackUnsafe))
+         resolution.stackSafeAttr = 0;
    }
    else if (targetRef) {
       handleUnsupportedMessageCall(node, resolution.message, targetRef,

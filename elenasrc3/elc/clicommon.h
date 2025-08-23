@@ -452,6 +452,7 @@ enum class ExpressionAttribute : pos64_t
    ShortcutMode         = 0x0400000000000,
    NotNil               = 0x0800000000000,
    HeapAllocated        = 0x1000000000000,
+   StackUnsafe          = 0x2000000000000,
 };
 
 struct ExpressionAttributes
