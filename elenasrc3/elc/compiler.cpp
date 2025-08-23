@@ -45,6 +45,13 @@ static inline MethodHint operator | (const ref_t& l, const MethodHint& r)
    return (MethodHint)(l | (unsigned int)r);
 }
 
+static inline bool isUnboxingRequired(TargetMode mode)
+{
+   return mode == TargetMode::UnboxingRequired || mode == TargetMode::RefUnboxingRequired
+      || mode == TargetMode::LocalUnboxingRequired || mode == TargetMode::LocalAddressUnboxingRequired
+      || mode == TargetMode::ConditionalUnboxingRequired;
+}
+
 //inline void testNodes(SyntaxNode node)
 //{
 //   SyntaxNode current = node.firstChild();
@@ -13443,6 +13450,15 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
 
    ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef: currentField.typeInfo.typeRef, EAttr::AsyncOp | EAttr::StackUnsafe);
 
+   // !! HOTFIX - add the temporal boxed variable whic hrequires unboxing as yield variables (to be resued)
+   for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
+      ObjectInfo temp = *it;
+
+      if (isUnboxingRequired(temp.mode)) {
+         compiler->markYieldVariable(scope, temp.reference);
+      }
+   }
+
    bool nillableOp = false;
    if (!compileAssigningOp(currentField, exprVal, nillableOp))
       scope.raiseError(errInvalidOperation, node);
@@ -13470,6 +13486,8 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->closeNode();
 
    writer->appendNode(BuildKey::IncludeTry); // include the current try blocks again
+
+
 
    if (valueExpected) {
       // to ingnore the compatibility errors, replace Task with Task<T> type, if applicable
@@ -15822,9 +15840,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, bool clearI
    for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
       ObjectInfo temp = *it;
 
-      if (temp.mode == TargetMode::UnboxingRequired || temp.mode == TargetMode::RefUnboxingRequired
-         || temp.mode == TargetMode::LocalUnboxingRequired || temp.mode == TargetMode::LocalAddressUnboxingRequired
-         || temp.mode == TargetMode::ConditionalUnboxingRequired)
+      if (isUnboxingRequired(temp.mode))
       {
          if (!resultSaved && retVal.kind != ObjectKind::Unknown) {
             // presave the result
