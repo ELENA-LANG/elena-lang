@@ -23,8 +23,6 @@ public sealed class HttpBody
    {
       byte[] dump := new byte[](512);
       
-      Console.writeLine("readHeaderAsync:");
-
       int eoh := 0;
       int received := :await _stream.readAsync(dump, 512);
          
@@ -52,8 +50,6 @@ public sealed class HttpBody
    {
       byte[] dump := new byte[](512);
       
-      Console.writeLine("readHeaderAsync:");
-
       int eoh := 0;
       int received := 0;
       if (_stream.isDataAvailable) 

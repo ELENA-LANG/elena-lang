@@ -7,8 +7,30 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * net : using a dynamic array instead of stack allocated
-  * NetworkStream : an extension method to pass a memorybuffer; use buffer directly
+  webapi phone book example : add, delete, update, search
+  --------------------------------------
+  #35 : first draft
+  - net : use buffer directly
+  * dummy web server - GET
+
+  * test http get / https get samples
+  ======================================
+  - Map_StoreUStrAligned4 - probably better to extend MemoryDump with align method for this
+  - refactoring : ParserTable - use MemoryHashTable instead of Map
+  - extensions'runtime for Linux
+  ======================================
+  #184 : IDE linux - migrate to gtkmm4
+  * set focus on textview
+  * keypress event
+  * redesign controller to support async open file workflow
+  * get rid of FileDialogBase
+  * #184 : IDE linux - clipboard
+  * #184 : IDE linux - edit menus
+  * #184 : IDE linux - mark modified file
+  * #184 : IDE linux - include / exclude
+  * #184 : uncomment checkMenuItemById
+  * #184 : exit
+  --------------------------------------
   ======================================
   webapi phone book example : add, delete, update, search
   --------------------------------------
@@ -29,23 +51,6 @@ In development:
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
-  ======================================
-  - Map_StoreUStrAligned4 - probably better to extend MemoryDump with align method for this
-  - refactoring : ParserTable - use MemoryHashTable instead of Map
-  - extensions'runtime for Linux
-  ======================================
-  #184 : IDE linux - migrate to gtkmm4
-  * set focus on textview
-  * keypress event
-  * redesign controller to support async open file workflow
-  * get rid of FileDialogBase
-  * #184 : IDE linux - clipboard
-  * #184 : IDE linux - edit menus
-  * #184 : IDE linux - mark modified file
-  * #184 : IDE linux - include / exclude
-  * #184 : uncomment checkMenuItemById
-  * #184 : exit
-  --------------------------------------
 
   === Iteration 43 ===
   --------------------------------------

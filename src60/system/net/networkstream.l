@@ -16,12 +16,15 @@ public class NetworkStream : Stream
       _ownStream := false;
       
       _timeout := 300;
-      _counter := 10;
+      _counter := 3;
    }
 
    constructor()
    {
       _ownStream := false;
+      
+      _timeout := 300;
+      _counter := 3;
    }
 
    constructor assign(INetSocket socket, bool socketStream)
@@ -83,6 +86,8 @@ public class NetworkStream : Stream
      
    indexed get internal bool isDataAvailable()
    {
+//      ^ _socket.AvailableToRead
+
       if (_socket.AvailableToRead) { ^ true; };
          
       int index := _counter;
@@ -93,7 +98,7 @@ public class NetworkStream : Stream
          if (_socket.AvailableToRead) { ^ true; };
       };
       
-      ^ false;  
+      ^ false;
    }
 
    indexed async internal Task writeStringAsync(string s)

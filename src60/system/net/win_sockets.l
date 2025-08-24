@@ -338,7 +338,6 @@ public sealed const struct NativeSocket
 
    int receive(byte[] buffer, int maxLength, int flags)
    {
-      Console.writeLine("[");
       int retVal := extern WS2_32.recv(_handle,buffer,maxLength,flags);
         
       Console.writeLine(retVal);
@@ -349,8 +348,6 @@ public sealed const struct NativeSocket
          if (err != WSAEWOULDBLOCK)
             { SocketException.new("Error at socket").raise() }
       };
-            
-      Console.writeLine("]");
 
       ^ retVal
    }
