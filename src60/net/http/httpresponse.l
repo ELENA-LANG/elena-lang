@@ -21,7 +21,7 @@ public sealed class HttpBody
    // !! must be internal
    async /*internal*/ Task readHeaderAsync(HttpFirstHeader firstLine, HttpHeaders headers)
    {
-      byte dump[512];
+      byte[] dump := new byte[](512);
       
       Console.writeLine("readHeaderAsync:");
 
@@ -50,7 +50,7 @@ public sealed class HttpBody
    // !! must be internal
    /*internal*/ readHeader(HttpFirstHeader firstLine, HttpHeaders headers)
    {
-      byte dump[512];
+      byte[] dump := new byte[](512);
       
       Console.writeLine("readHeaderAsync:");
 
@@ -77,7 +77,7 @@ public sealed class HttpBody
    // !! must be internal
    async /*internal*/ Task<string> readAsStringAsync(HttpHeaders headers)
    {
-      byte dump[512];
+      byte[] dump := new byte[](512);
       int received := 0;
       if (_stream.isDataAvailable) 
          received := :await _stream.readAsync(dump, 512);
@@ -96,7 +96,7 @@ public sealed class HttpBody
    // !! must be internal
    /*internal*/ string readAsString(HttpHeaders headers)
    {
-      byte dump[512];
+      byte[] dump := new byte[](512);
       int received := 0;
       if (_stream.isDataAvailable) 
          received := _stream.read(dump, 512);

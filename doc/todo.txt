@@ -8,7 +8,7 @@ In development:
   === Iteration 42 ===
   ======================================
   * net : using a dynamic array instead of stack allocated
-  * NetworkStream : an extension method to pass a memorybuffer
+  * NetworkStream : an extension method to pass a memorybuffer; use buffer directly
   ======================================
   webapi phone book example : add, delete, update, search
   --------------------------------------

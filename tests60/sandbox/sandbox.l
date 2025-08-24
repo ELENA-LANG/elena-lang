@@ -43,6 +43,46 @@ public program()
 
 import extensions;
 import system'threading;
+import system'net;
+import system'io;
+
+public sealed class HttpBody
+{
+   NetworkStream _stream;
+   MemoryBuffer  _buffer;
+   
+   constructor(NetworkStream stream)
+   {
+      _stream := stream;
+      _buffer := MemoryBuffer.allocate();
+   }
+   
+   // !! must be internal
+   async /*internal*/ Task readHeaderAsync(/*HttpFirstHeader firstLine, HttpHeaders headers*/)
+   {
+      byte[] dump := new byte[](512);
+      
+      Console.writeLine("readHeaderAsync:");
+
+      int eoh := 0;
+      int received := :await _stream.readAsync(dump, 512);
+         
+      while (received > 0) {
+         _buffer.write(0, received, dump);
+
+         eoh := seekHeaderEnd();
+         if (eoh > 0)
+            :break;
+
+         received := 0;
+         if (_stream.isDataAvailable) 
+            received := :await _stream.readAsync(dump, 512);
+      };
+   }
+
+   private int seekHeaderEnd()
+      = 0;
+}
 
 singleton Tester
 {
