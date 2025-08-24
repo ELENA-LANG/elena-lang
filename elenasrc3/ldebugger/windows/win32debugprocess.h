@@ -134,6 +134,8 @@ namespace elena_lang
       bool                       _stepMode;
       bool                       _newThread;
 
+      HANDLE                     _hProcess;
+
       DWORD                      _dwCurrentProcessId;
       DWORD                      _dwCurrentThreadId;
       DWORD                      _dwDebugeeProcessId;

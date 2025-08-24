@@ -465,7 +465,8 @@ void Win32DebugProcess :: processEvent(DWORD timeout)
 
       switch (event.dwDebugEventCode) {
          case CREATE_PROCESS_DEBUG_EVENT:
-            _current = new Win32ThreadContext(event.u.CreateProcessInfo.hProcess, event.u.CreateProcessInfo.hThread);
+            _hProcess = event.u.CreateProcessInfo.hProcess;
+            _current = new Win32ThreadContext(_hProcess, event.u.CreateProcessInfo.hThread);
             _current->refresh();
 
             _threads.add(_dwCurrentThreadId, _current);
@@ -488,14 +489,17 @@ void Win32DebugProcess :: processEvent(DWORD timeout)
             processEnd();
             break;
          case CREATE_THREAD_DEBUG_EVENT:
-            _current = new Win32ThreadContext((*_threads.start())->hProcess, event.u.CreateThread.hThread);
+            _current = new Win32ThreadContext(_hProcess, event.u.CreateThread.hThread);
             _current->refresh();
 
             _threads.add(_dwCurrentThreadId, _current);
             break;
          case EXIT_THREAD_DEBUG_EVENT:
             _threads.erase(event.dwThreadId);
-            _current = *_threads.start();
+            if (_threads.count() > 0) {
+               _current = *_threads.start();
+            }
+            else _current = nullptr;
             break;
          case LOAD_DLL_DEBUG_EVENT:
             ::CloseHandle(event.u.LoadDll.hFile);
