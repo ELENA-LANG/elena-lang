@@ -28,8 +28,7 @@ public class DummyHttpGetHandler : IHttpHandler
    }
    
    Task<HttpServerResponse> proceedAsync(HttpServerRequest request)
-      = ::Task<HttpServerResponse>.assign({ ^ proceed(request) });
-   
+      = ::Task<HttpServerResponse>.run({ ^ proceed(request) });
 }
 
 public singleton DummyHttpHandlerFactory : IHttpHandlerFactory

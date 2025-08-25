@@ -21,21 +21,17 @@ public sealed class HttpBody
    // !! must be internal
    async /*internal*/ Task readHeaderAsync(HttpFirstHeader firstLine, HttpHeaders headers)
    {
-      byte[] dump := new byte[](512);
-      
       int eoh := 0;
-      int received := :await _stream.readAsync(dump, 512);
+      int received := :await _stream.readAsync(_buffer);
          
       while (received > 0) {
-         _buffer.write(0, received, dump);
-
          eoh := seekHeaderEnd();
          if (eoh > 0)
             :break;
 
          received := 0;
          if (_stream.isDataAvailable) 
-            received := :await _stream.readAsync(dump, 512);
+            received := :await _stream.readAsync(/*dump, 512*/_buffer);
       };
 
       // !! temporal
@@ -48,7 +44,7 @@ public sealed class HttpBody
    // !! must be internal
    /*internal*/ readHeader(HttpFirstHeader firstLine, HttpHeaders headers)
    {
-      byte[] dump := new byte[](512);
+      byte dump[512];
       
       int eoh := 0;
       int received := 0;
@@ -73,17 +69,14 @@ public sealed class HttpBody
    // !! must be internal
    async /*internal*/ Task<string> readAsStringAsync(HttpHeaders headers)
    {
-      byte[] dump := new byte[](512);
       int received := 0;
       if (_stream.isDataAvailable) 
-         received := :await _stream.readAsync(dump, 512);
+         received := :await _stream.readAsync(/*dump, 512*/_buffer);
          
       while (received > 0) {
-         _buffer.write(0, received, dump);
-
          received := 0;
          if (_stream.isDataAvailable) 
-            received := :await _stream.readAsync(dump, 512);
+            received := :await _stream.readAsync(/*dump, 512*/_buffer);
       };
 
       ^ returnContentAsString(headers);
@@ -92,7 +85,7 @@ public sealed class HttpBody
    // !! must be internal
    /*internal*/ string readAsString(HttpHeaders headers)
    {
-      byte[] dump := new byte[](512);
+      byte dump[512];
       int received := 0;
       if (_stream.isDataAvailable) 
          received := _stream.read(dump, 512);
@@ -220,15 +213,15 @@ public sealed class HttpBody
 
       int length := _buffer.Length;
       int eol := seekEOL(buffer, 0, length);
-      if (eol > 0 && length - eol > 2) {
+      if (eol > 0 && length - eol >= 2) {
          if (buffer[eol]==13 && buffer[eol+1]==10) {
             ^ eol + 2;
          };
 
          int start := eol;
          while (start < length) {
-            eol := seekEOL(buffer, start, length - start);
-            if (eol > 0 && length - eol > 2) {
+            eol := seekEOL(buffer, start, length);
+            if (eol > 0 && length - eol >= 2) {
                if (buffer[eol]==13 && buffer[eol+1]==10) {
                   ^ eol + 2;
                };
