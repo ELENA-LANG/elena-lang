@@ -31,7 +31,7 @@ public sealed class HttpBody
 
          received := 0;
          if (_stream.isDataAvailable) 
-            received := :await _stream.readAsync(/*dump, 512*/_buffer);
+            received := :await _stream.readAsync(_buffer);
       };
 
       // !! temporal
@@ -44,23 +44,17 @@ public sealed class HttpBody
    // !! must be internal
    /*internal*/ readHeader(HttpFirstHeader firstLine, HttpHeaders headers)
    {
-      byte dump[512];
-      
       int eoh := 0;
-      int received := 0;
-      if (_stream.isDataAvailable) 
-         received := _stream.read(dump, 512);
+      int received := :await _stream.readAsync(_buffer);
          
       while (received > 0) {
-         _buffer.write(0, received, dump);
-
          eoh := seekHeaderEnd();
          if (eoh > 0)
             :break;
 
          received := 0;
          if (_stream.isDataAvailable) 
-            received := _stream.read(dump, 512);
+            received := _stream.read(_buffer);
       };
 
       parseHeaders(firstLine, headers, eoh)

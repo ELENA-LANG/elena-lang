@@ -10,42 +10,16 @@ In development:
   webapi phone book example : add, delete, update, search
   --------------------------------------
   #35 : first draft
-  - net : use buffer directly
+  - test http get / https get samples
   * dummy web server - GET
 
-  * test http get / https get samples
-
-  * fix debugger step over the code :
-
-   private int seekHeaderEnd()
-   {
-      byte[] buffer := _buffer.Content;
-
-      int length := _buffer.Length;
-      int eol := seekEOL(buffer, 0, length);
-      if (eol > 0 && length - eol >= 2) {
-         if (buffer[eol]==13 && buffer[eol+1]==10) {
-            ^ eol + 2;
-         };
-
-         int start := eol;
-         while (start < length) {
-            eol := seekEOL(buffer, start, length - start);
-            if (eol > 0 && length - eol >= 2) {
+  ======================================
+  - fix debugger step over the code :
+    several condition in row
                if (buffer[eol]==13 && buffer[eol+1]==10) {
                   ^ eol + 2;
                };
 
-               start := eol;
-            }
-            else :break;
-         }         
-      };
-
-      ^ 0
-   }   
-
-  ======================================
   - Map_StoreUStrAligned4 - probably better to extend MemoryDump with align method for this
   - refactoring : ParserTable - use MemoryHashTable instead of Map
   - extensions'runtime for Linux
