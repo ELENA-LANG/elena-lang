@@ -44,17 +44,21 @@ public sealed class HttpBody
    // !! must be internal
    /*internal*/ readHeader(HttpFirstHeader firstLine, HttpHeaders headers)
    {
+      byte dump[512];
+      int received := _stream.read(dump, 512);
+
       int eoh := 0;
-      int received := :await _stream.readAsync(_buffer);
          
       while (received > 0) {
+         _buffer.write(0, received, dump);
+         
          eoh := seekHeaderEnd();
          if (eoh > 0)
             :break;
 
          received := 0;
          if (_stream.isDataAvailable) 
-            received := _stream.read(_buffer);
+            received := _stream.read(dump, 512);
       };
 
       parseHeaders(firstLine, headers, eoh)
@@ -65,12 +69,12 @@ public sealed class HttpBody
    {
       int received := 0;
       if (_stream.isDataAvailable) 
-         received := :await _stream.readAsync(/*dump, 512*/_buffer);
+         received := :await _stream.readAsync(_buffer);
          
       while (received > 0) {
          received := 0;
          if (_stream.isDataAvailable) 
-            received := :await _stream.readAsync(/*dump, 512*/_buffer);
+            received := :await _stream.readAsync(_buffer);
       };
 
       ^ returnContentAsString(headers);
@@ -80,9 +84,7 @@ public sealed class HttpBody
    /*internal*/ string readAsString(HttpHeaders headers)
    {
       byte dump[512];
-      int received := 0;
-      if (_stream.isDataAvailable) 
-         received := _stream.read(dump, 512);
+      int received := _stream.read(dump, 512);
          
       while (received > 0) {
          _buffer.write(0, received, dump);
@@ -282,7 +284,7 @@ public sealed class HttpResponse
    internal readHeader()
       = _body.readHeader(_firstLine, _headers);
 
-   async Task<string> readAsStringAsync()
+   Task<string> readAsStringAsync()
       = _body.readAsStringAsync(_headers);
 
    string readAsString()

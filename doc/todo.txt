@@ -10,16 +10,18 @@ In development:
   webapi phone book example : add, delete, update, search
   --------------------------------------
   #35 : first draft
-  - test http get / https get samples
   * dummy web server - GET
 
   ======================================
+  - fix comment highlighting eg (/*,*/test
+  - ecv-cli : pagination - turn off / on
   - fix debugger step over the code :
     several condition in row
                if (buffer[eol]==13 && buffer[eol+1]==10) {
                   ^ eol + 2;
                };
 
+  - IDE : support profiles
   - Map_StoreUStrAligned4 - probably better to extend MemoryDump with align method for this
   - refactoring : ParserTable - use MemoryHashTable instead of Map
   - extensions'runtime for Linux
@@ -40,7 +42,9 @@ In development:
   webapi phone book example : add, delete, update, search
   --------------------------------------
   #35 : first draft
-  + dummy web server - GET
+  --------------------------------------
+  * test https get samples
+  * dummy web server - GET
 
   * test http get / https get samples
 

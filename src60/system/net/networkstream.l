@@ -15,8 +15,8 @@ public class NetworkStream : Stream
       _socket := socket;
       _ownStream := false;
       
-      _timeout := 300;
-      _counter := 3;
+      _timeout := 100;
+      _counter := 2;
    }
 
    constructor()
