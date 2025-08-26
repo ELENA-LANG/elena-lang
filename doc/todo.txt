@@ -7,9 +7,12 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  webapi phone book example : add, delete, update, search
+  * #35 : first draft
   --------------------------------------
-  #35 : first draft
+  * mbedtls_ssl_read(ssl, NULL, 0) and then mbedtls_ssl_get_bytes_avail(ssl)
+  * test https get samples
+
+  * #35 : first draft
   * dummy web server - GET
 
   ======================================
@@ -43,7 +46,6 @@ In development:
   --------------------------------------
   #35 : first draft
   --------------------------------------
-  * test https get samples
   * dummy web server - GET
 
   * test http get / https get samples

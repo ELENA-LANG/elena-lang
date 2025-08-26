@@ -130,10 +130,12 @@ public class MbedTlsSocket : INetSocket
 
    get bool AvailableToRead()
    {
-      // currently it is not supported
-      NotSupportedException.raise();
+      int retVal := 0;
+      extern {
+         retVal := extern wrpmbedtls.context_read(_context);
+      };
 
-      ^ false
+      ^ retVal != 0;
    }
 
    close()
