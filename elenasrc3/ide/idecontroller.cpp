@@ -798,8 +798,35 @@ int ProjectController :: openProject(ProjectModel& model, path_t projectFile)
       loadProfileList(model, projectConfig, root);
       loadProfileList(model, projectConfig, platformRoot);
 
-      loadConfig(model, projectConfig, root);
-      loadConfig(model, projectConfig, platformRoot);
+      if (model.profileList.count() > 0) {
+         // select profile automatically if required
+         if (model.profile.empty())
+            model.profile.copy(*model.profileList.start());
+
+         ConfigFile::Node profileRoot = projectConfig.selectNode<ustr_t>(root, PROFILE_CATEGORY, *model.profile, [](ustr_t key, ConfigFile::Node& node)
+            {
+               return node.compareAttribute("key", key);
+            });
+
+         loadConfig(model, projectConfig, root);
+         if (!profileRoot.isNotFound())
+            loadConfig(model, projectConfig, profileRoot);
+
+         if (!platformRoot.isNotFound()) {
+            ConfigFile::Node profilePlatformRoot = projectConfig.selectNode<ustr_t>(platformRoot, PROFILE_CATEGORY, *model.profile, [](ustr_t key, ConfigFile::Node& node)
+               {
+                  return node.compareAttribute("key", key);
+               });
+
+            loadConfig(model, projectConfig, platformRoot);
+            loadConfig(model, projectConfig, profilePlatformRoot);
+
+         }
+      }
+      else {
+         loadConfig(model, projectConfig, root);
+         loadConfig(model, projectConfig, platformRoot);
+      }
 
       status |= STATUS_FRAME_VISIBILITY_CHANGED;
    }
@@ -861,6 +888,9 @@ int ProjectController :: closeProject(ProjectModel& model)
    model.package.clear();
    model.target.clear();
    model.outputPath.clear();
+
+   model.profileList.clear();
+   model.profile.clear();
 
    return STATUS_PROJECT_CHANGED;
 }

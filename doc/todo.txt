@@ -9,7 +9,7 @@ In development:
   ======================================
   IDE improvements
   --------------------------------------
-  - IDE : support profiles
+  - IDE : working with profiles - see httpget example
   --------------------------------------
   Linux API
   --------------------------------------
