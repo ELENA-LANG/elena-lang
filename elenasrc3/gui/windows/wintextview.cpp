@@ -183,9 +183,7 @@ void TextViewWindow :: update(bool maxColChanged, bool resized)
 {
    if (_model->isAssigned()) {
       updateVScroller(resized);
-      if (maxColChanged) {
-         updateHScroller(resized);
-      }
+      updateHScroller(resized || maxColChanged);
    }
 
    ControlBase::refresh();
