@@ -63,6 +63,7 @@ public class Task
 
    private complete(Exception? ex)
    {
+      Action<Task>? contCopy := nil;
       lock(self) {
          if (_completed) {
             Console.writeLine("The task is already completed");
@@ -71,11 +72,11 @@ public class Task
          };
 
          _exception := ex;
+         contCopy := _continuation;
          _completed := true;
-
-         if:not:nil(_continuation) {
-            _continuation(self);
-         }
+      };
+      if:not:nil(contCopy) {
+         contCopy(self);
       }
    }
 

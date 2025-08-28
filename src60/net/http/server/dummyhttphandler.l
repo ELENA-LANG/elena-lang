@@ -13,7 +13,7 @@ public class DummyHttpGetHandler : IHttpHandler
    {
       HttpServerResponse response;
       if (request.Path == "/") {
-         response := HttpServerResponse.new("<html><header>ELENA Web Server Dummy</header><body><div>ELENA Web Server Dummy Response</div></body></html>");
+         response := HttpServerResponse.new("<html><header><title>ELENA Web Server Dummy</title></header><body><div>ELENA Web Server Dummy Response</div></body></html>");
       }
       else {
          response := _errorHandler.getNotFoundResponse();

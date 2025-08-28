@@ -110,7 +110,9 @@ public sealed struct ThreadHandle
                                                                    
    join(int timeOut)
    {
-      extern KERNEL32.WaitForSingleObject(_handle, timeOut)
+      extern {
+         extern KERNEL32.WaitForSingleObject(_handle, timeOut);
+      }
    }     
    
    bool checkIfAlive()

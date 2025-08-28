@@ -24,7 +24,8 @@ public sealed class HttpServerResponse
       _headers := new HttpHeaders();
       _buffer := MemoryBuffer.allocate();
       
-      Base64Encoding.encode(0, length, body, _buffer);
+      //Base64Encoding.encode(0, length, body, _buffer);
+      _buffer.write(0, length, body);
    }
    
    async Task saveContentAsync(NetworkStream stream)
@@ -40,9 +41,13 @@ public sealed class HttpServerResponse
       
       _headers.saveTo(output);
       output.write($13$10);
+
+      Console.writeLine(*output);
+      var s := UTF8Encoding.toString(0, _buffer.Length, _buffer.Content);
+      Console.writeLine(s);      
       
       :await stream.writeStringAsync(*output);
-      
+
       :await stream.writeAsync(_buffer.Content, _buffer.Length);
    }
 }

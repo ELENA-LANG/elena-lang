@@ -7,15 +7,18 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * #35 : first draft
+  * #35 : dummy web server - GET
   --------------------------------------
-  * mbedtls_ssl_read(ssl, NULL, 0) and then mbedtls_ssl_get_bytes_avail(ssl)
-  * test https get samples
-
-  * #35 : first draft
-  * dummy web server - GET
-
+  * find out why adding try / catch fails the code
+  * uncomment HttpServer
+  * get rid of join statement; the main program must contain Console.readChar() and message : "press any key to end..."
   ======================================
+  + Console.readLine() - must not block the thread
+  - test sampleapi1, Chrome Browser http://localhost => dummy page
+  - test sampleapi1, Chrome Browser http://localhost/test => not found
+  ======================================
+  IDE improvements
+  --------------------------------------
   - fix comment highlighting eg (/*,*/test
   - ecv-cli : pagination - turn off / on
   - fix debugger step over the code :
@@ -28,27 +31,23 @@ In development:
   - Map_StoreUStrAligned4 - probably better to extend MemoryDump with align method for this
   - refactoring : ParserTable - use MemoryHashTable instead of Map
   - extensions'runtime for Linux
-  ======================================
+  --------------------------------------
   #184 : IDE linux - migrate to gtkmm4
-  * set focus on textview
-  * keypress event
-  * redesign controller to support async open file workflow
-  * get rid of FileDialogBase
-  * #184 : IDE linux - clipboard
-  * #184 : IDE linux - edit menus
-  * #184 : IDE linux - mark modified file
-  * #184 : IDE linux - include / exclude
-  * #184 : uncomment checkMenuItemById
-  * #184 : exit
   --------------------------------------
+  - set focus on textview
+  - keypress event
+  - redesign controller to support async open file workflow
+  - get rid of FileDialogBase
+  - #184 : IDE linux - clipboard
+  - #184 : IDE linux - edit menus
+  - #184 : IDE linux - mark modified file
+  - #184 : IDE linux - include / exclude
+  - #184 : uncomment checkMenuItemById
+  - #184 : exit
   ======================================
-  webapi phone book example : add, delete, update, search
-  --------------------------------------
   #35 : first draft
   --------------------------------------
-  * dummy web server - GET
-
-  * test http get / https get samples
+  * test https get samples
 
   * dummy https web server - GET
 
@@ -62,6 +61,9 @@ In development:
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
+  --------------------------------------
+  #35 : webapi phone book example : add, delete, update, search
+  --------------------------------------
 
   === Iteration 43 ===
   --------------------------------------

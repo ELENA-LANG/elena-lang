@@ -52,7 +52,9 @@ public sealed class HttpServer : interface<IHttpServer>
                }
             });
 //      }
-       Console.readLine()
+
+      Console.readLine();
+
    }
 }
 
@@ -88,7 +90,7 @@ public singleton HttpErrorHandler : BaseHttpErrorHandler
       = getInternalErrorResponse(ex);
       
    Task<HttpServerResponse> handleAsync(Exception ex)
-      = ::Task<HttpServerResponse>.assign({ ^ handle(ex) });
+      = ::Task<HttpServerResponse>.run({ ^ handle(ex) });
 }
 
 class HttpAcceptor
@@ -134,14 +136,14 @@ class HttpAcceptor
       HttpServerResponse response;      
       auto handler := _handleFactory.create(request.Method);
       if (handler != nil) {
-         try {
+//         try {
             response := :await handler.proceedAsync(request);
-         }
+/*         }
          catch(Exception ex) {
             auto handler := _handleFactory.getErrorHandler();
             
             response := :await handler.handleAsync(ex);
-         }         
+         }*/
       }
       else response := _handleFactory.getErrorHandler().getNotFoundResponse();
       
