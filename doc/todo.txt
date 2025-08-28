@@ -9,9 +9,8 @@ In development:
   ======================================
   * #35 : dummy web server - GET
   --------------------------------------
-  * find out why adding try / catch fails the code
-  * uncomment HttpServer
-  * get rid of join statement; the main program must contain Console.readChar() and message : "press any key to end..."
+  * return not found
+  * rename HttpServer into SimpleHttpServer
   ======================================
   + Console.readLine() - must not block the thread
   - test sampleapi1, Chrome Browser http://localhost => dummy page
@@ -50,15 +49,14 @@ In development:
   * test https get samples
 
   * dummy https web server - GET
+  * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
 
-  * simple web api - GET
-  * simple https web api - GET
+  * comment output => use logger to display this information
 
   * simple web api client - GET
   * simple web api - POST
   * simple web api client - POST
 
-  * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   --------------------------------------

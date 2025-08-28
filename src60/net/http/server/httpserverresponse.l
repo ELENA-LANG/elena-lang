@@ -8,9 +8,9 @@ public sealed class HttpServerResponse
 {
    string Protocol : prop(_protocol);
    
-   int StatusCode : prop(_statusText);
+   int StatusCode : prop(_statusCode);
    
-   string StatusText : prop(_statusCode);
+   string StatusText : prop(_statusText);
    
    HttpHeaders Headers : rprop(_headers);
    

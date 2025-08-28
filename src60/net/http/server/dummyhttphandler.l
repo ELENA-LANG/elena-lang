@@ -14,15 +14,14 @@ public class DummyHttpGetHandler : IHttpHandler
       HttpServerResponse response;
       if (request.Path == "/") {
          response := HttpServerResponse.new("<html><header><title>ELENA Web Server Dummy</title></header><body><div>ELENA Web Server Dummy Response</div></body></html>");
+         response.Protocol := "HTTP/1.1";
+         response.StatusCode := 200;
+         response.StatusText := "OK";
+         response.Headers.add("Content-Type", "text/html");
       }
       else {
          response := _errorHandler.getNotFoundResponse();
       };      
-
-      response.Protocol := "HTTP/1.1";
-      response.StatusCode := 200;
-      response.StatusText := "OK";
-      response.Headers.add("Content-Type", "text/html");
       
       ^ response
    }

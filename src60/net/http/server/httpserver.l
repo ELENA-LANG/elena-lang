@@ -3,14 +3,14 @@ import net;
 import net'http;
 import system'threading;
 
-public sealed class HttpServer : interface<IHttpServer>
+public sealed class SimpleHttpServer : interface<IHttpServer>
 {
    Thread               _listenThread;  
 
    TcpListener          _listener;
    int                  _backLog; 
    
-   IHttpHandlerFactory  _handleFactory;
+   IHttpHandlerFactory  _handleFactory;   
    
    constructor create(IHttpHandlerFactory handleFactory)
    {
@@ -25,15 +25,13 @@ public sealed class HttpServer : interface<IHttpServer>
       {
          run();
       });
-      
-      _listenThread.join();
    }   
 
    protected run()
    {
       _listener.start(_backLog);
       
-//      while(true) {
+      while(true) {
          auto client := _listener.acceptTcpClient();
          auto thread := Thread.start(
             {
@@ -51,10 +49,7 @@ public sealed class HttpServer : interface<IHttpServer>
                   acceptor.returnError(ex);
                }
             });
-//      }
-
-      Console.readLine();
-
+      }
    }
 }
 
@@ -136,14 +131,14 @@ class HttpAcceptor
       HttpServerResponse response;      
       auto handler := _handleFactory.create(request.Method);
       if (handler != nil) {
-//         try {
+         try {
             response := :await handler.proceedAsync(request);
-/*         }
+         }
          catch(Exception ex) {
             auto handler := _handleFactory.getErrorHandler();
             
             response := :await handler.handleAsync(ex);
-         }*/
+         }
       }
       else response := _handleFactory.getErrorHandler().getNotFoundResponse();
       

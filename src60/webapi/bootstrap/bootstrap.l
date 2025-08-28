@@ -7,7 +7,7 @@ internal singleton Bootstrap : IBootstap
    
    initDummy()
    {
-      _server := HttpServer.create(DummyHttpHandlerFactory);
+      _server := SimpleHttpServer.create(DummyHttpHandlerFactory);
    }
    
    protected IHttpServer getServer()
