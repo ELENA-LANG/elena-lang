@@ -460,6 +460,7 @@ void DocumentView :: hscroll(DocumentChangeStatus& changeStatus, int displacemen
       frame.x = 0;
 
    if (_frame.getCaret() != frame) {
+      _text->validateBookmark(_frame);
       _frame.moveTo(frame.x, frame.y);
 
       changeStatus.frameChanged = true;

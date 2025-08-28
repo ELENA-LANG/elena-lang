@@ -7,17 +7,9 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * #35 : dummy web server - GET
-  --------------------------------------
-  * return not found
-  * rename HttpServer into SimpleHttpServer
-  ======================================
-  + Console.readLine() - must not block the thread
-  - test sampleapi1, Chrome Browser http://localhost => dummy page
-  - test sampleapi1, Chrome Browser http://localhost/test => not found
-  ======================================
   IDE improvements
   --------------------------------------
+  - #802 : The horizontal scroll bar is broken
   - fix comment highlighting eg (/*,*/test
   - ecv-cli : pagination - turn off / on
   - fix debugger step over the code :
