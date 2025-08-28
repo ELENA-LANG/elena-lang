@@ -7,14 +7,6 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  IDE improvements
-  --------------------------------------
-  - IDE : working with profiles - see httpget example
-  --------------------------------------
-  Linux API
-  --------------------------------------
-  - extensions'runtime for Linux
-  --------------------------------------
   #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
   - set focus on textview
