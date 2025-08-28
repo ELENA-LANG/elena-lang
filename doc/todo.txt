@@ -9,7 +9,6 @@ In development:
   ======================================
   IDE improvements
   --------------------------------------
-  - fix comment highlighting eg (/*,*/test
   - ecv-cli : pagination - turn off / on
   - fix debugger step over the code :
     several condition in row
@@ -19,7 +18,6 @@ In development:
 
   - IDE : support profiles
   - Map_StoreUStrAligned4 - probably better to extend MemoryDump with align method for this
-  - refactoring : ParserTable - use MemoryHashTable instead of Map
   - extensions'runtime for Linux
   --------------------------------------
   #184 : IDE linux - migrate to gtkmm4
@@ -54,6 +52,8 @@ In development:
   #35 : webapi phone book example : add, delete, update, search
   --------------------------------------
 
+  ### EPIC: elena 6.9 ###
+
   === Iteration 43 ===
   --------------------------------------
   --------------------------------------
@@ -80,5 +80,5 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  ### EPIC: elena 6.9 ###
+  ### EPIC: elena 6.10 ###
 

@@ -1166,6 +1166,10 @@ void ByteCodeViewer :: runSession()
                _showClassAttributes = !_showClassAttributes;
                _presenter->print("Displaying class attributes mode is %s", _showClassAttributes ? "true" : "false");
                break;
+            case 'p':
+               _noPaging = !_noPaging;
+               _presenter->print("No pagination mode is %s", _noPaging ? "true" : "false");
+               break;
             default:
                printHelp();
                break;
