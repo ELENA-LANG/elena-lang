@@ -3342,8 +3342,8 @@ void ByteCodeWriter :: closeTryBlock(CommandTape& tape, TryContextInfo& tryInfo,
          tape.write(ByteCode::PeekFI, tryInfo.index);
       }
 
-      if (virtualMode)
-         tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
+      //if (virtualMode)
+      //   tape.write(ByteCode::Jump, PseudoArg::FirstLabel);
    }
    else {
       // finally-block
