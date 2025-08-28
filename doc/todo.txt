@@ -9,7 +9,6 @@ In development:
   ======================================
   IDE improvements
   --------------------------------------
-  - #802 : The horizontal scroll bar is broken
   - fix comment highlighting eg (/*,*/test
   - ecv-cli : pagination - turn off / on
   - fix debugger step over the code :
