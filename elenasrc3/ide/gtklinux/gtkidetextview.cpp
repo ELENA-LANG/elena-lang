@@ -47,10 +47,10 @@ void IDETextViewFrame :: on_text_model_change(TextViewModelEvent event)
       client->onDocumentUpdate(event.changeStatus);
 
    if (test(event.status, STATUS_FRAME_VISIBILITY_CHANGED)) {
+      grab_focus();
+
       if (client)
          client->grab_focus();
-
-      //grab_focus();
    }
 
    //   if (_model->sourceViewModel.isAssigned()) {
