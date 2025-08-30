@@ -813,7 +813,7 @@ void GTKIDEWindow :: saveAll()
    saveProject();
 }
 
-bool IDEWindow :: saveBeforeClose(int index)
+bool GTKIDEWindow :: saveBeforeClose(int index)
 {
 /*   if (_controller->ifFileUnnamed(_model, index)) {
       PathString path;
