@@ -164,18 +164,14 @@ namespace elena_lang
       bool openFile(SourceViewModel* model, ProjectModel* projectModel, path_t sourceFile, int& status);
       bool openFile(IDEModel* model, path_t sourceFile, int& status);
       int openProject(IDEModel* model, path_t projectFile);
-      bool closeProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog,
-         IDEModel* model, int& status);
+      bool closeProject(IDEModel* model, int& status);
 
-      bool closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
-         int index, int& status);
-      bool saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode);
-      bool closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
-         int& status);
-      bool closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
-         int& status);
-      bool saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode);
-      bool saveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode, int& status);
+      bool closeFile(IDEModel* model, int index, int& status);
+      //bool saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode);
+      bool closeAll(IDEModel* model, int& status);
+      bool closeAllButActive(IDEModel* model, int& status);
+      //bool saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode);
+      //bool saveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode, int& status);
 
       void displayErrors(IDEModel* model, text_str output, ErrorLogBase* log);
 
@@ -218,25 +214,28 @@ namespace elena_lang
       void doNewFile(IDEModel* model);
       bool doOpenFile(IDEModel* model, PathList& files);
       void doOpenFile(IDEModel* model, path_t path);
-      bool doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave);
-      bool doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
-      bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
-      bool doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, int index);
-      bool doCloseAll(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model, bool closeProject);
-      bool doCloseAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model);
-      void doNewProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, ProjectSettingsBase& prjSettingDialog,
-         IDEModel* model);
-      bool doOpenProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
-      void doOpenProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model, path_t path);
-      bool doCloseProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
-      bool doSaveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode);
+
+      bool ifFileUnnamed(IDEModel* model, int index = -1);
+      bool ifFileNotSaved(IDEModel* model, int index);
+      bool ifProjectNotSaved(IDEModel* model);
+      bool ifProjectUnnamed(IDEModel* model);
+
+      bool doSaveFile(IDEModel* model, int index, bool forcedSave, path_t filePath = nullptr);
+
+      bool doCloseFile(IDEModel* model, int index);
+      bool doCloseAll(IDEModel* model, bool closeProjectMode);
+      bool doCloseAllButActive(IDEModel* model);
+      void doNewProject(IDEModel* model);
+      void doOpenProject(IDEModel* model, path_t path);
+      //bool doCloseProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool doSaveProject(IDEModel* model, path_t newPath = nullptr);
 
       bool doSearch(FindDialogBase& dialog, IDEModel* model);
       bool doSearchNext(IDEModel* model);
       bool doReplace(FindDialogBase& dialog, MessageDialogBase& qusetionDialog, IDEModel* model);
       void doGoToLine(GotoDialogBase& dialog, IDEModel* model);
 
-      bool doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
+      bool doCompileProject(IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
       void doDebugAction(IDEModel* model, DebugAction action,
          MessageDialogBase& mssgDialog, bool withoutPostponeAction);
@@ -262,9 +261,6 @@ namespace elena_lang
       void doSelectPrevWindow(IDEModel* model);
       void doSelectWindow(TextViewModelBase* viewModel, path_t path);
 
-      void doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog,
-         IDEModel* model);
-
       void onCompilationCompletion(IDEModel* model, int exitCode,
          text_str output, ErrorLogBase* log);
       void onDebuggerHook(ProjectModel* model);
@@ -278,13 +274,11 @@ namespace elena_lang
       void doInclude(IDEModel* model);
       void doExclude(IDEModel* model);
 
-      bool doExit(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      //bool doExit(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
 
-      bool onClose(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model);
+      bool onClose(IDEModel* model);
 
       void init(IDEModel* model, int& status);
-
-      void autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model);
 
       IDEController(ProcessBase* outputProcess, ProcessBase* vmConsoleProcess, IDEDebugProcessBase* process,
          IDEModel* model, PlatformType platform, PathHelperBase* pathHelper, CompareFileDateTime comparer

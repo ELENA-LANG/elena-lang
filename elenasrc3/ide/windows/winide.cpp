@@ -299,7 +299,11 @@ void IDEWindow :: newFile()
 
 void IDEWindow :: newProject()
 {
-   _controller->doNewProject(fileDialog, projectDialog, messageDialog, projectSettingsDialog, _model);
+   closeProject();
+
+   _controller->doNewProject(_model);
+
+   projectSettingsDialog.showModal();
 }
 
 void IDEWindow :: openFile()
@@ -311,57 +315,182 @@ void IDEWindow :: openFile()
    }
 }
 
-void IDEWindow :: saveFile()
+void IDEWindow :: saveFile(int index)
 {
-   _controller->doSaveFile(fileDialog, _model, false, true);
+   if (_controller->ifFileUnnamed(_model, index)) {
+      PathString path;
+      if (!fileDialog.saveFile(_T("l"), path))
+         return;
+
+      _controller->doSaveFile(_model, index, true, *path);
+   }
+   else _controller->doSaveFile(_model, index, true);
 }
 
-void IDEWindow::saveFileAs()
+void IDEWindow :: saveFileAs(int index)
 {
-   _controller->doSaveFile(fileDialog, _model, true, true);
+   PathString path;
+   if (!fileDialog.saveFile(_T("l"), path))
+      return;
+
+   _controller->doSaveFile(_model, index, true, *path);
 }
 
-void IDEWindow::saveAll()
+void IDEWindow :: saveAll()
 {
-   _controller->doSaveAll(fileDialog, projectDialog, _model);
+   for (int index = 1; index <= (int)_model->sourceViewModel.getDocumentCount(); index++) {
+      if (_controller->ifFileNotSaved(_model, index) || _controller->ifFileUnnamed(_model, index))
+         saveFile(index);
+   }
+
+   saveProject();
 }
 
 void IDEWindow :: saveProject()
 {
-   _controller->doSaveProject(projectDialog, _model, true);
+   if (_controller->ifProjectUnnamed(_model)) {
+      PathString path;
+      if (!projectDialog.saveFile(_T("prj"), path))
+         return;
+
+      _controller->doSaveProject(_model, *path);
+   }
+   else if (_controller->ifProjectNotSaved(_model)) {
+      _controller->doSaveProject(_model);
+   }
 }
 
-void IDEWindow :: closeFile()
+bool IDEWindow :: saveBeforeClose(int index)
 {
-   _controller->doCloseFile(fileDialog, messageDialog, _model);
+   if (_controller->ifFileUnnamed(_model, index)) {
+      PathString path;
+      if (!fileDialog.saveFile(_T("l"), path)) {
+         auto result = messageDialog.question(QUESTION_CLOSE_UNSAVED);
+
+         if (result != MessageDialogBase::Answer::Yes)
+            return false;
+      }
+      else _controller->doSaveFile(_model, index, true, *path);
+   }
+   else if (_controller->ifFileNotSaved(_model, index)) {
+      path_t path = _model->sourceViewModel.getDocumentPath(index);
+
+      auto result = messageDialog.question(
+         QUESTION_SAVE_FILECHANGES, path);
+
+      if (result == MessageDialogBase::Answer::Cancel) {
+         return false;
+      }
+      else if (result == MessageDialogBase::Answer::Yes) {
+         PathString path;
+         if (fileDialog.saveFile(_T("l"), path)) {
+            _controller->doSaveFile(_model, index, true, *path);
+         }
+         else return false;
+      }
+   }
+
+   return true;
 }
 
-void IDEWindow :: closeAll()
+void IDEWindow :: closeFile(int index)
 {
-   _controller->doCloseAll(fileDialog, projectDialog, messageDialog, _model, false);
+   if (saveBeforeClose(index))
+      _controller->doCloseFile(_model, index);
+}
+
+bool IDEWindow :: closeAll()
+{
+   for (int index = 1; index <= (int)_model->sourceViewModel.getDocumentCount(); index++) {
+      if (!saveBeforeClose(index))
+         return false;
+   }
+
+   return _controller->doCloseAll(_model, false);
 }
 
 void IDEWindow :: closeAllButActive()
 {
-   _controller->doCloseAllButActive(fileDialog, messageDialog, _model);
+   int currentIndex = _model->sourceViewModel.getCurrentIndex();
+   for (int index = 1; index <= (int)_model->sourceViewModel.getDocumentCount(); index++) {
+      if (index != currentIndex && !saveBeforeClose(index))
+         return;
+   }
+
+   _controller->doCloseAllButActive(_model);
 }
 
 void IDEWindow :: openProject()
 {
-   _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model);
+   PathString path;
+   if (projectDialog.openFile(path)) {
+      closeProject();
+
+      _controller->doOpenProject(_model, *path);
+      _recentProjectList.reload();
+   }
+}
+
+void IDEWindow :: openProject(path_t path)
+{
+   closeProject();
+
+   _controller->doOpenProject(_model, path);
    _recentProjectList.reload();
 }
 
-void IDEWindow :: closeProject()
+bool IDEWindow :: closeProject()
 {
-   _controller->doCloseProject(fileDialog, projectDialog, messageDialog, _model);
+   if (_model->projectModel.empty)
+      return true;
+
+   if (_controller->ifProjectNotSaved(_model)) {
+      auto result = messageDialog.question(QUESTION_SAVEPROJECT_CHANGES);
+      if (result == MessageDialogBase::Answer::Cancel) {
+         return false;
+      }
+      else if (result == MessageDialogBase::Answer::Yes) {
+         saveProject();
+      }
+   }
+
+   for (int index = 1; index <= (int)_model->sourceViewModel.getDocumentCount(); index++) {
+      if (!saveBeforeClose(index))
+         return false;
+   }
+
+   return _controller->doCloseAll(_model, true);
 
    //_controller->onLayoutchange();
 }
 
+void IDEWindow :: selectWindow()
+{
+   auto retVal = windowDialog.selectWindow();
+   switch (retVal.value2) {
+      case WindowListDialogBase::Mode::Activate:
+      {
+         path_t path = _model->sourceViewModel.getDocumentPath(retVal.value1);
+         _controller->doSelectWindow(_model->viewModel(), path);
+         break;
+      }
+      case WindowListDialogBase::Mode::Close:
+         closeFile(retVal.value1);
+         break;
+      default:
+         break;
+   }
+}
+
 void IDEWindow :: exit()
 {
-   if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
+   bool successful = false;
+   if (_model->projectModel.empty) {
+      successful = closeProject();
+   }
+   else successful = closeAll();
+
+   if(successful && _controller->onClose(_model)) {
       SDIWindow::exit();
    }
 }
@@ -734,10 +863,10 @@ bool IDEWindow :: onCommand(int command)
          openProject();
          break;
       case IDM_FILE_SAVE:
-         saveFile();
+         saveFile(-1);
          break;
       case IDM_FILE_SAVEAS:
-         saveFileAs();
+         saveFileAs(-1);
          break;
       case IDM_FILE_SAVEALL:
          saveAll();
@@ -746,7 +875,7 @@ bool IDEWindow :: onCommand(int command)
          saveProject();
          break;
       case IDM_FILE_CLOSE:
-         closeFile();
+         closeFile(-1);
          break;
       case IDM_FILE_CLOSEALL:
          closeAll();
@@ -823,9 +952,11 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_PROJECT_COMPILE:
          if (_model->autoSave)
-            _controller->autoSave(fileDialog, projectDialog, _model);
+            saveAll();
 
-         _controller->doCompileProject(fileDialog, projectDialog, _model);
+         saveProject();
+
+         _controller->doCompileProject(_model);
          break;
       case IDM_PROJECT_INCLUDE:
          includeFile();
@@ -838,25 +969,25 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_DEBUG_RUN:
          if (_model->autoSave)
-            _controller->autoSave(fileDialog, projectDialog, _model);
+            saveAll();
 
          _controller->doDebugAction(_model, DebugAction::Run, messageDialog, false);
          break;
       case IDM_DEBUG_STEPOVER:
          if (_model->autoSave)
-            _controller->autoSave(fileDialog, projectDialog, _model);
+            saveAll();
 
          _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, false);
          break;
       case IDM_DEBUG_STEPINTO:
          if (_model->autoSave)
-            _controller->autoSave(fileDialog, projectDialog, _model);
+            saveAll();
 
          _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, false);
          break;
       case IDM_DEBUG_RUNTO:
          if (_model->autoSave)
-            _controller->autoSave(fileDialog, projectDialog, _model);
+            saveAll();
 
          _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, false);
          break;
@@ -939,8 +1070,7 @@ bool IDEWindow :: onCommand(int command)
       case IDM_FILE_PROJECTS_9:
       {
          PathString path(_recentProjectList.getPath(command - IDM_FILE_PROJECTS));
-         _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model, *path);
-         _recentProjectList.reload();
+         openProject(*path);
          break;
       }
       case IDM_FILE_FILES_CLEAR:
@@ -964,7 +1094,7 @@ bool IDEWindow :: onCommand(int command)
          _controller->doConfigureDebuggerSettings(debuggerSettingsDialog, _model);
          break;
       case IDM_WINDOW_WINDOWS:
-         _controller->doSelectWindow(fileDialog, messageDialog, windowDialog, _model);
+         selectWindow();         
          break;
       default:
          return false;
@@ -1331,7 +1461,12 @@ void IDEWindow :: onDebuggerSourceNotFound()
 
 bool IDEWindow :: onClose()
 {
-   if (!_controller->onClose(fileDialog, projectDialog, messageDialog, _model))
+   if (_model->projectModel.empty) {
+      closeProject();
+   }
+   else closeAll();
+
+   if (!_controller->onClose(_model))
       return false;
 
    return WindowBase::onClose();
@@ -1490,7 +1625,7 @@ void IDEWindow :: onDropFiles(HDROP hDrop)
          _controller->doOpenFile(_model, path_t(szName));
       }
       else if (PathUtil::checkExtension(path_t(szName), "prj")) {
-         _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model, path_t(szName));
+         openProject(path_t(szName));
          break;
       }
    }

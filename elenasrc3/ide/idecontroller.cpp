@@ -1393,21 +1393,41 @@ void IDEController :: doOpenFile(IDEModel* model, path_t path)
    notifyOnModelChange(projectStatus);
 }
 
-bool IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool saveAsMode, bool forcedSave)
+bool IDEController :: ifFileUnnamed(IDEModel* model, int index)
 {
-   auto docView = model->sourceViewModel.DocView();
+   auto docView = index == -1 ? model->sourceViewModel.DocView() : model->sourceViewModel.getDocument(index);
+
+   return docView != nullptr && docView->isUnnamed();
+}
+
+bool IDEController :: ifFileNotSaved(IDEModel* model, int index)
+{
+   auto docView = index == -1 ? model->sourceViewModel.DocView() : model->sourceViewModel.getDocument(index);
+
+   return docView != nullptr && (docView->isModified());
+}
+
+bool IDEController::ifProjectNotSaved(IDEModel* model)
+{
+   return model->projectModel.notSaved;
+}
+
+bool IDEController :: ifProjectUnnamed(IDEModel* model)
+{
+   return model->projectModel.projectPath.empty();
+}
+
+bool IDEController :: doSaveFile(IDEModel* model, int index, bool forcedSave, path_t filePath)
+{
+   auto docView = index == -1 ? model->sourceViewModel.DocView() : model->sourceViewModel.getDocument(index);
    if (!docView || docView->isReadOnly())
       return false;
 
-   if (docView->isUnnamed() || saveAsMode) {
-      PathString path;
-      if (!dialog.saveFile(_T("l"), path))
-         return false;
-
+   if (!filePath.empty()) {
       NamespaceString sourceNameStr;
-      projectController.defineSourceName(&model->projectModel, *path, sourceNameStr);
+      projectController.defineSourceName(&model->projectModel, filePath, sourceNameStr);
 
-      sourceController.renameSource(&model->sourceViewModel, nullptr, *sourceNameStr, *path);
+      sourceController.renameSource(&model->sourceViewModel, nullptr, *sourceNameStr, filePath);
 
       forcedSave = true;
    }
@@ -1425,64 +1445,17 @@ bool IDEController :: doSaveFile(FileDialogBase& dialog, IDEModel* model, bool s
    return true;
 }
 
-bool IDEController :: doSaveAll(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
-{
-   if (!saveAll(dialog, model, true)) {
-      return true;
-   }
-
-   if (model->projectModel.notSaved) {
-      return doSaveProject(projectDialog, model, false);
-   }
-
-   return false;
-}
-
-void IDEController :: doNewProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog,
-   ProjectSettingsBase& prjSettingDialog, IDEModel* model)
+void IDEController :: doNewProject(IDEModel* model)
 {
    int projectStatus = STATUS_NONE;
-   if (!closeProject(dialog, projectDialog, mssgDialog, model, projectStatus))
-      return;
-
    projectStatus |= projectController.newProject(model->projectModel);
 
-   if (prjSettingDialog.showModal()) {
-      notifyOnModelChange(projectStatus);
-   }
+   notifyOnModelChange(projectStatus);
 }
 
-bool IDEController :: doOpenProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model)
+void IDEController :: doOpenProject(IDEModel* model, path_t path)
 {
    int projectStatus = STATUS_NONE;
-
-   PathString path;
-   if (projectDialog.openFile(path)) {
-      if (!closeProject(dialog, projectDialog, mssgDialog, model, projectStatus))
-         return false;
-
-      int retVal = openProject(model, *path);
-
-      if (retVal) {
-         projectStatus |= retVal;
-
-         projectStatus |= STATUS_DOC_READY;
-
-         notifyOnModelChange(projectStatus);
-
-         return true;
-      }
-   }
-
-   return false;
-}
-
-void IDEController :: doOpenProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model, path_t path)
-{
-   int projectStatus = STATUS_NONE;
-
-   if (!closeProject(dialog, projectDialog, mssgDialog, model, projectStatus))
-      return;
 
    if (PathUtil::checkExtension(path, "l")) {
       openFile(model, path, projectStatus);
@@ -1492,49 +1465,41 @@ void IDEController :: doOpenProject(FileDialogBase& dialog, FileDialogBase& proj
    notifyOnModelChange(projectStatus);
 }
 
-bool IDEController :: saveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode, int& status)
-{
-   if (saveAsMode || model->projectModel.notSaved) {
-      if (model->projectModel.projectPath.empty()) {
-         PathString path;
-         if (!projectDialog.saveFile(_T("prj"), path))
-            return false;
-
-         projectController.setProjectPath(model->projectModel, *path);
-      }
-
-      status |= projectController.saveProject(model->projectModel);
-   }
-
-   return true;
-}
-
-bool IDEController :: doSaveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode)
+//bool IDEController :: saveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode, int& status)
+//{
+//   if (saveAsMode || model->projectModel.notSaved) {
+//      if (model->projectModel.projectPath.empty()) {
+//         PathString path;
+//         if (!projectDialog.saveFile(_T("prj"), path))
+//            return false;
+//
+//         projectController.setProjectPath(model->projectModel, *path);
+//      }
+//
+//      status |= projectController.saveProject(model->projectModel);
+//   }
+//
+//   return true;
+//}
+//
+bool IDEController :: doSaveProject(IDEModel* model, path_t newPath)
 {
    int projectStatus = STATUS_NONE;
-   if (!saveProject(projectDialog, model, saveAsMode, projectStatus))
-      return false;
+
+   if (newPath.empty()) {
+      projectController.setProjectPath(model->projectModel, newPath);
+   }
+   
+   projectStatus |= projectController.saveProject(model->projectModel);
 
    notifyOnModelChange(projectStatus);
 
    return true;
 }
 
-bool IDEController :: closeProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog,
-   IDEModel* model, int& status)
+bool IDEController :: closeProject(IDEModel* model, int& status)
 {
-   if (model->projectModel.notSaved) {
-      auto result = mssgDialog.question(QUESTION_SAVEPROJECT_CHANGES);
-      if (result == MessageDialogBase::Answer::Cancel) {
-         return false;
-      }
-      else if (result == MessageDialogBase::Answer::Yes) {
-         if (!saveProject(projectDialog, model, false, status))
-            return false;
-      }
-   }
-
-   if (closeAll(dialog, mssgDialog, model, status)) {
+   if (closeAll(model, status)) {
       status |= projectController.closeProject(model->projectModel);
 
       return true;
@@ -1542,63 +1507,43 @@ bool IDEController :: closeProject(FileDialogBase& dialog, FileDialogBase& proje
    else return false;
 }
 
-bool IDEController :: doCloseProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model)
+//bool IDEController :: doCloseProject(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model)
+//{
+//   int projectStatus = STATUS_NONE;
+//
+//   if(!closeProject(dialog, projectDialog, mssgDialog, model, projectStatus))
+//      return false;
+//
+//   notifyOnModelChange(projectStatus);
+//
+//   return true;
+//}
+//
+//bool IDEController :: saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode)
+//{
+//   auto docView = model->sourceViewModel.getDocument(index);
+//
+//   return doSaveFile(dialog, model, false, forcedMode);
+//}
+
+bool IDEController :: closeFile(IDEModel* model, int index, int& status)
 {
-   int projectStatus = STATUS_NONE;
-
-   if(!closeProject(dialog, projectDialog, mssgDialog, model, projectStatus))
-      return false;
-
-   notifyOnModelChange(projectStatus);
-
-   return true;
-}
-
-bool IDEController :: saveFile(FileDialogBase& dialog, IDEModel* model, int index, bool forcedMode)
-{
-   auto docView = model->sourceViewModel.getDocument(index);
-
-   return doSaveFile(dialog, model, false, forcedMode);
-}
-
-bool IDEController :: closeFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
-   int index, int& status)
-{
-   auto docView = model->sourceViewModel.getDocument(index);
-   if (docView->isUnnamed()) {
-      if (!doSaveFile(dialog, model, false, true)) {
-         auto result = mssgDialog.question(QUESTION_CLOSE_UNSAVED);
-
-         if (result != MessageDialogBase::Answer::Yes)
-            return false;
-      }
-   }
-   else if (docView->isModified()) {
-      path_t path = model->sourceViewModel.getDocumentPath(index);
-
-      auto result = mssgDialog.question(
-         QUESTION_SAVE_FILECHANGES, path);
-
-      if (result == MessageDialogBase::Answer::Cancel) {
-         return false;
-      }
-      else if (result == MessageDialogBase::Answer::Yes) {
-         if (!doSaveFile(dialog, model, false, true))
-            return false;
-      }
-   }
+   auto docView = index == -1 ? model->sourceViewModel.DocView() : model->sourceViewModel.getDocument(index);
 
    sourceController.closeSource(&model->sourceViewModel, index, true, status);
 
    return true;
 }
 
-bool IDEController :: doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model, int index)
+bool IDEController :: doCloseFile(IDEModel* model, int index)
 {
    int projectStatus = STATUS_NONE;
 
+   if (index == -1)
+      index = model->sourceViewModel.getCurrentIndex();
+
    if (index > 0) {
-      bool retVal = closeFile(dialog, mssgDialog, model, index, projectStatus);
+      bool retVal = closeFile(model, index, projectStatus);
 
       notifyOnModelChange(projectStatus);
 
@@ -1608,85 +1553,68 @@ bool IDEController :: doCloseFile(FileDialogBase& dialog, MessageDialogBase& mss
    return false;
 }
 
-bool IDEController :: doCloseFile(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
-{
-   auto docView = model->sourceViewModel.DocView();
-   if (docView) {
-      return doCloseFile(dialog, mssgDialog, model, model->sourceViewModel.getCurrentIndex());
-   }
-   return false;
-}
-
-bool IDEController :: closeAll(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
-   int& status)
+bool IDEController :: closeAll(IDEModel* model, int& status)
 {
    while (model->sourceViewModel.getDocumentCount() > 0) {
-      if (!closeFile(dialog, mssgDialog, model, 1, status))
+      if (!closeFile(model, 1, status))
          return false;
    }
 
    return true;
 }
 
-bool IDEController :: closeAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model,
-   int& status)
+bool IDEController :: closeAllButActive(IDEModel* model, int& status)
 {
    int index = model->sourceViewModel.getCurrentIndex();
    for (int i = 1; i < index; i++) {
-      if (!closeFile(dialog, mssgDialog, model, 1, status))
+      if (!closeFile(model, 1, status))
          return false;
    }
 
    int count = model->sourceViewModel.getDocumentCount();
    for (int i = 2; i <= count; i++) {
-      if (!closeFile(dialog, mssgDialog, model, 2, status))
+      if (!closeFile(model, 2, status))
          return false;
    }
 
    return true;
 }
 
-bool IDEController :: saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode)
-{
-   for (pos_t i = 0; i < model->sourceViewModel.getDocumentCount(); i++) {
-      if (!saveFile(dialog, model, i + 1, forcedMode))
-         return false;
-   }
+//bool IDEController :: saveAll(FileDialogBase& dialog, IDEModel* model, bool forcedMode)
+//{
+//   for (pos_t i = 0; i < model->sourceViewModel.getDocumentCount(); i++) {
+//      if (!saveFile(dialog, model, i + 1, forcedMode))
+//         return false;
+//   }
+//
+//   return true;
+//}
 
-   return true;
-}
-
-bool IDEController :: doCloseAll(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model, bool closeProjectMode)
+bool IDEController :: doCloseAll(IDEModel* model, bool closeProjectMode)
 {
    int projectStatus = STATUS_NONE;
+   
    if (closeProjectMode) {
-      if (!closeProject(dialog, projectDialog, mssgDialog, model, projectStatus))
+      if (!closeProject(model, projectStatus))
          return false;
    }
-   else if (!closeAll(dialog, mssgDialog, model, projectStatus))
+   else if (!closeAll(model, projectStatus))
       return false;
 
    notifyOnModelChange(projectStatus);
    return true;
 }
 
-bool IDEController :: doCloseAllButActive(FileDialogBase& dialog, MessageDialogBase& mssgDialog, IDEModel* model)
+bool IDEController :: doCloseAllButActive(IDEModel* model)
 {
    int projectStatus = STATUS_NONE;
-   if (closeAllButActive(dialog, mssgDialog, model, projectStatus)) {
+   if (closeAllButActive(model, projectStatus)) {
       notifyOnModelChange(projectStatus);
 
       return true;
    }
 
    return false;
-}
-
-bool IDEController :: doExit(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model)
-{
-   projectController.stopVMConsole();
-
-   return doCloseAll(dialog, projectDialog, mssgDialog, model, true);
 }
 
 void IDEController :: doSelectNextWindow(IDEModel* model)
@@ -1876,14 +1804,11 @@ void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode,
    }
 }
 
-bool IDEController :: doCompileProject(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
+bool IDEController :: doCompileProject(IDEModel* model)
 {
-   if (doSaveProject(projectDialog, model, false)) {
-      onCompilationStart(model);
+   onCompilationStart(model);
 
-      return projectController.doCompileProject(model->projectModel, DebugAction::None);
-   }
-   else return false;
+   return projectController.doCompileProject(model->projectModel, DebugAction::None);
 }
 
 void IDEController :: doStartVMConsole(IDEModel* model)
@@ -1913,11 +1838,11 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
    projectController.refreshDebugContext(contextBrowser, item, param);
 }
 
-bool IDEController :: onClose(FileDialogBase& dialog, FileDialogBase& projectDialog, MessageDialogBase& mssgDialog, IDEModel* model)
+bool IDEController :: onClose(IDEModel* model)
 {
    projectController.stopVMConsole();
 
-   return doCloseAll(dialog, projectDialog, mssgDialog, model, true);
+   return true;
 }
 
 void IDEController :: onDebuggerHook(ProjectModel* model)
@@ -2032,25 +1957,6 @@ void IDEController :: doGoToLine(GotoDialogBase& dialog, IDEModel* model)
    }
 }
 
-void IDEController :: doSelectWindow(FileDialogBase& fileDialog, MessageDialogBase& mssgDialog, WindowListDialogBase& dialog,
-   IDEModel* model)
-{
-   auto retVal = dialog.selectWindow();
-   switch (retVal.value2) {
-      case WindowListDialogBase::Mode::Activate:
-      {
-         path_t path = model->sourceViewModel.getDocumentPath(retVal.value1);
-         doSelectWindow(model->viewModel(), path);
-         break;
-      }
-      case WindowListDialogBase::Mode::Close:
-         doCloseFile(fileDialog, mssgDialog, model, retVal.value1);
-         break;
-      default:
-         break;
-   }
-}
-
 void IDEController :: doIndent(IDEModel* model)
 {
    sourceController.indent(&model->sourceViewModel);
@@ -2108,15 +2014,4 @@ void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel
 void IDEController :: onDocSelection(IDEModel* model, int index)
 {
    notifyOnModelChange(STATUS_FRAME_CHANGED);
-}
-
-void IDEController :: autoSave(FileDialogBase& dialog, FileDialogBase& projectDialog, IDEModel* model)
-{
-   if (!model->running && model->sourceViewModel.isAnyDocumentModified()) {
-      for (pos_t i = 0; i < model->sourceViewModel.getDocumentCount(); i++) {
-         if (model->sourceViewModel.getDocument(i + 1)->isModified()) {
-            saveFile(dialog, model, i + 1, true);
-         }
-      }
-   }
 }
