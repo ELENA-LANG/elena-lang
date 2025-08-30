@@ -9,8 +9,11 @@ In development:
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
-  - #184 : IDE : save / close file
+  - #184 : IDE : implement file / edit menu commands except (project)
   - #184 : IDE linux - clipboard
+
+  - #184 : IDE : implement file-project, project menu commands
+  - #184 : IDE : enable / disable meni commands
 
   - #184 : IDE linux - implement all menu commands (except debug / compile)
   - get rid of FileDialogBase
@@ -18,6 +21,7 @@ In development:
   - #184 : IDE linux - include / exclude
   - #184 : uncomment checkMenuItemById
   - #184 : exit
+  - #184 : recent file / project list
   --------------------------------------
   * IDE : call stack
   * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected

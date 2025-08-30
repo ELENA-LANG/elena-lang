@@ -114,11 +114,11 @@ protected:
    }
    void on_menu_file_save()
    {
-      //_controller->doSaveFile(fileDialog, _model, false, true);
+      saveFile(-1);
    }
    void on_menu_file_saveas()
    {
-      //_controller->doSaveFile(fileDialog, _model, true, true);
+      saveFileAs(-1);
    }
    void on_menu_project_saveas()
    {
@@ -126,11 +126,11 @@ protected:
    }
    void on_menu_file_saveall()
    {
-      //_controller->doSaveAll(fileDialog, projectDialog, _model);
+      saveAll();
    }
    void on_menu_file_close()
    {
-      //_controller->doCloseFile(fileDialog, messageDialog, _model);
+      closeFile(-1);
    }
    void on_menu_file_closeall()
    {
@@ -339,6 +339,16 @@ protected:
    void onProjectChange(bool empty);
    void onProjectRefresh(bool empty);
    void onIDEStatusChange(int status);
+
+   void saveFile(int index);
+   void saveFileAs(int index);
+   void saveFile_finish(PathString& path, int index);
+   void saveAll();
+   void saveProject();
+
+   bool saveBeforeClose(int index);
+
+   void closeFile(int index);
 
 public:
    void populate(int counter, Gtk::Widget** children);

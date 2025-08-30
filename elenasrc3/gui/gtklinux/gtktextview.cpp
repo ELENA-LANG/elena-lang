@@ -501,7 +501,7 @@ bool TextViewWindow :: on_key_press_event(const guint keyval, const guint keycod
          else _controller->indent(_model);
          break;
       default:
-         if (!ctrl || !alt) {
+         if (!ctrl && !alt) {
             guint32 unichar = gdk_keyval_to_unicode(keyval);
             if (unichar >= 0x20) {
                char utf8string[10];

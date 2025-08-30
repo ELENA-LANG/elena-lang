@@ -9,6 +9,8 @@
 
 using namespace elena_lang;
 
+typedef Pair<GTKIDEWindow*, int, nullptr> FileCallbackArg;
+
 static Glib::ustring ui_info =
         "<interface>"
         "  <menu id='MenuBar'>"
@@ -46,12 +48,12 @@ static Glib::ustring ui_info =
         "      <section>"
         "         <item>"
         "            <attribute name='label'>_Save</attribute>"
-        "            <attribute name='action'>FileSave</attribute>"
+        "            <attribute name='action'>win.FileSaveSource</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;S</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Save As...</attribute>"
-        "            <attribute name='action'>FileSaveAs</attribute>"
+        "            <attribute name='action'>win.FileSaveAsSource</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Save _Project As...</attribute>"
@@ -60,7 +62,7 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Save _All</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;&lt;Shift&gt;S</attribute>"
-        "            <attribute name='action'>FileSaveAll</attribute>"
+        "            <attribute name='action'>win.FileSaveAll</attribute>"
         "         </item>"
         "      </section>"
         "      <section>"
@@ -475,10 +477,10 @@ void GTKIDEWindow :: populateUI()
 //   _app->add_action("FileNewProject", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_project));
    refActions->add_action("FileOpenSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_source));
 //   _app->add_action("FileOpenProject", "<control><shift>O", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
-//   _app->add_action("FileSave", "<control>S", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_save));
-//   _app->add_action("FileSaveAs", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveas));
+   refActions->add_action("FileSaveSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_save));
+   refActions->add_action("FileSaveAsSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveas));
 //   _app->add_action("FileProjectAs", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
-//   _app->add_action("FileSaveAll", "<control><shift>S", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveall));
+   refActions->add_action("FileSaveAll", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveall));
 //   _app->add_action("FileClose", "<control>W", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
 //   _app->add_action("FileCloseAll", "<control><shift>W", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeall));
 //   _app->add_action("ProjectClose", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
@@ -557,6 +559,12 @@ void GTKIDEWindow :: populateUI()
       Gtk::KeyvalTrigger::create(GDK_KEY_o, Gdk::ModifierType::CONTROL_MASK),
       Gtk::NamedAction::create("win.FileOpenSource")));
    controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_s, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.FileSaveSource")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_s, Gdk::ModifierType::CONTROL_MASK | Gdk::ModifierType::SHIFT_MASK),
+      Gtk::NamedAction::create("win.FileSaveAll")));
+   controller->add_shortcut(Gtk::Shortcut::create(
       Gtk::KeyvalTrigger::create(GDK_KEY_F4, Gdk::ModifierType::ALT_MASK),
       Gtk::NamedAction::create("win.FileQuit")));
 
@@ -573,14 +581,8 @@ void GTKIDEWindow :: populateUI()
 //   _refActionGroup->add( Gtk::Action::create("HelpMenu", "_Help") );
 //   _refActionGroup->add( Gtk::Action::create("SearchMenu", "_Search") );
 //
-//   _refActionGroup->add( Gtk::Action::create("FileNew", "New") );
-//   _refActionGroup->add( Gtk::Action::create("FileNewSource", "Source"), Gtk::AccelKey("<control>N"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_source));
 //   _refActionGroup->add( Gtk::Action::create("FileNewProject", "Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_project));
-//   _refActionGroup->add( Gtk::Action::create("FileOpen", "Open") );
-//   _refActionGroup->add( Gtk::Action::create("FileOpenSource", "Source"), Gtk::AccelKey("<control>O"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_source));
 //   _refActionGroup->add( Gtk::Action::create("FileOpenProject", "Project"), Gtk::AccelKey("<control><shift>O"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
-//   _refActionGroup->add( Gtk::Action::create("FileSave", "Save"), Gtk::AccelKey("<control>S"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_save));
-//   _refActionGroup->add( Gtk::Action::create("FileSaveAs", "Save As..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveas));
 //   _refActionGroup->add( Gtk::Action::create("FileProjectAs", "Save Project As..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
 //   _refActionGroup->add( Gtk::Action::create("FileSaveAll", "Save All"), Gtk::AccelKey("<control><shift>S"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveall));
 //   _refActionGroup->add( Gtk::Action::create("FileClose", "Close"), Gtk::AccelKey("<control>W"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
@@ -769,3 +771,83 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
    //}
 }
 
+void GTKIDEWindow :: saveFile_finish(PathString& path, int index)
+{
+   _controller->doSaveFile(_model, index, true, *path);
+}
+
+void GTKIDEWindow :: saveFile(int index)
+{
+   if (_controller->ifFileUnnamed(_model, index)) {
+      saveFileAs(index);
+   }
+   else _controller->doSaveFile(_model, index, true);
+}
+
+void GTKIDEWindow :: saveFileAs(int index)
+{
+   FileCallbackArg* arg = new FileCallbackArg(this, index);
+
+   fileDialog.saveFile((void*)arg, [](void* arg, PathString* path)
+   {
+      FileCallbackArg* info = (FileCallbackArg*)arg;
+
+      info->value1->saveFile_finish(*path, info->value2);
+
+      delete info;
+   });
+}
+
+void GTKIDEWindow :: saveProject()
+{
+   // !! temporally empty
+}
+
+void GTKIDEWindow :: saveAll()
+{
+   for (int index = 1; index <= (int)_model->sourceViewModel.getDocumentCount(); index++) {
+      if (_controller->ifFileNotSaved(_model, index) || _controller->ifFileUnnamed(_model, index))
+         saveFile(index);
+   }
+
+   saveProject();
+}
+
+bool IDEWindow :: saveBeforeClose(int index)
+{
+/*   if (_controller->ifFileUnnamed(_model, index)) {
+      PathString path;
+      if (!fileDialog.saveFile(path)) {
+         auto result = messageDialog.question(QUESTION_CLOSE_UNSAVED);
+
+         if (result != MessageDialogBase::Answer::Yes)
+            return false;
+      }
+      else _controller->doSaveFile(_model, index, true, *path);
+   }
+   else if (_controller->ifFileNotSaved(_model, index)) {
+      path_t path = _model->sourceViewModel.getDocumentPath(index);
+
+      auto result = messageDialog.question(
+         QUESTION_SAVE_FILECHANGES, path);
+
+      if (result == MessageDialogBase::Answer::Cancel) {
+         return false;
+      }
+      else if (result == MessageDialogBase::Answer::Yes) {
+         PathString path;
+         if (fileDialog.saveFile(path)) {
+            _controller->doSaveFile(_model, index, true, *path);
+         }
+         else return false;
+      }
+   }
+*/
+   return true;
+}
+
+void GTKIDEWindow :: closeFile(int index)
+{
+   if (saveBeforeClose(index))
+      _controller->doCloseFile(_model, index);
+}
