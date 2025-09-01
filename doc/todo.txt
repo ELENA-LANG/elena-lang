@@ -9,22 +9,8 @@ In development:
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
-  - #184 : IDE - fix undo / redo
-  - #184 : short-cuts for undo / redo
-  - #184 : IDE - implement edit menu commands
-
+  - #184 : IDE - implement edit clipboard commands
   - #184 : IDE linux - clipboard
-
-  - #184 : IDE : implement file-project, project menu commands
-  - #184 : IDE : enable / disable meni commands
-
-  - #184 : IDE linux - implement all menu commands (except debug / compile)
-  - get rid of FileDialogBase
-  - #184 : IDE linux - mark modified file
-  - #184 : IDE linux - include / exclude
-  - #184 : uncomment checkMenuItemById
-  - #184 : exit
-  - #184 : recent file / project list
   --------------------------------------
   * IDE : close all - do not save file if it was not changed
   * IDE : call stack
@@ -47,6 +33,22 @@ In development:
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   --------------------------------------
   #35 : webapi phone book example : add, delete, update, search
+  --------------------------------------
+  ======================================
+  * #184 : IDE linux - migrate to gtkmm4
+  --------------------------------------
+  - #184 : IDE : implement file-project, project menu commands
+  - #184 : IDE : enable / disable menu commands
+  - #184 : IDE - select text with a mouse
+  - #184 : dialogs must be mandantory
+
+  - #184 : IDE linux - implement all menu commands (except debug / compile)
+  - get rid of FileDialogBase
+  - #184 : IDE linux - mark modified file
+  - #184 : IDE linux - include / exclude
+  - #184 : uncomment checkMenuItemById
+  - #184 : exit
+  - #184 : recent file / project list
   --------------------------------------
 
   ### EPIC: elena 6.9 ###

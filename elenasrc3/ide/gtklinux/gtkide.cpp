@@ -147,58 +147,60 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Delete</attribute>"
         "            <attribute name='accel'>Delete</attribute>"
-        "            <attribute name='action'>EditDelete</attribute>"
+        "            <attribute name='action'>win.EditDelete</attribute>"
         "         </item>"
         "      </section>"
         "      <section>"
         "         <item>"
         "            <attribute name='label'>Select All</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;A</attribute>"
-        "            <attribute name='action'>EditSelectAll</attribute>"
+        "            <attribute name='action'>win.EditSelectAll</attribute>"
         "         </item>"
         "      </section>"
         "      <section>"
         "         <item>"
         "            <attribute name='label'>Insert Tab (Indent)</attribute>"
         "            <attribute name='accel'>TAB</attribute>"
-        "            <attribute name='action'>EditInsertTab</attribute>"
+        "            <attribute name='action'>win.EditInsertTab</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Remove Tab (Outdent)</attribute>"
         "            <attribute name='accel'>&lt;Shift&gt;TAB</attribute>"
-        "            <attribute name='action'>EditRemoveTab</attribute>"
+        "            <attribute name='action'>win.EditRemoveTab</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Trim whitespace</attribute>"
-        "            <attribute name='action'>EditTrim</attribute>"
+        "            <attribute name='accel'>&lt;Ctrl&gt;T</attribute>"
+        "            <attribute name='action'>win.EditTrim</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Erase line</attribute>"
-        "            <attribute name='action'>EditEraseLine</attribute>"
+        "            <attribute name='accel'>&lt;Ctrl&gt;L</attribute>"
+        "            <attribute name='action'>win.EditEraseLine</attribute>"
         "         </item>"
         "      </section>"
         "      <section>"
         "         <item>"
         "            <attribute name='label'>To upper case</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;U</attribute>"
-        "            <attribute name='action'>EditUpper</attribute>"
+        "            <attribute name='action'>win.EditUpper</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>To lower case</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;&lt;Shift&gt;U</attribute>"
-        "            <attribute name='action'>EditLower</attribute>"
+        "            <attribute name='action'>win.EditLower</attribute>"
         "         </item>"
         "      </section>"
         "      <section>"
         "         <item>"
         "            <attribute name='label'>Block comment</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;K</attribute>"
-        "            <attribute name='action'>EditComment</attribute>"
+        "            <attribute name='action'>win.EditComment</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Block uncomment</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;&lt;Shift&gt;K</attribute>"
-        "            <attribute name='action'>EditUncomment</attribute>"
+        "            <attribute name='action'>win.EditUncomment</attribute>"
         "         </item>"
         "      </section>"
         "    </submenu>"
@@ -496,20 +498,20 @@ void GTKIDEWindow :: populateUI()
 
    refActions->add_action("EditUndo", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_undo));
    refActions->add_action("EditRedo", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_redo));
-
 //   _app->add_action(EditCut", "<control>X", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_cut));
 //   _app->add_action(EditCopy", "<control>C", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_copy));
 //   _app->add_action("EditPaste", "<control>V", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_paste));
 //   _app->add_action("EditDelete", "Delete", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_delete));
-//   _app->add_action("EditSelectAll", "<control>A", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_select_all));
-//   _app->add_action("EditInsertTab", "TAB", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_indent));
-//   _app->add_action("EditRemoveTab", "<shift>TAB", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_outdent));
-//   _app->add_action("EditTrim", "<control>T", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_trim));
-//   _app->add_action("EditEraseLine", "<control>L", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_erase_line));
-//   _app->add_action("EditUpper", "<control>U", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_upper));
-//   _app->add_action("EditLower", "<control><shift>U", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_lower));
-//   _app->add_action("EditComment", "<control>K", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_comment));
-//   _app->add_action("EditUncomment", "<control><shift>K", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_uncomment));
+   refActions->add_action("EditDelete", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_delete));
+   refActions->add_action("EditSelectAll", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_select_all));
+   refActions->add_action("EditInsertTab", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_indent));
+   refActions->add_action("EditRemoveTab", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_outdent));
+   refActions->add_action("EditTrim", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_trim));
+   refActions->add_action("EditEraseLine", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_erase_line));
+   refActions->add_action("EditUpper", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_upper));
+   refActions->add_action("EditLower", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_lower));
+   refActions->add_action("EditComment", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_comment));
+   refActions->add_action("EditUncomment", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_uncomment));
 
 //   _app->add_action("ProjectView", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view));
 //   _app->add_action("ProjectOutput", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
@@ -575,6 +577,43 @@ void GTKIDEWindow :: populateUI()
       Gtk::KeyvalTrigger::create(GDK_KEY_F4, Gdk::ModifierType::ALT_MASK),
       Gtk::NamedAction::create("win.FileQuit")));
 
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_z, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditUndo")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_y, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditRedo")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_Delete),
+      Gtk::NamedAction::create("win.EditDelete")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_a, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditSelectAll")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_Tab),
+      Gtk::NamedAction::create("win.EditInsertTab")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_Tab, Gdk::ModifierType::SHIFT_MASK),
+      Gtk::NamedAction::create("win.EditRemoveTab")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_l, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditEraseLine")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_t, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditTrim")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_u, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditUpper")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_u, Gdk::ModifierType::CONTROL_MASK | Gdk::ModifierType::SHIFT_MASK),
+      Gtk::NamedAction::create("win.EditLower")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_k, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditComment")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_k, Gdk::ModifierType::CONTROL_MASK | Gdk::ModifierType::SHIFT_MASK),
+      Gtk::NamedAction::create("win.EditUncomment")));
+
    loadUI(ui_info, "MenuBar");
 
 //   //File menu:
@@ -591,32 +630,16 @@ void GTKIDEWindow :: populateUI()
 //   _refActionGroup->add( Gtk::Action::create("FileNewProject", "Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_project));
 //   _refActionGroup->add( Gtk::Action::create("FileOpenProject", "Project"), Gtk::AccelKey("<control><shift>O"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
 //   _refActionGroup->add( Gtk::Action::create("FileProjectAs", "Save Project As..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
-//   _refActionGroup->add( Gtk::Action::create("FileSaveAll", "Save All"), Gtk::AccelKey("<control><shift>S"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveall));
-//   _refActionGroup->add( Gtk::Action::create("FileClose", "Close"), Gtk::AccelKey("<control>W"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
-//   _refActionGroup->add( Gtk::Action::create("FileCloseAll", "Close All"), Gtk::AccelKey("<control><shift>W"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeall));
 //   _refActionGroup->add( Gtk::Action::create("ProjectClose", "Close Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
-//   _refActionGroup->add( Gtk::Action::create("FileCloseAllButActive", "Close All But Active"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeproject));
 //
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
 //   _refActionGroup->add( Gtk::Action::create("FileRecentProjects", "Recent projects") );
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFilesClear", "Clear history"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearfilehistory));
 //   _refActionGroup->add( Gtk::Action::create("FileRecentProjectsClear", "Clear history"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearprojecthistory));
 //
-//   _refActionGroup->add( Gtk::Action::create("EditUndo", "Undo"), Gtk::AccelKey("<control>Z"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_undo));
-//   _refActionGroup->add( Gtk::Action::create("EditRedo", "Redo"), Gtk::AccelKey("<control>Y"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_redo));
 //   _refActionGroup->add( Gtk::Action::create("EditCut", "Cut"), Gtk::AccelKey("<control>X"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_cut));
 //   _refActionGroup->add( Gtk::Action::create("EditCopy", "Copy"), Gtk::AccelKey("<control>C"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_copy));
 //   _refActionGroup->add( Gtk::Action::create("EditPaste", "Paste"), Gtk::AccelKey("<control>V"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_paste));
-//   _refActionGroup->add( Gtk::Action::create("EditDelete", "Delete"), Gtk::AccelKey("Delete"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_delete));
-//   _refActionGroup->add( Gtk::Action::create("EditSelectAll", "Select All"), Gtk::AccelKey("<control>A"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_select_all));
-//   _refActionGroup->add( Gtk::Action::create("EditInsertTab", "Insert Tab (Indent)"), Gtk::AccelKey("TAB"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_indent));
-//   _refActionGroup->add( Gtk::Action::create("EditRemoveTab", "Remove Tab (Outdent)"), Gtk::AccelKey("<shift>TAB"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_outdent));
-//   _refActionGroup->add( Gtk::Action::create("EditTrim", "Trim whitespace"), Gtk::AccelKey("<control>T"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_trim));
-//   _refActionGroup->add( Gtk::Action::create("EditEraseLine", "Erase line"), Gtk::AccelKey("<control>L"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_erase_line));
-//   _refActionGroup->add( Gtk::Action::create("EditUpper", "To upper case"), Gtk::AccelKey("<control>U"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_upper));
-//   _refActionGroup->add( Gtk::Action::create("EditLower", "To lower case"), Gtk::AccelKey("<control><shift>U"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_lower));
-//   _refActionGroup->add( Gtk::Action::create("EditComment", "Block comment"), Gtk::AccelKey("<control>K"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_comment));
-//   _refActionGroup->add( Gtk::Action::create("EditUncomment", "Block uncomment"), Gtk::AccelKey("<control><shift>K"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_uncomment));
 //
 //   _refActionGroup->add( Gtk::Action::create("ProjectView", "Project View"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view));
 //   _refActionGroup->add( Gtk::ToggleAction::create("ProjectOutput", "Compiler output"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
