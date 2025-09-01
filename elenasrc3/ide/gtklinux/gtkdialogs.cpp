@@ -95,15 +95,21 @@ void FileDialog :: on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& r
 {
    PathString path;
 
-   auto file = dialog->save_finish(result);
-   path.copy(file->get_path().c_str());
+   try
+   {
+      auto file = dialog->save_finish(result);
+      path.copy(file->get_path().c_str());
 
-   if(PathUtil::checkExtension(*path, "")) {
-      path.appendExtension(*_defExtension);
+      if(PathUtil::checkExtension(*path, "")) {
+         path.appendExtension(*_defExtension);
+      }
+
+      _callback(_callbackArg, &path);
    }
-
-   _callback(_callbackArg, &path);
-
+   catch (const Gtk::DialogError& err)
+   {
+      _callback(_callbackArg, nullptr);
+   };
    _listCallback = nullptr;
    _callback = nullptr;
    _callbackArg = nullptr;
@@ -160,38 +166,63 @@ void FileDialog :: saveFile(void* arg, FileDialogCallback callback)
 
 // --- MessageDialog ---
 
-int MessageDialog :: show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel)
+void MessageDialog :: on_question_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+  const Glib::RefPtr<Gtk::AlertDialog>& dialog)
 {
-//   Gtk::MessageDialog dialog(message, false, messageType, buttonTypes, true);
-//   dialog.set_transient_for(*_owner);
-//
-////   if (withCancel)
-////      dialog.add_button("Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
-//
-//   return dialog.run();
+   try
+   {
+      const int response_id = dialog->choose_finish(result);
+      switch(response_id) {
+         case 0:
+            _callback(_callbackArg, MessageDialogBase::Answer::Cancel);
+            break;
+         case 1:
+            _callback(_callbackArg, MessageDialogBase::Answer::Yes);
+            break;
+         case 2:
+            _callback(_callbackArg, MessageDialogBase::Answer::No);
+            break;
+         default:
+            assert(true);
+            break;
+      }
+   }
+   catch (const Gtk::DialogError& err)
+   {
+   }
 
-
-    return 0; // !! temporal
+   _callback = nullptr;
 }
 
-MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str param)
+void MessageDialog :: show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel)
+{
+   auto dialog = Gtk::AlertDialog::create();
+
+   dialog->set_message(message);
+   dialog->set_buttons({"Cancel", "Yes", "No"});
+   dialog->set_default_button(2);
+   dialog->set_cancel_button(0);
+
+   dialog->choose(sigc::bind(sigc::mem_fun(
+      *this, &MessageDialog::on_question_dialog_finish), dialog));
+
+}
+
+void MessageDialog :: question(text_str message, text_str param, void* arg, MessageCallback callback)
 {
    IdentifierString questionStr(message, param);
 
-   return question(*questionStr);
+   question(*questionStr, arg, callback);
 }
 
-MessageDialogBase::Answer MessageDialog :: question(text_str message)
+void MessageDialog :: question(text_str message, void* arg, MessageCallback callback)
 {
-   int retVal = show(message, Gtk::MessageType::QUESTION, Gtk::ButtonsType::YES_NO, true);
+   assert(_callback == nullptr);
 
-/*   if (retVal == Gtk::ResponseType::RESPONSE_YES) {
-      return Answer::Yes;
-   }
-   else if (retVal == Gtk::ResponseType::RESPONSE_CANCEL) {
-      return Answer::Cancel;
-   }
-   else*/ return Answer::No;
+   _callback = callback;
+   _callbackArg = arg;
+
+   show(message, Gtk::MessageType::QUESTION, Gtk::ButtonsType::YES_NO, true);
 }
 
 void MessageDialog :: info(text_str message)

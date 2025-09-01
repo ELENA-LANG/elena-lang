@@ -29,6 +29,7 @@ namespace elena_lang
 
    typedef void(*FileDialogListCallback)(void*, PathList*);
    typedef void(*FileDialogCallback)(void*, PathString*);
+   typedef void(*MessageCallback)(void* arg, int result);
 
    // --- FileDialog ---
    class FileDialog// : public FileDialogBase
@@ -63,21 +64,31 @@ namespace elena_lang
          const char* initialDir = nullptr);
    };
 
-   class MessageDialog : public MessageDialogBase
+   class MessageDialog
    {
-      Gtk::Window* _owner;
+      Gtk::Window*    _owner;
+      //Glib::RefPtr<Gtk::AlertDialog> _dialog;
 
-      int show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel);
+      MessageCallback _callback;
+      void*           _callbackArg;
+
+      void on_question_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+         const Glib::RefPtr<Gtk::AlertDialog>& dialog);
+
+      void show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel);
 
    public:
-      Answer question(text_str message, text_str param) override;
-      Answer question(text_str message) override;
+      void question(text_str message, text_str param, void* arg, MessageCallback callback);
+      void question(text_str message, void* arg, MessageCallback callback);
 
-      void info(text_str message) override;
+      void info(text_str message);
 
       MessageDialog(Gtk::Window* owner)
       {
          _owner = owner;
+         //_dialog = nullptr;
+         _callback = nullptr;
+         _callbackArg = nullptr;
       }
    };
 

@@ -10,6 +10,7 @@
 using namespace elena_lang;
 
 typedef Pair<GTKIDEWindow*, int, nullptr> FileCallbackArg;
+typedef Triple<GTKIDEWindow*, CloseCallback, int, nullptr, nullptr> CloseCallbackArg;
 
 static Glib::ustring ui_info =
         "<interface>"
@@ -69,12 +70,12 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Close</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;W</attribute>"
-        "            <attribute name='action'>FileClose</attribute>"
+        "            <attribute name='action'>win.FileCloseSource</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Close All</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;&lt;Shift&gt;W</attribute>"
-        "            <attribute name='action'>FileCloseAll</attribute>"
+        "            <attribute name='action'>win.FileCloseAll</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Close Project</attribute>"
@@ -82,7 +83,7 @@ static Glib::ustring ui_info =
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Close All But Active</attribute>"
-        "            <attribute name='action'>FileCloseAllButActive</attribute>"
+        "            <attribute name='action'>win.FileCloseAllButActive</attribute>"
         "         </item>"
         "      </section>"
         "      <submenu>"
@@ -119,12 +120,12 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Undo</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;Z</attribute>"
-        "            <attribute name='action'>EditUndo</attribute>"
+        "            <attribute name='action'>win.EditUndo</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Redo</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;Y</attribute>"
-        "            <attribute name='action'>EditRedo</attribute>"
+        "            <attribute name='action'>win.EditRedo</attribute>"
         "         </item>"
         "      </section>"
         "      <section>"
@@ -482,17 +483,20 @@ void GTKIDEWindow :: populateUI()
 //   _app->add_action("FileProjectAs", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
    refActions->add_action("FileSaveAll", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveall));
 //   _app->add_action("FileClose", "<control>W", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
-//   _app->add_action("FileCloseAll", "<control><shift>W", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeall));
+   refActions->add_action("FileCloseSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
+   refActions->add_action("FileCloseAll", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeall));
 //   _app->add_action("ProjectClose", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
 //   _app->add_action("FileCloseAllButActive", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeproject));
+   refActions->add_action("FileCloseAllButActive", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeallbutactive));
 //   _app->add_action("FileQuit", /*"<alt>F4", */sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_quit));
    refActions->add_action("FileQuit", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_quit));
 
 //   _app->add_action("FileRecentFilesClear", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearfilehistory));
 //   _app->add_action("FileRecentProjectsClear", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearprojecthistory));
 
-//   _app->add_action("EditUndo", "<control>Z"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_undo));
-//   _app->add_action("EditRedo", "<control>Y"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_redo));
+   refActions->add_action("EditUndo", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_undo));
+   refActions->add_action("EditRedo", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_redo));
+
 //   _app->add_action(EditCut", "<control>X", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_cut));
 //   _app->add_action(EditCopy", "<control>C", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_copy));
 //   _app->add_action("EditPaste", "<control>V", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_paste));
@@ -564,6 +568,9 @@ void GTKIDEWindow :: populateUI()
    controller->add_shortcut(Gtk::Shortcut::create(
       Gtk::KeyvalTrigger::create(GDK_KEY_s, Gdk::ModifierType::CONTROL_MASK | Gdk::ModifierType::SHIFT_MASK),
       Gtk::NamedAction::create("win.FileSaveAll")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_w, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.FileCloseSource")));
    controller->add_shortcut(Gtk::Shortcut::create(
       Gtk::KeyvalTrigger::create(GDK_KEY_F4, Gdk::ModifierType::ALT_MASK),
       Gtk::NamedAction::create("win.FileQuit")));
@@ -791,9 +798,9 @@ void GTKIDEWindow :: saveFileAs(int index)
    fileDialog.saveFile((void*)arg, [](void* arg, PathString* path)
    {
       FileCallbackArg* info = (FileCallbackArg*)arg;
-
-      info->value1->saveFile_finish(*path, info->value2);
-
+      if (path) {
+         info->value1->saveFile_finish(*path, info->value2);
+      }
       delete info;
    });
 }
@@ -813,41 +820,129 @@ void GTKIDEWindow :: saveAll()
    saveProject();
 }
 
-bool GTKIDEWindow :: saveBeforeClose(int index)
+void GTKIDEWindow :: onFileClose(int index, CloseCallback callback)
 {
-/*   if (_controller->ifFileUnnamed(_model, index)) {
-      PathString path;
-      if (!fileDialog.saveFile(path)) {
-         auto result = messageDialog.question(QUESTION_CLOSE_UNSAVED);
+   if (_controller->ifFileUnnamed(_model, index)) {
+      CloseCallbackArg* arg = new CloseCallbackArg(this, callback, index);
 
-         if (result != MessageDialogBase::Answer::Yes)
-            return false;
-      }
-      else _controller->doSaveFile(_model, index, true, *path);
+      fileDialog.saveFile((void*)arg, [](void* arg, PathString* path)
+      {
+         CloseCallbackArg* info = (CloseCallbackArg*)arg;
+         if (path) {
+            info->value1->saveFile_finish(*path, info->value3);
+
+            info->value2(info->value1, info->value3);
+
+            delete info;
+         }
+         else {
+            info->value1->messageDialog.question(QUESTION_CLOSE_UNSAVED, info, [](void* arg, int result)
+            {
+               CloseCallbackArg* info = (CloseCallbackArg*)arg;
+
+               if (result == MessageDialogBase::Answer::Yes) {
+                  info->value2(info->value1, info->value3);
+               }
+
+               delete info;
+            });
+         };
+      });
    }
    else if (_controller->ifFileNotSaved(_model, index)) {
+      CloseCallbackArg* arg = new CloseCallbackArg(this, callback, index);
       path_t path = _model->sourceViewModel.getDocumentPath(index);
 
-      auto result = messageDialog.question(
-         QUESTION_SAVE_FILECHANGES, path);
+      messageDialog.question(QUESTION_SAVE_FILECHANGES, path, arg, [](void* arg, int result)
+      {
+         CloseCallbackArg* info = (CloseCallbackArg*)arg;
 
-      if (result == MessageDialogBase::Answer::Cancel) {
-         return false;
-      }
-      else if (result == MessageDialogBase::Answer::Yes) {
-         PathString path;
-         if (fileDialog.saveFile(path)) {
-            _controller->doSaveFile(_model, index, true, *path);
+         if (result == MessageDialogBase::Answer::Cancel) {
+
          }
-         else return false;
-      }
+         else if (result == MessageDialogBase::Answer::Yes) {
+            PathString p(info->value1->_model->sourceViewModel.getDocumentPath(info->value3));
+
+            info->value1->saveFile_finish(p, info->value3);
+
+            info->value2(info->value1, info->value3);
+         }
+         else {
+            info->value2(info->value1, info->value3);
+         }
+
+         delete info;
+      });
    }
-*/
-   return true;
+   else callback(this, index);
+}
+
+void GTKIDEWindow :: closeFile_finish(int index)
+{
+   _controller->doCloseFile(_model, index);
 }
 
 void GTKIDEWindow :: closeFile(int index)
 {
-   if (saveBeforeClose(index))
-      _controller->doCloseFile(_model, index);
+   onFileClose(index, [](void* arg, int index)
+   {
+      GTKIDEWindow* ide = (GTKIDEWindow*)arg;
+
+      ide->closeFile_finish(index);
+   });
+}
+
+void GTKIDEWindow :: closeAll_finish()
+{
+   _controller->doCloseAll(_model, false);
+}
+
+void GTKIDEWindow :: closeAll_next(int index)
+{
+   onFileClose(index, [](void* arg, int index)
+   {
+      index++;
+
+      GTKIDEWindow* ide = (GTKIDEWindow*)arg;
+      if (index < (int)ide->_model->sourceViewModel.getDocumentCount()) {
+         ide->closeAll_next(index);
+      }
+      else ide->closeAll_finish();
+   });
+}
+
+void GTKIDEWindow :: closeAllButActive_finish()
+{
+   _controller->doCloseAllButActive(_model);
+}
+
+void GTKIDEWindow :: closeAllButActive_next(int index)
+{
+   onFileClose(index, [](void* arg, int index)
+   {
+      index++;
+
+      GTKIDEWindow* ide = (GTKIDEWindow*)arg;
+      if (index == ide->_model->sourceViewModel.getCurrentIndex()) {
+         index++;
+      }
+
+      if (index < (int)ide->_model->sourceViewModel.getDocumentCount()) {
+         ide->closeAllButActive_next(index);
+      }
+      else ide->closeAllButActive_finish();
+   });
+}
+
+void GTKIDEWindow :: closeAll()
+{
+   closeAll_next(0);
+}
+
+void GTKIDEWindow :: closeAllButActive()
+{
+   if (_model->sourceViewModel.getCurrentIndex() == 1) {
+      closeAllButActive_next(1);
+   }
+   else closeAllButActive_next(0);
 }

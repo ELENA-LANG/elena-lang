@@ -29,6 +29,8 @@ public:
 
 // --- GTKIDEView ---
 
+typedef void(*CloseCallback)(void* arg, int index);
+
 class GTKIDEWindow : public SDIWindow
 {
 protected:
@@ -108,8 +110,12 @@ protected:
    }
    void on_menu_file_quit()
    {
-      //if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
+      //if(_controller->doExit(fileDialog, projec   typedef void(*CloseCallback)(void* arg, int index);
+
+      //Dialog, messageDialog, _model)) {
          _app->quit();
+
+         set_visible(false);
       //}
    }
    void on_menu_file_save()
@@ -134,7 +140,7 @@ protected:
    }
    void on_menu_file_closeall()
    {
-      //_controller->doCloseAll(fileDialog, projectDialog, messageDialog, _model, false);
+      closeAll();
    }
    void on_menu_file_closeproject()
    {
@@ -142,7 +148,7 @@ protected:
    }
    void on_menu_file_closeallbutactive()
    {
-      //_controller->doCloseAllButActive(fileDialog, messageDialog, _model);
+      closeAllButActive();
    }
 
    void on_menu_edit_undo()
@@ -304,6 +310,8 @@ protected:
    void on_menu_debug_clearbps()
    {
    }
+
+
    void on_menu_debug_source()
    {
    }
@@ -346,9 +354,18 @@ protected:
    void saveAll();
    void saveProject();
 
-   bool saveBeforeClose(int index);
+   void onFileClose(int index, CloseCallback callback);
 
+   void closeFile_finish(int index);
    void closeFile(int index);
+
+   void closeAll_next(int index);
+   void closeAll_finish();
+   void closeAll();
+
+   void closeAllButActive_finish();
+   void closeAllButActive_next(int index);
+   void closeAllButActive();
 
 public:
    void populate(int counter, Gtk::Widget** children);

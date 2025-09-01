@@ -9,7 +9,9 @@ In development:
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
-  - #184 : IDE : implement file / edit menu commands except (project)
+  - #184 : IDE - implement edit menu commands
+  - #184 : IDE - fix undo / redo
+
   - #184 : IDE linux - clipboard
 
   - #184 : IDE : implement file-project, project menu commands
@@ -23,6 +25,7 @@ In development:
   - #184 : exit
   - #184 : recent file / project list
   --------------------------------------
+  * IDE : close all - do not save file if it was not changed
   * IDE : call stack
   * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected
   ======================================

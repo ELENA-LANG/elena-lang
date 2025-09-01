@@ -122,6 +122,31 @@ namespace elena_lang
    };
 #pragma pack(pop)
 
+   template <class T1, class T2, class T3, T1 def1 = 0, T2 def2 = 0, T3 def3 = 0> struct Triple
+   {
+      T1 value1;
+      T2 value2;
+      T3 value3;
+
+      bool operator ==(Triple triple) const
+      {
+         return (this->value1 == triple.value1 && this->value2 == triple.value2 && this->value3 == triple.value3);
+      }
+
+      Triple()
+      {
+         this->value1 = def1;
+         this->value2 = def2;
+         this->value3 = def3;
+      }
+      Triple(T1 value1, T2 value2, T3 value3)
+      {
+         this->value1 = value1;
+         this->value2 = value2;
+         this->value3 = value3;
+      }
+   };
+
    // --- IteratorBase ---
    template <class T, class Item, void(*FreeT)(T)> class ListIteratorBase
    {
