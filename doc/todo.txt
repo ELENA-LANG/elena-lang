@@ -9,8 +9,9 @@ In development:
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
-  - #184 : IDE - implement edit menu commands
   - #184 : IDE - fix undo / redo
+  - #184 : short-cuts for undo / redo
+  - #184 : IDE - implement edit menu commands
 
   - #184 : IDE linux - clipboard
 

@@ -1172,7 +1172,7 @@ pos_t TextHistory::HistoryBackReader :: getLength()
 
 void* TextHistory::HistoryBackReader :: getLine(pos_t length)
 {
-   _offset -= (length + sizeof(wchar_t));
+   _offset -= (length + sizeof(wide_c));
 
    return _buffer->get(_offset);
 }
