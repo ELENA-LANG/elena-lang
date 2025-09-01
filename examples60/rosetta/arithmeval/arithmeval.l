@@ -353,7 +353,7 @@ public program()
    {
       try
       {
-         Console.printLine("=",parser.run(text))
+         Console.printLine("=",parser.run(text as:string))
       }
       catch(Exception e)
       {

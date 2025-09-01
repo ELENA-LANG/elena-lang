@@ -7,10 +7,8 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * #184 : IDE linux - migrate to gtkmm4
-  --------------------------------------
+  - #184 : IDE - linux clipboard
   - #184 : IDE - implement edit clipboard commands
-  - #184 : IDE linux - clipboard
   --------------------------------------
   * IDE : close all - do not save file if it was not changed
   * IDE : call stack
