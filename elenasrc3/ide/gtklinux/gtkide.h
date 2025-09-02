@@ -34,16 +34,18 @@ typedef void(*CloseCallback)(void* arg, int index);
 class GTKIDEWindow : public SDIWindow
 {
 protected:
-   class Clipboard : public ClipboardBase
+   class Clipboard //: public ClipboardBase
    {
       Glib::RefPtr<Gdk::Clipboard> _clipboard;
 
       GTKIDEWindow* _owner;
       Glib::ustring _strData;
 
+      void on_clipboard_received(Glib::RefPtr<Gio::AsyncResult>& result);
+
    public:
-      bool copyToClipboard(DocumentView* docView, bool selectionMode) override;
-      void pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView) override;
+      void copyToClipboard(DocumentView* docView, bool selectionMode);
+      void pasteFromClipboard();
 
       Clipboard(GTKIDEWindow* owner)
       {
@@ -76,7 +78,16 @@ protected:
 
    bool copyToClipboard()
    {
-      return _controller->sourceController.copyToClipboard(_model->viewModel(), &_clipboard);
+      auto docView = _model->sourceViewModel.DocView();
+
+      _clipboard.copyToClipboard(docView, docView->hasSelection());
+
+      return true;
+   }
+
+   void pasteFromClipboard()
+   {
+      _clipboard.pasteFromClipboard();
    }
 
    // event signals
@@ -170,7 +181,7 @@ protected:
    }
    void on_menu_edit_paste()
    {
-      _controller->sourceController.pasteFromClipboard(_model->viewModel(), &_clipboard);
+      pasteFromClipboard();
    }
    void on_menu_edit_delete()
    {

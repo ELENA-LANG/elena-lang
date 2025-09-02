@@ -7,12 +7,13 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  - #184 : IDE - linux clipboard
-  - #184 : IDE - implement edit clipboard commands
+  * support the following syntax : pointer item_ptr := _pointer + index * :sizeof pointer;
   --------------------------------------
-  * IDE : close all - do not save file if it was not changed
-  * IDE : call stack
-  * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected
+  - investigate grammar if it is possible
+  - implement
+  - update the existing code in UnsafePointer / UnsafePointer<T>
+  --------------------------------------
+  * doc : UnsafePointer<T>
   ======================================
   #35 : first draft
   --------------------------------------
@@ -47,6 +48,10 @@ In development:
   - #184 : uncomment checkMenuItemById
   - #184 : exit
   - #184 : recent file / project list
+  --------------------------------------
+  * IDE : close all - do not save file if it was not changed
+  * IDE : call stack
+  * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected
   --------------------------------------
 
   ### EPIC: elena 6.9 ###

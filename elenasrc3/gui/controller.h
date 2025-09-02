@@ -149,6 +149,7 @@ namespace elena_lang
 
       bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
       void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
+      void pasteFromClipboard(TextViewModelBase* model, const_text_t text) override;
 
       void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;

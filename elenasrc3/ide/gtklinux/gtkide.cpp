@@ -131,18 +131,18 @@ static Glib::ustring ui_info =
         "      <section>"
         "         <item>"
         "            <attribute name='label'>Cut</attribute>"
-        "            <attribute name='accel'>&lt;Alt&gt;F4</attribute>"
-        "            <attribute name='action'>EditCut</attribute>"
+        "            <attribute name='accel'>&lt;Ctrl&gt;X</attribute>"
+        "            <attribute name='action'>win.EditCut</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Copy</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;C</attribute>"
-        "            <attribute name='action'>EditCopy</attribute>"
+        "            <attribute name='action'>win.EditCopy</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Paste</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;V</attribute>"
-        "            <attribute name='action'>EditPaste</attribute>"
+        "            <attribute name='action'>win.EditPaste</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Delete</attribute>"
@@ -419,22 +419,42 @@ const char* PROJECT_FILE_FILTER[] =
 
 // --- GTKIDEWindow::Clipboard ---
 
-bool GTKIDEWindow::Clipboard :: copyToClipboard(DocumentView* docView, bool selectionMode)
+void GTKIDEWindow::Clipboard :: copyToClipboard(DocumentView* docView, bool selectionMode)
 {
-//   docView->copySelection(text);
-//
-//   _clipboard->set_text(_strData);
+   size_t len = selectionMode ? docView->getSelectionLength() + 1 : docView->getCurrentLineLength() + 1;
+   if (len < 511) {
+      char buffer[512];
+      if (selectionMode) {
+         docView->copySelection(buffer);
+      }
+      else docView->copyCurrentLine(buffer);
 
-   return true;
+      _clipboard->set_text(buffer);
+   }
+   else {
+      DynamicString<char> buffer;
+      buffer.allocate(len);
+
+      if (selectionMode) {
+         docView->copySelection((char*)buffer.str());
+      }
+      else docView->copyCurrentLine((char*)buffer.str());
+
+      _clipboard->set_text(buffer.str());
+   }
 }
 
-void GTKIDEWindow::Clipboard :: pasteFromClipboard(DocumentChangeStatus& status, DocumentView* docView)
+void GTKIDEWindow::Clipboard :: pasteFromClipboard()
 {
-//   Glib::ustring text = _clipboard->wait_for_text();
-//
-//   char* s = text.c_str();
-//
-//   docView->insertLine(status, s, getlength(s));
+   _clipboard->read_text_async(sigc::mem_fun(*this,
+              &GTKIDEWindow::Clipboard::on_clipboard_received));
+}
+
+void GTKIDEWindow::Clipboard :: on_clipboard_received(Glib::RefPtr<Gio::AsyncResult>& result)
+{
+   auto text = _clipboard->read_text_finish(result);
+
+   _owner->_controller->sourceController.pasteFromClipboard(_owner->_model->viewModel(), text.c_str());
 }
 
 // --- GTKIDEWindow ---
@@ -498,10 +518,9 @@ void GTKIDEWindow :: populateUI()
 
    refActions->add_action("EditUndo", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_undo));
    refActions->add_action("EditRedo", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_redo));
-//   _app->add_action(EditCut", "<control>X", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_cut));
-//   _app->add_action(EditCopy", "<control>C", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_copy));
-//   _app->add_action("EditPaste", "<control>V", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_paste));
-//   _app->add_action("EditDelete", "Delete", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_delete));
+   refActions->add_action("EditCut", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_cut));
+   refActions->add_action("EditCopy", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_copy));
+   refActions->add_action("EditPaste", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_paste));
    refActions->add_action("EditDelete", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_delete));
    refActions->add_action("EditSelectAll", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_select_all));
    refActions->add_action("EditInsertTab", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_indent));
@@ -613,6 +632,15 @@ void GTKIDEWindow :: populateUI()
    controller->add_shortcut(Gtk::Shortcut::create(
       Gtk::KeyvalTrigger::create(GDK_KEY_k, Gdk::ModifierType::CONTROL_MASK | Gdk::ModifierType::SHIFT_MASK),
       Gtk::NamedAction::create("win.EditUncomment")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_c, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditCopy")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_v, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditPaste")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_x, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.EditCut")));
 
    loadUI(ui_info, "MenuBar");
 
@@ -636,10 +664,6 @@ void GTKIDEWindow :: populateUI()
 //   _refActionGroup->add( Gtk::Action::create("FileRecentProjects", "Recent projects") );
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFilesClear", "Clear history"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearfilehistory));
 //   _refActionGroup->add( Gtk::Action::create("FileRecentProjectsClear", "Clear history"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearprojecthistory));
-//
-//   _refActionGroup->add( Gtk::Action::create("EditCut", "Cut"), Gtk::AccelKey("<control>X"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_cut));
-//   _refActionGroup->add( Gtk::Action::create("EditCopy", "Copy"), Gtk::AccelKey("<control>C"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_copy));
-//   _refActionGroup->add( Gtk::Action::create("EditPaste", "Paste"), Gtk::AccelKey("<control>V"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_paste));
 //
 //   _refActionGroup->add( Gtk::Action::create("ProjectView", "Project View"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view));
 //   _refActionGroup->add( Gtk::ToggleAction::create("ProjectOutput", "Compiler output"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
