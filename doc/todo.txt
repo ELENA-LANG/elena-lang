@@ -6,17 +6,7 @@ In development:
   ### EPIC: elena 6.8 ###
 
   === Iteration 42 ===
-  ======================================
-  * should we use (){..} instead of ambigous {} ?
-  --------------------------------------
-  - review the preposition
-  - provide grammar
-  - test
-  - add to feature list
-  --------------------------------------
-  * support Stack<XmlNode?> stack - must be support in template arg
-  * support external variables
-  ======================================
+  #35 : webapi phone book example : add, delete, update, search
   #35 : first draft
   --------------------------------------
   * test https get samples
@@ -32,9 +22,8 @@ In development:
 
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
-  --------------------------------------
-  #35 : webapi phone book example : add, delete, update, search
-  --------------------------------------
+  ======================================
+  * warn if nil is passed to the non-nil argument
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
