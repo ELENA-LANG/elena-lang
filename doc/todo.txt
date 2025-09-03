@@ -7,13 +7,15 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * support the following syntax : pointer item_ptr := _pointer + index * :sizeof pointer;
+  * should we use (){..} instead of ambigous {} ?
   --------------------------------------
-  - investigate grammar if it is possible
-  - implement
-  - update the existing code in UnsafePointer / UnsafePointer<T>
+  - review the preposition
+  - provide grammar
+  - test
+  - add to feature list
   --------------------------------------
-  * doc : UnsafePointer<T>
+  * support Stack<XmlNode?> stack - must be support in template arg
+  * support external variables
   ======================================
   #35 : first draft
   --------------------------------------

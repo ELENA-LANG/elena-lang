@@ -44,10 +44,11 @@ public program()
 
 public program()
 {
-   int n := 2;
-   int m := 3;
-   if (n == 2 && m == 3) {
-     Console.writeLine("n == 2 && m == 3");
-   }
-   else Console.writeLine("n == 2 && m == 3");
+   var f1 := { Console.writeLine("The traditional lambda function without arguments"); };
+   var f2 := (arg){ Console.writeLine($"The new lambda function with argument {arg}"); };
+   var f3 := (){ Console.writeLine("The new lambda function without arguments to be in line with syntax like c(x){ ... }"); };
+
+   f1();
+   f2("value");
+   f3();
 }

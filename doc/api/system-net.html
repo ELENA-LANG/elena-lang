@@ -1111,9 +1111,17 @@ system'net'NetworkStream</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_buffer</CODE>
+<CODE>_timeout</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_counter</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1142,11 +1150,20 @@ system'net'NetworkStream</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN> socket, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> socketStream)
+<CODE><i>constructor</i>()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN> socket, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> socketStream)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
@@ -1245,11 +1262,20 @@ system'net'NetworkStream</LI>
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>readAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -1258,34 +1284,16 @@ system'net'NetworkStream</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>readAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>readToBuffer(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+<CODE>writeStringAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;</CODE></TD>
@@ -1294,12 +1302,21 @@ system'net'NetworkStream</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>reaAllAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> nonBlocking)
+</CODE>
+</TD>
+</TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'String&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readAsStringAsync()
+<CODE>readAsStringAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> nonBlocking)
 </CODE>
 </TD>
 </TR>
@@ -1338,7 +1355,7 @@ system'net'NetworkStream</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+<CODE>writeStringAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -1347,7 +1364,25 @@ system'net'NetworkStream</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+<CODE>writeString(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readAllAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> nonBlocking)
 </CODE>
 </TD>
 </TR>
@@ -1356,25 +1391,7 @@ system'net'NetworkStream</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'String&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readAsStringAsync()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>readAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>readToBuffer(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>readAllAsStringAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> nonBlocking)
 </CODE>
 </TD>
 </TR>

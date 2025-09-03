@@ -227,7 +227,7 @@ public sealed const struct UnsafeArray
 
    UnsafePointer at(int index)
    {
-      pointer item_ptr := _pointer + index * (:sizeof pointer);
+      pointer item_ptr := _pointer + index * :sizeof pointer;
       
       ^ item_ptr
    }   
@@ -253,7 +253,7 @@ public sealed const struct UnsafeArray<T>
 
    UnsafePointer<T> at(int index)
    {
-      pointer item_ptr := _pointer + index * (:sizeof pointer);
+      pointer item_ptr := _pointer + index * :sizeof pointer;
       
       ^ item_ptr
    }   

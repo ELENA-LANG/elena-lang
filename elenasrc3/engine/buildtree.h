@@ -400,6 +400,8 @@ namespace elena_lang
          map.add("direct_call_op", BuildKey::DirectCallOp);
          map.add("semi_direct_call_op", BuildKey::SemiDirectCallOp);
          map.add("addingint", BuildKey::AddingInt);
+         map.add("index_op", BuildKey::IndexOp);
+         map.add("loadingacc_to_index", BuildKey::LoadingAccToIndex);
          map.add("saving_index", BuildKey::SavingIndex);
          map.add("open_frame", BuildKey::OpenFrame);
          map.add("close_frame", BuildKey::CloseFrame);
@@ -457,6 +459,7 @@ namespace elena_lang
          map.add("procedure_ref", BuildKey::ProcedureReference);
          map.add("break_op", BuildKey::BreakOp);
          map.add("bytearray_op", BuildKey::ByteArrayOp);
+         map.add("newarray_op", BuildKey::NewArrayOp);
          map.add("loop_op", BuildKey::LoopOp);
          map.add("virtual_breakpoint", BuildKey::VirtualBreakpoint);
          map.add("eop_breakpoint", BuildKey::EOPBreakpoint);

@@ -16,4 +16,5 @@ template_test()
    Func<T1,T2,T3,T4>? f3 := nil;
    Func<T1,T2,T3,T4,T5>? f4 := nil;
    Func<T1,T2,T3,T4,T5,T6>? f5 := nil;
+   UnsafePointer<T1> p1 := default;
 }

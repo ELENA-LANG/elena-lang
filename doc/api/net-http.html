@@ -23,6 +23,131 @@ ELENA&nbsp;Standard&nbsp;Library<br>6.5
 </STRONG>
 </DIV>
 </DIV>
+<A NAME="HttpBody">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+net'http'</DIV>
+<H2 title="HttpBody" class="title">HttpBody</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">HttpBody</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+net'http'HttpBody</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_stream</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_buffer</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpBody">HttpBody</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN> stream)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readHeaderAsync(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpFirstHeader">HttpFirstHeader</A></SPAN> firstLine, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>readHeader(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpFirstHeader">HttpFirstHeader</A></SPAN> firstLine, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'String&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readAsStringAsync(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readAsString(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="HttpClient">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -337,6 +462,70 @@ net'http'HttpException</LI>
 </UL>
 <HR>
 </DIV>
+<A NAME="HttpFirstHeader">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+net'http'</DIV>
+<H2 title="HttpFirstHeader" class="title">HttpFirstHeader</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">HttpFirstHeader</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+net'http'HttpFirstHeader</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Argument1</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Argument2</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Argument3</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="HttpHeaders">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -497,6 +686,15 @@ net'http'HttpHeaders</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>saveTo(<SPAN CLASS="memberNameLink"><A HREF="system-text.html#StringBuilder">StringBuilder</A></SPAN> content)
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -653,17 +851,17 @@ net'http'HttpResponse</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpBody">HttpBody</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_stream</CODE>
+<CODE>_body</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpFirstHeader">HttpFirstHeader</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_buffer</CODE>
+<CODE>_firstLine</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -672,30 +870,6 @@ net'http'HttpResponse</LI>
 <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>_headers</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_protocol</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_statusCode</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_statusText</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -736,10 +910,18 @@ net'http'HttpResponse</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>StatusText()</CODE>
+<CODE>Protocol()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>StatusText()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
@@ -747,7 +929,7 @@ net'http'HttpResponse</LI>
 <CODE>StatusCode()</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
@@ -1052,6 +1234,43 @@ net'http'Uri</LI>
 </TABLE>
 </LI>
 </UL>
+<HR>
+</DIV>
+<A NAME="HTTP_PORT">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+net'http'</DIV>
+<H2 title="HTTP_PORT" class="title">HTTP_PORT</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>HTTP_PORT</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
 <HR>
 </DIV>
 <A NAME="SocketFactory#initializer$inline0">
