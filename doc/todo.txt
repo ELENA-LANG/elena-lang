@@ -6,22 +6,16 @@ In development:
   ### EPIC: elena 6.8 ###
 
   === Iteration 42 ===
-  #35 : webapi phone book example : add, delete, update, search
   #35 : first draft
   --------------------------------------
-  * test https get samples
-
   * dummy https web server - GET
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
-
-  * comment output => use logger to display this information
-
-  * simple web api client - GET
-  * simple web api - POST
-  * simple web api client - POST
-
-  * combining into a generic httpserver
-  * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
+  --------------------------------------
+  - review possible solution
+  - design
+  - implement
+  - test
+  --------------------------------------
   ======================================
   * warn if nil is passed to the non-nil argument
   ======================================
@@ -43,8 +37,19 @@ In development:
   * IDE : close all - do not save file if it was not changed
   * IDE : call stack
   * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected
+  ======================================
+  #35 : webapi phone book example : add, delete, update, search
+  #35 : first draft
   --------------------------------------
+  * comment output => use logger to display this information
 
+  * simple web api client - GET
+  * simple web api - POST
+  * simple web api client - POST
+
+  * combining into a generic httpserver
+  * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
+  --------------------------------------
   ### EPIC: elena 6.9 ###
 
   === Iteration 43 ===

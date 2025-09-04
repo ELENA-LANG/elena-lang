@@ -132,7 +132,7 @@ public class MbedTlsSocket : INetSocket
    {
       int retVal := 0;
       extern {
-         retVal := extern wrpmbedtls.context_read(_context);
+         retVal := extern wrpmbedtls.socket_data_available(_context);
       };
 
       ^ retVal != 0;
