@@ -3,7 +3,7 @@ import net'http;
 
 namespace registration
 {
-   internal class MbedTlsSocketFactory : INetSocketFactory
+   internal class MbedTlsSocketFactory //: INetSocketFactory
    {
       internal static register()
       {
