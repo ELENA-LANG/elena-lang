@@ -10,6 +10,7 @@ In development:
   --------------------------------------
   - redesign net'http'server : to use INetSocket instead of NetSocket
   --------------------------------------
+  * fix an error : netsocket.l (99)
   * redesign SimpleHttpServer, using factory to create a listener
 
   * add Listener factory to be used in net'http'server
