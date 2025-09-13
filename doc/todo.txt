@@ -8,6 +8,19 @@ In development:
   === Iteration 42 ===
   #35 : first draft
   --------------------------------------
+  - redesign net'http'server : to use INetSocket instead of NetSocket
+  --------------------------------------
+  * redesign SimpleHttpServer, using factory to create a listener
+
+  * add Listener factory to be used in net'http'server
+  * redesign the Client / Listener factories
+  * implement
+  * test http get
+  * test https get
+  * design : TcpListener and NetListener
+  --------------------------------------
+  - SimpleHttpServer : introduce a provider 
+  --------------------------------------
   * dummy https web server - GET
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   --------------------------------------
@@ -37,6 +50,8 @@ In development:
   * IDE : close all - do not save file if it was not changed
   * IDE : call stack
   * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected
+  * IDE : right click on tab - context menu : close, close all, close all but current
+  * IDE : close icon on the tab
   ======================================
   #35 : webapi phone book example : add, delete, update, search
   #35 : first draft

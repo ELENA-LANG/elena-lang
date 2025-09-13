@@ -2,7 +2,7 @@ import system'calendar;
 import system'net;
 import system'threading;
 
-public class TcpListener
+public class TcpListener : interface<INetListener>
 {
    NativeSocket _listenSocket;
    bool   _noDelayMode;
