@@ -211,6 +211,8 @@ ELENA byte codes (or ecodes)
 
    lsave sp:disp            - sp[disp]  := long:index
 
+   lswap sp:i               - long:index <=> sp[i]
+
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
    nconvf dp:disp           - double:acc >> int:dp[disp]

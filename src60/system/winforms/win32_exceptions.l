@@ -1,5 +1,3 @@
-import system;
-
 // --- IOException ---
 
 public class WinFormsException : Exception

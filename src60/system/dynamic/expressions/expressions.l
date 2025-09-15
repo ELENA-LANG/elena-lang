@@ -1,4 +1,3 @@
-import system;
 import system'collections;
 //import system'routines;
 import system'text;

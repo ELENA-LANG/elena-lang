@@ -166,6 +166,7 @@ namespace elena_lang
       Jle            = 0xBA,
       PeekTLS        = 0xBB,
       StoreTLS       = 0xBC,
+      LSwapSI        = 0xBD,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,

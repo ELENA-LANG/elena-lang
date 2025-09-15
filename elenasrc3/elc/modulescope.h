@@ -33,6 +33,7 @@ class ModuleScope : public ModuleScopeBase, public LibraryLoaderListenerBase
 public:
    bool isStandardOne() override;
    bool withValidation() override;
+   bool withPrologEpilog() override;
 
    ref_t mapAnonymous(ustr_t prefix) override;
 

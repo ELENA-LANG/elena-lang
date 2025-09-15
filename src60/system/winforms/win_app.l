@@ -1,5 +1,3 @@
-import system;
-
 public sealed class SDIApplication
 {
    object _mainWindow;

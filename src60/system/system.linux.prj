@@ -50,21 +50,21 @@
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
-     <module name="attributes" hints="2">
+     <module name="attributes" hints="6">
         <include>attributes/attributes.l</include>
      </module>
-     <module name="predefined" hints="2">
+     <module name="predefined" hints="6">
         <include>predefined/predefined.l</include>
         <include>predefined/aliases.l</include>
      </module>
-     <module name="operations" hints="2">
+     <module name="operations" hints="6">
         <include>operations/inline.l</include>
         <include>operations/operations.l</include>
      </module>
-     <module name="operations'advanced" hints="2">
+     <module name="operations'advanced" hints="6">
         <include>operations/advanced/operations.l</include>
      </module>
-     <module hints="1">
+     <module hints="5">
         <include>inline_templates.l</include>
         <include>object.l</include>
         <include>basic.l</include>

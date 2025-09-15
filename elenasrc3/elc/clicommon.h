@@ -320,6 +320,7 @@ public:
 
    virtual bool isStandardOne() = 0;
    virtual bool withValidation() = 0;
+   virtual bool withPrologEpilog() = 0;
 
    virtual bool isDeclared(ref_t reference) = 0;
    virtual bool isSymbolDeclared(ref_t reference) = 0;

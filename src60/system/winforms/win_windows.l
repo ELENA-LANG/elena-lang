@@ -1,4 +1,3 @@
-import system;
 import system'drawing;
 
 public sealed struct WNDCLASS

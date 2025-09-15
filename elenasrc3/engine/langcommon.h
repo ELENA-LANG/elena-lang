@@ -22,6 +22,7 @@ namespace elena_lang
       mhNone           = 0,
       mhStandart       = 1,
       mhNoValidation   = 2,
+      mhNoPrologEpilog = 4,
    };
 
    enum class MethodHint : ref_t

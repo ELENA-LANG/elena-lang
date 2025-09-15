@@ -1,4 +1,3 @@
-import system;
 import system'runtime;
 
 #if (__project["_Win"]) // Windows

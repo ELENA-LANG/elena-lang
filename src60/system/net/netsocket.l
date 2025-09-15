@@ -96,8 +96,8 @@ public class NetListener : INetListener
 
          _listenSocket.bind(ai_addrptr, ai_addrlen);
 
-/*         if (_noDelayMode)
-            _listenSocket.option(IPPROTO_TCP, TCP_NODELAY, true);*/
+         if (_noDelayMode)
+            _listenSocket.option(IPPROTO_TCP, TCP_NODELAY, true);
       };      
    }
 }

@@ -1,5 +1,3 @@
-import system;
-
 // --- Struct ---
 
 public mixin Struct

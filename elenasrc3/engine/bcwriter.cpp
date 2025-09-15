@@ -1346,6 +1346,55 @@ void shortCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
    else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
+void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.arg.value;
+   int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
+
+   if (!isAssignOp(operatorId)) {
+      tape.write(ByteCode::LoadSI, 1);
+      tape.write(ByteCode::ConvL);
+      if (operatorId == SUB_OPERATOR_ID) {
+         tape.write(ByteCode::LNeg);
+      }
+      tape.write(ByteCode::CopyDPN, targetOffset, 8);
+
+      switch (operatorId) {
+         case ADD_OPERATOR_ID:
+         case SUB_OPERATOR_ID:
+            tape.write(ByteCode::IAddDPN, targetOffset, 8);
+            break;
+         case MUL_OPERATOR_ID:
+            tape.write(ByteCode::IMulDPN, targetOffset, 8);
+            break;
+         default:
+            throw InternalError(errFatalError);
+      }
+   }
+   else {
+      tape.write(ByteCode::LoadSI, 1);
+      tape.write(ByteCode::ConvL);
+      if (operatorId == SUB_OPERATOR_ID) {
+         tape.write(ByteCode::LNeg);
+      }
+
+      tape.write(ByteCode::LSwapSI, 0);
+      switch (operatorId) {
+         case ADD_ASSIGN_OPERATOR_ID:
+         case SUB_ASSIGN_OPERATOR_ID:
+            tape.write(ByteCode::IAddDPN, targetOffset, 8);
+            break;
+         case DIV_ASSIGN_OPERATOR_ID:
+            tape.write(ByteCode::IMulDPN, targetOffset, 8);
+            break;
+         default:
+            throw InternalError(errFatalError);
+      }
+
+   }
+}
+
 void longOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand

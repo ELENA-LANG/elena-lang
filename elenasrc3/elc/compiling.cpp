@@ -360,7 +360,7 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
 void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
    SyntaxWriterBase* syntaxWriter)
 {
-   if (!prolog)
+   if (emptystr(prolog))
       return;
 
    StringTextReader<char> reader(prolog);
@@ -473,8 +473,8 @@ void CompilingProcess :: parseFile(path_t projectPath,
 
 void CompilingProcess :: parseModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it,
-   SyntaxTreeBuilder& builder/*,
-   ModuleScopeBase& moduleScope*/)
+   SyntaxTreeBuilder& builder,
+   bool withPrologEpilog)
 {
    IdentifierString target;
 
@@ -490,9 +490,11 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
       }
 
       // generating syntax tree
-      parseFileTemlate(*env.fileProlog, _prologName, &builder);
+      if (withPrologEpilog)
+         parseFileTemlate(*env.fileProlog, _prologName, &builder);
       parseFile(*env.projectPath, file_it, &builder, parserTarget);
-      parseFileTemlate(*env.fileEpilog, _epilogName, &builder);
+      if (withPrologEpilog)
+         parseFileTemlate(*env.fileEpilog, _epilogName, &builder);
 
       builder.closeNode();
 
@@ -682,7 +684,7 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
-   parseModule(env, module_it, builder/*, moduleScope*/);
+   parseModule(env, module_it, builder, moduleScope.withPrologEpilog());
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 

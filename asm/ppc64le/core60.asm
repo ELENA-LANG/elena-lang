@@ -2259,6 +2259,39 @@ inline %0BCh
 
 end
 
+// ; lswapsi
+inline %0BDh
+
+  ld      r15, __arg16_1(r1)  
+
+  ld      r16, 0(r15)
+  std     r14, 0(r15)
+  mr      r14, r16
+
+end 
+
+// ; lswapsi 0
+inline %1BDh
+
+  mr      r15, r3
+
+  ld      r16, 0(r15)
+  std     r14, 0(r15)
+  mr      r14, r16
+
+end 
+
+// ; lswapsi 1
+inline %2BDh
+
+  mr      r15, r4
+
+  ld      r16, 0(r15)
+  std     r14, 0(r15)
+  mr      r14, r16
+
+end 
+
 // ; cmpr
 inline %0C0h
 

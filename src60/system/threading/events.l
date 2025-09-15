@@ -1,5 +1,3 @@
-import system;
-
 #if (__project["_Win"]) // Windows
 
 internal struct EventHandle

@@ -1,5 +1,3 @@
-import system;
-
 public extension strongEnumerableOp<T>
 {
    forEach(Action<T> f)

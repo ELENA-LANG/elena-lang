@@ -1,5 +1,3 @@
-import system;
-
 public const int INVALID_SOCKET = -1;
 public const int SOCKET_ERROR   = -1;
 

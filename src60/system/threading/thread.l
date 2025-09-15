@@ -1,5 +1,3 @@
-import system;
-
 // --- StartHelper ---
 
 internal sealed class StartHelper : interface<Func>

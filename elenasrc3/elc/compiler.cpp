@@ -11892,7 +11892,7 @@ void Compiler::Namespace::declareNamespace(SyntaxNode node, bool ignoreImport, b
                      compiler->importExtensions(scope, name);
                }
                else if (duplicateInclusion) {
-                  scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current);
+                  scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current.findChild(SyntaxKey::Name));
 
                   // HOTFIX : comment out, to prevent duplicate warnings
                   current.setKey(SyntaxKey::Idle);

@@ -1,5 +1,3 @@
-import system;
-
 public class Task
 {
    bool           _completed;

@@ -42,6 +42,11 @@ bool ModuleScope :: withValidation()
    return !test(hints, mhNoValidation);
 }
 
+bool ModuleScope :: withPrologEpilog()
+{
+   return !test(hints, mhNoPrologEpilog);
+}
+
 static inline void findUninqueName(ModuleBase* module, IdentifierString& name)
 {
    size_t pos = name.length();

@@ -120,8 +120,8 @@ namespace elena_lang
          ProjectTarget* parserTarget);
       void parseModule(ProjectEnvironment& env,
          ModuleIteratorBase& module_it,
-         SyntaxTreeBuilder& builder/*,
-         ModuleScopeBase& moduleScope*/);
+         SyntaxTreeBuilder& builder,
+         bool withPrologEpilog);
       bool buildModule(ProjectEnvironment& env,
          LexicalMap::Iterator& lexical_it,
          ModuleIteratorBase& module_it, 

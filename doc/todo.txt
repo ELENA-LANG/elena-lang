@@ -8,9 +8,18 @@ In development:
   === Iteration 42 ===
   #35 : first draft
   --------------------------------------
+  * #86 : long + int native support
+  * #86 : long - int native support
+  * #86 : long += int native support
+  * #86 : long -= int native support
+  * functional test : long + int, long - int
+  * functional test : long += int, long -= int
+  --------------------------------------
+  * x64 : pointer + int : must be supported
+  * UnsafePointer.add(int) - must be supported
+  --------------------------------------
   - redesign net'http'server : to use INetSocket instead of NetSocket
   --------------------------------------
-  * fix an error : netsocket.l (99)
   * redesign SimpleHttpServer, using factory to create a listener
 
   * add Listener factory to be used in net'http'server

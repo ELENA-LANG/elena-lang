@@ -1,5 +1,3 @@
-import system;
-
 // --- TapeFunction ---
 
 public interface TapeFunction

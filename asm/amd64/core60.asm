@@ -1827,6 +1827,39 @@ inline %0BCh
 
 end
 
+// ; lswapsi
+inline %0BDh
+
+  lea   rdi, [rsp + __arg32_1]
+  mov   rax, [rdi]
+
+  mov   [rdi], rdx
+  mov   rdx, rax 
+
+end 
+
+// ; lswapsi 0
+inline %1BDh
+
+  lea   rdi, r10
+  mov   rax, [rdi]
+
+  mov   [rdi], rdx
+  mov   rdx, rax 
+
+end 
+
+// ; lswapsi 1
+inline %2BDh
+
+  lea   rdi, r11
+  mov   rax, [rdi]
+
+  mov   [rdi], rdx
+  mov   rdx, rax 
+
+end 
+
 // ; cmpr r
 inline %0C0h
 
