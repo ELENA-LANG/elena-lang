@@ -702,7 +702,6 @@ static inline void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
       if (operatorId == SUB_OPERATOR_ID) {
          tape.write(ByteCode::LNeg);
       }
-      tape.write(ByteCode::XLAddDP, targetOffset);
       switch (operatorId) {
          case ADD_ASSIGN_OPERATOR_ID:
          case SUB_ASSIGN_OPERATOR_ID:
