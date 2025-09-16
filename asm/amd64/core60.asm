@@ -1841,7 +1841,7 @@ end
 // ; lswapsi 0
 inline %1BDh
 
-  lea   rdi, r10
+  mov   rdi, r10
   mov   rax, [rdi]
 
   mov   [rdi], rdx
@@ -1852,7 +1852,7 @@ end
 // ; lswapsi 1
 inline %2BDh
 
-  lea   rdi, r11
+  mov   rdi, r11
   mov   rax, [rdi]
 
   mov   [rdi], rdx
