@@ -2679,7 +2679,6 @@ inline %4E1h
   lea  edi, [ebp + __arg32_1]
   mov  eax, [esi + 4]
   mov  ecx, [esi]
-  add  word ptr [edi], ax
   add  [edi], ecx
   adc  [edi+4], eax
 

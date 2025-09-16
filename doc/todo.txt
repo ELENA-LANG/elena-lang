@@ -17,6 +17,7 @@ In development:
   --------------------------------------
   * x64 : pointer + int : must be supported (no more warnings for system library)
   * UnsafePointer.add(int) - must be supported
+  * fix : Console.writeLine($"{n}-{m}={r2}");
   --------------------------------------
   - redesign net'http'server : to use INetSocket instead of NetSocket
   --------------------------------------
