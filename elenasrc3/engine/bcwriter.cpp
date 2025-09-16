@@ -666,7 +666,8 @@ void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
    int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
 
    if (!isAssignOp(operatorId)) {
-      tape.write(ByteCode::LoadSI, 1);
+      tape.write(ByteCode::PeekSI, 1);
+      tape.write(ByteCode::Load);
       tape.write(ByteCode::ConvL);
       if (operatorId == SUB_OPERATOR_ID) {
          tape.write(ByteCode::LNeg);
@@ -695,7 +696,8 @@ void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
       }
    }
    else {
-      tape.write(ByteCode::LoadSI, 1);
+      tape.write(ByteCode::PeekSI, 1);
+      tape.write(ByteCode::Load);
       tape.write(ByteCode::ConvL);
       if (operatorId == SUB_OPERATOR_ID) {
          tape.write(ByteCode::LNeg);
