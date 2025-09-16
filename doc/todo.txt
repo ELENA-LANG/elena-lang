@@ -8,10 +8,7 @@ In development:
   === Iteration 42 ===
   #35 : first draft
   --------------------------------------
-  * #86 : long + int native support
-  * #86 : long - int native support
-  * #86 : long += int native support
-  * #86 : long -= int native support
+  * #86 : test long += int native support
   * functional test : long + int, long - int
   * functional test : long += int, long -= int
   --------------------------------------
