@@ -658,6 +658,65 @@ void intLongOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
+
+void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.arg.value;
+   int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
+
+   if (!isAssignOp(operatorId)) {
+      tape.write(ByteCode::LoadSI, 1);
+      tape.write(ByteCode::ConvL);
+      if (operatorId == SUB_OPERATOR_ID) {
+         tape.write(ByteCode::LNeg);
+      }
+      tape.write(ByteCode::LSaveDP, targetOffset);
+
+      switch (operatorId) {
+         case ADD_OPERATOR_ID:
+         case SUB_OPERATOR_ID:
+            tape.write(ByteCode::IAddDPN, targetOffset, 8);
+            break;
+         case MUL_OPERATOR_ID:
+            tape.write(ByteCode::IMulDPN, targetOffset, 8);
+            break;
+         case BAND_OPERATOR_ID:
+            tape.write(ByteCode::IAndDPN, targetOffset, 8);
+            break;
+         case BOR_OPERATOR_ID:
+            tape.write(ByteCode::IOrDPN, targetOffset, 8);
+            break;
+         case BXOR_OPERATOR_ID:
+            tape.write(ByteCode::IXorDPN, targetOffset, 8);
+            break;
+         default:
+            throw InternalError(errFatalError);
+      }
+   }
+   else {
+      tape.write(ByteCode::LoadSI, 1);
+      tape.write(ByteCode::ConvL);
+      if (operatorId == SUB_OPERATOR_ID) {
+         tape.write(ByteCode::LNeg);
+      }
+
+      tape.write(ByteCode::LSwapSI, 0);
+      switch (operatorId) {
+         case ADD_ASSIGN_OPERATOR_ID:
+         case SUB_ASSIGN_OPERATOR_ID:
+            tape.write(ByteCode::IAddDPN, targetOffset, 8);
+            break;
+         case MUL_ASSIGN_OPERATOR_ID:
+            tape.write(ByteCode::IMulDPN, targetOffset, 8);
+            break;
+         default:
+            throw InternalError(errFatalError);
+      }
+
+   }
+}
+
 void real_int_xop(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
@@ -1344,55 +1403,6 @@ void shortCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
       tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
    }
    else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
-}
-
-void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
-{
-   // NOTE : sp[0] - loperand, sp[1] - roperand
-   int targetOffset = node.arg.value;
-   int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
-
-   if (!isAssignOp(operatorId)) {
-      tape.write(ByteCode::LoadSI, 1);
-      tape.write(ByteCode::ConvL);
-      if (operatorId == SUB_OPERATOR_ID) {
-         tape.write(ByteCode::LNeg);
-      }
-      tape.write(ByteCode::CopyDPN, targetOffset, 8);
-
-      switch (operatorId) {
-         case ADD_OPERATOR_ID:
-         case SUB_OPERATOR_ID:
-            tape.write(ByteCode::IAddDPN, targetOffset, 8);
-            break;
-         case MUL_OPERATOR_ID:
-            tape.write(ByteCode::IMulDPN, targetOffset, 8);
-            break;
-         default:
-            throw InternalError(errFatalError);
-      }
-   }
-   else {
-      tape.write(ByteCode::LoadSI, 1);
-      tape.write(ByteCode::ConvL);
-      if (operatorId == SUB_OPERATOR_ID) {
-         tape.write(ByteCode::LNeg);
-      }
-
-      tape.write(ByteCode::LSwapSI, 0);
-      switch (operatorId) {
-         case ADD_ASSIGN_OPERATOR_ID:
-         case SUB_ASSIGN_OPERATOR_ID:
-            tape.write(ByteCode::IAddDPN, targetOffset, 8);
-            break;
-         case DIV_ASSIGN_OPERATOR_ID:
-            tape.write(ByteCode::IMulDPN, targetOffset, 8);
-            break;
-         default:
-            throw InternalError(errFatalError);
-      }
-
-   }
 }
 
 void longOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -2343,7 +2353,7 @@ ByteCodeWriter::Saver commands[] =
    uint8CondOp, uint16CondOp, intLongOp, distrConstant, unboxingAndCallMessage, threadVarOp, threadVarAssigning, threadVarBegin,
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
-   procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral
+   procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp,
 };
 
 inline bool duplicateBreakpoints(BuildNode lastNode)

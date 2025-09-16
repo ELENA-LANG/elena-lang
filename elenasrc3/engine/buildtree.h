@@ -184,8 +184,9 @@ namespace elena_lang
       ExternalVarReference = 0x0092,
       ByteConstOp          = 0x0093,
       PropNameLiteral      = 0x0094,
+      LongIntOp            = 0x0095,
 
-      MaxOperationalKey    = 0x0094,      
+      MaxOperationalKey    = 0x0095,
       
       DeclDictionaryOp     = 0x0095,
       LoopOp               = 0x0096,
@@ -466,6 +467,7 @@ namespace elena_lang
          map.add("int_sop", BuildKey::IntSOp);
          map.add("const_param", BuildKey::Const);
          map.add("stack_index", BuildKey::StackIndex);
+         map.add("long_int_op", BuildKey::LongIntOp);
       }
    };
 
