@@ -52,7 +52,7 @@ CodeGenerator _codeGenerators[256] =
    loadFrameIndexOp, loadStackIndexOp, loadFrameDispOp, loadStackIndexOp, loadFrameDispOp, loadROp, loadFieldIndexOp, loadStackIndexOp,
 
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
-   compileJge, compileJgr, compileJle, loadTLSOp, loadTLSOp, loadStackIndexOp, loadNop, loadNop,
+   compileJge, compileJgr, compileJle, loadTLSOp, loadTLSOp, loadFrameDispOp, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadNop,
    loadFrameIndexOp, loadStackIndexOp, compileClose, loadStackIndexOp, loadStackIndexOp, loadFrameIndexOp, loadROp, loadSysOp,
@@ -128,7 +128,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::Shl, ByteCode::Shr, ByteCode::XLabelDPR, ByteCode::TryLock, ByteCode::FreeLock,
    ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave,
    ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg, ByteCode::Parent,
-   ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS, ByteCode::DFree, ByteCode::LSwapSI,
+   ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS, ByteCode::DFree, ByteCode::XLAddDP,
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

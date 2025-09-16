@@ -2259,36 +2259,12 @@ inline %0BCh
 
 end
 
-// ; lswapsi
+// ; xladddp
 inline %0BDh
 
-  ld      r15, __arg16_1(r1)  
-
-  ld      r16, 0(r15)
-  std     r14, 0(r15)
-  mr      r14, r16
-
-end 
-
-// ; lswapsi 0
-inline %1BDh
-
-  mr      r15, r3
-
-  ld      r16, 0(r15)
-  std     r14, 0(r15)
-  mr      r14, r16
-
-end 
-
-// ; lswapsi 1
-inline %2BDh
-
-  mr      r15, r4
-
-  ld      r16, 0(r15)
-  std     r14, 0(r15)
-  mr      r14, r16
+  addi    r16, r31, __arg16_1
+  ld      r16, 0(r16)
+  add     r14, r14, r16
 
 end 
 

@@ -1,4 +1,3 @@
-//------------------------------------------------------------------------------
 // 
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
@@ -12,12 +11,8 @@
 
 #include "elena.h"
 
-#if _MSC_VER
-
-#pragma warning( push )
-#pragma warning( disable : 4458 )
-
-#endif
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_HIDE_CLASSMEMBER
 
 namespace elena_lang
 {
@@ -166,7 +161,7 @@ namespace elena_lang
       Jle            = 0xBA,
       PeekTLS        = 0xBB,
       StoreTLS       = 0xBC,
-      LSwapSI        = 0xBD,
+      XLAddDP        = 0xBD,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,
@@ -638,10 +633,6 @@ namespace elena_lang
    };
 }
 
-#ifdef _MSC_VER
-
-#pragma warning( pop )
-
-#endif
+DISABLE_WARNING_POP
 
 #endif

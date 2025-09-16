@@ -211,8 +211,6 @@ ELENA byte codes (or ecodes)
 
    lsave sp:disp            - sp[disp]  := long:index
 
-   lswap sp:i               - long:index <=> sp[i]
-
    mov sp:i1, fp:i2,        - sp[i1] := fp[i2]
 
    nconvf dp:disp           - double:acc >> int:dp[disp]
@@ -236,6 +234,8 @@ ELENA byte codes (or ecodes)
    swap sp:i                - acc <=> sp[i]
 
    xadd dp:disp             - index += [dp[disp]];
+ 
+   xladd dp:disp            - long:index += long:[dp[disp]];
  
    xrefresh sp:i            - cached_sp[i] := sp[i];
 

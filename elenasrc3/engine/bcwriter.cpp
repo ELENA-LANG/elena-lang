@@ -539,18 +539,18 @@ static inline void savingLongIndex(CommandTape& tape, BuildNode& node, TapeScope
    tape.write(ByteCode::LSaveDP, node.arg.value);
 }
 
-void savingFloatIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void savingFloatIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetDP, node.arg.value);
    tape.write(ByteCode::XFSave);
 }
 
-void loadingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void loadingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::LoadDP, node.arg.value);
 }
 
-void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
    bool altMode = node.existChild(BuildKey::IndexTableMode);
@@ -565,7 +565,7 @@ void dispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
    else tape.write(ByteCode::Redirect);
 }
 
-void xdispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void xdispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
 
@@ -574,14 +574,14 @@ void xdispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::XDispatchMR, message, node.arg.reference | mskConstArray);
 }
 
-void genericDispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void genericDispatchOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    mssg_t message = node.findChild(BuildKey::Message).arg.reference;
 
    tape.write(ByteCode::XRedirectM, message);
 }
 
-void intRealOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void intRealOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
@@ -617,7 +617,7 @@ void intRealOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void intLongOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void intLongOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
@@ -659,7 +659,7 @@ void intLongOp(CommandTape& tape, BuildNode& node, TapeScope&)
 }
 
 
-void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
@@ -696,21 +696,18 @@ void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
       }
    }
    else {
-      tape.write(ByteCode::PeekSI, 1);
+      tape.write(ByteCode::PeekSI);
       tape.write(ByteCode::Load);
       tape.write(ByteCode::ConvL);
       if (operatorId == SUB_OPERATOR_ID) {
          tape.write(ByteCode::LNeg);
       }
-
-      tape.write(ByteCode::LSwapSI, 0);
+      tape.write(ByteCode::XLAddDP, targetOffset);
       switch (operatorId) {
          case ADD_ASSIGN_OPERATOR_ID:
          case SUB_ASSIGN_OPERATOR_ID:
-            tape.write(ByteCode::IAddDPN, targetOffset, 8);
-            break;
-         case MUL_ASSIGN_OPERATOR_ID:
-            tape.write(ByteCode::IMulDPN, targetOffset, 8);
+            tape.write(ByteCode::XLAddDP, targetOffset);
+            tape.write(ByteCode::LSaveDP, targetOffset);
             break;
          default:
             throw InternalError(errFatalError);
@@ -719,7 +716,7 @@ void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void real_int_xop(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void real_int_xop(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
@@ -749,7 +746,7 @@ void real_int_xop(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void real_int_op(CommandTape& tape, BuildNode& node, TapeScope& scope)
+static inline void real_int_op(CommandTape& tape, BuildNode& node, TapeScope& scope)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
@@ -763,7 +760,7 @@ void real_int_op(CommandTape& tape, BuildNode& node, TapeScope& scope)
    real_int_xop(tape, node, scope);
 }
 
-void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
@@ -796,7 +793,7 @@ void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
@@ -844,7 +841,7 @@ void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void intOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void intOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand
    int targetOffset = node.arg.value;
@@ -885,7 +882,7 @@ void intOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SaveDP, targetOffset);
 }
 
-void byteOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void byteOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand
    int targetOffset = node.arg.value;
@@ -932,7 +929,7 @@ void byteOpWithConst(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SaveDP, targetOffset);
 }
 
-void uintOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void uintOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;
@@ -980,7 +977,7 @@ void uintOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void intSOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void intSOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    int targetOffset = node.arg.value;
    int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
@@ -1005,7 +1002,7 @@ void intSOp(CommandTape& tape, BuildNode& node, TapeScope&)
    }
 }
 
-void byteOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void byteOp(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    // NOTE : sp[0] - loperand, sp[1] - roperand
    int targetOffset = node.arg.value;

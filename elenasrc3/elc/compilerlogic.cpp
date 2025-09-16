@@ -42,7 +42,7 @@ static inline bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 225;
+constexpr auto OperationLength = 224;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -720,9 +720,6 @@ constexpr Op Operations[OperationLength] =
    },
    {
       SUB_ASSIGN_OPERATOR_ID, BuildKey::LongIntOp, V_INT64, V_INT32, 0, 0
-   },
-   {
-      MUL_ASSIGN_OPERATOR_ID, BuildKey::LongIntOp, V_INT64, V_INT32, 0, 0
    },
 };
 

@@ -48,7 +48,7 @@ const char* _fnOpcodes[256] =
    "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", "xstore i", "set sp",
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
-   "jge", "jgr", "jle", "peek tls", "store tls", "lswap sp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "jge", "jgr", "jle", "peek tls", "store tls", "xladd dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "cmp", "fcmp", "icmp", "tst flag", "tst n", "tst mssg", "xcmp sp", OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", "extclose", "lload sp", "load sp", "xloadarg fp", "xcreate", "system",
@@ -72,7 +72,7 @@ const ByteCode opNotUsingAcc[] = {
    ByteCode::LLoadDP, ByteCode::TstM, ByteCode::TstN, ByteCode::XCmpSI, ByteCode::ExtCloseN, ByteCode::LLoadSI, ByteCode::LoadSI, ByteCode::XLoadArgFI, ByteCode::FAddDPN, ByteCode::FSubDPN, 
    ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::UDivDPN, ByteCode::XLabelDPR, ByteCode::IAndDPN, ByteCode::IOrDPN, ByteCode::IXorDPN, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN, 
    ByteCode::XOpenIN, ByteCode::CopyDPN, ByteCode::IAddDPN, ByteCode::ISubDPN, ByteCode::IMulDPN, ByteCode::IDivDPN, ByteCode::NSaveDPN, ByteCode::XHookDPR, ByteCode::NAddDPN, ByteCode::DCopyDPN, 
-   ByteCode::OpenIN, ByteCode::XStoreSIR, ByteCode::ExtOpenIN, ByteCode::MovSIFI, ByteCode::XMovSISI, ByteCode::XStoreFIR, ByteCode::CallExtR, ByteCode::DFree
+   ByteCode::OpenIN, ByteCode::XStoreSIR, ByteCode::ExtOpenIN, ByteCode::MovSIFI, ByteCode::XMovSISI, ByteCode::XStoreFIR, ByteCode::CallExtR, ByteCode::DFree, ByteCode::XLAddDP,
 };
 
 const ByteCode opSetAcc[] = {

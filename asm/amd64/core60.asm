@@ -1827,38 +1827,13 @@ inline %0BCh
 
 end
 
-// ; lswapsi
+// ; xladddpn
 inline %0BDh
 
-  lea   rdi, [rsp + __arg32_1]
-  mov   rax, [rdi]
+  mov  rax, qword ptr [rbp+__arg32_1]
+  add  rdx, rax
 
-  mov   [rdi], rdx
-  mov   rdx, rax 
-
-end 
-
-// ; lswapsi 0
-inline %1BDh
-
-  mov   rdi, r10
-  mov   rax, [rdi]
-
-  mov   [rdi], rdx
-  mov   rdx, rax 
-
-end 
-
-// ; lswapsi 1
-inline %2BDh
-
-  mov   rdi, r11
-  mov   rax, [rdi]
-
-  mov   [rdi], rdx
-  mov   rdx, rax 
-
-end 
+end
 
 // ; cmpr r
 inline %0C0h

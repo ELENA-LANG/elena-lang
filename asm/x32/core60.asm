@@ -1871,33 +1871,16 @@ inline %0BCh
 
 end
 
-// ; lswapsi
+// ; xladddpn
 inline %0BDh
 
-  lea   edi, [esp + __arg32_1]
+  lea  edi, [ebp+__arg32_1]
+  mov  ecx, [edi]
+  add  eax, ecx
+  mov  ecx, [edi + 4]
+  adc  edx, ecx
 
-  mov   ecx, [edi]
-  mov   [edi], eax
-  mov   eax, ecx
-
-  mov   ecx, [edi+4]
-  mov   [edi+4], edx
-  mov   edx, ecx
-
-end 
-
-// ; lswapsi 0
-inline %1BDh
-
-  mov   ecx, [esi]
-  mov   [esi], eax
-  mov   eax, ecx
-
-  mov   ecx, [esi+4]
-  mov   [esi+4], edx
-  mov   edx, ecx
-
-end 
+end
 
 // ; cmpr r
 inline %0C0h

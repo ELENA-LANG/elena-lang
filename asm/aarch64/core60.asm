@@ -2621,34 +2621,12 @@ inline %0BCh
 
 end
 
-// ; lswapsi
+// ; xladddp
 inline %0BDh
 
-  add     x11, sp, __arg12_1
-  ldr     x17, [x11]
-
-  str     x9, [x11]
-  mov     x9, x17
-
-end 
-
-// ; lswapsi 0
-inline %1BDh
-
-  ldr     x17, [x0]
-
-  str     x9, [x11]
-  mov     x9, x17
-
-end 
-
-// ; lswapsi 1
-inline %2BDh
-
-  ldr     x17, [x1]
-
-  str     x9, [x11]
-  mov     x9, x17
+  add     x11, x29, __arg12_1
+  ldr     x12,  [x11]
+  add     x9, x9, x12
 
 end 
 
