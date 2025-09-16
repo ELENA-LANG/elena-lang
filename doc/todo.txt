@@ -15,7 +15,7 @@ In development:
   * functional test : long + int, long - int
   * functional test : long += int, long -= int
   --------------------------------------
-  * x64 : pointer + int : must be supported
+  * x64 : pointer + int : must be supported (no more warnings for system library)
   * UnsafePointer.add(int) - must be supported
   --------------------------------------
   - redesign net'http'server : to use INetSocket instead of NetSocket

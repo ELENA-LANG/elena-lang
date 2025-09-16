@@ -53,6 +53,11 @@ bool TestModuleScope :: withValidation()
    return false;
 }
 
+bool TestModuleScope :: withPrologEpilog()
+{
+   return false;
+}
+
 ref_t TestModuleScope :: mapAnonymous(ustr_t prefix)
 {
    IdentifierString name("'", prefix, INLINE_CLASSNAME);

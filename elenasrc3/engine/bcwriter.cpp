@@ -2356,7 +2356,7 @@ ByteCodeWriter::Saver commands[] =
    procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp,
 };
 
-inline bool duplicateBreakpoints(BuildNode lastNode)
+static inline bool duplicateBreakpoints(BuildNode lastNode)
 {
    BuildNode prevNode = lastNode.prevNode();
    while (prevNode != BuildKey::Breakpoint) {
@@ -2379,7 +2379,7 @@ inline bool duplicateBreakpoints(BuildNode lastNode)
    return false;
 }
 
-inline BuildNode getPrevious(BuildNode node)
+static inline BuildNode getPrevious(BuildNode node)
 {
    node = node.prevNode();
    switch (node.key) {
@@ -2395,7 +2395,7 @@ inline BuildNode getPrevious(BuildNode node)
    }
 }
 
-inline void setChild(BuildNode node, BuildKey childKey, ref_t childArg)
+static inline void setChild(BuildNode node, BuildKey childKey, ref_t childArg)
 {
    BuildNode child = node.findChild(childKey);
    if (child.key == childKey) {
@@ -2404,7 +2404,7 @@ inline void setChild(BuildNode node, BuildKey childKey, ref_t childArg)
    else node.appendChild(childKey, childArg);
 }
 
-inline BuildNode getNextNode(BuildNode node)
+static inline BuildNode getNextNode(BuildNode node)
 {
    node = node.nextNode();
    switch (node.key) {
@@ -2421,7 +2421,7 @@ inline BuildNode getNextNode(BuildNode node)
 }
 
 
-inline bool scanFrameForLocalAddresses(BuildNode& current, BuildKey destKey, int local)
+static inline bool scanFrameForLocalAddresses(BuildNode& current, BuildKey destKey, int local)
 {
    bool callOp = false;
    int localCounter = 0;
@@ -2456,7 +2456,7 @@ inline bool scanFrameForLocalAddresses(BuildNode& current, BuildKey destKey, int
    return false;
 }
 
-inline bool doubleAssigningByRefHandler(BuildNode lastNode)
+static inline bool doubleAssigningByRefHandler(BuildNode lastNode)
 {
    // OPTTMIZATION CASE : ByRefHandler can directly pass the variable as byref arg
    lastNode.setKey(BuildKey::Idle);
@@ -2485,7 +2485,7 @@ inline bool doubleAssigningByRefHandler(BuildNode lastNode)
    return false;
 }
 
-inline bool intCopying(BuildNode lastNode)
+static inline bool intCopying(BuildNode lastNode)
 {
    int size = lastNode.findChild(BuildKey::Size).arg.value;
    if (size == 4 || size == 1 || size == 2) {
@@ -2503,7 +2503,7 @@ inline bool intCopying(BuildNode lastNode)
    return false;
 }
 
-inline bool intOpWithConsts(BuildNode lastNode)
+static inline bool intOpWithConsts(BuildNode lastNode)
 {
    BuildNode opNode = lastNode;
    BuildNode savingOp2 = getPrevious(opNode);
@@ -2576,7 +2576,7 @@ inline bool intOpWithConsts(BuildNode lastNode)
    return true;
 }
 
-inline bool optIntOpWithConsts(BuildNode lastNode)
+static inline bool optIntOpWithConsts(BuildNode lastNode)
 {
    BuildNode copyNode = lastNode;
    BuildNode sourNode = getPrevious(copyNode);
@@ -2596,7 +2596,7 @@ inline bool optIntOpWithConsts(BuildNode lastNode)
    return false;
 }
 
-inline bool doubleCopyingIntOp(BuildNode lastNode)
+static inline bool doubleCopyingIntOp(BuildNode lastNode)
 {
    BuildNode copyingOp = lastNode;
    BuildNode tempLocalOp = getPrevious(copyingOp);
@@ -2616,7 +2616,7 @@ inline bool doubleCopyingIntOp(BuildNode lastNode)
    return false;
 }
 
-inline bool assignIntOpWithConsts(BuildNode lastNode)
+static inline bool assignIntOpWithConsts(BuildNode lastNode)
 {
    BuildNode opNode = lastNode;
    BuildNode savingOp = getPrevious(opNode);
@@ -2645,7 +2645,7 @@ inline bool assignIntOpWithConsts(BuildNode lastNode)
    return true;
 }
 
-inline bool boxingInt(BuildNode lastNode)
+static inline bool boxingInt(BuildNode lastNode)
 {
    BuildNode copyNode = lastNode;
    BuildNode localNode = getPrevious(copyNode);
@@ -2667,7 +2667,7 @@ inline bool boxingInt(BuildNode lastNode)
    return true;
 }
 
-inline bool nativeBranchingOp(BuildNode lastNode)
+static inline bool nativeBranchingOp(BuildNode lastNode)
 {
    BuildNode branchNode = lastNode;
    BuildNode localNode = getPrevious(branchNode);
