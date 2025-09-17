@@ -265,16 +265,17 @@ public longTests() : testCase()
     i := 12345678901230l;
     n32 := 8;
     long r := i + n32;
-    Assert.ifTrue(i == 12345678901238l);
-    n := 100000;
-    Assert.ifTrue(i == 12345678801238l);
+    Assert.ifTrue(r == 12345678901238l);
+    n32 := 100000;
+    r := i - n32;
+    Assert.ifTrue(r == 12345678801230l);
     Console.write(".");
 
-    i -= n32;
-    Assert.ifTrue(i == 12345678801230l);
+    r -= n32;
+    Assert.ifTrue(r == i);
     n32 := 100004;
-    i += n32;
-    Assert.ifTrue(i == 12345678901234l);
+    r += n32;
+    Assert.ifTrue(r == 12345679001234l);
     Console.write(".");
 
     var tester := (long l, long control1, long control2) { long r1 := -l; long r2 := -r1; Assert.ifTrue(r1 == control1); Assert.ifTrue(r2 == control2);  };
