@@ -184,7 +184,7 @@ public sealed const struct UnsafePointer<T>
       self.loadData(value, $size class T);
       
 #elif ($size class T <= 0)
-      T value := nil;
+      T value := class T.Default;
 
       NotSupportedException.raise("Operation is not supported");
 

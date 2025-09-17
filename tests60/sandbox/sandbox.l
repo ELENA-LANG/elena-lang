@@ -3,7 +3,7 @@ public program()
    long n := 3;
    int m := 4;
 
-   n += m;
+   long r := n - m;
 
-   Console.writeLine(n);
+   Console.writeLine($"{n}-{m}={r}");
 }
