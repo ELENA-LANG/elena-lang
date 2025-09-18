@@ -362,6 +362,34 @@ system'net'IN_ADDR</LI>
 </UL>
 <HR>
 </DIV>
+<A NAME="INetListener">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'net'</DIV>
+<H2 title="INetListener" class="title">INetListener</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">INetListener</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'INetListener</LI>
+</UL>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="INetSocket">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -523,9 +551,27 @@ system'net'INetSocketFactory</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">INetListener</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> prefix, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'INetSocket&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>openSocketAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> host, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'INetListener&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>openListenerAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> prefix, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
 </CODE>
 </TD>
 </TR>
@@ -897,6 +943,98 @@ system'net'NativeSocketFactory</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>openSocket(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> host, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">INetListener</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> prefix, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="NetListener">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'net'</DIV>
+<H2 title="NetListener" class="title">NetListener</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">NetListener</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">system'net'INetListener</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'NetListener</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NativeSocket">NativeSocket</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_listenSocket</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_noDelayMode</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetListener">NetListener</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelayMode)
 </CODE>
 </TD>
 </TR>

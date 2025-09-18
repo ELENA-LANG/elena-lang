@@ -2,19 +2,20 @@ import extensions'threading;
 import net;
 import net'http;
 import system'threading;
+import system'net;
 
 public sealed class SimpleHttpServer : interface<IHttpServer>
 {
    Thread               _listenThread;  
 
-   TcpListener          _listener;
+   INetListener         _listener;
    int                  _backLog; 
    
    IHttpHandlerFactory  _handleFactory;   
    
    constructor create(IHttpHandlerFactory handleFactory)
    {
-      _listener := TcpListener.new(HTTP_PORT, false);
+      _listener := SocketFactory.openListener("http", HTTP_PORT, false);
       _backLog := 100;
       _handleFactory := handleFactory
    }
@@ -32,12 +33,12 @@ public sealed class SimpleHttpServer : interface<IHttpServer>
       _listener.start(_backLog);
       
       while(true) {
-         auto client := _listener.acceptTcpClient();
+         auto socket := _listener.acceptNetSocket();
          auto thread := Thread.start(
             {
                try
                {
-                  auto acceptor := new HttpAcceptor(client, _handleFactory);
+                  auto acceptor := new HttpAcceptor(socket, _handleFactory);
                   acceptor.acceptClient();
                }
                catch(Exception ex)
@@ -45,7 +46,7 @@ public sealed class SimpleHttpServer : interface<IHttpServer>
                   // !! temporal
                   Console.printLineConcurrent(ex);
                   
-                  auto acceptor := new HttpAcceptor(client, _handleFactory);
+                  auto acceptor := new HttpAcceptor(socket, _handleFactory);
                   acceptor.returnError(ex);
                }
             });
@@ -90,12 +91,14 @@ public singleton HttpErrorHandler : BaseHttpErrorHandler
 
 class HttpAcceptor
 {
-   TcpClient            _client;
+   INetSocket           _socket;
+   NetworkStream        _stream; 
    IHttpHandlerFactory  _handleFactory;
    
-   constructor(TcpClient client, IHttpHandlerFactory handleFactory)
+   constructor(INetSocket socket, IHttpHandlerFactory handleFactory)
    {
-      _client := client;
+      _socket := socket;
+      _stream := NetworkStream.assign(_socket, false);
       _handleFactory := handleFactory
    }
    
@@ -106,13 +109,11 @@ class HttpAcceptor
    
    async Task returnErrorAsync(Exception ex)
    {
-      auto stream := _client.stream();
-      
       auto handler := _handleFactory.getErrorHandler();
       
       HttpServerResponse response := :await handler.handleAsync(ex);
       
-      :await response.saveContentAsync(stream);
+      :await response.saveContentAsync(_stream);
    }
    
    acceptClient()
@@ -122,9 +123,7 @@ class HttpAcceptor
    
    async Task acceptClientAsync()
    {
-      auto stream := _client.stream();
-      
-      auto request := HttpServerRequest.assign(stream);
+      auto request := HttpServerRequest.assign(_stream);
       
       :await request.readHeaderAsync();
       
@@ -142,8 +141,8 @@ class HttpAcceptor
       }
       else response := _handleFactory.getErrorHandler().getNotFoundResponse();
       
-      :await response.saveContentAsync(stream);
+      :await response.saveContentAsync(_stream);
 
-      _client.close();
+      _stream.close();
    }
 }

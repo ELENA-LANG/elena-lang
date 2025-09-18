@@ -15,7 +15,7 @@
   </project>
   <manifest>
      <name>ELENA Network Provider Library</name>
-     <version>6.7.12</version>
+     <version>6.7.13</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -42,7 +42,6 @@
        <include>http\server\ihttpserver.l</include>
        <include>http\server\dummyhttphandler.l</include>
        <include>http\server\httpserver.l</include>
-       <include>http\server\httpsserver.l</include>
      </module>
   </files>
 </configuration>

@@ -27,6 +27,25 @@ public class SocketFactory
       }
    }
 
+   static INetListener openListener(string prefix, short port, bool noDelay)
+   {
+      INetListener listener;
+      prefix =>
+         "http" :
+         {
+            listener := _httpFactory.openListener(prefix, port, noDelay);
+         }
+         "https" :
+         {
+            listener := _httpsFactory.openListener(prefix, port, noDelay);
+         }
+         ! : {
+            InvalidArgumentException.raise("prefix");
+         };
+
+      ^ listener            
+   }
+
    static INetSocket openSocket(Uri uri)
    {
       INetSocket socket;

@@ -21,7 +21,13 @@ public interface INetSocket
 
 public interface INetListener
 {
+   abstract start();
    
+   abstract start(int backLog);
+   
+   abstract INetSocket acceptNetSocket();
+   
+   abstract Task<INetSocket> acceptNetSocketAsync();
 }
 
 public interface INetSocketFactory
@@ -100,6 +106,43 @@ public class NetListener : INetListener
             _listenSocket.option(IPPROTO_TCP, TCP_NODELAY, true);
       };      
    }
+   
+   private Task<NativeSocket> listenAsync()
+      = ::Task<NativeSocket>.run({ ^ _listenSocket.accept(); });
+   
+   start()
+   {
+      _listenSocket.listen(SOMAXCONN)
+   }
+
+   start(int backLog)
+   {
+      _listenSocket.listen(backLog)
+   }
+   
+   INetSocket acceptNetSocket()
+   {
+      NativeSocket socket := _listenSocket.accept();
+      if:not(socket.isInvalid)
+      {
+         if (_noDelayMode)
+            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
+      };
+
+      ^ NetSocket.assign(socket)
+   }
+
+   async Task<INetSocket> acceptNetSocketAsync()
+   {
+      NativeSocket socket := :await listenAsync();
+      if:not(socket.isInvalid)
+      {
+         if (_noDelayMode)
+            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
+      };
+
+      ^ NetSocket.assign(socket)
+   }   
 }
 
 public class NativeSocketFactory : INetSocketFactory

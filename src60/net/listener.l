@@ -2,7 +2,7 @@ import system'calendar;
 import system'net;
 import system'threading;
 
-public class TcpListener : interface<INetListener>
+public sealed class TcpListener
 {
    NativeSocket _listenSocket;
    bool   _noDelayMode;
@@ -48,32 +48,8 @@ public class TcpListener : interface<INetListener>
       _listenSocket.close()
    }
 
-   NativeSocket acceptSocket()
-   {
-      NativeSocket socket := _listenSocket.accept();
-      if:not(socket.isInvalid)
-      {
-         if (_noDelayMode)
-            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
-      };
-
-      ^ socket
-   }
-
    private Task<NativeSocket> listenAsync()
       = ::Task<NativeSocket>.run({ ^ _listenSocket.accept(); });
-
-   async Task<NativeSocket> acceptSocketAsync()
-   {
-      NativeSocket socket := :await listenAsync();
-      if:not(socket.isInvalid)
-      {
-         if (_noDelayMode)
-            socket.option(IPPROTO_TCP, TCP_NODELAY, true);
-      };
-
-      ^ socket
-   }
 
    TcpClient acceptTcpClient()
    {
