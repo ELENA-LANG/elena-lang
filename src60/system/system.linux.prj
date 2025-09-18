@@ -42,7 +42,6 @@
   <project>
      <namespace>system</namespace>
      <template>lib60</template>
-     <prolog> </prolog>
   </project>
   <manifest>
      <name>ELENA Standard Library</name>

@@ -7,10 +7,6 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
-  * redesign net'http'server : to use INetSocket instead of NetSocket
-  --------------------------------------
-  - test https get
-  ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
   - IDE : implement file-project
