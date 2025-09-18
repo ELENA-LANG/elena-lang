@@ -9,7 +9,6 @@ In development:
   --------------------------------------
   * redesign net'http'server : to use INetSocket instead of NetSocket
   --------------------------------------
-  - test http get
   - test https get
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
