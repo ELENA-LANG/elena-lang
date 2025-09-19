@@ -92,8 +92,10 @@ namespace elena_lang
       }
    };
 
-   class ProjectSettings : public Gtk::Dialog, public ProjectSettingsBase
+   class ProjectSettings : public Gtk::Window
    {
+      Gtk::Box          _box;
+
       Gtk::Frame        _projectFrame;
       Gtk::Grid         _projectGrid;
       Gtk::Label        _typeLabel;
@@ -126,7 +128,11 @@ namespace elena_lang
       Gtk::Label        _argumentsLabel;
       Gtk::Entry        _argumentsText;
 
-      ProjectModel* _model;
+      Gtk::Box          _footer;
+      Gtk::Button       _buttonOK;
+      Gtk::Button       _button_Cancel;
+
+      ProjectModel*     _model;
 
       void loadTemplateList();
       void loadProfileList();
@@ -134,10 +140,13 @@ namespace elena_lang
       void populate();
       void save();
 
-   public:
-      bool showModal() override;
+      void onOK();
+      void onCancel();
 
-      ProjectSettings(ProjectModel* model);
+   public:
+      void showModal();
+
+      ProjectSettings(Gtk::Window* owner, ProjectModel* model);
    };
 
 //   class EditorSettings : public WinDialog, public EditorSettingsBase

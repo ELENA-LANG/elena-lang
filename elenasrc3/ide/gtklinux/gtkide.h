@@ -29,7 +29,8 @@ public:
 
 // --- GTKIDEView ---
 
-typedef void(*CloseCallback)(void* arg, int index);
+typedef void(*FileCloseCallback)(void* arg, int index);
+typedef void(*CloseCallback)(void* arg);
 
 class GTKIDEWindow : public SDIWindow
 {
@@ -72,9 +73,16 @@ protected:
 
    ProjectSettings              projectSettingsDialog;
 
+   bool                         _closing;
+   bool                         _projectMode;
+   bool                         _newMode;
+
    void populateUI();
 
    //Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
+
+   void newProject();
+   void closeProject(CloseCallback callback);
 
    bool copyToClipboard()
    {
@@ -97,7 +105,10 @@ protected:
    }
    void on_menu_file_new_project()
    {
-      //_controller->doNewProject(fileDialog, projectDialog, messageDialog, projectSettingsDialog, _model);
+      closeProject([](void* arg)
+         {
+            static_cast<GTKIDEWindow*>(arg)->newProject();
+         })
    }
 
    void on_menu_file_open_source()
@@ -155,7 +166,7 @@ protected:
    }
    void on_menu_file_closeproject()
    {
-      //_controller->doCloseProject(fileDialog, projectDialog, messageDialog, _model);
+      closeProject(nullptr);
    }
    void on_menu_file_closeallbutactive()
    {
@@ -321,8 +332,6 @@ protected:
    void on_menu_debug_clearbps()
    {
    }
-
-
    void on_menu_debug_source()
    {
    }
@@ -365,7 +374,8 @@ protected:
    void saveAll();
    void saveProject();
 
-   void onFileClose(int index, CloseCallback callback);
+   void onFileClose(int index, FileCloseCallback callback);
+   void onProjectClose(CloseCallback callback);
 
    void closeFile_finish(int index);
    void closeFile(int index);

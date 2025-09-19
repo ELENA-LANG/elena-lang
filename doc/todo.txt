@@ -7,9 +7,9 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
-  * #184 : IDE linux - migrate to gtkmm4
+  * #184 : IDE linux - new project
   --------------------------------------
-  - IDE : implement file-project
+  - show a project settings on new project
   ======================================
   - SimpleHttpServer : introduce a provider 
   --------------------------------------

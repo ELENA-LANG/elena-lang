@@ -232,18 +232,23 @@ void MessageDialog :: info(text_str message)
 
 // --- ProjectSettings ---
 
-ProjectSettings :: ProjectSettings(ProjectModel* model)
-   : _projectFrame("Project"), _typeLabel("Type"), _namespaceLabel("Namespace"), _profileLabel("Profile"),
+ProjectSettings :: ProjectSettings(Gtk::Window* owner, ProjectModel* model)
+   : _box(Gtk::Orientation::VERTICAL), _projectFrame("Project"), _typeLabel("Type"), _namespaceLabel("Namespace"), _profileLabel("Profile"),
      _compilerFrame("Compiler"), _strictTypeLabel("Strict type enforcing"), _optionsLabel("Additional options"), _warningLabel("Warning level"),
      _linkerFrame("Linker"), _targetLabel("Target file name"), _outputLabel("Output path"),
-     _debuggerFrame("Debugger"), _modeLabel("Debug mode"), _argumentsLabel("Command arguments")
+     _debuggerFrame("Debugger"), _modeLabel("Debug mode"), _argumentsLabel("Command arguments"),
+     _footer(Gtk::Orientation::HORIZONTAL, 5), _buttonOK("_OK", true), _button_Cancel("_Cancel", true)
 {
-//   _model = model;
-//
-//   Gtk::Box *box = get_vbox();
-//
+   _model = model;
+
+   //set_default_size(250, 100);
+   set_transient_for(*owner);
+   set_modal();
+   set_hide_on_close();
+
+   _box.append(_projectFrame);
 //   box->pack_start(_projectFrame, Gtk::PACK_SHRINK);
-//
+
 //   _projectFrame.add(_projectGrid);
 //   _projectGrid.set_row_homogeneous(true);
 //   _projectGrid.set_column_homogeneous(true);
@@ -253,9 +258,9 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
 //   _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
 //   _projectGrid.attach(_profileLabel, 0, 2, 1, 1);
 //   _projectGrid.attach(_profileCombobox, 1, 2, 1, 1);
-//
-//   box->pack_start(_compilerFrame);
-//
+
+   _box.append(_compilerFrame);
+
 //   _compilerFrame.add(_compilerGrid);
 //   _compilerGrid.set_row_homogeneous(true);
 //   _compilerGrid.set_column_homogeneous(true);
@@ -265,9 +270,9 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
 //   _compilerGrid.attach(_optionsText, 1, 1, 1, 1);
 //   _compilerGrid.attach(_warningLabel, 0, 2, 1, 1);
 //   _compilerGrid.attach(_warningCombobox, 1, 2, 1, 1);
-//
-//   box->pack_start(_linkerFrame);
-//
+
+   _box.append(_linkerFrame);
+
 //   _linkerFrame.add(_linkerrGrid);
 //   _linkerrGrid.set_row_homogeneous(true);
 //   _linkerrGrid.set_column_homogeneous(true);
@@ -275,18 +280,24 @@ ProjectSettings :: ProjectSettings(ProjectModel* model)
 //   _linkerrGrid.attach(_targetText, 1, 0, 1, 1);
 //   _linkerrGrid.attach(_outputLabel, 0, 1, 1, 1);
 //   _linkerrGrid.attach(_outputText, 1, 1, 1, 1);
-//
-//   box->pack_start(_debuggerFrame);
-//
+
+   _box.append(_debuggerFrame);
+
 //   _debuggerFrame.add(_debuggerGrid);
 //   _debuggerGrid.set_row_homogeneous(true);
 //   _debuggerGrid.attach(_modeLabel, 0, 0, 1, 1);
 //   _debuggerGrid.attach(_modeCombobox, 1, 0, 1, 1);
 //   _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
 //   _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
-//
-//   add_button("OK", Gtk::RESPONSE_OK);
-//   add_button("Cancel", Gtk::RESPONSE_CANCEL);
+   
+   _footer.set_halign(Gtk::Align::END);
+   _footer.append(_buttonOK);
+   _footer.append(_button_Cancel);
+
+   _buttonOK.signal_clicked().connect(sigc::mem_fun(*frame, &ProjectSettings::onOK));
+   _button_Cancel.signal_clicked().connect(sigc::mem_fun(*frame, &ProjectSettings::onCancel));
+
+   _box.append(_footer);
 //
 //   _modeCombobox.append("Disabled");
 //   _modeCombobox.append("Enabled");
@@ -429,17 +440,21 @@ void ProjectSettings :: save()
       _model->notSaved = true;
 }
 
-bool ProjectSettings :: showModal()
+void ProjectSettings :: onOK()
 {
-//   populate();
 
-   bool retVal = /*run() == Gtk::RESPONSE_OK*/false;
-   if (retVal)
-      save();
+}
 
-   close();
+void ProjectSettings :: onCancel()
+{
 
-   return retVal;
+}
+
+void ProjectSettings :: showModal()
+{
+   populate();
+
+   set_visible(true);
 }
 
 //// --- EditorSettings ---

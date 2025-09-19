@@ -463,8 +463,12 @@ GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model, GtkApp*
    : _clipboard(this),
      fileDialog(this, SOURCE_FILE_FILTER, 4, OPEN_FILE_CAPTION, *model->projectModel.paths.lastPath),
      projectDialog(this, PROJECT_FILE_FILTER, 4, OPEN_PROJECT_CAPTION, *model->projectModel.paths.lastPath),
-     messageDialog(this), projectSettingsDialog(&model->projectModel)
+     messageDialog(this), projectSettingsDialog(this, &model->projectModel)
 {
+   _closing = false;
+   _projectMode = false;
+   _newMode = false;
+
    _app = app;
 
    _model = model;
@@ -867,7 +871,7 @@ void GTKIDEWindow :: saveAll()
    saveProject();
 }
 
-void GTKIDEWindow :: onFileClose(int index, CloseCallback callback)
+void GTKIDEWindow :: onFileClose(int index, FileCloseCallback callback)
 {
    if (_controller->ifFileUnnamed(_model, index)) {
       CloseCallbackArg* arg = new CloseCallbackArg(this, callback, index);
@@ -941,7 +945,15 @@ void GTKIDEWindow :: closeFile(int index)
 
 void GTKIDEWindow :: closeAll_finish()
 {
-   _controller->doCloseAll(_model, false);
+   _controller->doCloseAll(_model, _projectMode);
+
+   _closing = false;
+
+   if (_newMode) {
+      _newMode = false;
+
+      newProject();
+   }
 }
 
 void GTKIDEWindow :: closeAll_next(int index)
@@ -983,6 +995,28 @@ void GTKIDEWindow :: closeAllButActive_next(int index)
 
 void GTKIDEWindow :: closeAll()
 {
+   if (_closing) {
+      // only one closing process can be started simultaneously 
+      return;
+   }
+
+   _closing = true;
+   _projectMode = false;
+
+   closeAll_next(0);
+}
+
+void GTKIDEWindow::closeProject()
+{
+   if (_closing) {
+      // only one closing process can be started simultaneously 
+      return;
+   }
+
+   _closing = true;
+   _projectMode = true;
+   _newMode = true;
+
    closeAll_next(0);
 }
 
@@ -992,4 +1026,11 @@ void GTKIDEWindow :: closeAllButActive()
       closeAllButActive_next(1);
    }
    else closeAllButActive_next(0);
+}
+
+void GTKIDEWindow :: newProject()
+{
+   _controller->doNewProject(_model);
+
+   projectSettingsDialog.showModal();
 }
