@@ -30,7 +30,15 @@ public:
 // --- GTKIDEView ---
 
 typedef void(*FileCloseCallback)(void* arg, int index);
-typedef void(*CloseCallback)(void* arg);
+
+enum class CloseMode : int
+{
+   None        = 0,
+   ProjectMask = 1,
+
+   NewProject  = 1,
+   OpenProject = 3,
+};
 
 class GTKIDEWindow : public SDIWindow
 {
@@ -74,15 +82,16 @@ protected:
    ProjectSettings              projectSettingsDialog;
 
    bool                         _closing;
-   bool                         _projectMode;
-   bool                         _newMode;
+   CloseMode                    _mode;
 
    void populateUI();
 
    //Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
 
    void newProject();
-   void closeProject(CloseCallback callback);
+   void closeProject(bool newMode);
+   void openProject();
+   void openProject_finish(path_t path);
 
    bool copyToClipboard()
    {
@@ -105,10 +114,7 @@ protected:
    }
    void on_menu_file_new_project()
    {
-      closeProject([](void* arg)
-         {
-            static_cast<GTKIDEWindow*>(arg)->newProject();
-         })
+      closeProject(true);
    }
 
    void on_menu_file_open_source()
@@ -127,8 +133,12 @@ protected:
 
    void on_menu_file_open_project()
    {
-      //_controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model);
-      //_recentProjectList.reload();
+      projectDialog.openFile((void*)this, [](void* arg, PathString* path)
+      {
+         if (path) {
+            openProject();
+         }
+      });
    }
    void on_menu_file_quit()
    {
@@ -166,7 +176,7 @@ protected:
    }
    void on_menu_file_closeproject()
    {
-      closeProject(nullptr);
+      closeProject(false);
    }
    void on_menu_file_closeallbutactive()
    {
@@ -256,7 +266,7 @@ protected:
    }
    void on_menu_project_options()
    {
-      _controller->doChangeProject(projectSettingsDialog, _model);
+      //_controller->doChangeProject(projectSettingsDialog, _model);
    }
    void on_menu_file_clearfilehistory()
    {
@@ -375,7 +385,6 @@ protected:
    void saveProject();
 
    void onFileClose(int index, FileCloseCallback callback);
-   void onProjectClose(CloseCallback callback);
 
    void closeFile_finish(int index);
    void closeFile(int index);

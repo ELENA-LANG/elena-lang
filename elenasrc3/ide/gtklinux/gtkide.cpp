@@ -10,7 +10,7 @@
 using namespace elena_lang;
 
 typedef Pair<GTKIDEWindow*, int, nullptr> FileCallbackArg;
-typedef Triple<GTKIDEWindow*, CloseCallback, int, nullptr, nullptr> CloseCallbackArg;
+typedef Triple<GTKIDEWindow*, FileCloseCallback, int, nullptr, nullptr> CloseCallbackArg;
 
 static Glib::ustring ui_info =
         "<interface>"
@@ -27,7 +27,7 @@ static Glib::ustring ui_info =
         "            </item>"
         "            <item>"
         "               <attribute name='label'>Project</attribute>"
-        "               <attribute name='action'>FileNewProject</attribute>"
+        "               <attribute name='action'>win.FileNewProject</attribute>"
         "            </item>"
         "         </section>"
         "      </submenu>"
@@ -42,7 +42,7 @@ static Glib::ustring ui_info =
         "            <item>"
         "               <attribute name='label'>Project</attribute>"
         "               <attribute name='accel'>&lt;Ctrl&gt;&lt;Shift&gt;O</attribute>"
-        "               <attribute name='action'>FileOpenProject</attribute>"
+        "               <attribute name='action'>win.FileOpenProject</attribute>"
         "            </item>"
         "         </section>"
         "      </submenu>"
@@ -466,8 +466,7 @@ GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model, GtkApp*
      messageDialog(this), projectSettingsDialog(this, &model->projectModel)
 {
    _closing = false;
-   _projectMode = false;
-   _newMode = false;
+   _mode = CloseMode::None;
 
    _app = app;
 
@@ -501,9 +500,9 @@ void GTKIDEWindow :: populateUI()
    auto refActions = Gio::SimpleActionGroup::create();
 
    refActions->add_action("FileNewSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_source));
-//   _app->add_action("FileNewProject", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_project));
+   refActions->add_action("FileNewProject", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_project));
    refActions->add_action("FileOpenSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_source));
-//   _app->add_action("FileOpenProject", "<control><shift>O", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
+   refActions->add_action("FileOpenProject", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
    refActions->add_action("FileSaveSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_save));
    refActions->add_action("FileSaveAsSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveas));
 //   _app->add_action("FileProjectAs", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
@@ -512,9 +511,7 @@ void GTKIDEWindow :: populateUI()
    refActions->add_action("FileCloseSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
    refActions->add_action("FileCloseAll", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeall));
 //   _app->add_action("ProjectClose", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
-//   _app->add_action("FileCloseAllButActive", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeproject));
    refActions->add_action("FileCloseAllButActive", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeallbutactive));
-//   _app->add_action("FileQuit", /*"<alt>F4", */sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_quit));
    refActions->add_action("FileQuit", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_quit));
 
 //   _app->add_action("FileRecentFilesClear", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearfilehistory));
@@ -588,6 +585,9 @@ void GTKIDEWindow :: populateUI()
       Gtk::KeyvalTrigger::create(GDK_KEY_o, Gdk::ModifierType::CONTROL_MASK),
       Gtk::NamedAction::create("win.FileOpenSource")));
    controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_o, Gdk::ModifierType::CONTROL_MASK | Gdk::ModifierType::SHIFT_MASK),
+      Gtk::NamedAction::create("win.FileOpenProject")));
+   controller->add_shortcut(Gtk::Shortcut::create(
       Gtk::KeyvalTrigger::create(GDK_KEY_s, Gdk::ModifierType::CONTROL_MASK),
       Gtk::NamedAction::create("win.FileSaveSource")));
    controller->add_shortcut(Gtk::Shortcut::create(
@@ -659,7 +659,6 @@ void GTKIDEWindow :: populateUI()
 //   _refActionGroup->add( Gtk::Action::create("HelpMenu", "_Help") );
 //   _refActionGroup->add( Gtk::Action::create("SearchMenu", "_Search") );
 //
-//   _refActionGroup->add( Gtk::Action::create("FileNewProject", "Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_new_project));
 //   _refActionGroup->add( Gtk::Action::create("FileOpenProject", "Project"), Gtk::AccelKey("<control><shift>O"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
 //   _refActionGroup->add( Gtk::Action::create("FileProjectAs", "Save Project As..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
 //   _refActionGroup->add( Gtk::Action::create("ProjectClose", "Close Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
@@ -945,15 +944,22 @@ void GTKIDEWindow :: closeFile(int index)
 
 void GTKIDEWindow :: closeAll_finish()
 {
-   _controller->doCloseAll(_model, _projectMode);
+   _controller->doCloseAll(_model, test((int)_mode, CloseMode::ProjectMask));
 
    _closing = false;
 
-   if (_newMode) {
-      _newMode = false;
-
-      newProject();
+   switch (_mode) {
+      case CloseMode::NewProject:
+         newProject();
+         break;
+      case CloseMode::NewProject:
+         openProject_finish(*projectDialog.lastSelected);
+         break;
+      default:
+         break;
    }
+
+   _mode = CloseMode::None;
 }
 
 void GTKIDEWindow :: closeAll_next(int index)
@@ -996,26 +1002,44 @@ void GTKIDEWindow :: closeAllButActive_next(int index)
 void GTKIDEWindow :: closeAll()
 {
    if (_closing) {
-      // only one closing process can be started simultaneously 
+      // only one closing process can be started simultaneously
       return;
    }
 
    _closing = true;
-   _projectMode = false;
+   _mode = CloseMode::None;
 
    closeAll_next(0);
 }
 
-void GTKIDEWindow::closeProject()
+void GTKIDEWindow :: openProject()
 {
    if (_closing) {
-      // only one closing process can be started simultaneously 
+      // only one closing process can be started simultaneously
       return;
    }
 
    _closing = true;
-   _projectMode = true;
-   _newMode = true;
+   _mode = CloseMode::OpenProject;
+
+   closeAll_next(0);
+}
+
+void GTKIDEWindow::openProject_finish(path_t path)
+{
+   _controller->doOpenProject(_model, path);
+   //_recentProjectList.reload();
+}
+
+void GTKIDEWindow :: closeProject(bool newMode)
+{
+   if (_closing) {
+      // only one closing process can be started simultaneously
+      return;
+   }
+
+   _closing = true;
+   _mode = newMode ? CloseMode::NewProject : CloseMode::ProjectMode;
 
    closeAll_next(0);
 }

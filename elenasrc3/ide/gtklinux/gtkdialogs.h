@@ -52,10 +52,14 @@ namespace elena_lang
 
       void on_list_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
           const Glib::RefPtr<Gtk::FileDialog>& dialog);
+      void on_open_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+         const Glib::RefPtr<Gtk::FileDialog>& dialog);
       void on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
           const Glib::RefPtr<Gtk::FileDialog>& dialog);
 
    public:
+      PathString   lastSelected;
+
       bool openFile(PathString& path)/* override*/;
       void openFiles(void* arg, FileDialogListCallback callback);
       void saveFile(void* arg, FileDialogCallback callback);

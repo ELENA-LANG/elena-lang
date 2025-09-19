@@ -45,36 +45,6 @@ FileDialog :: FileDialog(Gtk::Window* owner, const char** filter, int filterCoun
    }
 }
 
-bool FileDialog :: openFile(PathString& path)
-{
-//   Gtk::FileChooserDialog dialog(_caption, Gtk::FileChooser::Action::OPEN);
-//   dialog.set_transient_for(*_owner);
-//
-//   if (!emptystr(_initialDir))
-//      dialog.set_current_folder (_initialDir);
-//
-//   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-//   dialog.add_button("_Open", Gtk::RESPONSE_OK);
-//
-//   for (int i = 0; i < _filterCounter; i += 2) {
-//      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
-//
-//      filter_l->set_name(_filter[i + 1]);
-//      filter_l->add_pattern(_filter[i]);
-//      dialog.add_filter(filter_l);
-//   }
-//
-//   int result = dialog.run();
-//   if (result == Gtk::RESPONSE_OK) {
-//      std::string filename = dialog.get_filename();
-//
-//      path.copy(filename.c_str());
-//
-//      return true;
-//   }
-   return false;
-}
-
 void FileDialog :: on_list_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
   const Glib::RefPtr<Gtk::FileDialog>& dialog)
 {
@@ -115,6 +85,29 @@ void FileDialog :: on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& r
    _callbackArg = nullptr;
 }
 
+void FileDialog :: on_open_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+   const Glib::RefPtr<Gtk::FileDialog>& dialog)
+{
+   try
+   {
+      auto file = dialog->open_finish(result);
+      lastSelected.copy(file->get_path().c_str());
+
+      if (PathUtil::checkExtension(*lastSelected, "")) {
+         lastSelected.appendExtension(*_defExtension);
+      }
+
+      _callback(_callbackArg, &lastSelected);
+   }
+   catch (const Gtk::DialogError& err)
+   {
+      _callback(_callbackArg, nullptr);
+   };
+   _listCallback = nullptr;
+   _callback = nullptr;
+   _callbackArg = nullptr;
+}
+
 void FileDialog :: prepareDialog(Glib::RefPtr<Gtk::FileDialog> dialog)
 {
    auto filters = Gio::ListStore<Gtk::FileFilter>::create();
@@ -134,6 +127,20 @@ void FileDialog :: prepareDialog(Glib::RefPtr<Gtk::FileDialog> dialog)
       auto file = Gio::File::create_for_path(_initialDir);
       dialog->set_initial_folder(file);
    }
+}
+
+void FileDialog::openFile(void* arg, FileDialogCallback callback)
+{
+   assert(_callback == nullptr && _listCallback == nullptr);
+
+   _callback = callback;
+   _callbackArg = arg;
+
+   auto dialog = Gtk::FileDialog::create();
+   prepareDialog(dialog);
+
+   dialog->open(sigc::bind(sigc::mem_fun(
+      *this, &FileDialog::on_open_file_dialog_finish), dialog));
 }
 
 void FileDialog :: openFiles(void* arg, FileDialogListCallback callback)
@@ -241,73 +248,81 @@ ProjectSettings :: ProjectSettings(Gtk::Window* owner, ProjectModel* model)
 {
    _model = model;
 
-   //set_default_size(250, 100);
+   set_default_size(400, 400);
    set_transient_for(*owner);
    set_modal();
    set_hide_on_close();
 
    _box.append(_projectFrame);
-//   box->pack_start(_projectFrame, Gtk::PACK_SHRINK);
 
-//   _projectFrame.add(_projectGrid);
-//   _projectGrid.set_row_homogeneous(true);
-//   _projectGrid.set_column_homogeneous(true);
-//   _projectGrid.attach(_typeLabel, 0, 0, 1, 1);
-//   _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
-//   _projectGrid.attach(_namespaceLabel, 0, 1, 1, 1);
-//   _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
-//   _projectGrid.attach(_profileLabel, 0, 2, 1, 1);
-//   _projectGrid.attach(_profileCombobox, 1, 2, 1, 1);
+   _projectFrame.set_margin(10);
+   _projectFrame.set_child(_projectGrid);
+   _projectGrid.set_margin(5);
+   _projectGrid.set_row_homogeneous(true);
+   _projectGrid.set_column_homogeneous(true);
+   _projectGrid.attach(_typeLabel, 0, 0, 1, 1);
+   _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
+   _projectGrid.attach(_namespaceLabel, 0, 1, 1, 1);
+   _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
+   _projectGrid.attach(_profileLabel, 0, 2, 1, 1);
+   _projectGrid.attach(_profileCombobox, 1, 2, 1, 1);
 
    _box.append(_compilerFrame);
 
-//   _compilerFrame.add(_compilerGrid);
-//   _compilerGrid.set_row_homogeneous(true);
-//   _compilerGrid.set_column_homogeneous(true);
-//   _compilerGrid.attach(_strictTypeLabel, 0, 0, 1, 1);
-//   _compilerGrid.attach(_strictTypeCheckbox, 1, 0, 1, 1);
-//   _compilerGrid.attach(_optionsLabel, 0, 1, 1, 1);
-//   _compilerGrid.attach(_optionsText, 1, 1, 1, 1);
-//   _compilerGrid.attach(_warningLabel, 0, 2, 1, 1);
-//   _compilerGrid.attach(_warningCombobox, 1, 2, 1, 1);
+   _compilerFrame.set_margin(10);
+   _compilerFrame.set_child(_compilerGrid);
+   _compilerGrid.set_margin(5);
+   _compilerGrid.set_row_homogeneous(true);
+   _compilerGrid.set_column_homogeneous(true);
+   _compilerGrid.attach(_strictTypeLabel, 0, 0, 1, 1);
+   _compilerGrid.attach(_strictTypeCheckbox, 1, 0, 1, 1);
+   _compilerGrid.attach(_optionsLabel, 0, 1, 1, 1);
+   _compilerGrid.attach(_optionsText, 1, 1, 1, 1);
+   _compilerGrid.attach(_warningLabel, 0, 2, 1, 1);
+   _compilerGrid.attach(_warningCombobox, 1, 2, 1, 1);
 
    _box.append(_linkerFrame);
 
-//   _linkerFrame.add(_linkerrGrid);
-//   _linkerrGrid.set_row_homogeneous(true);
-//   _linkerrGrid.set_column_homogeneous(true);
-//   _linkerrGrid.attach(_targetLabel, 0, 0, 1, 1);
-//   _linkerrGrid.attach(_targetText, 1, 0, 1, 1);
-//   _linkerrGrid.attach(_outputLabel, 0, 1, 1, 1);
-//   _linkerrGrid.attach(_outputText, 1, 1, 1, 1);
+   _linkerFrame.set_margin(10);
+   _linkerFrame.set_child(_linkerrGrid);
+   _linkerrGrid.set_margin(5);
+   _linkerrGrid.set_row_homogeneous(true);
+   _linkerrGrid.set_column_homogeneous(true);
+   _linkerrGrid.attach(_targetLabel, 0, 0, 1, 1);
+   _linkerrGrid.attach(_targetText, 1, 0, 1, 1);
+   _linkerrGrid.attach(_outputLabel, 0, 1, 1, 1);
+   _linkerrGrid.attach(_outputText, 1, 1, 1, 1);
 
    _box.append(_debuggerFrame);
 
-//   _debuggerFrame.add(_debuggerGrid);
-//   _debuggerGrid.set_row_homogeneous(true);
-//   _debuggerGrid.attach(_modeLabel, 0, 0, 1, 1);
-//   _debuggerGrid.attach(_modeCombobox, 1, 0, 1, 1);
-//   _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
-//   _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
-   
+   _debuggerFrame.set_margin(10);
+   _debuggerFrame.set_child(_debuggerGrid);
+   _debuggerGrid.set_margin(5);
+   _debuggerGrid.set_row_homogeneous(true);
+   _debuggerGrid.set_column_homogeneous(true);
+   _debuggerGrid.attach(_modeLabel, 0, 0, 1, 1);
+   _debuggerGrid.attach(_modeCombobox, 1, 0, 1, 1);
+   _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
+   _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
+
    _footer.set_halign(Gtk::Align::END);
    _footer.append(_buttonOK);
    _footer.append(_button_Cancel);
 
-   _buttonOK.signal_clicked().connect(sigc::mem_fun(*frame, &ProjectSettings::onOK));
-   _button_Cancel.signal_clicked().connect(sigc::mem_fun(*frame, &ProjectSettings::onCancel));
+   _buttonOK.signal_clicked().connect(sigc::mem_fun(*this, &ProjectSettings::onOK));
+   _button_Cancel.signal_clicked().connect(sigc::mem_fun(*this, &ProjectSettings::onCancel));
 
    _box.append(_footer);
-//
-//   _modeCombobox.append("Disabled");
-//   _modeCombobox.append("Enabled");
-//
-//   _warningCombobox.append(" None");
-//   _warningCombobox.append(" Level 1");
-//   _warningCombobox.append(" Level 2");
-//   _warningCombobox.append(" Level 3");
-//
-//   show_all_children();
+
+   _modeCombobox.append("Disabled");
+   _modeCombobox.append("Enabled");
+
+   _warningCombobox.append(" None");
+   _warningCombobox.append(" Level 1");
+   _warningCombobox.append(" Level 2");
+   _warningCombobox.append(" Level 3");
+
+   set_child(_box);
 }
 
 void ProjectSettings :: loadTemplateList()
@@ -442,12 +457,14 @@ void ProjectSettings :: save()
 
 void ProjectSettings :: onOK()
 {
+   save();
 
+   set_visible(false);
 }
 
 void ProjectSettings :: onCancel()
 {
-
+   set_visible(false);
 }
 
 void ProjectSettings :: showModal()

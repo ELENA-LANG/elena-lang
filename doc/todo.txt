@@ -9,7 +9,10 @@ In development:
   --------------------------------------
   * #184 : IDE linux - new project
   --------------------------------------
-  - show a project settings on new project
+  - file menu : FileOpenProject
+  - file menu : FileProjectAs
+  - file menu : FileClose
+  - file menu : ProjectClose
   ======================================
   - SimpleHttpServer : introduce a provider 
   --------------------------------------
