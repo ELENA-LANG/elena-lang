@@ -136,7 +136,7 @@ protected:
       projectDialog.openFile((void*)this, [](void* arg, PathString* path)
       {
          if (path) {
-            openProject();
+            static_cast<GTKIDEWindow*>(arg)->openProject();
          }
       });
    }

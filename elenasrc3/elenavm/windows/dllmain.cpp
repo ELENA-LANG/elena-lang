@@ -154,18 +154,18 @@ EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* c
    catch (InternalError err)
    {
       printError(err.messageCode);
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
    catch (JITUnresolvedException& e)
    {
       printError(errVMReferenceNotFound, e.referenceInfo.referenceName);
 
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
    catch (...)
    {
       printError(errVMBroken);
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
 
    if (machine->isStandAlone())
@@ -190,18 +190,18 @@ EXTERN_DLL_EXPORT int EvaluateVMLA(void* tape)
    catch (InternalError err)
    {
       printError(err.messageCode);
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
    catch (JITUnresolvedException& e)
    {
       printError(errVMReferenceNotFound, e.referenceInfo.referenceName);
 
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
    catch (...)
    {
       printError(errVMBroken);
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
 
    return retVal;
@@ -298,7 +298,7 @@ EXTERN_DLL_EXPORT int ExecuteVMLA(const char* target, const char* arg, char* out
 
 EXTERN_DLL_EXPORT int FreeVMLA()
 {
-   return -1;
+   return EXIT_FAILURE;
 }
 
 EXTERN_DLL_EXPORT void ExitLA(int retVal)

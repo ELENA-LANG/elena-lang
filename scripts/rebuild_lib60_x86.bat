@@ -2,37 +2,37 @@ REM NOTE : the script MUST be called from the root folder
 
 bin\asm-cli -windows -x86 asm\x32\core60.asm bin\x32 core60_win.bin
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 
 bin\asm-cli -windows -x86 asm\x32\corex60.asm bin\x32 corex60_win.bin
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 
 bin\asm-cli -windows -x86 asm\x32\core60_client.asm bin\x32 core60_win_client.bin
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 
 bin\asm-cli -bc32 src60\core\system.core_routines.esm lib60
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 
 bin\asm-cli -bc32 src60\core\system.win_core_routines.esm lib60
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 
 bin\elena-cli src60\elena_api.prjcol
 @echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
+if %ERRORLEVEL% EQU 1 GOTO CompilerError
 @echo on
 
 bin\elena-cli tests60\system_tests\system_tests.prj
 @echo off 
-if %ERRORLEVEL% EQU -2 GOTO CompilerError
+if %ERRORLEVEL% EQU 1 GOTO CompilerError
 @echo on
 
 echo system api test for x86

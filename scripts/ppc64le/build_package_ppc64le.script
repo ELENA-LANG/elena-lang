@@ -129,7 +129,7 @@ fi
 
  ../../bin/elena64-cli ../../src60/elena_api.linux.prjcol
  ret=$?
- if [ $ret -eq 2 ]
+ if [ $ret -eq 1 ]
  then
    echo "Failure" >&2
    exit 1
@@ -142,7 +142,7 @@ fi
 
  elena64-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
- if [ $ret -eq 2 ]
+ if [ $ret -eq 1 ]
  then
    echo "Failure" >&2
    exit 1
@@ -152,12 +152,12 @@ fi
 
  ../../tests60/system_tests/system_tests
  ret=$?
- if [ $ret -eq 2 ]
+ if [ $ret -eq 0 ]
  then
+   echo .
+ else
    echo "Failure" >&2
    exit 1
- else
-   echo .
  fi
 
  echo "Do you wish to create a package?"

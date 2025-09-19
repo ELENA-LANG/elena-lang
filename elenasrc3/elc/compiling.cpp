@@ -997,42 +997,42 @@ int CompilingProcess :: build(Project& project,
       _presenter->printPath(e.message, e.path, e.lineInfo.row, e.lineInfo.column, e.token);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (InvalidChar& e) {
       _presenter->print("(%d,%d): Invalid char %c\n", e.lineInfo.row, e.lineInfo.column, e.ch);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (JITUnresolvedException& ex)
    {
       _presenter->print(_presenter->getMessage(errUnresovableLink), ex.referenceInfo.referenceName);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (InternalError& ex) {
       _presenter->print(_presenter->getMessage(ex.messageCode), ex.arg);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (InternalStrError& ex) {
       _presenter->print(_presenter->getMessage(ex.messageCode), *ex.arg);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch(AbortError&) {
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (...)
    {
       _presenter->print(_presenter->getMessage(errFatalError));
       _presenter->print(ELC_UNSUCCESSFUL);
 
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
 }

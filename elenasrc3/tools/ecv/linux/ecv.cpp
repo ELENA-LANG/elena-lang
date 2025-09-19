@@ -136,7 +136,7 @@ int main(int argc, char* argv[])
       if(!viewer.load(*path)) {
          consoleHelper.printPath(ECV_MODULE_NOTLOADED, path.str());
 
-         return -1;
+         return EXIT_FAILURE;
       }
    }
    else {
@@ -144,7 +144,7 @@ int main(int argc, char* argv[])
       if (!viewer.loadByName(*arg)) {
          consoleHelper.printPath(ECV_MODULE_NOTLOADED, argv[1]);
 
-         return -1;
+         return EXIT_FAILURE;
       }
    }
 

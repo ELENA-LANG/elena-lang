@@ -361,7 +361,7 @@ int CLIHelper :: compileProject(int argc, path_c** argv,
    if (!linker) {
       errorProcessor.raiseError(errNotSupportedPlatform, getPlatformName(platform));
 
-      return -1; // !! never reached
+      return EXIT_FAILURE; // !! never reached
    }      
 
    bool cleanMode = false;
@@ -378,7 +378,7 @@ int CLIHelper :: compileProject(int argc, path_c** argv,
       else if (PathUtil::checkExtension(argv[i], "prj")) {
          PathString path(argv[i]);
          if (!project.loadProject(*path, *profile)) {
-            return ERROR_RET_CODE;
+            return EXIT_FAILURE;
          }
 
          if (profile.empty() && project.availableProfileList.count() != 0) {
@@ -395,7 +395,7 @@ int CLIHelper :: compileProject(int argc, path_c** argv,
       }
       else if (PathUtil::checkExtension(argv[i], "prjcol")) {
          presenter.printLine(ELC_PRJ_COLLECTION_WARNING);
-         return -2;
+         return WARNING_RET_CODE;
       }
       else {
          FileNameString fileName(argv[i]);
@@ -441,7 +441,7 @@ int CLIHelper :: compileProjectCollection(int argc, path_c** argv, path_t path, 
    if (!collection.load(platform, path)) {
       presenter.printPath(presenter.getMessage(wrnInvalidConfig), path);
 
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
 
    for (auto it = collection.projectSpecs.start(); !it.eof(); ++it) {
@@ -456,8 +456,8 @@ int CLIHelper :: compileProjectCollection(int argc, path_c** argv, path_t path, 
       presenter.printPath(ELC_COMPILING_PROJECT, projectPath);
 
       int result = compileSingleProject(argc, argv, appPath, errorProcessor, spec->basePath, spec->profile);
-      if (result == ERROR_RET_CODE) {
-         return ERROR_RET_CODE;
+      if (result == EXIT_FAILURE) {
+         return EXIT_FAILURE;
       }
       else if (result == WARNING_RET_CODE) {
          retVal = WARNING_RET_CODE;

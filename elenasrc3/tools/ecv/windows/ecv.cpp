@@ -152,7 +152,7 @@ int main()
 
    if (argc < 2) {
       consoleHelper.print("ecv-cli <module name> | ecv-cli <module path>");
-      return 0;
+      return EXIT_SUCCESS;
    }
 
    if (wstr_t(argv[1]).endsWith(L".nl")) {
@@ -162,7 +162,7 @@ int main()
       if(!viewer.load(*path)) {
          consoleHelper.printPath(ECV_MODULE_NOTLOADED, path.str());
 
-         return -1;
+         return EXIT_FAILURE;
       }
    }
    else {
@@ -170,11 +170,11 @@ int main()
       if (!viewer.loadByName(*arg)) {
          consoleHelper.printPath(ECV_MODULE_NOTLOADED, argv[1]);
 
-         return -1;
+         return EXIT_FAILURE;
       }
    }
 
    viewer.runSession();
 
-   return 0;
+   return EXIT_SUCCESS;
 }

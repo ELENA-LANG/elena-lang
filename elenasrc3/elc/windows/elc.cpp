@@ -148,10 +148,10 @@ int main()
       int argc;
       wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
-      int retVal = 0;
+      int retVal = EXIT_SUCCESS;
       if (argc < 2) {
          Presenter::getInstance().printLine(ELC_HELP_INFO);
-         return -2;
+         return WARNING_RET_CODE;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
          retVal = CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],            
@@ -178,6 +178,6 @@ int main()
    }
    catch (CLIException)
    {
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
 }

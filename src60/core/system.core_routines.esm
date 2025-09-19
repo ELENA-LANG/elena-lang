@@ -30,7 +30,7 @@ define __realSize                     8;
 define elMessage              00200000h;
 define elSubject              01000000h;
 
-define err_ret          -1;
+define err_ret           1;
 define nameconst_index  -1;
 
 define WM_CREATE         1;

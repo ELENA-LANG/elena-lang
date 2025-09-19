@@ -60,7 +60,7 @@ namespace elena_lang
    public:
       PathString   lastSelected;
 
-      bool openFile(PathString& path)/* override*/;
+      void openFile(void* arg, FileDialogCallback callback);
       void openFiles(void* arg, FileDialogListCallback callback);
       void saveFile(void* arg, FileDialogCallback callback);
 

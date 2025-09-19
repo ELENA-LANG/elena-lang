@@ -83,7 +83,7 @@ entry()
 
          Console.writeLine(err);
 
-         extern ExitLA(-1);
+         extern ExitLA(1);
       }
    }
    finally
@@ -110,7 +110,7 @@ gui_entry()
 
          forward program.error("ELENA", err);
 
-         extern ExitLA(-1);
+         extern ExitLA(1);
       }
    }
    finally

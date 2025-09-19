@@ -58,7 +58,7 @@ static Glib::ustring ui_info =
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Save _Project As...</attribute>"
-        "            <attribute name='action'>FileProjectAs</attribute>"
+        "            <attribute name='action'>win.FileProjectSaveAs</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Save _All</attribute>"
@@ -505,7 +505,7 @@ void GTKIDEWindow :: populateUI()
    refActions->add_action("FileOpenProject", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
    refActions->add_action("FileSaveSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_save));
    refActions->add_action("FileSaveAsSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveas));
-//   _app->add_action("FileProjectAs", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
+   refActions->add_action("FileProjectSaveAs", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
    refActions->add_action("FileSaveAll", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_saveall));
 //   _app->add_action("FileClose", "<control>W", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
    refActions->add_action("FileCloseSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
@@ -648,19 +648,6 @@ void GTKIDEWindow :: populateUI()
 
    loadUI(ui_info, "MenuBar");
 
-//   //File menu:
-//   _refActionGroup->add( Gtk::Action::create("FileMenu", "_File") );
-//   _refActionGroup->add( Gtk::Action::create("EditMenu", "_Edit") );
-//   _refActionGroup->add( Gtk::Action::create("ProjectMenu", "_Project") );
-//   _refActionGroup->add( Gtk::Action::create("ViewMenu", "_View") );
-//   _refActionGroup->add( Gtk::Action::create("DebugMenu", "_Debug") );
-//   _refActionGroup->add( Gtk::Action::create("ToolsMenu", "_Tools") );
-//   _refActionGroup->add( Gtk::Action::create("WindowMenu", "_Window") );
-//   _refActionGroup->add( Gtk::Action::create("HelpMenu", "_Help") );
-//   _refActionGroup->add( Gtk::Action::create("SearchMenu", "_Search") );
-//
-//   _refActionGroup->add( Gtk::Action::create("FileOpenProject", "Project"), Gtk::AccelKey("<control><shift>O"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_open_project));
-//   _refActionGroup->add( Gtk::Action::create("FileProjectAs", "Save Project As..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_saveas));
 //   _refActionGroup->add( Gtk::Action::create("ProjectClose", "Close Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
 //
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
@@ -944,7 +931,7 @@ void GTKIDEWindow :: closeFile(int index)
 
 void GTKIDEWindow :: closeAll_finish()
 {
-   _controller->doCloseAll(_model, test((int)_mode, CloseMode::ProjectMask));
+   _controller->doCloseAll(_model, test((int)_mode, (int)CloseMode::ProjectMask));
 
    _closing = false;
 
@@ -952,7 +939,7 @@ void GTKIDEWindow :: closeAll_finish()
       case CloseMode::NewProject:
          newProject();
          break;
-      case CloseMode::NewProject:
+      case CloseMode::OpenProject:
          openProject_finish(*projectDialog.lastSelected);
          break;
       default:
@@ -1039,7 +1026,7 @@ void GTKIDEWindow :: closeProject(bool newMode)
    }
 
    _closing = true;
-   _mode = newMode ? CloseMode::NewProject : CloseMode::ProjectMode;
+   _mode = newMode ? CloseMode::NewProject : CloseMode::ProjectMask;
 
    closeAll_next(0);
 }
