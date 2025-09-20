@@ -38,6 +38,7 @@ enum class CloseMode : int
 
    NewProject  = 1,
    OpenProject = 3,
+   ExitApp     = 5,
 };
 
 class GTKIDEWindow : public SDIWindow
@@ -142,13 +143,7 @@ protected:
    }
    void on_menu_file_quit()
    {
-      //if(_controller->doExit(fileDialog, projec   typedef void(*CloseCallback)(void* arg, int index);
-
-      //Dialog, messageDialog, _model)) {
-         _app->quit();
-
-         set_visible(false);
-      //}
+      closeAndExit();
    }
    void on_menu_file_save()
    {
@@ -160,7 +155,7 @@ protected:
    }
    void on_menu_project_saveas()
    {
-      //_controller->doSaveProject(projectDialog, _model, true);
+      saveProject();
    }
    void on_menu_file_saveall()
    {
@@ -383,6 +378,7 @@ protected:
    void saveFile_finish(PathString& path, int index);
    void saveAll();
    void saveProject();
+   void saveProject_finish(PathString& path);
 
    void onFileClose(int index, FileCloseCallback callback);
 
@@ -392,6 +388,7 @@ protected:
    void closeAll_next(int index);
    void closeAll_finish();
    void closeAll();
+   void closeAndExit();
 
    void closeAllButActive_finish();
    void closeAllButActive_next(int index);

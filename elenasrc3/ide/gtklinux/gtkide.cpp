@@ -79,7 +79,7 @@ static Glib::ustring ui_info =
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Close Project</attribute>"
-        "            <attribute name='action'>ProjectClose</attribute>"
+        "            <attribute name='action'>win.ProjectClose</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Close All But Active</attribute>"
@@ -510,7 +510,7 @@ void GTKIDEWindow :: populateUI()
 //   _app->add_action("FileClose", "<control>W", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
    refActions->add_action("FileCloseSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
    refActions->add_action("FileCloseAll", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeall));
-//   _app->add_action("ProjectClose", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
+   refActions->add_action("ProjectClose", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeproject));
    refActions->add_action("FileCloseAllButActive", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_closeallbutactive));
    refActions->add_action("FileQuit", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_quit));
 
@@ -648,8 +648,6 @@ void GTKIDEWindow :: populateUI()
 
    loadUI(ui_info, "MenuBar");
 
-//   _refActionGroup->add( Gtk::Action::create("ProjectClose", "Close Project"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_close));
-//
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
 //   _refActionGroup->add( Gtk::Action::create("FileRecentProjects", "Recent projects") );
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFilesClear", "Clear history"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_file_clearfilehistory));
@@ -842,9 +840,24 @@ void GTKIDEWindow :: saveFileAs(int index)
    });
 }
 
+void GTKIDEWindow::saveProject_finish(PathString& path)
+{
+   _controller->doSaveProject(_model, *path);
+}
+
 void GTKIDEWindow :: saveProject()
 {
-   // !! temporally empty
+   if (_controller->ifProjectUnnamed(_model)) {
+      projectDialog.saveFile((void*)this, [](void* arg, PathString* path)
+         {
+            if (path) {
+               static_cast<GTKIDEWindow*>(arg)->saveProject_finish(*path);
+            }
+         });
+   }
+   else if (_controller->ifProjectNotSaved(_model)) {
+      _controller->doSaveProject(_model);
+   }
 }
 
 void GTKIDEWindow :: saveAll()
@@ -942,6 +955,10 @@ void GTKIDEWindow :: closeAll_finish()
       case CloseMode::OpenProject:
          openProject_finish(*projectDialog.lastSelected);
          break;
+      case CloseMode::ExitApp:
+         //_app->quit();
+         set_visible(false);
+         break;
       default:
          break;
    }
@@ -995,6 +1012,19 @@ void GTKIDEWindow :: closeAll()
 
    _closing = true;
    _mode = CloseMode::None;
+
+   closeAll_next(0);
+}
+
+void GTKIDEWindow :: closeAndExit()
+{
+   if (_closing) {
+      // only one closing process can be started simultaneously
+      return;
+   }
+
+   _closing = true;
+   _mode = CloseMode::ExitApp;
 
    closeAll_next(0);
 }

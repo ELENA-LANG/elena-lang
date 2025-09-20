@@ -9,9 +9,8 @@ In development:
   --------------------------------------
   * #184 : IDE linux - new project
   --------------------------------------
-  - file menu : FileProjectSaveAs
-  - file menu : FileClose
-  - file menu : ProjectClose
+  - test project menu
+  - test exit
   ======================================
   - SimpleHttpServer : introduce a provider 
   --------------------------------------
