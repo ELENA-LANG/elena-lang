@@ -72,7 +72,7 @@ void ConfigFile :: removeSetting(ustr_t xpath)
 
 void ConfigFile :: create()
 {
-   _tree.loadXml("<configuration></configuration>");
+   _tree.loadXml("<?xml version=\"1.0\" encoding=\"utf-8\"?><configuration></configuration>");
 }
 
 bool ConfigFile :: load(path_t path, FileEncoding encoding)

@@ -6,19 +6,18 @@ In development:
   ### EPIC: elena 6.8 ###
 
   === Iteration 42 ===
-  --------------------------------------
-  * #184 : IDE linux - new project
-  --------------------------------------
-  - test project menu
-  - test exit
+  ======================================
+  - #818 : Support <?xml version="1.0"?> in .prj file
   ======================================
   - SimpleHttpServer : introduce a provider 
+  --------------------------------------
+  - review possible solution
+  - design
+  - implement dummy
   --------------------------------------
   * dummy https web server - GET
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   --------------------------------------
-  - review possible solution
-  - design
   - implement
   - test
   --------------------------------------
