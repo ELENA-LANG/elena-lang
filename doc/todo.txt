@@ -7,8 +7,6 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  - #818 : Support <?xml version="1.0"?> in .prj file
-  ======================================
   - SimpleHttpServer : introduce a provider 
   --------------------------------------
   - review possible solution
@@ -22,6 +20,7 @@ In development:
   - test
   --------------------------------------
   ======================================
+  * #820 : Launch elena64-ide.exe from the command line 
   * warn if nil is passed to the non-nil argument
   ======================================
   * #184 : IDE linux - migrate to gtkmm4

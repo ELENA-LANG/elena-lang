@@ -1,4 +1,4 @@
-//---------------------------------------------------------------------------
+errors.h//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains the ELENA Compiler error messages
@@ -65,7 +65,7 @@ namespace elena_lang
    constexpr auto errMsgDupPrivateMethod           = "\n%s(%d:%d): error 182: A private method with the same name '%s' is already declared\n";
    constexpr auto errMsgDupProtectedMethod         = "\n%s(%d:%d): error 183: A protected method with the same name '%s' is already declared\n";
    constexpr auto errMsgUnknownDefConstructor      = "\n%s(%d:%d): error 184: A constructor is not defined for the class\n";
-   constexpr auto errMsgUnknownMessage             = "\n%s(%d:%d): error 185: Message '%s' does not handled by the object\n";
+   constexpr auto errMsgUnknownMessage             = "\n%s(%d:%d): error 185: Message '%s' is not handled by the object\n";
    constexpr auto errMsgAssigningToSelf            = "\n%s(%d:%d): error 186: Cannot assign a variable '%s' to itself\n";
    constexpr auto errMsgUnknownTypecast            = "\n%s(%d:%d): error 188: typecasting routine cannot be found\n";
    constexpr auto errMsgUnknownFunction            = "\n%s(%d:%d): error 189: Function message does not handled by the object '%s'\n";
