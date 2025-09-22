@@ -7,8 +7,6 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * api : provide descriptions for all classes in system
-  ======================================
   * SimpleHttpServer : introduce a provider 
   --------------------------------------
   - review possible solution
@@ -22,11 +20,11 @@ In development:
   - test
   --------------------------------------
   ======================================
+  * api : provide descriptions for all classes in system & extensions, starting from IntMatrix
   * #820 : Launch elena64-ide.exe from the command line 
   * warn if nil is passed to the non-nil argument
   * ldoc : support search by method name
   * ldoc : support search by class name
-  * api : provide descriptions for all classes in system & extensions
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------

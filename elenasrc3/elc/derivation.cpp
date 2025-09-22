@@ -2634,6 +2634,9 @@ void TemplateProssesor :: generateTemplate(SyntaxTreeWriter& writer, TemplateSco
          case SyntaxKey::Attribute:
             copyNode(writer, scope, current);
             break;
+         case SyntaxKey::InlineTemplate:
+            copyTemplatePostfix(writer, scope, current);
+            break;
          case SyntaxKey::Parent:
             copyParent(writer, scope, current);
             break;

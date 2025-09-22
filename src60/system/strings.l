@@ -1,19 +1,20 @@
 // --- Array template ---
 
-public sealed Array<T> : Indexable<T>
+public sealed Array<T> : Indexable<T>,
+   info("A strong-typed array template")
 {
    embeddable __string T[] array;
 
-   static Array<T>? Default
+   static Array<T>? Default : info("Returns nil")
       = nil;
 
-   static Array<T> MinValue
+   static Array<T> MinValue : info("Returns an array with zero elements")
       = new T[](0);
 
-   constructor allocate(int length)
+   constructor allocate(int length) : info("Creates an array with the specified <b>length</b>")
       = new T[](length);   
 
-   constructor copy(T[] array, int index, int length)
+   constructor copy(T[] array, int index, int length) : info("Creates a copy of sub array of <b>array</b> starting from <b>index</b> with the specified <b>length</b>")
       <= allocate(length)
    {
       for(int i := 0; i < length; i += 1)
@@ -23,7 +24,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    static copy(Array<T> target, Array<T> source, int index, int length)
-      : info("Copies a subarray from source starting at index to target")
+      : info("Copies a sub array from <b>source</b> starting at <b>index</b> with the specified <b>length</b> into <b>target</b> at 0 position.")
    {      
       for(int i := 0; i < length; i += 1)
       {
@@ -32,7 +33,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    static copyTo(Array<T> target, Array<T> source, int index, int length)
-      : info("Copies a source array to target at index")
+      : info("Copies <b>source</b> array starting with 0 position with the specified <b>length</b> into <b>target</b> at <b>index</b> position")
    {      
       for(int i := 0; i < length; i += 1)
       {
@@ -41,6 +42,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    static move(Array<T> target, int index, int length, int offset)
+       : info("Moves a sub array inside <b>target</b>.<br/>If <b>index</b> is positive moves <b>length</b> elements starting from <b>offset</b> to the array start<br/>Otherwise moves first <b>length</b> elements to the right on <b>index</b> positions")
    {
       if (offset > 0) {
          for (int i := 0; i < length; i += 1)
@@ -60,7 +62,9 @@ public sealed Array<T> : Indexable<T>
       }
    }
 
-   Enumerator<T> enumerator() = new BaseEnumerator<T>
+   Enumerator<T> enumerator()
+      : info("Creates an array enumerator") 
+   = new BaseEnumerator<T>
    {
       this index := -1;
         
@@ -76,9 +80,12 @@ public sealed Array<T> : Indexable<T>
       }
    };
 
-   Enumerable cast() = new Enumerable{ Enumerator enumerator() => self; };
+   Enumerable cast() : info("Returns enumerable wrapper around the array")
+      = new Enumerable{ Enumerator enumerator() => self; };
 
-   Indexer<T> indexer() = new BaseIndexer<T>
+   Indexer<T> indexer() 
+      : info("Creates an array indexer") 
+   = new BaseIndexer<T>
    {
       this index := 0;
         
@@ -94,6 +101,7 @@ public sealed Array<T> : Indexable<T>
    };   
 
    T at(int n)
+      : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
    {
       if (n < 0)
          { system'InvalidArgumentException.raise() };
@@ -109,6 +117,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    setAt(int n, T item)
+      : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
    {
       if (n < 0)
          { system'InvalidArgumentException.raise() };
@@ -132,6 +141,7 @@ public sealed Array<T> : Indexable<T>
       <= at(cast int(n));
 
    int Length
+      : info("Returns the array length")
    {
       get()
       {
@@ -141,10 +151,10 @@ public sealed Array<T> : Indexable<T>
       }
    }
 
-   T[] add(T[] a)
+   T[] add(T[] a) : info("Concatenates the array and an argument <b>a</b> and returns the new array")
       <= add(a, a.Length);
                               
-   T[] add(T[] a, int length)
+   T[] add(T[] a, int length) : info("Concatenate the array and an argument <b>a</b> and returns the new array")
    {
       int length1 := self.Length;
       int length2 := length;
@@ -163,6 +173,7 @@ public sealed Array<T> : Indexable<T>
    }
                                  
    T[] clone()
+       : info("Returns the shallow copy of the array")
    {
       int len := self.Length;
       T[] copy := new T[](len);
@@ -174,6 +185,7 @@ public sealed Array<T> : Indexable<T>
    }
    
    Array cast()
+       : info("Creates a weak copy of the array")
    {
       int len := self.Length;
       auto clone := Array.allocate(len);
@@ -187,21 +199,25 @@ public sealed Array<T> : Indexable<T>
 
 // --- Variadic Array template ---
 
-public sealed nonstructural VariadicArray<T> : Indexable<T>
+public sealed nonstructural VariadicArray<T> : Indexable<T>,
+   info("A strong-typed variadic array template<br/>It is used to box the method variadic argument list")
 {
    embeddable __string T[] array;
 
    private readArgLength(out int retVal) : external(system'core_routines'__varg_readLength);
 
    T at(int n)
+          : info("Returns an element at the position <b>n</b>")
       = array[n];
 
    setAt(int n, T item)
+      : info("Assigns <b>item</b> to the element at the position <b>n</b>")
    {
       array[n] := item;
    }  
 
    int Length
+      : info("Returns the variadic array length")
    {
       get()
       {
@@ -211,7 +227,9 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
       }
    }
 
-   Enumerator<T> enumerator() = new BaseEnumerator<T>
+   Enumerator<T> enumerator() 
+      : info("Creates a variadic array enumerator") 
+   = new BaseEnumerator<T>
    {
       this index := -1;
         
@@ -227,7 +245,9 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
       }
    };
 
-   Indexer<T> indexer() = new BaseIndexer<T>
+   Indexer<T> indexer() 
+      : info("Creates a variadic array indexer") 
+   = new BaseIndexer<T>
    {
       this index := 0;
         
@@ -243,6 +263,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
    };    
 
    T[] cast()
+      : info("Creates a strong typed array of the variadic array elements")
    {
       int len := self.Length;
         
@@ -260,12 +281,14 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 // --- matrixof ---
 
 public sealed Matrix<T>
+   : info("A two-dimensional strong-type array")
 {
    T[] _array;
    int _rows;
    int _columns;
     
    constructor allocate(int rows, int columns)
+      : info("Creates a two-dimensional array of <b>rows<b> and <b>columns<b>")
    {
       _rows := rows;
       _columns := columns;
@@ -278,35 +301,8 @@ public sealed Matrix<T>
    constructor allocate(rows, columns)
       <= allocate(cast int(rows), cast int(columns));
     
-   constructor load(params)
-   {
-      _rows := params.Rows;
-      _columns := params.Columns;
-        
-      int len := _rows * _columns;
-        
-      _array := new T[](/*theRows * theColumns*/len);
-        
-      int i := 0;
-      int j := 0;
-        
-      while (i < _rows)
-      {
-         j := 0;
-         while (j < _columns)
-         {
-            T val := params.at(i,j);
-                
-            self.setAt(i, j, val);
-                
-            j := j + 1
-         };
-            
-         i := i + 1
-      }
-   }    
-    
    int Length
+      : info("Returns the number of rows")
    {
       get()
       {
@@ -315,6 +311,7 @@ public sealed Matrix<T>
    }    
 
    int Columns
+      : info("Returns the number of columns")
    {
       get()
       {
@@ -323,6 +320,7 @@ public sealed Matrix<T>
    }
 
    int Rows
+      : info("Returns the number of rows")
    {
       get()
       {
@@ -330,30 +328,33 @@ public sealed Matrix<T>
       }
    }
 
-   /// Writes an integer value at the specified position
-   setAt(int i, int j, T v)
-   {        
-      int index := i * _columns + j;
-        
-      _array[index] := v
-   }
-
-   /// Reads an integer value at the specified position and saves it into an output variable
-   read(int i, int j, ref T retVal)
+   private read(int i, int j, ref T retVal)
    {
       int index := i * _columns + j;
         
       retVal := _array[index];
    }
 
+   /// Writes an integer value at the specified position
+   setAt(int i, int j, T v)
+     : info("Assigns <b>v</b> argument to the matrix element at a row <b>i</b> and a column <b>j</b>")
+   {        
+      int index := i * _columns + j;
+        
+      _array[index] := v
+   }
+
    T at(int i, int j)
+     : info("Returns the matrix element at a row <b>i</b> and a column <b>j</b>")
    {
       self.read(i, j, ref T retVal);
       ^ retVal
    }
 
    /// Returns a row
-   at(i) = new
+   at(i) 
+      : info("Returns <b>i</b>-th row as an array") 
+   = new
    {
       Length = _columns;
         
@@ -367,6 +368,7 @@ public sealed Matrix<T>
    };
 
    Enumerator enumerator() 
+      : info("Creates a weak matrix enumerator<br/>It goes from the first row till the last one for each column") 
    {
       int i := 0;
       int j := -1;
@@ -409,18 +411,20 @@ public sealed Matrix<T>
 // --- BitArray ---
 
 public sealed class BitArray
+   : info("An array of Boolean values")
 {
    int[] _array;
    int   _length;
     
-   /// Creates the array with the specified length
    constructor allocate(int length)
+      : info("Creates a bit array with the specified <b>length</b>")
    {
       _length := length;
       _array := new int[](length / 32 + 1)
    }
     
    int Length
+      : info("Returns the bit array length")
    {
       get()
       {
@@ -432,6 +436,7 @@ public sealed class BitArray
       = self.at(cast int(index));
     
    bool at(int index)
+      : info("Returns a boolean value at the specified <b>index</b> position")
    {
       int arr_index := index / 32;
       int bit_index := arr_index * 32;
@@ -447,6 +452,7 @@ public sealed class BitArray
    }
 
    setAt(int index, bool value)
+      : info("Set a boolean value at the specified <b>index</b> position")
    {
       int arr_index := index / 32;
       int bit_index := arr_index * 32;
@@ -472,32 +478,39 @@ public sealed class BitArray
       _array[arr_index] := bits
    }
     
-   /// Returns the array enumerator
-   Enumerator<bool> enumerator() = new BitArrayEnumerator(self);
+   Enumerator<bool> enumerator()
+       : info("Creates a boolean enumerator")
+     = new BitArrayEnumerator(self);
 
-   /// Returns the array indexer
-   Indexer<bool> indexer() = new BitArrayIndexer(self);
+   Indexer<bool> indexer() 
+       : info("Creates a boolean indexer")
+     = new BitArrayIndexer(self);
 }
 
 // --- BitArray32 ---
 
 public sealed class BitArray32
+   : info("An 32-bit integer bit map")
 {
    int _value;
     
    constructor load(int value)
+      : info("Creates a bit map from <b>value</b>")
    {
       _value := value
    }
     
-   int Length = 32;
+   int Length : info("Returns 32") 
+      = 32;
     
    write(int value)
+     : info("Copies a bit map from <b>value</b>")
    {
       _value := value
    }
     
    bool at(int index)
+      : info("Returns a bit at the specified <b>index</b> position")
    {
       int bit_mask := 1;
       if (index != 0)
@@ -507,6 +520,7 @@ public sealed class BitArray32
    }
     
    setAt(int index, bool value)
+      : info("Set a boolean value of <b>value<b> to the specified <b>index</b> position")
    {
       int bit_mask := 1;
       if (index != 0)
@@ -524,11 +538,13 @@ public sealed class BitArray32
       }
    }
     
-   /// Returns the array enumerator
-   Enumerator<bool> enumerator() = new BitArray32Enumerator(self);
+   Enumerator<bool> enumerator() 
+         : info("Creates a bit map enumerator")
+      = new BitArray32Enumerator(self);
 
-   /// Returns the array indexer
-   Indexer<bool> indexer() = new BitArray32Indexer(self);
+   Indexer<bool> indexer() 
+         : info("Creates a bit map indexer")
+     = new BitArray32Indexer(self);
 }
 
 // --- IntMatrix ---

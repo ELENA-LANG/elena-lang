@@ -743,7 +743,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Array&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Array&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed array template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -798,6 +799,8 @@ system'Array&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
+<div class="block">
+Creates an array with the specified <b>length</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -807,6 +810,8 @@ system'Array&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
+<div class="block">
+Creates a copy of sub array of <b>array</b> starting from <b>index</b> with the specified <b>length</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -829,7 +834,7 @@ system'Array&lt;T1&gt;</LI>
 <CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> source, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 <div class="block">
-Copies a subarray from source starting at index to target</div>
+Copies a sub array from <b>source</b> starting at <b>index</b> with the specified <b>length</b> into <b>target</b> at 0 position.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -840,7 +845,7 @@ Copies a subarray from source starting at index to target</div>
 <CODE>copyTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> source, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 <div class="block">
-Copies a source array to target at index</div>
+Copies <b>source</b> array starting with 0 position with the specified <b>length</b> into <b>target</b> at <b>index</b> position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -850,6 +855,8 @@ Copies a source array to target at index</div>
 <TD CLASS="colLast">
 <CODE>move(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> offset)
 </CODE>
+<div class="block">
+Moves a sub array inside <b>target</b>.<br/>If <b>index</b> is positive moves <b>length</b> elements starting from <b>offset</b> to the array start<br/>Otherwise moves first <b>length</b> elements to the right on <b>index</b> positions</div>
 </TD>
 </TR>
 </TABLE>
@@ -870,6 +877,8 @@ Copies a source array to target at index</div>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Default()</CODE>
+<div class="block">
+Returns nil</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -878,6 +887,8 @@ Copies a source array to target at index</div>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MinValue()</CODE>
+<div class="block">
+Returns an array with zero elements</div>
 </TD>
 </TR>
 </TABLE>
@@ -898,6 +909,8 @@ Copies a source array to target at index</div>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the array length</div>
 </TD>
 </TR>
 </TABLE>
@@ -918,6 +931,8 @@ Copies a source array to target at index</div>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable">Enumerable</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns enumerable wrapper around the array</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -926,6 +941,8 @@ Copies a source array to target at index</div>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Creates a weak copy of the array</div>
 </TD>
 </TR>
 </TABLE>
@@ -947,6 +964,8 @@ Copies a source array to target at index</div>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Creates an array indexer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -974,6 +993,8 @@ Copies a source array to target at index</div>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Creates an array enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -983,6 +1004,8 @@ Copies a source array to target at index</div>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -992,6 +1015,8 @@ Copies a source array to target at index</div>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system-$private.html#T1">T1</A></SPAN> item)
 </CODE>
+<div class="block">
+Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1001,6 +1026,8 @@ Copies a source array to target at index</div>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> a)
 </CODE>
+<div class="block">
+Concatenates the array and an argument <b>a</b> and returns the new array</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1010,6 +1037,8 @@ Copies a source array to target at index</div>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> a, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
+<div class="block">
+Concatenate the array and an argument <b>a</b> and returns the new array</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1019,6 +1048,8 @@ Copies a source array to target at index</div>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+<div class="block">
+Returns the shallow copy of the array</div>
 </TD>
 </TR>
 </TABLE>
@@ -1347,7 +1378,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">BaseEnumerator</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">BaseEnumerator</SPAN><BR/>
+<I>A base generic enumerator for a collection or an array<br/>Property getter <b>Value<b> must be implemented</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1410,6 +1442,8 @@ system'BaseEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>next()
 </CODE>
+<div class="block">
+Increments the field <b>index</b> by one. If the value is smaller then the field <b>length</b> it returns true; returns false otherwise</div>
 </TD>
 </TR>
 </TABLE>
@@ -1430,7 +1464,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public template <SPAN CLASS="typeNameLabel">BaseEnumerator&lt;T1&gt;</SPAN></PRE>
+abstract public template <SPAN CLASS="typeNameLabel">BaseEnumerator&lt;T1&gt;</SPAN><BR/>
+<I>A base enumerator template for a collection or an array<br/>Property getter <b>Value<b> must be implemented</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1492,6 +1527,8 @@ system'BaseEnumerator&lt;T1&gt;</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns a wrapper implementing a generic enumerator</div>
 </TD>
 </TR>
 </TABLE>
@@ -1513,6 +1550,8 @@ system'BaseEnumerator&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>next()
 </CODE>
+<div class="block">
+Increments the field <b>index</b> by one. If the value is smaller then the field <b>length</b> it returns true; returns false otherwise</div>
 </TD>
 </TR>
 </TABLE>
@@ -1627,7 +1666,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">BaseIndexer</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">BaseIndexer</SPAN><BR/>
+<I>A base generic indexer for a collection or an array<br/>Property <b>Value<b> must be implemented</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1689,6 +1729,8 @@ system'BaseIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Available()</CODE>
+<div class="block">
+Returns true if the field <b>index</b> is less then the field <b>length</b>; returns false otherwise</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1697,6 +1739,8 @@ system'BaseIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
+<div class="block">
+Index property over the field <b>index</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1706,6 +1750,8 @@ system'BaseIndexer</LI>
 <TD CLASS="colLast">
 <CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Index property over the field <b>index</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1714,6 +1760,8 @@ system'BaseIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Length property over the field <b>length<b></div>
 </TD>
 </TR>
 </TABLE>
@@ -1735,6 +1783,8 @@ system'BaseIndexer</LI>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> disp)
 </CODE>
+<div class="block">
+Increases the field <b>index<b> by a value of **disp**</div>
 </TD>
 </TR>
 </TABLE>
@@ -1755,7 +1805,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public template <SPAN CLASS="typeNameLabel">BaseIndexer&lt;T1&gt;</SPAN></PRE>
+abstract public template <SPAN CLASS="typeNameLabel">BaseIndexer&lt;T1&gt;</SPAN><BR/>
+<I>A base indexer template for a collection or an array<br/>Property <b>Value<b> must be implemented</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1817,6 +1868,8 @@ system'BaseIndexer&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Available()</CODE>
+<div class="block">
+Returns true if the field <b>index</b> is less then the field <b>length</b>; returns false otherwise</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1825,6 +1878,8 @@ system'BaseIndexer&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
+<div class="block">
+Index property over the field <b>index</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1834,6 +1889,8 @@ system'BaseIndexer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Index property over the field <b>index</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1842,6 +1899,8 @@ system'BaseIndexer&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns a value of the field <b>length<b></div>
 </TD>
 </TR>
 </TABLE>
@@ -1862,6 +1921,8 @@ system'BaseIndexer&lt;T1&gt;</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns a wrapper implementing a generic indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -1883,6 +1944,8 @@ system'BaseIndexer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> offs)
 </CODE>
+<div class="block">
+Increases the field <b>index<b> by a value of **disp**</div>
 </TD>
 </TR>
 </TABLE>
@@ -2287,7 +2350,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">BitArray</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">BitArray</SPAN><BR/>
+<I>An array of Boolean values</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -2344,6 +2408,8 @@ system'BitArray</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
+<div class="block">
+Creates a bit array with the specified <b>length</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -2364,6 +2430,8 @@ system'BitArray</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the bit array length</div>
 </TD>
 </TR>
 </TABLE>
@@ -2394,6 +2462,8 @@ system'BitArray</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns a boolean value at the specified <b>index</b> position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2403,6 +2473,8 @@ system'BitArray</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> value)
 </CODE>
+<div class="block">
+Set a boolean value at the specified <b>index</b> position</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2412,6 +2484,8 @@ system'BitArray</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Creates a boolean enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2421,6 +2495,8 @@ system'BitArray</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Creates a boolean indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -2441,7 +2517,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">BitArray32</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">BitArray32</SPAN><BR/>
+<I>An 32-bit integer bit map</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -2490,6 +2567,8 @@ system'BitArray32</LI>
 <TD CLASS="colLast">
 <CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Creates a bit map from <b>value</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -2510,6 +2589,8 @@ system'BitArray32</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns 32</div>
 </TD>
 </TR>
 </TABLE>
@@ -2531,6 +2612,8 @@ system'BitArray32</LI>
 <TD CLASS="colLast">
 <CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Copies a bit map from <b>value</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2540,6 +2623,8 @@ system'BitArray32</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns a bit at the specified <b>index</b> position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2549,6 +2634,8 @@ system'BitArray32</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> value)
 </CODE>
+<div class="block">
+Set a boolean value of <b>value<b> to the specified <b>index</b> position</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2558,6 +2645,8 @@ system'BitArray32</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Creates a bit map enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2567,6 +2656,8 @@ system'BitArray32</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Creates a bit map indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -5768,7 +5859,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public template <SPAN CLASS="typeNameLabel">Enumerable&lt;T1&gt;</SPAN></PRE>
+abstract public template <SPAN CLASS="typeNameLabel">Enumerable&lt;T1&gt;</SPAN><BR/>
+<I>An abstract strong-typed enumerable class<br/>Must be overridden</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -5926,7 +6018,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public template <SPAN CLASS="typeNameLabel">Enumerator&lt;T1&gt;</SPAN></PRE>
+abstract public template <SPAN CLASS="typeNameLabel">Enumerator&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed enumerator template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -8036,7 +8129,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">Indexable</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">Indexable</SPAN><BR/>
+<I>An abstract generic indexable class<br/>Must be overridden</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -8065,6 +8159,8 @@ system'Indexable</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the generic indexer of the class</div>
 </TD>
 </TR>
 </TABLE>
@@ -8085,7 +8181,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public template <SPAN CLASS="typeNameLabel">Indexable&lt;T1&gt;</SPAN></PRE>
+abstract public template <SPAN CLASS="typeNameLabel">Indexable&lt;T1&gt;</SPAN><BR/>
+<I>An abstract strong-typed indexable class<br/>Must be overridden</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -8114,6 +8211,8 @@ system'Indexable&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the strong-typed indexer of the class</div>
 </TD>
 </TR>
 </TABLE>
@@ -8135,7 +8234,7 @@ system'</DIV>
 <HR>
 <PRE STYLE="padding-top: 15px;">
 abstract public class <SPAN CLASS="typeNameLabel">Indexer</SPAN><BR/>
-<I>A generic indexer interface<br/>The indexer is a class which allow to access a collection elements by an index</I></PRE>
+<I>A generic indexer interface<br/>The indexer is a tape interface over a collection, allowing to move along it, setting and getting its elements by an index</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -8260,7 +8359,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public template <SPAN CLASS="typeNameLabel">Indexer&lt;T1&gt;</SPAN></PRE>
+abstract public template <SPAN CLASS="typeNameLabel">Indexer&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed indexer interface<br/>The indexer is a tape interface over a collection, allowing to move along it, setting and getting its elements by an index</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -8288,6 +8388,8 @@ system'Indexer&lt;T1&gt;</LI>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Available()</CODE>
+<div class="block">
+Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8296,6 +8398,8 @@ system'Indexer&lt;T1&gt;</LI>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns an element the given index</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -8305,6 +8409,8 @@ system'Indexer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>Value(<SPAN CLASS="memberNameLink"><A HREF="system-$private.html#T1">T1</A></SPAN> value)
 </CODE>
+<div class="block">
+Set an element at the given index</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8313,6 +8419,8 @@ system'Indexer&lt;T1&gt;</LI>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -8322,6 +8430,8 @@ system'Indexer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8330,6 +8440,8 @@ system'Indexer&lt;T1&gt;</LI>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the length of the corresponding collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -8350,6 +8462,8 @@ system'Indexer&lt;T1&gt;</LI>
 <i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Converts the object to a generic indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -8371,6 +8485,8 @@ system'Indexer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Increases the current index by parameter **index**</div>
 </TD>
 </TR>
 </TABLE>
@@ -11639,6 +11755,201 @@ Returns the value copy</div>
 </UL>
 <HR>
 </DIV>
+<A NAME="Matrix&lt;T1&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="Matrix&lt;T1&gt;" class="title">Matrix&lt;T1&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public template <SPAN CLASS="typeNameLabel">Matrix&lt;T1&gt;</SPAN><BR/>
+<I>A two-dimensional strong-type array</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'Matrix&lt;T1&gt;</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_array</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_rows</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_columns</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system.html#Matrix&lt;T1&gt;">Matrix&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(rows, columns)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system.html#Matrix&lt;T1&gt;">Matrix&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> rows, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> columns)
+</CODE>
+<div class="block">
+Creates a two-dimensional array of <b>rows<b> and <b>columns<b></div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Length()</CODE>
+<div class="block">
+Returns the number of rows</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Columns()</CODE>
+<div class="block">
+Returns the number of columns</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Rows()</CODE>
+<div class="block">
+Returns the number of rows</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j, <SPAN CLASS="memberNameLink"><A HREF="system-$private.html#T1">T1</A></SPAN> v)
+</CODE>
+<div class="block">
+Assigns <b>v</b> argument to the matrix element at a row <b>i</b> and a column <b>j</b></div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private.html#T1">T1</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
+</CODE>
+<div class="block">
+Returns the matrix element at a row <b>i</b> and a column <b>j</b></div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(i)
+</CODE>
+<div class="block">
+Returns <b>i</b>-th row as an array</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a weak matrix enumerator<br/>It goes from the first row till the last one for each column</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="Message">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -13168,7 +13479,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Range</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Range</SPAN><BR/>
+<I>represents a range that has start and end indexes.<br>The class support Enumerable interface</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -13231,6 +13543,8 @@ system'Range</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> start, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> count)
 </CODE>
+<div class="block">
+creates a range with the specified <b>start</b> position. <b>count</b> contains the length of the range</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -13240,6 +13554,8 @@ system'Range</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> start, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> count)
 </CODE>
+<div class="block">
+creates a range with the specified <b>start</b> position. <b>count</b> contains the length of the range</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -13249,6 +13565,8 @@ system'Range</LI>
 <TD CLASS="colLast">
 <CODE>for(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> start, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> end)
 </CODE>
+<div class="block">
+creates a range with the specified <b>start</b> and <b>end</b> positions</div>
 </TD>
 </TR>
 </TABLE>
@@ -13269,6 +13587,8 @@ system'Range</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+returns the length of the range</div>
 </TD>
 </TR>
 </TABLE>
@@ -13289,6 +13609,8 @@ system'Range</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable">Enumerable</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns a wrapper implementing a generic enumerator</div>
 </TD>
 </TR>
 </TABLE>
@@ -13310,6 +13632,8 @@ system'Range</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+returns the range enumerator</div>
 </TD>
 </TR>
 </TABLE>
@@ -14613,7 +14937,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Reference&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Reference&lt;T1&gt;</SPAN><BR/>
+<I>a variable template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
