@@ -61,12 +61,12 @@ namespace elena_lang
          throw TestException(code);
       }
 
-      void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node) override
+      void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node, ustr_t) override
       {
          throw TestException(code);
       }
 
-      void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node)
+      void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node, ustr_t)
       {
       }
 

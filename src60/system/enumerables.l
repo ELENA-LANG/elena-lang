@@ -3,7 +3,7 @@
 // --- Enumerator ---
 
 public interface Enumerator
-   : info("An enumerator prototype")
+   : info("A generic enumerator interface")
 {
    get abstract Value()
       : info("Returns the current object");
@@ -17,23 +17,29 @@ public interface Enumerator
    abstract enumerable()
       : info("returns the enumerator owner");
 
-   Enumerator enumerator() = self;
+   Enumerator enumerator() : info("returns itself")
+      = self;
 }
 
 // --- Enumerator<T> ---
 
 public interface Enumerator<T>
+   : info("A strong-typed enumerator template")
 {
-   abstract bool next();
+   abstract bool next()
+      : info("Goes to the next enumeration member and returns true if it is not the last member");
 
    get abstract T Value()
       : info("Returns the current object");
 
-   abstract reset();
+   abstract reset()
+      : info("Resets the enumerator");
 
-   abstract enumerable();
+   abstract enumerable()
+      : info("returns the enumerator owner");
 
-   abstract Enumerator cast();
+   abstract Enumerator cast()
+      : info("converts the class to the generic enumerator");
 
    Enumerator<T> enumerator() = self;
 }
@@ -41,35 +47,45 @@ public interface Enumerator<T>
 // --- Enumerable ---
 
 public abstract Enumerable
+   : info("An abstract generic enumerable class<br/>Must be overridden")
 {
-   abstract Enumerator enumerator();
+   abstract Enumerator enumerator()
+      : info("Returns the generic enumerator of the class");
 }
 
 public abstract Enumerable<T>
+   : info("An abstract strong-typed enumerable class<br/>Must be overridden")
 {
-   abstract Enumerator<T> enumerator();
+   abstract Enumerator<T> enumerator()
+     : info("Returns the strong-typed enumerator of the class");
 }
 
 // --- Indexer ---
 
 public interface Indexer
+   : info("A generic indexer interface<br/>The indexer is a class which allow to access a collection elements by an index")
 {
-   get abstract bool Available();
+   get abstract bool Available()
+      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false");
 
-   get abstract Value();
+   get abstract Value()
+      : info("Returns an element the given index");
 
-   set abstract Value(value);
+   set abstract Value(value)
+      : info("Set an element at the given index");
 
-   abstract int Index
+   abstract int Index : info("Index property")
    {
       get();
 
       set(value);
    }
 
-   abstract appendIndex(int index);
+   abstract appendIndex(int index)
+     : info("Increases the current index by parameter **index**");
 
    abstract int Length
+     : info("Returns the length of the corresponding collection")
    {
       get();
    }

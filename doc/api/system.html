@@ -5716,7 +5716,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">Enumerable</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">Enumerable</SPAN><BR/>
+<I>An abstract generic enumerable class<br/>Must be overridden</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -5745,6 +5746,8 @@ system'Enumerable</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the generic enumerator of the class</div>
 </TD>
 </TR>
 </TABLE>
@@ -5794,6 +5797,8 @@ system'Enumerable&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the strong-typed enumerator of the class</div>
 </TD>
 </TR>
 </TABLE>
@@ -5815,7 +5820,7 @@ system'</DIV>
 <HR>
 <PRE STYLE="padding-top: 15px;">
 abstract public class <SPAN CLASS="typeNameLabel">Enumerator</SPAN><BR/>
-<I>An enumerator prototype</I></PRE>
+<I>A generic enumerator interface</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -5899,6 +5904,8 @@ returns the enumerator owner</div>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+returns itself</div>
 </TD>
 </TR>
 </TABLE>
@@ -5969,6 +5976,8 @@ Returns the current object</div>
 <i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+converts the class to the generic enumerator</div>
 </TD>
 </TR>
 </TABLE>
@@ -5990,6 +5999,8 @@ Returns the current object</div>
 <TD CLASS="colLast">
 <CODE>next()
 </CODE>
+<div class="block">
+Goes to the next enumeration member and returns true if it is not the last member</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -5999,6 +6010,8 @@ Returns the current object</div>
 <TD CLASS="colLast">
 <CODE>reset()
 </CODE>
+<div class="block">
+Resets the enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -6008,6 +6021,8 @@ Returns the current object</div>
 <TD CLASS="colLast">
 <CODE>enumerable()
 </CODE>
+<div class="block">
+returns the enumerator owner</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8119,7 +8134,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-abstract public class <SPAN CLASS="typeNameLabel">Indexer</SPAN></PRE>
+abstract public class <SPAN CLASS="typeNameLabel">Indexer</SPAN><BR/>
+<I>A generic indexer interface<br/>The indexer is a class which allow to access a collection elements by an index</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -8147,6 +8163,8 @@ system'Indexer</LI>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Available()</CODE>
+<div class="block">
+Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8155,6 +8173,8 @@ system'Indexer</LI>
 <i>get abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns an element the given index</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -8164,6 +8184,8 @@ system'Indexer</LI>
 <TD CLASS="colLast">
 <CODE>Value(value)
 </CODE>
+<div class="block">
+Set an element at the given index</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8172,6 +8194,8 @@ system'Indexer</LI>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -8181,6 +8205,8 @@ system'Indexer</LI>
 <TD CLASS="colLast">
 <CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -8189,6 +8215,8 @@ system'Indexer</LI>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the length of the corresponding collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -8210,6 +8238,8 @@ system'Indexer</LI>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Increases the current index by parameter **index**</div>
 </TD>
 </TR>
 </TABLE>

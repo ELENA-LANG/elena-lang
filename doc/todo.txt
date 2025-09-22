@@ -7,7 +7,7 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * api : provide descriptions for all classes in system & extensions
+  * api : provide descriptions for all classes in system
   ======================================
   * SimpleHttpServer : introduce a provider 
   --------------------------------------
@@ -26,6 +26,7 @@ In development:
   * warn if nil is passed to the non-nil argument
   * ldoc : support search by method name
   * ldoc : support search by class name
+  * api : provide descriptions for all classes in system & extensions
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
