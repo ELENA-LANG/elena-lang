@@ -661,6 +661,7 @@ namespace elena_lang
       virtual void print(ustr_t msg, int arg1, int arg2) = 0;
       virtual void print(ustr_t msg, int arg1, int arg2, int arg3) = 0;
       virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+      virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4, ustr_t arg5) = 0;
       virtual void printPath(ustr_t msg, path_t arg) = 0;
       virtual void printPath(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
 

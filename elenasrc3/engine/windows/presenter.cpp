@@ -3,7 +3,7 @@
 //
 //		This file contains the Windows Presenter implementation
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "presenter.h"
@@ -171,6 +171,20 @@ void WinConsolePresenter :: print(ustr_t msg, ustr_t path, int col, int row, ust
    WideMessage ws(s);
 
    ::print(wstr.str(), wpath.str(), row, col, ws.str());
+}
+
+void WinConsolePresenter::print(ustr_t msg, ustr_t path, int col, int row, ustr_t s, ustr_t arg)
+{
+   WideMessage wstr(msg);
+#if defined(__GNUC__) && (defined(_WIN32) || defined(__WIN32__))
+   adjustConstantForGCC(wstr);
+#endif
+
+   WideMessage wpath(path);
+   WideMessage ws(s);
+   WideMessage warg(arg);
+
+   ::print(wstr.str(), wpath.str(), row, col, ws.str(), warg.str());
 }
 
 void WinConsolePresenter :: printLine(ustr_t msg, ustr_t arg)

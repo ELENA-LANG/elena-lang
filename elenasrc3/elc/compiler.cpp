@@ -989,9 +989,19 @@ void Compiler::NamespaceScope::raiseError(int message, SyntaxNode terminal)
    errorProcessor->raiseTerminalError(message, *sourcePath, terminal);
 }
 
+void Compiler::NamespaceScope::raiseError(int message, SyntaxNode terminal, ustr_t arg)
+{
+   errorProcessor->raiseTerminalError(message, *sourcePath, terminal, arg);
+}
+
 void Compiler::NamespaceScope::raiseWarning(int level, int message, SyntaxNode terminal)
 {
    errorProcessor->raiseTerminalWarning(level, message, *sourcePath, terminal);
+}
+
+void Compiler::NamespaceScope::raiseWarning(int level, int message, SyntaxNode terminal, ustr_t arg)
+{
+   errorProcessor->raiseTerminalWarning(level, message, *sourcePath, terminal, arg);
 }
 
 ObjectInfo Compiler::NamespaceScope::defineConstant(SymbolInfo info)
@@ -14016,7 +14026,7 @@ ObjectInfo Compiler::Expression :: compileAltOperation(SyntaxNode node)
          writer->newNode(BuildKey::AltOp, ehLocal.argument);
 
          writer->newNode(BuildKey::Tape);
-         ObjectInfo retVal = compile(current, 0, EAttr::Parameter);
+         /*ObjectInfo retVal = */compile(current, 0, EAttr::Parameter);
          unboxArguments({}, true);
          writer->closeNode();
 
@@ -15232,11 +15242,13 @@ ObjectInfo Compiler::Expression::declareTempLocal(ref_t typeRef, bool dynamicOnl
 
 void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_t message, ref_t targetRef, bool weakTarget, bool strongResolved)
 {
+   ustr_t typeName = scope.module->resolveReference(targetRef);
+
    if (strongResolved) {
       if (getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
          scope.raiseError(errUnknownDefConstructor, node);
       }
-      else scope.raiseError(errUnknownMessage, findMessageNode(node));
+      else scope.raiseError(errUnknownMethod, findMessageNode(node), typeName);
    }
    else {
       SyntaxNode messageNode = findMessageNode(node);
@@ -15272,15 +15284,14 @@ void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_
 
             compiler->_errorProcessor->info(infoUnknownMessage, *messageName);
 
-            ustr_t name = scope.module->resolveReference(targetRef);
-            if (!name.empty())
-               compiler->_errorProcessor->info(infoTargetClass, name);
+            if (!typeName.empty())
+               compiler->_errorProcessor->info(infoTargetClass, typeName);
          }
 
          if (compiler->_strictTypeEnforcing && compiler->_logic->isClosedClass(*scope.moduleScope, targetRef)) {
-            scope.raiseError(errUnknownMessage, messageNode);
+            scope.raiseError(errUnknownMethod, messageNode, typeName);
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMessage, messageNode);
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMethod, messageNode, typeName);
       }
    }
 }

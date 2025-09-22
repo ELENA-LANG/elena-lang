@@ -1,9 +1,8 @@
+A;
+
 public program()
 {
-   long n := 3;
-   int m := 4;
+   A a := new A();
 
-   long r := n - m;
-
-   Console.writeLine($"{n}-{m}={r}");
+   a.test()
 }

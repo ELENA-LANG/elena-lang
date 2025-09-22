@@ -447,9 +447,17 @@ namespace elena_lang
          {
             parent->raiseError(message, terminal);
          }
+         virtual void raiseError(int message, SyntaxNode terminal, ustr_t arg)
+         {
+            parent->raiseError(message, terminal, arg);
+         }
          virtual void raiseWarning(int level, int message, SyntaxNode terminal)
          {
             parent->raiseWarning(level, message, terminal);
+         }
+         virtual void raiseWarning(int level, int message, SyntaxNode terminal, ustr_t arg)
+         {
+            parent->raiseWarning(level, message, terminal, arg);
          }
 
          virtual ref_t mapNewIdentifier(ustr_t identifier, Visibility visibility)
@@ -596,7 +604,9 @@ namespace elena_lang
          ref_t resolveExtensionTarget(ref_t reference);
 
          void raiseError(int message, SyntaxNode terminal) override;
+         void raiseError(int message, SyntaxNode terminal, ustr_t arg) override;
          void raiseWarning(int level, int message, SyntaxNode terminal) override;
+         void raiseWarning(int level, int message, SyntaxNode terminal, ustr_t arg) override;
 
          ObjectInfo defineObjectInfo(ref_t reference, ExpressionAttribute mode, bool checkMode);
          ObjectInfo definePredefined(ref_t reference/*, ExpressionAttribute mode*/);

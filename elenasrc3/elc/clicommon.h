@@ -617,17 +617,23 @@ class ErrorProcessor : public ErrorProcessorBase
       return current;
    }
 
-   void printTerminalInfo(int code, ustr_t pathArg, SyntaxNode node)
+   void printTerminalInfo(int code, ustr_t pathArg, SyntaxNode node, ustr_t arg = nullptr)
    {
       SyntaxNode terminal = findTerminal(node);
       if (terminal != SyntaxKey::None) {
          SyntaxNode col = terminal.findChild(SyntaxKey::Column);
          SyntaxNode row = terminal.findChild(SyntaxKey::Row);
 
-         _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
+         if (arg) {
+            _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier(), arg);
+         }
+         else _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
       }
       else {
-         _presenter->print(_presenter->getMessage(code), pathArg, 0, 0, "<unknown>");
+         if (arg) {
+            _presenter->print(_presenter->getMessage(code), pathArg, 0, 0, "<unknown>", arg);
+         }
+         else _presenter->print(_presenter->getMessage(code), pathArg, 0, 0, "<unknown>");
       }
    }
 
@@ -675,14 +681,14 @@ public:
       throw CLIException();
    }
 
-   virtual void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node)
+   virtual void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node, ustr_t arg = nullptr)
    {
-      printTerminalInfo(code, pathArg, node);
+      printTerminalInfo(code, pathArg, node, arg);
 
       throw AbortError();
    }
 
-   void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node)  
+   void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node, ustr_t arg = nullptr)
    {
       if (!test(_warningMasks, level))
          return;
@@ -690,7 +696,7 @@ public:
       if (_numberOfWarnings < MAX_WARNINGS) {
          _numberOfWarnings++;
 
-         printTerminalInfo(code, pathArg, node);
+         printTerminalInfo(code, pathArg, node, arg);
       }
    }
 

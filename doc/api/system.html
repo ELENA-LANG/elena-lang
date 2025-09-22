@@ -1533,7 +1533,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">BaseExtender</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">BaseExtender</SPAN><BR/>
+<I>A base mixing.<br/>The class must be inherited to extend the target object with extra methods</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1582,6 +1583,8 @@ system'BaseExtender</LI>
 <TD CLASS="colLast">
 <CODE>equal(o)
 </CODE>
+<div class="block">
+Redirects the message to <b>object</b> field</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1591,6 +1594,8 @@ system'BaseExtender</LI>
 <TD CLASS="colLast">
 <CODE>toPrintable()
 </CODE>
+<div class="block">
+Redirects the message to <b>object</b> field</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1600,6 +1605,8 @@ system'BaseExtender</LI>
 <TD CLASS="colLast">
 <CODE><i>dispatch</i>()
 </CODE>
+<div class="block">
+Redirects an income message to <b>object</b> field</div>
 </TD>
 </TR>
 </TABLE>
@@ -2219,7 +2226,7 @@ system'</DIV>
 <HR>
 <PRE STYLE="padding-top: 15px;">
 abstract public class <SPAN CLASS="typeNameLabel">BaseVariable</SPAN><BR/>
-<I>variable base class</I></PRE>
+<I>a variable base class</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -21152,7 +21159,7 @@ system'</DIV>
 <HR>
 <PRE STYLE="padding-top: 15px;">
 public class <SPAN CLASS="typeNameLabel">Variable</SPAN><BR/>
-<I>A generic variable.<br/>Extends an assigned value</I></PRE>
+<I>A generic variable.<br/>Extends an assigned value with compound operators : append (+=), reduce (-=), multiplyBy (*=) and divideBy (/=)</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -21241,6 +21248,8 @@ Creates the empty variable</div>
 <TD CLASS="colLast">
 <CODE>append(val)
 </CODE>
+<div class="block">
+Implements compound operator += <br>If the value is nil, assigns the operand to it, otherwise sum them and assign the result to the variable</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21250,6 +21259,8 @@ Creates the empty variable</div>
 <TD CLASS="colLast">
 <CODE>reduce(val)
 </CODE>
+<div class="block">
+Implements compound operator -= <br>If the value is nil, assigns the operand to it, otherwise subtract <b>val</b> from the variable value and assign the result to the variable</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21259,6 +21270,8 @@ Creates the empty variable</div>
 <TD CLASS="colLast">
 <CODE>multiplyBy(val)
 </CODE>
+<div class="block">
+Implements compound operator *= <br>If the value is nil, raises an exception, otherwise multiply the variable value by <b>val</b> and assign the result to the variable</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21268,6 +21281,8 @@ Creates the empty variable</div>
 <TD CLASS="colLast">
 <CODE>divideBy(val)
 </CODE>
+<div class="block">
+Implements compound operator /= <br>If the value is nil, raises an exception, otherwise divide the variable value by <b>val</b> and assign the result to the variable</div>
 </TD>
 </TR>
 </TABLE>

@@ -7,7 +7,9 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  - SimpleHttpServer : introduce a provider 
+  * api : provide descriptions for all classes in system & extensions
+  ======================================
+  * SimpleHttpServer : introduce a provider 
   --------------------------------------
   - review possible solution
   - design
@@ -22,6 +24,8 @@ In development:
   ======================================
   * #820 : Launch elena64-ide.exe from the command line 
   * warn if nil is passed to the non-nil argument
+  * ldoc : support search by method name
+  * ldoc : support search by class name
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
@@ -76,6 +80,7 @@ In development:
   - MTA support for Linux : support socket
   - MTA support for Linux : support http
   - MTA support for Linux : tests threads / tasks examples
+  - api : provide descriptions for all classes in net, algoithm, cellular, forms, ltests, mbedtls, sqlite, textgen, webapi, xforms, xml
   --------------------------------------
 
   === Iteration 45 ===

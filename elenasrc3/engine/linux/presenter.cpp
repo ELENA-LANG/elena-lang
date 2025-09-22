@@ -94,6 +94,11 @@ void LinuxConsolePresenter :: print(ustr_t msg, ustr_t path, int col, int row, u
    ::print(msg.str(), path.str(), row, col, s.str());
 }
 
+void LinuxConsolePresenter::print(ustr_t msg, ustr_t path, int col, int row, ustr_t s, ustr_t arg)
+{
+   ::print(msg.str(), path.str(), row, col, s.str(), arg.str());
+}
+
 void LinuxConsolePresenter :: printLine(ustr_t msg, ustr_t arg)
 {
    ::printLine(msg.str(), arg.str());

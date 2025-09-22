@@ -1,4 +1,4 @@
-errors.h//---------------------------------------------------------------------------
+//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains the ELENA Compiler error messages
@@ -64,8 +64,8 @@ namespace elena_lang
    constexpr auto errMsgUnknownTemplate            = "\n%s(%d:%d): error 181: Unknown template %s\n";
    constexpr auto errMsgDupPrivateMethod           = "\n%s(%d:%d): error 182: A private method with the same name '%s' is already declared\n";
    constexpr auto errMsgDupProtectedMethod         = "\n%s(%d:%d): error 183: A protected method with the same name '%s' is already declared\n";
-   constexpr auto errMsgUnknownDefConstructor      = "\n%s(%d:%d): error 184: A constructor is not defined for the class\n";
-   constexpr auto errMsgUnknownMessage             = "\n%s(%d:%d): error 185: Message '%s' is not handled by the object\n";
+   constexpr auto errMsgUnknownDefConstructor      = "\n%s(%d:%d): error 184: A unnamed constructor matching the passed arguments is not defined for the class\n";
+   constexpr auto errMsgUnknownMethod              = "\n%s(%d:%d): error 185: Method '%s' is not declared in the class %s or there is no appropriate overload\n";
    constexpr auto errMsgAssigningToSelf            = "\n%s(%d:%d): error 186: Cannot assign a variable '%s' to itself\n";
    constexpr auto errMsgUnknownTypecast            = "\n%s(%d:%d): error 188: typecasting routine cannot be found\n";
    constexpr auto errMsgUnknownFunction            = "\n%s(%d:%d): error 189: Function message does not handled by the object '%s'\n";
@@ -87,8 +87,8 @@ namespace elena_lang
 
    constexpr auto wrnMsgUnknownHint             = "\n%s(%d:%d): warning 404: Unknown attribute '%s'\n";
    constexpr auto wrnMsgInvalidHint             = "\n%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n";
-   constexpr auto wrnMsgUnknownMessage          = "\n%s(%d:%d): warning 407: Message '%s' does not handled by the object\n";
-   constexpr auto wrnMsgUnknownFunction         = "\n%s(%d:%d): warning 408: Function message does not handled by the object '%s'\n";
+   constexpr auto wrnMsgUnknownMethod           = "\n%s(%d:%d): warning 407: Method '%s' is not declared in the class %s or there is no appropriate overload\n";
+   constexpr auto wrnMsgUnknownFunction         = "\n%s(%d:%d): warning 408: 'function' message is not declared in the object '%s' or there is no appropriate overload\n";
    constexpr auto wrnMsgUnknownDefConstructor   = "\n%s(%d:%d): warning 409: Explicit constructor is not defined in the object\n";
    constexpr auto wrnMsgCallingItself           = "\n%s(%d:%d): warning 410: Calling itself can lead to short-circuiting\n";
    constexpr auto wrnMsgAssigningNillable       = "\n%s(%d:%d): warning 411: Assinging nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
