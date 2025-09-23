@@ -7,6 +7,14 @@ In development:
 
   === Iteration 42 ===
   ======================================
+  * default constructor was not called
+  --------------------------------------
+  - investigate
+  - fix
+  - unit test - #14 optimization
+  ======================================
+  * provide descriptions for all classes in system root namespace
+  ======================================
   * SimpleHttpServer : introduce a provider 
   --------------------------------------
   - review possible solution
@@ -25,6 +33,7 @@ In development:
   * warn if nil is passed to the non-nil argument
   * ldoc : support search by method name
   * ldoc : support search by class name
+  * Babylonian spiral
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------

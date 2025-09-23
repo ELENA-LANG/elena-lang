@@ -2393,6 +2393,15 @@ static inline BuildNode getPrevious(BuildNode node)
    }
 }
 
+static inline BuildNode goToNode(BuildNode node, BuildKey key)
+{
+   BuildNode previous = getPrevious(node);
+   while (previous.key != BuildKey::None && previous.key != key)
+      previous = getPrevious(previous);
+
+   return previous;
+}
+
 static inline void setChild(BuildNode node, BuildKey childKey, ref_t childArg)
 {
    BuildNode child = node.findChild(childKey);
@@ -2828,7 +2837,7 @@ inline bool doubleAssigningIntRealOp(BuildNode lastNode)
 
 inline bool inplaceCallOp(BuildNode lastNode)
 {
-   BuildNode markNode = getPrevious(lastNode);
+   BuildNode markNode = goToNode(lastNode, BuildKey::InplaceCall);
    BuildNode callNode = getPrevious(markNode);
    BuildNode classNode = getPrevious(callNode);
 
