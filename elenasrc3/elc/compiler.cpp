@@ -12321,7 +12321,9 @@ void Compiler::Class :: declareClassClass(ClassScope& classClassScope, SyntaxNod
    compiler->inheritStaticMethods(classClassScope, node);
 
    // declare in-place constructor if required
-   if (test(scope.info.header.flags, elStructureRole) && !test(scope.info.header.flags, elDynamicRole)) {
+   if (test(scope.info.header.flags, elStructureRole) && !test(scope.info.header.flags, elDynamicRole) 
+      && node.firstChild(SyntaxKey::MemberMask) != SyntaxKey::RedirectDispatch)
+   {
       compiler->injectInplaceConstructors(classClassScope, scope, node);
    }
 
