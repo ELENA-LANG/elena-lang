@@ -3454,7 +3454,9 @@ void Compiler :: injectInplaceConstructors(ClassScope& classClassScope, ClassSco
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Constructor) {
          bool dummy = false;
-         if (getArgCount(current.arg.reference) < 2 && isDefaultOrConversionConstructor(classClassScope, current.arg.reference, false, dummy)) {
+         if (getArgCount(current.arg.reference) < 2 && isDefaultOrConversionConstructor(classClassScope, current.arg.reference, false, dummy)
+            && current.firstChild(SyntaxKey::MemberMask) != SyntaxKey::RedirectDispatch) 
+         {
             MethodInfo constructorInfo = classClassScope.info.methods.get(current.arg.reference);
 
             declareInplaceConstructorHandler(current.arg.reference, constructorInfo, classScope, classClassScope);
@@ -12321,9 +12323,7 @@ void Compiler::Class :: declareClassClass(ClassScope& classClassScope, SyntaxNod
    compiler->inheritStaticMethods(classClassScope, node);
 
    // declare in-place constructor if required
-   if (test(scope.info.header.flags, elStructureRole) && !test(scope.info.header.flags, elDynamicRole) 
-      && node.firstChild(SyntaxKey::MemberMask) != SyntaxKey::RedirectDispatch)
-   {
+   if (test(scope.info.header.flags, elStructureRole) && !test(scope.info.header.flags, elDynamicRole)) {
       compiler->injectInplaceConstructors(classClassScope, scope, node);
    }
 
