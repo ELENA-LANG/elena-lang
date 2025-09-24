@@ -3455,7 +3455,7 @@ void Compiler :: injectInplaceConstructors(ClassScope& classClassScope, ClassSco
       if (current == SyntaxKey::Constructor) {
          bool dummy = false;
          if (getArgCount(current.arg.reference) < 2 && isDefaultOrConversionConstructor(classClassScope, current.arg.reference, false, dummy)
-            && current.firstChild(SyntaxKey::MemberMask) != SyntaxKey::RedirectDispatch) 
+            && !current.firstChild(SyntaxKey::MemberMask).compare(SyntaxKey::RedirectDispatch, SyntaxKey::ReturnExpression))
          {
             MethodInfo constructorInfo = classClassScope.info.methods.get(current.arg.reference);
 
