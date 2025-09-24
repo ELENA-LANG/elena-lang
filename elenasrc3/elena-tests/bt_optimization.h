@@ -94,8 +94,15 @@ namespace elena_lang
       void SetUp() override;
    };
 
-   // Optimization #12 (inplaceCallOp) : "struct X ( real x; ) ..  X x := new X() => call in-place constructor
+   // Optimization #12 (inplaceCallOp) : "struct X ( int x; ) ..  X x := new X() => call in-place constructor
    class BTOptimization12 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization #12 (inplaceCallOp) : "struct X ( int x; constructor(int){} ) ..  X x := 2 => call in-place constructor
+   class BTOptimization12_2 : public BTOptimization
    {
    protected:
       void SetUp() override;

@@ -1,9 +1,14 @@
 struct X
 {
    int x;
+
+   constructor(int x)
+   {
+      this x := x
+   }
 }
 
 public program()
 {
-   X x := new X();
+   X x := 2;
 }

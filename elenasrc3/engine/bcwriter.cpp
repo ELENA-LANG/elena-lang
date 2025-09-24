@@ -2881,6 +2881,7 @@ inline bool inplaceCallOp(BuildNode lastNode)
 
       callNode.setKey(BuildKey::SavingInStack);
       callNode.setArgumentValue(0);      
+      callNode.findChild(BuildKey::Type).setKey(BuildKey::Idle);
 
       lastNode.setKey(BuildKey::Idle);
 

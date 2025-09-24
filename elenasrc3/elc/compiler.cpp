@@ -3453,7 +3453,8 @@ void Compiler :: injectInplaceConstructors(ClassScope& classClassScope, ClassSco
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Constructor) {
-         if (getAction(current.arg.reference) == getAction(classClassScope.moduleScope->buildins.constructor_message) && getArgCount(current.arg.reference) < 2) {
+         bool dummy = false;
+         if (getArgCount(current.arg.reference) < 2 && isDefaultOrConversionConstructor(classClassScope, current.arg.reference, false, dummy)) {
             MethodInfo constructorInfo = classClassScope.info.methods.get(current.arg.reference);
 
             declareInplaceConstructorHandler(current.arg.reference, constructorInfo, classScope, classClassScope);

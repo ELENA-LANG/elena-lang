@@ -7,13 +7,6 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * in-place constructor call
-  --------------------------------------
-  - declare in-place constructor
-  - unit test - #12 optimization
-  - in-place convertor
-  - unit test - #12 optimization
-  ======================================
   * provide descriptions for all classes in system root namespace
   ======================================
   * SimpleHttpServer : introduce a provider 
