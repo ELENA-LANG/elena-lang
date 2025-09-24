@@ -1839,8 +1839,8 @@ namespace elena_lang
       void importCode(Scope& scope, SyntaxNode node, SyntaxNode& importNode);
 
       void injectLocalLoadingForYieldMethod(BuildTreeWriter& writer, ClassScope* classScope, CodeScope& codeScope);
-
       void injectSpecialArgumentInfo(BuildTreeWriter& writer, MethodScope& scope);
+      void injectInplaceConstructors(ClassScope& classClassScope, ClassScope& classScope, SyntaxNode node);
 
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 
@@ -2060,7 +2060,7 @@ namespace elena_lang
       void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope,
          /*SyntaxNode node, */bool& newFrame);
 
-      mssg_t declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope);
+      mssg_t declareInplaceConstructorHandler(mssg_t message, MethodInfo& methodInfo, ClassScope& classScope, ClassScope& classClassScope);
       mssg_t compileInplaceConstructorHandler(BuildTreeWriter& writer, MethodScope& invokerScope,
          ClassScope& classClassScope, SyntaxNode current, SyntaxNode methodNode, mssg_t handler);
       void compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node,

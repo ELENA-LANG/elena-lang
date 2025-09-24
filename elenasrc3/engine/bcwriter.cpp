@@ -2855,6 +2855,7 @@ inline bool inplaceCallOp(BuildNode lastNode)
 
       callNode.setKey(BuildKey::SavingInStack);
       callNode.setArgumentValue(0);
+      callNode.findChild(BuildKey::Type).setKey(BuildKey::Idle);
 
       lastNode.setKey(BuildKey::Idle);
 
@@ -2879,7 +2880,7 @@ inline bool inplaceCallOp(BuildNode lastNode)
       setChild(markNode, BuildKey::Type, callNode.findChild(BuildKey::Type).arg.reference);
 
       callNode.setKey(BuildKey::SavingInStack);
-      callNode.setArgumentValue(0);
+      callNode.setArgumentValue(0);      
 
       lastNode.setKey(BuildKey::Idle);
 

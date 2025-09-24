@@ -3448,6 +3448,22 @@ void Compiler::verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey metho
    }
 }
 
+void Compiler :: injectInplaceConstructors(ClassScope& classClassScope, ClassScope& classScope, SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Constructor) {
+         if (getAction(current.arg.reference) == getAction(classClassScope.moduleScope->buildins.constructor_message) && getArgCount(current.arg.reference) < 2) {
+            MethodInfo constructorInfo = classClassScope.info.methods.get(current.arg.reference);
+
+            declareInplaceConstructorHandler(current.arg.reference, constructorInfo, classScope, classClassScope);
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
 void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, SyntaxKey methodKey, bool closed)
 {
    VirtualMethodList implicitMultimethods({});
@@ -3540,6 +3556,7 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
 
             //ref_t hints = current.findChild(SyntaxKey::Hints).arg.value;
          }
+         // check for possible
       }
       current = current.nextNode();
    }
@@ -9165,54 +9182,54 @@ void Compiler::compileDispatchProberCode(BuildTreeWriter& writer, CodeScope& sco
    }
 }
 
-mssg_t Compiler::declareInplaceConstructorHandler(MethodScope& invokerScope, ClassScope& classClassScope)
+mssg_t Compiler :: declareInplaceConstructorHandler(mssg_t message, MethodInfo& methodInfo, ClassScope& classScope, ClassScope& classClassScope)
 {
-   ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
-
    ref_t actionRef, flags;
    pos_t argCount;
-   decodeMessage(invokerScope.message, actionRef, argCount, flags);
+   decodeMessage(message, actionRef, argCount, flags);
 
    flags &= ~FUNCTION_MESSAGE;
 
    ref_t signRef = 0;
-   ustr_t actionName = invokerScope.module->resolveAction(actionRef, signRef);
+   ustr_t actionName = classScope.module->resolveAction(actionRef, signRef);
    ref_t signArgs[ARG_COUNT];
-   size_t signLen = invokerScope.module->resolveSignature(signRef, signArgs);
+   size_t signLen = classScope.module->resolveSignature(signRef, signArgs);
 
    // insert a struct variable
    for (size_t i = signLen; i > 0; i--)
       signArgs[i] = signArgs[i - 1];
 
-   signArgs[0] = classScope->reference;
+   signArgs[0] = classScope.reference;
 
    // HOTFIX : use weak reference as a message argument
-   if (test(classScope->info.header.flags, elTemplatebased))
+   if (test(classScope.info.header.flags, elTemplatebased))
       signArgs[0] = mapAsWeakReference(classClassScope.moduleScope, signArgs[0]);
 
    signLen++;
 
    mssg_t inplaceMessage = encodeMessage(
-      invokerScope.module->mapAction(
-         actionName, invokerScope.module->mapSignature(signArgs, signLen, false), false), argCount + 1, flags | STATIC_MESSAGE);
+      classScope.module->mapAction(
+         actionName, classScope.module->mapSignature(signArgs, signLen, false), false), argCount + 1, flags | STATIC_MESSAGE);
 
-   if (MethodInfo::checkVisibility(invokerScope.info, MethodHint::Protected)) {
-      mssg_t publicInplaceMessage = encodeMessage(
-         invokerScope.module->mapAction(
-            CONSTRUCTOR_MESSAGE, invokerScope.module->mapSignature(signArgs, signLen, false), false), argCount + 1, flags | STATIC_MESSAGE);
+   if (!classClassScope.info.methods.exist(inplaceMessage)) {
+      if (MethodInfo::checkVisibility(methodInfo, MethodHint::Protected)) {
+         mssg_t publicInplaceMessage = encodeMessage(
+            classScope.module->mapAction(
+               CONSTRUCTOR_MESSAGE, classScope.module->mapSignature(signArgs, signLen, false), false), argCount + 1, flags | STATIC_MESSAGE);
 
-      classClassScope.addMssgAttribute(publicInplaceMessage,
-         ClassAttribute::ProtectedAlias, inplaceMessage);
+         classClassScope.addMssgAttribute(publicInplaceMessage,
+            ClassAttribute::ProtectedAlias, inplaceMessage);
+      }
+
+      MethodInfo info = { };
+
+      info.hints |= (ref_t)MethodHint::Private;
+      info.hints |= (ref_t)MethodHint::Sealed;
+      info.hints |= (ref_t)MethodHint::Stacksafe;
+
+      classClassScope.info.methods.add(inplaceMessage, info);
+      classClassScope.save();
    }
-
-   MethodInfo info = { };
-
-   info.hints |= (ref_t)MethodHint::Private;
-   info.hints |= (ref_t)MethodHint::Sealed;
-   info.hints |= (ref_t)MethodHint::Stacksafe;
-
-   classClassScope.info.methods.add(inplaceMessage, info);
-   classClassScope.save();
 
    return inplaceMessage;
 }
@@ -9976,9 +9993,9 @@ void Compiler::compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScop
 void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, SyntaxNode current, SyntaxNode methodNode,
    MethodScope& scope, CodeScope& codeScope, ClassScope& classClassScope/*, ref_t classFlags, bool newFrame*/)
 {
-   mssg_t privateHandler = declareInplaceConstructorHandler(scope, classClassScope);
-
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+
+   mssg_t privateHandler = declareInplaceConstructorHandler(scope.message, scope.info, *classScope, classClassScope);
 
    // calling the byref handler
    Expression expression(this, codeScope, writer, classScope->withDebugInfo, nullptr);
@@ -12276,7 +12293,7 @@ void Compiler::Class::resolveClassPostfixes(SyntaxNode node, bool extensionMode)
    else compiler->declareClassParent(parentRef, scope, parentNode);
 }
 
-void Compiler::Class::declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef)
+void Compiler::Class :: declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef)
 {
    classClassScope.info.header.flags |= elClassClass; // !! IMPORTANT : classclass flags should be set
 
@@ -12301,6 +12318,11 @@ void Compiler::Class::declareClassClass(ClassScope& classClassScope, SyntaxNode 
 
    compiler->generateClassDeclaration(classClassScope, node, 0);
    compiler->inheritStaticMethods(classClassScope, node);
+
+   // declare in-place constructor if required
+   if (test(scope.info.header.flags, elStructureRole) && !test(scope.info.header.flags, elDynamicRole)) {
+      compiler->injectInplaceConstructors(classClassScope, scope, node);
+   }
 
    // save declaration
    classClassScope.save();

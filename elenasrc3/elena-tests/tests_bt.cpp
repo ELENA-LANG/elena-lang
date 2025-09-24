@@ -22,6 +22,9 @@ using namespace elena_lang;
 * BTOptimization4
 * ---------------
 *
+* BTOptimization12
+* ---------------
+*
 */
 
 TEST_F(BTOptimization1_1, BuildTapeTest)
@@ -50,6 +53,11 @@ TEST_F(BTOptimization2, BuildTapeTest)
 }
 
 TEST_F(BTOptimization4, BuildTapeTest)
+{
+   runBTTest();
+}
+
+TEST_F(BTOptimization12, BuildTapeTest)
 {
    runBTTest();
 }

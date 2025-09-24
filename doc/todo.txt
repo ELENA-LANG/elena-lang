@@ -7,11 +7,12 @@ In development:
 
   === Iteration 42 ===
   ======================================
-  * default constructor was not called
+  * in-place constructor call
   --------------------------------------
-  - investigate
-  - fix
-  - unit test - #14 optimization
+  - declare in-place constructor
+  - unit test - #12 optimization
+  - in-place convertor
+  - unit test - #12 optimization
   ======================================
   * provide descriptions for all classes in system root namespace
   ======================================

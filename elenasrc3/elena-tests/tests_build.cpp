@@ -99,6 +99,11 @@ TEST_F(BTOptimization4, BuildTest)
    runBuildTest();
 }
 
+TEST_F(BTOptimization12, BuildTest)
+{
+   runBuildTest(true);
+}
+
 TEST_F(StructAlignment, BuildTest)
 {
    runTest();
