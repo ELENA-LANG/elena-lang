@@ -8,6 +8,10 @@ In development:
   === Iteration 42 ===
   ======================================
   * provide descriptions for all classes in system root namespace
+  --------------------------------------
+  - provide symbol descriptions
+  - symbols from basic.l
+  - descriptions strings.l
   ======================================
   * SimpleHttpServer : introduce a provider 
   --------------------------------------
