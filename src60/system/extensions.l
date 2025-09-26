@@ -958,7 +958,7 @@ public extension realOp : RealNumber
 
 public extension intRefOp : Reference<int>
 {
-    append(int n)
+    append(int n) 
     {
         int v := *self;
         v := v + n;
@@ -980,6 +980,7 @@ public extension intRefOp : Reference<int>
 public extension stringOp : String
 {
    string Substring(int index)
+      : info("Returns a substring starting from <b>index</b> till the end")
    {
       int len := self.Length;
       if (len > index)
@@ -992,15 +993,14 @@ public extension stringOp : String
       ^ EmptyString
    }
 
-   int indexOf(string s)
+   int indexOf(string s) : info("Returns the index of the first occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
       = self.indexOf(0, s);
 
-   int indexOf(char ch)
+   int indexOf(char ch) : info("Returns the index of the first occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
       = self.indexOf(0, ch);
 
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the string")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int retVal := PrimitiveStringOperations.getHashcode(self);
@@ -1009,24 +1009,24 @@ public extension stringOp : String
       }
    }
 
-   bool isEmpty()
+   bool isEmpty() : info("Returns true if the string has 0 length")
    {
       int len := self.Length;
         
       ^ len == 0;
    }
         
-   bool isNonempty()
+   bool isNonempty() : info("Returns true if the string has a length greater then 0")
    {
       int len := self.Length;
         
       ^ len != 0;
    }
     
-   string padLeft(int length)
+   string padLeft(int length) : info("Returns a new string of a specified length in which the beginning of the current string is padded with spaces")
       = self.padLeft($32, length);
     
-   string padLeft(char ch, int length)
+   string padLeft(char ch, int length) : info("Returns a new string of a specified length in which the beginning of the current string is padded with the provided character <b>ch</b>")
    {
       int currentLength := self.Length;
         
@@ -1036,10 +1036,10 @@ public extension stringOp : String
       ^ self
    }
     
-   string padRight(int length)
+   string padRight(int length) : info("Returns a new string of a specified length in which the ending of the current string is padded with spaces")
        = self.padRight($32, length);
     
-   string padRight(char ch, int length)
+   string padRight(char ch, int length) : info("Returns a new string of a specified length in which the ending of the current string is padded with the provided character <b>ch</b>")
    {
       int currentLength := self.Length;
 
@@ -1049,14 +1049,14 @@ public extension stringOp : String
       ^ self
    }
 
-   bool startingWith(string s)
+   bool startingWith(string s) : info("Returns true if the string starts with the specified string <b>s</b>")
    {
       int n := self.indexOf(0, s);
         
       ^ 0 == n
    }
         
-   bool endingWith(string s)
+   bool endingWith(string s) : info("Returns true if the string ends with the specified string <b>s</b>")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -1066,7 +1066,7 @@ public extension stringOp : String
       ^ n != -1
    }
         
-   bool containing(string s)
+   bool containing(string s) : info("Returns true if the string contains the specified string <b>s</b>")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -1076,7 +1076,7 @@ public extension stringOp : String
       ^ n != -1
    }
     
-   string trimLeft(char ch)
+   string trimLeft(char ch) : info("Removes all the leading occurrences of a specified character <b>ch</b> from the string")
    {
       int  index := 0;
       int  len := self.Length;
@@ -1105,10 +1105,10 @@ public extension stringOp : String
       ^ EmptyString
    }
     
-   string trimLeft()
+   string trimLeft() : info("Removes all the leading occurrences of a space from the string")
       = self.trimLeft($32);
        
-   string trimRight(char ch)
+   string trimRight(char ch) : info("Removes all the tailing occurrences of a specified character <b>ch</b> from the string")
    {
       int  len := self.Length;
       int  index := len - 1;
@@ -1130,16 +1130,16 @@ public extension stringOp : String
       ^ EmptyString
    }
     
-   string trimRight()
+   string trimRight() : info("Removes all the tailing occurrences of a space from the string")
       = self.trimRight($32);
         
-   string trim(char ch)
+   string trim(char ch) : info("Removes all the leading and tailing occurrences of a specified character <b>ch</b> from the string")
       = self.trimLeft(ch).trimRight(ch);
     
-   string trim()
+   string trim() : info("Removes all the leading and tailing occurrences of a space from the string")
       = self.trimLeft($32).trimRight($32);
 
-   string replace(string replacee, string replacer)
+   string replace(string replacee, string replacer) : info("Replaces all the occurrences of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
       string target := EmptyString;
       int    start := 0;
@@ -1165,7 +1165,7 @@ public extension stringOp : String
       ^ self
    }   
 
-   string replaceFirst(string replacee, string replacer)
+   string replaceFirst(string replacee, string replacer) : info("Replaces the first occurrence of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
       int replaceeLen := replacee.Length;
       int i := self.indexOf(0, replacee);
@@ -1185,7 +1185,7 @@ public extension stringOp : String
 
 public extension charOp : CharValue
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the character")
    {
       // Reads the object hash code into the output parameter
       get()
@@ -1197,12 +1197,12 @@ public extension charOp : CharValue
       }
    }
 
-   bool isNewLine()
+   bool isNewLine() : info("Returns true if it is a new line character")
    {
       ^ self == $10
    }
 
-   bool isWhitespace()
+   bool isWhitespace() : info("Returns true if it is a white space character")
    {
       self =>
          $9  : { ^ true }
@@ -1214,14 +1214,14 @@ public extension charOp : CharValue
       ^ false
    }
 
-   bool isDigit()
+   bool isDigit() : info("Returns true if it is a digit character")
    {
       int ch := IntConvertor.convert(self);
         
       ^ (ch >= 30h) && (ch <= 39h)
    }
 
-   bool isLetter()
+   bool isLetter() : info("Returns true if it is a text letter character")
    {
       int ch := IntConvertor.convert(self);
         
@@ -1239,8 +1239,8 @@ public extension charOp : CharValue
             
       ^ false
    }
-    
-   bool isLToken()
+                                                                          
+   bool isLToken() : info("Returns true if it is an identifier character")
    {
       int ch := IntConvertor.convert(self);
         
@@ -1266,6 +1266,7 @@ public extension charOp : CharValue
 public extension wideOp : WideString
 {
    wide Substring(int index)
+      : info("Returns a substring starting from <b>index</b> till the end")
    {
       int len := self.Length;
       if (len > index)
@@ -1278,15 +1279,14 @@ public extension wideOp : WideString
       ^ emptyWideString
    }
 
-   int indexOf(wide s)
+   int indexOf(wide s) : info("Returns the index of the first occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
       = self.indexOf(0, s);
 
-   int indexOf(char ch)
+   int indexOf(char ch) : info("Returns the index of the first occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
       = self.indexOf(0, ch);
 
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the string")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int retVal := PrimitiveWideStringOperations.getHashcode(self);
@@ -1295,24 +1295,24 @@ public extension wideOp : WideString
       }
    }
 
-   bool isEmpty()
+   bool isEmpty() : info("Returns true if the string has 0 length")
    {
       int len := self.Length;
         
       ^ len == 0;
    }
         
-   bool isNonempty()
+   bool isNonempty() : info("Returns true if the string has a length greater then 0")
    {
       int len := self.Length;
         
       ^ len != 0;
    }
     
-   wide padLeft(int length)
+   wide padLeft(int length) : info("Returns a new string of a specified length in which the beginning of the current string is padded with spaces")
       = self.padLeft($32, length);
     
-   wide padLeft(char ch, int length)
+   wide padLeft(char ch, int length) : info("Returns a new string of a specified length in which the beginning of the current string is padded with the provided character <b>ch</b>")
    {
       int currentLength := self.Length;
         
@@ -1322,10 +1322,10 @@ public extension wideOp : WideString
       ^ self
    }
     
-   wide padRight(int length)
+   wide padRight(int length) : info("Returns a new string of a specified length in which the ending of the current string is padded with spaces")
        = self.padRight($32, length);
     
-   wide padRight(char ch, int length)
+   wide padRight(char ch, int length) : info("Returns a new string of a specified length in which the ending of the current string is padded with the provided character <b>ch</b>")
    {
       int currentLength := self.Length;
 
@@ -1335,14 +1335,14 @@ public extension wideOp : WideString
       ^ self
    }
 
-   bool startingWith(wide s)
+   bool startingWith(wide s) : info("Returns true if the string starts with the specified string <b>s</b>")
    {
       int n := self.indexOf(0, s);
         
       ^ 0 == n
    }
         
-   bool endingWith(wide s)
+   bool endingWith(wide s) : info("Returns true if the string ends with the specified string <b>s</b>")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -1352,7 +1352,7 @@ public extension wideOp : WideString
       ^ n != -1
    }
         
-   bool containing(wide s)
+   bool containing(wide s) : info("Returns true if the string contains the specified string <b>s</b>")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -1362,7 +1362,7 @@ public extension wideOp : WideString
       ^ n != -1
    }
     
-   wide trimLeft(char ch)
+   wide trimLeft(char ch) : info("Removes all the leading occurrences of a specified character <b>ch</b> from the string")
    {
       int  index := 0;
       int  len := self.Length;
@@ -1391,10 +1391,10 @@ public extension wideOp : WideString
       ^ emptyWideString
    }
     
-   wide trimLeft()
+   wide trimLeft() : info("Removes all the leading occurrences of a space from the string")
       = self.trimLeft($32);
        
-   wide trimRight(char ch)
+   wide trimRight(char ch) : info("Removes all the tailing occurrences of a specified character <b>ch</b> from the string")
    {
       int  len := self.Length;
       int  index := len - 1;
@@ -1416,16 +1416,16 @@ public extension wideOp : WideString
       ^ emptyWideString
    }
     
-   wide trimRight()
+   wide trimRight() : info("Removes all the tailing occurrences of a space from the string")
       = self.trimRight($32);
         
-   wide trim(char ch)
+   wide trim(char ch) : info("Removes all the leading and tailing occurrences of a specified character <b>ch</b> from the string")
       = self.trimLeft(ch).trimRight(ch);
     
-   wide trim()
+   wide trim() : info("Removes all the leading and tailing occurrences of a space from the string")
       = self.trimLeft($32).trimRight($32);
 
-   wide replace(wide replacee, wide replacer)
+   wide replace(wide replacee, wide replacer) : info("Replaces all the occurrences of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
       wide   target := emptyWideString;
       int    start := 0;
@@ -1451,7 +1451,7 @@ public extension wideOp : WideString
       ^ self
    }   
 
-   wide replaceFirst(wide replacee, wide replacer)
+   wide replaceFirst(wide replacee, wide replacer) : info("Replaces the first occurrence of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
       int replaceeLen := replacee.Length;
       int i := self.indexOf(0, replacee);
@@ -1471,7 +1471,7 @@ public extension wideOp : WideString
 
 public extension weakArrayOp
 {
-    Array Subarray(int index, int length)
+    Array Subarray(int index, int length) : info("Returns a sub array of the collection starting from <b>index</b> and with the specified <b>length</b><br/>The object must support indexer message")
     {
         auto it := self.indexer();
         it.Index := index;
@@ -1491,7 +1491,7 @@ public extension weakArrayOp
 // --- stringWeakOp ---
 public extension stringWeakOp
 {
-   fillString(s, int counter)
+   fillString(s, int counter) : info("Writes the argument <b>s</b> to the object, <b>counter</b> times<br/>The object must support write message")
    {
       for (int i := 0; i < counter; i += 1)
       {
@@ -1501,10 +1501,10 @@ public extension stringWeakOp
       ^ self
    }
 
-   writeCopies(line, int counter)
+   writeCopies(line, int counter) : info("Writes the argument <b>line</b> to the object, <b>counter</b> times<br/>The object must support write message")
       = self.fillString(line, counter);
 
-   writePadding(line, char ch, int width)
+   writePadding(line, char ch, int width) : info("Writes the argument <b>line</b> into the object padded with a character<b>ch</b> from the both sides so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       int length := line.Length;        
         
@@ -1526,7 +1526,7 @@ public extension stringWeakOp
    }   
 
 
-   writePaddingLeft(line, char ch, int width)
+   writePaddingLeft(line, char ch, int width) : info("Writes the argument <b>line</b> into the object padded from the beginning with a character<b>ch</b> so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       var paddedStr := line.padLeft(ch, width);
 
@@ -1535,7 +1535,7 @@ public extension stringWeakOp
       ^ self
    }
     
-   writePaddingRight(line, char ch, int width)
+   writePaddingRight(line, char ch, int width) : info("Writes the argument <b>line</b> into the object padded from the ending with a character<b>ch</b> so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       var paddedStr := line.padRight(ch, width);
 
@@ -1544,7 +1544,7 @@ public extension stringWeakOp
       ^ self
    }
     
-   writePaddingLeft(line, int width)
+   writePaddingLeft(line, int width) : info("Writes the argument <b>line</b> into the object padded from the beginning with a space so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       var paddedStr := line.padLeft($32, width);
 
@@ -1553,7 +1553,7 @@ public extension stringWeakOp
       ^ self
    }
     
-   writePaddingRight(line, int width)
+   writePaddingRight(line, int width) : info("Writes the argument <b>line</b> into the object padded from the ending with a space so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       var paddedStr := line.padRight($32, width);
 
@@ -1565,7 +1565,7 @@ public extension stringWeakOp
 
 public extension threadObjectOp
 {
-   enterCriticalSection() : external(system'core_routines'__enterCritical);
+   enterCriticalSection() : external(system'core_routines'__enterCritical), info("Locks the object");
 
-   leaveCriticalSection() : external(system'core_routines'__leaveCritical);
+   leaveCriticalSection() : external(system'core_routines'__leaveCritical), info("Unlocks the object");
 }

@@ -1020,7 +1020,7 @@ public const struct String : BaseValue,
    }
 
    int indexOf(int index, char ch)
-      : info("Saves the index of the first occurence of the specified character <b>ch</b> starting from <b>index</b> into an output parameter.<br/>If the substring is not found. returns -1")
+      : info("Returns the index of the first occurence of the specified character <b>ch</b> starting from <b>index</b>.<br/>If the substring is not found. returns -1")
    {
       int sublen := self.Length - index;
 
