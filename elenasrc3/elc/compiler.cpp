@@ -2702,10 +2702,10 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             break;
          }
          case SyntaxKey::MetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, false);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class, false);
             break;
          case SyntaxKey::SharedMetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, true);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class, true);
             break;
          case SyntaxKey::ElseCondStatement:
          case SyntaxKey::CondStatement:
