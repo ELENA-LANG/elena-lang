@@ -898,6 +898,9 @@ bool Interpreter::evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo&
          case ObjectKind::ClassSelf:
             retVal = { ObjectKind::SelfName };
             return true;
+         case ObjectKind::Symbol:
+            retVal = { ObjectKind::SymbolName };
+            return true;
          case ObjectKind::Method:
             retVal = { ObjectKind::MethodName };
             return true;
@@ -2634,6 +2637,7 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    if (superMode) {
       switch (level) {
          case Scope::ScopeLevel::Class:
+         case Scope::ScopeLevel::Symbol:
             level = Scope::ScopeLevel::Namespace;
             break;
          case Scope::ScopeLevel::Method:
@@ -2667,9 +2671,6 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
 
          break;
       }
-      case Scope::ScopeLevel::Symbol:
-         assert(false);
-         break;
       default:
          break;
    }
@@ -5020,6 +5021,16 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
             ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
             if (classScope != nullptr) {
                ustr_t name = scope.module->resolveReference(classScope->reference);
+
+               retVal = interpreter.mapStringConstant(name);
+            }
+            break;
+         }
+         case ObjectKind::SymbolName:
+         {
+            SymbolScope* symbolScope = Scope::getScope<SymbolScope>(scope, Scope::ScopeLevel::Symbol);
+            if (symbolScope != nullptr) {
+               ustr_t name = scope.module->resolveReference(symbolScope->reference);
 
                retVal = interpreter.mapStringConstant(name);
             }

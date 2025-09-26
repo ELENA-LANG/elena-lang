@@ -2,7 +2,7 @@
 
 public extension objectOp
 {
-   string __getClassName()   
+   string __getClassName() : info("Returns the object class name")
       = __className;
 
    __getClass() : external(system'core_routines'__object_class),
@@ -18,14 +18,14 @@ public extension objectOp
          : info("Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible")
       = self.equal(o) \ back(false);
 
-   bool isEmpty()
+   bool isEmpty() : info("Returns true if the object length is 0")
    {
       int len := self.Length;
         
       ^ len == 0;
    }
         
-   bool isNonempty()
+   bool isNonempty() : info("Returns true if the object length is not 0")
    {
       int len := self.Length;
         
@@ -36,13 +36,13 @@ public extension objectOp
          : info("Returns true if the object is nil")
       = nil == self;       
 
-   doWith(action)
+   doWith(action) : info("Invokes <b>action</b> function passing the object as an argument")
       = action(self);
 
    bool instanceOf(type) : external(system'core_routines'__object_instanceOf),
                   info("Checks if the object is an instance of type");
 
-   bool subsetOf(type)
+   bool subsetOf(type) : info("Returns true if the object is an instance of a child of <b>type</b>")
    {
       var class := self.__getClass();
       while (class != nil) {
@@ -139,9 +139,8 @@ public extension valueOp
 
 public extension byteOp : ByteNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the byte")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int val := self;
@@ -151,7 +150,7 @@ public extension byteOp : ByteNumber
       }
    }
 
-   get byte Absolute()
+   get byte Absolute() : info("Returns the absolute value of the byte")
    {
       byte n := self;
     
@@ -161,7 +160,7 @@ public extension byteOp : ByteNumber
       ^ n
    }
 
-   byte power(int y)
+   byte power(int y) : info("returns the power of the byte raised to <b>y</b>")
    {
       byte x := self;
       byte r := 1;
@@ -174,10 +173,10 @@ public extension byteOp : ByteNumber
       ^ new ByteNumber(r)
    }
 
-   byte sqr()
+   byte sqr() : info("returns the power of the byte raised to 2")
       = self * self;
 
-   byte sqrt()
+   byte sqrt() : info("returns the square root of the byte")
    {   
       byte num := self;
               
@@ -195,39 +194,38 @@ public extension byteOp : ByteNumber
       ^ n
    }
 
-   byte mod(operand)
+   byte mod(operand) : info("returns the remainder of an integer division")
    {
       var retVal := self / operand * operand;
         
       ^ ByteConvertor.convert(retVal)
    }
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the byte is odd")
       = self.mod(2) != 0;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the byte is even")
       = self.mod(2) == 0;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the byte is zero")
       = self.equal(0);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the byte is positive")
       = self > 0;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the byte is negative")
       = self < 0;
         
-   bool isNonnegative()
-      = self <= 0;
+   bool isNonnegative() : info("Returns true if the byte is not negative")
+      = self >= 0;
 }
 
 // --- shortOp ---
 
 public extension shortOp : ShortNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the short integer")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int val := self;
@@ -237,7 +235,7 @@ public extension shortOp : ShortNumber
       }
    }
 
-   get short Absolute()
+   get short Absolute() : info("Returns the absolute value of the short integer")
    {
       short n := self;
     
@@ -247,7 +245,7 @@ public extension shortOp : ShortNumber
       ^ n
    }
 
-   short power(int y)
+   short power(int y) : info("returns the power of the short integer raised to <b>y</b>")
    {
       short x := self;
       short r := 1;
@@ -260,10 +258,10 @@ public extension shortOp : ShortNumber
       ^ new ShortNumber(r)
    }
 
-   short sqr()
+   short sqr() : info("returns the power of the short integer raised to 2")
       = self * self;
 
-   short sqrt()
+   short sqrt() : info("returns the square root of the short integer")
    {   
       short num := self;
               
@@ -281,32 +279,32 @@ public extension shortOp : ShortNumber
       ^ n
    }
 
-   short mod(operand)
+   short mod(operand) : info("returns the remainder of an integer division")
    {
       var retVal := self / operand * operand;
         
       ^ ShortConvertor.convert(retVal)
    }    
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the short integer is odd")
       = self.mod(2) != 0;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the short integer is even")
       = self.mod(2) == 0;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the short integer is zero")
       = self.equal(0);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the short integer is positive")
       = self > 0;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the short integer is negative")
       = self < 0;
         
-   bool isNonnegative()
-      = self <= 0;
+   bool isNonnegative() : info("Returns true if the short integer is not negative")
+      = self >= 0;
 
-   get byte High()
+   get byte High() : info("Returns a high byte of the short integer")
    {
       short w := self;
       w := w & 0FF00h;
@@ -315,7 +313,7 @@ public extension shortOp : ShortNumber
       ^ ByteConvertor.convert(w)
    }
         
-   get byte Low()
+   get byte Low() : info("Returns a low byte of the short integer")
    {
       short w := self;
       w := w & 0FFh;
@@ -328,9 +326,8 @@ public extension shortOp : ShortNumber
 
 public extension intOp : IntNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the integer")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int retVal := PrimitiveIntOperations.getHashcode(self);
@@ -339,7 +336,7 @@ public extension intOp : IntNumber
       }
    }
 
-   get int Absolute()
+   get int Absolute() : info("Returns the absolute value of the integer")
    {
       int n := self;
     
@@ -349,7 +346,7 @@ public extension intOp : IntNumber
       ^ n
    }
 
-   int power(int y)
+   int power(int y) : info("returns the power of the integer raised to <b>y</b>")
    {
       int x := self;
       int r := 1;
@@ -364,10 +361,10 @@ public extension intOp : IntNumber
       ^ r
    }
 
-   int sqr()
+   int sqr() : info("returns the power of the integer raised to 2")
       = self * self;
 
-   int sqrt()
+   int sqrt() : info("returns the square root of the integer")
    {   
       int num := self;
               
@@ -385,10 +382,10 @@ public extension intOp : IntNumber
       ^ n
    }
 
-   real realDiv(n)
+   real realDiv(n) : info("returns the result of a real division")
       = new RealNumber(self).divide(n);
 
-   int mod(int operand)
+   int mod(int operand) : info("returns the remainder of an integer division")
    {
       int retVal := self / operand * operand;
 
@@ -397,32 +394,32 @@ public extension intOp : IntNumber
       ^ retVal
    }
 
-   int mod(o)
+   int mod(o) : info("returns the remainder of an integer division")
    {
       int retVal := self.mod(cast int(o));
         
       ^ retVal
    }
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the integer is odd")
       = self.mod(2) != 0;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the integer is even")
       = self.mod(2) == 0;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the integer is zero")
       = self.equal(0);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the integer is positive")
       = self > 0;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the integer is negative")
       = self < 0;
         
-   bool isNonnegative()
-      = self <= 0;
+   bool isNonnegative() : info("Returns true if the integer is not negative")
+      = self >= 0;
 
-   get short High()
+   get short High() : info("Returns a high word of the integer")
    {
       int w := self;
       w := w & 0FFFF0000h;
@@ -431,7 +428,7 @@ public extension intOp : IntNumber
       ^ ShortConvertor.convert(w)
    }
         
-   get short Low()
+   get short Low() : info("Returns a low word of the integer")
    {
       int w := self;
       w := w & 0FFFFh;
@@ -444,7 +441,7 @@ public extension intOp : IntNumber
 
 public extension uintOp : UIntNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the unsigned integer")
    {
       // Reads the object hash code into the output parameter
       get()
@@ -455,10 +452,10 @@ public extension uintOp : UIntNumber
       }
    }
 
-   uint sqr()
+   uint sqr() : info("returns the power of the unsigned integer raised to 2")
       = self * self;
 
-   uint sqrt()
+   uint sqrt() : info("returns the square root of the unsigned integer")
    {   
       uint num := self;
               
@@ -476,7 +473,7 @@ public extension uintOp : UIntNumber
       ^ n
    }
 
-   uint mod(uint operand)
+   uint mod(uint operand) : info("returns the remainder of an integer division")
    {
       uint retVal := self / operand * operand;
 
@@ -485,7 +482,7 @@ public extension uintOp : UIntNumber
       ^ retVal
    }
 
-   uint mod(int operand)
+   uint mod(int operand) : info("returns the remainder of an integer division")
    {
       uint uoperand := operand;
       uint retVal := self / uoperand * uoperand;
@@ -495,36 +492,27 @@ public extension uintOp : UIntNumber
       ^ retVal
    }
 
-   uint mod(operand)
+   uint mod(operand) : info("returns the remainder of an integer division")
       = self.mod(cast uint(operand));
 
-   real realDiv(n)
+   real realDiv(n) : info("returns the result of a real division")
       = new RealNumber(self).divide(n);
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the integer is odd")
       = self.mod(2) != 0;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the integer is even")
       = self.mod(2) == 0;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the integer is zero")
       = self.equal(0);
-        
-   bool isPositive()
-      = self > 0;
-        
-   bool isNegative()
-      = self < 0;
-        
-   bool isNonnegative()
-      = self <= 0;
 }
 
 // --- longOp ---
 
 public extension longOp : LongNumber
 {   
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the long integer")
    {
       // Reads the object hash code into the output parameter
       get()
@@ -535,7 +523,7 @@ public extension longOp : LongNumber
       }
    }
 
-   get long Absolute()
+   get long Absolute() : info("Returns the absolute value of the long integer")
    {
       long n := self;
 
@@ -545,7 +533,7 @@ public extension longOp : LongNumber
       ^ n
    }
 
-   long power(long y)
+   long power(long y) : info("returns the power of the long integer raised to <b>y</b>")
    {
       long x := self;
       long r := 1;
@@ -558,7 +546,7 @@ public extension longOp : LongNumber
       ^ new LongNumber(r)
    }
     
-   long power(int y)
+   long power(int y) : info("returns the power of the long integer raised to <b>y</b>")
    {
       long x := self;
       long r := 1;
@@ -574,10 +562,10 @@ public extension longOp : LongNumber
       ^ new LongNumber(r)
    }
 
-   long sqr()
+   long sqr() : info("returns the power of the long integer raised to 2")
       = self * self;
 
-   long sqrt()
+   long sqrt() : info("returns the square root of the long integer")
    {   
       long num := self;
               
@@ -595,10 +583,10 @@ public extension longOp : LongNumber
       ^ n
    }
 
-   real realDiv(n)
+   real realDiv(n) : info("returns the result of a real division")
       = new RealNumber(self).divide(n);
 
-   long mod(long operand)
+   long mod(long operand) : info("returns the remainder of an long integer division")
    {
       long retVal := self / operand * operand;
 
@@ -607,7 +595,7 @@ public extension longOp : LongNumber
       ^ retVal
    }    
 
-   long mod(n)
+   long mod(n) : info("returns the remainder of an long integer division")
    {
       long x := self;
       long y := cast long(n);
@@ -618,25 +606,25 @@ public extension longOp : LongNumber
       ^ new LongNumber(x - z)
    }
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the long integer is odd")
       = self.mod(2l) != 0l;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the long integer is even")
       = self.mod(2l) == 0l;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the long integer is zero")
       = self.equal(0l);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the long integer is positive")
       = self > 0l;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the long integer is negative")
       = self < 0l;
         
-   bool isNonnegative()
+   bool isNonnegative() : info("Returns true if the long integer is not negative")
       = self <= 0l;
 
-   get int High()
+   get int High() : info("Returns a high integer of the long integer")
    {
       long w := self;
       w := w & -4294967296l;
@@ -645,7 +633,7 @@ public extension longOp : LongNumber
       ^ IntConvertor.convert(w)
    }
 
-   get int Low()
+   get int Low() : info("Returns a low integer of the long integer")
    {
       long w := self;
       w := w & 4294967295l;
@@ -658,7 +646,7 @@ public extension longOp : LongNumber
 
 public extension realOp : RealNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the real number")
    {
       // Reads the object hash code into the output parameter
       get()
@@ -669,7 +657,7 @@ public extension realOp : RealNumber
       }
    }
 
-   real power(real y)
+   real power(real y) : info("returns the power of the real number raised to <b>y</b>")
    {
       real x := self;
         
@@ -688,7 +676,7 @@ public extension realOp : RealNumber
       ^ x            
    }
 
-   real power(int y)
+   real power(int y) : info("returns the power of the real number raised to <b>y</b>")
    {
       real x := self;
 
@@ -723,45 +711,45 @@ public extension realOp : RealNumber
       ^ x
    }
 
-   real sqr()
+   real sqr() : info("returns the power of the real number raised to 2")
       = self * self;
 
-   real sqrt()
+   real sqrt() : info("returns the square root of the real number")
    {
       PrimitiveRealOperations.sqrt(self, out real retVal);
 
       ^ retVal
    }
 
-   real exp()
+   real exp() : info("Returns the result of e raised to the power of the real number")
    {
       PrimitiveRealOperations.exp(self, out real retVal);
 
       ^ retVal
    }
 
-   real ln()
+   real ln() : info("returns the natural logarithm of the real number")
    {
       PrimitiveRealOperations.ln(self, out real retVal);
 
       ^ retVal
    }
 
-   real sin()
+   real sin() : info("returns the trigonometric sines of the real number")
    {
       PrimitiveRealOperations.sin(self, out real retVal);
 
       ^ retVal
    }
 
-   real cos()
+   real cos() : info("returns the trigonometric cosines of the real number")
    {
       PrimitiveRealOperations.cos(self, out real retVal);
 
       ^ retVal
    }
 
-   real tan()
+   real tan() : info("returns the trigonometric tangents of the real number")
    {
       PrimitiveRealOperations.sin(self, out real sinVal);
       PrimitiveRealOperations.cos(self, out real cosVal);
@@ -771,14 +759,14 @@ public extension realOp : RealNumber
       ^ n
    }
 
-   real arctan()
+   real arctan() : info("returns the trigonometric inverse tangents (arctan) of the real number")
    {
       PrimitiveRealOperations.arctan(self, out real retVal);
 
       ^ retVal
    }
 
-   real arcsin()
+   real arcsin() : info("returns the trigonometric inverse sines (arcsin) of the real number")
    {
       real n := self;
         
@@ -792,7 +780,7 @@ public extension realOp : RealNumber
       ^ retVal
    }
             
-   real arccos()
+   real arccos() : info("returns the trigonometric inverse cosines (arccos) of the real number")
    {
       real n := self;        
       real retVal := 0.0r;
@@ -807,7 +795,7 @@ public extension realOp : RealNumber
       ^ retVal
    }
 
-   real log2()
+   real log2() : info("returns the base 2 logarithm of the real number")
    {
       real x := self.ln();
       real y := 2.0.ln();
@@ -815,7 +803,7 @@ public extension realOp : RealNumber
       ^ x / y
    }
             
-   real log10()
+   real log10() : info("returns the base 10 logarithm of the real number")
    {
       real x := self.ln();
       real y := 10.0.ln();
@@ -823,34 +811,34 @@ public extension realOp : RealNumber
       ^ x / y
    }      
 
-   get real Integer()
+   get real Integer() : info("Returns the integer part of the real number")
    {
       PrimitiveRealOperations.trunc(self, out real retVal);
 
       ^ retVal
    }
 
-   get int IntegerInt()
+   get int IntegerInt() : info("Returns the integer part as an integer of the real number")
       = IntConvertor.convert(self.Integer);
 
-   get real Rounded()
+   get real Rounded() : info("Rounds real number")
    {
       PrimitiveRealOperations.round(self, out real retVal);
 
       ^ retVal
    }
 
-   get int RoundedInt()
+   get int RoundedInt() : info("Rounds real number as an integer")
       = IntConvertor.convert(self.Rounded);
 
-   get real Absolute()
+   get real Absolute() : info("Returns the absolute value of the real number")
    {
       PrimitiveRealOperations.abs(self, out real retVal);
 
       ^ retVal  
    }
 
-   get real Reciprocal()
+   get real Reciprocal() : info("Returns the reciprocal (1/x) of the real number")
    {
       real value := self;
         
@@ -859,14 +847,14 @@ public extension realOp : RealNumber
       ^ value
    }    
 
-   real frac()
+   real frac() : info("Returns the fractional part of the real number")
    {
       real retVal := self.Absolute;
       
       ^ retVal - retVal.Integer
    }
 
-   real ceil()
+   real ceil() : info("Returns the smallest integer value not less than the real number")
    {
       if (self < 0)
       {
@@ -880,7 +868,7 @@ public extension realOp : RealNumber
       }
    }
 
-   real floor()
+   real floor() : info("Round numbers down to the nearest integer")
    {
       if (self >= 0)
       {
@@ -894,7 +882,7 @@ public extension realOp : RealNumber
       }
    }
 
-   real round(int precision)
+   real round(int precision) : info("Returns the real number rounded to <b>precision</b> digits after the dot")
    {
       real a := self;
       bool neg := false;
@@ -914,7 +902,7 @@ public extension realOp : RealNumber
       ^ neg ? (a * -1.0r) : a
    }    
 
-   real truncate(int precision)
+   real truncate(int precision) : info("Returns the real number truncated to <b>precision</b> digits after the dot")
    {
       real a := self;
       bool neg := false;
@@ -933,7 +921,7 @@ public extension realOp : RealNumber
    }
 
             
-   get real Radian()
+   get real Radian() : info("Returns the real number as a radian")
    {
       real value := self;
         
@@ -943,7 +931,7 @@ public extension realOp : RealNumber
       ^ value
    }
             
-   get real Degree()
+   get real Degree() : info("Returns the real number as a degree")
    {
       real value := self;
         
@@ -953,17 +941,17 @@ public extension realOp : RealNumber
       ^ value
    }
 
-   bool isZero()
+   bool isZero() : info("Returns true if the real number is zero")
       = self.equal(0.0);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the real number is positive")
       = self > 0.0;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the real number is negative")
       = self < 0.0;
         
-   bool isNonnegative()
-      = self <= 0.0;
+   bool isNonnegative() : info("Returns true if the real number is not negative")
+      = self >= 0.0;
 }
 
 // --- intRefOp ---

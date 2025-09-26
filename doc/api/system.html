@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.5: Module system
+ELENA Standard Library 6.7: Module system
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.5: Module system
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.5
+ELENA&nbsp;Standard&nbsp;Library<br>6.7
 </STRONG>
 </DIV>
 </DIV>
@@ -545,7 +545,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Array</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Array</SPAN><BR/>
+<I>A generic array</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -600,6 +601,8 @@ system'Array</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
+<div class="block">
+Creates the array with the specified length</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -609,6 +612,8 @@ system'Array</LI>
 <TD CLASS="colLast">
 <CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> array)
 </CODE>
+<div class="block">
+Creates a copy of the provided sub <b>array</b> starting at <b>index</b> and the specified <b>length</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -629,6 +634,8 @@ system'Array</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MinValue()</CODE>
+<div class="block">
+Returns an array with a length 0</div>
 </TD>
 </TR>
 </TABLE>
@@ -649,6 +656,8 @@ system'Array</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the array length</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -657,6 +666,8 @@ system'Array</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'Object<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns itself</div>
 </TD>
 </TR>
 </TABLE>
@@ -678,6 +689,8 @@ system'Array</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the array indexer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -687,6 +700,8 @@ system'Array</LI>
 <TD CLASS="colLast">
 <CODE>add(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> a)
 </CODE>
+<div class="block">
+Concatinates the arrays</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -696,6 +711,8 @@ system'Array</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+Assigns <b>item</b> to the element at the position <b>n</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -705,6 +722,8 @@ system'Array</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -714,6 +733,8 @@ system'Array</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the array enumerator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -723,6 +744,8 @@ system'Array</LI>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+<div class="block">
+Creates a shallow copy of the array</div>
 </TD>
 </TR>
 </TABLE>
@@ -1070,7 +1093,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ArrayEnumerator</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ArrayEnumerator</SPAN><BR/>
+<I>A generic array enumerator</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1133,6 +1157,8 @@ system'ArrayEnumerator</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> arr)
 </CODE>
+<div class="block">
+Creates an enumerator to the specified <b>s</b> argument</div>
 </TD>
 </TR>
 </TABLE>
@@ -1153,6 +1179,8 @@ system'ArrayEnumerator</LI>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns the current element</div>
 </TD>
 </TR>
 </TABLE>
@@ -1174,6 +1202,8 @@ system'ArrayEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>next()
 </CODE>
+<div class="block">
+Goes to the next enumeration member and returns true if it is not the last member</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1183,6 +1213,8 @@ system'ArrayEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>reset()
 </CODE>
+<div class="block">
+Resets the enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1192,6 +1224,8 @@ system'ArrayEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>enumerable()
 </CODE>
+<div class="block">
+returns the enumerating array</div>
 </TD>
 </TR>
 </TABLE>
@@ -1212,7 +1246,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ArrayIndexer</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ArrayIndexer</SPAN><BR/>
+<I>A generic array indexer</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1275,6 +1310,8 @@ system'ArrayIndexer</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> arr)
 </CODE>
+<div class="block">
+Creates an indexer to the specified <b>arr</b> argument</div>
 </TD>
 </TR>
 </TABLE>
@@ -1295,6 +1332,8 @@ system'ArrayIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Available()</CODE>
+<div class="block">
+Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1303,6 +1342,8 @@ system'ArrayIndexer</LI>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns the indexed element</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1312,6 +1353,8 @@ system'ArrayIndexer</LI>
 <TD CLASS="colLast">
 <CODE>Value(o)
 </CODE>
+<div class="block">
+Set the element at the current index</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1320,6 +1363,8 @@ system'ArrayIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1329,6 +1374,8 @@ system'ArrayIndexer</LI>
 <TD CLASS="colLast">
 <CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1337,6 +1384,8 @@ system'ArrayIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the length of the indexed array</div>
 </TD>
 </TR>
 </TABLE>
@@ -1358,6 +1407,8 @@ system'ArrayIndexer</LI>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> val)
 </CODE>
+<div class="block">
+Increases the current index by parameter **index**</div>
 </TD>
 </TR>
 </TABLE>
@@ -4342,6 +4393,8 @@ clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Hashcode()</CODE>
+<div class="block">
+Returns the hash code of the byte</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4350,6 +4403,8 @@ clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Absolute()</CODE>
+<div class="block">
+Returns the absolute value of the byte</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -4359,6 +4414,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>power(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+returns the power of the byte raised to <b>y</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4368,6 +4425,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>sqr()
 </CODE>
+<div class="block">
+returns the power of the byte raised to 2</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -4377,6 +4436,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>sqrt()
 </CODE>
+<div class="block">
+returns the square root of the byte</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4386,6 +4447,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns the remainder of an integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -4395,6 +4458,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isOdd()
 </CODE>
+<div class="block">
+Returns true if the byte is odd</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4404,6 +4469,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isEven()
 </CODE>
+<div class="block">
+Returns true if the byte is even</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -4413,6 +4480,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isZero()
 </CODE>
+<div class="block">
+Returns true if the byte is zero</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4422,6 +4491,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isPositive()
 </CODE>
+<div class="block">
+Returns true if the byte is positive</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -4431,6 +4502,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isNegative()
 </CODE>
+<div class="block">
+Returns true if the byte is negative</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4440,6 +4513,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isNonnegative()
 </CODE>
+<div class="block">
+Returns true if the byte is not negative</div>
 </TD>
 </TR>
 </TABLE>
@@ -9984,6 +10059,8 @@ Returns true if any of the mask bits are set</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Hashcode()</CODE>
+<div class="block">
+Returns the hash code of the integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9992,6 +10069,8 @@ Returns true if any of the mask bits are set</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Absolute()</CODE>
+<div class="block">
+Returns the absolute value of the integer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10001,6 +10080,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>power(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+returns the power of the integer raised to <b>y</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10010,6 +10091,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>sqr()
 </CODE>
+<div class="block">
+returns the power of the integer raised to 2</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10019,6 +10102,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>sqrt()
 </CODE>
+<div class="block">
+returns the square root of the integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10028,6 +10113,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>realDiv(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of a real division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10037,6 +10124,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns the remainder of an integer division</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10046,6 +10135,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+returns the remainder of an integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10055,6 +10146,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>isOdd()
 </CODE>
+<div class="block">
+Returns true if the integer is odd</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10064,6 +10157,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>isEven()
 </CODE>
+<div class="block">
+Returns true if the integer is even</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10073,6 +10168,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>isZero()
 </CODE>
+<div class="block">
+Returns true if the integer is zero</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10082,6 +10179,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>isPositive()
 </CODE>
+<div class="block">
+Returns true if the integer is positive</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10091,6 +10190,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>isNegative()
 </CODE>
+<div class="block">
+Returns true if the integer is negative</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10100,6 +10201,8 @@ Returns true if any of the mask bits are set</div>
 <TD CLASS="colLast">
 <CODE>isNonnegative()
 </CODE>
+<div class="block">
+Returns true if the integer is not negative</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10108,6 +10211,8 @@ Returns true if any of the mask bits are set</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>High()</CODE>
+<div class="block">
+Returns a high word of the integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10116,6 +10221,8 @@ Returns true if any of the mask bits are set</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Low()</CODE>
+<div class="block">
+Returns a low word of the integer</div>
 </TD>
 </TR>
 </TABLE>
@@ -11624,6 +11731,8 @@ Returns the value copy</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Hashcode()</CODE>
+<div class="block">
+Returns the hash code of the long integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11632,6 +11741,8 @@ Returns the value copy</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Absolute()</CODE>
+<div class="block">
+Returns the absolute value of the long integer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11641,6 +11752,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>power(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+returns the power of the long integer raised to <b>y</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11650,6 +11763,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>power(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+returns the power of the long integer raised to <b>y</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11659,6 +11774,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>sqr()
 </CODE>
+<div class="block">
+returns the power of the long integer raised to 2</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11668,6 +11785,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>sqrt()
 </CODE>
+<div class="block">
+returns the square root of the long integer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11677,6 +11796,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>realDiv(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of a real division</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11686,6 +11807,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns the remainder of an long integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11695,6 +11818,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the remainder of an long integer division</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11704,6 +11829,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isOdd()
 </CODE>
+<div class="block">
+Returns true if the long integer is odd</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11713,6 +11840,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isEven()
 </CODE>
+<div class="block">
+Returns true if the long integer is even</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11722,6 +11851,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isZero()
 </CODE>
+<div class="block">
+Returns true if the long integer is zero</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11731,6 +11862,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isPositive()
 </CODE>
+<div class="block">
+Returns true if the long integer is positive</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11740,6 +11873,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isNegative()
 </CODE>
+<div class="block">
+Returns true if the long integer is negative</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11749,6 +11884,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isNonnegative()
 </CODE>
+<div class="block">
+Returns true if the long integer is not negative</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11757,6 +11894,8 @@ Returns the value copy</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>High()</CODE>
+<div class="block">
+Returns a high integer of the long integer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11765,6 +11904,8 @@ Returns the value copy</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Low()</CODE>
+<div class="block">
+Returns a low integer of the long integer</div>
 </TD>
 </TR>
 </TABLE>
@@ -12958,6 +13099,8 @@ Executes the parameter function and pass itself as a parameter</div>
 <TD CLASS="colLast">
 <CODE>__getClassName()
 </CODE>
+<div class="block">
+Returns the object class name</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -13011,6 +13154,8 @@ Returns true if the parameter is equal to the object or false. It does not raise
 <TD CLASS="colLast">
 <CODE>isEmpty()
 </CODE>
+<div class="block">
+Returns true if the object length is 0</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -13020,6 +13165,8 @@ Returns true if the parameter is equal to the object or false. It does not raise
 <TD CLASS="colLast">
 <CODE>isNonempty()
 </CODE>
+<div class="block">
+Returns true if the object length is not 0</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -13040,6 +13187,8 @@ Returns true if the object is nil</div>
 <TD CLASS="colLast">
 <CODE>doWith(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> action)
 </CODE>
+<div class="block">
+Invokes <b>action</b> function passing the object as an argument</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -13060,6 +13209,8 @@ Checks if the object is an instance of type</div>
 <TD CLASS="colLast">
 <CODE>subsetOf(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> type)
 </CODE>
+<div class="block">
+Returns true if the object is an instance of a child of <b>type</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14682,6 +14833,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Hashcode()</CODE>
+<div class="block">
+Returns the hash code of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14691,6 +14844,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>power(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+returns the power of the real number raised to <b>y</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14700,6 +14855,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>power(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+returns the power of the real number raised to <b>y</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14709,6 +14866,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>sqr()
 </CODE>
+<div class="block">
+returns the power of the real number raised to 2</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14718,6 +14877,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>sqrt()
 </CODE>
+<div class="block">
+returns the square root of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14727,6 +14888,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>exp()
 </CODE>
+<div class="block">
+Returns the result of e raised to the power of the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14736,6 +14899,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>ln()
 </CODE>
+<div class="block">
+returns the natural logarithm of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14745,6 +14910,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>sin()
 </CODE>
+<div class="block">
+returns the trigonometric sines of the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14754,6 +14921,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>cos()
 </CODE>
+<div class="block">
+returns the trigonometric cosines of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14763,6 +14932,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>tan()
 </CODE>
+<div class="block">
+returns the trigonometric tangents of the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14772,6 +14943,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>arctan()
 </CODE>
+<div class="block">
+returns the trigonometric inverse tangents (arctan) of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14781,6 +14954,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>arcsin()
 </CODE>
+<div class="block">
+returns the trigonometric inverse sines (arcsin) of the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14790,6 +14965,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>arccos()
 </CODE>
+<div class="block">
+returns the trigonometric inverse cosines (arccos) of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14799,6 +14976,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>log2()
 </CODE>
+<div class="block">
+returns the base 2 logarithm of the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14808,6 +14987,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>log10()
 </CODE>
+<div class="block">
+returns the base 10 logarithm of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14816,6 +14997,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Integer()</CODE>
+<div class="block">
+Returns the integer part of the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14824,6 +15007,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>IntegerInt()</CODE>
+<div class="block">
+Returns the integer part as an integer of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14832,6 +15017,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Rounded()</CODE>
+<div class="block">
+Rounds real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14840,6 +15027,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>RoundedInt()</CODE>
+<div class="block">
+Rounds real number as an integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14848,6 +15037,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Absolute()</CODE>
+<div class="block">
+Returns the absolute value of the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14856,6 +15047,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Reciprocal()</CODE>
+<div class="block">
+Returns the reciprocal (1/x) of the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14865,6 +15058,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>frac()
 </CODE>
+<div class="block">
+Returns the fractional part of the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14874,6 +15069,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>ceil()
 </CODE>
+<div class="block">
+Returns the smallest integer value not less than the real number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14883,6 +15080,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>floor()
 </CODE>
+<div class="block">
+Round numbers down to the nearest integer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14892,6 +15091,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>round(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> precision)
 </CODE>
+<div class="block">
+Returns the real number rounded to <b>precision</b> digits after the dot</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14901,6 +15102,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>truncate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> precision)
 </CODE>
+<div class="block">
+Returns the real number truncated to <b>precision</b> digits after the dot</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14909,6 +15112,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Radian()</CODE>
+<div class="block">
+Returns the real number as a radian</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14917,6 +15122,8 @@ Clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Degree()</CODE>
+<div class="block">
+Returns the real number as a degree</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14926,6 +15133,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>isZero()
 </CODE>
+<div class="block">
+Returns true if the real number is zero</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14935,6 +15144,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>isPositive()
 </CODE>
+<div class="block">
+Returns true if the real number is positive</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -14944,6 +15155,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>isNegative()
 </CODE>
+<div class="block">
+Returns true if the real number is negative</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14953,6 +15166,8 @@ Clones the value</div>
 <TD CLASS="colLast">
 <CODE>isNonnegative()
 </CODE>
+<div class="block">
+Returns true if the real number is not negative</div>
 </TD>
 </TR>
 </TABLE>
@@ -17137,6 +17352,8 @@ clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Hashcode()</CODE>
+<div class="block">
+Returns the hash code of the short integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17145,6 +17362,8 @@ clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Absolute()</CODE>
+<div class="block">
+Returns the absolute value of the short integer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17154,6 +17373,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>power(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+returns the power of the short integer raised to <b>y</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17163,6 +17384,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>sqr()
 </CODE>
+<div class="block">
+returns the power of the short integer raised to 2</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17172,6 +17395,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>sqrt()
 </CODE>
+<div class="block">
+returns the square root of the short integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17181,6 +17406,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns the remainder of an integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17190,6 +17417,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isOdd()
 </CODE>
+<div class="block">
+Returns true if the short integer is odd</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17199,6 +17428,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isEven()
 </CODE>
+<div class="block">
+Returns true if the short integer is even</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17208,6 +17439,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isZero()
 </CODE>
+<div class="block">
+Returns true if the short integer is zero</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17217,6 +17450,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isPositive()
 </CODE>
+<div class="block">
+Returns true if the short integer is positive</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17226,6 +17461,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isNegative()
 </CODE>
+<div class="block">
+Returns true if the short integer is negative</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17235,6 +17472,8 @@ clones the value</div>
 <TD CLASS="colLast">
 <CODE>isNonnegative()
 </CODE>
+<div class="block">
+Returns true if the short integer is not negative</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17243,6 +17482,8 @@ clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>High()</CODE>
+<div class="block">
+Returns a high byte of the short integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17251,6 +17492,8 @@ clones the value</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Low()</CODE>
+<div class="block">
+Returns a low byte of the short integer</div>
 </TD>
 </TR>
 </TABLE>
@@ -19997,6 +20240,8 @@ Returns the value copy</div>
 <i>get property </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Hashcode()</CODE>
+<div class="block">
+Returns the hash code of the unsigned integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20006,6 +20251,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>sqr()
 </CODE>
+<div class="block">
+returns the power of the unsigned integer raised to 2</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20015,6 +20262,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>sqrt()
 </CODE>
+<div class="block">
+returns the square root of the unsigned integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20024,6 +20273,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns the remainder of an integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20033,6 +20284,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns the remainder of an integer division</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20042,6 +20295,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>mod(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> operand)
 </CODE>
+<div class="block">
+returns the remainder of an integer division</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20051,6 +20306,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>realDiv(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
 </CODE>
+<div class="block">
+returns the result of a real division</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20060,6 +20317,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isOdd()
 </CODE>
+<div class="block">
+Returns true if the integer is odd</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20069,6 +20328,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isEven()
 </CODE>
+<div class="block">
+Returns true if the integer is even</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20078,33 +20339,8 @@ Returns the value copy</div>
 <TD CLASS="colLast">
 <CODE>isZero()
 </CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>isPositive()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>isNegative()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>isNonnegative()
-</CODE>
+<div class="block">
+Returns true if the integer is zero</div>
 </TD>
 </TR>
 </TABLE>
@@ -21794,6 +22030,8 @@ system'Variant</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(object)
 </CODE>
+<div class="block">
+Creates a variant object and assigns it with <b>object</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -21814,6 +22052,8 @@ system'Variant</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Tries to convert the value to a byte number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21822,6 +22062,8 @@ system'Variant</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Tries to convert the value to a short integer number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21830,6 +22072,8 @@ system'Variant</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Tries to convert the value to a character</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21838,6 +22082,8 @@ system'Variant</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Tries to convert the literal value to the integer number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21846,6 +22092,8 @@ system'Variant</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Tries to convert the literal value to the long integer number</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21854,6 +22102,8 @@ system'Variant</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Tries to convert the literal value to the real number</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21862,6 +22112,8 @@ system'Variant</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns a literal value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21870,6 +22122,8 @@ system'Variant</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns a wide literal value</div>
 </TD>
 </TR>
 </TABLE>
@@ -21891,6 +22145,8 @@ system'Variant</LI>
 <TD CLASS="colLast">
 <CODE>equal(p)
 </CODE>
+<div class="block">
+Tries to convert <b>p</b> argument to the variant type and check if they are equals</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21900,6 +22156,8 @@ system'Variant</LI>
 <TD CLASS="colLast">
 <CODE>toPrintable()
 </CODE>
+<div class="block">
+Redirects to the assigned object</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21909,6 +22167,8 @@ system'Variant</LI>
 <TD CLASS="colLast">
 <CODE>saveTo(target)
 </CODE>
+<div class="block">
+Tries to convert <b>target</b> value to the type compatible with the variant value, reassigns it and returns the argument.<br/>Target must support Value property</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21918,6 +22178,8 @@ system'Variant</LI>
 <TD CLASS="colLast">
 <CODE>add(p)
 </CODE>
+<div class="block">
+Tries to convert <b>p</b> argument to the variant type and returns the sum</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21927,6 +22189,8 @@ system'Variant</LI>
 <TD CLASS="colLast">
 <CODE>subtract(p)
 </CODE>
+<div class="block">
+Tries to convert <b>p</b> argument to the variant type and returns the difference</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21936,6 +22200,8 @@ system'Variant</LI>
 <TD CLASS="colLast">
 <CODE>multiply(p)
 </CODE>
+<div class="block">
+Tries to convert <b>p</b> argument to the variant type and returns the product</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21945,6 +22211,8 @@ system'Variant</LI>
 <TD CLASS="colLast">
 <CODE>divide(p)
 </CODE>
+<div class="block">
+Tries to convert <b>p</b> argument to the variant type and returns the division result</div>
 </TD>
 </TR>
 </TABLE>
@@ -22160,6 +22428,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size)
 </CODE>
+<div class="block">
+creates a string with specific <b>size</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22169,6 +22439,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size, <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
+<div class="block">
+Creates the copy of a substring of <b>s</b> with specified length <b>size</b> starting at 0</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22178,6 +22450,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>fill(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size, <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Creates the literal string with specified length <b>size</b> fills with character <b>ch</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22187,6 +22461,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
+<div class="block">
+Creates the literal string copy of <b>s</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22196,6 +22472,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'CharValue<I>[]</I></A></SPAN> charArray)
 </CODE>
+<div class="block">
+Creates the copy of a sub array <b>charArray</b> starting from <b>index</b> and with the specified <b>length</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22225,6 +22503,8 @@ system'WideString</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MinValue()</CODE>
+<div class="block">
+Returns an empty string</div>
 </TD>
 </TR>
 </TABLE>
@@ -22245,6 +22525,8 @@ system'WideString</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the string length</div>
 </TD>
 </TR>
 </TABLE>
@@ -22265,6 +22547,8 @@ system'WideString</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Converts to UTF-8 string</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22273,6 +22557,8 @@ system'WideString</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable&lt;T1&gt;">Enumerable&lt;system'CharValue&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Creates an enumerable wrapper</div>
 </TD>
 </TR>
 </TABLE>
@@ -22294,6 +22580,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>less(o)
 </CODE>
+<div class="block">
+Tries to convert the argument <b>o</b> to UTF-16 string and check if the object is less then it. If the conversion is not possible it returns false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22303,6 +22591,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>equal(o)
 </CODE>
+<div class="block">
+Tries to convert the argument <b>o</b> to UTF-16 string and compare with it. If the conversion is not possible it returns false</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22312,6 +22602,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>toPrintable()
 </CODE>
+<div class="block">
+Returns UTF-8 copy of the string</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22330,6 +22622,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
+<div class="block">
+Returns true if the string equals to <b>s</b>; otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22339,6 +22633,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
+<div class="block">
+Returns true if the string is less then <b>s</b>; otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22348,6 +22644,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Returns true if the string equals to <b>ch</b>; otherwise returns false<br/>Note the character will be converted to UTF-16 string before comparison</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22357,6 +22655,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>less(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Returns true if the string is less then <b>ch</b>; otherwise returns false<br/>Note the character will be converted to UTF-16 string before comparison</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22366,6 +22666,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns a character at the specified position <b>index</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22375,6 +22677,8 @@ system'WideString</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns a word at the specified position <b>index</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22415,6 +22719,8 @@ Saves the index of the first occurence of the specified substring into an output
 <TD CLASS="colLast">
 <CODE>indexOf(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Saves the index of the first occurence of the specified character <b>ch</b> starting from <b>index</b> into an output parameter.<br/>If the substring is not found. returns -1</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22435,6 +22741,8 @@ Inserts the substring into and returns the new one</div>
 <TD CLASS="colLast">
 <CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Inserts the character <b>ch</b> at the specified <b>index</b> and returns the new one</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22445,7 +22753,7 @@ Inserts the substring into and returns the new one</div>
 <CODE>delete(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 <div class="block">
-Deletes the substring from the object and returns the new one</div>
+Deletes the substring starting from <b>index</b> and with the specified <b>length</b> from the object and returns the new one</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22456,7 +22764,7 @@ Deletes the substring from the object and returns the new one</div>
 <CODE>Substring(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 <div class="block">
-Returns the substring</div>
+Returns the substring from <b>index</b> and with the specified <b>length</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22466,6 +22774,8 @@ Returns the substring</div>
 <TD CLASS="colLast">
 <CODE>save(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'CharValue<I>[]</I></A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex)
 </CODE>
+<div class="block">
+Copies the characters from the string starting from <b>index</b> and with the specified <b>length</b> and copies to <b>buffer</b> starting from <b>destIndex</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22495,6 +22805,8 @@ Returns the string enumerator</div>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the string indexer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22504,6 +22816,8 @@ Returns the string enumerator</div>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+<div class="block">
+Clones the value</div>
 </TD>
 </TR>
 </TABLE>
@@ -22711,7 +23025,7 @@ Returns the string enumerator</div>
 </UL>
 <HR>
 </DIV>
-<A NAME="CommandLine">
+<A NAME="CommandLine__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -22748,7 +23062,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="console">
+<A NAME="console__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -22785,7 +23099,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="E_value">
+<A NAME="E_value__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -22798,7 +23112,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+E constant</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -22815,6 +23129,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>E_value</CODE>
+<div class="block">
+E constant</div>
 </TD>
 </TABLE>
 </LI>
@@ -22822,7 +23138,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="EmptyString">
+<A NAME="EmptyString__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -22835,7 +23151,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+Empty string constant</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -22852,6 +23168,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>EmptyString</CODE>
+<div class="block">
+Empty string constant</div>
 </TD>
 </TABLE>
 </LI>
@@ -22859,7 +23177,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="emptyString">
+<A NAME="emptyString__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -22872,7 +23190,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+<b>obsolete</b> : Empty string constant<br/>Please use EmptyString</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -22889,6 +23207,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>emptyString</CODE>
+<div class="block">
+<b>obsolete</b> : Empty string constant<br/>Please use EmptyString</div>
 </TD>
 </TABLE>
 </LI>
@@ -22896,7 +23216,46 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="emptyWideString">
+<A NAME="EmptyWideString__sym__">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="EmptyWideString" class="title">EmptyWideString</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+Empty string constant</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>EmptyWideString</CODE>
+<div class="block">
+Empty string constant</div>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="emptyWideString__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -22909,7 +23268,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+<b>obsolete</b> : Empty string constant<br/>Please use EmptyWideString</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -22926,6 +23285,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>emptyWideString</CODE>
+<div class="block">
+<b>obsolete</b> : Empty string constant<br/>Please use EmptyWideString</div>
 </TD>
 </TABLE>
 </LI>
@@ -22933,7 +23294,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="false">
+<A NAME="false__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -22946,7 +23307,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+false boolean value</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -22963,6 +23324,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue#false">BoolValue#false</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>false</CODE>
+<div class="block">
+false boolean value</div>
 </TD>
 </TABLE>
 </LI>
@@ -22970,7 +23333,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="NewLineConstant">
+<A NAME="NewLineConstant__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -22983,7 +23346,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+New line characters</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -23000,6 +23363,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>NewLineConstant</CODE>
+<div class="block">
+New line characters</div>
 </TD>
 </TABLE>
 </LI>
@@ -23007,7 +23372,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="nilValue">
+<A NAME="nilValue__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -23020,7 +23385,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+<b>obsolete</b> : A nil value<br/>Please use NilValue</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -23037,6 +23402,8 @@ system'</DIV>
 <i>public </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>nilValue</CODE>
+<div class="block">
+<b>obsolete</b> : A nil value<br/>Please use NilValue</div>
 </TD>
 </TABLE>
 </LI>
@@ -23044,7 +23411,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="Pi_value">
+<A NAME="Pi_value__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -23057,7 +23424,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+Pi constant</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -23074,6 +23441,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Pi_value</CODE>
+<div class="block">
+Pi constant</div>
 </TD>
 </TABLE>
 </LI>
@@ -23081,7 +23450,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="startUpEvents">
+<A NAME="startUpEvents__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -23118,7 +23487,7 @@ system'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="true">
+<A NAME="true__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -23131,7 +23500,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+true boolean value</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -23148,6 +23517,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue#true">BoolValue#true</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>true</CODE>
+<div class="block">
+true boolean value</div>
 </TD>
 </TABLE>
 </LI>
@@ -23166,7 +23537,7 @@ system'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.5
+ELENA&nbsp;Standard&nbsp;Library<br>6.7
 </STRONG>
 </DIV>
 </DIV>

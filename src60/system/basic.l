@@ -177,8 +177,8 @@ public interface BoolValue
    };
 }
 
-public const true = BoolValue.true;
-public const false = BoolValue.false;
+public const true : info("true boolean value") = BoolValue.true;
+public const false : info("false boolean value") = BoolValue.false;
 
 // --- BaseNumber ---
 
@@ -2707,9 +2707,9 @@ public sealed const struct RealNumber : BaseNumber,
       = 0.0 - _value;
 }
 
-public real Pi_value = PrimitiveRealOperations.getPi();
+public real Pi_value : info("Pi constant") = PrimitiveRealOperations.getPi();
 
-public real E_value = PrimitiveRealOperations.getE();
+public real E_value : info("E constant") = PrimitiveRealOperations.getE();
 
 // --- CharValue ---
 
@@ -2878,7 +2878,8 @@ public singleton NilValue
 }
 
 // !! obsolete
-public symbol nilValue = NilValue;
+public symbol nilValue  : info("<b>obsolete</b> : A nil value<br/>Please use NilValue")
+   = NilValue;
 
 // --- KeyValue ---
 

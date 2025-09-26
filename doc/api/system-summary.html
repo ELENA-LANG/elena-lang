@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.5: Module system
+ELENA Standard Library 6.7: Module system
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ Module
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.5
+ELENA&nbsp;Standard&nbsp;Library<br>6.7
 </STRONG>
 </DIV>
 </DIV>
@@ -112,7 +112,8 @@ abstract public template <SPAN CLASS="typeNameLabel">Action&lt;T1,T2,T3,T4,T5&gt
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-public class <SPAN CLASS="typeNameLabel">Array</SPAN></DIV>
+public class <SPAN CLASS="typeNameLabel">Array</SPAN><BR/>
+<I>A generic array</I></DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -131,7 +132,8 @@ public template <SPAN CLASS="typeNameLabel">Array&lt;T1&gt;</SPAN><BR/>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-public class <SPAN CLASS="typeNameLabel">ArrayEnumerator</SPAN></DIV>
+public class <SPAN CLASS="typeNameLabel">ArrayEnumerator</SPAN><BR/>
+<I>A generic array enumerator</I></DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -140,7 +142,8 @@ public class <SPAN CLASS="typeNameLabel">ArrayEnumerator</SPAN></DIV>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-public class <SPAN CLASS="typeNameLabel">ArrayIndexer</SPAN></DIV>
+public class <SPAN CLASS="typeNameLabel">ArrayIndexer</SPAN><BR/>
+<I>A generic array indexer</I></DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1201,7 +1204,7 @@ Symbol Summary
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#CommandLine">CommandLine</A>
+<A HREF="system.html#CommandLine__sym__">CommandLine</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
@@ -1210,7 +1213,7 @@ CommandLine</DIV>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#console">console</A>
+<A HREF="system.html#console__sym__">console</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
@@ -1219,92 +1222,101 @@ console</DIV>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#E_value">E_value</A>
+<A HREF="system.html#E_value__sym__">E_value</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-E_value</DIV>
+E constant</DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#EmptyString">EmptyString</A>
+<A HREF="system.html#EmptyString__sym__">EmptyString</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-EmptyString</DIV>
+Empty string constant</DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#emptyString">emptyString</A>
+<A HREF="system.html#emptyString__sym__">emptyString</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-emptyString</DIV>
+<b>obsolete</b> : Empty string constant<br/>Please use EmptyString</DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#emptyWideString">emptyWideString</A>
+<A HREF="system.html#EmptyWideString__sym__">EmptyWideString</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-emptyWideString</DIV>
+Empty string constant</DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#false">false</A>
+<A HREF="system.html#emptyWideString__sym__">emptyWideString</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-false</DIV>
+<b>obsolete</b> : Empty string constant<br/>Please use EmptyWideString</DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#NewLineConstant">NewLineConstant</A>
+<A HREF="system.html#false__sym__">false</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-NewLineConstant</DIV>
+false boolean value</DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#nilValue">nilValue</A>
+<A HREF="system.html#NewLineConstant__sym__">NewLineConstant</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-nilValue</DIV>
+New line characters</DIV>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#Pi_value">Pi_value</A>
+<A HREF="system.html#nilValue__sym__">nilValue</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-Pi_value</DIV>
+<b>obsolete</b> : A nil value<br/>Please use NilValue</DIV>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#startUpEvents">startUpEvents</A>
+<A HREF="system.html#Pi_value__sym__">Pi_value</A>
+</TD>
+<TD CLASS="colLast">
+<DIV CLASS="block">
+Pi constant</DIV>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A HREF="system.html#startUpEvents__sym__">startUpEvents</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
 startUpEvents</DIV>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
-<A HREF="system.html#true">true</A>
+<A HREF="system.html#true__sym__">true</A>
 </TD>
 <TD CLASS="colLast">
 <DIV CLASS="block">
-true</DIV>
+true boolean value</DIV>
 </TD>
 </TR>
 </TABLE>
@@ -1322,7 +1334,7 @@ Module
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.5
+ELENA&nbsp;Standard&nbsp;Library<br>6.7
 </STRONG>
 </DIV>
 </DIV>

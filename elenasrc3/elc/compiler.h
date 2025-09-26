@@ -91,6 +91,7 @@ namespace elena_lang
       SelfPackage,
       MethodName,
       FieldName,
+      SymbolName,
       StaticField,
       StaticThreadField,
       StaticConstField,
