@@ -2702,10 +2702,10 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             break;
          }
          case SyntaxKey::MetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Symbol, false);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, false);
             break;
          case SyntaxKey::SharedMetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Symbol, true);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, true);
             break;
          case SyntaxKey::ElseCondStatement:
          case SyntaxKey::CondStatement:
@@ -4105,10 +4105,10 @@ void Compiler::declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node)
             break;
          }
          case SyntaxKey::MetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, false);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Symbol, false);
             break;
          case SyntaxKey::SharedMetaDictionary:
-            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Field, true);
+            declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Symbol, true);
             break;            
          default:
             //   scope.raiseError(errInvalidSyntax, node);
