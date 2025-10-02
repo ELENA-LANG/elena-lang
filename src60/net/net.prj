@@ -15,7 +15,7 @@
   </project>
   <manifest>
      <name>ELENA Network Provider Library</name>
-     <version>6.7.13</version>
+     <version>6.7.14</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -29,12 +29,14 @@
      </module>
      <module name="http">
        <include>http\common.l</include>
+       <include>http\httpfactories.l</include>
        <include>http\httpheaders.l</include>
        <include>http\httpresponse.l</include>
        <include>http\httprequest.l</include>
        <include>http\httpclient.l</include>
      </module>
      <module name="http'server">
+       <include>http\server\httpserverfactory.l</include>
        <include>http\server\httpserverrequest.l</include>
        <include>http\server\httpserverresponse.l</include>
        <include>http\server\ihttperrorhandler.l</include>

@@ -1787,13 +1787,13 @@ void IDEController :: onCompilationCompletion(IDEModel* model, int exitCode,
 {
    model->running = false;
 
-   if (exitCode == 0) {
+   if (exitCode == EXIT_SUCCESS) {
       model->status = IDEStatus::CompiledSuccessfully;
 
       notifyOnModelChange(STATUS_STATUS_CHANGED | STATUS_PROJECT_REFRESH);
    }
    else {
-      if (exitCode == -1) {
+      if (exitCode != EXIT_FAILURE) {
          model->status = IDEStatus::CompiledWithWarnings;
       }
       else model->status = IDEStatus::CompiledWithErrors;

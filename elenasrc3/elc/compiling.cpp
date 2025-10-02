@@ -92,7 +92,7 @@ CompilingProcess::TemplateGenerator :: TemplateGenerator(CompilingProcess* proce
 }
 
 bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-   SyntaxNode target, List<SyntaxNode>& parameters)
+   SyntaxNode target, SyntaxNode declarationNode, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
       moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
@@ -100,7 +100,7 @@ bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& modu
    if (!sectionInfo.section)
       return false;
 
-   _processor.importTemplate(sectionInfo.section, target, parameters);
+   _processor.importTemplate(sectionInfo.section, target, declarationNode, parameters);
 
    return true;
 }

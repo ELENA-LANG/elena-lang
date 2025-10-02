@@ -47,7 +47,6 @@ namespace elena_lang
    constexpr auto errMsgNotCompatibleMulti      = "\n%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n";
    constexpr auto errMsgTypeAlreadyDeclared     = "\n%s(%d:%d): error 158: type attribute cannot be overridden\n";
    constexpr auto errMsgAbstractMethods         = "\n%s(%d:%d): error 159: Class contains abstract methods\n";
-
    constexpr auto errMsgDispatcherInInterface   = "\n%s(%d:%d): error 160: Closed class contains a dispatcher method\n";
    constexpr auto errMsgAbstractMethodCode      = "\n%s(%d:%d): error 161: An abstract method cannot have an explicit body\n";
    constexpr auto errMsgNotAbstractClass        = "\n%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n";
@@ -67,9 +66,10 @@ namespace elena_lang
    constexpr auto errMsgUnknownDefConstructor      = "\n%s(%d:%d): error 184: A unnamed constructor matching the passed arguments is not defined for the class\n";
    constexpr auto errMsgUnknownMethod              = "\n%s(%d:%d): error 185: Method '%s' is not declared in the class %s or there is no appropriate overload\n";
    constexpr auto errMsgAssigningToSelf            = "\n%s(%d:%d): error 186: Cannot assign a variable '%s' to itself\n";
-   constexpr auto errMsgUnknownTypecast            = "\n%s(%d:%d): error 188: typecasting routine cannot be found\n";
+   constexpr auto errMsgUnknownTypecast            = "\n%s(%d:%d): error 188: Typecasting routine cannot be found\n";
    constexpr auto errMsgUnknownFunction            = "\n%s(%d:%d): error 189: Function message does not handled by the object '%s'\n";
-   constexpr auto errMsgUnsupportedOperator        = "\n%s(%d:%d): error 190: operator handler is not defined for %s\n";
+   constexpr auto errMsgUnsupportedOperator        = "\n%s(%d:%d): error 190: Operator handler is not defined for %s\n";
+   constexpr auto errMsgUnknownRedirectMethod      = "\n%s(%d:%d): error 191: '%s' - the target class does not contain the declaration of the message '%s' or an appropriate overload\n";
 
    constexpr auto errMsgUnknownModule              = "\nlinker: error 201: Unknown module '%s'\n";
    constexpr auto errMsgUnresovableLink            = "\nlinker: error 202: Link '%s' is not resolved\n";
@@ -97,6 +97,7 @@ namespace elena_lang
    constexpr auto wrnMsgNillableRedefined       = "\n%s(%d:%d): warning 414: The method nullable signature mismatches with the previously declared one\n";
    constexpr auto wrnMsgNillableOutputRedefined = "\n%s(%d:%d): warning 415: The method nullable attribute of an output type mismatches with the previously declared one\n";
    constexpr auto wrnMsgCannotBeNil             = "\n%s(%d:%d): warning 416: The object %s cannot be nil\n";
+   constexpr auto wrnMsgUnknownRedirectMethod   = "\n%s(%d:%d): warning 417: '%s' - the target class does not contain the declaration of the message '%s' or an appropriate overload\n";
 
    constexpr auto wrnMsgTypeInherited           = "\n%s(%d:%d): warning 420: Type attribute is inherited\n";
    constexpr auto wrnMsgDuplicateInclude        = "\n%s(%d:%d): warning 425: '%s': duplicate inclusion\n";

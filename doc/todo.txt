@@ -6,13 +6,15 @@ In development:
   ### EPIC: elena 6.8 ###
 
   === Iteration 42 ===
-  ======================================
-  * provide descriptions for all classes in system root namespace
   --------------------------------------
-  - descriptions extensions.l
-  ======================================
   * SimpleHttpServer : introduce a provider 
   --------------------------------------
+  - warn if the implementing method is not supported by the class (see net library)
+  - design webapi server initialization routine
+  - implement
+  - test 
+  - design embedtls server initialization routine
+
   - review possible solution
   - design
   - implement dummy
@@ -54,8 +56,7 @@ In development:
   * IDE : right click on tab - context menu : close, close all, close all but current
   * IDE : close icon on the tab
   ======================================
-  #35 : webapi phone book example : add, delete, update, search
-  #35 : first draft
+  #35 : webapi weather backend (using existing frontend)
   --------------------------------------
   * comment output => use logger to display this information
 

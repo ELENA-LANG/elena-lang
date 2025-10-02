@@ -689,7 +689,7 @@ void IDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
 
    freestr(output);
 
-   if (exitCode != -2) {
+   if (exitCode != EXIT_FAILURE) {
       switch ((DebugAction)postponedAction) {
          case DebugAction::Run:
             _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);

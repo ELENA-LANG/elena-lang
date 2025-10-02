@@ -48,7 +48,7 @@ namespace elena_lang
          ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
             List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) override;
 
-         bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, 
+         bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, SyntaxNode declarationNode,
             List<SyntaxNode>& parameters) override;
 
          bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, 

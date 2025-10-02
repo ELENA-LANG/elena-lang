@@ -325,12 +325,14 @@ namespace elena_lang
          ModuleScopeBase* moduleScope;
          ref_t            targetRef;
          int              variadicIndex;
+         bool             skipTerminalInfo;
 
          TemplateScope() :
             type(Type::None),
             argValues({}),
             parameterValues({}),
-            moduleScope(nullptr), targetRef(0), variadicIndex(0)
+            moduleScope(nullptr), targetRef(0), variadicIndex(0),
+            skipTerminalInfo(false)
          {
          }
          TemplateScope(Type type, ModuleScopeBase* scope, ref_t targetRef) :
@@ -339,7 +341,8 @@ namespace elena_lang
             parameterValues({}),
             moduleScope(scope),
             targetRef(targetRef),
-            variadicIndex(0)
+            variadicIndex(0),
+            skipTerminalInfo(false)
          {
          }
       };
@@ -367,11 +370,11 @@ namespace elena_lang
       void generateTemplate(SyntaxTreeWriter& writer, TemplateScope& scope, 
          MemoryBase* templateBody, bool importModuleInfo, ref_t templateRef);
 
-      void importTemplate(Type type, MemoryBase* templateSection, SyntaxNode target,
+      void importTemplate(Type type, MemoryBase* templateSection, SyntaxNode target, SyntaxNode declarationNode,
          List<SyntaxNode>* arguments, List<SyntaxNode>* parameters);
 
    public:
-      void importTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
+      void importTemplate(MemoryBase* section, SyntaxNode target, SyntaxNode declarationNode, List<SyntaxNode>& parameters);
       void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importInlinePropertyTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
       void importCodeTemplate(MemoryBase* templateSection,

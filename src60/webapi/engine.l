@@ -1,5 +1,11 @@
 import net'http'server;
 
+public interface IControllerFactory
+{
+   IHttpHandlerFactory 
+}
+
+
 public interface IBootstap
 {
    abstract initDummy();

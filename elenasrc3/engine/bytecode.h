@@ -499,6 +499,7 @@ namespace elena_lang
       static void formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
          ref_t* references, size_t len, pos_t argCount, ref_t flags);
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
+      static bool resolveGenericMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
 
       // NOTE : information about nullable arguments are optional and is used only in ECV tool
       static void formatMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,

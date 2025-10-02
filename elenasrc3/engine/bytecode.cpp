@@ -233,6 +233,22 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    return true;
 }
 
+bool ByteCodeUtil :: resolveGenericMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ref_t signature = 0;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+   if (emptystr(actionName))
+      return false;
+
+   formatMessageName(messageName, module, actionName, nullptr, 0, argCount, flags);
+
+   return true;
+}
+
 bool ByteCodeUtil :: resolveMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, mssg_t message, int nullableArgs)
 {
    ref_t actionRef, flags;
@@ -958,6 +974,7 @@ inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
    return false;
 }
 
+// NOTE : the copy of an iterator must be passed
 inline bool isAccFree(ByteCodeIterator bc_it)
 {
    while (bc_it.eof()) {

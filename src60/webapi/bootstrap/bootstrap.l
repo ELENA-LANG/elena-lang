@@ -3,31 +3,43 @@ import webapi;
 
 internal singleton Bootstrap : IBootstap
 {
-   static IHttpServer _server;
+   static IHttpServer?           _server;
+   static IHandleFactory?        _handleFactory;
+   static IHttpServerProvider?   _provier; 
    
-   initDummy()
+   initSimpleServer()
    {
-      _server := SimpleHttpServer.create(DummyHttpHandlerFactory);
+      _server := SimpleHttpServer.create(_provider ?? HttpServerProvider, _handleFactory ?? DummyHttpHandlerFactory);
    }
    
-   protected IHttpServer getServer()
+   protected IHttpServer? getServer()
       = _server;
 }
 
 public singleton WebApiFactory : BootstrapFactoryBase
 {
-   static Action<IBootstap> _serverStartUp;
-   
-   registerServer(Action<IBootstap> action)
+   static List<Action<IBootstap>> _setupSteps;
+
+   private List<Action<IBootstap>> getSteps()
    {
-      _serverStartUp := action;
+      if (_setupSteps != nil)
+         _setupSteps := new List<Action<IBootstap>>();
+
+      ^ _setupSteps
+   }
+         
+   register(Action<IBootstap> action)
+   {
+      getSteps().append(action)
    }
    
    protected IBootstap create()
    {
       IBootstap bootstrap := Bootstrap;
       
-      _serverStartUp(bootstrap);
+      foreach(auto action;in getSteps()) {
+         action(bootstrap);
+      };
       
       ^ bootstrap;
    }   
