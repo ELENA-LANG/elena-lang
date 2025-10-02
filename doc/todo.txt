@@ -9,8 +9,6 @@ In development:
   --------------------------------------
   * SimpleHttpServer : introduce a provider 
   --------------------------------------
-  - design webapi server initialization routine
-  - implement
   - test 
   - design embedtls server initialization routine
 

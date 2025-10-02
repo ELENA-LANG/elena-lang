@@ -35,7 +35,7 @@ public singleton WebApiFactory : BootstrapFactoryBase
       ^ _setupSteps
    }
          
-   register(Action<IBootstap> action)
+   registerServer(Action<IBootstap> action)
    {
       getSteps().append(action)
    }
