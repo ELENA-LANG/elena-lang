@@ -205,7 +205,7 @@ ref_t TestTemplateProssesor :: generateClassTemplate(ModuleScopeBase& moduleScop
    return templateRef;
 }
 
-bool TestTemplateProssesor :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+bool TestTemplateProssesor :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, SyntaxNode declarationNode,
    List<SyntaxNode>& parameters)
 {
    return false;
