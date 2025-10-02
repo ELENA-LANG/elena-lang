@@ -16,9 +16,6 @@ namespace registration
    
       INetSocket openSocket(string host, short port)
          = MbedTlsSocket.open(host, port);
-         
-      INetListener openListener(string prefix, short port, bool noDelay)
-         = NotSupportedException.raise();
    }   
 }
 
