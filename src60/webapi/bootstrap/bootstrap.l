@@ -25,28 +25,21 @@ internal singleton Bootstrap : IBootstap
 
 public singleton WebApiFactory : BootstrapFactoryBase
 {
-   static List<Action<IBootstap>> _setupSteps;
-
-   private List<Action<IBootstap>> getSteps()
-   {
-      if (_setupSteps != nil)
-         _setupSteps := new List<Action<IBootstap>>();
-
-      ^ _setupSteps
-   }
+   static Action<IBootstap> _setup;
          
    registerServer(Action<IBootstap> action)
    {
-      getSteps().append(action)
+      if:not:nil(_setup)
+         InvalidOperationException.raise("Only one server can be register currently");
+
+      _setup := action
    }
    
    protected IBootstap create()
    {
       IBootstap bootstrap := Bootstrap;
       
-      foreach(auto action;in getSteps()) {
-         action(bootstrap);
-      };
+      _setup(bootstrap);
       
       ^ bootstrap;
    }   
