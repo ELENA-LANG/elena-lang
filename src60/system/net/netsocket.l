@@ -34,8 +34,13 @@ public interface INetSocketFactory
 {
    abstract INetSocket openSocket(string host, short port);
 
+   abstract INetListener openListener(short port, bool noDelay);
+         
    Task<INetSocket> openSocketAsync(string host, short port)
       = ::Task<INetSocket>.run({ ^ self.openSocket(host, port); });
+      
+   Task<INetListener> openListenerAsync(short port, bool noDelay)
+      = ::Task<INetListener>.run({ ^ self.openListener(port, noDelay); });
 }
 
 public class NetSocket : INetSocket
@@ -148,4 +153,7 @@ public class NativeSocketFactory : INetSocketFactory
 
    INetSocket openSocket(string host, short port)
       = NetSocket.assign(NativeSocket.connect(host, port));
+      
+   INetListener openListener(short port, bool noDelay)      
+      = NetListener.open(port, noDelay);
 }

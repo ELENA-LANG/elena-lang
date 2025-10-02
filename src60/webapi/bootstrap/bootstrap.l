@@ -1,16 +1,22 @@
 import system'collections;
+import net'http;
 import net'http'server;
 import webapi;
 
-internal singleton Bootstrap //: IBootstap
+internal singleton Bootstrap : IBootstap
 {
    static IHttpServer?           _server;
-//   static IHandleFactory?        _handleFactory;
-   static IHttpServerProvider?   _provier; 
+   static IHttpHandlerFactory?   _handleFactory;
+   static IHttpServerProvider?   _provider; 
+   
+   initSimpleServer(string prefix, short port)
+   {
+      _server := SimpleHttpServer.create(prefix, port, _provider ?? HttpServerProvider, _handleFactory ?? DummyHttpHandlerFactory);
+   }
    
    initSimpleServer()
    {
-//      _server := SimpleHttpServer.create(_provider ?? HttpServerProvider, _handleFactory ?? DummyHttpHandlerFactory);
+      _server := SimpleHttpServer.create("http", HTTP_PORT, _provider ?? HttpServerProvider, _handleFactory ?? DummyHttpHandlerFactory);
    }
    
    protected IHttpServer? getServer()

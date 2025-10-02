@@ -350,15 +350,15 @@ namespace elena_lang
       void loadArguments(TemplateScope& scope, List<SyntaxNode>* parameters);
       void loadParameters(TemplateScope& scope, List<SyntaxNode>* parameters);
 
-      void copyNode(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
-      void copyChildren(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyNode(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node, bool skipTerminalInfo);
+      void copyChildren(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node, bool skipTerminalInfo);
       void copyField(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyMethod(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyParent(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyClassMember(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode& current);
       void copyClassMembers(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
       void copyTemplatePostfix(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
-      void copyKVKey(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node);
+      void copyKVKey(SyntaxTreeWriter& writer, TemplateScope& scope, SyntaxNode node, bool skipTerminalInfo);
 
       void copyModuleInfo(SyntaxTreeWriter& writer, SyntaxNode rootNode, TemplateScope& scope);
 

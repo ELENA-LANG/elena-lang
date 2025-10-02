@@ -13,7 +13,8 @@ public interface IControllerFactory
 
 public interface IBootstap
 {
-   abstract initDummy();
+   abstract initSimpleServer();
+   abstract initSimpleServer(string prefix, short port);
    
    protected abstract IHttpServer getServer();
    

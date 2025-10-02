@@ -9,7 +9,6 @@ In development:
   --------------------------------------
   * SimpleHttpServer : introduce a provider 
   --------------------------------------
-  - warn if the implementing method is not supported by the class (see net library)
   - design webapi server initialization routine
   - implement
   - test 
