@@ -1,10 +1,15 @@
 import net'http'server;
-
+/*
 public interface IControllerFactory
 {
    IHttpHandlerFactory 
 }
+*/
 
+//public interface IHttpHandlerFactory 
+//{
+//   
+//}
 
 public interface IBootstap
 {
