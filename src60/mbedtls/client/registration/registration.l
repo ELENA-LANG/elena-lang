@@ -3,15 +3,16 @@ import net'http;
 
 namespace registration
 {
-   internal class MbedTlsSocketFactory : INetSocketFactory
+   internal class MbedTlsClientSocketFactory : INetSocketFactory
    {
       internal static register()
       {
-         SocketFactory.assignHttpsFactory(MbedTlsSocketFactory.create());
+         SocketFactory.assignHttpsFactoryInvoker(() => MbedTlsClientSocketFactory.create());
       }
 
       constructor create()
       {
+         MbedTlsClientStartup;
       }
    
       INetSocket openSocket(string host, short port)

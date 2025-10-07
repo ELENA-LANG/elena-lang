@@ -12,6 +12,8 @@ const string DRBG_PERSONALIZED_STR = "ELENA API6 client";
 const int MBEDTLS_NET_PROTO_TCP = 0;
 
 const int MBEDTLS_SSL_IS_CLIENT = 0;
+const int MBEDTLS_SSL_IS_SERVER = 1;
+
 const int MBEDTLS_SSL_TRANSPORT_STREAM = 0;
 const int MBEDTLS_SSL_PRESET_DEFAULT   = 0;
 const int MBEDTLS_SSL_VERIFY_NONE      = 0;
@@ -228,3 +230,32 @@ public class MbedTlsException : Exception
    constructor new(string s)
       <= super new(s);
 }
+
+internal class MbedTlsEnvironment
+{
+   constructor init(string customStr, int endpoint, int transport, int preset)
+   {
+      int ret := extern wrpmbedtls.mbedtls_drbg_seed_def(customStr, customStr.Length + 1);
+      if (ret != 0)
+      {
+         MbedTlsException.raise($"Failed. mbedtls_ctr_drbg_seed returned {ret}");
+      };
+
+      ret := extern wrpmbedtls.context_ssl_config_defaults(_context, endpoint, transport, preset);
+      if (ret != 0)
+      {
+         MbedTlsException.raise($"Failed. mbedtls_ssl_config_defaults returned {ret}");
+      };
+   }
+
+   internal setupClient(int authmode)
+   {
+      extern wrpmbedtls.mbedtls_client_setup(authmode);
+   }
+}
+
+public static MbedTlsEnvironment MbedTlsClientStartup
+   = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_CLIENT, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT).setupClient(MBEDTLS_SSL_VERIFY_NONE);
+
+public static MbedTlsEnvironment MbedTlsServerStartup
+   = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);

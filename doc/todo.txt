@@ -7,19 +7,14 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
-  * SimpleHttpServer : introduce a provider 
-  --------------------------------------
-  - test 
-  - design embedtls server initialization routine
-
-  - review possible solution
-  - design
-  - implement dummy
-  --------------------------------------
-  * dummy https web server - GET
+  * design embedtls server initialization routine
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   --------------------------------------
-  - implement
+  - SocketFactory : create a factory then the first time asked
+  - redesign mbedtls wrapper
+  - redesign mbedtls library
+  - test https get example
+  - implement dummy https web server - GET
   - test
   --------------------------------------
   ======================================

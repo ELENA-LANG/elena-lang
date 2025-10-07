@@ -1,7 +1,7 @@
 /* *********************************************************************
 ELENA Project : MbedTls based SSL Socket
 
-NOTE : the prject requires wrpmbedtls.dll (>= 1.1) 
+NOTE : the prject requires wrpmbedtls.dll (>= 1.2) 
 
 It can be downloaded from https://github.com/ELENA-LANG/mbedtls-as-dll
 
@@ -15,6 +15,8 @@ public class MbedTlsSocket : INetSocket
 
    private prepare(string host, string port)
    {
+      MbedTlsClientStartup;
+
       _context := extern wrpmbedtls.new_context();
 
       extern wrpmbedtls.init_context(_context);
@@ -22,26 +24,13 @@ public class MbedTlsSocket : INetSocket
 
       int ret := 0;
 
-      string pers := DRBG_PERSONALIZED_STR;
-      ret := extern wrpmbedtls.context_drbg_seed_def(_context, DRBG_PERSONALIZED_STR, DRBG_PERSONALIZED_STR.Length + 1);
-      if (ret != 0)
-      {
-         Exception.raise($"Failed. mbedtls_ctr_drbg_seed returned {ret}");
-      };
-
       ret := extern wrpmbedtls.context_net_connect(_context, host, port, MBEDTLS_NET_PROTO_TCP);
       if (ret != 0)
       {
          Exception.raise($"Failed. mbedtls_net_connect returned {ret}");
       };
 
-      ret := extern wrpmbedtls.context_ssl_config_defaults(_context, MBEDTLS_SSL_IS_CLIENT, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);
-      if (ret != 0)
-      {
-         Exception.raise($"Failed. mbedtls_ssl_config_defaults returned {ret}");
-      };
-
-      ret := extern wrpmbedtls.context_setup(_context, MBEDTLS_SSL_VERIFY_NONE);
+      ret := extern wrpmbedtls.context_setup(_context);
       if (ret != 0) 
       {
          Exception.raise($"Failed. mbedtls_ssl_setup returned {ret}");

@@ -4,8 +4,13 @@ public class SocketFactory
 {
    static object _sync := new object();
 
-   static INetSocketFactory _httpFactory;
-   static INetSocketFactory _httpsFactory;
+   static Func<INetSocketFactory>   _httpsFactoryInvoker;
+
+   static INetSocketFactory         _httpFactory;
+   static INetSocketFactory         _httpsFactory;
+
+   private static INetSocketFactory HttpsFactory
+      = _httpsFactory ?? _httpsFactory := _httpsFactoryInvoker();
 
    static constructor()
    {
@@ -16,6 +21,13 @@ public class SocketFactory
    {
       lock(_sync) {
          _httpsFactory := factory;
+      }
+   }
+
+   static assignHttpsFactoryInvoker(Func<INetSocketFactory> invoker)
+   {
+      lock(_sync) {
+         _httpsFactoryInvoker := invoker;
       }
    }
 
@@ -47,7 +59,7 @@ public class SocketFactory
                port := 443;
 
             lock(_sync) {
-               socket := _httpsFactory.openSocket(uri.Host, port);
+               socket := HttpsFactory.openSocket(uri.Host, port);
             }
          }
          ! : {
@@ -67,7 +79,7 @@ public class SocketFactory
          }
          "https" :
          {
-            socket := _httpsFactory.openListener(port, noDelay);
+            socket := HttpsFactory.openListener(port, noDelay);
          }
          ! : {
             InvalidArgumentException.raise("prefix");
