@@ -4,7 +4,7 @@ class Test
 {
    static test()
    {
-      var o := X;
+      var o := X.toPrintable();
       
       Console.printLine("X=", o)
    }

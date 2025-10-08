@@ -13209,7 +13209,7 @@ bool Compiler::Expression :: isDirectMethodCall(SyntaxNode& node, bool isPropert
       return true;
    }
    else if (node == SyntaxKey::Object && node.firstChild() == SyntaxKey::identifier) {
-      if (node.nextNode().compare(SyntaxKey::Expression, SyntaxKey::None)) {
+      if (isProperty || node.nextNode().compare(SyntaxKey::Expression, SyntaxKey::None)) {
          ustr_t name = node.firstChild().identifier();
          pos_t argCount = SyntaxTree::countSibling(node.nextNode(), SyntaxKey::Expression);
 
