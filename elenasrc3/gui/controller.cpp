@@ -494,8 +494,8 @@ void TextViewController :: highlightBrackets(TextViewModelBase* model, DocumentC
    if (pos != NOTFOUND_POS) {
       pos_t closeBracketPos = caret.position();
       if (findBracket(text, caret, CLOSING_BRACKETS[pos], OPENING_BRACKETS[pos], false)) {
-         docView->addHighlight(caret.position(), STYLE_HIGHLIGHTED_BRACKET);
          docView->addHighlight(closeBracketPos, STYLE_HIGHLIGHTED_BRACKET);
+         docView->addHighlight(caret.position(), STYLE_HIGHLIGHTED_BRACKET);
 
          changeStatus.formatterChanged = true;
       }
