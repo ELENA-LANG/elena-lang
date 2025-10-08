@@ -1,5 +1,6 @@
 import system'net;
 import net'http;
+import mbedtls;
 
 namespace registration
 {
@@ -17,7 +18,7 @@ namespace registration
       INetSocket openSocket(string host, short port)
          = MbedTlsSocket.open(host, port);
          
-      INetListener openListener(string prefix, short port, bool noDelay)
+      INetListener openListener(short port, bool noDelay)
          = NotSupportedException.raise();
    }   
 }

@@ -1,5 +1,6 @@
 import system'net;
 import net'http;
+import mbedtls;
 
 namespace registration
 {
@@ -7,7 +8,7 @@ namespace registration
    {
       internal static register()
       {
-         SocketFactory.assignHttpsFactoryInvoker(() => MbedTlsClientSocketFactory.create());
+         SocketFactory.assignHttpsFactoryInvoker({ ^ MbedTlsClientSocketFactory.create() });
       }
 
       constructor create()
@@ -24,4 +25,3 @@ namespace registration
 }
 
 static Registration : preloaded = registration'MbedTlsSocketFactory.register();
-

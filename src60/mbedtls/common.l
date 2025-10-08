@@ -231,7 +231,7 @@ public class MbedTlsException : Exception
       <= super new(s);
 }
 
-internal class MbedTlsEnvironment
+public class MbedTlsEnvironment
 {
    constructor init(string customStr, int endpoint, int transport, int preset)
    {
@@ -241,7 +241,7 @@ internal class MbedTlsEnvironment
          MbedTlsException.raise($"Failed. mbedtls_ctr_drbg_seed returned {ret}");
       };
 
-      ret := extern wrpmbedtls.context_ssl_config_defaults(_context, endpoint, transport, preset);
+      ret := extern wrpmbedtls.mbedtls_config_ssl(endpoint, transport, preset);
       if (ret != 0)
       {
          MbedTlsException.raise($"Failed. mbedtls_ssl_config_defaults returned {ret}");
