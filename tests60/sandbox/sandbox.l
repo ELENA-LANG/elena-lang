@@ -1,18 +1,19 @@
-interface I
-{
-   abstract foo();
-}
+import extensions;
 
-class A : interface<I>
+class Test
 {
-   bar() {}
-
-/*   I cast() = new I
+   static test()
    {
-      embeddable dispatch() => self;
-   };*/
+      var o := X;
+      
+      Console.printLine("X=", o)
+   }
+
+   static int X
+      = 2;
 }
 
 public program()
 {
+   Test.test()
 }

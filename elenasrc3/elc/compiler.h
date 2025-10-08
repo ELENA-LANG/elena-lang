@@ -1527,7 +1527,7 @@ namespace elena_lang
 
          bool                 withDebugInfo;
 
-         bool isDirectMethodCall(SyntaxNode& node);
+         bool isDirectMethodCall(SyntaxNode& node, bool isProperty);
 
          bool resolveAndValidate(ObjectInfo target, ref_t targetRef, mssg_t message,
             CheckMethodResult& result, bool weakCall, bool allowPrivateCall);

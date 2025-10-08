@@ -12931,7 +12931,15 @@ ObjectInfo Compiler::Expression :: compileObject(SyntaxNode node, ExpressionAttr
             return compileNewOp(node, retVal, signRef, arguments);
          }
          case ObjectKind::Unknown:
-            scope.raiseError(errUnknownObject, node.lastChild(SyntaxKey::TerminalMask));
+            if (isDirectMethodCall(node, true)) {
+               // if direct method call is possible (without specifying target)
+               ArgumentsInfo arguments;
+               ObjectInfo source = scope.mapSelf(true);
+
+               retVal = compileMessageOperationR(node, node, source, arguments,
+                  0, true, false, false, mode);
+            }
+            else scope.raiseError(errUnknownObject, node.lastChild(SyntaxKey::TerminalMask));
             break;
          default:
             break;
@@ -13195,7 +13203,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    return retVal;
 }
 
-bool Compiler::Expression::isDirectMethodCall(SyntaxNode& node)
+bool Compiler::Expression :: isDirectMethodCall(SyntaxNode& node, bool isProperty)
 {
    if (node == SyntaxKey::Message) {
       return true;
@@ -13209,7 +13217,7 @@ bool Compiler::Expression::isDirectMethodCall(SyntaxNode& node)
          if (!classScope)
             return false;
 
-         mssg_t weakMessage = encodeMessage(scope.module->mapAction(name, 0, true), argCount + 1, 0);
+         mssg_t weakMessage = encodeMessage(scope.module->mapAction(name, 0, true), argCount + 1, isProperty ? PROPERTY_MESSAGE : 0);
          if (compiler->_logic->isMessageSupported(classScope->info, weakMessage)) {
             node.setKey(SyntaxKey::Message);
             node.setArgumentReference(weakMessage);
@@ -13374,7 +13382,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
    ArgumentListType argListType = ArgumentListType::Normal;
 
    SyntaxNode current = node.firstChild();
-   if (isDirectMethodCall(current)) {
+   if (isDirectMethodCall(current, false)) {
       // if direct method call is possible (without specifying target)
       source = scope.mapSelf(true);
 
