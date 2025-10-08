@@ -8,7 +8,7 @@ namespace registration
    {
       internal static register()
       {
-         SocketFactory.assignHttpsFactoryInvoker({ ^ MbedTlsClientSocketFactory.create() });
+//         SocketFactory.assignHttpsFactoryInvoker({ ^ MbedTlsClientSocketFactory.create() });
       }
 
       constructor create()
