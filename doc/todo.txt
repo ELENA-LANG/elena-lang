@@ -7,6 +7,15 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
+  * support advanced syntax for Func<T>
+  --------------------------------------
+  - implement
+  - support explicit return type [T]...
+             ([T] => 1)
+  - support : var f3 := ([] => "Hello");
+  - add to a feature list
+  ======================================
+  --------------------------------------
   * design embedtls server initialization routine
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   --------------------------------------
@@ -16,8 +25,26 @@ In development:
   - test https get example
   - implement dummy https web server - GET
   - test
-  --------------------------------------
   ======================================
+  * release 6.8
+  --------------------------------------
+  - test aarch64
+  - test ppc64
+  - test red
+  - update versions everywhere
+  - prepare release notes
+  - create x86 setup 
+  - create x64 setup 
+  - create aarch64
+  - create ppc64
+  - merge PR
+  --------------------------------------
+
+  ### EPIC: elena 6.9 ###
+
+  === Iteration 44 ===
+  ====================================== 
+  * new version 6.8.1
   * fix entropy sample
   * api : provide descriptions for all classes in system & extensions, starting from IntMatrix
   * #820 : Launch elena64-ide.exe from the command line 
@@ -60,27 +87,6 @@ In development:
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   --------------------------------------
 
-  ### EPIC: elena 6.9 ###
-
-  === Iteration 43 ===
-  --------------------------------------
-  --------------------------------------
-  - ppc : fpi, fsin, fcos
-  - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
-  - #708 : compile library, compile executable, test executable  
-  - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
-  - MTA support for Linux : test sample2 (events)
-  - MTA support for Linux : test simple multithread sample
-  --------------------------------------
-
-  === Iteration 44 ===
-  --------------------------------------
-  - MTA support for Linux : support socket
-  - MTA support for Linux : support http
-  - MTA support for Linux : tests threads / tasks examples
-  - api : provide descriptions for all classes in net, algoithm, cellular, forms, ltests, mbedtls, sqlite, textgen, webapi, xforms, xml
-  --------------------------------------
-
   === Iteration 45 ===
   --------------------------------------
   --------------------------------------
@@ -91,3 +97,6 @@ In development:
 
   ### EPIC: elena 6.10 ###
 
+  === Iteration 47 ===
+  --------------------------------------
+  --------------------------------------

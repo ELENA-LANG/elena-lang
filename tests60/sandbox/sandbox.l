@@ -2,18 +2,19 @@ import extensions;
 
 class Test
 {
-   static test()
+   static printFunctionResult(Func f)
    {
-      var o := X.toPrintable();
-      
-      Console.printLine("X=", o)
+      Console.printLine(f," prints ", f()) 
    }
 
-   static int X
-      = 2;
+//   static printStrongFunctionResult(Func<string> f)
+//   {
+//      Console.printLine(f," prints ", f()) 
+//   }
 }
 
 public program()
 {
-   Test.test()
+   Test.printFunctionResult(([] => "Hello from Func"))
+//   Test.printFunctionResult::([] => "Hello from Func")
 }

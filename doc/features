@@ -472,6 +472,7 @@ public program()
 {
    var f1 := { Console.writeLine("The traditional lambda function without arguments"); };
    var f2 := (){ Console.writeLine("The new lambda function without arguments to be in line with syntax like c(x){ ... }"); };
+   var f3 := ([] => "Hello");
 
    f1();
    f2();

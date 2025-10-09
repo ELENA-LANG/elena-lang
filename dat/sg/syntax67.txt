@@ -347,6 +347,7 @@ L3_SINGLE_EXPRESSION ::=
 			}
 		}
 		| CLOSURE_RET_TYPE identifier+ LAMBDA_RX
+		| "[]" "=>" RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
 	};
 
 TYPE_EXPR ::=
@@ -468,6 +469,7 @@ SUB_EXPRESSION ::=
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT { INLINE_F | L3_F } SUB_R
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR ")"
 	| CLOSURE_RET_TYPE identifier+ LAMBDA_RX
+        | "[]" "=>" RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
 	| BRACKET SUB_EXPRESSION SUB_F ")"
 	| "::" TYPE_EXPR ")"
 	| ":" identifier L3_EXPRESSION? ^OPERATION_TEMPLATE ")"
