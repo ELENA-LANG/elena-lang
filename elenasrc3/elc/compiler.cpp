@@ -2243,6 +2243,51 @@ static inline ref_t resolveDictionaryMask(TypeInfo typeInfo)
    return 0;
 }
 
+static inline void defineUserFriendClassName(IdentifierString& output, ref_t reference, ModuleBase* module)
+{
+   output.copy(module->resolveReference(reference));
+
+   ustr_t s = *output;
+   size_t index = s.findStr(PRIVATE_PREFIX_NS);
+   if (index != NOTFOUND_POS) {
+      output.cut(index, strlen(PRIVATE_PREFIX_NS));
+      output.insert("private ", 0);
+   }
+
+   index = s.findStr(TEMPLATE_PREFIX);
+   if (index != NOTFOUND_POS) {
+      output.cut(index, strlen(TEMPLATE_PREFIX));
+
+      size_t start = s.findStr("#");
+      index = s.findSubStr(start, "&", getlength(s) - start);
+      output.cut(start, index - start + 1);
+
+      output.insert("<", start);
+      output.append(">");
+
+      output.replaceAll('@', '\'', 0);
+      output.replaceAll('&', ',', 0);
+   }
+}
+
+void Compiler :: printErrorWithClassInfo(Scope& scope, SyntaxNode node, ref_t targerRef, ref_t sourceRef, int error)
+{
+   if (_verbose) {
+      ustr_t targetName = scope.module->resolveReference(targerRef);
+      ustr_t sourceName = scope.module->resolveReference(sourceRef);
+
+      if (!targetName.empty())
+         _errorProcessor->info(infoTargetClass, targetName);
+      if (!sourceName.empty())
+         _errorProcessor->info(infoSourceClass, sourceName);
+   }
+
+   IdentifierString className;
+   defineUserFriendClassName(className, targerRef, scope.module);
+
+   scope.raiseError(error, node, *className);
+}
+
 ref_t Compiler::mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix,
    Visibility visibility, bool ignoreDuplicates)
 {
@@ -15304,7 +15349,8 @@ ObjectInfo Compiler::Expression::declareTempLocal(ref_t typeRef, bool dynamicOnl
 
 void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_t message, ref_t targetRef, bool weakTarget, bool strongResolved)
 {
-   ustr_t typeName = scope.module->resolveReference(targetRef);
+   IdentifierString userFriendlyTypeName;
+   defineUserFriendClassName(userFriendlyTypeName, targetRef, scope.module);
 
    bool strictTypeEnforcing = compiler->_strictTypeEnforcing && compiler->_logic->isClosedClass(*scope.moduleScope, targetRef);
 
@@ -15312,7 +15358,7 @@ void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_
       if (getAction(message) == getAction(scope.moduleScope->buildins.constructor_message)) {
          scope.raiseError(errUnknownDefConstructor, node);
       }
-      else scope.raiseError(errUnknownMethod, findMessageNode(node), typeName);
+      else scope.raiseError(errUnknownMethod, findMessageNode(node), *userFriendlyTypeName);
    }
    else {
       SyntaxNode messageNode = findMessageNode(node);
@@ -15358,14 +15404,14 @@ void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_
 
             compiler->_errorProcessor->info(infoUnknownMessage, *messageName);
 
-            if (!typeName.empty())
-               compiler->_errorProcessor->info(infoTargetClass, typeName);
+            if (targetRef)
+               compiler->_errorProcessor->info(infoTargetClass, scope.module->resolveReference(targetRef));
          }
 
          if (strictTypeEnforcing) {
-            scope.raiseError(errUnknownMethod, messageNode, typeName);
+            scope.raiseError(errUnknownMethod, messageNode, *userFriendlyTypeName);
          }
-         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMethod, messageNode, typeName);
+         else scope.raiseWarning(WARNING_LEVEL_1, wrnUnknownMethod, messageNode, *userFriendlyTypeName);
       }
    }
 }
@@ -17684,10 +17730,10 @@ void Compiler::LambdaClosure :: compile(SyntaxNode node)
    if (!lazyExpression) {
       ref_t closureRef = resolveClosure(methodScope.message, methodScope.info.outputRef);
       if (closureRef) {
-         if (compiler->_logic->isCompatible(*scope.moduleScope, { parentRef }, { closureRef }, true)) {
-            parentRef = closureRef;
+         if (!compiler->_logic->isCompatible(*scope.moduleScope, { parentRef }, { closureRef }, true)) {
+            compiler->printErrorWithClassInfo(scope, node, parentRef, closureRef, errIncompatibleClosure);
          }
-         else scope.raiseError(errInvalidOperation, node);
+         else parentRef = closureRef;
       }
       else throw InternalError(errClosureError);
    }

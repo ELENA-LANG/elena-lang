@@ -11,7 +11,7 @@ using namespace elena_lang;
 
 // --- XmlNode ---
 
-inline bool isWhitespace(char ch)
+static inline bool isWhitespace(char ch)
 {
    return (ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t');
 }
@@ -61,7 +61,7 @@ static inline void skipPseudoAttribute(ustr_t content, size_t& position)
    }
 }
 
-inline bool isClosingTag(ustr_t content, size_t start, ustr_t tag)
+static inline bool isClosingTag(ustr_t content, size_t start, ustr_t tag)
 {
    if (content[start] == '<' && content[start + 1] == '/') {
       if (content.compareSub(tag, start + 2, tag.length()) && content[start + 2 + tag.length()] == '>') {
@@ -342,7 +342,7 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
          else if (!inlineMode && _content[i] == '"') {
             size_t start = i;
             seekQuoteEnd(_content.str(), i, '"');
-            writer.write(_content.str() + start, i - start + 1);
+            writer.write(_content.str() + start, static_cast<pos_t>(i - start + 1));
          }
          else if (inlineMode) {
             ignoreWhitespace = false;

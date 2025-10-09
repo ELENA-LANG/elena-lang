@@ -1747,6 +1747,8 @@ namespace elena_lang
       bool                   _strictTypeEnforcing;
       bool                   _nullableTypeWarning;
 
+      void printErrorWithClassInfo(Scope& scope, SyntaxNode node, ref_t targerRef, ref_t sourceRef, int error);
+
       mssg_t overwriteAsAsyncFunction(Scope& scope, mssg_t weakMessage);
 
       void addTypeInfo(Scope& scope, SyntaxNode node, SyntaxKey key, TypeInfo typeInfo);

@@ -345,6 +345,7 @@ namespace elena_lang
    constexpr auto errMixedUpVariadicMessage  = 114;
    constexpr auto errRedirectToItself        = 115;
    constexpr auto errAssigningRealOnly       = 116;
+   constexpr auto errIncompatibleClosure     = 117;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;
    constexpr auto errCannotEval              = 140;
@@ -441,6 +442,7 @@ namespace elena_lang
    constexpr auto infoExptectedType          = 709;
    constexpr auto infoInternalDefConstructor = 710;
    constexpr auto infoMessageInfo            = 711;
+   constexpr auto infoSourceClass            = 712;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;

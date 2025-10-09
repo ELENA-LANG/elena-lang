@@ -7,13 +7,7 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
-  * support advanced syntax for Func<T>
-  --------------------------------------
-  - support explicit return type [T]...
-             ([T] => 1)
-  - support : var f3 := ([] => "Hello");
-  - add to a feature list
-  ======================================
+  * use user friend class name for errors
   --------------------------------------
   * design embedtls server initialization routine
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
