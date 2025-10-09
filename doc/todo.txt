@@ -9,7 +9,6 @@ In development:
   --------------------------------------
   * support advanced syntax for Func<T>
   --------------------------------------
-  - implement
   - support explicit return type [T]...
              ([T] => 1)
   - support : var f3 := ([] => "Hello");
@@ -30,7 +29,7 @@ In development:
   --------------------------------------
   - test aarch64
   - test ppc64
-  - test red
+  - test FreeBSD 
   - update versions everywhere
   - prepare release notes
   - create x86 setup 

@@ -15,6 +15,6 @@ class Test
 
 public program()
 {
-   Test.printFunctionResult(([] => "Hello from Func"))
+   Test.printFunctionResult(([string] => "Hello from Func"))
 //   Test.printFunctionResult::([] => "Hello from Func")
 }

@@ -346,7 +346,10 @@ L3_SINGLE_EXPRESSION ::=
 				"{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
 			}
 		}
-		| CLOSURE_RET_TYPE identifier+ LAMBDA_RX
+		| CLOSURE_RET_TYPE {
+			identifier+ LAMBDA_RX
+			| "=>" RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
+		}
 		| "[]" "=>" RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
 	};
 
@@ -468,7 +471,10 @@ SUB_EXPRESSION ::=
 	| { string | wide } ^OBJECT { SBRACKET INDEXER_R }? { INLINE_F | L3_F } SUB_R
 	| { integer | hexinteger | long | real | constant | character } ^OBJECT { INLINE_F | L3_F } SUB_R
 	| interpolate { INTERPOL_EXPRESSION interpolate }+ ^INTERPOLATE_EXPR ")"
-	| CLOSURE_RET_TYPE identifier+ LAMBDA_RX
+	| CLOSURE_RET_TYPE {
+		identifier+ LAMBDA_RX
+		| "=>" RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
+	}
         | "[]" "=>" RET_EXPRESSION ^CLOSURE ")" ^EXPRESSION
 	| BRACKET SUB_EXPRESSION SUB_F ")"
 	| "::" TYPE_EXPR ")"
