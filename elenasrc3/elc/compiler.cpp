@@ -2273,8 +2273,8 @@ static inline void defineUserFriendClassName(IdentifierString& output, ref_t ref
 void Compiler :: printErrorWithClassInfo(Scope& scope, SyntaxNode node, ref_t targerRef, ref_t sourceRef, int error)
 {
    if (_verbose) {
-      ustr_t targetName = scope.module->resolveReference(targerRef);
-      ustr_t sourceName = scope.module->resolveReference(sourceRef);
+      ustr_t targetName = targerRef ? scope.module->resolveReference(targerRef) : nullptr;
+      ustr_t sourceName = sourceRef ? scope.module->resolveReference(sourceRef) : nullptr;
 
       if (!targetName.empty())
          _errorProcessor->info(infoTargetClass, targetName);

@@ -13,7 +13,7 @@ namespace registration
 
       constructor create()
       {
-         MbedTlsServerStartup;
+         MbedTlsEnvironment.startUpServer()
       }
    
       INetSocket openSocket(string host, short port)
