@@ -15,8 +15,6 @@ public class MbedTlsSocket : INetSocket
 
    private prepare(string host, string port)
    {
-      MbedTlsClientStartup;
-
       _context := extern wrpmbedtls.mbedtls_new_context();
       //   mbedtls_x509_crt_init(&cacert);
 
