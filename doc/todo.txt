@@ -10,10 +10,11 @@ In development:
   * design embedtls server initialization routine
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   --------------------------------------
+  - redesign 
   - test http get
   - test https get
   - test http server
-  - implement dummy https web server - GET
+  - implement dummy https web server - GET 
   - implement https example
   - release a new version of mbedtls wrapper   
   ======================================

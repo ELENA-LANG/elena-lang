@@ -10,7 +10,7 @@
   </project>
   <manifest>
      <name>ELENA SSL Socket based on MbedTls routines</name>
-     <version>6.7.4</version>
+     <version>6.7.5</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>

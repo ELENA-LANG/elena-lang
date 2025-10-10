@@ -1,4 +1,14 @@
 <configuration>
+  <profile key="default">
+     <variables>
+       <variable key="Http">-1</variable>
+     </variables>
+  </profile>
+  <profile key="ssl">
+     <variables>
+       <variable key="Https">-1</variable>
+     </variables>
+  </profile>
   <files>
      <module>
         <file>bootstrap.l</file>
