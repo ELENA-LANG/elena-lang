@@ -24,16 +24,16 @@ public class MbedTlsSocket : INetSocket
 
       int ret := 0;
 
+      ret := extern wrpmbedtls.context_setup(_context);
+      if (ret != 0) 
+      {
+         Exception.raise($"Failed. context_setup returned {ret}");
+      };
+
       ret := extern wrpmbedtls.context_net_connect(_context, host, port, MBEDTLS_NET_PROTO_TCP);
       if (ret != 0)
       {
          Exception.raise($"Failed. mbedtls_net_connect returned {ret}");
-      };
-
-      ret := extern wrpmbedtls.context_setup(_context);
-      if (ret != 0) 
-      {
-         Exception.raise($"Failed. mbedtls_ssl_setup returned {ret}");
       };
 
       ret := extern wrpmbedtls.context_ssl_set_hostname(_context, host);
