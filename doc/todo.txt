@@ -7,17 +7,15 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
-  * use user friend class name for errors
-  --------------------------------------
   * design embedtls server initialization routine
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   --------------------------------------
-  - SocketFactory : create a factory then the first time asked
-  - redesign mbedtls wrapper
-  - redesign mbedtls library
-  - test https get example
+  - test http get
+  - test https get
+  - test http server
   - implement dummy https web server - GET
-  - test
+  - implement https example
+  - release a new version of mbedtls wrapper   
   ======================================
   * release 6.8
   --------------------------------------
