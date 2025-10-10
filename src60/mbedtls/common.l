@@ -261,14 +261,17 @@ public class MbedTlsEnvironment
 
    static startUpClient()
    {
-      MbedTlsStartup.setupClient(MBEDTLS_SSL_VERIFY_NONE)
+      MbedTlsClientStartup.setupClient(MBEDTLS_SSL_VERIFY_NONE)
    }
 
    static startUpServer()
    {
-      MbedTlsStartup.setupServer()
+      MbedTlsServerStartup.setupServer()
    }
 }
 
-static MbedTlsEnvironment MbedTlsStartup
+static MbedTlsEnvironment MbedTlsClientStartup
+   = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_CLIENT, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);
+
+static MbedTlsEnvironment MbedTlsServerStartup
    = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);
