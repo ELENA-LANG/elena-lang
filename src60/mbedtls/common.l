@@ -261,7 +261,7 @@ public class MbedTlsEnvironment
 }
 
 public static MbedTlsEnvironment MbedTlsClientStartup
-   = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_CLIENT, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT).setupServer();
+   = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_CLIENT, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT).setupClient(MBEDTLS_SSL_VERIFY_NONE);
 
 public static MbedTlsEnvironment MbedTlsServerStartup
    = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT).setupServer();
