@@ -17,32 +17,32 @@ public class MbedTlsSocket : INetSocket
    {
       MbedTlsClientStartup;
 
-      _context := extern wrpmbedtls.new_context();
+      _context := extern wrpmbedtls.mbedtls_new_context();
 
-      extern wrpmbedtls.init_context(_context);
+      extern wrpmbedtls.mbedtls_init_context(_context);
       //   mbedtls_x509_crt_init(&cacert);
 
       int ret := 0;
 
-      ret := extern wrpmbedtls.context_setup(_context);
-      if (ret != 0) 
-      {
-         Exception.raise($"Failed. context_setup returned {ret}");
-      };
-
-      ret := extern wrpmbedtls.context_net_connect(_context, host, port, MBEDTLS_NET_PROTO_TCP);
+      ret := extern wrpmbedtls.mbedtls_context_net_connect(_context, host, port, MBEDTLS_NET_PROTO_TCP);
       if (ret != 0)
       {
          Exception.raise($"Failed. mbedtls_net_connect returned {ret}");
       };
 
-      ret := extern wrpmbedtls.context_ssl_set_hostname(_context, host);
+      ret := extern wrpmbedtls.mbedtls_context_setup(_context);
+      if (ret != 0) 
+      {
+         Exception.raise($"Failed. context_setup returned {ret}");
+      };
+
+      ret := extern wrpmbedtls.mbedtls_context_ssl_set_hostname(_context, host);
       if (ret != 0)
       {
          Exception.raise($"Failed. mbedtls_ssl_set_hostname returned {ret}");
       };
 
-      extern wrpmbedtls.context_ssl_set_bio_def(_context);
+      extern wrpmbedtls.mbedtls_context_ssl_set_bio_def(_context);
    }
 
    constructor open(string host, short port)
@@ -56,7 +56,7 @@ public class MbedTlsSocket : INetSocket
 
       while (true) {
          extern {
-            retVal := extern wrpmbedtls.context_read(_context,
+            retVal := extern wrpmbedtls.mbedtls_context_read(_context,
                           buffer, length);
          };
 
@@ -76,7 +76,7 @@ public class MbedTlsSocket : INetSocket
    {
       int retVal := 0;
       while (true) {
-         retVal := extern wrpmbedtls.context_write(_context, buffer, length);
+         retVal := extern wrpmbedtls.mbedtls_context_write(_context, buffer, length);
    
          if (retVal < 0) {
             if (retVal == MBEDTLS_ERR_SSL_WANT_WRITE || retVal == MBEDTLS_ERR_SSL_WANT_READ) {
@@ -121,7 +121,7 @@ public class MbedTlsSocket : INetSocket
    {
       int retVal := 0;
       extern {
-         retVal := extern wrpmbedtls.socket_data_available(_context);
+         retVal := extern wrpmbedtls.mbedtls_socket_data_available(_context);
       };
 
       ^ retVal != 0;
@@ -129,8 +129,8 @@ public class MbedTlsSocket : INetSocket
 
    close()
    {
-      extern wrpmbedtls.free_context(_context);
-      extern wrpmbedtls.delete_context(_context);
+      extern wrpmbedtls.mbedtls_free_context(_context);
+      extern wrpmbedtls.mbedtls_delete_context(_context);
 
       _context := default;
    }
