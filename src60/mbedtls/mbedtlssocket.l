@@ -18,8 +18,6 @@ public class MbedTlsSocket : INetSocket
       MbedTlsClientStartup;
 
       _context := extern wrpmbedtls.mbedtls_new_context();
-
-      extern wrpmbedtls.mbedtls_init_context(_context);
       //   mbedtls_x509_crt_init(&cacert);
 
       int ret := 0;
@@ -129,7 +127,6 @@ public class MbedTlsSocket : INetSocket
 
    close()
    {
-      extern wrpmbedtls.mbedtls_free_context(_context);
       extern wrpmbedtls.mbedtls_delete_context(_context);
 
       _context := default;
