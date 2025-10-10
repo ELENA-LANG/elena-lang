@@ -233,7 +233,7 @@ public class MbedTlsException : Exception
 
 public class MbedTlsEnvironment
 {
-   constructor init(string customStr, int endpoint, int transport, int preset)
+   internal constructor init(string customStr, int endpoint, int transport, int preset)
    {
       extern wrpmbedtls.mbedtls_startup();
 
@@ -258,10 +258,17 @@ public class MbedTlsEnvironment
    internal setupServer()
    {
    }
+
+   static startUpClient()
+   {
+      MbedTlsStartup.setupClient(MBEDTLS_SSL_VERIFY_NONE)
+   }
+
+   static startUpServer()
+   {
+      MbedTlsStartup.setupServer()
+   }
 }
 
-public static MbedTlsEnvironment MbedTlsClientStartup
-   = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_CLIENT, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT).setupClient(MBEDTLS_SSL_VERIFY_NONE);
-
-public static MbedTlsEnvironment MbedTlsServerStartup
-   = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT).setupServer();
+static MbedTlsEnvironment MbedTlsStartup
+   = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);
