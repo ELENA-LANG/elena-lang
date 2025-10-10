@@ -24,4 +24,4 @@ namespace registration
    }   
 }
 
-static Registration : preloaded = registration'MbedTlsSocketFactory.register();
+static Registration : preloaded = registration'MbedTlsClientSocketFactory.register();
