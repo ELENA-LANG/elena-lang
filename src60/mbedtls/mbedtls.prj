@@ -10,13 +10,14 @@
   </project>
   <manifest>
      <name>ELENA SSL Socket based on MbedTls routines</name>
-     <version>6.7.5</version>
+     <version>6.7.7</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
      <module>
         <include>common.l</include>
         <include>mbedtlssocket.l</include>
+        <include>mbedtlslistener.l</include>
      </module>
      <module name="client">
         <include>client\registration\registration.l</include>

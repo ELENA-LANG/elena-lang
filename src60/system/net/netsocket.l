@@ -28,6 +28,8 @@ public interface INetListener
    abstract INetSocket acceptNetSocket();
    
    abstract Task<INetSocket> acceptNetSocketAsync();
+
+   abstract close();
 }
 
 public interface INetSocketFactory
@@ -143,6 +145,9 @@ public class NetListener : INetListener
 
       ^ NetSocket.assign(socket)
    }   
+
+   close()
+      => _listenSocket;
 }
 
 public class NativeSocketFactory : INetSocketFactory

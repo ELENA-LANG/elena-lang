@@ -17,10 +17,10 @@ namespace registration
       }
    
       INetSocket openSocket(string host, short port)
-         = MbedTlsSocket.open(host, port);
+         = MbedTlsSocket.open(host, port, *MbedTlsServerStartup);
          
       INetListener openListener(short port, bool noDelay)
-         = NotSupportedException.raise();
+         = MbedTlsListener.open(port, noDelay, *MbedTlsServerStartup);
    }   
 }
 

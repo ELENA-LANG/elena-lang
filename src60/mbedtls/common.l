@@ -18,6 +18,8 @@ const int MBEDTLS_SSL_TRANSPORT_STREAM = 0;
 const int MBEDTLS_SSL_PRESET_DEFAULT   = 0;
 const int MBEDTLS_SSL_VERIFY_NONE      = 0;
 
+const int PSA_SUCCESS                  = 0;
+
 const int MBEDTLS_ERR_SSL_WANT_READ                         = -26880;
 const int MBEDTLS_ERR_SSL_WANT_WRITE                        = -26752;
 
@@ -233,17 +235,22 @@ public class MbedTlsException : Exception
 
 public class MbedTlsEnvironment
 {
+   pointer _env;
+
+   pointer Value
+      = _env; 
+
    internal constructor init(string customStr, int endpoint, int transport, int preset)
    {
-      extern wrpmbedtls.mbedtls_startup();
+      _env := extern wrpmbedtls.mbedtls_startup();
 
-      int ret := extern wrpmbedtls.mbedtls_drbg_seed_def(customStr, customStr.Length + 1);
+      int ret := extern wrpmbedtls.mbedtls_drbg_seed_def(_env, customStr, customStr.Length + 1);
       if (ret != 0)
       {
          MbedTlsException.raise($"Failed. mbedtls_ctr_drbg_seed returned {ret}");
       };
 
-      ret := extern wrpmbedtls.mbedtls_config_ssl(endpoint, transport, preset);
+      ret := extern wrpmbedtls.mbedtls_config_ssl(_env, endpoint, transport, preset);
       if (ret != 0)
       {
          MbedTlsException.raise($"Failed. mbedtls_ssl_config_defaults returned {ret}");
@@ -252,11 +259,49 @@ public class MbedTlsEnvironment
 
    internal setupClient(int authmode)
    {
-      extern wrpmbedtls.mbedtls_client_setup(authmode);
+      extern wrpmbedtls.mbedtls_client_setup(_env, authmode);
    }
 
    internal setupServer()
    {
+      int ret := extern mbedtls_init_psa();
+      if (ret != PSA_SUCCESS)
+      {
+         MbedTlsException.raise($"Failed to initialize PSA Crypto implementation. psa_crypto_init returned {ret}");
+      };
+
+      extern mbedtls_new_server_context(_env);
+
+      ret := extern mbedtls_init_srvcert(_env);
+      if (ret != 0)
+      {
+         MbedTlsException.raise($"Srvcert init Failed. mbedtls_x509_crt_parse returned {ret}");
+      };
+
+      ret := extern mbedtls_init_cachain(_env);
+      if (ret != 0)
+      {
+         MbedTlsException.raise($"Cachain init Failed. mbedtls_x509_crt_parse returned {ret}");
+      };
+
+      ret := extern mbedtls_init_srv_key(_env);
+      if (ret != 0)
+      {
+         MbedTlsException.raise($"Failed. mbedtls_pk_parse_key returned {ret}");
+      };
+
+      ret := extern mbedtls_servercontext_setup(_env);
+      if (ret != 0)
+      {
+         MbedTlsException.raise($"Failed. mbedtls_ssl_conf_own_cert returned {ret}");
+      };
+   }
+
+   close()
+   {
+      extern wrpmbedtls.mbedtls_shutdown(_env);
+
+      _env := default;
    }
 
    static startUpClient()
@@ -270,8 +315,8 @@ public class MbedTlsEnvironment
    }
 }
 
-static MbedTlsEnvironment MbedTlsClientStartup
+public static MbedTlsEnvironment MbedTlsClientStartup
    = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_CLIENT, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);
 
-static MbedTlsEnvironment MbedTlsServerStartup
+public static MbedTlsEnvironment MbedTlsServerStartup
    = MbedTlsEnvironment.init(DRBG_PERSONALIZED_STR, MBEDTLS_SSL_IS_SERVER, MBEDTLS_SSL_TRANSPORT_STREAM, MBEDTLS_SSL_PRESET_DEFAULT);

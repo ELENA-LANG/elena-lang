@@ -9,42 +9,9 @@ It can be downloaded from https://github.com/ELENA-LANG/mbedtls-as-dll
 
 import system'net;
 
-public class MbedTlsSocket : INetSocket
+internal class MbedTlsBaseSocket : INetSocket
 {
-   pointer  _context;         
-
-   private prepare(string host, string port)
-   {
-      _context := extern wrpmbedtls.mbedtls_new_context();
-      //   mbedtls_x509_crt_init(&cacert);
-
-      int ret := 0;
-
-      ret := extern wrpmbedtls.mbedtls_context_net_connect(_context, host, port, MBEDTLS_NET_PROTO_TCP);
-      if (ret != 0)
-      {
-         Exception.raise($"Failed. mbedtls_net_connect returned {ret}");
-      };
-
-      ret := extern wrpmbedtls.mbedtls_context_setup(_context);
-      if (ret != 0) 
-      {
-         Exception.raise($"Failed. context_setup returned {ret}");
-      };
-
-      ret := extern wrpmbedtls.mbedtls_context_ssl_set_hostname(_context, host);
-      if (ret != 0)
-      {
-         Exception.raise($"Failed. mbedtls_ssl_set_hostname returned {ret}");
-      };
-
-      extern wrpmbedtls.mbedtls_context_ssl_set_bio_def(_context);
-   }
-
-   constructor open(string host, short port)
-   {
-      prepare(host, port.toPrintable());
-   }
+   pointer  _context;
 
    int read(byte[] buffer, int length)
    {
@@ -86,6 +53,59 @@ public class MbedTlsSocket : INetSocket
       ^ retVal
    }
 
+   get bool AvailableToRead()
+   {
+      int retVal := 0;
+      extern {
+         retVal := extern wrpmbedtls.mbedtls_socket_data_available(_context);
+      };
+
+      ^ retVal != 0;
+   }
+
+   close()
+   {
+      extern wrpmbedtls.mbedtls_delete_context(_context);
+
+      _context := default;
+   }
+}
+
+public class MbedTlsSocket : MbedTlsBaseSocket
+{
+   private prepare(string host, string port, pointer env)
+   {
+      _context := extern wrpmbedtls.mbedtls_new_context();
+      //   mbedtls_x509_crt_init(&cacert);
+
+      int ret := 0;
+
+      ret := extern wrpmbedtls.mbedtls_context_net_connect(_context, host, port, MBEDTLS_NET_PROTO_TCP);
+      if (ret != 0)
+      {
+         Exception.raise($"Failed. mbedtls_net_connect returned {ret}");
+      };
+
+      ret := extern wrpmbedtls.mbedtls_context_setup(env, _context);
+      if (ret != 0) 
+      {
+         Exception.raise($"Failed. context_setup returned {ret}");
+      };
+
+      ret := extern wrpmbedtls.mbedtls_context_ssl_set_hostname(_context, host);
+      if (ret != 0)
+      {
+         Exception.raise($"Failed. mbedtls_ssl_set_hostname returned {ret}");
+      };
+
+      extern wrpmbedtls.mbedtls_context_ssl_set_bio_def(_context);
+   }
+
+   constructor open(string host, short port, pointer env)
+   {
+      prepare(host, port.toPrintable(), env);
+   }
+
    verify()
    {
 //       byte gp_buf[1024];
@@ -111,22 +131,5 @@ public class MbedTlsSocket : INetSocket
 ////       else {
 //           //mbedtls_printf("Certificate verification passed\n");
 ////       }
-   }
-
-   get bool AvailableToRead()
-   {
-      int retVal := 0;
-      extern {
-         retVal := extern wrpmbedtls.mbedtls_socket_data_available(_context);
-      };
-
-      ^ retVal != 0;
-   }
-
-   close()
-   {
-      extern wrpmbedtls.mbedtls_delete_context(_context);
-
-      _context := default;
    }
 }
