@@ -206,7 +206,7 @@ namespace elena_lang
       void saveFile(int index);
       void saveFileAs(int index);
       void saveAll();
-      void saveProject();
+      void saveProject(bool saveAsMode);
       void closeFile(int index);
       bool closeAll();
       void closeAllButActive();

@@ -773,9 +773,10 @@ int ProjectController :: openProject(ProjectModel& model, path_t projectFile)
 
    ustr_t key = getPlatformName(_platform);
 
-   setProjectPath(model, projectFile);
-
+   model.sources.clear();
    model.singleSourceProject = false;
+
+   setProjectPath(model, projectFile);
 
    ConfigFile projectConfig;
    if (projectConfig.load(projectFile, FileEncoding::UTF8)) {
@@ -838,8 +839,6 @@ void ProjectController :: setProjectPath(ProjectModel& model, path_t projectFile
 {
    FileNameString src(projectFile, true);
    FileNameString name(projectFile);
-
-   model.sources.clear();
 
    model.empty = false;
    model.name.copy(*name);
@@ -1465,23 +1464,6 @@ void IDEController :: doOpenProject(IDEModel* model, path_t path)
    notifyOnModelChange(projectStatus);
 }
 
-//bool IDEController :: saveProject(FileDialogBase& projectDialog, IDEModel* model, bool saveAsMode, int& status)
-//{
-//   if (saveAsMode || model->projectModel.notSaved) {
-//      if (model->projectModel.projectPath.empty()) {
-//         PathString path;
-//         if (!projectDialog.saveFile(_T("prj"), path))
-//            return false;
-//
-//         projectController.setProjectPath(model->projectModel, *path);
-//      }
-//
-//      status |= projectController.saveProject(model->projectModel);
-//   }
-//
-//   return true;
-//}
-//
 bool IDEController :: doSaveProject(IDEModel* model, path_t newPath)
 {
    int projectStatus = STATUS_NONE;

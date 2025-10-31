@@ -298,6 +298,7 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
       bool inlineMode = false;
       bool openning = true;
       bool ignoreWhitespace = true;
+      bool diretiveMode = false;
       for (size_t i = 0; i < _content.length(); i++) {
          if (_content[i] == '<') {
             if (_content[i + 1] == '?') {
@@ -306,6 +307,7 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
                   writer.writeNewLine();
                   writer.fillText(" ", 1, indent + 4);
                }
+               diretiveMode = true;
             }
             else if (_content[i + 1] != '/') {
                openning = true;
@@ -333,6 +335,13 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
                inlineMode = true;
 
             ignoreWhitespace = true;
+
+            if (diretiveMode) {
+               writer.writeChar(_content[i]);
+               writer.writeNewLine();
+               diretiveMode = false;
+               continue;
+            }
          }
          else if (isWhitespace(_content[i])) {
             // ignore existing line breaks

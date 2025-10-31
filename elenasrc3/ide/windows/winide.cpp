@@ -343,12 +343,12 @@ void IDEWindow :: saveAll()
          saveFile(index);
    }
 
-   saveProject();
+   saveProject(false);
 }
 
-void IDEWindow :: saveProject()
+void IDEWindow :: saveProject(bool saveAsMode)
 {
-   if (_controller->ifProjectUnnamed(_model)) {
+   if (_controller->ifProjectUnnamed(_model) || saveAsMode) {
       PathString path;
       if (!projectDialog.saveFile(_T("prj"), path))
          return;
@@ -450,7 +450,7 @@ bool IDEWindow :: closeProject()
          return false;
       }
       else if (result == MessageDialogBase::Answer::Yes) {
-         saveProject();
+         saveProject(false);
       }
    }
 
@@ -872,7 +872,7 @@ bool IDEWindow :: onCommand(int command)
          saveAll();
          break;
       case IDM_FILE_SAVEPROJECT:
-         saveProject();
+         saveProject(true);
          break;
       case IDM_FILE_CLOSE:
          closeFile(-1);

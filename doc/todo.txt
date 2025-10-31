@@ -7,8 +7,6 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
-  - test openning / saving xml project with <? ...> derective
-  --------------------------------------
   * design embedtls server initialization routine
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   --------------------------------------
