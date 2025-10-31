@@ -2753,12 +2753,15 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
          case SyntaxKey::SharedMetaDictionary:
             declareDictionary(scope, current, Visibility::Public, Scope::ScopeLevel::Class, true);
             break;
-         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::ElseIfCondStatement:
          case SyntaxKey::CondStatement:
             if (!evalCondStatement(scope, current)) {
                skipCondStatement(current);
                continue;
             }
+            break;
+         case SyntaxKey::ElseCondStatement:
+            skipCondStatement(current);
             break;
          case SyntaxKey::Method:
          {
@@ -4649,7 +4652,11 @@ void Compiler :: skipCondStatement(SyntaxNode& node)
          level++;
          node.setKey(SyntaxKey::Idle);
       }
+      else if (node == SyntaxKey::ElseIfCondStatement && level == 0) {
+         break;
+      }
       else if (node == SyntaxKey::ElseCondStatement && level == 0) {
+         node = node.nextNode();
          break;
       }
       else if (node != SyntaxKey::EndCondStatement || level > 0) {
@@ -8683,12 +8690,15 @@ ObjectInfo Compiler :: compileCode(BuildTreeWriter& writer, CodeScope& codeScope
             if(!noDebugInfoMode)
                addBreakpoint(writer, current, BuildKey::EOPBreakpoint);
             break;
-         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::ElseIfCondStatement:
          case SyntaxKey::CondStatement:
             if (!evalCondStatement(codeScope, current)) {
                skipCondStatement(current);
                continue;
             }
+            break;
+         case SyntaxKey::ElseCondStatement:
+            skipCondStatement(current);
             break;
          default:
             break;
@@ -12069,12 +12079,15 @@ void Compiler::Namespace::declareMemberIdentifiers(SyntaxNode node)
             current.setArgumentReference(classScope.reference);
             break;
          }
-         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::ElseIfCondStatement:
          case SyntaxKey::CondStatement:
             if (!compiler->evalCondStatement(scope, current)) {
                compiler->skipCondStatement(current);
                continue;
             }
+            break;
+         case SyntaxKey::ElseCondStatement:
+            compiler->skipCondStatement(current);
             break;
          default:
             // to make compiler happy

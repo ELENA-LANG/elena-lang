@@ -1,20 +1,15 @@
 import extensions;
 
-class Test
-{
-   static printFunctionResult(Func f)
-   {
-      Console.printLine(f," prints ", f()) 
-   }
+#if (__project["_Win1"]) // Windows
 
-//   static printStrongFunctionResult(Func<string> f)
-//   {
-//      Console.printLine(f," prints ", f()) 
-//   }
-}
+A;
+
+#else
+
+B;
+
+#endif
 
 public program()
 {
-   Test.printFunctionResult(([string] => "Hello from Func"))
-//   Test.printFunctionResult::([] => "Hello from Func")
 }

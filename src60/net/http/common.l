@@ -1,7 +1,8 @@
 import system'text'parsing;
 import system'net;
 
-public const short HTTP_PORT = 80;
+public const short HTTP_PORT  = 80;
+public const short HTTPS_PORT = 443;
 
 public class HttpException : Exception
 {

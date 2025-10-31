@@ -70,9 +70,10 @@ namespace elena_lang
       CondStatement           = 0x001024,
       SharedMetaDictionary    = 0x001025,
       EndCondStatement        = 0x001026,
-      ElseCondStatement       = 0x001027,
+      ElseIfCondStatement     = 0x001027,
       ForStatement            = 0x001028,
       EndForStatement         = 0x001029,
+      ElseCondStatement       = 0x00102A,
 
       Object                  = 0x001031,
       TemplateType            = 0x001032,

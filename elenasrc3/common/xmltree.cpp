@@ -300,7 +300,7 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
       bool ignoreWhitespace = true;
       for (size_t i = 0; i < _content.length(); i++) {
          if (_content[i] == '<') {
-            if (_content[i + 1] != '?') {
+            if (_content[i + 1] == '?') {
                inlineMode = false;
                if (indent + 4 > 0) {
                   writer.writeNewLine();
@@ -341,8 +341,10 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
          }
          else if (!inlineMode && _content[i] == '"') {
             size_t start = i;
+            i++;
             seekQuoteEnd(_content.str(), i, '"');
             writer.write(_content.str() + start, static_cast<pos_t>(i - start + 1));
+            continue;
          }
          else if (inlineMode) {
             ignoreWhitespace = false;

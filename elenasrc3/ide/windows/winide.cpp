@@ -954,8 +954,6 @@ bool IDEWindow :: onCommand(int command)
          if (_model->autoSave)
             saveAll();
 
-         saveProject();
-
          _controller->doCompileProject(_model);
          break;
       case IDM_PROJECT_INCLUDE:

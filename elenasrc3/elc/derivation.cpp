@@ -75,7 +75,7 @@ void SyntaxTreeBuilder :: flushNamespace(SyntaxTreeWriter& writer, SyntaxNode& n
             break;
          case SyntaxKey::MetaExpression:
          case SyntaxKey::CondStatement:
-         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::ElseIfCondStatement:
          {
             Scope scope;
             flushStatement(writer, scope, current);
@@ -85,6 +85,7 @@ void SyntaxTreeBuilder :: flushNamespace(SyntaxTreeWriter& writer, SyntaxNode& n
             flushDeclaration(writer, current);
             break;
          case SyntaxKey::EndCondStatement:
+         case SyntaxKey::ElseCondStatement:
             SyntaxTree::copyNewNode(writer, current);
             flush(writer, current);
             writer.closeNode();
@@ -107,7 +108,7 @@ void SyntaxTreeBuilder :: flush(SyntaxTreeWriter& writer, SyntaxNode node)
             break;
          case SyntaxKey::MetaExpression:
          case SyntaxKey::CondStatement:
-         case SyntaxKey::ElseCondStatement:
+         case SyntaxKey::ElseIfCondStatement:
          {
             Scope scope;
             flushStatement(writer, scope, current);
@@ -1268,6 +1269,7 @@ void SyntaxTreeBuilder :: flushMethodCode(SyntaxTreeWriter& writer, Scope& scope
             flushNode(writer, scope, current);
             break;
          case SyntaxKey::CondStatement:
+         case SyntaxKey::ElseIfCondStatement:
          case SyntaxKey::ElseCondStatement:
          case SyntaxKey::EndCondStatement:
          case SyntaxKey::ForStatement:
@@ -1564,6 +1566,7 @@ void SyntaxTreeBuilder :: flushClass(SyntaxTreeWriter& writer, Scope& scope, Syn
       while (current != SyntaxKey::None) {
          switch (current.key) {
             case SyntaxKey::CondStatement:
+            case SyntaxKey::ElseIfCondStatement:
             case SyntaxKey::ElseCondStatement:
             case SyntaxKey::EndCondStatement:
             {
@@ -1750,6 +1753,7 @@ void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, 
             flushClassMember(writer, scope, current);
             break;
          case SyntaxKey::CondStatement:
+         case SyntaxKey::ElseIfCondStatement:
          case SyntaxKey::ElseCondStatement:
          case SyntaxKey::EndCondStatement:
          {

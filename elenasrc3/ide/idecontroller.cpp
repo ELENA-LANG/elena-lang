@@ -1486,7 +1486,7 @@ bool IDEController :: doSaveProject(IDEModel* model, path_t newPath)
 {
    int projectStatus = STATUS_NONE;
 
-   if (newPath.empty()) {
+   if (!newPath.empty()) {
       projectController.setProjectPath(model->projectModel, newPath);
    }
    

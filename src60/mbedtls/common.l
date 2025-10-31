@@ -264,33 +264,33 @@ public class MbedTlsEnvironment
 
    internal setupServer()
    {
-      int ret := extern mbedtls_init_psa();
+      int ret := extern wrpmbedtls.mbedtls_init_psa();
       if (ret != PSA_SUCCESS)
       {
          MbedTlsException.raise($"Failed to initialize PSA Crypto implementation. psa_crypto_init returned {ret}");
       };
 
-      extern mbedtls_new_server_context(_env);
+      extern wrpmbedtls.mbedtls_new_server_context(_env);
 
-      ret := extern mbedtls_init_srvcert(_env);
+      ret := extern wrpmbedtls.mbedtls_init_srvcert(_env);
       if (ret != 0)
       {
          MbedTlsException.raise($"Srvcert init Failed. mbedtls_x509_crt_parse returned {ret}");
       };
 
-      ret := extern mbedtls_init_cachain(_env);
+      ret := extern wrpmbedtls.mbedtls_init_cachain(_env);
       if (ret != 0)
       {
          MbedTlsException.raise($"Cachain init Failed. mbedtls_x509_crt_parse returned {ret}");
       };
 
-      ret := extern mbedtls_init_srv_key(_env);
+      ret := extern wrpmbedtls.mbedtls_init_srv_key(_env);
       if (ret != 0)
       {
          MbedTlsException.raise($"Failed. mbedtls_pk_parse_key returned {ret}");
       };
 
-      ret := extern mbedtls_servercontext_setup(_env);
+      ret := extern wrpmbedtls.mbedtls_servercontext_setup(_env);
       if (ret != 0)
       {
          MbedTlsException.raise($"Failed. mbedtls_ssl_conf_own_cert returned {ret}");
