@@ -9,14 +9,9 @@ In development:
   --------------------------------------
   * release 6.8
   --------------------------------------
-  - test aarch64
-  - test ppc64
-  - test FreeBSD 
-  - prepare release notes
   - create x86 setup 
   - create x64 setup 
-  - create aarch64
-  - create ppc64
+  - prepare release notes
   - merge PR
   - release a new version of mbedtls wrapper   
   --------------------------------------
