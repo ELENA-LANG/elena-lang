@@ -1,3 +1,4 @@
+import webapi;
 import webapi'bootstrap;
 import net'http;
 
@@ -5,7 +6,7 @@ import net'http;
 
 import mbedtls'server'registration;
 
-Action<IBootstap> Registration = (x => x.initSimpleServer("HTTPS", HTTPS_PORT));
+Action<IBootstap> Registration = (x => x.initSimpleServer("https", HTTPS_PORT));
 
 #else
 

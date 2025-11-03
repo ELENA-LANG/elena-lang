@@ -12,13 +12,7 @@ public interface IHttpServerProvider
 public singleton HttpServerProvider : IHttpServerProvider
 {
    INetListener start(string protocol, short port, bool noDelay)
-   {
-      if (protocol == "http") {
-         ^ SocketFactory.openListener(protocol, port, noDelay)
-      };
-      
-      ^ InvalidArgumentException.raise("protocol");            
-   }
+      = SocketFactory.openListener(protocol, port, noDelay);
    
    shutdown() {}
    

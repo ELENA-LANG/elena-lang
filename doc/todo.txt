@@ -7,10 +7,6 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
-  * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
-  --------------------------------------
-  - implement https example
-  ======================================
   * release 6.8
   --------------------------------------
   - test aarch64
@@ -63,6 +59,7 @@ In development:
   ======================================
   #35 : webapi weather backend (using existing frontend)
   --------------------------------------
+  * working on dummy https server : investigate error - mbedtls_socket_handshake returns -28160
   * example - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   * comment output => use logger to display this information
 

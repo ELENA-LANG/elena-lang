@@ -20,7 +20,7 @@ namespace registration
          = MbedTlsSocket.open(host, port, *MbedTlsClientStartup);
          
       INetListener openListener(short port, bool noDelay)
-         = NotSupportedException.raise("Functionality is currently not supported");
+         = MbedTlsListener.open(port, noDelay, *MbedTlsServerStartup);
    }   
 }
 
