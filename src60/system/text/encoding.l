@@ -149,6 +149,14 @@ namespace text
          ^ index
       }
 
+      byte[] toByteArray(string s)
+      {
+         MemoryBuffer output := MemoryBuffer.allocate();
+         fromString(s, output);
+         
+         ^ *output
+      }
+
       int getCharCount(string s)
       {
          int len := 0;

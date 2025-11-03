@@ -27,10 +27,10 @@ Font :: Font(const char* fontName, int size, bool bold, bool italic)
    this->font.set_family(fontName);
    this->font.set_size(size * PANGO_SCALE);
    if (bold)
-      this->font.set_weight(Pango::WEIGHT_BOLD);
+      this->font.set_weight(Pango::Weight::BOLD);
 
    if (italic)
-      this->font.set_style(Pango::STYLE_ITALIC);
+      this->font.set_style(Pango::Style::ITALIC);
 }
 
 //void Font :: release()

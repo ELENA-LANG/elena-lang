@@ -1,5 +1,4 @@
 import system'net;
-//import system'io;
 import system'threading;
 import extensions;
 
@@ -54,6 +53,59 @@ public sealed class TcpClient
    NetworkStream stream()
       = _stream ?? _stream := NetworkStream.assign(_socket, true);
 }
+
+// --- NetClient ---
+
+public sealed class NetClient
+{
+   INetSocket _socket;
+   NetworkStream _stream;
+
+//   constructor()
+//   {
+//   }
+//
+//   internal constructor new(NativeSocket socket)
+//   {
+//      _socket := socket
+//   }
+//
+//   constructor connect(string host, int port)
+//   {
+//      _socket := NativeSocket.connect(host, port);
+//   } 
+//
+//   set Blocking(bool val)
+//   {
+//      int mode := val ? 0 : 1;
+//
+//      mode := _socket.iocommand(FIONBIO, mode)
+//   }
+//    
+//   set Nodelay(bool val)
+//   {
+//      _socket.option(IPPROTO_TCP, TCP_NODELAY, val)
+//   }
+//
+//   get bool Available()
+//      = _socket.isConnected();
+//
+//   private closeInternal()
+//   {
+//      _socket.shutdown(SD_BOTH);
+//      _socket.close();
+//   }
+//    
+//   close()
+//   {
+//      if(nil != _socket)
+//         { closeInternal() }
+//   }
+//
+//   NetworkStream stream()
+//      = _stream ?? _stream := NetworkStream.assign(_socket, true);
+}
+
 
 public sealed class EventBasedTcpClient
 {

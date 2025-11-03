@@ -38,7 +38,7 @@ echo compiling lib60 files
 
  ../../bin/elena-cli -p../../lib60_win ../../src60/elena_api.prjcol
  ret=$?
- if [ $ret -eq 2 ]
+ if [ $ret -eq 1 ]
  then
    echo "Failure" >&2
    exit 1

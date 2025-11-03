@@ -11,14 +11,14 @@
 
 namespace elena_lang
 {
-   #define UNI_MAX_BMP           (unsigned int)0x0000FFFF
-   #define UNI_REPLACEMENT_CHAR  (unsigned int)0x0000FFFD
-   #define UNI_MAX_UTF16         (unsigned int)0x0010FFFF
-   #define UNI_SUR_HIGH_START    (unsigned int)0xD800
-   #define UNI_SUR_HIGH_END      (unsigned int)0xDBFF
-   #define UNI_SUR_LOW_START     (unsigned int)0xDC00
-   #define UNI_SUR_LOW_END       (unsigned int)0xDFFF
-   #define UNI_MAX_LEGAL_UTF32   (unsigned int)0x0010FFFF
+   constexpr auto UNI_MAX_BMP = (unsigned int)0x0000FFFF;
+   constexpr auto UNI_REPLACEMENT_CHAR = (unsigned int)0x0000FFFD;
+   constexpr auto UNI_MAX_UTF16 = (unsigned int)0x0010FFFF;
+   constexpr auto UNI_SUR_HIGH_START = (unsigned int)0xD800;
+   constexpr auto UNI_SUR_HIGH_END = (unsigned int)0xDBFF;
+   constexpr auto UNI_SUR_LOW_START = (unsigned int)0xDC00;
+   constexpr auto UNI_SUR_LOW_END = (unsigned int)0xDFFF;
+   constexpr auto UNI_MAX_LEGAL_UTF32 = (unsigned int)0x0010FFFF;
 
    constexpr auto NOTFOUND_POS = (size_t)-1;
 

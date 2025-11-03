@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Path class declarations.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PATHS_H
@@ -225,11 +225,14 @@ namespace elena_lang
       }
       void copyExtension(path_t path)
       {
+         size_t len = path.length();
          size_t index = path.findLast(PATH_SEPARATOR) + 1;
-         size_t dotIndex = path.findLastSub(index, '.', path.length());
+         size_t dotIndex = path.findLastSub(index, '.', len);
 
-         append('.');
-         append(path.str() + dotIndex + 1);
+         if (dotIndex < len) {
+            append('.');
+            append(path.str() + dotIndex + 1);
+         }
       }
 
       FileNameString(path_t path, bool withExtension = false)

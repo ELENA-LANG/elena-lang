@@ -11,7 +11,7 @@
 #include "gtklinux/gtkcommon.h"
 //#include "editcontrol.h"
 //#include "ideproject.h"
-//#include "ideview.h"
+#include "ideview.h"
 
 namespace elena_lang
 {
@@ -27,8 +27,12 @@ namespace elena_lang
 //      static bool isNo(int result) { return result == IDNO; }
 //   };
 
+   typedef void(*FileDialogListCallback)(void*, PathList*);
+   typedef void(*FileDialogCallback)(void*, PathString*);
+   typedef void(*MessageCallback)(void* arg, int result);
+
    // --- FileDialog ---
-   class FileDialog : public FileDialogBase
+   class FileDialog// : public FileDialogBase
    {
       Gtk::Window* _owner;
 
@@ -37,107 +41,118 @@ namespace elena_lang
 
       const char** _filter;
       int          _filterCounter;
-//
-//      OPENFILENAME _struct;
-//      wchar_t      _fileName[MAX_PATH * 8];        // ??
-//      int          _defaultFlags;
-//
-   public:
-//      static const wchar_t* ProjectFilter;
-//      static const wchar_t* SourceFilter;
 
-      bool openFile(PathString& path) override;
-      bool openFiles(List<path_t, freepath>& files) override;
-      bool saveFile(path_t ext, PathString& path) override;
+      PathString   _defExtension;
+
+      FileDialogListCallback  _listCallback;
+      FileDialogCallback      _callback;
+      void*                   _callbackArg;
+
+      void prepareDialog(Glib::RefPtr<Gtk::FileDialog> dialog);
+
+      void on_list_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+          const Glib::RefPtr<Gtk::FileDialog>& dialog);
+      void on_open_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+         const Glib::RefPtr<Gtk::FileDialog>& dialog);
+      void on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+          const Glib::RefPtr<Gtk::FileDialog>& dialog);
+
+   public:
+      PathString   lastSelected;
+
+      void openFile(void* arg, FileDialogCallback callback);
+      void openFiles(void* arg, FileDialogListCallback callback);
+      void saveFile(void* arg, FileDialogCallback callback);
 
       FileDialog(Gtk::Window* owner, const char** filter, int filterCounter, const char* caption,
          const char* initialDir = nullptr);
    };
 
-   class MessageDialog : public MessageDialogBase
+   class MessageDialog
    {
-      Gtk::Window* _owner;
+      Gtk::Window*    _owner;
+      //Glib::RefPtr<Gtk::AlertDialog> _dialog;
 
-      int show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel);
+      MessageCallback _callback;
+      void*           _callbackArg;
+
+      void on_question_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+         const Glib::RefPtr<Gtk::AlertDialog>& dialog);
+
+      void show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel);
 
    public:
-      Answer question(text_str message, text_str param) override;
-      Answer question(text_str message) override;
+      void question(text_str message, text_str param, void* arg, MessageCallback callback);
+      void question(text_str message, void* arg, MessageCallback callback);
 
-      void info(text_str message) override;
+      void info(text_str message);
 
       MessageDialog(Gtk::Window* owner)
       {
          _owner = owner;
+         //_dialog = nullptr;
+         _callback = nullptr;
+         _callbackArg = nullptr;
       }
    };
 
-//   class WinDialog
-//   {
-//   protected:
-//      HINSTANCE   _instance;
-//      HWND        _handle;
-//
-//      WindowBase* _owner;
-//      int         _dialogId;
-//
-//      virtual void onCreate() = 0;
-//      virtual void onOK() = 0;
-//
-//      virtual void doCommand(int id, int command);
-//
-//      void enable(int id, bool enabled);
-//
-//      void addComboBoxItem(int id, const wchar_t* text);
-//      void setComboBoxIndex(int id, int index);
-//      int  getComboBoxIndex(int id);
-//      void clearComboBoxItem(int id);
-//
-//      void addListItem(int id, const wchar_t* text);
-//      int  getListSelCount(int id);
-//      int  getListIndex(int id);
-//
-//      void setText(int id, const wchar_t* text);
-//      void setIntText(int id, int value);
-//      void getText(int id, wchar_t** text, int length);
-//      int  getIntText(int id);
-//      void setTextLimit(int id, int maxLength);
-//
-//      void setCheckState(int id, bool value);
-//      void setUndefinedCheckState(int id);
-//      bool getCheckState(int id);
-//      bool isUndefined(int id);
-//
-//   public:
-//      static BOOL CALLBACK DialogProc(HWND hwnd, size_t message, WPARAM wParam, LPARAM lParam);
-//
-//      int show();
-//
-//      WinDialog(HINSTANCE instance, WindowBase* owner, int dialogId)
-//         : _handle(nullptr)
-//      {
-//         _instance = instance;
-//         _owner = owner;
-//         _dialogId = dialogId;
-//      }
-//   };
-//
-//   class ProjectSettings : public WinDialog, public ProjectSettingsBase
-//   {
-//      ProjectModel* _model;
-//
-//      void loadTemplateList();
-//      void loadProfileList();
-//
-//      void onCreate() override;
-//      void onOK() override;
-//
-//   public:
-//      bool showModal() override;
-//
-//      ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model);
-//   };
-//
+   class ProjectSettings : public Gtk::Window
+   {
+      Gtk::Box          _box;
+
+      Gtk::Frame        _projectFrame;
+      Gtk::Grid         _projectGrid;
+      Gtk::Label        _typeLabel;
+      Gtk::ComboBoxText _typeCombobox;
+      Gtk::Label        _namespaceLabel;
+      Gtk::Entry        _namespaceText;
+      Gtk::Label        _profileLabel;
+      Gtk::ComboBoxText _profileCombobox;
+
+      Gtk::Frame        _compilerFrame;
+      Gtk::Grid         _compilerGrid;
+      Gtk::Label        _strictTypeLabel;
+      Gtk::CheckButton  _strictTypeCheckbox;
+      Gtk::Label        _optionsLabel;
+      Gtk::Entry        _optionsText;
+      Gtk::Label        _warningLabel;
+      Gtk::ComboBoxText _warningCombobox;
+
+      Gtk::Frame        _linkerFrame;
+      Gtk::Grid         _linkerrGrid;
+      Gtk::Label        _targetLabel;
+      Gtk::Entry        _targetText;
+      Gtk::Label        _outputLabel;
+      Gtk::Entry        _outputText;
+
+      Gtk::Frame        _debuggerFrame;
+      Gtk::Grid         _debuggerGrid;
+      Gtk::Label        _modeLabel;
+      Gtk::ComboBoxText _modeCombobox;
+      Gtk::Label        _argumentsLabel;
+      Gtk::Entry        _argumentsText;
+
+      Gtk::Box          _footer;
+      Gtk::Button       _buttonOK;
+      Gtk::Button       _button_Cancel;
+
+      ProjectModel*     _model;
+
+      void loadTemplateList();
+      void loadProfileList();
+
+      void populate();
+      void save();
+
+      void onOK();
+      void onCancel();
+
+   public:
+      void showModal();
+
+      ProjectSettings(Gtk::Window* owner, ProjectModel* model);
+   };
+
 //   class EditorSettings : public WinDialog, public EditorSettingsBase
 //   {
 //      TextViewModelBase* _model;

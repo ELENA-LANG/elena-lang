@@ -14,12 +14,12 @@
 
 using namespace elena_lang;
 
-PlatformType operator & (const PlatformType& l, const PlatformType& r)
+static inline PlatformType operator & (const PlatformType& l, const PlatformType& r)
 {
    return (PlatformType)((int)l & (int)r);
 }
 
-PlatformType operator | (const PlatformType& l, const PlatformType& r)
+static inline PlatformType operator | (const PlatformType& l, const PlatformType& r)
 {
    return (PlatformType)((int)l | (int)r);
 }
@@ -305,7 +305,8 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
          DynamicString<char> key;
          baseConfig.readContent(key);
 
-         loadConfigByName(configPath, key.str(), false);
+         if (!loadConfigByName(configPath, key.str(), false))
+            _presenter->print(_presenter->getMessage(wrnInvalidTemplateName), key.str());
       }
 
       loadSetting(config, root, NAMESPACE_KEY, _defaultNs);
@@ -449,9 +450,9 @@ void Project :: prepare()
 
    path_t outputPath = PathSetting(ProjectOption::OutputPath);
    if (emptystr(outputPath)) {
-      PathString outputPath(_projectPath);
+      PathString outputPathStr(_projectPath);
 
-      addPathSetting(ProjectOption::OutputPath, *outputPath);
+      addPathSetting(ProjectOption::OutputPath, *outputPathStr);
    }
 
    path_t target = PathSetting(ProjectOption::TargetPath);
@@ -470,7 +471,7 @@ void Project :: forEachForward(void* arg, void (* feedback)(void* arg, ustr_t ke
    }
 }
 
-inline void loadProfileList(ConfigFile& config, ConfigFile::Node& root, IdentifierList* profileList)
+static inline void loadProfileList(ConfigFile& config, ConfigFile::Node& root, IdentifierList* profileList)
 {
    ConfigFile::Collection profiles;
    if (config.select(root, PROFILE_CATEGORY, profiles)) {
@@ -502,7 +503,7 @@ void Project :: loadProfileList(ConfigFile& config)
 
 // --- ProjectCollection ---
 
-inline void loadModuleCollection(PlatformType platform, path_t collectionPath, ConfigFile::Collection& modules, 
+static inline void loadModuleCollection(PlatformType platform, path_t collectionPath, ConfigFile::Collection& modules, 
    ProjectCollection::ProjectSpecs& projectSpecs)
 {
    DynamicString<char> pathStr;

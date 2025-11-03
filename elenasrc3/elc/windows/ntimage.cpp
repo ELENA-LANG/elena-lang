@@ -250,7 +250,7 @@ void Win32NtImageFormatter :: createImportSection(ImageProviderBase& provider, R
    for (auto dll = importTable.start(); !dll.eof(); ++dll) {
       tableWriter.writeDReference(importRef, lstWriter.position()); // OriginalFirstThunk
       tableWriter.writeDWord((pos_t)time(nullptr));                      // TimeDateStamp 
-      tableWriter.writeDWord(-1);                                   // ForwarderChain
+      tableWriter.writeDWord(INVALID_POS);                                   // ForwarderChain
       tableWriter.writeDReference(importRef, import->length());     // Name
 
       ustr_t dllName = dll.key();
@@ -332,7 +332,7 @@ void Win64NtImageFormatter :: createImportSection(ImageProviderBase& provider, R
    for (auto dll = importTable.start(); !dll.eof(); ++dll) {
       tableWriter.writeDReference(importRef, lstWriter.position()); // OriginalFirstThunk
       tableWriter.writeDWord((pos_t)time(nullptr));                     // TimeDateStamp 
-      tableWriter.writeDWord(-1);                                  // ForwarderChain
+      tableWriter.writeDWord(INVALID_POS);                              // ForwarderChain = -1
       tableWriter.writeDReference(importRef, import->length());     // Name
 
       ustr_t dllName = dll.key();

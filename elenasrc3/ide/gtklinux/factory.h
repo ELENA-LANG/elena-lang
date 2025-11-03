@@ -36,6 +36,9 @@ namespace elena_lang
    class IDEFactory : public GUIFactoryBase, public ViewFactoryBase
    {
    protected:
+      int            _argc;
+      char**         _argv;
+
       IDEBroadcaster _broadcaster;
 
       FontFactory    _fontFactory;
@@ -53,10 +56,12 @@ namespace elena_lang
 
       //void initializeModel(IDEModel* ideView);
 
-      void initializeScheme(int frameTextIndex,
-         int projectView);
+      void initializeScheme(int frameTextIndex/*,
+         int projectView*/);
 
    public:
+      static void initPathSettings(IDEModel* ideModel);
+
       void reloadStyles(TextViewModelBase* viewModel) override;
 
       void styleControl(GUIControlBase* control) override;
@@ -65,7 +70,8 @@ namespace elena_lang
       GUIControlBase* createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess) override;
 
-      IDEFactory(IDEModel* ideView,
+      IDEFactory(int argc, char** argv,
+         IDEModel* ideView,
          IDEController* ideController,
          GUISettinngs   settings);
    };

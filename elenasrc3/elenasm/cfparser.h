@@ -23,7 +23,7 @@ namespace elena_lang
    class ScriptEngineCFParser : public ScriptEngineParserBase
    {
    public:
-      typedef MemoryMap<ustr_t, ref_t, Map_StoreUStr, Map_GetUStr> NameMap;
+      typedef MemoryMap<ustr_t, ref_t, Map_StoreUStrAligned4, Map_GetUStr> NameMap;
 
       enum RuleType
       {
@@ -50,12 +50,14 @@ namespace elena_lang
       class SaverBase
       {
       public:
-         virtual bool isMatched(ustr_t token, char state)
+         virtual bool isMatched(ustr_t/* token*/, char/* state*/)
          {
             return true;
          }
 
          virtual void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) = 0;
+
+         virtual ~SaverBase() = default;
       };
 
       struct Rule

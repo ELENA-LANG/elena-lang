@@ -1,22 +1,23 @@
+<?xml version="1.0" encoding="utf-8"?>
 <configuration>
-  <platform key="Win_x86">
-     <project>
-        <executable>agenda.exe</executable>
-     </project>
-  </platform>
-  <platform key="Win_x64">
-     <project>
-        <executable>agenda64.exe</executable>
-     </project>
-  </platform>
-  <project>
-     <namespace>agenda</namespace>
-     <template>gui</template>
-  </project>
-  <files>
-     <module>
-        <include>form.l</include>
-     </module>
-  </files>
+    <platform key="Win_x86">
+        <project>
+            <executable>agenda.exe</executable>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <executable>agenda64.exe</executable>
+        </project>
+    </platform>
+    <project>
+        <options>-v</options>
+        <namespace>agenda</namespace>
+        <template>gui</template>
+    </project>
+    <files>
+        <module>
+            <include>form.l</include>
+        </module>
+    </files>
 </configuration>
-

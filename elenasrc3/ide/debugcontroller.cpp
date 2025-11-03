@@ -526,7 +526,7 @@ void DebugController :: stepOver()
             _postponed.autoNextLine = true;
             _postponed.row = lineInfo->row;
 
-            if (nextStep->symbol == DebugSymbol::VirtualBreakpoint) {
+            if (nextStep->symbol == DebugSymbol::VirtualBreakpoint && nextStep->addresses.step.address != lineInfo->addresses.step.address) {
                _process->setBreakpoint(nextStep->addresses.step.address, true);
             }
             else _process->setStepMode();
@@ -884,6 +884,22 @@ void* DebugController :: readFieldValue(ContextBrowserBase* watch, void* parent,
    else return nullptr;
 }
 
+void* DebugController :: readInlineField(ContextBrowserBase* watch, void* parent, addr_t address, int index, int level)
+{
+   // read class VMT address if not provided
+   IdentifierString classNameStr;
+
+   addr_t vmtAddress = _process->getClassVMT(address);
+
+   ref_t flags = 0;
+   DebugLineInfo* info = _provider.seekClassInfo(address, classNameStr, vmtAddress, flags);
+
+   ustr_t name = (const char*)info[index].addresses.field.nameRef;
+   addr_t fieldAddress = _process->getField(address, info[index].addresses.field.offset);
+
+   return readObject(watch, parent, fieldAddress, name, level - 1);
+}
+
 void DebugController :: readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)
 {
    if (level <= 0 || info == nullptr)
@@ -1077,6 +1093,12 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                   className, vmtAddress);
                break;
             }
+            case DebugSymbol::InlineField:
+            {
+               item = readInlineField(watch, nullptr, _process->getStackItem(lineInfo[index].addresses.local.offset),
+                  lineInfo[index].addresses.inlineField.index, level - 1);
+               break;
+            }               
             default:
                break;
          }

@@ -140,7 +140,7 @@ int main(int argc, char* argv[])
    printf(ASM_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ASM_REVISION_NUMBER);
    if (argc < 2 || argc > 6) {
       printf(ASM_HELP);
-      return  -1;
+      return  EXIT_FAILURE;
    }
 
    IdentifierString platform(targetPlatform);
@@ -190,7 +190,7 @@ int main(int argc, char* argv[])
          }
          else {
             printf(ASM_HELP);
-            return  -1;
+            return  EXIT_FAILURE;
          }
       }
       else if (i == optionIndex + 1) {
@@ -204,7 +204,7 @@ int main(int argc, char* argv[])
       }
       else {
          printf(ASM_HELP);
-         return  -1;
+         return  EXIT_FAILURE;
       }
    }
 
@@ -295,21 +295,21 @@ int main(int argc, char* argv[])
 
       printf(ASM_DONE);
 
-      return 0;
+      return EXIT_SUCCESS;
    }
    catch (InvalidChar& e) {
       printf("(%d,%d): Invalid char %c\n", e.lineInfo.row, e.lineInfo.column, e.ch);
-      return -1;
+      return EXIT_FAILURE;
    }
    catch (SyntaxError& e) {
       printf(e.message, e.lineInfo.row, e.lineInfo.column);
-      return -1;
+      return EXIT_FAILURE;
    }
    catch (ProcedureError& e) {
       printf(e.message, *e.arg, *e.name);
-      return -1;
+      return EXIT_FAILURE;
    }
    catch(ExceptionBase&) {
-      return -1;
+      return EXIT_FAILURE;
    }
 }

@@ -804,7 +804,7 @@ void Arm64Assembler :: declareLabel(ScriptToken& tokenInfo, MemoryWriter& writer
    read(tokenInfo);
 }
 
-bool Arm64Assembler :: compileADDShifted(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm,
+bool Arm64Assembler :: compileADDShifted(ScriptToken&/* tokenInfo*/, ARMOperand rd, ARMOperand rn, ARMOperand rm,
    int shift, int amount, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && rm.isXR()) {
@@ -815,7 +815,7 @@ bool Arm64Assembler :: compileADDShifted(ScriptToken& tokenInfo, ARMOperand rd, 
    return true;
 }
 
-bool Arm64Assembler :: compileANDShifted(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm,
+bool Arm64Assembler :: compileANDShifted(ScriptToken&/* tokenInfo*/, ARMOperand rd, ARMOperand rn, ARMOperand rm,
    int shift, int amount, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && rm.isXR()) {
@@ -826,7 +826,7 @@ bool Arm64Assembler :: compileANDShifted(ScriptToken& tokenInfo, ARMOperand rd, 
    return true;
 }
 
-bool Arm64Assembler :: compileANDSShifted(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm,
+bool Arm64Assembler :: compileANDSShifted(ScriptToken&/* tokenInfo*/, ARMOperand rd, ARMOperand rn, ARMOperand rm,
    int shift, int amount, MemoryWriter& writer)
 {
    if (rd.isXR() && rn.isXR() && rm.isXR()) {
@@ -1153,7 +1153,7 @@ bool Arm64Assembler :: compileFSQRT(ARMOperand rd, ARMOperand rn, MemoryWriter& 
    return true;
 }
 
-bool Arm64Assembler :: compileFSUB(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm,
+bool Arm64Assembler :: compileFSUB(ScriptToken&/* tokenInfo*/, ARMOperand rd, ARMOperand rn, ARMOperand rm,
    MemoryWriter& writer)
 {
    if (rd.isDR() && rn.isDR() && rm.isDR()) {
@@ -1164,7 +1164,7 @@ bool Arm64Assembler :: compileFSUB(ScriptToken& tokenInfo, ARMOperand rd, ARMOpe
    return true;
 }
 
-bool Arm64Assembler :: compileFMADD(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, ARMOperand ra,
+bool Arm64Assembler :: compileFMADD(ScriptToken&/* tokenInfo*/, ARMOperand rd, ARMOperand rn, ARMOperand rm, ARMOperand ra,
    MemoryWriter& writer)
 {
    if (rd.isDR() && rn.isDR() && rm.isDR() && ra.isDR()) {
@@ -1175,7 +1175,7 @@ bool Arm64Assembler :: compileFMADD(ScriptToken& tokenInfo, ARMOperand rd, ARMOp
    return true;
 }
 
-bool Arm64Assembler :: compileFMSUB(ScriptToken& tokenInfo, ARMOperand rd, ARMOperand rn, ARMOperand rm, ARMOperand ra,
+bool Arm64Assembler :: compileFMSUB(ScriptToken&/* tokenInfo*/, ARMOperand rd, ARMOperand rn, ARMOperand rm, ARMOperand ra,
    MemoryWriter& writer)
 {
    if (rd.isDR() && rn.isDR() && rm.isDR() && ra.isDR()) {

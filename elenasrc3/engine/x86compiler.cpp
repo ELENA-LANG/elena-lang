@@ -29,12 +29,12 @@ void X86JITCompiler :: prepare(
    JITCompiler32::prepare(loader, imageProvider, helper, &lh, settings, virtualMode);
 }
 
-void X86JITCompiler :: writeImm9(MemoryWriter* writer, int value, int type)
+void X86JITCompiler :: writeImm9(MemoryWriter*/* writer*/, int/* value*/, int/* type*/)
 {
    throw InternalError(errNotImplemented);
 }
 
-void X86JITCompiler :: writeImm12(MemoryWriter* writer, int value, int type)
+void X86JITCompiler :: writeImm12(MemoryWriter*/* writer*/, int/* value*/, int/* type*/)
 {
    throw InternalError(errNotImplemented);
 }

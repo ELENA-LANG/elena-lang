@@ -161,12 +161,12 @@ void TreeScriptParser :: parse(ScriptEngineReaderBase& reader, MemoryDump* outpu
    else output->clear();
 }
 
-bool TreeScriptParser::parseDirective(ScriptEngineReaderBase& reader, MemoryDump* output)
+bool TreeScriptParser::parseDirective(ScriptEngineReaderBase&/* reader*/, MemoryDump*/* output*/)
 {
    return false;
 }
 
-bool TreeScriptParser :: parseGrammarRule(ScriptEngineReaderBase& reader)
+bool TreeScriptParser :: parseGrammarRule(ScriptEngineReaderBase&/* reader*/)
 {
    return false;
 }

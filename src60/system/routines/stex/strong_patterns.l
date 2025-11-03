@@ -1,5 +1,3 @@
-import system;
-
 public StrongFilter<T> : Enumerator<T>
 {
    Func<T,bool>  filter;

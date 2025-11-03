@@ -22,6 +22,7 @@ namespace elena_lang
       mhNone           = 0,
       mhStandart       = 1,
       mhNoValidation   = 2,
+      mhNoPrologEpilog = 4,
    };
 
    enum class MethodHint : ref_t
@@ -159,7 +160,7 @@ namespace elena_lang
          loadableInRuntime = reader->getBool();
       }
 
-      void save(StreamWriter* writer)
+      void save(StreamWriter* writer) const
       {
          writer->writeDWord((unsigned int)symbolType);
          writer->writeRef(valueRef);
@@ -208,8 +209,8 @@ namespace elena_lang
    struct ClassInfo
    {
       typedef MemoryMap<mssg_t, MethodInfo, Map_StoreUInt, Map_GetUInt> MethodMap;
-      typedef MemoryMap<ustr_t, FieldInfo, Map_StoreUStr, Map_GetUStr> FieldMap;
-      typedef MemoryMap<ustr_t, StaticFieldInfo, Map_StoreUStr, Map_GetUStr> StaticFieldMap;
+      typedef MemoryMap<ustr_t, FieldInfo, Map_StoreUStrAligned4, Map_GetUStr> FieldMap;
+      typedef MemoryMap<ustr_t, StaticFieldInfo, Map_StoreUStrAligned4, Map_GetUStr> StaticFieldMap;
 
       pos_t           inheritLevel;
       ClassHeader     header;
@@ -344,6 +345,7 @@ namespace elena_lang
    constexpr auto errMixedUpVariadicMessage  = 114;
    constexpr auto errRedirectToItself        = 115;
    constexpr auto errAssigningRealOnly       = 116;
+   constexpr auto errIncompatibleClosure     = 117;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;
    constexpr auto errCannotEval              = 140;
@@ -358,61 +360,68 @@ namespace elena_lang
    constexpr auto errNotCompatibleMulti      = 157;
    constexpr auto errTypeAlreadyDeclared     = 158;
    constexpr auto errAbstractMethods         = 159;
-   constexpr auto errDispatcherInInterface   = 160;
-   constexpr auto errAbstractMethodCode      = 161;
-   constexpr auto errNotAbstractClass        = 164;
-   constexpr auto errIllegalPrivate          = 166;
-   constexpr auto errDupPublicMethod         = 167;
-   constexpr auto errEmptyStructure          = 169;
-   constexpr auto errInvalidType             = 172;
-   constexpr auto errDupInternalMethod       = 173;
-   constexpr auto errInvalidConstAttr        = 174;
-   constexpr auto errIllegalConstructorAbstract = 177;
-   constexpr auto errNoBodyMethod            = 180;
-   constexpr auto errUnknownTemplate         = 181;
-   constexpr auto errDupPrivateMethod        = 182;
-   constexpr auto errDupProtectedMethod      = 183;
-   constexpr auto errUnknownDefConstructor   = 184;
-   constexpr auto errUnknownMessage          = 185;
-   constexpr auto errAssigningToSelf         = 186;
-   constexpr auto errUnknownTypecast         = 188;
-   constexpr auto errUnknownFunction         = 189;
-   constexpr auto errUnsupportedOperator     = 189;
+   constexpr auto errDispatcherInInterface         = 160;
+   constexpr auto errAbstractMethodCode            = 161;
+   constexpr auto errNotAbstractClass              = 164;
+   constexpr auto errIllegalPrivate                = 166;
+   constexpr auto errDupPublicMethod               = 167;
+   constexpr auto errEmptyStructure                = 169;
+   constexpr auto errInvalidType                   = 172;
+   constexpr auto errDupInternalMethod             = 173;
+   constexpr auto errInvalidConstAttr              = 174;
+   constexpr auto errHeapObjectRequired            = 175;
+   constexpr auto errIllegalConstructorAbstract    = 177;
+   constexpr auto errNoBodyMethod                  = 180;
+   constexpr auto errUnknownTemplate               = 181;
+   constexpr auto errDupPrivateMethod              = 182;
+   constexpr auto errDupProtectedMethod            = 183;
+   constexpr auto errUnknownDefConstructor         = 184;
+   constexpr auto errUnknownMethod                 = 185;
+   constexpr auto errAssigningToSelf               = 186;
+   constexpr auto errUnknownTypecast               = 188;
+   constexpr auto errUnknownFunction               = 189;
+   constexpr auto errUnsupportedOperator           = 190;
+   constexpr auto errUnknownRedirectMethod         = 191;
 
-   constexpr auto errUnknownModule           = 201;
-   constexpr auto errUnresovableLink         = 202;
-   constexpr auto errInvalidModule           = 203;
-   constexpr auto errCannotCreate            = 204;
-   constexpr auto errInvalidFile             = 205;
-   constexpr auto errInvalidParserTarget     = 206;
-   constexpr auto errInvalidParserTargetType = 207;
-   constexpr auto errTLSIsNotAllowed         = 208;
-   constexpr auto errInvalidModuleVersion    = 210;
-   constexpr auto errEmptyTarget             = 212;
+   constexpr auto errUnknownModule                 = 201;
+   constexpr auto errUnresovableLink               = 202;
+   constexpr auto errInvalidModule                 = 203;
+   constexpr auto errCannotCreate                  = 204;
+   constexpr auto errInvalidFile                   = 205;
+   constexpr auto errInvalidParserTarget           = 206;
+   constexpr auto errInvalidParserTargetType       = 207;
+   constexpr auto errTLSIsNotAllowed               = 208;
+   constexpr auto errInvalidModuleVersion          = 210;
+   constexpr auto errEmptyTarget                   = 212;
 
-   constexpr auto errParserNotInitialized    = 300;
-   constexpr auto errProjectAlreadyLoaded    = 301;
+   constexpr auto errParserNotInitialized          = 300;
+   constexpr auto errProjectAlreadyLoaded          = 301;
 
-   constexpr auto wrnUnknownHint             = 404;
-   constexpr auto wrnInvalidHint             = 406;
-   constexpr auto wrnUnknownMessage          = 407;
-   constexpr auto wrnUnknownFunction         = 408;
-   constexpr auto wrnUnknownDefConstructor   = 409;
-   constexpr auto wrnCallingItself           = 410;
-   constexpr auto wrnAssigningNillable       = 411;
-   constexpr auto wrnReturningNillable       = 412;
-   constexpr auto wrnNillableTarget          = 413;
-   constexpr auto wrnTypeInherited           = 420;
-   constexpr auto wrnDuplicateInclude        = 425;
-   constexpr auto wrnUnknownTypecast         = 426;
-   constexpr auto wrnUnsupportedOperator     = 427;
-   constexpr auto wrnUnassignedVariable      = 428;
-   constexpr auto wrnLessAccessible          = 429;
-   constexpr auto wrnUnknownModule           = 430;
+   constexpr auto wrnUnknownHint                   = 404;
+   constexpr auto wrnInvalidHint                   = 406;
+   constexpr auto wrnUnknownMethod                 = 407;
+   constexpr auto wrnUnknownFunction               = 408;
+   constexpr auto wrnUnknownDefConstructor         = 409;
+   constexpr auto wrnCallingItself                 = 410;
+   constexpr auto wrnAssigningNillable             = 411;
+   constexpr auto wrnReturningNillable             = 412;
+   constexpr auto wrnNillableTarget                = 413;
+   constexpr auto wrnNillableRedefined             = 414;
+   constexpr auto wrnNillableOutputRedefined       = 415;
+   constexpr auto wrnCannotBeNil                   = 416;
+   constexpr auto wrnUnknownRedirectMethod         = 417;
+   constexpr auto wrnTypeInherited                 = 420;
+   constexpr auto wrnDuplicateInclude              = 425;
+   constexpr auto wrnUnknownTypecast               = 426;
+   constexpr auto wrnUnsupportedOperator           = 427;
+   constexpr auto wrnUnassignedVariable            = 428;
+   constexpr auto wrnLessAccessible                = 429;
+   constexpr auto wrnUnknownModule                 = 430;
 
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;
    constexpr auto wrnInvalidPrjCollection    = 502;
+   constexpr auto wrnInvalidTemplateName     = 503;
 
    constexpr auto errCommandSetAbsent        = 600;
    constexpr auto errReadOnlyModule          = 601;
@@ -433,6 +442,7 @@ namespace elena_lang
    constexpr auto infoExptectedType          = 709;
    constexpr auto infoInternalDefConstructor = 710;
    constexpr auto infoMessageInfo            = 711;
+   constexpr auto infoSourceClass            = 712;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;
@@ -536,7 +546,8 @@ namespace elena_lang
    constexpr auto V_INTERFACE_DISPATCHER  = 0x8000102Au;
    constexpr auto V_PACKED_STRUCT         = 0x8000102Cu;
    constexpr auto V_THREADVAR             = 0x8000102Du;
-   constexpr auto V_SHORTCUT              = 0x8000102E;
+   constexpr auto V_SHORTCUT              = 0x8000102Eu;
+   constexpr auto V_HEAPALLOCATED         = 0x8000102Fu;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;

@@ -184,8 +184,9 @@ namespace elena_lang
       ExternalVarReference = 0x0092,
       ByteConstOp          = 0x0093,
       PropNameLiteral      = 0x0094,
+      LongIntOp            = 0x0095,
 
-      MaxOperationalKey    = 0x0094,      
+      MaxOperationalKey    = 0x0095,
       
       DeclDictionaryOp     = 0x0095,
       LoopOp               = 0x0096,
@@ -236,6 +237,7 @@ namespace elena_lang
       ByteArrayParameter   = 0x00C8,
       IntArrayParameter    = 0x00C9,
       RealArrayParameter   = 0x00CA,
+      InlineField          = 0x00CB,
 
       BinaryArray          = 0x00D0,
 
@@ -395,9 +397,12 @@ namespace elena_lang
          map.add("conversion_op", BuildKey::ConversionOp);
          map.add("int_real_op", BuildKey::IntRealOp);
          map.add("real_int_op", BuildKey::RealIntOp);
+         map.add("symbol_call_op", BuildKey::SymbolCall);
          map.add("direct_call_op", BuildKey::DirectCallOp);
          map.add("semi_direct_call_op", BuildKey::SemiDirectCallOp);
          map.add("addingint", BuildKey::AddingInt);
+         map.add("index_op", BuildKey::IndexOp);
+         map.add("loadingacc_to_index", BuildKey::LoadingAccToIndex);
          map.add("saving_index", BuildKey::SavingIndex);
          map.add("open_frame", BuildKey::OpenFrame);
          map.add("close_frame", BuildKey::CloseFrame);
@@ -416,6 +421,7 @@ namespace elena_lang
          map.add("exit", BuildKey::Exit);
          map.add("parameter", BuildKey::Parameter);
          map.add("call_op", BuildKey::CallOp);
+         map.add("final_op", BuildKey::FinalOp);
          map.add("terminator", BuildKey::TerminatorReference);
          map.add("free_varstack", BuildKey::FreeVarStack);
          map.add("going_to_eop", BuildKey::goingToEOP);
@@ -454,11 +460,14 @@ namespace elena_lang
          map.add("procedure_ref", BuildKey::ProcedureReference);
          map.add("break_op", BuildKey::BreakOp);
          map.add("bytearray_op", BuildKey::ByteArrayOp);
+         map.add("newarray_op", BuildKey::NewArrayOp);
          map.add("loop_op", BuildKey::LoopOp);
          map.add("virtual_breakpoint", BuildKey::VirtualBreakpoint);
          map.add("eop_breakpoint", BuildKey::EOPBreakpoint);
          map.add("int_sop", BuildKey::IntSOp);
          map.add("const_param", BuildKey::Const);
+         map.add("stack_index", BuildKey::StackIndex);
+         map.add("long_int_op", BuildKey::LongIntOp);
       }
    };
 
@@ -536,8 +545,8 @@ namespace elena_lang
 
    struct BuildPatternContext
    {
-      BuildCodeTrieNode node;
-      BuildPatternArg   args;
+      BuildCodeTrieNode node = {};
+      BuildPatternArg   args = {};
 
       BuildPatternContext() = default;
       BuildPatternContext(BuildCodeTrieNode node, BuildPatternArg args)

@@ -120,18 +120,19 @@ namespace elena_lang
    typedef Pair<ref_t, mssg_t>   ExtensionInfo;
 
    // --- Maps ---
-   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>                         ReferenceMap;
-   typedef Map<ref64_t, ref_t>                                             ActionMap;
-   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>                        AddressMap;
-   typedef Map<mssg_t, ExtensionInfo>                                      ExtensionMap;
-   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>                 ExtensionTemplateMap;
-   typedef Map<ref_t, ref_t>                                               ResolvedMap;
-   typedef Map<int, addr_t>                                                FieldAddressMap;
-   typedef MemoryMap<ustr_t, ustr_t, Map_StoreUStr, Map_GetUStr, freeUStr> Forwards;
-   typedef Map<ustr_t, bool, allocUStr, freeUStr>                          Variables;
+   typedef Map<ustr_t, ref_t, allocUStr, freeUStr>                            ReferenceMap;
+   typedef Map<ref64_t, ref_t>                                                ActionMap;
+   typedef Map<ustr_t, addr_t, allocUStr, freeUStr>                           AddressMap;
+   typedef Map<mssg_t, ExtensionInfo>                                         ExtensionMap;
+   typedef Map<mssg_t, ustr_t, nullptr, nullptr, freeUStr>                    ExtensionTemplateMap;
+   typedef Map<ref_t, ref_t>                                                  ResolvedMap;
+   typedef Map<int, addr_t>                                                   FieldAddressMap;
+   typedef MemoryMap<ustr_t, ustr_t, Map_StoreUStr, Map_GetUStr, freeUStr>    Forwards;
+   typedef Map<ustr_t, bool, allocUStr, freeUStr>                             Variables;
 
    // --- Lists ---
-   typedef List<ustr_t, freeUStr>                           IdentifierList;
+   typedef List<ustr_t, freeUStr>                                             IdentifierList;
+   typedef SerializableMemoryList<ustr_t, Map_StoreUStrAligned4, Map_GetUStr> DependecyList;
 
    // --- Tuples ---
 
@@ -186,7 +187,7 @@ namespace elena_lang
       ModuleBase* module;
       ustr_t      referenceName; // when module is not null - referenceName is weak one
 
-      bool isRelative()
+      bool isRelative() const
       {
          return module != nullptr && isWeakReference(referenceName);
       }
@@ -421,7 +422,7 @@ namespace elena_lang
 
       virtual void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
          ref_t addressMask, ModuleBase* module = nullptr) = 0;
-      virtual void writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
+      virtual void writeVMTMethodReference(/*MemoryBase& target, */pos_t position, ref_t reference, pos_t disp, mssg_t message,
          ref_t addressMask, ModuleBase* module = nullptr) = 0;
 
       virtual void writeRelAddress32(MemoryBase& target, pos_t position, addr_t vaddress,
@@ -660,6 +661,7 @@ namespace elena_lang
       virtual void print(ustr_t msg, int arg1, int arg2) = 0;
       virtual void print(ustr_t msg, int arg1, int arg2, int arg3) = 0;
       virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
+      virtual void print(ustr_t msg, ustr_t arg1, int arg2, int arg3, ustr_t arg4, ustr_t arg5) = 0;
       virtual void printPath(ustr_t msg, path_t arg) = 0;
       virtual void printPath(ustr_t msg, path_t arg1, int arg2, int arg3, ustr_t arg4) = 0;
 

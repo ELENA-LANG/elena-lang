@@ -101,7 +101,7 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
 
          // look through the records to find the entry
          DebugLineInfo info;
-         bool found = false;
+         found = false;
          while (!lineReader.eof() && !found) {
             lineReader.read(&info, sizeof(DebugLineInfo));
             switch (info.symbol) {

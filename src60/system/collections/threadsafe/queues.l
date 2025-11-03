@@ -1,4 +1,3 @@
-import system;
 import system'collections;
 
 // --- Queue Template ---

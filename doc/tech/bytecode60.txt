@@ -235,6 +235,8 @@ ELENA byte codes (or ecodes)
 
    xadd dp:disp             - index += [dp[disp]];
  
+   xladd dp:disp            - long:index += long:[dp[disp]];
+ 
    xrefresh sp:i            - cached_sp[i] := sp[i];
 
    xflush sp:i              - sp[i] := cached_sp[i];

@@ -320,6 +320,7 @@ public:
 
    virtual bool isStandardOne() = 0;
    virtual bool withValidation() = 0;
+   virtual bool withPrologEpilog() = 0;
 
    virtual bool isDeclared(ref_t reference) = 0;
    virtual bool isSymbolDeclared(ref_t reference) = 0;
@@ -402,55 +403,57 @@ public:
 
 enum class ExpressionAttribute : pos64_t
 {
-   None                 = 0x000000000000,
-   Meta                 = 0x000000000001,
-   NestedNs             = 0x000000000002,
-   Forward              = 0x000000000004,
-   Weak                 = 0x000000000008,
-   NoTypeAllowed        = 0x000000000010,
-   Intern               = 0x000000000020,
-   Parameter            = 0x000000000040,
-   NewVariable          = 0x000000000080,
-   Local                = 0x000000000100,
-   NewOp                = 0x000000000200,
-   StrongResolved       = 0x000000000400,
-   RootSymbol           = 0x000000000800,
-   Root                 = 0x000000001000,
-   CastOp               = 0x000000002000,
-   IgnoreDuplicate      = 0x000000004000,
-   RefOp                = 0x000000008000,
-   NoPrimitives         = 0x000000010000,
-   MssgLiteral          = 0x000000020000,
-   MssgNameLiteral      = 0x000000040000,
-   Extern               = 0x000000080000,
-   Member               = 0x000000100000,
-   ProbeMode            = 0x000000200000,
-   AllowPrivateCall     = 0x000000400000,
-   InitializerScope     = 0x000000800000,
-   NestedDecl           = 0x000001000000,
-   ConstantExpr         = 0x000002000000,
-   Variadic             = 0x000004000000,
-   WithVariadicArg      = 0x000008000000,
-   RetrievingType       = 0x000010000000,
-   RetValExpected       = 0x000020000000,
-   CheckShortCircle     = 0x000040000000,
-   LookaheadExprMode    = 0x000080000000,   
-   Class                = 0x000100000000,
-   Nillable             = 0x000200000000,
-   AllowGenericSignature= 0x000400000000,
-   AsyncOp              = 0x000800000000,
-   OutRefOp             = 0x001000000000,
-   WithVariadicArgCast  = 0x002008000000,
-   DistributedForward   = 0x004000000000,
-   DynamicObject        = 0x008000000000,
-   Superior             = 0x010000000000,
-   Lookahead            = 0x020000000000,
-   NoDebugInfo          = 0x040000000000,
-   NoExtension          = 0x080000000000,
-   TryMode              = 0x100000000000,
-   GetterMode           = 0x200000000000,
-   ShortcutMode         = 0x400000000000,
-   NotNil               = 0x800000000000,
+   None                 = 0x0000000000000,
+   Meta                 = 0x0000000000001,
+   NestedNs             = 0x0000000000002,
+   Forward              = 0x0000000000004,
+   Weak                 = 0x0000000000008,
+   NoTypeAllowed        = 0x0000000000010,
+   Intern               = 0x0000000000020,
+   Parameter            = 0x0000000000040,
+   NewVariable          = 0x0000000000080,
+   Local                = 0x0000000000100,
+   NewOp                = 0x0000000000200,
+   StrongResolved       = 0x0000000000400,
+   RootSymbol           = 0x0000000000800,
+   Root                 = 0x0000000001000,
+   CastOp               = 0x0000000002000,
+   IgnoreDuplicate      = 0x0000000004000,
+   RefOp                = 0x0000000008000,
+   NoPrimitives         = 0x0000000010000,
+   MssgLiteral          = 0x0000000020000,
+   MssgNameLiteral      = 0x0000000040000,
+   Extern               = 0x0000000080000,
+   Member               = 0x0000000100000,
+   ProbeMode            = 0x0000000200000,
+   AllowPrivateCall     = 0x0000000400000,
+   InitializerScope     = 0x0000000800000,
+   NestedDecl           = 0x0000001000000,
+   ConstantExpr         = 0x0000002000000,
+   Variadic             = 0x0000004000000,
+   WithVariadicArg      = 0x0000008000000,
+   RetrievingType       = 0x0000010000000,
+   RetValExpected       = 0x0000020000000,
+   CheckShortCircle     = 0x0000040000000,
+   LookaheadExprMode    = 0x0000080000000,   
+   Class                = 0x0000100000000,
+   Nillable             = 0x0000200000000,
+   AllowGenericSignature= 0x0000400000000,
+   AsyncOp              = 0x0000800000000,
+   OutRefOp             = 0x0001000000000,
+   WithVariadicArgCast  = 0x0002008000000,
+   DistributedForward   = 0x0004000000000,
+   DynamicObject        = 0x0008000000000,
+   Superior             = 0x0010000000000,
+   Lookahead            = 0x0020000000000,
+   NoDebugInfo          = 0x0040000000000,
+   NoExtension          = 0x0080000000000,
+   TryMode              = 0x0100000000000,
+   GetterMode           = 0x0200000000000,
+   ShortcutMode         = 0x0400000000000,
+   NotNil               = 0x0800000000000,
+   HeapAllocated        = 0x1000000000000,
+   StackUnsafe          = 0x2000000000000,
 };
 
 struct ExpressionAttributes
@@ -467,7 +470,7 @@ struct ExpressionAttributes
       else return false;
    }
 
-   bool test(ExpressionAttribute mask)
+   bool test(ExpressionAttribute mask) const
    {
       return test(attrs, mask);
    }
@@ -530,7 +533,7 @@ public:
       TypeInfo typeInfo, bool declarationMode = false) = 0;
 
    virtual ref_t generateExtensionTemplate(ModuleScopeBase& scope, ref_t templateRef, size_t argumentLen,
-      ref_t* arguments, ustr_t ns, ExtensionMap* outerExtensionList) = 0;
+      ref_t* arguments, /*ustr_t ns, */ExtensionMap* outerExtensionList) = 0;
 
    virtual ~CompilerBase() = default;
 
@@ -544,7 +547,7 @@ public:
    virtual ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
       List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) = 0;
 
-   virtual bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+   virtual bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, SyntaxNode declarationNode,
       List<SyntaxNode>& parameters) = 0;
    virtual bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;
@@ -614,17 +617,23 @@ class ErrorProcessor : public ErrorProcessorBase
       return current;
    }
 
-   void printTerminalInfo(int code, ustr_t pathArg, SyntaxNode node)
+   void printTerminalInfo(int code, ustr_t pathArg, SyntaxNode node, ustr_t arg = nullptr)
    {
       SyntaxNode terminal = findTerminal(node);
       if (terminal != SyntaxKey::None) {
          SyntaxNode col = terminal.findChild(SyntaxKey::Column);
          SyntaxNode row = terminal.findChild(SyntaxKey::Row);
 
-         _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
+         if (arg) {
+            _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier(), arg);
+         }
+         else _presenter->print(_presenter->getMessage(code), pathArg, col.arg.value, row.arg.value, terminal.identifier());
       }
       else {
-         _presenter->print(_presenter->getMessage(code), pathArg, 0, 0, "<unknown>");
+         if (arg) {
+            _presenter->print(_presenter->getMessage(code), pathArg, 0, 0, "<unknown>", arg);
+         }
+         else _presenter->print(_presenter->getMessage(code), pathArg, 0, 0, "<unknown>");
       }
    }
 
@@ -672,14 +681,14 @@ public:
       throw CLIException();
    }
 
-   virtual void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node)
+   virtual void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node, ustr_t arg = nullptr)
    {
-      printTerminalInfo(code, pathArg, node);
+      printTerminalInfo(code, pathArg, node, arg);
 
       throw AbortError();
    }
 
-   void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node)  
+   void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node, ustr_t arg = nullptr)
    {
       if (!test(_warningMasks, level))
          return;
@@ -687,11 +696,11 @@ public:
       if (_numberOfWarnings < MAX_WARNINGS) {
          _numberOfWarnings++;
 
-         printTerminalInfo(code, pathArg, node);
+         printTerminalInfo(code, pathArg, node, arg);
       }
    }
 
-   bool hasWarnings() { return _numberOfWarnings > 0; }
+   bool hasWarnings() const { return _numberOfWarnings > 0; }
 
    void setWarningLevel(WarningLevel level)
    {

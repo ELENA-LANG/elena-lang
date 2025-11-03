@@ -1,4 +1,3 @@
-import system;
 import system'runtime;
 
 #if (__project["_Win"]) // Windows
@@ -14,6 +13,8 @@ public const int THREAD_PRIORITY_NORMAL = 0;
 public const int THREAD_PRIORITY_BELOW_NORMAL = -1;
 public const int THREAD_PRIORITY_LOWEST = -2;
 
+#endif
+
 // --- ThreadHandle ---
 public sealed struct ThreadHandle
 {
@@ -21,6 +22,31 @@ public sealed struct ThreadHandle
    pointer _actionPtr;
 
    private handle createThreadHandle(pointer arg, int flags, int stackSafe) : external(system'core_routines'__thread_create);
+
+   private create(int stackSize)
+   {
+      _handle := self.createThreadHandle(_actionPtr, 4, stackSize);
+
+      if (_handle.isUnassigned()) {
+         InvalidOperationException.raise();
+      }
+   }
+
+#if (__project["_Win"]) // Windows
+
+   constructor(object f)
+   {
+      _actionPtr := PermVectorTable.allocate(f);
+
+      create(0)
+   }
+
+   constructor(object f, int stackSize)
+   {
+      _actionPtr := PermVectorTable.allocate(f);
+
+      create(stackSize)
+   }
 
    private ThreadPriority toPriority(int win_priority)
    {
@@ -59,28 +85,6 @@ public sealed struct ThreadHandle
       _handle := extern KERNEL32.GetCurrentThread();
    }
 
-   constructor(object f)
-   {
-      _actionPtr := PermVectorTable.allocate(f);
-
-      _handle := self.createThreadHandle(_actionPtr, 4, 0);
-
-      if (_handle.isUnassigned()) {
-         InvalidOperationException.raise();
-      }
-   }
-
-   constructor(object f, int stackSize)
-   {
-      _actionPtr := PermVectorTable.allocate(f);
-
-      _handle := self.createThreadHandle(_actionPtr, 4, stackSize);
-
-      if (_handle.isUnassigned()) {
-         InvalidOperationException.raise();
-      }
-   }
-
    ThreadPriority getPriority()
    {
       int win_priority := extern KERNEL32.GetThreadPriority(_handle);
@@ -105,7 +109,9 @@ public sealed struct ThreadHandle
                                                                    
    join(int timeOut)
    {
-      extern KERNEL32.WaitForSingleObject(_handle, timeOut)
+      extern {
+         extern KERNEL32.WaitForSingleObject(_handle, timeOut);
+      }
    }     
    
    bool checkIfAlive()
@@ -127,28 +133,74 @@ public sealed struct ThreadHandle
          extern KERNEL32.Sleep(interval)
       }
    }
-}
 
 #elif (__project["_Linux"] || __project["_FreeBSD"])
 
-public sealed struct ThreadHandle
-{
-   Handle  _handle;
+   int _stackSize;
+
+   constructor(object f)
+   {
+      _actionPtr := PermVectorTable.allocate(f);
+      _stackSize := 0
+   }
+
+   constructor(object f, int stackSize)
+   {
+      _actionPtr := PermVectorTable.allocate(f);
+      _stackSize := stackSize
+   }
 
    constructor()
    {
       NotSupportedException.raise()
    }
 
-   constructor(object f)
+   ThreadPriority getPriority()
    {
       NotSupportedException.raise()
    }
 
-   constructor(object f, int stackSize)
+   setPriority(ThreadPriority priority)
    {
       NotSupportedException.raise()
    }
-}
+
+   start()
+   {
+      create(_stackSize)
+   }
+
+   join()
+   {
+      extern
+      {
+         extern libc.pthread_join(_handle);
+      }
+   }
+                                                                   
+   join(int timeOut)
+   {
+      NotSupportedException.raise()
+   }     
+   
+   bool checkIfAlive()
+   {
+      NotSupportedException.raise()
+   }                                                                
+
+   close()
+   {
+      _handle := default;
+   }
+
+   static sleep(int interval)
+   {
+      extern
+      {
+         extern libc.sleep(interval);
+      }
+   }
 
 #endif
+
+}

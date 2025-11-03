@@ -36,415 +36,444 @@ FileDialog :: FileDialog(Gtk::Window* owner, const char** filter, int filterCoun
    _filter = filter;
    _filterCounter = filterCounter;
    _initialDir = initialDir;
+   _listCallback = nullptr;
+   _callback = nullptr;
+
+   if (filterCounter > 0) {
+      _defExtension.copy(filter[0]);
+      _defExtension.cut(0, 2);
+   }
 }
 
-bool FileDialog :: openFile(PathString& path)
+void FileDialog :: on_list_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+  const Glib::RefPtr<Gtk::FileDialog>& dialog)
 {
-   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_OPEN);
-   dialog.set_transient_for(*_owner);
+    PathList files(nullptr);
 
-   if (!emptystr(_initialDir))
-      dialog.set_current_folder (_initialDir);
+    auto file = dialog->open_finish(result);
+    files.add(StrUtil::clone(file->get_path().c_str()));
 
-   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-   dialog.add_button("_Open", Gtk::RESPONSE_OK);
+   _listCallback(_callbackArg, &files);
 
-   for (int i = 0; i < _filterCounter; i += 2) {
-      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
-
-      filter_l->set_name(_filter[i + 1]);
-      filter_l->add_pattern(_filter[i]);
-      dialog.add_filter(filter_l);
-   }
-
-   int result = dialog.run();
-   if (result == Gtk::RESPONSE_OK) {
-      std::string filename = dialog.get_filename();
-
-      path.copy(filename.c_str());
-
-      return true;
-   }
-   return false;
+   _listCallback = nullptr;
+   _callback = nullptr;
+   _callbackArg = nullptr;
 }
 
-bool FileDialog :: openFiles(List<path_t, freepath>& files)
+void FileDialog :: on_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+  const Glib::RefPtr<Gtk::FileDialog>& dialog)
 {
-   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_OPEN);
-   dialog.set_transient_for(*_owner);
+   PathString path;
 
-   if (!emptystr(_initialDir))
-      dialog.set_current_folder (_initialDir);
+   try
+   {
+      auto file = dialog->save_finish(result);
+      path.copy(file->get_path().c_str());
 
-   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-   dialog.add_button("_Open", Gtk::RESPONSE_OK);
+      if(PathUtil::checkExtension(*path, "")) {
+         path.appendExtension(*_defExtension);
+      }
 
-   for (int i = 0; i < _filterCounter; i += 2) {
-      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
-
-      filter_l->set_name(_filter[i + 1]);
-      filter_l->add_pattern(_filter[i]);
-      dialog.add_filter(filter_l);
+      _callback(_callbackArg, &path);
    }
-
-   int result = dialog.run();
-   if (result == Gtk::RESPONSE_OK) {
-      std::string filename = dialog.get_filename();
-
-      files.add(StrUtil::clone(filename.c_str()));
-
-      return true;
-   }
-   return false;
+   catch (const Gtk::DialogError& err)
+   {
+      _callback(_callbackArg, nullptr);
+   };
+   _listCallback = nullptr;
+   _callback = nullptr;
+   _callbackArg = nullptr;
 }
 
-bool FileDialog :: saveFile(path_t ext, PathString& path)
+void FileDialog :: on_open_file_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+   const Glib::RefPtr<Gtk::FileDialog>& dialog)
 {
-   Gtk::FileChooserDialog dialog(_caption, Gtk::FILE_CHOOSER_ACTION_SAVE);
-   dialog.set_transient_for(*_owner);
+   try
+   {
+      auto file = dialog->open_finish(result);
+      lastSelected.copy(file->get_path().c_str());
 
-   if (!emptystr(_initialDir))
-      dialog.set_current_folder (_initialDir);
+      if (PathUtil::checkExtension(*lastSelected, "")) {
+         lastSelected.appendExtension(*_defExtension);
+      }
 
-   dialog.add_button("_Cancel", Gtk::RESPONSE_CANCEL);
-   dialog.add_button("_Save", Gtk::RESPONSE_OK);
+      _callback(_callbackArg, &lastSelected);
+   }
+   catch (const Gtk::DialogError& err)
+   {
+      _callback(_callbackArg, nullptr);
+   };
+   _listCallback = nullptr;
+   _callback = nullptr;
+   _callbackArg = nullptr;
+}
 
+void FileDialog :: prepareDialog(Glib::RefPtr<Gtk::FileDialog> dialog)
+{
+   auto filters = Gio::ListStore<Gtk::FileFilter>::create();
    for (int i = 0; i < _filterCounter; i += 2) {
-      Glib::RefPtr<Gtk::FileFilter> filter_l = Gtk::FileFilter::create();
+      auto filter = Gtk::FileFilter::create();
+      filter->set_name(_filter[i + 1]);
+      filter->add_pattern(_filter[i]);
 
-      filter_l->set_name(_filter[i + 1]);
-      filter_l->add_pattern(_filter[i]);
-      dialog.add_filter(filter_l);
+      filters->append(filter);
    }
 
-   int result = dialog.run();
-   if (result == Gtk::RESPONSE_OK) {
-      std::string filename = dialog.get_filename();
+   dialog->set_filters(filters);
 
-      path.copy(filename.c_str());
-
-      return true;
+//   dialog.set_transient_for(*_owner);
+//
+   if (!emptystr(_initialDir)) {
+      auto file = Gio::File::create_for_path(_initialDir);
+      dialog->set_initial_folder(file);
    }
-   return false;
+}
+
+void FileDialog::openFile(void* arg, FileDialogCallback callback)
+{
+   assert(_callback == nullptr && _listCallback == nullptr);
+
+   _callback = callback;
+   _callbackArg = arg;
+
+   auto dialog = Gtk::FileDialog::create();
+   prepareDialog(dialog);
+
+   dialog->open(sigc::bind(sigc::mem_fun(
+      *this, &FileDialog::on_open_file_dialog_finish), dialog));
+}
+
+void FileDialog :: openFiles(void* arg, FileDialogListCallback callback)
+{
+   assert(_callback == nullptr && _listCallback == nullptr);
+
+   _listCallback = callback;
+   _callbackArg = arg;
+
+   auto dialog = Gtk::FileDialog::create();
+   prepareDialog(dialog);
+
+   dialog->open(sigc::bind(sigc::mem_fun(
+      *this, &FileDialog::on_list_file_dialog_finish), dialog));
+}
+
+void FileDialog :: saveFile(void* arg, FileDialogCallback callback)
+{
+   assert(_callback == nullptr && _listCallback == nullptr);
+
+   _callback = callback;
+   _callbackArg = arg;
+
+   auto dialog = Gtk::FileDialog::create();
+   prepareDialog(dialog);
+
+   dialog->save(sigc::bind(sigc::mem_fun(
+      *this, &FileDialog::on_file_dialog_finish), dialog));
 }
 
 // --- MessageDialog ---
 
-int MessageDialog :: show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel)
+void MessageDialog :: on_question_dialog_finish(const Glib::RefPtr<Gio::AsyncResult>& result,
+  const Glib::RefPtr<Gtk::AlertDialog>& dialog)
 {
-   Gtk::MessageDialog dialog(message, false, messageType, buttonTypes, true);
-   dialog.set_transient_for(*_owner);
+   try
+   {
+      const int response_id = dialog->choose_finish(result);
+      switch(response_id) {
+         case 0:
+            _callback(_callbackArg, MessageDialogBase::Answer::Cancel);
+            break;
+         case 1:
+            _callback(_callbackArg, MessageDialogBase::Answer::Yes);
+            break;
+         case 2:
+            _callback(_callbackArg, MessageDialogBase::Answer::No);
+            break;
+         default:
+            assert(true);
+            break;
+      }
+   }
+   catch (const Gtk::DialogError& err)
+   {
+   }
 
-   if (withCancel)
-      dialog.add_button("Cancel", Gtk::ResponseType::RESPONSE_CANCEL);
-
-   return dialog.run();
+   _callback = nullptr;
 }
 
-MessageDialogBase::Answer MessageDialog :: question(text_str message, text_str param)
+void MessageDialog :: show(const char* message, Gtk::MessageType messageType, Gtk::ButtonsType buttonTypes, bool withCancel)
+{
+   auto dialog = Gtk::AlertDialog::create();
+
+   dialog->set_message(message);
+   dialog->set_buttons({"Cancel", "Yes", "No"});
+   dialog->set_default_button(2);
+   dialog->set_cancel_button(0);
+
+   dialog->choose(sigc::bind(sigc::mem_fun(
+      *this, &MessageDialog::on_question_dialog_finish), dialog));
+
+}
+
+void MessageDialog :: question(text_str message, text_str param, void* arg, MessageCallback callback)
 {
    IdentifierString questionStr(message, param);
 
-   return question(*questionStr);
+   question(*questionStr, arg, callback);
 }
 
-MessageDialogBase::Answer MessageDialog :: question(text_str message)
+void MessageDialog :: question(text_str message, void* arg, MessageCallback callback)
 {
-   int retVal = show(message, Gtk::MESSAGE_QUESTION, Gtk::BUTTONS_YES_NO, true);
+   assert(_callback == nullptr);
 
-   if (retVal == Gtk::ResponseType::RESPONSE_YES) {
-      return Answer::Yes;
-   }
-   else if (retVal == Gtk::ResponseType::RESPONSE_CANCEL) {
-      return Answer::Cancel;
-   }
-   else return Answer::No;
+   _callback = callback;
+   _callbackArg = arg;
+
+   show(message, Gtk::MessageType::QUESTION, Gtk::ButtonsType::YES_NO, true);
 }
 
 void MessageDialog :: info(text_str message)
 {
-   show(message, Gtk::MessageType::MESSAGE_INFO, Gtk::ButtonsType::BUTTONS_OK, false);
+//   show(message, Gtk::MessageType::MESSAGE_INFO, Gtk::ButtonsType::BUTTONS_OK, false);
 }
 
-//// --- WinDialog ---
-//
-//BOOL CALLBACK WinDialog::DialogProc(HWND hWnd, size_t message, WPARAM wParam, LPARAM lParam)
-//{
-//   WinDialog* dialog = (WinDialog*)::GetWindowLongPtr(hWnd, GWLP_USERDATA);
-//   switch (message) {
-//      case WM_INITDIALOG:
-//         dialog = (WinDialog*)lParam;
-//         dialog->_handle = hWnd;
-//         ::SetWindowLongPtr(hWnd, GWLP_USERDATA, (LONG_PTR)lParam);
-//
-//         dialog->onCreate();
-//
-//         return 0;
-//      case WM_COMMAND:
-//         dialog->doCommand(LOWORD(wParam), HIWORD(wParam));
-//         return TRUE;
-//      default:
-//         return FALSE;
-//   }
-//}
-//
-//void WinDialog :: doCommand(int id, int command)
-//{
-//   switch (id) {
-//      case IDOK:
-//         onOK();
-//         ::EndDialog(_handle, IDOK);
-//         break;
-//      case IDCANCEL:
-//         ::EndDialog(_handle, IDCANCEL);
-//         break;
-//   }
-//}
-//
-//int WinDialog :: show()
-//{
-//   return (int)::DialogBoxParam(_instance, MAKEINTRESOURCE(_dialogId),
-//      _owner->handle(), (DLGPROC)DialogProc, (LPARAM)this);
-//}
-//
-//void WinDialog :: clearComboBoxItem(int id)
-//{
-//   LRESULT counter = ::SendDlgItemMessage(_handle, id, CB_GETCOUNT, 0, 0);
-//   while (counter > 0) {
-//      ::SendDlgItemMessage(_handle, id, CB_DELETESTRING, 0, 0);
-//
-//      counter--;
-//   }
-//}
-//
-//void WinDialog :: addComboBoxItem(int id, const wchar_t* text)
-//{
-//   ::SendDlgItemMessage(_handle, id, CB_ADDSTRING, 0, (LPARAM)text);
-//}
-//
-//void WinDialog :: setComboBoxIndex(int id, int index)
-//{
-//   ::SendDlgItemMessage(_handle, id, CB_SETCURSEL, index, 0);
-//}
-//
-//int WinDialog :: getComboBoxIndex(int id)
-//{
-//   return (int)::SendDlgItemMessage(_handle, id, CB_GETCURSEL, 0, 0);
-//}
-//
-//void WinDialog :: addListItem(int id, const wchar_t* text)
-//{
-//   ::SendDlgItemMessage(_handle, id, LB_ADDSTRING, 0, (LPARAM)text);
-//}
-//
-//int WinDialog :: getListSelCount(int id)
-//{
-//   return (int)::SendDlgItemMessage(_handle, id, LB_GETSELCOUNT, 0, 0);
-//}
-//
-//int WinDialog :: getListIndex(int id)
-//{
-//   return (int)::SendDlgItemMessage(_handle, id, LB_GETCURSEL, 0, 0);
-//}
-//
-//void WinDialog :: setText(int id, const wchar_t* text)
-//{
-//   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)text);
-//}
-//
-//void WinDialog :: setIntText(int id, int value)
-//{
-//   String<text_c, 15> s;
-//   s.appendInt(value);
-//
-//   ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)(s.str()));
-//}
-//
-//void WinDialog :: setTextLimit(int id, int maxLength)
-//{
-//   ::SendDlgItemMessage(_handle, id, EM_SETLIMITTEXT, maxLength, 0);
-//}
-//
-//void WinDialog :: getText(int id, wchar_t** text, int length)
-//{
-//   ::SendDlgItemMessage(_handle, id, WM_GETTEXT, length, (LPARAM)text);
-//}
-//
-//int WinDialog :: getIntText(int id)
-//{
-//   wchar_t s[13];
-//
-//   ::SendDlgItemMessage(_handle, id, WM_GETTEXT, 12, (LPARAM)s);
-//
-//   return StrConvertor::toInt(s, 10);
-//}
-//
-//void WinDialog :: setCheckState(int id, bool value)
-//{
-//   ::SendDlgItemMessage(_handle, id, BM_SETCHECK, value ? BST_CHECKED : BST_UNCHECKED, 0);
-//}
-//
-//void WinDialog :: setUndefinedCheckState(int id)
-//{
-//   ::SendDlgItemMessage(_handle, id, BM_SETCHECK, BST_INDETERMINATE, 0);
-//}
-//
-//bool WinDialog :: getCheckState(int id)
-//{
-//   return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_CHECKED);
-//}
-//
-//bool WinDialog :: isUndefined(int id)
-//{
-//   return test((int)::SendDlgItemMessage(_handle, id, BM_GETCHECK, 0, 0), BST_INDETERMINATE);
-//}
-//
-//void WinDialog :: enable(int id, bool enabled)
-//{
-//   ::EnableWindow(::GetDlgItem(_handle, id), enabled ? TRUE : FALSE);
-//}
-//
-//// --- ProjectSettings ---
-//
-//ProjectSettings :: ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model)
-//   : WinDialog(instance, owner, IDD_SETTINGS)
-//{
-//   _model = model;
-//}
-//
-//void ProjectSettings :: loadTemplateList()
-//{
-//   int selected = 0;
-//   int current = 0;
-//   for (auto it = _model->projectTypeList.start(); !it.eof(); ++it) {
-//      ustr_t key = *it;
-//      if (_model->templateName.compare(key)) {
-//         selected = current;
-//      }
-//
-//      WideMessage caption(key);
-//      addComboBoxItem(IDC_SETTINGS_TEPMPLATE, *caption);
-//      current++;
-//   }
-//
-//   setComboBoxIndex(IDC_SETTINGS_TEPMPLATE, selected);
-//}
-//
-//void ProjectSettings :: loadProfileList()
-//{
-//   int selected = 0;
-//   int current = 0;
-//   for (auto it = _model->profileList.start(); !it.eof(); ++it) {
-//      ustr_t key = *it;
-//      if (_model->profile.compare(key)) {
-//         selected = current;
-//      }
-//
-//      WideMessage caption(key);
-//      addComboBoxItem(IDC_SETTINGS_PROFILE, *caption);
-//      current++;
-//   }
-//
-//   setComboBoxIndex(IDC_SETTINGS_PROFILE, selected);
-//}
-//
-//void ProjectSettings :: onCreate()
-//{
-//   setTextLimit(IDC_SETTINGS_PACKAGE, IDENTIFIER_LEN);
-//
-//   WideMessage caption(*_model->package);
-//   setText(IDC_SETTINGS_PACKAGE, caption.str());
-//
-//   WideMessage optionCaption(*_model->options);
-//   setText(IDC_SETTINGS_OPTIONS, optionCaption.str());
-//
-//   WideMessage targetCaption(*_model->target);
-//   setText(IDC_SETTINGS_TARGET, targetCaption.str());
-//
-//   setText(IDC_SETTINGS_OUTPUT, *_model->outputPath);
-//
-//   setText(IDC_SETTINGS_ARGUMENT, *_model->debugArguments);
-//
-//   addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Disabled"));
-//   addComboBoxItem(IDC_SETTINGS_DEBUG, _T("Enabled"));
-//
-//   //int mode = _project->getDebugMode();
-//   //if (mode != 0) {
-//      setComboBoxIndex(IDC_SETTINGS_DEBUG, 1);
-//   //}
-//   //else setComboBoxIndex(IDC_SETTINGS_DEBUG, 0);
-//
-//   if (_model->strictType == FLAG_UNDEFINED) {
-//      setUndefinedCheckState(IDC_SETTINGS_STRICTTYPE);
-//   }
-//   else setCheckState(IDC_SETTINGS_STRICTTYPE, _model->strictType == -1);
-//
-//   loadTemplateList();
-//   loadProfileList();
-//}
-//
-//void ProjectSettings :: onOK()
-//{
-//   wchar_t name[IDENTIFIER_LEN + 1];
-//
-//   if (getComboBoxIndex(IDC_SETTINGS_TEPMPLATE) != -1) {
-//      getText(IDC_SETTINGS_TEPMPLATE, (wchar_t**)(&name), IDENTIFIER_LEN);
-//
-//      IdentifierString value(name);
-//      _model->templateName.copy(*value);
-//   }
-//
-//   if (getComboBoxIndex(IDC_SETTINGS_PROFILE) != -1) {
-//      getText(IDC_SETTINGS_PROFILE, (wchar_t**)(&name), IDENTIFIER_LEN);
-//
-//      IdentifierString value(name);
-//      _model->profile.copy(*value);
-//   }
-//
-//   getText(IDC_SETTINGS_PACKAGE, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   if (getlength(name) > 0) {
-//      IdentifierString value(name);
-//      _model->package.copy(*value);
-//   }
-//   else _model->package.clear();
-//
-//   getText(IDC_SETTINGS_OPTIONS, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   if (getlength(name) > 0) {
-//      IdentifierString value(name);
-//      _model->options.copy(*value);
-//   }
-//   else _model->options.clear();
-//
-//   getText(IDC_SETTINGS_TARGET, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   if (getlength(name) > 0) {
-//      IdentifierString value(name);
-//      _model->target.copy(*value);
-//   }
-//   else _model->target.clear();
-//
-//   getText(IDC_SETTINGS_OUTPUT, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   _model->outputPath.copy(name);
-//
-//   getText(IDC_SETTINGS_ARGUMENT, (wchar_t**)(&name), IDENTIFIER_LEN);
-//   _model->debugArguments.copy(name);
-//
-//   if (isUndefined(IDC_SETTINGS_STRICTTYPE)) {
-//      _model->strictType = FLAG_UNDEFINED;
-//   }
-//   else if (getCheckState(IDC_SETTINGS_STRICTTYPE)) {
-//      _model->strictType = -1;
-//   }
-//   else _model->strictType = 0;
-//
-//   if (!_model->singleSourceProject)
-//      _model->notSaved = true;
-//}
-//
-//bool ProjectSettings :: showModal()
-//{
-//   return show() == IDOK;
-//}
-//
+// --- ProjectSettings ---
+
+ProjectSettings :: ProjectSettings(Gtk::Window* owner, ProjectModel* model)
+   : _box(Gtk::Orientation::VERTICAL), _projectFrame("Project"), _typeLabel("Type"), _namespaceLabel("Namespace"), _profileLabel("Profile"),
+     _compilerFrame("Compiler"), _strictTypeLabel("Strict type enforcing"), _optionsLabel("Additional options"), _warningLabel("Warning level"),
+     _linkerFrame("Linker"), _targetLabel("Target file name"), _outputLabel("Output path"),
+     _debuggerFrame("Debugger"), _modeLabel("Debug mode"), _argumentsLabel("Command arguments"),
+     _footer(Gtk::Orientation::HORIZONTAL, 5), _buttonOK("_OK", true), _button_Cancel("_Cancel", true)
+{
+   _model = model;
+
+   set_default_size(400, 400);
+   set_transient_for(*owner);
+   set_modal();
+   set_hide_on_close();
+
+   _box.append(_projectFrame);
+
+   _projectFrame.set_margin(10);
+   _projectFrame.set_child(_projectGrid);
+   _projectGrid.set_margin(5);
+   _projectGrid.set_row_homogeneous(true);
+   _projectGrid.set_column_homogeneous(true);
+   _projectGrid.attach(_typeLabel, 0, 0, 1, 1);
+   _projectGrid.attach(_typeCombobox, 1, 0, 1, 1);
+   _projectGrid.attach(_namespaceLabel, 0, 1, 1, 1);
+   _projectGrid.attach(_namespaceText, 1, 1, 1, 1);
+   _projectGrid.attach(_profileLabel, 0, 2, 1, 1);
+   _projectGrid.attach(_profileCombobox, 1, 2, 1, 1);
+
+   _box.append(_compilerFrame);
+
+   _compilerFrame.set_margin(10);
+   _compilerFrame.set_child(_compilerGrid);
+   _compilerGrid.set_margin(5);
+   _compilerGrid.set_row_homogeneous(true);
+   _compilerGrid.set_column_homogeneous(true);
+   _compilerGrid.attach(_strictTypeLabel, 0, 0, 1, 1);
+   _compilerGrid.attach(_strictTypeCheckbox, 1, 0, 1, 1);
+   _compilerGrid.attach(_optionsLabel, 0, 1, 1, 1);
+   _compilerGrid.attach(_optionsText, 1, 1, 1, 1);
+   _compilerGrid.attach(_warningLabel, 0, 2, 1, 1);
+   _compilerGrid.attach(_warningCombobox, 1, 2, 1, 1);
+
+   _box.append(_linkerFrame);
+
+   _linkerFrame.set_margin(10);
+   _linkerFrame.set_child(_linkerrGrid);
+   _linkerrGrid.set_margin(5);
+   _linkerrGrid.set_row_homogeneous(true);
+   _linkerrGrid.set_column_homogeneous(true);
+   _linkerrGrid.attach(_targetLabel, 0, 0, 1, 1);
+   _linkerrGrid.attach(_targetText, 1, 0, 1, 1);
+   _linkerrGrid.attach(_outputLabel, 0, 1, 1, 1);
+   _linkerrGrid.attach(_outputText, 1, 1, 1, 1);
+
+   _box.append(_debuggerFrame);
+
+   _debuggerFrame.set_margin(10);
+   _debuggerFrame.set_child(_debuggerGrid);
+   _debuggerGrid.set_margin(5);
+   _debuggerGrid.set_row_homogeneous(true);
+   _debuggerGrid.set_column_homogeneous(true);
+   _debuggerGrid.attach(_modeLabel, 0, 0, 1, 1);
+   _debuggerGrid.attach(_modeCombobox, 1, 0, 1, 1);
+   _debuggerGrid.attach(_argumentsLabel, 0, 1, 1, 1);
+   _debuggerGrid.attach(_argumentsText, 1, 1, 1, 1);
+
+   _footer.set_halign(Gtk::Align::END);
+   _footer.append(_buttonOK);
+   _footer.append(_button_Cancel);
+
+   _buttonOK.signal_clicked().connect(sigc::mem_fun(*this, &ProjectSettings::onOK));
+   _button_Cancel.signal_clicked().connect(sigc::mem_fun(*this, &ProjectSettings::onCancel));
+
+   _box.append(_footer);
+
+   _modeCombobox.append("Disabled");
+   _modeCombobox.append("Enabled");
+
+   _warningCombobox.append(" None");
+   _warningCombobox.append(" Level 1");
+   _warningCombobox.append(" Level 2");
+   _warningCombobox.append(" Level 3");
+
+   set_child(_box);
+}
+
+void ProjectSettings :: loadTemplateList()
+{
+   _typeCombobox.remove_all();
+
+   int selected = 0;
+   int current = 0;
+   for (auto it = _model->projectTypeList.start(); !it.eof(); ++it) {
+      ustr_t key = *it;
+      if (_model->templateName.compare(key)) {
+         selected = current;
+      }
+
+      _typeCombobox.append(key.str());
+      current++;
+   }
+
+   _typeCombobox.set_active(selected);
+}
+
+void ProjectSettings :: loadProfileList()
+{
+   _profileCombobox.remove_all();
+
+   int selected = 0;
+   int current = 0;
+   for (auto it = _model->profileList.start(); !it.eof(); ++it) {
+      ustr_t key = *it;
+      if (_model->profile.compare(key)) {
+         selected = current;
+      }
+
+      _profileCombobox.append(key.str());
+      current++;
+   }
+
+   _profileCombobox.set_active(selected);
+}
+
+inline void setText(Gtk::Entry& control, const char* value)
+{
+   if (!emptystr(value)) {
+      control.set_text(value);
+   }
+   else control.set_text("");
+}
+
+void ProjectSettings :: populate()
+{
+   setText(_namespaceText, _model->package.str());
+
+   setText(_optionsText, _model->options.str());
+
+   setText(_targetText, _model->target.str());
+
+   setText(_outputText, _model->outputPath.str());
+
+   setText(_argumentsText, _model->debugArguments.str());
+
+   //int mode = _project->getDebugMode();
+   //if (mode != 0) {
+      _modeCombobox.set_active(1);
+   //}
+   //else _modeCombobox.set_active(0);
+
+   _strictTypeCheckbox.set_active();
+
+   if (_model->strictType == FLAG_UNDEFINED) {
+      _strictTypeCheckbox.set_inconsistent(true);
+   }
+   else {
+      _strictTypeCheckbox.set_inconsistent(false);
+      _strictTypeCheckbox.set_active(_model->strictType == -1);
+   }
+
+   _warningCombobox.set_active(_model->warningLevel);
+
+   loadTemplateList();
+   loadProfileList();
+}
+
+void ProjectSettings :: save()
+{
+   Glib::ustring name = _namespaceText.get_text();
+   if (!name.empty()) {
+      _model->package.copy(name.c_str());
+   }
+   else _model->package.clear();
+
+   if (_typeCombobox.get_active_row_number() != -1) {
+      name = _typeCombobox.get_active_text();
+      _model->templateName.copy(name.c_str());
+   }
+
+   if (_profileCombobox.get_active_row_number() != -1) {
+      name = _profileCombobox.get_active_text();
+      _model->profile.copy(name.c_str());
+   }
+
+   Glib::ustring path = _targetText.get_text();
+   if (!path.empty()) {
+      _model->target.copy(path.c_str());
+   }
+   else _model->target.clear();
+
+   path = _outputText.get_text();
+   _model->outputPath.copy(path.c_str());
+
+   path = _argumentsText.get_text();
+   _model->debugArguments.copy(path.c_str());
+
+   path = _optionsText.get_text();
+   if (!path.empty()) {
+      _model->options.copy(path.c_str());
+   }
+   else _model->options.clear();
+
+   if (_strictTypeCheckbox.get_inconsistent()) {
+      _model->strictType = FLAG_UNDEFINED;
+   }
+   else if (_strictTypeCheckbox.get_active()) {
+      _model->strictType = -1;
+   }
+   else _model->strictType = 0;
+
+   _model->warningLevel = _warningCombobox.get_active_row_number();
+
+   if (!_model->singleSourceProject)
+      _model->notSaved = true;
+}
+
+void ProjectSettings :: onOK()
+{
+   save();
+
+   set_visible(false);
+}
+
+void ProjectSettings :: onCancel()
+{
+   set_visible(false);
+}
+
+void ProjectSettings :: showModal()
+{
+   populate();
+
+   set_visible(true);
+}
+
 //// --- EditorSettings ---
 //
 //EditorSettings :: EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model)

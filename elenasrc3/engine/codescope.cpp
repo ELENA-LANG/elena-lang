@@ -133,13 +133,13 @@ ustr_t ReferenceMapper :: retrieveReference(addr_t address, ref_t sectionMask)
 {
    switch (sectionMask) {
       case mskVMTRef:
-         return _dataReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t key, addr_t current)
+         return _dataReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t, addr_t current)
             {
                return current == reference;
             });
       case mskSymbolRef:
       case mskProcedureRef:
-         return _symbolReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t key, addr_t current)
+         return _symbolReferences.retrieve<addr_t>(nullptr, address, [](addr_t reference, ustr_t, addr_t current)
             {
                return current == reference;
             });
@@ -185,7 +185,7 @@ ref_t ReferenceMapper :: resolveAction(ustr_t actionName, ref_t signRef)
 
 ustr_t ReferenceMapper :: retrieveAction(ref_t actionRef, ref_t& signRef)
 {
-   auto actionKey = _actions.retrieve<ref_t>(0, actionRef, [](ref_t actionRef, ref64_t key, ref_t current)
+   auto actionKey = _actions.retrieve<ref_t>(0, actionRef, [](ref_t actionRef, ref64_t, ref_t current)
       {
          return current == actionRef;
       });

@@ -266,7 +266,7 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 
    // search message dispatcher
    IdentifierString messageRef;
-   size_t listLen = getlength(moduleList);
+   //size_t listLen = getlength(moduleList);
    size_t i = 0;
    while (moduleList[i]) {
       ustr_t ns = moduleList + i;

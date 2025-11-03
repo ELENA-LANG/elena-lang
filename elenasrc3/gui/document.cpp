@@ -126,7 +126,7 @@ bool LexicalFormatter :: checkPrecedingHighlight(pos_t start, pos_t& end)
       pos_t current = it.key();
 
       if (current < start) {
-         break;
+         continue;
       }
       if (current < end) {
          end = it.key();
@@ -166,8 +166,8 @@ pos_t LexicalFormatter :: proceed(pos_t position, ReaderInfo& info)
       if (current > position) {
          info.style = curStyle;
          // to allow bracket highlighting foregoing another operator
-         if (curStyle == STYLE_OPERATOR && checkPrecedingHighlight(position, current)) {
-            
+         if (curStyle == STYLE_OPERATOR) {
+            checkPrecedingHighlight(position, current);
          }
          count = current - position;
          break;
@@ -460,6 +460,7 @@ void DocumentView :: hscroll(DocumentChangeStatus& changeStatus, int displacemen
       frame.x = 0;
 
    if (_frame.getCaret() != frame) {
+      _text->validateBookmark(_frame);
       _frame.moveTo(frame.x, frame.y);
 
       changeStatus.frameChanged = true;

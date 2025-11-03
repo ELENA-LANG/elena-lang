@@ -72,7 +72,7 @@ int main(int argc, char* argv[])
 
    if (argc != 2) {
       printf("ldoc {<module> | <path>}\n");
-      return -1;
+      return EXIT_FAILURE;
    }
 
    // prepare library provider
@@ -107,7 +107,7 @@ int main(int argc, char* argv[])
       if(!generator.load(*path)) {
          presenter.printPath(LDOC_MODULE_NOTLOADED, path.str());
 
-         return -1;
+         return EXIT_FAILURE;
       }
    }
    else {
@@ -115,7 +115,7 @@ int main(int argc, char* argv[])
       if (!generator.loadByName(*arg)) {
          presenter.printPath(LDOC_MODULE_NOTLOADED, argv[1]);
 
-         return -1;
+         return EXIT_FAILURE;
       }
    }
 

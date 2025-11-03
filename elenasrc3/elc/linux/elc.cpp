@@ -133,7 +133,7 @@ int main(int argc, char* argv[])
       // Reading command-line arguments...
       if (argc < 2) {
          Presenter::getInstance().printLine(ELC_HELP_INFO);
-         return -2;
+         return WARNING_RET_CODE;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
          return CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],            
@@ -145,6 +145,6 @@ int main(int argc, char* argv[])
    }
    catch (CLIException)
    {
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
 }

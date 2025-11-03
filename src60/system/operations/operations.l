@@ -202,7 +202,7 @@ public template using<expr>(block) : __included(statements)
 
 public template lock<expr>(block) : __included(statements)
 {
-   __intermediate v := expr;
+   __intermediate v := __nonboxable expr;
 
    v.enterCriticalSection();
     

@@ -16,6 +16,7 @@ nilcondop, assigning, local, branchop => 7;
 int_real_op, local_address, copying => 10;
 real_int_op, local_address, copying => 10;
 direct_call_op, inplacemark, copying => 12;
+direct_call_op, inplacemark, assigning, local, copying => 12;
 int_literal, saving_stack =0, local, copying_to_acc_exact => 13;
 int_literal, saving_stack =0, local, copying_to_acc_field => 13;
 direct_call_op, inplacemark, saving_stack, local, copying_to_acc => 14;

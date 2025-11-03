@@ -52,6 +52,10 @@ ScriptParser :: ScriptParser()
    _Release = (void(__cdecl*)(int))_library->loadFunction("ReleaseSMLA");
    _ClearStack = (void(__cdecl*)())_library->loadFunction("ClearStackSMLA");
 
+#elif defined(__MACH__)
+
+    // !! temporall - not yet implemented
+
 #else
 
    _library = new ElfSysLibraryLoader(SCRIPTENGINE_LIB);
