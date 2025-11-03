@@ -28,7 +28,7 @@
     </files>
     <manifest>
        <name>ELENA TextGen Library</name>
-       <version>6.7.2</version>
+       <version>6.8.0</version>
        <author>Aleksey Rakov</author>
     </manifest>
     <project>

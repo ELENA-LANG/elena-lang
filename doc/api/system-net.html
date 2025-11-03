@@ -433,6 +433,15 @@ system'net'INetListener</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -601,7 +610,7 @@ system'net'INetSocketFactory</LI>
 <CODE>
 <i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">INetListener</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> prefix, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
+<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
 </CODE>
 </TD>
 </TR>
@@ -619,7 +628,7 @@ system'net'INetSocketFactory</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'INetListener&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>openListenerAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> prefix, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
+<CODE>openListenerAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
 </CODE>
 </TD>
 </TR>
@@ -999,7 +1008,7 @@ system'net'NativeSocketFactory</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">INetListener</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> prefix, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
+<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
 </CODE>
 </TD>
 </TR>
@@ -1131,6 +1140,15 @@ system'net'NetListener</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'INetSocket&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>acceptNetSocketAsync()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
 </CODE>
 </TD>
 </TR>

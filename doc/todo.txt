@@ -12,7 +12,6 @@ In development:
   - test aarch64
   - test ppc64
   - test FreeBSD 
-  - update versions everywhere
   - prepare release notes
   - create x86 setup 
   - create x64 setup 
