@@ -5,14 +5,14 @@ import net'http;
 
 import mbedtls'server'registration;
 
-Registration = (x => x.initSimpleServer("HTTPS", HTTPS_PORT));
+Action<IBootstap> Registration = (x => x.initSimpleServer("HTTPS", HTTPS_PORT));
 
 #else
 
-Registration = (x => x.initSimpleServer());
+Action<IBootstap> Registration = (x => x.initSimpleServer());
 
 #endif
 
 public SampleApi1Bootstap : preloaded =
    WebApiFactory
-      .registerServer::(Registration);
+      .registerServer(Registration);

@@ -1,14 +1,6 @@
 import extensions;
 
-#if (__project["_Win1"]) // Windows
-
-A;
-
-#else
-
-B;
-
-#endif
+auto X = (x => 2);
 
 public program()
 {

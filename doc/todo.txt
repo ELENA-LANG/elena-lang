@@ -7,12 +7,9 @@ In development:
 
   === Iteration 42 ===
   --------------------------------------
-  * design embedtls server initialization routine
   * simple https server; using example https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   --------------------------------------
-  - implement dummy https web server - GET 
   - implement https example
-  - release a new version of mbedtls wrapper   
   ======================================
   * release 6.8
   --------------------------------------
@@ -26,6 +23,7 @@ In development:
   - create aarch64
   - create ppc64
   - merge PR
+  - release a new version of mbedtls wrapper   
   --------------------------------------
 
   ### EPIC: elena 6.9 ###
@@ -65,6 +63,7 @@ In development:
   ======================================
   #35 : webapi weather backend (using existing frontend)
   --------------------------------------
+  * example - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
   * comment output => use logger to display this information
 
   * simple web api client - GET
