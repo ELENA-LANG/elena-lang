@@ -16,6 +16,10 @@ define toc_stat              0038h
 define toc_allocperm         0040h
 define toc_prepare           0048h
 
+define et_current            0008h
+define tt_stack_frame        0010h
+define tt_stack_root         0028h
+
 // ; system startup
 inline %4CFh
 
