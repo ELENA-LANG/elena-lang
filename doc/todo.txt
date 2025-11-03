@@ -9,10 +9,10 @@ In development:
   --------------------------------------
   * release 6.8
   --------------------------------------
-  - create x86 setup 
-  - create x64 setup 
-  - prepare release notes
   - merge PR
+  - prepare release notes
+  - upload linux x86, linux amd64, bsd amd64
+  - upload release files
   - release a new version of mbedtls wrapper   
   --------------------------------------
 
