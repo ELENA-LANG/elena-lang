@@ -33,9 +33,9 @@
 #elif defined(__aarch64__)
 
 #include "linux/elfarmlinker64.h"
-#include "linux/arm64compiler.h"
-
 #include "linux/elfarmimage.h"
+
+#include "arm64compiler.h"
 
 #elif defined(__PPC64__)
 
