@@ -13,7 +13,7 @@
 using namespace elena_lang;
 
 // --- key mapping routines ---
-inline pos_t simpleParseRule(parse_key_t key)
+static inline pos_t simpleParseRule(parse_key_t key)
 {
    return key;
 }
@@ -25,19 +25,19 @@ typedef ParserTable::ParserStack ParserStack;
 
 // --- ParserTable ---
 
-inline pos_t tableKey(parse_key_t nonterminal, parse_key_t terminal)
+static inline pos_t tableKey(parse_key_t nonterminal, parse_key_t terminal)
 {
    return (nonterminal << cnTablePower) + terminal;
 }
 
-inline void nextKey(SyntaxHash::Iterator& it)
+static inline void nextKey(SyntaxHash::Iterator& it)
 {
    pos_t key = it.key();
    while (!it.eof() && key == it.key())
       ++it;
 }
 
-inline void copySubSet(SymbolHash& sour, SymbolHash& dest, parse_key_t sourKey, parse_key_t destKey, bool& added)
+static inline void copySubSet(SymbolHash& sour, SymbolHash& dest, parse_key_t sourKey, parse_key_t destKey, bool& added)
 {
    SymbolHash::Iterator it = sour.getIt(sourKey);
    while (!it.eof() && it.key() == sourKey) {
@@ -46,7 +46,7 @@ inline void copySubSet(SymbolHash& sour, SymbolHash& dest, parse_key_t sourKey, 
       ++it;
    }
 }
-inline bool copySubSet(SyntaxHash& sour, TableHash& dest, parse_key_t sourKey, parse_key_t destKey)
+static inline bool copySubSet(SyntaxHash& sour, TableHash& dest, parse_key_t sourKey, parse_key_t destKey)
 {
    // check if the rule is ambigous
    if (dest.exist(destKey))
@@ -61,7 +61,7 @@ inline bool copySubSet(SyntaxHash& sour, TableHash& dest, parse_key_t sourKey, p
    return true;
 }
 
-inline void add2stack(size_t key, TableHash::Iterator& it, ParserStack& stack)
+static inline void add2stack(size_t key, TableHash::Iterator& it, ParserStack& stack)
 {
    parse_key_t symbol = *it;
 
@@ -106,7 +106,7 @@ parse_key_t ParserTable :: resolveSymbolByIndex(int index)
 
 ustr_t ParserTable :: resolveKey(parse_key_t key)
 {
-   return _symbols.retrieve<parse_key_t>(nullptr, key, [](parse_key_t target_value, ustr_t key, parse_key_t value) { return target_value == value; });
+   return _symbols.retrieve<parse_key_t>(nullptr, key, [](parse_key_t target_value, ustr_t/* key*/, parse_key_t value) { return target_value == value; });
 }
 
 bool ParserTable :: registerRule(parse_key_t* members, size_t length)

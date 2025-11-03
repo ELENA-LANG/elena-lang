@@ -29,22 +29,84 @@ public:
 
 // --- GTKIDEView ---
 
+typedef void(*FileCloseCallback)(void* arg, int index);
+
+enum class CloseMode : int
+{
+   None        = 0,
+   ProjectMask = 1,
+
+   NewProject  = 1,
+   OpenProject = 3,
+   ExitApp     = 5,
+};
+
 class GTKIDEWindow : public SDIWindow
 {
 protected:
-   IDEModel*         _model;
-   IDEController*    _controller;
+   class Clipboard //: public ClipboardBase
+   {
+      Glib::RefPtr<Gdk::Clipboard> _clipboard;
 
-   FileDialog        fileDialog;
-   FileDialog        projectDialog;
-   MessageDialog     messageDialog;
+      GTKIDEWindow* _owner;
+      Glib::ustring _strData;
+
+      void on_clipboard_received(Glib::RefPtr<Gio::AsyncResult>& result);
+
+   public:
+      void copyToClipboard(DocumentView* docView, bool selectionMode);
+      void pasteFromClipboard();
+
+      Clipboard(GTKIDEWindow* owner)
+      {
+         _owner = owner;
+
+         _clipboard = owner->get_clipboard();
+      }
+   };
+
+   GtkApp*                      _app;
+
+   IDEModel*                    _model;
+   IDEController*               _controller;
+
+   Clipboard                    _clipboard;
 
    ProjectTreeColumns           _projectTreeColumns;
    Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
-   void populateMenu();
+   // dialogs
+   FileDialog                   fileDialog;
+   FileDialog                   projectDialog;
+   MessageDialog                messageDialog;
 
-   Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
+   ProjectSettings              projectSettingsDialog;
+
+   bool                         _closing;
+   CloseMode                    _mode;
+
+   void populateUI();
+
+   //Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
+
+   void newProject();
+   void closeProject(bool newMode);
+   void openProject();
+   void openProject_finish(path_t path);
+
+   bool copyToClipboard()
+   {
+      auto docView = _model->sourceViewModel.DocView();
+
+      _clipboard.copyToClipboard(docView, docView->hasSelection());
+
+      return true;
+   }
+
+   void pasteFromClipboard()
+   {
+      _clipboard.pasteFromClipboard();
+   }
 
    // event signals
    void on_menu_file_new_source()
@@ -53,117 +115,129 @@ protected:
    }
    void on_menu_file_new_project()
    {
+      closeProject(true);
    }
+
    void on_menu_file_open_source()
    {
-      _controller->doOpenFile(fileDialog, _model);
+      fileDialog.openFiles((void*)this, [](void* arg, PathList* list)
+      {
+         static_cast<GTKIDEWindow*>(arg)->on_menu_file_open_source_finish(list);
+      });
+   }
+   void on_menu_file_open_source_finish(PathList* files)
+   {
+      _controller->doOpenFile(_model, *files);
       //_recentFileList.reload();
       //_recentProjectList.reload();
    }
+
    void on_menu_file_open_project()
    {
-      _controller->doOpenProject(fileDialog, projectDialog, messageDialog, _model);
-      //_recentProjectList.reload();
+      projectDialog.openFile((void*)this, [](void* arg, PathString* path)
+      {
+         if (path) {
+            static_cast<GTKIDEWindow*>(arg)->openProject();
+         }
+      });
    }
    void on_menu_file_quit()
    {
-      if(_controller->doExit(fileDialog, projectDialog, messageDialog, _model)) {
-         SDIWindow::exit();
-      }
+      closeAndExit();
    }
    void on_menu_file_save()
    {
-      _controller->doSaveFile(fileDialog, _model, false, true);
+      saveFile(-1);
    }
    void on_menu_file_saveas()
    {
-      _controller->doSaveFile(fileDialog, _model, true, true);
+      saveFileAs(-1);
    }
    void on_menu_project_saveas()
    {
-      //_controller->doSaveProject(true);
+      saveProject();
    }
    void on_menu_file_saveall()
    {
-      //_controller->doSave(true);
+      saveAll();
    }
    void on_menu_file_close()
    {
-      _controller->doCloseFile(fileDialog, messageDialog, _model);
+      closeFile(-1);
    }
    void on_menu_file_closeall()
    {
-      //_controller->doCloseAll(false);
+      closeAll();
    }
    void on_menu_file_closeproject()
    {
-      //_controller->doCloseAll(true);
+      closeProject(false);
    }
    void on_menu_file_closeallbutactive()
    {
-      //_controller->doCloseAllButActive();
+      closeAllButActive();
    }
 
    void on_menu_edit_undo()
    {
-      //_controller->doUndo();
+      _controller->sourceController.undo(_model->viewModel());
    }
    void on_menu_edit_redo()
    {
-      //_controller->doRedo();
+      _controller->sourceController.redo(_model->viewModel());
    }
    void on_menu_edit_cut()
    {
-//      if (_controller->doEditCopy())
-//         _controller->doEditDelete();
+      if (copyToClipboard())
+         on_menu_edit_delete();
    }
    void on_menu_edit_copy()
    {
-      //_controller->doEditCopy();
+      copyToClipboard();
    }
    void on_menu_edit_paste()
    {
-      //_controller->doEditPaste();
+      pasteFromClipboard();
    }
    void on_menu_edit_delete()
    {
-      //_controller->doEditDelete();
+      _controller->sourceController.deleteText(_model->viewModel());
    }
    void on_menu_edit_select_all()
    {
-      //_controller->doSelectAll();
+      _controller->sourceController.selectAll(_model->viewModel());
    }
    void on_menu_edit_indent()
    {
-      //_controller->doIndent();
+      _controller->doIndent(_model);
    }
    void on_menu_edit_outdent()
    {
-      //_controller->doOutdent();
+      _controller->doOutdent(_model);
    }
    void on_menu_edit_trim()
    {
-      //_controller->doTrim();
+      _controller->sourceController.trim(_model->viewModel());
    }
    void on_menu_edit_erase_line()
    {
-      //_controller->doEraseLine();
+      _controller->sourceController.eraseLine(_model->viewModel());
    }
    void on_menu_edit_upper()
    {
-      //_controller->doUpperCase();
+      _controller->sourceController.upperCase(_model->viewModel());
    }
    void on_menu_edit_lower()
    {
-      //_controller->doLowerCase();
+      _controller->sourceController.lowerCase(_model->viewModel());
    }
    void on_menu_edit_comment()
    {
-      //_controller->doComment();
+      _controller->sourceController.insertBlockText(_model->viewModel(), "//", 2);
    }
    void on_menu_edit_uncomment()
    {
-      //_controller->doUnComment();
+      _controller->sourceController.deleteBlockText(_model->viewModel(), "//", 2);
    }
    void on_menu_project_include()
    {
@@ -187,7 +261,7 @@ protected:
    }
    void on_menu_project_options()
    {
-      //_controller->doSetProjectSettings();
+      //_controller->doChangeProject(projectSettingsDialog, _model);
    }
    void on_menu_file_clearfilehistory()
    {
@@ -299,13 +373,34 @@ protected:
    void onProjectRefresh(bool empty);
    void onIDEStatusChange(int status);
 
+   void saveFile(int index);
+   void saveFileAs(int index);
+   void saveFile_finish(PathString& path, int index);
+   void saveAll();
+   void saveProject();
+   void saveProject_finish(PathString& path);
+
+   void onFileClose(int index, FileCloseCallback callback);
+
+   void closeFile_finish(int index);
+   void closeFile(int index);
+
+   void closeAll_next(int index);
+   void closeAll_finish();
+   void closeAll();
+   void closeAndExit();
+
+   void closeAllButActive_finish();
+   void closeAllButActive_next(int index);
+   void closeAllButActive();
+
 public:
    void populate(int counter, Gtk::Widget** children);
 
    void on_text_model_change(TextViewModelEvent event);
    void on_textframe_change(SelectionEvent event);
 
-   GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model);
+   GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model, GtkApp* app);
 };
 
 } // _GUI_

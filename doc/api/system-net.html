@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.5: Module system'net
+ELENA Standard Library 6.7: Module system'net
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.5: Module system'net
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.5
+ELENA&nbsp;Standard&nbsp;Library<br>6.7
 </STRONG>
 </DIV>
 </DIV>
@@ -362,6 +362,91 @@ system'net'IN_ADDR</LI>
 </UL>
 <HR>
 </DIV>
+<A NAME="INetListener">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'net'</DIV>
+<H2 title="INetListener" class="title">INetListener</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">INetListener</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'INetListener</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>start()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>start(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> backLog)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>acceptNetSocket()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'INetSocket&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>acceptNetSocketAsync()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="INetSocket">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -523,9 +608,27 @@ system'net'INetSocketFactory</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">INetListener</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'INetSocket&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>openSocketAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> host, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'INetListener&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>openListenerAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
 </CODE>
 </TD>
 </TR>
@@ -900,6 +1003,155 @@ system'net'NativeSocketFactory</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">INetListener</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="NetListener">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'net'</DIV>
+<H2 title="NetListener" class="title">NetListener</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">NetListener</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">system'net'INetListener</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'net'NetListener</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NativeSocket">NativeSocket</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_listenSocket</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_noDelayMode</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetListener">NetListener</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelayMode)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>start()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>start(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> backLog)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>acceptNetSocket()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'net'INetSocket&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>acceptNetSocketAsync()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -1111,9 +1363,17 @@ system'net'NetworkStream</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_buffer</CODE>
+<CODE>_timeout</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_counter</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1142,11 +1402,20 @@ system'net'NetworkStream</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN> socket, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> socketStream)
+<CODE><i>constructor</i>()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN> socket, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> socketStream)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-net.html#NetworkStream">NetworkStream</A></SPAN></CODE></TD>
@@ -1245,11 +1514,20 @@ system'net'NetworkStream</LI>
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>readAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dump, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
@@ -1258,34 +1536,16 @@ system'net'NetworkStream</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>readAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>readToBuffer(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+<CODE>writeStringAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;</CODE></TD>
@@ -1294,12 +1554,21 @@ system'net'NetworkStream</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>reaAllAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> nonBlocking)
+</CODE>
+</TD>
+</TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'String&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readAsStringAsync()
+<CODE>readAsStringAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> nonBlocking)
 </CODE>
 </TD>
 </TR>
@@ -1338,7 +1607,7 @@ system'net'NetworkStream</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+<CODE>writeStringAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -1347,7 +1616,25 @@ system'net'NetworkStream</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>write(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+<CODE>writeString(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>readAllAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> nonBlocking)
 </CODE>
 </TD>
 </TR>
@@ -1356,25 +1643,7 @@ system'net'NetworkStream</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'String&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readAsStringAsync()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>readAsync(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>readToBuffer(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#MemoryBuffer">MemoryBuffer</A></SPAN> buffer, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>readAllAsStringAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> nonBlocking)
 </CODE>
 </TD>
 </TR>
@@ -1721,7 +1990,7 @@ system'net'SocketException</LI>
 </UL>
 <HR>
 </DIV>
-<A NAME="AF_INET">
+<A NAME="AF_INET__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -1758,7 +2027,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="AF_UNSPEC">
+<A NAME="AF_UNSPEC__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -1795,7 +2064,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="AI_PASSIVE">
+<A NAME="AI_PASSIVE__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -1832,7 +2101,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="FD_SETSIZE">
+<A NAME="FD_SETSIZE__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -1869,7 +2138,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="FIONBIO">
+<A NAME="FIONBIO__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -1906,7 +2175,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="FIONREAD">
+<A NAME="FIONREAD__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -1943,7 +2212,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="INVALID_SOCKET">
+<A NAME="INVALID_SOCKET__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -1980,7 +2249,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="IPPROTO_TCP">
+<A NAME="IPPROTO_TCP__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2017,7 +2286,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="SD_BOTH">
+<A NAME="SD_BOTH__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2054,7 +2323,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="SO_ERROR">
+<A NAME="SO_ERROR__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2091,7 +2360,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="SOCK_STREAM">
+<A NAME="SOCK_STREAM__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2128,7 +2397,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="SOCKET_ERROR">
+<A NAME="SOCKET_ERROR__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2165,7 +2434,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="SOL_SOCKET">
+<A NAME="SOL_SOCKET__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2202,7 +2471,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="SOMAXCONN">
+<A NAME="SOMAXCONN__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2239,7 +2508,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="TCP_NODELAY">
+<A NAME="TCP_NODELAY__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2276,7 +2545,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="WSAECONNRESET">
+<A NAME="WSAECONNRESET__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2313,7 +2582,7 @@ system'net'</DIV>
 </DIV>
 <HR>
 </DIV>
-<A NAME="WSAEWOULDBLOCK">
+<A NAME="WSAEWOULDBLOCK__sym__">
 </A>
 <!-- ======== START OF SYMBOL DATA ======== -->
 <DIV CLASS="header">
@@ -2361,7 +2630,7 @@ system'net'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.5
+ELENA&nbsp;Standard&nbsp;Library<br>6.7
 </STRONG>
 </DIV>
 </DIV>

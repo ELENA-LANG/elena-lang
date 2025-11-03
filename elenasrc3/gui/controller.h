@@ -12,6 +12,8 @@
 
 namespace elena_lang
 {
+   typedef List<path_t, freepath> PathList;
+
    // --- FileDialogBase ---
    class FileDialogBase
    {
@@ -98,7 +100,7 @@ namespace elena_lang
    // --- TextViewController ---
    class TextViewController : public TextViewControllerBase
    {
-   protected:      
+   protected:
       NotifierBase*    _notifier;
 
       //void onTextChanged(TextViewModelBase* model, DocumentView* view);
@@ -147,6 +149,7 @@ namespace elena_lang
 
       bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
       void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) override;
+      void pasteFromClipboard(TextViewModelBase* model, const_text_t text) override;
 
       void moveCaretDown(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;
       void moveCaretLeft(TextViewModelBase* model, bool kbShift, bool kbCtrl) override;

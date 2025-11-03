@@ -14,21 +14,21 @@
 
 using namespace elena_lang;
 
-#define MAX_LINE           256
+constexpr auto MAX_LINE = 256;
 
-const char* trim(const char* s)
+static inline const char* trim(const char* s)
 {
    while (s[0] == 0x20)s++;
 
    return s;
 }
 
-inline bool isLetterOrDigit(char ch)
+static inline bool isLetterOrDigit(char ch)
 {
    return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9');
 }
 
-inline void trimLine(IdentifierString& line)
+static inline void trimLine(IdentifierString& line)
 {
    while (!line.empty() && line[line.length() - 1] == '\r' || line[line.length() - 1] == '\n')
       line[line.length() - 1] = 0;
@@ -37,7 +37,7 @@ inline void trimLine(IdentifierString& line)
       line[line.length() - 1] = 0;
 }
 
-inline bool isAssignment(ustr_t line)
+static inline bool isAssignment(ustr_t line)
 {
    if (line[0] != '$')
       return false;
@@ -53,7 +53,7 @@ inline bool isAssignment(ustr_t line)
    return (i < len - 1) && (line[i] == ':' && line[i + 1] == '=');
 }
 
-inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, TemplateInfo& info)
+static inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, TemplateInfo& info)
 {
    size_t pos = s.findSubStr(start, "$1", end - start);
    if (pos != NOTFOUND_POS) {
@@ -66,7 +66,7 @@ inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, TemplateInfo& 
    trimLine(info.postfix);
 }
 
-inline size_t findTerminator(ustr_t text, size_t index)
+static inline size_t findTerminator(ustr_t text, size_t index)
 {
    bool quoteMode = false;
    size_t i = index;
@@ -88,7 +88,7 @@ inline size_t findTerminator(ustr_t text, size_t index)
    return i;
 }
 
-inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
+static inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
 {
    size_t i = index;
    while (i < text.length()) {
@@ -131,7 +131,7 @@ inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, u
    return true;
 }
 
-inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
+static inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
 {
    size_t i = index;
    while (i < text.length()) {
@@ -163,7 +163,7 @@ inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t pref
 VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
    : _appPath(appPath), _env({}), _imports(nullptr)
 {
-   _started = false;
+   _started = _multiLineFlag = false;
 
    _encoding = FileEncoding::UTF8;
 
@@ -296,6 +296,8 @@ bool VMSession::importScript(ustr_t scriptName)
    while (reader.read(buffer, 1024)) {
       _body.append(buffer);
    }
+
+   return true;
 }
 
 void VMSession :: executeCommandLine(bool preview, TemplateType type, ustr_t script)
@@ -408,7 +410,7 @@ bool VMSession :: executeCommand(const char* line, bool& running)
       printHelp();
    }
    else if (ustr_t(line).compare("@multiline")) {
-      _multiLine = true;
+      _multiLineFlag = true;
    }
    else if (ustr_t(line).startsWith("@base ")) {
       IdentifierString basePath(line + 6);
@@ -437,14 +439,14 @@ bool VMSession :: executeCommand(const char* line, bool& running)
    else if (ustr_t(line).compare("@eval")) {
       executeCommandLine(false, TemplateType::Multiline, _body.str());
 
-      _multiLine = false;
+      _multiLineFlag = false;
       _body.clear();
    }
    else if (ustr_t(line).compare("@print")) {
       executeCommandLine(true, TemplateType::Multiline, _body.str());
    }
    else if (ustr_t(line).compare("@clear")) {
-      _multiLine = false;
+      _multiLineFlag = false;
       _body.clear();
    }
    else if (line[1] == 'a' && ustr_t(line).startsWith("@add import ")) {
@@ -469,7 +471,7 @@ void VMSession :: run()
 
    do {
       try {
-         if (!_multiLine)
+         if (!_multiLineFlag)
             _presenter->print("\n>");
 
          _presenter->readLine(buffer, MAX_LINE);
@@ -487,7 +489,7 @@ void VMSession :: run()
             if (!executeCommand(*line, running))
                _presenter->print("Invalid command, use -h to get the list of the commands\n");
          }
-         else if (_multiLine) {
+         else if (_multiLineFlag) {
             _body.append(*line);
             _body.append("\n");
          }

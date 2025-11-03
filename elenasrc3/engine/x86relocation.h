@@ -94,7 +94,7 @@ inline void relocate64(pos_t pos, ref_t mask, ref_t reference, void* address, Ad
       }
       case mskImportRef64:
       {
-         addr_t base = space->imageBase + space->importMapping.get(reference | mask);
+         base = space->imageBase + space->importMapping.get(reference | mask);
          *(unsigned long long*)address += base + space->import;
 
          break;

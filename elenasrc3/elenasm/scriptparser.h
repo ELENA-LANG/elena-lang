@@ -36,7 +36,7 @@ namespace elena_lang
       int      state;
       LineInfo lineInfo;
 
-      bool compare(ScriptBookmark& bm)
+      bool compare(ScriptBookmark& bm) const
       {
          return offset == bm.offset;
       }

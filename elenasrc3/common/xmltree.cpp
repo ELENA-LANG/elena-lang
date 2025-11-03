@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains XML Reader / Writer File class implementation
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "xmltree.h"
@@ -11,12 +11,12 @@ using namespace elena_lang;
 
 // --- XmlNode ---
 
-inline bool isWhitespace(char ch)
+static inline bool isWhitespace(char ch)
 {
    return (ch == ' ' || ch == '\r' || ch == '\n' || ch == '\t');
 }
 
-inline void seekEnd(ustr_t content, size_t& position, char endChar)
+static inline void seekEnd(ustr_t content, size_t& position, char endChar)
 {
    while (!isWhitespace(content[position]) && content[position] != endChar) {
       if (content[position] == 0)
@@ -26,7 +26,7 @@ inline void seekEnd(ustr_t content, size_t& position, char endChar)
    }
 }
 
-inline void seekQuoteEnd(ustr_t content, size_t& position, char endChar)
+static inline void seekQuoteEnd(ustr_t content, size_t& position, char endChar)
 {
    while (content[position] != endChar) {
       if (content[position] == 0)
@@ -36,13 +36,32 @@ inline void seekQuoteEnd(ustr_t content, size_t& position, char endChar)
    }
 }
 
-inline void skipWhitespace(ustr_t content, size_t& position)
+static inline void skipWhitespace(ustr_t content, size_t& position)
 {
    while (isWhitespace(content[position]))
       position++;
 }
 
-inline bool isClosingTag(ustr_t content, size_t start, ustr_t tag)
+static inline void skipPseudoAttribute(ustr_t content, size_t& position)
+{
+   if (content[position] == '<' && content[position + 1] == '?') {
+      position += 2;
+      while (content[position] != 0) {
+         if (content[position] == '"') {
+            seekQuoteEnd(content, position, '\"');
+         }
+         else if (content[position] == '?' && content[position + 1] == '>') {
+            position += 2;
+            skipWhitespace(content, position);
+            break;
+         }
+
+         position++;
+      }
+   }
+}
+
+static inline bool isClosingTag(ustr_t content, size_t start, ustr_t tag)
 {
    if (content[start] == '<' && content[start + 1] == '/') {
       if (content.compareSub(tag, start + 2, tag.length()) && content[start + 2 + tag.length()] == '>') {
@@ -115,12 +134,18 @@ size_t XmlNode :: parse(ustr_t content, size_t position, size_t end, PositionLis
    // skip the ending whitespaces
    skipWhitespace(content, position);
 
+   // skip pseudo attributes
+   skipPseudoAttribute(content, position);
+
    NodeTag tag;
    position = loadTag(content, position, tag, nullptr);
 
    while (position < end) {
       // skip the ending whitespaces
       skipWhitespace(content, position);
+
+      // skip pseudo attributes
+      skipPseudoAttribute(content, position);
 
       if (content[position] != '<') {
          position = content.findSub(position, '<', end, end);
@@ -237,6 +262,11 @@ XmlTree::XmlTree(ustr_t rootTag)
 void XmlTree::loadXml(ustr_t content)
 {
    _content.copy(content);
+
+   // skip the ending whitespaces
+   skipWhitespace(getContent(), _position);
+   // skip pseudo attributes
+   skipPseudoAttribute(getContent(), _position);
 }
 
 bool XmlTree :: load(path_t path, FileEncoding encoding)
@@ -248,6 +278,11 @@ bool XmlTree :: load(path_t path, FileEncoding encoding)
    //read the file, NOTE : buffer should be bigger to contain the tailing zero
    char buffer[132];
    reader.readAll(_content, buffer, 128);
+
+   // skip the ending whitespaces
+   skipWhitespace(getContent(), _position);
+   // skip pseudo attributes
+   skipPseudoAttribute(getContent(), _position);
 
    return true;
 }
@@ -263,9 +298,18 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
       bool inlineMode = false;
       bool openning = true;
       bool ignoreWhitespace = true;
+      bool diretiveMode = false;
       for (size_t i = 0; i < _content.length(); i++) {
          if (_content[i] == '<') {
-            if (_content[i + 1] != '/') {
+            if (_content[i + 1] == '?') {
+               inlineMode = false;
+               if (indent + 4 > 0) {
+                  writer.writeNewLine();
+                  writer.fillText(" ", 1, indent + 4);
+               }
+               diretiveMode = true;
+            }
+            else if (_content[i + 1] != '/') {
                openning = true;
                inlineMode = false;
                indent += 4;
@@ -291,11 +335,25 @@ bool XmlTree::save(path_t path, FileEncoding encoding, bool withBOM, bool format
                inlineMode = true;
 
             ignoreWhitespace = true;
+
+            if (diretiveMode) {
+               writer.writeChar(_content[i]);
+               writer.writeNewLine();
+               diretiveMode = false;
+               continue;
+            }
          }
          else if (isWhitespace(_content[i])) {
             // ignore existing line breaks
             if (ignoreWhitespace)
                continue;
+         }
+         else if (!inlineMode && _content[i] == '"') {
+            size_t start = i;
+            i++;
+            seekQuoteEnd(_content.str(), i, '"');
+            writer.write(_content.str() + start, static_cast<pos_t>(i - start + 1));
+            continue;
          }
          else if (inlineMode) {
             ignoreWhitespace = false;

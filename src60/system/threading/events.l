@@ -1,5 +1,3 @@
-import system;
-
 #if (__project["_Win"]) // Windows
 
 internal struct EventHandle
@@ -102,7 +100,7 @@ public sealed class AutoResetEvent : BaseEvent
    }
 }
 
-public sealed struct CountDownEvent
+public sealed class CountDownEvent
 {
    EventHandle _handle;
    int         _counter;

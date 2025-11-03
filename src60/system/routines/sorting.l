@@ -1,5 +1,3 @@
-import system;
-
 public interface SortingAgent
 {
    abstract int Length

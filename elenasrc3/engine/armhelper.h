@@ -584,14 +584,14 @@ namespace elena_lang
          writeB(offset, writer);
       }
 
-      void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJumpForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
          writeB(0, writer);
       }
 
-      void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJeqForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -607,7 +607,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::EQ, writer);
       }
 
-      void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJneForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -623,7 +623,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::NE, writer);
       }
 
-      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJltForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -639,7 +639,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::LT, writer);
       }
 
-      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -655,7 +655,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::GE, writer);
       }
 
-      void writeJleForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJleForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -671,7 +671,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::LE, writer);
       }
 
-      void writeJgrForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJgrForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 

@@ -9,6 +9,9 @@
   - [ADDED] invoking get property with a message name literal
   - [ADDED] intermediate local variables (aka object shortcuts)
   - [ADDED] #562 : nullable
+  - [ADDED] new attribute "__nonboxable" - requiring only memory allocated objects
+  - [ADDED] shorthand syntax for lambda function without arguments : ([] => "Hello from Func")
+  - [ADDED] "#else" statement
 
 - ELC
   - [ADDED] option "-xn-" to turn off nullable types
@@ -20,6 +23,18 @@
   - [FIXED] suppress a method not found warning when calling itself
   - [ADDED] #781 : Cross-compile on Windows for Linux 
   - [ADDED] #778 : Cross-compile from Unix to Windows 
+  - [ADDED] warning if the inherited method has different nullable signature than the parent one
+  - [CRITICAL][FIXED] __intermediate variable
+  - [ADDED] warning if the target is a structure for ?. / !. operations
+  - [CRITICAL][FIXED] resolving a template compiled in a third-part module
+  - [FIXED]an issue with a template-based field of the structure
+  - [FIXED] duplicate boxing / unboxing
+  - [FIXED] correct boxing / unboxing in async operations
+  - [ADDED] #818 : Support <?xml version="1.0"?> in .prj file
+  - [DONE] #824 : Improving usability : making some error / warning messages more clear
+  - [FIXED] in-place constructor is missing
+  - [ADDED] support property call shorthand syntax
+  - [FIXED] displaying user friendly error for an incompatible closure function
 
 - API
   - [FIXED] textgen : support {{ }} special symbols 
@@ -29,6 +44,11 @@
   - [ADDED] wideListOp.splitByNewLine
   - [ADDED] system'PropertyMessageName
   - [ADDED] record template
+  - [REDUX] nilValue => NilValue
+  - [CRITICAL][FIXED] CountDownEvent
+  - [ADDED] #35 : adding net'http'server module
+  - [ADDED] #35 : adding webapi module
+  - [ADDED] UnsafeArray, UnsafeArray<T>
 
 - SM
 
@@ -40,9 +60,17 @@
   - [FIXED] an issue with a vertical splitter
   - [FIXED] breakpoint must be inside the loop
   - [FIXED] step over the loop
+  - [ADDED] Project Settings : Warning level combobox
+  - [FIXED] closure : should display captured variables / self
+  - [FIXED] #802 : The horizontal scroll bar is broken
+  - [FIXED] comment highlighting 
+  - [FIXED] step over multi-conditional if statement
+  - [ADDED] supporting project with profiles
+  - [FIXED] active bracket highlighting 
 
 - Tools
   - [ADDED] elt-cli : supporting textgen
+  - [FIXED] ecv-cli - support toggling pagination
 
 - Misc
   - [ADDED] #763 : freebsd nightly build

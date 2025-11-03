@@ -39,6 +39,16 @@ constexpr auto CURRENT_PLATFORM           = PlatformType::Win_x86_64;
 
 #endif
 
+//#define MEMORY_LEAK_DETECTION 1
+
+#if defined(MEMORY_LEAK_DETECTION)
+
+#define _CRTDBG_MAP_ALLOC //to get more details
+#include <stdlib.h>  
+#include <crtdbg.h>   //for malloc and free
+
+#endif
+
 // --- Presenter ---
 
 class Presenter : public WinConsolePresenter
@@ -72,7 +82,7 @@ public:
 
 // --- getAppPath ---
 
-void getAppPath(PathString& appPath)
+static inline void getAppPath(PathString& appPath)
 {
    wchar_t path[MAX_PATH + 1];
 
@@ -82,7 +92,7 @@ void getAppPath(PathString& appPath)
    appPath.lower();
 }
 
-path_t getDefaultExtension(PlatformType platform)
+static inline path_t getDefaultExtension(PlatformType platform)
 {
    switch (platform)
    {
@@ -94,7 +104,7 @@ path_t getDefaultExtension(PlatformType platform)
    }
 }
 
-int compileProject(int argc, path_c** argv, path_t appPath, ErrorProcessor& errorProcessor, 
+static inline int compileProject(int argc, path_c** argv, path_t appPath, ErrorProcessor& errorProcessor,
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
    PlatformType platform = CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM);
@@ -118,6 +128,13 @@ int compileProject(int argc, path_c** argv, path_t appPath, ErrorProcessor& erro
 
 int main()
 {
+#if defined(MEMORY_LEAK_DETECTION)
+   _CrtMemState sOld;
+   _CrtMemState sNew;
+   _CrtMemState sDiff;
+   _CrtMemCheckpoint(&sOld); //take a snapshot
+#endif
+
    try
    {
       PathString appPath;
@@ -131,10 +148,10 @@ int main()
       int argc;
       wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
 
-      int retVal = 0;
+      int retVal = EXIT_SUCCESS;
       if (argc < 2) {
          Presenter::getInstance().printLine(ELC_HELP_INFO);
-         return -2;
+         return WARNING_RET_CODE;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
          retVal = CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],            
@@ -144,10 +161,23 @@ int main()
       }
       else retVal = compileProject(argc, argv, *appPath, errorProcessor);
 
+#if defined(MEMORY_LEAK_DETECTION)
+      _CrtMemCheckpoint(&sNew); //take a snapshot 
+      if (_CrtMemDifference(&sDiff, &sOld, &sNew)) // if there is a difference
+      {
+         OutputDebugString(L"-----------_CrtMemDumpStatistics ---------");
+         _CrtMemDumpStatistics(&sDiff);
+         OutputDebugString(L"-----------_CrtMemDumpAllObjectsSince ---------");
+         _CrtMemDumpAllObjectsSince(&sOld);
+         OutputDebugString(L"-----------_CrtDumpMemoryLeaks ---------");
+         _CrtDumpMemoryLeaks();
+      }
+#endif
+
       return retVal;
    }
    catch (CLIException)
    {
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
 }

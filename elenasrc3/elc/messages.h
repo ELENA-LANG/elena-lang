@@ -10,7 +10,7 @@
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 107;
+   constexpr auto MessageLength = 116;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -30,6 +30,7 @@ namespace elena_lang
       {errNotImplemented, errMsgNotImplemented},
       {wrnSyntaxFileNotFound, wrnMsgSyntaxFileNotFound},
       {wrnInvalidConfig, wrnMsgInvalidConfig},
+      {wrnInvalidTemplateName, wrnMsgInvalidTemplateName},
       {wrnInvalidPrjCollection, wrnMsgInvalidPrjCollection},
       {errParserNotInitialized, errMsgParserNotInitialized},
       {errProjectAlreadyLoaded, errMsgProjectAlreadyLoaded},
@@ -71,6 +72,7 @@ namespace elena_lang
       {infoUnknownMessage, infoMsgUnknownMessage},
       {infoMessageInfo, infoMsgMessageInfo},
       {infoTargetClass, infoMsgTargetClass},
+      {infoSourceClass, infoMsgSourceClass},
       {infoScopeMethod, infoMsgScopeMethod},
       {infoCurrentClass, infoMsgCurrentClass},
       {infoAbstractMetod, infoMsgAbstractMetod},
@@ -82,11 +84,13 @@ namespace elena_lang
       {errNotAbstractClass, errMsgNotAbstractClass},
       {errIllegalOperation, errMsgIllegalOperation},
       {errUnknownDefConstructor, errMsgUnknownDefConstructor},
-      {wrnUnknownMessage, wrnMsgUnknownMessage},
-      {errUnknownMessage, errMsgUnknownMessage},
+      {wrnUnknownMethod, wrnMsgUnknownMethod},
+      {errUnknownMethod, errMsgUnknownMethod},
       {wrnUnknownDefConstructor, wrnMsgUnknownDefConstructor},
       {errInvalidConstAttr, errMsgInvalidConstAttr},
       {wrnUnknownFunction, wrnMsgUnknownFunction},
+      {wrnNillableRedefined, wrnMsgNillableRedefined},
+      {wrnNillableOutputRedefined, wrnMsgNillableOutputRedefined},
       {errUnknownFunction, errMsgUnknownFunction},
       {errIllegalPrivate, errMsgIllegalPrivate},
       {wrnTypeInherited, wrnMsgTypeInherited},
@@ -117,9 +121,14 @@ namespace elena_lang
       {wrnAssigningNillable, wrnMsgAssigningNillable},
       {wrnReturningNillable, wrnMsgReturningNillable},
       {errFailedMemoryAllocation, errMssgFailedMemoryAllocation},
-      {errMissingNamespace , errMsgMissingNamespace },
+      {errMissingNamespace, errMsgMissingNamespace },
       {infoInternalDefConstructor ,infoMsgInternalDefConstructor},
-      {errNotSupportedPlatform ,errMsgNotSupportedPlatform},
+      {errNotSupportedPlatform, errMsgNotSupportedPlatform},
+      {errHeapObjectRequired, errMsgHeapObjectRequired},
+      {wrnCannotBeNil, wrnMsgCannotBeNil},
+      {wrnUnknownRedirectMethod, wrnMsgUnknownRedirectMethod},
+      {errUnknownRedirectMethod, errMsgUnknownRedirectMethod},
+      {errIncompatibleClosure, errMsgIncompatibleClosure },
    };
 
 }

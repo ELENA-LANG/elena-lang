@@ -1827,6 +1827,14 @@ inline %0BCh
 
 end
 
+// ; xladddpn
+inline %0BDh
+
+  mov  rax, qword ptr [rbp+__arg32_1]
+  add  rdx, rax
+
+end
+
 // ; cmpr r
 inline %0C0h
 

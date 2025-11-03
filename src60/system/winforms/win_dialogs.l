@@ -1,4 +1,3 @@
-import system;
 import system'text;
 
 public singleton messageBox

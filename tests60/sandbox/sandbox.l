@@ -1,5 +1,7 @@
-#let attributes["PUBLIC"]      := 80004001h;
+import extensions;
 
-PUBLIC program()
+auto X = (x => 2);
+
+public program()
 {
 }

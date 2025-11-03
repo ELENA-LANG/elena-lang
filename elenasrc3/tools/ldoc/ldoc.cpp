@@ -3,7 +3,7 @@
 //
 //		This is a main file containing doc generator code
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ldoc.h"
@@ -462,7 +462,7 @@ void writeSummaryTable(TextFileWriter& writer, ApiClassInfo* info, const char* b
    writer.writeTextLine("</TD>");
 }
 
-void writeSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const char* bodyFileName)
+void writeSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const char* bodyFileName, const char* postfix = nullptr)
 {
    writer.writeTextLine("<TD CLASS=\"colFirst\">");
 
@@ -470,6 +470,9 @@ void writeSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const char* 
    writer.writeText(bodyFileName);
    writer.writeText("#");
    writeRefName(writer, (*info->name), false);
+   if (postfix) {
+      writer.writeText(postfix);
+   }
    writer.writeText("\">");
    writer.writeText(*info->name);
    writer.writeTextLine("</A>");
@@ -477,7 +480,10 @@ void writeSummaryTable(TextFileWriter& writer, ApiSymbolInfo* info, const char* 
 
    writer.writeTextLine("<TD CLASS=\"colLast\">");
    writer.writeTextLine("<DIV CLASS=\"block\">");
-   writer.writeText(*info->name);
+   if (info->shortDescr.empty()) {
+      writer.writeText(*info->name);
+   }
+   else writer.writeText(*info->shortDescr);
    writer.writeTextLine("</DIV>");
    writer.writeTextLine("</TD>");
 }
@@ -519,10 +525,12 @@ void writeClassBodyHeader(TextFileWriter& writer, ApiClassInfo* info, ustr_t mod
    writer.writeTextLine("</DIV>");
 }
 
-void writeSymbolBodyHeader(TextFileWriter& writer, ApiSymbolInfo* info, ustr_t moduleName)
+void writeSymbolBodyHeader(TextFileWriter& writer, ApiSymbolInfo* info, ustr_t moduleName, const char* postfix = nullptr)
 {
    writer.writeText("<A NAME=\"");
    writer.writeText(*info->name);
+   if (postfix)
+      writer.writeText(postfix);
    writer.writeTextLine("\">");
    writer.writeTextLine("</A>");
 
@@ -1727,6 +1735,10 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 
             moduleInfo->symbols.add(apiSymbolInfo);
 
+            ustr_t descr = _classDescriptions.get(referenceName);
+            if (!descr.empty())
+               apiSymbolInfo->shortDescr.copy(descr);
+
             if (symbolInfo.typeRef) {
                loadType(symbolInfo.typeRef, apiSymbolInfo->type, false);
             }
@@ -1856,9 +1868,9 @@ void DocGenerator :: generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWr
    IdentifierString moduleName;
    parseNs(moduleName, *_rootNs, *symbolInfo->fullName);
 
-   writeSummaryTable(summaryWriter, symbolInfo, bodyName);
+   writeSummaryTable(summaryWriter, symbolInfo, bodyName, "__sym__");
 
-   writeSymbolBodyHeader(bodyWriter, symbolInfo, *moduleName);
+   writeSymbolBodyHeader(bodyWriter, symbolInfo, *moduleName, "__sym__");
 
    writeSymbolHeader(bodyWriter);
    writeSymbolFirstColumn(bodyWriter, symbolInfo);

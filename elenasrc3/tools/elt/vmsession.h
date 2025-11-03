@@ -36,7 +36,7 @@ namespace elena_lang
    class VMSession
    {
       bool                 _started;
-      bool                 _multiLine;
+      bool                 _multiLineFlag;
 
       PathString           _appPath;
       PathString           _basePath;

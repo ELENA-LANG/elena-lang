@@ -15,7 +15,7 @@ namespace elena_lang
 {
 
 // --- ModuleScope ---
-class ModuleScope : public ModuleScopeBase
+class ModuleScope : public ModuleScopeBase, public LibraryLoaderListenerBase
 {
    int                   hints;
 
@@ -26,11 +26,14 @@ class ModuleScope : public ModuleScopeBase
    Forwards              reusedTemplates;
    Forwards              declaredImportLibraries;
 
+   DependecyList         dependencies;
+
    void saveListMember(ustr_t name, ustr_t memberName);
 
 public:
    bool isStandardOne() override;
    bool withValidation() override;
+   bool withPrologEpilog() override;
 
    ref_t mapAnonymous(ustr_t prefix) override;
 
@@ -103,6 +106,8 @@ public:
 
    void flush() override;
 
+   void onLoad(ModuleBase* module) override;
+
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 
       VariableResolverBase* variableResolver,
@@ -115,7 +120,8 @@ public:
       int ptrSize,
       int moduleHint)
       : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
-         minimalArgList, ptrSize, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr)
+         minimalArgList, ptrSize, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr),
+         dependencies(nullptr)
    {
       this->loader = loader;
       this->forwardResolver = forwardResolver;

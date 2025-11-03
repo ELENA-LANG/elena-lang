@@ -126,7 +126,7 @@ public:
 void init()
 {
    machine = new ELENAUnixVMMachine(CONFIG_PATH, &Presenter::getInstance(), CURRENT_PLATFORM,
-      VA_ALIGNMENT, { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED }, createJITCompiler);
+      VA_ALIGNMENT, /*{ DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED }, */createJITCompiler);
 }
 
 void printError(int errCode)

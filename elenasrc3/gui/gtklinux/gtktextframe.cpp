@@ -50,6 +50,7 @@ void TextViewFrame :: beforeDocumentClose(int index)
 
 void TextViewFrame :: onDocumentClose(int index, bool empty)
 {
+   deleteTab(index - 1);
 }
 
 TextViewWindow* TextViewFrame :: getCurrentTextView()

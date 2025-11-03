@@ -199,19 +199,24 @@ namespace elena_lang
       void closeResultTab(int controlIndex);
       void setChildFocus(int controlIndex);
 
+      bool saveBeforeClose(int index);
+
       void newFile();
       void openFile();
-      void saveFile();
-      void saveFileAs();
+      void saveFile(int index);
+      void saveFileAs(int index);
       void saveAll();
-      void saveProject();
-      void closeFile();
-      void closeAll();
+      void saveProject(bool saveAsMode);
+      void closeFile(int index);
+      bool closeAll();
       void closeAllButActive();
       void newProject();
       void openProject();
-      void closeProject();
+      void openProject(path_t path);
+      bool closeProject();
       void exit() override;
+
+      void selectWindow();
 
       void undo();
       void redo();

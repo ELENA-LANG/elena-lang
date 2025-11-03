@@ -16,7 +16,7 @@ constexpr auto loadTerminator = 34;
 
 // --- ScriptEngineTextParser ---
 
-bool ScriptEngineTextParser :: parseGrammarRule(ScriptEngineReaderBase& reader)
+bool ScriptEngineTextParser :: parseGrammarRule(ScriptEngineReaderBase&/* reader*/)
 {
    return false;
 }
@@ -179,7 +179,7 @@ void ScriptEngineBuilder :: parse(ScriptEngineReaderBase& reader, MemoryDump* ou
       writer.writeDWord(0);
 }
 
-bool ScriptEngineBuilder :: parseGrammarRule(ScriptEngineReaderBase& reader)
+bool ScriptEngineBuilder :: parseGrammarRule(ScriptEngineReaderBase&/* reader*/)
 {
    return false;
 }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Project Model implementation File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ideproject.h"
@@ -27,6 +27,8 @@ ProjectModel :: ProjectModel(IDEStatus* status)
    this->started = false;
    this->notSaved = false;
    this->strictType = FLAG_UNDEFINED;
+
+   this->warningLevel = 1;
 
    // !!NOTE : make sure the path separator should tail the path
    if (this->paths.librarySourceRoot[this->paths.librarySourceRoot.length() - 1] != PATH_SEPARATOR)

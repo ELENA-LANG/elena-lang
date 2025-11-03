@@ -45,7 +45,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.7.3</version>
+    <version>6.8.0</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -68,6 +68,14 @@
      </module>
      <module name="scripting">
        <include>scripting/interpreter.l</include>
+     </module>
+     <module name="threading">
+       <include>threading/threading.l</include>
+       <include>threading/console.l</include>
+     </module>
+     <module name="runtime">
+       <include>runtime/systemmonitor.l</include>
+       <include>runtime/package.l</include>
      </module>
   </files>
 </configuration>

@@ -27,9 +27,9 @@ extension evoHelper
 
 class EvoAlgorithm : Enumerator
 {
-    object _target;
-    object _current;
-    object _variantCount;
+    object  _target;
+    object? _current;
+    object  _variantCount;
 
     constructor new(s,count)
     {

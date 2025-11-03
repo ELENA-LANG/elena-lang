@@ -12,5 +12,6 @@
     <project platform="windows">mbedtls\mbedtls.prj</project>
     <project>xml\xml.prj</project>
     <project platform="windows">textgen\textgen.prj</project>
+    <project platform="windows">webapi\webapi.prj</project>
   </collection>
 </configuration>

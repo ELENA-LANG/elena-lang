@@ -1,4 +1,3 @@
-import system;
 import system'collections;
 
 idleFunc1 = (x){};

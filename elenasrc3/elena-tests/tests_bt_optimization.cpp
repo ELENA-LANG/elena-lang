@@ -33,6 +33,13 @@ constexpr auto Declaration2 = "namespace (class ( nameattr (identifier \"Object\
 constexpr auto SyntaxTree2 = "expression (assign_operation (object (type (identifier \"IntNumber\" ()) identifier \"n\" ()) expression (object (integer \"2\"))))";
 constexpr auto SyntaxTree4 = "expression ( code( expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"r\" ())expression (add_operation (object (identifier \"n\" ())expression (object (integer \"2\" ()))))))))";
 
+constexpr auto Declaration12 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"X\" ())field (type (identifier \"IntNumber\" ())nameattr (identifier \"x\" ()))))";
+constexpr auto SyntaxTree12 = "expression (assign_operation (object (type (identifier \"X\" ())identifier \"x\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"X\" ())))))";
+//constexpr auto Declaration12_2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))             class (attribute -2147479550 ()nameattr (identifier \"X\" ()) field (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ()))     method (   nameattr (identifier \"constructor\" ()) parameter(type(identifier \"IntNumber\" ()) nameattr (identifier \"x\" ()))               code ())     ))";
+constexpr auto Declaration12_2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))             class (attribute -2147479550 ()nameattr (identifier \"X\" ()) field (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ())) method (nameattr (identifier \"constructor\" ()) parameter (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ())) code ())))";
+                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                          
+constexpr auto SyntaxTree12_2 = "expression (assign_operation (object (type (identifier \"X\" ())identifier \"x\" ())expression (object (integer \"2\" ()))))";
+
 constexpr auto Struct_Declaration1 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
 constexpr auto Struct_Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479508 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
 constexpr auto Struct_Declaration3 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ()))) class (attribute -2147479550 () nameattr (identifier \"Complex\" ())field (type (identifier \"byte\" ())nameattr (identifier \"f1\" ()) ) field (type (identifier \"Aligned\" ())nameattr (identifier \"f2\" ()))))";
@@ -63,22 +70,26 @@ constexpr auto S2_Scenario1 = "class (attribute -2147479546 ()nameattr (identifi
 
 #ifdef _M_IX86
 
-constexpr auto BuildTree1_1 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2306 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
-constexpr auto BuildTree1_2 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2434 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
-constexpr auto BuildTree1_4 = "byrefmark -8 () local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 3331 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
+constexpr auto BuildTree1_1 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
+constexpr auto BuildTree1_2 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
+constexpr auto BuildTree1_4 = "byrefmark -8 () local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
 constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -4 ( size 4 ())";
 constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -4 (size 4 ())local_address -4 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop -12 (operator_id 4 ())local_address -12 ()copying -8 (size 4 ())";
+constexpr auto BuildTree12 = "class_reference 3 () direct_call_op 1056 (type 6 ()) inplacemark 4353 () assigning 1 () local 1 () copying -4 (size 4 ())";
+constexpr auto BuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack () class_reference 3 () direct_call_op 3105 (type 6 ()) inplacemark 4354 () copying -4 (size 4 ())";
 
-constexpr auto OptimizedBuildTree1_1 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2306 (type 4 ()) local_address -4 ()";
-constexpr auto OptimizedBuildTree1_2 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2434 (type 4 ()) local_address -4 ()";
-constexpr auto OptimizedBuildTree1_4 = "local_address -4 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3331 (type 4 ()) local_address -4 ()";
+constexpr auto OptimizedBuildTree1_1 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -4 ()";
+constexpr auto OptimizedBuildTree1_2 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -4 ()";
+constexpr auto OptimizedBuildTree1_4 = "local_address -4 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -4 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -4 (size 4 ()value 3 ())local_address -4 ()copying -8 (size 4 ())addingint -8 (value 2 ())";
+constexpr auto OptimizedBuildTree12 = "local_address -4 () saving_stack () direct_call_op 4353 (type 6 ()) assigning 1 () local 1 ()";
+constexpr auto OptimizedBuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack 1 () local_address -4 () saving_stack () direct_call_op 4354 (type 6 ())";
 
 constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 11 (message 3138 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop -4 (operator_id 6 ()) unbox_call_message -2 (value 1 () length -4 () temp_var -8 () message 1217 ()) local 1 () saving_stack() argument() direct_call_op 2626 (type 5 ()) loading_index -4() free_varstack() close_frame() exit()) reserved 3 ()reserved_n 8 ())";
 constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 15 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1217 () assigning 4 () local 3 () saving_stack() argument() call_op 1217 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 2626 (type 5 ()) local 1 () close_frame() exit()) reserved 9 ()";
 
-constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assigning 1 ()class_reference 8 ()direct_call_op 544 (type 16 ())assigning 2 ()class_reference 9 ()direct_call_op 544 (type 17 ())assigning 3 ()terminator ()saving_stack 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 7 ()saving_stack ()argument ()direct_call_op 3650 (type 7 ())local 1 ()close_frame ()exit ())reserved 7 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assigning 1 ()class_reference 8 ()direct_call_op 544 (type 16 ())assigning 2 ()class_reference 9 ()direct_call_op 544 (type 17 ())assigning 3 ()terminator ()saving_stack 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 7 ()saving_stack ()argument ()direct_call_op 4162 (type 7 ())local 1 ()close_frame ()exit ())reserved 7 ())";
 
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3074 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1217 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1217 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3138 (type 4 ())local 1 ()close_frame()exit())reserved 9 ()";
@@ -88,7 +99,7 @@ constexpr auto BuildTree_DirectByteOperation2 = "tape (open_frame ()assigning 1 
 
 constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 2 ()";
 
-constexpr auto BuildTree_CallMethodWithSignatureOfObject = "tape (open_frame ()assigning 1 ()int_literal 2 (value 2 ())assigning 2 ()local 2 ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 1538 (type 3 ())local 1 ()close_frame ()exit ())reserved 4 ())";
+constexpr auto BuildTree_CallMethodWithSignatureOfObject = "tape (open_frame ()assigning 1 ()int_literal 2 (value 2 ())assigning 2 ()local 2 ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 2050 (type 3 ())local 1 ()close_frame ()exit ())reserved 4 ())";
 
 constexpr auto PackedStructSize = 20;
 
@@ -97,22 +108,26 @@ constexpr auto ComplexStructSize = 16;
 
 #elif _M_X64
 
-constexpr auto BuildTree1_1 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2306 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
-constexpr auto BuildTree1_2 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2434 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
-constexpr auto BuildTree1_4 = "byrefmark -24 () local_address -24 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 3331 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
+constexpr auto BuildTree1_1 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
+constexpr auto BuildTree1_2 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
+constexpr auto BuildTree1_4 = "byrefmark -24 () local_address -24 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
 constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -8 ( size 4 ())";
 constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop -40 (operator_id 4 ())local_address -40 ()copying -24 (size 4 ())";
+constexpr auto BuildTree12 = "class_reference 3 () direct_call_op 1056 (type 6 ()) inplacemark 4353 () assigning 1 () local 1 () copying -8 (size 8 ())";
+constexpr auto BuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack () class_reference 3 () direct_call_op 3105 (type 6 ()) inplacemark 4354 () copying -8 (size 8 ())";
 
-constexpr auto OptimizedBuildTree1_1 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2306 (type 4 ()) local_address -8 ()";
-constexpr auto OptimizedBuildTree1_2 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 2434 (type 4 ()) local_address -8 ()";
-constexpr auto OptimizedBuildTree1_4 = "local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3331 (type 4 ()) local_address -8 ()";
+constexpr auto OptimizedBuildTree1_1 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -8 ()";
+constexpr auto OptimizedBuildTree1_2 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -8 ()";
+constexpr auto OptimizedBuildTree1_4 = "local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -8 ()";
 constexpr auto OptimizedBuildTree2 = "saving_int - 8 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -8 (size 4 ()value 3 ())local_address -8 ()copying -24 (size 4 ())addingint -24 (value 2 ())";
+constexpr auto OptimizedBuildTree12 = "local_address -8 () saving_stack () direct_call_op 4353 (type 6 ()) assigning 1 () local 1 ()";
+constexpr auto OptimizedBuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack 1 () local_address -8 () saving_stack () direct_call_op 4354 (type 6 ())";
 
 constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 11 (message 3138 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop -8 (operator_id 6 ()) unbox_call_message -2 (value 1 () length -8 () temp_var -24 () message 1217 ()) local 1 () saving_stack() argument() direct_call_op 2626 (type 5 ()) loading_index -8() free_varstack() close_frame() exit()) reserved 4 ()reserved_n 32 ())";
 constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 15 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1217 () assigning 4 () local 3 () saving_stack() argument() call_op 1217 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 2626 (type 5 ()) local 1 () close_frame() exit()) reserved 10 ()";
 
-constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assigning 1 ()class_reference 8 ()direct_call_op 544 (type 16 ())assigning 2 ()class_reference 9 ()direct_call_op 544 (type 17 ())assigning 3 ()terminator ()saving_stack 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 7 ()saving_stack ()argument ()direct_call_op 3650 (type 7 ())local 1 ()close_frame ()exit ())reserved 8 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assigning 1 ()class_reference 8 ()direct_call_op 544 (type 16 ())assigning 2 ()class_reference 9 ()direct_call_op 544 (type 17 ())assigning 3 ()terminator ()saving_stack 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 7 ()saving_stack ()argument ()direct_call_op 4162 (type 7 ())local 1 ()close_frame ()exit ())reserved 8 ())";
 
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3074 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1217 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1217 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3138 (type 4 ())local 1 ()close_frame()exit())reserved 10 ()";
@@ -122,7 +137,7 @@ constexpr auto BuildTree_DirectByteOperation2 = "tape (open_frame ()assigning 1 
 
 constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 4 ()";
 
-constexpr auto BuildTree_CallMethodWithSignatureOfObject = "tape (open_frame ()assigning 1 ()int_literal 2 (value 2 ())assigning 2 ()local 2 ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 1538 (type 3 ())local 1 ()close_frame ()exit ())reserved 4 ())";
+constexpr auto BuildTree_CallMethodWithSignatureOfObject = "tape (open_frame ()assigning 1 ()int_literal 2 (value 2 ())assigning 2 ()local 2 ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 2050 (type 3 ())local 1 ()close_frame ()exit ())reserved 4 ())";
 
 constexpr auto PackedStructSize = 24;
 
@@ -307,6 +322,30 @@ void BTOptimization4 :: SetUp()
    BuildTreeSerializer::load(OptimizedBuildTree4, afterOptimization);
 }
 
+// --- BTOptimization12 ---
+
+void BTOptimization12 :: SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration12, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree12, exprNode);
+   
+   BuildTreeSerializer::load(BuildTree12, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree12, afterOptimization);
+}
+
+
+void BTOptimization12_2 :: SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration12_2, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree12_2, exprNode);
+
+   BuildTreeSerializer::load(BuildTree12_2, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree12_2, afterOptimization);
+}
 // --- StructAlignment ---
 
 void StructAlignment :: SetUp()
@@ -617,7 +656,7 @@ void LambdaTest :: runTest(int scenario)
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
@@ -683,7 +722,7 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
@@ -737,4 +776,16 @@ void IntAssigningNil :: SetUp()
    intReference = 2;
    targetRef = 3;
    expectedError = 0x6b;
+}
+
+// ---- IntermediateVar ----
+void IntermediateVar :: SetUp()
+{
+   ScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_2, S2_Scenario_Sync, S2_Scenario_IntermediateVar);
+
+   BuildTreeSerializer::load(B_IntermediateVar, controlOutputNode);
+
+   targetRef = 3;
 }

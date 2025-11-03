@@ -14,6 +14,8 @@ using namespace elena_lang;
 TabBar::TabBar()
    //: Gtk::Widget()
 {
+   signal_switch_page().connect(sigc::mem_fun(*this,
+              &TabBar::on_notebook_switch_page) );
 }
 
 void TabBar :: addTab(const char* name, Gtk::Widget* control)
@@ -21,16 +23,17 @@ void TabBar :: addTab(const char* name, Gtk::Widget* control)
    if (!get_visible())
       show();
 
-   Gtk::HBox* hb = new Gtk::HBox(TRUE, 0);
-   hb->pack_start(*control, TRUE, TRUE, 0);
-   hb->show_all();
+   Gtk::Box* hb = new Gtk::Box();
+   //hb->pack_start(*control, TRUE, TRUE, 0);
+   hb->append(*control);
+   //hb->show_all();
 
    append_page(*hb, name); // !! temporal
 }
 
 Gtk::Widget* TabBar :: getCurrentControl()
 {
-   Gtk::HBox* hb = dynamic_cast<Gtk::HBox*>(get_nth_page(get_current_page()));
+   Gtk::Box* hb = dynamic_cast<Gtk::Box*>(get_nth_page(get_current_page()));
    if (!hb)
       return nullptr;
 
@@ -51,6 +54,11 @@ void TabBar :: onTabChange(int page_num)
 void TabBar :: renameTab(int index, const char* title)
 {
    set_tab_label_text(*get_nth_page(index), title);
+}
+
+void TabBar :: deleteTab(int index)
+{
+   remove_page(index);
 }
 
 /*Gtk::Widget* TabBar :: getTabControl(int index) const

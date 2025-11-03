@@ -5,88 +5,76 @@ In development:
 [development]
   ### EPIC: elena 6.8 ###
 
-  --------------------------------------
   === Iteration 42 ===
   --------------------------------------
-  dev: 
-  - MTA support for Linux : test simple multithread sample
-  - #658 :  debug elena program in VSCode : start single file / normal project ; step over / into (see IDE code); auto context
-  - #620 : backlog
-  - genetic algorithms
-  - #748 : i386
-  - #708 : fix invalid linker name in argument '-fuse-ld=lld'
-  - #708 : compile the project (elc, elenart, elenavm, og, sg, asm, ecv); run scripts
-  gen:
-  - script : support ++ operator
-  - work on REPL (elt), generate project template
-  api:
-  - #35 : working on webapi
-  - #622 : api backlog
-  - docs : Pi_value
-  ide:  
-  - #184 : IDE linux - project settings, new project, save project, save all, close project, editor settings, debug settings, compile the project
-  - #184 : IDE linux - toolbar
-  - #184 : IDE linux - last files / projects
-  - #184 : IDE linux - remember last open project / file
-  - compile in the separate thread  
-  - async method - auto watch : self and some variables are not displayed
-  maint:
-  - optimization : direct branching with nil
-  - test all x86-64 examples
-  - get rid of win_locale.l in system; refactor for cross-platform
-  - rosetta code - moving to 6.7 : (Combinations)
-  samples:
-  - review pi performance (must < 6) : realOp.power[3] byte code
-  - chat sample
-  - rosetta code : Program termination, Parallel calculations
-  port:
-  - linux elt - use rpath for linking elenavm
-  - linux elt - migrate to amd64
-  tools:
-  - vs #2 : elena.tmLanguage.json  
-  prom:
-  - post an article about records using meta programming
-  - weekly posting
-  - post what's new in ELENA 6.7
-  - adding a text how uninstall ELENA
-  - post how to implement comma quibling using elt-cli / textgen
+  * release 6.8
   --------------------------------------
-  - #620 : backlog
-  --------------------------------------
-  * new opcode : fpi - ppc64le
-  * new opcode : fsin / fcos - ppc64le
+  - merge PR
+  - prepare release notes
+  - upload linux x86, linux amd64, bsd amd64
+  - upload release files
+  - release a new version of mbedtls wrapper   
   --------------------------------------
 
-  === Iteration 43 ===
-  --------------------------------------
-  dev: 
-  - upndown (connector - cmdSearch)
-  - #708 : compile library, compile executable, test executable  
-  gen:
-  api:
-  - #34 : http client : support redirects, put, delete, support patch, head, options, web api  
-  ide:  
-  maint:
-  samples:
-  - optimization : pi (used classes byte code)
-  port:
-  tools:
-  prom:
-  --------------------------------------
-  --------------------------------------
-  --------------------------------------
+  ### EPIC: elena 6.9 ###
 
   === Iteration 44 ===
+  ====================================== 
+  * new version 6.8.1
+  * fix entropy sample
+  * api : provide descriptions for all classes in system & extensions, starting from IntMatrix
+  * #820 : Launch elena64-ide.exe from the command line 
+  * warn if nil is passed to the non-nil argument
+  * ldoc : support search by method name
+  * ldoc : support search by class name
+  * Babylonian spiral
+  ======================================
+  * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
-  dev: 
-  gen:
-  api:
-  ide:  
-  maint:
-  samples:
-  port:
-  tools:
-  prom:
+  - #184 : IDE : project view
+  - #184 : project menu commands
+  - #184 : IDE : enable / disable menu commands
+  - #184 : IDE - select text with a mouse
+  - #184 : dialogs must be mandantory
+
+  - #184 : IDE linux - implement all menu commands (except debug / compile)
+  - get rid of FileDialogBase
+  - #184 : IDE linux - mark modified file
+  - #184 : IDE linux - include / exclude
+  - #184 : uncomment checkMenuItemById
+  - #184 : exit
+  - #184 : recent file / project list
   --------------------------------------
+  * IDE : close all - do not save file if it was not changed
+  * IDE : call stack
+  * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected
+  * IDE : right click on tab - context menu : close, close all, close all but current
+  * IDE : close icon on the tab
+  ======================================
+  #35 : webapi weather backend (using existing frontend)
+  --------------------------------------
+  * working on dummy https server : investigate error - mbedtls_socket_handshake returns -28160
+  * example - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
+  * comment output => use logger to display this information
+
+  * simple web api client - GET
+  * simple web api - POST
+  * simple web api client - POST
+
+  * combining into a generic httpserver
+  * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
+  --------------------------------------
+
+  === Iteration 45 ===
+  --------------------------------------
+  --------------------------------------
+
+  === Iteration 46 ===
+  --------------------------------------
+  --------------------------------------
+
+  ### EPIC: elena 6.10 ###
+
+  === Iteration 47 ===
   --------------------------------------
   --------------------------------------

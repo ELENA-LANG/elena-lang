@@ -43,7 +43,7 @@ public program()
 {
    var list := new BlockingQueue<string>();
 
-   Thread.new(
+   Thread.start(
    {
       var s := list.pop();
 

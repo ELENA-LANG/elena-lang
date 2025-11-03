@@ -59,7 +59,7 @@ void getSelfPath(PathString& rootPath)
 {
    char buff[FILENAME_MAX];
    size_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
-   if (len != -1) {
+   if (len != NOTFOUND_POS) {
       buff[len] = 0;
       rootPath.copy(buff);
    }

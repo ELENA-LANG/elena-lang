@@ -1,6 +1,6 @@
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GUI Controller implementation File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "controller.h"
@@ -184,6 +184,22 @@ void TextViewController :: pasteFromClipboard(TextViewModelBase* model, Clipboar
    }
 }
 
+void TextViewController :: pasteFromClipboard(TextViewModelBase* model, const_text_t text)
+{
+   if (emptystr(text))
+      return;
+
+   DocumentChangeStatus status = {};
+   auto docView = model->DocView();
+   if (!docView->isReadOnly()) {
+      if (!emptystr(text)) {
+         docView->insertLine(status, text, getlength(text));
+      }
+
+      notifyTextModelChange(model, status);
+   }
+}
+
 bool TextViewController :: insertNewLine(TextViewModelBase* model)
 {
    DocumentChangeStatus status = {};
@@ -217,7 +233,7 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
 
       if (isPairedBracket(ch)) {
          auto caret = docView->getCaret();
-         if (caret.x == docView->getCurrentLineLength()) 
+         if (caret.x == docView->getCurrentLineLength())
             docView->insertChar(status, getClosingBracket(ch), 1, false);
       }
 
@@ -478,11 +494,11 @@ void TextViewController :: highlightBrackets(TextViewModelBase* model, DocumentC
    if (pos != NOTFOUND_POS) {
       pos_t closeBracketPos = caret.position();
       if (findBracket(text, caret, CLOSING_BRACKETS[pos], OPENING_BRACKETS[pos], false)) {
-         docView->addHighlight(caret.position(), STYLE_HIGHLIGHTED_BRACKET);
          docView->addHighlight(closeBracketPos, STYLE_HIGHLIGHTED_BRACKET);
+         docView->addHighlight(caret.position(), STYLE_HIGHLIGHTED_BRACKET);
 
          changeStatus.formatterChanged = true;
-      }      
+      }
    }
 }
 

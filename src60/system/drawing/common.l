@@ -1,5 +1,3 @@
-import system;
-
 // --- Point ---
 
 public sealed struct Point

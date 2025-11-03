@@ -142,6 +142,6 @@ int main(int argc, char* argv[])
    }
    catch (CLIException)
    {
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
 }

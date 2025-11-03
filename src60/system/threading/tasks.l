@@ -1,5 +1,3 @@
-import system;
-
 public class Task
 {
    bool           _completed;
@@ -45,6 +43,8 @@ public class Task
          ThreadPool.queueAction({ action(self) });
       }
       else if:not:nil(_continuation) {
+         Console.writeLine("Only a single continuation is supported currently");
+
          InvalidOperationException.raise("Only a single continuation is supported currently")
       }
       else {
@@ -61,17 +61,20 @@ public class Task
 
    private complete(Exception? ex)
    {
+      Action<Task>? contCopy := nil;
       lock(self) {
          if (_completed) {
+            Console.writeLine("The task is already completed");
+
             InvalidOperationException.raise("The task is already completed")
          };
 
          _exception := ex;
+         contCopy := _continuation;
          _completed := true;
-
-         if:not:nil(_continuation) {
-            _continuation(self);
-         }
+      };
+      if:not:nil(contCopy) {
+         contCopy(self);
       }
    }
 
@@ -212,6 +215,8 @@ public class Task
            }
            catch (Exception e)
            {
+               Console.writeLine(e);
+              
                t.setException(e);
            }
        });

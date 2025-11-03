@@ -1,5 +1,3 @@
-import system;
-
 // --- Window Color Constants
 public const int COLOR_BACKGROUND = 5;
 

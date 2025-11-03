@@ -37,6 +37,9 @@ namespace elena_lang
       CRLF
    };
 
+   DISABLE_WARNING_PUSH
+   DISABLE_WARNING_UNINITIALIZED_FIELD
+
    struct Page
    {
       size_t   used;
@@ -60,6 +63,8 @@ namespace elena_lang
          StrConvertor::copy(text, page.text, used, used);
       }
    };
+
+   DISABLE_WARNING_POP
 
    typedef BList<Page>  Pages;
 

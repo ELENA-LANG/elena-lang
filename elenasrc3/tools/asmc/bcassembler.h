@@ -28,26 +28,26 @@ namespace elena_lang
 
          bool fixLabel(pos_t label, MemoryWriter& writer, ReferenceHelperBase* rh) override;
 
-         void writeJumpBack(pos_t label, MemoryWriter& writer) override {}
-         void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override {}
+         void writeJumpBack(pos_t/* label*/, MemoryWriter&/* writer*/) override {}
+         void writeJumpForward(pos_t/* label*/, MemoryWriter&/* writer*/, int/* byteCodeOffset*/) override {}
 
-         void writeJeqBack(pos_t label, MemoryWriter& writer) override {}
-         void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override {}
+         void writeJeqBack(pos_t/* label*/, MemoryWriter&/* writer*/) override {}
+         void writeJeqForward(pos_t/* label*/, MemoryWriter&/* writer*/, int/* byteCodeOffset*/) override {}
 
-         void writeJneBack(pos_t label, MemoryWriter& writer) override {}
-         void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+         void writeJneBack(pos_t/* label*/, MemoryWriter&/* writer*/) override {}
+         void writeJneForward(pos_t/* label*/, MemoryWriter&/* writer*/, int/* byteCodeOffset*/)  override {}
 
-         void writeJltBack(pos_t label, MemoryWriter& writer) override {}
-         void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+         void writeJltBack(pos_t/* label*/, MemoryWriter&/* writer*/) override {}
+         void writeJltForward(pos_t/* label*/, MemoryWriter&/* writer*/, int/* byteCodeOffset*/)  override {}
 
-         void writeJgeBack(pos_t label, MemoryWriter& writer) override {}
-         void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+         void writeJgeBack(pos_t/* label*/, MemoryWriter&/* writer*/) override {}
+         void writeJgeForward(pos_t/* label*/, MemoryWriter&/* writer*/, int/* byteCodeOffset*/)  override {}
 
-         void writeJleBack(pos_t label, MemoryWriter& writer) override {}
-         void writeJleForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+         void writeJleBack(pos_t/* label*/, MemoryWriter&/* writer*/) override {}
+         void writeJleForward(pos_t/* label*/, MemoryWriter&/* writer*/, int/* byteCodeOffset*/)  override {}
 
-         void writeJgrBack(pos_t label, MemoryWriter& writer) override {}
-         void writeJgrForward(pos_t label, MemoryWriter& writer, int byteCodeOffset)  override {}
+         void writeJgrBack(pos_t/* label*/, MemoryWriter&/* writer*/) override {}
+         void writeJgrForward(pos_t/* label*/, MemoryWriter&/* writer*/, int/* byteCodeOffset*/)  override {}
 
          ref_t getLabel(ustr_t labelName)
          {

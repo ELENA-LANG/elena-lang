@@ -1,5 +1,3 @@
-import system;
-
 public abstract class AsyncStateEnumerator : Enumerator<Task>
 {
    private __context;  // context must be the first one

@@ -1871,6 +1871,17 @@ inline %0BCh
 
 end
 
+// ; xladddpn
+inline %0BDh
+
+  lea  edi, [ebp+__arg32_1]
+  mov  ecx, [edi]
+  add  eax, ecx
+  mov  ecx, [edi + 4]
+  adc  edx, ecx
+
+end
+
 // ; cmpr r
 inline %0C0h
 
@@ -2651,7 +2662,6 @@ inline %4E1h
   lea  edi, [ebp + __arg32_1]
   mov  eax, [esi + 4]
   mov  ecx, [esi]
-  add  word ptr [edi], ax
   add  [edi], ecx
   adc  [edi+4], eax
 

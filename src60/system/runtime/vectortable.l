@@ -1,5 +1,3 @@
-import system;
-
 // --- PermVectorArray ---
 
 class PermVectorArray

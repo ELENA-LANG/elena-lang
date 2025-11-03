@@ -92,7 +92,7 @@ CompilingProcess::TemplateGenerator :: TemplateGenerator(CompilingProcess* proce
 }
 
 bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-   SyntaxNode target, List<SyntaxNode>& parameters)
+   SyntaxNode target, SyntaxNode declarationNode, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
       moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
@@ -100,7 +100,7 @@ bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& modu
    if (!sectionInfo.section)
       return false;
 
-   _processor.importTemplate(sectionInfo.section, target, parameters);
+   _processor.importTemplate(sectionInfo.section, target, declarationNode, parameters);
 
    return true;
 }
@@ -188,7 +188,7 @@ bool CompilingProcess::TemplateGenerator :: importTextblock(ModuleScopeBase& mod
    return true;
 }
 
-size_t getLengthSkipPostfix(ustr_t name)
+static inline size_t getLengthSkipPostfix(ustr_t name)
 {
    size_t len = name.length();
 
@@ -360,7 +360,7 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
 void CompilingProcess :: parseFileTemlate(ustr_t prolog, path_t name,
    SyntaxWriterBase* syntaxWriter)
 {
-   if (!prolog)
+   if (emptystr(prolog))
       return;
 
    StringTextReader<char> reader(prolog);
@@ -474,7 +474,7 @@ void CompilingProcess :: parseFile(path_t projectPath,
 void CompilingProcess :: parseModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it,
    SyntaxTreeBuilder& builder,
-   ModuleScopeBase& moduleScope)
+   bool withPrologEpilog)
 {
    IdentifierString target;
 
@@ -490,9 +490,11 @@ void CompilingProcess :: parseModule(ProjectEnvironment& env,
       }
 
       // generating syntax tree
-      parseFileTemlate(*env.fileProlog, _prologName, &builder);
+      if (withPrologEpilog)
+         parseFileTemlate(*env.fileProlog, _prologName, &builder);
       parseFile(*env.projectPath, file_it, &builder, parserTarget);
-      parseFileTemlate(*env.fileEpilog, _epilogName, &builder);
+      if (withPrologEpilog)
+         parseFileTemlate(*env.fileEpilog, _epilogName, &builder);
 
       builder.closeNode();
 
@@ -542,7 +544,7 @@ void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree&
    }
 }
 
-inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>* filters)
+static inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>* filters)
 {
    DynamicUStr target;
 
@@ -551,7 +553,7 @@ inline void printTree(PresenterBase* presenter, SyntaxNode node, List<SyntaxKey>
    presenter->print(target.str());
 }
 
-inline void printTree(PresenterBase* presenter, BuildNode node, List<BuildKey>* filters)
+static inline void printTree(PresenterBase* presenter, BuildNode node, List<BuildKey>* filters)
 {
    DynamicUStr target;
 
@@ -662,6 +664,8 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
       minimalArgList, ptrSize,
       module_it.hints());
 
+   _libraryProvider.addListener(&moduleScope);
+
    // Validation : standart module must be named "system"
    if (moduleScope.isStandardOne())
       assert(module_it.name().compare(STANDARD_MODULE));
@@ -680,11 +684,15 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
-   parseModule(env, module_it, builder, moduleScope);
+   parseModule(env, module_it, builder, moduleScope.withPrologEpilog());
 
    _presenter->print(ELC_COMPILING_MODULE, moduleScope.module->name());
 
-   return buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
+   bool retVal = buildSyntaxTree(moduleScope, syntaxTree, false, nullptr);
+
+   _libraryProvider.removeListener(&moduleScope);
+
+   return retVal;
 }
 
 void CompilingProcess :: configurateParser(SyntaxVersion version)
@@ -989,42 +997,42 @@ int CompilingProcess :: build(Project& project,
       _presenter->printPath(e.message, e.path, e.lineInfo.row, e.lineInfo.column, e.token);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (InvalidChar& e) {
       _presenter->print("(%d,%d): Invalid char %c\n", e.lineInfo.row, e.lineInfo.column, e.ch);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (JITUnresolvedException& ex)
    {
       _presenter->print(_presenter->getMessage(errUnresovableLink), ex.referenceInfo.referenceName);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (InternalError& ex) {
       _presenter->print(_presenter->getMessage(ex.messageCode), ex.arg);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (InternalStrError& ex) {
       _presenter->print(_presenter->getMessage(ex.messageCode), *ex.arg);
 
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch(AbortError&) {
       _presenter->print(ELC_UNSUCCESSFUL);
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
    catch (...)
    {
       _presenter->print(_presenter->getMessage(errFatalError));
       _presenter->print(ELC_UNSUCCESSFUL);
 
-      return ERROR_RET_CODE;
+      return EXIT_FAILURE;
    }
 }

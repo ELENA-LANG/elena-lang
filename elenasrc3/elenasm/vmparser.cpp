@@ -281,7 +281,7 @@ void VMTapeParser :: parseInline(ustr_t script, TapeWriter& writer)
    parseInlineScript(scriptReader, writer);
 }
 
-bool VMTapeParser :: parseGrammarRule(ScriptEngineReaderBase& reader)
+bool VMTapeParser :: parseGrammarRule(ScriptEngineReaderBase&/* reader*/)
 {
    return false;
 }

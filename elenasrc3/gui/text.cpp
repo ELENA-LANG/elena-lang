@@ -712,7 +712,7 @@ text_t Text::getLine(TextBookmark& bookmark, size_t& length)
    }
 }
 
-#endif //  
+#endif //
 
 void Text :: create()
 {
@@ -1119,7 +1119,7 @@ inline size_t sizeToShift(size_t size)
    }
 }
 
-bool TextHistory::HistoryWriter :: write(Buffer* buffer, Operation operation, pos_t& position, 
+bool TextHistory::HistoryWriter :: write(Buffer* buffer, Operation operation, pos_t& position,
    pos_t& length, void* &line, pos_t& offset)
 {
 #ifdef _MSC_VER
@@ -1172,7 +1172,7 @@ pos_t TextHistory::HistoryBackReader :: getLength()
 
 void* TextHistory::HistoryBackReader :: getLine(pos_t length)
 {
-   _offset -= (length + sizeof(wchar_t));
+   _offset -= (length + sizeof(text_c));
 
    return _buffer->get(_offset);
 }
@@ -1251,7 +1251,7 @@ void TextHistory :: switchBuffer()
       _buffer = &_buffer2;
    }
    else _buffer = &_buffer1;
-   
+
    _buffer->clear();
    _offset = 0;
 }
@@ -1346,7 +1346,7 @@ bool TextHistory :: undo(Text* text, TextBookmark& caret)
       // insert mode
       text->eraseLine(caret, length);
    }
-   
+
    _locking = false;
    _offset = reader.position();
 

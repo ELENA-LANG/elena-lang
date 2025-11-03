@@ -1,4 +1,3 @@
-import system;
 import system'calendar;
 import system'threading;
 
@@ -306,7 +305,10 @@ public sealed const struct NativeSocket
 
    listen(int backLog)
    {
-      int retVal := extern WS2_32.listen(_handle, backLog);
+      int retVal := 0;
+      extern {
+         retVal := extern WS2_32.listen(_handle, backLog);
+      };
             
       if (retVal == SOCKET_ERROR)
          { SocketException.new("Error at socket").raise() }
@@ -338,21 +340,27 @@ public sealed const struct NativeSocket
 
    int receive(byte[] buffer, int maxLength, int flags)
    {
-      int retVal := extern WS2_32.recv(_handle,buffer,maxLength,flags);
-        
+      int retVal := 0;
+      extern {
+         retVal := extern WS2_32.recv(_handle,buffer,maxLength,flags);
+      };
+
       if (retVal == SOCKET_ERROR)
       {
          int err := extern WS2_32.WSAGetLastError();
          if (err != WSAEWOULDBLOCK)
             { SocketException.new("Error at socket").raise() }
       };
-            
+
       ^ retVal
    }
 
    NativeSocket accept()
    {
-      handle socket := extern WS2_32.accept(_handle, 0, 0);
+      handle socket;
+      extern {
+         socket := extern WS2_32.accept(_handle, 0, 0);
+      };
             
       ^ socket
    }

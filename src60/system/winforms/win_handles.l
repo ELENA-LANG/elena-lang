@@ -1,5 +1,3 @@
-import system;
-
 // --- HInstance ---
 
 public sealed const struct HInstance

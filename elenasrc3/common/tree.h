@@ -9,12 +9,8 @@
 #ifndef TREE_H
 #define TREE_H
 
-#ifdef _MSC_VER
-
-#pragma warning( push )
-#pragma warning( disable : 4458 )
-
-#endif
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_HIDE_CLASSMEMBER
 
 namespace elena_lang
 {
@@ -41,6 +37,11 @@ namespace elena_lang
          NodeArg(ref_t reference, pos_t strArgPosition)
          {
             this->reference = reference;
+            this->strArgPosition = strArgPosition;
+         }
+         NodeArg(int value, pos_t strArgPosition)
+         {
+            this->value = value;
             this->strArgPosition = strArgPosition;
          }
       };
@@ -498,6 +499,12 @@ namespace elena_lang
 
             return Node::read(_tree, child);
          }
+         Node appendChild(Key key, int value)
+         {
+            pos_t child = _tree->appendChild(_position, key, value, INVALID_POS);
+
+            return Node::read(_tree, child);
+         }
          Node appendChild(Key key)
          {
             pos_t child = _tree->appendChild(_position, key, 0, INVALID_POS);
@@ -594,7 +601,16 @@ namespace elena_lang
 
          return newChild(INVALID_POS, key, arg);
       }
+      pos_t appendChild(pos_t position, Key key, int value, pos_t strArgPosition)
+      {
+         NodeArg arg(value, strArgPosition);
 
+         pos_t child = newChild(position, key, arg);
+
+         appendChild(position, child);
+
+         return child;
+      }
       pos_t appendChild(pos_t position, Key key, ref_t reference, pos_t strArgPosition)
       {
          NodeArg arg(reference, strArgPosition);
@@ -668,6 +684,13 @@ namespace elena_lang
             }
             else _current = _tree->appendChild(_current, key, arg, INVALID_POS);
          }
+         void newNode(Key key, int arg)
+         {
+            if (_current == INVALID_POS) {
+               _current = _tree->newRoot(key, arg, INVALID_POS);
+            }
+            else _current = _tree->appendChild(_current, key, arg, INVALID_POS);
+         }
          void newNode(Key key, ustr_t argument)
          {
             pos_t strPos = _tree->saveStrArgument(argument);
@@ -689,6 +712,11 @@ namespace elena_lang
             _current = _tree->readParent(_current);
          }
 
+         void appendNode(Key key, int arg)
+         {
+            newNode(key, arg);
+            closeNode();
+         }
          void appendNode(Key key, ref_t arg)
          {
             newNode(key, arg);
@@ -892,10 +920,6 @@ namespace elena_lang
    };
 }
 
-#ifdef _MSC_VER
-
-#pragma warning( pop )
-
-#endif
+DISABLE_WARNING_POP
 
 #endif

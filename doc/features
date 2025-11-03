@@ -305,7 +305,7 @@ public program()
  Enumerations
 ----------------------------------------------------------------------------
 
-public const struct Color : enum<int>(Red ::= 1,Green ::= 2,Blue ::= 3);
+public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
 
 public program()
 {
@@ -452,3 +452,28 @@ In the project file:
 In the project collection file:
 
     <project platform="windows">forms\forms.prj</project>
+
+----------------------------------------------------------------------------
+   __nonboxable attribute
+----------------------------------------------------------------------------
+
+Raise an error if the expression is not memory allocated
+
+e.g.
+
+   int n := 0;
+   var o := __nonboxable n; // !! must raise an error : "Heap allocated object is expected"
+
+----------------------------------------------------------------------------
+   lambda function without arguments
+----------------------------------------------------------------------------
+
+public program()
+{
+   var f1 := { Console.writeLine("The traditional lambda function without arguments"); };
+   var f2 := (){ Console.writeLine("The new lambda function without arguments to be in line with syntax like c(x){ ... }"); };
+   var f3 := ([] => "Hello");
+
+   f1();
+   f2();
+}

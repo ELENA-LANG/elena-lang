@@ -1,4 +1,3 @@
-import system;
 import system'collections;
 //import system'routines;
 import system'text;
@@ -131,7 +130,7 @@ namespace expressions
                     
          if ((mode == 0 || mode == mode_class) && refName == "nil")
          {
-            ^ ConstantFunction.load(nilValue);
+            ^ ConstantFunction.load(NilValue);
          };
          
          ^ parent?.resolve(variable, assignMode)
@@ -333,7 +332,7 @@ namespace expressions
          List<TapeFunction> list := new List<TapeFunction>(8);
    
          // reserve the alloc place
-         list.append(nilValue);
+         list.append(NilValue);
 
          auto scope := new RootExpressionScope(parentScope);
 
@@ -1087,7 +1086,7 @@ namespace expressions
          List<TapeFunction> list := new List<TapeFunction>(8);
    
          // reserve the alloc place
-         list.append(nilValue);
+         list.append(NilValue);
 
          auto scope := new RootExpressionScope(parentScope);
 
@@ -1537,11 +1536,11 @@ namespace expressions
       {
          condition.saveTo(list, scope, 0);
          int bookmark := list.Length;
-         list.append(cast TapeFunction(nilValue));
+         list.append(cast TapeFunction(NilValue));
          body.saveTo(list, scope, 0);
          if (elseBody != nil) {
             int bookmark2 := list.Length;
-            list.append(cast TapeFunction(nilValue));
+            list.append(cast TapeFunction(NilValue));
                 
             //int offs := list.Length - bookmark - 1;
             int offs := list.Length - bookmark;
@@ -1560,7 +1559,7 @@ namespace expressions
             offs := offs - 1;
                 
             list[bookmark] := new JumpIfNotFunction(offs);
-            list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+            list.append(ConstantFunction.load(NilValue)); // !! should be redesigned
          }
       }
    }
@@ -1592,7 +1591,7 @@ namespace expressions
             
          condition.saveTo(list, scope, 0);
          int bookmark := list.Length;
-         list.append(cast TapeFunction(nilValue));
+         list.append(cast TapeFunction(NilValue));
          body.saveTo(list, scope, 0);
             
          int offs := top - list.Length - 1;
@@ -1605,7 +1604,7 @@ namespace expressions
             
          list[bookmark] := new JumpIfNotFunction(offs);
             
-         list.append(ConstantFunction.load(nilValue)); // !! should be redesigned
+         list.append(ConstantFunction.load(NilValue)); // !! should be redesigned
       }
    }
 

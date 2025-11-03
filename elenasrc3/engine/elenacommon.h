@@ -282,6 +282,7 @@ namespace elena_lang
          struct Field { addr_t nameRef; int offset; } field;
          struct Info { addr_t nameRef; int size; } info;
          struct Offset { pos_t disp; } offset;
+         struct Inline { int index; int offset; } inlineField;
       } addresses;
 
       DebugLineInfo()

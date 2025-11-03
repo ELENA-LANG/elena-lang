@@ -1,6 +1,6 @@
 // --- BaseVariable ---
 public abstract class BaseVariable
-   : info("variable base class")
+   : info("a variable base class")
 {
    get abstract Value() : info("Returns the variable value;<br/>should be overridden");
 
@@ -86,21 +86,22 @@ public nonstructural Nullable<T>
 }
 
 public class BaseExtender
+   : info("A base mixing.<br/>The class must be inherited to extend the target object with extra methods")
 {
    object object;
 
-   bool equal(o)
+   bool equal(o) : info("Redirects the message to <b>object</b> field")
       => object;
 
-   string toPrintable()
+   string toPrintable() : info("Redirects the message to <b>object</b> field")
       => object;
 
-   dispatch()
+   dispatch() : info("Redirects an income message to <b>object</b> field")
       => object;
 }
 
 public class Variable : BaseVariable, Reference<object>,
-   info("A generic variable.<br/>Extends an assigned value")
+   info("A generic variable.<br/>Extends an assigned value with compound operators : append (+=), reduce (-=), multiplyBy (*=) and divideBy (/=)")
 {
    constructor()
          : info("Creates the empty variable")
@@ -114,6 +115,7 @@ public class Variable : BaseVariable, Reference<object>,
    }
 
    append(val)
+         : info("Implements compound operator += <br>If the value is nil, assigns the operand to it, otherwise sum them and assign the result to the variable")
    {
       if (value == nil) {
          value := val
@@ -124,6 +126,7 @@ public class Variable : BaseVariable, Reference<object>,
    }
 
    reduce(val)
+         : info("Implements compound operator -= <br>If the value is nil, assigns the operand to it, otherwise subtract <b>val</b> from the variable value and assign the result to the variable")
    {
       if (value == nil) {
          value := val
@@ -134,6 +137,7 @@ public class Variable : BaseVariable, Reference<object>,
    }
 
    multiplyBy(val)
+         : info("Implements compound operator *= <br>If the value is nil, raises an exception, otherwise multiply the variable value by <b>val</b> and assign the result to the variable")
    {
       if (value == nil) {
          system'InvalidOperationException.raise()
@@ -143,6 +147,7 @@ public class Variable : BaseVariable, Reference<object>,
    }
 
    divideBy(val)
+         : info("Implements compound operator /= <br>If the value is nil, raises an exception, otherwise divide the variable value by <b>val</b> and assign the result to the variable")
    {
       if (value == nil) {
          system'InvalidOperationException.raise()

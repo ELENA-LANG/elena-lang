@@ -27,7 +27,7 @@ typedef Map<ustr_t, int, allocUStr, freeUStr> Coordinates;
 
 parse_key_t lastKey = 0;
 
-parse_key_t registerSymbol(ParserTable& table, ustr_t symbol, parse_key_t newKey, bool terminalMode)
+static inline parse_key_t registerSymbol(ParserTable& table, ustr_t symbol, parse_key_t newKey, bool terminalMode)
 {
    parse_key_t key = table.resolveSymbol(symbol);
    if (!key) {
@@ -50,7 +50,7 @@ parse_key_t registerSymbol(ParserTable& table, ustr_t symbol, parse_key_t newKey
    return key;
 }
 
-parse_key_t registerStarRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
+static inline parse_key_t registerStarRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
 {
    IdentifierString ruleName("AUTO_", table.resolveKey(key));
    ruleName.append("*");
@@ -77,7 +77,7 @@ parse_key_t registerStarRule(ParserTable& table, parse_key_t key, Coordinates& c
    return star_key;
 }
 
-parse_key_t registerPlusRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
+static inline parse_key_t registerPlusRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
 {
    IdentifierString ruleName("AUTO_", table.resolveKey(key));
    ruleName.append("+");
@@ -101,7 +101,7 @@ parse_key_t registerPlusRule(ParserTable& table, parse_key_t key, Coordinates& c
    return plus_key;
 }
 
-parse_key_t registerEpsRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
+static inline parse_key_t registerEpsRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
 {
    IdentifierString ruleName("AUTO_", table.resolveKey(key));
    ruleName.append("?");
@@ -126,7 +126,7 @@ parse_key_t registerEpsRule(ParserTable& table, parse_key_t key, Coordinates& co
    return eps_key;
 }
 
-void registerBrackets(ParserTable& table, parse_key_t* rule, size_t& rule_len, size_t start, Coordinates& coordinates, int row)
+static inline void registerBrackets(ParserTable& table, parse_key_t* rule, size_t& rule_len, size_t start, Coordinates& coordinates, int row)
 {
    parse_key_t bracket_key = rule[start];
    if (!bracket_key) {
@@ -165,7 +165,7 @@ int main(int argc, char* argv[])
    printf(SG_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, SG_REVISION_NUMBER);
    if (argc < 2 || argc > 3) {
       printf(SG_HELP);
-      return  -1;
+      return  EXIT_FAILURE;
    }
    try
    {
@@ -177,7 +177,7 @@ int main(int argc, char* argv[])
          }
          else {
             printf(SG_HELP);
-            return  -1;
+            return EXIT_FAILURE;
          }
       }
 
@@ -185,7 +185,7 @@ int main(int argc, char* argv[])
       TextFileReader source(path.str(), encoding, false);
       if (!source.isOpen()) {
          printf(SG_FILENOTEXIST);
-         return  -1;
+         return EXIT_FAILURE;
       }
 
       Coordinates coordiantes(-1);
@@ -310,7 +310,7 @@ int main(int argc, char* argv[])
          ustr_t terminal = table.resolveKey(ambigous.value1);
 
          printf(SG_AMBIGUOUS, nonterminal.str(), terminal.str(), coordiantes.get(nonterminal.str()));
-         return -1;
+         return EXIT_FAILURE;
       }
 
       printf("saving...\n");
@@ -325,13 +325,13 @@ int main(int argc, char* argv[])
    {
       printf(e.message, e.lineInfo.row, e.lineInfo.column);
 
-      return -1;
+      return EXIT_FAILURE;
    }
    catch (...)
    {
       printf(SG_FATAL);
 
-      return -1;
+      return EXIT_FAILURE;
    }
 
    return 0;

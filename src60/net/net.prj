@@ -15,24 +15,35 @@
   </project>
   <manifest>
      <name>ELENA Network Provider Library</name>
-     <version>6.7.3</version>
+     <version>6.8.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
      <module>
         <include>common.l</include>
-        <include>win32_client.l</include>
-        <include>win32_listener.l</include>
+        <include>client.l</include>
+        <include>listener.l</include>
+     </module>
+     <module name="tcpserver">
+       <include>tcpserver\eventbasedtcpserver.l</include>
      </module>
      <module name="http">
        <include>http\common.l</include>
+       <include>http\httpfactories.l</include>
        <include>http\httpheaders.l</include>
        <include>http\httpresponse.l</include>
        <include>http\httprequest.l</include>
        <include>http\httpclient.l</include>
      </module>
-     <module name="server">
-       <include>server\win32_server.l</include>
+     <module name="http'server">
+       <include>http\server\httpserverfactory.l</include>
+       <include>http\server\httpserverrequest.l</include>
+       <include>http\server\httpserverresponse.l</include>
+       <include>http\server\ihttperrorhandler.l</include>
+       <include>http\server\ihttphandler.l</include>
+       <include>http\server\ihttpserver.l</include>
+       <include>http\server\dummyhttphandler.l</include>
+       <include>http\server\httpserver.l</include>
      </module>
   </files>
 </configuration>

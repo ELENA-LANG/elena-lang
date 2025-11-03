@@ -1,6 +1,16 @@
 import system'text;
 import system'collections;
 
+// !! must be internal
+public sealed class HttpFirstHeader
+{
+   string Argument1 : prop;
+   
+   string Argument2 : prop;
+   
+   string Argument3 : prop;
+}
+
 public sealed class HttpHeaders
 {
    List<Tuple<string, string>> _headers;
@@ -46,17 +56,22 @@ public sealed class HttpHeaders
       ^ String.MinValue
    }
 
-   get string Value()
+   saveTo(StringBuilder content)
    {
-      auto content := new StringBuilder();
       foreach(auto p; in _headers) {
          content
             .write(p.Item1)
             .write(":")
             .write(p.Item2)
             .write($13$10);         
-      };
+      };      
+   }
 
+   get string Value()
+   {
+      auto content := new StringBuilder();
+      saveTo(content);
+      
       ^ content.Value
    }
 }

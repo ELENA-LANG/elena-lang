@@ -262,6 +262,22 @@ public longTests() : testCase()
     Assert.ifTrue(i == 1l);
     Console.write(".");
 
+    i := 12345678901230l;
+    n32 := 8;
+    long r := i + n32;
+    Assert.ifTrue(r == 12345678901238l);
+    n32 := 100000;
+    r := i - n32;
+    Assert.ifTrue(r == 12345678801230l);
+    Console.write(".");
+
+    r -= n32;
+    Assert.ifTrue(r == i);
+    n32 := 100004;
+    r += n32;
+    Assert.ifTrue(r == 12345679001234l);
+    Console.write(".");
+
     var tester := (long l, long control1, long control2) { long r1 := -l; long r2 := -r1; Assert.ifTrue(r1 == control1); Assert.ifTrue(r2 == control2);  };
 
     tester(-1l,1l,-1l);
@@ -1237,7 +1253,7 @@ public tryFinallyTest() : testCase()
          passed2 := true
       }
    });
-   Assert.ifTrue(passed);    
+   Assert.ifTrue(passed2);    
    Console.write(".");
 }
 
@@ -1606,7 +1622,7 @@ public stackSafeExtensions() : testCase()
 
 public genericTest() : testCase()
 {
-    var r := cast int(nilValue);
+    var r := cast int(NilValue);
     Assert.ifTrue(r == nil);
     Console.write(".")
 }

@@ -2621,6 +2621,15 @@ inline %0BCh
 
 end
 
+// ; xladddp
+inline %0BDh
+
+  add     x11, x29, __arg12_1
+  ldr     x12,  [x11]
+  add     x9, x9, x12
+
+end 
+
 // ; cmpr
 inline %0C0h
 
