@@ -33,7 +33,7 @@ jobs:
 
     - name: Install dependencies
       run: |
-        pkg install -y build-essential gcc-multilib g++-multilib alien dpkg-dev debhelper
+        sudo apt-get install build-essential gcc-multilib g++-multilib alien dpkg-dev debhelper
 
     - name: Build
       run: make all_${{ matrix.platform }}
