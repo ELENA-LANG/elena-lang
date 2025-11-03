@@ -396,7 +396,7 @@ int X86Assembler :: readStReg(ScriptToken& tokenInfo)
 }
 
 
-X86Operand X86Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
+X86Operand X86Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t/* errorMessage*/)
 {
    X86Operand operand;
 
@@ -412,7 +412,7 @@ X86Operand X86Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t err
    return operand;
 }
 
-X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, ref_t mask)
+X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t/* errorMessage*/, ref_t mask)
 {
    X86Operand operand;
 
@@ -430,7 +430,7 @@ X86Operand X86Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t err
    return operand;
 }
 
-X86Operand X86Assembler :: compileMDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
+X86Operand X86Assembler :: compileMDataOperand(ScriptToken& tokenInfo, ustr_t/* errorMessage*/)
 {
    X86Operand operand;
 
@@ -2557,7 +2557,7 @@ void X86Assembler :: compileExternCall(ScriptToken& tokenInfo, MemoryWriter& wri
    }
 }
 
-bool X86Assembler::compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool X86Assembler::compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope&)
 {
    if (tokenInfo.compare("adc")) {
       compileAdc(tokenInfo, writer);
@@ -3105,7 +3105,7 @@ X86Operand X86_64Assembler :: readDispOperand(ScriptToken& tokenInfo, X86Operand
    else return X86Assembler::readDispOperand(tokenInfo, operand, prefix, errorMessage);
 }
 
-X86Operand X86_64Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
+X86Operand X86_64Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t/* errorMessage*/)
 {
    X86Operand operand;
 
@@ -3121,7 +3121,7 @@ X86Operand X86_64Assembler :: compileCodeOperand(ScriptToken& tokenInfo, ustr_t 
    return operand;
 }
 
-X86Operand X86_64Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage, ref_t mask)
+X86Operand X86_64Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t/* errorMessage*/, ref_t mask)
 {
    X86Operand operand;
 
@@ -3139,7 +3139,7 @@ X86Operand X86_64Assembler :: compileDataOperand(ScriptToken& tokenInfo, ustr_t 
    return operand;
 }
 
-X86Operand X86_64Assembler :: compileMDataOperand(ScriptToken& tokenInfo, ustr_t errorMessage)
+X86Operand X86_64Assembler :: compileMDataOperand(ScriptToken& tokenInfo, ustr_t/* errorMessage*/)
 {
    X86Operand operand;
 

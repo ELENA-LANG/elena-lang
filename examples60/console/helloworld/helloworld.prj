@@ -1,14 +1,4 @@
 <configuration>
-  <platform key="Win_x86">
-     <project>
-        <executable>helloworld</executable>
-     </project>
-  </platform>
-  <platform key="Win_x64">
-     <project>
-        <executable>helloworld64</executable>
-     </project>
-  </platform>
   <project>
      <namespace>helloworld</namespace>
   </project>
@@ -17,14 +7,32 @@
         <include>helloworld.l</include>
      </module>
   </files>
-  <profile key="virtual">
-     <project>
-        <template>vm_console</template>
-     </project>
-  </profile> 
-  <profile key="default">
-     <project>
-        <template>console</template>
-     </project>
-  </profile> 
+  <platform key="Win_x86">
+     <profile key="virtual">
+        <project>
+           <template>vm_console</template>
+           <executable>vm_helloworld</executable>
+        </project>
+     </profile>
+     <profile key="default">
+        <project>
+           <template>console</template>
+           <executable>helloworld</executable>
+        </project>
+     </profile>
+  </platform>
+  <platform key="Win_x64">
+     <profile key="virtual">
+        <project>
+           <template>vm_console</template>
+           <executable>vm_helloworld64</executable>
+        </project>
+     </profile>
+     <profile key="default">
+        <project>
+           <template>console</template>
+           <executable>helloworld64</executable>
+        </project>
+     </profile>
+  </platform>
 </configuration>

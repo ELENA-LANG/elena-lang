@@ -42,10 +42,10 @@ namespace elena_lang
    // --- JITLinkerSettings ---
    struct JITLinkerSettings
    {
-      pos_t       alignment;
-      JITSettings jitSettings;
-      bool        virtualMode;
-      bool        autoLoadMode;
+      pos_t           alignment;
+      ProcessSettings jitSettings;
+      bool            virtualMode;
+      bool            autoLoadMode;
    };
 
    // --- JITLinker ---
@@ -63,6 +63,7 @@ namespace elena_lang
          ustr_t messageClass;
          ustr_t extMessageClass;
          ustr_t messageNameClass;
+         ustr_t propertyNameClass;
       };
 
       struct VAddressInfo
@@ -117,7 +118,7 @@ namespace elena_lang
 
          void writeReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp,
             ref_t addressMask, ModuleBase* module) override;
-         void writeVMTMethodReference(MemoryBase& target, pos_t position, ref_t reference, pos_t disp, mssg_t message,
+         void writeVMTMethodReference(/*MemoryBase& target, */pos_t position, ref_t reference, pos_t disp, mssg_t message,
             ref_t addressMask, ModuleBase* module) override;
 
          void writeVAddress32(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
@@ -200,13 +201,13 @@ namespace elena_lang
       ref_t resolveWeakAction(ustr_t actionName);
 
       ref_t createAction(ustr_t actionName, ref_t weakAction, ref_t signature);
-      ref_t createSignature(ModuleBase* module, ref_t signature, bool variadicOne, 
-         VAddressMap& references);
-      mssg_t createMessage(ModuleBase* module, mssg_t message, VAddressMap& references);
+      ref_t createSignature(ModuleBase* module, ref_t signature, bool variadicOne/*,
+         VAddressMap& references*/);
+      mssg_t createMessage(ModuleBase* module, mssg_t message/*, VAddressMap& references*/);
 
-      mssg_t parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
-      mssg_t parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
-      Pair<mssg_t, addr_t> parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module, VAddressMap& references);
+      mssg_t parseMessageLiteral(ustr_t messageLiteral, ModuleBase* module/*, VAddressMap& references*/);
+      mssg_t parseMessageNameLiteral(ustr_t messageLiteral, ModuleBase* module/*, VAddressMap& references*/);
+      Pair<mssg_t, addr_t> parseExtMessageLiteral(ustr_t messageLiteral, ModuleBase* module/*, VAddressMap& references*/);
 
       void generateOverloadListMetaAttribute(ModuleBase* module, mssg_t message, ref_t listRef);
 
@@ -256,7 +257,7 @@ namespace elena_lang
       ref_t resolveAction(ustr_t actionName);
 
       void loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions);
-      void prepare(JITSettings jitSettings);
+      void prepare(ProcessSettings& jitSettings);
       void setCompiler(JITCompilerBase* compiler)
       {
          _compiler = compiler;

@@ -25,3 +25,20 @@ public extensionCallTest() : testCase()
     
     o.eval();
 }
+
+public nilOperationTest() : testCase()
+{
+   Console.print("Comparing with nil in the script - ");   
+   
+   var f := LScript.eval("
+      public program()
+      {
+         var o := nil;
+         if (o == nil) {
+            system'Console.writeLine(""Done"");
+         };
+      }
+").program;
+
+   f();
+}

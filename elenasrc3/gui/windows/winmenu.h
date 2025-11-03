@@ -32,6 +32,7 @@ namespace  elena_lang
 
       void setFocus() override {}
       void refresh() override {}
+      void invalidate() override {}
 
       wchar_t getMnemonicAccKey() override;
 

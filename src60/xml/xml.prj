@@ -9,6 +9,11 @@
             <output>..\..\lib60_64</output>
         </project>
     </platform>
+    <platform key="Linux_AMD64">
+        <project>
+           <output>..\..\lib60_64_lnx</output>
+        </project>
+    </platform>
     <files>
         <module>
             <file>xmlnode.l</file>
@@ -19,7 +24,7 @@
     </files>
     <manifest>
        <name>ELENA XML Library</name>
-       <version>6.6.2</version>
+       <version>6.8.0</version>
        <author>Aleksey Rakov</author>
     </manifest>
     <project>

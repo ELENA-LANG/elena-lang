@@ -116,7 +116,7 @@ public:
 class BufferSaver : public ScriptEngineCFParser::SaverBase
 {
 public:
-   void saveTo(ScriptEngineReaderBase& scriptReader, ScriptEngineCFParser* parser, ref_t ptr, ScriptEngineLog& log) override
+   void saveTo(ScriptEngineReaderBase&/* scriptReader*/, ScriptEngineCFParser* parser, ref_t/* ptr*/, ScriptEngineLog& log) override
    {
       parser->flushBuffer(log);
       parser->clearBuffer();
@@ -206,9 +206,9 @@ bool normalApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, Scrip
    return bm.state != dfaEOF && parser->compareToken(reader, bm, rule.terminal);
 }
 
-bool regexApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser* parser)
+bool regexApplyRule(ScriptEngineCFParser::Rule& rule, ScriptBookmark& bm, ScriptEngineReaderBase& reader, ScriptEngineCFParser*/* parser*/)
 {
-   return rule.saver->isMatched(reader.lookup(bm), bm.state);
+   return rule.saver->isMatched(reader.lookup(bm), (char)bm.state);
 }
 
 // --- ScriptEngineCFParser ---
@@ -272,7 +272,7 @@ ref_t ScriptEngineCFParser :: autonameRule(ref_t parentRuleId)
    IdentifierString ns;
    int   index = 0;
    do {
-      ustr_t key = _names.retrieve<ref_t>(DEFAULT_STR, parentRuleId, [](ref_t reference, ustr_t key, ref_t current)
+      ustr_t key = _names.retrieve<ref_t>(DEFAULT_STR, parentRuleId, [](ref_t reference, ustr_t/* key*/, ref_t current)
          {
             return current == reference;
          });
@@ -967,7 +967,7 @@ void ScriptEngineCFParser :: predict(DerivationQueue& queue, DerivationItem item
 pos_t ScriptEngineCFParser :: buildDerivationTree(ScriptEngineReaderBase& reader, ref_t startRuleId, MemoryWriter& writer)
 {
    DerivationQueue predictions({});
-   predictions.push(DerivationItem(startRuleId, 0, -1));
+   predictions.push(DerivationItem(startRuleId, 0, INVALID_POS));
 
    ScriptBookmark bm;
    while (predictions.count() > 0) {

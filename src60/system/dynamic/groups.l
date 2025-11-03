@@ -1,4 +1,3 @@
-import system;
 import system'text;
 
 public const struct ExtensionDispatcher
@@ -17,7 +16,7 @@ public const struct ExtensionDispatcher
       }
    }
 
-   static ExtensionDispatcher load(Message message, string[] namespaces)
+   static ExtensionDispatcher? load(Message message, string[] namespaces)
    {
       pointer output[64];
         
@@ -70,7 +69,7 @@ public const struct VariadicExtensionDispatcher
       }
    }
     
-   static VariadicExtensionDispatcher load(Message message, string[] namespaces)
+   static VariadicExtensionDispatcher? load(Message message, string[] namespaces)
    {
       pointer output[64];
         

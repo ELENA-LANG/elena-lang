@@ -175,7 +175,7 @@ namespace elena_lang
    class RecursiveRule : public NestedRule
    {
    public:
-      PatternRule* gotoNext(Stack<PatternRule*>& parents) override
+      PatternRule* gotoNext(Stack<PatternRule*>&/* parents*/) override
       {
          return this;
       }
@@ -231,7 +231,7 @@ namespace elena_lang
       char chTill;
 
    public:
-      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t/* s*/, size_t/* index*/, char ch, Stack<PatternRule*>& parents) override
       {
          if (ch >= chFrom && ch <= chTill) {
             return gotoNext(parents);
@@ -249,7 +249,7 @@ namespace elena_lang
    class AnyWordChar : public LinkRule
    {
    public:
-      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t/* s*/, size_t/* index*/, char ch, Stack<PatternRule*>& parents) override
       {
          if (PatternRule::isLetter(ch)) {
             return gotoNext(parents);
@@ -269,7 +269,7 @@ namespace elena_lang
    class DigitChar : public LinkRule
    {
    public:
-      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t/* s*/, size_t/* index*/, char ch, Stack<PatternRule*>& parents) override
       {
          if (PatternRule::isDigit(ch)) {
             return gotoNext(parents);
@@ -310,7 +310,7 @@ namespace elena_lang
       char _ch;
 
    public:
-      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t/*s*/, size_t/* index*/, char ch, Stack<PatternRule*>& parents) override
       {
          if (_ch == ch) {
             return gotoNext(parents);
@@ -329,17 +329,17 @@ namespace elena_lang
    class EOLRule : public PatternRule
    {
    public:
-      void setNext(PatternRule* next) override
+      void setNext(PatternRule*/* next*/) override
       {
          throw AbortError();
       }
 
-      PatternRule* makeStep(ustr_t s, size_t index, char ch, Stack<PatternRule*>& parents) override
+      PatternRule* makeStep(ustr_t/* s*/, size_t/* index*/, char ch, Stack<PatternRule*>&/* parents*/) override
       {
          return ch == 0 ? this : nullptr;
       }
 
-      PatternRule* gotoNext(Stack<PatternRule*>& parents) override
+      PatternRule* gotoNext(Stack<PatternRule*>&/* parents*/) override
       {
          return nullptr;
       }

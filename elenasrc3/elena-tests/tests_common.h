@@ -61,12 +61,12 @@ namespace elena_lang
          throw TestException(code);
       }
 
-      void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node) override
+      void raiseTerminalError(int code, ustr_t pathArg, SyntaxNode node, ustr_t) override
       {
          throw TestException(code);
       }
 
-      void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node)
+      void raiseTerminalWarning(int level, int code, ustr_t pathArg, SyntaxNode node, ustr_t)
       {
       }
 
@@ -87,6 +87,7 @@ namespace elena_lang
    public:
       bool isStandardOne() override;
       bool withValidation() override;
+      bool withPrologEpilog() override;
 
       ref_t mapAnonymous(ustr_t prefix) override;
 
@@ -175,7 +176,7 @@ namespace elena_lang
       ref_t generateClassTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
          List<SyntaxNode>& parameters, bool declarationMode, ExtensionMap* outerExtensionList) override;
 
-      bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+      bool importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, SyntaxNode declarationNode,
          List<SyntaxNode>& parameters) override;
       bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
          List<SyntaxNode>& parameters) override;
@@ -185,7 +186,7 @@ namespace elena_lang
          List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
       bool importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
          List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
-      bool importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+      bool importParameterizedTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) override;
       bool importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target) override;
 

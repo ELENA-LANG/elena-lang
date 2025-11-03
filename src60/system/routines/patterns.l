@@ -1,4 +1,3 @@
-import system;
 import system'collections;
 
 idleFunc1 = (x){};
@@ -322,7 +321,7 @@ public class PatternFilter2 : Enumerator
 {
    Func2      filter;
    Enumerator enumerator;
-   object     previous;
+   object?    previous;
     
    constructor new(Func2 filter, Enumerator enumerator)
    {
@@ -368,8 +367,8 @@ public class PatternFilter3 : Enumerator
 {
    Func3      filter;
    Enumerator enumerator;
-   object     previous;
-   object     beforePrev;
+   object?    previous;
+   object?    beforePrev;
     
    constructor new(Func3 filter, Enumerator enumerator)
    {
@@ -422,9 +421,9 @@ public class PatternFilter4 : Enumerator
 {
    Func4       filter;
    Enumerator  enumerator;
-   object      previous;
-   object      beforePrev;
-   object      before2Prev;
+   object?     previous;
+   object?     beforePrev;
+   object?     before2Prev;
     
    constructor new(Func4 filter, Enumerator enumerator)
    {
@@ -483,10 +482,10 @@ public class PatternFilter5 : Enumerator
 {
    Func5      filter;
    Enumerator enumerator;
-   object     previous;
-   object     beforePrev;
-   object     before2Prev;
-   object     before3Prev;
+   object?    previous;
+   object?    beforePrev;
+   object?    before2Prev;
+   object?    before3Prev;
     
    constructor new(Func5 filter, Enumerator enumerator)
    {
@@ -551,11 +550,11 @@ public class PatternFilter6 : Enumerator
 {
    Func6      filter;
    Enumerator enumerator;
-   object     previous;
-   object     beforePrev;
-   object     before2Prev;
-   object     before3Prev;
-   object     before4Prev;
+   object?    previous;
+   object?    beforePrev;
+   object?    before2Prev;
+   object?    before3Prev;
+   object?    before4Prev;
     
    constructor new(Func6 filter, Enumerator enumerator)
    {

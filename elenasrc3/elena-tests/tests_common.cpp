@@ -53,6 +53,11 @@ bool TestModuleScope :: withValidation()
    return false;
 }
 
+bool TestModuleScope :: withPrologEpilog()
+{
+   return false;
+}
+
 ref_t TestModuleScope :: mapAnonymous(ustr_t prefix)
 {
    IdentifierString name("'", prefix, INLINE_CLASSNAME);
@@ -200,7 +205,7 @@ ref_t TestTemplateProssesor :: generateClassTemplate(ModuleScopeBase& moduleScop
    return templateRef;
 }
 
-bool TestTemplateProssesor :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+bool TestTemplateProssesor :: importTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target, SyntaxNode declarationNode,
    List<SyntaxNode>& parameters)
 {
    return false;
@@ -230,13 +235,13 @@ bool TestTemplateProssesor :: importExpressionTemplate(ModuleScopeBase& moduleSc
    return false;
 }
 
-bool TestTemplateProssesor :: importEnumTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
+bool TestTemplateProssesor :: importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target)
 {
    return false;
 }
 
-bool TestTemplateProssesor :: importTextblock(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target)
+bool TestTemplateProssesor :: importParameterizedTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+   SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters)
 {
    return false;
 }
@@ -428,7 +433,7 @@ void ScenarioTest :: run(ModuleScopeBase* moduleScope, int scenario)
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
@@ -493,7 +498,7 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
 
-   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public);
+   Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
    Compiler::Method methodHelper(classHelper);
 
@@ -563,6 +568,12 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
       moduleScope->buildins.constructor_message =
          encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
             0, FUNCTION_MESSAGE);
+      moduleScope->buildins.protected_constructor_message =
+         encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
+            0, FUNCTION_MESSAGE);
+      moduleScope->buildins.init_message =
+         encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
+            1, STATIC_MESSAGE);
    }
 
    Compiler* compiler = env.createCompiler();
@@ -571,7 +582,7 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
    BuildTreeWriter writer(output);
    Compiler::Namespace nsScope(compiler, moduleScope, nullptr, nullptr, nullptr);
 
-   Compiler::Class cls(nsScope, 0, Visibility::Internal);
+   Compiler::Class cls(nsScope, 0, Visibility::Internal, false);
    Compiler::Method method(cls);
    Compiler::Code code(method);
 
@@ -583,7 +594,7 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
 
    writer.newNode(BuildKey::Root);
    writer.newNode(BuildKey::Tape);
-   Compiler::Expression expression(code, writer);
+   Compiler::Expression expression(code, writer, false);
    expression.compileRoot(exprNode.firstChild(), ExpressionAttribute::NoDebugInfo);
    writer.closeNode();
    writer.closeNode();

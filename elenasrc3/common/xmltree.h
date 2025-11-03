@@ -132,7 +132,7 @@ namespace elena_lang
 
       XmlNode insertNode(ustr_t xpath);
 
-      void removeNode(size_t position);
+      void removeNode(size_t position) override;
 
       void loadXml(ustr_t content);
 

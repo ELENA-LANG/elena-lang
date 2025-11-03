@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Executive Linker base class body
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -11,14 +11,28 @@
 #include "langcommon.h"
 #include "windows/winconsts.h"
 
+#if defined(__unix__)
+
+#include "windows/ntdeclaration.h"
+
+#else
+
 #include <windows.h>
+
+#endif
+
 #include <time.h>
 
 #pragma warning(disable:4996)
 
 using namespace elena_lang;
 
+#if defined(__unix__)
+constexpr auto WINSTUB_PATH      = "winstub.ex_";
+#else
 constexpr auto WINSTUB_PATH      = L"winstub.ex_";
+#endif
+
 constexpr auto FILE_ALIGNMENT    = 0x200;
 constexpr auto SECTION_ALIGNMENT = 0x1000;
 
@@ -165,8 +179,8 @@ void WinNtLinker :: prepareNtImage(ImageProviderBase& provider, WinNtExecutableI
    image.sectionAlignment = SECTION_ALIGNMENT;
    image.addressSpace.imageBase = IMAGE_BASE;
 
-   _imageFormatter->prepareImage(provider, image.addressSpace, image.imageSections, 
-      image.sectionAlignment, 
+   _imageFormatter->prepareImage(provider, image.addressSpace, image.imageSections,
+      image.sectionAlignment,
       image.fileAlignment,
       image.withDebugInfo);
 

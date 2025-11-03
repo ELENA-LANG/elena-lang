@@ -30,7 +30,7 @@ define __realSize                     8;
 define elMessage              00200000h;
 define elSubject              01000000h;
 
-define err_ret          -1;
+define err_ret           1;
 define nameconst_index  -1;
 
 define WM_CREATE         1;
@@ -1654,6 +1654,37 @@ procedure __mssgname_dispatcher
   jeq         labDefault
 
   loadv
+  peek        sp:0
+  jump        vt:0
+
+labDefault:
+
+  redirect
+
+  // ; if the message is not resolved
+  open       (3),[],[tempObject:page_size]
+
+  store      sp:1
+
+  set        dp:tempObject
+  xnewn      4, class:"system'Message"
+  save
+  store      sp:2
+
+  xstore     sp:0, class : "system'MethodNotFoundException"
+
+  set        mssgconst : "new[3]"
+  throw
+
+end
+
+procedure __propname_dispatcher
+
+  tst         n:FUNCTION_MESSAGE
+  jeq         labDefault
+
+  loadv
+  or          n:PROPERTY_MESSAGE
   peek        sp:0
   jump        vt:0
 

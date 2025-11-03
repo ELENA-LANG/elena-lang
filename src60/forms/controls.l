@@ -4,15 +4,15 @@ import system'drawing;
 
 public abstract class BaseControl
 {
-   bool   _visible;
-   bool   _enabled;
-   bool   _tabStop;
+   bool    _visible;
+   bool    _enabled;
+   bool    _tabStop;
 
-   Region _region;   
+   Region  _region;   
 
-   object _parent;
+   object? _parent;
 
-   wide   _caption;
+   wide    _caption;
 
    string Caption
    {

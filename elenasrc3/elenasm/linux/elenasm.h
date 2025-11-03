@@ -31,9 +31,9 @@ extern "C"
 
    DLL_PUBLIC void* InterpretScriptSMLA(const char* script);
 
-   DLL_PUBLIC int GetLengthSMLA(void* tape);
+   DLL_PUBLIC int GetLengthSMLA(int id);
 
-   DLL_PUBLIC void ReleaseSMLA(void* tape);
+   DLL_PUBLIC void ReleaseSMLA(int id);
 
    DLL_PUBLIC size_t GetStatusSMLA(char* buffer, size_t maxLength);
 

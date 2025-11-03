@@ -522,13 +522,13 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[textIndex] = textCtrls.value1;
    children[bottomBox] = vb;
    children[tabBar] = createTabBar(sdi, notifier);
-   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier);
+   children[hsplitter] = createSplitter(sdi, (ControlBase*)children[tabBar], false, notifier);
    children[statusBarIndex] = createStatusbar(sdi);
    children[compilerOutput] = createCompilerOutput((ControlBase*)children[tabBar], outputProcess, notifier);
    children[errorList] = createErrorList((ControlBase*)children[tabBar], notifier);
    children[browser] = createDebugBrowser((ControlBase*)children[tabBar], notifier);
    children[projectView] = createProjectView(sdi, notifier);
-   children[hsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier);
+   children[vsplitter] = createSplitter(sdi, (ControlBase*)children[projectView], true, notifier);
    children[menu] = createMenu(sdi);
    children[debugContextMenu] = createDebugContextMenu(sdi);
    children[vmConsoleControl] = createVmConsoleControl((ControlBase*)children[tabBar], vmConsoleProcess);
@@ -536,14 +536,14 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[contextEditor] = createEditorContextMenu(sdi);
    children[editIndex] = textCtrls.value2;
 
-   vb->append(children[vsplitter]);
+   vb->append(children[hsplitter]);
    vb->append(children[statusBarIndex]);
 
    initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex,
       debugContextMenu, vmConsoleControl, toolBarControl, contextEditor, editIndex);
 
    sdi->populate(counter, children);
-   sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, hsplitter);
+   sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, vsplitter);
 
    styleControl(sdi);
 

@@ -99,6 +99,8 @@ namespace elena_lang
       IdentifierString  profile;
       IdentifierString  options;
 
+      int               warningLevel;
+
       ProjectPaths      sources;
       ProjectPaths      addedSources;
       ProjectPaths      removeSources;

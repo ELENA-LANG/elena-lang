@@ -1,5 +1,3 @@
-import system;
-
 // --- GCHeapInfo ---
 public struct GCHeapInfo
 {

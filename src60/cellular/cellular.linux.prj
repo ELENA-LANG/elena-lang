@@ -24,13 +24,28 @@
         <output>../../lib60_64</output>
      </project>
   </platform>
+  <platform key="Win_x86">
+     <project>
+        <output>../../lib60_win</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
+  </platform>
+  <platform key="Win_x64_BSD">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
+  </platform>
   <project>
      <namespace>cellular</namespace>
      <template>lib60</template>
   </project>
   <manifest>
      <name>ELENA Cellular Library</name>
-     <version>6.5.0</version>
+     <version>6.8.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>

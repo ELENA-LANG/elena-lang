@@ -1,8 +1,6 @@
-import system;
-
 public extension strongEnumerableOp<T>
 {
-   forEach(Func<T,object> f)
+   forEach(Action<T> f)
    {
       Enumerator<T> e := self.enumerator();
         
@@ -17,9 +15,6 @@ public extension strongEnumerableOp<T>
         
    Enumerator<T> selectBy(Func<T,T> f)
       = new StrongSelector<T,T>(f, cast Enumerator<T>(self.enumerator()));
-        
-   Enumerator<T> selectBy(Func<T,object> f)
-      = new StrongSelector<T,object>(f, cast Enumerator<T>(self.enumerator()));
 }
 
 public extension strongEnumerableOp2<T>
@@ -40,7 +35,7 @@ public extension strongEnumerableOp<T1,T2>
 
 // --- Summing ---
 
-public StrongSumming<T> : Func<T,object>
+public StrongSumming<T> : Action<T>
 {
    Reference<T> result;
     
@@ -56,7 +51,7 @@ public StrongSumming<T> : Func<T,object>
       ^ result.Value
    }
 
-   object function(T item)
+   function(T item)
    { 
       T val := result.Value;
       val := val + item;

@@ -301,17 +301,51 @@ namespace elena_lang
       {
          return write(&value, 8);
       }
+      bool writeQWord(long long value)
+      {
+         return write(&value, 8);
+      }
+      bool writeQWord(pos_t value)
+      {
+         return writeQWord(static_cast<unsigned long long>(value));
+      }
+      bool writeQWord(int value)
+      {
+         return writeQWord(static_cast<long long>(value));
+      }
       bool writeDWord(unsigned int value)
       {
          return write(&value, 4);
+      }
+      bool writeWord(int value)
+      {
+         return write(&value, 2);
+      }
+      bool writeWord(unsigned int value)
+      {
+         return write(&value, 2);
       }
       bool writeWord(unsigned short value)
       {
          return write(&value, 2);
       }
+      bool writeShort(int value)
+      {
+         short shortValue = static_cast<short>(value);
+
+         return write(&shortValue, 2);
+      }
       bool writeShort(short value)
       {
          return write(&value, 2);
+      }
+      bool writeByte(int value)
+      {
+         return write(&value, 1);
+      }
+      bool writeByte(unsigned int value)
+      {
+         return write(&value, 1);
       }
       bool writeByte(unsigned char value)
       {
@@ -641,7 +675,7 @@ namespace elena_lang
       pos_t    _length;
 
    public:
-      bool isOpen() const { return _text != nullptr; }
+      bool isOpen() const override { return _text != nullptr; }
 
       pos_t position() const override { return _offset; }
 

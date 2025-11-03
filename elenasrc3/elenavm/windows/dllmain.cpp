@@ -21,7 +21,7 @@ constexpr unsigned int DEFAULT_STACKRESERVED = 0x200000;
 
 constexpr auto CURRENT_PLATFORM = PlatformType::Win_x86;
 
-JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
+JITCompilerBase* createJITCompiler(LibraryLoaderBase*/* loader*/, PlatformType platform)
 {
    switch (platform) {
       case PlatformType::Win_x86:
@@ -71,7 +71,7 @@ private:
    Presenter() = default;
 
 public:
-   ustr_t getMessage(int code) override
+   ustr_t getMessage(int/* code*/) override
    {
       // !!temporal : not used
       return nullptr;
@@ -97,7 +97,7 @@ void init(HMODULE hModule)
    rootPath.combine(CONFIG_FILE);
 
    machine = new ELENAWinVMMachine(*rootPath, &Presenter::getInstance(), CURRENT_PLATFORM,
-      VA_ALIGNMENT, { DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED }, createJITCompiler);
+      VA_ALIGNMENT, /*{DEFAULT_MGSIZE, DEFAULT_YGSIZE, DEFAULT_STACKRESERVED}, */createJITCompiler);
 }
 
 void printError(int errCode)
@@ -141,7 +141,7 @@ void printError(int errCode, ustr_t arg)
 EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* criricalHandlerReference)
 {
 #ifdef DEBUG_OUTPUT
-   printf("InitializeVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("InitializeVMSTLA.6 %x,%x\n", (int)tape, (int)criricalHandlerReference);
 
    fflush(stdout);
 #endif
@@ -154,18 +154,18 @@ EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* c
    catch (InternalError err)
    {
       printError(err.messageCode);
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
    catch (JITUnresolvedException& e)
    {
       printError(errVMReferenceNotFound, e.referenceInfo.referenceName);
 
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
    catch (...)
    {
       printError(errVMBroken);
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
 
    if (machine->isStandAlone())
@@ -177,7 +177,7 @@ EXTERN_DLL_EXPORT int InitializeVMSTLA(SystemEnv* env, void* tape, const char* c
 EXTERN_DLL_EXPORT int EvaluateVMLA(void* tape)
 {
 #ifdef DEBUG_OUTPUT
-   printf("EvaluateVMSTLA.6 %x,%x\n", (int)env, (int)criricalHandler);
+   printf("EvaluateVMSTLA.6 %x,%x\n", (int)tape);
 
    fflush(stdout);
 #endif
@@ -190,18 +190,18 @@ EXTERN_DLL_EXPORT int EvaluateVMLA(void* tape)
    catch (InternalError err)
    {
       printError(err.messageCode);
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
    catch (JITUnresolvedException& e)
    {
       printError(errVMReferenceNotFound, e.referenceInfo.referenceName);
 
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
    catch (...)
    {
       printError(errVMBroken);
-      retVal = -1;
+      retVal = EXIT_FAILURE;
    }
 
    return retVal;
@@ -298,7 +298,7 @@ EXTERN_DLL_EXPORT int ExecuteVMLA(const char* target, const char* arg, char* out
 
 EXTERN_DLL_EXPORT int FreeVMLA()
 {
-   return -1;
+   return EXIT_FAILURE;
 }
 
 EXTERN_DLL_EXPORT void ExitLA(int retVal)
@@ -444,14 +444,14 @@ EXTERN_DLL_EXPORT void GetGCStatisticsLA(GCStatistics* statistics)
    machine->getGCStatistics(statistics);
 }
 
-EXTERN_DLL_EXPORT void ResetGCStatisticsLA(GCStatistics* statistics)
+EXTERN_DLL_EXPORT void ResetGCStatisticsLA()
 {
    SystemRoutineProvider::ResetGCStatistics();
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+                       LPVOID/* lpReserved*/
                      )
 {
     switch (ul_reason_for_call)

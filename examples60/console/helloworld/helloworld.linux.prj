@@ -1,31 +1,80 @@
 <configuration>
-  <platform key="Linux_I386">
-     <project>
-        <executable>helloworld</executable>
-     </project>
-  </platform>
-  <platform key="Linux_AMD64">
-     <project>
-        <executable>helloworld64</executable>
-     </project>
-  </platform>
-  <platform key="Linux_PPC64le">
-     <project>
-        <executable>helloworld64</executable>
-     </project>
-  </platform>
-  <platform key="Linux_ARM64">
-     <project>
-        <executable>helloworld64</executable>
-     </project>
-  </platform>
   <project>
      <namespace>helloworld</namespace>
-     <template>console</template>
   </project>
   <files>
      <module>
         <include>helloworld.l</include>
      </module>
   </files>
+  <platform key="Linux_I386">
+     <profile key="virtual">
+        <project>
+           <executable>vm_helloworld</executable>
+           <template>vm_console</template>
+        </project>
+     </profile>
+     <profile key="default">
+        <project>
+           <executable>helloworld</executable>
+           <template>console</template>
+        </project>
+     </profile>
+  </platform>
+  <platform key="Linux_AMD64">
+     <profile key="virtual">
+        <project>
+           <executable>vm_helloworld64</executable>
+           <template>vm_console</template>
+        </project>
+     </profile> 
+     <profile key="default">
+        <project>
+           <executable>helloworld64</executable>
+           <template>console</template>
+        </project>
+     </profile> 
+  </platform>
+  <platform key="Linux_PPC64le">
+     <profile key="virtual">
+        <project>
+           <executable>vm_helloworld64</executable>
+           <template>vm_console</template>
+        </project>
+     </profile> 
+     <profile key="default">
+        <project>
+           <executable>helloworld64</executable>
+           <template>console</template>
+        </project>
+     </profile> 
+  </platform>
+  <platform key="Linux_ARM64">
+     <profile key="virtual">
+        <project>
+           <executable>vm_helloworld64</executable>
+           <template>vm_console</template>
+        </project>
+     </profile> 
+     <profile key="default">
+        <project>
+           <executable>helloworld64</executable>
+           <template>console</template>
+        </project>
+     </profile> 
+  </platform>
+  <platform key="FreeBSD_AMD64">
+     <profile key="virtual">
+        <project>
+           <executable>vm_helloworld64</executable>
+           <template>vm_console</template>
+        </project>
+     </profile> 
+     <profile key="default">
+        <project>
+           <executable>helloworld64</executable>
+           <template>console</template>
+        </project>
+     </profile> 
+  </platform>
 </configuration>

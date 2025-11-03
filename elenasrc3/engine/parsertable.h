@@ -3,7 +3,7 @@
 //               
 //		This header contains Parser table class declaration.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PARSERTABLE_H
@@ -37,7 +37,7 @@ namespace elena_lang
    class ParserTable
    {
    public:
-      typedef MemoryMap<ustr_t, parse_key_t, Map_StoreUStr, Map_GetUStr> SymbolMap;
+      typedef MemoryMap<ustr_t, parse_key_t, Map_StoreUStrAligned4, Map_GetUStr> SymbolMap;
       typedef /*MemoryHashTable*/Map<parse_key_t, parse_key_t> SyntaxHash;
       typedef /*MemoryHashTable*/Map<parse_key_t, parse_key_t> TableHash;
       typedef Stack<parse_key_t> ParserStack;

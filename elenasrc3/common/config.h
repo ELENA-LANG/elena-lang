@@ -122,9 +122,9 @@ namespace elena_lang
          XmlNodeList list(XmlNode::Default());
          _tree.selectNodes(node.xmlNode, xpath, list);
          for (auto it = list.start(); !it.eof(); ++it) {
-            Node node(*it);
-            if (filter(arg, node))
-               return node;
+            Node current(*it);
+            if (filter(arg, current))
+               return current;
          }
 
          return Node();

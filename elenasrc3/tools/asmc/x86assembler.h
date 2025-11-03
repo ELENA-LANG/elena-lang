@@ -209,7 +209,7 @@ namespace elena_lang
       void compileDQField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
       void compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
-      bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;
+      bool compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
       bool compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope) override;
       bool compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, PrefixInfo& prefixScope) override;
       bool compileDOpCode(ScriptToken& tokenInfo, MemoryWriter& writer) override;

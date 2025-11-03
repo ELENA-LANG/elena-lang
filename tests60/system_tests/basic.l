@@ -153,6 +153,11 @@ public intTests() : testCase()
    i /= 2;    
    Assert.ifTrue(i == 1);
    Console.write(".");
+
+   n := IntNumber.MinValue;
+   string s := n.toPrintable();
+   Assert.ifTrue(s == "-2147483648");
+   Console.write(".");
 }
 
 public uintTests() : testCase()
@@ -257,6 +262,22 @@ public longTests() : testCase()
     Assert.ifTrue(i == 1l);
     Console.write(".");
 
+    i := 12345678901230l;
+    n32 := 8;
+    long r := i + n32;
+    Assert.ifTrue(r == 12345678901238l);
+    n32 := 100000;
+    r := i - n32;
+    Assert.ifTrue(r == 12345678801230l);
+    Console.write(".");
+
+    r -= n32;
+    Assert.ifTrue(r == i);
+    n32 := 100004;
+    r += n32;
+    Assert.ifTrue(r == 12345679001234l);
+    Console.write(".");
+
     var tester := (long l, long control1, long control2) { long r1 := -l; long r2 := -r1; Assert.ifTrue(r1 == control1); Assert.ifTrue(r2 == control2);  };
 
     tester(-1l,1l,-1l);
@@ -307,6 +328,12 @@ public realTests() : testCase()
    real negr := -2.3;
    real absr := negr.Absolute;
    Assert.ifTrue(absr == 2.3);
+   Console.write(".");
+
+   real r6 := 36.0;
+   int n6 := 8;
+   real res6 := r6 / n6;
+   Assert.ifTrue(res6 == 4.5);
    Console.write(".");
 }
 
@@ -1226,7 +1253,7 @@ public tryFinallyTest() : testCase()
          passed2 := true
       }
    });
-   Assert.ifTrue(passed);    
+   Assert.ifTrue(passed2);    
    Console.write(".");
 }
 
@@ -1368,6 +1395,38 @@ public ifExpressionTest() : testCase()
     Console.write(".")    
 }
 
+public ifNilExpressionTest() : testCase()
+{
+    auto c := DynamicSingleton.load(
+                Expression.Method(
+                   "eval",
+                   Expression.CodeBlock(                   
+                      Expression.If(                      
+                          new CondMessageCallExpression(
+                            Expression.Variable("a"),
+                            "equal[2]",
+                            Expression.Identifier("nil")
+                          ),                             
+                          Expression.CodeBlock(                          
+                            Expression.Constant(true) 
+                          ),                             
+                          Expression.CodeBlock(                          
+                            Expression.Constant(false) 
+                          )
+                      )
+                   ),
+                   ScopeIdentifier.Variable("a")
+                )
+             );
+
+    var o := c.compile();
+
+    Assert.ifTrue(o.eval(nil));
+    Assert.ifFalse(o.eval(2));
+
+    Console.write(".")   
+}
+
 public loopExpressionTest() : testCase()
 {
     auto c := DynamicSingleton.load(
@@ -1449,7 +1508,7 @@ public nilDispatcherTest() : testCase()
 {
    auto d := new NilDispatcher();
    var d2 := d;
-   A a := nil;
+   A? a := nil;
    var b := nil;
     
    d.testMe(1, a) \ back(nil);
@@ -1502,14 +1561,14 @@ public duplicateBoxing() : testCase()
 
     var mode := -1;
     var value := false;
-    value ? { mode := 0 } ! { mode := 1 };
+    (value) ? { mode := 0 } ! { mode := 1 };
     
     Assert.ifTrue(mode == 1);
     Console.write(".");
     
     mode := -1;
     value := true;
-    value ? { mode := 0 } ! { mode := 1 };
+    (value) ? { mode := 0 } ! { mode := 1 };
     
     Assert.ifTrue(mode == 0);
 
@@ -1563,7 +1622,7 @@ public stackSafeExtensions() : testCase()
 
 public genericTest() : testCase()
 {
-    var r := cast int(nilValue);
+    var r := cast int(NilValue);
     Assert.ifTrue(r == nil);
     Console.write(".")
 }
@@ -1753,7 +1812,7 @@ public incTest() : testCase()
 
 singleton MultiValGetter
 {
-   object, object getMultiVal()
+   (object, object) getMultiVal()
    {
       ^ ("Alex", 13)
    }
@@ -1776,7 +1835,7 @@ public multiValTest() : testCase()
 
    Console.write(".");
 
-   var i1, i2 := MultiValGetter.getMultiVal();
+   (var i1, var i2) := MultiValGetter.getMultiVal();
    Assert.ifTrue(i1 == "Alex");
    Assert.ifTrue(i2 == 13);
 
@@ -2090,7 +2149,7 @@ public ifNilOperatorTest() : testCase()
 
 // --- enumTest ---
 
-public const struct Color : enum<int>(Red ::= 1,Green ::= 2,Blue ::= 3);
+public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
 
 public enumTest() : testCase()
 {
@@ -2111,7 +2170,7 @@ NilArgB;
 
 NilArgA
 {
-   NilArgB b;
+   NilArgB? b;
 
    constructor new(NilArgB? b)
    {
@@ -2212,7 +2271,7 @@ public isNilOperatorTest() : testCase()
    Assert.ifFailed({ var a := nil; var b := nil; var r := a ?? b.test() });
    Console.write(".");
 
-   string s := nil;
+   string? s := nil;
    Assert.ifEqual(s ?? String.MinValue, EmptyString);
    Console.write(".");
 }
@@ -2512,5 +2571,81 @@ public base64EncodingTest() : testCase()
    
    var decoded := UTF8Encoding.toString(buffer);
    Assert.ifEqual(decoded, source);
+   Console.write(".");
+}
+
+extension dummyOp
+{
+   testMe2(Func f)
+      = self;
+}
+
+extension testOp<T> : T
+{
+   testMe(Func<T,T> f)
+      = f(self);
+
+   testMe2(Func<T,T> f)
+      = f(self);
+}
+
+public directExtensionTemplateCall() : testCase()
+{
+   var r1 := 3::testMe<int>((x => x + 1));
+   var r2 := 2::testMe2<int>((x => x + 1));
+
+   Assert.ifEqual(r1, 4);
+   Assert.ifEqual(r2, 3);
+
+   Console.write(".");
+}
+
+// --- recordTest ---
+
+MyRecord : record(string FirstName,string LastName,int Age);
+
+public recordTest() : testCase()
+{
+   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);
+   MyRecord r2 := new MyRecord("Ivan", "Ivanov", 22);
+   MyRecord r3 := new MyRecord("Petr", "Ivanov", 22);
+
+   Assert.ifTrue(r == r2);
+   Assert.ifFalse(r == r3);
+
+   Console.write(".");
+}
+
+// --- usingTest --
+
+class UsingScope
+{
+   bool isInitialized;
+   
+   bool checkStatus
+      = isInitialized;
+   
+   constructor()
+   {
+      isInitialized := true;
+   }
+   
+   close()
+   {
+      isInitialized := false
+   }   
+}
+
+public usingTest() : testCase()
+{
+   var scope := new UsingScope();
+   
+   using(var scopeVar := scope)
+   {
+      Assert.ifTrue(scopeVar.checkStatus);
+   };
+   
+   Assert.ifFalse(scope.checkStatus);
+   
    Console.write(".");
 }

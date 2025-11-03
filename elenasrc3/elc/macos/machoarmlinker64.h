@@ -17,12 +17,12 @@ namespace elena_lang
    class MachOARM64Linker : public MachOLinker64
    {
    protected:
-      virtual CPUType getCPUType()
+      CPUType getCPUType() override
       {
          return CPUType::AARCH64;
       }
 
-      virtual CPUSubType getCPUSubType()
+      CPUSubType getCPUSubType() override
       {
          return CPUSubType::ARM_ALL;
       }

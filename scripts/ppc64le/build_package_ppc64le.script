@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.7.0.ppc64le-linux
+RELEASE=elena-6.8.0.ppc64le-linux
 
 mkdir -p ../lib60_64
 mkdir -p /usr/share/elena
@@ -20,6 +20,16 @@ cp ../../bin/templates/*.config /etc/elena/templates/
 echo compiling data files
 
 ../../bin/sg64-cli ../../dat/sg/syntax60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/sg64-cli ../../dat/sg/syntax67.txt
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -61,6 +71,7 @@ fi
 
 cp ../../dat/og/*.dat /usr/share/elena/
 cp ../../dat/sg/syntax60.dat /usr/share/elena
+cp ../../dat/sg/syntax67.dat /usr/share/elena
 
 echo compiling assembly files
 
@@ -75,6 +86,16 @@ else
 fi
 
 ../../bin/asm64-cli -ppc64le ../../asm/ppc64le/core60_lnx.asm /usr/lib/elena/core/ppc64le
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/asm64-cli -linux -ppc64le ../../asm/ppc64le/core60_client.asm /usr/lib/elena/core/ppc64le core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -108,7 +129,7 @@ fi
 
  ../../bin/elena64-cli ../../src60/elena_api.linux.prjcol
  ret=$?
- if [ $ret -eq 2 ]
+ if [ $ret -eq 1 ]
  then
    echo "Failure" >&2
    exit 1
@@ -121,7 +142,7 @@ fi
 
  elena64-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
- if [ $ret -eq 2 ]
+ if [ $ret -eq 1 ]
  then
    echo "Failure" >&2
    exit 1
@@ -131,12 +152,12 @@ fi
 
  ../../tests60/system_tests/system_tests
  ret=$?
- if [ $ret -eq 2 ]
+ if [ $ret -eq 0 ]
  then
+   echo .
+ else
    echo "Failure" >&2
    exit 1
- else
-   echo .
  fi
 
  echo "Do you wish to create a package?"
@@ -168,6 +189,7 @@ fi
  cp ../../dat/og/bt_xrules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/og/bc_rules60.dat ./$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax60.dat ./$RELEASE/usr/share/elena
+ cp ../../dat/sg/syntax67.dat ./$RELEASE/usr/share/elena
 
  echo copying binaries
 

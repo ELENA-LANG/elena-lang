@@ -47,6 +47,18 @@ namespace elena_lang
 
       }
    };
+
+   class ElfFreeBSDAmd64Linker : public ElfAmd64Linker
+   {
+   protected:
+      ustr_t getInterpreter() override;
+
+   public:
+      ElfFreeBSDAmd64Linker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
+         : ElfAmd64Linker(errorProcessor, imageFormatter)
+      {
+      }
+   };
 }
 
 #endif

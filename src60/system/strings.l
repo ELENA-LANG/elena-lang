@@ -1,19 +1,20 @@
 // --- Array template ---
 
-public sealed Array<T> : Indexable<T>
+public sealed Array<T> : Indexable<T>,
+   info("A strong-typed array template")
 {
    embeddable __string T[] array;
 
-   static Array<T> Default
+   static Array<T>? Default : info("Returns nil")
       = nil;
 
-   static Array<T> MinValue
+   static Array<T> MinValue : info("Returns an array with zero elements")
       = new T[](0);
 
-   constructor allocate(int length)
+   constructor allocate(int length) : info("Creates an array with the specified <b>length</b>")
       = new T[](length);   
 
-   constructor copy(T[] array, int index, int length)
+   constructor copy(T[] array, int index, int length) : info("Creates a copy of sub array of <b>array</b> starting from <b>index</b> with the specified <b>length</b>")
       <= allocate(length)
    {
       for(int i := 0; i < length; i += 1)
@@ -23,7 +24,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    static copy(Array<T> target, Array<T> source, int index, int length)
-      : info("Copies a subarray from source starting at index to target")
+      : info("Copies a sub array from <b>source</b> starting at <b>index</b> with the specified <b>length</b> into <b>target</b> at 0 position.")
    {      
       for(int i := 0; i < length; i += 1)
       {
@@ -32,7 +33,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    static copyTo(Array<T> target, Array<T> source, int index, int length)
-      : info("Copies a source array to target at index")
+      : info("Copies <b>source</b> array starting with 0 position with the specified <b>length</b> into <b>target</b> at <b>index</b> position")
    {      
       for(int i := 0; i < length; i += 1)
       {
@@ -41,6 +42,7 @@ public sealed Array<T> : Indexable<T>
    }
 
    static move(Array<T> target, int index, int length, int offset)
+       : info("Moves a sub array inside <b>target</b>.<br/>If <b>index</b> is positive moves <b>length</b> elements starting from <b>offset</b> to the array start<br/>Otherwise moves first <b>length</b> elements to the right on <b>index</b> positions")
    {
       if (offset > 0) {
          for (int i := 0; i < length; i += 1)
@@ -60,7 +62,9 @@ public sealed Array<T> : Indexable<T>
       }
    }
 
-   Enumerator<T> enumerator() = new BaseEnumerator<T>
+   Enumerator<T> enumerator()
+      : info("Creates an array enumerator") 
+   = new BaseEnumerator<T>
    {
       this index := -1;
         
@@ -76,9 +80,12 @@ public sealed Array<T> : Indexable<T>
       }
    };
 
-   Enumerable cast() = new Enumerable{ Enumerator enumerator() => self; };
+   Enumerable cast() : info("Returns enumerable wrapper around the array")
+      = new Enumerable{ Enumerator enumerator() => self; };
 
-   Indexer<T> indexer() = new BaseIndexer<T>
+   Indexer<T> indexer() 
+      : info("Creates an array indexer") 
+   = new BaseIndexer<T>
    {
       this index := 0;
         
@@ -94,6 +101,7 @@ public sealed Array<T> : Indexable<T>
    };   
 
    T at(int n)
+      : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
    {
       if (n < 0)
          { system'InvalidArgumentException.raise() };
@@ -105,12 +113,11 @@ public sealed Array<T> : Indexable<T>
          ^ array[n] 
       };
 
-      system'InvalidArgumentException.raise();
-
-      ^ default
+      ^ system'InvalidArgumentException.raise();
    }
 
    setAt(int n, T item)
+      : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
    {
       if (n < 0)
          { system'InvalidArgumentException.raise() };
@@ -134,6 +141,7 @@ public sealed Array<T> : Indexable<T>
       <= at(cast int(n));
 
    int Length
+      : info("Returns the array length")
    {
       get()
       {
@@ -143,10 +151,10 @@ public sealed Array<T> : Indexable<T>
       }
    }
 
-   T[] add(T[] a)
+   T[] add(T[] a) : info("Concatenates the array and an argument <b>a</b> and returns the new array")
       <= add(a, a.Length);
                               
-   T[] add(T[] a, int length)
+   T[] add(T[] a, int length) : info("Concatenate the array and an argument <b>a</b> and returns the new array")
    {
       int length1 := self.Length;
       int length2 := length;
@@ -165,6 +173,7 @@ public sealed Array<T> : Indexable<T>
    }
                                  
    T[] clone()
+       : info("Returns the shallow copy of the array")
    {
       int len := self.Length;
       T[] copy := new T[](len);
@@ -174,25 +183,41 @@ public sealed Array<T> : Indexable<T>
         
       ^ copy
    }
+   
+   Array cast()
+       : info("Creates a weak copy of the array")
+   {
+      int len := self.Length;
+      auto clone := Array.allocate(len);
+      for (int i := 0; i < len; i++) {
+         clone[i] := array[i];
+      };
+      
+      ^ clone
+   }   
 }
 
 // --- Variadic Array template ---
 
-public sealed nonstructural VariadicArray<T> : Indexable<T>
+public sealed nonstructural VariadicArray<T> : Indexable<T>,
+   info("A strong-typed variadic array template<br/>It is used to box the method variadic argument list")
 {
    embeddable __string T[] array;
 
    private readArgLength(out int retVal) : external(system'core_routines'__varg_readLength);
 
    T at(int n)
+          : info("Returns an element at the position <b>n</b>")
       = array[n];
 
    setAt(int n, T item)
+      : info("Assigns <b>item</b> to the element at the position <b>n</b>")
    {
       array[n] := item;
    }  
 
    int Length
+      : info("Returns the variadic array length")
    {
       get()
       {
@@ -202,7 +227,9 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
       }
    }
 
-   Enumerator<T> enumerator() = new BaseEnumerator<T>
+   Enumerator<T> enumerator() 
+      : info("Creates a variadic array enumerator") 
+   = new BaseEnumerator<T>
    {
       this index := -1;
         
@@ -218,7 +245,9 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
       }
    };
 
-   Indexer<T> indexer() = new BaseIndexer<T>
+   Indexer<T> indexer() 
+      : info("Creates a variadic array indexer") 
+   = new BaseIndexer<T>
    {
       this index := 0;
         
@@ -234,6 +263,7 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
    };    
 
    T[] cast()
+      : info("Creates a strong typed array of the variadic array elements")
    {
       int len := self.Length;
         
@@ -251,12 +281,14 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>
 // --- matrixof ---
 
 public sealed Matrix<T>
+   : info("A two-dimensional strong-type array")
 {
    T[] _array;
    int _rows;
    int _columns;
     
    constructor allocate(int rows, int columns)
+      : info("Creates a two-dimensional array of <b>rows<b> and <b>columns<b>")
    {
       _rows := rows;
       _columns := columns;
@@ -269,35 +301,8 @@ public sealed Matrix<T>
    constructor allocate(rows, columns)
       <= allocate(cast int(rows), cast int(columns));
     
-   constructor load(params)
-   {
-      _rows := params.Rows;
-      _columns := params.Columns;
-        
-      int len := _rows * _columns;
-        
-      _array := new T[](/*theRows * theColumns*/len);
-        
-      int i := 0;
-      int j := 0;
-        
-      while (i < _rows)
-      {
-         j := 0;
-         while (j < _columns)
-         {
-            T val := params.at(i,j);
-                
-            self.setAt(i, j, val);
-                
-            j := j + 1
-         };
-            
-         i := i + 1
-      }
-   }    
-    
    int Length
+      : info("Returns the number of rows")
    {
       get()
       {
@@ -306,6 +311,7 @@ public sealed Matrix<T>
    }    
 
    int Columns
+      : info("Returns the number of columns")
    {
       get()
       {
@@ -314,6 +320,7 @@ public sealed Matrix<T>
    }
 
    int Rows
+      : info("Returns the number of rows")
    {
       get()
       {
@@ -321,30 +328,33 @@ public sealed Matrix<T>
       }
    }
 
-   /// Writes an integer value at the specified position
-   setAt(int i, int j, T v)
-   {        
-      int index := i * _columns + j;
-        
-      _array[index] := v
-   }
-
-   /// Reads an integer value at the specified position and saves it into an output variable
-   read(int i, int j, ref T retVal)
+   private read(int i, int j, ref T retVal)
    {
       int index := i * _columns + j;
         
       retVal := _array[index];
    }
 
+   /// Writes an integer value at the specified position
+   setAt(int i, int j, T v)
+     : info("Assigns <b>v</b> argument to the matrix element at a row <b>i</b> and a column <b>j</b>")
+   {        
+      int index := i * _columns + j;
+        
+      _array[index] := v
+   }
+
    T at(int i, int j)
+     : info("Returns the matrix element at a row <b>i</b> and a column <b>j</b>")
    {
       self.read(i, j, ref T retVal);
       ^ retVal
    }
 
    /// Returns a row
-   at(i) = new
+   at(i) 
+      : info("Returns <b>i</b>-th row as an array") 
+   = new
    {
       Length = _columns;
         
@@ -358,6 +368,7 @@ public sealed Matrix<T>
    };
 
    Enumerator enumerator() 
+      : info("Creates a weak matrix enumerator<br/>It goes from the first row till the last one for each column") 
    {
       int i := 0;
       int j := -1;
@@ -400,18 +411,20 @@ public sealed Matrix<T>
 // --- BitArray ---
 
 public sealed class BitArray
+   : info("An array of Boolean values")
 {
    int[] _array;
    int   _length;
     
-   /// Creates the array with the specified length
    constructor allocate(int length)
+      : info("Creates a bit array with the specified <b>length</b>")
    {
       _length := length;
       _array := new int[](length / 32 + 1)
    }
     
    int Length
+      : info("Returns the bit array length")
    {
       get()
       {
@@ -423,6 +436,7 @@ public sealed class BitArray
       = self.at(cast int(index));
     
    bool at(int index)
+      : info("Returns a boolean value at the specified <b>index</b> position")
    {
       int arr_index := index / 32;
       int bit_index := arr_index * 32;
@@ -438,6 +452,7 @@ public sealed class BitArray
    }
 
    setAt(int index, bool value)
+      : info("Set a boolean value at the specified <b>index</b> position")
    {
       int arr_index := index / 32;
       int bit_index := arr_index * 32;
@@ -463,32 +478,39 @@ public sealed class BitArray
       _array[arr_index] := bits
    }
     
-   /// Returns the array enumerator
-   Enumerator<bool> enumerator() = new BitArrayEnumerator(self);
+   Enumerator<bool> enumerator()
+       : info("Creates a boolean enumerator")
+     = new BitArrayEnumerator(self);
 
-   /// Returns the array indexer
-   Indexer<bool> indexer() = new BitArrayIndexer(self);
+   Indexer<bool> indexer() 
+       : info("Creates a boolean indexer")
+     = new BitArrayIndexer(self);
 }
 
 // --- BitArray32 ---
 
 public sealed class BitArray32
+   : info("An 32-bit integer bit map")
 {
    int _value;
     
    constructor load(int value)
+      : info("Creates a bit map from <b>value</b>")
    {
       _value := value
    }
     
-   int Length = 32;
+   int Length : info("Returns 32") 
+      = 32;
     
    write(int value)
+     : info("Copies a bit map from <b>value</b>")
    {
       _value := value
    }
     
    bool at(int index)
+      : info("Returns a bit at the specified <b>index</b> position")
    {
       int bit_mask := 1;
       if (index != 0)
@@ -498,6 +520,7 @@ public sealed class BitArray32
    }
     
    setAt(int index, bool value)
+      : info("Set a boolean value of <b>value<b> to the specified <b>index</b> position")
    {
       int bit_mask := 1;
       if (index != 0)
@@ -515,22 +538,26 @@ public sealed class BitArray32
       }
    }
     
-   /// Returns the array enumerator
-   Enumerator<bool> enumerator() = new BitArray32Enumerator(self);
+   Enumerator<bool> enumerator() 
+         : info("Creates a bit map enumerator")
+      = new BitArray32Enumerator(self);
 
-   /// Returns the array indexer
-   Indexer<bool> indexer() = new BitArray32Indexer(self);
+   Indexer<bool> indexer() 
+         : info("Creates a bit map indexer")
+     = new BitArray32Indexer(self);
 }
 
 // --- IntMatrix ---
 
 public sealed class IntMatrix
+   : info("A two-dimensional array of integers") 
 {
    int[] _array;
    int   _rows;
    int   _columns;
     
    constructor allocate(int rows, int columns)
+      : info("Creates a two-dimensional array of <b>rows<b> and <b>columns<b>")
    {
       _rows := rows;
       _columns := columns;
@@ -538,14 +565,15 @@ public sealed class IntMatrix
       _array := new int[](columns * rows)
    }
         
-   /// Reads the matrix lengths to the output parameter
    readLengthsTo(out int rows, out int columns)
+      : info("Reads the matrix lengths to the output parameter")
    {
       rows := _rows;
       columns := _columns
    }
 
    int Length
+      : info("Returns the number of rows")
    {
       get()
       {
@@ -554,6 +582,7 @@ public sealed class IntMatrix
    }    
 
    int Columns
+      : info("Returns the number of columns")
    {
       get()
       {
@@ -562,6 +591,7 @@ public sealed class IntMatrix
    }
 
    int Rows
+      : info("Returns the number of rows")
    {
       get()
       {
@@ -569,8 +599,8 @@ public sealed class IntMatrix
       }
    }
 
-   /// Writes an integer value at the specified position
    setAt(int i, int j, int v)
+     : info("Assigns <b>v</b> argument to the matrix element at a row <b>i</b> and a column <b>j</b>")
    {
       int index := i * _columns + j;
         
@@ -578,6 +608,7 @@ public sealed class IntMatrix
    }
 
    int at(int i, int j)
+     : info("Returns the matrix element at a row <b>i</b> and a column <b>j</b>")
    {
       int index := i * _columns + j;
       int retVal := _array[index];
@@ -586,7 +617,9 @@ public sealed class IntMatrix
    }
 
    /// Returns a row
-   at(int i) = new Indexable<int>
+   at(int i) 
+       : info("Returns indexable wrapper around the matrix row at the <b>i</b> position")
+   = new Indexable<int>
    {
       Length = _columns;
         
@@ -618,12 +651,14 @@ public sealed class IntMatrix
 // --- RealMatrix ---
 
 public sealed class RealMatrix
+   : info("A two-dimensional array of real numbers") 
 {
    real[] _array;
    int    _rows;
    int    _columns;
     
    constructor allocate(int rows, int columns)
+      : info("Creates a two-dimensional array of <b>rows<b> and <b>columns<b>")
    {
       _rows := rows;
       _columns := columns;
@@ -631,14 +666,15 @@ public sealed class RealMatrix
       _array := new real[](columns * rows)
    }
         
-   /// Reads the matrix lengths to the output parameter
    readLengthsTo(ref int rows, ref int columns)
+      : info("Reads the matrix lengths to the output parameter")
    {
       rows := _rows;
       columns := _columns
    }
 
    int Length
+      : info("Returns the number of rows")
    {
       get()
       {
@@ -647,6 +683,7 @@ public sealed class RealMatrix
    }    
 
    int Columns
+      : info("Returns the number of columns")
    {
       get()
       {
@@ -655,6 +692,7 @@ public sealed class RealMatrix
    }
 
    int Rows
+      : info("Returns the number of rows")
    {
       get()
       {
@@ -664,14 +702,15 @@ public sealed class RealMatrix
 
    /// Writes a real value at the specified position
    setAt(int i, int j, real v)
+     : info("Assigns <b>v</b> argument to the matrix element at a row <b>i</b> and a column <b>j</b>")
    {
       int index := i * _columns + j;
         
       _array[index] := v
    }
 
-   /// Reads a real value at the specified position and saves it into an output variable
    read(int i, int j, ref real retVal)
+     : info("Reads a real value at the specified position and saves it into an output variable")
    {
       int index := i * _columns + j;
         
@@ -679,6 +718,7 @@ public sealed class RealMatrix
    }
 
    real at(int i, int j)
+     : info("Returns the matrix element at a row <b>i</b> and a column <b>j</b>")
    {
       int index := i * _columns + j;
       real retVal := _array[index];
@@ -686,7 +726,9 @@ public sealed class RealMatrix
       ^ retVal
    }
 
-   at(int i) = new Indexable<real>
+   at(int i) 
+      : info("Returns indexable wrapper around the matrix row at the <b>i</b> position")
+   = new Indexable<real>
    {
       Length = _columns;
         
@@ -723,13 +765,15 @@ public const struct String : BaseValue,
    __string byte[] array;
 
    const static string MinValue
+        : info("Returns an empty string")
       = "";
 
    constructor allocate(int size)
+        : info("creates a string with specific <b>size</b>")
       = new byte[](size + 1);
 
-    /// Creates the literal string with specified length and copies the parameter value
    constructor copy(int size, string s)
+        : info("Creates the copy of a substring of <b>s</b> with specified length <b>size</b> starting at 0")
       <= allocate(size)
    {
       PrimitiveStringOperations.copy(array, 0, size, s);
@@ -739,8 +783,8 @@ public const struct String : BaseValue,
       array[size] := z;
    }
 
-   /// Creates the literal string with specified length fills with specified character value        
    constructor fill(int size, char ch)
+        : info("Creates the literal string with specified length <b>size</b> fills with character <b>ch</b>")
       <= allocate(ch.Length * size)
    {
       byte buffer[4];
@@ -762,12 +806,12 @@ public const struct String : BaseValue,
       array[offs] := z;
    }
 
-   /// Creates the literal string copy              
    constructor copy(string s)
+       : info("Creates the literal string copy of <b>s</b>")
       <= copy(s.Length, s);
 
-   /// Creates the copy of a subarray        
    constructor copy(int index, int length, char[] charArray)
+        : info("Creates the copy of a sub array <b>charArray</b> starting from <b>index</b> and with the specified <b>length</b>")
       <= allocate(UTFOperations.calcSubStringLength(index, length, charArray))
    {
       PrimitiveArrayOperations.copyCharArray(charArray, index, length, this array);
@@ -788,7 +832,9 @@ public const struct String : BaseValue,
       array[size] := z;
    }
 
-   string toPrintable() = self;
+   string toPrintable() 
+        : info("Returns itself")
+      = self;
 
    string cast(params object[] args)
    {
@@ -797,7 +843,7 @@ public const struct String : BaseValue,
       int len := args.Length;
       int bufLen := 0;
 
-      string retVal := nil;
+      string? retVal := nil;
       for(int i := 0; i < len; i++) {
          string arg := args[i].toPrintable();
          int argLen := arg.Length;
@@ -822,10 +868,11 @@ public const struct String : BaseValue,
       }
       else retVal := retVal + tempStr;
 
-      ^ retVal;      
+      ^ retVal!;      
    }
 
    wide cast()
+      : info("Converts to the UTF-16 string")
    {
       int        i := 0;
       int        m := 0;
@@ -859,11 +906,13 @@ public const struct String : BaseValue,
       ^ retVal      
    }
 
-   Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
+   Enumerable<char> cast()
+        : info("Creates an enumerable wrapper")
+      = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 
    int Length
+        : info("Returns the string length")
    {
-      /// Reads the literal length into an output parameter
       get()
       {
          int l := $len array;
@@ -873,23 +922,28 @@ public const struct String : BaseValue,
       }
    }
 
-   bool equal(string s) : external(system'core_routines'__str_equal);
+   bool equal(string s) : external(system'core_routines'__str_equal), info("Returns true if the string equals to <b>s</b>; otherwise returns false");
 
    bool equal(wide s)
+         : info("Returns true if the string equals to <b>s</b>; otherwise returns false<br/>Note the string will be converted to UTF-16 string before comparison")
       = cast wide(self).equal(s);
 
    bool equal(char ch)
+         : info("Returns true if the string equals to <b>ch</b>; otherwise returns false<br/>Note the character will be converted to UTF-8 string before comparison")
       <= equal(cast string(ch));
 
-   bool less(string s) : external(system'core_routines'__str_less);
+   bool less(string s) : external(system'core_routines'__str_less), info("Returns true if the string is less then <b>s</b>; otherwise returns false");
 
    bool less(wide s)
+          : info("Returns true if the string less then <b>s</b>; otherwise returns false<br/>Note the string will be converted to UTF-16 string before comparison")
       = cast wide(self).less(s);
 
    bool less(char ch)
+         : info("Returns true if the string is less then <b>ch</b>; otherwise returns false<br/>Note the character will be converted to UTF-8 string before comparison")
       <= less(cast string(ch));
 
    bool equal(o)
+         : info("Tries to convert the argument <b>o</b> to UTF-8 string and compare with it. If the conversion is not possible it returns false")
    {
       if (o; is string s)
       {
@@ -900,6 +954,7 @@ public const struct String : BaseValue,
    }
 
    bool less(o)
+         : info("Tries to convert the argument <b>o</b> to UTF-8 string and check if the object is less then it. If the conversion is not possible it returns false")
    {
       if (o; is string s)
       {
@@ -913,6 +968,7 @@ public const struct String : BaseValue,
    private copySubS(string dest, string sour, int index, int length, int sourIndex) : external(system'core_routines'__str_xcopysubs);
 
    char at(int index)
+      : info("Returns a character at the specified position <b>index</b>")
    {
       int len := self.Length;
       if (index < 0 || index >= len)
@@ -928,6 +984,7 @@ public const struct String : BaseValue,
    }
 
    retoverload byte at(int index)
+         : info("Returns a byte at the specified position <b>index</b>")
       = array[index];
 
    string add(o)
@@ -937,7 +994,7 @@ public const struct String : BaseValue,
       <= add(*v);
 
    string add(string subs)
-      : info("Concatinates the values")
+      : info("Concatenate the values")
    {
       int l1 := self.Length;
       if (l1 == 0) {
@@ -954,7 +1011,7 @@ public const struct String : BaseValue,
    }
 
    int indexOf(int index, string literal)
-      : info("Saves the index of the first occurence of the specified substring into an output parameter.<br/>If the substring is not found. returns -1")
+      : info("Saves the index of the first occurence of the specified string <b>literal</b> starting from <b>index</b> into an output parameter.<br/>If the substring is not found. returns -1")
    {
       int sublen := literal.Length;
       int retVal := PrimitiveStringOperations.indexOf(self, literal, index, sublen);
@@ -963,6 +1020,7 @@ public const struct String : BaseValue,
    }
 
    int indexOf(int index, char ch)
+      : info("Returns the index of the first occurence of the specified character <b>ch</b> starting from <b>index</b>.<br/>If the substring is not found. returns -1")
    {
       int sublen := self.Length - index;
 
@@ -986,10 +1044,11 @@ public const struct String : BaseValue,
    }
 
    string insert(int index, char ch)
+        : info("Inserts the character <b>ch</b> at the specified <b>index</b> and returns the new one")
       = self.insert(index, cast string(ch));
 
    string delete(int index, int length)
-      : info("Deletes the substring from the object and returns the new one")
+      : info("Deletes the substring starting from <b>index</b> and with the specified <b>length</b> from the object and returns the new one")
    {
       int len1 := self.Length;
       int sindex := index + length;
@@ -1002,12 +1061,13 @@ public const struct String : BaseValue,
    }
 
    string Substring(int index, int length)
-      : info("Returns the substring")
+      : info("Returns the substring from <b>index</b> and with the specified <b>length</b>")
    {
       ^ String.fromByteArray(index, length, array);
    }
 
    int save(int index, int length, char[] buffer, int destIndex)
+        : info("Copies the characters from the string starting from <b>index</b> and with the specified <b>length</b> and copies to <b>buffer</b> starting from <b>destIndex</b>")
       = PrimitiveStringOperations.save(buffer, self, index, length, destIndex);
 
    internal saveToByteArray(int index, byte[] buffer, int length)
@@ -1017,20 +1077,23 @@ public const struct String : BaseValue,
          : info("Returns the string enumerator")
       = new StringEnumerator(self);
 
-   Indexer<char> indexer() = new StringIndexer(self);
+   Indexer<char> indexer() 
+         : info("Returns the string indexer")
+      = new StringIndexer(self);
     
-   /// Clones the value
-   string clone() = String.copy(self);
+   string clone() : info("Clones the value")
+     = String.copy(self);
 }
 
-public const String EmptyString = String.MinValue;
+public const String EmptyString : info("Empty string constant") = String.MinValue;
 
 // obsolete
-public const String emptyString = String.MinValue;
+public const String emptyString : info("<b>obsolete</b> : Empty string constant<br/>Please use EmptyString") = String.MinValue;
 
 // --- StringEnumerator ---
 
-sealed class StringEnumerator : Enumerator<char>
+sealed class StringEnumerator : Enumerator<char>,
+  info("A UTF-8 string enumerator")
 {
    string         literal;
    Reference<int> index;
@@ -1038,6 +1101,7 @@ sealed class StringEnumerator : Enumerator<char>
    char           char;  
 
    constructor(string s)
+      : info("Creates an enumerator to the specified <b>s</b> argument")
    {
       literal := s;
       index := -1;
@@ -1046,12 +1110,14 @@ sealed class StringEnumerator : Enumerator<char>
    }
 
    reset()
+      : info("Resets the enumerator")
    {
       index.Value := -1;
       diff.Value := 1
    }
 
    bool next()
+      : info("Goes to the next enumeration member and returns true if it is not the last member")
    {
       int len := literal.Length;
         
@@ -1073,30 +1139,37 @@ sealed class StringEnumerator : Enumerator<char>
       ^ false
    }
 
-   Enumerator cast() = new Enumerator
+   Enumerator cast() 
+      : info("Creates a weak enumerator")
+   = new Enumerator
    {
       embeddable dispatch() => self;
    };
    
-   enumerable() = literal;
+   enumerable() : info("returns the enumerating string")
+      = literal;
 
-   char Value = char;
+   char Value : info("Returns the current character")
+      = char;
 }
 
 // --- StringIndexer ---
 
-sealed class StringIndexer : Indexer<char>
+sealed class StringIndexer : Indexer<char>,
+   info("A UTF-8 string indexer") 
 {
    string         literal;
    Reference<int> index;
 
    constructor(string s)
+      : info("Creates an indexer to the specified <b>s</b> argument")
    {
       literal := s;
       index := 0;
    }
 
    get bool Available()
+      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
    {
       int len := literal.Length;
       int val := *index;
@@ -1105,6 +1178,7 @@ sealed class StringIndexer : Indexer<char>
    }
    
    get char Value()
+      : info("Returns the indexed character")
    {
       int val := *index;
       char ch := literal[val];
@@ -1113,13 +1187,13 @@ sealed class StringIndexer : Indexer<char>
    }
    
    set Value(char ch)
+      : info("Not supported. Raises the exeception")
    {
       system'NotSupportedException.raise()
    }
 
-   int Index
+   int Index : info("Index property")
    {
-      /// Reads the current index and saves it into an output parameter
       get()
       {
          int retVal := *index;
@@ -1127,7 +1201,6 @@ sealed class StringIndexer : Indexer<char>
          ^ retVal
       }
         
-      /// Sets the index by specified value
       set(val)
       {
          index.Value := val
@@ -1135,13 +1208,13 @@ sealed class StringIndexer : Indexer<char>
    }
    
    appendIndex(int val)
+      : info("Increases the current index by parameter **index**")
    {
       index.append(val)
    }
     
-   int Length
+   int Length : info("Returns the length of the indexed string")
    {
-      /// Reads the length to the output parameter    
       get()
       {
          int retVal := literal.Length;
@@ -1150,7 +1223,7 @@ sealed class StringIndexer : Indexer<char>
       }
    }
         
-   Indexer cast() = new Indexer{ embeddable dispatch() => self; };   
+   Indexer cast() : info("Creates a weak indexer") = new Indexer{ embeddable dispatch() => self; };   
 }
 
 // --- WideString ---
@@ -1161,12 +1234,15 @@ public const struct WideString : BaseValue,
    __string short[] array;
 
    const static wide MinValue
+        : info("Returns an empty string")
       = ""w;
 
    constructor allocate(int size)
+        : info("creates a string with specific <b>size</b>")
       = new short[](size + 1);
 
    constructor copy(int size, wide s)
+        : info("Creates the copy of a substring of <b>s</b> with specified length <b>size</b> starting at 0")
       <= allocate(size)
    {
       PrimitiveWideStringOperations.copy(array, 0, size, s);
@@ -1178,6 +1254,7 @@ public const struct WideString : BaseValue,
 
    /// Creates the literal string with specified length fills with specified character value        
    constructor fill(int size, char ch)
+        : info("Creates the literal string with specified length <b>size</b> fills with character <b>ch</b>")
       <= allocate(ch.Length * size)
    {
       short buffer[4];
@@ -1201,10 +1278,12 @@ public const struct WideString : BaseValue,
 
    /// Creates the literal string copy              
    constructor copy(wide s)
+       : info("Creates the literal string copy of <b>s</b>")
       <= copy(s.Length, s);
 
    /// Creates the copy of a subarray        
    constructor copy(int index, int length, char[] charArray)
+        : info("Creates the copy of a sub array <b>charArray</b> starting from <b>index</b> and with the specified <b>length</b>")
       <= allocate(UTFOperations.calcSubWideStringLength(index, length, charArray))
    {
       PrimitiveArrayOperations.copyCharArray(charArray, index, length, this array);
@@ -1226,6 +1305,7 @@ public const struct WideString : BaseValue,
    }
 
    string cast()
+      : info("Converts to UTF-8 string")
    {
       int        i := 0;
       int        m := 0;
@@ -1259,15 +1339,18 @@ public const struct WideString : BaseValue,
       ^ retVal      
    }
 
-   Enumerable<char> cast() = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
+   Enumerable<char> cast() : info("Creates an enumerable wrapper")
+      = new Enumerable<char>{ Enumerator<char> enumerator() => self; };
 
-   string toPrintable() = self;
-
+   string toPrintable() 
+        : info("Returns UTF-8 copy of the string")
+      = self;
 
    private copySubS(wide dest, wide sour, int index, int length) : external(system'core_routines'__wstr_copysubs);
    private copySubS(wide dest, wide sour, int index, int length, int sourIndex) : external(system'core_routines'__wstr_xcopysubs);
 
-   bool equal(o)
+   bool equal(o) 
+      : info("Tries to convert the argument <b>o</b> to UTF-16 string and compare with it. If the conversion is not possible it returns false")
    {
       if (o; is wide w)
       {
@@ -1278,6 +1361,7 @@ public const struct WideString : BaseValue,
    }
 
    bool less(o)
+      : info("Tries to convert the argument <b>o</b> to UTF-16 string and check if the object is less then it. If the conversion is not possible it returns false")
    {
       if (o; is wide w)
       {
@@ -1287,17 +1371,18 @@ public const struct WideString : BaseValue,
       ^ false
    }
 
-   bool equal(wide s) : external(system'core_routines'__wstr_equal);
+   bool equal(wide s) : external(system'core_routines'__wstr_equal), info("Returns true if the string equals to <b>s</b>; otherwise returns false");
 
-   bool less(wide s) : external(system'core_routines'__wstr_less);
+   bool less(wide s) : external(system'core_routines'__wstr_less), info("Returns true if the string is less then <b>s</b>; otherwise returns false");
 
-   bool equal(char ch)
+   bool equal(char ch) : info("Returns true if the string equals to <b>ch</b>; otherwise returns false<br/>Note the character will be converted to UTF-16 string before comparison")
       <= equal(cast wide(ch));
 
-   bool less(char ch)
+   bool less(char ch) : info("Returns true if the string is less then <b>ch</b>; otherwise returns false<br/>Note the character will be converted to UTF-16 string before comparison")
       <= less(cast wide(ch));
 
    char at(int index)
+      : info("Returns a character at the specified position <b>index</b>")
    {
       int len := self.Length;
       if (index < 0 || index >= len)
@@ -1313,6 +1398,7 @@ public const struct WideString : BaseValue,
    }
 
    retoverload short at(int index)
+         : info("Returns a word at the specified position <b>index</b>")
       = array[index];
 
    wide add(o)
@@ -1348,6 +1434,7 @@ public const struct WideString : BaseValue,
    }
 
    int indexOf(int index, char ch)
+      : info("Saves the index of the first occurence of the specified character <b>ch</b> starting from <b>index</b> into an output parameter.<br/>If the substring is not found. returns -1")
    {
       int sublen := self.Length - index;
       int retVal := PrimitiveWideStringOperations.indexOf(self, ch, index, sublen);
@@ -1370,10 +1457,11 @@ public const struct WideString : BaseValue,
    }
 
    wide insert(int index, char ch)
+        : info("Inserts the character <b>ch</b> at the specified <b>index</b> and returns the new one")
       = self.insert(index, cast wide(ch));
 
    wide delete(int index, int length)
-      : info("Deletes the substring from the object and returns the new one")
+      : info("Deletes the substring starting from <b>index</b> and with the specified <b>length</b> from the object and returns the new one")
    {
       int len1 := self.Length;
       int sindex := index + length;
@@ -1386,12 +1474,13 @@ public const struct WideString : BaseValue,
    }
 
    wide Substring(int index, int length)
-      : info("Returns the substring")
+      : info("Returns the substring from <b>index</b> and with the specified <b>length</b>")
    {
       ^ WideString.fromShortArray(index, length, array);
    }
 
    int save(int index, int length, char[] buffer, int destIndex)
+        : info("Copies the characters from the string starting from <b>index</b> and with the specified <b>length</b> and copies to <b>buffer</b> starting from <b>destIndex</b>")
       = PrimitiveWideStringOperations.save(buffer, self, index, length, destIndex);
 
    internal saveToShortArray(int index, short[] buffer, int length, int outputIndex)
@@ -1401,12 +1490,14 @@ public const struct WideString : BaseValue,
          : info("Returns the string enumerator")
       = new WideStringEnumerator(self);
 
-   Indexer<char> indexer() = new WideStringIndexer(self);
+   Indexer<char> indexer() 
+         : info("Returns the string indexer")
+      = new WideStringIndexer(self);
     
-   /// Clones the value
-   wide clone() = WideString.copy(self);
+   wide clone() : info("Clones the value")
+      = WideString.copy(self);
 
-   int Length
+   int Length : info("Returns the string length")
    {
       /// Reads the literal length into an output parameter
       get()
@@ -1421,8 +1512,10 @@ public const struct WideString : BaseValue,
 
 // --- emptyWideString ---
 
-/// An empty wide literal value
-public const WideString emptyWideString = WideString.MinValue;
+public const WideString EmptyWideString : info("Empty string constant")
+   = WideString.MinValue;
+
+public const WideString emptyWideString : info("<b>obsolete</b> : Empty string constant<br/>Please use EmptyWideString") = WideString.MinValue;
 
 // --- WideStringEnumerator ---
 
@@ -1555,43 +1648,36 @@ public sealed class Variant
     object value;
     
     constructor(object)
+       : info("Creates a variant object and assigns it with <b>object</b>")
     {
         value := object
     }
     
-    /// Tries to convert the value to a byte number
-    byte cast()
+    byte cast() : info("Tries to convert the value to a byte number")
         = ByteConvertor.convert(value);
 
-    /// Tries to convert the value to a short integer number
-    short cast()
+    short cast() : info("Tries to convert the value to a short integer number")
         = ShortConvertor.convert(value);
 
-    /// Tries to convert the value to a character
-    char cast()
+    char cast() : info("Tries to convert the value to a character")
         = CharConvertor.convert(value);
 
-    /// Tries to convert the literal value to the integer number
-    int cast()
+    int cast() : info("Tries to convert the literal value to the integer number")
         = IntConvertor.convert(value);
 
-    /// Tries to convert the literal value to the long integer number
-    long cast()
+    long cast() : info("Tries to convert the literal value to the long integer number")
         = LongConvertor.convert(value);
 
-    /// Tries to convert the literal value to the real number
-    real cast()
+    real cast() : info("Tries to convert the literal value to the real number")
         = RealConvertor.convert(value);
 
-    /// Returns a literal value
-    string cast()
+    string cast() : info("Returns a literal value")
         = StringConvertor.convert(value);
     
-    /// Returns a wide literal value
-    wide cast()
+    wide cast() : info("Returns a wide literal value")
         = WideConvertor.convert(value);
 
-    string toPrintable()
+    string toPrintable() : info("Redirects to the assigned object")
         => value;
 
     private castValueTo(target)
@@ -1624,45 +1710,42 @@ public sealed class Variant
                 = cast wide(self);
         }.castTo(target);
 
-    saveTo(target)
+    saveTo(target) : info("Tries to convert <b>target</b> value to the type compatible with the variant value, reassigns it and returns the argument.<br/>Target must support Value property")
     {
         target.Value := self.castValueTo(target.Value);
         
         ^ target
     }
 
-    add(p)
-        = p.add(self.castValueTo(p));
+    add(p) : info("Tries to convert <b>p</b> argument to the variant type and returns the sum")
+        = self.add(self.castValueTo(p));
 
-    subtract(p)
+    subtract(p) : info("Tries to convert <b>p</b> argument to the variant type and returns the difference")
         = self.castValueTo(p).subtract(p);
 
-    multiply(p)
+    multiply(p) : info("Tries to convert <b>p</b> argument to the variant type and returns the product")
         = self.castValueTo(p).multiply(p);
 
-    divide(p)
+    divide(p) : info("Tries to convert <b>p</b> argument to the variant type and returns the division result")
         = self.castValueTo(p).divide(p);
 
-    bool equal(p)
+    bool equal(p) : info("Tries to convert <b>p</b> argument to the variant type and check if they are equals")
         = self.castValueTo(p).equal(p);
 }
 
 // --- Array ---
 
-public sealed Array : Indexable
+public sealed Array : Indexable, info("A generic array")
 {
    __string object[] array;
     
-   /// Creates an empty array
-   constructor MinValue
+   constructor MinValue : info("Returns an array with a length 0")
       = new object[](0);
     
-   /// Creates the array with the specified length
-   constructor allocate(int len)
+   constructor allocate(int len) : info("Creates the array with the specified length")
       = new object[](len);
 
-    /// Creates a copy of the provided sub array
-   constructor copy(int index, int length, Array array)
+   constructor copy(int index, int length, Array array) : info("Creates a copy of the provided sub <b>array</b> starting at <b>index</b> and the specified <b>length</b>")
       <= allocate(length)
    {
       for(int i := 0; i < length; i += 1)
@@ -1671,8 +1754,7 @@ public sealed Array : Indexable
       }
    }
         
-   /// Concatinates the arrays    
-   add(Array a)
+   add(Array a) : info("Concatinates the arrays")
    {
       int length1 := self.Length;
       int length2 := a.Length;
@@ -1690,7 +1772,7 @@ public sealed Array : Indexable
       ^ retVal
    }
 
-   int Length
+   int Length : info("Returns the array length")
    {
       get()
       {
@@ -1700,48 +1782,51 @@ public sealed Array : Indexable
       }
    }
 
-   /// Sets the specified array member
    setAt(int n, object o)
+      : info("Assigns <b>item</b> to the element at the position <b>n</b>")
    {
       array[n] := o
    }
 
-   /// Returns the specified array member
    object at(int n)
-      = array[n];
+        : info("Returns an element at the position <b>n</b>")
+     = array[n];
  
-   /// Returns the array enumerator
-   Enumerator enumerator() = new ArrayEnumerator(self);
+   Enumerator enumerator() : info("Returns the array enumerator")
+      = new ArrayEnumerator(self);
 
-   /// Returns the array indexer
-   Indexer indexer() = new ArrayIndexer(self);
+   Indexer indexer() : info("Returns the array indexer")
+      = new ArrayIndexer(self);
 
-   object[] Value = array;
+   object[] Value : info("Returns itself")
+      = array;
 
-   /// Clones the array
-   Array clone()
+   Array clone() : info("Creates a shallow copy of the array")
       = Array.copy(0, self.Length, self);
 }
 
 // --- ArrrayEnumerator ---
 
-public sealed ArrayEnumerator : Enumerator
+public sealed ArrayEnumerator : Enumerator, info("A generic array enumerator")
 {
    Array          array;
    Reference<int> index;
 
    constructor(Array arr)
+      : info("Creates an enumerator to the specified <b>s</b> argument")
    {
       array := arr;
       index := -1;
    }
 
    reset()
+      : info("Resets the enumerator")
    {
       index.Value := -1;
    }
 
    bool next()
+      : info("Goes to the next enumeration member and returns true if it is not the last member")
    {
       int len := array.Length;
         
@@ -1756,26 +1841,29 @@ public sealed ArrayEnumerator : Enumerator
       ^ false
    }
 
-   Value
+   Value : info("Returns the current element")
       = array[*index];
 
-   enumerable() = array;
+   enumerable() : info("returns the enumerating array")
+      = array;
 }
 
 // --- ArrayIndexer ---
 
-public sealed ArrayIndexer : Indexer
+public sealed ArrayIndexer : Indexer, info("A generic array indexer")
 {
    Array          array;
    Reference<int> index;
 
    constructor(Array arr)
+      : info("Creates an indexer to the specified <b>arr</b> argument")
    {
       array := arr;
       index := 0;
    }
 
    get bool Available()
+      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
    {
       int len := array.Length;
       int val := *index;
@@ -1784,6 +1872,7 @@ public sealed ArrayIndexer : Indexer
    }
    
    get Value()
+      : info("Returns the indexed element")
    {
       int val := *index;
 
@@ -1791,15 +1880,15 @@ public sealed ArrayIndexer : Indexer
    }
    
    set Value(o)
+      : info("Set the element at the current index")
    {
       int val := *index;
 
       array[val] := o;      
    }
 
-   int Index
+   int Index : info("Index property")
    {
-      /// Reads the current index and saves it into an output parameter
       get()
       {
          int retVal := *index;
@@ -1807,7 +1896,6 @@ public sealed ArrayIndexer : Indexer
          ^ retVal
       }
         
-      /// Sets the index by specified value
       set(val)
       {
          index.Value := val
@@ -1815,13 +1903,13 @@ public sealed ArrayIndexer : Indexer
    }
    
    appendIndex(int val)
+      : info("Increases the current index by parameter **index**")
    {
       index.append(val)
    }
     
-   int Length
+   int Length : info("Returns the length of the indexed array")
    {
-      /// Reads the length to the output parameter    
       get()
       {
          int retVal := array.Length;
@@ -2068,3 +2156,15 @@ class BitArray32Enumerator : Enumerator<bool>
     
    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
+
+#if (__project["_Win"]) // Windows
+
+public const String NewLineConstant : info("New line characters")
+    = $13$10;
+
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+public const string NewLineConstant : info("A new line character")
+    = ""$10;
+
+#endif

@@ -124,6 +124,8 @@
 		<Unit filename="../../engine/x86helper.h" />
 		<Unit filename="../../engine/xmlprojectbase.cpp" />
 		<Unit filename="../../engine/xmlprojectbase.h" />
+		<Unit filename="../cli.cpp" />
+		<Unit filename="../cli.h" />
 		<Unit filename="../clicommon.h" />
 		<Unit filename="../cliconst.h" />
 		<Unit filename="../codeimage.cpp" />
@@ -159,6 +161,14 @@
 		<Unit filename="../separser.h" />
 		<Unit filename="../source.cpp" />
 		<Unit filename="../source.h" />
+		<Unit filename="../windows/ntimage.cpp" />
+		<Unit filename="../windows/ntimage.h" />
+		<Unit filename="../windows/ntlinker.cpp" />
+		<Unit filename="../windows/ntlinker.h" />
+		<Unit filename="../windows/ntlinker32.cpp" />
+		<Unit filename="../windows/ntlinker32.h" />
+		<Unit filename="../windows/ntlinker64.cpp" />
+		<Unit filename="../windows/ntlinker64.h" />
 		<Extensions />
 	</Project>
 </CodeBlocks_project_file>

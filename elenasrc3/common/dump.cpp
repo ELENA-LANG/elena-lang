@@ -154,7 +154,7 @@ bool ByteArray :: insert(pos_t position, const void* s, pos_t length)
    return true;
 }
 
-void ByteArray :: trim(pos_t position)
+void ByteArray :: trim(pos_t/* position*/)
 {
 }
 

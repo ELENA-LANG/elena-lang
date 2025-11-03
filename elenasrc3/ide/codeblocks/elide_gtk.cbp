@@ -12,14 +12,14 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++20" />
 					<Add option="-m32" />
 					<Add option="-g" />
-					<Add option="-std=c++20" />
-					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
+					<Add option="`pkg-config gtkmm-4.0 --cflags`" />
 				</Compiler>
 				<Linker>
 					<Add option="-m32" />
-					<Add option="`pkg-config gtkmm-3.0 --libs`" />
+					<Add option="`pkg-config gtkmm-4.0 --libs`" />
 				</Linker>
 			</Target>
 			<Target title="Release32">
@@ -29,7 +29,7 @@
 				<Option compiler="gcc" />
 				<Compiler>
 					<Add option="-march=pentium3" />
-					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
+					<Add option="`pkg-config gtkmm-4.0 --cflags`" />
 					<Add option="-std=c++20" />
 					<Add option="-m32" />
 				</Compiler>
@@ -45,14 +45,17 @@
 				<Option type="1" />
 				<Option compiler="gcc" />
 				<Compiler>
+					<Add option="-std=c++20" />
 					<Add option="-m64" />
 					<Add option="-g" />
-					<Add option="-std=c++20" />
-					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
+					<Add option="`pkg-config gtkmm-4.0 --cflags`" />
 				</Compiler>
 				<Linker>
 					<Add option="-m64" />
-					<Add option="`pkg-config gtkmm-3.0 --libs`" />
+					<Add option="`pkg-config gtkmm-4.0 --libs`" />
+					<Add library="../../../bin/liblcommon64.a" />
+					<Add library="../../../bin/libldebugger64.a" />
+					<Add library="../../../bin/liblengine64.a" />
 				</Linker>
 			</Target>
 			<Target title="Release64">
@@ -63,35 +66,33 @@
 				<Compiler>
 					<Add option="-march=pentium3" />
 					<Add option="-m64" />
-					<Add option="`pkg-config gtkmm-3.0 --cflags`" />
+					<Add option="`pkg-config gtkmm-4.0 --cflags`" />
 				</Compiler>
 				<Linker>
 					<Add option="-O3" />
 					<Add option="-s" />
 					<Add option="-m64" />
-					<Add option="`pkg-config gtkmm-3.0 --libs`" />
+					<Add option="`pkg-config gtkmm-4.0 --libs`" />
+					<Add library="../../../bin/liblcommon64.a" />
+					<Add library="../../../bin/libldebugger64.a" />
+					<Add library="../../../bin/liblengine64.a" />
 				</Linker>
 			</Target>
 		</Build>
 		<Compiler>
 			<Add option="-Wall" />
 			<Add option="-fexceptions" />
-			<Add directory=".." />
-			<Add directory="../../engine" />
 			<Add directory="../../common" />
+			<Add directory="../../engine" />
+			<Add directory=".." />
+			<Add directory="../.." />
 			<Add directory="../../gui" />
 		</Compiler>
-		<Unit filename="../../common/config.cpp" />
 		<Unit filename="../../common/config.h" />
-		<Unit filename="../../common/dump.cpp" />
 		<Unit filename="../../common/dump.h" />
-		<Unit filename="../../common/files.cpp" />
 		<Unit filename="../../common/files.h" />
-		<Unit filename="../../common/paths.cpp" />
 		<Unit filename="../../common/paths.h" />
-		<Unit filename="../../common/ustring.cpp" />
 		<Unit filename="../../common/ustring.h" />
-		<Unit filename="../../common/xmltree.cpp" />
 		<Unit filename="../../common/xmltree.h" />
 		<Unit filename="../../engine/module.cpp" />
 		<Unit filename="../../engine/module.h" />
@@ -124,12 +125,12 @@
 		<Unit filename="../editframe.h" />
 		<Unit filename="../gtklinux/factory.cpp" />
 		<Unit filename="../gtklinux/factory.h" />
+		<Unit filename="../gtklinux/gtkdialogs.cpp" />
+		<Unit filename="../gtklinux/gtkdialogs.h" />
 		<Unit filename="../gtklinux/gtkide.cpp" />
 		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/gtkidetextview.cpp" />
 		<Unit filename="../gtklinux/gtkidetextview.h" />
-		<Unit filename="../gtklinux/gtkdialogs.cpp" />
-		<Unit filename="../gtklinux/gtkdialogs.h" />
 		<Unit filename="../gtklinux/main.cpp" />
 		<Unit filename="../idecommon.cpp" />
 		<Unit filename="../idecommon.h" />

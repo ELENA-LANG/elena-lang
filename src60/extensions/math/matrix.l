@@ -12,7 +12,7 @@ namespace math
 
    internal singleton MatrixHelper
    {
-      ::(RealMatrix, bool) getDecomposed(RealMatrix m)
+      (RealMatrix, bool) getDecomposed(RealMatrix m)
       {
          // create matrix copy
          auto a := m.clone();

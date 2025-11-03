@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "modulescope.h"
@@ -14,7 +14,7 @@ using namespace elena_lang;
 
 // --- ModuleScope ---
 
-inline ref_t mapNewIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
+static inline ref_t mapNewIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
 {
    ustr_t prefix = CompilerLogic::getVisibilityPrefix(visibility);
 
@@ -23,7 +23,7 @@ inline ref_t mapNewIdentifier(ModuleBase* module, ustr_t identifier, Visibility 
    return module->mapReference(*name);
 }
 
-inline ref_t mapExistingIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
+static inline ref_t mapExistingIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
 {
    ustr_t prefix = CompilerLogic::getVisibilityPrefix(visibility);
 
@@ -42,7 +42,12 @@ bool ModuleScope :: withValidation()
    return !test(hints, mhNoValidation);
 }
 
-inline void findUninqueName(ModuleBase* module, IdentifierString& name)
+bool ModuleScope :: withPrologEpilog()
+{
+   return !test(hints, mhNoPrologEpilog);
+}
+
+static inline void findUninqueName(ModuleBase* module, IdentifierString& name)
 {
    size_t pos = name.length();
    int   index = 0;
@@ -424,4 +429,18 @@ void ModuleScope :: flush()
          writer->writeString(key);
          writer->writeString(value);
       });
+
+   // saving dependency list
+   MemoryBase* dependencySection = module->mapSection(
+      module->mapReference(DEPENDENCY_LIST, false) | mskMetaInfo,
+      false);
+
+   MemoryWriter dependencyWriter(dependencySection);
+   dependencies.save(&dependencyWriter);
+}
+
+void ModuleScope::onLoad(ModuleBase* extModule)
+{
+   if (extModule != module)
+      dependencies.add(extModule->name());
 }

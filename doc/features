@@ -305,7 +305,7 @@ public program()
  Enumerations
 ----------------------------------------------------------------------------
 
-public const struct Color : enum<int>(Red ::= 1,Green ::= 2,Blue ::= 3);
+public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
 
 public program()
 {
@@ -354,3 +354,126 @@ class Win64A
 }
 
 #endif
+
+----------------------------------------------------------------------------
+ Calling extension template directly
+----------------------------------------------------------------------------
+extension testOp<T> : T
+{
+   testMe(Func<T,T> f)
+      = f(self);
+}
+
+public program()
+{
+   var r := 3::testMe<int>((int x => x + 1));
+   Console.writeLine("3+1=",r);
+}
+
+----------------------------------------------------------------------------
+ Specify the lambda function returning value
+----------------------------------------------------------------------------
+
+  var f := ([real]int x => x + 1);
+  o.testMe::([object]int x => x + 1);
+
+----------------------------------------------------------------------------
+ Declaring a parametrized template
+----------------------------------------------------------------------------
+
+class TemplateWithDefaults<T>(defValue)::
+{
+   T X := defValue;
+}
+
+MyClass : TemplateWithDefaults<int>(2)
+{
+}
+
+----------------------------------------------------------------------------
+ Calling property with message constant
+----------------------------------------------------------------------------
+
+singleton A { X = 2; }
+
+public program()
+{
+    var o := get mssg X(A);
+}
+
+----------------------------------------------------------------------------
+ Declaring a record
+----------------------------------------------------------------------------
+
+MyRecord : record(string FirstName,string LastName,int Age);
+
+public program()
+{
+   MyRecord r := new MyRecord("Ivan", "Ivanov", 22);
+   MyRecord r2 := new MyRecord("Ivan", "Ivanov", 22);
+
+   Assert.ifTrue(r == r2);
+}
+
+----------------------------------------------------------------------------
+ Not nil operation
+----------------------------------------------------------------------------
+
+A
+{
+   testMe() {}
+}
+
+public program()
+{
+   A? a := nil;
+   if:nil(a)
+      a := new A();
+
+   a!.testMe(); 
+}
+
+----------------------------------------------------------------------------
+ Platform attribute
+----------------------------------------------------------------------------
+
+In the project file:
+
+        <module name="winforms" platform="windows">
+            <include>winforms\win_common.l</include>
+            <include>winforms\win32_exceptions.l</include>
+            <include>winforms\win_handles.l</include>
+            <include>winforms\win_controls.l</include>
+            <include>winforms\win_windows.l</include>
+            <include>winforms\win_dialogs.l</include>
+            <include>winforms\win_app.l</include>
+        </module>
+
+In the project collection file:
+
+    <project platform="windows">forms\forms.prj</project>
+
+----------------------------------------------------------------------------
+   __nonboxable attribute
+----------------------------------------------------------------------------
+
+Raise an error if the expression is not memory allocated
+
+e.g.
+
+   int n := 0;
+   var o := __nonboxable n; // !! must raise an error : "Heap allocated object is expected"
+
+----------------------------------------------------------------------------
+   lambda function without arguments
+----------------------------------------------------------------------------
+
+public program()
+{
+   var f1 := { Console.writeLine("The traditional lambda function without arguments"); };
+   var f2 := (){ Console.writeLine("The new lambda function without arguments to be in line with syntax like c(x){ ... }"); };
+   var f3 := ([] => "Hello");
+
+   f1();
+   f2();
+}

@@ -17,7 +17,7 @@ singleton combinationEnd : BaseStrategy
 {
    at(Indexer[] indexers, int length) = nil;
     
-   BaseStrategy eval(Indexer[] indexers, int length) = nil;
+   BaseStrategy eval(Indexer[] indexers, int length) = self;
     
    bool Result = false;
 }

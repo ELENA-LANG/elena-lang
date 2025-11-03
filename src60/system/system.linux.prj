@@ -1,85 +1,70 @@
+<?xml version="1.0" encoding="utf-8"?>
 <configuration>
   <platform key="Linux_I386">
      <project>
         <output>../../lib60</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx32_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="Linux_AMD64">
      <project>
         <output>../../lib60_64</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx64_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="FreeBSD_AMD64">
      <project>
         <output>../../lib60_64</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx64_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="Linux_PPC64le">
      <project>
         <output>../../lib60_64</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx64_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
   </platform>
   <platform key="Linux_ARM64">
      <project>
         <output>../../lib60_64</output>
      </project>
-     <files>
-        <module>
-           <include>calendar/lnx64_datetime.l</include>
-           <include>calendar/dates.l</include>
-        </module>
-     </files>
+  </platform>
+  <platform key="Win_x86">
+     <project>
+        <output>../../lib60_win</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
+  </platform>
+  <platform key="Win_x64_BSD">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
   </platform>
   <project>
      <namespace>system</namespace>
      <template>lib60</template>
-     <prolog> </prolog>
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.6.9</version>
+     <version>6.8.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
-     <module name="attributes" hints="2">
+     <module name="attributes" hints="6">
         <include>attributes/attributes.l</include>
      </module>
-     <module name="predefined" hints="2">
+     <module name="predefined" hints="6">
         <include>predefined/predefined.l</include>
         <include>predefined/aliases.l</include>
      </module>
-     <module name="operations" hints="2">
+     <module name="operations" hints="6">
         <include>operations/inline.l</include>
         <include>operations/operations.l</include>
      </module>
-     <module name="operations'advanced" hints="2">
+     <module name="operations'advanced" hints="6">
         <include>operations/advanced/operations.l</include>
      </module>
-     <module hints="1">
+     <module hints="5">
         <include>inline_templates.l</include>
         <include>object.l</include>
         <include>basic.l</include>
@@ -92,14 +77,11 @@
         <include>closures.l</include>
         <include>convertors.l</include>
         <include>pointers.l</include>
-        <include>lnx_primitives.l</include>
         <include>dynamic.l</include>
         <include>exceptions.l</include>
         <include>events.l</include>
         <include>console.l</include>
         <include>app.l</include>
-        <include>lnx_app.l</include>
-        <include>lnx_strings.l</include>
         <include>template_tests.l</include>
         <include>collections/list.l</include>
         <include>collections/queues.l</include>
@@ -108,6 +90,8 @@
         <include>collections/sorted_list.l</include>
         <include>collections/template_tests.l</include>
         <include>math/math.l</include>
+        <include>calendar/date_routines.l</include>
+        <include>calendar/dates.l</include>
         <include>text/encoding.l</include>
         <include>text/textbuffer.l</include>
         <include>text/base64.l</include>
@@ -115,11 +99,14 @@
         <include>io/streamreader.l</include>
         <include>io/streamwriter.l</include>
         <include>io/memorystream.l</include>
-        <include>io/lnx_console.l</include>
+        <include>io/console.l</include>
         <include>io/files.l</include>
         <include>io/ioexceptions.l</include>
-        <include>io/lnx_files.l</include>
-        <include>io/lnx_getfiles.l</include>
+        <include>io/getfiles.l</include>
+     </module>
+     <module name="collections'threadsafe">
+        <include>collections/threadsafe/queues.l</include>
+        <include>collections/threadsafe/template_tests.l</include>
      </module>
      <module name="routines">
        <include>routines/enumerables.l</include>
@@ -134,6 +121,19 @@
        <include>runtime/common.l</include>
        <include>runtime/gc_routines.l</include>
        <include>runtime/vectortable.l</include>
+       <include>runtime/env.l</include>
+     </module>
+     <module name="threading">
+       <include>threading/common.l</include>
+       <include>threading/handlers.l</include>
+       <include>threading/thread.l</include>
+       <include>threading/semaphores.l</include>
+       <include>threading/events.l</include>
+       <include>threading/blockinglists.l</include>
+       <include>threading/threadpool.l</include>
+       <include>threading/tasks.l</include>
+       <include>threading/templates.l</include>
+       <include>threading/template_tests.l</include>
      </module>
      <module name="dynamic">
        <include>dynamic/reflection.l</include>

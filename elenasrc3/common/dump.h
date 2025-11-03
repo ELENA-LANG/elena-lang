@@ -37,7 +37,7 @@ namespace elena_lang
 
       void* get(pos_t position) const override;
 
-      ref_t getRef(pos_t position)
+      ref_t getRef(pos_t position) const
       {
          ref_t retVal = 0;
          read(position, &retVal, sizeof(ref_t));
@@ -88,7 +88,7 @@ namespace elena_lang
          _used = 0;
       }
 
-      void trim(pos_t position)
+      void trim(pos_t position) override
       {
          if (position < _used) {
             _used = position;
@@ -169,7 +169,7 @@ namespace elena_lang
          return write(&ch, 1);
       }
 
-      bool write(const char* s, pos_t length)
+      bool write(const char* s, pos_t length) override
       {
          _target->append(s, length);
 

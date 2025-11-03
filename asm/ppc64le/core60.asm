@@ -2259,6 +2259,15 @@ inline %0BCh
 
 end
 
+// ; xladddp
+inline %0BDh
+
+  addi    r16, r31, __arg16_1
+  ld      r16, 0(r16)
+  add     r14, r14, r16
+
+end 
+
 // ; cmpr
 inline %0C0h
 

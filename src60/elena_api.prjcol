@@ -5,12 +5,13 @@
     <project>cellular\cellular.prj</project>
     <project>algorithms\algorithms.prj</project>
     <project>ltests\ltests.prj</project>
-    <project>sqlite\sqlite.prj</project>
-    <project>forms\forms.prj</project>
-    <project>xforms\xforms.prj</project>
-    <project>net\net.prj</project>
-    <project>mbedtls\mbedtls.prj</project>
+    <project platform="windows">sqlite\sqlite.prj</project>
+    <project platform="windows">forms\forms.prj</project>
+    <project platform="windows">xforms\xforms.prj</project>
+    <project platform="windows">net\net.prj</project>
+    <project platform="windows">mbedtls\mbedtls.prj</project>
     <project>xml\xml.prj</project>
-    <project>textgen\textgen.prj</project>
+    <project platform="windows">textgen\textgen.prj</project>
+    <project platform="windows">webapi\webapi.prj</project>
   </collection>
 </configuration>

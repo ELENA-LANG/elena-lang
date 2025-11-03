@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86-64
-//                                              (C)2021-2024 by Aleksey Rakov
+//                                              (C)2021-2025 by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -24,7 +24,7 @@ const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[Overloads
    { ByteCode::ExtOpenIN, x86_64compileExtOpenIN},
 };
 
-inline void x86_64AllocStack(int args, MemoryWriter* code)
+static inline void x86_64AllocStack(int args, MemoryWriter* code)
 {
    // sub esp, arg
    if (args < 0x80) {
@@ -39,7 +39,7 @@ inline void x86_64AllocStack(int args, MemoryWriter* code)
    }
 }
 
-inline void x86_64FreeStack(int args, MemoryWriter* code)
+static inline void x86_64FreeStack(int args, MemoryWriter* code)
 {
    // add rsp, arg
    if (args < 0x80) {
@@ -156,7 +156,7 @@ void X86_64JITCompiler :: prepare(
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
    LabelHelperBase*,
-   JITSettings _settings,
+   ProcessSettings& _settings,
    bool virtualMode)
 {
    _constants.inlineMask = mskCodeRelRef32;
@@ -171,12 +171,12 @@ void X86_64JITCompiler :: prepare(
    JITCompiler64::prepare(loader, imageProvider, helper, &lh, _settings, virtualMode);
 }
 
-void X86_64JITCompiler :: writeImm9(MemoryWriter* writer, int, int)
+void X86_64JITCompiler :: writeImm9(MemoryWriter*/* writer*/, int, int)
 {
    throw InternalError(errNotImplemented);
 }
 
-void X86_64JITCompiler :: writeImm12(MemoryWriter* writer, int, int)
+void X86_64JITCompiler :: writeImm12(MemoryWriter*/* writer*/, int, int)
 {
    throw InternalError(errNotImplemented);
 }

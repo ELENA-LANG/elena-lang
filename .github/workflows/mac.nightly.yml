@@ -1,0 +1,38 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: Nightly MacOS AMD64 Build
+
+on:
+  workflow_dispatch: # Put here!!
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    strategy:
+      matrix:
+        os: [macos-13]
+        platform: [amd64]
+ 
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        ref: iteration42
+
+    - name: Set version
+      run: |
+        VER=$(cat VERSION)
+        echo "BUILD_TAG=$VER" >> $GITHUB_ENV
+
+    - name: Install dependencies
+      run: |
+        brew install llvm
+        brew install lld
+
+    - name: Build
+      run: make all_mac_${{ matrix.platform }}

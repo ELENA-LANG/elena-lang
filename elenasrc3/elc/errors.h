@@ -15,7 +15,7 @@
 namespace elena_lang
 {
    constexpr auto errMsgInvalidSyntax           = "\n%s(%d:%d): error 004: Invalid syntax near '%s'\n";
-   constexpr auto errMssgCBrExpectedSyntax      = "\n%s(%d:%d): error 009: '}' expected\n";
+   constexpr auto errMsgCBrExpectedSyntax       = "\n%s(%d:%d): error 009: '}' expected\n";
 
    constexpr auto errMsgDuplicatedSymbol        = "\n%s(%d:%d): error 102: Class '%s' already exists\n";
    constexpr auto errMsgDuplicatedMethod        = "\n%s(%d:%d): error 103: Method '%s' already exists in the class\n";
@@ -32,6 +32,7 @@ namespace elena_lang
    constexpr auto errMsgMixedUpVariadicMessage  = "\n%s(%d:%d): error 114: The class '%s' contains variadic and normal methods with the same name\n";
    constexpr auto errMsgRedirectToItself        = "\n%s(%d:%d): error 115: Redirecting message '%s' to itself\n";
    constexpr auto errMssgAssigningRealOnly      = "\n%s(%d:%d): error 116: Read-only field '%s' cannot be changed\n";
+   constexpr auto errMsgIncompatibleClosure     = "\n%s(%d:%d): error 117: The function closure '%s' is incompatible with an expected type %s\n";
    constexpr auto errMsgDuplicatedDefinition    = "\n%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n";
    constexpr auto errMsgInvalidIntNumber        = "\n%s(%d:%d): error 130: Invalid integer value %s\n";
    constexpr auto errMsgCannotEval              = "\n%s(%d:%d): error 140: Cannot evaluate the expression %s\n";
@@ -47,62 +48,70 @@ namespace elena_lang
    constexpr auto errMsgNotCompatibleMulti      = "\n%s(%d:%d): error 157: type attribute should be the same for the overloaded method '%s'\n";
    constexpr auto errMsgTypeAlreadyDeclared     = "\n%s(%d:%d): error 158: type attribute cannot be overridden\n";
    constexpr auto errMsgAbstractMethods         = "\n%s(%d:%d): error 159: Class contains abstract methods\n";
-
    constexpr auto errMsgDispatcherInInterface   = "\n%s(%d:%d): error 160: Closed class contains a dispatcher method\n";
    constexpr auto errMsgAbstractMethodCode      = "\n%s(%d:%d): error 161: An abstract method cannot have an explicit body\n";
    constexpr auto errMsgNotAbstractClass        = "\n%s(%d:%d): error 164: An attribute '%s' cannot be declared in a non-abstract class\n";
    constexpr auto errMsgIllegalPrivate          = "\n%s(%d:%d): error 166: An attribute '%s' cannot be applied for an extension\n";
 
-   constexpr auto errMsgDupPublicMethod         = "\n%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
-   constexpr auto errMsgEmptyStructure          = "\n%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
-   constexpr auto errMsgInvalidType             = "\n%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
-   constexpr auto errMsgDupInternalMethod       = "\n%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
-   constexpr auto errMsgInvalidConstAttr        = "\n%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";
+   constexpr auto errMsgDupPublicMethod            = "\n%s(%d:%d): error 167: A public method with the same name '%s' is already declared\n";
+   constexpr auto errMsgEmptyStructure             = "\n%s(%d:%d): error 169: a structure class '%s' should have at least one field\n";
+   constexpr auto errMsgInvalidType                = "\n%s(%d:%d): error 172: '%s' cannot be used in the declaration\n";
+   constexpr auto errMsgDupInternalMethod          = "\n%s(%d:%d): error 173: An internal method with the same name '%s' is already declared\n";
+   constexpr auto errMsgInvalidConstAttr           = "\n%s(%d:%d): error 174: A method '%s' cannot be compiled as a constant one\n";
+   constexpr auto errMsgHeapObjectRequired         = "\n%s(%d:%d): error 175: '%s' - heap allocated object is expected\n";
    constexpr auto errMsgIllegalConstructorAbstract = "\n%s(%d:%d): error 177: An abstract class cannot have a public constructor\n";
-   constexpr auto errMsgNoBodyMethod            = "\n%s(%d:%d): error 180: Only abstract method can have no body\n";
-   constexpr auto errMsgUnknownTemplate         = "\n%s(%d:%d): error 181: Unknown template %s\n";
-   constexpr auto errMsgDupPrivateMethod        = "\n%s(%d:%d): error 182: A private method with the same name '%s' is already declared\n";
-   constexpr auto errMsgDupProtectedMethod      = "\n%s(%d:%d): error 183: A protected method with the same name '%s' is already declared\n";
-   constexpr auto errMsgUnknownDefConstructor   = "\n%s(%d:%d): error 184: A constructor is not defined for the class\n";
-   constexpr auto errMsgUnknownMessage          = "\n%s(%d:%d): error 185: Message '%s' does not handled by the object\n";
-   constexpr auto errMsgAssigningToSelf         = "\n%s(%d:%d): error 186: Cannot assign a variable '%s' to itself\n";
-   constexpr auto errMsgUnknownTypecast         = "\n%s(%d:%d): error 188: typecasting routine cannot be found\n";
-   constexpr auto errMsgUnknownFunction         = "\n%s(%d:%d): error 189: Function message does not handled by the object '%s'\n";
-   constexpr auto errMsgUnsupportedOperator     = "\n%s(%d:%d): error 190: operator handler is not defined for %s\n";
+   constexpr auto errMsgNoBodyMethod               = "\n%s(%d:%d): error 180: Only abstract method can have no body\n";
+   constexpr auto errMsgUnknownTemplate            = "\n%s(%d:%d): error 181: Unknown template %s\n";
+   constexpr auto errMsgDupPrivateMethod           = "\n%s(%d:%d): error 182: A private method with the same name '%s' is already declared\n";
+   constexpr auto errMsgDupProtectedMethod         = "\n%s(%d:%d): error 183: A protected method with the same name '%s' is already declared\n";
+   constexpr auto errMsgUnknownDefConstructor      = "\n%s(%d:%d): error 184: A unnamed constructor matching the passed arguments is not defined for the class\n";
+   constexpr auto errMsgUnknownMethod              = "\n%s(%d:%d): error 185: Method '%s' is not declared in the class %s or there is no appropriate overload\n";
+   constexpr auto errMsgAssigningToSelf            = "\n%s(%d:%d): error 186: Cannot assign a variable '%s' to itself\n";
+   constexpr auto errMsgUnknownTypecast            = "\n%s(%d:%d): error 188: Typecasting routine cannot be found\n";
+   constexpr auto errMsgUnknownFunction            = "\n%s(%d:%d): error 189: Function message does not handled by the object '%s'\n";
+   constexpr auto errMsgUnsupportedOperator        = "\n%s(%d:%d): error 190: Operator handler is not defined for %s\n";
+   constexpr auto errMsgUnknownRedirectMethod      = "\n%s(%d:%d): error 191: '%s' - the target class does not contain the declaration of the message '%s' or an appropriate overload\n";
 
-   constexpr auto errMsgUnknownModule           = "\nlinker: error 201: Unknown module '%s'\n";
-   constexpr auto errMsgUnresovableLink         = "\nlinker: error 202: Link '%s' is not resolved\n";
-   constexpr auto errMsgInvalidModule           = "\nlinker: error 203: Invalid module file '%s'\n";
-   constexpr auto errMsgCannotCreate            = "\nlinker: error 204: Cannot create a file '%s'\n";
-   constexpr auto errMsgInvalidFile             = "\nlinker: error 205: Invalid file '%s'\n";
-   constexpr auto errMsgInvalidParserTarget     = "\nlinker: error 206: Invalid parser target '%s'\n";
-   constexpr auto errMsgInvalidParserTargetType = "\nlinker: error 207: Invalid parser target type '%s'\n";
-   constexpr auto errMsgTLSIsNotAllowed         = "\nlinker: error 208: thread variable can be used only for MTA\n";
-   constexpr auto errMsgInvalidModuleVersion    = "\nlinker: error 210: Obsolete module file '%s'\n";
-   constexpr auto errMsgEmptyTarget             = "\nlinker: error 212: Target is not specified\n";
+   constexpr auto errMsgUnknownModule              = "\nlinker: error 201: Unknown module '%s'\n";
+   constexpr auto errMsgUnresovableLink            = "\nlinker: error 202: Link '%s' is not resolved\n";
+   constexpr auto errMsgInvalidModule              = "\nlinker: error 203: Invalid module file '%s'\n";
+   constexpr auto errMsgCannotCreate               = "\nlinker: error 204: Cannot create a file '%s'\n";
+   constexpr auto errMsgInvalidFile                = "\nlinker: error 205: Invalid file '%s'\n";
+   constexpr auto errMsgInvalidParserTarget        = "\nlinker: error 206: Invalid parser target '%s'\n";
+   constexpr auto errMsgInvalidParserTargetType    = "\nlinker: error 207: Invalid parser target type '%s'\n";
+   constexpr auto errMsgTLSIsNotAllowed            = "\nlinker: error 208: thread variable can be used only for MTA\n";
+   constexpr auto errMsgInvalidModuleVersion       = "\nlinker: error 210: Obsolete module file '%s'\n";
+   constexpr auto errMsgEmptyTarget                = "\nlinker: error 212: Target is not specified\n";
 
-   constexpr auto errMsgParserNotInitialized = "\ninternal error 300: a parser cannot be initialized\n";
-   constexpr auto errMsgProjectAlreadyLoaded = "\ninternal error 301: a project cannot be loaded: %s\n";
+   constexpr auto errMsgParserNotInitialized    = "\ninternal error 300: a parser cannot be initialized\n";
+   constexpr auto errMsgProjectAlreadyLoaded    = "\ninternal error 301: a project cannot be loaded: %s\n";
 
-   constexpr auto wrnMsgUnknownHint          = "\n%s(%d:%d): warning 404: Unknown attribute '%s'\n";
-   constexpr auto wrnMsgInvalidHint          = "\n%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n";
-   constexpr auto wrnMsgUnknownMessage       = "\n%s(%d:%d): warning 407: Message '%s' does not handled by the object\n";
-   constexpr auto wrnMsgUnknownFunction      = "\n%s(%d:%d): warning 408: Function message does not handled by the object '%s'\n";
-   constexpr auto wrnMsgUnknownDefConstructor= "\n%s(%d:%d): warning 409: Explicit constructor is not defined in the object\n";
-   constexpr auto wrnMsgCallingItself        = "\n%s(%d:%d): warning 410: Calling itself can lead to short-circuiting\n";
-   constexpr auto wrnMssgAssigningNillable   = "\n%s(%d:%d): warning 411: Assinging nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
-   constexpr auto wrnMssgReturningNillable   = "\n%s(%d:%d): warning 412: Returning nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
-   constexpr auto wrnMsgUnknownModule        = "\n%s(%d:%d): warning 413: Unknown module '%s'\n";
-   constexpr auto wrnMsgTypeInherited        = "\n%s(%d:%d): warning 420: Type attribute is inherited\n";
-   constexpr auto wrnMsgDuplicateInclude     = "\n%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
-   constexpr auto wrnMsgUnknownTypecast      = "\n%s(%d:%d): warning 426: typecasting routine cannot be found\n";
-   constexpr auto wrnMsgUnsupportedOperator  = "\n%s(%d:%d): warning 427: operator handler is not defined for %s\n";
-   constexpr auto wrnMsgUnassignedVariable   = "\n%s(%d:%d): warning 428: an unassigned variable - '%s'\n";
-   constexpr auto wrnMsgLessAccessible       = "\n%s(%d:%d): warning 429: the returning type is less accessible than '%s'\n";
+   constexpr auto wrnMsgUnknownHint             = "\n%s(%d:%d): warning 404: Unknown attribute '%s'\n";
+   constexpr auto wrnMsgInvalidHint             = "\n%s(%d:%d): warning 406: Attribute '%s' cannot be applied here\n";
+   constexpr auto wrnMsgUnknownMethod           = "\n%s(%d:%d): warning 407: Method '%s' is not declared in the class %s or there is no appropriate overload\n";
+   constexpr auto wrnMsgUnknownFunction         = "\n%s(%d:%d): warning 408: 'function' message is not declared in the object '%s' or there is no appropriate overload\n";
+   constexpr auto wrnMsgUnknownDefConstructor   = "\n%s(%d:%d): warning 409: Explicit constructor is not defined in the object\n";
+   constexpr auto wrnMsgCallingItself           = "\n%s(%d:%d): warning 410: Calling itself can lead to short-circuiting\n";
+   constexpr auto wrnMsgAssigningNillable       = "\n%s(%d:%d): warning 411: Assinging nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
+   constexpr auto wrnMsgReturningNillable       = "\n%s(%d:%d): warning 412: Returning nillable expression can lead to nil reference exception.\nPlease use nil-coalescing operators\n";
+   constexpr auto wrnMsgNillableTarget          = "\n%s(%d:%d): warning 413: Sending a message to a nillable object can lead to nil reference exception.\nPlease use nil-coalescing operators or check if the value is not nil\n";
+   constexpr auto wrnMsgNillableRedefined       = "\n%s(%d:%d): warning 414: The method nullable signature mismatches with the previously declared one\n";
+   constexpr auto wrnMsgNillableOutputRedefined = "\n%s(%d:%d): warning 415: The method nullable attribute of an output type mismatches with the previously declared one\n";
+   constexpr auto wrnMsgCannotBeNil             = "\n%s(%d:%d): warning 416: The object %s cannot be nil\n";
+   constexpr auto wrnMsgUnknownRedirectMethod   = "\n%s(%d:%d): warning 417: '%s' - the target class does not contain the declaration of the message '%s' or an appropriate overload\n";
+
+   constexpr auto wrnMsgTypeInherited           = "\n%s(%d:%d): warning 420: Type attribute is inherited\n";
+   constexpr auto wrnMsgDuplicateInclude        = "\n%s(%d:%d): warning 425: '%s': duplicate inclusion\n";
+   constexpr auto wrnMsgUnknownTypecast         = "\n%s(%d:%d): warning 426: typecasting routine cannot be found\n";
+   constexpr auto wrnMsgUnsupportedOperator     = "\n%s(%d:%d): warning 427: operator handler is not defined for %s\n";
+   constexpr auto wrnMsgUnassignedVariable      = "\n%s(%d:%d): warning 428: an unassigned variable - '%s'\n";
+   constexpr auto wrnMsgLessAccessible          = "\n%s(%d:%d): warning 429: the returning type is less accessible than '%s'\n";
+   constexpr auto wrnMsgUnknownModule           = "\n%s(%d:%d): warning 430: Unknown module '%s'\n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "\nwarning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "\nwarning 501: invalid or unknown config file %s\n";
    constexpr auto wrnMsgInvalidPrjCollection = "\nwarning 502: invalid or unknown project collection file %s\n";
+   constexpr auto wrnMsgInvalidTemplateName  = "\nwarning 503: invalid or unknown template %s\n";
 
    constexpr auto errMsgCommandSetAbsent     = "\ninternal error 600: command set is not defined for %x\n";
    constexpr auto errMsgReadOnlyModule       = "\ninternal error 601: read-only module\n";
@@ -118,19 +127,22 @@ namespace elena_lang
    constexpr auto errMsgNotImplemented       = "\nNot implemented error\n";
    constexpr auto errMsgCorruptedVMT         = "\nVMT structure is corrupt\n";
    constexpr auto errMsgMissingNamespace     = "\nInvalid project structure - missing namespace\n";
+   constexpr auto errMsgNotSupportedPlatform = "\nThe specified platform %s is not supported for this environment\n";
 
    constexpr auto errMssgFailedMemoryAllocation = "\nnFatal error: cannot allocate the memory\n";
 
-   constexpr auto infoMsgNewMethod           = "\ninfo 701:   new method %s\n";
-   constexpr auto infoMsgCurrentMethod       = "\ninfo 702:   compiling method %s\n";
-   constexpr auto infoMsgCurrentClass        = "\ninfo 703: compiling class %s\n";
-   constexpr auto infoMsgAbstractMetod       = "\ninfo 704:   abstract method %s\n";
-   constexpr auto infoMssgMixedUpVariadic    = "\ninfo 705:   mixed-up variadic method %s\n";
-   constexpr auto infoMsgUnknownMessage      = "\ninfo 706:   unhandled message: %s\n";
-   constexpr auto infoMsgTargetClass         = "info 707:   target class: %s\n";
-   constexpr auto infoMsgScopeMethod         = "info 708:   in the method: %s\n";
-   constexpr auto infoMssgExptectedType      = "\ninfo 709: the expected type is %s, but the actual type is %s\n";
+   constexpr auto infoMsgNewMethod              = "\ninfo 701:   new method %s\n";
+   constexpr auto infoMsgCurrentMethod          = "\ninfo 702:   compiling method %s\n";
+   constexpr auto infoMsgCurrentClass           = "\ninfo 703: compiling class %s\n";
+   constexpr auto infoMsgAbstractMetod          = "\ninfo 704:   abstract method %s\n";
+   constexpr auto infoMssgMixedUpVariadic       = "\ninfo 705:   mixed-up variadic method %s\n";
+   constexpr auto infoMsgUnknownMessage         = "\ninfo 706:   unhandled message: %s\n";
+   constexpr auto infoMsgTargetClass            = "info 707:   target class: %s\n";
+   constexpr auto infoMsgScopeMethod            = "info 708:   in the method: %s\n";
+   constexpr auto infoMssgExptectedType         = "\ninfo 709: the expected type is %s, but the actual type is %s\n";
    constexpr auto infoMsgInternalDefConstructor = "\ninfo 710: default constructor cannot be internal\n";
+   constexpr auto infoMsgMessageInfo            = "\ninfo 711:  message: %s\n";
+   constexpr auto infoMsgSourceClass            = "info 712:   source class: %s\n";
 
 } // _ELENA_
 

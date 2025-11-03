@@ -14,6 +14,9 @@
 
 namespace elena_lang
 {
+   DISABLE_WARNING_PUSH
+   DISABLE_WARNING_UNINITIALIZED_FIELD
+
    struct CheckMethodResult
    {
       mssg_t      message;
@@ -24,6 +27,7 @@ namespace elena_lang
       bool        stackSafe;
       bool        withVariadicDispatcher;
       bool        withCustomDispatcher;
+      bool        throwOp;
       int         nillableArgs;
       mssg_t      byRefHandler;
 
@@ -46,6 +50,8 @@ namespace elena_lang
          return variableOne || variadicOne || byRefOne || outRefOne || mssgNameLiteral || newOp || typecastOne;
       }
    };
+
+   DISABLE_WARNING_POP
 
    typedef CachedList<Pair<mssg_t, ref_t>, 10> VirtualMethods;
 
@@ -116,7 +122,7 @@ namespace elena_lang
       bool validateAutoType(ModuleScopeBase& scope, TypeInfo& typeInfo);
 
       bool isTryDispatchAllowed(ModuleScopeBase& scope, mssg_t message);
-      mssg_t defineTryDispatcher(ModuleScopeBase& scope, mssg_t message);
+      mssg_t defineTryDispatcher(ModuleScopeBase& scope/*, mssg_t message*/);
       ref_t defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef);
 
       bool isRole(ClassInfo& info);
@@ -147,7 +153,7 @@ namespace elena_lang
       bool isClosedClass(ClassInfo& info);
       bool isClosedClass(ModuleScopeBase& scope, ref_t reference);
 
-      bool isMultiMethod(ClassInfo& info, MethodInfo& methodInfo);
+      bool isMultiMethod(/*ClassInfo& info, */MethodInfo& methodInfo);
 
       bool isValidOp(int operatorId, const int* validOperators, size_t len);
 
@@ -191,7 +197,7 @@ namespace elena_lang
 
       mssg_t retrieveDynamicConvertor(ModuleScopeBase& scope, ref_t targetRef);
 
-      ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope, ustr_t ns, 
+      ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope/*, ustr_t ns*/,
          ref_t targetRef, TypeInfo sourceInfo, bool directConversion);
 
       bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
@@ -207,7 +213,7 @@ namespace elena_lang
          CheckMethodResult& result);
 
       mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, bool selfCall, int& nillableArgs);
-      mssg_t resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference, int& nillableArgs);
+      mssg_t resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference/*, int& nillableArgs*/);
 
       void injectOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, ClassInfo& info, ref_t classRef);
       void injectMethodOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint callType,
@@ -223,9 +229,9 @@ namespace elena_lang
          ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall);
 
       virtual ref_t resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern,
-         ref_t signatureRef, ustr_t ns, ExtensionMap* outerExtensionList);
+         ref_t signatureRef, /*ustr_t ns, */ExtensionMap* outerExtensionList);
       virtual ref_t resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, 
-         ustr_t ns, size_t argumentLen, ref_t* arguments, ExtensionMap* outerExtensionList);
+         /*ustr_t ns, */size_t argumentLen, ref_t* arguments, ExtensionMap* outerExtensionList);
 
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared);
 

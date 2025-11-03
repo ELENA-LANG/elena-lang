@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86
-//                                                 (C)2021-2022, by Aleksey Rakov
+//                                                 (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -19,7 +19,7 @@ void X86JITCompiler :: prepare(
    ImageProviderBase* imageProvider, 
    ReferenceHelperBase* helper,
    LabelHelperBase*,
-   JITSettings settings,
+   ProcessSettings& settings,
    bool virtualMode)
 {
    X86LabelHelper lh;
@@ -29,12 +29,12 @@ void X86JITCompiler :: prepare(
    JITCompiler32::prepare(loader, imageProvider, helper, &lh, settings, virtualMode);
 }
 
-void X86JITCompiler :: writeImm9(MemoryWriter* writer, int value, int type)
+void X86JITCompiler :: writeImm9(MemoryWriter*/* writer*/, int/* value*/, int/* type*/)
 {
    throw InternalError(errNotImplemented);
 }
 
-void X86JITCompiler :: writeImm12(MemoryWriter* writer, int value, int type)
+void X86JITCompiler :: writeImm12(MemoryWriter*/* writer*/, int/* value*/, int/* type*/)
 {
    throw InternalError(errNotImplemented);
 }

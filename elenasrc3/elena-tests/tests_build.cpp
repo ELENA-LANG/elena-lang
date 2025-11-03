@@ -54,6 +54,10 @@
 * --------------------
 * 
 * ByteArrayOp
+* -----------
+* 
+* IntermediateVar
+* ---------------
 */
 
 
@@ -93,6 +97,16 @@ TEST_F(BTOptimization2, BuildTest)
 TEST_F(BTOptimization4, BuildTest)
 {
    runBuildTest();
+}
+
+TEST_F(BTOptimization12, BuildTest)
+{
+   runBuildTest(true);
+}
+
+TEST_F(BTOptimization12_2, BuildTest)
+{
+   runBuildTest(true);
 }
 
 TEST_F(StructAlignment, BuildTest)
@@ -162,6 +176,11 @@ TEST_F(ByteArrayOperation, BuildTest)
 }
 
 TEST_F(ByteArrayOperation2, BuildTest)
+{
+   runTest();
+}
+
+TEST_F(IntermediateVar, BuildTest)
 {
    runTest();
 }

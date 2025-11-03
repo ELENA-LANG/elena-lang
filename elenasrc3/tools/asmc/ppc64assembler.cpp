@@ -1358,7 +1358,6 @@ void PPC64Assembler :: compileLFIWAX(ScriptToken& tokenInfo, MemoryWriter& write
 
    checkComma(tokenInfo);
 
-   int d = 0;
    PPCOperand rb = readRegister(tokenInfo, ASM_INVALID_SOURCE);
 
    if (frt.isFPR() && rb.isGPR()) {
@@ -1953,7 +1952,7 @@ void PPC64Assembler::compileDoubleField(ScriptToken& tokenInfo, MemoryWriter& wr
    else throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
 }
 
-bool PPC64Assembler :: compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer)
+bool PPC64Assembler :: compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope&)
 {
    if (tokenInfo.compare("addi")) {
       compileADDI(tokenInfo, writer);
@@ -2128,7 +2127,7 @@ bool PPC64Assembler :: compileIOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
    return true;
 }
 
-bool PPC64Assembler :: compileJOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+bool PPC64Assembler :: compileJOpCode(ScriptToken&/* tokenInfo*/, MemoryWriter&/* writer*/, LabelScope&/* labelScope*/)
 {
    return false;
 }

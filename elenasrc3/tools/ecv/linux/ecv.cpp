@@ -12,7 +12,15 @@
 
 using namespace elena_lang;
 
+#if defined(__FreeBSD__)
+
+constexpr auto DEFAULT_CONFIG       = "/usr/local/etc/elena/templates/lib60.config";
+
+#else
+
 constexpr auto DEFAULT_CONFIG       = "/etc/elena/templates/lib60.config";
+
+#endif
 
 #if defined(__x86_64__)
 
@@ -128,7 +136,7 @@ int main(int argc, char* argv[])
       if(!viewer.load(*path)) {
          consoleHelper.printPath(ECV_MODULE_NOTLOADED, path.str());
 
-         return -1;
+         return EXIT_FAILURE;
       }
    }
    else {
@@ -136,7 +144,7 @@ int main(int argc, char* argv[])
       if (!viewer.loadByName(*arg)) {
          consoleHelper.printPath(ECV_MODULE_NOTLOADED, argv[1]);
 
-         return -1;
+         return EXIT_FAILURE;
       }
    }
 

@@ -159,7 +159,7 @@ namespace elena_lang
       }
 
       TextViewModelBase(TextViewSettings settings)
-         : fontInfo(10), settings(settings)
+         : settings(settings), fontInfo(10)
       {
          this->_currentView = nullptr;
          this->lineNumbersVisible = true; // !! temporal hard-coded
@@ -206,6 +206,7 @@ namespace elena_lang
 
       virtual bool copyToClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
       virtual void pasteFromClipboard(TextViewModelBase* model, ClipboardBase* clipboard) = 0;
+      virtual void pasteFromClipboard(TextViewModelBase* model, const_text_t text) = 0;
 
       virtual void selectWord(TextViewModelBase* model) = 0;
       virtual void selectAll(TextViewModelBase* model) = 0;

@@ -101,7 +101,7 @@ ref_t ByteCodeAssembler :: readReference(ScriptToken& tokenInfo, bool skipRead)
       return 0;
    }
    else if (tokenInfo.compare("terminator")) {
-      return -1;
+      return INVALID_REF;
    }
    else if (tokenInfo.compare("class")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);

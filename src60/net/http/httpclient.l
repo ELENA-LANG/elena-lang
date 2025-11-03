@@ -1,64 +1,6 @@
 import system'net;
 import system'threading;
 
-public class SocketFactory
-{
-   static object _sync := new object();
-
-   static INetSocketFactory _httpFactory;
-   static INetSocketFactory _httpsFactory;
-
-   static constructor()
-   {
-      _httpFactory := NativeSocketFactory.create();
-   }
-
-   static assignHttpsFactory(INetSocketFactory factory)
-   {
-      lock(_sync) {
-         _httpsFactory := factory;
-      }
-   }
-
-   static assignHttpFactory(INetSocketFactory factory)
-   {
-      lock(_sync) {
-         _httpFactory := factory;
-      }
-   }
-
-   static INetSocket openSocket(Uri uri)
-   {
-      INetSocket socket := nil;
-      string scheme := uri.Scheme;
-      short port := uri.Port;
-      scheme =>
-         "http" : 
-         {
-            if (port==0)
-               port := 80;
-
-            lock(_sync) {
-               socket := _httpFactory.openSocket(uri.Host, port);
-            }
-         } 
-         "https" : 
-         {
-            if (port==0)
-               port := 443;
-
-            lock(_sync) {
-               socket := _httpsFactory.openSocket(uri.Host, port);
-            }
-         }
-         ! : {
-            InvalidArgumentException.raise("uri");
-         };
-      
-      ^ socket 
-   }
-}
-
 public class HttpClient
 {      
    string      _host;
@@ -98,7 +40,7 @@ public class HttpClient
       string headers := _headers.Value;
       string request := $"GET {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
 
-      :await stream.writeAsync(request);
+      :await stream.writeStringAsync(request);
 
       HttpResponse response := HttpResponse.assign(stream);
 
@@ -127,7 +69,7 @@ public class HttpClient
       
       string request := $"POST {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"Content-Length:{length}"$13$10"Content-Type:application/x-www-form-urlencoded"$13$10"{headers}"$13$10"{content}";
 
-      :await stream.writeAsync(request);
+      :await stream.writeStringAsync(request);
 
       HttpResponse response := HttpResponse.assign(stream);
 
@@ -147,7 +89,7 @@ public class HttpClient
       string headers := _headers.Value;
       string request := $"GET {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"{headers}"$13$10;
 
-      stream.write(request);
+      stream.writeString(request);
 
       HttpResponse response := HttpResponse.assign(stream);
 
@@ -180,7 +122,7 @@ public class HttpClient
       
       string request := $"POST {path} HTTP/1.1"$13$10"Host:{_host}"$13$10"Connection:close"$13$10"Content-Length:{length}"$13$10"Content-Type:application/x-www-form-urlencoded"$13$10"{headers}"$13$10"{content}";
 
-      stream.write(request);
+      stream.writeString(request);
 
       HttpResponse response := HttpResponse.assign(stream);
 

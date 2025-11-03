@@ -67,10 +67,31 @@ namespace elena_lang
       void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) override;
 
    public:
-      MachOLinker64(ErrorProcessorBase* errorProcessor/*, ImageFormatter* imageFormatter*/)
-         : MachOLinker(errorProcessor)
+      MachOLinker64(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
+         : MachOLinker(errorProcessor, imageFormatter)
       {
-         _imageFormatter = imageFormatter;
+      }
+   };
+
+   // --- MachOAmd64Linker ---
+   class MachOAmd64Linker : public MachOLinker64
+   {
+   protected:
+      CPUType getCPUType() override
+      {
+         return CPUType::x86;
+      }
+
+      CPUSubType getCPUSubType() override
+      {
+         return CPUSubType::X86_ALL;
+      }
+
+   public:
+      MachOAmd64Linker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
+         : MachOLinker64(errorProcessor, imageFormatter)
+      {
+
       }
    };
 }

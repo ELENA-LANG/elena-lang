@@ -1,4 +1,3 @@
-import system;
 import system'io;
 import system'text;
 import system'threading;
@@ -7,13 +6,24 @@ public class NetworkStream : Stream
 {
    INetSocket  _socket;
    bool        _ownStream;
-   byte[]      _buffer; 
+   int         _timeout;
+   int         _counter;
 
    constructor(INetSocket socket)
    {
       _socket := socket;
       _ownStream := false;
-      _buffer := new byte[](512);
+      
+      _timeout := 100;
+      _counter := 2;
+   }
+
+   constructor()
+   {
+      _ownStream := false;
+      
+      _timeout := 300;
+      _counter := 3;
    }
 
    constructor assign(INetSocket socket, bool socketStream)
@@ -22,13 +32,14 @@ public class NetworkStream : Stream
       _ownStream := socketStream;
    }
 
+   constructor assign(NativeSocket socket, bool socketStream)
+      <= assign(NetSocket.assign(socket), socketStream);
+
    int Length
    {
       get()
       {
-         NotSupportedException.raise();
-
-         ^ 0 // to make compiler happy
+         ^ NotSupportedException.raise();
       }
    }
      
@@ -36,9 +47,7 @@ public class NetworkStream : Stream
    {
       get()
       {
-         NotSupportedException.raise();
-
-         ^ 0 // to make compiler happy
+         ^ NotSupportedException.raise();
       }
          
       set(retVal)
@@ -50,6 +59,20 @@ public class NetworkStream : Stream
    int read(byte[] dump, int length)
       = _socket.read(dump, length);
      
+   indexed internal Task<int> readAsync(byte[] dump, int length)
+      = _socket.readAsync(dump, length);
+
+   indexed internal Task<int> readAsync(MemoryBuffer buffer)
+      = ::Task<int>.run(
+         { 
+            byte dump[512];            
+            int received := _socket.read(dump, 512);
+            
+            buffer.write(0, received, dump);
+         
+            ^ received
+         });
+
    int write(byte[] dump, int length)
    {
       int retVal := _socket.write(dump, length);
@@ -57,62 +80,29 @@ public class NetworkStream : Stream
       ^ retVal
    }
      
-   indexed internal Task<int> readAsync(byte[] dump, int length)
-      = _socket.readAsync(dump, length);
-     
    indexed internal Task<int> writeAsync(byte[] dump, int length)
       = _socket.writeAsync(dump, length);
      
-   indexed internal bool isDataAvailable
-      = _socket.AvailableToRead;
-
-   indexed async internal Task<int> readAsync(MemoryBuffer buffer, int length)
+   indexed get internal bool isDataAvailable()
    {
-      int total_received := 0;
-      int total := length;
-      while (total > 0) {
-         int size := 512;
-         if (size > length)
-            size := length;
+//      ^ _socket.AvailableToRead
 
-         int received := :await readAsync(_buffer, size);
-         if (received > 0) {
-            total_received += received;
-            total -= received;
-
-            buffer.write(0, received, _buffer);
-         }
-         else :break;
+      if (_socket.AvailableToRead) { ^ true; };
+         
+      int index := _counter;
+      while (index > 0) {
+         Thread.sleep(_timeout);
+         index--;
+         
+         if (_socket.AvailableToRead) { ^ true; };
       };
-
-      ^ total_received;
+      
+      ^ false;
    }
 
-   indexed internal int readToBuffer(MemoryBuffer buffer, int length)
+   indexed async internal Task writeStringAsync(string s)
    {
-      int total_received := 0;
-      int total := length;
-      while (total > 0) {
-         int size := 512;
-         if (size > length)
-            size := length;
-
-         int received := read(_buffer, size);
-         if (received > 0) {
-            total_received += received;
-            total -= received;
-
-            buffer.write(0, received, _buffer);
-         }
-         else :break;
-      };
-
-      ^ total_received;
-   }
-
-   indexed async internal Task writeAsync(string s)
-   {
-      byte tmp[1024];
+      byte[] tmp := new byte[](1024);
       int len := s.Length;
       int index := 0;
       while (len > 0) {
@@ -150,16 +140,32 @@ public class NetworkStream : Stream
       };
    }
 
-   indexed async internal Task<string> readAsStringAsync()
+   indexed async internal Task reaAllAsync(MemoryBuffer buffer, bool nonBlocking)
    {
+      bool skipCheck := !nonBlocking;
+      
+      while (true) {
+         int received := 0;
+         if (skipCheck || self.isDataAvailable)
+            received := :await readAsync(buffer);
+         
+         if (received == 0)
+            :break;         
+      };
+   }
+
+   indexed async internal Task<string> readAsStringAsync(bool nonBlocking)
+   {
+      bool skipCheck := !nonBlocking;
+      
       MemoryBuffer buffer := MemoryBuffer.allocate();
-
-      byte tmp[1024];
-      int read := :await self.readAsync(tmp, 1024);
-      while (read > 0) {
-         buffer.write(0, read, tmp);
-
-         read := :await self.readAsync(tmp, 1024);
+      while (true) {
+         int received := 0;
+         if (skipCheck || self.isDataAvailable)
+            received := :await readAsync(buffer);
+         
+         if (received == 0)
+            :break;         
       };
 
       ^ UTF8Encoding.toString(0, buffer.Length, buffer.Value);
@@ -171,8 +177,7 @@ public class NetworkStream : Stream
          InvalidOperationException.raise();
 
       _socket.close()
-   }
-   
+   }   
 }
 
 public extension AsyncStreamExtension : NetworkStream
@@ -183,20 +188,20 @@ public extension AsyncStreamExtension : NetworkStream
    Task<int> writeAsync(byte[] dump, int length)
       = self.writeAsync(dump, length);
 
-   Task writeAsync(string s)
-      = self.writeAsync(s);
+   Task writeStringAsync(string s)
+      = self.writeStringAsync(s);
 
-   write(string s)
+   writeString(string s)
       = self.writeString(s);
 
-   Task<string> readAsStringAsync()
-      = self.readAsStringAsync();
+   Task<int> readAsync(MemoryBuffer buffer)
+      = self.readAsync(buffer);
 
-   Task<int> readAsync(MemoryBuffer buffer, int length)
-      = self.readAsync(buffer, length);
+   Task readAllAsync(MemoryBuffer buffer, bool nonBlocking)
+      = self.readAllAsync(buffer, nonBlocking);
 
-   int readToBuffer(MemoryBuffer buffer, int length)
-      = self.readToBuffer(buffer, length);
+   Task<string> readAllAsStringAsync(bool nonBlocking)
+      = self.readAllAsStringAsync(nonBlocking);
 
    bool isDataAvailable
       = self.isDataAvailable;

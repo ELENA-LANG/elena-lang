@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      WinAPI Splitter class implementation
-//                                              (C)2022-2024, by Aleksey Rakov
+//                                              (C)2022-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "winsplitter.h"
@@ -93,12 +93,12 @@ elena_lang::Rectangle Splitter :: getRectangle()
       return {};
    }
 
-   auto rec = _client->getRectangle();
+   auto rect = _client->getRectangle();
 
    if (!_vertical) {
-      return { _rect.topLeft.x, _rect.topLeft.y, rec.width(), rec.height() + _minHeight };
+      return { rect.topLeft.x, rect.topLeft.y - _minHeight, rect.width(), rect.height() + _minHeight };
    }
-   else return { _rect.topLeft.x, _rect.topLeft.y, rec.width() + _minWidth, rec.height() };
+   else return { rect.topLeft.x, rect.topLeft.y, rect.width() + _minWidth, rect.height() };
 }
 
 void Splitter :: setRectangle(elena_lang::Rectangle rec)
@@ -110,22 +110,18 @@ void Splitter :: setRectangle(elena_lang::Rectangle rec)
    int height = rec.height();
 
    if (!_vertical) {
-      if (height > _minHeight) {
-         height -= _minHeight;
-      }
-      else height = 1;
+      if (height < _minHeight)
+         height = _minHeight;
 
-      _client->setRectangle({ rec.topLeft.x, rec.topLeft.y + _minHeight, width, height });
+      _client->setRectangle({ rec.topLeft.x, rec.topLeft.y + _minHeight, width, height - _minHeight });
       ControlBase::setRectangle({ rec.topLeft.x, rec.topLeft.y, width, _minHeight });
    }
    else {
-      if (width > _minWidth) {
-         width -= _minWidth;
-      }
-      else width = 1;
+      if (width < _minWidth)
+         width = _minWidth;
 
-      _client->setRectangle({ rec.topLeft.x, rec.topLeft.y, width, height });
-      ControlBase::setRectangle({ rec.topLeft.x + _client->getRectangle().width(), rec.topLeft.y, _minWidth, height });
+      _client->setRectangle({ rec.topLeft.x, rec.topLeft.y, width - _minWidth, height });
+      ControlBase::setRectangle({ rec.topLeft.x + width - _minWidth, rec.topLeft.y, _minWidth, height});
    }
 }
 
@@ -134,6 +130,13 @@ void Splitter :: refresh()
    _client->refresh();
 
    ControlBase::refresh();
+}
+
+void Splitter :: invalidate()
+{
+   _client->invalidate();
+
+   ControlBase::invalidate();
 }
 
 void Splitter :: onButtonDown(Point point, bool kbShift)

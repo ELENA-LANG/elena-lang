@@ -331,7 +331,7 @@ int parseBuildKeyRules(FileEncoding encoding, path_t path)
 
       printf("\nCannot create a file %s\n", pathStr.str());
 
-      return -1;
+      return EXIT_FAILURE;
    }
 
    trie.save(&file);
@@ -358,20 +358,20 @@ int main(int argc, char* argv[])
       }
       else {
          printf(OG_HELP);
-         return  -1;
+         return EXIT_FAILURE;
       }
    }
    catch (SyntaxError e)
    {
       printf(e.message, e.lineInfo.row, e.lineInfo.column);
 
-      return -1;
+      return EXIT_FAILURE;
    }
    catch (...)
    {
       printf(OG_FATAL);
 
-      return -1;
+      return EXIT_FAILURE;
    }
 
    return retVal;

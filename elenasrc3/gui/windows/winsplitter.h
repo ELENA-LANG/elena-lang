@@ -48,6 +48,7 @@ namespace elena_lang
       void setRectangle(Rectangle rec) override;
 
       void refresh() override;
+      void invalidate() override;
 
       LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam) override;
 

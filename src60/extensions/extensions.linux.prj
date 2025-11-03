@@ -24,13 +24,28 @@
         <output>../../lib60_64</output>
      </project>
   </platform>
+  <platform key="Win_x86">
+     <project>
+        <output>../../lib60_win</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
+  </platform>
+  <platform key="Win_x64_BSD">
+     <project>
+        <output>../../lib60_64_win</output>
+     </project>
+  </platform>
   <project>
      <namespace>extensions</namespace>
      <template>lib60</template>
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.6.2</version>
+    <version>6.8.0</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -42,7 +57,6 @@
         <include>tests.l</include>
         <include>random.l</include>
         <include>app.l</include>
-        <include>lnx_args.l</include>
         <include>text/strings.l</include>
         <include>text/words.l</include>
         <include>math/functions.l</include>
@@ -54,6 +68,14 @@
      </module>
      <module name="scripting">
        <include>scripting/interpreter.l</include>
+     </module>
+     <module name="threading">
+       <include>threading/threading.l</include>
+       <include>threading/console.l</include>
+     </module>
+     <module name="runtime">
+       <include>runtime/systemmonitor.l</include>
+       <include>runtime/package.l</include>
      </module>
   </files>
 </configuration>

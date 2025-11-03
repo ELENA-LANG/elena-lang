@@ -1,9 +1,13 @@
+*
+!*.*
+!*/
 /lib60
 /lib60_64
 /dat/api2html
 /bin
 /doc
 /tests60
+/build
 /elenasrc3/packages
 *.exe
 *.exp
@@ -20,5 +24,7 @@
 *.user
 *.pdb
 *.filters
+*.layout
+*.depend
 /elenasrc3/temp
 .vs/

@@ -8,23 +8,26 @@
 
 using namespace elena_lang;
 
-// --- WindowApp ---
+// --- GtkApp ---
 
-int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent)
+void GtkApp :: on_my_startup()
 {
-   Gtk::Window* window = dynamic_cast<WindowWrapper*>(mainWindow)->getHandle();
+   _appWindow->set_application(_app);
 
-//      if (maximized)
-//         maximize();
-
-   window->show();
-
-   Gtk::Main::run(*window);
-
-   return 0;
+   _appWindow->show();
 }
 
-void WindowApp :: notify(EventBase* event)
+int GtkApp :: run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent)
+{
+   _appWindow = dynamic_cast<WindowWrapper*>(mainWindow)->getHandle();
+
+   if (maximized)
+      _appWindow->maximize();
+
+   return _app->run(_argc, _argv);
+}
+
+void GtkApp :: notify(EventBase* event)
 {
    _eventBroadcaster->sendMessage(event);
 }

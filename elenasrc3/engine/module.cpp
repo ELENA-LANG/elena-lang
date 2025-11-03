@@ -19,7 +19,7 @@ ustr_t AbstractModule :: resolveReference(ref_t reference)
 {
    ustr_t key = _resolvedReferences.get(reference);
    if (key.empty()) {
-      key = _references.retrieve<ref_t>(nullptr, reference, [](ref_t reference, ustr_t key, ref_t current)
+      key = _references.retrieve<ref_t>(nullptr, reference, [](ref_t reference, ustr_t/* key*/, ref_t current)
          {
             return current == reference;
          });
@@ -60,7 +60,7 @@ ref_t AbstractModule :: retrieveSignature(ref_t* references, size_t length, bool
 
 ustr_t AbstractModule :: resolveConstant(ref_t reference)
 {
-   return _constants.retrieve<ref_t>(nullptr, reference, [](ref_t reference, ustr_t key, ref_t current)
+   return _constants.retrieve<ref_t>(nullptr, reference, [](ref_t reference, ustr_t/* key*/, ref_t current)
       {
          return current == reference;
       });
@@ -70,7 +70,7 @@ ustr_t AbstractModule :: resolveAction(ref_t reference, ref_t& signature)
 {
    ref64_t actionRef = _resolvedActions.get(reference);
    if (!actionRef) {
-      actionRef = _actions.retrieve<ref_t>(0ll, reference, [](ref_t reference, ref64_t key, ref_t current)
+      actionRef = _actions.retrieve<ref_t>(0ll, reference, [](ref_t reference, ref64_t/* key*/, ref_t current)
          {
             return current == reference;
          });
@@ -83,7 +83,7 @@ ustr_t AbstractModule :: resolveAction(ref_t reference, ref_t& signature)
 
    ustr_t key = _resolvedActionNames.get(nameRef);
    if (!key) {
-      key = _actionNames.retrieve<ref_t>(DEFAULT_STR, nameRef, [](ref_t reference, ustr_t key, ref_t current)
+      key = _actionNames.retrieve<ref_t>(DEFAULT_STR, nameRef, [](ref_t reference, ustr_t/* key*/, ref_t current)
          {
             return current == reference;
          });
@@ -98,7 +98,7 @@ size_t AbstractModule :: resolveSignature(ref_t signature, ref_t* references)
 {
    ustr_t key = _resolvedActionNames.get(signature);
    if (!key) {
-      key = _actionNames.retrieve<ref_t>(DEFAULT_STR, signature, [](ref_t reference, ustr_t key, ref_t current)
+      key = _actionNames.retrieve<ref_t>(DEFAULT_STR, signature, [](ref_t reference, ustr_t/* key*/, ref_t current)
          {
             return current == reference;
          });
@@ -313,7 +313,7 @@ bool Module :: save(StreamWriter& writer)
 
 // --- ROModule::ROSection ---
 
-bool ROModule::ROSection :: write(pos_t position, const void* s, pos_t length)
+bool ROModule::ROSection :: write(pos_t/* position*/, const void*/* s*/, pos_t/* length*/)
 {
    // should never be called
    throw InternalError(errReadOnlyModule);
@@ -325,7 +325,7 @@ void ROModule::ROSection :: trim(pos_t)
    throw InternalError(errReadOnlyModule);
 }
 
-bool ROModule::ROSection :: insert(pos_t position, const void* s, pos_t length)
+bool ROModule::ROSection :: insert(pos_t/* position*/, const void*/* s*/, pos_t/* length*/)
 {
    // should never be called
    throw InternalError(errReadOnlyModule);
@@ -414,7 +414,7 @@ ref_t ROModule :: mapReference(ustr_t referenceName, bool existing)
    else return _references.get(referenceName);
 }
 
-void ROModule :: mapPredefinedReference(ustr_t referenceName, ref_t reference)
+void ROModule :: mapPredefinedReference(ustr_t/* referenceName*/, ref_t/* reference*/)
 {
    throw InternalError(errReadOnlyModule);
 }

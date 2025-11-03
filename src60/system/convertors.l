@@ -543,8 +543,8 @@ public singleton RealConvertor
 
    real convert(string s)
    {
-      string intPartStr := nil;
-      string decimalPartStr := nil;
+      string intPartStr;
+      string? decimalPartStr := nil;
 
       int index := s.indexOf(0, $46);
       if (index != -1) {
@@ -686,6 +686,10 @@ public singleton StringConvertor
       int n := value;
       if (n < 0)
       {
+         if (n == 80000000h) {
+            ^ convert(-2147483648l, radix);
+         };
+         
          n := 0 - n;
       };   
 

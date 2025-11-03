@@ -286,14 +286,14 @@ EXTERN_DLL_EXPORT void GetGCStatisticsLA(GCStatistics* statistics)
    SystemRoutineProvider::CalcGCStatistics(systemEnv, statistics);
 }
 
-EXTERN_DLL_EXPORT void ResetGCStatisticsLA(GCStatistics* statistics)
+EXTERN_DLL_EXPORT void ResetGCStatisticsLA()
 {
    SystemRoutineProvider::ResetGCStatistics();
 }
 
 BOOL APIENTRY DllMain( HMODULE hModule,
                        DWORD  ul_reason_for_call,
-                       LPVOID lpReserved
+                       LPVOID
                      )
 {
     switch (ul_reason_for_call)

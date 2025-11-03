@@ -183,10 +183,7 @@ void TextViewWindow :: update(bool maxColChanged, bool resized)
 {
    if (_model->isAssigned()) {
       updateVScroller(resized);
-      if (maxColChanged) {
-         updateHScroller(resized);
-      }
-      else updateHScroller(resized);
+      updateHScroller(resized || maxColChanged);
    }
 
    ControlBase::refresh();
@@ -199,7 +196,7 @@ void TextViewWindow :: updateHScroller(bool resized)
       auto docView = _model->DocView();
 
       Point size = _model->DocView()->getSize();
-      int max = docView->getMaxColumn();
+      int max = max(docView->getMaxColumn(), size.x + (size.x >> 2));
       setScrollInfo(SB_HORZ, max - 1, size.x);
    }
    setScrollPosition(SB_HORZ, position);

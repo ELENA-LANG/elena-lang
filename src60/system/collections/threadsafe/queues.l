@@ -1,4 +1,3 @@
-import system;
 import system'collections;
 
 // --- Queue Template ---
@@ -85,7 +84,7 @@ public sealed ConcurrentQueue<T>
    {
       int top := 0;
       int tale := 0;
-      List<T> copy := nil;
+      List<T> copy;
 
       lock(_sync) {
          top := *_top;

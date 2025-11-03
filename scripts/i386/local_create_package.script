@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.7.0.i386-linux
+RELEASE=elena-6.8.0.i386-linux
 
  mkdir -p ../../build/$RELEASE/etc/elena/
  mkdir -p ../../build/$RELEASE/etc/elena/templates/
@@ -22,6 +22,7 @@ RELEASE=elena-6.7.0.i386-linux
  cp ../../dat/og/bt_xrules60.dat ../../build/$RELEASE/usr/share/elena
  cp ../../dat/og/bc_rules60.dat ../../build/$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax60.dat ../../build/$RELEASE/usr/share/elena
+ cp ../../dat/sg/syntax67.dat ../../build/$RELEASE/usr/share/elena
 
  echo copying binaries
 
@@ -36,8 +37,8 @@ RELEASE=elena-6.7.0.i386-linux
 
  cp ../../bin/lib60/*.* ../../build/$RELEASE/usr/lib/elena/lib60/
 
- cp -r ../../examples60 $RELEASE/usr/elena-lang
- cp -r ../../src60 $RELEASE/usr/elena-lang
+ cp -r ../../examples60 ../../build/$RELEASE/usr/elena-lang
+ cp -r ../../src60 ../../build/$RELEASE/usr/elena-lang
 
  mkdir ../../build/$RELEASE/DEBIAN
  cp ./control ../../build/$RELEASE/DEBIAN

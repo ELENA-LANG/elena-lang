@@ -94,9 +94,8 @@ void SystemRoutineProvider :: ExitThread(int exitCode)
 
 #if _M_IX86 || __i386__
 
-LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
+static LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
-   int r = 0;
    switch (ExceptionInfo->ExceptionRecord->ExceptionCode) {
       case EXCEPTION_BREAKPOINT:
       case EXCEPTION_SINGLE_STEP:
@@ -139,17 +138,14 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 
             return EXCEPTION_CONTINUE_EXECUTION;
          }
-         else return EXCEPTION_CONTINUE_SEARCH;
+         return EXCEPTION_CONTINUE_SEARCH;
    }
-
-   return EXCEPTION_CONTINUE_SEARCH;
 }
 
 #elif _M_X64
 
-LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
+static LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 {
-   int r = 0;
    switch (ExceptionInfo->ExceptionRecord->ExceptionCode) {
       case EXCEPTION_BREAKPOINT:
       case EXCEPTION_SINGLE_STEP:
@@ -186,8 +182,6 @@ LONG WINAPI ELENAVectoredHandler(struct _EXCEPTION_POINTERS* ExceptionInfo)
 
          return EXCEPTION_CONTINUE_EXECUTION;
    }
-
-   return EXCEPTION_CONTINUE_SEARCH;
 }
 
 #endif
@@ -236,12 +230,12 @@ void SystemRoutineProvider :: GCSignalStop(void* handle)
 void SystemRoutineProvider :: GCWaitForSignals(size_t count, void* handles)
 {
    if (count != 0)
-      ::WaitForMultipleObjects((DWORD)count, (HANDLE*)handles, -1, -1);
+      ::WaitForMultipleObjects((DWORD)count, (HANDLE*)handles, -1, (DWORD)-1);
 }
 
 void SystemRoutineProvider :: GCWaitForSignal(void* handle)
 {
-   ::WaitForSingleObject((HANDLE)handle, -1);
+   ::WaitForSingleObject((HANDLE)handle, (DWORD)-1);
 }
 
 void SystemRoutineProvider :: GCSignalClear(void* handle)

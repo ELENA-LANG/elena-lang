@@ -1,4 +1,3 @@
-import system;
 import system'text;
 
 public singleton messageBox
@@ -105,7 +104,7 @@ class BaseFileDialog
 
    internal prepare(tagOFNA struct, short[] filters, short[] fileName, int maxFile)
    {
-      struct.lStructSize := $size struct;
+      struct.lStructSize := :sizeof struct;
       struct.hwndOwner := _parent.Handle;
       struct.hInstance := CurrentInstance.Handle;
       struct.lpstrFilter := filters;

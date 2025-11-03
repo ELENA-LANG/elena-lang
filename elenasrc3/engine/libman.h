@@ -39,6 +39,7 @@ namespace elena_lang
 
       ustr_t resolveTemplateWeakReference(ustr_t referenceName, ForwardResolverBase* forwardResolver);
 
+      ModuleBase* resolveTemplateIndirectly(ModuleBase* module, ustr_t templateName, ref_t& reference);
       ModuleBase* resolveModule(ustr_t referenceName, ref_t& reference, bool silentMode, bool debugModule);
       ModuleBase* resolveWeakModule(ustr_t referenceName, ref_t& reference, bool silentMode);
 
@@ -121,6 +122,11 @@ namespace elena_lang
 
             ++it;
          }
+      }
+
+      void removeListener(LibraryLoaderListenerBase* listener)
+      {
+         _listeners.cut(listener);
       }
 
       void loadDistributedSymbols(ModuleBase* module, ustr_t virtualSymbolName, ModuleInfoList& list);

@@ -14,7 +14,7 @@
 namespace elena_lang
 {
 
-#define ELENART_REVISION_NUMBER        0x000C
+#define ELENART_REVISION_NUMBER        0x0010
 
 }
 

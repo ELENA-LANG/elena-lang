@@ -1,0 +1,48 @@
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+
+name: BSD Make Release
+
+on:
+  push:
+    branches: [ "master" ]
+  pull_request:
+    branches: [ "master" ]
+  workflow_dispatch: # Put here!!
+
+permissions: write-all
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    name: FreeBSD release build
+    steps:
+    - uses: actions/checkout@v4
+    - name: Run in FreeBSD
+      id: nightly
+      uses: vmactions/freebsd-vm@v1
+      with:
+        usesh: true
+        sync: rsync
+        run: |
+          make clang_all_amd64
+          cd scripts/bsd.amd64
+          ./local_build_package_amd64.script 
+          ./local_runtests.script
+          ./local_create_package.script
+
+    - name: Set version
+      run: |
+        VER=$(cat VERSION)
+        echo "BUILD_TAG=$VER" >> $GITHUB_ENV
+
+    - name: Upload Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: v${{ env.BUILD_TAG }}
+        draft: false
+        prerelease: true
+        files: |
+          ./build/*tar.xz

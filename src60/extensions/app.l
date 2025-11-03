@@ -1,3 +1,27 @@
+import system'routines;
+
+#if (__project["_Win"]) // Windows
+
+// --- program_arguments ---
+
+public static Program_arguments = 
+    new extensions'text'TokenEnumerator(CommandLine.toString(), new extensions'text'TokenStatemachine()).selectBy::(s => s.trim($34)).toArray();
+
+// obosolete
+public program_arguments = Program_arguments;
+  
+#elif (__project["_Linux"] || __project["_FreeBSD"])
+
+// --- Arguments ---
+
+public static Program_arguments = 
+    CommandLineArguments;
+
+// obosolete
+public program_arguments = Program_arguments;
+
+#endif
+
 // --- ProgramLoop ---
 
 class ProgramLoopImpl

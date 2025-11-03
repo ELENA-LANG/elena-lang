@@ -2,13 +2,13 @@
 <CodeBlocks_project_file>
 	<FileVersion major="1" minor="6" />
 	<Project>
-		<Option title="elenart" />
+		<Option title="elenavm" />
 		<Option pch_mode="2" />
 		<Option compiler="gcc" />
 		<Build>
 			<Target title="Debug32">
-				<Option output="../../../bin/elenart60" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../temp/elenart60/" />
+				<Option output="../../../bin/elenavm" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../temp/elenavm/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -23,8 +23,8 @@
 				</Linker>
 			</Target>
 			<Target title="Release32">
-				<Option output="../../../bin/elenart60" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../temp/release/elenart60/" />
+				<Option output="../../../bin/elenavm60" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../temp/release/elenavm60/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -41,8 +41,8 @@
 				</Linker>
 			</Target>
 			<Target title="Debug64">
-				<Option output="../../../bin/elenart60_64" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../temp/elenart60_64/" />
+				<Option output="../../../bin/elenavm60_64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../temp/elenavm60_64/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -58,8 +58,8 @@
 				</Linker>
 			</Target>
 			<Target title="Release64">
-				<Option output="../../../bin/elenart60_64" prefix_auto="1" extension_auto="1" />
-				<Option object_output="../temp/release/elenart60_64/" />
+				<Option output="../../../bin/elenavm60_64" prefix_auto="1" extension_auto="1" />
+				<Option object_output="../temp/release/elenavm60_64/" />
 				<Option type="3" />
 				<Option compiler="gcc" />
 				<Option createDefFile="1" />
@@ -82,11 +82,58 @@
 			<Add directory="../../engine" />
 			<Add directory="../../common" />
 		</Compiler>
+		<Unit filename="../../common/config.cpp" />
+		<Unit filename="../../common/config.h" />
+		<Unit filename="../../common/dump.cpp" />
+		<Unit filename="../../common/dump.h" />
+		<Unit filename="../../common/files.cpp" />
+		<Unit filename="../../common/files.h" />
+		<Unit filename="../../common/paths.cpp" />
+		<Unit filename="../../common/paths.h" />
+		<Unit filename="../../common/ustring.cpp" />
+		<Unit filename="../../common/ustring.h" />
+		<Unit filename="../../common/xmltree.cpp" />
+		<Unit filename="../../common/xmltree.h" />
+		<Unit filename="../../engine/bytecode.cpp" />
+		<Unit filename="../../engine/bytecode.h" />
+		<Unit filename="../../engine/codescope.cpp" />
+		<Unit filename="../../engine/codescope.h" />
 		<Unit filename="../../engine/elenamachine.cpp" />
 		<Unit filename="../../engine/elenamachine.h" />
+		<Unit filename="../../engine/gcroutines.cpp" />
+		<Unit filename="../../engine/jitcompiler.cpp" />
+		<Unit filename="../../engine/jitcompiler.h" />
+		<Unit filename="../../engine/jitlinker.cpp" />
+		<Unit filename="../../engine/jitlinker.h" />
+		<Unit filename="../../engine/libman.cpp" />
+		<Unit filename="../../engine/libman.h" />
+		<Unit filename="../../engine/linux/elfhelper.cpp" />
+		<Unit filename="../../engine/linux/elfhelper.h" />
+		<Unit filename="../../engine/linux/lnxconsts.h" />
 		<Unit filename="../../engine/linux/lnxroutines.cpp" />
-		<Unit filename="../elenartmachine.cpp" />
-		<Unit filename="../elenartmachine.h" />
+		<Unit filename="../../engine/linux/presenter.cpp" />
+		<Unit filename="../../engine/linux/presenter.h" />
+		<Unit filename="../../engine/module.cpp" />
+		<Unit filename="../../engine/module.h" />
+		<Unit filename="../../engine/rtmanager.cpp" />
+		<Unit filename="../../engine/rtmanager.h" />
+		<Unit filename="../../engine/section.cpp" />
+		<Unit filename="../../engine/section.h" />
+		<Unit filename="../../engine/x86_64compiler.cpp" />
+		<Unit filename="../../engine/x86_64compiler.h" />
+		<Unit filename="../../engine/x86compiler.cpp" />
+		<Unit filename="../../engine/x86compiler.h" />
+		<Unit filename="../../engine/x86helper.cpp" />
+		<Unit filename="../../engine/x86helper.h" />
+		<Unit filename="../../engine/xmlprojectbase.cpp" />
+		<Unit filename="../../engine/xmlprojectbase.h" />
+		<Unit filename="../elenavmmachine.cpp" />
+		<Unit filename="../elenavmmachine.h" />
+		<Unit filename="../linux/elenalnxvmachine.cpp" />
+		<Unit filename="../linux/elenalnxvmachine.h" />
+		<Unit filename="../linux/elenavm.h" />
+		<Unit filename="../linux/lnxsection.cpp" />
+		<Unit filename="../linux/lnxsection.h" />
 		<Unit filename="../linux/main.cpp" />
 		<Extensions />
 	</Project>

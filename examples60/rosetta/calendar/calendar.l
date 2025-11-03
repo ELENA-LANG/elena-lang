@@ -1,165 +1,214 @@
+// --- auxiliary code to simulate UPPERCASE code ---
+
+import extensions;
 import system'text;
 import system'routines;
 import system'calendar;
-import extensions;
 import extensions'routines;
+
+public program = PROGRAM;
+
+CONSOLE = Console;
+
+abstract INDEXERCLASS : interface<Indexer>
+{ 
+   abstract ISAVAILABLE(); 
+   abstract GETINDEX();
+   abstract SETINDEX(INDEX);
+   abstract NEWINDEX(OFFS);
+   abstract GETVALUE();
+   abstract GETLENGTH();
+   
+   bool Available = ISAVAILABLE();   
+   int Index
+   {
+      get() = GETINDEX();
+         
+      set(int INDEX)
+      {
+         SETINDEX(INDEX);
+      }
+   }      
+   appendIndex(int OFFS) { this self.Index := NEWINDEX(OFFS) }   
+   set Value(o) { NotSupportedException.raise() }
+   get Value() = GETVALUE();
+   get int Length() { ^ GETLENGTH() }
+}
+
+PARALLELENUMERATOR(N) { ^ ParallelEnumerator.new(N) }
+
+NEWDATE(Y,M,D) { ^ Date.new(Y,M,D) }
+NEWTEXTBUILDER() { ^ new TextBuilder() }
+
+GETMONTH(D) { ^ D.Month }
+GETDAYOFWEEK(D) { ^D.DayOfWeek }
+GETDAYSTR(D) { ^ D.Day.toPrintable() }
+
+READCHAR() { Console.readChar() }
+READINT(PROMPT) { ^ Console.write(PROMPT).readLine().toInt() }
+
+WRITEPADDING(OUTPUT,S,SPACER,LEN) { OUTPUT.writePadding(S,SPACER,LEN) }
+WRITEPADDINGLEFT(OUTPUT,S,SPACER,LEN) { OUTPUT.writePaddingLeft(S,SPACER,LEN) }
+WRITELINE(OUTPUT) { OUTPUT.writeLine() }
+WRITE(OUTPUT,S) { OUTPUT.write(S) }
+WRITEARGS(OUTPUT,S1,S2) { OUTPUT.print(S1, S2) }
+WRITECOPIES(OUTPUT,S,N) { OUTPUT.writeCopies(S,N) }
+
+ALLOCATE(COUNT) { ^ Array.allocate(COUNT) }
+
+CLEAR(S) { S.clear() }
+
+POPULATE(OBJ, ACTION) { ^ OBJ.populate(ACTION) }
+FOREACH(OBJ, ACTION) { ^ OBJ.forEach(ACTION) }
 
 // --- calendar ---
 
-const MonthNames = new string[]{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
-const DayNames = new string[]{"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
+const MONTHNAMES = new string[]{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
+const DAYNAMES = new string[]{"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
 
-class CalendarMonthPrinter
+// --- UPPERCASE CODE --
+
+CALENDARMONTHPRINTER
 {
-   Date           _date;
-   TextBuilder    _line;
-   int            _month;
-   int            _year;
-   Reference<int> _row;
+   _DATE;
+   _LINE;
+   _MONTH;
+   _YEAR;
+   _ROW;
     
-   constructor(year, month)
+   constructor NEW(YEAR, MONTH)
    {
-      _month := month;
-      _year := year;
-      _line := new TextBuilder();
-      _row := 0;
+      _MONTH := MONTH;
+      _YEAR := YEAR;
+      _LINE := NEWTEXTBUILDER();
+      _ROW := 0;
    }
 
-   writeTitle()
+   WRITETITLE()
    {
-      _row.Value := 0;
-      _date := Date.new(_year, _month, 1);
+      _ROW := 0;
+      _DATE := NEWDATE(_YEAR, _MONTH, 1);
 
-      DayNames.forEach::(name)
-         { _line.print(" ",name) }
+      FOREACH(DAYNAMES, (NAME)
+         { WRITEARGS(_LINE, " ", NAME) })
    }
     
-   writeLine()
+   WRITECALLINE()
    {
-      _line.clear();
+      CLEAR(_LINE);
 
-      if (_date.Month == _month)
+      if (GETMONTH(_DATE) == _MONTH)
       {
-         var dw := _date.DayOfWeek;
-
-         _line.writeCopies("   ",_date.DayOfWeek == 0 ? 6 : (_date.DayOfWeek - 1));
+         WRITECOPIES(_LINE, "   ",(GETDAYOFWEEK(_DATE) == 0) ? 6 : (GETDAYOFWEEK(_DATE) - 1));
 
          do
          {
-            _line.writePaddingLeft(_date.Day.toPrintable(), $32, 3);
+            WRITEPADDINGLEFT(_LINE, GETDAYSTR(_DATE), $32, 3);
 
-            _date := _date.addDays(1)
+            _DATE := _DATE.addDays(1)
          }
-         until(_date.Month != _month || _date.DayOfWeek == 1)
+         until(GETMONTH(_DATE) != _MONTH || GETDAYOFWEEK(_DATE) == 1)
       };
 
-      int length := _line.Length;
-      if (length < 21)
-         { _line.writeCopies(" ", 21 - length) };
+      int LENGTH := _LINE.Length;
+      if (LENGTH < 21)
+         { WRITECOPIES(_LINE, " ", 21 - LENGTH) };
 
-      _row.append(1)
+      _ROW += 1
    }
     
-   indexer() = new Indexer
+   indexer() = new INDEXERCLASS
    {
-      bool Available = _row < 7;
+      ISAVAILABLE() = _ROW < 7;
 
-      int Index
+      GETINDEX()= _ROW;
+      
+      SETINDEX(INDEX)
       {
-         get() = _row.Value;
-            
-         set(int index)
-         {
-            if (index <= _row)
-               { self.writeTitle() };
-                    
-            while (index > _row)
-               { self.writeLine() }
-         }
+         if (INDEX <= _ROW)
+            { WRITETITLE() };
+                 
+         while (INDEX > _ROW)
+            { WRITECALLINE() }
       }
 
-      appendIndex(int index)
+      NEWINDEX(OFFS)
       {
-         this self.Index := _row.Value + index
+         ^ _ROW + OFFS
       }
         
-      get int Length() { ^ 7 }
+      GETLENGTH() { ^ 7 }
 
-      get Value() = self;
-        
-      set Value(o) { NotSupportedException.raise() }
+      GETVALUE() = self;              
    };
     
-   printTitleTo(output)
+   PRINTTITLETO(OUTPUT)
    {
-      output.writePadding(MonthNames[_month - 1], $32, 21)
+      WRITEPADDING(OUTPUT, MONTHNAMES[_MONTH - 1], $32, 21)
    }
    
-   printTo(output)
+   PRINTTO(OUTPUT)
    {
-      output.write(_line.Value)
+      WRITE(OUTPUT, *_LINE)
    }
 }
 
-class Calendar
+CALENDARCLASS
 {
-   int _year;
-   int _rowLength;
+   _YEAR;
+   _ROWLENGTH;
     
-   constructor new(int year)
+   constructor NEW(YEAR)
    {
-      _year := year;
-      _rowLength := 3
+      _YEAR := YEAR;
+      _ROWLENGTH := 3
    }
     
-   printTo(output)
+   PRINTTO(OUTPUT)
    {
-      output.writePadding("[SNOOPY]", $32, _rowLength * 25); 
-      output.writeLine();
-      output.writePadding(_year.toPrintable(), $32, _rowLength * 25); 
-      output.writeLine().writeLine();
+      WRITEPADDING(OUTPUT, "[SNOOPY]", $32, _ROWLENGTH * 25); 
+      WRITELINE(OUTPUT);
+      WRITEPADDING(OUTPUT, _YEAR.toPrintable(), $32, _ROWLENGTH * 25); 
+      WRITELINE(OUTPUT); WRITELINE(OUTPUT);
         
-      var rowCount := 12 / _rowLength;
-      var months := Array.allocate(rowCount).populate::(i =>
-            Array.allocate(_rowLength) 
-                  .populate::(j =>
-                     new CalendarMonthPrinter(_year, i * _rowLength + j + 1)));
+      var ROWCOUNT := 12 / _ROWLENGTH;
+      var MONTHS := POPULATE(ALLOCATE(ROWCOUNT), (I =>
+            POPULATE(ALLOCATE(_ROWLENGTH), (J =>
+                     CALENDARMONTHPRINTER.NEW(_YEAR, I * _ROWLENGTH + J + 1)))));
         
-      months.forEach::(row)
+      FOREACH(MONTHS, (ROW)
       {
-         var r := row;
-            
-         row.forEach::(month)
+         FOREACH(ROW, (MONTH)
          {
-            month.printTitleTo(output);
+            MONTH.PRINTTITLETO(OUTPUT);
                     
-            output.write("   ")
-         };
+            WRITE(OUTPUT, "   ")
+         });
             
-         output.writeLine();
+         WRITELINE(OUTPUT);
             
-         ParallelEnumerator.new(row).forEach::(line)
+         FOREACH(PARALLELENUMERATOR(ROW), (LINE)
          {
-            line.forEach::(printer)
+            FOREACH(LINE, (PRINTER)
             {
-               printer.printTo(output);
+               PRINTER.PRINTTO(OUTPUT);
 
-               output.write("   ")
-            };
+               WRITE(OUTPUT, "   ")
+            });
 
-            output.writeLine()
-         }
-      }        
+            WRITELINE(OUTPUT);
+         })
+      })
    }
 }
 
-// --- program ---
+// --- PROGRAM ---
 
-public program()
+PROGRAM()
 {
-   var calender := Calendar.new(Console.write("ENTER THE YEAR:").readLine().toInt());
+   CALENDARCLASS CALENDER := CALENDARCLASS.NEW(READINT("ENTER THE YEAR:"));
     
-   calender.printTo(Console);
+   CALENDER.PRINTTO(CONSOLE);
 
-   Console.readChar()
+   READCHAR();
 }

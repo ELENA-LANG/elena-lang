@@ -2,7 +2,7 @@
 
 public extension objectOp
 {
-   string __getClassName()   
+   string __getClassName() : info("Returns the object class name")
       = __className;
 
    __getClass() : external(system'core_routines'__object_class),
@@ -18,14 +18,14 @@ public extension objectOp
          : info("Returns true if the parameter is equal to the object or false. It does not raise an exception if the objects are not compatible")
       = self.equal(o) \ back(false);
 
-   bool isEmpty()
+   bool isEmpty() : info("Returns true if the object length is 0")
    {
       int len := self.Length;
         
       ^ len == 0;
    }
         
-   bool isNonempty()
+   bool isNonempty() : info("Returns true if the object length is not 0")
    {
       int len := self.Length;
         
@@ -36,13 +36,13 @@ public extension objectOp
          : info("Returns true if the object is nil")
       = nil == self;       
 
-   doWith(action)
+   doWith(action) : info("Invokes <b>action</b> function passing the object as an argument")
       = action(self);
 
    bool instanceOf(type) : external(system'core_routines'__object_instanceOf),
                   info("Checks if the object is an instance of type");
 
-   bool subsetOf(type)
+   bool subsetOf(type) : info("Returns true if the object is an instance of a child of <b>type</b>")
    {
       var class := self.__getClass();
       while (class != nil) {
@@ -139,9 +139,8 @@ public extension valueOp
 
 public extension byteOp : ByteNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the byte")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int val := self;
@@ -151,7 +150,7 @@ public extension byteOp : ByteNumber
       }
    }
 
-   get byte Absolute()
+   get byte Absolute() : info("Returns the absolute value of the byte")
    {
       byte n := self;
     
@@ -161,7 +160,7 @@ public extension byteOp : ByteNumber
       ^ n
    }
 
-   byte power(int y)
+   byte power(int y) : info("returns the power of the byte raised to <b>y</b>")
    {
       byte x := self;
       byte r := 1;
@@ -174,10 +173,10 @@ public extension byteOp : ByteNumber
       ^ new ByteNumber(r)
    }
 
-   byte sqr()
+   byte sqr() : info("returns the power of the byte raised to 2")
       = self * self;
 
-   byte sqrt()
+   byte sqrt() : info("returns the square root of the byte")
    {   
       byte num := self;
               
@@ -195,39 +194,38 @@ public extension byteOp : ByteNumber
       ^ n
    }
 
-   byte mod(operand)
+   byte mod(operand) : info("returns the remainder of an integer division")
    {
       var retVal := self / operand * operand;
         
       ^ ByteConvertor.convert(retVal)
    }
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the byte is odd")
       = self.mod(2) != 0;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the byte is even")
       = self.mod(2) == 0;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the byte is zero")
       = self.equal(0);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the byte is positive")
       = self > 0;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the byte is negative")
       = self < 0;
         
-   bool isNonnegative()
-      = self <= 0;
+   bool isNonnegative() : info("Returns true if the byte is not negative")
+      = self >= 0;
 }
 
 // --- shortOp ---
 
 public extension shortOp : ShortNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the short integer")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int val := self;
@@ -237,7 +235,7 @@ public extension shortOp : ShortNumber
       }
    }
 
-   get short Absolute()
+   get short Absolute() : info("Returns the absolute value of the short integer")
    {
       short n := self;
     
@@ -247,7 +245,7 @@ public extension shortOp : ShortNumber
       ^ n
    }
 
-   short power(int y)
+   short power(int y) : info("returns the power of the short integer raised to <b>y</b>")
    {
       short x := self;
       short r := 1;
@@ -260,10 +258,10 @@ public extension shortOp : ShortNumber
       ^ new ShortNumber(r)
    }
 
-   short sqr()
+   short sqr() : info("returns the power of the short integer raised to 2")
       = self * self;
 
-   short sqrt()
+   short sqrt() : info("returns the square root of the short integer")
    {   
       short num := self;
               
@@ -281,32 +279,32 @@ public extension shortOp : ShortNumber
       ^ n
    }
 
-   short mod(operand)
+   short mod(operand) : info("returns the remainder of an integer division")
    {
       var retVal := self / operand * operand;
         
       ^ ShortConvertor.convert(retVal)
    }    
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the short integer is odd")
       = self.mod(2) != 0;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the short integer is even")
       = self.mod(2) == 0;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the short integer is zero")
       = self.equal(0);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the short integer is positive")
       = self > 0;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the short integer is negative")
       = self < 0;
         
-   bool isNonnegative()
-      = self <= 0;
+   bool isNonnegative() : info("Returns true if the short integer is not negative")
+      = self >= 0;
 
-   get byte High()
+   get byte High() : info("Returns a high byte of the short integer")
    {
       short w := self;
       w := w & 0FF00h;
@@ -315,7 +313,7 @@ public extension shortOp : ShortNumber
       ^ ByteConvertor.convert(w)
    }
         
-   get byte Low()
+   get byte Low() : info("Returns a low byte of the short integer")
    {
       short w := self;
       w := w & 0FFh;
@@ -328,9 +326,8 @@ public extension shortOp : ShortNumber
 
 public extension intOp : IntNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the integer")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int retVal := PrimitiveIntOperations.getHashcode(self);
@@ -339,7 +336,7 @@ public extension intOp : IntNumber
       }
    }
 
-   get int Absolute()
+   get int Absolute() : info("Returns the absolute value of the integer")
    {
       int n := self;
     
@@ -349,7 +346,7 @@ public extension intOp : IntNumber
       ^ n
    }
 
-   int power(int y)
+   int power(int y) : info("returns the power of the integer raised to <b>y</b>")
    {
       int x := self;
       int r := 1;
@@ -364,10 +361,10 @@ public extension intOp : IntNumber
       ^ r
    }
 
-   int sqr()
+   int sqr() : info("returns the power of the integer raised to 2")
       = self * self;
 
-   int sqrt()
+   int sqrt() : info("returns the square root of the integer")
    {   
       int num := self;
               
@@ -385,10 +382,10 @@ public extension intOp : IntNumber
       ^ n
    }
 
-   real realDiv(n)
+   real realDiv(n) : info("returns the result of a real division")
       = new RealNumber(self).divide(n);
 
-   int mod(int operand)
+   int mod(int operand) : info("returns the remainder of an integer division")
    {
       int retVal := self / operand * operand;
 
@@ -397,32 +394,32 @@ public extension intOp : IntNumber
       ^ retVal
    }
 
-   int mod(o)
+   int mod(o) : info("returns the remainder of an integer division")
    {
       int retVal := self.mod(cast int(o));
         
       ^ retVal
    }
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the integer is odd")
       = self.mod(2) != 0;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the integer is even")
       = self.mod(2) == 0;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the integer is zero")
       = self.equal(0);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the integer is positive")
       = self > 0;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the integer is negative")
       = self < 0;
         
-   bool isNonnegative()
-      = self <= 0;
+   bool isNonnegative() : info("Returns true if the integer is not negative")
+      = self >= 0;
 
-   get short High()
+   get short High() : info("Returns a high word of the integer")
    {
       int w := self;
       w := w & 0FFFF0000h;
@@ -431,7 +428,7 @@ public extension intOp : IntNumber
       ^ ShortConvertor.convert(w)
    }
         
-   get short Low()
+   get short Low() : info("Returns a low word of the integer")
    {
       int w := self;
       w := w & 0FFFFh;
@@ -444,7 +441,7 @@ public extension intOp : IntNumber
 
 public extension uintOp : UIntNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the unsigned integer")
    {
       // Reads the object hash code into the output parameter
       get()
@@ -455,10 +452,10 @@ public extension uintOp : UIntNumber
       }
    }
 
-   uint sqr()
+   uint sqr() : info("returns the power of the unsigned integer raised to 2")
       = self * self;
 
-   uint sqrt()
+   uint sqrt() : info("returns the square root of the unsigned integer")
    {   
       uint num := self;
               
@@ -476,7 +473,7 @@ public extension uintOp : UIntNumber
       ^ n
    }
 
-   uint mod(uint operand)
+   uint mod(uint operand) : info("returns the remainder of an integer division")
    {
       uint retVal := self / operand * operand;
 
@@ -485,7 +482,7 @@ public extension uintOp : UIntNumber
       ^ retVal
    }
 
-   uint mod(int operand)
+   uint mod(int operand) : info("returns the remainder of an integer division")
    {
       uint uoperand := operand;
       uint retVal := self / uoperand * uoperand;
@@ -495,36 +492,27 @@ public extension uintOp : UIntNumber
       ^ retVal
    }
 
-   uint mod(operand)
+   uint mod(operand) : info("returns the remainder of an integer division")
       = self.mod(cast uint(operand));
 
-   real realDiv(n)
+   real realDiv(n) : info("returns the result of a real division")
       = new RealNumber(self).divide(n);
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the integer is odd")
       = self.mod(2) != 0;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the integer is even")
       = self.mod(2) == 0;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the integer is zero")
       = self.equal(0);
-        
-   bool isPositive()
-      = self > 0;
-        
-   bool isNegative()
-      = self < 0;
-        
-   bool isNonnegative()
-      = self <= 0;
 }
 
 // --- longOp ---
 
 public extension longOp : LongNumber
 {   
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the long integer")
    {
       // Reads the object hash code into the output parameter
       get()
@@ -535,7 +523,7 @@ public extension longOp : LongNumber
       }
    }
 
-   get long Absolute()
+   get long Absolute() : info("Returns the absolute value of the long integer")
    {
       long n := self;
 
@@ -545,7 +533,7 @@ public extension longOp : LongNumber
       ^ n
    }
 
-   long power(long y)
+   long power(long y) : info("returns the power of the long integer raised to <b>y</b>")
    {
       long x := self;
       long r := 1;
@@ -558,7 +546,7 @@ public extension longOp : LongNumber
       ^ new LongNumber(r)
    }
     
-   long power(int y)
+   long power(int y) : info("returns the power of the long integer raised to <b>y</b>")
    {
       long x := self;
       long r := 1;
@@ -574,10 +562,10 @@ public extension longOp : LongNumber
       ^ new LongNumber(r)
    }
 
-   long sqr()
+   long sqr() : info("returns the power of the long integer raised to 2")
       = self * self;
 
-   long sqrt()
+   long sqrt() : info("returns the square root of the long integer")
    {   
       long num := self;
               
@@ -595,10 +583,10 @@ public extension longOp : LongNumber
       ^ n
    }
 
-   real realDiv(n)
+   real realDiv(n) : info("returns the result of a real division")
       = new RealNumber(self).divide(n);
 
-   long mod(long operand)
+   long mod(long operand) : info("returns the remainder of an long integer division")
    {
       long retVal := self / operand * operand;
 
@@ -607,7 +595,7 @@ public extension longOp : LongNumber
       ^ retVal
    }    
 
-   long mod(n)
+   long mod(n) : info("returns the remainder of an long integer division")
    {
       long x := self;
       long y := cast long(n);
@@ -618,25 +606,25 @@ public extension longOp : LongNumber
       ^ new LongNumber(x - z)
    }
 
-   bool isOdd()
+   bool isOdd() : info("Returns true if the long integer is odd")
       = self.mod(2l) != 0l;
         
-   bool isEven()
+   bool isEven() : info("Returns true if the long integer is even")
       = self.mod(2l) == 0l;
         
-   bool isZero()
+   bool isZero() : info("Returns true if the long integer is zero")
       = self.equal(0l);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the long integer is positive")
       = self > 0l;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the long integer is negative")
       = self < 0l;
         
-   bool isNonnegative()
+   bool isNonnegative() : info("Returns true if the long integer is not negative")
       = self <= 0l;
 
-   get int High()
+   get int High() : info("Returns a high integer of the long integer")
    {
       long w := self;
       w := w & -4294967296l;
@@ -645,7 +633,7 @@ public extension longOp : LongNumber
       ^ IntConvertor.convert(w)
    }
 
-   get int Low()
+   get int Low() : info("Returns a low integer of the long integer")
    {
       long w := self;
       w := w & 4294967295l;
@@ -658,7 +646,7 @@ public extension longOp : LongNumber
 
 public extension realOp : RealNumber
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the real number")
    {
       // Reads the object hash code into the output parameter
       get()
@@ -669,7 +657,7 @@ public extension realOp : RealNumber
       }
    }
 
-   real power(real y)
+   real power(real y) : info("returns the power of the real number raised to <b>y</b>")
    {
       real x := self;
         
@@ -688,7 +676,7 @@ public extension realOp : RealNumber
       ^ x            
    }
 
-   real power(int y)
+   real power(int y) : info("returns the power of the real number raised to <b>y</b>")
    {
       real x := self;
 
@@ -723,45 +711,45 @@ public extension realOp : RealNumber
       ^ x
    }
 
-   real sqr()
+   real sqr() : info("returns the power of the real number raised to 2")
       = self * self;
 
-   real sqrt()
+   real sqrt() : info("returns the square root of the real number")
    {
       PrimitiveRealOperations.sqrt(self, out real retVal);
 
       ^ retVal
    }
 
-   real exp()
+   real exp() : info("Returns the result of e raised to the power of the real number")
    {
       PrimitiveRealOperations.exp(self, out real retVal);
 
       ^ retVal
    }
 
-   real ln()
+   real ln() : info("returns the natural logarithm of the real number")
    {
       PrimitiveRealOperations.ln(self, out real retVal);
 
       ^ retVal
    }
 
-   real sin()
+   real sin() : info("returns the trigonometric sines of the real number")
    {
       PrimitiveRealOperations.sin(self, out real retVal);
 
       ^ retVal
    }
 
-   real cos()
+   real cos() : info("returns the trigonometric cosines of the real number")
    {
       PrimitiveRealOperations.cos(self, out real retVal);
 
       ^ retVal
    }
 
-   real tan()
+   real tan() : info("returns the trigonometric tangents of the real number")
    {
       PrimitiveRealOperations.sin(self, out real sinVal);
       PrimitiveRealOperations.cos(self, out real cosVal);
@@ -771,14 +759,14 @@ public extension realOp : RealNumber
       ^ n
    }
 
-   real arctan()
+   real arctan() : info("returns the trigonometric inverse tangents (arctan) of the real number")
    {
       PrimitiveRealOperations.arctan(self, out real retVal);
 
       ^ retVal
    }
 
-   real arcsin()
+   real arcsin() : info("returns the trigonometric inverse sines (arcsin) of the real number")
    {
       real n := self;
         
@@ -792,7 +780,7 @@ public extension realOp : RealNumber
       ^ retVal
    }
             
-   real arccos()
+   real arccos() : info("returns the trigonometric inverse cosines (arccos) of the real number")
    {
       real n := self;        
       real retVal := 0.0r;
@@ -807,7 +795,7 @@ public extension realOp : RealNumber
       ^ retVal
    }
 
-   real log2()
+   real log2() : info("returns the base 2 logarithm of the real number")
    {
       real x := self.ln();
       real y := 2.0.ln();
@@ -815,7 +803,7 @@ public extension realOp : RealNumber
       ^ x / y
    }
             
-   real log10()
+   real log10() : info("returns the base 10 logarithm of the real number")
    {
       real x := self.ln();
       real y := 10.0.ln();
@@ -823,34 +811,34 @@ public extension realOp : RealNumber
       ^ x / y
    }      
 
-   get real Integer()
+   get real Integer() : info("Returns the integer part of the real number")
    {
       PrimitiveRealOperations.trunc(self, out real retVal);
 
       ^ retVal
    }
 
-   get int IntegerInt()
+   get int IntegerInt() : info("Returns the integer part as an integer of the real number")
       = IntConvertor.convert(self.Integer);
 
-   get real Rounded()
+   get real Rounded() : info("Rounds real number")
    {
       PrimitiveRealOperations.round(self, out real retVal);
 
       ^ retVal
    }
 
-   get int RoundedInt()
+   get int RoundedInt() : info("Rounds real number as an integer")
       = IntConvertor.convert(self.Rounded);
 
-   get real Absolute()
+   get real Absolute() : info("Returns the absolute value of the real number")
    {
       PrimitiveRealOperations.abs(self, out real retVal);
 
       ^ retVal  
    }
 
-   get real Reciprocal()
+   get real Reciprocal() : info("Returns the reciprocal (1/x) of the real number")
    {
       real value := self;
         
@@ -859,14 +847,14 @@ public extension realOp : RealNumber
       ^ value
    }    
 
-   real frac()
+   real frac() : info("Returns the fractional part of the real number")
    {
       real retVal := self.Absolute;
       
       ^ retVal - retVal.Integer
    }
 
-   real ceil()
+   real ceil() : info("Returns the smallest integer value not less than the real number")
    {
       if (self < 0)
       {
@@ -880,7 +868,7 @@ public extension realOp : RealNumber
       }
    }
 
-   real floor()
+   real floor() : info("Round numbers down to the nearest integer")
    {
       if (self >= 0)
       {
@@ -894,7 +882,7 @@ public extension realOp : RealNumber
       }
    }
 
-   real round(int precision)
+   real round(int precision) : info("Returns the real number rounded to <b>precision</b> digits after the dot")
    {
       real a := self;
       bool neg := false;
@@ -914,7 +902,7 @@ public extension realOp : RealNumber
       ^ neg ? (a * -1.0r) : a
    }    
 
-   real truncate(int precision)
+   real truncate(int precision) : info("Returns the real number truncated to <b>precision</b> digits after the dot")
    {
       real a := self;
       bool neg := false;
@@ -933,7 +921,7 @@ public extension realOp : RealNumber
    }
 
             
-   get real Radian()
+   get real Radian() : info("Returns the real number as a radian")
    {
       real value := self;
         
@@ -943,7 +931,7 @@ public extension realOp : RealNumber
       ^ value
    }
             
-   get real Degree()
+   get real Degree() : info("Returns the real number as a degree")
    {
       real value := self;
         
@@ -953,24 +941,24 @@ public extension realOp : RealNumber
       ^ value
    }
 
-   bool isZero()
+   bool isZero() : info("Returns true if the real number is zero")
       = self.equal(0.0);
         
-   bool isPositive()
+   bool isPositive() : info("Returns true if the real number is positive")
       = self > 0.0;
         
-   bool isNegative()
+   bool isNegative() : info("Returns true if the real number is negative")
       = self < 0.0;
         
-   bool isNonnegative()
-      = self <= 0.0;
+   bool isNonnegative() : info("Returns true if the real number is not negative")
+      = self >= 0.0;
 }
 
 // --- intRefOp ---
 
 public extension intRefOp : Reference<int>
 {
-    append(int n)
+    append(int n) 
     {
         int v := *self;
         v := v + n;
@@ -992,6 +980,7 @@ public extension intRefOp : Reference<int>
 public extension stringOp : String
 {
    string Substring(int index)
+      : info("Returns a substring starting from <b>index</b> till the end")
    {
       int len := self.Length;
       if (len > index)
@@ -1004,15 +993,14 @@ public extension stringOp : String
       ^ EmptyString
    }
 
-   int indexOf(string s)
+   int indexOf(string s) : info("Returns the index of the first occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
       = self.indexOf(0, s);
 
-   int indexOf(char ch)
+   int indexOf(char ch) : info("Returns the index of the first occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
       = self.indexOf(0, ch);
 
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the string")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int retVal := PrimitiveStringOperations.getHashcode(self);
@@ -1021,24 +1009,24 @@ public extension stringOp : String
       }
    }
 
-   bool isEmpty()
+   bool isEmpty() : info("Returns true if the string has 0 length")
    {
       int len := self.Length;
         
       ^ len == 0;
    }
         
-   bool isNonempty()
+   bool isNonempty() : info("Returns true if the string has a length greater then 0")
    {
       int len := self.Length;
         
       ^ len != 0;
    }
     
-   string padLeft(int length)
+   string padLeft(int length) : info("Returns a new string of a specified length in which the beginning of the current string is padded with spaces")
       = self.padLeft($32, length);
     
-   string padLeft(char ch, int length)
+   string padLeft(char ch, int length) : info("Returns a new string of a specified length in which the beginning of the current string is padded with the provided character <b>ch</b>")
    {
       int currentLength := self.Length;
         
@@ -1048,10 +1036,10 @@ public extension stringOp : String
       ^ self
    }
     
-   string padRight(int length)
+   string padRight(int length) : info("Returns a new string of a specified length in which the ending of the current string is padded with spaces")
        = self.padRight($32, length);
     
-   string padRight(char ch, int length)
+   string padRight(char ch, int length) : info("Returns a new string of a specified length in which the ending of the current string is padded with the provided character <b>ch</b>")
    {
       int currentLength := self.Length;
 
@@ -1061,14 +1049,14 @@ public extension stringOp : String
       ^ self
    }
 
-   bool startingWith(string s)
+   bool startingWith(string s) : info("Returns true if the string starts with the specified string <b>s</b>")
    {
       int n := self.indexOf(0, s);
         
       ^ 0 == n
    }
         
-   bool endingWith(string s)
+   bool endingWith(string s) : info("Returns true if the string ends with the specified string <b>s</b>")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -1078,7 +1066,7 @@ public extension stringOp : String
       ^ n != -1
    }
         
-   bool containing(string s)
+   bool containing(string s) : info("Returns true if the string contains the specified string <b>s</b>")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -1088,7 +1076,7 @@ public extension stringOp : String
       ^ n != -1
    }
     
-   string trimLeft(char ch)
+   string trimLeft(char ch) : info("Removes all the leading occurrences of a specified character <b>ch</b> from the string")
    {
       int  index := 0;
       int  len := self.Length;
@@ -1117,10 +1105,10 @@ public extension stringOp : String
       ^ EmptyString
    }
     
-   string trimLeft()
+   string trimLeft() : info("Removes all the leading occurrences of a space from the string")
       = self.trimLeft($32);
        
-   string trimRight(char ch)
+   string trimRight(char ch) : info("Removes all the tailing occurrences of a specified character <b>ch</b> from the string")
    {
       int  len := self.Length;
       int  index := len - 1;
@@ -1142,16 +1130,16 @@ public extension stringOp : String
       ^ EmptyString
    }
     
-   string trimRight()
+   string trimRight() : info("Removes all the tailing occurrences of a space from the string")
       = self.trimRight($32);
         
-   string trim(char ch)
+   string trim(char ch) : info("Removes all the leading and tailing occurrences of a specified character <b>ch</b> from the string")
       = self.trimLeft(ch).trimRight(ch);
     
-   string trim()
+   string trim() : info("Removes all the leading and tailing occurrences of a space from the string")
       = self.trimLeft($32).trimRight($32);
 
-   string replace(string replacee, string replacer)
+   string replace(string replacee, string replacer) : info("Replaces all the occurrences of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
       string target := EmptyString;
       int    start := 0;
@@ -1177,7 +1165,7 @@ public extension stringOp : String
       ^ self
    }   
 
-   string replaceFirst(string replacee, string replacer)
+   string replaceFirst(string replacee, string replacer) : info("Replaces the first occurrence of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
       int replaceeLen := replacee.Length;
       int i := self.indexOf(0, replacee);
@@ -1197,7 +1185,7 @@ public extension stringOp : String
 
 public extension charOp : CharValue
 {
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the character")
    {
       // Reads the object hash code into the output parameter
       get()
@@ -1209,12 +1197,12 @@ public extension charOp : CharValue
       }
    }
 
-   bool isNewLine()
+   bool isNewLine() : info("Returns true if it is a new line character")
    {
       ^ self == $10
    }
 
-   bool isWhitespace()
+   bool isWhitespace() : info("Returns true if it is a white space character")
    {
       self =>
          $9  : { ^ true }
@@ -1226,14 +1214,14 @@ public extension charOp : CharValue
       ^ false
    }
 
-   bool isDigit()
+   bool isDigit() : info("Returns true if it is a digit character")
    {
       int ch := IntConvertor.convert(self);
         
       ^ (ch >= 30h) && (ch <= 39h)
    }
 
-   bool isLetter()
+   bool isLetter() : info("Returns true if it is a text letter character")
    {
       int ch := IntConvertor.convert(self);
         
@@ -1251,8 +1239,8 @@ public extension charOp : CharValue
             
       ^ false
    }
-    
-   bool isLToken()
+                                                                          
+   bool isLToken() : info("Returns true if it is an identifier character")
    {
       int ch := IntConvertor.convert(self);
         
@@ -1278,6 +1266,7 @@ public extension charOp : CharValue
 public extension wideOp : WideString
 {
    wide Substring(int index)
+      : info("Returns a substring starting from <b>index</b> till the end")
    {
       int len := self.Length;
       if (len > index)
@@ -1290,15 +1279,14 @@ public extension wideOp : WideString
       ^ emptyWideString
    }
 
-   int indexOf(wide s)
+   int indexOf(wide s) : info("Returns the index of the first occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
       = self.indexOf(0, s);
 
-   int indexOf(char ch)
+   int indexOf(char ch) : info("Returns the index of the first occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
       = self.indexOf(0, ch);
 
-   int Hashcode
+   int Hashcode : info("Returns the hash code of the string")
    {
-      // Reads the object hash code into the output parameter
       get()
       {
          int retVal := PrimitiveWideStringOperations.getHashcode(self);
@@ -1307,24 +1295,24 @@ public extension wideOp : WideString
       }
    }
 
-   bool isEmpty()
+   bool isEmpty() : info("Returns true if the string has 0 length")
    {
       int len := self.Length;
         
       ^ len == 0;
    }
         
-   bool isNonempty()
+   bool isNonempty() : info("Returns true if the string has a length greater then 0")
    {
       int len := self.Length;
         
       ^ len != 0;
    }
     
-   wide padLeft(int length)
+   wide padLeft(int length) : info("Returns a new string of a specified length in which the beginning of the current string is padded with spaces")
       = self.padLeft($32, length);
     
-   wide padLeft(char ch, int length)
+   wide padLeft(char ch, int length) : info("Returns a new string of a specified length in which the beginning of the current string is padded with the provided character <b>ch</b>")
    {
       int currentLength := self.Length;
         
@@ -1334,10 +1322,10 @@ public extension wideOp : WideString
       ^ self
    }
     
-   wide padRight(int length)
+   wide padRight(int length) : info("Returns a new string of a specified length in which the ending of the current string is padded with spaces")
        = self.padRight($32, length);
     
-   wide padRight(char ch, int length)
+   wide padRight(char ch, int length) : info("Returns a new string of a specified length in which the ending of the current string is padded with the provided character <b>ch</b>")
    {
       int currentLength := self.Length;
 
@@ -1347,14 +1335,14 @@ public extension wideOp : WideString
       ^ self
    }
 
-   bool startingWith(wide s)
+   bool startingWith(wide s) : info("Returns true if the string starts with the specified string <b>s</b>")
    {
       int n := self.indexOf(0, s);
         
       ^ 0 == n
    }
         
-   bool endingWith(wide s)
+   bool endingWith(wide s) : info("Returns true if the string ends with the specified string <b>s</b>")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -1364,7 +1352,7 @@ public extension wideOp : WideString
       ^ n != -1
    }
         
-   bool containing(wide s)
+   bool containing(wide s) : info("Returns true if the string contains the specified string <b>s</b>")
    {
       int l1 := self.Length;
       int l2 := s.Length;
@@ -1374,7 +1362,7 @@ public extension wideOp : WideString
       ^ n != -1
    }
     
-   wide trimLeft(char ch)
+   wide trimLeft(char ch) : info("Removes all the leading occurrences of a specified character <b>ch</b> from the string")
    {
       int  index := 0;
       int  len := self.Length;
@@ -1403,10 +1391,10 @@ public extension wideOp : WideString
       ^ emptyWideString
    }
     
-   wide trimLeft()
+   wide trimLeft() : info("Removes all the leading occurrences of a space from the string")
       = self.trimLeft($32);
        
-   wide trimRight(char ch)
+   wide trimRight(char ch) : info("Removes all the tailing occurrences of a specified character <b>ch</b> from the string")
    {
       int  len := self.Length;
       int  index := len - 1;
@@ -1428,16 +1416,16 @@ public extension wideOp : WideString
       ^ emptyWideString
    }
     
-   wide trimRight()
+   wide trimRight() : info("Removes all the tailing occurrences of a space from the string")
       = self.trimRight($32);
         
-   wide trim(char ch)
+   wide trim(char ch) : info("Removes all the leading and tailing occurrences of a specified character <b>ch</b> from the string")
       = self.trimLeft(ch).trimRight(ch);
     
-   wide trim()
+   wide trim() : info("Removes all the leading and tailing occurrences of a space from the string")
       = self.trimLeft($32).trimRight($32);
 
-   wide replace(wide replacee, wide replacer)
+   wide replace(wide replacee, wide replacer) : info("Replaces all the occurrences of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
       wide   target := emptyWideString;
       int    start := 0;
@@ -1463,7 +1451,7 @@ public extension wideOp : WideString
       ^ self
    }   
 
-   wide replaceFirst(wide replacee, wide replacer)
+   wide replaceFirst(wide replacee, wide replacer) : info("Replaces the first occurrence of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
       int replaceeLen := replacee.Length;
       int i := self.indexOf(0, replacee);
@@ -1483,7 +1471,7 @@ public extension wideOp : WideString
 
 public extension weakArrayOp
 {
-    Array Subarray(int index, int length)
+    Array Subarray(int index, int length) : info("Returns a sub array of the collection starting from <b>index</b> and with the specified <b>length</b><br/>The object must support indexer message")
     {
         auto it := self.indexer();
         it.Index := index;
@@ -1503,7 +1491,7 @@ public extension weakArrayOp
 // --- stringWeakOp ---
 public extension stringWeakOp
 {
-   fillString(s, int counter)
+   fillString(s, int counter) : info("Writes the argument <b>s</b> to the object, <b>counter</b> times<br/>The object must support write message")
    {
       for (int i := 0; i < counter; i += 1)
       {
@@ -1513,10 +1501,10 @@ public extension stringWeakOp
       ^ self
    }
 
-   writeCopies(line, int counter)
+   writeCopies(line, int counter) : info("Writes the argument <b>line</b> to the object, <b>counter</b> times<br/>The object must support write message")
       = self.fillString(line, counter);
 
-   writePadding(line, char ch, int width)
+   writePadding(line, char ch, int width) : info("Writes the argument <b>line</b> into the object padded with a character<b>ch</b> from the both sides so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       int length := line.Length;        
         
@@ -1538,7 +1526,7 @@ public extension stringWeakOp
    }   
 
 
-   writePaddingLeft(line, char ch, int width)
+   writePaddingLeft(line, char ch, int width) : info("Writes the argument <b>line</b> into the object padded from the beginning with a character<b>ch</b> so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       var paddedStr := line.padLeft(ch, width);
 
@@ -1547,7 +1535,7 @@ public extension stringWeakOp
       ^ self
    }
     
-   writePaddingRight(line, char ch, int width)
+   writePaddingRight(line, char ch, int width) : info("Writes the argument <b>line</b> into the object padded from the ending with a character<b>ch</b> so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       var paddedStr := line.padRight(ch, width);
 
@@ -1556,7 +1544,7 @@ public extension stringWeakOp
       ^ self
    }
     
-   writePaddingLeft(line, int width)
+   writePaddingLeft(line, int width) : info("Writes the argument <b>line</b> into the object padded from the beginning with a space so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       var paddedStr := line.padLeft($32, width);
 
@@ -1565,7 +1553,7 @@ public extension stringWeakOp
       ^ self
    }
     
-   writePaddingRight(line, int width)
+   writePaddingRight(line, int width) : info("Writes the argument <b>line</b> into the object padded from the ending with a space so that the total length equals to <b>width</b><br/>The object must support write message")
    {
       var paddedStr := line.padRight($32, width);
 
@@ -1577,7 +1565,7 @@ public extension stringWeakOp
 
 public extension threadObjectOp
 {
-   enterCriticalSection() : external(system'core_routines'__enterCritical);
+   enterCriticalSection() : external(system'core_routines'__enterCritical), info("Locks the object");
 
-   leaveCriticalSection() : external(system'core_routines'__leaveCritical);
+   leaveCriticalSection() : external(system'core_routines'__leaveCritical), info("Unlocks the object");
 }

@@ -63,24 +63,20 @@ void* InterpretScriptSMLA(const char* script)
    return engine->translate(0, script);
 }
 
-int GetLengthSMLA(void* tape)
+int GetLengthSMLA(int id)
 {
    if (engine == nullptr)
       init();
 
-   if (tape) {
-      return engine->getLength(tape);
-   }
-   else return 0;
+   return engine->getLength(id);
 }
 
-void ReleaseSMLA(void* tape)
+void ReleaseSMLA(int id)
 {
    if (engine == nullptr)
       init();
 
-   if (tape)
-      engine->free(tape);
+   engine->freeTape(id);
 }
 
 size_t GetStatusSMLA(char* buffer, size_t maxLength)

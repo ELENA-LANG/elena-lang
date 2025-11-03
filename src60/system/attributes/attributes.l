@@ -5,7 +5,8 @@
 #let attributes["import"]      := 80008002h;
 
 /// modificator:
-#let attributes["__ignore_duplicates"] :=  80007001h;
+#let attributes["__ignore_duplicates"] := 80007001h;
+#let attributes["__throwop"]           := 80007003h;
 
 /// method attributes:
 #let attributes["indexed"]     :=  80006001h;
@@ -47,31 +48,32 @@
 #let attributes["interface"]   := 80001007h;
 #let attributes["method"]      := 80001008h;
 #let attributes["field"]       := 80001009h;
-#let attributes["nonstructural"] := 8000100Ah;
-#let attributes["generic"]     := 8000100Bh;
-#let attributes["function"]    := 8000100Ch;
-#let attributes["var"]         := 8000100Dh;
-#let attributes["this"]        := 8000100Eh;
-#let attributes["static"]      := 8000100Fh;
-#let attributes["enumeration"] := 80001010h;
-#let attributes["cast"]        := 80001011h;
-#let attributes["new"]         := 80001012h;
-#let attributes["dispatch"]    := 80001013h;
-#let attributes["textblock"]   := 80001014h;
-#let attributes["extern"]      := 80001015h;
-#let attributes["intern"]      := 80001016h;
-#let attributes["forward"]     := 80001017h;
-#let attributes["mixin"]       := 80001019h;
-#let attributes["distributed"] := 8000101Ah;
-#let attributes["auto"]        := 8000101Ch;
-#let attributes["namespace"]   := 80001021h;
-#let attributes["super"]       := 80001024h;
-#let attributes["inline"]      := 80001025h;
-#let attributes["__probe"]     := 80001026h;
-#let attributes["template"]    := 80001027h;
-#let attributes["weak"]        := 80001029h;
-#let attributes["packed"]      := 8000102Ch;
-#let attributes["__threadvar"] := 8000102Dh;
+#let attributes["nonstructural"]  := 8000100Ah;
+#let attributes["generic"]        := 8000100Bh;
+#let attributes["function"]       := 8000100Ch;
+#let attributes["var"]            := 8000100Dh;
+#let attributes["this"]           := 8000100Eh;
+#let attributes["static"]         := 8000100Fh;
+#let attributes["cast"]           := 80001011h;
+#let attributes["new"]            := 80001012h;
+#let attributes["dispatch"]       := 80001013h;
+#let attributes["textblock"]      := 80001014h;
+#let attributes["extern"]         := 80001015h;
+#let attributes["intern"]         := 80001016h;
+#let attributes["forward"]        := 80001017h;
+#let attributes["mixin"]          := 80001019h;
+#let attributes["distributed"]    := 8000101Ah;
+#let attributes["auto"]           := 8000101Ch;
+#let attributes["namespace"]      := 80001021h;
+#let attributes["super"]          := 80001024h;
+#let attributes["inline"]         := 80001025h;
+#let attributes["__probe"]        := 80001026h;
+#let attributes["template"]       := 80001027h;
+#let attributes["weak"]           := 80001029h;
+#let attributes["packed"]         := 8000102Ch;
+#let attributes["__threadvar"]    := 8000102Dh;
+#let attributes["__intermediate"] := 8000102Eh;
+#let attributes["__nonboxable"]   := 8000102Fh;
 
 /// primitive types
 #let attributes["__string"]    := 80000801h;
@@ -87,3 +89,4 @@
 #let attributes["__ptr"]       := 8000080Ah;
 #let attributes["__ext_mssg"]  := 8000080Bh;
 #let attributes["__typeof"]    := 8000080Ch;
+

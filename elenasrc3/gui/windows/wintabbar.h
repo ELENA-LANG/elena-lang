@@ -93,6 +93,7 @@ namespace elena_lang
       }
 
       void refresh() override;
+      void invalidate() override;
 
       TabBar(NotifierBase* notifier, bool withAbovescore, int height);
    };

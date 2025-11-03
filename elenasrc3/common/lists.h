@@ -3,24 +3,17 @@
 //
 //              This header contains various ELENA Engine list templates
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LISTS_H
 #define LISTS_H
 #include <assert.h>
 
-#ifdef __GNUC__
-
-#pragma GCC diagnostic push
-#pragma GCC diagnostic ignored "-Waddress"
-
-#elif _MSC_VER
-
-#pragma warning( push )
-#pragma warning( disable:4127 )
-
-#endif
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_NULLCONVERSION
+DISABLE_WARNING_ADDRESS
+DISABLE_WARNING_UNINITIALIZED_FIELD
 
 namespace elena_lang
 {
@@ -128,6 +121,31 @@ namespace elena_lang
       }
    };
 #pragma pack(pop)
+
+   template <class T1, class T2, class T3, T1 def1 = 0, T2 def2 = 0, T3 def3 = 0> struct Triple
+   {
+      T1 value1;
+      T2 value2;
+      T3 value3;
+
+      bool operator ==(Triple triple) const
+      {
+         return (this->value1 == triple.value1 && this->value2 == triple.value2 && this->value3 == triple.value3);
+      }
+
+      Triple()
+      {
+         this->value1 = def1;
+         this->value2 = def2;
+         this->value3 = def3;
+      }
+      Triple(T1 value1, T2 value2, T3 value3)
+      {
+         this->value1 = value1;
+         this->value2 = value2;
+         this->value3 = value3;
+      }
+   };
 
    // --- IteratorBase ---
    template <class T, class Item, void(*FreeT)(T)> class ListIteratorBase
@@ -399,6 +417,71 @@ namespace elena_lang
          _length = length;
       }
       MemoryListIterator()
+      {
+         _buffer = nullptr;
+         _position = 0;
+         _length = 0;
+      }
+   };
+
+   // --- SerializableMemoryListIterator ---
+   template <class T, T(*GetItem)(MemoryDump*, pos_t)> class SerializableMemoryListIterator
+   {
+      MemoryDump* _buffer;
+      pos_t       _position, _length;
+      T           _current;
+
+   public:
+      bool operator ==(const SerializableMemoryListIterator& it)
+      {
+         return _position == it._position;
+      }
+      bool operator !=(const SerializableMemoryListIterator& it)
+      {
+         return _position != it._position;
+      }
+
+      SerializableMemoryListIterator& operator =(const SerializableMemoryListIterator& it)
+      {
+         this->_position = it._position;
+         this->_length = it._length;
+         this->_buffer = it._buffer;
+
+         return *this;
+      }
+
+      SerializableMemoryListIterator& operator ++()
+      {
+         if (_position < _length) {
+            _position = MemoryBase::getDWord(_buffer, _position + 4);
+         }
+
+         return *this;
+      }
+      SerializableMemoryListIterator operator ++(int)
+      {
+         MemoryListIterator tmp = *this;
+         ++*this;
+
+         return tmp;
+      }
+
+      T& operator*()
+      {
+         _current = GetItem(_buffer, MemoryBase::getDWord(_buffer, _position));
+
+         return _current;
+      }
+
+      bool eof() const { return _position >= _length; }
+
+      SerializableMemoryListIterator(MemoryDump* buffer, pos_t length)
+      {
+         _buffer = buffer;
+         _position = 0;
+         _length = length;
+      }
+      SerializableMemoryListIterator()
       {
          _buffer = nullptr;
          _position = 0;
@@ -1129,6 +1212,8 @@ namespace elena_lang
 
       pos_t count() const { return _count; }
 
+      int count_int() const { return (int)_count; }
+
       Iterator start() const
       {
          return Iterator(_top);
@@ -1635,6 +1720,17 @@ namespace elena_lang
       pos_t position = dump->length();
 
       dump->write(position, s.str(), getlength_pos(s) + 1);
+
+      return position;
+   }
+
+   inline pos_t Map_StoreUStrAligned4(MemoryDump* dump, ustr_t s)
+   {
+      pos_t position = dump->length();
+      pos_t size = getlength_pos(s) + 1;
+
+      dump->write(position, s.str(), size);
+      dump->writeBytes(position + size, 0, (pos_t)(alignSize(size, 4) - size));
 
       return position;
    }
@@ -3138,6 +3234,20 @@ namespace elena_lang
          else return _allocated[index - cacheSize];
       }
 
+      bool exist(T& item)
+      {
+         for (size_t i = 0; i < _length; i++) {
+            if (i < cacheSize && _cached[i] == item) {
+               return true;
+            }
+            else if (i >= cacheSize && _allocated[i - cacheSize] == item) {
+               return true;
+            }
+         }
+
+         return false;
+      }
+
       void add(T item)
       {
          if (_length < cacheSize) {
@@ -3253,6 +3363,64 @@ DISABLE_WARNING_POP
          _position = 0;
       }
       ~MemoryList() = default;
+   };
+
+   // --- MemoryList ---
+   /// NOTE : the serialized objects are stored in the memory, so they can become invlaid after an add operation
+   template <class T, pos_t(*StoreItem)(MemoryDump*, T), T(*GetItem)(MemoryDump*, pos_t)> class SerializableMemoryList
+   {
+      MemoryDump _buffer;
+      T          _defValue;
+      pos_t      _position;
+
+   public:
+      typedef SerializableMemoryListIterator<T, GetItem> Iterator;
+
+      Iterator start() const { return Iterator((MemoryDump*)&_buffer, _position); }
+
+      void add(T item)
+      {
+         MemoryBase::writeQWord(&_buffer, _position, 0);
+
+         pos_t itemPos = StoreItem(&_buffer, item);
+
+         MemoryBase::writeDWord(&_buffer, _position, itemPos);
+         MemoryBase::writeDWord(&_buffer, _position + 4, _buffer.length());
+
+         _position = _buffer.length();
+      }
+
+      void clear()
+      {
+         _position = 0;
+         _buffer.clear();
+      }
+
+      void save(StreamWriter* writer)
+      {
+         writer->writePos(_buffer.length());
+
+         MemoryReader reader(&_buffer);
+         writer->copyFrom(&reader, _buffer.length());
+      }
+
+      void load(StreamReader* reader)
+      {
+         pos_t length = reader->getPos();
+         _buffer.reserve(length);
+
+         MemoryWriter writer(&_buffer);
+         writer.copyFrom(reader, length);
+
+         _position = _buffer.length();
+      }
+
+      SerializableMemoryList(T defValue)
+      {
+         _defValue = defValue;
+         _position = 0;
+      }
+      ~SerializableMemoryList() = default;
    };
 
    // --- MemoryTrie ---
@@ -3661,14 +3829,6 @@ DISABLE_WARNING_POP
    }
 }
 
-#ifdef __GNUC__
-
-#pragma GCC diagnostic pop
-
-#elif _MSC_VER
-
-#pragma warning( pop )
-
-#endif
+DISABLE_WARNING_POP
 
 #endif

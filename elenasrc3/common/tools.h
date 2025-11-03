@@ -26,7 +26,7 @@
 namespace elena_lang
 {
 
-#ifdef __unix__
+#if defined(__unix__) || defined(__MACH__)
 inline size_t wcslen(const unsigned short* s)
 {
    const unsigned short* p = s;
@@ -104,7 +104,7 @@ inline static int __fastcall getlength_int(const wchar_t* s)
    return (s == nullptr) ? 0 : (int)wcslen(s);
 }
 
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__MACH__)
 
 inline size_t getlength(const unsigned short* s)
 {

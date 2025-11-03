@@ -37,6 +37,7 @@
      <module>
         <include>main.l</include>
         <include>basic.l</include>
+        <include>declarations.l</include>
      </module>
   </files>
 </configuration>

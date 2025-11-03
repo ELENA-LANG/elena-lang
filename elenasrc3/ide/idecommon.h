@@ -9,7 +9,7 @@
 
 #include "elena.h"
 #include "guieditor.h"
-//#include "ldbg_common.h"
+#include "ldebugger/ldbg_common.h"
 
 namespace elena_lang
 {
@@ -253,14 +253,8 @@ namespace elena_lang
       bool includeAppPath2Paths;  // applicable only for Windows
    };
 
-   struct ExceptionInfo
-   {
-      int   code;
-      addr_t address;
-   };
-
    // --- DebugProcessBase ---
-   class DebugProcessBase
+   class IDEDebugProcessBase : public DebugProcessBase
    {
    public:
       virtual bool startThread(DebugControllerBase* controller) = 0;
@@ -274,7 +268,7 @@ namespace elena_lang
 
       virtual void setStepMode() = 0;
 
-      virtual ExceptionInfo* Exception() = 0;
+      virtual DebugProcessException* Exception() = 0;
       virtual void resetException() = 0;
 
       virtual void initEvents() = 0;
@@ -314,18 +308,11 @@ namespace elena_lang
       virtual unsigned long long getQWORD(addr_t address) = 0;
       virtual double getFLOAT64(addr_t address) = 0;
 
-      virtual void setBreakpoint(addr_t address, bool withStackLevelControl) = 0;
       virtual void addBreakpoint(addr_t address) = 0;
       virtual void removeBreakpoint(addr_t address) = 0;
 
-      virtual void addStep(addr_t address, void* current) = 0;
-
-      virtual bool readDump(addr_t address, char* s, pos_t length) = 0;
-
       virtual addr_t findEntryPoint(path_t programPath) = 0;
       virtual bool findSignature(StreamReader& reader, char* signature, pos_t length) = 0;
-
-      virtual ~DebugProcessBase() = default;
    };
 
    class PathHelperBase

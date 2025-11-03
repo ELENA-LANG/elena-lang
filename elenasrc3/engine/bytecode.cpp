@@ -48,7 +48,7 @@ const char* _fnOpcodes[256] =
    "peek fp", "peek sp", "lsave dp", "lsave sp", "lload dp", "xfill", "xstore i", "set sp",
 
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
-   "jge", "jgr", "jle", "peek tls", "store tls", OPCODE_UNKNOWN, OPCODE_UNKNOWN, OPCODE_UNKNOWN,
+   "jge", "jgr", "jle", "peek tls", "store tls", "xladd dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
    "cmp", "fcmp", "icmp", "tst flag", "tst n", "tst mssg", "xcmp sp", OPCODE_UNKNOWN,
    "cmp fp", "cmp sp", "extclose", "lload sp", "load sp", "xloadarg fp", "xcreate", "system",
@@ -72,7 +72,7 @@ const ByteCode opNotUsingAcc[] = {
    ByteCode::LLoadDP, ByteCode::TstM, ByteCode::TstN, ByteCode::XCmpSI, ByteCode::ExtCloseN, ByteCode::LLoadSI, ByteCode::LoadSI, ByteCode::XLoadArgFI, ByteCode::FAddDPN, ByteCode::FSubDPN, 
    ByteCode::FMulDPN, ByteCode::FDivDPN, ByteCode::UDivDPN, ByteCode::XLabelDPR, ByteCode::IAndDPN, ByteCode::IOrDPN, ByteCode::IXorDPN, ByteCode::INotDPN, ByteCode::IShlDPN, ByteCode::IShrDPN, 
    ByteCode::XOpenIN, ByteCode::CopyDPN, ByteCode::IAddDPN, ByteCode::ISubDPN, ByteCode::IMulDPN, ByteCode::IDivDPN, ByteCode::NSaveDPN, ByteCode::XHookDPR, ByteCode::NAddDPN, ByteCode::DCopyDPN, 
-   ByteCode::OpenIN, ByteCode::XStoreSIR, ByteCode::ExtOpenIN, ByteCode::MovSIFI, ByteCode::XMovSISI, ByteCode::XStoreFIR, ByteCode::CallExtR, ByteCode::DFree
+   ByteCode::OpenIN, ByteCode::XStoreSIR, ByteCode::ExtOpenIN, ByteCode::MovSIFI, ByteCode::XMovSISI, ByteCode::XStoreFIR, ByteCode::CallExtR, ByteCode::DFree, ByteCode::XLAddDP,
 };
 
 const ByteCode opSetAcc[] = {
@@ -233,6 +233,22 @@ bool ByteCodeUtil :: resolveMessageName(IdentifierString& messageName, ModuleBas
    return true;
 }
 
+bool ByteCodeUtil :: resolveGenericMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message)
+{
+   ref_t actionRef, flags;
+   pos_t argCount = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ref_t signature = 0;
+   ustr_t actionName = module->resolveAction(actionRef, signature);
+   if (emptystr(actionName))
+      return false;
+
+   formatMessageName(messageName, module, actionName, nullptr, 0, argCount, flags);
+
+   return true;
+}
+
 bool ByteCodeUtil :: resolveMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, mssg_t message, int nullableArgs)
 {
    ref_t actionRef, flags;
@@ -349,6 +365,7 @@ inline ref_t importRArg(ref_t arg, ModuleBase* exporter, ModuleBase* importer)
       switch (mask) {
          case mskMssgLiteralRef:
          case mskMssgNameLiteralRef:
+         case mskPropNameLiteralRef:
             return ImportHelper::importMessageConstant(exporter, arg & ~mskAnyRef, importer) | mask;
             break;
          case mskExtMssgLiteralRef:
@@ -782,7 +799,7 @@ void CommandTape :: import(ModuleBase* sourceModule, MemoryBase* source, bool wi
 
 void CommandTape :: saveTo(MemoryWriter* writer)
 {
-   Map<int, int> labels(0);
+   Map<int, int> labelPos(0);
    Map<int, int> fwdJumps(0);
    bool importMode = false;
 
@@ -800,7 +817,7 @@ void CommandTape :: saveTo(MemoryWriter* writer)
          //   break;
          case ByteCode::Label:
             fixJumps(writer->Memory(), writer->position(), fwdJumps, command.arg1);
-            labels.add(command.arg1, writer->position());
+            labelPos.add(command.arg1, writer->position());
 
             // JIT compiler interprets nop command as a label mark
             ByteCodeUtil::write(*writer, { ByteCode::Nop });
@@ -816,13 +833,13 @@ void CommandTape :: saveTo(MemoryWriter* writer)
             writer->writeByte((char)command.code);
             if (!importMode) {
                // if forward jump, it should be resolved later
-               if (!labels.exist(command.arg1)) {
+               if (!labelPos.exist(command.arg1)) {
                   fwdJumps.add(command.arg1, writer->position());
                   // put jump offset place holder
                   writer->writeDWord(0);
                }
                // if backward jump
-               else writer->writeDWord(labels.get(command.arg1) - writer->position() - 4);
+               else writer->writeDWord(labelPos.get(command.arg1) - writer->position() - 4);
             }
             else writer->writeDWord(command.arg1);
 
@@ -837,13 +854,13 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 
             if ((command.arg2 & mskAnyRef) == mskLabelRef) {
                // if forward jump, it should be resolved later
-               if (!labels.exist(command.arg2)) {
+               if (!labelPos.exist(command.arg2)) {
                   fwdJumps.add(command.arg2, writer->position());
                   // put jump offset place holder
                   writer->writeDWord(mskLabelRef);
                }
                // if backward jump
-               else writer->writeDWord(labels.get(command.arg2) - writer->position() - 4);
+               else writer->writeDWord(labelPos.get(command.arg2) - writer->position() - 4);
             }
             else writer->write(&command.arg2, sizeof(arg_t));
 
@@ -957,6 +974,7 @@ inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
    return false;
 }
 
+// NOTE : the copy of an iterator must be passed
 inline bool isAccFree(ByteCodeIterator bc_it)
 {
    while (bc_it.eof()) {

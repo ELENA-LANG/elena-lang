@@ -49,8 +49,12 @@ ScriptParser :: ScriptParser()
    _InterpretScript = (void* (__cdecl*)(const char*))_library->loadFunction("InterpretScriptSMLA");
    _InterpretFile = (void* (__cdecl*)(const char*, int, bool))_library->loadFunction("InterpretFileSMLA");
    _GetStatus = (size_t(__cdecl*)(char*, size_t))_library->loadFunction("GetStatusSMLA");
-   _Release = (void(__cdecl*)(void*))_library->loadFunction("ReleaseSMLA");
+   _Release = (void(__cdecl*)(int))_library->loadFunction("ReleaseSMLA");
    _ClearStack = (void(__cdecl*)())_library->loadFunction("ClearStackSMLA");
+
+#elif defined(__MACH__)
+
+    // !! temporall - not yet implemented
 
 #else
 
@@ -122,7 +126,7 @@ void ScriptParser :: parse(path_t filePath, SyntaxTree& tree)
          tree.load(&temp);
       }
 
-      _Release(tape);
+      _Release(0);
    }
 }
 

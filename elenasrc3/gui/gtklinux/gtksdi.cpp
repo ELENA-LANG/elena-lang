@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK SDI Control Implementation File
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtksdi.h"
@@ -11,20 +11,21 @@ using namespace elena_lang;
 // --- SDIWindow ---
 
 SDIWindow :: SDIWindow()
-   : Gtk::Window(Gtk::WINDOW_TOPLEVEL), _box(Gtk::ORIENTATION_VERTICAL),
-     _hbox(Gtk::ORIENTATION_HORIZONTAL), _vbox(Gtk::ORIENTATION_VERTICAL)
+   : Gtk::ApplicationWindow(/*Gtk::WINDOW_TOPLEVEL*/), _box(Gtk::Orientation::VERTICAL),
+     _tbox(Gtk::Orientation::VERTICAL),
+     _hbox(Gtk::Orientation::HORIZONTAL), _bbox(Gtk::Orientation::VERTICAL)
 {
    _children = nullptr;
    _childCounter = 0;
+   _skip = false;
 
-   add(_box);
+   _box.append(_tbox);
+   _box.append(_hbox);
+   _box.append(_bbox);
 
-   _refActionGroup = Gtk::ActionGroup::create();
-   _refUIManager = Gtk::UIManager::create();
+   set_child(_box);
 
-   _refUIManager->insert_action_group(_refActionGroup);
-
-   add_accel_group(_refUIManager->get_accel_group());
+   _refBuilder = Gtk::Builder::create();
 }
 
 void SDIWindow :: populate(int counter, Gtk::Widget** children)
@@ -35,31 +36,44 @@ void SDIWindow :: populate(int counter, Gtk::Widget** children)
 
 void SDIWindow::setLayout(int client, int top, int bottom, int right, int left)
 {
-   _box.pack_start(_hbox, TRUE, TRUE, 0);
-
    if (left != -1)
-      _hbox.pack_start(*_children[left], Gtk::PACK_SHRINK);
+      //_hbox.pack_start(*_children[left], Gtk::PACK_SHRINK);
+      _hbox.append(*_children[left]);
 
-   _hbox.pack_start(_vbox, Gtk::PACK_EXPAND_WIDGET);
-
-   if (client != -1)
-      _vbox.pack_start(*_children[client], TRUE, TRUE, 0);
+   if (client != -1) {
+      //_vbox.pack_start(*_children[client], TRUE, TRUE, 0);
+      _hbox.append(*_children[client]);
+      _children[client]->set_hexpand(true);
+      _children[client]->set_vexpand(true);
+   }
 
    if (bottom != -1)
-      _vbox.pack_start(*_children[bottom], Gtk::PACK_SHRINK);
+      //_vbox.pack_start(*_children[bottom], Gtk::PACK_SHRINK);
+      _bbox.append(*_children[bottom]);
 
 //   if (statusbar)
 //      _box.pack_start(*statusbar, Gtk::PACK_SHRINK);
-
-   show_all_children(); // !!temporal
 }
 
 void SDIWindow :: loadUI(Glib::ustring ui_info, const char* name)
 {
-   _refUIManager->add_ui_from_string(ui_info);
+   _refBuilder->add_from_string(ui_info);
 
-   Gtk::Widget* pMenubar = _refUIManager->get_widget(name);
-   if(pMenubar)
-      _box.pack_start(*pMenubar, Gtk::PACK_SHRINK);
+   auto gmenu = _refBuilder->get_object<Gio::Menu>(name);
+   if(gmenu) {
+      auto menuBar = Gtk::make_managed<Gtk::PopoverMenuBar>(gmenu);
+
+      _tbox.append(*menuBar);
+   }
 }
 
+bool SDIWindow :: toggleVisibility(int childIndex)
+{
+   bool visible = _children[childIndex]->get_visible();
+
+   visible = !visible;
+
+   _children[childIndex]->set_visible(visible);
+
+   return visible;
+}

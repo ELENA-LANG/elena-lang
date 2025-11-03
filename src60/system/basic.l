@@ -106,7 +106,7 @@ public interface BoolValue
          bool xor(expr)
                   : info("Executes logical XOR operation.")
          {
-            cast bool(expr) ? { ^ BoolValue.false };
+            (cast bool(expr)) ? { ^ BoolValue.false };
          }
 
          bool Inverted 
@@ -163,7 +163,7 @@ public interface BoolValue
          bool xor(expr)
                   : info("Executes logical XOR operation")
          {
-            cast bool(expr) ? { ^ BoolValue.true };
+            (cast bool(expr)) ? { ^ BoolValue.true };
             
             ^ this self
          }
@@ -177,8 +177,8 @@ public interface BoolValue
    };
 }
 
-public const true = BoolValue.true;
-public const false = BoolValue.false;
+public const true : info("true boolean value") = BoolValue.true;
+public const false : info("false boolean value") = BoolValue.false;
 
 // --- BaseNumber ---
 
@@ -224,12 +224,15 @@ public abstract class IntBaseNumber : BaseNumber,
    info("a base integer value")
 {
    band(BaseVariable var)
+         : info("Executes bitwise AND with a variable value of <b>var</b> argument")
       <= band(*var);
 
    bor(BaseVariable var)
+         : info("Executes bitwise OR with a variable value of <b>var</b> argument")
       <= bor(*var);
 
    bxor(BaseVariable var)
+         : info("Executes bitwise XOR with a variable value of <b>var</b> argument")
       <= bxor(*var);
 
    abstract band(o)
@@ -249,7 +252,8 @@ public abstract class IntBaseNumber : BaseNumber,
          : info("Returns true if any of the mask bits are set")
       = 0 != self.band(operand);
 
-   get abstract BInverted();
+   get abstract BInverted()
+        : info("Returns a bitwise inverted value");
 }
 
 // --- ByteNumber ---
@@ -284,15 +288,19 @@ public const struct ByteNumber : IntBaseNumber,
       = ByteConvertor.convert(n);
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
      <= add(cast byte(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
      <= subtract(cast byte(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
      <= multiply(cast byte(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
      <= divide(cast byte(o));
 
    byte add(byte n)
@@ -376,6 +384,7 @@ public const struct ByteNumber : IntBaseNumber,
       = new RealNumber(_value).divide(n);   
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is byte b)
       {  
@@ -386,6 +395,7 @@ public const struct ByteNumber : IntBaseNumber,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type when it is possible and compared")
       <= less(cast byte(o));
 
    bool equal(byte b)
@@ -393,6 +403,7 @@ public const struct ByteNumber : IntBaseNumber,
       = _value == b;
 
    bool less(byte b)
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = _value < b;
 
    bool equal(short s)
@@ -400,6 +411,7 @@ public const struct ByteNumber : IntBaseNumber,
       = new ShortNumber(_value).equal(s);
 
    bool less(short s)
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new ShortNumber(_value).less(s);
 
    bool equal(int n)
@@ -427,12 +439,15 @@ public const struct ByteNumber : IntBaseNumber,
       = new RealNumber(_value).less(n);
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
       <= band(cast byte(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
       <= bor(cast byte(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ByteNumber type")
       <= bxor(cast byte(n));
 
    byte band(byte n)
@@ -540,6 +555,7 @@ public const struct SByteNumber : IntBaseNumber,
       = 127;
 
    static sbyte Default
+            : info("Returns the default value")
       = 0;
 
    constructor()
@@ -555,15 +571,19 @@ public const struct SByteNumber : IntBaseNumber,
       = SByteConvertor.convert(n);
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= add(cast sbyte(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= subtract(cast sbyte(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= multiply(cast sbyte(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
      <= divide(cast sbyte(o));
 
    sbyte add(sbyte n)
@@ -647,6 +667,7 @@ public const struct SByteNumber : IntBaseNumber,
       = new RealNumber(self).divide(n);   
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is sbyte n)
       {
@@ -657,6 +678,7 @@ public const struct SByteNumber : IntBaseNumber,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type when it is possible and compared")
       <= less(cast sbyte(o));
 
    bool equal(sbyte b)
@@ -664,6 +686,7 @@ public const struct SByteNumber : IntBaseNumber,
       = _value == b;
 
    bool less(sbyte b)
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = _value < b;
 
    bool equal(short s)
@@ -671,6 +694,7 @@ public const struct SByteNumber : IntBaseNumber,
       = new ShortNumber(self).equal(s);
 
    bool less(short s)
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new ShortNumber(self).less(s);
 
    bool equal(int n)
@@ -678,7 +702,7 @@ public const struct SByteNumber : IntBaseNumber,
       = new IntNumber(self).equal(n);
 
    bool less(int n)
-            : info("Compares the value")
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new IntNumber(self).less(n);
 
    bool equal(long n)
@@ -686,7 +710,7 @@ public const struct SByteNumber : IntBaseNumber,
       = new LongNumber(self).equal(n);
 
    bool less(long n)
-            : info("Compares the value")
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new LongNumber(self).less(n);
 
    bool equal(real n)
@@ -694,16 +718,19 @@ public const struct SByteNumber : IntBaseNumber,
       = new RealNumber(self).equal(n);
 
    bool less(real n)
-            : info("Compares the value")
+            : info("Returns the true if the object is less than an argument;<br/>otherwise returns false")
       = new RealNumber(self).less(n);
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
       <= band(cast sbyte(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
       <= bor(cast sbyte(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the SByteNumber type")
       <= bxor(cast sbyte(n));
 
    sbyte band(sbyte n)
@@ -811,6 +838,7 @@ public const struct ShortNumber : IntBaseNumber,
       = 32767;
 
    static short Default
+            : info("Returns the value value (0)")
       = 0;
 
    constructor()
@@ -830,18 +858,23 @@ public const struct ShortNumber : IntBaseNumber,
       = ShortConvertor.convert(b);
 
    constructor(int n)
+            : info("Converts from an integer")
       = ShortConvertor.convert(n);
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
      <= add(cast short(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
      <= subtract(cast short(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
      <= multiply(cast short(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
      <= divide(cast short(o));
 
    short add(short n)
@@ -925,6 +958,7 @@ public const struct ShortNumber : IntBaseNumber,
       = new RealNumber(_value).divide(n);   
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is short n)
       {
@@ -935,12 +969,15 @@ public const struct ShortNumber : IntBaseNumber,
    }
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
       <= band(cast short(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
       <= bor(cast short(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type")
       <= bxor(cast short(n));
 
    short band(short n)
@@ -992,6 +1029,7 @@ public const struct ShortNumber : IntBaseNumber,
       = new LongNumber(self).bxor(n);
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the ShortNumber type when it is possible and compared")
       <= less(cast short(o));
 
    bool equal(short b)
@@ -1055,6 +1093,7 @@ public const struct ShortNumber : IntBaseNumber,
       = RealConvertor.convert(self);
 
    string toPrintable()
+            : info("returns the literal presentation")
       = StringConvertor.convert(self, 10);
 
    short shiftLeft(int val)
@@ -1070,6 +1109,7 @@ public const struct ShortNumber : IntBaseNumber,
       = ~_value;
 
    get short Negative()
+            : info("Returns negated value")
 //      = -_value;
    {
       short v := 0;
@@ -1099,6 +1139,7 @@ public const struct UShortNumber : IntBaseNumber,
       = 65535;
 
    static ushort Default
+            : info("Returns the default value (0)")
       = 0;
 
    constructor()
@@ -1118,18 +1159,23 @@ public const struct UShortNumber : IntBaseNumber,
       = UShortConvertor.convert(b);
 
    constructor(int n)
+            : info("tries to convert the integer number o to unsigned short number")
       = UShortConvertor.convert(n);
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
      <= add(cast ushort(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
      <= subtract(cast ushort(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
      <= multiply(cast ushort(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
      <= divide(cast ushort(o));
 
    ushort add(ushort n)
@@ -1213,6 +1259,7 @@ public const struct UShortNumber : IntBaseNumber,
       = new RealNumber(_value).divide(n);   
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is ushort n)
       {
@@ -1223,12 +1270,15 @@ public const struct UShortNumber : IntBaseNumber,
    }
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
       <= band(cast ushort(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
       <= bor(cast ushort(n));
 
    bxor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type")
       <= bxor(cast ushort(n));
 
    ushort band(ushort n)
@@ -1280,6 +1330,7 @@ public const struct UShortNumber : IntBaseNumber,
       = new LongNumber(self).bxor(n);
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UShortNumber type when it is possible and compared")
       <= less(cast ushort(o));
 
    bool equal(ushort b)
@@ -1347,6 +1398,7 @@ public const struct UShortNumber : IntBaseNumber,
       = RealConvertor.convert(self);
 
    string toPrintable()
+            : info("returns the literal presentation")
       = StringConvertor.convert(self, 10);
 
    ushort shiftLeft(int val)
@@ -1362,6 +1414,7 @@ public const struct UShortNumber : IntBaseNumber,
       = ~_value;
 
    get ushort Negative()
+            : info("Returns negated value")
 //      = -_value;
    {
       ushort v := 0;
@@ -1391,9 +1444,11 @@ public const struct IntNumber : IntBaseNumber,
       = 2147483647;
 
    static int Default
+            : info("Returns the default value (0)")
       = 0;
 
    constructor()
+            : info("Returns the default value")
       = 0;
 
    constructor(int n)
@@ -1405,15 +1460,19 @@ public const struct IntNumber : IntBaseNumber,
       = IntConvertor.convert(n);
 
    constructor(byte b)
+            : info("converts the argument to IntNumber")
       = b;
 
    constructor(short s)
+            : info("converts the argument to IntNumber")
       = s;
 
    constructor(ushort s)
+            : info("converts the argument to IntNumber")
       = IntConvertor.convert(s);
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is int n)
       {
@@ -1424,6 +1483,7 @@ public const struct IntNumber : IntBaseNumber,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type when it is possible and compared")
       <= less(cast int(o));
 
    bool equal(byte b)
@@ -1467,24 +1527,31 @@ public const struct IntNumber : IntBaseNumber,
    }
 
    bool equal(int n)
+            : info("Compares the integer value")
       = _value == n; 
 
    bool notequal(int n)
+            : info("Compares the integer value")
       = _value != n;
 
    bool less(int n)
+            : info("Compares the integer value")
       = _value < n;
 
    add(o)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
      <= add(cast int(o));
 
    subtract(o)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
      <= subtract(cast int(o));
 
    multiply(o)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
      <= multiply(cast int(o));
 
    divide(o)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
      <= divide(cast int(o));
 
    int add(int n)
@@ -1582,7 +1649,7 @@ public const struct IntNumber : IntBaseNumber,
    }
 
    real divide(real n)
-            : info("Returns the result of integer division")
+            : info("Returns the result of the division as a real number")
    {
       real val := _value;
 
@@ -1592,21 +1659,27 @@ public const struct IntNumber : IntBaseNumber,
    }
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
       <= band(cast int(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
       <= bor(cast int(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the IntNumber type")
       <= bxor(cast int(n));
 
    band(BaseVariable v)
+            : info("Returns the result of bitwise AND operation with a variable value")
       <= band(*v);
 
    bor(BaseVariable v)
+            : info("Returns the result of bitwise OR operation with a variable value")
       <= bor(*v);
 
    bxor(BaseVariable v)
+            : info("Returns the result of bitwise XOR operation with a variable value")
       <= bxor(*v);
 
    int band(int n)
@@ -1685,9 +1758,11 @@ public const struct IntNumber : IntBaseNumber,
       = new IntNumber(_value);
 
    int shiftLeft(int val)
+            : info("shifts an integer value to the left by a specified number of bits")
       = _value $shl val;
    
    int shiftRight(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
       = _value $shr val;
 
    get int BInverted()
@@ -1695,6 +1770,7 @@ public const struct IntNumber : IntBaseNumber,
       = ~_value;
 
    get int Negative()
+            : info("Returns the negated value")
       = -_value;
 
    bool allMask(int operand)
@@ -1722,26 +1798,31 @@ public sealed const struct UIntNumber : IntBaseNumber,
    embeddable __uint _value[4];
 
    constructor(byte b)
+      : info("converts the argument to UIntNumber")
    {
       _value := UIntConvertor.convert(b);
    }
 
    constructor(short s)
+      : info("converts the argument to UIntNumber")
    {
       _value := UIntConvertor.convert(s);
    }
 
    constructor(int n)
+      : info("converts the argument to UIntNumber")
    {
       _value := UIntConvertor.convert(n);
    }
 
    constructor(uint n)
+      : info("Creates the object with specified value")
    {
       _value := n
    }
 
    constructor()
+            : info("Returns the default value")
       = 0;
 
    cast u(string s)
@@ -1763,6 +1844,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = 0FFFFFFFFh;
 
    static uint Default
+            : info("Returns the default value (0)")
       = 0;
 
    string toPrintable()
@@ -1778,6 +1860,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = ByteConvertor.convert(self);
 
    int cast()
+            : info("Returns the signed integer")
       = self;
    
    long cast()
@@ -1789,6 +1872,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = new RealNumber(self);
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is uint n)
       {
@@ -1799,6 +1883,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
    }
 
    bool less(n)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type when it is possible and compared")
       <= less(cast uint(n));
 
    bool equal(uint n)
@@ -1846,27 +1931,35 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = new RealNumber(self).less(n);
 
    add(n)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= add(cast uint(n));
 
    subtract(n)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= subtract(cast uint(n));
 
    multiply(n)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= multiply(cast uint(n));
 
    divide(n)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= divide(cast uint(n));
 
    uint add(BaseVariable v)
+            : info("Returns the sum of the object and a variable value")
       <= add(*v);
 
    uint subtract(BaseVariable v)
+            : info("Returns the difference of the object and a variable value")
       <= subtract(*v);
 
    uint multiply(BaseVariable v)
+            : info("Returns the product of the object and a variable value")
       <= multiply(*v);
 
    uint divide(BaseVariable v)
+            : info("Returns the result of integer division")
       <= divide(*v);
 
    uint add(uint n)
@@ -1934,36 +2027,47 @@ public sealed const struct UIntNumber : IntBaseNumber,
       <= divide(cast uint(n));
 
    long add(long n)
+            : info("Returns the sum as a long integer")
       = new LongNumber(n).add(n);
 
    long subtract(long n)
+            : info("Returns the difference as a long integer")
       = new LongNumber(n).subtract(n);
 
    long multiply(long n)
+            : info("Returns the product as a long integer")
       = new LongNumber(n).multiply(n);
 
    long divide(long n)
+            : info("Returns the result of integer division as a long integer")
       = new LongNumber(n).divide(n);
 
    real add(real n)
+            : info("Returns the sum as a real number")
       = new RealNumber(n).add(n);
 
    real subtract(real n)
+            : info("Returns the difference as a real number")
       = new RealNumber(n).subtract(n);
 
    real multiply(real n)
+            : info("Returns the product as a real number")
       = new RealNumber(n).multiply(n);
 
    real divide(real n)
+            : info("Returns the result of the division as a real number")
       = new RealNumber(n).divide(n);
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= band(cast uint(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= bor(cast uint(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
       <= bxor(cast uint(n));
 
    uint band(uint n)
@@ -2027,15 +2131,19 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = new LongNumber(n).bxor(n);
 
    uint shiftLeft(uint val)
+            : info("shifts an integer value to the left by a specified number of bits")
       = _value $shl val;
 
    uint shiftLeft(int val)
+            : info("shifts an integer value to the left by a specified number of bits")
       <= shiftLeft(cast uint(val));
 
    uint shiftRight(uint val)
+            : info("shifts an integer value to the right by a specified number of bits")
       = _value $shr val;
 
    uint shiftRight(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
       <= shiftRight(cast uint(val));
    
    get uint BInverted()
@@ -2043,6 +2151,7 @@ public sealed const struct UIntNumber : IntBaseNumber,
       = ~_value;
 
    uint clone()
+            : info("Returns the value copy")
       = new UIntNumber(self);
 }
 
@@ -2062,6 +2171,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       = 9223372036854775807l;
 
    static long Default
+            : info("Returns the default value (0)")
       = 0l;
 
    constructor()
@@ -2109,6 +2219,7 @@ public sealed const struct LongNumber : IntBaseNumber,
       = RealConvertor.convert(self);
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is long n)
       {
@@ -2119,6 +2230,7 @@ public sealed const struct LongNumber : IntBaseNumber,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type when it is possible and compared")
       <= less(cast long(o));
 
    bool equal(long n)
@@ -2130,171 +2242,225 @@ public sealed const struct LongNumber : IntBaseNumber,
       = _value < n;
 
    bool equal(byte b)
+            : info("Compares the integer value")
       <= equal(cast long(b));
 
    bool less(byte b)
       <= less(cast long(b));
 
    bool equal(short s)
+            : info("Compares the integer value")
       <= equal(cast long(s));
 
    bool less(short s)
       <= less(cast long(s));
 
    bool equal(int n)
+            : info("Compares the integer value")
       <= equal(cast long(n));
 
    bool less(int n)
+            : info("Compares the integer value")
       <= less(cast long(n));
 
    bool equal(real n)
+            : info("Compares the integer value")
       = new RealNumber(self).equal(n);
 
    bool less(real n)
+            : info("Compares the integer value")
       = new RealNumber(self).less(n);
 
    add(n)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= add(cast long(n));
 
    subtract(n)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= subtract(cast long(n));
 
    multiply(n)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= multiply(cast long(n));
 
    divide(n)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= divide(cast long(n));
 
    long add(long n)
+            : info("Returns the sum")
       = _value + n;
 
    long subtract(long n)
+            : info("Returns the difference")
       = _value - n;
 
    long multiply(long n)
+            : info("Returns the product")
       = _value * n;
 
    long divide(long n)
+            : info("Returns the result of integer division")
       = _value / n;
 
    long add(byte n)
+            : info("Returns the sum")
       <= add(cast long(n));
 
    long subtract(byte n)
+            : info("Returns the difference")
       <= subtract(cast long(n));
 
    long multiply(byte n)
+            : info("Returns the product")
       <= multiply(cast long(n));
 
    long divide(byte n)
+            : info("Returns the result of integer division")
       <= divide(cast long(n));
 
    long add(short n)
+            : info("Returns the sum")
       <= add(cast long(n));
 
    long subtract(short n)
+            : info("Returns the difference")
       <= subtract(cast long(n));
 
    long multiply(short n)
+            : info("Returns the product")
       <= multiply(cast long(n));
 
    long divide(short n)
+            : info("Returns the result of integer division")
       <= divide(cast long(n));
 
    long add(int n)
+            : info("Returns the sum")
       <= add(cast long(n));
 
    long subtract(int n)
+            : info("Returns the difference")
       <= subtract(cast long(n));
 
    long multiply(int n)
+            : info("Returns the product")
       <= multiply(cast long(n));
 
    long divide(int n)
+            : info("Returns the result of integer division")
       <= divide(cast long(n));
 
    long add(uint n)
+            : info("Returns the sum")
       <= add(cast long(n));
 
    long subtract(uint n)
+            : info("Returns the difference")
       <= subtract(cast long(n));
 
    long multiply(uint n)
+            : info("Returns the product")
       <= multiply(cast long(n));
 
    long divide(uint n)
+            : info("Returns the result of integer division")
       <= divide(cast long(n));
 
    real add(real n)
+            : info("Returns the sum as a real number")
       = new RealNumber(self).add(n);
 
    real subtract(real n)
+            : info("Returns the difference as a real number")
       = new RealNumber(self).subtract(n);
 
    real multiply(real n)
+            : info("Returns the product as a real number")
       = new RealNumber(self).multiply(n);
 
    real divide(real n)
+            : info("Returns the result of a division as a real number")
       = new RealNumber(self).divide(n);
 
    band(n)
+            : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= band(cast long(n));
 
    bor(n)
+            : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= band(cast long(n));
 
    bxor(n)
+            : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
       <= band(cast long(n));
 
    long band(long n)
+            : info("Returns the result of bitwise AND operation")
       = _value & n;
 
    long bor(long n)
+            : info("Returns the result of bitwise OR operation")
       = _value | n;
 
    long bxor(long n)
+            : info("Returns the result of bitwise XOR operation")
       = _value ^ n;
 
    long band(byte n)
+            : info("Returns the result of bitwise AND operation")
       <= band(cast long(n));
 
    long bor(byte n)
+            : info("Returns the result of bitwise OR operation")
       <= bor(cast long(n));
 
    long bxor(byte n)
+            : info("Returns the result of bitwise XOR operation")
       <= bxor(cast long(n));
 
    long band(short n)
+            : info("Returns the result of bitwise AND operation")
       <= band(cast long(n));
 
    long bor(short n)
+            : info("Returns the result of bitwise OR operation")
       <= bor(cast long(n));
 
    long bxor(short n)
+            : info("Returns the result of bitwise XOR operation")
       <= bxor(cast long(n));
 
    long band(int n)
+            : info("Returns the result of bitwise AND operation")
       <= band(cast long(n));
 
    long bor(int n)
+            : info("Returns the result of bitwise OR operation")
       <= bor(cast long(n));
 
    long bxor(int n)
+            : info("Returns the result of bitwise XOR operation")
       <= bxor(cast long(n));
 
    long band(uint n)
+            : info("Returns the result of bitwise AND operation")
       <= band(cast long(n));
 
    long bor(uint n)
+            : info("Returns the result of bitwise OR operation")
       <= bor(cast long(n));
 
    long bxor(uint n)
+            : info("Returns the result of bitwise XOR operation")
       <= bxor(cast long(n));
 
    long shiftLeft(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
       = _value $shl val;
    
    long shiftRight(int val)
+            : info("shifts an integer value to the right by a specified number of bits")
       = _value $shr val;
 
    get long BInverted()
@@ -2302,12 +2468,15 @@ public sealed const struct LongNumber : IntBaseNumber,
       = ~_value;
 
    get long Negative()
+            : info("Returns the negated value")
       = -1l * _value;
 
    string toPrintable()
+            : info("Returns literal representation.")
       = StringConvertor.convert(self, 10);
 
    long clone()
+            : info("Returns the value copy")
       = new LongNumber(_value);
 }
 
@@ -2327,6 +2496,7 @@ public sealed const struct RealNumber : BaseNumber,
       = 1.7976931348623157e+308r;
 
    static real Default
+            : info("Returns the default value (0)")
       = 0.0;
 
    static real NegativeInfinity 
@@ -2342,15 +2512,19 @@ public sealed const struct RealNumber : BaseNumber,
       = 0.0 / 0.0;   
 
    static real Pi
+            : info("Returns Pi value")
       = Pi_value;
 
    constructor(int n)
+            : info("Converts the value")
       = RealConvertor.convert(n);
    
    constructor(byte n)
+            : info("Converts the value")
       = RealConvertor.convert(n);
    
    constructor(short n)
+            : info("Converts the value")
       = RealConvertor.convert(n);
 
    constructor()
@@ -2370,6 +2544,7 @@ public sealed const struct RealNumber : BaseNumber,
       = RealConvertor.convert(n);
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type when it is possible and compared; otherwise returns false")
    {
       if (o; is real r)
       {
@@ -2380,6 +2555,7 @@ public sealed const struct RealNumber : BaseNumber,
    }
 
    bool less(n)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type when it is possible and compared")
       <= less(cast real(n));
 
    bool equal(real n)
@@ -2391,15 +2567,19 @@ public sealed const struct RealNumber : BaseNumber,
       = _value < n;
 
    add(n)
+            : info("Returns the sum;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type")
       <= add(cast real(n));
 
    subtract(n)
+            : info("Returns the difference;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type")
       <= subtract(cast real(n));
 
    multiply(n)
+            : info("Returns the product;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type")
       <= multiply(cast real(n));
 
    divide(n)
+            : info("Returns the result of integer division;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the RealNumber type")
       <= divide(cast real(n));
 
    real add(real n)
@@ -2527,9 +2707,9 @@ public sealed const struct RealNumber : BaseNumber,
       = 0.0 - _value;
 }
 
-public real Pi_value = PrimitiveRealOperations.getPi();
+public real Pi_value : info("Pi constant") = PrimitiveRealOperations.getPi();
 
-public real E_value = PrimitiveRealOperations.getE();
+public real E_value : info("E constant") = PrimitiveRealOperations.getE();
 
 // --- CharValue ---
 
@@ -2548,6 +2728,7 @@ public const struct CharValue : BaseValue,
       = $1114111;
 
    static char Default
+            : info("Returns the default value (0)")
       = $0;
 
    constructor()
@@ -2587,6 +2768,7 @@ public const struct CharValue : BaseValue,
    }
 
    bool equal(o)
+            : info("Compares the value;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the CharValue type when it is possible and compared; otherwise returns false")
    {
       var ch := cast char(o) ?? nil;
       if (ch == nil) {
@@ -2597,18 +2779,23 @@ public const struct CharValue : BaseValue,
    }
 
    bool less(o)
+            : info("Returns the true if the object is less than an argument;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the CharValue type when it is possible and compared")
       <= less(cast char(o));
 
    bool equal(char val)
+            : info("Compares the value")
       = _value == val;
 
    bool less(char val)
+            : info("Returns the true if the object value is less than an argument one;<br/>otherwise returns false")
       = _value < val;
 
    bool equal(int n)
+            : info("Compares the value with a character numeric value")
       = _value == n;
 
    bool equal(string s)
+            : info("If the UTF8 string contains a single character, compares the value with an object value;<br/>otherwise returns false")
    {
       int sLen := s.Length;
       int chLen := self.Length;
@@ -2624,6 +2811,7 @@ public const struct CharValue : BaseValue,
    }
 
    bool equal(wide s)
+            : info("If the UTF16 string contains a single character, compares the value with an object value;<br/>otherwise returns false")
    {
       int sLen := s.Length;
       int chLen := self.WideLength;
@@ -2639,9 +2827,11 @@ public const struct CharValue : BaseValue,
    }
 
    bool less(string s)
+            : info("If the UTF8 string contains a single character, compares the value with an object value;<br/>otherwise returns false")
          => cast string(s);
 
    bool less(wide s)
+            : info("If the UTF16 string contains a single character, compares the value with an object value;<br/>otherwise returns false")
          => cast wide(s);
 
    char clone()
@@ -2649,22 +2839,25 @@ public const struct CharValue : BaseValue,
       = new CharValue(self);
 
    string toPrintable()
+            : info("returns the literal presentation")
       = StringConvertor.convert(self);
 
    string cast()
+            : info("converts the character value to the UTF8 string")
       = StringConvertor.convert(self); 
 
    wide cast()
+            : info("converts the character value to the UTF16 string")
       = WideConvertor.convert(self); 
 }
 
 // --- nil constant ---
 
-public singleton nilValue
+public singleton NilValue
    : info("A nil value")
 {
    bool equal(object)
-      : info("Returns true if the specified object is nil.")
+      : info("Returns true if the specified object is nil. Otherwise the result is false")
    {
       if (nil == object)
       {
@@ -2684,16 +2877,20 @@ public singleton nilValue
       = nil;
 }
 
+// !! obsolete
+public symbol nilValue  : info("<b>obsolete</b> : A nil value<br/>Please use NilValue")
+   = NilValue;
+
 // --- KeyValue ---
 
 public sealed class KeyValue
-   : info("A key - object pair<br/>Extends the object with a key property")
+   : info("A key - value pair<br/>Extends the object with a key property")
 {
    object key;
    object value;
 
    constructor new(key, value)
-      : info("Creates a new object")
+      : info("Creates a new key-value pair")
    {
       this key := key;
       this value := value
@@ -2706,16 +2903,19 @@ public sealed class KeyValue
       = value;
 
    set Value(value)
+          : info("Set the key")
    {
       this value := value
    }
 
    bool equal(o)
+            : info("Compares the argument with the object value field")
       => value;
 
    string toPrintable()
+            : info("returns the literal presentation of the value")
       => value;
 
-   dispatch() : info("Redirects the incoming messages to the object")
+   dispatch() : info("Redirects the incoming messages to the value")
      => value;
 }

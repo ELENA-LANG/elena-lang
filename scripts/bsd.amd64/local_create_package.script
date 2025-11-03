@@ -1,0 +1,44 @@
+#!/bin/sh
+
+ RELEASE=elena-6.8.0.amd64-freebsd
+
+ mkdir -p ../../build/$RELEASE/bin/
+ mkdir -p ../../build/$RELEASE/bin/templates/
+ mkdir -p ../../build/$RELEASE/bin/amd64/
+ mkdir -p ../../build/$RELEASE/lib60_64/
+ mkdir -p ../../build/$RELEASE/examples60/
+ mkdir -p ../../build/$RELEASE/src60/
+
+ echo copying configuration
+
+ cp ../../bin/*.config ../../build/$RELEASE/bin
+ cp ../../bin/templates/*.config ../../build/$RELEASE/bin/templates
+
+ echo copying shared files
+
+ cp ../../dat/og/*.dat ../../build/$RELEASE/bin
+ cp ../../dat/sg/syntax60.dat ../../build/$RELEASE/bin
+ cp ../../dat/sg/syntax67.dat ../../build/$RELEASE/bin
+
+ echo copying binaries
+
+ cp ../../bin/elena64-cli ../../build/$RELEASE/bin
+ cp ../../bin/libelenart60_64.so ../../build/$RELEASE/bin
+
+ echo copying core
+
+ cp ../../bin/amd64/*.bin ../../build/$RELEASE/bin/amd64
+
+ echo copying lib60
+
+ cp ../../lib60_64/*.* ../../build/$RELEASE/lib60_64
+
+ cp -r ../../examples60 ../../build/$RELEASE/examples60
+ cp -r ../../src60 ../../build/$RELEASE
+
+ cp -r ../../LICENSE ../../build/$RELEASE
+ cp -r ../../CHANGELOG.md ../../build/$RELEASE
+ cp -r ../../README.md ../../build/$RELEASE
+ cp -r ../../CONTRIBUTING.md ../../build/$RELEASE
+
+ tar -cJf ../../build/$RELEASE.tar.xz ../../build/$RELEASE

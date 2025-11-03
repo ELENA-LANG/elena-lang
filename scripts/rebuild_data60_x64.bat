@@ -2,33 +2,40 @@ REM NOTE : the script MUST be called from the root folder
 
 bin\sg64-cli dat\sg\syntax60.txt
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 
 move dat\sg\syntax60.dat bin
 
+bin\sg64-cli dat\sg\syntax67.txt
+@echo off 
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
+@echo on
+
+move dat\sg\syntax67.dat bin
+
 bin\sg64-cli dat\sg\syntax50.txt
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 
 move dat\sg\syntax50.dat bin
 
 bin\og64-cli dat\og\bc_rules60.txt
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 move dat\og\bc_rules60.dat bin
 
 bin\og64-cli -s dat\og\bt_rules60.txt 
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 move dat\og\bt_rules60.dat bin
 
 bin\og64-cli -s dat\og\bt_xrules60.txt 
 @echo off 
-if %ERRORLEVEL% EQU -1 GOTO Asm2BinError
+if %ERRORLEVEL% EQU 1 GOTO Asm2BinError
 @echo on
 move dat\og\bt_xrules60.dat bin
 

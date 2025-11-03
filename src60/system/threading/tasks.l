@@ -1,10 +1,8 @@
-import system;
-
 public class Task
 {
    bool           _completed;
 
-   Exception      _exception;
+   Exception?     _exception;
    Action<Task>   _continuation;
 
    Func           _action; 
@@ -33,7 +31,7 @@ public class Task
    indexed internal getResultUnsafe()
       = nil;
 
-   indexed internal Exception Exception
+   indexed internal Exception? Exception
    {  
       get()
          = _exception;
@@ -45,6 +43,8 @@ public class Task
          ThreadPool.queueAction({ action(self) });
       }
       else if:not:nil(_continuation) {
+         Console.writeLine("Only a single continuation is supported currently");
+
          InvalidOperationException.raise("Only a single continuation is supported currently")
       }
       else {
@@ -61,17 +61,20 @@ public class Task
 
    private complete(Exception? ex)
    {
+      Action<Task>? contCopy := nil;
       lock(self) {
          if (_completed) {
+            Console.writeLine("The task is already completed");
+
             InvalidOperationException.raise("The task is already completed")
          };
 
          _exception := ex;
+         contCopy := _continuation;
          _completed := true;
-
-         if:not:nil(_continuation) {
-            _continuation(self);
-         }
+      };
+      if:not:nil(contCopy) {
+         contCopy(self);
       }
    }
 
@@ -92,13 +95,13 @@ public class Task
          ^ self
       };   
 
-      ManualResetEvent mres := nil;
+      ManualResetEvent? mres := nil;
       lock (self)
       {
          if:not(_completed)
          {
             mres := ManualResetEvent.new();
-            continueWithUnsafe((Task x){ mres.set() });
+            continueWithUnsafe((Task x){ mres!.set() });
          }
       };
       
@@ -132,7 +135,7 @@ public class Task
       int len := tasks.Length;
       int remaining := len;
 
-      Exception e := nil;
+      Exception? e := nil;
 
       Action<Task> continuation := (Task completed)
       {
@@ -162,7 +165,7 @@ public class Task
       int len := tasks.Length;
       int remaining := len;
 
-      Exception e := nil;
+      Exception? e := nil;
 
       Action<Task> continuation := (Task completed)
       {
@@ -212,6 +215,8 @@ public class Task
            }
            catch (Exception e)
            {
+               Console.writeLine(e);
+              
                t.setException(e);
            }
        });

@@ -16,13 +16,13 @@ using namespace elena_lang;
 // --- AssemblerBase ---
 
 AssemblerBase :: AssemblerBase(int tabSize, UStrReader* reader, ModuleBase* target)
-   : _reader(tabSize, reader), constants(0), _macros(false)
+   : _reader(tabSize, reader), _macros(false), constants(0)
 {
    _target = target;
 }
 
 AssemblerBase :: AssemblerBase(const char** dfa, int tabSize, UStrReader* reader, ModuleBase* target)
-   : _reader(dfa, tabSize, reader), constants(0), _macros(false)
+   : _reader(dfa, tabSize, reader), _macros(false), constants(0)
 {
    _target = target;
 }
@@ -350,7 +350,7 @@ bool AssemblerBase :: compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
 {
    switch (tokenInfo.token[0]) {
       case 'a':
-         return compileAOpCode(tokenInfo, writer);
+         return compileAOpCode(tokenInfo, writer, labelScope);
       case 'b':
          return compileBOpCode(tokenInfo, writer, labelScope);
       case 'c':
@@ -390,9 +390,30 @@ bool AssemblerBase :: compileOpCode(ScriptToken& tokenInfo, MemoryWriter& writer
    }
 }
 
-bool AssemblerBase :: isMacroVariableDefined(ustr_t macro)
+bool AssemblerBase :: isMacroVariableDefined(ScriptToken& tokenInfo)
 {
-   return _macros.get(macro);
+   if (tokenInfo.compare("(")) {
+      bool defined = false;
+
+      do {
+         read(tokenInfo);
+
+         if (_macros.get(*tokenInfo.token)) {
+            defined = true;
+         }
+
+         read(tokenInfo);
+         if (tokenInfo.compare("|"))
+            read(tokenInfo);
+
+      } while (tokenInfo.compare("|"));
+
+      if (!tokenInfo.compare(")"))
+         throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
+
+      return defined;
+   }
+   else return _macros.get(*tokenInfo.token);
 }
 
 void AssemblerBase :: skipBlock(ScriptToken& tokenInfo)
@@ -421,7 +442,7 @@ void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* help
          if (tokenInfo.compare("#if") || tokenInfo.compare("#elif")) {
             read(tokenInfo);
 
-            if (!isMacroVariableDefined(*tokenInfo.token)) {
+            if (!isMacroVariableDefined(tokenInfo)) {
                skipBlock(tokenInfo);
             }
             else read(tokenInfo);

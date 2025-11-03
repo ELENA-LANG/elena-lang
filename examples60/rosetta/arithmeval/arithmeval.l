@@ -168,11 +168,11 @@ singleton startState
 
 class Scope
 {
-   object _state;
-   int    _level;
-   object _parser;
-   object _token;
-   object _expression;
+   object  _state;
+   int     _level;
+   object  _parser;
+   object? _token;
+   object  _expression;
     
    constructor new(parser)
    {
@@ -353,7 +353,7 @@ public program()
    {
       try
       {
-         Console.printLine("=",parser.run(text))
+         Console.printLine("=",parser.run(text as:string))
       }
       catch(Exception e)
       {

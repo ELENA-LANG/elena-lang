@@ -11,6 +11,9 @@
 
 #include "lbhelper.h"
 
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_NONNULL
+
 namespace elena_lang
 {
    // --- PPCOperand ---
@@ -299,14 +302,14 @@ namespace elena_lang
          writeBxx(offset, 0, 0, writer);
       }
 
-      void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJumpForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
          writeBxx(0, 0, 0, writer);
       }
 
-      void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJeqForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -322,7 +325,7 @@ namespace elena_lang
          writeBCxx(12, 2, offset, 0, 0, writer);
       }
 
-      void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJneForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -338,7 +341,7 @@ namespace elena_lang
          writeBCxx(4, 2, offset, 0, 0, writer);
       }
 
-      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJltForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -354,7 +357,7 @@ namespace elena_lang
          writeBCxx(12, 0, offset, 0, 0, writer);
       }
 
-      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -370,7 +373,7 @@ namespace elena_lang
          writeBCxx(4, 0, offset, 0, 0, writer);
       }
 
-      void writeJgrForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJgrForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -386,7 +389,7 @@ namespace elena_lang
          writeBCxx(12, 1, offset, 0, 0, writer);
       }
 
-      void writeJleForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJleForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -404,5 +407,7 @@ namespace elena_lang
    };
 
 }
+
+DISABLE_WARNING_POP
 
 #endif

@@ -9,7 +9,15 @@
 #include "elflinker32.h"
 #include "elfcommon.h"
 
+#if defined __unix__
+
 #include <elf.h>
+
+#else
+
+#include "elfdeclaration.h"
+
+#endif
 
 #define MAGIC_NUMBER "\x07F""ELF"
 

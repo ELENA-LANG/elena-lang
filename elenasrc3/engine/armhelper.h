@@ -3,7 +3,7 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: ARM64
-//                                            (C)2021-2023, by Aleksey Rakov
+//                                            (C)2021-2025, by Aleksey Rakov
 //                                            (C)2016, from The LLVM Compiler
 //---------------------------------------------------------------------------
 
@@ -318,6 +318,13 @@ namespace elena_lang
             | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
       }
 
+      static unsigned int makeFTypeOpcode(int op0, int op, int ftype, int op2, ARMOperandType rm, int op3, ARMOperandType ra, ARMOperandType rn,
+         ARMOperandType rd)
+      {
+         return (op0 << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (((unsigned int)rm & 0x1F) << 16) | (op3 << 15) | (((unsigned int)ra & 0x1F) << 10)
+            | (((unsigned int)rn & 0x1F) << 5) | ((unsigned int)rd & 0x1F);
+      }
+
       static unsigned int makeFTypeOpcode(int op0, int op, int ftype, int op2, int opc, int op3, ARMOperandType rn, ARMOperandType rd)
       {
          return (op0 << 29) | (op << 24) | (ftype << 22) | (op2 << 21) | (opc << 15) | (op3 << 10)
@@ -502,6 +509,11 @@ namespace elena_lang
          *(unsigned int*)opcode = *(unsigned int*)opcode | ((imm26 & 0xFFFFFFF) >> 2);
       }
 
+      static void fixADRCommand(void* opcode, int imm20)
+      {
+         *(unsigned int*)opcode = makeROpcode(0, 0x10, imm20, (ARMOperandType)(*(unsigned int*)opcode & 0x1F));
+      }
+
       static void fixMovZCommand(void* opcode, int imm16)
       {
          *(unsigned int*)opcode = *(unsigned int*)opcode | ((imm16 & 0xFFFF) << 5);
@@ -536,7 +548,7 @@ namespace elena_lang
                   ARMHelper::fixBxxCommand(opcode, offset);
                }
                else if (ARMHelper::isBCommand(opcode)) {
-                  if (abs(offset) > 0x3FFFFFF)
+                  if (abs(offset) > 0xFFFFF)
                      return false;
 
                   ARMHelper::fixBCommand(opcode, offset);
@@ -547,7 +559,17 @@ namespace elena_lang
          for (auto a_it = addresses.getIt(label); !a_it.eof(); a_it = addresses.nextIt(label, a_it)) {
             auto info = *a_it;
 
-            rh->resolveLabel(writer, info.mask, info.position);
+            if (info.mask == mskRelRef32) {
+               ref_t labelPos = info.position;
+               int offset = writer.position() - labelPos;
+
+               if (abs(offset) > 0x3FFFFFF)
+                  return false;
+
+               void* opcode = writer.Memory()->get(labelPos);
+               ARMHelper::fixADRCommand(opcode, offset);
+            }
+            else rh->resolveLabel(writer, info.mask, info.position);
          }
 
          return true;
@@ -562,14 +584,14 @@ namespace elena_lang
          writeB(offset, writer);
       }
 
-      void writeJumpForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJumpForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
          writeB(0, writer);
       }
 
-      void writeJeqForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJeqForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -585,7 +607,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::EQ, writer);
       }
 
-      void writeJneForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJneForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -601,7 +623,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::NE, writer);
       }
 
-      void writeJltForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJltForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -617,7 +639,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::LT, writer);
       }
 
-      void writeJgeForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJgeForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -633,7 +655,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::GE, writer);
       }
 
-      void writeJleForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJleForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 
@@ -649,7 +671,7 @@ namespace elena_lang
          writeBcc(offset, (int)JumpType::LE, writer);
       }
 
-      void writeJgrForward(pos_t label, MemoryWriter& writer, int byteCodeOffset) override
+      void writeJgrForward(pos_t label, MemoryWriter& writer, int/* byteCodeOffset*/) override
       {
          jumps.add(label, { writer.position() });
 

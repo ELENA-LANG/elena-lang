@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                               (C)2023 by Alexei Rakov
+//                                               (C)2023-2025 by Alexei Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -27,7 +27,7 @@ using namespace elena_lang;
 // --- ScriptEngine ---
 
 ScriptEngine :: ScriptEngine(path_t rootPath)
-   : _rootPath(rootPath), _parsers(nullptr), _tape(16384)
+   : _rootPath(rootPath), _parsers(nullptr), _tapes(nullptr)
 {
    _lastId = 0;
 }
@@ -35,6 +35,18 @@ ScriptEngine :: ScriptEngine(path_t rootPath)
 int ScriptEngine :: newScope()
 {
    return ++_lastId;
+}
+
+MemoryDump* ScriptEngine :: getTape(int id)
+{
+   MemoryDump* tape = _tapes.get(id);
+   if (!tape) {
+      tape = new MemoryDump(16384);
+
+      _tapes.add(id, tape);
+   }
+
+   return tape;
 }
 
 ScriptEngineParserBase* ScriptEngine :: newParser(int id, ParserType type)
@@ -117,7 +129,7 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
             if (reader.compare("#define")) {
                parser->parseGrammarRule(reader);
             }
-            else parser->parseDirective(reader, &_tape);
+            else parser->parseDirective(reader, getTape(id));
          }
       }
    }
@@ -127,23 +139,26 @@ void ScriptEngine :: parseMetaScript(int id, ScriptEngineReaderBase& reader)
 void ScriptEngine :: parseScript(int id, ScriptEngineReaderBase& reader)
 {
    ScriptEngineParserBase* parser = getParser(id);
+   MemoryDump* tape = getTape(id);
 
-   parser->parse(reader, &_tape);
+   parser->parse(reader, tape);
 }
 
 void* ScriptEngine :: translate(int id, UStrReader* source)
 {
+   MemoryDump* tape = getTape(id);
+
    _lastError.clear();
 
    ScriptEngineReader scriptReader(source);
-   pos_t offset = _tape.length();
+   pos_t offset = tape->length();
    if (offset != 0)
       throw InvalidOperationError("Tape is not released");
 
    parseMetaScript(id, scriptReader);
    parseScript(id, scriptReader);
 
-   return _tape.get(offset);
+   return tape->get(offset);
 }
 
 void* ScriptEngine :: translate(int id, ustr_t script)
@@ -228,16 +243,17 @@ void* ScriptEngine :: translate(int id, path_t path, FileEncoding encoding, bool
    }
 }
 
-void ScriptEngine :: free(void* tape)
+void ScriptEngine :: freeTape(int id)
 {
-   // !! temporal solution : presuming only one tape at once
-   _tape.trim(0);
+   _tapes.erase(id);
 }
 
-pos_t ScriptEngine :: getLength(void* tape)
+pos_t ScriptEngine :: getLength(int id)
 {
-   if (_tape.get(0) == tape) {
-      return _tape.length();
+   if (_tapes.exist(id)) {
+      MemoryDump* tape = getTape(id);
+
+      return tape->length();
    }
-   else return 0;
+   return 0;
 }

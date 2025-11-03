@@ -25,7 +25,9 @@ bin\ldoc forms doc\api
 bin\ldoc ltests doc\api
 bin\ldoc net doc\api
 bin\ldoc net'http doc\api
+bin\ldoc net'http'server doc\api
 bin\ldoc net'server doc\api
 bin\ldoc textgen doc\api
 bin\ldoc xforms doc\api
 bin\ldoc xml doc\api
+bin\ldoc webapi doc\api

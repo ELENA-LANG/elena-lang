@@ -27,7 +27,7 @@ typedef Map<ustr_t, int, allocUStr, freeUStr> Coordinates;
 
 parse_key_t lastKey = 0;
 
-parse_key_t registerSymbol(ParserTable& table, ustr_t symbol, parse_key_t newKey, bool terminalMode)
+static inline parse_key_t registerSymbol(ParserTable& table, ustr_t symbol, parse_key_t newKey, bool terminalMode)
 {
    parse_key_t key = table.resolveSymbol(symbol);
    if (!key) {
@@ -50,10 +50,14 @@ parse_key_t registerSymbol(ParserTable& table, ustr_t symbol, parse_key_t newKey
    return key;
 }
 
-parse_key_t registerStarRule(ParserTable& table, parse_key_t key)
+static inline parse_key_t registerStarRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
 {
    IdentifierString ruleName("AUTO_", table.resolveKey(key));
    ruleName.append("*");
+
+   int row = coordinates.get(table.resolveKey(key));
+   if (row != -1)
+      coordinates.add(*ruleName, row);
 
    parse_key_t star_key = table.resolveSymbol(*ruleName);
    if (!star_key) {
@@ -73,10 +77,14 @@ parse_key_t registerStarRule(ParserTable& table, parse_key_t key)
    return star_key;
 }
 
-parse_key_t registerPlusRule(ParserTable& table, parse_key_t key)
+static inline parse_key_t registerPlusRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
 {
    IdentifierString ruleName("AUTO_", table.resolveKey(key));
    ruleName.append("+");
+
+   int row = coordinates.get(table.resolveKey(key));
+   if (row != -1)
+      coordinates.add(*ruleName, row);
 
    parse_key_t plus_key = table.resolveSymbol(*ruleName);
    if (!plus_key) {
@@ -85,7 +93,7 @@ parse_key_t registerPlusRule(ParserTable& table, parse_key_t key)
       parse_key_t rule[3];
       rule[0] = plus_key;
       rule[1] = key;
-      rule[2] = registerStarRule(table, key);
+      rule[2] = registerStarRule(table, key, coordinates);
 
       table.registerRule(rule, 3);
    }
@@ -93,10 +101,14 @@ parse_key_t registerPlusRule(ParserTable& table, parse_key_t key)
    return plus_key;
 }
 
-parse_key_t registerEpsRule(ParserTable& table, parse_key_t key)
+static inline parse_key_t registerEpsRule(ParserTable& table, parse_key_t key, Coordinates& coordinates)
 {
    IdentifierString ruleName("AUTO_", table.resolveKey(key));
    ruleName.append("?");
+
+   int row = coordinates.get(table.resolveKey(key));
+   if (row != -1)
+      coordinates.add(*ruleName, row);
 
    parse_key_t eps_key = table.resolveSymbol(*ruleName);
    if (!eps_key) {
@@ -114,7 +126,7 @@ parse_key_t registerEpsRule(ParserTable& table, parse_key_t key)
    return eps_key;
 }
 
-void registerBrackets(ParserTable& table, parse_key_t* rule, size_t& rule_len, size_t start, Coordinates& coordinates, int row)
+static inline void registerBrackets(ParserTable& table, parse_key_t* rule, size_t& rule_len, size_t start, Coordinates& coordinates, int row)
 {
    parse_key_t bracket_key = rule[start];
    if (!bracket_key) {
@@ -153,7 +165,7 @@ int main(int argc, char* argv[])
    printf(SG_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, SG_REVISION_NUMBER);
    if (argc < 2 || argc > 3) {
       printf(SG_HELP);
-      return  -1;
+      return  EXIT_FAILURE;
    }
    try
    {
@@ -165,7 +177,7 @@ int main(int argc, char* argv[])
          }
          else {
             printf(SG_HELP);
-            return  -1;
+            return EXIT_FAILURE;
          }
       }
 
@@ -173,7 +185,7 @@ int main(int argc, char* argv[])
       TextFileReader source(path.str(), encoding, false);
       if (!source.isOpen()) {
          printf(SG_FILENOTEXIST);
-         return  -1;
+         return EXIT_FAILURE;
       }
 
       Coordinates coordiantes(-1);
@@ -232,6 +244,16 @@ int main(int argc, char* argv[])
             }
             rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable;
          }
+         else if (token.compare("^=")) {
+            // NOTE : ^^ means merge rchildren
+            rule[rule_len++] = pkTransformMark;
+            rule[rule_len++] = pkTransformMark;
+            rule[rule_len++] = pkTransformMark;
+
+            reader.read(token);
+
+            rule[rule_len++] = registerSymbol(table, *token.token, lastKey + 1, false) | pkInjectable;
+         }
          else if (token.compare("=")) {
             reader.read(token);
             rule[rule_len++] = pkTransformMark;
@@ -239,13 +261,13 @@ int main(int argc, char* argv[])
          }
          else if (token.compare("+")) {
             if (rule_len > 0) {
-               rule[rule_len - 1] = registerPlusRule(table, rule[rule_len - 1]);
+               rule[rule_len - 1] = registerPlusRule(table, rule[rule_len - 1], coordiantes);
             }
             else throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
          }
          else if (token.compare("*")) {
             if (rule_len > 0) {
-               rule[rule_len - 1] = registerStarRule(table, rule[rule_len - 1]);
+               rule[rule_len - 1] = registerStarRule(table, rule[rule_len - 1], coordiantes);
             }
             else throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
          }
@@ -255,7 +277,7 @@ int main(int argc, char* argv[])
          }
          else if (token.compare("?")) {
             if (rule_len > 0) {
-               rule[rule_len - 1] = registerEpsRule(table, rule[rule_len - 1]);
+               rule[rule_len - 1] = registerEpsRule(table, rule[rule_len - 1], coordiantes);
             }
             else throw SyntaxError(SG_INVALID_RULE, token.lineInfo);
          }
@@ -288,7 +310,7 @@ int main(int argc, char* argv[])
          ustr_t terminal = table.resolveKey(ambigous.value1);
 
          printf(SG_AMBIGUOUS, nonterminal.str(), terminal.str(), coordiantes.get(nonterminal.str()));
-         return -1;
+         return EXIT_FAILURE;
       }
 
       printf("saving...\n");
@@ -303,13 +325,13 @@ int main(int argc, char* argv[])
    {
       printf(e.message, e.lineInfo.row, e.lineInfo.column);
 
-      return -1;
+      return EXIT_FAILURE;
    }
    catch (...)
    {
       printf(SG_FATAL);
 
-      return -1;
+      return EXIT_FAILURE;
    }
 
    return 0;

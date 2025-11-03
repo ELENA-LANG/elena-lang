@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8" standalone="yes" ?>
+<CodeBlocks_project_file>
+	<FileVersion major="1" minor="6" />
+	<Project>
+		<Option title="lengine" />
+		<Option pch_mode="2" />
+		<Option compiler="gcc" />
+		<Build>
+			<Target title="Debug32">
+				<Option output="../../../bin/lengine" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="../temp/lengine/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-std=c++20" />
+					<Add option="-m32" />
+					<Add option="-g" />
+				</Compiler>
+			</Target>
+			<Target title="Release32">
+				<Option output="../../../bin/lengine" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="../temp/release/lengine/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-march=pentium3" />
+					<Add option="-std=c++20" />
+					<Add option="-m32" />
+				</Compiler>
+				<Linker>
+					<Add option="-O3" />
+					<Add option="-s" />
+					<Add option="-m32" />
+				</Linker>
+			</Target>
+			<Target title="Debug64">
+				<Option output="../../../bin/lengine64" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="../temp/lengine64/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-std=c++20" />
+					<Add option="-m64" />
+					<Add option="-g" />
+				</Compiler>
+				<Linker>
+					<Add option="-m64" />
+				</Linker>
+			</Target>
+			<Target title="Release64">
+				<Option output="../../../bin/lengine64" prefix_auto="1" extension_auto="1" />
+				<Option working_dir="" />
+				<Option object_output="../temp/release/lengine64/" />
+				<Option type="2" />
+				<Option compiler="gcc" />
+				<Option createDefFile="1" />
+				<Compiler>
+					<Add option="-march=pentium3" />
+					<Add option="-m64" />
+				</Compiler>
+				<Linker>
+					<Add option="-O3" />
+					<Add option="-s" />
+					<Add option="-m64" />
+				</Linker>
+			</Target>
+		</Build>
+		<Compiler>
+			<Add option="-Wall" />
+			<Add option="-fexceptions" />
+			<Add directory=".." />
+			<Add directory="../../common" />
+		</Compiler>
+		<Unit filename="../module.cpp" />
+		<Unit filename="../module.h" />
+		<Unit filename="../section.cpp" />
+		<Unit filename="../section.h" />
+		<Extensions />
+	</Project>
+</CodeBlocks_project_file>

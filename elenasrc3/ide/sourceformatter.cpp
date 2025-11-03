@@ -35,7 +35,7 @@ const text_c* lexDFA[] =
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaeeeeeeeaaaaaaaaaaaeeeeeeebbbbbbbbbbbbbbbbbbbbbbbbbbeaeebabbbbbbbbbbbbbbbbbbbbbbbbbbaaaaa"),
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffaaaaaaaaaaafffffffaaaaaaaaaaaaaaaaaaaaaaaaaafaffaaaaaaaaaaaaaaaaaaaaaaaaaaaafffaa"),
      _T("gggggggggggggggggggggggggggggggggfggggggfffffffgggggggggggfffffffggggggggggggggggggggggggggfgfgggggggggggggggggggggggggggggfffgg"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqataaaaaaaaaaaooooooooooaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqataaaaaaaaaahooooooooooaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagaaaaaaaaakaaaaigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"),
      _T("jiiiiiiiiijiijiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"),
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
@@ -47,7 +47,7 @@ const text_c* lexDFA[] =
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffaaaaaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaafafaaaaaaaaaaaaaaaaaaaaaaaaaaaaafffaa"),
      _T("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqrqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"),
      _T("ssssssssssssssssssssssssssssssssssqstsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffaaaaaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaa"),
+     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffhaaaaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaa"),
      _T("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuqutuuuuuuuuuuuttttttttttuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"),
      _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
 };

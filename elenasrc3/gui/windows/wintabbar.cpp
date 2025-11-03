@@ -317,3 +317,11 @@ void TabBar :: refresh()
 
    CustomTabBar::refresh();
 }
+
+void TabBar::invalidate()
+{
+   if (_current)
+      _current->invalidate();
+
+   CustomTabBar::invalidate();
+}

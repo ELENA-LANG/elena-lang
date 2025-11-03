@@ -22,9 +22,15 @@
 #define DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER    DISABLE_WARNING(4100)
 #define DISABLE_WARNING_UNREFERENCED_FUNCTION            DISABLE_WARNING(4505)
 #define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(26495)
+#define DISABLE_WARNING_EXPENSIVE_COPY                   DISABLE_WARNING(26820)
+#define DISABLE_WARNING_UNUSEDVARIABLE                   DISABLE_WARNING(4189)
+#define DISABLE_WARNING_HIDE_CLASSMEMBER                 DISABLE_WARNING(4458)
+#define DISABLE_WARNING_NULLCONVERSION
+#define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(4127)
+#define DISABLE_WARNING_NONNULL
 // other warnings you want to deactivate...
 
-#elif defined(__GNUC__) || defined(__clang__)
+#elif defined(__GNUC__)
 #define DO_PRAGMA(X) _Pragma(#X)
 #define DISABLE_WARNING_PUSH           DO_PRAGMA(GCC diagnostic push)
 #define DISABLE_WARNING_POP            DO_PRAGMA(GCC diagnostic pop) 
@@ -32,7 +38,31 @@
 
 #define DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER    DISABLE_WARNING(-Wunused-parameter)
 #define DISABLE_WARNING_UNREFERENCED_FUNCTION            DISABLE_WARNING(-Wunused-function)
-#define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(-Wunused-function)
+#define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(-Wunused-variable)
+#define DISABLE_WARNING_UNUSEDVARIABLE                   DISABLE_WARNING(-Wunused-variable)
+#define DISABLE_WARNING_EXPENSIVE_COPY
+#define DISABLE_WARNING_NULLCONVERSION                   
+#define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(-Waddress)
+#define DISABLE_WARNING_HIDE_CLASSMEMBER                 
+#define DISABLE_WARNING_NONNULL                          DISABLE_WARNING(-Wnonnull)
+
+#elif defined(__clang__)
+
+#define DO_PRAGMA(X) _Pragma(#X)
+#define DISABLE_WARNING_PUSH           DO_PRAGMA(clang diagnostic push)
+#define DISABLE_WARNING_POP            DO_PRAGMA(clang diagnostic pop) 
+#define DISABLE_WARNING(warningName)   DO_PRAGMA(clang diagnostic ignored #warningName)
+
+#define DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER    DISABLE_WARNING(-Wunused-parameter)
+#define DISABLE_WARNING_UNREFERENCED_FUNCTION            DISABLE_WARNING(-Wunused-function)
+#define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(-Wunused-variable)
+#define DISABLE_WARNING_UNUSEDVARIABLE                   DISABLE_WARNING(-Wunused-variable)
+#define DISABLE_WARNING_EXPENSIVE_COPY
+#define DISABLE_WARNING_NULLCONVERSION                   DISABLE_WARNING(-Wnull-conversion)
+#define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(-Waddress)
+#define DISABLE_WARNING_HIDE_CLASSMEMBER                 
+#define DISABLE_WARNING_NONNULL
+
 // other warnings you want to deactivate... 
 
 #else
@@ -40,6 +70,11 @@
 #define DISABLE_WARNING_POP
 #define DISABLE_WARNING_UNREFERENCED_FORMAL_PARAMETER
 #define DISABLE_WARNING_UNREFERENCED_FUNCTION
+#define DISABLE_WARNING_UNUSEDVARIABLE
+#define DISABLE_WARNING_NULLCONVERSION
+#define DISABLE_WARNING_HIDE_CLASSMEMBER
+#define DISABLE_WARNING_EXPENSIVE_COPY
+#define DISABLE_WARNING_NONNULL
 // other warnings you want to deactivate... 
 
 #endif

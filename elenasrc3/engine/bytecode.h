@@ -1,4 +1,3 @@
-//------------------------------------------------------------------------------
 // 
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
@@ -12,12 +11,8 @@
 
 #include "elena.h"
 
-#if _MSC_VER
-
-#pragma warning( push )
-#pragma warning( disable : 4458 )
-
-#endif
+DISABLE_WARNING_PUSH
+DISABLE_WARNING_HIDE_CLASSMEMBER
 
 namespace elena_lang
 {
@@ -166,6 +161,7 @@ namespace elena_lang
       Jle            = 0xBA,
       PeekTLS        = 0xBB,
       StoreTLS       = 0xBC,
+      XLAddDP        = 0xBD,
 
       CmpR           = 0xC0,
       FCmpN          = 0xC1,
@@ -503,6 +499,7 @@ namespace elena_lang
       static void formatMessageName(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
          ref_t* references, size_t len, pos_t argCount, ref_t flags);
       static bool resolveMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
+      static bool resolveGenericMessageName(IdentifierString& messageName, ModuleBase* module, mssg_t message);
 
       // NOTE : information about nullable arguments are optional and is used only in ECV tool
       static void formatMessageNameWithNullableArgs(IdentifierString& messageName, ModuleBase* module, ustr_t actionName,
@@ -637,10 +634,6 @@ namespace elena_lang
    };
 }
 
-#ifdef _MSC_VER
-
-#pragma warning( pop )
-
-#endif
+DISABLE_WARNING_POP
 
 #endif

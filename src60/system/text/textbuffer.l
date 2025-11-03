@@ -695,7 +695,7 @@ namespace text
       }
 
       insert(index, o)
-         <= insert(index as::IntNumber, o.toPrintable() as::WideString);
+         <= insert(index as:IntNumber, (o.toPrintable()) as:WideString);
 
       delete(int index, int length)
       {

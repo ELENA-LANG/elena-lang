@@ -1,0 +1,7 @@
+<configuration>
+  <collection>
+    <project>system_tests\system_tests.prj</project>
+    <project>script_tests\script_tests.prj</project>
+    <project>api_tests\api_tests.prj</project>
+  </collection>
+</configuration>

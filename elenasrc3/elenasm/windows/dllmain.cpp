@@ -59,18 +59,14 @@ EXTERN_DLL_EXPORT void* InterpretScriptSMLA(ustr_t script)
    return engine->translate(0, script);
 }
 
-EXTERN_DLL_EXPORT int GetLengthSMLA(void* tape)
+EXTERN_DLL_EXPORT int GetLengthSMLA(int id)
 {
-   if (tape) {
-      return engine->getLength(tape);
-   }
-   else return 0;
+   return engine->getLength(id);
 }
 
-EXTERN_DLL_EXPORT void ReleaseSMLA(void* tape)
+EXTERN_DLL_EXPORT void ReleaseSMLA(int id)
 {
-   if (tape)
-      engine->free(tape);
+   engine->freeTape(id);
 }
 
 EXTERN_DLL_EXPORT size_t GetStatusSMLA(char* buffer, size_t maxLength)
@@ -101,7 +97,7 @@ EXTERN_DLL_EXPORT void ClearStackSMLA()
 
 BOOL APIENTRY DllMain(HMODULE hModule,
    DWORD  ul_reason_for_call,
-   LPVOID lpReserved
+   LPVOID/* lpReserved*/
    )
 {
    switch (ul_reason_for_call)

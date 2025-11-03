@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Script Engine
 //
-//                                              (C)2023 by Aleksey Rakov
+//                                              (C)2023-2025 by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SCRIPTPARSER_H
@@ -36,7 +36,7 @@ namespace elena_lang
       int      state;
       LineInfo lineInfo;
 
-      bool compare(ScriptBookmark& bm)
+      bool compare(ScriptBookmark& bm) const
       {
          return offset == bm.offset;
       }

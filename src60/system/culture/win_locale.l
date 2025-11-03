@@ -8,7 +8,7 @@ namespace culture
     
    public sealed class Locale : ILocale
    {
-      wide _name;
+      wide? _name;
 
       constructor new(wide name)
       {
@@ -25,6 +25,9 @@ namespace culture
         
       get static ILocale Invariant()
          = new Locale();
+
+// !! temporal
+#if (__project["_Win"]) // Windows
 
       private strToUpper(short[] src, int length, short[] dest, ref int destLength)
       {
@@ -57,6 +60,7 @@ namespace culture
                 
          destLength := retVal            
       }
+#endif
 
       string toUppercase(string s)
          <= toUppercase(cast wide(s));

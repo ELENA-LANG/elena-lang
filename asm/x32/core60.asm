@@ -1761,8 +1761,8 @@ end
 inline %0ACh
 
   lea  edi, [ebp + __arg32_1]
-  mov  eax, dword ptr [ebx]
-  mov  edx, dword ptr [ebx+4]
+  mov  eax, dword ptr [edi]
+  mov  edx, dword ptr [edi+4]
 
 end
 
@@ -1868,6 +1868,17 @@ end
 
 // ; storetls
 inline %0BCh
+
+end
+
+// ; xladddpn
+inline %0BDh
+
+  lea  edi, [ebp+__arg32_1]
+  mov  ecx, [edi]
+  add  eax, ecx
+  mov  ecx, [edi + 4]
+  adc  edx, ecx
 
 end
 
@@ -2651,7 +2662,6 @@ inline %4E1h
   lea  edi, [ebp + __arg32_1]
   mov  eax, [esi + 4]
   mov  ecx, [esi]
-  add  word ptr [edi], ax
   add  [edi], ecx
   adc  [edi+4], eax
 

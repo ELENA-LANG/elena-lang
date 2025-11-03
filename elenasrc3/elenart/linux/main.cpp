@@ -14,8 +14,20 @@
 
 using namespace elena_lang;
 
+#if defined(__FreeBSD__)
+
+#define ROOT_PATH          "/usr/local/lib/elena"
+
+#define CONFIG_PATH        "/usr/local/etc/elena/elenart60.config"
+
+#else
+
 #define ROOT_PATH          "/usr/lib/elena"
+
 #define CONFIG_PATH        "/etc/elena/elenart60.config"
+
+#endif
+
 
 #if defined(__x86_64__)
 
@@ -47,7 +59,7 @@ void getSelfPath(PathString& rootPath)
 {
    char buff[FILENAME_MAX];
    size_t len = ::readlink("/proc/self/exe", buff, sizeof(buff) - 1);
-   if (len != -1) {
+   if (len != NOTFOUND_POS) {
       buff[len] = 0;
       rootPath.copy(buff);
    }
@@ -105,6 +117,11 @@ void* CollectGCLA(void* roots, size_t size)
    //printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
+}
+
+void* CollectPermGCLA(size_t size)
+{
+   return __routineProvider.GCRoutinePerm(systemEnv->gc_table, size);
 }
 
 size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
@@ -233,4 +250,113 @@ void ExitLA(int retVal)
       fflush(stdout);
    }
    __routineProvider.Exit(retVal);
+}
+
+void GetGCStatisticsLA(GCStatistics* statistics)
+{
+   SystemRoutineProvider::CalcGCStatistics(systemEnv, statistics);
+}
+
+void ResetGCStatisticsLA()
+{
+   SystemRoutineProvider::ResetGCStatistics();
+}
+
+/// <summary>
+/// Fills the passed dispatch list with references to extension message overload list
+/// </summary>
+/// <param name="moduleList">List of imported modules separated by semicolon</param>
+/// <param name="message">Extension message</param>
+/// <param name="output">Dispatch list</param>
+/// <returns></returns>
+int LoadExtensionDispatcherLA(const char* moduleList, mssg_t message, void* output)
+{
+   return machine->loadExtensionDispatcher(moduleList, message, output);
+}
+
+size_t LoadActionNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadActionName((mssg_t)message, buffer, length);
+}
+
+addr_t LoadClassByBufferLA(void* referenceName, size_t index, size_t length)
+{
+   if (length < 0x100) {
+      IdentifierString str((const char*)referenceName + index, length);
+
+      return LoadClassByStringLA(*str);
+   }
+   else {
+      DynamicString<char> str((const char*)referenceName, index, length);
+
+      return LoadClassByStringLA(str.str());
+   }
+}
+
+mssg_t LoadActionLA(const char* actionName)
+{
+   return machine->loadAction(actionName);
+}
+
+size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
+{
+   return machine->loadClassMessages(classPtr, output, skip, maxLength);
+}
+
+bool CheckClassMessageLA(void* classPtr, mssg_t message)
+{
+   return machine->checkClassMessage(classPtr, message);
+}
+
+void* CreateThreadLA(void* arg, void* threadProc, int stackSize, int flags)
+{
+   return machine->allocateThread(systemEnv, arg, threadProc, stackSize, flags);
+}
+
+void InitThreadLA(SystemEnv* env, void* criricalHandler, int index)
+{
+   __routineProvider.InitMTAExceptionHandling(env, index, criricalHandler);
+   __routineProvider.InitMTASignals(env, index);
+}
+
+void StartThreadLA(SystemEnv* env, void* entryPoint, int index)
+{
+#ifdef DEBUG_OUTPUT
+   printf("StartThreadLA.6 %x\n", (int)env);
+
+   fflush(stdout);
+#endif
+
+   machine->startThread(env, entryPoint, index);
+}
+
+void UninitThreadLA(SystemEnv* env, int index)
+{
+   __routineProvider.ClearMTASignals(env, index);
+   machine->clearThreadEntry(env, index);
+}
+
+void ExitThreadLA(int errCode)
+{
+   return __routineProvider.ExitThread(errCode);
+}
+
+void SignalStopGCLA(void* handle)
+{
+   SystemRoutineProvider::GCSignalStop(handle);
+}
+
+void WaitForSignalGCLA(void* handle)
+{
+   SystemRoutineProvider::GCWaitForSignal(handle);
+}
+
+void SignalClearGCLA(void* handle)
+{
+   SystemRoutineProvider::GCSignalClear(handle);
+}
+
+void WaitForSignalsGCLA(size_t count, void* handles)
+{
+   SystemRoutineProvider::GCWaitForSignals(count, handles);
 }

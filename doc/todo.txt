@@ -3,87 +3,78 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.7 ###
-
   ### EPIC: elena 6.8 ###
-
-  === Iteration 41 ===
-  --------------------------------------
-  dev: 
-  - #739
-  - #743
-  - VM support for Linux (make for both linux and windows)
-  - MTA support for Linux : support MT routines in elenart
-  - support :sizeof
-  - #708 : compile the project (elc, og, sg, asm, ecv), compile library, compile executable, test executable
-  - implement analog of record using meta programming (extensions'records)
-  - upndown (connector - cmdSearch)
-  - #748 : i386
-  - #620 : backlog
-  gen:
-  - work on REPL (elt) : execute simple program
-  api:
-  - api refactoring : main program entry to be called - Program
-  - #622 : api backlog
-  - #34 : http client : support redirects, put, delete, support patch, head, options, web api
-  - textgen : support {{ }} special symbols 
-  ide:  
-  - splitter is not correctly displayed
-  - compile in the separate thread
-  - debugger : stepped into the property / operator automatically (see for example xml)
-  - debugger : watch list is not refreshed correctly  (see for example xml)
-  - #184 : linux -  open project, new project, save project, save all, close project ...
-  - syntax highlighting
-  - async method - auto watch : self and some variables are not displayed
-  maint:
-  - freebsd : create package, workflow
-  - test all x86-64 examples
-  - API - review / description
-  - review pi performance (must < 6) : realOp.power[3] byte code
-  - nillable single dispatcher : use direct reference to nilValue symbol 
-  samples:
-  - optimization : pi (used classes byte code)
-  - rosetta code : Program termination, Parallel calculations
-  - rosetta code : moving to 6.6 : (..Add a variable to a class instance at runtime)
-  port:
-  - chat sample
-  tools:
-  - #658 :  debug elena program in VSCode : new thread event, loading source info, step over source
-  - vs #2 : elena.tmLanguage.json  
-  prom:
-  - api : BaseNumber
-  - post an article about records using meta programming
-  - weekly posting
-  --------------------------------------
-  --------------------------------------
-  --------------------------------------
 
   === Iteration 42 ===
   --------------------------------------
-  dev: 
-  gen:
-  api:
-  ide:  
-  maint:
-  samples:
-  port:
-  tools:
-  prom:
+  * release 6.8
   --------------------------------------
+  - merge PR
+  - prepare release notes
+  - upload linux x86, linux amd64, bsd amd64
+  - upload release files
+  - release a new version of mbedtls wrapper   
+  --------------------------------------
+
+  ### EPIC: elena 6.9 ###
+
+  === Iteration 44 ===
+  ====================================== 
+  * new version 6.8.1
+  * fix entropy sample
+  * api : provide descriptions for all classes in system & extensions, starting from IntMatrix
+  * #820 : Launch elena64-ide.exe from the command line 
+  * warn if nil is passed to the non-nil argument
+  * ldoc : support search by method name
+  * ldoc : support search by class name
+  * Babylonian spiral
+  ======================================
+  * #184 : IDE linux - migrate to gtkmm4
+  --------------------------------------
+  - #184 : IDE : project view
+  - #184 : project menu commands
+  - #184 : IDE : enable / disable menu commands
+  - #184 : IDE - select text with a mouse
+  - #184 : dialogs must be mandantory
+
+  - #184 : IDE linux - implement all menu commands (except debug / compile)
+  - get rid of FileDialogBase
+  - #184 : IDE linux - mark modified file
+  - #184 : IDE linux - include / exclude
+  - #184 : uncomment checkMenuItemById
+  - #184 : exit
+  - #184 : recent file / project list
+  --------------------------------------
+  * IDE : close all - do not save file if it was not changed
+  * IDE : call stack
+  * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected
+  * IDE : right click on tab - context menu : close, close all, close all but current
+  * IDE : close icon on the tab
+  ======================================
+  #35 : webapi weather backend (using existing frontend)
+  --------------------------------------
+  * working on dummy https server : investigate error - mbedtls_socket_handshake returns -28160
+  * example - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
+  * comment output => use logger to display this information
+
+  * simple web api client - GET
+  * simple web api - POST
+  * simple web api client - POST
+
+  * combining into a generic httpserver
+  * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
+  --------------------------------------
+
+  === Iteration 45 ===
   --------------------------------------
   --------------------------------------
 
-  === Iteration 43 ===
+  === Iteration 46 ===
   --------------------------------------
-  dev: 
-  gen:
-  api:
-  ide:  
-  maint:
-  samples:
-  port:
-  tools:
-  prom:
   --------------------------------------
+
+  ### EPIC: elena 6.10 ###
+
+  === Iteration 47 ===
   --------------------------------------
   --------------------------------------

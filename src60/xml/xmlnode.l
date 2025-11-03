@@ -72,7 +72,7 @@ public class XmlNode
    get int ChildCounter()
       = _children.Length;
    
-   internal static ::(string, string) parseXPath(int index, string xpath)
+   (string, string) internal static parseXPath(int index, string xpath)
    {
       int separator := xpath.indexOf(index, $47);
       if (separator != -1) {
@@ -82,14 +82,14 @@ public class XmlNode
       ^ (xpath.Substring(index), String.MinValue);
    }
    
-   XmlNode findChild(string xpath)
+   XmlNode? findChild(string xpath)
    {
       if (xpath == String.MinValue)
       {
          ^ self
       };
       
-      string current, string subpath := XmlNode.parseXPath(0, xpath);
+      (string current, string subpath) := XmlNode.parseXPath(0, xpath);
       
       if (current != _name) {
          ^ nil
@@ -105,7 +105,7 @@ public class XmlNode
       ^ nil
    }
    
-   XmlNode nextSibling()
+   XmlNode? nextSibling()
    {
       if:nil(_parent)
       {
@@ -123,7 +123,7 @@ public class XmlNode
       ^ nil
    }
    
-   XmlNode previousSibling()
+   XmlNode? previousSibling()
    {
       if:nil(_parent)
          { ^ nil };
@@ -137,7 +137,7 @@ public class XmlNode
       ^ nil      
    }
    
-   XmlNode firstChild()
+   XmlNode? firstChild()
    {
       if (_children.Length == 0) {
          ^ nil
@@ -146,7 +146,7 @@ public class XmlNode
       ^ _children[0]
    }
    
-   XmlNode lastChild()
+   XmlNode? lastChild()
    {
       if (_children.Length == 0) {
          ^ nil

@@ -28,8 +28,6 @@
 
 using namespace elena_lang;
 
-#pragma warning(disable:4996)
-
 // --- Unicode coversion routines ---
 
 static const int halfShift = 10; /* used for shifting by 10 bits */
@@ -403,6 +401,9 @@ int StrConvertor :: toInt(const char* s, int radix)
 
 int StrConvertor :: toInt(const wide_c* s, int radix)
 {
+   // !! temporally - supporting only decimal based
+   assert(radix == 10);
+
    int n = 0;
    bool neg = false;
 
@@ -412,7 +413,7 @@ int StrConvertor :: toInt(const wide_c* s, int radix)
       neg = true;
    }
    while (*s) {
-      n *= 10;
+      n *= radix;
 
       unsigned short c = *s;
       if (c >= '0' && c <= '9') {
@@ -561,7 +562,7 @@ char* StrConvertor :: toString(double value, int precision, char* s, size_t dest
    return s;
 }
 
-wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_t destLength)
+wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_t/* destLength*/)
 {
    char tmp[25];
    StrConvertor::toString(value, precision, tmp, 25);
@@ -575,25 +576,25 @@ wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_
 
 // --- internal functions ---
 
-bool inline util_compare(const char* s1, const char* s2)
+static inline bool util_compare(const char* s1, const char* s2)
 {
    if (s1 && s2) return (strcmp(s1, s2) == 0);
    else return (s1 == s2);
 }
 
-bool inline util_greater(const char* s1, const char* s2)
+static inline bool util_greater(const char* s1, const char* s2)
 {
    if (s1 && s2) return (strcmp(s1, s2) > 0);
    else return false;
 }
 
-bool inline util_compare(const char* s1, const char* s2, size_t length)
+static inline bool util_compare(const char* s1, const char* s2, size_t length)
 {
    if (s1 && s2) return (strncmp(s1, s2, length) == 0);
    else return (s1 == s2);
 }
 
-inline size_t util_find(const char* s, char ch, size_t length, size_t defValue)
+static inline size_t util_find(const char* s, char ch, size_t length, size_t defValue)
 {
    if (length == 0)
       return defValue;
@@ -605,7 +606,7 @@ inline size_t util_find(const char* s, char ch, size_t length, size_t defValue)
    else return p - s;
 }
 
-inline size_t util_find_str(const char* s, const char* subs, size_t defValue)
+static inline size_t util_find_str(const char* s, const char* subs, size_t defValue)
 {
    const char* p = (const char*)strstr(s, subs);
    if (p == nullptr) {
@@ -614,16 +615,35 @@ inline size_t util_find_str(const char* s, const char* subs, size_t defValue)
    else return p - s;
 }
 
-inline size_t util_find_str(const char* s, size_t index, const char* subs, size_t defValue)
+#if !defined(__FreeBSD__)
+
+static inline const char* strnstr(const char* haystack, const char* needle, size_t length)
 {
-   const char* p = (const char*)strstr(s + index, subs);
+   size_t needle_length = strlen(needle);
+   size_t i;
+   for (i = 0; i < length; i++) {
+      if (i + needle_length > length) {
+         return nullptr;
+      }
+      if (strncmp(&haystack[i], needle, needle_length) == 0) {
+         return &haystack[i];
+      }
+   }
+   return nullptr;
+}
+
+#endif
+
+static inline size_t util_find_str(const char* s, size_t index, size_t length, const char* subs, size_t defValue)
+{
+   const char* p = strnstr(s + index, subs, length);
    if (p == nullptr) {
       return defValue;
    }
    else return p - s;
 }
 
-size_t inline util_find_last(const char* s, char c, size_t defValue)
+static inline size_t util_find_last(const char* s, char c, size_t defValue)
 {
    const char* p = strrchr(s, c);
    if (p == nullptr) {
@@ -632,12 +652,12 @@ size_t inline util_find_last(const char* s, char c, size_t defValue)
    else return p - s;
 }
 
-void append(char* dest, const char* sour, size_t length)
+static inline void append(char* dest, const char* sour, size_t length)
 {
    strncat(dest, sour, length);
 }
 
-char* util_clone(const char* s, size_t length)
+static inline char* util_clone(const char* s, size_t length)
 {
    if (!emptystr(s)) {
       char* copy = StrFactory::allocate(length + 1, s);
@@ -650,17 +670,17 @@ char* util_clone(const char* s, size_t length)
 
 #if (defined(_WIN32) || defined(__WIN32__))
 
-char* util_clone(const char* s)
+static inline char* util_clone(const char* s)
 {
    return emptystr(s) ? nullptr : _strdup(s);
 }
 
-wchar_t* util_clone(const wchar_t* s)
+static inline wchar_t* util_clone(const wchar_t* s)
 {
    return _wcsdup(s);
 }
 
-wchar_t* util_clone(const wchar_t* s, size_t length)
+static inline wchar_t* util_clone(const wchar_t* s, size_t length)
 {
    if (!emptystr(s)) {
       wchar_t* copy = StrFactory::allocate(length + 1, s);
@@ -671,33 +691,34 @@ wchar_t* util_clone(const wchar_t* s, size_t length)
    else return nullptr;
 }
 
-void append(wchar_t* dest, const wchar_t* sour, size_t length)
+static inline void append(wchar_t* dest, const wchar_t* sour, size_t length)
 {
    wcsncat(dest, sour, length);
 }
 
-inline bool util_compare(const wchar_t* s1, const wchar_t* s2)
+static inline bool util_compare(const wchar_t* s1, const wchar_t* s2)
 {
    if (s1 && s2) return (wcscmp(s1, s2) == 0);
    else return (s1 == s2);
 }
 
-inline bool util_compare(const wchar_t* s1, const wchar_t* s2, size_t length)
+static inline bool util_compare(const wchar_t* s1, const wchar_t* s2, size_t length)
 {
    if (s1 && s2) return (wcsncmp(s1, s2, length) == 0);
    else return (s1 == s2);
 }
 
-size_t inline util_find(const wchar_t* s, wchar_t ch, size_t length, size_t defValue)
+static inline size_t util_find(const wchar_t* s, wchar_t ch, size_t length, size_t defValue)
 {
-   const wchar_t* p = wcschr(s, ch);
-   if (p == NULL) {
-      return defValue;
+   for (size_t i = 0; i < length; i++) {
+      if (s[i] == ch)
+         return i;
    }
-   else return p - s;
+
+   return defValue;
 }
 
-inline size_t util_find_last(const wchar_t* s, wchar_t c, size_t defValue)
+static inline size_t util_find_last(const wchar_t* s, wchar_t c, size_t defValue)
 {
    const wchar_t* p = wcsrchr(s, c);
    if (p == nullptr) {
@@ -706,7 +727,7 @@ inline size_t util_find_last(const wchar_t* s, wchar_t c, size_t defValue)
    else return p - s;
 }
 
-inline size_t util_find_str(const wchar_t* s, const wchar_t* subs, size_t defValue)
+static inline size_t util_find_str(const wchar_t* s, const wchar_t* subs, size_t defValue)
 {
    const wchar_t* p = wcsstr(s, subs);
    if (p == nullptr) {
@@ -715,7 +736,7 @@ inline size_t util_find_str(const wchar_t* s, const wchar_t* subs, size_t defVal
    else return p - s;
 }
 
-inline size_t util_find_str(const wchar_t* s, size_t index, const wchar_t* subs, size_t defValue)
+static inline size_t util_find_str(const wchar_t* s, size_t index, const wchar_t* subs, size_t defValue)
 {
    const wchar_t* p = wcsstr(s + index, subs);
    if (p == nullptr) {
@@ -724,17 +745,41 @@ inline size_t util_find_str(const wchar_t* s, size_t index, const wchar_t* subs,
    else return p - s;
 }
 
-inline char* util_lower(char* s)
+static inline const wchar_t* wcsstrn(const wchar_t* haystack, const wchar_t* needle, size_t length)
+{
+   size_t needle_length = wcslen(needle);
+   size_t i;
+   for (i = 0; i < length; i++) {
+      if (i + needle_length > length) {
+         return nullptr;
+      }
+      if (wcsncmp(&haystack[i], needle, needle_length) == 0) {
+         return &haystack[i];
+      }
+   }
+   return nullptr;
+}
+
+static inline size_t util_find_str(const wchar_t* s, size_t index, size_t length, const wchar_t* subs, size_t defValue)
+{
+   const wchar_t* p = wcsstrn(s + index, subs, length);
+   if (p == nullptr) {
+      return defValue;
+   }
+   else return p - s;
+}
+
+static inline char* util_lower(char* s)
 {
    return _strlwr(s);
 }
 
-inline char* util_upper(char* s)
+static inline char* util_upper(char* s)
 {
    return _strupr(s);
 }
 
-inline char util_lower(char ch)
+static inline char util_lower(char ch)
 {
    char s[2];
    s[0] = ch;
@@ -744,17 +789,17 @@ inline char util_lower(char ch)
    return s[0];
 }
 
-inline wchar_t* util_lower(wchar_t* s)
+static inline wchar_t* util_lower(wchar_t* s)
 {
    return _wcslwr(s);
 }
 
-inline wchar_t* util_upper(wchar_t* s)
+static inline wchar_t* util_upper(wchar_t* s)
 {
    return _wcsupr(s);
 }
 
-inline wchar_t util_lower(wchar_t ch)
+static inline wchar_t util_lower(wchar_t ch)
 {
    wchar_t s[2];
    s[0] = ch;
@@ -811,7 +856,7 @@ inline bool util_compare(const unsigned short* s1, const unsigned short* s2)
    else return (s1 == s2);
 }
 
-inline bool util_compare(const unsigned short* s1, const unsigned short* s2, size_t length)
+static inline bool util_compare(const unsigned short* s1, const unsigned short* s2, size_t length)
 {
    if (s1 && s2) {
       while (length > 0 && (*s1 || *s2)) {
@@ -825,7 +870,7 @@ inline bool util_compare(const unsigned short* s1, const unsigned short* s2, siz
    else return (s1 == s2);
 }
 
-inline size_t util_find(const unsigned short* s, unsigned short c, size_t length, size_t defValue)
+static inline size_t util_find(const unsigned short* s, unsigned short c, size_t length, size_t defValue)
 {
    for (size_t i = 0; i < length; i++) {
       if (s[i] == c)
@@ -835,7 +880,7 @@ inline size_t util_find(const unsigned short* s, unsigned short c, size_t length
    return defValue;
 }
 
-inline size_t util_find(const unsigned short* s, unsigned short c, size_t defValue)
+static inline size_t util_find(const unsigned short* s, unsigned short c, size_t defValue)
 {
    const unsigned short* p = s;
 
@@ -849,7 +894,7 @@ inline size_t util_find(const unsigned short* s, unsigned short c, size_t defVal
    return defValue;
 }
 
-inline size_t util_find_last(const unsigned short* s, unsigned short c, size_t defValue)
+static inline size_t util_find_last(const unsigned short* s, unsigned short c, size_t defValue)
 {
    const unsigned short* p = s + getlength(s);
 
@@ -863,7 +908,7 @@ inline size_t util_find_last(const unsigned short* s, unsigned short c, size_t d
    return defValue;
 }
 
-inline size_t util_find_str(const unsigned short* s, const unsigned short* subs, size_t defValue)
+static inline size_t util_find_str(const unsigned short* s, const unsigned short* subs, size_t defValue)
 {
    size_t length = getlength(s);
    size_t sub_len = getlength(subs);
@@ -884,9 +929,8 @@ inline size_t util_find_str(const unsigned short* s, const unsigned short* subs,
    return defValue;
 }
 
-inline size_t util_find_str(const unsigned short* s, size_t index, const unsigned short* subs, size_t defValue)
+static inline size_t util_find_str(const unsigned short* s, size_t index, size_t length, const unsigned short* subs, size_t defValue)
 {
-   size_t length = getlength(s);
    size_t sub_len = getlength(subs);
 
    for (size_t i = index; i < length; i++) {
@@ -905,7 +949,7 @@ inline size_t util_find_str(const unsigned short* s, size_t index, const unsigne
    return defValue;
 }
 
-inline char* util_lower(char* s)
+static inline char* util_lower(char* s)
 {
    while (*s) {
       *s = tolower(*s); // !! temporal: currently only ascii symbols are handled
@@ -915,12 +959,12 @@ inline char* util_lower(char* s)
    return s;
 }
 
-inline char util_lower(char ch)
+static inline char util_lower(char ch)
 {
    return tolower(ch);
 }
 
-inline unsigned short* util_lower(unsigned short* s)
+static inline unsigned short* util_lower(unsigned short* s)
 {
    while (*s) {
       *s = tolower(*s); // !! temporal: currently only ascii symbols are handled
@@ -929,12 +973,12 @@ inline unsigned short* util_lower(unsigned short* s)
    return s;
 }
 
-inline wchar_t util_lower(unsigned short ch)
+static inline wchar_t util_lower(unsigned short ch)
 {
    return tolower(ch); // !! temporal: currently only ascii symbols are handled
 }
 
-inline char* util_upper(char* s)
+static inline char* util_upper(char* s)
 {
    while (*s) {
       *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
@@ -944,7 +988,7 @@ inline char* util_upper(char* s)
    return s;
 }
 
-inline unsigned short* util_upper(unsigned short* s)
+static inline unsigned short* util_upper(unsigned short* s)
 {
    while (*s) {
       *s = toupper(*s); // !! temporal: currently only ascii symbols are handled
@@ -953,12 +997,12 @@ inline unsigned short* util_upper(unsigned short* s)
    return s;
 }
 
-inline char util_upper(char ch)
+static inline char util_upper(char ch)
 {
    return toupper(ch);
 }
 
-inline wchar_t util_upper(unsigned short ch)
+static inline wchar_t util_upper(unsigned short ch)
 {
    return toupper(ch); // !! temporal: currently only ascii symbols are handled
 }
@@ -1200,7 +1244,7 @@ size_t ustr_t::findStr(const char* subs, size_t defValue)
 
 size_t ustr_t::findSubStr(size_t index, const char* subs, size_t length, size_t defValue)
 {
-   return util_find_str(_string, index, subs, defValue);
+   return util_find_str(_string, index, length, subs, defValue);
 }
 
 char* ustr_t :: clone()
@@ -1271,7 +1315,7 @@ size_t wstr_t::findStr(const wide_c* subs, size_t defValue)
 
 size_t wstr_t::findSubStr(size_t index, const wide_c* subs, size_t length, size_t defValue)
 {
-   return util_find_str(_string, index, subs, defValue);
+   return util_find_str(_string, index, length, subs, defValue);
 }
 
 size_t wstr_t :: findLast(wide_c c, size_t defValue)

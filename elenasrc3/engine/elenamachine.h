@@ -52,13 +52,13 @@ namespace elena_lang
          else return false;
       }
 
-      bool write(pos_t position, const void* s, pos_t length) override
+      bool write(pos_t, const void*, pos_t) override
       {
          // write operations are not supported
          return false;
       }
 
-      bool insert(pos_t position, const void* s, pos_t length) override
+      bool insert(pos_t, const void*, pos_t) override
       {
          // write operations are not supported
          return false;
@@ -100,6 +100,9 @@ namespace elena_lang
       virtual ~ELENAMachine() = default;
    };
 
+   DISABLE_WARNING_PUSH
+   DISABLE_WARNING_UNUSEDVARIABLE
+
    // --- SystemRoutineProvider ---
    static class SystemRoutineProvider
    {
@@ -133,7 +136,7 @@ namespace elena_lang
 
       static void* CreateThread(size_t tt_index, int stackSize, int flags, void* threadProc);
 
-      static void StopThread();
+      //static void StopThread();
 
       static void GCSignalClear(void* handle);
       static void GCSignalStop(void* handle);
@@ -162,6 +165,7 @@ namespace elena_lang
 
    } __routineProvider;
 
+   DISABLE_WARNING_POP
 }
 
 #endif

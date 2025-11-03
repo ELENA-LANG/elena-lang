@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86-64
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86_64COMPILER_H
@@ -32,7 +32,7 @@ namespace elena_lang
          ImageProviderBase* imageProvider, 
          ReferenceHelperBase* helper,
          LabelHelperBase* lh,
-         JITSettings settings,
+         ProcessSettings& settings,
          bool virtualMode) override;
 
       friend void x86_64loadCallOp(JITCompilerScope* scope);
@@ -41,6 +41,11 @@ namespace elena_lang
       friend void x86_64compileExtOpenIN(JITCompilerScope* scope);
 
    public:
+      static JITCompilerSettings getSettings()
+      {
+         return { 2, 2, 16, 32 };
+      }
+
       int calcFrameOffset(int argument, bool extMode) override
       {
          // NOTE : for the external frame we have to store all nonvolatile registers (rsi, rdi, rbx, r12, r13, r14, r15)
