@@ -24,7 +24,7 @@ jobs:
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: iteration42
+        ref: iteration43
 
     - name: Set version
       run: |
