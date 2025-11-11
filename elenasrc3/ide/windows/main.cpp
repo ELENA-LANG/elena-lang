@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      WinAPI32 program entry 
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -58,12 +58,46 @@ bool compareFileModifiedTime(path_t sour, path_t dest)
    return sourceDT > moduleDT;
 }
 
-typedef Win32DebugAdapter    DebugProcess;
+// --- loadCommandLine ---
 
-// Forward declarations of functions included in this code module:
-ATOM                MyRegisterClass(HINSTANCE hInstance);
-BOOL                InitInstance(HINSTANCE, int);
-INT_PTR CALLBACK    About(HWND, UINT, WPARAM, LPARAM);
+inline void setOption(IDEController* ideController, IDEModel* model, path_t parameter)
+{
+   if (parameter[0] != '-') {
+      if (PathUtil::checkExtension(parameter, _T("l"))) {
+         ideController->addToRecentProjects(model, parameter);
+      }
+      else if (PathUtil::checkExtension(parameter, _T("prj"))) {
+         ideController->addToRecentProjects(model, parameter);
+      }
+   }
+   else if (text_str(parameter).compare(_T("-sclassic"))) {
+      model->sourceViewModel.schemeIndex = 1;
+   }
+   else if (text_str(parameter).compare(_T("-sdark"))) {
+      model->sourceViewModel.schemeIndex = 2;
+   }
+}
+
+void loadCommandLine(IDEController* ideController, IDEModel* model, LPWSTR cmdWLine)
+{
+   size_t start = 0;
+   for (size_t i = 1; i <= wcslen(cmdWLine); i++) {
+      if (cmdWLine[i] == ' ' || cmdWLine[i] == 0) {
+         PathString parameter(cmdWLine + start, i - start);
+
+         /*// check if a custom config file should be loaded
+         if (text_str(parameter).compare(CMD_CONFIG_PATH, _ELENA_::getlength(CMD_CONFIG_PATH))) {
+            configPath.copy(model->paths.appPath.c_str());
+            configPath.combine(parameter + _ELENA_::getlength(CMD_CONFIG_PATH));
+         }
+         else*/ setOption(ideController, model, *parameter);
+
+         start = i + 1;
+      }
+   }
+}
+
+typedef Win32DebugAdapter    DebugProcess;
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -106,6 +140,8 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
 
    ideController.setNotifier(app);
 
+   loadCommandLine(&ideController, &ideModel, lpCmdLine);
+
    StartUpEvent startUpEvent(STATUS_NONE);
    int retVal = app->run(ideWindow, ideModel.appMaximized, &startUpEvent);
 
@@ -114,27 +150,4 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    delete app;
 
    return retVal;
-}
-
-// Message handler for about box.
-INT_PTR CALLBACK About(HWND hDlg, UINT message, WPARAM wParam, LPARAM lParam)
-{
-    UNREFERENCED_PARAMETER(lParam);
-    switch (message)
-    {
-       case WM_INITDIALOG:
-           return (INT_PTR)TRUE;
-
-       case WM_COMMAND:
-           if (LOWORD(wParam) == IDOK || LOWORD(wParam) == IDCANCEL)
-           {
-               EndDialog(hDlg, LOWORD(wParam));
-               return (INT_PTR)TRUE;
-           }
-           break;
-       default:
-          // to make compiler happy
-          break;
-    }
-    return (INT_PTR)FALSE;
 }

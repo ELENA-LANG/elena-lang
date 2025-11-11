@@ -1,6 +1,6 @@
 #!/bin/sh
 
- RELEASE=elena-6.8.0.amd64-freebsd
+ RELEASE=elena-6.8.1.amd64-freebsd
 
  mkdir -p ../../build/$RELEASE/bin/
  mkdir -p ../../build/$RELEASE/bin/templates/

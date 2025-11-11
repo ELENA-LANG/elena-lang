@@ -1,3 +1,23 @@
+## ELENA 6.9.0
+
+- ELENA
+
+- ELC
+
+- API
+
+- SM
+
+- Scripts
+
+- SAMPLES
+
+- IDE
+
+- Tools
+
+- Misc
+
 ## ELENA 6.8.0
 
 - ELENA
@@ -49,12 +69,6 @@
   - [ADDED] #35 : adding net'http'server module
   - [ADDED] #35 : adding webapi module
   - [ADDED] UnsafeArray, UnsafeArray<T>
-
-- SM
-
-- Scripts
-
-- SAMPLES
 
 - IDE
   - [FIXED] an issue with a vertical splitter

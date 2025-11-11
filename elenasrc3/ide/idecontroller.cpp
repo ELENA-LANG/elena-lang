@@ -1274,7 +1274,7 @@ inline void removeDuplicate(ProjectPaths& lastOpenFiles, path_t value)
    }
 }
 
-inline void addToRecentProjects(IDEModel* model, path_t path)
+void IDEController :: addToRecentProjects(IDEModel* model, path_t path)
 {
    removeDuplicate(model->projectModel.lastOpenProjects, path);
 

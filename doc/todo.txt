@@ -3,24 +3,24 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.8 ###
-
-  === Iteration 42 ===
-  --------------------------------------
-  * release 6.8
-  --------------------------------------
-  - merge PR
-  - prepare release notes
-  - upload linux x86, linux amd64, bsd amd64
-  - upload release files
-  - release a new version of mbedtls wrapper   
-  --------------------------------------
-
   ### EPIC: elena 6.9 ###
 
-  === Iteration 44 ===
+  === Iteration 43 ===
   ====================================== 
-  * new version 6.8.1
+  * Launch elena64-ide.exe from the command line #820
+  --------------------------------------
+  - implement
+  --------------------------------------
+  * syntax error : "Queue q := new Queue();"
+  * support syntax : string[] dirNames := new []{ ".", ".." };
+  * property "int? X" must be supported
+  * support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
+  ====================================== 
+  * what's new 6.8
+  --------------------------------------
+  - dialect dialect EL7
+  - ...
+  ======================================
   * fix entropy sample
   * api : provide descriptions for all classes in system & extensions, starting from IntMatrix
   * #820 : Launch elena64-ide.exe from the command line 
@@ -28,6 +28,7 @@ In development:
   * ldoc : support search by method name
   * ldoc : support search by class name
   * Babylonian spiral
+  - release a new version of mbedtls wrapper   
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
@@ -65,16 +66,17 @@ In development:
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   --------------------------------------
 
-  === Iteration 45 ===
+  === Iteration 44 ===
   --------------------------------------
+  * new version 6.8.2
   --------------------------------------
 
-  === Iteration 46 ===
+  === Iteration 45 ===
   --------------------------------------
   --------------------------------------
 
   ### EPIC: elena 6.10 ###
 
-  === Iteration 47 ===
+  === Iteration 46 ===
   --------------------------------------
   --------------------------------------
