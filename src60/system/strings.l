@@ -197,6 +197,56 @@ public sealed Array<T> : Indexable<T>,
    }   
 }
 
+public sealed ConstArray<T> : //Indexable<T>,
+   info("A strong-typed constant array template")
+{
+   embeddable __string T[] array;
+
+
+
+
+   constructor allocate(int length) : info("Creates an array with the specified <b>length</b>")
+      = new T[](length);   
+
+   constructor copy(T[] array, int index, int length) : info("Creates a copy of sub array of <b>array</b> starting from <b>index</b> with the specified <b>length</b>")
+      <= allocate(length)
+   {
+      for(int i := 0; i < length; i += 1)
+      {
+         this array[i] := array[i + index]
+      }
+   }
+
+
+
+   T at(int n)
+      : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
+   {
+      if (n < 0)
+         { system'InvalidArgumentException.raise() };
+        
+      int len := $len array;
+
+      if (n < len)
+      { 
+         ^ array[n] 
+      };
+
+      ^ system'InvalidArgumentException.raise();
+   }
+
+   int Length
+      : info("Returns the array length")
+   {
+      get()
+      {
+         int len := $len array;
+            
+         ^ len
+      }
+   }
+}
+
 // --- Variadic Array template ---
 
 public sealed nonstructural VariadicArray<T> : Indexable<T>,

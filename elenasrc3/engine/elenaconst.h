@@ -12,12 +12,12 @@
 namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
-#define ENGINE_MAJOR_VERSION              6                    // ELENA Engine version
+#define ENGINE_MAJOR_VERSION              6              // ELENA Engine version
 #define ENGINE_MINOR_VERSION              8
 
-   constexpr auto LINE_LEN = 0x1000;            // the maximal source line length
-   constexpr auto IDENTIFIER_LEN = 0x0300;            // the maximal identifier length
-   constexpr auto MESSAGE_LEN = 0x500;             // the maximal message length
+   constexpr auto LINE_LEN = 0x1000;                     // the maximal source line length
+   constexpr auto IDENTIFIER_LEN = 0x0300;               // the maximal identifier length
+   constexpr auto MESSAGE_LEN = 0x500;                   // the maximal message length
 
    // --- ELENA Standart message constants ---
    constexpr auto ACTION_ORDER = 9;
@@ -30,19 +30,19 @@ namespace elena_lang
    constexpr auto VARIADIC_MESSAGE = 0x040u;
    constexpr auto PROPERTY_MESSAGE = 0x080u;
    constexpr auto CONVERSION_MESSAGE = 0x0C0u;
-   constexpr auto PREFIX_MESSAGE_MASK = 0x0C0u;            // HOTFIX : is used to correctly identify VARIADIC_MESSAGE / PROPERTY_MESSAGE / CONVERSION_MESSAGE
+   constexpr auto PREFIX_MESSAGE_MASK = 0x0C0u;          // HOTFIX : is used to correctly identify VARIADIC_MESSAGE / PROPERTY_MESSAGE / CONVERSION_MESSAGE
 
    constexpr auto ARG_COUNT = 0x01Eu;
    constexpr auto ARG_MASK = 0x01Fu;
 
    // --- ELENA Module structure constants ---
-   constexpr auto ELENA_SIGNITURE = "ELENA.";          // the stand alone image
-   constexpr auto ELENA_VM_SIGNITURE = "VM.ELENA.";       // the stand alone image
-   constexpr auto MODULE_SIGNATURE = "ELENA.0606";      // the module version
+   constexpr auto ELENA_SIGNITURE = "ELENA.";            // the stand alone image
+   constexpr auto ELENA_VM_SIGNITURE = "VM.ELENA.";      // the stand alone image
+   constexpr auto MODULE_SIGNATURE = "ELENA.0606";       // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE = "ED.06";
 
    // --- ELENA core module names ---
-   constexpr auto CORE_ALIAS = "core";            // Core functionality
+   constexpr auto CORE_ALIAS = "core";                   // Core functionality
 
    // --- ELENA predefined module names ---
    constexpr auto BINARY_MODULE = "$binary";

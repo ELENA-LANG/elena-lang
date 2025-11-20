@@ -42,7 +42,7 @@ static inline bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 224;
+constexpr auto OperationLength = 226;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -677,6 +677,12 @@ constexpr Op Operations[OperationLength] =
       SET_INDEXER_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_ELEMENT, V_INT32, 0
    },
    {
+      LEN_OPERATOR_ID, BuildKey::ObjArraySOp, V_CONST_OBJARRAY, 0, 0, V_INT32
+   },
+   {
+      INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_CONST_OBJARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
       INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_ARGARRAY, V_INT32, 0, V_ELEMENT
    },
    {
@@ -1307,9 +1313,9 @@ void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProc
    if (!abstractOne || withVariadic) {
       for (auto it = info.methods.start(); !it.eof(); ++it) {
          auto mssg = it.key();
-         auto methodInfo = *it;
+         //auto methodInfo = *it;
 
-         if (!abstractOne && test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
+         if (!abstractOne && test(/*methodInfo*/(*it).hints, (ref_t)MethodHint::Abstract)) {
             IdentifierString messageName;
             ByteCodeUtil::resolveMessageName(messageName, scope.module, mssg);
 
@@ -1679,9 +1685,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
       // verify if it is a weak interface (an interface without output type specified)
       bool isWeakInterface = true;
       for (auto it = info.methods.start(); !it.eof(); ++it) {
-         auto methodInfo = *it;
+         ref_t outputRef = (*it).outputRef;
 
-         if (!methodInfo.inherited && methodInfo.outputRef && methodInfo.outputRef != classRef) {
+         if (!(*it).inherited && outputRef && outputRef != classRef) {
             isWeakInterface = false;
             break;
          }
@@ -1940,6 +1946,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.flags = /*elDebugArray | */elDynamicRole;
          info.size = 0;
          break;
+      case V_CONST_OBJARRAY:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = /*elDebugArray | */elDynamicRole | elReadOnlyRole;
+         info.size = 0;
+         break;
       case V_AUTO:
          break;
       default:
@@ -1998,7 +2009,7 @@ SizeInfo CompilerLogic :: defineStructSize(ModuleScopeBase& scope, ref_t referen
    else return sizeInfo;
 }
 
-ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne)
+ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne, bool readOnly)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, elementRef, true))
@@ -2022,7 +2033,7 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
 
       return V_BINARYARRAY;
    }
-   else return V_OBJARRAY;
+   else return readOnly ? V_CONST_OBJARRAY : V_OBJARRAY;
 }
 
 bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible)
@@ -2612,9 +2623,7 @@ bool CompilerLogic :: isNeedVerification(ClassInfo& info, VirtualMethodList& imp
 {
    // HOTFIX : Make sure the multi-method methods have the same output type as generic one
    for (auto it = implicitMultimethods.start(); !it.eof(); it++) {
-      auto vm = *it;
-
-      mssg_t message = vm.message;
+      mssg_t message = (*it).message;
 
       auto methodInfo = info.methods.get(message);
       ref_t outputRef = methodInfo.outputRef;
@@ -2662,8 +2671,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
    // sort the overloadlist
    CachedList<mssg_t, 0x20> list;
    for (auto m_it = methods.start(); !m_it.eof(); ++m_it) {
-      auto methodInfo = *m_it;
-      if (methodInfo.multiMethod == message) {
+      if ((*m_it).multiMethod == message) {
          bool added = false;
          mssg_t omsg = m_it.key();
          pos_t len = list.count_pos();
@@ -2755,10 +2763,9 @@ void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_
    scope.loadClassInfo(info, parentRef);
    for (auto it = info.methods.start(); !it.eof(); ++it) {
       auto mssg = it.key();
-      auto methodInfo = *it;
 
-      if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
-         methods.add({ mssg, methodInfo.outputRef });
+      if (test((*it).hints, (ref_t)MethodHint::Abstract)) {
+         methods.add({ mssg, (*it).outputRef });
       }
    }
 }

@@ -191,7 +191,7 @@ struct BuiltinReferences
    ref_t   messageReference, extMessageReference;
    ref_t   messageNameReference;
    ref_t   wrapperTemplateReference;
-   ref_t   arrayTemplateReference;
+   ref_t   arrayTemplateReference, constArrayTemplateReference;
    ref_t   nullableTemplateReference;
    ref_t   argArrayTemplateReference;
    ref_t   closureTemplateReference, tupleTemplateReference;
@@ -230,7 +230,7 @@ struct BuiltinReferences
       messageReference = extMessageReference = 0;
       messageNameReference = 0;
       wrapperTemplateReference = 0;
-      arrayTemplateReference = argArrayTemplateReference = 0;
+      arrayTemplateReference = argArrayTemplateReference = constArrayTemplateReference = 0;
       nullableTemplateReference = 0;
       closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;
       asyncStatemachineReference = yielditTemplateReference = 0;

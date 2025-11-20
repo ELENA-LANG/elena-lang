@@ -3286,12 +3286,12 @@ namespace elena_lang
 
                void* ptr = realloc(_allocated, _allocatedSize * sizeof(T));
 
-               assert(ptr != nullptr);
-
                if (ptr) {
                   _allocated = (T*)ptr;
                }
             }
+
+            assert(_allocated != nullptr);
 
             if (index < cacheSize) {
                for (size_t i = _length; i > cacheSize; i--)

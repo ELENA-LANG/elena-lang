@@ -7,14 +7,53 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * Launch elena64-ide.exe from the command line #820
+  * support const T[] array declaration
   --------------------------------------
+  - const object[] tmp - declare a variable
+  - declare / implement const array template
+  - declare a read-only array; it must be compatible with a normal array (via conversion?)  
+  - V_UINT8ARRAY
+  - V_INT8ARRAY
+  - V_INT16ARRAY
+  - V_INT32ARRAY
+  - V_FLOAT64ARRAY
+  - V_BINARYARRAY
+  - support const attribute; it must be applicable only to an array (const T[])
+  - modify resolveArrayTemplate to support read-only array
+  - entry into features about const arrays
+  ====================================== 
+  * const class
+  --------------------------------------
+  - const class is an analog of the class with
+  - entry into features about const class
+  ====================================== 
+  * support Collection<T>, ReadOnlyCollection<T>
+  --------------------------------------
+  - declare these two template interfaces
+  - inherit them for Array, Array<T>, List, List<T>
+  - add .asReadOnly<T> extension to convert an array into a readonly collection
+  - implemet example
+  --------------------------------------
+  * support const field
+  * support const / readonly for variables
+  --------------------------------------
+  * support constant array declared in rdata
+  --------------------------------------
+  - design
+  - check if feasible
   - implement
   --------------------------------------
-  * syntax error : "Queue q := new Queue();"
+  * #592 : Set operation with a constant array 
   * support syntax : string[] dirNames := new []{ ".", ".." };
+  --------------------------------------
+  - implicitly define the array type
+  --------------------------------------
   * property "int? X" must be supported
   * support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
+  ====================================== 
+  * support readonly for fields
+  --------------------------------------
+  - readonly array field; must be accessible in the constructor
   ====================================== 
   * what's new 6.8
   --------------------------------------

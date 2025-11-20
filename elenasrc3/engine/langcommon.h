@@ -500,6 +500,8 @@ namespace elena_lang
    constexpr auto V_ABSTRACT              = 0x80003002u;
    constexpr auto V_CLOSED                = 0x80003003u;
    constexpr auto V_PREDEFINED            = 0x80003005u;
+   constexpr auto V_CONVERSION            = 0x80003011u;
+   constexpr auto V_NEWOP                 = 0x80003012u;
 
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;
@@ -526,8 +528,6 @@ namespace elena_lang
    constexpr auto V_VARIABLE              = 0x8000100Du;
    constexpr auto V_MEMBER                = 0x8000100Eu;
    constexpr auto V_STATIC                = 0x8000100Fu;
-   constexpr auto V_CONVERSION            = 0x80001011u;
-   constexpr auto V_NEWOP                 = 0x80001012u;
    constexpr auto V_DISPATCHER            = 0x80001013u;
    constexpr auto V_TEXTBLOCK             = 0x80001014u;
    constexpr auto V_EXTERN                = 0x80001015u;
@@ -604,6 +604,7 @@ namespace elena_lang
    constexpr auto V_GETTER                = 0x80000025u;
    constexpr auto V_UINT8ARRAY            = 0x80000026u;
    constexpr auto V_NOTNILLABLE           = 0x80000027u;
+   constexpr auto V_CONST_OBJARRAY        = 0x80000028u;
 
    /// built-in variables
    constexpr auto V_SELF_VAR              = 0x80000081u;
@@ -732,7 +733,8 @@ namespace elena_lang
    constexpr auto FALSE_FORWARD                 = "$false";          // the false boolean value
    constexpr auto WRAPPER_FORWARD               = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD                 = "$array";          // the array template
-   constexpr auto VARIADIC_ARRAY_FORWARD        = "$varray";         // the array template
+   constexpr auto CONST_ARRAY_FORWARD           = "$const_array";    // the constant array template
+   constexpr auto VARIADIC_ARRAY_FORWARD        = "$varray";         // the variadic array template
    constexpr auto MESSAGE_FORWARD               = "$message";        // the message name class
    constexpr auto PROPERTY_NAME_FORWARD         = "$prop_subject";   // the property message name class
    constexpr auto MESSAGE_NAME_FORWARD          = "$subject";        // the message class

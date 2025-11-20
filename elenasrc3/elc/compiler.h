@@ -1795,8 +1795,8 @@ namespace elena_lang
 
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
-      ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode);
-      ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode);
+      ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode, bool readOnly);
+      ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode, bool readOnly);
 
       ref_t resolveStrongType(Scope& scope, TypeInfo typeInfo, bool declarationMode = false);
       TypeInfo resolveStrongTypeInfo(Scope& scope, TypeInfo typeInfo, bool declarationMode = false);
@@ -1811,7 +1811,7 @@ namespace elena_lang
       //ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
       ref_t resolveStateMachine(Scope& scope, ref_t templateRef, ref_t stateRef);
       ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
-      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode);
+      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode, bool constAttr);
       //ref_t resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
       ref_t resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items);
@@ -1918,8 +1918,8 @@ namespace elena_lang
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       DeclarationError declareVariable(Scope& scope, ustr_t identifier, TypeInfo typeInfo, ObjectInfo& variable, int& size,
-         ExprScope* exprScope, CodeScope* codeScope, MethodScope* methodScope);
-      bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate);
+         ExprScope* exprScope, CodeScope* codeScope, MethodScope* methodScope, bool constAttr);
+      bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate, bool constAttr);
 
       void markYieldVariable(Scope& scope, ref_t localOffset);
 

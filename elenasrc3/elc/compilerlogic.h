@@ -104,7 +104,7 @@ namespace elena_lang
 
       SizeInfo defineStructSize(ClassInfo& info);
       SizeInfo defineStructSize(ModuleScopeBase& scope, ref_t reference);
-      ref_t definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne);
+      ref_t definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne, bool readOnly);
 
       bool validateTemplateAttribute(ref_t attribute, Visibility& visibility, TemplateType& type);
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, SymbolKind& symbolKind);
@@ -247,6 +247,7 @@ namespace elena_lang
             case V_UINT8ARRAY:
             case V_FLOAT64ARRAY:
             case V_BINARYARRAY:
+            case V_CONST_OBJARRAY:
                return true;
             default:
                return false;
