@@ -1818,10 +1818,10 @@ namespace elena_lang
 
       int resolveSize(Scope& scope, SyntaxNode node);
       TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
-         bool declarationMode, bool allowRole);
+         bool declarationMode, bool allowRole, bool constAttr);
       TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
-         bool declarationMode, bool allowRole);
-      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole);
+         bool declarationMode, bool allowRole, bool constAttr);
+      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters,
          ustr_t prefix, SyntaxKey argKey, ustr_t postFix);

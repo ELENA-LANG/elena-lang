@@ -171,7 +171,7 @@ public sealed Array<T> : Indexable<T>,
             
       ^ retVal
    }
-                                 
+
    T[] clone()
        : info("Returns the shallow copy of the array")
    {
@@ -197,13 +197,10 @@ public sealed Array<T> : Indexable<T>,
    }   
 }
 
-public sealed ConstArray<T> : //Indexable<T>,
+public sealed ConstArray<T> : Enumerable<T>,
    info("A strong-typed constant array template")
 {
    embeddable __string T[] array;
-
-
-
 
    constructor allocate(int length) : info("Creates an array with the specified <b>length</b>")
       = new T[](length);   
@@ -217,7 +214,32 @@ public sealed ConstArray<T> : //Indexable<T>,
       }
    }
 
+   T[] clone()
+       : info("Returns the shallow copy of the array")
+   {
+      int len := Length;
+      T[] copy := new T[](len);
+      for(int i := 0; i < len; i+=1) {
+         copy[i] := array[i]
+      };
+        
+      ^ copy
+   }
 
+   T[] cast() : info("Creates a copy of the strong-typed array")
+      = clone();
+   
+   Array cast()
+       : info("Creates a weak copy of the array")
+   {
+      int len := self.Length;
+      auto clone := Array.allocate(len);
+      for (int i := 0; i < len; i++) {
+         clone[i] := array[i];
+      };
+      
+      ^ clone
+   }   
 
    T at(int n)
       : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
@@ -245,6 +267,27 @@ public sealed ConstArray<T> : //Indexable<T>,
          ^ len
       }
    }
+   
+   Enumerator<T> enumerator()
+      : info("Creates an array enumerator") 
+   = new BaseEnumerator<T>
+   {
+      this index := -1;
+        
+      this length := self.Length;
+        
+      get T Value() = self.at(this index.Value);
+        
+      enumerable() = self;
+        
+      reset()
+      {
+         this index.Value := -1
+      }
+   };
+
+   Enumerable cast() : info("Returns enumerable wrapper around the array")
+      = new Enumerable{ Enumerator enumerator() => self; };
 }
 
 // --- Variadic Array template ---

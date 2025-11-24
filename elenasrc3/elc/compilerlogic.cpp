@@ -1191,6 +1191,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_HEAPALLOCATED:
          attrs |= ExpressionAttribute::HeapAllocated;
          return true;
+      case V_CONST:
+         attrs |= ExpressionAttribute::ReadOnly;
+         return true;
       default:
          return false;
    }

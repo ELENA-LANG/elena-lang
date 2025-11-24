@@ -26,6 +26,7 @@ public struct Array
 public program()
 {
    const object[] constA := new const object[] { 1, 2, 3 };
+//   const object[] constA := new object[] { 1, 2, 3 };
 
 //   const string[] constA;
 
