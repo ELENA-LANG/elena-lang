@@ -27,6 +27,8 @@ public struct Array
 
 public program()
 {
+   const byte[] constA := new const byte[] { 1, 2, 3 };
+
 //   const object[] constA := new const object[] { 1, 2, 3 };
 //   const object[] constA := new [] { 1, 2, 3 };
 //   const object[] constA := new object[] { 1, 2, 3 };

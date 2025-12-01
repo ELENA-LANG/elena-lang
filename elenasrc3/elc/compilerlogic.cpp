@@ -42,7 +42,7 @@ static inline bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 226;
+constexpr auto OperationLength = 228;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -591,6 +591,10 @@ constexpr Op Operations[OperationLength] =
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
+      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_CONST_INT8ARRAY, V_INT32, 0, V_ELEMENT
+   },
+   {
+      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
       INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
@@ -615,6 +619,9 @@ constexpr Op Operations[OperationLength] =
    },
    {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_UINT8ARRAY, 0, 0, V_INT32
+   },
+   {
+      LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_CONST_INT8ARRAY, 0, 0, V_INT32
    },
    {
       LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_INT16ARRAY, 0, 0, V_INT32
@@ -1920,6 +1927,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       case V_INT8ARRAY:
       case V_UINT8ARRAY:
+      case V_CONST_INT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
@@ -2020,7 +2028,7 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
 
    if (isEmbeddableStruct(info) && structOne) {
       if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
-         return V_INT8ARRAY;
+         return readOnly ? V_CONST_INT8ARRAY : V_INT8ARRAY;
 
       if (isCompatible(scope, { V_UINT8 }, { elementRef }, true) && info.size == 1)
          return V_UINT8ARRAY;

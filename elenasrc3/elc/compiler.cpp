@@ -5307,8 +5307,10 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
       case V_FLOAT64ARRAY:
       case V_BINARYARRAY:
          return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, false);
-         //case V_NULLABLE:
+      //case V_NULLABLE:
          //   return resolveNullableTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
+      case V_CONST_INT8ARRAY:
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, true);
       case V_NIL:
          return moduleScope.buildins.superReference;
       case V_ARGARRAY:
@@ -9645,7 +9647,7 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
       if (typeInfo.typeRef == V_INT16ARRAY) {
          writer.newNode(BuildKey::ShortArrayParameter, name);
       }
-      else if (typeInfo.typeRef == V_INT8ARRAY || typeInfo.typeRef == V_UINT8ARRAY) {
+      else if (typeInfo.typeRef == V_INT8ARRAY || typeInfo.typeRef == V_UINT8ARRAY || typeInfo.typeRef == V_CONST_INT8ARRAY) {
          writer.newNode(BuildKey::ByteArrayParameter, name);
       }
       else if (typeInfo.typeRef == V_INT32ARRAY) {
@@ -17312,6 +17314,7 @@ void Compiler::Expression::convertIntLiteralForOperation(SyntaxNode node, int op
          literal = convertIntLiteral(scope, node, messageArguments[1], V_INT16, true);
          break;
       case V_INT8ARRAY:
+      case V_CONST_INT8ARRAY:
          literal = convertIntLiteral(scope, node, messageArguments[1], V_INT8, true);
          break;
       case V_UINT8ARRAY:

@@ -9,8 +9,8 @@ In development:
   ====================================== 
   * support const T[] array declaration
   --------------------------------------
-  - V_UINT8ARRAY
   - V_INT8ARRAY
+  - V_UINT8ARRAY
   - V_INT16ARRAY
   - V_INT32ARRAY
   - V_FLOAT64ARRAY
