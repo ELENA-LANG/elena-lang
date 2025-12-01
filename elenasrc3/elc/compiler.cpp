@@ -7994,6 +7994,13 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
                   retVal.mode = TargetMode::CreatingArray;
                break;
             }
+            case SyntaxKey::None:
+               if (probeMode && newOp) {
+                  retVal = { ObjectKind::Class, V_AUTO, 0u, TargetMode::Creating };
+                  probeMode = false;
+               }
+               else invalid = true;
+               break;
             default:
                invalid = true;
                break;
@@ -12889,7 +12896,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          compileSwitchOperation(current, EAttrs::test(mode, EAttr::NoDebugInfo));
          break;
       case SyntaxKey::CollectionExpression:
-         retVal = compileCollection(current, mode);
+         retVal = compileCollection(current, mode, targetRef);
          break;
       case SyntaxKey::KeyValueExpression:
          retVal = compileKeyValue(current/*, mode*/);
@@ -14420,14 +14427,17 @@ void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withou
       writer->appendNode(BuildKey::OpenStatement);
 }
 
-ObjectInfo Compiler::Expression::compileCollection(SyntaxNode node, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef)
 {
    bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
 
    SyntaxNode current = node.firstChild();
 
-   ObjectInfo objectInfo = compileObject(node.firstChild(), EAttr::NestedDecl);
-   if (objectInfo.kind != ObjectKind::Class)
+   ObjectInfo objectInfo = compileObject(node.firstChild(), EAttr::NestedDecl | EAttr::ProbeMode);
+   if (objectInfo.typeInfo.typeRef == V_AUTO && targetRef)
+      objectInfo.typeInfo = { targetRef };
+
+   if (objectInfo.kind != ObjectKind::Class || objectInfo.typeInfo.typeRef == V_AUTO)
       scope.raiseError(errInvalidOperation, node);
 
    ref_t collectionTypeRef = compiler->resolveStrongType(scope, objectInfo.typeInfo);

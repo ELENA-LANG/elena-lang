@@ -1677,7 +1677,7 @@ namespace elena_lang
 
          ObjectInfo compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode);
          ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode);
-         ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode);
+         ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node/*, ExpressionAttribute mode*/);
          ObjectInfo compileClosureOperation(SyntaxNode node, ref_t targetRef);

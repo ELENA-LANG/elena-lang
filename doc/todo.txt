@@ -9,16 +9,17 @@ In development:
   ====================================== 
   * support const T[] array declaration
   --------------------------------------
-  - implement a const array; it must be compatible with a normal array (via conversion?)  
   - V_UINT8ARRAY
   - V_INT8ARRAY
   - V_INT16ARRAY
   - V_INT32ARRAY
   - V_FLOAT64ARRAY
   - V_BINARYARRAY
+
   - support const attribute; it must be applicable only to an array (const T[])
   - modify resolveArrayTemplate to support read-only array
   - entry into features about const arrays
+  - const array api
   ====================================== 
   * const array (stored in the data array)
   --------------------------------------
