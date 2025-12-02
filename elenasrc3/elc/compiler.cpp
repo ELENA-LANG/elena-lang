@@ -1430,10 +1430,39 @@ static inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, E
          fieldInfo.typeInfo, fieldInfo.offset };
    }
    else if (!ignoreFields && fieldInfo.offset == -2) {
-      bool readOnly = (test(info.header.flags, elReadOnlyRole) || FieldInfo::checkHint(fieldInfo, FieldHint::ReadOnly))
-         && !EAttrs::test(attr, EAttr::InitializerScope);
+      bool readOnly = (test(info.header.flags, elReadOnlyRole) || FieldInfo::checkHint(fieldInfo, FieldHint::ReadOnly));
+      if (EAttrs::test(attr, EAttr::InitializerScope) && readOnly) {
+         TypeInfo typeInfo = fieldInfo.typeInfo;
+         // HOTFIX : convert a constant array into a normal one to allow operations inside the constructor
+         switch (typeInfo.typeRef) {
+            case V_CONST_BINARYARRAY:
+               typeInfo.typeRef = V_BINARYARRAY;
+               break;
+            case V_CONST_FLOAT64ARRAY:
+               typeInfo.typeRef = V_FLOAT64ARRAY;
+               break;
+            case V_CONST_INT16ARRAY:
+               typeInfo.typeRef = V_INT16ARRAY;
+               break;
+            case V_CONST_INT32ARRAY:
+               typeInfo.typeRef = V_INT32ARRAY;
+               break;
+            case V_CONST_INT8ARRAY:
+               typeInfo.typeRef = V_INT8ARRAY;
+               break;
+            case V_CONST_OBJARRAY:
+               typeInfo.typeRef = V_OBJARRAY;
+               break;
+            case V_CONST_UINT8ARRAY:
+               typeInfo.typeRef = V_UINT8ARRAY;
+               break;
+            default:
+               break;
+         }
 
-      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1u, TargetMode::ArrayContent };
+         return { ObjectKind::SelfLocal, typeInfo, 1u, TargetMode::ArrayContent };
+      }
+      else return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1u, TargetMode::ArrayContent };
    }
    else {
       auto staticFieldInfo = info.statics.get(identifier);

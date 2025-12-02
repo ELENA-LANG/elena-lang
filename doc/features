@@ -496,3 +496,31 @@ public program()
   const string[] dirNames := new const string []{ ".", ".." };
 }
 	
+----------------------------------------------------------------------------
+   readonly fields
+----------------------------------------------------------------------------
+
+class B;
+
+class A
+{
+   readonly B b;
+
+   constructor new(B b)
+   {
+      this b := b
+   }
+
+   testReadOnly(B arg)
+   {
+      b := arg // !! raises an error : 
+   }
+   
+}
+
+public program()
+{
+   A a := A.new(new B());
+   a.testReadOnly(new B());
+}
+	

@@ -197,10 +197,10 @@ public sealed Array<T> : Indexable<T>,
    }   
 }
 
-public sealed ConstArray<T> : Enumerable<T>,
+public sealed const ConstArray<T> : Enumerable<T>,
    info("A strong-typed constant array template")
 {
-   embeddable __string T[] array;
+   embeddable /*readonly*/ __string T[] array;
 
    constructor allocate(int length) : info("Creates an array with the specified <b>length</b>")
       = new T[](length);   

@@ -1,56 +1,42 @@
-import system'collections;
 import extensions;
 
-/*
-public struct Array
+public const struct ExtensionDispatcher
 {
-   embeddable __string int[] array;
+   embeddable __string pointer[] _array;
 
-   test()
+   protected constructor allocate(int length)
+      = new pointer[](length);
+        
+   internal constructor copy(pointer[] array, int length)
+      <= allocate(length)
    {
-      array[0] := 2
+      for(int i := 0; i < length; i += 1)
+      {
+         _array[i] := array[i]
+      }
    }
 }
-*/
 
-/*public const Array
+/*class B;
+
+class A
 {
-   embeddable __string object[] array;
+   readonly B b;
 
-   test()
+   constructor new(B b)
    {
-      array[0] := 2
+      this b := b
    }
+
+   testReadOnly(B arg)
+   {
+      b := arg // !! raises an error : 
+   }
+   
 }*/
-
-//A;
-
-struct XY
-{
-   int X : prop(_x);
-   int Y : prop(_y);
-
-   constructor(int val)
-   {
-      _x := val;
-      _y := 0;
-   }
-}
 
 public program()
 {
-   const XY[] constA := new const XY[] { 1, 2, 3 };
-
-//   const object[] constA := new const object[] { 1, 2, 3 };
-//   const object[] constA := new [] { 1, 2, 3 };
-//   const object[] constA := new object[] { 1, 2, 3 };
-
-//   const string[] constA;
-
-//   const string[] constA := ReadOnlyArray<string>.new("a","b","c");
-
-//   string[] a := constA;
-
-//   const string[] a := new []{ ".", ".." };
-//  string[] dirNames := new []{ ".", ".." };
+//   A a := A.new(new B());
+//   a.testReadOnly(new B());
 }

@@ -499,13 +499,13 @@ namespace elena_lang
    constexpr auto V_SEALED                = 0x80003001u;
    constexpr auto V_ABSTRACT              = 0x80003002u;
    constexpr auto V_CLOSED                = 0x80003003u;
+   constexpr auto V_EMBEDDABLE            = 0x80003004u;
    constexpr auto V_PREDEFINED            = 0x80003005u;
    constexpr auto V_CONVERSION            = 0x80003011u;
    constexpr auto V_NEWOP                 = 0x80003012u;
 
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;
-   constexpr auto V_EMBEDDABLE            = 0x80002002u;
    constexpr auto V_WRAPPER               = 0x80002003u;
    constexpr auto V_READONLY              = 0x80002004u;
    constexpr auto V_OUTWRAPPER            = 0x80002005u;

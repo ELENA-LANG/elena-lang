@@ -7,14 +7,14 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * const array (stored in the data array)
-  --------------------------------------
-  - declare a constant array of objects in rdata
-  ====================================== 
-  * const class
+  * #351 : const class / const fields
   --------------------------------------
   - const class is an analog of the class with
   - entry into features about const class
+  ====================================== 
+  * const array (stored in the data array)
+  --------------------------------------
+  - declare a constant array of objects in rdata
   ====================================== 
   * support Collection<T>, ReadOnlyCollection<T>
   --------------------------------------
