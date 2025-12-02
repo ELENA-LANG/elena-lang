@@ -5310,6 +5310,11 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
       //case V_NULLABLE:
          //   return resolveNullableTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
       case V_CONST_INT8ARRAY:
+      case V_CONST_UINT8ARRAY:
+      case V_CONST_INT16ARRAY:
+      case V_CONST_INT32ARRAY:
+      case V_CONST_FLOAT64ARRAY:
+      case V_CONST_BINARYARRAY:
          return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, true);
       case V_NIL:
          return moduleScope.buildins.superReference;
@@ -6309,7 +6314,7 @@ ref_t Compiler::resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t eleme
 ref_t Compiler::resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode, bool constAttr)
 {
    return resolveTemplate(moduleScope, 
-      constAttr? moduleScope.buildins.constArrayTemplateReference : moduleScope.buildins.arrayTemplateReference, elementRef, nullableElement, declarationMode);
+      constAttr ? moduleScope.buildins.constArrayTemplateReference : moduleScope.buildins.arrayTemplateReference, elementRef, nullableElement, declarationMode);
 }
 //
 //ref_t Compiler :: resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode)
@@ -6769,7 +6774,7 @@ DeclarationError Compiler :: declareVariable(Scope& scope, ustr_t identifier, Ty
    if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.typeInfo.typeRef))
       return DeclarationError::Type;
 
-   if (variable.typeInfo.typeRef == V_BINARYARRAY)
+   if (variable.typeInfo.typeRef == V_BINARYARRAY || variable.typeInfo.typeRef == V_CONST_BINARYARRAY)
       // HOTFIX : recognize binary array actual size
       localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.typeInfo.elementRef).size;
 
@@ -9644,19 +9649,29 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
       }
    }
    else if (size < 0) {
-      if (typeInfo.typeRef == V_INT16ARRAY) {
-         writer.newNode(BuildKey::ShortArrayParameter, name);
-      }
-      else if (typeInfo.typeRef == V_INT8ARRAY || typeInfo.typeRef == V_UINT8ARRAY || typeInfo.typeRef == V_CONST_INT8ARRAY) {
-         writer.newNode(BuildKey::ByteArrayParameter, name);
-      }
-      else if (typeInfo.typeRef == V_INT32ARRAY) {
-         writer.newNode(BuildKey::IntArrayParameter, name);
-      }
-      else if (typeInfo.typeRef == V_FLOAT64ARRAY) {
-         writer.newNode(BuildKey::RealArrayParameter, name);
-      }
-      else writer.newNode(BuildKey::Parameter, name); // !! temporal
+      switch (typeInfo.typeRef) {
+         case V_INT16ARRAY:
+         case V_CONST_INT16ARRAY:
+            writer.newNode(BuildKey::ShortArrayParameter, name);
+            break;
+         case V_INT8ARRAY:
+         case V_UINT8ARRAY:
+         case V_CONST_INT8ARRAY:
+         case V_CONST_UINT8ARRAY:
+            writer.newNode(BuildKey::ByteArrayParameter, name);
+            break;
+         case V_INT32ARRAY:
+         case V_CONST_INT32ARRAY:
+            writer.newNode(BuildKey::IntArrayParameter, name);
+            break;
+         case V_FLOAT64ARRAY:
+         case V_CONST_FLOAT64ARRAY:
+            writer.newNode(BuildKey::RealArrayParameter, name);
+            break;
+         default:
+            writer.newNode(BuildKey::Parameter, name); // !! temporal
+            break;
+      }      
    }
    else writer.newNode(BuildKey::Parameter, name);
 
@@ -17311,6 +17326,7 @@ void Compiler::Expression::convertIntLiteralForOperation(SyntaxNode node, int op
    ref_t loperandRef = messageArguments[0].typeInfo.typeRef;
    switch (loperandRef) {
       case V_INT16ARRAY:
+      case V_CONST_INT16ARRAY:
          literal = convertIntLiteral(scope, node, messageArguments[1], V_INT16, true);
          break;
       case V_INT8ARRAY:
@@ -17318,9 +17334,11 @@ void Compiler::Expression::convertIntLiteralForOperation(SyntaxNode node, int op
          literal = convertIntLiteral(scope, node, messageArguments[1], V_INT8, true);
          break;
       case V_UINT8ARRAY:
+      case V_CONST_UINT8ARRAY:
          literal = convertIntLiteral(scope, node, messageArguments[1], V_UINT8, true);
          break;
       case V_BINARYARRAY:
+      case V_CONST_BINARYARRAY:
          literal = convertIntLiteral(scope, node, messageArguments[1],
             compiler->_logic->retrievePrimitiveType(*scope.moduleScope, messageArguments[0].typeInfo.elementRef), true);
          break;

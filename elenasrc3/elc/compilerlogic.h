@@ -241,14 +241,19 @@ namespace elena_lang
       {
          switch (reference) {
             case V_OBJARRAY:
+            case V_CONST_OBJARRAY:
             case V_INT32ARRAY:
+            case V_CONST_INT32ARRAY:
             case V_INT16ARRAY:
+            case V_CONST_INT16ARRAY:
             case V_INT8ARRAY:
             case V_CONST_INT8ARRAY:
             case V_UINT8ARRAY:
+            case V_CONST_UINT8ARRAY:
             case V_FLOAT64ARRAY:
+            case V_CONST_FLOAT64ARRAY:
             case V_BINARYARRAY:
-            case V_CONST_OBJARRAY:
+            case V_CONST_BINARYARRAY:
                return true;
             default:
                return false;

@@ -479,11 +479,20 @@ public program()
 }
 
 ----------------------------------------------------------------------------
-   short-cut syntax for constant array
+   short-cut syntax for array
 ----------------------------------------------------------------------------
 
 public program()
 {
   string[] dirNames := new []{ ".", ".." };
+}
+	
+----------------------------------------------------------------------------
+   syntax for a constant array
+----------------------------------------------------------------------------
+
+public program()
+{
+  const string[] dirNames := new const string []{ ".", ".." };
 }
 	

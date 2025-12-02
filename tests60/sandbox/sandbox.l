@@ -25,9 +25,21 @@ public struct Array
 
 //A;
 
+struct XY
+{
+   int X : prop(_x);
+   int Y : prop(_y);
+
+   constructor(int val)
+   {
+      _x := val;
+      _y := 0;
+   }
+}
+
 public program()
 {
-   const byte[] constA := new const byte[] { 1, 2, 3 };
+   const XY[] constA := new const XY[] { 1, 2, 3 };
 
 //   const object[] constA := new const object[] { 1, 2, 3 };
 //   const object[] constA := new [] { 1, 2, 3 };
