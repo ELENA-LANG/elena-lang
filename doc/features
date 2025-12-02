@@ -513,7 +513,7 @@ class A
 
    testReadOnly(B arg)
    {
-      b := arg // !! raises an error : 
+      b := arg // !! raises an error 116 : Read-only field cannot be changed
    }
    
 }
