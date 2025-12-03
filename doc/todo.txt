@@ -7,6 +7,11 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
+  * fixing system_tests
+  --------------------------------------
+  - test preloaded symbols
+  - test system_tests
+  ====================================== 
   * const array (stored in the data array)
   --------------------------------------
   - design : if a target class is a primitive constant array try to create collection (reusing code in compileSymbol for constant array)
