@@ -1445,7 +1445,10 @@ static inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, E
       bool readOnly = (test(info.header.flags, elReadOnlyRole) || FieldInfo::checkHint(fieldInfo, FieldHint::ReadOnly))
          && !EAttrs::test(attr, EAttr::InitializerScope);
 
-      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1u, TargetMode::ArrayContent };
+      TypeInfo typeInfo = fieldInfo.typeInfo;
+      typeInfo.constant = false; // !! HOTFIX : treat a constant embedded array like a normal one
+
+      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, typeInfo, 1u, TargetMode::ArrayContent };
    }
    else {
       auto staticFieldInfo = info.statics.get(identifier);
