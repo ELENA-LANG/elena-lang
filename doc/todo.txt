@@ -9,8 +9,23 @@ In development:
   ====================================== 
   * fixing system_tests
   --------------------------------------
+  - test readonly fields
+  - test += operation with read-only field
+
+  - converting array to const array
+
+  - passing byte[] as const byte[]
+  - passing sbyte[] as const sbyte[]
+  - passing short[] as const short[]
+  - passing int[] as const int[]
+  - passing real[] as const real[]
+  - passing struct[] as const struct[]
+  - passing object[] as const object[]
+  - implicit conversion from V_INT8ARRAY to V_CONST_INT8ARRAY
+  - review String.at - 
   - test preloaded symbols
   - test system_tests
+  - converting const array to array must not be possible
   ====================================== 
   * const array (stored in the data array)
   --------------------------------------
@@ -38,6 +53,8 @@ In development:
   * support readonly for fields
   --------------------------------------
   - readonly array field; must be accessible in the constructor
+  ====================================== 
+  * review String.at method, simplify
   ====================================== 
   * what's new 6.8
   --------------------------------------

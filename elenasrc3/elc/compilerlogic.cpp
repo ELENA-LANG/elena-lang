@@ -42,7 +42,7 @@ static inline bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 238;
+constexpr auto OperationLength = 224;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -591,10 +591,6 @@ constexpr Op Operations[OperationLength] =
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_CONST_INT8ARRAY, V_INT32, 0, V_ELEMENT
-   },
-   {
-      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
       INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_UINT8ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
@@ -615,26 +611,13 @@ constexpr Op Operations[OperationLength] =
       SET_INDEXER_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_ELEMENT, V_INT8, 0
    },
    {
-      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_CONST_UINT8ARRAY, V_UINT8, 0, V_ELEMENT
-   },
-   {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_INT8ARRAY, 0, 0, V_INT32
    },
    {
       LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_UINT8ARRAY, 0, 0, V_INT32
    },
    {
-      LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_CONST_INT8ARRAY, 0, 0, V_INT32
-   },
-   {
-      LEN_OPERATOR_ID, BuildKey::ByteArraySOp, V_CONST_UINT8ARRAY, 0, 0, V_INT32
-   },
-   {
       LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_INT16ARRAY, 0, 0, V_INT32
-   },
-   {
-      LEN_OPERATOR_ID, BuildKey::ShortArraySOp, V_CONST_INT16ARRAY, 0, 0, V_INT32
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
@@ -644,22 +627,11 @@ constexpr Op Operations[OperationLength] =
       SET_INDEXER_OPERATOR_ID, BuildKey::ShortArrayOp, V_INT16ARRAY, V_ELEMENT, V_INT32, 0
    },
    {
-      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::ShortArrayOp, V_CONST_INT16ARRAY, V_INT32, 0, V_ELEMENT
-   },
-   {
       LEN_OPERATOR_ID, BuildKey::IntArraySOp, V_INT32ARRAY, 0, 0, V_INT32
-   },
-   {
-      LEN_OPERATOR_ID, BuildKey::IntArraySOp, V_CONST_INT32ARRAY, 0, 0, V_INT32
    },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
       INDEX_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_INT32, 0, V_ELEMENT
-   },
-   {
-      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::IntArrayOp, V_CONST_INT32ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::IntArrayOp, V_INT32ARRAY, V_ELEMENT, V_INT32, 0
@@ -668,15 +640,8 @@ constexpr Op Operations[OperationLength] =
       LEN_OPERATOR_ID, BuildKey::BinaryArraySOp, V_FLOAT64ARRAY, 0, 0, V_INT32
    },
    {
-      LEN_OPERATOR_ID, BuildKey::BinaryArraySOp, V_CONST_FLOAT64ARRAY, 0, 0, V_INT32
-   },
-   {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
       INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_FLOAT64ARRAY, V_INT32, 0, V_ELEMENT
-   },
-   {
-      // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
-      INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_CONST_FLOAT64ARRAY, V_INT32, 0, V_ELEMENT
    },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::BinaryArrayOp, V_FLOAT64ARRAY, V_ELEMENT, V_INT32, 0
@@ -685,16 +650,10 @@ constexpr Op Operations[OperationLength] =
       INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_INT32, 0, V_ELEMENT
    },
    {
-      INDEX_OPERATOR_ID, BuildKey::BinaryArrayOp, V_CONST_BINARYARRAY, V_INT32, 0, V_ELEMENT
-   },
-   {
       SET_INDEXER_OPERATOR_ID, BuildKey::BinaryArrayOp, V_BINARYARRAY, V_ELEMENT, V_INT32, 0
    },
    {
       LEN_OPERATOR_ID, BuildKey::BinaryArraySOp, V_BINARYARRAY, 0, 0, V_INT32
-   },
-   {
-      LEN_OPERATOR_ID, BuildKey::BinaryArraySOp, V_CONST_BINARYARRAY, 0, 0, V_INT32
    },
    {
       IF_OPERATOR_ID, BuildKey::BranchOp, V_FLAG, V_CLOSURE, 0, V_CLOSURE
@@ -716,12 +675,6 @@ constexpr Op Operations[OperationLength] =
    },
    {
       SET_INDEXER_OPERATOR_ID, BuildKey::ObjArrayOp, V_OBJARRAY, V_ELEMENT, V_INT32, 0
-   },
-   {
-      LEN_OPERATOR_ID, BuildKey::ObjArraySOp, V_CONST_OBJARRAY, 0, 0, V_INT32
-   },
-   {
-      INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_CONST_OBJARRAY, V_INT32, 0, V_ELEMENT
    },
    {
       INDEX_OPERATOR_ID, BuildKey::ObjArrayOp, V_ARGARRAY, V_INT32, 0, V_ELEMENT
@@ -1679,11 +1632,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32ARRAY:
-         case V_CONST_INT32ARRAY:
             info.header.flags |= elDebugDWORDS;
             break;
          case V_FLOAT64ARRAY:
-         case V_CONST_FLOAT64ARRAY:
             info.header.flags |= elDebugFLOAT64S;
             break;
          default:
@@ -1718,11 +1669,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             info.header.flags |= elMessageName;
             break;
          case V_INT32ARRAY:
-         case V_CONST_INT32ARRAY:
             info.header.flags |= elDebugDWORDS;
             break;
          case V_FLOAT64ARRAY:
-         case V_CONST_FLOAT64ARRAY:
             info.header.flags |= elDebugFLOAT64S;
             break;
          default:
@@ -1965,32 +1914,26 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       case V_INT8ARRAY:
       case V_UINT8ARRAY:
-      case V_CONST_INT8ARRAY:
-      case V_CONST_UINT8ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugBytes | elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
          break;
       case V_INT16ARRAY:
-      case V_CONST_INT16ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
          info.size = -2;
          break;
       case V_INT32ARRAY:
-      case V_CONST_INT32ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugDWORDS | elStructureRole | elDynamicRole | elWrapper;
          info.size = -4;
          break;
       case V_FLOAT64ARRAY:
-      case V_CONST_FLOAT64ARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugFLOAT64S | elStructureRole | elDynamicRole | elWrapper;
          info.size = -8;
          break;
       case V_BINARYARRAY:
-      case V_CONST_BINARYARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugBytes | */elStructureRole | elDynamicRole | elWrapper;
          info.size = -1;
@@ -1998,11 +1941,6 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
       case V_OBJARRAY:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = /*elDebugArray | */elDynamicRole;
-         info.size = 0;
-         break;
-      case V_CONST_OBJARRAY:
-         info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = /*elDebugArray | */elDynamicRole | elReadOnlyRole;
          info.size = 0;
          break;
       case V_AUTO:
@@ -2063,7 +2001,7 @@ SizeInfo CompilerLogic :: defineStructSize(ModuleScopeBase& scope, ref_t referen
    else return sizeInfo;
 }
 
-ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne, bool readOnly)
+ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elementRef, bool structOne)
 {
    ClassInfo info;
    if (!defineClassInfo(scope, info, elementRef, true))
@@ -2071,23 +2009,23 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
 
    if (isEmbeddableStruct(info) && structOne) {
       if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
-         return readOnly ? V_CONST_INT8ARRAY : V_INT8ARRAY;
+         return V_INT8ARRAY;
 
       if (isCompatible(scope, { V_UINT8 }, { elementRef }, true) && info.size == 1)
-         return readOnly ? V_CONST_UINT8ARRAY : V_UINT8ARRAY;
+         return V_UINT8ARRAY;
 
       if (isCompatible(scope, { V_INT16 }, { elementRef }, true) && info.size == 2)
-         return readOnly ? V_CONST_INT16ARRAY : V_INT16ARRAY;
+         return V_INT16ARRAY;
 
       if (isCompatible(scope, { V_INT32 }, { elementRef }, true) && info.size == 4)
-         return readOnly ? V_CONST_INT32ARRAY : V_INT32ARRAY;
+         return V_INT32ARRAY;
 
       if (isCompatible(scope, { V_FLOAT64 }, { elementRef }, true) && info.size == 8)
-         return readOnly ? V_CONST_FLOAT64ARRAY : V_FLOAT64ARRAY;
+         return V_FLOAT64ARRAY;
 
-      return readOnly ? V_CONST_BINARYARRAY : V_BINARYARRAY;
+      return V_BINARYARRAY;
    }
-   else return readOnly ? V_CONST_OBJARRAY : V_OBJARRAY;
+   else return V_OBJARRAY;
 }
 
 bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible)

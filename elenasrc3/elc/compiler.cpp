@@ -296,6 +296,18 @@ static inline bool isSingleObject(ObjectKind kind)
    }
 }
 
+static inline bool isReadOnlyOperand(ObjectKind kind)
+{
+   switch (kind) {
+      case ObjectKind::ReadOnlySelfLocal:
+      case ObjectKind::ReadOnlyField:
+      case ObjectKind::ReadOnlyFieldAddress:
+         return true;
+      default:
+         return false;
+   }
+}
+
 static inline bool areConstants(ArgumentsInfo& args)
 {
    for (size_t i = 0; i < args.count(); i++) {
@@ -1430,39 +1442,10 @@ static inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, E
          fieldInfo.typeInfo, fieldInfo.offset };
    }
    else if (!ignoreFields && fieldInfo.offset == -2) {
-      bool readOnly = (test(info.header.flags, elReadOnlyRole) || FieldInfo::checkHint(fieldInfo, FieldHint::ReadOnly));
-      if (EAttrs::test(attr, EAttr::InitializerScope) && readOnly) {
-         TypeInfo typeInfo = fieldInfo.typeInfo;
-         // HOTFIX : convert a constant array into a normal one to allow operations inside the constructor
-         switch (typeInfo.typeRef) {
-            case V_CONST_BINARYARRAY:
-               typeInfo.typeRef = V_BINARYARRAY;
-               break;
-            case V_CONST_FLOAT64ARRAY:
-               typeInfo.typeRef = V_FLOAT64ARRAY;
-               break;
-            case V_CONST_INT16ARRAY:
-               typeInfo.typeRef = V_INT16ARRAY;
-               break;
-            case V_CONST_INT32ARRAY:
-               typeInfo.typeRef = V_INT32ARRAY;
-               break;
-            case V_CONST_INT8ARRAY:
-               typeInfo.typeRef = V_INT8ARRAY;
-               break;
-            case V_CONST_OBJARRAY:
-               typeInfo.typeRef = V_OBJARRAY;
-               break;
-            case V_CONST_UINT8ARRAY:
-               typeInfo.typeRef = V_UINT8ARRAY;
-               break;
-            default:
-               break;
-         }
+      bool readOnly = (test(info.header.flags, elReadOnlyRole) || FieldInfo::checkHint(fieldInfo, FieldHint::ReadOnly))
+         && !EAttrs::test(attr, EAttr::InitializerScope);
 
-         return { ObjectKind::SelfLocal, typeInfo, 1u, TargetMode::ArrayContent };
-      }
-      else return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1u, TargetMode::ArrayContent };
+      return { readOnly ? ObjectKind::ReadOnlySelfLocal : ObjectKind::SelfLocal, fieldInfo.typeInfo, 1u, TargetMode::ArrayContent };
    }
    else {
       auto staticFieldInfo = info.statics.get(identifier);
@@ -3839,7 +3822,8 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
 
          typeInfo.elementRef = typeInfo.typeRef;
          typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, typeInfo.elementRef,
-            true, test(scope.info.header.flags, elReadOnlyRole));
+            true);
+         typeInfo.constant = test(scope.info.header.flags, elReadOnlyRole);
       }
       else return false;
    }
@@ -3872,7 +3856,8 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
          typeInfo.elementRef = typeInfo.typeRef;
 
          typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, typeInfo.elementRef,
-            test(scope.info.header.flags, elStructureRole), test(scope.info.header.flags, elReadOnlyRole) || readOnly);
+            test(scope.info.header.flags, elStructureRole));
+         typeInfo.constant = test(scope.info.header.flags, elReadOnlyRole) || readOnly;
 
          scope.info.fields.add(name, { -2, typeInfo, readOnly, privateOne });
       }
@@ -5335,23 +5320,15 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
       case V_INT32ARRAY:
       case V_FLOAT64ARRAY:
       case V_BINARYARRAY:
-         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, false);
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, typeInfo.constant);
       //case V_NULLABLE:
          //   return resolveNullableTemplate(moduleScope, ns, typeInfo.elementRef, declarationMode);
-      case V_CONST_INT8ARRAY:
-      case V_CONST_UINT8ARRAY:
-      case V_CONST_INT16ARRAY:
-      case V_CONST_INT32ARRAY:
-      case V_CONST_FLOAT64ARRAY:
-      case V_CONST_BINARYARRAY:
-         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, true);
       case V_NIL:
          return moduleScope.buildins.superReference;
       case V_ARGARRAY:
          return resolveArgArrayTemplate(moduleScope, typeInfo.elementRef, declarationMode);
       case V_OBJARRAY:
-      case V_CONST_OBJARRAY:
-         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, typeInfo.typeRef == V_CONST_OBJARRAY);
+         return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, typeInfo.constant);
       case V_PTR32:
       case V_PTR64:
          return moduleScope.buildins.pointerReference;
@@ -6218,13 +6195,13 @@ void Compiler::declareIncludeAttributes(Scope& scope, SyntaxNode node, bool& tex
    }
 }
 
-ref_t Compiler :: defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode, bool readOnly)
+ref_t Compiler :: defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode)
 {
    ref_t retVal = _logic->definePrimitiveArray(*scope.moduleScope, elementRef,
-      _logic->isEmbeddable(*scope.moduleScope, elementRef), readOnly);
+      _logic->isEmbeddable(*scope.moduleScope, elementRef));
 
    if (!retVal && declarationMode)
-      retVal = readOnly ? V_CONST_OBJARRAY : V_OBJARRAY;
+      retVal = V_OBJARRAY;
 
    return retVal;
 }
@@ -6232,10 +6209,11 @@ ref_t Compiler :: defineArrayType(Scope& scope, ref_t elementRef, bool declarati
 ObjectInfo Compiler::defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode, bool readOnly)
 {
    ref_t elementRef = info.typeInfo.typeRef;
-   ref_t arrayRef = defineArrayType(scope, elementRef, declarationMode, readOnly);
+   ref_t arrayRef = defineArrayType(scope, elementRef, declarationMode);
 
    info.typeInfo.typeRef = arrayRef;
    info.typeInfo.elementRef = elementRef;
+   info.typeInfo.constant = readOnly;
 
    if (info.mode == TargetMode::Creating)
       info.mode = TargetMode::CreatingArray;
@@ -6374,6 +6352,7 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
             auto info = resolveStrongTypeAttribute(scope, current, declarationMode, false, constAttr);
             elementRef = info.typeRef;
             nullable = info.nillable;
+            constAttr |= info.constant;             
             break;
          }
          case SyntaxKey::TemplateType:
@@ -6402,12 +6381,12 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
 
    if (node == SyntaxKey::ArrayType) {
       if (attributes.variadicOne) {
-         return { V_ARGARRAY, elementRef };
+         return { V_ARGARRAY, elementRef, false, false, constAttr };
       }
-      else return { defineArrayType(scope, elementRef, declarationMode, constAttr), elementRef, false, nullable };
+      else return { defineArrayType(scope, elementRef, declarationMode), elementRef, false, nullable, constAttr };
    }
    else if (node == SyntaxKey::NullableType) {
-      return { elementRef, 0, true };
+      return { elementRef, 0, true, false, constAttr };
    }
    else return {};
 }
@@ -6465,6 +6444,9 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
          else assert(false);
          break;
    }
+
+   if (constAttr)
+      typeInfo.constant = true;
 
    validateType(scope, typeInfo.typeRef, node, declarationMode);
 
@@ -6779,7 +6761,7 @@ void Compiler :: markYieldVariable(Scope& scope, ref_t localOffset)
 }
 
 DeclarationError Compiler :: declareVariable(Scope& scope, ustr_t identifier, TypeInfo typeInfo, ObjectInfo& variable, int& size,
-   ExprScope* exprScope, CodeScope* codeScope, MethodScope* methodScope, bool constAttr)
+   ExprScope* exprScope, CodeScope* codeScope, MethodScope* methodScope)
 {
    variable.typeInfo = typeInfo;
    variable.kind = ObjectKind::Local;
@@ -6788,7 +6770,7 @@ DeclarationError Compiler :: declareVariable(Scope& scope, ustr_t identifier, Ty
       if (!variable.typeInfo.isPrimitive()) {
          // if it is a primitive array
          variable.typeInfo.elementRef = variable.typeInfo.typeRef;
-         variable.typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, variable.typeInfo.elementRef, true, constAttr);
+         variable.typeInfo.typeRef = _logic->definePrimitiveArray(*scope.moduleScope, variable.typeInfo.elementRef, true);
       }
       else return DeclarationError::Hint;
    }
@@ -6803,7 +6785,7 @@ DeclarationError Compiler :: declareVariable(Scope& scope, ustr_t identifier, Ty
    if (!_logic->defineClassInfo(*scope.moduleScope, localInfo, variable.typeInfo.typeRef))
       return DeclarationError::Type;
 
-   if (variable.typeInfo.typeRef == V_BINARYARRAY || variable.typeInfo.typeRef == V_CONST_BINARYARRAY)
+   if (variable.typeInfo.typeRef == V_BINARYARRAY)
       // HOTFIX : recognize binary array actual size
       localInfo.size *= _logic->defineStructSize(*scope.moduleScope, variable.typeInfo.elementRef).size;
 
@@ -6842,7 +6824,7 @@ DeclarationError Compiler :: declareVariable(Scope& scope, ustr_t identifier, Ty
    return DeclarationError::None;
 }
 
-bool Compiler::declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate, bool constAttr)
+bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate)
 {
    int size = 0;
    if (terminal == SyntaxKey::IndexerOperation) {
@@ -6874,7 +6856,7 @@ bool Compiler::declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeI
    }
 
    ObjectInfo variable = {};
-   DeclarationError err = declareVariable(scope, *identifier, typeInfo, variable, size, exprScope, codeScope, methodScope, constAttr);
+   DeclarationError err = declareVariable(scope, *identifier, typeInfo, variable, size, exprScope, codeScope, methodScope);
    switch (err) {
       case DeclarationError::Hint:
          scope.raiseError(errInvalidHint, terminal);
@@ -7290,6 +7272,20 @@ static inline bool DoesOperationSupportConvertableIntLiteral(int operatorId)
       case AND_OPERATOR_ID:
       case OR_OPERATOR_ID:
       case XOR_OPERATOR_ID:
+      case ADD_ASSIGN_OPERATOR_ID:
+      case SUB_ASSIGN_OPERATOR_ID:
+      case MUL_ASSIGN_OPERATOR_ID:
+      case DIV_ASSIGN_OPERATOR_ID:
+      case SET_INDEXER_OPERATOR_ID:
+         return true;
+      default:
+         return false;
+   }
+}
+
+static inline bool isLOperandMutable(int operatorId)
+{
+   switch (operatorId) {
       case ADD_ASSIGN_OPERATOR_ID:
       case SUB_ASSIGN_OPERATOR_ID:
       case MUL_ASSIGN_OPERATOR_ID:
@@ -7791,7 +7787,6 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
    bool ignoreDuplicates = EAttrs::testAndExclude(attrs, ExpressionAttribute::IgnoreDuplicate);
    bool distributedMode = EAttrs::testAndExclude(attrs, ExpressionAttribute::DistributedForward);
    bool invalidForNonIdentifier = terminalAttrs.isAnySet() || distributedMode;
-   bool constAttr = EAttrs::testAndExclude(attrs, ExpressionAttribute::ReadOnly);
 
    switch (node.key) {
       case SyntaxKey::TemplateType:
@@ -7813,7 +7808,7 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
          if (terminalAttrs.variableMode) {
             invalid = terminalAttrs.forwardMode;
 
-            if (declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates, constAttr)) {
+            if (declareVariable(scope, node, declaredTypeInfo, ignoreDuplicates)) {
                retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference,
                   attrs | ExpressionAttribute::Local);
 
@@ -9588,7 +9583,7 @@ void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& s
          ObjectInfo variable = {};
 
          int size = 0;
-         auto err = declareVariable(scope, p_it.key(), param.typeInfo, variable, size, nullptr, &codeScope, nullptr, false);
+         auto err = declareVariable(scope, p_it.key(), param.typeInfo, variable, size, nullptr, &codeScope, nullptr);
          assert(err == DeclarationError::None);
 
          writer.appendNode(BuildKey::LoadExtArg, -param.offset);
@@ -9680,21 +9675,16 @@ void Compiler :: writeParameterDebugInfo(BuildTreeWriter& writer, Scope& scope, 
    else if (size < 0) {
       switch (typeInfo.typeRef) {
          case V_INT16ARRAY:
-         case V_CONST_INT16ARRAY:
             writer.newNode(BuildKey::ShortArrayParameter, name);
             break;
          case V_INT8ARRAY:
          case V_UINT8ARRAY:
-         case V_CONST_INT8ARRAY:
-         case V_CONST_UINT8ARRAY:
             writer.newNode(BuildKey::ByteArrayParameter, name);
             break;
          case V_INT32ARRAY:
-         case V_CONST_INT32ARRAY:
             writer.newNode(BuildKey::IntArrayParameter, name);
             break;
          case V_FLOAT64ARRAY:
-         case V_CONST_FLOAT64ARRAY:
             writer.newNode(BuildKey::RealArrayParameter, name);
             break;
          default:
@@ -13982,7 +13972,7 @@ ObjectInfo Compiler::Expression::compileIndexerOperation(SyntaxNode node, int op
       ObjectInfo info = compiler->mapObject(scope, loperand, EAttr::Lookahead);
       if (info.kind == ObjectKind::NewVariable) {
          // if it is a new variable declaration - treat it like a new array
-         compiler->declareVariable(scope, node, info.typeInfo, false, false); // !! temporal - typeref should be provided or super class
+         compiler->declareVariable(scope, node, info.typeInfo, false); // !! temporal - typeref should be provided or super class
 
          if (compiler->_trackingUnassigned) {
             CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
@@ -16717,6 +16707,10 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
 
    ObjectInfo retVal = {};
    if (op != BuildKey::None) {
+      // HTOFIX : mutable operation is not allowed for read-only loperand
+      if (isReadOnlyOperand(loperand.kind) && isLOperandMutable(operatorId))
+         scope.raiseError(errAssigningRealOnly, node);
+
       ObjectInfo roperand = {};
       ObjectInfo ioperand = {};
 
@@ -17355,19 +17349,15 @@ void Compiler::Expression::convertIntLiteralForOperation(SyntaxNode node, int op
    ref_t loperandRef = messageArguments[0].typeInfo.typeRef;
    switch (loperandRef) {
       case V_INT16ARRAY:
-      case V_CONST_INT16ARRAY:
          literal = convertIntLiteral(scope, node, messageArguments[1], V_INT16, true);
          break;
       case V_INT8ARRAY:
-      case V_CONST_INT8ARRAY:
          literal = convertIntLiteral(scope, node, messageArguments[1], V_INT8, true);
          break;
       case V_UINT8ARRAY:
-      case V_CONST_UINT8ARRAY:
          literal = convertIntLiteral(scope, node, messageArguments[1], V_UINT8, true);
          break;
       case V_BINARYARRAY:
-      case V_CONST_BINARYARRAY:
          literal = convertIntLiteral(scope, node, messageArguments[1],
             compiler->_logic->retrievePrimitiveType(*scope.moduleScope, messageArguments[0].typeInfo.elementRef), true);
          break;

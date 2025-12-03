@@ -1796,7 +1796,7 @@ namespace elena_lang
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode, bool readOnly);
-      ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode, bool readOnly);
+      ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode);
 
       ref_t resolveStrongType(Scope& scope, TypeInfo typeInfo, bool declarationMode = false);
       TypeInfo resolveStrongTypeInfo(Scope& scope, TypeInfo typeInfo, bool declarationMode = false);
@@ -1918,8 +1918,8 @@ namespace elena_lang
       void generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags);
 
       DeclarationError declareVariable(Scope& scope, ustr_t identifier, TypeInfo typeInfo, ObjectInfo& variable, int& size,
-         ExprScope* exprScope, CodeScope* codeScope, MethodScope* methodScope, bool constAttr);
-      bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate, bool constAttr);
+         ExprScope* exprScope, CodeScope* codeScope, MethodScope* methodScope);
+      bool declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typeInfo, bool ignoreDuplicate);
 
       void markYieldVariable(Scope& scope, ref_t localOffset);
 

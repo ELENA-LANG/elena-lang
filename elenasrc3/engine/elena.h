@@ -857,6 +857,7 @@ namespace elena_lang
    {
       ref_t typeRef;
       bool nillable;
+      bool constant;
       ref_t elementRef;
       bool nillableElement;
 
@@ -879,6 +880,7 @@ namespace elena_lang
       {
          typeRef = elementRef = 0;
          nillableElement = nillable = false;
+         constant = false;
       }
       TypeInfo(ref_t typeRef)
       {
@@ -886,6 +888,7 @@ namespace elena_lang
          this->elementRef = 0;
          this->nillable = false;
          this->nillableElement = false;
+         this->constant = false;
       }
       TypeInfo(ref_t typeRef, ref_t elemantRef)
       {
@@ -893,6 +896,7 @@ namespace elena_lang
          this->elementRef = elemantRef;
          this->nillable = false;
          this->nillableElement = false;
+         this->constant = false;
       }
       TypeInfo(ref_t typeRef, ref_t elemantRef, bool nillable)
       {
@@ -900,6 +904,7 @@ namespace elena_lang
          this->elementRef = elemantRef;
          this->nillable = nillable;
          this->nillableElement = false;
+         this->constant = false;
       }
       TypeInfo(ref_t typeRef, ref_t elemantRef, bool nillable, bool nillableElement)
       {
@@ -907,6 +912,15 @@ namespace elena_lang
          this->elementRef = elemantRef;
          this->nillable = nillable;
          this->nillableElement = nillableElement;
+         this->constant = false;
+      }
+      TypeInfo(ref_t typeRef, ref_t elemantRef, bool nillable, bool nillableElement, bool constant)
+      {
+         this->typeRef = typeRef;
+         this->elementRef = elemantRef;
+         this->nillable = nillable;
+         this->nillableElement = nillableElement;
+         this->constant = constant;
       }
    };
 
