@@ -7,14 +7,10 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * #351 : const class / const fields
-  --------------------------------------
-  - const class is an analog of the class with
-  - entry into features about const class
-  ====================================== 
   * const array (stored in the data array)
   --------------------------------------
-  - declare a constant array of objects in rdata
+  - design : if a target class is a primitive constant array try to create collection (reusing code in compileSymbol for constant array)
+  - implement
   ====================================== 
   * support Collection<T>, ReadOnlyCollection<T>
   --------------------------------------
@@ -23,14 +19,8 @@ In development:
   - add .asReadOnly<T> extension to convert an array into a readonly collection
   - implemet example
   --------------------------------------
-  * support const field
-  * support const / readonly for variables
+  * support const / readonly for variables??
   --------------------------------------
-  * support constant array declared in rdata
-  --------------------------------------
-  - design
-  - check if feasible
-  - implement
   --------------------------------------
   * #592 : Set operation with a constant array 
   * support syntax : string[] dirNames := new []{ ".", ".." };
