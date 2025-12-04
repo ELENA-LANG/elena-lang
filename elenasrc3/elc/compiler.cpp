@@ -5426,7 +5426,7 @@ void Compiler::declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool
          case SyntaxKey::ArrayType:
          case SyntaxKey::TemplateType:
             if (!identifierDeclarationMode) {
-               auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false, false);
+               auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false, constant);
                scope.info.typeRef = typeInfo.typeRef;
 
                if (typeInfo.nillable)
