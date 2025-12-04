@@ -202,6 +202,16 @@ public sealed const ConstArray<T> : Enumerable<T>,
 {
    embeddable /*readonly*/ __string T[] array;
 
+   constructor (T[] array)
+      <= allocate(array.Length)
+   {
+      int length := array.Length;
+      for(int i := 0; i < length; i += 1)
+      {
+         this array[i] := array[i]
+      }
+   }
+
    constructor allocate(int length) : info("Creates an array with the specified <b>length</b>")
       = new T[](length);   
 
@@ -225,21 +235,6 @@ public sealed const ConstArray<T> : Enumerable<T>,
         
       ^ copy
    }
-
-   T[] cast() : info("Creates a copy of the strong-typed array")
-      = clone();
-   
-   Array cast()
-       : info("Creates a weak copy of the array")
-   {
-      int len := self.Length;
-      auto clone := Array.allocate(len);
-      for (int i := 0; i < len; i++) {
-         clone[i] := array[i];
-      };
-      
-      ^ clone
-   }   
 
    T at(int n)
       : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")

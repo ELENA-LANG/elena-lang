@@ -7,23 +7,11 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * fixing system_tests
-  --------------------------------------
-  - test preloaded symbols
-  - test system_tests
-
-
-  - test readonly fields
-  - test += operation with read-only field
-
-  - converting array to const array
-
-  - converting const array to array must not be possible
-  ====================================== 
   * const array (stored in the data array)
   --------------------------------------
-  - design : if a target class is a primitive constant array try to create collection (reusing code in compileSymbol for constant array)
-  - implement
+  - expressions : preloaded collection must be constant
+  - support new [] { "1", "2", "3" } - as a constant
+  - review examples -> use constant arrays when it is required
   ====================================== 
   * support Collection<T>, ReadOnlyCollection<T>
   --------------------------------------
@@ -31,15 +19,14 @@ In development:
   - inherit them for Array, Array<T>, List, List<T>
   - add .asReadOnly<T> extension to convert an array into a readonly collection
   - implemet example
-  --------------------------------------
+  ====================================== 
   * support const / readonly for variables??
-  --------------------------------------
-  --------------------------------------
+  ====================================== 
   * #592 : Set operation with a constant array 
   * support syntax : string[] dirNames := new []{ ".", ".." };
   --------------------------------------
   - implicitly define the array type
-  --------------------------------------
+  ====================================== 
   * property "int? X" must be supported
   * support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
   ====================================== 
@@ -48,11 +35,6 @@ In development:
   - readonly array field; must be accessible in the constructor
   ====================================== 
   * review String.at method, simplify
-  ====================================== 
-  * what's new 6.8
-  --------------------------------------
-  - dialect dialect EL7
-  - ...
   ======================================
   * fix entropy sample
   * api : provide descriptions for all classes in system & extensions, starting from IntMatrix
@@ -61,7 +43,7 @@ In development:
   * ldoc : support search by method name
   * ldoc : support search by class name
   * Babylonian spiral
-  - release a new version of mbedtls wrapper   
+  * release a new version of mbedtls wrapper   
   ======================================
   * #184 : IDE linux - migrate to gtkmm4
   --------------------------------------
@@ -97,7 +79,11 @@ In development:
 
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
+  ====================================== 
+  * what's new 6.8
   --------------------------------------
+  - dialect dialect EL7
+  - ...
 
   === Iteration 44 ===
   --------------------------------------

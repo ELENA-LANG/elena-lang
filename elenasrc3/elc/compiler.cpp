@@ -4948,6 +4948,10 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
       if (objectInfo.kind != ObjectKind::Class)
          scope.raiseError(errInvalidOperation, node);
 
+      // NOTE : only const array type can be saved as a constant
+      if (!objectInfo.typeInfo.constant)
+         return {};
+
       current = current.nextNode();
 
       collectionTypeRef = resolveStrongType(scope, objectInfo.typeInfo);
@@ -13791,6 +13795,10 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
    BuildKey op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, dummy);
    // !! temporal : use weak operation when assigning outer variable requiring a special type of unboxing (to avoid duplicate boxing)
    if (op != BuildKey::None && loperand.mode != TargetMode::LocalAddressUnboxingRequired) {
+      // HTOFIX : mutable operation is not allowed for read-only loperand
+      if (isReadOnlyOperand(loperand.kind) && isLOperandMutable(operatorId))
+         scope.raiseError(errAssigningRealOnly, node);
+
       // box argument locally if required
       loperand = boxArgumentLocally(loperand, true, true);
 
@@ -14469,6 +14477,11 @@ void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withou
 ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef)
 {
    bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
+
+   Interpreter interpreter(scope.moduleScope, compiler->_logic);
+   ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), true);
+   if (evalRetVal.kind == ObjectKind::Constant || evalRetVal.kind == ObjectKind::ConstArray)
+      return evalRetVal;
 
    SyntaxNode current = node.firstChild();
 
