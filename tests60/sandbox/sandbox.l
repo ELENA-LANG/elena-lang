@@ -9,7 +9,9 @@ import extensions;
 
 public program()
 {
-   const byte[] arr := new const byte[] { 1, 3, 4 };
+   const byte[] ptr := base_map;
+
+//   const byte[] arr := new const byte[] { 1, 3, 4 };
 
 //   arr[0] := 3;
 }

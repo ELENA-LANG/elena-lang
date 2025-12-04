@@ -14478,10 +14478,13 @@ ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, Expression
 {
    bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
 
-   Interpreter interpreter(scope.moduleScope, compiler->_logic);
-   ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), true);
-   if (evalRetVal.kind == ObjectKind::Constant || evalRetVal.kind == ObjectKind::ConstArray)
-      return evalRetVal;
+   // HOTFIX : if the constant array was already declared, no need to create it again
+   if (!constOne || !node.arg.reference) {
+      Interpreter interpreter(scope.moduleScope, compiler->_logic);
+      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), true);
+      if (evalRetVal.kind == ObjectKind::Constant || evalRetVal.kind == ObjectKind::ConstArray)
+         return evalRetVal;
+   }
 
    SyntaxNode current = node.firstChild();
 
