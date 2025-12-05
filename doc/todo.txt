@@ -7,10 +7,11 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
+  * support both Program and program (temporally)
+  ====================================== 
   * const array (stored in the data array)
   --------------------------------------
-  - expressions : preloaded collection must be constant
-  - support new [] { "1", "2", "3" } - as a constant
+  - support new [] { "1", "2", "3" } - as a constant (variable and symbol)
   - review examples -> use constant arrays when it is required
   ====================================== 
   * support Collection<T>, ReadOnlyCollection<T>

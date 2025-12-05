@@ -4883,9 +4883,9 @@ ObjectInfo Compiler::evalOperation(Interpreter& interpreter, Scope& scope, Synta
    return retVal;
 }
 
-ObjectInfo Compiler::evalObject(/*Interpreter& interpreter, */Scope& scope, SyntaxNode node)
+ObjectInfo Compiler::evalObject(/*Interpreter& interpreter, */Scope& scope, SyntaxNode node, ExpressionAttribute exprMode)
 {
-   EAttrs mode = ExpressionAttribute::Meta;
+   EAttrs mode = ExpressionAttribute::Meta | exprMode;
 
    return mapObject(scope, node, mode);
 }
@@ -4944,7 +4944,7 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
    bool numericOne = false;
 
    if (!anonymousOne) {
-      ObjectInfo objectInfo = evalObject(/*interpreter, */scope, current);
+      ObjectInfo objectInfo = evalObject(/*interpreter, */scope, current, EAttr::ProbeMode);
       if (objectInfo.kind != ObjectKind::Class)
          scope.raiseError(errInvalidOperation, node);
 
