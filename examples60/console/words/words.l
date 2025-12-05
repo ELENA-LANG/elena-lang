@@ -34,7 +34,7 @@ class WordList
 
 // --- Program ---
 
-public program()
+public Program()
 {
    Console.writeLine("Enter the text(to stop press enter two times):");
 

@@ -1,7 +1,7 @@
 import system'routines;
 import extensions;
 
-public program()
+public Program()
 { 
     var Doors := Array.allocate(100).populate::(n=>false);
     for(int i := 0; i < 100; i++)

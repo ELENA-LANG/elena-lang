@@ -1,7 +1,7 @@
 import system'routines;
 import extensions;
  
-public program()
+public Program()
 {
     auto string := "Hello,How,Are,You,Today";
  

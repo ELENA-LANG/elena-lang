@@ -4,7 +4,7 @@ import extensions'threading;
 
 static sync = new object();
 
-public program()
+public Program()
 {
    threadControl.start(
    {

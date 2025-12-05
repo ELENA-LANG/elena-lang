@@ -23,7 +23,7 @@ public singleton Control
             2 : { ^UtcNow.toString() }
             3 : { ^Now.Year.toString() }
             4 : { ^Now.toShortTimeString() }
-            7 : { forward program.stop(); ^ EmptyString }
+            7 : { forward Program.stop(); ^ EmptyString }
             ! : { ^"Invalid choice" }
     }
 }

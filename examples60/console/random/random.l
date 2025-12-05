@@ -2,7 +2,7 @@
 
 import extensions;
 
-// --- program ---
+// --- Program ---
 
 const int rows = 4;
 const int cols = 6;
@@ -10,7 +10,7 @@ const int cols = 6;
 const int runCount = 1000000;
 const int distGroupCount = 20;
 
-public program()
+public Program()
 {
    auto intGroupSize := (1.0 + IntNumber.MaxValue) / distGroupCount;
 

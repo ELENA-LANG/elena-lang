@@ -62,7 +62,7 @@ class EvoAlgorithm : Enumerator
     enumerable() => _target;                          
 }
 
-public program()
+public Program()
 {
     var attempt := new Integer();
     EvoAlgorithm.new(Target,C).forEach::(current)

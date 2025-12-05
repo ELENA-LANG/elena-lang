@@ -197,9 +197,9 @@ extension gameOp
     }
 }
 
-// --- program ---
+// --- Program ---
 
-public program()
+public Program()
 {
     var game := new TwentyFourGame().help();
 

@@ -1,6 +1,6 @@
 import extensions;
  
-public program()
+public Program()
 {
     var s := "abcd";
  

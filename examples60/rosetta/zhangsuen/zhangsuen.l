@@ -146,7 +146,7 @@ extension zhangsuenOp : Matrix<CharValue>
     }
 }
  
-public program()
+public Program()
 {
     Matrix<CharValue> grid := class Matrix<CharValue>.load(new
     {

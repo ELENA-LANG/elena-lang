@@ -16,7 +16,7 @@ A(k,x1,x2,x3,x4,x5)
    }
 }
 
-public program()
+public Program()
 {
    for(int n := 0; n <= 14; n += 1)
    {

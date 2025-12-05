@@ -10,7 +10,7 @@ compareStrings = (val1,val2)
     if (val1 <= val2) { Console.printLine("The string ",val1," is not lexically after than ",val2) }
 };
  
-public program()
+public Program()
 {
     var s1 := "this";
     var s2 := "that";

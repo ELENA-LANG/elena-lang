@@ -16,7 +16,7 @@ function(acc)
 accumulator(n)
     = function(new Variable(n));
 
-public program()
+public Program()
 {
     var x := accumulator(1);
     

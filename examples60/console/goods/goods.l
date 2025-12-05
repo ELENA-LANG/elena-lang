@@ -65,7 +65,7 @@ class Adapter
 
 // --- Program --- 
 
-public program() 
+public Program() 
 {
     if(Program_arguments.Length == 1)
         {  Console.printLine("Please provide the path to the file to view"); AbortException.raise() };

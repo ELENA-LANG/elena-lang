@@ -28,7 +28,7 @@ ackermann(m,n)
          }
 }
 
-public program()
+public Program()
 {
    for(int i:=0; i <= 3; i += 1)
    {

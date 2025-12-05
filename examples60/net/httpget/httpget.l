@@ -18,7 +18,7 @@ singleton Tester
    }
 }
 
-public program()
+public Program()
 {
    Tester.browse("http://www.google.com").Result;
 }

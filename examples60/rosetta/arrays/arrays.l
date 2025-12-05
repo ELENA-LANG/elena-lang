@@ -5,7 +5,7 @@ import extensions;
 
 const staticArray = new int[]{1, 2, 3};
 
-public program()
+public Program()
 {
     var array := Array.allocate(3);
     array[0] := 1;

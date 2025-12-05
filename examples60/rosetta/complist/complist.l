@@ -26,7 +26,7 @@ testCases
          new string[]{"AA","ACB","BB","CC"},
          new string[]{"single_element"}};
 
-public program()
+public Program()
 {
     testCases.forEach::(list)
         {

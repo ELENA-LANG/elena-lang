@@ -124,7 +124,7 @@ Your choice:";
                 ^ identity.toString()
             }
             "6" : {
-                forward program.stop()
+                forward Program.stop()
             }
     }
 }

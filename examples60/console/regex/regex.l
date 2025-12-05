@@ -21,7 +21,7 @@ public singleton Control
    proceed(line)
    {
       if (line == String.MinValue) 
-        forward program.stop();
+        forward Program.stop();
 
       ^ _regEx.match(line) ? "matched" : "not matched";
    }

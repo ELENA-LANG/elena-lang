@@ -24,7 +24,7 @@ extension op
 
 // --- Program ---
 
-public program()
+public Program()
 {
    var array := new int[]{1, 2, 3, 4, 5, 6, 7, 8};
    Console.printLine(

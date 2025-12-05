@@ -227,7 +227,7 @@ sealed struct ZeckendorfNumber
         = ZeckendorfNumber.product(self, n);
 }
 
-public program()
+public Program()
 {
     Console.printLine("Addition:");
     var n := 10n;

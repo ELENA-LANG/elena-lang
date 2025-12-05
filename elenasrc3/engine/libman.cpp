@@ -44,11 +44,8 @@ LibraryProvider :: LibraryProvider()
       _modules(nullptr),
       _debugModules(nullptr),
       _templates(nullptr),
-      _forwardAliases(nullptr),
       _listeners(nullptr)
 {
-   // !!HOTFIX : support both program & Program
-   _forwardAliases.add(PROGRAM_ENTRY, ALT_PROGRAM_ENTRY);
 }
 
 void LibraryProvider :: nameToPath(ustr_t moduleName, PathString& path, ustr_t extension)
@@ -485,9 +482,6 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ustr_t referenceName, For
       ustr_t resolvedName = forwardResolver->resolveForward(referenceName + getlength(FORWARD_PREFIX_NS));
       if (!resolvedName.empty()) {
          referenceName = resolvedName;
-      }
-      else if (_forwardAliases.exist(referenceName)) {
-         return retrieveReferenceInfo(_forwardAliases.get(referenceName), forwardResolver);
       }
       else throw JITUnresolvedException(ReferenceInfo(referenceName));
    }

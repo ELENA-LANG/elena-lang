@@ -233,7 +233,7 @@ public class MainWindow : SDIDialog
           { self.onButtonClickSave() };
 
       BtmSair.onClick := (args)
-          { forward program.stop() }
+          { forward Program.stop() }
    }
 
    private TipoDoCalculo(int index)

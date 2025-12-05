@@ -20,7 +20,7 @@
         </module>
     </files>
     <forwards>
-        <forward key="program">extensions'ProgramLoop</forward>
-        <forward key="program'control">matrix'Control</forward>
+        <forward key="Program">extensions'ProgramLoop</forward>
+        <forward key="Program'Control">matrix'Control</forward>
     </forwards>
 </configuration>

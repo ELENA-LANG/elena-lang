@@ -37,7 +37,7 @@ class SMA
 
 // --- Program ---
 
-public program()
+public Program()
 {
     var SMA3 := SMA.new(3);
     var SMA5 := SMA.new(5);

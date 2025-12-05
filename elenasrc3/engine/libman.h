@@ -26,7 +26,6 @@ namespace elena_lang
       PathMap           _binaryPaths, _packagePaths;
       ModuleMap         _binaries, _modules, _debugModules;
       Forwards          _templates;
-      Forwards          _forwardAliases;
 
       Listeners         _listeners;
 

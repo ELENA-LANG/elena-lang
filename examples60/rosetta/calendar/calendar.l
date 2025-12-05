@@ -6,7 +6,7 @@ import system'routines;
 import system'calendar;
 import extensions'routines;
 
-public program = PROGRAM;
+public Program = PROGRAM;
 
 CONSOLE = Console;
 
