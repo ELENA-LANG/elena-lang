@@ -68,7 +68,7 @@ entry()
 {
    try
    {
-      forward program();
+      forward Program();
    }
    catch::
    {
@@ -96,7 +96,7 @@ gui_entry()
 {
    try
    {
-      forward program();
+      forward Program();
    }
    catch::
    {
@@ -108,7 +108,7 @@ gui_entry()
       {
          startUpEvents.handlingError(err);
 
-         forward program.error("ELENA", err);
+         forward Program.error("ELENA", err);
 
          extern ExitLA(1);
       }

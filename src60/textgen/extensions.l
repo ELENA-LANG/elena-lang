@@ -13,7 +13,7 @@ public extension textGenOp
             .loadPath("~\scripts\grammar60.es")
             .loadPath("~\scripts\lscript60.es");
 
-      var function := scriptEngine.buildScript(full_script).compile().program;
+      var function := scriptEngine.buildScript(full_script).compile().Program;
       
       function(self, output);
       

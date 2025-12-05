@@ -2016,7 +2016,7 @@ namespace expressions
             
          var tape := self.compile(set);
             
-         var program := tape.program;
+         var program := tape.Program;
          ^ program();
       }
 

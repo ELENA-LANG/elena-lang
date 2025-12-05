@@ -1,7 +1,7 @@
 ///$output:=the output path
 ///$script:=the textgen script
 ///$target:= the multi-line text to be parsed
-public program() {
+public Program() {
 $1
 
   var output := textgen'TextGen.parseAsLineSeparated($target, $script);

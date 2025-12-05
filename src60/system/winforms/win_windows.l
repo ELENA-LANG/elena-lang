@@ -122,7 +122,7 @@ public class SDIWindowCallback : WindowCallback
    {
       super.onWMDestoy(hwnd);
 
-      forward program.stop()
+      forward Program.stop()
    }
 }
 

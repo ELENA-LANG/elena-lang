@@ -7,6 +7,11 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
+  * api refactoring : main program entry to be called - Program?
+  --------------------------------------
+  - support both program and Program 
+  - rename program'control to Program'Control
+  ====================================== 
   * const array (stored in the data array)
   --------------------------------------
   - expressions : preloaded collection must be constant
@@ -26,6 +31,14 @@ In development:
   * support syntax : string[] dirNames := new []{ ".", ".." };
   --------------------------------------
   - implicitly define the array type
+  ====================================== 
+  *  documentation - operations with arrays / collections
+  --------------------------------------
+  - implement toUInt, toSByte
+  - update all existing code in documentation : Strings
+  - test all samples 
+  - add description for ++ / -- operators
+  - new section - operations with collections / arrays
   ====================================== 
   * property "int? X" must be supported
   * support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }

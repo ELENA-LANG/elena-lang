@@ -712,7 +712,8 @@ namespace elena_lang
 
    constexpr auto VM_TAPE                    = "$elena'meta$startUpTape";
 
-   constexpr auto PROGRAM_ENTRY              = "$forwards'program";         // used by the linker to define the debug entry
+   constexpr auto PROGRAM_ENTRY              = "$forwards'Program";         // used by the linker to define the debug entry
+   constexpr auto ALT_PROGRAM_ENTRY          = "$forwards'program";         // used by the linker to define the debug entry
 
    constexpr auto SYSTEM_FORWARD                = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD                 = "$super";          // the common class predecessor
