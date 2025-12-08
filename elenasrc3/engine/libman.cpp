@@ -477,7 +477,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
                
                auto result = retrieveReferenceInfo(*copy, forwardResolver);
                if (result.module == nullptr) {
-                  IdentifierString copy(*_namespace);
+                  copy.copy(*_namespace);
                   copy.append('\'');
                   copy.append(referenceName.str() + index + 1);
 

@@ -4752,7 +4752,7 @@ ObjectInfo Compiler::evalExprValueOperation(Interpreter& interpreter, Scope& sco
    }
 
    if (lnode == SyntaxKey::KeyValueExpression) {
-      return evalExpression(interpreter, scope, lnode.findChild(SyntaxKey::Expression), ignoreErrors);
+      return evalExpression(interpreter, scope, lnode.findChild(SyntaxKey::Expression), {}, ignoreErrors);
    }
    else if (lnode == SyntaxKey::Object) {
       SyntaxNode terminalNode = lnode.firstChild(SyntaxKey::TerminalMask);
@@ -4770,7 +4770,7 @@ ObjectInfo Compiler::evalSizeOperation(Interpreter& interpreter, Scope& scope, S
 {
    SyntaxNode lnode = node.firstChild(SyntaxKey::DeclarationMask);
 
-   ObjectInfo loperand = evalExpression(interpreter, scope, lnode, ignoreErrors);
+   ObjectInfo loperand = evalExpression(interpreter, scope, lnode, {}, ignoreErrors);
    SizeInfo sizeInfo = {};
    switch (loperand.kind) {
       case ObjectKind::LocalAddress:
@@ -4806,8 +4806,8 @@ ObjectInfo Compiler :: evalBoolOperation(Interpreter& interpreter, Scope& scope,
    ObjectInfo retVal = {};
 
    ArgumentsInfo arguments;
-   arguments.add(evalExpression(interpreter, scope, lnode, ignoreErrors));
-   arguments.add(evalExpression(interpreter, scope, rnode, ignoreErrors));
+   arguments.add(evalExpression(interpreter, scope, lnode, {}, ignoreErrors));
+   arguments.add(evalExpression(interpreter, scope, rnode, {}, ignoreErrors));
 
    if (!interpreter.evalBoolOp(operator_id, arguments, retVal)) {
       if (!ignoreErrors) {
@@ -4832,9 +4832,9 @@ ObjectInfo Compiler::evalOperation(Interpreter& interpreter, Scope& scope, Synta
       SyntaxNode sublnode = lnode.firstChild(SyntaxKey::DeclarationMask);
       SyntaxNode subrnode = sublnode.nextNode(SyntaxKey::DeclarationMask);
 
-      loperand = evalExpression(interpreter, scope, sublnode, ignoreErrors);
-      ioperand = evalExpression(interpreter, scope, subrnode, ignoreErrors);
-      roperand = evalExpression(interpreter, scope, rnode, ignoreErrors);
+      loperand = evalExpression(interpreter, scope, sublnode, {}, ignoreErrors);
+      ioperand = evalExpression(interpreter, scope, subrnode, {}, ignoreErrors);
+      roperand = evalExpression(interpreter, scope, rnode, {}, ignoreErrors);
 
       if (operator_id == SET_OPERATOR_ID) {
          operator_id = SET_INDEXER_OPERATOR_ID;
@@ -4847,10 +4847,10 @@ ObjectInfo Compiler::evalOperation(Interpreter& interpreter, Scope& scope, Synta
       argCount = 3;
    }
    else {
-      loperand = evalExpression(interpreter, scope, lnode, ignoreErrors);
+      loperand = evalExpression(interpreter, scope, lnode, {}, ignoreErrors);
       if (rnode != SyntaxKey::None) {
          argCount = 2;
-         roperand = evalExpression(interpreter, scope, rnode, ignoreErrors);
+         roperand = evalExpression(interpreter, scope, rnode, {}, ignoreErrors);
       }
    }
 
@@ -4905,7 +4905,7 @@ ObjectInfo Compiler::evalPropertyOperation(Interpreter& interpreter, Scope& scop
 {
    SyntaxNode lnode = node.firstChild();
 
-   ObjectInfo loperand = evalExpression(interpreter, scope, lnode, ignoreErrors);
+   ObjectInfo loperand = evalExpression(interpreter, scope, lnode, {}, ignoreErrors);
    mssg_t message = mapMessage(scope, node.findChild(SyntaxKey::Message), true, false, false);
 
    switch (loperand.kind) {
@@ -4935,7 +4935,7 @@ ObjectInfo Compiler::evalPropertyOperation(Interpreter& interpreter, Scope& scop
    return {};
 }
 
-ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne, bool ignoreErrors)
+ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, TypeInfo targetInfo, bool anonymousOne, bool ignoreErrors)
 {
    SyntaxNode current = node.firstChild();
 
@@ -4947,6 +4947,9 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
       ObjectInfo objectInfo = evalObject(/*interpreter, */scope, current, EAttr::ProbeMode);
       if (objectInfo.kind != ObjectKind::Class)
          scope.raiseError(errInvalidOperation, node);
+
+      if (objectInfo.typeInfo.typeRef == V_AUTO && targetInfo.typeRef)
+         objectInfo.typeInfo = targetInfo;
 
       // NOTE : only const array type can be saved as a constant
       if (!objectInfo.typeInfo.constant)
@@ -4975,7 +4978,7 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
    ArgumentsInfo arguments;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::Expression) {
-         auto argInfo = evalExpression(interpreter, scope, current, ignoreErrors);
+         auto argInfo = evalExpression(interpreter, scope, current, {}, ignoreErrors);
 
          argInfo.typeInfo.typeRef = resolveStrongType(scope, argInfo.typeInfo);
 
@@ -5014,13 +5017,13 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
    return interpreter.createConstCollection(nestedRef, collectionTypeRef, arguments, byValue, size);
 }
 
-ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool resolveMode)
+ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, TypeInfo targetInfo, bool ignoreErrors, bool resolveMode)
 {
    ObjectInfo retVal = {};
 
    switch (node.key) {
       case SyntaxKey::Expression:
-         retVal = evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask), ignoreErrors, resolveMode);
+         retVal = evalExpression(interpreter, scope, node.firstChild(SyntaxKey::DeclarationMask), targetInfo, ignoreErrors, resolveMode);
          break;
       case SyntaxKey::AndOperation:
       case SyntaxKey::OrOperation:
@@ -5064,10 +5067,10 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
          retVal = evalPropertyOperation(interpreter, scope, node, ignoreErrors);
          break;
       case SyntaxKey::CollectionExpression:
-         retVal = evalCollection(interpreter, scope, node, false, ignoreErrors);
+         retVal = evalCollection(interpreter, scope, node, targetInfo, false, ignoreErrors);
          break;
       case SyntaxKey::PrimitiveCollection:
-         retVal = evalCollection(interpreter, scope, node, true, ignoreErrors);
+         retVal = evalCollection(interpreter, scope, node, {}, true, ignoreErrors);
          break;
       case SyntaxKey::NestedBlock:
       {
@@ -5137,7 +5140,7 @@ void Compiler :: evalStatement(MetaScope& scope, SyntaxNode node)
 {
    Interpreter interpreter(scope.moduleScope, _logic);
 
-   ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
+   ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression), {});
    if (retVal.kind == ObjectKind::Unknown)
       scope.raiseError(errCannotEval, node);
 }
@@ -5146,7 +5149,7 @@ ObjectInfo Compiler :: evalExpression(MetaScope& scope, SyntaxNode node)
 {
    Interpreter interpreter(scope.moduleScope, _logic);
 
-   ObjectInfo retVal = evalExpression(interpreter, scope, node);
+   ObjectInfo retVal = evalExpression(interpreter, scope, node, {});
    if (retVal.kind == ObjectKind::Unknown)
       scope.raiseError(errCannotEval, node);
 
@@ -5414,6 +5417,7 @@ void Compiler::declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool
 {
    bool constant = false;
    SyntaxNode current = node.firstChild();
+   TypeInfo targetInfo = {};
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Attribute:
@@ -5426,10 +5430,13 @@ void Compiler::declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool
          case SyntaxKey::ArrayType:
          case SyntaxKey::TemplateType:
             if (!identifierDeclarationMode) {
-               auto typeInfo = resolveStrongTypeAttribute(scope, current, true, false, constant);
-               scope.info.typeRef = typeInfo.typeRef;
+               targetInfo = resolveStrongTypeAttribute(scope, current, true, false, constant, true);
+               if (targetInfo.isPrimitive()) {
+                  scope.info.typeRef = resolvePrimitiveType(*scope.moduleScope, targetInfo, true);
+               }
+               else scope.info.typeRef = targetInfo.typeRef;
 
-               if (typeInfo.nillable)
+               if (targetInfo.nillable)
                   scope.raiseError(errInvalidOperation, node);
             }
 
@@ -5450,9 +5457,10 @@ void Compiler::declareSymbolAttributes(SymbolScope& scope, SyntaxNode node, bool
          scope.raiseError(errInvalidOperation, node); // !! currently external variable cannot be constant
 
       scope.info.symbolType = SymbolType::Constant;
+      targetInfo.constant = true;
 
       Interpreter interpreter(scope.moduleScope, _logic);
-      ObjectInfo operand = evalExpression(interpreter, scope, node.findChild(SyntaxKey::GetExpression).firstChild(), true);
+      ObjectInfo operand = evalExpression(interpreter, scope, node.findChild(SyntaxKey::GetExpression).firstChild(), targetInfo, true);
       if (operand.kind == ObjectKind::IntLiteral) {
          NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
          nsScope->defineIntConstant(scope.reference, operand.extra);
@@ -6460,14 +6468,14 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
    return typeInfo;
 }
 
-TypeInfo Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr)
+TypeInfo Compiler :: resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr, bool allowPrimitive)
 {
    TypeAttributes typeAttributes = {};
    TypeInfo typeInfo = resolveTypeAttribute(scope, node, typeAttributes, declarationMode, allowRole, constAttr);
    if (typeAttributes.isNonempty())
       scope.raiseError(errInvalidOperation, node);
 
-   if (isPrimitiveRef(typeInfo.typeRef)) {
+   if (!allowPrimitive && isPrimitiveRef(typeInfo.typeRef)) {
       return { resolvePrimitiveType(*scope.moduleScope, typeInfo, declarationMode) };
    }
    else return typeInfo;
@@ -6740,7 +6748,7 @@ int Compiler::allocateLocalAddress(Scope& scope, int size, bool binaryArray)
 int Compiler::resolveArraySize(Scope& scope, SyntaxNode node)
 {
    Interpreter interpreter(scope.moduleScope, _logic);
-   ObjectInfo retVal = evalExpression(interpreter, scope, node);
+   ObjectInfo retVal = evalExpression(interpreter, scope, node, {});
    switch (retVal.kind) {
       case ObjectKind::IntLiteral:
          return retVal.extra;
@@ -6951,7 +6959,7 @@ bool Compiler::evalAccumClassConstant(ustr_t constName, ClassScope& scope, Synta
    auto fieldInfo = *(collectionInfo.fields.start());
    /*ref_t elementTypeRef = */resolveStrongType(scope, { fieldInfo.typeInfo.elementRef });
 
-   ObjectInfo value = evalExpression(interpreter, scope, node);
+   ObjectInfo value = evalExpression(interpreter, scope, node, {});
    if (value.kind == ObjectKind::Symbol && value.reference == scope.reference) {
       // HOTFIX : recognize the class
       value = { ObjectKind::Class, { scope.info.header.classRef }, scope.reference };
@@ -6980,7 +6988,7 @@ bool Compiler::evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode
    auto it = scope.info.statics.getIt(constName);
    assert(!it.eof());
 
-   ObjectInfo retVal = evalExpression(interpreter, metaScope, node, false, false);
+   ObjectInfo retVal = evalExpression(interpreter, metaScope, node, {}, false, false);
    bool setIndex = false;
    switch (retVal.kind) {
    case ObjectKind::SelfName:
@@ -7722,7 +7730,7 @@ ObjectInfo Compiler::mapMessageConstant(Scope& scope, SyntaxNode node, ref_t act
    pos_t argCount = 0;
 
    Interpreter interpreter(scope.moduleScope, _logic);
-   ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
+   ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression), {});
    switch (retVal.kind) {
       case ObjectKind::IntLiteral:
          argCount = retVal.extra;
@@ -7745,7 +7753,7 @@ ObjectInfo Compiler :: mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_
    pos_t argCount = 0;
 
    Interpreter interpreter(scope.moduleScope, _logic);
-   ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression));
+   ObjectInfo retVal = evalExpression(interpreter, scope, node.findChild(SyntaxKey::Expression), {});
    switch (retVal.kind) {
       case ObjectKind::IntLiteral:
          argCount = retVal.extra;
@@ -11116,7 +11124,7 @@ void Compiler::createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& man
    MetaScope scope(nullptr, Scope::ScopeLevel::Namespace);
    scope.module = moduleScope->module;
    scope.moduleScope = moduleScope;
-   evalCollection(interpreter, scope, tempTree.readRoot(), true, false);
+   evalCollection(interpreter, scope, tempTree.readRoot(), {}, true, false);
 }
 
 void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,
@@ -14441,7 +14449,7 @@ void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withou
             writer->newNode(BuildKey::SwitchOption);
 
             int operator_id = EQUAL_OPERATOR_ID;
-            ObjectInfo value = compiler->evalExpression(interpreter, scope, optionNode);
+            ObjectInfo value = compiler->evalExpression(interpreter, scope, optionNode, {});
             arguments.clear();
             arguments.add(loperand);
             arguments.add(value);
@@ -14481,7 +14489,7 @@ ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, Expression
    // HOTFIX : if the constant array was already declared, no need to create it again
    if (!constOne || !node.arg.reference) {
       Interpreter interpreter(scope.moduleScope, compiler->_logic);
-      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), true);
+      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), { targetRef, 0, false, false, constOne }, true);
       if (evalRetVal.kind == ObjectKind::Constant || evalRetVal.kind == ObjectKind::ConstArray)
          return evalRetVal;
    }
@@ -15720,7 +15728,7 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rn
 {
    if (compiler->_evaluateOp) {
       Interpreter interpreter(scope.moduleScope, compiler->_logic);
-      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), true);
+      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), { expectedRef }, true);
       if (evalRetVal.kind != ObjectKind::Unknown)
          return evalRetVal;
    }
@@ -15774,12 +15782,16 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
 
    ObjectInfo exprVal = {};
 
+   EAttr exprMode = EAttr::RetValExpected;
+   if (target.typeInfo.constant)
+      exprMode = exprMode| EAttr::ConstantExpr;
+
    // HOTFIX : allow to assign ref argument in place
    ref_t targetRef = (target.kind == ObjectKind::LocalAddress && target.typeInfo.typeRef == V_WRAPPER)
       ? target.typeInfo.elementRef : compiler->resolveStrongType(scope, target.typeInfo);
    if (targetRef == V_AUTO) {
       // support auto attribute
-      exprVal = compile(roperand, 0, EAttr::RetValExpected);
+      exprVal = compile(roperand, 0, exprMode);
 
       if (resolveAutoType(exprVal, target)) {
          targetRef = compiler->resolveStrongType(scope, exprVal.typeInfo);
@@ -15787,7 +15799,7 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
       }
       else scope.raiseError(errInvalidOperation, roperand.parentNode());
    }
-   else exprVal = compile(roperand, targetRef, EAttr::RetValExpected);
+   else exprVal = compile(roperand, targetRef, exprMode);
 
    if (target.kind == ObjectKind::Shortcut) {
       CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
@@ -17643,7 +17655,7 @@ void Compiler::MetaExpression::generateObject(SyntaxTreeWriter& writer, SyntaxNo
 
 void Compiler::MetaExpression::generateNameOperation(SyntaxTreeWriter& writer, SyntaxNode node)
 {
-   ObjectInfo info = compiler->evalExpression(*interpreter, *scope, node, true, true);
+   ObjectInfo info = compiler->evalExpression(*interpreter, *scope, node, {}, true, true);
    if (info.kind == ObjectKind::StringLiteral) {
       writer.newNode(SyntaxKey::Object);
 

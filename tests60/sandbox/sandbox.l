@@ -1,9 +1,10 @@
 import extensions;
 
-const string[] strings = new const string[] { "a", "b", "c" };
+//const string[] strings = new /*const string*/[] { "a", "b", "c" };
 
-//public Program()
-public program()
+public Program()
 {
+   const string[] strings := new /*const string*/[] { "a", "b", "c" };
+
    Console.printLine(strings.asEnumerable())
 }

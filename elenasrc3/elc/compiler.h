@@ -1821,7 +1821,7 @@ namespace elena_lang
          bool declarationMode, bool allowRole, bool constAttr);
       TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
          bool declarationMode, bool allowRole, bool constAttr);
-      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr);
+      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr, bool allowPrimitive = false);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters,
          ustr_t prefix, SyntaxKey argKey, ustr_t postFix);
@@ -1975,9 +1975,9 @@ namespace elena_lang
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalBoolOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
-      ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
+      ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, TypeInfo targetInfo, bool ignoreErrors = false, bool resolveMode = true);
       ObjectInfo evalObject(/*Interpreter& interpreter, */Scope& scope, SyntaxNode node, ExpressionAttribute exprMode = ExpressionAttribute::None);
-      ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne, bool ignoreErrors);
+      ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, TypeInfo targetInfo, bool anonymousOne, bool ignoreErrors);
       ObjectInfo evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
       ObjectInfo evalExprValueOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
       ObjectInfo evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool metaMode = false);
