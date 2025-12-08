@@ -143,6 +143,7 @@ namespace elena_lang
    constexpr auto infoMsgInternalDefConstructor = "\ninfo 710: default constructor cannot be internal\n";
    constexpr auto infoMsgMessageInfo            = "\ninfo 711:  message: %s\n";
    constexpr auto infoMsgSourceClass            = "info 712:   source class: %s\n";
+   constexpr auto infoMsgMissingTemplate        = "info 713:   template %s is not defined\n";
 
 } // _ELENA_
 

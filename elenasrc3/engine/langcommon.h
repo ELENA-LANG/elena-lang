@@ -443,6 +443,7 @@ namespace elena_lang
    constexpr auto infoInternalDefConstructor = 710;
    constexpr auto infoMessageInfo            = 711;
    constexpr auto infoSourceClass            = 712;
+   constexpr auto infoMissingTemplate        = 713;
 
    constexpr auto errVMBroken                = 800;
    constexpr auto errVMNotInitialized        = 801;

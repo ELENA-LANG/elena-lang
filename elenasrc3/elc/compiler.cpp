@@ -11166,6 +11166,11 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);
    moduleScope->branchingInfo.falseRef = safeMapReference(moduleScope, forwardResolver, FALSE_FORWARD);
 
+   if (_verbose) {
+      if (!moduleScope->buildins.constArrayTemplateReference)
+         _errorProcessor->info(infoMissingTemplate, CONST_ARRAY_FORWARD);
+   }
+
    // cache the frequently used messages
    moduleScope->buildins.dispatch_message = encodeMessage(
       moduleScope->module->mapAction(DISPATCH_MESSAGE, 0, false), 1, 0);
