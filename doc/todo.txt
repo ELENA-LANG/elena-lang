@@ -9,6 +9,7 @@ In development:
   ====================================== 
   * Rosetta code migration
   --------------------------------------
+  - implement xor operation
   - fix Logical operations
   - fix Old Russian measure of length
   - fix Reflection/List properties

@@ -12862,6 +12862,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
       case SyntaxKey::ShlOperation:
       case SyntaxKey::ShrOperation:
       case SyntaxKey::NegateOperation:
+      case SyntaxKey::XorOperation:
          retVal = compileOperation(current, (int)current.key - OPERATOR_MAKS, targetRef, mode);
          break;
       case SyntaxKey::ExprValOperation:
@@ -12889,7 +12890,6 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          break;
       case SyntaxKey::AndOperation:
       case SyntaxKey::OrOperation:
-      case SyntaxKey::XorOperation:
          retVal = compileBoolOperation(current, (int)current.key - OPERATOR_MAKS);
          if (targetRef)
             typecastObject(current, retVal, targetRef, EAttrs::test(mode, EAttr::Nillable));
