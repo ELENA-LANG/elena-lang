@@ -5027,6 +5027,7 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
          break;
       case SyntaxKey::AndOperation:
       case SyntaxKey::OrOperation:
+      case SyntaxKey::XorOperation:
          retVal = evalBoolOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS, ignoreErrors);
          break;
       case SyntaxKey::AssignOperation:
@@ -12888,6 +12889,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          break;
       case SyntaxKey::AndOperation:
       case SyntaxKey::OrOperation:
+      case SyntaxKey::XorOperation:
          retVal = compileBoolOperation(current, (int)current.key - OPERATOR_MAKS);
          if (targetRef)
             typecastObject(current, retVal, targetRef, EAttrs::test(mode, EAttr::Nillable));

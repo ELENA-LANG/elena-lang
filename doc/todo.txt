@@ -9,8 +9,6 @@ In development:
   ====================================== 
   * Rosetta code migration
   --------------------------------------
-  - fix Hello world/Graphical
-  - fix Interactive programming (repl)
   - fix Logical operations
   - fix Old Russian measure of length
   - fix Reflection/List properties
@@ -29,6 +27,8 @@ In development:
   - fix File input/output
   - fix Zeckendorf arithmetic
   - fix Zhang-Suen thinning algorithm
+  - fix Interactive programming (repl)
+  - fix Hello world/Graphical
   ====================================== 
   * Samples
   ====================================== 
