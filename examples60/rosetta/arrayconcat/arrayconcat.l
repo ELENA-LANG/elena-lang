@@ -3,8 +3,8 @@ import extensions;
 
 public Program()
 {
-    var a := new int[]{1,2,3};
-    var b := new int[]{4,5};
+    auto a := new int[]{1,2,3};
+    auto b := new int[]{4,5};
 
     Console.printLine(
         "(",a.asEnumerable(),") + (",b.asEnumerable(),

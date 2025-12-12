@@ -7,26 +7,36 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * const array (stored in the data array)
+  * Rosetta code migration
   --------------------------------------
-  - support new [] { "1", "2", "3" } - as a constant (variable and symbol)
-  - review examples -> use constant arrays when it is required
+  - fix Hello world/Graphical
+  - fix Interactive programming (repl)
+  - fix Logical operations
+  - fix Old Russian measure of length
+  - fix Reflection/List properties
+  - fix Short-circuit evaluation
+  - fix Sleep
+  - fix Sockets
+  - fix System time
+  - fix Terminal control/Clear the screen
+  - fix Terminal control/Cursor positioning
+  - fix Time a function
+  - Tree traversal : fix warnings
+  - fix Truncate a file
+  - fix UTF-8 encode and decode (the last character)
+  - fix World Cup group stage
+  - fix entropy sample
+  - fix File input/output
+  - fix Zeckendorf arithmetic
+  - fix Zhang-Suen thinning algorithm
   ====================================== 
-  * support Collection<T>, ReadOnlyCollection<T>
+  * Samples
+  ====================================== 
+  * fix IDE : openning single file project from command line
   --------------------------------------
-  - declare these two template interfaces
-  - inherit them for Array, Array<T>, List, List<T>
-  - add .asReadOnly<T> extension to convert an array into a readonly collection
-  - implemet example
+  - fix
   ====================================== 
-  * support const / readonly for variables??
-  ====================================== 
-  * #592 : Set operation with a constant array 
-  * support syntax : string[] dirNames := new []{ ".", ".." };
-  --------------------------------------
-  - implicitly define the array type
-  ====================================== 
-  *  documentation - operations with arrays / collections
+  * documentation - operations with arrays / collections
   --------------------------------------
   - implement toUInt, toSByte
   - update all existing code in documentation : Strings
@@ -34,17 +44,25 @@ In development:
   - add description for ++ / -- operators
   - new section - operations with collections / arrays
   ====================================== 
-  * property "int? X" must be supported
-  * support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
-  ====================================== 
-  * support readonly for fields
-  --------------------------------------
-  - readonly array field; must be accessible in the constructor
+  * review tutorials
   ====================================== 
   * review String.at method, simplify
+  --------------------------------------
+  - check bytecode, if it can be simplified
+  ====================================== 
+  * api documentation
+  --------------------------------------
+  - system module - provide descriptions for all classes in system & extensions, starting from IntMatrix
+  ====================================== 
+  * Rosetta code post
+  --------------------------------------
+  - Send an unknown method call
+  - First-class functions
+  ====================================== 
+  * property "int? X" must be supported
+  * support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
+  * support named tuples
   ======================================
-  * fix entropy sample
-  * api : provide descriptions for all classes in system & extensions, starting from IntMatrix
   * #820 : Launch elena64-ide.exe from the command line 
   * warn if nil is passed to the non-nil argument
   * ldoc : support search by method name

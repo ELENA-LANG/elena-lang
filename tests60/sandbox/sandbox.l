@@ -1,10 +1,29 @@
-import extensions;
-
-//const string[] strings = new /*const string*/[] { "a", "b", "c" };
-
-public Program()
+import forms;
+ 
+public class MainWindow : SDIDialog
 {
-   const string[] strings := new /*const string*/[] { "a", "b", "c" };
-
-   Console.printLine(strings.asEnumerable())
+    Label goodByeWorldLabel;
+    Button closeButton;
+ 
+    constructor new()
+       <= super new()
+    {
+        self.Caption := "ELENA";
+        
+        goodByeWorldLabel := Label.new();
+        closeButton       := Button.new();
+ 
+        self
+            .appendControl(goodByeWorldLabel)
+            .appendControl(closeButton);        
+ 
+        self.setRegion(250, 200, 200, 110);
+ 
+        goodByeWorldLabel.Caption := "Goodbye, World!";
+        goodByeWorldLabel.setRegion(40, 10, 150, 30);
+ 
+        closeButton.Caption := "Close";
+        closeButton.setRegion(20, 40, 150, 30);
+        closeButton.onClick := (args){ forward program.stop() };
+    }
 }

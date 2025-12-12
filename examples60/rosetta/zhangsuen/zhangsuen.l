@@ -3,7 +3,7 @@ import system'routines;
 import extensions;
 import extensions'routines;
 
-const string[] image = new string[]{
+const string[] image = new []{
         "                                                          ",
         " #################                   #############        ",
         " ##################               ################        ",

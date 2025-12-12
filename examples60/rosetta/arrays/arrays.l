@@ -3,7 +3,7 @@
 import system'collections;
 import extensions;
 
-const staticArray = new int[]{1, 2, 3};
+const int[] staticArray = new []{1, 2, 3};
 
 public Program()
 {

@@ -57,7 +57,10 @@ public sealed struct RandomGenerator
 }
 
 // --- randomGenerator ---
-public static RandomGenerator randomGenerator = RandomGenerator.new();
+public static RandomGenerator Random = RandomGenerator.new();
+
+// !! obosolete
+public randomGenerator = Random;
 
 // -- ERandomizer --
 
@@ -74,7 +77,7 @@ public extension randomOp
         
       while (i < n)
       {
-         var j := randomGenerator.nextInt(max);
+         var j := Random.nextInt(max);
             
          list.exchange(i, j);
             

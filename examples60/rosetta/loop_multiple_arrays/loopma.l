@@ -34,7 +34,7 @@ public ProgramUsingZip()
 // To build the program to use 'programUsingZip' symbol, just change
 // the forward to use programUsingZip as entry point
 // --
-// Program=ProgramUsingZip;
+//public Program=ProgramUsingZip;
 // --
 public Program
    = ProgramUsingFor;

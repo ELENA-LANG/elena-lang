@@ -22,8 +22,8 @@ extension algorithmOp
                 }
                 else
                 { 
-                    if(randomGenerator.nextInt(counter) < n)
-                        { weak self[randomGenerator.nextInt(n)] := i }
+                    if(Random.nextInt(counter) < n)
+                        { weak self[Random.nextInt(n)] := i }
                 };
 
                 ^ weak self.Value

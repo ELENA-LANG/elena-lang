@@ -8,7 +8,7 @@ const string AllowedCharacters = " ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 const int C = 100;
 const real P = 0.05r;
 
-rnd = randomGenerator;
+rnd = Random;
 
 randomChar 
     = AllowedCharacters[rnd.nextInt(AllowedCharacters.Length)];

@@ -63,8 +63,8 @@ FOREACH(OBJ, ACTION) { ^ OBJ.forEach(ACTION) }
 
 // --- calendar ---
 
-const MONTHNAMES = new string[]{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
-const DAYNAMES = new string[]{"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
+const string[] MONTHNAMES = new []{"JANUARY","FEBRUARY","MARCH","APRIL","MAY","JUNE","JULY","AUGUST","SEPTEMBER","OCTOBER","NOVEMBER","DECEMBER"};
+const string[] DAYNAMES = new []{"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
 
 // --- UPPERCASE CODE --
 

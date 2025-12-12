@@ -484,6 +484,9 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
                   result = retrieveReferenceInfo(*copy, forwardResolver);
                }
 
+               if (!result.module)
+                  throw JITUnresolvedException(ReferenceInfo(referenceName));
+
                return result;
             }
 
