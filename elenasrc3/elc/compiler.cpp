@@ -1092,6 +1092,22 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
 
             return info;
          }
+         else {
+            SymbolInfo symbolInfo;
+            if (moduleScope->loadSymbolInfo(symbolInfo, reference)) {
+               switch (symbolInfo.symbolType) {
+                  case SymbolType::Singleton:
+                     return { ObjectKind::Singleton, { symbolInfo.typeRef }, reference };
+                  case SymbolType::Constant:
+                  case SymbolType::ConstantArray:
+                     if (symbolInfo.valueRef) {
+                        // HOTFIX : ingore declared but not defined constant
+                        return defineConstant(symbolInfo);
+                     }
+                     break;
+               }
+            }
+         }
       }
       if (internOne) {
          // check if it is an internal procedure

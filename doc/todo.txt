@@ -9,7 +9,6 @@ In development:
   ====================================== 
   * Rosetta code migration
   --------------------------------------
-  - fix Reflection/List properties
   - fix Short-circuit evaluation
   - fix Sleep
   - fix Sockets
