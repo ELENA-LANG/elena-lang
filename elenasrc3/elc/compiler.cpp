@@ -1097,7 +1097,9 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
             if (moduleScope->loadSymbolInfo(symbolInfo, reference)) {
                switch (symbolInfo.symbolType) {
                   case SymbolType::Singleton:
-                     return { ObjectKind::Singleton, { symbolInfo.typeRef }, reference };
+                     if (symbolInfo.valueRef)
+                        return { ObjectKind::Singleton, { symbolInfo.typeRef }, symbolInfo.valueRef };
+                     break;
                   case SymbolType::Constant:
                   case SymbolType::ConstantArray:
                      if (symbolInfo.valueRef) {
