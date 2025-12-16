@@ -9,7 +9,9 @@ In development:
   ====================================== 
   * API 
   --------------------------------------
-  - Encoder extension - toByteArray(0, s.Length, s)
+  - why extension is not recognized
+  - fix extension
+  - Encoder extension - toByteArray(0, s.Length, s);
   ====================================== 
   * Rosetta code migration
   --------------------------------------
@@ -61,7 +63,6 @@ In development:
   ====================================== 
   * property "int? X" must be supported
   * support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
-  * support named tuples
   ======================================
   * #820 : Launch elena64-ide.exe from the command line 
   * warn if nil is passed to the non-nil argument
