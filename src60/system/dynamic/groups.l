@@ -27,7 +27,7 @@ public const struct ExtensionDispatcher
          auto s := namespaces[i];
          int sLen := s.Length;
 
-         int tmpLen := UTF8Encoder.toByteArray(s, 0, ref sLen, tmp, tmpIndex, 1024);
+         int tmpLen := UTF8Encoder.saveToByteArray(s, 0, ref sLen, tmp, tmpIndex, 1024);
          tmpIndex += tmpLen;
          tmp[tmpIndex] := 0;
          tmpIndex += 1;
@@ -80,7 +80,7 @@ public const struct VariadicExtensionDispatcher
          auto s := namespaces[i];
          int sLen := s.Length;
             
-         int  tmpLen := UTF8Encoder.toByteArray(s, 0, ref sLen, tmp, tmpIndex, 1024);
+         int  tmpLen := UTF8Encoder.saveToByteArray(s, 0, ref sLen, tmp, tmpIndex, 1024);
          tmpIndex += tmpLen;
          tmp[tmpIndex] := 0;
          tmpIndex += 1;

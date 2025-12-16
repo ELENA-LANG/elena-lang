@@ -7,6 +7,10 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
+  * API 
+  --------------------------------------
+  - Encoder extension - toByteArray(0, s.Length, s)
+  ====================================== 
   * Rosetta code migration
   --------------------------------------
   - fix Sockets
@@ -40,6 +44,7 @@ In development:
   - test all samples 
   - add description for ++ / -- operators
   - new section - operations with collections / arrays
+  - new section - operations with encoders
   ====================================== 
   * review String.at method, simplify
   --------------------------------------

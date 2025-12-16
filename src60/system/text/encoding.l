@@ -38,7 +38,7 @@ namespace text
          ^ j - outputIndex;
       }
 
-      int toByteArray(string s, int index, ref int length, byte[] output, int outputIndex, int outputLength)
+      int saveToByteArray(string s, int index, ref int length, byte[] output, int outputIndex, int outputLength)
       {
          char tmp[128];
          int end := length;
