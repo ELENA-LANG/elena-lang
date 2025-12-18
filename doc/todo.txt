@@ -7,15 +7,15 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * API 
+  * retoverload default implementation : calling retoverload method, 
   --------------------------------------
-  - why extension is not recognized
-  - fix extension
-  - Encoder extension - toByteArray(0, s.Length, s);
+  - investigate - calling retoverload method
+  - plan
+  - fix
+  - unit test
   ====================================== 
   * Rosetta code migration
   --------------------------------------
-  - fix Sockets
   - fix System time
   - fix Terminal control/Clear the screen
   - fix Terminal control/Cursor positioning
@@ -31,13 +31,15 @@ In development:
   - fix Interactive programming (repl)
   - fix Hello world/Graphical
   ====================================== 
+  * fix IDE : openning single file project from command line
+  --------------------------------------
+  - investigate
+  - plan
+  - fix
+  ====================================== 
   * Samples
   ====================================== 
   * review tutorials
-  ====================================== 
-  * fix IDE : openning single file project from command line
-  --------------------------------------
-  - fix
   ====================================== 
   * documentation - operations with arrays / collections
   --------------------------------------
