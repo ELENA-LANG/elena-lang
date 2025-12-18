@@ -1660,6 +1660,8 @@ namespace elena_lang
 
          void convertIntLiteralForOperation(SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments);
 
+         bool isUnboxingRequiredForTempLocal(ObjectInfo tempLocal);
+
       public:
          bool writeObjectInfo(ObjectInfo info, bool allowMeta = false);
          void writeObjectInfo(ObjectInfo info, SyntaxNode node)

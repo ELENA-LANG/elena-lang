@@ -9,9 +9,8 @@ In development:
   ====================================== 
   * retoverload default implementation : calling retoverload method, 
   --------------------------------------
-  - investigate - calling retoverload method
-  - plan
   - fix
+  - check for stack allocated
   - unit test
   ====================================== 
   * Rosetta code migration

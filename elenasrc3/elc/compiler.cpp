@@ -8403,7 +8403,7 @@ ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& c
    ArgumentsInfo updatedOuterArgs;
    Expression expression(this, codeScope, writer, !EAttrs::test(mode, EAttr::NoDebugInfo), &updatedOuterArgs);
 
-   ObjectInfo retVal = expression.compileRoot(node, mode);
+   ObjectInfo retVal = expression.compileRoot(node, mode | EAttr::Root);
 
    if (EAttrs::test(mode, EAttr::RetValExpected)) {
       retVal = expression.unboxArguments(retVal, false);
@@ -15848,6 +15848,11 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
       }
    }
 
+   // HOTFIX : if the expression result must be unboxed - do it before the operation
+   if (exprVal.kind == ObjectKind::TempLocal && isUnboxingRequiredForTempLocal(exprVal)) {
+      unboxArguments({}, EAttrs::test(mode, EAttr::Root));
+   }
+
    bool nillableOp = false;
    if (!compileAssigningOp(target, exprVal, nillableOp)) {
       switch (target.kind) {
@@ -16674,7 +16679,7 @@ ref_t Compiler::Expression::mapNested(ExpressionAttribute mode)
       if (owner)
          nestedRef = owner->reference;
    }
-   else if (EAttrs::testAndExclude(mode, EAttr::Root)) {
+   else if (EAttrs::testAndExclude(mode, EAttr::Root) && EAttrs::test(mode, EAttr::RetValExpected)) {
       MethodScope* ownerMeth = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
       if (ownerMeth && ownerMeth->checkHint(MethodHint::Constant)) {
          ref_t dummyRef = 0;
@@ -17394,6 +17399,14 @@ void Compiler::Expression::unboxOuterArgs()
       }
       else assert(false);
    }
+}
+
+bool Compiler::Expression :: isUnboxingRequiredForTempLocal(ObjectInfo tempLocal)
+{
+   ObjectKey key = { ObjectKind::RefLocal, tempLocal.reference };
+   ObjectInfo temp = scope.tempLocals.get(key);
+
+   return (temp.kind != ObjectKind::Unknown && isUnboxingRequired(temp.mode));
 }
 
 void Compiler::Expression::convertIntLiteralForOperation(SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments)
