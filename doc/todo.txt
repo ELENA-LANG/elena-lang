@@ -7,10 +7,8 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * retoverload default implementation : calling retoverload method, 
+  * retoverload default implementation : calling retoverload method
   --------------------------------------
-  - fix
-  - check for stack allocated
   - unit test
   ====================================== 
   * Rosetta code migration

@@ -52,6 +52,12 @@ namespace elena_lang
 
       void SetUp() override;
    };
+
+   class RetoverloadHandlerTest : public ExprTest
+   {
+   protected:
+      void SetUp() override;
+   };
 }
 
 #endif

@@ -2649,3 +2649,21 @@ public usingTest() : testCase()
    
    Console.write(".");
 }
+
+public singleton RetoverloadTester
+{
+   int getValue()
+      = 1;
+
+   retoverload long getValue()
+      = 2l;
+}
+
+public retoverloadTest() : testCase()
+{
+   int n := RetoverloadTester.getValue();
+   long m := RetoverloadTester.getValue();
+
+   Assert.ifTrue(n == 1);
+   Assert.ifTrue(m == 2l);
+}
