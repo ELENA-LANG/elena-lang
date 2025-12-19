@@ -7,9 +7,15 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
+  * Fix warnings inside the
+  --------------------------------------
+  - investigate : the template class was not generated
+  - plan
+  - implement
+  - review 
+  ====================================== 
   * Rosetta code migration
   --------------------------------------
-  - fix Time a function
   - Tree traversal : fix warnings
   - fix Truncate a file
   - fix UTF-8 encode and decode (the last character)

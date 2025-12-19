@@ -10912,6 +10912,11 @@ void Compiler :: compileNestedClass(BuildTreeWriter& writer, ClassScope& scope, 
 
    scope.save();
 
+   // validate field types
+   if (scope.info.fields.count() > 0 || scope.info.statics.count() > 0) {
+      validateClassFields(scope, node);
+   }
+
    BuildNode buildNode = writer.CurrentNode();
    while (buildNode != BuildKey::Root)
       buildNode = buildNode.parentNode();
