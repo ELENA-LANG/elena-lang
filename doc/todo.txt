@@ -16,10 +16,9 @@ In development:
   ====================================== 
   * Rosetta code migration
   --------------------------------------
-  - Tree traversal : fix warnings
   - fix Truncate a file
-  - fix UTF-8 encode and decode (the last character)
   - fix World Cup group stage
+  - fix UTF-8 encode and decode (the last character)
   - fix entropy sample
   - fix File input/output
   - fix Zeckendorf arithmetic

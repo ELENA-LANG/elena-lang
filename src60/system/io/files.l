@@ -319,6 +319,14 @@ namespace io
       }
    }
 
+   public extension FileOp : FileStream
+   {
+      set Length(int value)
+      {
+         self.setLength(value)
+      }
+   }
+
    singleton fileControl
    {
       TextReader newReader(path) = TextStreamReader.new(path);
