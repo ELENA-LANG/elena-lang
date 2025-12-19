@@ -747,7 +747,7 @@ RI_OP ::=
 				T_EXPRESSION T_EXPRESSION_F ^ TEMPLATE_BLOCK					
 				| LT_EXPRESSION ^ TEMPLATE_BLOCK
 			}
-			| { "," MESSAGE_PARAMETER }+ ")" { eps ^MESSAGE_OPERATION }
+			| { "," MESSAGE_PARAMETER }+ ")" { RF_OP | eps ^MESSAGE_OPERATION }
 		}
 		| ")" {
 			RF_OP

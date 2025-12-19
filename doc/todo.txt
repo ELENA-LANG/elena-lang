@@ -7,15 +7,8 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * retoverload default implementation : calling retoverload method
-  --------------------------------------
-  - unit test
-  ====================================== 
   * Rosetta code migration
   --------------------------------------
-  - fix System time
-  - fix Terminal control/Clear the screen
-  - fix Terminal control/Cursor positioning
   - fix Time a function
   - Tree traversal : fix warnings
   - fix Truncate a file
