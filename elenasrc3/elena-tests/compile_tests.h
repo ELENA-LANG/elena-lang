@@ -38,6 +38,12 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   class CallingIndexedMethod : public ExprTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
    class DuplicateBoxingTest : public ExprTest
    {
    protected:

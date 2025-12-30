@@ -2033,9 +2033,7 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   int codeIndex = scope->altMode ? 6 : 0;
-
-   void* code = scope->compiler->_inlines[codeIndex][scope->code()];
+   void* code = scope->compiler->_inlines[0][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
@@ -2089,13 +2087,6 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          }
-         case PTR32_3:
-            // virtual argument used for alt mode - a reference to VMT
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
-            break;
-         case PTR64_3:
-            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef64);
-            break;
          default:
             //else writeCoreReference();
             break;

@@ -4620,18 +4620,6 @@ inline %0FDh
 
 end
 
-// ; alt callmr
-inline %6FDh
-
-  mov  rbx, __ptr64_3
-  mov  ecx, __arg32_1
-  mov  rdi, [rax - elVMTSizeOffset]
-  shl  rdi, 4
-  lea  rax, [rax + rdi]
-  call [rax + rcx + 8]
-
-end
-
 // ; callext
 inline %0FEh
 

@@ -249,14 +249,6 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       reference = PTR32LO_1;
       offset = 0;
    }
-   else if (tokenInfo.compare(PTR32_ARGUMENT3)) {
-      reference = PTR32_3;
-      offset = 0;
-   }
-   else if (tokenInfo.compare(PTR64_ARGUMENT3)) {
-      reference = PTR64_3;
-      offset = 0;
-   }
    else if (tokenInfo.compare(RDATA32_ARGUMENT1)) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
       read(tokenInfo);

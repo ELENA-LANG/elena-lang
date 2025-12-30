@@ -12,26 +12,14 @@ In development:
   ====================================== 
   * lang
   --------------------------------------
-  - fix File.Length := ...
   - mbedtls : compile https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
   - https server
   ====================================== 
-  * current : call indexed method for sealed stack-allocated method
+  * fix File.Length
   -------------------------------------- 
-  - simplified code : keep class flag in the cache
-
-  - opcode : vcall      mssg:static:system$$setLength<'IntNumber>[2], class:system'io'FileStream
-
-  - plan : possible solution - altmode must change call mssg:m, r (similar to vcall)
-
-  - implement for x86
-  - implement for x86-64
-
-  - implement for AARCH64
-  - implement for PPC64le
-  - review 
-  - unit test (sealed indexed / normal indexed)
-  - functional test (sealed indexed / normal indexed)
+  - investigate
+  - plan
+  - implement
 
 
 

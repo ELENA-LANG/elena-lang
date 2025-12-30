@@ -53,8 +53,6 @@ namespace elena_lang
    constexpr auto RDATA32_ARGUMENT1          = "rdata32";
    constexpr auto RDATA64_ARGUMENT1          = "rdata64";
    constexpr auto QWORD_ARGUMENT2            = "__arg64_2";
-   constexpr auto PTR32_ARGUMENT3            = "__ptr32_3";
-   constexpr auto PTR64_ARGUMENT3            = "__ptr64_3";
 
    constexpr auto ASM_GREETING               = "ELENA Assembler Compiler %d.%d.%d (C)2011-2025 by Aleksey Rakov\n";
    constexpr auto ASM_HELP                   = "asmc-cli [-amd64 | -x86] [-windows | -linux] <file> <output path> [<output_name>]\n";
