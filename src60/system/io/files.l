@@ -120,7 +120,7 @@ namespace io
          int pos := self.Index;
              
          self.Index := length;
-         extern KERNEL32.SetEndOfFile(_handle);
+         int ret := extern KERNEL32.SetEndOfFile(_handle);
              
          if(length > pos)
             { self.Index := pos }
@@ -319,14 +319,6 @@ namespace io
       }
    }
 
-   public extension FileOp : FileStream
-   {
-      set Length(int value)
-      {
-         self.setLength(value)
-      }
-   }
-
    singleton fileControl
    {
       TextReader newReader(path) = TextStreamReader.new(path);
@@ -413,6 +405,13 @@ namespace io
          };
             
          ^ fileLen
+      }
+
+      set Length(int value)
+      {
+         using(auto stream := FileStream.openForEdit(_path)) {
+            stream.setLength(value)
+         };
       }
 
       saveContent(string content)
