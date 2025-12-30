@@ -13,7 +13,7 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
 #define ENGINE_MAJOR_VERSION              6              // ELENA Engine version
-#define ENGINE_MINOR_VERSION              8
+#define ENGINE_MINOR_VERSION              9
 
    constexpr auto LINE_LEN = 0x1000;                     // the maximal source line length
    constexpr auto IDENTIFIER_LEN = 0x0300;               // the maximal identifier length
@@ -502,6 +502,8 @@ namespace elena_lang
    constexpr ref_t NARG16LO_1 = 0x00000028u;
    constexpr ref_t NARG16HI_2 = 0x00000029u;
    constexpr ref_t INV_ARG12_2 = 0x0000002Au;
+   constexpr ref_t PTR32_3 = 0x0000002Bu;
+   constexpr ref_t PTR64_3 = 0x0000002Cu;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID = (ref_t)-1;

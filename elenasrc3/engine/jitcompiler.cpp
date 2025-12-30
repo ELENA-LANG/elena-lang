@@ -2033,11 +2033,15 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
 
-   void* code = scope->compiler->_inlines[0][scope->code()];
+   int codeIndex = scope->altMode ? 6 : 0;
+
+   void* code = scope->compiler->_inlines[codeIndex][scope->code()];
 
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
    ref_t arg2 = scope->command.arg2 & ~mskAnyRef;
+
+   int argMask = scope->getAltMode() ? mskHMTMethodOffset : mskVMTMethodAddress;
 
    // simply copy correspondent inline code
    writer->write(code, length);
@@ -2050,41 +2054,48 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
       writer->seek(position + entries->offset);
       switch (entries->reference) {
          case PTR32_2:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32);
             break;
          case RELPTR32_2:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRelRef32);
             break;
          case DISP32HI_2:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskDisp32Hi);
             break;
          case DISP32LO_2:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskDisp32Lo);
             break;
          case XDISP32HI_2:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskXDisp32Hi);
             break;
          case XDISP32LO_2:
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskXDisp32Lo);
             break;
          case PTR32HI_2:
          {
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Hi);
             break;
          }
          case PTR32LO_2:
          {
-            scope->compiler->writeVMTMethodArg(scope, arg2 | mskVMTMethodAddress,
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
             break;
          }
+         case PTR32_3:
+            // virtual argument used for alt mode - a reference to VMT
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32);
+            break;
+         case PTR64_3:
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef64);
+            break;
          default:
             //else writeCoreReference();
             break;

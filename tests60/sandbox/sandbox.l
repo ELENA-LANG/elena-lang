@@ -1,121 +1,33 @@
+import system'io;
 import extensions;
-import extensions'routines;
-import system'collections;
  
-singleton DummyNode
+//public Program()
+//{
+/*    if (Program_arguments.Length != 3)
+        { Console.printLine("Please provide the path to the file and a new length"); AbortException.raise() };
+ */
+//    auto file := File.assign(/*program_arguments[1]*/"input.txt");
+//    var length := /*Program_arguments[2].toInt()*/5;
+ 
+//    if:not(file.Available)
+//        { Console.printLine("File ",file," does not exist"); AbortException.raise() };
+ 
+//    file.Length := length
+//}
+
+struct XY
 {
-    get generic()
-        = EmptyEnumerable;
-} 
- 
-class Node
-{
-    int  Value : rprop;
-    Node Left  : rprop;
-    Node Right : rprop;
- 
-    constructor new(int value)
-    {
-        Value := value
-    }
- 
-    constructor new(int value, Node left)
-    {
-        Value := value;
-        Left := left;
-    }    
- 
-    constructor new(int value, Node left, Node right)
-    {
-        Value := value;
-        Left := left;
-        Right := right
-    }
- 
-    Preorder = new Enumerable
-    {
-        Enumerator enumerator() = CompoundEnumerator.new(
-                                        SingleEnumerable.new(Value), 
-                                        (Left ?? DummyNode).Preorder, 
-                                        (Right ?? DummyNode).Preorder);
-    };
- 
-    Inorder = new Enumerable
-    {
-        Enumerator enumerator()
-        {
-            if (nil != Left)
-            {
-                ^ CompoundEnumerator.new(Left.Inorder, SingleEnumerable.new(Value), (Right ?? DummyNode).Inorder)
-            }
-            else
-            {
-                ^ SingleEnumerable.new(Value).enumerator()
-            }
-        }
-    };
- 
-    Postorder = new Enumerable
-    {
-        Enumerator enumerator()
-        {
-            if (nil == Left)
-            {
-                ^ SingleEnumerable.new(Value).enumerator()
-            }
-            else if (nil == Right)
-            {
-                ^ CompoundEnumerator.new(Left.Postorder, SingleEnumerable.new(Value))
-            }
-            else
-            {
-                ^ CompoundEnumerator.new(Left.Postorder, Right.Postorder, SingleEnumerable.new(Value))
-            }
-        }
-    };
- 
-    LevelOrder = new Enumerable
-    {
-        Queue<Node> queue := class Queue<Node>.allocate(4).push(self);
- 
-        Enumerator enumerator() = new Enumerator
-        {
-            bool next() = queue.isNotEmpty();
- 
-            get Value()
-            {
-                Node item := queue.pop();
-                Node left := item.Left;
-                Node right := item.Right;
- 
-                if (nil != left)
-                {
-                    queue.push(left)
-                };
-                if (nil != right)
-                {
-                    queue.push(right)
-                };
- 
-                ^ item.Value
-            }
- 
-            reset()
-            {
-                NotSupportedException.raise()
-            }
- 
-            enumerable() = queue;
-        };
-    };
+   int X : prop(_x);
+   int Y : prop(_y);
+
+   indexed internal test()
+   {
+   }
 }
- 
+
 public Program()
 {
-   var tree := Node.new(1, Node.new(2, Node.new(4, Node.new(7)), Node.new(5)), Node.new(3, Node.new(6, Node.new(8), Node.new(9))));
- 
-   Console.printLine("Preorder  :", tree.Preorder);
-   Console.printLine("Inorder   :", tree.Inorder);
-   Console.printLine("Postorder :", tree.Postorder);
-   Console.printLine("LevelOrder:", tree.LevelOrder)
+   XY xy := new XY();
+
+   xy.test()
 }

@@ -309,14 +309,8 @@ public:
    bool                 tapeOptMode;
 
    Map<ref_t, SizeInfo> cachedSizes;
+   Map<ref_t, ref_t>    cachedFlags;
    Map<ref_t, ref_t>    cachedClassReferences;
-   Map<ref_t, bool>     cachedEmbeddableReadonlys;
-   Map<ref_t, bool>     cachedEmbeddables;
-   Map<ref_t, bool>     cachedEmbeddableStructs;
-   Map<ref_t, bool>     cachedEmbeddableArrays;
-   Map<ref_t, bool>     cachedStacksafeArgs;
-   Map<ref_t, bool>     cachedWrappers; 
-   Map<ref_t, bool>     cachedClosed;
 
    virtual bool isStandardOne() = 0;
    virtual bool withValidation() = 0;
@@ -380,13 +374,7 @@ public:
       operations(0),
       cachedSizes({}),
       cachedClassReferences(0),
-      cachedEmbeddableReadonlys(false),
-      cachedEmbeddables(false), 
-      cachedEmbeddableStructs(false),
-      cachedEmbeddableArrays(false),
-      cachedStacksafeArgs(false),
-      cachedWrappers(false),
-      cachedClosed(false)
+      cachedFlags(0)
    {
       this->module = module;
       this->debugModule = debugModule;

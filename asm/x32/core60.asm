@@ -4577,6 +4577,17 @@ inline %0FDh
 
 end
 
+// ; alt callmr
+inline %6FDh
+
+  mov  eax, __ptr32_3
+  mov  ecx, __arg32_1
+  mov  edi, [eax - elVMTSizeOffset]
+  lea  eax, [eax + edi * 8]
+  call [eax + ecx + 4]
+
+end
+
 // ; callext
 inline %0FEh
 

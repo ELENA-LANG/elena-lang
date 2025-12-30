@@ -92,6 +92,8 @@ namespace elena_lang
 
       void loadOperations();
 
+      ref_t getFlags(ModuleScopeBase& scope, ref_t reference);
+
    public:
       BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length, ref_t& outputRef);
       BuildKey resolveNewOp(ModuleScopeBase& scope, ref_t loperand, ref_t* arguments, pos_t length);
@@ -125,33 +127,35 @@ namespace elena_lang
       mssg_t defineTryDispatcher(ModuleScopeBase& scope/*, mssg_t message*/);
       ref_t defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef);
 
-      bool isRole(ClassInfo& info);
-      bool isAbstract(ClassInfo& info);
-      bool isReadOnly(ClassInfo& info);
-      bool withVariadicsMethods(ClassInfo& info);
+      bool isRole(ref_t flags);
+      bool isAbstract(ref_t flags);
+      bool isReadOnly(ref_t flags);
+      bool withVariadicsMethods(ref_t flags);
 
-      bool isNumericData(ClassInfo& info);
+      bool isNumericData(ref_t flags);
 
-      bool isDynamic(ClassInfo& info);
-      bool isEmbeddableArray(ClassInfo& info);
+      bool isDynamic(ref_t flags);
+      bool isEmbeddableArray(ref_t flags);
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
 
-      bool isEmbeddableStruct(ClassInfo& info);
+      bool isEmbeddableStruct(ref_t flags);
       bool isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo);
 
       bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo);
-      bool isEmbeddableAndReadOnly(ClassInfo& info);
+      bool isEmbeddableAndReadOnly(ref_t flags);
       bool isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo);
-      bool isEmbeddable(ClassInfo& info);
+      bool isEmbeddable(ref_t flags);
 
       bool isWrapper(ModuleScopeBase& scope, ref_t reference);
-      bool isWrapper(ClassInfo& info);
+      bool isWrapper(ref_t flags);
 
       bool isStacksafeArg(ModuleScopeBase& scope, ref_t reference);
-      bool isStacksafeArg(ClassInfo& info);
+      bool isStacksafeArg(ref_t flags);
 
-      bool isClosedClass(ClassInfo& info);
+      bool isClosedClass(ref_t flags);
       bool isClosedClass(ModuleScopeBase& scope, ref_t reference);
+      bool isSealedClass(ref_t flags);
+      bool isSealedClass(ModuleScopeBase& scope, ref_t reference);
 
       bool isMultiMethod(/*ClassInfo& info, */MethodInfo& methodInfo);
 
