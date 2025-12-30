@@ -1455,6 +1455,8 @@ ref_t CompilerLogic :: getFlags(ModuleScopeBase& scope, ref_t reference)
          flags = info.header.flags;
 
          scope.cachedFlags.add(reference, flags);
+
+         return flags;
       }
       else return 0;
    }
