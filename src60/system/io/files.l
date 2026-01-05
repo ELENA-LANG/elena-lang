@@ -450,7 +450,7 @@ namespace io
             while (reader.Available)
             {
                read := 128;
-               reader.read(buffer, ref read);
+               read := reader.read(buffer, read);
                    
                output.write(buffer, read)
             };            

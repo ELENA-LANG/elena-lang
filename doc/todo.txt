@@ -15,12 +15,13 @@ In development:
   - mbedtls : compile https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
   - https server
   ====================================== 
-  * fix File.Length
+  * current : fix File input/output
   -------------------------------------- 
+  - warn - reader.read(buffer, ref read) <- warn that the second argument must me typecated
   - investigate
   - plan
-  - implement
-
+  - fix
+  - test : for ASCII, WIN1251, WIN1252
 
 
 
@@ -30,11 +31,7 @@ In development:
   ====================================== 
   * Rosetta code migration
   --------------------------------------
-  - fix Truncate a file
-  - fix World Cup group stage
   - fix UTF-8 encode and decode (the last character)
-  - fix entropy sample
-  - fix File input/output
   - fix Zeckendorf arithmetic
   - fix Zhang-Suen thinning algorithm
   - fix Interactive programming (repl)
