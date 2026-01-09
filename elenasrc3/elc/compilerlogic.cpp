@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
@@ -3190,4 +3190,26 @@ bool CompilerLogic :: validateDispatcherType(ClassInfo& classInfo)
    }
 
    return false;
+}
+
+
+ref_t CompilerLogic :: resolveStaticMethodOrigin(ModuleScopeBase& scope, ref_t targetRef, mssg_t staticMethod)
+{
+   ref_t originRef = targetRef;
+
+   while (originRef) {
+      ClassInfo info;
+      if (!defineClassInfo(scope, info, originRef))
+         return 0;
+
+      if (!info.methods.exist(staticMethod))
+         return 0;
+
+      if (!info.methods.get(staticMethod).inherited)
+         return originRef;
+
+      originRef = info.header.parentRef;
+   }
+
+   return 0;
 }

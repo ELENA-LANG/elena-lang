@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILERLOGIC_H
@@ -236,6 +236,8 @@ namespace elena_lang
          ref_t signatureRef, /*ustr_t ns, */ExtensionMap* outerExtensionList);
       virtual ref_t resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern, 
          /*ustr_t ns, */size_t argumentLen, ref_t* arguments, ExtensionMap* outerExtensionList);
+
+      ref_t resolveStaticMethodOrigin(ModuleScopeBase& scope, ref_t targetRef, mssg_t staticMethod);
 
       bool isValidType(ModuleScopeBase& scope, ref_t classReference, bool ignoreUndeclared);
 

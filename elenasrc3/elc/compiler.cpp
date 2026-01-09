@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class implementation.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 //#define FULL_OUTOUT_INFO 1
@@ -15655,7 +15655,17 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
             operation = BuildKey::SemiDirectCallOp;
             break;
          case MethodHint::ByIndex:
-            operation = compiler->_logic->isSealedClass(*scope.moduleScope, targetRef) ? BuildKey::DirectCallOp : BuildKey::SemiDirectCallOp;
+            if (compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
+               operation = BuildKey::SemiDirectCallOp;
+               // HOTFIX : resolve the origin of the static method
+               if (test(resolution.message, STATIC_MESSAGE)) {
+                  targetRef = compiler->_logic->resolveStaticMethodOrigin(*scope.moduleScope, targetRef, resolution.message);
+
+                  assert(targetRef != 0);
+               }
+            }
+            else operation = BuildKey::SemiDirectCallOp;
+
             indexedCallMode = true;
             break;
          default:

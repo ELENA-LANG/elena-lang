@@ -9,33 +9,30 @@ In development:
   ====================================== 
   * dev
   --------------------------------------
+  - ExtensionDispatcher.load
   ====================================== 
   * lang
   --------------------------------------
   - mbedtls : compile https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
   - https server
   ====================================== 
-  * current : fix File input/output
-  -------------------------------------- 
-  - warn - reader.read(buffer, ref read) <- warn that the second argument must me typecated
-  - investigate
-  - plan
-  - fix
-  - test : for ASCII, WIN1251, WIN1252
-
-
-
-
-  ====================================== 
-  * old
-  ====================================== 
-  * Rosetta code migration
+  * doc : Rosetta code migration
   --------------------------------------
+  - Interactive programming (repl)
+  - fix Hello world/Graphical
   - fix UTF-8 encode and decode (the last character)
   - fix Zeckendorf arithmetic
   - fix Zhang-Suen thinning algorithm
-  - fix Interactive programming (repl)
-  - fix Hello world/Graphical
+  ====================================== 
+  * current : calling static method declared in the parent class from the closed child
+  -------------------------------------- 
+  - implement
+  - unit tests
+
+
+
+
+
   ====================================== 
   * fix IDE : openning single file project from command line
   --------------------------------------
