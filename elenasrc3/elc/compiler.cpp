@@ -15656,7 +15656,7 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
             break;
          case MethodHint::ByIndex:
             if (compiler->_logic->isSealedClass(*scope.moduleScope, targetRef)) {
-               operation = BuildKey::SemiDirectCallOp;
+               operation = BuildKey::DirectCallOp;
                // HOTFIX : resolve the origin of the static method
                if (test(resolution.message, STATIC_MESSAGE)) {
                   targetRef = compiler->_logic->resolveStaticMethodOrigin(*scope.moduleScope, targetRef, resolution.message);
