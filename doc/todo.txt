@@ -26,7 +26,6 @@ In development:
   ====================================== 
   * current : calling static method declared in the parent class from the closed child
   -------------------------------------- 
-  - implement
   - unit tests
 
 

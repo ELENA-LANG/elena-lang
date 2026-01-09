@@ -44,6 +44,12 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   class CallingSealedByRefDeclaredInParent : public ExprTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
    class DuplicateBoxingTest : public ExprTest
    {
    protected:
