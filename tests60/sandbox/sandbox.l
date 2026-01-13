@@ -1,23 +1,46 @@
-import system'text;
+/*
+A	    U+0041	41 
+ö	    U+00f6	c3 b6 
+Ж	    U+0416	d0 96 
+€	    U+20ac	e2 82 ac 
+𝄞	    U+1d11e	f0 9d 84 9e 
+*/ 
+
+import system'routines;
+import extensions;
  
-interface I
+extension op : String
 {
-   int foo(int n)
-     = 2 + n;
+    string printAsString()
+    {
+       console.print(self," ")
+    }
+ 
+    string printAsUTF8Array()
+    {
+        self.toByteArray().forEach::(b){ console.print(b.toString(16)," ") }
+    }
+ 
+    string printAsUTF32()
+    {
+        self.toArray().forEach::(c){ console.print("U+",c.toInt().toString(16)," ") }
+    }
 }
-
-public singleton A : I
+ 
+public program()
 {
-}
-
-public Program()
-{
-    int n := A.foo(1);
-
-//      byte tmp[1024];
-//      int tmpIndex := 0;
-//         auto s := "abc";
-//         int sLen := /*s.Length*/3;
-//
-//         int tmpLen := UTF8Encoder.saveToByteArray(s, 0, ref sLen, tmp, tmpIndex, 1024);
+    "A".printAsString().printAsUTF8Array().printAsUTF32();
+    console.printLine();
+ 
+    "ö".printAsString().printAsUTF8Array().printAsUTF32();
+    console.printLine();
+ 
+    "Ж".printAsString().printAsUTF8Array().printAsUTF32();
+    console.printLine();
+ 
+    "€".printAsString().printAsUTF8Array().printAsUTF32();
+    console.printLine();
+ 
+    "𝄞".printAsString().printAsUTF8Array().printAsUTF32();
+    console.printLine();
 }

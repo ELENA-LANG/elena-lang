@@ -27,7 +27,11 @@ internal class MbedTlsBaseSocket : INetSocket
             if (retVal == MBEDTLS_ERR_SSL_WANT_WRITE || retVal == MBEDTLS_ERR_SSL_WANT_READ) {
                retVal := 0;
             }
-            else MbedTlsException.raise($"Failed. mbedtls_ssl_write returned {retVal}");
+            else if (retVal == MBEDTLS_ERR_SSL_PEER_CLOSE_NOTIFY) {
+            }  
+            else if (retVal == MBEDTLS_ERR_SSL_RECEIVED_NEW_SESSION_TICKET) {
+            }  
+            else MbedTlsException.raise($"Failed. mbedtls_context_read returned {retVal}");
          }
          else :break;
       };
@@ -79,6 +83,11 @@ public class MbedTlsSocket : MbedTlsBaseSocket
       //   mbedtls_x509_crt_init(&cacert);
 
       int ret := 0;
+      ret := extern wrpmbedtls.mbedtls_cert_parse(_context);
+      if (ret != 0)
+      {
+         Exception.raise($"Failed. mbedtls_x509_crt_parse returned {ret}");
+      };
 
       ret := extern wrpmbedtls.mbedtls_context_net_connect(_context, host, port, MBEDTLS_NET_PROTO_TCP);
       if (ret != 0)
@@ -99,6 +108,12 @@ public class MbedTlsSocket : MbedTlsBaseSocket
       };
 
       extern wrpmbedtls.mbedtls_context_ssl_set_bio_def(_context);
+
+      ret := extern wrpmbedtls.mbedtls_handshake(_context);
+      if (ret != 0)
+      {
+         Exception.raise($"Failed. mbedtls_ssl_handshake returned - {ret}");
+      };
    }
 
    constructor open(string host, short port, pointer env)
@@ -108,6 +123,11 @@ public class MbedTlsSocket : MbedTlsBaseSocket
 
    verify()
    {
+       int ret := extern wrpmbedtls.mbedtls_verify(_context);
+       if (ret != 0) {
+          Exception.raise($"Failed. mbedtls_x509_crt_verify_info returned {ret}");
+       }
+
 //       byte gp_buf[1024];
 //       ret := extern wrpmbedtls.x509_crt_info(gp_buf, 1024,
 //                                   ""$10"  ", extern wrpmbedtls.ssl_get_peer_cert(ssl));

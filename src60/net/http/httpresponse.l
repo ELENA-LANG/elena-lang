@@ -35,8 +35,8 @@ public sealed class HttpBody
       };
 
       // !! temporal
-      var s := UTF8Encoding.toString(0, _buffer.Length, _buffer.Content);
-      Console.writeLine(s);      
+//      var s := UTF8Encoding.toString(0, _buffer.Length, _buffer.Content);
+//      Console.writeLine(s);      
 
       parseHeaders(firstLine, headers, eoh)
    }

@@ -9,37 +9,28 @@ In development:
   ====================================== 
   * dev
   --------------------------------------
-  - ExtensionDispatcher.load
+  - fix IDE : openning single file project from command line
   ====================================== 
   * lang
   --------------------------------------
-  - mbedtls : compile https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
-  - https server
   ====================================== 
   * doc : Rosetta code migration
   --------------------------------------
-  - Interactive programming (repl)
-  - fix Hello world/Graphical
   - fix UTF-8 encode and decode (the last character)
   - fix Zeckendorf arithmetic
   - fix Zhang-Suen thinning algorithm
   ====================================== 
-  * current : calling static method declared in the parent class from the closed child
+  * current : simple https server
   -------------------------------------- 
-  - unit tests
+  - migrate ssl_server.c example
+  - test https server
+  - refering site : https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
 
 
 
 
 
   ====================================== 
-  * fix IDE : openning single file project from command line
-  --------------------------------------
-  - investigate
-  - plan
-  - fix
-  ====================================== 
-  * Samples
   ====================================== 
   * review tutorials
   ====================================== 
@@ -110,10 +101,8 @@ In development:
   * combining into a generic httpserver
   * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
   ====================================== 
-  * what's new 6.8
-  --------------------------------------
-  - dialect dialect EL7
-  - ...
+
+
 
   === Iteration 44 ===
   --------------------------------------

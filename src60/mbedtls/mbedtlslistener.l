@@ -77,7 +77,7 @@ public class MbedTlsListener : INetListener
 
       extern wrpmbedtls.mbedtls_context_ssl_set_bio_def(socketContext);
 
-      ret := extern wrpmbedtls.mbedtls_socket_handshake(socketContext);
+      ret := extern wrpmbedtls.mbedtls_handshake(socketContext);
       if (ret != 0) 
       {
          Exception.raise($"Failed. mbedtls_ssl_handshake returned {ret}");
