@@ -1,4 +1,5 @@
 import extensions;
+import system'threading;
 import ltests;
 
 class MyException : Exception
@@ -9,13 +10,6 @@ class MyException : Exception
 
 class AwaitExceptionTester
 {
-   bool failed;
-
-   constructor()
-   {
-      failed := false;
-   }
-
    async Task doSomethingAsync()
    {
       MyException.raise("Failed");
@@ -23,6 +17,7 @@ class AwaitExceptionTester
 
    async Task invokeAsync()
    {
+      bool failed := false;
       try
       {
          :await doSomethingAsync();
@@ -30,11 +25,8 @@ class AwaitExceptionTester
       catch(MyException e)
       {
          failed := true;
-      }
-   }
+      };
 
-   validate()
-   {
       Assert.ifTrue(failed);
    }
 }
@@ -44,7 +36,6 @@ public awaitExceptionTest() : testCase()
 {
    auto tester := new AwaitExceptionTester();
    tester.invokeAsync().Result;
-   tester.validate();
 
    Console.writeLine(".");
 }
