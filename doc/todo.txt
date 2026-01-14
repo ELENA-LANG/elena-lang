@@ -11,7 +11,7 @@ In development:
   --------------------------------------
   - fix IDE : openning single file project from command line
   ====================================== 
-  * lang
+  * lang : exception in async is swallowed
   --------------------------------------
   ====================================== 
   * doc : Rosetta code migration
@@ -22,10 +22,17 @@ In development:
   ====================================== 
   * current : simple https server
   -------------------------------------- 
+  - exception in async is swallowed
+  - refering site : https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
   - migrate ssl_server.c example
   - test https server
-  - refering site : https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
-
+  -------------------------------------- 
+  * current : exception in async is swallowed
+  -------------------------------------- 
+  - investigate
+  - plan
+  - implement
+  - unit test
 
 
 

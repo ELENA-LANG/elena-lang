@@ -17,7 +17,7 @@ internal class MbedTlsRemoteSocket : MbedTlsBaseSocket
 
    constructor open()
    {
-      _context := extern wrpmbedtls.mbedtls_new_context();
+      _context := extern wrpmbedtls.mbedtls_new_remote_context();
    }
 }
 

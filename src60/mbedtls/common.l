@@ -282,12 +282,6 @@ public class MbedTlsEnvironment
          MbedTlsException.raise($"Srvcert init Failed. mbedtls_x509_crt_parse returned {ret}");
       };
 
-      ret := extern wrpmbedtls.mbedtls_init_cachain(_env);
-      if (ret != 0)
-      {
-         MbedTlsException.raise($"Cachain init Failed. mbedtls_x509_crt_parse returned {ret}");
-      };
-
       ret := extern wrpmbedtls.mbedtls_init_srv_key(_env);
       if (ret != 0)
       {
@@ -297,7 +291,7 @@ public class MbedTlsEnvironment
       ret := extern wrpmbedtls.mbedtls_servercontext_setup(_env);
       if (ret != 0)
       {
-         MbedTlsException.raise($"Failed. mbedtls_ssl_conf_own_cert returned {ret}");
+         MbedTlsException.raise($"Failed. mbedtls_ssl_conf_own_cert  returned {ret}");
       };
    }
 

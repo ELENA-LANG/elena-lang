@@ -12897,8 +12897,8 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          retVal = compileSpecialOperation(/*current, */(int)current.key - OPERATOR_MAKS/*, targetRef*/);
          break;
       case SyntaxKey::AsyncOperation:
-         retVal = compileAsyncOperation(current, targetRef, paramMode || EAttrs::test(mode, EAttr::RetValExpected), dynamicRequired, false);
-         targetRef = 0;
+         retVal = compileAsyncOperation(current, /*targetRef*/0, paramMode || EAttrs::test(mode, EAttr::RetValExpected), dynamicRequired, false);
+         //targetRef = 0;
          break;
       case SyntaxKey::YieldOperation:
          compileYieldOperation(current);
@@ -13658,7 +13658,7 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
 
-   ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef: currentField.typeInfo.typeRef, EAttr::AsyncOp | EAttr::StackUnsafe);
+   ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef : currentField.typeInfo.typeRef, EAttr::AsyncOp | EAttr::StackUnsafe);
 
    // !! HOTFIX - add the temporal boxed variable whic hrequires unboxing as yield variables (to be resued)
    for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
@@ -13696,8 +13696,6 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    writer->closeNode();
 
    writer->appendNode(BuildKey::IncludeTry); // include the current try blocks again
-
-
 
    if (valueExpected) {
       // to ingnore the compatibility errors, replace Task with Task<T> type, if applicable

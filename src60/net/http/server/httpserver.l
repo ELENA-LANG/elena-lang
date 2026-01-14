@@ -142,6 +142,9 @@ class HttpAcceptor
             response := :await handler.proceedAsync(request);
          }
          catch(Exception ex) {
+            // !! temporal
+            Console.printLineConcurrent(ex);                  
+
             auto handler := _handleFactory.getErrorHandler();
             
             response := :await handler.handleAsync(ex);
