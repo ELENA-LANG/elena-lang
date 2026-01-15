@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class implementation.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "modulescope.h"
@@ -45,6 +45,11 @@ bool ModuleScope :: withValidation()
 bool ModuleScope :: withPrologEpilog()
 {
    return !test(hints, mhNoPrologEpilog);
+}
+
+bool ModuleScope :: isNoTemplateCache()
+{
+   return !test(hints, mhNoTemplateCache);
 }
 
 static inline void findUninqueName(ModuleBase* module, IdentifierString& name)

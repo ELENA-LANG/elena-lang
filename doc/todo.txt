@@ -22,11 +22,13 @@ In development:
   ====================================== 
   * current : simple https server
   -------------------------------------- 
-  - exception in async is swallowed
   - refering site : https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
   - migrate ssl_server.c example
   - test https server
   -------------------------------------- 
+  * current : loading both client and server registration
+  -------------------------------------- 
+  - investigate :
 
 
 

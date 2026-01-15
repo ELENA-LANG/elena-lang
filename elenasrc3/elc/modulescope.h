@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class declaration.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MODULESCOPE_H
@@ -34,6 +34,7 @@ public:
    bool isStandardOne() override;
    bool withValidation() override;
    bool withPrologEpilog() override;
+   bool isNoTemplateCache() override;
 
    ref_t mapAnonymous(ustr_t prefix) override;
 
@@ -107,6 +108,11 @@ public:
    void flush() override;
 
    void onLoad(ModuleBase* module) override;
+
+   void cleanTemplateCache()
+   {
+      reusedTemplates.clear(); 
+   }
 
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 

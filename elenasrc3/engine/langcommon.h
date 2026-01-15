@@ -3,7 +3,7 @@
 //
 //		This file contains the language common constants
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LANGCOMMON_H
@@ -19,10 +19,11 @@ namespace elena_lang
 
    enum MetaHint : int
    {
-      mhNone           = 0,
-      mhStandart       = 1,
-      mhNoValidation   = 2,
-      mhNoPrologEpilog = 4,
+      mhNone            = 0,
+      mhStandart        = 1,
+      mhNoValidation    = 2,
+      mhNoPrologEpilog  = 4,
+      mhNoTemplateCache = 8, 
    };
 
    enum class MethodHint : ref_t

@@ -3,7 +3,7 @@
 //
 //		This file contains the compiler common interfaces & types
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
@@ -315,6 +315,7 @@ public:
    virtual bool isStandardOne() = 0;
    virtual bool withValidation() = 0;
    virtual bool withPrologEpilog() = 0;
+   virtual bool isNoTemplateCache() = 0;
 
    virtual bool isDeclared(ref_t reference) = 0;
    virtual bool isSymbolDeclared(ref_t reference) = 0;

@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor body
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -669,6 +669,10 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    // Validation : standart module must be named "system"
    if (moduleScope.isStandardOne())
       assert(module_it.name().compare(STANDARD_MODULE));
+
+   // Clean template cache if required
+   if (moduleScope.isNoTemplateCache())
+      moduleScope.cleanTemplateCache();
 
    // loading lexical elements
    while (!lexical_it.eof()) {
