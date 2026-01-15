@@ -49,7 +49,7 @@ bool ModuleScope :: withPrologEpilog()
 
 bool ModuleScope :: isNoTemplateReuse()
 {
-   return !test(hints, mhNoTemplateCache);
+   return test(hints, mhNoTemplateCache);
 }
 
 static inline void findUninqueName(ModuleBase* module, IdentifierString& name)
@@ -77,7 +77,7 @@ ref_t ModuleScope :: mapAnonymous(ustr_t prefix)
 
 inline bool isNeedToBeGenerated(ustr_t resolved, ustr_t ns, bool noReuse)
 {
-   return resolved.empty() && (!noReuse || NamespaceString::compareNs(resolved, ns));
+   return resolved.empty() || (noReuse && !NamespaceString::compareNs(resolved, ns));
 }
 
 ref_t ModuleScope :: mapTemplateIdentifier(ustr_t templateName, Visibility visibility, bool& alreadyDeclared, bool declarationMode)
