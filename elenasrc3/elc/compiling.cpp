@@ -670,10 +670,6 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    if (moduleScope.isStandardOne())
       assert(module_it.name().compare(STANDARD_MODULE));
 
-   // Clean template cache if required
-   if (moduleScope.isNoTemplateCache())
-      moduleScope.cleanTemplateCache();
-
    // loading lexical elements
    while (!lexical_it.eof()) {
       ustr_t name = lexical_it.key();

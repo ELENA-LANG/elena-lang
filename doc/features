@@ -523,3 +523,22 @@ public program()
    a.testReadOnly(new B());
 }
 	
+----------------------------------------------------------------------------
+   without template reusing
+----------------------------------------------------------------------------
+
+It is possible to force the compiler to generate the templates without
+reusing ones declared in the previous modules. The special module hint 
+must be provided
+
+     <module>
+        <include>common.l</include>
+        <include>mbedtlssocket.l</include>
+        <include>mbedtlslistener.l</include>
+     </module>
+     <module name="client" hints="8">                                <!-- all required templates will be generated again, so no extra link to the previous module -->
+        <include>client\registration\registration.l</include>
+     </module>
+     <module name="server" hints="8">                                <!-- all required templates will be generated again, so no extra link to the previous module -->
+       <include>server\registration\registration.l</include>
+     </module>

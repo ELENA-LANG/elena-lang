@@ -34,7 +34,7 @@ public:
    bool isStandardOne() override;
    bool withValidation() override;
    bool withPrologEpilog() override;
-   bool isNoTemplateCache() override;
+   bool isNoTemplateReuse() override;
 
    ref_t mapAnonymous(ustr_t prefix) override;
 
@@ -108,11 +108,6 @@ public:
    void flush() override;
 
    void onLoad(ModuleBase* module) override;
-
-   void cleanTemplateCache()
-   {
-      reusedTemplates.clear(); 
-   }
 
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 
