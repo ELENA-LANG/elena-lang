@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      WinAPI32 program entry 
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -60,14 +60,21 @@ bool compareFileModifiedTime(path_t sour, path_t dest)
 
 // --- loadCommandLine ---
 
-inline void setOption(IDEController* ideController, IDEModel* model, path_t parameter)
+inline void setOption(IDEController* ideController, IDEModel* model, path_t parameter, path_t currentPath)
 {
    if (parameter[0] != '-') {
+      PathString path;
+      if (PathUtil::isRelative(parameter, parameter.length())) {
+         path.copy(currentPath);
+         path.combine(parameter);
+      }
+      else path.copy(parameter);
+
       if (PathUtil::checkExtension(parameter, _T("l"))) {
-         ideController->addToRecentProjects(model, parameter);
+         ideController->addToRecentProjects(model, *path);
       }
       else if (PathUtil::checkExtension(parameter, _T("prj"))) {
-         ideController->addToRecentProjects(model, parameter);
+         ideController->addToRecentProjects(model, *path);
       }
    }
    else if (text_str(parameter).compare(_T("-sclassic"))) {
@@ -80,6 +87,11 @@ inline void setOption(IDEController* ideController, IDEModel* model, path_t para
 
 void loadCommandLine(IDEController* ideController, IDEModel* model, LPWSTR cmdWLine)
 {
+   TCHAR currentPath[MAX_PATH + 1];
+   size_t len = GetCurrentDirectory(MAX_PATH, currentPath);
+   if (len <= 0)
+      return;   
+
    size_t start = 0;
    for (size_t i = 1; i <= wcslen(cmdWLine); i++) {
       if (cmdWLine[i] == ' ' || cmdWLine[i] == 0) {
@@ -90,7 +102,7 @@ void loadCommandLine(IDEController* ideController, IDEModel* model, LPWSTR cmdWL
             configPath.copy(model->paths.appPath.c_str());
             configPath.combine(parameter + _ELENA_::getlength(CMD_CONFIG_PATH));
          }
-         else*/ setOption(ideController, model, *parameter);
+         else*/ setOption(ideController, model, *parameter, path_t(currentPath));
 
          start = i + 1;
       }
@@ -98,6 +110,9 @@ void loadCommandLine(IDEController* ideController, IDEModel* model, LPWSTR cmdWL
 }
 
 typedef Win32DebugAdapter    DebugProcess;
+
+Win32Process      vmConsoleProcess(50);
+Win32Process      outputProcess(50);
 
 int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
                      _In_opt_ HINSTANCE hPrevInstance,
@@ -114,8 +129,6 @@ int APIENTRY wWinMain(_In_ HINSTANCE hInstance,
    TextViewSettings textViewSettings = { EOLMode::CRLF, false, 3 };
 
    IDEModel          ideModel(textViewSettings);
-   Win32Process      vmConsoleProcess(50);
-   Win32Process      outputProcess(50);
    DebugProcess      debugProcess;
    IDEController     ideController(&outputProcess, &vmConsoleProcess, &debugProcess, &ideModel,
                         CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);

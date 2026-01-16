@@ -9,7 +9,6 @@ In development:
   ====================================== 
   * dev
   --------------------------------------
-  - fix IDE : openning single file project from command line
   ====================================== 
   * lang : backlog
   --------------------------------------
@@ -30,7 +29,6 @@ In development:
   - support new auto() construction to skip the type declaration
   - property "int? X" must be supported
   - support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
-  - #820 : Launch elena64-ide.exe from the command line 
   - warn if nil is passed to the non-nil argument
   ====================================== 
   * doc : Rosetta code migration
@@ -45,7 +43,8 @@ In development:
   ====================================== 
   * current : backlog
   -------------------------------------- 
-  - fix extension literal - mssg sin<system'math'mathOp>[0] (see a documentation)
+  - fix IDE : openning single file project from command line
+  - #820 : Launch elena64-ide.exe from the command line 
 
   === Iteration 44 ===
   --------------------------------------

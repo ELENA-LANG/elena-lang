@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Implementation File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -276,7 +276,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    fontSettingsDialog(instance, this),
    ideSettingsDialog(instance, this, model),
    debuggerSettingsDialog(instance, this, &model->projectModel),
-   _docViewListener(nullptr)
+   _docViewListener(nullptr),
+   _tabTTHandle(0)
 {
    this->_viewFactory = viewFactory;
 

@@ -1195,9 +1195,8 @@ void IDEController :: init(IDEModel* model, int& status)
       PathString path(model->projectModel.lastOpenProjects.get(1));
 
       if (PathUtil::checkExtension(*path, "l")) {
-         if (openFile(model, *path, status)) {
-            model->changeStatus(IDEStatus::Ready);
-         }
+         status |= projectController.openSingleFileProject(model->projectModel, *path);
+         model->changeStatus(IDEStatus::Ready);
       }
       else {
          int retVal = openProject(model, *path);
@@ -1413,7 +1412,7 @@ bool IDEController::ifProjectNotSaved(IDEModel* model)
 
 bool IDEController :: ifProjectUnnamed(IDEModel* model)
 {
-   return model->projectModel.projectPath.empty();
+   return !model->projectModel.singleSourceProject && model->projectModel.projectPath.empty();
 }
 
 bool IDEController :: doSaveFile(IDEModel* model, int index, bool forcedSave, path_t filePath)
