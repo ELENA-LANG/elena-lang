@@ -7783,12 +7783,15 @@ ObjectInfo Compiler :: mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_
    }
 
    mssg_t message = encodeMessage(actionRef, argCount, 0);
+
+   if (argCount >= ARG_COUNT)
+      scope.raiseError(errInvalidOperation, node);
+
+   // NOTE : we need to increase the argument number to include the target
+   message++;
+
    IdentifierString messageName;
    ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
-
-   argCount++;
-   if (argCount > ARG_COUNT)
-      scope.raiseError(errInvalidOperation, node);
 
    size_t index = (*messageName).find('[');
    if (index == NOTFOUND_POS)
