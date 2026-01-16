@@ -15486,7 +15486,8 @@ void Compiler::Expression :: handleNillableArguments(SyntaxNode node, ArgumentsI
    }
 
    if (warning) {
-      scope.raiseWarning(WARNING_LEVEL_1, wrnNonNillableArgument, node);
+      // !! temporally WARNING_LEVEL_3
+      scope.raiseWarning(/*WARNING_LEVEL_1*/WARNING_LEVEL_3, wrnNonNillableArgument, node);
    }
 }
 
