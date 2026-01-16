@@ -7786,6 +7786,10 @@ ObjectInfo Compiler :: mapExtMessageConstant(Scope& scope, SyntaxNode node, ref_
    IdentifierString messageName;
    ByteCodeUtil::resolveMessageName(messageName, scope.module, message);
 
+   argCount++;
+   if (argCount > ARG_COUNT)
+      scope.raiseError(errInvalidOperation, node);
+
    size_t index = (*messageName).find('[');
    if (index == NOTFOUND_POS)
       scope.raiseError(errInvalidOperation, node);

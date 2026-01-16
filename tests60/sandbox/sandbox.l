@@ -1,24 +1,8 @@
-import system'threading;
-
-class Sample1
-{
-   async static Task wait()
-   {
-      Exception.raise("error");
-
-      ^ 2
-   }
-
-   async static Task someMethod()
-   {
-      Console.writeLine("Some Method Started......");
-      :await wait();
-      //int n := :await wait();
-      Console.writeLine("Some Method End");      
-   }
-}
 
 public Program()
 {
-   Sample1.someMethod().Result;
+  var n := RealNumber.Pi / 2;
+  var f := mssg sin<system'math'mathOp>[0];
+
+  console.printLine(f(n));
 }

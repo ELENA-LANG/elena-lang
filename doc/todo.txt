@@ -11,101 +11,41 @@ In development:
   --------------------------------------
   - fix IDE : openning single file project from command line
   ====================================== 
-  * lang : exception in async is swallowed
+  * lang : backlog
   --------------------------------------
+  - test : https://www.reddit.com/r/elena_lang/comments/7oa098/dynamic_programming_in_elena_call_your_code_from/
+  - test : https://www.reddit.com/r/elena_lang/comments/7o3s8b/dynamic_programming_in_elena_evaluating_a_code_in/
+  - test : https://www.reddit.com/r/elena_lang/comments/7o1zvq/dynamic_programming_in_elena_conditional/
+  - test : https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
+  - a field must be assigned, warn if not
+  - the following declaration must be allowed : var f := string x => x;
+  -  support action : (){ ... }
+  - use Enumerable<T> as a type for yield method
+  - ecv - set filter to hide inline classes
+  - predefined method cannot be indexed
+  - redesign switch statement : it should be possible to use as an expression as well (so we cannot use => anymore : e.g. console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  ) console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third")
+  - support function call with double colon (e.g. ::printing() - is always a function)
+  - prjcol - compile only selected collections (e.g. only console in examples.prjcol)
+  - review simple sample : too many stack is allocated
+  - support new auto() construction to skip the type declaration
+  - property "int? X" must be supported
+  - support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
+  - #820 : Launch elena64-ide.exe from the command line 
+  - warn if nil is passed to the non-nil argument
   ====================================== 
   * doc : Rosetta code migration
   --------------------------------------
   - fix UTF-8 encode and decode (the last character)
   - fix Zeckendorf arithmetic
   - fix Zhang-Suen thinning algorithm
+  - test all samples
+  - test all tutorials
+  - test all doc code snippets
+  - check : ELENA 6 : How to use ELENA code from external program
   ====================================== 
-  * current : simple https server
+  * current : backlog
   -------------------------------------- 
-  - refering site : https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_server.c
-  - migrate ssl_server.c example
-  - test https server
-  -------------------------------------- 
-  * current : loading both client and server registration
-  -------------------------------------- 
-  - investigate :
-
-
-
-
-  ====================================== 
-  ====================================== 
-  * review tutorials
-  ====================================== 
-  * documentation - operations with arrays / collections
-  --------------------------------------
-  - implement toUInt, toSByte
-  - update all existing code in documentation : Strings
-  - test all samples 
-  - add description for ++ / -- operators
-  - new section - operations with collections / arrays
-  - new section - operations with encoders
-  ====================================== 
-  * review String.at method, simplify
-  --------------------------------------
-  - check bytecode, if it can be simplified
-  ====================================== 
-  * api documentation
-  --------------------------------------
-  - system module - provide descriptions for all classes in system & extensions, starting from IntMatrix
-  ====================================== 
-  * Rosetta code post
-  --------------------------------------
-  - Send an unknown method call
-  - First-class functions
-  ====================================== 
-  * property "int? X" must be supported
-  * support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
-  ======================================
-  * #820 : Launch elena64-ide.exe from the command line 
-  * warn if nil is passed to the non-nil argument
-  * ldoc : support search by method name
-  * ldoc : support search by class name
-  * Babylonian spiral
-  * release a new version of mbedtls wrapper   
-  ======================================
-  * #184 : IDE linux - migrate to gtkmm4
-  --------------------------------------
-  - #184 : IDE : project view
-  - #184 : project menu commands
-  - #184 : IDE : enable / disable menu commands
-  - #184 : IDE - select text with a mouse
-  - #184 : dialogs must be mandantory
-
-  - #184 : IDE linux - implement all menu commands (except debug / compile)
-  - get rid of FileDialogBase
-  - #184 : IDE linux - mark modified file
-  - #184 : IDE linux - include / exclude
-  - #184 : uncomment checkMenuItemById
-  - #184 : exit
-  - #184 : recent file / project list
-  --------------------------------------
-  * IDE : close all - do not save file if it was not changed
-  * IDE : call stack
-  * IDE Profile : introduce menu sub menu - profiles where the current profile can be selected
-  * IDE : right click on tab - context menu : close, close all, close all but current
-  * IDE : close icon on the tab
-  ======================================
-  #35 : webapi weather backend (using existing frontend)
-  --------------------------------------
-  * working on dummy https server : investigate error - mbedtls_socket_handshake returns -28160
-  * example - https://github.com/Mbed-TLS/mbedtls/blob/development/programs/ssl/ssl_pthread_server.c
-  * comment output => use logger to display this information
-
-  * simple web api client - GET
-  * simple web api - POST
-  * simple web api client - POST
-
-  * combining into a generic httpserver
-  * DI resolver : https://learn.microsoft.com/en-us/aspnet/web-api/overview/advanced/dependency-injection
-  ====================================== 
-
-
+  - fix extension literal - mssg sin<system'math'mathOp>[0] (see a documentation)
 
   === Iteration 44 ===
   --------------------------------------
