@@ -15460,6 +15460,36 @@ ObjectInfo Compiler::Expression::declareTempLocal(ref_t typeRef, bool dynamicOnl
    }
 }
 
+inline bool isNillable(ObjectInfo obj)
+{
+   return obj.kind == ObjectKind::Nil || obj.typeInfo.nillable;
+}
+
+void Compiler::Expression :: handleNillableArguments(SyntaxNode node, ArgumentsInfo& arguments, int nillableArgs)
+{
+   bool warning = false;
+
+   if (!compiler->checkNullableTypeFlag())
+      return;
+
+   // box the arguments if required
+   int argMask = 1;
+   unsigned int argCount = arguments.count_pos();
+   for (unsigned int i = 1; i < argCount; i++) {
+      auto arg = arguments[i];
+      if (isNillable(arg) && !test(nillableArgs, argMask)) {
+         warning = true;
+         break;
+      }
+
+      argMask <<= 1;
+   }
+
+   if (warning) {
+      scope.raiseWarning(WARNING_LEVEL_1, wrnNonNillableArgument, node);
+   }
+}
+
 void Compiler::Expression :: handleUnsupportedMessageCall(SyntaxNode node, mssg_t message, ref_t targetRef, bool weakTarget, bool strongResolved)
 {
    IdentifierString userFriendlyTypeName;
@@ -15684,6 +15714,8 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
 
       if (EAttrs::testAndExclude(mode.attrs, EAttr::StackUnsafe))
          resolution.stackSafeAttr = 0;
+
+      handleNillableArguments(node, arguments, result.nillableArgs);
    }
    else if (targetRef) {
       handleUnsupportedMessageCall(node, resolution.message, targetRef,

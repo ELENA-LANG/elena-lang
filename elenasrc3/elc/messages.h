@@ -3,14 +3,14 @@
 //
 //		Copmpiler messages 
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "errors.h"
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 117;
+   constexpr auto MessageLength = 118;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -130,6 +130,7 @@ namespace elena_lang
       {errUnknownRedirectMethod, errMsgUnknownRedirectMethod},
       {errIncompatibleClosure, errMsgIncompatibleClosure },
       {infoMissingTemplate, infoMsgMissingTemplate},
+      {wrnNonNillableArgument, wrnMsgNonNillableArgument },
    };
 
 }

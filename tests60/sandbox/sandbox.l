@@ -1,8 +1,16 @@
+import extensions;
 
-public Program()
+A;
+
+public singleton Tester
 {
-  var n := RealNumber.Pi / 2;
-  var f := mssg sin<system'math'mathOp>[0];
+   printMe(object? o)
+   {
+      Console.printLine(o)
+   }
+}
 
-  console.printLine(f(n));
+public program()
+{
+   Tester.printMe(nil)
 }

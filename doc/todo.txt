@@ -19,7 +19,6 @@ In development:
   - a field must be assigned, warn if not
   - the following declaration must be allowed : var f := string x => x;
   -  support action : (){ ... }
-  - use Enumerable<T> as a type for yield method
   - ecv - set filter to hide inline classes
   - predefined method cannot be indexed
   - redesign switch statement : it should be possible to use as an expression as well (so we cannot use => anymore : e.g. console.printLine(x => 1 { "first" } 2 { "second" } 3 { "third" })  ) console.printLine(x $sel 1 => "first", 2 => "second", 3 => "third")
@@ -29,7 +28,6 @@ In development:
   - support new auto() construction to skip the type declaration
   - property "int? X" must be supported
   - support static property : public singleton Bootstrap : IBootstap { static IHttpServer Server : rprop(_server); ... }
-  - warn if nil is passed to the non-nil argument
   ====================================== 
   * doc : Rosetta code migration
   --------------------------------------
@@ -43,8 +41,7 @@ In development:
   ====================================== 
   * current : backlog
   -------------------------------------- 
-  - fix IDE : openning single file project from command line
-  - #820 : Launch elena64-ide.exe from the command line 
+  - warn if nil is passed to the non-nil argument
 
   === Iteration 44 ===
   --------------------------------------

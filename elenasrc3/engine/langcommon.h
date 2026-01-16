@@ -418,6 +418,7 @@ namespace elena_lang
    constexpr auto wrnUnassignedVariable            = 428;
    constexpr auto wrnLessAccessible                = 429;
    constexpr auto wrnUnknownModule                 = 430;
+   constexpr auto wrnNonNillableArgument           = 431;
 
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;

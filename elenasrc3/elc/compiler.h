@@ -1594,6 +1594,7 @@ namespace elena_lang
          void handleNillableMessageCall(SyntaxNode node, mssg_t message, ObjectInfo target);
          void handleNillableReturn(SyntaxNode node, ObjectInfo target);
          void handleNillableAssign(SyntaxNode node, ObjectInfo target);
+         void handleNillableArguments(SyntaxNode node, ArgumentsInfo& arguments, int nillableArgs);
 
          ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
             ArgumentsInfo& arguments, ExpressionAttributes mode);

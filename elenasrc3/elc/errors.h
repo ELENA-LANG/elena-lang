@@ -107,6 +107,7 @@ namespace elena_lang
    constexpr auto wrnMsgUnassignedVariable      = "\n%s(%d:%d): warning 428: an unassigned variable - '%s'\n";
    constexpr auto wrnMsgLessAccessible          = "\n%s(%d:%d): warning 429: the returning type is less accessible than '%s'\n";
    constexpr auto wrnMsgUnknownModule           = "\n%s(%d:%d): warning 430: Unknown module '%s'\n";
+   constexpr auto wrnMsgNonNillableArgument     = "\n%s(%d:%d): warning 414: A nillable argument is not supported by the message signature\n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "\nwarning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "\nwarning 501: invalid or unknown config file %s\n";
