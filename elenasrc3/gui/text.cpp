@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Text class body
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "guicommon.h"
@@ -560,7 +560,7 @@ void Text :: copyLineTo(TextBookmark& bookmark, TextWriter<text_c>& writer, pos_
          else {
             size_t chLen = TextBookmark::charLength(line, i);
             if (chLen > 1) {
-               if (i + chLen < count) {
+               if (i + chLen <= count) {
                   writer.write(&line[i], (pos_t)chLen);
                   i += (chLen - 1);
                }
@@ -619,7 +619,7 @@ void Text :: copyLineToX(TextBookmark& bookmark, TextWriter<text_c>& writer, pos
          else {
             size_t chLen = TextBookmark::charLength(line, i);
             if (chLen > 1) {
-               if (i + chLen < count) {
+               if (i + chLen <= count) {
                   writer.write(&line[i], chLen);
                   i += ((pos_t)chLen - 1);
                }

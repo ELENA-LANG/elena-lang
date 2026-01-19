@@ -3,7 +3,7 @@ import extensions;
  
 extension op : String
 {
-    string printAsString()
+/*    string printAsString()
     {
        console.print(self," ")
     }
@@ -16,7 +16,7 @@ extension op : String
     string printAsUTF32()
     {
         self.toArray().forEach::(c){ console.print("U+",c.toInt().toString(16)," ") }
-    }
+    }*/
 }
  
 public program()
@@ -33,6 +33,8 @@ public program()
     "€".printAsString().printAsUTF8Array().printAsUTF32();
     console.printLine();*/
  
-    "𝄞".printAsString().printAsUTF8Array().printAsUTF32();
-    console.printLine();
+ /*   "𝄞".printAsString().printAsUTF8Array().printAsUTF32();
+    console.printLine();*/
+
+   var s := "𝄞";
 }

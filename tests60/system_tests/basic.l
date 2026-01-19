@@ -2667,3 +2667,10 @@ public retoverloadTest() : testCase()
    Assert.ifTrue(n == 1);
    Assert.ifTrue(m == 2l);
 }
+
+public utf32Test() : testCase()
+{
+   int code := "𝄞".toInt();
+
+   Assert.ifTrue(code == 1D11Eh);
+}
