@@ -39,9 +39,24 @@ In development:
   - test all doc code snippets
   - check : ELENA 6 : How to use ELENA code from external program
   ====================================== 
-  * current : backlog
+  * current : warn if nil is passed to the non-nil argument
   -------------------------------------- 
-  - warn if nil is passed to the non-nil argument
+  - proposed solution: new method hint - check nillable args; only explicitly declared strong typed methods have the flag;
+    alternatively - nillableArgs has a special flag (the heighest bit, so it will not mess with normal arguments) to indicate
+    without checking3
+
+
+  - new method hint - check nillable args; only set for explicit signature; must be returtned by checkMethod
+  - allow to pass nil to the weak argument
+  - make weak extension arguments nillable by default (see back extension)
+  - try to reduce unnecessary warnings  
+  - compile extensions : check warnings
+  - compile system : check warnings
+  - compile api : check warnings
+  - make it level 1 warning
+
+
+
 
   === Iteration 44 ===
   --------------------------------------

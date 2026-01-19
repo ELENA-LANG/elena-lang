@@ -2457,6 +2457,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
       result.nillableArgs = methodInfo.nillableArgs;
+      result.checkNillableArgs = test(methodInfo.nillableArgs, EnforcedNillableArgs);
       result.byRefHandler = methodInfo.byRefHandler;
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {

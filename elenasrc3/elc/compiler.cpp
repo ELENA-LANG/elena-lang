@@ -4573,6 +4573,9 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          // Compiler Magic : if it is a mixin function - argument size cannot be directly defined
          scope.message = overwriteArgCount(scope.message, 0);
       }
+
+      if (!weakSignature)
+         scope.info.nillableArgs |= EnforcedNillableArgs;
    }
 }
 
@@ -15486,8 +15489,7 @@ void Compiler::Expression :: handleNillableArguments(SyntaxNode node, ArgumentsI
    }
 
    if (warning) {
-      // !! temporally WARNING_LEVEL_3
-      scope.raiseWarning(/*WARNING_LEVEL_1*/WARNING_LEVEL_3, wrnNonNillableArgument, node);
+      scope.raiseWarning(WARNING_LEVEL_1, wrnNonNillableArgument, node);
    }
 }
 
@@ -15716,7 +15718,8 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
       if (EAttrs::testAndExclude(mode.attrs, EAttr::StackUnsafe))
          resolution.stackSafeAttr = 0;
 
-      handleNillableArguments(node, arguments, result.nillableArgs);
+      if (result.checkNillableArgs)
+         handleNillableArguments(node, arguments, result.nillableArgs);
    }
    else if (targetRef) {
       handleUnsupportedMessageCall(node, resolution.message, targetRef,

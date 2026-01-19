@@ -4,7 +4,7 @@ A;
 
 public singleton Tester
 {
-   printMe(object? o)
+   printMe(/*object? */o)
    {
       Console.printLine(o)
    }

@@ -71,6 +71,8 @@ namespace elena_lang
    };
 
    // --- MethodInfo ---
+   constexpr int EnforcedNillableArgs = 0x80000000;
+
    struct MethodInfo
    {
       bool   inherited;

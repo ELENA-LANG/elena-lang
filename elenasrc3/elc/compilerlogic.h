@@ -28,6 +28,7 @@ namespace elena_lang
       bool        withVariadicDispatcher;
       bool        withCustomDispatcher;
       bool        throwOp;
+      bool        checkNillableArgs;
       int         nillableArgs;
       mssg_t      byRefHandler;
 
