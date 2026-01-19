@@ -1102,7 +1102,7 @@ void ByteCodeViewer :: listMembers(ustr_t filter)
          BCVSessionInfo* info = (BCVSessionInfo*)arg;
 
          if (isWeakReference(referenceName)) {
-            if (info->ignoreInternalClasses && referenceName.findStr(INLINE_PREFIX) == NOTFOUND_POS)
+            if (info->ignoreInternalClasses && referenceName.findStr(INLINE_CLASSNAME) != NOTFOUND_POS)
                return;
 
             if (!info->filter.empty() && referenceName.findStr(info->filter) == NOTFOUND_POS)

@@ -438,8 +438,17 @@ int CLIHelper :: compileProjectCollection(int argc, path_c** argv, path_t path, 
    int retVal = 0;
    ProjectCollection collection;
 
-   if (!collection.load(platform, path)) {
+   // load name attribute
+   ustr_t nameAttr = nullptr;
+   if (argv[0][0] == '-' && argv[0][1] == 'n') {
+      IdentifierString argStr(argv[0] + 2);
+
+      nameAttr = (*argStr).clone();
+   }
+
+   if (!collection.load(platform, path, nameAttr)) {
       presenter.printPath(presenter.getMessage(wrnInvalidConfig), path);
+      freeUStr(nameAttr);
 
       return EXIT_FAILURE;
    }
@@ -457,12 +466,15 @@ int CLIHelper :: compileProjectCollection(int argc, path_c** argv, path_t path, 
 
       int result = compileSingleProject(argc, argv, appPath, errorProcessor, spec->basePath, spec->profile);
       if (result == EXIT_FAILURE) {
-         return EXIT_FAILURE;
+         retVal = EXIT_FAILURE;
+         break;
       }
       else if (result == WARNING_RET_CODE) {
          retVal = WARNING_RET_CODE;
       }
    }
+
+   freeUStr(nameAttr);
 
    return retVal;
 }

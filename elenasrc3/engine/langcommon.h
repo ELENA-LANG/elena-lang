@@ -793,6 +793,7 @@ namespace elena_lang
    constexpr auto PROFILE_ATTR                  = "profile";
    constexpr auto BASE_PATH_ATTR                = "base_path";
    constexpr auto PLATFORM_ATTR                 = "platform";
+   constexpr auto NAME_ATTR                     = "name";
 
    constexpr auto TEMPLATE_CATEGORY             = "templates/*";
    constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";

@@ -29,11 +29,9 @@ In development:
   - test all doc code snippets
   - check : ELENA 6 : How to use ELENA code from external program
   ====================================== 
-  - prjcol - compile only selected collections (e.g. only console in examples.prjcol)
   - predefined method cannot be indexed
-  - property "int? X" must be supported
   -------------------------------------- 
-  * current : ecv - set filter to hide inline classes
+  * current : prjcol - compile only selected collections (e.g. only console in examples.prjcol)
   -------------------------------------- 
 
 

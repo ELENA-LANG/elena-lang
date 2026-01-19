@@ -3,7 +3,7 @@
 //
 //		This file contains the project class body
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -543,7 +543,7 @@ static inline void loadModuleCollection(PlatformType platform, path_t collection
    }
 }
 
-bool ProjectCollection :: load(PlatformType platform, path_t path)
+bool ProjectCollection :: load(PlatformType platform, path_t path, ustr_t nameAttr)
 {
    PathString collectionPath;
    collectionPath.copySubPath(path, false);
@@ -558,6 +558,10 @@ bool ProjectCollection :: load(PlatformType platform, path_t path)
          ConfigFile::Collection collections;
          if (config.select(COLLECTIONS_CATEGORY, collections)) {
             for (auto it = collections.start(); !it.eof(); ++it) {
+               DynamicString<char> nameStr;
+               if (!(*it).readAttribute(NAME_ATTR, nameStr) || (!nameAttr.empty() && nameAttr.compare(nameStr.str())))
+                  continue;
+
                ConfigFile::Collection subModules;
                if (config.select(*it, "*", subModules)) {
                   loadModuleCollection(platform, *collectionPath, subModules, projectSpecs);
