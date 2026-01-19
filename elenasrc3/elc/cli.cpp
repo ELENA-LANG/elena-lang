@@ -262,6 +262,8 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
       case 'm':
          project.addBoolSetting(ProjectOption::MappingOutputMode, true);
          break;
+      case 'n':
+         break;
       case 'o':
          if (arg[2] == '0') {
             project.addIntSetting(ProjectOption::OptimizationMode, optNone);
@@ -440,8 +442,8 @@ int CLIHelper :: compileProjectCollection(int argc, path_c** argv, path_t path, 
 
    // load name attribute
    ustr_t nameAttr = nullptr;
-   if (argv[0][0] == '-' && argv[0][1] == 'n') {
-      IdentifierString argStr(argv[0] + 2);
+   if (argv[1][0] == '-' && argv[1][1] == 'n') {
+      IdentifierString argStr(argv[1] + 2);
 
       nameAttr = (*argStr).clone();
    }

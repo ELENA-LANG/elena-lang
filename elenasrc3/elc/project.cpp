@@ -559,7 +559,10 @@ bool ProjectCollection :: load(PlatformType platform, path_t path, ustr_t nameAt
          if (config.select(COLLECTIONS_CATEGORY, collections)) {
             for (auto it = collections.start(); !it.eof(); ++it) {
                DynamicString<char> nameStr;
-               if (!(*it).readAttribute(NAME_ATTR, nameStr) || (!nameAttr.empty() && nameAttr.compare(nameStr.str())))
+               if (!(*it).readAttribute(NAME_ATTR, nameStr))
+                  nameStr.clear();
+
+               if (!nameAttr.empty() && !nameAttr.compare(nameStr.str()))
                   continue;
 
                ConfigFile::Collection subModules;
