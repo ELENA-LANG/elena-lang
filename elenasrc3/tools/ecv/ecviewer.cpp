@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ecviewer.h"
@@ -153,6 +153,7 @@ void ByteCodeViewer :: printHelp()
    _presenter->print("-a                      - toggle displaying class attributes mode\n");
    _presenter->print("-b                      - toggle bytecode mode\n");
    _presenter->print("-h                      - toggle displaying method hints mode\n");
+   _presenter->print("-i                      - toggle ignore-internal classes mode\n");
    _presenter->print("-p                      - toggle pagination mode\n");
    _presenter->print("-q                      - quit\n");
    _presenter->print("-t                      - toggle ignore-breakpoint mode\n");
@@ -1087,11 +1088,12 @@ struct BCVSessionInfo
    int             row;
    int             pageSize;
    ustr_t          filter;
+   bool            ignoreInternalClasses;
 };
 
 void ByteCodeViewer :: listMembers(ustr_t filter)
 {
-   BCVSessionInfo info = { this, 1, _pageSize, filter };
+   BCVSessionInfo info = { this, 1, _pageSize, filter, _ignoreInternalClasses };
 
    _module->forEachReference(&info, [](ModuleBase* module, ref_t reference, void* arg)
       {
@@ -1100,6 +1102,9 @@ void ByteCodeViewer :: listMembers(ustr_t filter)
          BCVSessionInfo* info = (BCVSessionInfo*)arg;
 
          if (isWeakReference(referenceName)) {
+            if (info->ignoreInternalClasses && referenceName.findStr(INLINE_PREFIX) == NOTFOUND_POS)
+               return;
+
             if (!info->filter.empty() && referenceName.findStr(info->filter) == NOTFOUND_POS)
                return;
 
@@ -1161,6 +1166,10 @@ void ByteCodeViewer :: runSession()
             case 'h':
                _showMethodInfo = !_showMethodInfo;
                _presenter->print("Method hint mode is %s", _showMethodInfo ? "true" : "false");
+               break;
+            case 'i':
+               _ignoreInternalClasses = !_ignoreInternalClasses;
+               _presenter->print("Ignore internal classes mode is %s", _ignoreInternalClasses ? "true" : "false");
                break;
             case 'a':
                _showClassAttributes = !_showClassAttributes;
