@@ -2670,7 +2670,7 @@ public retoverloadTest() : testCase()
 
 public utf32Test() : testCase()
 {
-   int code := "𝄞".toInt();
+   int code := "𝄞".toChar().toInt();
 
    Assert.ifTrue(code == 1D11Eh);
 }
