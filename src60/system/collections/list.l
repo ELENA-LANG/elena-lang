@@ -320,14 +320,14 @@ namespace collections
       constructor new()
          <= new(32, 32, nil);
 
-      constructor new(object default)
+      constructor new(object? default)
          <= new(32, 32, default);
 
-      constructor new(int capacity, object default)
+      constructor new(int capacity, object? default)
          <= new(capacity, 32, default);
 
       /// Creates a dictionary
-      constructor new(int capacity, int hashLength, object default)
+      constructor new(int capacity, int hashLength, object? default)
       {
          int size := 32;
          while (size < hashLength)

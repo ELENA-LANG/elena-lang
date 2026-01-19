@@ -3091,7 +3091,7 @@ void Compiler :: generateMethodAttributes(ClassScope& scope, SyntaxNode node,
 
    int nodeNillableArgs = node.findChild(SyntaxKey::NillableInfo).arg.value;
    // validate if the nullable signatures matche each other
-   if (methodInfo.nillableArgs != 0 && methodInfo.nillableArgs != nodeNillableArgs) {
+   if ((methodInfo.nillableArgs & ~EnforcedNillableArgs) != 0 && methodInfo.nillableArgs != nodeNillableArgs) {
       scope.raiseWarning(WARNING_LEVEL_1, wrnNillableRedefined, node);
    }
 
@@ -4574,7 +4574,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
          scope.message = overwriteArgCount(scope.message, 0);
       }
 
-      if (!weakSignature)
+      if (!weakSignature && !noSignature)
          scope.info.nillableArgs |= EnforcedNillableArgs;
    }
 }
@@ -15475,20 +15475,29 @@ void Compiler::Expression :: handleNillableArguments(SyntaxNode node, ArgumentsI
    if (!compiler->checkNullableTypeFlag())
       return;
 
+   CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+
    // box the arguments if required
    int argMask = 1;
    unsigned int argCount = arguments.count_pos();
    for (unsigned int i = 1; i < argCount; i++) {
       auto arg = arguments[i];
       if (isNillable(arg) && !test(nillableArgs, argMask)) {
-         warning = true;
-         break;
+         if (codeScope && codeScope->verifiedObjects.exist(arg)) {
+            // validate if the target was checked as not nil - no need to warn
+         }
+         else {
+            warning = true;
+            break;
+         }
       }
 
       argMask <<= 1;
    }
 
    if (warning) {
+      SyntaxNode messageNode = findMessageNode(node);
+
       scope.raiseWarning(WARNING_LEVEL_1, wrnNonNillableArgument, node);
    }
 }

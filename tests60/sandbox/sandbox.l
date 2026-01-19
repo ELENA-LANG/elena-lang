@@ -1,5 +1,11 @@
 import extensions;
 
+public extension commonOpX
+{
+   back(o)
+      = o;
+}
+
 A;
 
 public singleton Tester

@@ -41,14 +41,8 @@ In development:
   ====================================== 
   * current : warn if nil is passed to the non-nil argument
   -------------------------------------- 
-  - proposed solution: new method hint - check nillable args; only explicitly declared strong typed methods have the flag;
-    alternatively - nillableArgs has a special flag (the heighest bit, so it will not mess with normal arguments) to indicate
-    without checking3
+  - check if the argument is validated
 
-
-  - new method hint - check nillable args; only set for explicit signature; must be returtned by checkMethod
-  - allow to pass nil to the weak argument
-  - make weak extension arguments nillable by default (see back extension)
   - try to reduce unnecessary warnings  
   - compile extensions : check warnings
   - compile system : check warnings
