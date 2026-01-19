@@ -7,14 +7,6 @@ In development:
 
   === Iteration 43 ===
   ====================================== 
-  * dev
-  --------------------------------------
-  ====================================== 
-  * lang : backlog
-  --------------------------------------
-  - a field must be assigned, warn if not
-  - support function call with double colon (e.g. ::printing() - is always a function)
-  ====================================== 
   * doc : Rosetta code migration
   --------------------------------------
   - fix UTF-8 encode and decode (the last character)
@@ -29,9 +21,12 @@ In development:
   - test all doc code snippets
   - check : ELENA 6 : How to use ELENA code from external program
   ====================================== 
-  - predefined method cannot be indexed
+  - current : fix UTF-8 encode and decode (the last character)
   -------------------------------------- 
-  * current : prjcol - compile only selected collections (e.g. only console in examples.prjcol)
+  * investigate
+  * plan
+  * implement
+  * functional test
   -------------------------------------- 
 
 
@@ -40,6 +35,15 @@ In development:
   === Iteration 44 ===
   --------------------------------------
   * new version 6.8.2
+  --------------------------------------
+  * dev
+  ====================================== 
+  * lang
+  ====================================== 
+  * doc
+  ====================================== 
+  * current
+  --------------------------------------
   --------------------------------------
 
   === Iteration 45 ===
