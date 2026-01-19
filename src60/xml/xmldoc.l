@@ -101,7 +101,7 @@ public class XmlDocument
          else {
             node := stack.pop();
             
-            formatter.closeTag(output, level, node);
+            formatter.closeTag(output, level, node!);
             level--;
                
             XmlNode? next := node?.nextSibling();

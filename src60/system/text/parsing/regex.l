@@ -399,7 +399,7 @@ public sealed class RegEx
             if:nil(rule) 
                InvalidArgumentException.raise("pattern");
 
-            list.append(rule);
+            list.append(rule!);
 
             if (continueMode) {
                :continue

@@ -1774,7 +1774,7 @@ namespace expressions
       compile()
          <= compile(nil, IdleExpressionScope);
 
-      compile(set, ExpressionScope parentScope)
+      compile(object? set, ExpressionScope parentScope)
       {
          ^ expr.compile(parentScope)
       }        
@@ -1803,7 +1803,7 @@ namespace expressions
       compile()
          <= compile(nil, IdleExpressionScope);
 
-      compile(set, ExpressionScope scope)
+      compile(object? set, ExpressionScope scope)
       {
          auto list := new List<Tuple<Message,DynamicTape>>();
          int len := methods.Length;
