@@ -5,9 +5,15 @@ const string[] dig1 = new []{"","1","10"};
 
 sealed struct ZeckendorfNumber
 {
-    int dVal;
-    int dLen;
-    
+    int dVal : rprop();
+    int dLen : rprop();
+
+    constructor()
+    {
+       dVal := 0;
+       dLen := 0
+    }
+            
     clone()
         = ZeckendorfNumber.newInternal(dVal,dLen);
     
@@ -21,17 +27,11 @@ sealed struct ZeckendorfNumber
         
         while (i >= 0)
         {
-            dVal += ((IntConvertor.convert(s[i]) - 48) * q);
+            dVal += ((s[i].toInt() - 48) * q);
             q *= 2;
             
             i -= 1
         }
-    }
-    
-    internal readContent(ref int val, ref int len)
-    {
-        val := dVal;
-        len := dLen;
     }
     
     private a(int n)
@@ -42,26 +42,26 @@ sealed struct ZeckendorfNumber
         {
             if (dLen < i)
             {
-                dLen := i
+                dLen := i;
             };
             
-            int v := (dVal $shr (i * 2)) & 3;
+            int v := (dVal shr:(i * 2)) & 3;
             v =>    
                 0 : { ^ self }
                 1 : { ^ self }
                 2 : {
-                    if:not ((dVal $shr ((i + 1) * 2)).allMask(1))
+                    if:not ((dVal shr:((i + 1) * 2)).allMask(1))
                     {
                         ^ self
                     };
                     
-                    dVal += (1 $shl (i*2 + 1));
+                    dVal += (1 shl:(i*2 + 1));
                     
                     ^ self
                 }
                 3 : {
-                    int tmp := 3 $shl (i * 2);
-                    tmp := tmp.bxor(-1);
+                    int tmp := 3 shl: (i * 2);
+                    tmp := tmp ^ -1;
                     dVal := dVal & tmp;
                     
                     self.b((i+1)*2)
@@ -81,15 +81,18 @@ sealed struct ZeckendorfNumber
     {
         if (pos == 0) { ^ self.inc() };
         
-        if:not((dVal $shr pos).allMask(1))
+        if:not((dVal shr:pos).allMask(1))
         {
-            dVal += (1 $shl pos);
+            dVal += (1 shl:pos);
             self.a(pos / 2);
             if (pos > 1) { self.a((pos / 2) - 1) }
         }
         else
         {
-            dVal := dVal & (1 $shl pos).BInverted;
+            int temp := 1 shl:pos;
+            temp := temp ^ -1;
+            dVal := dVal & temp;
+            
             self.b(pos + 1);
             int arg := pos - ((pos > 1) ? 2 : 1);
             self.b(/*pos - ((pos > 1) ? 2 : 1)*/arg)
@@ -98,9 +101,9 @@ sealed struct ZeckendorfNumber
 
     private c(int pos)
     {
-        if ((dVal $shr pos).allMask(1))
+        if ((dVal shr:pos).allMask(1))
         {
-            int tmp := 1 $shl pos;
+            int tmp := 1 shl:pos;
             tmp := tmp.bxor(-1);
             
             dVal := dVal & tmp;
@@ -122,18 +125,15 @@ sealed struct ZeckendorfNumber
             
     internal constructor sum(ZeckendorfNumber n, ZeckendorfNumber m)
     {
-        int mVal := 0;
-        int mLen := 0;
+        int mVal := m.dVal;
+        int mLen := m.dLen;
         
-        n.readContent(ref int v, ref int l);        
-        m.readContent(ref mVal, ref mLen);
-        
-        dVal := v;
-        dLen := l;
+        dVal := n.dVal;
+        dLen := n.dLen;
 
         for(int GN := 0; GN < (mLen + 1) * 2; GN += 1)
         {
-            if ((mVal $shr GN).allMask(1))
+            if ((mVal shr:GN).allMask(1))
             {
                 self.b(GN)
             }
@@ -142,24 +142,21 @@ sealed struct ZeckendorfNumber
     
     internal constructor difference(ZeckendorfNumber n, ZeckendorfNumber m)
     {
-        int mVal := 0;
-        int mLen := 0;
+        int mVal := m.dVal;
+        int mLen := m.dLen;
         
-        n.readContent(ref int v, ref int l);        
-        m.readContent(ref mVal, ref mLen);
-        
-        dVal := v;
-        dLen := l;
+        dVal := n.dVal;
+        dLen := n.dLen;
         
         for(int GN := 0; GN < (mLen + 1) * 2; GN += 1) 
         {
-            if ((mVal $shr GN).allMask(1))
+            if ((mVal shr:GN).allMask(1))
             {
                 self.c(GN)
             }
         };
         
-        while (((dVal $shr (dLen*2)) & 3) == 0 || dLen == 0)
+        while (((dVal shr:(dLen*2)) & 3) == 0 || dLen == 0)
         {
             dLen -= 1
         }
@@ -167,10 +164,8 @@ sealed struct ZeckendorfNumber
     
     internal constructor product(ZeckendorfNumber n, ZeckendorfNumber m)
     {
-        n.readContent(ref int v, ref int l);              
-        
-        dVal := v;
-        dLen := l;
+        dVal := n.dVal;
+        dLen := n.dLen;
         
         ZeckendorfNumber Na := m;
         ZeckendorfNumber Nb := m;
@@ -188,10 +183,8 @@ sealed struct ZeckendorfNumber
             Na := Nt
         };
         
-        Nr.readContent(ref v, ref l);
-        
-        dVal := v;
-        dLen := l;
+        dVal := Nr.dVal;
+        dLen := Nr.dLen;
     }
     
     internal constructor newInternal(int v, int l)
@@ -206,12 +199,9 @@ sealed struct ZeckendorfNumber
             { ^ "0" };
             
         string s := dig1[(dVal $shr (dLen * 2)) & 3];
-        int i := dLen - 1;
-        while (i >= 0)
+        for (int i := dLen - 1; i >= 0; i--)
         {
             s := s + dig[(dVal $shr (i * 2)) & 3];
-            
-            i-=1
         };
         
         ^ s

@@ -389,6 +389,34 @@ public sealed Matrix<T>
    constructor allocate(rows, columns)
       <= allocate(cast int(rows), cast int(columns));
     
+    
+   constructor load(params)
+   {
+      _rows := params.Rows;
+      _columns := params.Columns;
+        
+      int len := _rows * _columns;
+        
+      _array := new T[](/*theRows * theColumns*/len);
+        
+      int i := 0;
+      int j := 0;        
+      while (i < _rows)
+      {
+         j := 0;
+         while (j < _columns)
+         {
+            T val := params.at(i,j);
+                
+            self.setAt(i, j, val);
+                
+            j := j + 1
+         };
+            
+         i := i + 1
+      }
+   }    
+    
    int Length
       : info("Returns the number of rows")
    {
