@@ -13846,10 +13846,10 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
          scope.raiseError(errAssigningRealOnly, node);
 
       // box argument locally if required
-      loperand = boxArgumentLocally(loperand, true, true);
+      loperand = boxArgumentLocally(loperand, true, true, false);
 
       if (roperand.kind != ObjectKind::Unknown) {
-         roperand = boxArgumentLocally(roperand, true, false);
+         roperand = boxArgumentLocally(roperand, true, false, true);
 
          writeObjectInfo(roperand, node);
 
@@ -14997,7 +14997,7 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRe
    }
 
    for (pos_t i = count; i > 0; i--) {
-      ObjectInfo arg = boxArgumentLocally(arguments[i - 1], true, false);
+      ObjectInfo arg = boxArgumentLocally(arguments[i - 1], true, false, true);
 
       writeObjectInfo(arg, node);
       switch (arg.kind) {
@@ -16103,8 +16103,8 @@ bool Compiler::Expression::writeObjectInfo(ObjectInfo info, bool allowMeta)
    return true;
 }
 
-ObjectInfo Compiler::Expression::boxArgumentLocally(ObjectInfo info,
-   bool stackSafe, bool forced)
+ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
+   bool stackSafe, bool forced, bool noLocalUnboxing)
 {
    switch (info.kind) {
       case ObjectKind::Field:
@@ -16113,7 +16113,7 @@ ObjectInfo Compiler::Expression::boxArgumentLocally(ObjectInfo info,
       case ObjectKind::StaticField:
       case ObjectKind::StaticThreadField:
          if (forced) {
-            return boxLocally(info, stackSafe);
+            return boxLocally(info, stackSafe, noLocalUnboxing);
          }
          return info;
       case ObjectKind::ReadOnlyFieldAddress:
@@ -16128,7 +16128,7 @@ ObjectInfo Compiler::Expression::boxArgumentLocally(ObjectInfo info,
 
             return retVal;
          }
-         else return boxLocally(info, stackSafe);
+         else return boxLocally(info, stackSafe, noLocalUnboxing);
       case ObjectKind::StaticConstField:
       case ObjectKind::ClassStaticConstField:
          if (info.mode == TargetMode::BoxingPtr) {
@@ -16490,6 +16490,11 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, Ob
    op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef);
 
    if (op != BuildKey::None) {
+      if (hasToBePresaved(loperand)) {
+         loperand = unboxArguments(loperand, true);
+      }
+      else unboxArguments({}, true);
+
       writeObjectInfo(loperand);
 
       if (branchVerification && operatorId == ELSE_OPERATOR_ID)
@@ -16866,8 +16871,8 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
       else retVal = { ObjectKind::Object, { outputRef }, 0 };
 
       // box argument locally if required
-      loperand = boxArgumentLocally(loperand, true, false);
-      roperand = boxArgumentLocally(roperand, true, false);
+      loperand = boxArgumentLocally(loperand, true, false, true);
+      roperand = boxArgumentLocally(roperand, true, false, true);
 
       writeObjectInfo(loperand);
       writer->appendNode(BuildKey::SavingInStack, 0);
@@ -16951,52 +16956,52 @@ ObjectInfo Compiler::Expression::compileNativeConversion(SyntaxNode node, Object
 {
    ObjectInfo retVal = {};
 
-   source = boxArgumentLocally(source, false, false);
+   source = boxArgumentLocally(source, false, false, true);
 
    switch (operationKey) {
-   case INT8_32_CONVERSION:
-      retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT32 }, false));
+      case INT8_32_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT32 }, false));
 
-      writeObjectInfo(retVal);
-      writer->appendNode(BuildKey::SavingInStack, 0);
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
 
-      writeObjectInfo(source);
+         writeObjectInfo(source);
 
-      writer->appendNode(BuildKey::ConversionOp, operationKey);
-      break;
-   case INT16_32_CONVERSION:
-      retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT32 }, false));
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case INT16_32_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT32 }, false));
 
-      writeObjectInfo(retVal);
-      writer->appendNode(BuildKey::SavingInStack, 0);
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
 
-      writeObjectInfo(source);
+         writeObjectInfo(source);
 
-      writer->appendNode(BuildKey::ConversionOp, operationKey);
-      break;
-   case INT32_64_CONVERSION:
-      retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case INT32_64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
 
-      writeObjectInfo(retVal);
-      writer->appendNode(BuildKey::SavingInStack, 0);
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
 
-      writeObjectInfo(source);
+         writeObjectInfo(source);
 
-      writer->appendNode(BuildKey::ConversionOp, operationKey);
-      break;
-   case INT32_FLOAT64_CONVERSION:
-      retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case INT32_FLOAT64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
 
-      writeObjectInfo(retVal);
-      writer->appendNode(BuildKey::SavingInStack, 0);
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
 
-      writeObjectInfo(source);
+         writeObjectInfo(source);
 
-      writer->appendNode(BuildKey::ConversionOp, operationKey);
-      break;
-   default:
-      scope.raiseError(errInvalidOperation, node);
-      break;
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      default:
+         scope.raiseError(errInvalidOperation, node);
+         break;
    }
 
    return retVal;
@@ -17272,7 +17277,7 @@ ObjectInfo Compiler::Expression::boxArgument(ObjectInfo info, bool stackSafe, bo
 {
    ObjectInfo retVal = { ObjectKind::Unknown };
 
-   info = boxArgumentLocally(info, stackSafe, false);
+   info = boxArgumentLocally(info, stackSafe, false, false);
 
    if (info.kind == ObjectKind::DistributedTypeList || (!stackSafe && isBoxingRequired(info, allowingRefArg))) {
       ObjectKey key = { info.kind, info.reference };
@@ -17313,7 +17318,7 @@ ObjectInfo Compiler::Expression::boxArgument(ObjectInfo info, bool stackSafe, bo
    return retVal;
 }
 
-ObjectInfo Compiler::Expression::boxLocally(ObjectInfo info, bool stackSafe)
+ObjectInfo Compiler::Expression::boxLocally(ObjectInfo info, bool stackSafe, bool noLocalUnboxing)
 {
    // allocating temporal variable
    ObjectInfo tempLocal = {};
@@ -17331,7 +17336,7 @@ ObjectInfo Compiler::Expression::boxLocally(ObjectInfo info, bool stackSafe)
    }
    else tempLocal = declareTempLocal(info.typeInfo.typeRef, false);
 
-   if (stackSafe) {
+   if (stackSafe && !noLocalUnboxing) {
       tempLocal.mode = TargetMode::LocalUnboxingRequired;
 
       scope.tempLocals.add({ info.kind, info.reference }, tempLocal);

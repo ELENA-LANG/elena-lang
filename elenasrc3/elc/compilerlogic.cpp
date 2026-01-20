@@ -1403,6 +1403,11 @@ bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
    return isEmbeddableArray(getFlags(scope, reference));
 }
 
+bool CompilerLogic :: isReadOnly(ModuleScopeBase& scope, ref_t reference)
+{
+   return isReadOnly(getFlags(scope, reference));
+}
+
 bool CompilerLogic :: isDynamic(ref_t flags)
 {
    return test(flags, elDynamicRole | elWrapper);

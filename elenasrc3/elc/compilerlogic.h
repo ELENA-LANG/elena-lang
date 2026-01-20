@@ -135,6 +135,8 @@ namespace elena_lang
 
       bool isNumericData(ref_t flags);
 
+      bool isReadOnly(ModuleScopeBase& scope, ref_t reference);
+
       bool isDynamic(ref_t flags);
       bool isEmbeddableArray(ref_t flags);
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);

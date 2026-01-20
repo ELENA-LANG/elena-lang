@@ -9,7 +9,6 @@ In development:
   ====================================== 
   * doc : Rosetta code migration
   --------------------------------------
-  - fix UTF-8 encode and decode (the last character)
   - fix Zeckendorf arithmetic
   - fix Zhang-Suen thinning algorithm
   - test all samples
@@ -21,12 +20,15 @@ In development:
   - test all doc code snippets
   - check : ELENA 6 : How to use ELENA code from external program
   ====================================== 
-  - current : fix UTF-8 encode and decode (the last character)
+  - current : assigning a struct field in sub code
   -------------------------------------- 
-  * investigate
+  * investigate : unboxing is done after the branching operation -> removing all previous changes ; so probably required unboxing must be
+    after comparison operation; comparison operation - no need to unbox ; use native comparison operation
   * plan
-  * implement
-  * functional test
+  * fix
+  * unit test
+  * optimize the code with branching
+  * optimize the code without branching
   -------------------------------------- 
 
 
