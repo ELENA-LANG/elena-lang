@@ -322,6 +322,16 @@ void BTOptimization4 :: SetUp()
    BuildTreeSerializer::load(OptimizedBuildTree4, afterOptimization);
 }
 
+// --- BTOptimization7 ---
+
+void BTOptimization7::SetUp()
+{
+   BTOptimization::SetUp();
+
+   BuildTreeSerializer::load(BuildTree_StructFieldAssigning_1, buildNode);
+   BuildTreeSerializer::load(OptimizedTree_StructFieldAssigning_1, afterOptimization);
+}
+
 // --- BTOptimization12 ---
 
 void BTOptimization12 :: SetUp()
@@ -788,4 +798,21 @@ void IntermediateVar :: SetUp()
    BuildTreeSerializer::load(B_IntermediateVar, controlOutputNode);
 
    targetRef = 3;
+}
+
+// --- VariadicRuntimeSingleDispatch ---
+
+void StructFieldAssigning :: SetUp()
+{
+   MethodScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S1_StructFieldAssigning);
+
+   BuildTreeSerializer::load(BuildTree_StructFieldAssigning_1, controlOutputNode);
+
+   targetRef = 3;
+   intNumberRef = 2;
+
+   trueRef = 10;  // !! virtual references
+   falseRef = 11;
 }

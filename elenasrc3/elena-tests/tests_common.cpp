@@ -472,6 +472,8 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    ModuleScopeBase* moduleScope = env.createModuleScope(true, withAttributes);
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = intNumberRef;
+   moduleScope->branchingInfo.trueRef = trueRef;
+   moduleScope->branchingInfo.falseRef = falseRef;
 
    if (argArrayTemplateRef != INVALID_REF) {
       moduleScope->buildins.argArrayTemplateReference = argArrayTemplateRef;

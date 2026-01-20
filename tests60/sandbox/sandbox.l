@@ -1,4 +1,4 @@
-public sealed struct X
+public struct X
 {
     int dVal;
     int dLen;
