@@ -20,6 +20,7 @@ In development:
   - test all doc code snippets
   - check : ELENA 6 : How to use ELENA code from external program
   ====================================== 
+  - fix boxingTests
   - current : assigning a struct field in sub code
   -------------------------------------- 
   * investigate : unboxing is done after the branching operation -> removing all previous changes ; so probably required unboxing must be
@@ -27,8 +28,6 @@ In development:
   * plan
   * fix
   * unit test
-  * optimize the code with branching
-  * optimize the code without branching
   -------------------------------------- 
 
 

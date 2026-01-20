@@ -1619,7 +1619,7 @@ namespace elena_lang
          ObjectInfo declareTempStructure(SizeInfo sizeInfo);
 
          ObjectInfo boxArgument(ObjectInfo info, bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef = 0);
-         ObjectInfo boxArgumentLocally(ObjectInfo info, bool stackSafe, bool forced, bool noLocalUnboxing);
+         ObjectInfo boxArgumentLocally(ObjectInfo info, bool stackSafe, bool forced);
          ObjectInfo boxLocally(ObjectInfo info, bool stackSafe, bool noLocalUnboxing);
          ObjectInfo boxPtrLocally(ObjectInfo info);
          ObjectInfo boxArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);

@@ -13846,10 +13846,10 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
          scope.raiseError(errAssigningRealOnly, node);
 
       // box argument locally if required
-      loperand = boxArgumentLocally(loperand, true, true, false);
+      loperand = boxArgumentLocally(loperand, true, true);
 
       if (roperand.kind != ObjectKind::Unknown) {
-         roperand = boxArgumentLocally(roperand, true, false, true);
+         roperand = boxArgumentLocally(roperand, true, false);
 
          writeObjectInfo(roperand, node);
 
@@ -14997,7 +14997,7 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRe
    }
 
    for (pos_t i = count; i > 0; i--) {
-      ObjectInfo arg = boxArgumentLocally(arguments[i - 1], true, false, true);
+      ObjectInfo arg = boxArgumentLocally(arguments[i - 1], true, false);
 
       writeObjectInfo(arg, node);
       switch (arg.kind) {
@@ -16104,7 +16104,7 @@ bool Compiler::Expression::writeObjectInfo(ObjectInfo info, bool allowMeta)
 }
 
 ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
-   bool stackSafe, bool forced, bool noLocalUnboxing)
+   bool stackSafe, bool forced)
 {
    switch (info.kind) {
       case ObjectKind::Field:
@@ -16113,7 +16113,7 @@ ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
       case ObjectKind::StaticField:
       case ObjectKind::StaticThreadField:
          if (forced) {
-            return boxLocally(info, stackSafe, noLocalUnboxing);
+            return boxLocally(info, stackSafe, false);
          }
          return info;
       case ObjectKind::ReadOnlyFieldAddress:
@@ -16128,7 +16128,7 @@ ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
 
             return retVal;
          }
-         else return boxLocally(info, stackSafe, noLocalUnboxing);
+         else return boxLocally(info, stackSafe, compiler->_logic->isReadOnly(*scope.moduleScope, info.typeInfo.typeRef) && !forced);
       case ObjectKind::StaticConstField:
       case ObjectKind::ClassStaticConstField:
          if (info.mode == TargetMode::BoxingPtr) {
@@ -16871,8 +16871,8 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
       else retVal = { ObjectKind::Object, { outputRef }, 0 };
 
       // box argument locally if required
-      loperand = boxArgumentLocally(loperand, true, false, true);
-      roperand = boxArgumentLocally(roperand, true, false, true);
+      loperand = boxArgumentLocally(loperand, true, false);
+      roperand = boxArgumentLocally(roperand, true, false);
 
       writeObjectInfo(loperand);
       writer->appendNode(BuildKey::SavingInStack, 0);
@@ -16956,7 +16956,7 @@ ObjectInfo Compiler::Expression::compileNativeConversion(SyntaxNode node, Object
 {
    ObjectInfo retVal = {};
 
-   source = boxArgumentLocally(source, false, false, true);
+   source = boxArgumentLocally(source, false, false);
 
    switch (operationKey) {
       case INT8_32_CONVERSION:
@@ -17277,7 +17277,7 @@ ObjectInfo Compiler::Expression::boxArgument(ObjectInfo info, bool stackSafe, bo
 {
    ObjectInfo retVal = { ObjectKind::Unknown };
 
-   info = boxArgumentLocally(info, stackSafe, false, false);
+   info = boxArgumentLocally(info, stackSafe, false);
 
    if (info.kind == ObjectKind::DistributedTypeList || (!stackSafe && isBoxingRequired(info, allowingRefArg))) {
       ObjectKey key = { info.kind, info.reference };
