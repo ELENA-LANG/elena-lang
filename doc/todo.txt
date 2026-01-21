@@ -20,13 +20,9 @@ In development:
   ====================================== 
   - test all samples
   -------------------------------------- 
-  * fix datetime 
   * fix translit
   * fix script samples
   -------------------------------------- 
-  - current : calling retoverride method in a returning expression
-  -------------------------------------- 
-  * unit test
 
   ====================================== 
 
