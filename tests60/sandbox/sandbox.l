@@ -1,14 +1,17 @@
-import system'calendar;
+A;
 
-public extension dateFormatterOpX : Date
+B
 {
-   string toShortTimeString()
-      = cast TimeStruct(self).toShortTime();
+   retoverload A get()
+      = default;
+}
+
+singleton Tester
+{
+   A test(B b)
+     = b.get();
 }
 
 public Program()
 {
-/*   string s3 := cast TimeStruct(Now).toShortTime();
-   var s2 := cast TimeStruct(Now).toShortTime();*/
-   var s := Now.toShortTimeString()
 }

@@ -65,7 +65,26 @@
 *    A a := Tester.getValue();
 * }
 *
+* Calling retoverload method in a returning expression
+* ----------------------------------------------------
+* 
+* A;
+* 
+* B
+* {
+*     retoverload A get() = default;
+* }
+* 
+* singleton Tester
+* {
+*    A test(B b) = b.get();
+* }
+* 
 */
+
+
+
+
 
 #include "pch.h"
 // ------------------------------------------------
@@ -106,6 +125,8 @@ constexpr auto Build_S_ByRefHandlerTest_Class = "class 4 (method 5891 (tape ( op
 
 constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning 3 () local_reference 3 () saving_stack 1 () class_reference 3 () saving_stack () argument () direct_call_op 3586 (type 3 ()) local 3 () assigning 2 () local 2 () assigning 1 ()";
 
+constexpr auto Build_RetOverloadInRetExprTest_Scenario1 = "tape(open_frame ()assigning 1 ()local 2 ()assigning 3 ()local_reference 3 ()saving_stack 1 ()local -2 ()saving_stack ()argument ()call_op 1538 (type 3 ())local 3 ()assigning 2 ()local 2 () going_to_eop() close_frame ()exit ())reserved 5 ())";
+
 #elif _M_X64
 
 constexpr auto Build_CallingIndexedethod_Scenario1 = "int_literal 2 (value 3 ())saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 4610 (type 4 ()index_table_mode ())";
@@ -118,6 +139,8 @@ constexpr auto Build_DuplicateBoxing_Scenario1 = "int_literal 2 (value 2 ()) cop
 constexpr auto Build_S_ByRefHandlerTest_Class = "class 4 (method 5891 (tape ( open_frame () assigning 1 () local -2 () saving_stack () int_literal 2 (value 1 ())saving_stack 1 ()intop -8 (operator_id 4 ())local_address -8 ()saving_stack ()local -3 ()copying_to_acc -3 (size 4 ()) going_to_eop ()close_frame ()exit ())reserved 4 ()reserved_n 16 ())method 4098 (tape (open_frame ()assigning 1 ()local_address -8 ()saving_stack 2 ()local -2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 5891 (type 4 ()index_table_mode ())local_address -8 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 2 (size 4 ())assigning 2 ()local 2 ()close_frame ()exit ())reserved 6 ()reserved_n 16 ()))";
 
 constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning 3 () local_reference 3 () saving_stack 1 () class_reference 3 () saving_stack () argument () direct_call_op 3586 (type 3 ()) local 3 () assigning 2 () local 2 () assigning 1 ()";
+
+constexpr auto Build_RetOverloadInRetExprTest_Scenario1 = "tape(open_frame ()assigning 1 ()local 2 ()assigning 3 ()local_reference 3 ()saving_stack 1 ()local -2 ()saving_stack ()argument ()call_op 1538 (type 3 ())local 3 ()assigning 2 ()local 2 () going_to_eop() close_frame ()exit ())reserved 6 ())";
 
 #endif
 
@@ -346,4 +369,22 @@ void RetoverloadHandlerTest :: SetUp()
 TEST_F(RetoverloadHandlerTest, RetoverloadHandlerInvoker)
 {
    runBuildTest(true, false);
+}
+
+// --- RetOverloadInRetExpr ---
+
+void RetOverloadInRetExprTest::SetUp()
+{
+   MethodScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_5, RetOverloadInRetExprTest_Scenario1);
+
+   BuildTreeSerializer::load(Build_RetOverloadInRetExprTest_Scenario1, controlOutputNode);
+
+   targetRef = 4;
+}
+
+TEST_F(RetOverloadInRetExprTest, RetOverloadInRetExpr)
+{
+   runTest();
 }
