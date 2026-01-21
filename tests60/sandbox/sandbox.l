@@ -1,22 +1,14 @@
-public struct X
+import system'calendar;
+
+public extension dateFormatterOpX : Date
 {
-    int dVal;
-    int dLen;
-
-    test()
-    {
-        int i := 3;
-
-        if (dLen < i)
-        {
-            dLen := i;
-        };
-    }       
+   string toShortTimeString()
+      = cast TimeStruct(self).toShortTime();
 }
 
 public Program()
 {
-   X n := default;
-   
-   n.test();
+/*   string s3 := cast TimeStruct(Now).toShortTime();
+   var s2 := cast TimeStruct(Now).toShortTime();*/
+   var s := Now.toShortTimeString()
 }

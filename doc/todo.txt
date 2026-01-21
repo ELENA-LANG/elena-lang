@@ -18,17 +18,20 @@ In development:
   - check : ELENA 6 : How to use ELENA code from external program
   - Zhang-Suen thinning algorithm - check warnings
   ====================================== 
-  - current : test all samples
+  - test all samples
   -------------------------------------- 
   * fix datetime 
   * fix translit
   * fix script samples
   -------------------------------------- 
-
+  - current : calling retoverride method in a returning expression
+  -------------------------------------- 
+  * implelemt
+  * unit test
 
   ====================================== 
 
-  === Iteration 44 ===
+  === Iteration 44 (linux mt console, ide, httpget / httpsget reliability) ===
   --------------------------------------
   * new version 6.8.2
   --------------------------------------
@@ -42,11 +45,11 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  === Iteration 45 ===
+  === Iteration 45 (ldoc method index; full api docs; template generator) ===
   --------------------------------------
   --------------------------------------
 
-  ### EPIC: elena 6.10 ###
+  ### EPIC: elena 7.0 ###
 
   === Iteration 46 ===
   --------------------------------------

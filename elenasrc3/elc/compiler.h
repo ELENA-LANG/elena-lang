@@ -1628,6 +1628,9 @@ namespace elena_lang
          ObjectInfo boxVariadicArgument(ObjectInfo info);
 
          ObjectInfo unboxArguments(ObjectInfo retVal, bool clearInfo);
+
+         void unboxRetVal(ObjectInfo retVal);
+         void unboxArgument(ObjectKey key, ObjectInfo temp);
          void unboxArgumentLocaly(ObjectInfo tempLocal, ObjectKey targetKey);
          void unboxOuterArgs();
 

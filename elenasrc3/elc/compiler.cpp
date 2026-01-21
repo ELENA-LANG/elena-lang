@@ -12804,6 +12804,9 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionA
          scope.raiseError(errInvalidOperation, node);
       }
 
+      if (retVal.kind == ObjectKind::TempLocal)
+         unboxRetVal(retVal);
+
       retVal = boxArgument(retVal,
          !dynamicRequired && retVal.kind == ObjectKind::SelfBoxableLocal, true, false);
 
@@ -16140,6 +16143,62 @@ ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
    }
 }
 
+void Compiler::Expression :: unboxArgument(ObjectKey key, ObjectInfo temp)
+{
+   bool dummy = false;
+
+   // unbox the temporal variable
+   if (temp.mode == TargetMode::LocalUnboxingRequired || temp.mode == TargetMode::LocalAddressUnboxingRequired) {
+      unboxArgumentLocaly(temp, key);
+   }
+   else if (temp.mode == TargetMode::RefUnboxingRequired) {
+      if (temp.kind == ObjectKind::LocalReference) {
+         temp.kind = ObjectKind::Local;
+
+         compileAssigningOp({ ObjectKind::Local, temp.typeInfo, key.value2 }, temp, dummy);
+      }
+      else {
+         writeObjectInfo(temp);
+         writer->appendNode(BuildKey::Field);
+         compileAssigningOp(
+            { ObjectKind::Local, temp.typeInfo, key.value2 },
+            { ObjectKind::Object, temp.typeInfo, 0 }, dummy);
+      }
+   }
+   else if (key.value1 == ObjectKind::RefLocal) {
+      writeObjectInfo(temp);
+      writer->appendNode(BuildKey::Field);
+      compileAssigningOp(
+         { ObjectKind::Local, temp.typeInfo, key.value2 },
+         { ObjectKind::Object, temp.typeInfo, 0 }, dummy);
+   }
+   else if (key.value1 == ObjectKind::FieldAddress) {
+      unboxArgumentLocaly(temp, key);
+   }
+   else if (temp.mode == TargetMode::ConditionalUnboxingRequired) {
+      writeObjectInfo({ key.value1, temp.typeInfo, key.value2 });
+      writer->newNode(BuildKey::StackCondOp);
+      compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
+      writer->closeNode();
+   }
+   else compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
+}
+
+void Compiler::Expression :: unboxRetVal(ObjectInfo retVal)
+{
+   // find the original variable
+   auto key = scope.tempLocals.retrieve<ref_t>({}, retVal.reference, [](ref_t reference, ObjectKey key, ObjectInfo)
+      {
+         return key.value2 == reference;
+      });
+
+   if (key.value1 != ObjectKind::Unknown) {
+      ObjectInfo temp = scope.tempLocals.get(key);
+      if (isUnboxingRequired(temp.mode))
+         unboxArgument(key, temp);
+   }
+}
+
 ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, bool clearInfo)
 {
    // unbox the arguments if required
@@ -16147,9 +16206,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, bool clearI
    bool dummy = false;
    for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
       ObjectInfo temp = *it;
-
-      if (isUnboxingRequired(temp.mode))
-      {
+      if (isUnboxingRequired(temp.mode)) {
          if (!resultSaved && retVal.kind != ObjectKind::Unknown) {
             // presave the result
             ObjectInfo tempResult = declareTempLocal(retVal.typeInfo.typeRef, false);
@@ -16159,42 +16216,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, bool clearI
             resultSaved = true;
          }
 
-         // unbox the temporal variable
-         auto key = it.key();
-         if (temp.mode == TargetMode::LocalUnboxingRequired || temp.mode == TargetMode::LocalAddressUnboxingRequired) {
-            unboxArgumentLocaly(temp, key);
-         }
-         else if (temp.mode == TargetMode::RefUnboxingRequired) {
-            if (temp.kind == ObjectKind::LocalReference) {
-               temp.kind = ObjectKind::Local;
-
-               compileAssigningOp({ ObjectKind::Local, temp.typeInfo, key.value2 }, temp, dummy);
-            }
-            else {
-               writeObjectInfo(temp);
-               writer->appendNode(BuildKey::Field);
-               compileAssigningOp(
-                  { ObjectKind::Local, temp.typeInfo, key.value2 },
-                  { ObjectKind::Object, temp.typeInfo, 0 }, dummy);
-            }
-         }
-         else if (key.value1 == ObjectKind::RefLocal) {
-            writeObjectInfo(temp);
-            writer->appendNode(BuildKey::Field);
-            compileAssigningOp(
-               { ObjectKind::Local, temp.typeInfo, key.value2 },
-               { ObjectKind::Object, temp.typeInfo, 0 }, dummy);
-         }
-         else if (key.value1 == ObjectKind::FieldAddress) {
-            unboxArgumentLocaly(temp, key);
-         }
-         else if (temp.mode == TargetMode::ConditionalUnboxingRequired) {
-            writeObjectInfo({ key.value1, temp.typeInfo, key.value2 });
-            writer->newNode(BuildKey::StackCondOp);
-            compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
-            writer->closeNode();
-         }
-         else compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
+         unboxArgument(it.key(), temp);
       }
    }
 
