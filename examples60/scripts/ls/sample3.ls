@@ -3,7 +3,7 @@ import extensions'text;
 
 // --- Program ---
 
-public program()
+public Program()
 {
   var n := 2;
   

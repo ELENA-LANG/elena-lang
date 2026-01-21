@@ -18,10 +18,9 @@ In development:
   - check : ELENA 6 : How to use ELENA code from external program
   - Zhang-Suen thinning algorithm - check warnings
   ====================================== 
-  - test all samples
+  - test script samples
   -------------------------------------- 
-  * fix translit
-  * fix script samples
+  * fix linterpreter
   -------------------------------------- 
 
   ====================================== 
