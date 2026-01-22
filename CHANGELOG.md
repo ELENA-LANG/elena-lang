@@ -1,4 +1,4 @@
-## ELENA 6.9.0
+## ELENA 7.0.0
 
 - ELENA
 
