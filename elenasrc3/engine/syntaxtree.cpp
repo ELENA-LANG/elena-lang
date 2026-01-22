@@ -108,6 +108,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("shr_op", SyntaxKey::ShrOperation);
    map.add("band_op", SyntaxKey::BAndOperation);
    map.add("final_block", SyntaxKey::FinallyBlock);
+   map.add("inline_prop_template", SyntaxKey::InlinePropertyTemplate);
 }
 
 bool SyntaxTree :: save(MemoryBase* section)

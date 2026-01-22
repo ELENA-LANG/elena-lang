@@ -977,6 +977,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          attrs.typeInfo = { V_AUTO };
          attrs.isAuto = true;
          break;
+      case V_IGNOREDUPLICATE:
+         attrs.ignoreDuplicates = true;
+         break;
       default:
          return false;
    }

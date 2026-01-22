@@ -18,11 +18,7 @@ In development:
   * ELENAInNutshell 
   - Zhang-Suen thinning algorithm - check warnings
   ====================================== 
-  - current : fix tutorials
-  -------------------------------------- 
-  * fix JsonToDTO
-  * fix DynamicDecorator 
-  -------------------------------------- 
+  - current : fix JsonToDTO
   -------------------------------------- 
   * investigate
   * plan

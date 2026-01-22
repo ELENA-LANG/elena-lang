@@ -134,7 +134,7 @@ public field dto_prop<prop_name, T, field_name>
       field_name := value
    }
 
-   const subject[] __dto_properties;
+   __ignore_duplicates const subject[] __dto_properties;
 
    this __dto_properties += mssg prop_name;
 
@@ -158,7 +158,7 @@ public field dto_prop<name, T>
       name := value
    }
 
-   const subject[] __dto_properties;
+   __ignore_duplicates const subject[] __dto_properties;
 
    this __dto_properties += mssg name;
 
