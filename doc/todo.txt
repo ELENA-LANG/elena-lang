@@ -22,7 +22,6 @@ In development:
   -------------------------------------- 
   * fix JsonToDTO
   * fix DynamicDecorator 
-  * fix Puzzle 
   -------------------------------------- 
   -------------------------------------- 
   * investigate
