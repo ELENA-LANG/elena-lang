@@ -978,7 +978,7 @@ inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
 // NOTE : the copy of an iterator must be passed
 inline bool isAccFree(ByteCodeIterator bc_it)
 {
-   while (bc_it.eof()) {
+   while (!bc_it.eof()) {
       ByteCode bc = (*bc_it).code;
       if (contains(opSetAcc, sizeof(opSetAcc) / sizeof(ByteCode), bc))
          return true;
