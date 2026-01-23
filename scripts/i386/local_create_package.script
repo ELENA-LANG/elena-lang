@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-6.8.0.i386-linux
+RELEASE=elena-6.8.1.i386-linux
 
  mkdir -p ../../build/$RELEASE/etc/elena/
  mkdir -p ../../build/$RELEASE/etc/elena/templates/

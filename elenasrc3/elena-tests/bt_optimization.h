@@ -94,6 +94,13 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   // Optimization #7 : "native branching
+   class BTOptimization7 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
    // Optimization #12 (inplaceCallOp) : "struct X ( int x; ) ..  X x := new X() => call in-place constructor
    class BTOptimization12 : public BTOptimization
    {
@@ -264,6 +271,12 @@ namespace elena_lang
    }; 
 
    class IntermediateVar : public MethodScenarioTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class StructFieldAssigning : public MethodScenarioTest
    {
    protected:
       void SetUp() override;

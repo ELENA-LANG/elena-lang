@@ -1,7 +1,7 @@
 import system'math;
 import extensions;
  
-public program()
+public Program()
 {
     Console.printLine("Radians:");
     Console.printLine("sin(π/3) = ",(Pi_value/3).sin());

@@ -2,7 +2,7 @@ import extensions;
 
 // --- Program --- 
 
-public program()
+public Program()
 {
     // reading    
     var number := Console.write("Enter the number you want to convert: ").loadLineTo(Integer.new());

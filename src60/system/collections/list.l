@@ -66,13 +66,13 @@ namespace collections
       }      
 
       /// Returns the object at the specified position
-      setAt(int index, object o)
+      setAt(int index, object? o)
       {
          int len := *_length;
          if:not (len > index)
             { OutOfRangeException.raise() };
 
-         _array.setAt(index, o)
+         _array.setAt(index, o!)
       }
 
       private expand()
@@ -314,20 +314,20 @@ namespace collections
       Array     _hashTable;
       int       _hashMask;
 
-      object    _default;
+      object?   _default;
 
       /// Creates a dictionary
       constructor new()
          <= new(32, 32, nil);
 
-      constructor new(object default)
+      constructor new(object? default)
          <= new(32, 32, default);
 
-      constructor new(int capacity, object default)
+      constructor new(int capacity, object? default)
          <= new(capacity, 32, default);
 
       /// Creates a dictionary
-      constructor new(int capacity, int hashLength, object default)
+      constructor new(int capacity, int hashLength, object? default)
       {
          int size := 32;
          while (size < hashLength)
@@ -544,8 +544,8 @@ namespace collections
 
    sealed class ListItem
    {
-      object   _content;
-      ListItem _next;
+      object    _content;
+      ListItem? _next;
         
       /// Creates a new item
       constructor new(object)
@@ -562,7 +562,7 @@ namespace collections
          _content := object
       }
     
-      ListItem NextItem
+      ListItem? NextItem
       {
          /// Returns the next item
          get() = _next;
@@ -631,19 +631,19 @@ namespace collections
       /// Returns the list item at the specified position
       internal ListItem getItemAt(int index)
       {
-         int      currentIndex := index;
-         ListItem item := _top!;
+         int       currentIndex := index;
+         ListItem? item := _top;
             
          while (currentIndex > 0)
          {
-            item := item.NextItem;
+            item := item!.NextItem;
             if (nil == item)
                { OutOfRangeException.raise() };
                 
             currentIndex := currentIndex - 1
          };
             
-         ^ item
+         ^ item!
       }
     
       /// Returns the object at the specified position
@@ -684,11 +684,11 @@ namespace collections
          else
          {
             ListItem previous := self.getItemAt(index - 1);
-            ListItem next := previous.NextItem;
+            ListItem? next := previous.NextItem;
                 
-            previous.NextItem := next.NextItem;
+            previous.NextItem := next!.NextItem;
                 
-            if(next.equalReference(_last))
+            if(next!.equalReference(_last))
                { _last := previous }
          };
                 

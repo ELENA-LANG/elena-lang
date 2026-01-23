@@ -111,7 +111,7 @@ public class NetworkStream : Stream
             sublen := len;
          };
 
-         int converted := UTF8Encoder.toByteArray(s, index, ref sublen, tmp, 0, 1024);
+         int converted := UTF8Encoder.saveToByteArray(s, index, ref sublen, tmp, 0, 1024);
          
          converted := :await self.writeAsync(tmp, converted);
 
@@ -131,7 +131,7 @@ public class NetworkStream : Stream
             sublen := len;
          };
 
-         int converted := UTF8Encoder.toByteArray(s, index, ref sublen, tmp, 0, 1024);
+         int converted := UTF8Encoder.saveToByteArray(s, index, ref sublen, tmp, 0, 1024);
          
          converted := self.write(tmp, converted);
 

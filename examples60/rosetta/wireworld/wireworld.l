@@ -132,7 +132,7 @@ sealed class Model
     }
 }
  
-public program()
+public Program()
 {
     Model model := Model.load(sample,10,30);
     for(int i := 0; i < 10; i += 1)

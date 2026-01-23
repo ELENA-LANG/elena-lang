@@ -1,6 +1,6 @@
 import ltests;
 
-public program()
+public Program()
 {
    Console.writeLine("--- ELENA 6 API Functional Tests ---");
 

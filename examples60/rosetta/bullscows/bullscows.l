@@ -80,7 +80,7 @@ class GameMaster
    }
 }
 
-public program()
+public Program()
 {
    var gameMaster := new GameMaster();
 

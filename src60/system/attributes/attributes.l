@@ -27,11 +27,13 @@
 #let attributes["sealed"]      := 80003001h;
 #let attributes["abstract"]    := 80003002h;
 #let attributes["closed"]      := 80003003h;
+#let attributes["embeddable"]  := 80003004h;
 #let attributes["predefined"]  := 80003005h;
+#let attributes["cast"]        := 80003011h;
+#let attributes["new"]         := 80003012h;
 
 /// scope_prefix:
 #let attributes["const"]       := 80002001h;
-#let attributes["embeddable"]  := 80002002h;
 #let attributes["ref"]         := 80002003h;
 #let attributes["readonly"]    := 80002004h;
 #let attributes["out"]         := 80002005h;
@@ -54,8 +56,6 @@
 #let attributes["var"]            := 8000100Dh;
 #let attributes["this"]           := 8000100Eh;
 #let attributes["static"]         := 8000100Fh;
-#let attributes["cast"]           := 80001011h;
-#let attributes["new"]            := 80001012h;
 #let attributes["dispatch"]       := 80001013h;
 #let attributes["textblock"]      := 80001014h;
 #let attributes["extern"]         := 80001015h;

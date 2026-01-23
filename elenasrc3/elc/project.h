@@ -3,7 +3,7 @@
 //
 //		This file contains the project class declaration
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PROJECT_H
@@ -168,7 +168,7 @@ namespace elena_lang
 
       ProjectSpecs  projectSpecs;
 
-      bool load(PlatformType platform, path_t path);
+      bool load(PlatformType platform, path_t path, ustr_t nameAttr);
 
       ProjectCollection()
          : projectSpecs(nullptr)

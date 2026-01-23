@@ -120,7 +120,7 @@ namespace io
          int pos := self.Index;
              
          self.Index := length;
-         extern KERNEL32.SetEndOfFile(_handle);
+         int ret := extern KERNEL32.SetEndOfFile(_handle);
              
          if(length > pos)
             { self.Index := pos }
@@ -407,6 +407,13 @@ namespace io
          ^ fileLen
       }
 
+      set Length(int value)
+      {
+         using(auto stream := FileStream.openForEdit(_path)) {
+            stream.setLength(value)
+         };
+      }
+
       saveContent(string content)
       {
          File.saveContent(_path, content);
@@ -443,7 +450,7 @@ namespace io
             while (reader.Available)
             {
                read := 128;
-               reader.read(buffer, ref read);
+               read := reader.read(buffer, read);
                    
                output.write(buffer, read)
             };            

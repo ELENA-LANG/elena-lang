@@ -1,6 +1,6 @@
 import extensions'text;
 
-public program()
+public Program()
 {
     var s := StringWriter.load("Hello");
     s.append(" World");

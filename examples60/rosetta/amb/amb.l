@@ -71,7 +71,7 @@ singleton ambOperator
 
 // --- Program ---
 
-public program2()
+public Program2()
 {
     try
     {
@@ -86,7 +86,7 @@ public program2()
     Console.readChar()
 }
 
-public program()
+public Program()
 {
     try
     {

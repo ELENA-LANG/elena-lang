@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //                                             (C)2021-2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
@@ -294,7 +294,8 @@ inline ref_t getCmdMask(int command)
    }
 }
 
-bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule, bool withSystemStartUp)
+bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule,
+   bool withSystemStartUp, bool returnAcc)
 {
    CachedList<Pair<ref_t, pos_t>, 5> symbols;
 
@@ -416,6 +417,11 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
       }
    }
 
+   if (returnAcc) {
+      ByteCodeUtil::write(writer, ByteCode::StoreSI, 0);
+      ByteCodeUtil::write(writer, ByteCode::LoadSI, 0);
+   }
+
    ByteCodeUtil::write(writer, ByteCode::ExtCloseN);
    ByteCodeUtil::write(writer, ByteCode::XQuit);
 
@@ -450,7 +456,7 @@ void ELENAVMMachine :: resumeVM(SystemEnv* env, void* criricalHandler)
 }
 
 addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size, 
-   const char* criricalHandlerReference, bool withConfiguration, bool withSystemStartUp)
+   const char* criricalHandlerReference, bool withConfiguration, bool withSystemStartUp, bool returnAcc)
 {
    ByteArray      tapeArray(tape, size);
    MemoryReader   reader(&tapeArray);
@@ -474,7 +480,7 @@ addr_t ELENAVMMachine :: interprete(SystemEnv* env, void* tape, pos_t size,
 
    void* address = nullptr;
    if (_initialized) {
-      if (compileVMTape(reader, tapeSymbol, dummyModule, withSystemStartUp))
+      if (compileVMTape(reader, tapeSymbol, dummyModule, withSystemStartUp, returnAcc))
          address = (void*)_jitLinker->resolveTemporalByteCode(tapeSymbol, dummyModule);
 
       resumeVM(env, (void*)criricalHandler);
@@ -503,14 +509,14 @@ void ELENAVMMachine :: startSTA(SystemEnv* env, void* tape, const char* crirical
    }
 }
 
-addr_t ELENAVMMachine :: evaluate(void* tape)
+addr_t ELENAVMMachine :: evaluate(void* tape, bool returnAcc)
 {
-   return interprete(_env, tape, INVALID_POS, nullptr, false, true);
+   return interprete(_env, tape, INVALID_POS, nullptr, false, true, returnAcc);
 }
 
 bool ELENAVMMachine :: evaluateAndReturn(void* tape, char* output, size_t maxLength, size_t& copied)
 {
-   auto result = evaluate(tape);
+   auto result = evaluate(tape, true);
    if (result) {
       return SystemRoutineProvider::CopyResult(result, output, maxLength, copied);
    }

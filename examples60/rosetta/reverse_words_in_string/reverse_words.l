@@ -1,7 +1,7 @@
 import extensions;
 import system'routines;
  
-public program()
+public Program()
 {
     var text := new string[]{"---------- Ice and Fire ------------",
                   "",

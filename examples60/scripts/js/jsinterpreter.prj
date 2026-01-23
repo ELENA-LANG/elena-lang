@@ -29,7 +29,7 @@
         </module>
     </files>
     <forwards>
-        <forward key="jsprogram">interpreter'js'program</forward>
-        <forward key="program">interpreter'stat_program</forward>
+        <forward key="jsprogram">interpreter'js'Program</forward>
+        <forward key="Program">interpreter'Stat_program</forward>
     </forwards>
 </configuration>

@@ -15,6 +15,7 @@ template_test()
 {
    Reference<T1>? o1 := nil;
    Array<T1>? a1 := nil;
+   ConstArray<T1>? ac1 := nil;
    Matrix<T1>? m1 := nil;
    Func<T1>? f0 := nil;
    Func<T1,T2>? f1 := nil;

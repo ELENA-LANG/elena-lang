@@ -1,7 +1,8 @@
 import extensions;
 
-auto X = (x => 2);
-
-public program()
+public Program()
 {
+   //var f := true;
+   var f := !true;
+   Console.printLine(f)
 }

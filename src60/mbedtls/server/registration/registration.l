@@ -4,11 +4,11 @@ import mbedtls;
 
 namespace registration
 {
-   internal class MbedTlsSocketFactory : INetSocketFactory
+   internal class MbedTlsServerSocketFactory : INetSocketFactory
    {
       internal static register()
       {
-         SocketFactory.assignHttpsFactoryInvoker::([INetSocketFactory] => MbedTlsSocketFactory.create());
+         SocketFactory.assignHttpsFactoryInvoker::([INetSocketFactory] => MbedTlsServerSocketFactory.create());
       }
 
       constructor create()
@@ -24,5 +24,5 @@ namespace registration
    }   
 }
 
-static Registration : preloaded = registration'MbedTlsSocketFactory.register();
+static Registration : preloaded = registration'MbedTlsServerSocketFactory.register();
 

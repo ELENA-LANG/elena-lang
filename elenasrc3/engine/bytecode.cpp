@@ -77,7 +77,8 @@ const ByteCode opNotUsingAcc[] = {
 
 const ByteCode opSetAcc[] = {
    ByteCode::SetR, ByteCode::SetDP, ByteCode::PeekR, ByteCode::SetFP, ByteCode::CreateR, ByteCode::XSetFP, ByteCode::PeekFI, ByteCode::PeekSI, ByteCode::SetSP, 
-   ByteCode::PeekTLS, ByteCode::XCreateR, ByteCode::SelGrRR, ByteCode::NewIR, ByteCode::NewNR, ByteCode::CreateNR, 
+   ByteCode::PeekTLS, ByteCode::XCreateR, ByteCode::SelGrRR, ByteCode::SelEqRR, ByteCode::SelLtRR, ByteCode::NewIR, ByteCode::NewNR, ByteCode::CreateNR,
+   ByteCode::XNewNR
 };
 
 // --- Auxiliary  ---
@@ -977,7 +978,7 @@ inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
 // NOTE : the copy of an iterator must be passed
 inline bool isAccFree(ByteCodeIterator bc_it)
 {
-   while (bc_it.eof()) {
+   while (!bc_it.eof()) {
       ByteCode bc = (*bc_it).code;
       if (contains(opSetAcc, sizeof(opSetAcc) / sizeof(ByteCode), bc))
          return true;

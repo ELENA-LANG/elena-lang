@@ -3,7 +3,7 @@
 //
 //		This is a main file containing ecode viewer code
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ECVIEWER_H
@@ -43,6 +43,7 @@ namespace elena_lang
       bool               _showBytecodes;
       bool               _showMethodInfo;
       bool               _ignoreBreakpoints;
+      bool               _ignoreInternalClasses;
       bool               _showClassAttributes;
 
       MemoryBase* findProcedureCode(ustr_t referenceName);
@@ -120,6 +121,7 @@ namespace elena_lang
          _showBytecodes = false;
          _showMethodInfo = false;
          _ignoreBreakpoints = true;
+         _ignoreInternalClasses = true;
          _showClassAttributes = false;
       }
       virtual ~ByteCodeViewer()

@@ -38,6 +38,18 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   class CallingIndexedMethod : public ExprTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class CallingSealedByRefDeclaredInParent : public ExprTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
    class DuplicateBoxingTest : public ExprTest
    {
    protected:
@@ -50,6 +62,18 @@ namespace elena_lang
       BuildNode getExpectedOutput(BuildNode node, int scenario) override;
       SyntaxNode findTargetNode(int scenario) override;
 
+      void SetUp() override;
+   };
+
+   class RetoverloadHandlerTest : public ExprTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class RetOverloadInRetExprTest : public MethodScenarioTest
+   {
+   protected:
       void SetUp() override;
    };
 }

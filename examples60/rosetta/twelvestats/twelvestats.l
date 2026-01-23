@@ -41,7 +41,7 @@ puzzle = new Func1[]
     (bits => bits.top(11).selectBy::(x => x.toBit()).summarize() == 4 )
 };
 
-public program()
+public Program()
 {
     Console.writeLine();
     

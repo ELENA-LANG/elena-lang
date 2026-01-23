@@ -13,16 +13,16 @@ ELENA is OO language, so a function is in fact an object
 function(acc)
     = (n => acc.append(n));
 
-accumulator(n)
+Accumulator(n)
     = function(new Variable(n));
 
-public program()
+public Program()
 {
-    var x := accumulator(1);
+    var x := Accumulator(1);
     
     x(5);
     
-    var y := accumulator(3);
+    var y := Accumulator(3);
     
     Console.write(x(2.3r))
 }

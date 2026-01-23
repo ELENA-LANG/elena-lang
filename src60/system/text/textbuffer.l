@@ -501,7 +501,7 @@ namespace text
 
          self.reserve(counter);
 
-         UTF8Encoder.toByteArray(s, 0, ref s_len, _buffer, *_length, ref counter);
+         UTF8Encoder.saveToByteArray(s, 0, ref s_len, _buffer, *_length, ref counter);
          
          _length.append(counter)
       }
@@ -512,7 +512,7 @@ namespace text
          self.reserve(counter);
          
          int s_len := length;
-         UTF8Encoder.toByteArray(s, index, ref s_len, _buffer, *_length, ref counter);
+         UTF8Encoder.saveToByteArray(s, index, ref s_len, _buffer, *_length, ref counter);
          
          _length.append(counter)
       }
@@ -576,7 +576,7 @@ namespace text
          self.reserve(counter);
 
          Array<byte>.move(_buffer, index, current, s_len);
-         UTF8Encoder.toByteArray(s, 0, ref s_len, _buffer, index, ref counter);
+         UTF8Encoder.saveToByteArray(s, 0, ref s_len, _buffer, index, ref counter);
          
          _length.append(counter)         
       }

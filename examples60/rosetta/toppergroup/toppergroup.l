@@ -33,7 +33,7 @@ extension reportOp
         };
 }
  
-public program()
+public Program()
 {
     var employees := new Employee[]
     {

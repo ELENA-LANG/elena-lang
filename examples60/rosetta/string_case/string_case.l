@@ -1,6 +1,6 @@
 import system'culture;
  
-public program()
+public Program()
 {
     string s1 := "alphaBETA";
  

@@ -63,7 +63,7 @@ extension mathOp
     }
 }
 
-public program()
+public Program()
 {
     var n := MAXN;
     var max_lt := 0;

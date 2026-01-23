@@ -11,7 +11,7 @@ public singleton messageBox
     
    int open(string caption, string message, int flags)
    {
-      WindowHandle handle := cast WindowHandle(forward program.MainWindow) ?? defaultHandle;
+      WindowHandle handle := cast WindowHandle(forward Program.MainWindow) ?? defaultHandle;
         
       ^ messageBox.open(handle.Handle, cast wide(caption), cast wide(message), flags)
    }

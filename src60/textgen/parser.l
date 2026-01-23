@@ -39,7 +39,7 @@ singleton ScriptGenerator
       int length := script.Length;
       
       auto fullScript := new StringBuilder();
-      fullScript.write("program(self, output) { ");
+      fullScript.write("Program(self, output) { ");
       
       int start := 0;
       

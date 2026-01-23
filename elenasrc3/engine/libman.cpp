@@ -206,6 +206,23 @@ ModuleBase* LibraryProvider :: resolveModule(ustr_t referenceName, ref_t& refere
       return nullptr;
 
    if (NamespaceString::compareNs(referenceName, ROOT_MODULE)) {
+      if (referenceName.find('|') != NOTFOUND_POS) {
+         // HOTFIX : support both program & Program
+         size_t index = referenceName.find('|');
+
+         IdentifierString copy(referenceName, index);
+         auto result = resolveModule(*copy, reference, true, debugModule);
+         if (result == nullptr) {
+            size_t nsIndex = referenceName.findLast('\'');
+            copy.truncate(nsIndex + 1);
+            copy.append(referenceName.str() + index + 1);
+
+            result = resolveModule(*copy, reference, true, debugModule);
+         }
+
+         return result;
+      }
+
       ReferenceName name;
       ReferenceName::copyProperName(name, referenceName);
 
@@ -450,6 +467,29 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
          }
 
          if (NamespaceString::compareNs(referenceName, ROOT_MODULE)) {
+            if (referenceName.find('|') != NOTFOUND_POS) {
+               // HOTFIX : support both program & Program
+               size_t index = referenceName.find('|');
+               size_t nsIndex = referenceName.findLast('\'');
+
+               IdentifierString copy(*_namespace);
+               copy.append(referenceName.str() + nsIndex, index - nsIndex);
+               
+               auto result = retrieveReferenceInfo(*copy, forwardResolver);
+               if (result.module == nullptr) {
+                  copy.copy(*_namespace);
+                  copy.append('\'');
+                  copy.append(referenceName.str() + index + 1);
+
+                  result = retrieveReferenceInfo(*copy, forwardResolver);
+               }
+
+               if (!result.module)
+                  throw JITUnresolvedException(ReferenceInfo(referenceName));
+
+               return result;
+            }
+
             ReferenceName name;
             ReferenceName::copyProperName(name, referenceName);
 

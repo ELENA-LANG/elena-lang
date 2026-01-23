@@ -1594,6 +1594,7 @@ namespace elena_lang
          void handleNillableMessageCall(SyntaxNode node, mssg_t message, ObjectInfo target);
          void handleNillableReturn(SyntaxNode node, ObjectInfo target);
          void handleNillableAssign(SyntaxNode node, ObjectInfo target);
+         void handleNillableArguments(SyntaxNode node, ArgumentsInfo& arguments, int nillableArgs);
 
          ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
             ArgumentsInfo& arguments, ExpressionAttributes mode);
@@ -1619,7 +1620,7 @@ namespace elena_lang
 
          ObjectInfo boxArgument(ObjectInfo info, bool stackSafe, bool boxInPlace, bool allowingRefArg, ref_t targetRef = 0);
          ObjectInfo boxArgumentLocally(ObjectInfo info, bool stackSafe, bool forced);
-         ObjectInfo boxLocally(ObjectInfo info, bool stackSafe);
+         ObjectInfo boxLocally(ObjectInfo info, bool stackSafe, bool noLocalUnboxing);
          ObjectInfo boxPtrLocally(ObjectInfo info);
          ObjectInfo boxArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxRefArgumentLocallyInPlace(ObjectInfo info, ref_t targetRef = 0);
@@ -1627,6 +1628,9 @@ namespace elena_lang
          ObjectInfo boxVariadicArgument(ObjectInfo info);
 
          ObjectInfo unboxArguments(ObjectInfo retVal, bool clearInfo);
+
+         void unboxRetVal(ObjectInfo retVal);
+         void unboxArgument(ObjectKey key, ObjectInfo temp);
          void unboxArgumentLocaly(ObjectInfo tempLocal, ObjectKey targetKey);
          void unboxOuterArgs();
 
@@ -1660,6 +1664,8 @@ namespace elena_lang
 
          void convertIntLiteralForOperation(SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments);
 
+         bool isUnboxingRequiredForTempLocal(ObjectInfo tempLocal);
+
       public:
          bool writeObjectInfo(ObjectInfo info, bool allowMeta = false);
          void writeObjectInfo(ObjectInfo info, SyntaxNode node)
@@ -1677,7 +1683,7 @@ namespace elena_lang
 
          ObjectInfo compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode);
          ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode);
-         ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode);
+         ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node/*, ExpressionAttribute mode*/);
          ObjectInfo compileClosureOperation(SyntaxNode node, ref_t targetRef);
@@ -1795,7 +1801,7 @@ namespace elena_lang
 
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
-      ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode);
+      ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode, bool readOnly);
       ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode);
 
       ref_t resolveStrongType(Scope& scope, TypeInfo typeInfo, bool declarationMode = false);
@@ -1811,17 +1817,17 @@ namespace elena_lang
       //ref_t resolveClosure(Scope& scope, mssg_t closureMessage, ref_t outputRef);
       ref_t resolveStateMachine(Scope& scope, ref_t templateRef, ref_t stateRef);
       ref_t resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
-      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode);
+      ref_t resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode, bool constAttr);
       //ref_t resolveNullableTemplate(ModuleScopeBase& moduleScope, ustr_t ns, ref_t elementRef, bool declarationMode);
       ref_t resolveArgArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode);
       ref_t resolveTupleClass(Scope& scope, SyntaxNode node, ArgumentsInfo& items);
 
       int resolveSize(Scope& scope, SyntaxNode node);
       TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
-         bool declarationMode, bool allowRole);
+         bool declarationMode, bool allowRole, bool constAttr);
       TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
-         bool declarationMode, bool allowRole);
-      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole);
+         bool declarationMode, bool allowRole, bool constAttr);
+      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr, bool allowPrimitive = false);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters,
          ustr_t prefix, SyntaxKey argKey, ustr_t postFix);
@@ -1975,9 +1981,9 @@ namespace elena_lang
 
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalBoolOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
-      ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors = false, bool resolveMode = true);
-      ObjectInfo evalObject(/*Interpreter& interpreter, */Scope& scope, SyntaxNode node);
-      ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool anonymousOne, bool ignoreErrors);
+      ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, TypeInfo targetInfo, bool ignoreErrors = false, bool resolveMode = true);
+      ObjectInfo evalObject(/*Interpreter& interpreter, */Scope& scope, SyntaxNode node, ExpressionAttribute exprMode = ExpressionAttribute::None);
+      ObjectInfo evalCollection(Interpreter& interpreter, Scope& scope, SyntaxNode node, TypeInfo targetInfo, bool anonymousOne, bool ignoreErrors);
       ObjectInfo evalPropertyOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
       ObjectInfo evalExprValueOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
       ObjectInfo evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool metaMode = false);

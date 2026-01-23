@@ -17,7 +17,7 @@ Given 2 integer numbers, A and B. One needs to find their sum.
 import system'routines;
 import extensions;
 
-public program()
+public Program()
 {
    Console.printLine(Console.readLine()
                               .split()
@@ -25,7 +25,7 @@ public program()
                               .summarize())
 }
 
-public program_alt()
+public Program_alt()
 {
    var A := Integer.new();
    var B := Integer.new();

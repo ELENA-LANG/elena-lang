@@ -7,7 +7,7 @@ namespace expressions
    const int mode_lcl   = 1;
    const int mode_class = 4;
 
-   symbol used : preloaded = new object[]{Expression, CondMessageCallExpression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
+   symbol used : preloaded = new const object[]{Expression, CondMessageCallExpression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
 
    public class ScopeIdentifier
    {
@@ -1774,7 +1774,7 @@ namespace expressions
       compile()
          <= compile(nil, IdleExpressionScope);
 
-      compile(set, ExpressionScope parentScope)
+      compile(object? set, ExpressionScope parentScope)
       {
          ^ expr.compile(parentScope)
       }        
@@ -1803,7 +1803,7 @@ namespace expressions
       compile()
          <= compile(nil, IdleExpressionScope);
 
-      compile(set, ExpressionScope scope)
+      compile(object? set, ExpressionScope scope)
       {
          auto list := new List<Tuple<Message,DynamicTape>>();
          int len := methods.Length;
@@ -2016,7 +2016,7 @@ namespace expressions
             
          var tape := self.compile(set);
             
-         var program := tape.program;
+         var program := tape.Program;
          ^ program();
       }
 

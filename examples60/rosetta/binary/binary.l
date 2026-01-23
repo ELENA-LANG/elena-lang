@@ -5,7 +5,7 @@ import extensions;
 
 // --- Program ---
 
-public program()
+public Program()
 {
     new int[]{5,50,9000}.forEach::(n)
     {

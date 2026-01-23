@@ -27,7 +27,7 @@ extension bottleOp
     };
 }
 
-public program()
+public Program()
 {
     var bottles := 99;
     

@@ -1,6 +1,6 @@
 import extensions;
 
-public program()
+public Program()
 {
   // reading 
   var number := console.write("Enter the number you want to convert: ").loadLineTo(new Integer());

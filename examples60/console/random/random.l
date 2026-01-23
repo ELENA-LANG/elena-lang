@@ -2,7 +2,7 @@
 
 import extensions;
 
-// --- program ---
+// --- Program ---
 
 const int rows = 4;
 const int cols = 6;
@@ -10,7 +10,7 @@ const int cols = 6;
 const int runCount = 1000000;
 const int distGroupCount = 20;
 
-public program()
+public Program()
 {
    auto intGroupSize := (1.0 + IntNumber.MaxValue) / distGroupCount;
 
@@ -22,7 +22,7 @@ public program()
    {
       for(int j := 0; j <= cols; j += 1)
       {
-         Console.printPaddingRight(12, randomGenerator.nextReal());
+         Console.printPaddingRight(12, Random.nextReal());
       };
         
       Console.writeLine()
@@ -34,7 +34,7 @@ public program()
    {
       for(int j := 0; j <= cols; j += 1)
       {
-         Console.printPaddingRight(12, randomGenerator.nextInt());
+         Console.printPaddingRight(12, Random.nextInt());
       };
         
       Console.writeLine()
@@ -45,11 +45,11 @@ public program()
 
    for(int i := 0; i < runCount; i += 1)
    {
-      int index := (randomGenerator.nextInt(0, IntNumber.MaxValue) / intGroupSize).toInt();
+      int index := (Random.nextInt(0, IntNumber.MaxValue) / intGroupSize).toInt();
       if(index < distGroupCount)
          { intCounts[index] := intCounts[index] + 1 };
         
-      index := (randomGenerator.nextReal() * distGroupCount).toInt();
+      index := (Random.nextReal() * distGroupCount).toInt();
       if(index < distGroupCount)
          { realCounts[index] := realCounts[index] + 1 }
    };    

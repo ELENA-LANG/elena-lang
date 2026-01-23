@@ -171,7 +171,7 @@ public sealed Array<T> : Indexable<T>,
             
       ^ retVal
    }
-                                 
+
    T[] clone()
        : info("Returns the shallow copy of the array")
    {
@@ -195,6 +195,94 @@ public sealed Array<T> : Indexable<T>,
       
       ^ clone
    }   
+}
+
+public sealed const ConstArray<T> : Enumerable<T>,
+   info("A strong-typed constant array template")
+{
+   embeddable /*readonly*/ __string T[] array;
+
+   constructor (T[] array)
+      <= allocate(array.Length)
+   {
+      int length := array.Length;
+      for(int i := 0; i < length; i += 1)
+      {
+         this array[i] := array[i]
+      }
+   }
+
+   constructor allocate(int length) : info("Creates an array with the specified <b>length</b>")
+      = new T[](length);   
+
+   constructor copy(T[] array, int index, int length) : info("Creates a copy of sub array of <b>array</b> starting from <b>index</b> with the specified <b>length</b>")
+      <= allocate(length)
+   {
+      for(int i := 0; i < length; i += 1)
+      {
+         this array[i] := array[i + index]
+      }
+   }
+
+   T[] clone()
+       : info("Returns the shallow copy of the array")
+   {
+      int len := Length;
+      T[] copy := new T[](len);
+      for(int i := 0; i < len; i+=1) {
+         copy[i] := array[i]
+      };
+        
+      ^ copy
+   }
+
+   T at(int n)
+      : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
+   {
+      if (n < 0)
+         { system'InvalidArgumentException.raise() };
+        
+      int len := $len array;
+
+      if (n < len)
+      { 
+         ^ array[n] 
+      };
+
+      ^ system'InvalidArgumentException.raise();
+   }
+
+   int Length
+      : info("Returns the array length")
+   {
+      get()
+      {
+         int len := $len array;
+            
+         ^ len
+      }
+   }
+   
+   Enumerator<T> enumerator()
+      : info("Creates an array enumerator") 
+   = new BaseEnumerator<T>
+   {
+      this index := -1;
+        
+      this length := self.Length;
+        
+      get T Value() = self.at(this index.Value);
+        
+      enumerable() = self;
+        
+      reset()
+      {
+         this index.Value := -1
+      }
+   };
+
+   Enumerable cast() : info("Returns enumerable wrapper around the array")
+      = new Enumerable{ Enumerator enumerator() => self; };
 }
 
 // --- Variadic Array template ---
@@ -300,6 +388,34 @@ public sealed Matrix<T>
     
    constructor allocate(rows, columns)
       <= allocate(cast int(rows), cast int(columns));
+    
+    
+   constructor load(params)
+   {
+      _rows := params.Rows;
+      _columns := params.Columns;
+        
+      int len := _rows * _columns;
+        
+      _array := new T[](/*theRows * theColumns*/len);
+        
+      int i := 0;
+      int j := 0;        
+      while (i < _rows)
+      {
+         j := 0;
+         while (j < _columns)
+         {
+            T val := params.at(i,j);
+                
+            self.setAt(i, j, val);
+                
+            j := j + 1
+         };
+            
+         i := i + 1
+      }
+   }    
     
    int Length
       : info("Returns the number of rows")

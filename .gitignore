@@ -27,4 +27,8 @@
 *.layout
 *.depend
 /elenasrc3/temp
+/elenasrc3/engine/vs
+/elenasrc3/lruntime/vs
+/elenasrc3/ldebugger/vs
+examples60/db/sqlite/bin
 .vs/

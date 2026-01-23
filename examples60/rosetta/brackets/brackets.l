@@ -41,7 +41,7 @@ extension op
 
 // --- Program ---
 
-public program()
+public Program()
 {
    for(int len := 0; len < 9; len += 1)
    {

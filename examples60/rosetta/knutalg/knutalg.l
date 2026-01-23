@@ -22,8 +22,8 @@ extension algorithmOp
                 }
                 else
                 { 
-                    if(randomGenerator.nextInt(counter) < n)
-                        { weak self[randomGenerator.nextInt(n)] := i }
+                    if(Random.nextInt(counter) < n)
+                        { weak self[Random.nextInt(n)] := i }
                 };
 
                 ^ weak self.Value
@@ -32,7 +32,7 @@ extension algorithmOp
     }
 }
  
-public program()
+public Program()
 {
     var bin := Array.allocate(10).populate::(n => new Integer());
     for(int trial := 0; trial < 10000; trial += 1)

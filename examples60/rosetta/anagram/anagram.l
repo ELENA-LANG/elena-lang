@@ -13,7 +13,7 @@ extension op
          = self.toArray().ascendant().summarize(new StringWriter());
 }
 
-public program()
+public Program()
 {
     var start := Now;
     

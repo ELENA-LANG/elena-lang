@@ -1,7 +1,7 @@
 import extensions;
 import extensions'text;
  
-public program()
+public Program()
 {
     var s := "World";
     s := "Hello " + s;

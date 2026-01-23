@@ -72,4 +72,4 @@ public sealed class SDIApplication
    }
 }
 
-public static SDIApplication program = SDIApplication.new(); 
+public static SDIApplication Program = SDIApplication.new(); 

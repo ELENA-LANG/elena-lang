@@ -11,7 +11,7 @@ public singleton randomSet : RuleSet
 {
    int proceed(Space s, int i, int j)
    {
-      ^ randomGenerator.nextInt(0,2)
+      ^ Random.nextInt(0,2)
    }
 }
 

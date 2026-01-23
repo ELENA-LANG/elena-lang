@@ -1,6 +1,6 @@
 // --- Program ---
 
-public program()
+public Program()
 {
     Console.writeLine("Hello World");
     

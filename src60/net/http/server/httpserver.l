@@ -42,6 +42,8 @@ public sealed class SimpleHttpServer : interface<IHttpServer>
       _listener.start(_backLog);
       
       while(true) {
+         try {
+         
          auto socket := _listener.acceptNetSocket();
          auto thread := Thread.start(
             {
@@ -59,6 +61,12 @@ public sealed class SimpleHttpServer : interface<IHttpServer>
                   acceptor.returnError(ex);
                }
             });
+         }
+         catch(Exception ex)
+         {
+            // !! temporal
+            Console.printLineConcurrent(ex);
+         }
       }
    }
 }
@@ -142,6 +150,9 @@ class HttpAcceptor
             response := :await handler.proceedAsync(request);
          }
          catch(Exception ex) {
+            // !! temporal
+            Console.printLineConcurrent(ex);                  
+
             auto handler := _handleFactory.getErrorHandler();
             
             response := :await handler.handleAsync(ex);

@@ -58,6 +58,9 @@
 * 
 * IntermediateVar
 * ---------------
+* 
+* StructFieldAssigning
+* --------------------
 */
 
 
@@ -181,6 +184,11 @@ TEST_F(ByteArrayOperation2, BuildTest)
 }
 
 TEST_F(IntermediateVar, BuildTest)
+{
+   runTest();
+}
+
+TEST_F(StructFieldAssigning, BuildTest)
 {
    runTest();
 }

@@ -15,7 +15,7 @@ extension op
         = f(g(self));
 }
  
-public program()
+public Program()
 {
    var fs := new object[]{ mssgconst sin<mathOp>[1], mssgconst cos<mathOp>[1], (x => power(x, 3.0r)) };
    var gs := new object[]{ mssgconst arcsin<mathOp>[1], mssgconst arccos<mathOp>[1], (x => power(x, 1.0r / 3)) };

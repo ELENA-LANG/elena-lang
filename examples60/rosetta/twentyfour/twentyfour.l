@@ -112,10 +112,10 @@ class TwentyFourGame
     {
         theNumbers := new object[]
         {
-            1 + randomGenerator.nextInt(9), 
-            1 + randomGenerator.nextInt(9), 
-            1 + randomGenerator.nextInt(9), 
-            1 + randomGenerator.nextInt(9)
+            1 + Random.nextInt(9), 
+            1 + Random.nextInt(9), 
+            1 + Random.nextInt(9), 
+            1 + Random.nextInt(9)
         }
     }
     
@@ -197,9 +197,9 @@ extension gameOp
     }
 }
 
-// --- program ---
+// --- Program ---
 
-public program()
+public Program()
 {
     var game := new TwentyFourGame().help();
 

@@ -62,7 +62,7 @@ extension bsortOp
 
 // === Program ===
 
-public program()
+public Program()
 {
     // 1. Create the array
     var size := Console.write("Enter the array size:").loadLineTo(Integer.new()).Value;

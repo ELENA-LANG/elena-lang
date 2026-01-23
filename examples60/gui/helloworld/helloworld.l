@@ -10,6 +10,6 @@ public class MainWindow : XForm, using(MainWindow)
 
    private onExit(sender)
    {
-      forward program.stop()
+      forward Program.stop()
    }
 }

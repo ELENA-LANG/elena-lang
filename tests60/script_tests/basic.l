@@ -21,7 +21,7 @@ public extensionCallTest() : testCase()
             .loadPath("~\scripts\grammar60.es")
             .loadPath("~\scripts\lscript60.es");
             
-    var o := t.buildScript("import extensions; public program() { Console.printLine(""Done"") }");
+    var o := t.buildScript("import extensions; public Program() { Console.printLine(""Done"") }");
     
     o.eval();
 }
@@ -31,14 +31,14 @@ public nilOperationTest() : testCase()
    Console.print("Comparing with nil in the script - ");   
    
    var f := LScript.eval("
-      public program()
+      public Program()
       {
          var o := nil;
          if (o == nil) {
             system'Console.writeLine(""Done"");
          };
       }
-").program;
+").Program;
 
    f();
 }

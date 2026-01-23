@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor body
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"

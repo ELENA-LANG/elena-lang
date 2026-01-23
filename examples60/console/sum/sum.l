@@ -29,7 +29,7 @@ EnteredNumber = forward number.new().loadFrom(Console);
 
 // --- Program ---
 
-public program()
+public Program()
 {
    Console
       .printLine(forward prompt)

@@ -344,7 +344,7 @@ class Parser
    }
 }
 
-public program()
+public Program()
 {
    var text := new StringWriter();
    var parser := new Parser();

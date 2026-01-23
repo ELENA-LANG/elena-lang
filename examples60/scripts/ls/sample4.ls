@@ -2,7 +2,7 @@ import extensions;
 
 // --- Program ---
 
-public program()
+public Program()
 {
   var n := 1;
   while (n < 5)

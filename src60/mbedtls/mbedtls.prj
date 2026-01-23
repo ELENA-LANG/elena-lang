@@ -10,7 +10,7 @@
   </project>
   <manifest>
      <name>ELENA SSL Socket based on MbedTls routines</name>
-     <version>6.8.0</version>
+     <version>6.8.3</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -19,10 +19,10 @@
         <include>mbedtlssocket.l</include>
         <include>mbedtlslistener.l</include>
      </module>
-     <module name="client">
+     <module name="client" hints="8">
         <include>client\registration\registration.l</include>
      </module>
-     <module name="server">
+     <module name="server" hints="8">
        <include>server\registration\registration.l</include>
      </module>
   </files>

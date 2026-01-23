@@ -23,4 +23,4 @@ class TestClass
     }
 }
 
-public program = new TestClass();
+public Program = new TestClass();

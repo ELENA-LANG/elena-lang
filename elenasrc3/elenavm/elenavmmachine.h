@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM declaration
 //
-//                                             (C)2022-2024, by Aleksey Rakov
+//                                             (C)2022-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAVMMACHINE_H
@@ -70,15 +70,16 @@ namespace elena_lang
       void addForward(ustr_t forwardLine);
       void addPackage(ustr_t packageLine);
 
-      addr_t interprete(SystemEnv* env, void* tape, pos_t size, 
-         const char* criricalHandlerReference, bool withConfiguration, bool withSystemStartUp);
+      addr_t interprete(SystemEnv* env, void* tape, pos_t size, const char* criricalHandlerReference,
+         bool withConfiguration, bool withSystemStartUp, bool returnAcc = false);
 
       void onNewCode();
 
       virtual void stopVM();
 
       bool configurateVM(MemoryReader& reader, SystemEnv* env);
-      bool compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule, bool withSystemStartUp);
+      bool compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbol, ModuleBase* dummyModule,
+         bool withSystemStartUp, bool returnAcc);
 
       virtual void resumeVM(SystemEnv* env, void* criricalHandler);
 
@@ -111,7 +112,7 @@ namespace elena_lang
 
       void startSTA(SystemEnv* env, void* tape, const char* criricalHandlerReference);
 
-      addr_t evaluate(void* tape);
+      addr_t evaluate(void* tape, bool returnAcc);
 
       bool evaluateAndReturn(void* tape, char* output, size_t maxLength, size_t& copied);
 

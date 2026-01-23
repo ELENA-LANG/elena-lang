@@ -19,7 +19,7 @@ fib(n)
    }(n)
 }
 
-public program()
+public Program()
 {
    for (int i := -1; i <= 10; i += 1) 
    {

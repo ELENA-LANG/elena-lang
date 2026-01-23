@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Test Common implementation
-//                                             (C)2024-2025, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "pch.h"
@@ -54,6 +54,11 @@ bool TestModuleScope :: withValidation()
 }
 
 bool TestModuleScope :: withPrologEpilog()
+{
+   return false;
+}
+
+bool TestModuleScope :: isNoTemplateReuse()
 {
    return false;
 }
@@ -467,6 +472,8 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    ModuleScopeBase* moduleScope = env.createModuleScope(true, withAttributes);
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = intNumberRef;
+   moduleScope->branchingInfo.trueRef = trueRef;
+   moduleScope->branchingInfo.falseRef = falseRef;
 
    if (argArrayTemplateRef != INVALID_REF) {
       moduleScope->buildins.argArrayTemplateReference = argArrayTemplateRef;
