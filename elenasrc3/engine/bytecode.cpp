@@ -77,7 +77,8 @@ const ByteCode opNotUsingAcc[] = {
 
 const ByteCode opSetAcc[] = {
    ByteCode::SetR, ByteCode::SetDP, ByteCode::PeekR, ByteCode::SetFP, ByteCode::CreateR, ByteCode::XSetFP, ByteCode::PeekFI, ByteCode::PeekSI, ByteCode::SetSP, 
-   ByteCode::PeekTLS, ByteCode::XCreateR, ByteCode::SelGrRR, ByteCode::NewIR, ByteCode::NewNR, ByteCode::CreateNR, 
+   ByteCode::PeekTLS, ByteCode::XCreateR, ByteCode::SelGrRR, ByteCode::SelEqRR, ByteCode::SelLtRR, ByteCode::NewIR, ByteCode::NewNR, ByteCode::CreateNR,
+   ByteCode::XNewNR
 };
 
 // --- Auxiliary  ---
