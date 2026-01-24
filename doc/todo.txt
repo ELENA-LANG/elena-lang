@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 7.0 ###
 
-  === Iteration 44 (linux mt console; ide; powerpc) ===
+  === Iteration 44 (linux mt console; ide; powerpc, aarch64, mac) ===
   --------------------------------------
   * dev 
   --------------------------------------
