@@ -1,10 +1,24 @@
-## ELENA 7.0.0
+## ELENA 6.9.0
 
 - ELENA
+  - [ADDED] #592 : support const T[] array declaration
+  - [ADDED] short-cut syntax for constant array
 
 - ELC
+  - [FIXED] retoverload method
+  - [FIXED] an issue with template-based nested class fields
+  - [FIXED] calling indexed method for sealed stack-allocated method
+  - [FIXED] calling static method declared in the parent class from the closed child
+  - [FIXED] extension literal constant
+  - [ADDED] warning when passing an unsupported nullable argument
+  - [ADDED] new compiler option : -n<name> used to compile a sub collection
+  - [FIXED] assigning a struct field in sub code
+  - [FIXED] calling retoverload method in a returning expression
 
 - API
+  - [ADDED] system : ConstArray<T> template
+  - [CRITICAL][ADDED] program main entry is renamed from program to Program
+  - [FIXED] __getProperties extension method
 
 - SM
 
@@ -13,8 +27,10 @@
 - SAMPLES
 
 - IDE
+  - [ADDED] #820 - Launch elena64-ide.exe from the command line
 
 - Tools
+  - [ADDED] ecv: new flag  - ignore internal classes
 
 - Misc
 

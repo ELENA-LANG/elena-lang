@@ -3,13 +3,19 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 6.9 ###
+  ### EPIC: elena 7.0 ###
 
   === Iteration 44 (linux mt console; ide; powerpc) ===
   --------------------------------------
-  * new version 6.8.2
+  * dev 
   --------------------------------------
-  * dev
+  - IDE : review if all functionality is migrated to ELENA 6.8.x
+  - windows IDE : callstack  
+  - #83
+  - #219
+  - #185
+  - #233
+  - windows IDE : vm console (#58: vm console)
   ====================================== 
   * lang
   ====================================== 
@@ -33,7 +39,7 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  ### EPIC: elena 7.0 ###
+  ### EPIC: elena 8.0 ###
 
   === Iteration 46 ===
   --------------------------------------
