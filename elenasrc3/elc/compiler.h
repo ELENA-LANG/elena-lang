@@ -1451,6 +1451,8 @@ namespace elena_lang
 
          void declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef);
 
+         void validateClassParent(SyntaxNode node);
+
       public:
          bool isParentDeclared(SyntaxNode node);
 

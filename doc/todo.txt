@@ -21,8 +21,9 @@ In development:
   ====================================== 
   * doc
   ====================================== 
-  * current
+  * current : - Zhang-Suen thinning algorithm - check warnings 
   --------------------------------------
+  - investigate
   --------------------------------------
 
   === Iteration 45 (ldoc method index; full api docs; template generator; httpget / httpsget reliability) ===

@@ -11061,6 +11061,10 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
             Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility, _withDebugInfo);
             classHelper.load();
 
+            // HOTFIX : if the extension target is template, make sure it is compiled
+            if (classHelper.scope.extensionClassRef != 0)
+               classHelper.validateClassParent(current);
+
             compileClass(writer, classHelper.scope, current);
 
             // compile class class if it available
@@ -12390,6 +12394,16 @@ void Compiler::Class::declare(SyntaxNode node)
          scope.info.header.flags |= elFinal;
          scope.save();
       }
+   }
+}
+
+void Compiler::Class :: validateClassParent(SyntaxNode node)
+{
+   SyntaxNode parentNode = node.findChild(SyntaxKey::Parent);
+   if (parentNode.firstChild() == SyntaxKey::TemplateType) {
+      // NOTE : if the extension target is a template, it was only declared at this point
+      // the template must be compiled before it will be used further
+      compiler->resolveStrongTypeAttribute(scope, parentNode.firstChild(), false, false, false);
    }
 }
 
@@ -15466,7 +15480,7 @@ ObjectInfo Compiler::Expression::declareTempLocal(ref_t typeRef, bool dynamicOnl
    }
 }
 
-inline bool isNillable(ObjectInfo obj)
+static inline bool isNillable(ObjectInfo obj)
 {
    return obj.kind == ObjectKind::Nil || obj.typeInfo.nillable;
 }
