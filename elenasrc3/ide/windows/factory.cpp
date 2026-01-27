@@ -420,14 +420,14 @@ ControlBase* IDEFactory :: createDebugBrowser(ControlBase* owner, NotifierBase* 
 
 ControlBase* IDEFactory :: createCallStackControl(ControlBase* owner, NotifierBase* notifier)
 {
-   ControlBase* control = new CallStackLog(/*&_model->contextBrowserModel, */300, 50/*, notifier,
-      [](NotifierBase* notifier, size_t item, size_t param)
+   CallStackLog* control = new CallStackLog(300, 50, notifier, [](NotifierBase* notifier, int index)
       {
-         BrowseEvent event = { EVENT_BROWSE_CONTEXT, item, param };
+         SelectionEvent event = { EVENT_CALLSTACK_SELECTION, index };
 
          notifier->notify(&event);
-      }*/);
-   //browser->createControl(_instance, owner);
+      });
+
+   control->createControl(_instance, owner);
    //browser->hide();
 
    return control;
@@ -497,6 +497,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.captions.add(errorList, szErrorList);
    _model->ideScheme.captions.add(contextBrowser, szWatch);
    _model->ideScheme.captions.add(vmConsoleControl, szVMOutput);
+   _model->ideScheme.captions.add(callStackControl, szCallstack);
 }
 
 GUIApp* IDEFactory :: createApp()

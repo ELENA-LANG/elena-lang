@@ -6,19 +6,15 @@
 
 #include "wincallstack.h"
 // --------------------------------------------------------------------------
-//#include <tchar.h>
-//#include "elena.h"
+#include <tchar.h>
 
 using namespace elena_lang;
 
 // --- CallStackLog --
 
-CallStackLog::CallStackLog(/*ContextBrowserModel* model, */int width, int height/*, NotifierBase* notifier,
-   BrowseEventInvoker browseInvoker*/)
-   : ListView(width, height/*, notifier, false, nullptr, false*/)//, _rootItem(nullptr)
+CallStackLog::CallStackLog(int width, int height, NotifierBase* notifier, SelectionEventInvoker invoker)
+   : ListView(width, height), MessageLogBase(notifier, invoker)
 {
-//   _browseInvoker = browseInvoker;
-//   _model = model;
 }
 
 void CallStackLog :: write(ustr_t moduleName, ustr_t className, ustr_t methodName, ustr_t path, int col, int row, addr_t address)
@@ -37,15 +33,13 @@ void CallStackLog :: write(ustr_t moduleName, ustr_t className, ustr_t methodNam
    TextString wideMessageStr(*messageStr);
    int index = addRow(*wideMessageStr);
 
-   TextString widePathStr(path);
-   setColumnText(*widePathStr, index, 1);
+   setColumnText(*pathStr, index, 1);
 
    String<wchar_t, 10> rowStr;
    rowStr.appendInt(row);
    setColumnText(rowStr.str(), index, 2);
 
-   //MessageBookmark* bookmark = new MessageBookmark(moduleName, path.c_str(), col, row);
-   //_log->_bookmarks.add(index, bookmark);
+   addLog(index, *pathStr, row - 1, col);
 }
 
 void CallStackLog :: write(size_t address)
@@ -56,4 +50,32 @@ void CallStackLog :: write(size_t address)
    wideMessageStr.append('>');
 
    addRow(*wideMessageStr);
+}
+
+void CallStackLog :: clear()
+{
+   clearRows();
+   clearLog();
+}
+
+void CallStackLog :: onItemDblClick(int index)
+{
+   if (index >= 0)
+      _invoker(_notifier, index);
+}
+
+HWND CallStackLog :: createControl(HINSTANCE instance, ControlBase* owner)
+{
+   auto h = ListView::createControl(instance, owner);
+
+   addColumn(_T("Method"), 0, 600);
+   addColumn(_T("File"), 1, 100);
+   addColumn(_T("Line"), 2, 100);
+
+   return h;
+}
+
+MessageLogInfo CallStackLog :: getMessage(int index)
+{
+   return _list.get(index);
 }

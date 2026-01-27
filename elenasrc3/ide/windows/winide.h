@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Header File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINIDE_H
@@ -90,6 +90,7 @@ namespace elena_lang
       void sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app);
       void sendCompilationEndEvent(CompletionEvent* event, WindowApp* app);
       void sendErrorListSelEvent(SelectionEvent* event, WindowApp* app);
+      void sendCallstackSelEvent(SelectionEvent* event, WindowApp* app);
       void sendProjectViewSelectionEvent(ParamSelectionEvent* event, WindowApp* app);
       void sendLayoutEvent(LayoutEvent* event, WindowApp* app);
       void sendStartUpEvent(StartUpEvent* event, WindowApp* app);
@@ -181,6 +182,7 @@ namespace elena_lang
       void onComilationStart();
       void onCompilationEnd(int exitCode, int postponedAction);
       void onErrorHighlight(int index);
+      void onCallstackHighlight(int index);
       void onDebugWatchBrowse(BrowseNMHDR* rec);
 
       void updateCompileMenu(bool compileEnable, bool debugEnable, bool stopEnable);

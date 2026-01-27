@@ -12,41 +12,21 @@
 
 namespace elena_lang
 {
-   class CallStackLog : public ListView, public CallstackBase
+   class CallStackLog : public ListView, public CallstackBase, public MessageLogBase
    {
-   //public:
-   //   typedef void(*BrowseEventInvoker)(NotifierBase*, size_t, size_t);
-
-   //private:
-   //   TreeViewItem         _rootItem;
-   //   BrowseEventInvoker   _browseInvoker;
-
-   //   void* findWatchNodeStartingWith(WatchContext* root, ustr_t name) override;
-
-   //   void* addWatchNode(void* parentItem, ustr_t name, ustr_t className, addr_t address) override;
-   //   void editWatchNode(void* item, ustr_t name, ustr_t className, addr_t address) override;
-
-   //   void clearNode(void* item) override;
-   //   void populateNode(void* item, ustr_t value) override;
-
    public:
-   //   HWND createControl(HINSTANCE instance, ControlBase* owner) override;
+      HWND createControl(HINSTANCE instance, ControlBase* owner) override;
 
-   //   void onItemExpand(TreeViewItem item) override;
-
-   //   void expandRootNode() override;
-   //   void clearRootNode() override;
-
-   //   void expandNode(size_t param) override;
-
-   //   void refreshCurrentNode() override;
-
-   //   void removeUnused(WatchItems& refreshedItems) override;
+      void onItemDblClick(int index) override;
 
       void write(ustr_t moduleName, ustr_t className, ustr_t methodName, ustr_t path, int col, int row, addr_t address) override;
       void write(size_t address) override;
 
-      CallStackLog(/*ContextBrowserModel* model, */int width, int height/*, NotifierBase* notifier, BrowseEventInvoker browseInvoker*/);
+      void clear() override;
+
+      MessageLogInfo getMessage(int index) override;
+
+      CallStackLog(int width, int height, NotifierBase* notifier, SelectionEventInvoker invoker);
    };
 }
 

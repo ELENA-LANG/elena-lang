@@ -957,13 +957,14 @@ void DebugController :: readCallstack(CallstackBase* callStack)
 
    RTManager::readCallstack(reader, _process->getFrame(), _process->getIP(), writer);
 
-   while (!reader.eof()) {
+   MemoryReader stackReader(&retPoints);
+   while (!stackReader.eof()) {
       IdentifierString moduleName;
       ustr_t sourcePath = nullptr;
       ustr_t methodName = nullptr;
 
       addr_t address = 0;
-      reader.read(&address, sizeof(addr_t));
+      stackReader.read(&address, sizeof(addr_t));
 
       void* state = _process->retrieveState(address);
       DebugLineInfo* lineInfo = (state != nullptr) ? _provider.seekDebugLineInfo((addr_t)state, moduleName, sourcePath, methodName) : nullptr;

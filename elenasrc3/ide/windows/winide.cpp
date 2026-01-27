@@ -156,6 +156,15 @@ void IDENotificationFormatter :: sendErrorListSelEvent(SelectionEvent* event, Wi
    app->notify(EVENT_ERRORLIST_SELECTION, (NMHDR*)&nw);
 }
 
+void IDENotificationFormatter::sendCallstackSelEvent(SelectionEvent* event, WindowApp* app)
+{
+   SelectionNMHDR nw = { };
+   nw.index = event->Index();
+   nw.status = event->status;
+
+   app->notify(EVENT_CALLSTACK_SELECTION, (NMHDR*)&nw);
+}
+
 void IDENotificationFormatter :: sendProjectViewSelectionEvent(ParamSelectionEvent* event, WindowApp* app)
 {
    ParamSelectionNMHDR nw = { };
@@ -233,6 +242,9 @@ void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
          break;
       case EVENT_ERRORLIST_SELECTION:
          sendErrorListSelEvent(dynamic_cast<SelectionEvent*>(event), app);
+         break;
+      case EVENT_CALLSTACK_SELECTION:
+         sendCallstackSelEvent(dynamic_cast<SelectionEvent*>(event), app);
          break;
       case EVENT_TEXT_CONTEXTMENU:
          sendTextContextMenuEvent(dynamic_cast<ContextMenuEvent*>(event), app);
@@ -713,6 +725,15 @@ void IDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
 void IDEWindow :: onErrorHighlight(int index)
 {
    ErrorLogBase* resultBar = dynamic_cast<ErrorLogBase*>(_children[_model->ideScheme.errorListControl]);
+
+   auto messageInfo = resultBar->getMessage(index);
+   if (!messageInfo.path.empty())
+      _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+}
+
+void IDEWindow :: onCallstackHighlight(int index)
+{
+   CallstackBase* resultBar = dynamic_cast<CallstackBase*>(_children[_model->ideScheme.callStackControl]);
 
    auto messageInfo = resultBar->getMessage(index);
    if (!messageInfo.path.empty())
@@ -1412,6 +1433,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case EVENT_ERRORLIST_SELECTION:
          onErrorHighlight(((SelectionNMHDR*)hdr)->index);
+         break;
+      case EVENT_CALLSTACK_SELECTION:
+         onCallstackHighlight(((SelectionNMHDR*)hdr)->index);
          break;
       case EVENT_STARTUP:
          onStartup((ModelNMHDR*)hdr);

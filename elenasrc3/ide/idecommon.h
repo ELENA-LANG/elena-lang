@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE common classes header File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECOMMON_H
@@ -58,6 +58,7 @@ namespace elena_lang
    constexpr int EVENT_TEXT_CONTEXTMENU               = 0x0008;
    constexpr int EVENT_BROWSE_CONTEXT                 = 0x0009;
    constexpr int EVENT_TEXT_MARGINLICK                = 0x000A;
+   constexpr int EVENT_CALLSTACK_SELECTION            = 0x000B;
 
    // --- Event Statuses ---
    constexpr int STATUS_NONE                          = 0x0000;
@@ -241,6 +242,56 @@ namespace elena_lang
    public:
       virtual void write(ustr_t moduleName, ustr_t className, ustr_t methodName, ustr_t path, int col, int row, addr_t address) = 0;
       virtual void write(size_t address) = 0;
+
+      virtual void clear() = 0;
+
+      virtual MessageLogInfo getMessage(int index) = 0;
+   };
+
+   // --- MessageLogBase ---
+   class MessageLogBase
+   {
+   public:
+      typedef void(*SelectionEventInvoker)(NotifierBase*, int);
+
+   protected:
+      typedef Map<int, MessageLogInfo> MessageList;
+      typedef List<path_t, freepath>   Paths;
+
+      MessageList             _list;
+      Paths                   _paths;
+      NotifierBase*           _notifier;
+      SelectionEventInvoker   _invoker;
+
+   public:
+      void addLog(int index, path_t file, int row, int col)
+      {
+         path_t pathStr = _paths.retrieve<path_t>(file, [](path_t arg, path_t current)
+            {
+               return current.compare(arg);
+            });
+
+         if (pathStr.empty()) {
+            pathStr = file.clone();
+
+            _paths.add(pathStr);
+         }
+
+         _list.add(index, { pathStr, row, col });
+      }
+
+      void clearLog()
+      {
+         _list.clear();
+         _paths.clear();
+      }
+
+      MessageLogBase(NotifierBase* notifier, SelectionEventInvoker invoker)
+         : _list({}), _paths(nullptr)
+      {
+         _notifier = notifier;
+         _invoker = invoker;
+      }
    };
 
    // --- DebugControllerBase ---

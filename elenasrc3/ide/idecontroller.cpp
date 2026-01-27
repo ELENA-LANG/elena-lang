@@ -1,7 +1,7 @@
 ﻿//---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller implementation File
-//                                             (C)2005-2025, by Aleksey Rakov
+//                                             (C)2005-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifdef _MSC_VER
@@ -945,6 +945,7 @@ void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser
 
 void ProjectController :: refreshCallstack(CallstackBase* callstack)
 {
+   callstack->clear();
    _debugController.readCallstack(callstack);
 }
 

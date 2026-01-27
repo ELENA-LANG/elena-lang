@@ -16,6 +16,7 @@ In development:
   - #233
   - windows IDE : vm console (#58: vm console)
   - IDE : save the files before compilation if auto-save is on  
+  - IDE : highlight line
   ====================================== 
   * lang
   ====================================== 
