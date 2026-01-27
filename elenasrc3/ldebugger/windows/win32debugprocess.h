@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger class header
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WIN32DEBUGPROCESS_H
@@ -211,14 +211,21 @@ namespace elena_lang
          return _current ? _current->state : nullptr;
       }
 
+      void* retrieveState(addr_t address)
+      {
+         return _steps.get(address);
+      }
+
       Win32DebugProcessException* getException()
       {
          return _exception.code == 0 ? nullptr : &_exception;
       }
 
+      addr_t getCurrentAddress();
       addr_t getClassVMT(addr_t address);
       addr_t getStackItemAddress(disp_t disp);
       addr_t getStackItem(int index, disp_t offset);
+      addr_t getStackFrame();
       addr_t getMemoryPtr(addr_t address);
       addr_t getField(addr_t address, int index);
       addr_t getFieldAddress(addr_t address, disp_t disp);

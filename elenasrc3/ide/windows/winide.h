@@ -155,6 +155,7 @@ namespace elena_lang
 
       void onDebugStep();
       void onDebugWatch();
+      void onDebugCallstack();
       void onDebugEnd();
 
       void onDoubleClick(NMHDR* hdr);

@@ -3,13 +3,14 @@
 //
 //		This file contains implematioon of the DebugController class and
 //    its helpers
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "debugcontroller.h"
 #include "module.h"
+#include "rtmanager.h"
 
 #ifdef _MSC_VER
 
@@ -363,7 +364,8 @@ void DebugController :: processStep()
 
       IdentifierString moduleName;
       ustr_t sourcePath = nullptr;
-      DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath);
+      ustr_t methodName = nullptr;
+      DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath, methodName);
 
       if (_postponed.autoNextLine) {
          if (lineInfo->row == _postponed.row) {
@@ -943,6 +945,34 @@ void DebugController :: readContext(ContextBrowserBase* watch, void* parentItem,
       DebugLineInfo* info = _provider.seekClassInfo(address, className, vmtAddress, flags);
 
       readObjectContent(watch, parentItem, address, level, info, vmtAddress);
+   }
+}
+
+void DebugController :: readCallstack(CallstackBase* callStack)
+{
+   MemoryDump retPoints;
+
+   MemoryWriter writer(&retPoints);
+   DebugReader reader(_process, 0, (pos_t)_process->getBaseAddress());
+
+   RTManager::readCallstack(reader, _process->getFrame(), _process->getIP(), writer);
+
+   while (!reader.eof()) {
+      IdentifierString moduleName;
+      ustr_t sourcePath = nullptr;
+      ustr_t methodName = nullptr;
+
+      addr_t address = 0;
+      reader.read(&address, sizeof(addr_t));
+
+      void* state = _process->retrieveState(address);
+      DebugLineInfo* lineInfo = (state != nullptr) ? _provider.seekDebugLineInfo((addr_t)state, moduleName, sourcePath, methodName) : nullptr;
+      if (lineInfo != nullptr) {
+         ustr_t className = _provider.seekClassName((addr_t)state);
+
+         callStack->write(*moduleName, className, methodName, sourcePath, lineInfo->col + 1, lineInfo->row + 1, address);
+      }
+      else callStack->write(address);
    }
 }
 

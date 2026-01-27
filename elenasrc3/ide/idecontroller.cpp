@@ -943,6 +943,11 @@ void ProjectController :: refreshDebugContext(ContextBrowserBase* contextBrowser
    _debugController.readContext(contextBrowser, (void*)param, address, 4);
 }
 
+void ProjectController :: refreshCallstack(CallstackBase* callstack)
+{
+   _debugController.readCallstack(callstack);
+}
+
 bool ProjectController :: toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row, DocumentChangeStatus& status)
 {
    auto currentDoc = sourceModel.DocView();
@@ -1817,6 +1822,11 @@ void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, ID
 void IDEController :: refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param)
 {
    projectController.refreshDebugContext(contextBrowser, item, param);
+}
+
+void IDEController :: refreshCallstack(CallstackBase* callstack)
+{
+   projectController.refreshCallstack(callstack);
 }
 
 bool IDEController :: onClose(IDEModel* model)

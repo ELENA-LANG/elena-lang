@@ -258,6 +258,7 @@
     <ClInclude Include="..\..\common\lists.h" />
     <ClInclude Include="..\..\common\streams.h" />
     <ClInclude Include="..\..\engine\module.h" />
+    <ClInclude Include="..\..\engine\rtmanager.h" />
     <ClInclude Include="..\..\engine\section.h" />
     <ClInclude Include="..\..\engine\windows\winevents.h" />
     <ClInclude Include="..\..\gui\controller.h" />
@@ -299,9 +300,11 @@
     <ClInclude Include="..\windows\winidestatusbar.h" />
     <ClInclude Include="..\windows\winmessagelog.h" />
     <ClInclude Include="..\windows\winoutput.h" />
+    <ClInclude Include="..\windows\wincallstack.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\engine\module.cpp" />
+    <ClCompile Include="..\..\engine\rtmanager.cpp" />
     <ClCompile Include="..\..\engine\section.cpp" />
     <ClCompile Include="..\..\gui\controller.cpp" />
     <ClCompile Include="..\..\gui\document.cpp" />
@@ -339,6 +342,7 @@
     <ClCompile Include="..\windows\winidestatusbar.cpp" />
     <ClCompile Include="..\windows\winmessagelog.cpp" />
     <ClCompile Include="..\windows\winoutput.cpp" />
+    <ClCompile Include="..\windows\wincallstack.cpp" />
   </ItemGroup>
   <ItemGroup>
     <Image Include="..\windows\small.ico" />

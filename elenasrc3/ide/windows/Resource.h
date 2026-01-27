@@ -19,6 +19,7 @@
 #define IDC_COMPILER_MESSAGES          114
 #define IDC_COMPILER_WATCH             115
 #define IDC_COMPILER_VMOUTPUT          116
+#define IDC_COMPILER_CALLSTACK         117
 
 #define	IDR_FILENEW                   201
 #define	IDR_FILEOPEN                  202
@@ -115,6 +116,7 @@
 #define IDM_VIEW_WATCH                 603
 #define IDM_VIEW_MESSAGES              604
 #define IDM_VIEW_VMCONSOLE             605
+#define IDM_VIEW_CALLSTACK             606
 
 #define IDM_SEARCH_FIND                701
 #define IDM_SEARCH_FINDNEXT            702

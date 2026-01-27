@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //      This header contains the implementation of the class
 //      ELENA RT manager.
-//                                             (C)2023-2024, by Aleksey Rakov
+//                                             (C)2023-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "rtmanager.h"
@@ -20,6 +20,8 @@ constexpr int elVMTClassOffset = elVMTClassOffset32;
 constexpr int elVMTClassOffset = elVMTClassOffset64;
 
 #endif
+
+
 
 // --- RTManager ---
 
@@ -311,4 +313,24 @@ mssg_t RTManager :: loadWeakMessage(mssg_t message, bool vmMode)
    pos_t weakActionRef = reader.getPos();
 
    return weakActionRef ? encodeMessage(weakActionRef, argCount, flags) : message;
+}
+
+void RTManager :: readCallstack(StreamReader& stack, addr_t startPosition, addr_t currentAddress, StreamWriter& output)
+{
+   addr_t position = startPosition;
+   addr_t ret = 0;
+
+   output.write(&currentAddress, sizeof(currentAddress));
+
+   do {
+      stack.seek(position);
+      stack.read(&position, sizeof(position));
+      stack.read(&ret, sizeof(ret));
+      if (position == 0 && ret != 0) {
+         position = ret;
+      }
+      else if (ret != 0) {
+         output.write(&ret, sizeof(ret));
+      }
+   } while (position != 0);
 }

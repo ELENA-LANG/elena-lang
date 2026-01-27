@@ -234,6 +234,15 @@ namespace elena_lang
       //virtual void browse() = 0;
    };
 
+   // --- CallstackBase ---
+
+   class CallstackBase
+   {
+   public:
+      virtual void write(ustr_t moduleName, ustr_t className, ustr_t methodName, ustr_t path, int col, int row, addr_t address) = 0;
+      virtual void write(size_t address) = 0;
+   };
+
    // --- DebugControllerBase ---
    constexpr auto DEBUG_CLOSE = 0;
    constexpr auto DEBUG_SUSPEND = 1;
@@ -289,7 +298,12 @@ namespace elena_lang
       virtual addr_t getBaseAddress() = 0;
       virtual void* getState() = 0;
 
+      virtual void* retrieveState(addr_t address) = 0;
+
       //virtual addr_t getMemoryPtr(addr_t address) = 0;
+
+      virtual addr_t getFrame() = 0;
+      virtual addr_t getIP() = 0;
 
       virtual addr_t getStackItem(int index, disp_t offset = 0) = 0;
       virtual addr_t getStackItemAddress(disp_t disp) = 0;

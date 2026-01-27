@@ -738,6 +738,13 @@ void IDEWindow :: onDebugWatch()
    contextBrowser->expandRootNode();
 }
 
+void IDEWindow :: onDebugCallstack()
+{
+   CallstackBase* callStack = dynamic_cast<CallstackBase*>(_children[_model->ideScheme.callStackControl]);
+
+   _controller->refreshCallstack(callStack/*, _model*/);
+}
+
 void IDEWindow :: onDebugEnd()
 {
    ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
@@ -1020,6 +1027,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_VIEW_MESSAGES:
          toggleTabBarWindow(_model->ideScheme.errorListControl);
          break;
+      case IDM_VIEW_CALLSTACK:
+         toggleTabBarWindow(_model->ideScheme.callStackControl);
+         break;
       case IDM_HELP_API:
          openHelp();
          break;
@@ -1269,6 +1279,7 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
    }
    else if (test(rec->status, STATUS_DEBUGGER_STEP)) {
       onDebugWatch();
+      onDebugCallstack();
       onDebugStep();
    }
 

@@ -127,6 +127,7 @@ namespace elena_lang
       void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, size_t param, addr_t address);
+      void refreshCallstack(CallstackBase* callstack);
 
       bool toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row, DocumentChangeStatus& status);
 
@@ -256,6 +257,7 @@ namespace elena_lang
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
+      void refreshCallstack(CallstackBase* callstack);
 
       void toggleBreakpoint(IDEModel* model, int row);
 

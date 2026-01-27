@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FACTORY_H
@@ -44,6 +44,7 @@ namespace elena_lang
       ControlBase* createProjectView(ControlBase* owner, NotifierBase* notifier);
       ControlBase* createDebugBrowser(ControlBase* owner, NotifierBase* notifier);
       ControlBase* createVmConsoleControl(ControlBase* owner, ProcessBase* outputProcess);
+      ControlBase* createCallStackControl(ControlBase* owner, NotifierBase* notifier);
       GUIControlBase* createMenu(ControlBase* owner);
       GUIControlBase* createDebugContextMenu(ControlBase* owner);
       GUIControlBase* createEditorContextMenu(ControlBase* owner);
@@ -51,7 +52,8 @@ namespace elena_lang
 
       void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
          int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, 
-         int vmConsoleOutput, int toolBarControl, int contextEditor, int textIndex);
+         int vmConsoleOutput, int toolBarControl, int contextEditor, int textIndex,
+         int callStack);
 
    public:
       static void initPathSettings(IDEModel* ideModel);

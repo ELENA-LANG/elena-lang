@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger adapter class implementation
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -154,6 +154,11 @@ void* Win32DebugAdapter :: getState()
    return _debugProcess.getState();
 }
 
+void* Win32DebugAdapter :: retrieveState(addr_t address)
+{
+   return _debugProcess.retrieveState(address);
+}
+
 addr_t Win32DebugAdapter :: getClassVMT(addr_t address)
 {
    return _debugProcess.getClassVMT(address);
@@ -217,4 +222,14 @@ size_t Win32DebugAdapter :: getArrayLength(addr_t address)
 bool Win32DebugAdapter :: readDump(addr_t address, char* s, pos_t length)
 {
    return _debugProcess.readDump(address, s, length);
+}
+
+addr_t Win32DebugAdapter :: getFrame()
+{
+   return _debugProcess.getStackFrame();
+}
+
+addr_t Win32DebugAdapter :: getIP()
+{
+   return _debugProcess.getCurrentAddress();
 }

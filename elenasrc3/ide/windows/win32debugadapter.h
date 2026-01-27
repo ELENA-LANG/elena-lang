@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger Adapter class header
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WIN32DEBUGADAPTER_H
@@ -106,6 +106,8 @@ namespace elena_lang
       addr_t getBaseAddress() override;
       void* getState() override;
 
+      void* retrieveState(addr_t addess) override;
+
       ref_t getClassFlags(addr_t vmtAddress) override;
 
       addr_t getClassVMT(addr_t address) override;
@@ -114,6 +116,9 @@ namespace elena_lang
 
       addr_t getField(addr_t address, int index) override;
       addr_t getFieldAddress(addr_t address, disp_t disp) override;
+
+      addr_t getFrame() override;
+      addr_t getIP() override;
 
       //addr_t getMemoryPtr(addr_t address) override;
       char getBYTE(addr_t address) override;
