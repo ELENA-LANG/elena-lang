@@ -33,7 +33,7 @@ public Program()
             Console.writeLine("Line from thread 2 : " + n.toPrintable());
             n++;
          }         
-      }
+      };
 /*   });*/
 
    Console.readChar()
