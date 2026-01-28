@@ -1,0 +1,34 @@
+<configuration>
+  <platform key="Linux_I386">
+     <project>
+        <executable>tasksamples</executable>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <executable>tasksamples64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <project>
+        <executable>tasksamples64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_ARM64">
+     <project>
+        <executable>tasksamples64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>tasksamples</namespace>
+     <template>mt_console</template>
+  </project>
+  <files>
+     <module>
+        <file>sample1.l</file>
+        <file>sample2.l</file>
+        <file>sample3.l</file>
+        <file>main.l</file>
+     </module>
+  </files>
+</configuration>

@@ -28,7 +28,6 @@ In development:
   - test : https://www.reddit.com/r/elena_lang/comments/7o1zvq/dynamic_programming_in_elena_conditional/
   - test : https://www.reddit.com/r/elena_lang/comments/7nmib6/dynamic_programming_in_elena_bf_loop/
   - ppc64 : fix system_tests - intTests
-  - MTA support for Linux : test simple multithread sample
   - support subexpression for "?." and "\." (e.g. object.__getClass()\.__dto_properties())
   - run script functional test for x86-64
   - x86-64 : mta - test
@@ -38,8 +37,10 @@ In development:
   ====================================== 
   * current : MTA support for Linux
   --------------------------------------
-  - simple test for one thread and one main, both printing text
-  - test sample2 (events)
+  - test tasksamples
+  - test threadpoolsamples
+  - test asyncsamples 
+  - test examples60
   --------------------------------------
 
 
