@@ -756,21 +756,33 @@ void CompilingProcess :: configurate(Project& project)
 
    int optMode = project.IntSetting(ProjectOption::OptimizationMode, optMiddle);
    _compiler->setOptimizationMode(optMode);
+   if (_verbose && optMode)
+      _presenter->printLine("Optimization mode=%x", optMode);
 
    bool withMethodParamInfo = project.BoolSetting(ProjectOption::GenerateParamNameInfo, true);
    _compiler->setMethodParamInfo(withMethodParamInfo);
+   if (_verbose && withMethodParamInfo)
+      _presenter->printLine("MethodParamInfo is on");
 
    bool withConditionalBoxing = project.BoolSetting(ProjectOption::ConditionalBoxing, DEFAULT_CONDITIONAL_BOXING);
    _compiler->setConditionalBoxing(withConditionalBoxing);
+   if (_verbose && withConditionalBoxing)
+      _presenter->printLine("ConditionalBoxing is on");
 
    bool evalOpFlag = project.BoolSetting(ProjectOption::EvaluateOp, DEFAULT_EVALUATE_OP);
    _compiler->setEvaluateOp(evalOpFlag);
+   if (_verbose && evalOpFlag)
+      _presenter->printLine("EvalOpFlag is on");
 
    bool strictTypeFlag = project.BoolSetting(ProjectOption::StrictTypeEnforcing, DEFAULT_STRICT_TYPE_ENFORCING);
    _compiler->setStrictTypeFlag(strictTypeFlag);
+   if (_verbose && strictTypeFlag)
+      _presenter->printLine("strictTypeFlag is on");
 
    bool nullableTypeWarning = project.BoolSetting(ProjectOption::NullableTypeWarning, DEFAULT_NULLABLE_TYPE_WARNING);
    _compiler->setNullableTypeFlag(nullableTypeWarning);
+   if (_verbose && nullableTypeWarning)
+      _presenter->printLine("nullableTypeWarning is on");
 
    // load program forwards
    for (auto it = _forwards.start(); !it.eof(); ++it) {

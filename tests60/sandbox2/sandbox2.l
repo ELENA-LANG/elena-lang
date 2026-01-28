@@ -15,8 +15,8 @@ public Program()
               Console.writeLine("Line from thread 1 : " + n.toPrintable());
               n++;
            };
-           if (n == 50000)
-             InvalidArgumentException.raise()
+//           if (n == 50000)
+//             InvalidArgumentException.raise()
         }
       }
       catch(Exception ex)
@@ -25,8 +25,8 @@ public Program()
       }
    });
 
-   threadControl.start(
-   {
+/*   threadControl.start(
+   {*/
       int n := 1000;
       while (true) {
          lock(sync) {
@@ -34,7 +34,7 @@ public Program()
             n++;
          }         
       }
-   });
+/*   });*/
 
    Console.readChar()
 }
