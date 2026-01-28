@@ -370,7 +370,7 @@ void SignalClearGCLA(void* handle)
 
 void WaitForSignalsGCLA(size_t count, void* handles)
 {
-   printf("WaitForSignalsGCLA(%x", count);
+   printf("WaitForSignalsGCLA( %x", (int)count);
 
    SystemRoutineProvider::GCWaitForSignals(count, handles);
 
