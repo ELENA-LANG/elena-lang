@@ -440,9 +440,10 @@ namespace io
 
          extern libc.tcsetattr(STDIN_FILENO, TCSANOW, newState);
    
-         extern {
+         extern 
+         {
             ch := extern libc.getchar();      /* block (withot spinning) until we get a keypress */
-         }
+         };
    
          /* restore the saved state */
          extern libc.tcsetattr(STDIN_FILENO, TCSANOW, savedState);
@@ -459,9 +460,10 @@ namespace io
          {
             retVal += 1;
 
-            extern {
+            extern 
+            {
                ch := extern libc.getchar();
-            }               
+            };
 
             byte b := ByteConvertor.convert(ch);
     
