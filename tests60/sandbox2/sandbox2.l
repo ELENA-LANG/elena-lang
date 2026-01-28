@@ -12,13 +12,11 @@ public Program()
         int n := 1;
         while (true) {
            lock(sync) {
-              if (n.mod(1000) == 0)
-                 Console.writeLine("Line from thread 1 : " + n.toPrintable());
-
+              Console.writeLine("Line from thread 1 : " + n.toPrintable());
               n++;
            };
-//           if (n == 50000)
-//             InvalidArgumentException.raise()
+           if (n == 50000)
+             InvalidArgumentException.raise()
         }
       }
       catch(Exception ex)
@@ -27,18 +25,16 @@ public Program()
       }
    });
 
-/*   threadControl.start(
-   {*/
+   threadControl.start(
+   {
       int n := 1000;
       while (true) {
          lock(sync) {
-            if (n.mod(1000) == 0)
-               Console.writeLine("Line from thread 2 : " + n.toPrintable());
-
+            Console.writeLine("Line from thread 2 : " + n.toPrintable());
             n++;
          }         
-      };
-/*   });*/
+      }
+   });
 
    Console.readChar()
 }
