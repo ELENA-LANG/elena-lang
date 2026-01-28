@@ -12,7 +12,9 @@ public Program()
         int n := 1;
         while (true) {
            lock(sync) {
-              Console.writeLine("Line from thread 1 : " + n.toPrintable());
+              if (n.mod(1000) == 0)
+                 Console.writeLine("Line from thread 1 : " + n.toPrintable());
+
               n++;
            };
 //           if (n == 50000)
@@ -30,7 +32,9 @@ public Program()
       int n := 1000;
       while (true) {
          lock(sync) {
-            Console.writeLine("Line from thread 2 : " + n.toPrintable());
+            if (n.mod(1000) == 0)
+               Console.writeLine("Line from thread 2 : " + n.toPrintable());
+
             n++;
          }         
       };

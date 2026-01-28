@@ -114,7 +114,7 @@ void InitializeMTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 
 void* CollectGCLA(void* roots, size_t size)
 {
-   //printf("CollectGCLA %llx %llx\n", (long long)roots, size);
+   printf("CollectGCLA %llx %llx\n", (long long)roots, size);
 
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
 }
@@ -343,20 +343,36 @@ void ExitThreadLA(int errCode)
 
 void SignalStopGCLA(void* handle)
 {
+   printf("SignalStopGCLA( %x", (int)handle);
+
    SystemRoutineProvider::GCSignalStop(handle);
+
+   printf(")\n");
 }
 
 void WaitForSignalGCLA(void* handle)
 {
+   printf("WaitForSignalGCLA( %x", (int)handle);
+
    SystemRoutineProvider::GCWaitForSignal(handle);
+
+   printf(")\n");
 }
 
 void SignalClearGCLA(void* handle)
 {
+   printf("SignalClearGCLA( %x", (int)handle);
+
    SystemRoutineProvider::GCSignalClear(handle);
+
+   printf(")\n");
 }
 
 void WaitForSignalsGCLA(size_t count, void* handles)
 {
+   printf("WaitForSignalsGCLA(");
+
    SystemRoutineProvider::GCWaitForSignals(count, handles);
+
+   printf(")\n");
 }
