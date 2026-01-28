@@ -358,26 +358,10 @@ void SystemRoutineProvider::GCSignalStop(void* handle)
 
 void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
 {
-   printf("GCWaitForSignals %x\n", count);
-
-/*   if (count > 0)
-     printf("1 - %x\n", ((void**)handles)[0]);
-
-   if (count > 1)
-     printf("2 - %x\n", ((void**)handles)[1]);*/
-
    if (count > 0) {
       EventImpl** events = (EventImpl**)handles;
       for (size_t i = 0; i < count; i++) {
-         EventImpl* tmp = events[i];
-         printf("wait for %x \n", (int)tmp);
-
-
-
-
          events[i]->waitForSignal();
-
-         printf("done");
       }
    }
 }
