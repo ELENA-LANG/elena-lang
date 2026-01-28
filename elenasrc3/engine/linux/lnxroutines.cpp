@@ -369,7 +369,15 @@ void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
    if (count > 0) {
       EventImpl** events = (EventImpl**)handles;
       for (size_t i = 0; i < count; i++) {
+         EventImpl* tmp = events[i];
+         printf("wait for %x \n", (int)tmp);
+
+
+
+
          events[i]->waitForSignal();
+
+         printf("done");
       }
    }
 }
