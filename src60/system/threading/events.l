@@ -76,15 +76,13 @@ internal struct pthread_cond_t
 
 internal struct EventHandle
 {
-   int             _signaled;
    pthread_mutex_t _mutex;
    pthread_cond_t  _cond;
+   int             _signaled;
 
    internal constructor new(bool value, bool autoReset)
    {
-      pthread_mutex_t mutex;
-      extern libc.pthread_mutex_init(mutex, 0);
-      _mutex := mutex;
+      extern libc.pthread_mutex_init(_mutex, 0);
 
       pthread_cond_t cond;
       extern libc.pthread_cond_init(cond, 0);
@@ -97,29 +95,26 @@ internal struct EventHandle
 
    wait()
    {
-      pthread_mutex_t mutex := _mutex;
       pthread_cond_t  cond := _cond;
 
-      extern libc.pthread_mutex_lock(mutex);
-      _mutex := mutex;
+      extern libc.pthread_mutex_lock(_mutex);
 
       if (_signaled < 0) {
          extern
          {
-             extern libc.pthread_cond_wait(cond, mutex);
+             extern libc.pthread_cond_wait(cond, _mutex);
          }
       }
       else {
          extern
          {
             while (_signaled == 0) {
-               extern libc.pthread_cond_wait(cond, mutex);
+               extern libc.pthread_cond_wait(cond, _mutex);
             }
          }
       };
 
-      extern libc.pthread_mutex_unlock(mutex);
-      _mutex := mutex;
+      extern libc.pthread_mutex_unlock(_mutex);
    }
 
    wait(int timeOut)
@@ -129,16 +124,12 @@ internal struct EventHandle
 
    set()
    {
-      pthread_mutex_t mutex := _mutex;
-
-      extern libc.pthread_mutex_lock(mutex);
-      _mutex := mutex;
+      extern libc.pthread_mutex_lock(_mutex);
 
       if (_signaled == 0)
          _signaled := 1;
 
-      extern libc.pthread_mutex_unlock(mutex);
-      _mutex := mutex;
+      extern libc.pthread_mutex_unlock(_mutex);
 
       pthread_cond_t  cond := _cond;
       extern libc.pthread_cond_broadcast(cond);
@@ -148,27 +139,21 @@ internal struct EventHandle
    reset()
    {
       if (_signaled == 1) {
-         pthread_mutex_t mutex := _mutex;
-
-         extern libc.pthread_mutex_lock(mutex);
-         _mutex := mutex;
+         extern libc.pthread_mutex_lock(_mutex);
 
          _signaled := 0;
 
-         extern libc.pthread_mutex_unlock(mutex);
-         _mutex := mutex;
+         extern libc.pthread_mutex_unlock(_mutex);
       }
    }
 
    close()
    {
-      pthread_mutex_t mutex := _mutex;
       pthread_cond_t  cond := _cond;
 
-      extern libc.pthread_mutex_destroy(mutex);
+      extern libc.pthread_mutex_destroy(_mutex);
       extern libc.pthread_cond_destroy(cond);
 
-      _mutex := mutex;
       _cond := cond;
    }
 }

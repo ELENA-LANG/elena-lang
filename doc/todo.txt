@@ -9,7 +9,7 @@ In development:
   --------------------------------------
   * dev 
   --------------------------------------
-  - #184 : IDE migration
+  - 
   * IDE - forwards
   - windows IDE : vm console (#58: vm console)
   - IDE : save the files before compilation if auto-save is on  
@@ -17,24 +17,25 @@ In development:
   ====================================== 
   * lang
   --------------------------------------
-  - implement Semaphore for Linux32
   - test threadpoolsamples for i386 Linux
   - test asyncsamples  for i386 Linux
   - test tasksamples  for i386 Linux
   - test examples60 for i386 Linux
   ====================================== 
-  * doc
-  ====================================== 
   * backlog
   --------------------------------------
   - ppc64 : fix system_tests - intTests
   - x86-64 test tasksamples  
-  - #668 : Native operations with unsigned int
   ====================================== 
-  - current : backlog
+  * #184 : IDE migration
   --------------------------------------
-  - check warnings in api
-  - check warnings in standard tests
+  - IDE : project view
+  ====================================== 
+  * current : MTA Linux32
+  --------------------------------------
+  - implement Semaphore for Linux32
+  ====================================== 
+
 
 
   === Iteration 45 (ldoc method index; full api docs; template generator; httpget / httpsget reliability) ===
@@ -79,8 +80,21 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  === Iteration 48 (upndown sample) ===
+  === Iteration 48 (chat sample) ===
   * new version 7.0.3
+  --------------------------------------
+  * dev
+  ====================================== 
+  * lang
+  ====================================== 
+  * doc
+  ====================================== 
+  * current
+  --------------------------------------
+  --------------------------------------
+
+  === Iteration 49 (upndown sample) ===
+  * new version 7.0.4
   --------------------------------------
   * dev
   ====================================== 
