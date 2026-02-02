@@ -1,5 +1,14 @@
 import extensions;
 
+internal const int __SIZEOF_PTHREAD_MUTEX_T = 24;
+
+internal struct pthread_mutex_t
+{
+   byte __size[__SIZEOF_PTHREAD_MUTEX_T];
+}
+
+
+
 A
 {
   field x;

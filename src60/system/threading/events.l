@@ -1,3 +1,15 @@
+#if (__project["_Linux32"])
+
+internal const int __SIZEOF_PTHREAD_MUTEX_T = 24;
+internal const int __SIZEOF_PTHREAD_COND_T  = 48;
+
+#elif (__project["_Linux64"])
+
+internal const int __SIZEOF_PTHREAD_MUTEX_T = 40;
+internal const int __SIZEOF_PTHREAD_COND_T  = 48;
+
+#endif
+
 #if (__project["_Win"]) // Windows
 
 internal struct EventHandle
