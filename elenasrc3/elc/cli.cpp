@@ -315,6 +315,9 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
          else if (arg[2] == 'e') {
             project.addBoolSetting(ProjectOption::EvaluateOp, arg[3] != '-');
          }
+         else if (arg[2] == 'h') {
+            project.addBoolSetting(ProjectOption::CheckHiddenDeclaration, arg[3] != '-');
+         }
          else if (arg[2] == 'j') {
             project.addBoolSetting(ProjectOption::WithJumpAlignment, arg[3] != '-');
          }

@@ -16,6 +16,7 @@ namespace elena_lang
    constexpr bool DEFAULT_EVALUATE_OP              = true;
    constexpr bool DEFAULT_STRICT_TYPE_ENFORCING    = false;
    constexpr bool DEFAULT_NULLABLE_TYPE_WARNING    = true;
+   constexpr bool DEFAULT_CHECK_HIDDEN_DECLARATION = true;
 
    enum MetaHint : int
    {
@@ -421,6 +422,8 @@ namespace elena_lang
    constexpr auto wrnLessAccessible                = 429;
    constexpr auto wrnUnknownModule                 = 430;
    constexpr auto wrnNonNillableArgument           = 431;
+   constexpr auto wrnHiddenLocal                   = 432;
+   constexpr auto wrnHiddenField                   = 433;
 
    constexpr auto wrnSyntaxFileNotFound      = 500;
    constexpr auto wrnInvalidConfig           = 501;

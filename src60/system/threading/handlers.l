@@ -152,12 +152,15 @@ public sealed struct ThreadHandle
 
    constructor()
    {
-      NotSupportedException.raise()
+      _handle := extern libc.pthread_self();
    }
 
    ThreadPriority getPriority()
    {
-      NotSupportedException.raise()
+      //NotSupportedException.raise()
+
+      // !! temporal
+      ^ ThreadPriority.Normal
    }
 
    setPriority(ThreadPriority priority)

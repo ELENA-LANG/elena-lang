@@ -784,6 +784,12 @@ void CompilingProcess :: configurate(Project& project)
    if (_verbose && nullableTypeWarning)
       _presenter->printLine("nullableTypeWarning is on");
 
+   bool hiddenDeclarationMode = project.BoolSetting(ProjectOption::CheckHiddenDeclaration, DEFAULT_CHECK_HIDDEN_DECLARATION);
+   _compiler->setHiddenDeclarationMode(hiddenDeclarationMode);
+   if (_verbose && hiddenDeclarationMode)
+      _presenter->printLine("HiddenDeclaration is on");
+
+
    // load program forwards
    for (auto it = _forwards.start(); !it.eof(); ++it) {
       ustr_t f = *it;

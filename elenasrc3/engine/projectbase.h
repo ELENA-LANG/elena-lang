@@ -75,6 +75,7 @@ namespace elena_lang
       NullableTypeWarning,
       ConditionalBoxing,
       EvaluateOp,
+      CheckHiddenDeclaration,
 
       TracingMode,
 

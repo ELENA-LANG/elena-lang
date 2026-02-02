@@ -52,9 +52,113 @@ internal struct EventHandle
 
 #elif (__project["_Linux"] || __project["_FreeBSD"])
 
+internal struct pthread_mutex_t
+{
+   byte __size[__SIZEOF_PTHREAD_MUTEX_T];
+}
+
+internal struct pthread_cond_t
+{
+   byte __size[__SIZEOF_PTHREAD_COND_T];
+}
+
 internal struct EventHandle
 {
-   Handle  _handle;
+   int             _signaled;
+   pthread_mutex_t _mutex;
+   pthread_cond_t  _cond;
+
+   internal constructor new(bool value, bool autoReset)
+   {
+      pthread_mutex_t mutex;
+      extern libc.pthread_mutex_init(mutex, 0);
+      _mutex := mutex;
+
+      pthread_cond_t cond;
+      extern libc.pthread_cond_init(cond, 0);
+      _cond := cond;
+      
+      _signaled := value ? 1 : 0;
+      if (autoReset)
+         _signaled := _signaled | 80000000h;
+   }
+
+   wait()
+   {
+      pthread_mutex_t mutex := _mutex;
+      pthread_cond_t  cond := _cond;
+
+      extern libc.pthread_mutex_lock(mutex);
+      _mutex := mutex;
+
+      if (_signaled < 0) {
+         extern
+         {
+             extern libc.pthread_cond_wait(cond, mutex);
+         }
+      }
+      else {
+         extern
+         {
+            while (_signaled == 0) {
+               extern libc.pthread_cond_wait(cond, mutex);
+            }
+         }
+      };
+
+      extern libc.pthread_mutex_unlock(mutex);
+      _mutex := mutex;
+   }
+
+   wait(int timeOut)
+   {
+      NotSupportedException.raise()
+   }
+
+   set()
+   {
+      pthread_mutex_t mutex := _mutex;
+
+      extern libc.pthread_mutex_lock(mutex);
+      _mutex := mutex;
+
+      if (_signaled == 0)
+         _signaled := 1;
+
+      extern libc.pthread_mutex_unlock(mutex);
+      _mutex := mutex;
+
+      pthread_cond_t  cond := _cond;
+      extern libc.pthread_cond_broadcast(cond);
+      _cond := cond;
+   }
+
+   reset()
+   {
+      if (_signaled == 1) {
+         pthread_mutex_t mutex := _mutex;
+
+         extern libc.pthread_mutex_lock(mutex);
+         _mutex := mutex;
+
+         _signaled := 0;
+
+         extern libc.pthread_mutex_unlock(mutex);
+         _mutex := mutex;
+      }
+   }
+
+   close()
+   {
+      pthread_mutex_t mutex := _mutex;
+      pthread_cond_t  cond := _cond;
+
+      extern libc.pthread_mutex_destroy(mutex);
+      extern libc.pthread_cond_destroy(cond);
+
+      _mutex := mutex;
+      _cond := cond;
+   }
 }
 
 #endif
@@ -132,5 +236,4 @@ public sealed class CountDownEvent
 
    close()
       => _handle;
-
 }

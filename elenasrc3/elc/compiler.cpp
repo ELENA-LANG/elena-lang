@@ -2232,10 +2232,11 @@ Compiler::Compiler(
    _withDebugInfo = true;
    _strictTypeEnforcing = false;
    _nullableTypeWarning = false;
-
    _trackingUnassigned = false;
+   _checkHiddenDeclaration = false;
 
    _lookaheadOptMode = true; // !! temporal
+
 }
 
 bool Compiler::isClassClassOperation(Scope& scope, ObjectInfo target)
@@ -6858,6 +6859,20 @@ DeclarationError Compiler :: declareVariable(Scope& scope, ustr_t identifier, Ty
    }
    else return DeclarationError::Duplicate;
 
+   if (_checkHiddenDeclaration) {
+      ObjectInfo hiddenInfo = scope.mapIdentifier(identifier, false, EAttr::Superior);
+      switch (hiddenInfo.kind) {
+         case ObjectKind::Local:
+         case ObjectKind::LocalAddress:
+            return DeclarationError::HiddenLocal;
+         case ObjectKind::Field:
+         case ObjectKind::FieldAddress:
+            return DeclarationError::HiddenField;
+         default:
+            break;
+      }
+   }
+
    return DeclarationError::None;
 }
 
@@ -6906,6 +6921,12 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
          break;
       case DeclarationError::Operation:
          scope.raiseError(errInvalidOperation, terminal);
+         break;
+      case DeclarationError::HiddenLocal:
+         scope.raiseWarning(WARNING_LEVEL_2, wrnHiddenLocal, terminal);
+         break;
+      case DeclarationError::HiddenField:
+         scope.raiseWarning(WARNING_LEVEL_2, wrnHiddenField, terminal);
          break;
       default:
          break;

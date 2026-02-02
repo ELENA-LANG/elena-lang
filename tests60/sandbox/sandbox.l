@@ -1,21 +1,17 @@
 import extensions;
 
+A
+{
+  field x;
+
+  test()
+  {
+     int x := 2; // warn there is a field with the same name
+
+     x := 3;
+  }
+}
+
 public Program()
 {
-         int ch := 0; 
-
-         /*termios*/int savedState;   
-         /*termios*/int newState;
-
-//         extern libc.tcgetattr(STDIN_FILENO, savedState);
-
-         newState := savedState;
-
-//         extern libc.tcsetattr(STDIN_FILENO, TCSANOW, newState);
-   
-         extern {
-            ch := extern libc.getchar();      /* block (withot spinning) until we get a keypress */
-         };
-                        
-         ^ CharValue.load(ch);
 }
