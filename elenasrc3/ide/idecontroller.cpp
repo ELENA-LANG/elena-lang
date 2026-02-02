@@ -600,6 +600,8 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
       }
    }
 
+   // load forwards
+
    // load source files
    ConfigFile::Collection modules;
    if (config.select(configRoot, MODULE_CATEGORY, modules)) {

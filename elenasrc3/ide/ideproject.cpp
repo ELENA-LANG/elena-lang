@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Project Model implementation File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ideproject.h"
@@ -15,7 +15,8 @@ ProjectModel :: ProjectModel(IDEStatus* status)
    lastOpenFiles(nullptr),
    lastOpenProjects(nullptr),
    sources(nullptr), addedSources(nullptr), removeSources(nullptr),
-   breakpoints({}), projectTypeList(nullptr), profileList(nullptr)
+   breakpoints({}), projectTypeList(nullptr), profileList(nullptr),
+   forwards(nullptr)
 {
    this->status = status;
 

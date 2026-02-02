@@ -140,6 +140,11 @@ size_t XmlNode :: parse(ustr_t content, size_t position, size_t end, PositionLis
    NodeTag tag;
    position = loadTag(content, position, tag, nullptr);
 
+   // check if it is single tag
+   if (!tag.empty() && tag[tag.length() - 1] == '/') {
+      return position;
+   }
+
    while (position < end) {
       // skip the ending whitespaces
       skipWhitespace(content, position);
@@ -170,6 +175,9 @@ bool XmlNode :: compareTag(ustr_t tag)
 {
    NodeTag current;
    loadTag(getContent(), _position, current, nullptr);
+
+   if (!current.empty() && current[current.length() - 1] == '/')
+      current.truncate(current.length() - 1);
 
    return tag.compare(current.str());
 }

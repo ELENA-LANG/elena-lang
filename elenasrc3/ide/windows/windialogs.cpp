@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: Static dialog implementations
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -468,6 +468,154 @@ void ProjectSettings :: onOK()
 bool ProjectSettings :: showModal()
 {
    return show() == IDOK;
+}
+
+// --- ForwardsDialog ---
+
+ForwardsDialog :: ForwardsDialog(HINSTANCE instance, WindowBase* owner, ProjectModel* model)
+   : WinDialog(instance, owner, IDD_FORWARDS)
+{
+   _model = model;
+}
+
+bool ForwardsDialog :: showModal()
+{
+   return show() == IDOK;
+}
+
+void ForwardsDialog :: doCommand(int id, int command)
+{
+   switch (id) {
+      case IDC_FORWARDS_ADD:
+         addItem();
+         break;
+      case IDC_FORWARDS_REPLACE:
+         editItem();
+         break;
+      case IDC_FORWARDS_DELETE:
+         deleteItem();
+         break;
+      case IDC_FORWARDS_LIST:
+         if (command == LBN_DBLCLK) {
+            getItem();
+         }
+         break;
+      case IDC_FORWARDS_SAVE:
+         onOK();
+         ::EndDialog(_handle, -1);
+         break;
+      case IDOK:
+         break;
+      default:
+         WinDialog::doCommand(id, command);
+   }
+}
+
+bool ForwardsDialog :: validateItem(wchar_t*& text)
+{
+   //// trim space
+   //while (text[0] == ' ') text++;
+   //while (_ELENA_::getlength(text) > 0 && text[_ELENA_::getlength(text) - 1] == ' ') text[_ELENA_::getlength(text) - 1] = 0;
+
+   //if (_ELENA_::emptystr(text))
+   //   return false;
+   //else if (text_str(text).find('=') == -1) {
+   //   MsgBox::show(_owner->getHandle(), _T("The forward should have the following structure: <forward name>=<full class name>\n(e.g. 'integer=std'basic'integer)"), MB_ICONERROR);
+   //   return false;
+   //}
+   /*else */return true;
+}
+
+void ForwardsDialog::addItem()
+{
+   //wchar_t item[_ELENA_::IDENTIFIER_LEN * 2 + 1];
+
+   //getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), _ELENA_::IDENTIFIER_LEN * 2);
+
+   //wchar_t* s = item;
+   //if (validateItem(s)) {
+   //   addListItem(IDC_FORWARDS_LIST, s);
+   //   _changed = true;
+   //}
+   //setText(IDC_FORWARDS_EDIT, NULL);
+   //_current = -1;
+   //_changed = true;
+}
+
+void ForwardsDialog :: getItem()
+{
+   //_current = getListIndex(IDC_FORWARDS_LIST);
+
+   //wchar_t item[_ELENA_::IDENTIFIER_LEN * 2 + 1];
+
+   //getListItem(IDC_FORWARDS_LIST, _current, (wchar_t**)(&item));
+   //setText(IDC_FORWARDS_EDIT, item);
+}
+
+void ForwardsDialog :: editItem()
+{
+   //if (_current != -1) {
+   //   wchar_t item[_ELENA_::IDENTIFIER_LEN * 2 + 1];
+
+   //   getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), _ELENA_::IDENTIFIER_LEN * 2);
+
+   //   wchar_t* s = item;
+   //   if (validateItem(s)) {
+   //      removeListItem(IDC_FORWARDS_LIST, _current);
+   //      insertListItem(IDC_FORWARDS_LIST, _current, s);
+   //      _changed = true;
+   //   }
+   //   setText(IDC_FORWARDS_EDIT, NULL);
+   //   _current = -1;
+   //   _changed = true;
+   //}
+}
+
+void ForwardsDialog :: deleteItem()
+{
+   //int index = _current = getListIndex(IDC_FORWARDS_LIST);
+
+   //removeListItem(IDC_FORWARDS_LIST, index);
+   //setText(IDC_FORWARDS_EDIT, NULL);
+
+   //_current = -1;
+   //_changed = true;
+}
+
+void ForwardsDialog :: onCreate()
+{
+   //_ProjectManager::ForwardIterator forwards = _project->Forwards();
+   //_ELENA_::IdentifierString item;
+   //while (!forwards.Eof()) {
+   //   item.copy(forwards.key());
+   //   item.append('=');
+   //   item.append((_ELENA_::ident_t)*forwards);
+
+   //   addListItem(IDC_FORWARDS_LIST, TextString(item));
+
+   //   forwards++;
+   //}
+}
+
+void ForwardsDialog :: onOK()
+{
+   //if (_changed) {
+   //   _project->clearForwards();
+
+   //   int count = getListCount(IDC_FORWARDS_LIST);
+   //   text_c item[_ELENA_::IDENTIFIER_LEN * 2 + 1];
+   //   for (int i = 0; i < count; i++) {
+   //      getListItem(IDC_FORWARDS_LIST, i, (wchar_t**)(&item));
+
+   //      _ELENA_::IdentifierString line(item);
+
+   //      size_t pos = line.ident().find('=');
+
+   //      _ELENA_::IdentifierString name(line, pos);
+
+   //      _project->addForward(name, line + pos + 1);
+   //   }
+   //}
 }
 
 // --- EditorSettings ---

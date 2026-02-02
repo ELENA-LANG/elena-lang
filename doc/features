@@ -542,3 +542,11 @@ must be provided
      <module name="server" hints="8">                                <!-- all required templates will be generated again, so no extra link to the previous module -->
        <include>server\registration\registration.l</include>
      </module>
+
+------------------------------ 
+  clearing lexical information
+------------------------------
+
+  <lexicals>
+    <clear/>
+  </lexicals>

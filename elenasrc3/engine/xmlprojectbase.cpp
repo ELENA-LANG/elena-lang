@@ -3,7 +3,7 @@
 //
 //		This file contains the xml project base class implementation
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "xmlprojectbase.h"
@@ -254,7 +254,10 @@ void XmlProjectBase :: loadLexicals(ConfigFile& config, ConfigFile::Node& root, 
       for (auto it = collection.start(); !it.eof(); ++it) {
          ConfigFile::Node node = *it;
 
-         if (node.readAttribute("key", key)) {
+         if (node.compareTag("clear")) {
+            _lexicals.clear();
+         }
+         else if (node.readAttribute("key", key)) {
             node.readContent(value);
 
             _lexicals.add(key.str(), ustr_t(value.str()).clone());

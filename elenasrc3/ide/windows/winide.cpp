@@ -275,6 +275,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
       *model->projectModel.paths.lastPath),
    messageDialog(this),
    projectSettingsDialog(instance, this, &model->projectModel),
+   forwardsDialog(instance, this, &model->projectModel),
    findDialog(instance, this, false, &model->findModel),
    replaceDialog(instance, this, true, &model->findModel),
    gotoDialog(instance, this),
@@ -493,6 +494,11 @@ void IDEWindow :: selectWindow()
       default:
          break;
    }
+}
+
+void IDEWindow :: showForwards()
+{
+   forwardsDialog.showModal();
 }
 
 void IDEWindow :: exit()
@@ -993,6 +999,9 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_PROJECT_OPTION:
          _controller->doChangeProject(projectSettingsDialog, _model);
+         break;
+      case IDM_PROJECT_FORWARDS:
+         showForwards();
          break;
       case IDM_DEBUG_RUN:
          if (_model->autoSave)

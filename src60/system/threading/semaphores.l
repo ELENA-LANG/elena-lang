@@ -33,6 +33,22 @@ public struct Semaphore
 public struct Semaphore
 {
    Handle  _handle;
+
+   constructor create(int initValue, int maxValue)
+   {
+   }
+
+   close()
+   {
+   }
+
+   wait()
+   {
+   }   
+
+   release()
+   {
+   }
 }
 
 #endif

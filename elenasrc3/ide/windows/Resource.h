@@ -128,6 +128,7 @@
 #define IDM_PROJECT_COMPILE            803
 #define IDM_PROJECT_OPTION             804
 #define IDM_DEBUGGER_OPTIONS           805
+#define IDM_PROJECT_FORWARDS           806
 
 #define IDD_SETTINGS                   850
 #define IDC_SETTINGS_TEPMPLATE         851
@@ -213,6 +214,15 @@
 #define IDM_EDITOR_OPTIONS             1750
 #define IDM_IDE_OPTIONS                1751
 #define IDM_EDITOR_FONT_OPTIONS        1752
+
+#define IDD_FORWARDS                   1800
+#define IDC_FORWARDS_LIST              1801
+#define IDC_FORWARDS_EDIT              1802
+#define IDC_FORWARDS_ADD               1803
+#define IDC_FORWARDS_REPLACE           1804
+#define IDC_FORWARDS_DELETE            1805
+#define IDC_FORWARDS_LABEL1            1808
+#define IDC_FORWARDS_SAVE              1809
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                 -1

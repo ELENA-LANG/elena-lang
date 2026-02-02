@@ -5,23 +5,22 @@ In development:
 [development]
   ### EPIC: elena 7.0 ###
 
-  === Iteration 44 (ide; powerpc, aarch64, mac) ===
+  === Iteration 44 (ide; powerpc, aarch64, mac, i386 threading samples) ===
   --------------------------------------
   * dev 
   --------------------------------------
-  - windows IDE : forwards
-  - #83
-  - #219
-  - #185
-  - #233
+  - #184 : IDE migration
+  * IDE - forwards
   - windows IDE : vm console (#58: vm console)
   - IDE : save the files before compilation if auto-save is on  
   - IDE : highlight row
   ====================================== 
   * lang
   --------------------------------------
-  - test threadpoolsamples
-  - test asyncsamples 
+  - implement Semaphore for Linux32
+  - test threadpoolsamples for i386 Linux
+  - test asyncsamples  for i386 Linux
+  - test tasksamples  for i386 Linux
   - test examples60 for i386 Linux
   ====================================== 
   * doc
@@ -29,26 +28,13 @@ In development:
   * backlog
   --------------------------------------
   - ppc64 : fix system_tests - intTests
-  - run script functional test for x86-64
-  - x86-64 : mta - test
-  - project file - lexicals : support <clear/> command
+  - x86-64 test tasksamples  
+  - #668 : Native operations with unsigned int
   ====================================== 
-  * current : MTA support for Linux - tests threads / tasks examples
+  - current : backlog
   --------------------------------------
-  - test tasksamples
-  --------------------------------------
-  * Linux - implement missing functionality for Linux
-  --------------------------------------
-  - Semaphore
-  --------------------------------------
-  * backlog
-  --------------------------------------
-  * current : warn on duplicate variable name (parameter vs. field, local vs. parameter)
-  --------------------------------------
-  - when the local variable is declared - warn if there is another variable / field with the same name
-  - message : declaration of 'x' hides previous local declaration 
-  - make on option to turn it off
-  --------------------------------------
+  - check warnings in api
+  - check warnings in standard tests
 
 
   === Iteration 45 (ldoc method index; full api docs; template generator; httpget / httpsget reliability) ===

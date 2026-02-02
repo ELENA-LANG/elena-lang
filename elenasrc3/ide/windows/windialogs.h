@@ -143,6 +143,27 @@ namespace elena_lang
       ProjectSettings(HINSTANCE instance, WindowBase* owner, ProjectModel* model);
    };
 
+   class ForwardsDialog : public WinDialog
+   {
+      ProjectModel* _model;
+
+      bool validateItem(wchar_t*& text);
+
+      void addItem();
+      void getItem();
+      void editItem();
+      void deleteItem();
+
+      void onCreate() override;
+      void onOK() override;
+      void doCommand(int id, int command) override;
+
+   public:
+      bool showModal();
+
+      ForwardsDialog(HINSTANCE instance, WindowBase* owner, ProjectModel* model);
+   };
+
    class EditorSettings : public WinDialog, public EditorSettingsBase
    {
       TextViewModelBase* _model;

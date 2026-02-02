@@ -120,6 +120,7 @@ namespace elena_lang
       FileDialog        projectDialog;
       MessageDialog     messageDialog;
       ProjectSettings   projectSettingsDialog;
+      ForwardsDialog    forwardsDialog;
       FindDialog        findDialog, replaceDialog;
       GoToLineDialog    gotoDialog;
       WindowListDialog  windowDialog;
@@ -220,6 +221,7 @@ namespace elena_lang
       void exit() override;
 
       void selectWindow();
+      void showForwards();
 
       void undo();
       void redo();

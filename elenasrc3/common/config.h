@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains Config File class header
-//                                            (C)2021-2024, by Aleksey Rakov
+//                                            (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CONFIG_H
@@ -63,6 +63,11 @@ namespace elena_lang
          bool isNotFound()
          {
             return xmlNode.isNotFound();
+         }
+
+         bool compareTag(ustr_t name)
+         {
+            return xmlNode.compareTag(name);
          }
 
          Node(XmlNode node)
