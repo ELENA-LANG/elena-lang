@@ -601,6 +601,20 @@ void ProjectController :: loadConfig(ProjectModel& model, ConfigFile& config, Co
    }
 
    // load forwards
+   ConfigFile::Collection forwardItems;
+   if (config.select(configRoot, FORWARDS_CATEGORY, forwardItems)) {
+      DynamicString<char> keyStr;
+      DynamicString<char> itemStr;
+      for (auto f_it = forwardItems.start(); !f_it.eof(); ++f_it) {
+         ConfigFile::Node forwardNode = *f_it;
+
+         if (forwardNode.readAttribute("key", keyStr)) {
+            forwardNode.readContent(itemStr);
+
+            model.forwards.add(keyStr.str(), ustr_t(itemStr.str()).clone());
+         }
+      }
+   }
 
    // load source files
    ConfigFile::Collection modules;
@@ -734,6 +748,20 @@ void ProjectController :: saveConfig(ProjectModel& model, ConfigFile& config, Co
    }
 
    model.addedSources.clear();
+
+   if (model.forwardChanged) {
+      auto forwards = config.selectNode(platformRoot, FORWARDS_CATEGORY_ROOT);
+      if (!forwards.isNotFound())
+         forwards.remove();
+
+      forwards = config.selectNode(root, FORWARDS_CATEGORY_ROOT);
+      if (!forwards.isNotFound())
+         forwards.remove();
+
+      for (auto f_it = model.forwards.start(); !f_it.eof(); ++f_it) {
+         config.appendSetting(FORWARD_CATEGORY, "key", f_it.key(), *f_it);
+      }
+   }
 }
 
 int ProjectController :: newProject(ProjectModel& model)
@@ -811,6 +839,7 @@ int ProjectController :: openProject(ProjectModel& model, path_t projectFile)
                return node.compareAttribute("key", key);
             });
 
+         model.forwardChanged = false;
          loadConfig(model, projectConfig, root);
          if (!profileRoot.isNotFound())
             loadConfig(model, projectConfig, profileRoot);
@@ -866,7 +895,18 @@ int ProjectController :: saveProject(ProjectModel& model)
          return node.compareAttribute("key", key);
       });
 
-   saveConfig(model, projectConfig, root, platformRoot);
+   if (model.profileList.count() > 0 && model.profile.empty()) {
+      ConfigFile::Node profileRoot = projectConfig.selectNode<ustr_t>(root, PROFILE_CATEGORY, *model.profile, [](ustr_t key, ConfigFile::Node& node)
+         {
+            return node.compareAttribute("key", key);
+         });
+
+      if (!profileRoot.isNotFound()) {
+         saveConfig(model, projectConfig, profileRoot, platformRoot);
+      }
+      else saveConfig(model, projectConfig, root, platformRoot);
+   }
+   else saveConfig(model, projectConfig, root, platformRoot);
 
    projectConfig.save(*path, FileEncoding::UTF8);
 

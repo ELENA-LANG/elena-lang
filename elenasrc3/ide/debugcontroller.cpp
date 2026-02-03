@@ -680,13 +680,13 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
 void* DebugController :: readByteArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
-      size_t length = _min(_process->getArrayLength(address), 100);
+      int length = _min(_process->getArrayLength(address), 100);
 
       WatchContext context = { parent, address };
       void* item = watch->addOrUpdate(&context, name, "<bytearray>");
 
       IdentifierString value;
-      for (size_t i = 0; i < length; i++) {
+      for (int i = 0; i < length; i++) {
          unsigned char b = _process->getBYTE(address + i);
 
          value.copy("[");
@@ -705,13 +705,13 @@ void* DebugController :: readByteArrayLocal(ContextBrowserBase* watch, void* par
 void* DebugController :: readShortArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
-      size_t length = _min(_process->getArrayLength(address) >> 1, 100);
+      int length = _min(_process->getArrayLength(address) >> 1, 100);
 
       WatchContext context = { parent, address };
       void* item = watch->addOrUpdate(&context, name, "<shortarray>");
 
       IdentifierString value;
-      for (size_t i = 0; i < length; i++) {
+      for (int i = 0; i < length; i++) {
          unsigned short b = _process->getWORD(address + i * 2);
 
          value.copy("[");

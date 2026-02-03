@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Win32 Common header
 //      Win32 graphic tools body
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincanvas.h"
@@ -225,6 +225,15 @@ void Canvas :: drawRectangle(Rectangle rect, Color foreground, Color background)
 {
    setPenColor(foreground);
    setBrushColor(background);
+
+   ::Rectangle(_handler, rect.topLeft.x, rect.topLeft.y,
+      rect.bottomRight.x, rect.bottomRight.y);
+}
+
+void Canvas :: drawTransparentRectangle(Rectangle rect, Color foreground)
+{
+   setPenColor(foreground);
+   ::SelectObject(_handler, GetStockObject(NULL_BRUSH));
 
    ::Rectangle(_handler, rect.topLeft.x, rect.topLeft.y,
       rect.bottomRight.x, rect.bottomRight.y);

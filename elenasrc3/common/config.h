@@ -136,6 +136,7 @@ namespace elena_lang
       }
 
       void appendSetting(ustr_t xpath, ustr_t value);
+      void appendSetting(ustr_t xpath, ustr_t attribute, ustr_t attributeValue, ustr_t value);
 
       void removeSetting(ustr_t xpath);
 

@@ -19,6 +19,7 @@ namespace elena_lang
    constexpr auto OPTIONS_CATEGORY                    = "configuration/project/options";
    constexpr auto TARGET_CATEGORY                     = "configuration/project/executable";
    constexpr auto FILE_CATEGORY                       = "configuration/files/module/file";
+   constexpr auto FORWARD_CATEGORY                    = "configuration/forwards/forward";
 
    constexpr auto TARGET_SUB_CATEGORY                 = "project/executable";
    constexpr auto TEMPLATE_SUB_CATEGORY               = "project/template";
@@ -31,6 +32,9 @@ namespace elena_lang
 
    constexpr auto MODULE_CATEGORY                     = "files/*";
    constexpr auto REFERENCE_CATEGORY                  = "references/*";
+
+   constexpr auto FORWARDS_CATEGORY                   = "forwards/*";
+   constexpr auto FORWARDS_CATEGORY_ROOT              = "/forwards";
 
    constexpr auto WIN_X86_KEY                         = "Win_x86";
    constexpr auto WIN_X86_64_KEY                      = "Win_x64";

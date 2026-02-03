@@ -115,6 +115,7 @@ namespace elena_lang
       StringList        profileList;
 
       ForwardMap        forwards;
+      bool              forwardChanged;
 
       ustr_t getTarget();
       path_t getArguments();

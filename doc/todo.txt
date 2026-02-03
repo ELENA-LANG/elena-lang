@@ -9,11 +9,7 @@ In development:
   --------------------------------------
   * dev 
   --------------------------------------
-  - 
-  * IDE - forwards
   - windows IDE : vm console (#58: vm console)
-  - IDE : save the files before compilation if auto-save is on  
-  - IDE : highlight row
   ====================================== 
   * lang
   --------------------------------------
@@ -29,11 +25,14 @@ In development:
   ====================================== 
   * #184 : IDE migration
   --------------------------------------
+  - IDE : compile the project
   - IDE : project view
   ====================================== 
-  * current : MTA Linux32
+  * current : IDE improvements
   --------------------------------------
-  - implement Semaphore for Linux32
+  - IDE : highlight row
+  - IDE : test adding a new file to the project
+  - IDE : test removing a file from the project
   ====================================== 
 
 

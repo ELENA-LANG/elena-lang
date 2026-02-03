@@ -188,7 +188,7 @@ public sealed struct ThreadHandle
    
    bool checkIfAlive()
    {
-      NotSupportedException.raise()
+      ^ NotSupportedException.raise()
    }                                                                
 
    close()

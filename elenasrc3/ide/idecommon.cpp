@@ -98,7 +98,7 @@ void ContextBrowserBase :: populateWORD(WatchContext* context, unsigned short va
 
 }
 
-void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
+void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned int value)
 {
    String<char, 20> number;
    if (_model->hexadecimalMode) {
@@ -112,7 +112,7 @@ void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned value)
 
 }
 
-void ContextBrowserBase :: populateUINT(WatchContext* context, unsigned value)
+void ContextBrowserBase :: populateUINT(WatchContext* context, unsigned int value)
 {
    String<char, 20> number;
    if (_model->hexadecimalMode) {

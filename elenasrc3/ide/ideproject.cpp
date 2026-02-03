@@ -16,7 +16,7 @@ ProjectModel :: ProjectModel(IDEStatus* status)
    lastOpenProjects(nullptr),
    sources(nullptr), addedSources(nullptr), removeSources(nullptr),
    breakpoints({}), projectTypeList(nullptr), profileList(nullptr),
-   forwards(nullptr)
+   forwards(nullptr), forwardChanged(false)
 {
    this->status = status;
 

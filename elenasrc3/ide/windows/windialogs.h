@@ -98,9 +98,14 @@ namespace elena_lang
       int  getComboBoxIndex(int id);
       void clearComboBoxItem(int id);
 
+      void insertListItem(int id, int index, const wchar_t* text);
+      void removeListItem(int id, int index);
+
       void addListItem(int id, const wchar_t* text);
       int  getListSelCount(int id);
       int  getListIndex(int id);
+      void getListItem(int id, int index, wchar_t** text);
+      int getListCount(int id);
 
       void setText(int id, const wchar_t* text);
       void setIntText(int id, int value);
@@ -146,6 +151,8 @@ namespace elena_lang
    class ForwardsDialog : public WinDialog
    {
       ProjectModel* _model;
+      int           _current;
+      bool          _changed;
 
       bool validateItem(wchar_t*& text);
 
