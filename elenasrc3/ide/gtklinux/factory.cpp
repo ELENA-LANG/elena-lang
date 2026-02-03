@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -186,37 +186,37 @@ Gtk::Widget* IDEFactory :: createProjectView()
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess)
 {
-   Gtk::Widget** children = new Gtk::Widget*[2];
+   Gtk::Widget** children = new Gtk::Widget*[3];
    int counter = 1;
 
    int textIndex = counter++;
-//   int projectView = counter++;
+   int projectView = counter++;
    children[textIndex] = createTextControl();
-//   children[projectView] = createProjectView();
+   children[projectView] = createProjectView();
 
    GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model, nullptr);
 
-   initializeScheme(textIndex/*, projectView*/);
+   initializeScheme(textIndex, projectView);
 
    ideWindow->populate(counter, children);
-   ideWindow->setLayout(textIndex, -1, -1, -1, /*projectView*/-1);
+   ideWindow->setLayout(textIndex, -1, -1, -1, projectView);
 
-//   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
+   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
 //   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
 
    return new WindowWrapper(ideWindow);
 }
 
 
-void IDEFactory :: initializeScheme(int frameTextIndex/*, int tabBar, int compilerOutput, int errorList,*/
-   /*int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
+void IDEFactory :: initializeScheme(int frameTextIndex, /*int tabBar, int compilerOutput, int errorList,*/
+   int projectView/*, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
    int toolBarControl, int contextEditor, int textIndex*/)
 {
    _model->ideScheme.textFrameId = frameTextIndex;
 //   _model->ideScheme.resultControl = tabBar;
 //   _model->ideScheme.compilerOutputControl = compilerOutput;
 //   _model->ideScheme.errorListControl = errorList;
-//   _model->ideScheme.projectView = projectView;
+   _model->ideScheme.projectView = projectView;
 //   _model->ideScheme.debugWatch = contextBrowser;
 //   _model->ideScheme.menu = menu;
 //   _model->ideScheme.statusBar = statusBar;

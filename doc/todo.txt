@@ -25,14 +25,11 @@ In development:
   ====================================== 
   * #184 : IDE migration
   --------------------------------------
-  - IDE : compile the project
-  - IDE : project view
+  - ProjectOutput
   ====================================== 
-  * current : IDE improvements
+  * current : #184 : project messages
   --------------------------------------
-  - IDE : highlight row
-  - IDE : test adding a new file to the project
-  - IDE : test removing a file from the project
+  - ProjectMessages
   ====================================== 
 
 

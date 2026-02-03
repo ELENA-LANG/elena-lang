@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Linux-GTK IDE
 //
-//                                             (C)2024-2025, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKIDE_H
@@ -84,6 +84,9 @@ protected:
 
    bool                         _closing;
    CloseMode                    _mode;
+
+   // menu items
+   Glib::RefPtr<Gio::SimpleAction>  _projectViewMenuItem;
 
    void populateUI();
 
@@ -272,7 +275,7 @@ protected:
    void on_menu_project_view()
    {
       bool visible = toggleVisibility(_model->ideScheme.projectView);
-      checkMenuItemById("ViewMenu/ProjectView", visible);
+      checkMenuItemById(_projectViewMenuItem, visible);
    }
    void on_menu_project_output()
    {

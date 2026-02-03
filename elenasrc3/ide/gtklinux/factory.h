@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2024-2025, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FACTORY_H
@@ -56,8 +56,8 @@ namespace elena_lang
 
       //void initializeModel(IDEModel* ideView);
 
-      void initializeScheme(int frameTextIndex/*,
-         int projectView*/);
+      void initializeScheme(int frameTextIndex,
+         int projectView);
 
    public:
       static void initPathSettings(IDEModel* ideModel);

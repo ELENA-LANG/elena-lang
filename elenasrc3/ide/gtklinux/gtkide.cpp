@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Linux-GTK+ GTK IDE
-//                                             (C)2024-2025, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkide.h"
@@ -209,7 +209,7 @@ static Glib::ustring ui_info =
         "      <section>"
         "         <item>"
         "            <attribute name='label'>Project View</attribute>"
-        "            <attribute name='action'>ProjectView</attribute>"
+        "            <attribute name='action'>win.ProjectView</attribute>"
         "         </item>"
         "      </section>"
         "      <section>"
@@ -473,7 +473,7 @@ GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model, GtkApp*
    _model = model;
    _controller = controller;
 
-   //_projectTree = Gtk::TreeStore::create(_projectTreeColumns);
+   _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
 
    populateUI();
 
@@ -484,15 +484,15 @@ void GTKIDEWindow :: populate(int counter, Gtk::Widget** children)
 {
    SDIWindow::populate(counter, children);
 
-//   Gtk::TreeView* projectView = (Gtk::TreeView*)_children[_model->ideScheme.projectView];
+   Gtk::TreeView* projectView = (Gtk::TreeView*)_children[_model->ideScheme.projectView];
 
    // project tree
-//   projectView->set_model(_projectTree);
+   projectView->set_model(_projectTree);
 
-//   projectView->append_column("module", _projectTreeColumns._caption);
-//
-//   projectView->signal_row_activated().connect(sigc::mem_fun(*this,
-//              &GTKIDEWindow::on_projectview_row_activated));
+   projectView->append_column("module", _projectTreeColumns._caption);
+
+   projectView->signal_row_activated().connect(sigc::mem_fun(*this,
+              &GTKIDEWindow::on_projectview_row_activated));
 }
 
 void GTKIDEWindow :: populateUI()
@@ -533,7 +533,8 @@ void GTKIDEWindow :: populateUI()
    refActions->add_action("EditComment", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_comment));
    refActions->add_action("EditUncomment", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_uncomment));
 
-//   _app->add_action("ProjectView", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view));
+   _projectViewMenuItem = refActions->add_action_bool("ProjectView", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view), true);
+
 //   _app->add_action("ProjectOutput", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
 //   _app->add_action("ProjectMessages", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages));
 //   _app->add_action("ProjectWatch", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_watch));
@@ -740,7 +741,7 @@ void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
 
 void GTKIDEWindow :: onProjectChange(bool empty)
 {
-   Gtk::TreeView* projectView = dynamic_cast<Gtk::TreeView*>(_children[_model->ideScheme.projectView]);
+   //Gtk::TreeView* projectView = dynamic_cast<Gtk::TreeView*>(_children[_model->ideScheme.projectView]);
 
    _projectTree->clear();
 
@@ -781,7 +782,7 @@ void GTKIDEWindow :: onProjectChange(bool empty)
       }
    }
 
-//   projectView->expand(root);
+   //projectView->expand(root);
    //show_all_children();
 }
 
