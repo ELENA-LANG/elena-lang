@@ -215,7 +215,7 @@ static Glib::ustring ui_info =
         "      <section>"
         "         <item>"
         "            <attribute name='label'>Compiler output</attribute>"
-        "            <attribute name='action'>ProjectOutput</attribute>"
+        "            <attribute name='action'>win.ProjectOutput</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Messages</attribute>"
@@ -283,7 +283,7 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Compile</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;F9</attribute>"
-        "            <attribute name='action'>ProjectCompile</attribute>"
+        "            <attribute name='action'>win.ProjectCompile</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Clean up</attribute>"
@@ -545,8 +545,10 @@ void GTKIDEWindow :: populateUI()
 
    _projectViewMenuItem = refActions->add_action_bool("ProjectView", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view), true);
    _errorListMenuItem = refActions->add_action_bool("ProjectMessages", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages), false);
+   _outputMenuItem = refActions->add_action_bool("ProjectOutput", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output), false);
 
-//   _app->add_action("ProjectOutput", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
+   refActions->add_action("ProjectCompile", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
+
 //   _app->add_action("ProjectWatch", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_watch));
 //   _app->add_action("ProjectCallstack", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_callstack));
 //   _app->add_action("ProjectConsole", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_interactive));
@@ -559,7 +561,6 @@ void GTKIDEWindow :: populateUI()
 //
 //   _app->add_action("ProjectInclude", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_include));
 //   _app->add_action("ProjectExclude", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_exclude));
-//   _app->add_action("ProjectCompile", Gtk::AccelKey("<control>F9"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
 //   _app->add_action("ProjectCleanup", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_cleanup));
 //   _app->add_action("ProjectForwards", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_forwards));
 //   _app->add_action("ProjectOptions", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));
@@ -657,6 +658,10 @@ void GTKIDEWindow :: populateUI()
       Gtk::KeyvalTrigger::create(GDK_KEY_x, Gdk::ModifierType::CONTROL_MASK),
       Gtk::NamedAction::create("win.EditCut")));
 
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F9, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.ProjectCompile")));
+
    loadUI(ui_info, "MenuBar");
 
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
@@ -679,7 +684,6 @@ void GTKIDEWindow :: populateUI()
 //
 //   _refActionGroup->add( Gtk::Action::create("ProjectInclude", "Include"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_include));
 //   _refActionGroup->add( Gtk::Action::create("ProjectExclude", "Exclude"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_exclude));
-//   _refActionGroup->add( Gtk::Action::create("ProjectCompile", "Compile"), Gtk::AccelKey("<control>F9"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
 //   _refActionGroup->add( Gtk::Action::create("ProjectCleanup", "Clean up"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_cleanup));
 //   _refActionGroup->add( Gtk::Action::create("ProjectForwards", "Forwards..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_forwards));
 //   _refActionGroup->add( Gtk::Action::create("ProjectOptions", "Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));

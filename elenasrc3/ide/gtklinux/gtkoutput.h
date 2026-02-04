@@ -4,9 +4,10 @@
 //                                             (C)2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#ifndef GTKOUTPUT_H
+#define GTKOUTPUT_H
 
-#ifndef LNXOUTPUT_H
-#define LNXOUTPUT_H
+#include "gtklinux/gtkcommon.h"
 
 namespace elena_lang
 {
@@ -28,4 +29,4 @@ namespace elena_lang
    };
 }
 
-#endif // LNXOUTPUT_H
+#endif // GTKOUTPUT_H

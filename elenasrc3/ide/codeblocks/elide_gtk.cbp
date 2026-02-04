@@ -133,6 +133,10 @@
 		<Unit filename="../gtklinux/gtkide.h" />
 		<Unit filename="../gtklinux/gtkidetextview.cpp" />
 		<Unit filename="../gtklinux/gtkidetextview.h" />
+		<Unit filename="../gtklinux/lnxcontroller.cpp" />
+		<Unit filename="../gtklinux/lnxcontroller.h" />
+		<Unit filename="../gtklinux/gtkoutput.cpp" />
+		<Unit filename="../gtklinux/gtkoutput.h" />
 		<Unit filename="../gtklinux/main.cpp" />
 		<Unit filename="../idecommon.cpp" />
 		<Unit filename="../idecommon.h" />

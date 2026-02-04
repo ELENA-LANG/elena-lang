@@ -9,10 +9,22 @@
 #include "gtklinux/gtkide.h"
 #include "gtklinux/gtkidetextview.h"
 #include "gtklinux/gtktextview.h"
+#include "gtklinux/gtkoutput.h"
 //#include "text.h"
 //#include "sourceformatter.h"
 
 using namespace elena_lang;
+
+#ifdef _M_IX86
+
+#define CLI_PATH     "/usr/bin/elena-cli"
+
+#else
+
+#define CLI_PATH     "/usr/bin/elena64-cli"
+
+#endif // DEBUG
+
 
 //#define MAX_LOADSTRING 100
 //
@@ -107,6 +119,8 @@ IDEFactory :: IDEFactory(int argc, char** argv,
 //   _cmdShow = cmdShow;
    _model = ideModel;
    _controller = controller;
+
+   _model->projectModel.paths.compilerPath.copy(CLI_PATH);
 
    //initializeModel(ideModel);
 }
@@ -232,7 +246,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
 
    GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model, nullptr);
 
-   initializeScheme(textIndex, tabBar, errorList, projectView);
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView);
 
    ideWindow->populate(counter, children);
    ideWindow->setLayout(textIndex, -1, tabBar, -1, projectView);

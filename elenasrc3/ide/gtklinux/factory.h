@@ -12,6 +12,7 @@
 //#include "gtklinux/gtksdi.h"
 //#include "gtklinux/gtkgraphic.h"
 #include "gtklinux/gtktextview.h"
+#include "gtklinux/lnxcontroller.h"
 #include "ideview.h"
 #include "idecontroller.h"
 
@@ -55,7 +56,7 @@ namespace elena_lang
       Gtk::Widget* createProjectView();
       Gtk::Widget* createTabBar();
       Gtk::Widget* createErrorList();
-      Gtk::Widget* createCompilerOutput(ProcessBase* outputProcess)
+      Gtk::Widget* createCompilerOutput(ProcessBase* outputProcess);
 
       //void initializeModel(IDEModel* ideView);
 

@@ -10,5 +10,5 @@ using namespace elena_lang;
 
 ProcessOutput :: ProcessOutput()
 {
-   add(_output);
+   set_child(_output);
 }

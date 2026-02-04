@@ -151,7 +151,7 @@ namespace elena_lang
       virtual void stop(int exitCode) = 0;
 
       virtual bool write(const char* line, size_t length) = 0;
-      virtual bool write(wchar_t ch) = 0;
+      virtual bool write(text_c ch) = 0;
 
       ProcessBase()
          : _listeners(nullptr)

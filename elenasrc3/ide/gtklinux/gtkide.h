@@ -108,6 +108,7 @@ protected:
    // menu items
    Glib::RefPtr<Gio::SimpleAction>  _projectViewMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _errorListMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _outputMenuItem;
 
    void addHideTabBarPage(int controlIndex, bool visible);
 
@@ -275,7 +276,7 @@ protected:
    }
    void on_menu_project_compile()
    {
-      //_controller->doCompileProject();
+      _controller->doCompileProject(_model);
    }
    void on_menu_project_cleanup()
    {
@@ -302,6 +303,10 @@ protected:
    }
    void on_menu_project_output()
    {
+      bool visible = toggleVisibility(_model->ideScheme.compilerOutputControl);
+      checkMenuItemById(_outputMenuItem, visible);
+
+      addHideTabBarPage(_model->ideScheme.compilerOutputControl, visible);
    }
    void on_menu_project_messages()
    {

@@ -38,7 +38,7 @@ In development:
   --------------------------------------
   * current : #184 : compile / project messages / output
   ====================================== 
-  - output window
+  - implement compile
   - compile single file
   - compile the project
   - display error

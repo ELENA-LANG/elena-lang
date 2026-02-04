@@ -319,7 +319,7 @@ bool Win32Process :: write(const char* line, size_t length)
    else return false;
 }
 
-bool Win32Process :: write(wchar_t ch)
+bool Win32Process :: write(text_c ch)
 {
    if (ch == 8) {
       if (_offset > 0) {
