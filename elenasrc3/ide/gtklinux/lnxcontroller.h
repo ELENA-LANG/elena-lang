@@ -9,20 +9,33 @@
 #define LNXCONTROLLER_H
 
 #include "idecommon.h"
+#include <thread>
 
 namespace elena_lang
 {
    // -- LinuxProcess ---
    class LinuxProcess : public ProcessBase
    {
-      Glib::Threads::Thread* _outputThread;
-      const char** _args;
+      std::thread*         _outputThread;
+      mutable std::mutex   _mutex;
+
+      char**   _args;
+      int      _extraArg;
+      bool     _stopped;
+      int      _exitCode;
+
+      char     _buffer[512];
+      int      _buf_len;
 
       void setArguments(path_t cmdLine);
 
       void run(path_t path);
 
       void clear();
+
+      virtual void writeStdOut();
+      virtual void writeStdError(const char* error);
+      virtual void afterExecution();
 
    public:
       bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly, int extraArg) override;

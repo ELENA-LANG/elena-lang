@@ -4,7 +4,7 @@
 //                                             (C)2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#include "gtklinux/lnxoutput.h"
+#include "gtklinux/gtkoutput.h"
 
 using namespace elena_lang;
 

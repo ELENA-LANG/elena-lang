@@ -38,9 +38,10 @@ In development:
   --------------------------------------
   * current : #184 : compile / project messages / output
   ====================================== 
-  - implement compile
   - compile single file
   - compile the project
+
+  - free resources : thread
   - display error
   - display output
   --------------------------------------

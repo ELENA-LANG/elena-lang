@@ -6,12 +6,20 @@
 //---------------------------------------------------------------------------
 
 #include "gtklinux/lnxcontroller.h"
+#include <sys/wait.h>
+
+#define PIPE_READ 0
+#define PIPE_WRITE 1
 
 using namespace elena_lang;
 
 LinuxProcess :: LinuxProcess()
 {
-   args = nullptr
+   _args = nullptr;
+   _stopped = true;
+   _exitCode = 0;
+   _extraArg = 0;
+   _buf_len = 0;
 }
 
 void LinuxProcess :: clear()
@@ -20,7 +28,7 @@ void LinuxProcess :: clear()
       size_t index = 0;
 
       while (_args[index]) {
-         freestr(_args[index]);
+         freestr((char*)_args[index]);
 
          index++;
       }
@@ -33,11 +41,13 @@ void LinuxProcess :: clear()
 
 void LinuxProcess :: setArguments(path_t cmdLine)
 {
-   size_t length = 1;   
+   clear();
+
+   size_t length = 1;
    size_t index = cmdLine.find(' ');
    while (index != NOTFOUND_POS) {
       length++;
-      
+
       while (cmdLine[++index] == ' ');
 
       index = cmdLine.findSub(index, ' ');
@@ -50,7 +60,7 @@ void LinuxProcess :: setArguments(path_t cmdLine)
       index = cmdLine.find(' ');
       if (index != NOTFOUND_POS) {
          PathString tmp(cmdLine + start, index - start);
-         args[i++] = tmp.clone();
+         _args[i++] = (*tmp).clone();
 
       }
       else _args[i++] = path_t(cmdLine + index).clone();
@@ -61,18 +71,18 @@ void LinuxProcess :: setArguments(path_t cmdLine)
       index = cmdLine.findSub(index, ' ');
    }
 
-   _args[i] = nullptr;
+   _args[length] = nullptr;
 }
 
 void LinuxProcess :: run(path_t path)
 {
-   stopped = false;
-   exitCode = 0;
+   _stopped = false;
+   _exitCode = 0;
 
    int  stdinPipe[2];
    int  stdoutPipe[2];
 
-   const char** args = _args;
+   char* const* args = (char* const*) _args;
 
    if (pipe(stdinPipe) < 0) {
       //perror("allocating pipe for child input redirect");
@@ -113,7 +123,7 @@ void LinuxProcess :: run(path_t path)
       ::close(stdoutPipe[PIPE_READ]);
       ::close(stdoutPipe[PIPE_WRITE]);
 
-      int retVal = execv(path, args);
+      int retVal = execv(path, (char* const*)args);
 
       // if we get here at all, an error occurred, but we are in the child
       // process, so just exit
@@ -133,18 +143,18 @@ void LinuxProcess :: run(path_t path)
       //}
 
       while (true) {
-         buf_len = read(stdoutPipe[PIPE_READ], buffer, 512);
-         if (buf_len == 0)
+         _buf_len = read(stdoutPipe[PIPE_READ], _buffer, 511);
+         if (_buf_len == 0)
             break;
 
-         //owner->notifyOutput();
+         writeStdOut();
 
          // wait until the buffer is read
          while (true) {
-            Glib::usleep(100);
+            std::this_thread::sleep_for(std::chrono::milliseconds(100));
             {
-               Glib::Threads::Mutex::Lock lock(_mutex);
-               if (buf_len == 0)
+               std::lock_guard<std::mutex> lock(_mutex);
+               if (_buf_len == 0)
                   break;
             }
          }
@@ -158,11 +168,11 @@ void LinuxProcess :: run(path_t path)
       int status;
       waitpid(child, &status, 0);
       if (WIFEXITED(status)) {
-         exitCode = WEXITSTATUS(status);
+         _exitCode = WEXITSTATUS(status);
       }
 
-      stopped = true;
-      //owner->notifyCompletion(exitCode);
+      _stopped = true;
+      afterExecution();
    }
    else {
       // failed to create child
@@ -175,12 +185,17 @@ void LinuxProcess :: run(path_t path)
 
 bool LinuxProcess :: start(path_t path, path_t cmdLine, path_t curDir, bool readOnly, int extraArg)
 {
+   _extraArg = extraArg;
+
    setArguments(cmdLine);
 
-   _outputThread = Glib::Threads::Thread::create(
-      sigc::bind(sigc::mem_fun(_outputProcess, &OutputProcess::compile), path));
+   _outputThread = new std::thread(
+      [this,path]
+      {
+        run(path);
+      });
 
-   return false; //!! temporal
+   return true;
 }
 
 void LinuxProcess :: stop(int exitCode)
@@ -222,4 +237,29 @@ bool LinuxProcess :: write(char ch)
       /*else */return false;
    //}
    //else return write((const char*)&ch, 1);
+}
+
+void LinuxProcess :: writeStdOut()
+{
+   std::lock_guard<std::mutex> lock(_mutex);
+
+   _buffer[_buf_len] = 0;
+
+   for (auto it = _listeners.start(); !it.eof(); ++it) {
+      (*it)->onOutput(_buffer);
+   }
+}
+
+void LinuxProcess :: writeStdError(const char* error)
+{
+   for (auto it = _listeners.start(); !it.eof(); ++it) {
+      (*it)->onErrorOutput(error);
+   }
+}
+
+void LinuxProcess :: afterExecution()
+{
+   for (auto it = _listeners.start(); !it.eof(); ++it) {
+      (*it)->afterExecution(_exitCode, _extraArg);
+   }
 }
