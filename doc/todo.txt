@@ -5,36 +5,49 @@ In development:
 [development]
   ### EPIC: elena 7.0 ###
 
-  === Iteration 44 (ide; powerpc, aarch64, mac, i386 threading samples) ===
+  === Iteration 44 (powerpc, aarch64, mac, i386 threading samples) ===
   --------------------------------------
-  * dev 
-  --------------------------------------
-  - windows IDE : vm console (#58: vm console)
-  ====================================== 
   * lang
-  --------------------------------------
+  ====================================== 
   - test threadpoolsamples for i386 Linux
   - test asyncsamples  for i386 Linux
   - test tasksamples  for i386 Linux
   - test examples60 for i386 Linux
-  ====================================== 
-  * backlog
   --------------------------------------
+  * backlog
+  ====================================== 
   - ppc64 : fix system_tests - intTests
   - x86-64 test tasksamples  
-  ====================================== 
-  * #184 : IDE migration
   --------------------------------------
-  - ProjectOutput
+  * backlog : IDE
   ====================================== 
-  * current : #184 : project messages
+  - ide - disable close if no files are open
+  - ide - disable close project if the project is closed
+  - ide - closing old files on opening a project
+  - ide : react on mouse
+  - ide : context menu
+  - ide : closing unsaved file - closing unsaved
+  - ide : show hex number
+  - project settings : save output path
+  - close all - do not save file if it was not changed
+  - IDE : close icon on the tab
+  - IDE : right click on tab - context menu : close, close all, close all but current
+  - ide : error messages if the debug process failed
+  - ide : fix errors switching to error list / clear high light on click
+  - ide : new menu option : open output
   --------------------------------------
-  - ProjectMessages
+  * current : #184 : compile / project messages / output
   ====================================== 
+  - test messages
+  - compile single file
+  - compile the project
+  - display error
+  - display output
+  --------------------------------------
 
 
 
-  === Iteration 45 (ldoc method index; full api docs; template generator; httpget / httpsget reliability) ===
+  === Iteration 45 (ide, ldoc method index; full api docs; template generator) ===
   --------------------------------------
   * new version 6.8.3
   --------------------------------------
@@ -45,12 +58,11 @@ In development:
   * doc
   ====================================== 
   * current
-  --------------------------------------
-  --------------------------------------
+  ====================================== 
 
   ### EPIC: elena 8.0 ###
 
-  === Iteration 46 (graph sample) ===
+  === Iteration 46 (graph sample; httpget / httpsget reliability) ===
   * new version 7.0.1
   --------------------------------------
   * dev
@@ -60,11 +72,11 @@ In development:
   * doc
   ====================================== 
   * current
-  --------------------------------------
-  --------------------------------------
+  ====================================== 
 
   === Iteration 47 (tetris sample) ===
   * new version 7.0.2
+  --------------------------------------
   --------------------------------------
   * dev
   ====================================== 
@@ -73,8 +85,7 @@ In development:
   * doc
   ====================================== 
   * current
-  --------------------------------------
-  --------------------------------------
+  ====================================== 
 
   === Iteration 48 (chat sample) ===
   * new version 7.0.3

@@ -27,6 +27,23 @@ public:
    }
 };
 
+class MessageLogColumns : public Gtk::TreeModel::ColumnRecord
+{
+public:
+   Gtk::TreeModelColumn<Glib::ustring> _description;
+   Gtk::TreeModelColumn<Glib::ustring> _file;
+   Gtk::TreeModelColumn<Glib::ustring> _line;
+   Gtk::TreeModelColumn<Glib::ustring> _column;
+
+   MessageLogColumns()
+   {
+      add(_description);
+      add(_file);
+      add(_line);
+      add(_column);
+   }
+};
+
 // --- GTKIDEView ---
 
 typedef void(*FileCloseCallback)(void* arg, int index);
@@ -75,6 +92,9 @@ protected:
    ProjectTreeColumns           _projectTreeColumns;
    Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
+   MessageLogColumns            _messageLogColumns;
+   Glib::RefPtr<Gtk::TreeStore> _messageList;
+
    // dialogs
    FileDialog                   fileDialog;
    FileDialog                   projectDialog;
@@ -87,6 +107,7 @@ protected:
 
    // menu items
    Glib::RefPtr<Gio::SimpleAction>  _projectViewMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _errorListMenuItem;
 
    void populateUI();
 
@@ -279,10 +300,10 @@ protected:
    }
    void on_menu_project_output()
    {
-//      if (!_skip) {
-//         _controller->doShowCompilerOutput(!_model->compilerOutput);
-//      }
-//      else _skip = false;
+      bool visible = toggleVisibility(_model->ideScheme.errorListControl);
+      checkMenuItemById(_errorListMenuItem, visible);
+
+      toggleTabBar(_model->ideScheme.errorListControl, visible);
    }
    void on_menu_project_messages()
    {

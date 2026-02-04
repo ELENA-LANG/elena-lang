@@ -219,7 +219,7 @@ static Glib::ustring ui_info =
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Messages</attribute>"
-        "            <attribute name='action'>ProjectMessages</attribute>"
+        "            <attribute name='action'>win.ProjectMessages</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Debug Watch</attribute>"
@@ -474,6 +474,7 @@ GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model, GtkApp*
    _controller = controller;
 
    _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
+   _messageList = Gtk::TreeStore::create(_messageLogColumns);
 
    populateUI();
 
@@ -485,6 +486,7 @@ void GTKIDEWindow :: populate(int counter, Gtk::Widget** children)
    SDIWindow::populate(counter, children);
 
    Gtk::TreeView* projectView = (Gtk::TreeView*)_children[_model->ideScheme.projectView];
+   Gtk::TreeView* messageList = (Gtk::TreeView*)_children[_model->ideScheme.errorListControl];
 
    // project tree
    projectView->set_model(_projectTree);
@@ -493,6 +495,14 @@ void GTKIDEWindow :: populate(int counter, Gtk::Widget** children)
 
    projectView->signal_row_activated().connect(sigc::mem_fun(*this,
               &GTKIDEWindow::on_projectview_row_activated));
+
+   // message log
+   messageList->set_model(_messageList);
+
+   messageList->append_column("description", _messageLogColumns._description);
+   messageList->append_column("file", _messageLogColumns._file);
+   messageList->append_column("line", _messageLogColumns._line);
+   messageList->append_column("column", _messageLogColumns._column);
 }
 
 void GTKIDEWindow :: populateUI()
@@ -534,9 +544,9 @@ void GTKIDEWindow :: populateUI()
    refActions->add_action("EditUncomment", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_uncomment));
 
    _projectViewMenuItem = refActions->add_action_bool("ProjectView", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view), true);
+   _errorListMenuItem = refActions->add_action_bool("ProjectMessages", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages), false);
 
 //   _app->add_action("ProjectOutput", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
-//   _app->add_action("ProjectMessages", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages));
 //   _app->add_action("ProjectWatch", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_watch));
 //   _app->add_action("ProjectCallstack", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_callstack));
 //   _app->add_action("ProjectConsole", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_interactive));
@@ -1075,4 +1085,15 @@ void GTKIDEWindow :: newProject()
    _controller->doNewProject(_model);
 
    projectSettingsDialog.showModal();
+}
+
+void GTKIDEWindow :: addHideTabBarPage(int controlIndex, bool visible)
+{
+   Gtk::Notebook* tabBar = (Gtk::TreeView*)_children[_model->ideScheme.resultControl];
+   Gtk::Widget* control = (Gtk::TreeView*)_children[controlIndex];
+
+   if (visible) {
+      tabBar->append_page(*control, _model->ideScheme.captions.get(controlIndex));
+   }
+   else tabBar->remove_page(*control);
 }

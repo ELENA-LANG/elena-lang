@@ -183,23 +183,45 @@ Gtk::Widget* IDEFactory :: createProjectView()
    return projectView;
 }
 
+Gtk::Widget* IDEFactory :: createErrorList()
+{
+   Gtk::TreeView* errorLog = new Gtk::TreeView();
+
+   errorLog->set_size_request(200, 600); // !! temporal
+
+   return errorLog;
+}
+
+Gtk::Widget* IDEFactory :: createTabBar()
+{
+   Gtk::Notebook* tabBar = new Gtk::Notebook();
+
+   tabBar->set_size_request(200, 600); // !! temporal
+
+   return tabBar;
+}
+
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess)
 {
-   Gtk::Widget** children = new Gtk::Widget*[3];
+   Gtk::Widget** children = new Gtk::Widget*[5];
    int counter = 1;
 
    int textIndex = counter++;
    int projectView = counter++;
+   int tabBar = counter++;
+   int errorList = counter++;
    children[textIndex] = createTextControl();
    children[projectView] = createProjectView();
+   children[tabBar] = createTabBar();
+   children[errorList] = createErrorList();
 
    GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model, nullptr);
 
-   initializeScheme(textIndex, projectView);
+   initializeScheme(textIndex, tabBar, errorList, projectView);
 
    ideWindow->populate(counter, children);
-   ideWindow->setLayout(textIndex, -1, -1, -1, projectView);
+   ideWindow->setLayout(textIndex, -1, tabBar, -1, projectView);
 
    _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
 //   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
@@ -208,14 +230,14 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
 }
 
 
-void IDEFactory :: initializeScheme(int frameTextIndex, /*int tabBar, int compilerOutput, int errorList,*/
+void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, /*int compilerOutput, */int errorList,
    int projectView/*, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
    int toolBarControl, int contextEditor, int textIndex*/)
 {
    _model->ideScheme.textFrameId = frameTextIndex;
-//   _model->ideScheme.resultControl = tabBar;
+   _model->ideScheme.resultControl = tabBar;
 //   _model->ideScheme.compilerOutputControl = compilerOutput;
-//   _model->ideScheme.errorListControl = errorList;
+   _model->ideScheme.errorListControl = errorList;
    _model->ideScheme.projectView = projectView;
 //   _model->ideScheme.debugWatch = contextBrowser;
 //   _model->ideScheme.menu = menu;
@@ -227,7 +249,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, /*int tabBar, int compil
 //   _model->ideScheme.textControlId = textIndex;
 
 //   _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
-//   _model->ideScheme.captions.add(errorList, szErrorList);
+   _model->ideScheme.captions.add(errorList, "Messages");
 //   _model->ideScheme.captions.add(contextBrowser, szWatch);
 //   _model->ideScheme.captions.add(vmConsoleControl, szVMOutput);
 }
