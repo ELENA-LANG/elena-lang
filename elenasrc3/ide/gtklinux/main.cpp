@@ -1,10 +1,11 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Linux-GTK+ program entry
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkcommon.h"
+#include "gtklinux/lnxcontroller.h"
 #include "factory.h"
 
 using namespace elena_lang;
@@ -48,6 +49,8 @@ public:
    }
 };
 
+LinuxProcess      outputProcess;
+
 int main(int argc, char* argv[])
 {
    PathHelper    pathHelper;
@@ -73,7 +76,7 @@ int main(int argc, char* argv[])
    IDEFactory    factory(argc, argv, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
-   GUIControlBase* ideWindow = factory.createMainWindow(app, /*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr);
+   GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess, /*&vmConsoleProcess*/nullptr);
 
    ideController.setNotifier(app);
 

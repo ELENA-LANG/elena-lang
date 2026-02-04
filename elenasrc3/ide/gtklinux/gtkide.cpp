@@ -1089,11 +1089,19 @@ void GTKIDEWindow :: newProject()
 
 void GTKIDEWindow :: addHideTabBarPage(int controlIndex, bool visible)
 {
-   Gtk::Notebook* tabBar = (Gtk::TreeView*)_children[_model->ideScheme.resultControl];
-   Gtk::Widget* control = (Gtk::TreeView*)_children[controlIndex];
+   Gtk::Notebook* tabBar = (Gtk::Notebook*)_children[_model->ideScheme.resultControl];
+   Gtk::Widget* control = (Gtk::Widget*)_children[controlIndex];
 
    if (visible) {
+      if (!tabBar->get_visible())
+         tabBar->set_visible(true);
+
       tabBar->append_page(*control, _model->ideScheme.captions.get(controlIndex));
    }
-   else tabBar->remove_page(*control);
+   else {
+      tabBar->remove_page(*control);
+
+      if (tabBar->get_n_pages()==0)
+         tabBar->set_visible(false);
+   }
 }

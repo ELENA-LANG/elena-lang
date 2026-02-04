@@ -109,6 +109,8 @@ protected:
    Glib::RefPtr<Gio::SimpleAction>  _projectViewMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _errorListMenuItem;
 
+   void addHideTabBarPage(int controlIndex, bool visible);
+
    void populateUI();
 
    //Glib::RefPtr<Gtk::Action> getMenuItem(ustr_t name) override;
@@ -300,17 +302,13 @@ protected:
    }
    void on_menu_project_output()
    {
-      bool visible = toggleVisibility(_model->ideScheme.errorListControl);
-      checkMenuItemById(_errorListMenuItem, visible);
-
-      toggleTabBar(_model->ideScheme.errorListControl, visible);
    }
    void on_menu_project_messages()
    {
-//      if (!_skip) {
-//         _controller->doShowMessages(!_model->messages);
-//      }
-//      else _skip = false;
+      bool visible = toggleVisibility(_model->ideScheme.errorListControl);
+      checkMenuItemById(_errorListMenuItem, visible);
+
+      addHideTabBarPage(_model->ideScheme.errorListControl, visible);
    }
    void on_menu_project_watch()
    {

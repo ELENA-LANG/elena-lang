@@ -187,7 +187,8 @@ Gtk::Widget* IDEFactory :: createErrorList()
 {
    Gtk::TreeView* errorLog = new Gtk::TreeView();
 
-   errorLog->set_size_request(200, 600); // !! temporal
+   errorLog->set_size_request(200, 100); // !! temporal
+   errorLog->set_visible(false);
 
    return errorLog;
 }
@@ -196,25 +197,38 @@ Gtk::Widget* IDEFactory :: createTabBar()
 {
    Gtk::Notebook* tabBar = new Gtk::Notebook();
 
-   tabBar->set_size_request(200, 600); // !! temporal
+   tabBar->set_size_request(200, 100); // !! temporal
+   tabBar->set_visible(false);
 
    return tabBar;
+}
+
+Gtk::Widget* IDEFactory :: createCompilerOutput(ProcessBase* outputProcess)
+{
+   CompilerOutput* outputWindow = new CompilerOutput();
+
+   outputWindow->set_size_request(200, 100); // !! temporal
+   outputWindow->set_visible(false);
+
+   return outputWindow;
 }
 
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess)
 {
-   Gtk::Widget** children = new Gtk::Widget*[5];
+   Gtk::Widget** children = new Gtk::Widget*[6];
    int counter = 1;
 
    int textIndex = counter++;
    int projectView = counter++;
    int tabBar = counter++;
    int errorList = counter++;
+   int compilerOutput = counter++;
    children[textIndex] = createTextControl();
    children[projectView] = createProjectView();
    children[tabBar] = createTabBar();
    children[errorList] = createErrorList();
+   children[compilerOutput] = createCompilerOutput(outputProcess);
 
    GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model, nullptr);
 
@@ -230,13 +244,13 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
 }
 
 
-void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, /*int compilerOutput, */int errorList,
+void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList,
    int projectView/*, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
    int toolBarControl, int contextEditor, int textIndex*/)
 {
    _model->ideScheme.textFrameId = frameTextIndex;
    _model->ideScheme.resultControl = tabBar;
-//   _model->ideScheme.compilerOutputControl = compilerOutput;
+   _model->ideScheme.compilerOutputControl = compilerOutput;
    _model->ideScheme.errorListControl = errorList;
    _model->ideScheme.projectView = projectView;
 //   _model->ideScheme.debugWatch = contextBrowser;
@@ -248,7 +262,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, /*int compil
 //   _model->ideScheme.editorContextMenu = contextEditor;
 //   _model->ideScheme.textControlId = textIndex;
 
-//   _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
+   _model->ideScheme.captions.add(compilerOutput, "Output");
    _model->ideScheme.captions.add(errorList, "Messages");
 //   _model->ideScheme.captions.add(contextBrowser, szWatch);
 //   _model->ideScheme.captions.add(vmConsoleControl, szVMOutput);

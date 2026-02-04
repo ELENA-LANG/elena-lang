@@ -54,10 +54,12 @@ namespace elena_lang
       Gtk::Widget* createTextControl();
       Gtk::Widget* createProjectView();
       Gtk::Widget* createTabBar();
+      Gtk::Widget* createErrorList();
+      Gtk::Widget* createCompilerOutput(ProcessBase* outputProcess)
 
       //void initializeModel(IDEModel* ideView);
 
-      void initializeScheme(int frameTextIndex, int tabBar, int errorList,
+      void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList,
          int projectView);
 
    public:
