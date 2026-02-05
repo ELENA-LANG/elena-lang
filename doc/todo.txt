@@ -23,7 +23,6 @@ In development:
   ====================================== 
   - project settings : save output path
   - close all - do not save file if it was not changed
-  - IDE : close icon on the tab
   - IDE : right click on tab - context menu : close, close all, close all but current
   - ide : error messages if the debug process failed
   - ide : fix errors switching to error list / clear high light on click
@@ -31,8 +30,8 @@ In development:
   --------------------------------------
   * current : IDE back log
   ====================================== 
-  - ide : tree - show icons
   - ide : show hex number
+  - IDE : close icon on the tab
   --------------------------------------
 
 
