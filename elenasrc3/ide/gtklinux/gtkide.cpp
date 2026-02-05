@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkide.h"
+#include "gtklinux/gtkoutput.h"
 #include "eng/messages.h"
 
 using namespace elena_lang;
@@ -749,6 +750,11 @@ void GTKIDEWindow :: on_projectview_row_activated(const Gtk::TreeModel::Path& pa
    }
 }
 
+void GTKIDEWindow :: on_compilation_end(CompletionEvent event)
+{
+   onCompilationEnd(event.ExitCode(), event.PostpinedAction());
+}
+
 void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
 {
 }
@@ -826,6 +832,10 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
     //  }
       //else _children[_model->ideScheme.textFrameId]->hide();
    //}
+
+   if (test(status, STATUS_COMPILING)) {
+      onComilationStart();
+   }
 }
 
 void GTKIDEWindow :: saveFile_finish(PathString& path, int index)
@@ -1091,21 +1101,107 @@ void GTKIDEWindow :: newProject()
    projectSettingsDialog.showModal();
 }
 
-void GTKIDEWindow :: addHideTabBarPage(int controlIndex, bool visible)
+void GTKIDEWindow :: toggleResultTab(int controlIndex, bool visible)
 {
    Gtk::Notebook* tabBar = (Gtk::Notebook*)_children[_model->ideScheme.resultControl];
    Gtk::Widget* control = (Gtk::Widget*)_children[controlIndex];
 
    if (visible) {
+      if (control->get_visible())
+         return;
+
+      control->set_visible(true);
+
       if (!tabBar->get_visible())
          tabBar->set_visible(true);
 
       tabBar->append_page(*control, _model->ideScheme.captions.get(controlIndex));
    }
    else {
+      if (!control->get_visible())
+         return;
+
       tabBar->remove_page(*control);
+
+      control->set_visible(false);
 
       if (tabBar->get_n_pages()==0)
          tabBar->set_visible(false);
    }
 }
+
+void GTKIDEWindow :: onComilationStart()
+{
+//   updateCompileMenu(false, false, true);
+
+   toggleResultTab(_model->ideScheme.compilerOutputControl, true);
+
+   ((CompilerOutput*)_children[_model->ideScheme.compilerOutputControl])->clear();
+}
+
+void GTKIDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
+{
+   Glib::ustring output = ((CompilerOutput*)_children[_model->ideScheme.compilerOutputControl])->getOutput()->get_buffer()->get_text();
+
+   EventLog logger(this);
+
+   _controller->onCompilationCompletion(_model, exitCode, output.c_str(), &logger);
+
+   if (exitCode != EXIT_FAILURE) {
+//      switch ((DebugAction)postponedAction) {
+//         case DebugAction::Run:
+//            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
+//            break;
+//         case DebugAction::StepOver:
+//            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
+//            break;
+//         case DebugAction::StepInto:
+//            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
+//            break;
+//         case DebugAction::RunTo:
+//            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
+//            break;
+//         default:
+//            break;
+//      }
+   }
+}
+
+// --- GTKIDEWindow::EventLog ---
+
+void GTKIDEWindow::EventLog :: addMessage(text_str message, text_str file, text_str row, text_str col)
+{
+   auto logRow = *(_owner->_messageList->append());
+   logRow[_owner->_messageLogColumns._description] = message.str();
+   logRow[_owner->_messageLogColumns._file] = file.str();
+   logRow[_owner->_messageLogColumns._line] = row.str();
+   logRow[_owner->_messageLogColumns._column] = col.str();
+}
+
+MessageLogInfo GTKIDEWindow::EventLog :: getMessage(int index)
+{
+   return {};
+/*
+
+      Gtk::TreeModel::iterator iter = _messageList->get_iter(path);
+      if(iter) {
+         Gtk::TreeModel::Row row = *iter;
+
+         Glib::ustring file = row[_messageLogColumns._file];
+         Glib::ustring col = row[_messageLogColumns._column];
+         Glib::ustring line = row[_messageLogColumns._line];
+
+         MessageBookmark bookmark(file.c_str(), col.c_str(), line.c_str());
+
+         _controller->highlightMessage(&bookmark, STYLE_ERROR_LINE);
+      }
+
+
+*/
+}
+
+void GTKIDEWindow::EventLog :: clearMessages()
+{
+   _owner->_messageList->clear();
+}
+

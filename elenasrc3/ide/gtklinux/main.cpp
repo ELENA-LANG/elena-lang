@@ -59,7 +59,7 @@ int main(int argc, char* argv[])
    TextViewSettings textViewSettings = { EOLMode::LF, false, 3 };
 
    IDEModel      ideModel(textViewSettings);
-   IDEController ideController(/*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr, /*&debugProcess*/nullptr, &ideModel,
+   IDEController ideController(&outputProcess, /*&vmConsoleProcess*/nullptr, /*&debugProcess*/nullptr, &ideModel,
                         CURRENT_PLATFORM, &pathHelper, /*compareFileModifiedTime*/nullptr);
 
    // NOTE : it must be initialized before factory / controller

@@ -41,9 +41,10 @@ In development:
   - compile single file
   - compile the project
 
-  - free resources : thread
+  - show the result
   - display error
-  - display output
+
+  - free resources : thread
   --------------------------------------
 
 

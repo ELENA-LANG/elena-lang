@@ -97,6 +97,9 @@ void IDEBroadcaster :: sendMessage(EventBase* event)
       case EVENT_TEXTFRAME_SELECTION_CHANGED:
          textframe_changed.emit(*(SelectionEvent*)event);
          break;
+      case EVENT_COMPILATION_END:
+         completion_done.emit(*(CompletionEvent*)event);
+         break;
       default:
          break;
    }
@@ -219,10 +222,12 @@ Gtk::Widget* IDEFactory :: createTabBar()
 
 Gtk::Widget* IDEFactory :: createCompilerOutput(ProcessBase* outputProcess)
 {
-   CompilerOutput* outputWindow = new CompilerOutput();
+   CompilerOutput* outputWindow = new CompilerOutput(&_broadcaster);
 
    outputWindow->set_size_request(200, 100); // !! temporal
    outputWindow->set_visible(false);
+
+   outputProcess->attachListener(outputWindow);
 
    return outputWindow;
 }

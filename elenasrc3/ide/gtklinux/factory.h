@@ -20,6 +20,7 @@ namespace elena_lang
 {
    typedef sigc::signal<void(TextViewModelEvent)> type_textview_changed;
    typedef sigc::signal<void(SelectionEvent)> type_textframe_changed;
+   typedef sigc::signal<void(CompletionEvent)> type_completion_done;
 
    // --- IDEBroadcaster ---
    class IDEBroadcaster : public BroadcasterBase
@@ -27,6 +28,7 @@ namespace elena_lang
    public:
       type_textview_changed    textview_changed;
       type_textframe_changed   textframe_changed;
+      type_completion_done     completion_done;
 
       void sendMessage(EventBase* event) override;
 

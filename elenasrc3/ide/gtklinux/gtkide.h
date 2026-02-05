@@ -82,6 +82,25 @@ protected:
       }
    };
 
+   class EventLog : public ErrorLogBase
+   {
+      GTKIDEWindow*  _owner;
+
+   public:
+      void addMessage(text_str message, text_str file, text_str row, text_str col) override;
+
+      MessageLogInfo getMessage(int index) override;
+
+      void clearMessages() override;
+
+      EventLog(GTKIDEWindow* owner)
+         : _owner(owner)
+      {
+      }
+   };
+
+   friend class EventLog;
+
    GtkApp*                      _app;
 
    IDEModel*                    _model;
@@ -110,7 +129,7 @@ protected:
    Glib::RefPtr<Gio::SimpleAction>  _errorListMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _outputMenuItem;
 
-   void addHideTabBarPage(int controlIndex, bool visible);
+   void toggleResultTab(int controlIndex, bool visible);
 
    void populateUI();
 
@@ -306,14 +325,14 @@ protected:
       bool visible = toggleVisibility(_model->ideScheme.compilerOutputControl);
       checkMenuItemById(_outputMenuItem, visible);
 
-      addHideTabBarPage(_model->ideScheme.compilerOutputControl, visible);
+      toggleResultTab(_model->ideScheme.compilerOutputControl, visible);
    }
    void on_menu_project_messages()
    {
       bool visible = toggleVisibility(_model->ideScheme.errorListControl);
       checkMenuItemById(_errorListMenuItem, visible);
 
-      addHideTabBarPage(_model->ideScheme.errorListControl, visible);
+      toggleResultTab(_model->ideScheme.errorListControl, visible);
    }
    void on_menu_project_watch()
    {
@@ -421,11 +440,15 @@ protected:
    void closeAllButActive_next(int index);
    void closeAllButActive();
 
+   void onComilationStart();
+   void onCompilationEnd(int exitCode, int postponedAction);
+
 public:
    void populate(int counter, Gtk::Widget** children);
 
    void on_text_model_change(TextViewModelEvent event);
    void on_textframe_change(SelectionEvent event);
+   void on_compilation_end(CompletionEvent event);
 
    GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model, GtkApp* app);
 };

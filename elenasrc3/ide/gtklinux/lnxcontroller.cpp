@@ -6,7 +6,12 @@
 //---------------------------------------------------------------------------
 
 #include "gtklinux/lnxcontroller.h"
+
 #include <sys/wait.h>
+#include <fcntl.h>
+#include <unistd.h>
+#include <stdio.h>
+#include <stdlib.h>
 
 #define PIPE_READ 0
 #define PIPE_WRITE 1
@@ -14,6 +19,7 @@
 using namespace elena_lang;
 
 LinuxProcess :: LinuxProcess()
+   : _outputThread(nullptr)
 {
    _args = nullptr;
    _stopped = true;
@@ -22,7 +28,18 @@ LinuxProcess :: LinuxProcess()
    _buf_len = 0;
 }
 
-void LinuxProcess :: clear()
+void LinuxProcess :: freeOutputThread()
+{
+   if  (_outputThread) {
+      _outputThread->detach();
+
+      delete _outputThread;
+
+      _outputThread = nullptr;
+   }
+}
+
+void LinuxProcess :: clearArguments()
 {
    if (_args) {
       size_t index = 0;
@@ -41,7 +58,7 @@ void LinuxProcess :: clear()
 
 void LinuxProcess :: setArguments(path_t cmdLine)
 {
-   clear();
+   clearArguments();
 
    size_t length = 1;
    size_t index = cmdLine.find(' ');
@@ -57,41 +74,39 @@ void LinuxProcess :: setArguments(path_t cmdLine)
 
    size_t start = 0;
    for (size_t i = 0; i < length; i++) {
-      index = cmdLine.find(' ');
+      index = cmdLine.findSub(start, ' ');
       if (index != NOTFOUND_POS) {
          PathString tmp(cmdLine + start, index - start);
-         _args[i++] = (*tmp).clone();
+         _args[i] = (*tmp).clone();
 
       }
-      else _args[i++] = path_t(cmdLine + index).clone();
+      else _args[i] = path_t(cmdLine + start).clone();
 
       while (cmdLine[++index] == ' ');
 
       start = index;
-      index = cmdLine.findSub(index, ' ');
    }
 
    _args[length] = nullptr;
 }
 
-void LinuxProcess :: run(path_t path)
+void LinuxProcess :: run(/*path_t path*/)
 {
    _stopped = false;
-   _exitCode = 0;
 
-   int  stdinPipe[2];
-   int  stdoutPipe[2];
+//   char* const* args = (char* const*) _args;
+//
+//   int  stdinPipe[2] = {};
+   int  stdoutPipe[2] = {};
 
-   char* const* args = (char* const*) _args;
-
-   if (pipe(stdinPipe) < 0) {
-      //perror("allocating pipe for child input redirect");
-      return;
-   }
+//   if (pipe(stdinPipe) < 0) {
+//      //perror("allocating pipe for child input redirect");
+//      return;
+//   }
    if (pipe(stdoutPipe) < 0) {
-      ::close(stdinPipe[PIPE_READ]);
-      ::close(stdinPipe[PIPE_WRITE]);
-      //perror("allocating pipe for child output redirect");
+//      ::close(stdinPipe[PIPE_READ]);
+//      ::close(stdinPipe[PIPE_WRITE]);
+//      //perror("allocating pipe for child output redirect");
       return;
    }
 
@@ -100,30 +115,32 @@ void LinuxProcess :: run(path_t path)
       // child continues here
 
       // redirect stdin
-      if (dup2(stdinPipe[PIPE_READ], STDIN_FILENO) == -1) {
-         //perror("redirecting stdin");
-         return;
-      }
+//      if (dup2(stdinPipe[PIPE_READ], fileno(stdin)) == -1) {
+//         //perror("redirecting stdin");
+//         return;
+//      }
 
-      // redirect stdout
       if (dup2(stdoutPipe[PIPE_WRITE], STDOUT_FILENO) == -1) {
-         //perror("redirecting stdout");
+//         printf("redirecting stdout error");
          return;
       }
-
-      // redirect stderr
-      if (dup2(stdoutPipe[PIPE_WRITE], STDERR_FILENO) == -1) {
-         //perror("redirecting stderr");
-         return;
-      }
-
-      // all these are for use by parent only
-      ::close(stdinPipe[PIPE_READ]);
-      ::close(stdinPipe[PIPE_WRITE]);
+//
+//      // redirect stderr
+//      printf("child.3\n");
+//      if (dup2(stdoutPipe[PIPE_WRITE], fileno(stderr)) == -1) {
+//         printf("redirecting stderr error");
+//         return;
+//      }
+//
+//      printf("child.4\n");
+//      // all these are for use by parent only
+//      ::close(stdinPipe[PIPE_READ]);
+//      ::close(stdinPipe[PIPE_WRITE]);
       ::close(stdoutPipe[PIPE_READ]);
       ::close(stdoutPipe[PIPE_WRITE]);
 
-      int retVal = execv(path, (char* const*)args);
+      //int retVal = execv(path, (char* const*)args);
+      int retVal = execl("/usr/bin/elena64-cli", 0);
 
       // if we get here at all, an error occurred, but we are in the child
       // process, so just exit
@@ -134,7 +151,7 @@ void LinuxProcess :: run(path_t path)
       // parent continues here
 
       // close unused file descriptors, these are for child only
-      ::close(stdinPipe[PIPE_READ]);
+//      ::close(stdinPipe[PIPE_READ]);
       ::close(stdoutPipe[PIPE_WRITE]);
 
       // Include error check here
@@ -147,22 +164,26 @@ void LinuxProcess :: run(path_t path)
          if (_buf_len == 0)
             break;
 
+         // !! temporal
+         _buffer[_buf_len] = 0;
+         printf(_buffer);
+
          writeStdOut();
 
-         // wait until the buffer is read
-         while (true) {
-            std::this_thread::sleep_for(std::chrono::milliseconds(100));
-            {
-               std::lock_guard<std::mutex> lock(_mutex);
-               if (_buf_len == 0)
-                  break;
-            }
-         }
+//         // wait until the buffer is read
+//         //while (true) {
+//         //   std::this_thread::sleep_for(std::chrono::milliseconds(100));
+//         //   {
+//         //      std::lock_guard<std::mutex> lock(_mutex);
+//         //      if (_buf_len == 0)
+//         //         break;
+//         //   }
+//         //}
       }
 
-      // done with these in this example program, you would normally keep these
-      // open of course as long as you want to talk to the child
-      ::close(stdinPipe[PIPE_WRITE]);
+//      // done with these in this example program, you would normally keep these
+//      // open of course as long as you want to talk to the child
+//      ::close(stdinPipe[PIPE_WRITE]);
       ::close(stdoutPipe[PIPE_READ]);
 
       int status;
@@ -176,8 +197,8 @@ void LinuxProcess :: run(path_t path)
    }
    else {
       // failed to create child
-      ::close(stdinPipe[PIPE_READ]);
-      ::close(stdinPipe[PIPE_WRITE]);
+      //::close(stdinPipe[PIPE_READ]);
+      //::close(stdinPipe[PIPE_WRITE]);
       ::close(stdoutPipe[PIPE_READ]);
       ::close(stdoutPipe[PIPE_WRITE]);
    }
@@ -189,10 +210,11 @@ bool LinuxProcess :: start(path_t path, path_t cmdLine, path_t curDir, bool read
 
    setArguments(cmdLine);
 
+   freeOutputThread();
    _outputThread = new std::thread(
-      [this,path]
+      [this/*,path*/]
       {
-        run(path);
+        this->run(/*path*/);
       });
 
    return true;
@@ -241,13 +263,15 @@ bool LinuxProcess :: write(char ch)
 
 void LinuxProcess :: writeStdOut()
 {
-   std::lock_guard<std::mutex> lock(_mutex);
+   //std::lock_guard<std::mutex> lock(_mutex);
 
    _buffer[_buf_len] = 0;
 
    for (auto it = _listeners.start(); !it.eof(); ++it) {
       (*it)->onOutput(_buffer);
    }
+
+   _buf_len = 0;
 }
 
 void LinuxProcess :: writeStdError(const char* error)
