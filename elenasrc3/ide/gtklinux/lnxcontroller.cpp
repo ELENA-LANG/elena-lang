@@ -21,7 +21,6 @@ using namespace elena_lang;
 LinuxProcess :: LinuxProcess()
    : _outputThread(nullptr)
 {
-   _args = nullptr;
    _stopped = true;
    _exitCode = 0;
    _extraArg = 0;
@@ -39,27 +38,8 @@ void LinuxProcess :: freeOutputThread()
    }
 }
 
-void LinuxProcess :: clearArguments()
+char** LinuxProcess :: generateArguments(path_t cmdLine)
 {
-   if (_args) {
-      size_t index = 0;
-
-      while (_args[index]) {
-         freestr((char*)_args[index]);
-
-         index++;
-      }
-
-      delete[] _args;
-
-      _args = nullptr;
-   }
-}
-
-void LinuxProcess :: setArguments(path_t cmdLine)
-{
-   clearArguments();
-
    size_t length = 1;
    size_t index = cmdLine.find(' ');
    while (index != NOTFOUND_POS) {
@@ -70,32 +50,35 @@ void LinuxProcess :: setArguments(path_t cmdLine)
       index = cmdLine.findSub(index, ' ');
    }
 
-   _args = new char* [length + 1];
+   auto args = new char* [length + 1];
 
    size_t start = 0;
    for (size_t i = 0; i < length; i++) {
       index = cmdLine.findSub(start, ' ');
       if (index != NOTFOUND_POS) {
          PathString tmp(cmdLine + start, index - start);
-         _args[i] = (*tmp).clone();
+         args[i] = (*tmp).clone();
 
       }
-      else _args[i] = path_t(cmdLine + start).clone();
+      else args[i] = path_t(cmdLine + start).clone();
 
       while (cmdLine[++index] == ' ');
 
       start = index;
    }
 
-   _args[length] = nullptr;
+   args[length] = nullptr;
+
+   return args;
 }
 
-void LinuxProcess :: run(/*path_t path*/)
+void LinuxProcess :: run(path_t path, path_t cmdLine)
 {
    _stopped = false;
 
-//   char* const* args = (char* const*) _args;
-//
+   const char* path_str = path.str();
+   const char* cmdLine_str = cmdLine.str();
+
 //   int  stdinPipe[2] = {};
    int  stdoutPipe[2] = {};
 
@@ -124,23 +107,21 @@ void LinuxProcess :: run(/*path_t path*/)
 //         printf("redirecting stdout error");
          return;
       }
-//
-//      // redirect stderr
-//      printf("child.3\n");
+
+      // redirect stderr
 //      if (dup2(stdoutPipe[PIPE_WRITE], fileno(stderr)) == -1) {
 //         printf("redirecting stderr error");
 //         return;
 //      }
-//
-//      printf("child.4\n");
-//      // all these are for use by parent only
+
+      // all these are for use by parent only
 //      ::close(stdinPipe[PIPE_READ]);
 //      ::close(stdinPipe[PIPE_WRITE]);
       ::close(stdoutPipe[PIPE_READ]);
       ::close(stdoutPipe[PIPE_WRITE]);
 
-      //int retVal = execv(path, (char* const*)args);
-      int retVal = execl("/usr/bin/elena64-cli", 0);
+      char* const* args = (char* const*)generateArguments(cmdLine_str);
+      int retVal = execv(path_str, args);
 
       // if we get here at all, an error occurred, but we are in the child
       // process, so just exit
@@ -164,24 +145,13 @@ void LinuxProcess :: run(/*path_t path*/)
          if (_buf_len == 0)
             break;
 
-         // !! temporal
          _buffer[_buf_len] = 0;
-         printf(_buffer);
+         //printf(_buffer);
 
          writeStdOut();
-
-//         // wait until the buffer is read
-//         //while (true) {
-//         //   std::this_thread::sleep_for(std::chrono::milliseconds(100));
-//         //   {
-//         //      std::lock_guard<std::mutex> lock(_mutex);
-//         //      if (_buf_len == 0)
-//         //         break;
-//         //   }
-//         //}
       }
 
-//      // done with these in this example program, you would normally keep these
+      // done with these in this example program, you would normally keep these
 //      // open of course as long as you want to talk to the child
 //      ::close(stdinPipe[PIPE_WRITE]);
       ::close(stdoutPipe[PIPE_READ]);
@@ -206,15 +176,18 @@ void LinuxProcess :: run(/*path_t path*/)
 
 bool LinuxProcess :: start(path_t path, path_t cmdLine, path_t curDir, bool readOnly, int extraArg)
 {
-   _extraArg = extraArg;
+   if (!_stopped)
+      return false;
 
-   setArguments(cmdLine);
+   chdir(curDir.str());
+
+   _extraArg = extraArg;
 
    freeOutputThread();
    _outputThread = new std::thread(
-      [this/*,path*/]
+      [this,path,cmdLine]
       {
-        this->run(/*path*/);
+        this->run(path, cmdLine);
       });
 
    return true;

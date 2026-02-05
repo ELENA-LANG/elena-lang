@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     GTK+ TextView Control Implementation File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtktextview.h"
@@ -246,7 +246,6 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
          x = marginWidth;
          y += lineHeight;
 
-
          if (_model->lineNumbersVisible) {
             lineNumber.clear();
             lineNumber.appendInt(reader.row + 1);
@@ -257,12 +256,17 @@ void TextViewWindow::TextDrawingArea :: paint(Canvas& canvas , int viewWidth, in
                 lineNumber.str(),
                 marginStyle);
          }
+         if (reader.toggleMark) {
+            canvas.drawEllipse(x + 6, y + 6, 12, style);
+
+            reader.toggleMark = false;
+         }
       }
 
       width = canvas.TextWidth(style, buffer);
 
       if (reader.bandStyle) {
-         canvas.fillRectangle(x, y, viewWidth, lineHeight + 1, marginStyle);
+         canvas.fillRectangle(x, y, viewWidth, lineHeight + 1, style);
 
          reader.bandStyle = false;
       }

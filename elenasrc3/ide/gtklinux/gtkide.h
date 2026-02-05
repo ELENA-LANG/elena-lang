@@ -89,7 +89,8 @@ protected:
    public:
       void addMessage(text_str message, text_str file, text_str row, text_str col) override;
 
-      MessageLogInfo getMessage(int index) override;
+      MessageLogInfo getMessage(int index) override { return {}; } // !! is not used
+      MessageLogInfo getMessage(const Gtk::TreeModel::Path& path);
 
       void clearMessages() override;
 
@@ -413,11 +414,14 @@ protected:
 
    void on_projectview_row_activated(const Gtk::TreeModel::Path& path,
         Gtk::TreeViewColumn*);
+   void on_errorlist_row_activated(const Gtk::TreeModel::Path& path,
+        Gtk::TreeViewColumn*);
 
    void onDocumentUpdate(DocumentChangeStatus changeStatus);
    void onProjectChange(bool empty);
    void onProjectRefresh(bool empty);
    void onIDEStatusChange(int status);
+   void onErrorHighlight(const Gtk::TreeModel::Path& path);
 
    void saveFile(int index);
    void saveFileAs(int index);

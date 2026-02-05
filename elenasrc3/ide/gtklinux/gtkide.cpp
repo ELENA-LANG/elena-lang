@@ -504,6 +504,9 @@ void GTKIDEWindow :: populate(int counter, Gtk::Widget** children)
    messageList->append_column("file", _messageLogColumns._file);
    messageList->append_column("line", _messageLogColumns._line);
    messageList->append_column("column", _messageLogColumns._column);
+
+   messageList->signal_row_activated().connect(sigc::mem_fun(*this,
+              &GTKIDEWindow::on_errorlist_row_activated));
 }
 
 void GTKIDEWindow :: populateUI()
@@ -750,6 +753,12 @@ void GTKIDEWindow :: on_projectview_row_activated(const Gtk::TreeModel::Path& pa
    }
 }
 
+void GTKIDEWindow :: on_errorlist_row_activated(const Gtk::TreeModel::Path& path,
+    Gtk::TreeViewColumn*)
+{
+   onErrorHighlight(path);
+}
+
 void GTKIDEWindow :: on_compilation_end(CompletionEvent event)
 {
    onCompilationEnd(event.ExitCode(), event.PostpinedAction());
@@ -835,6 +844,11 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
 
    if (test(status, STATUS_COMPILING)) {
       onComilationStart();
+   }
+
+   if (test(status, STATUS_WITHERRORS)) {
+      toggleResultTab(_model->ideScheme.errorListControl, true);
+      checkMenuItemById(_errorListMenuItem, true);
    }
 }
 
@@ -1115,7 +1129,8 @@ void GTKIDEWindow :: toggleResultTab(int controlIndex, bool visible)
       if (!tabBar->get_visible())
          tabBar->set_visible(true);
 
-      tabBar->append_page(*control, _model->ideScheme.captions.get(controlIndex));
+      int n = tabBar->append_page(*control, _model->ideScheme.captions.get(controlIndex));
+      tabBar->set_current_page(n);
    }
    else {
       if (!control->get_visible())
@@ -1135,6 +1150,7 @@ void GTKIDEWindow :: onComilationStart()
 //   updateCompileMenu(false, false, true);
 
    toggleResultTab(_model->ideScheme.compilerOutputControl, true);
+   checkMenuItemById(_outputMenuItem, true);
 
    ((CompilerOutput*)_children[_model->ideScheme.compilerOutputControl])->clear();
 }
@@ -1167,6 +1183,15 @@ void GTKIDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
    }
 }
 
+void GTKIDEWindow :: onErrorHighlight(const Gtk::TreeModel::Path& path)
+{
+   EventLog logger(this);
+
+   auto messageInfo = logger.getMessage(path);
+   if (!messageInfo.path.empty())
+      _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+}
+
 // --- GTKIDEWindow::EventLog ---
 
 void GTKIDEWindow::EventLog :: addMessage(text_str message, text_str file, text_str row, text_str col)
@@ -1178,26 +1203,20 @@ void GTKIDEWindow::EventLog :: addMessage(text_str message, text_str file, text_
    logRow[_owner->_messageLogColumns._column] = col.str();
 }
 
-MessageLogInfo GTKIDEWindow::EventLog :: getMessage(int index)
+MessageLogInfo GTKIDEWindow::EventLog :: getMessage(const Gtk::TreeModel::Path& path)
 {
-   return {};
-/*
+   Gtk::TreeModel::iterator iter = _owner->_messageList->get_iter(path);
+   if(iter) {
+      Gtk::TreeModel::Row row = *iter;
 
-      Gtk::TreeModel::iterator iter = _messageList->get_iter(path);
-      if(iter) {
-         Gtk::TreeModel::Row row = *iter;
+      Glib::ustring file = row[_owner->_messageLogColumns._file];
+      Glib::ustring col = row[_owner->_messageLogColumns._column];
+      Glib::ustring line = row[_owner->_messageLogColumns._line];
 
-         Glib::ustring file = row[_messageLogColumns._file];
-         Glib::ustring col = row[_messageLogColumns._column];
-         Glib::ustring line = row[_messageLogColumns._line];
+      MessageLogInfo bookmark(file.c_str(), StrConvertor::toInt(line.c_str(), 10), StrConvertor::toInt(col.c_str(), 10));
 
-         MessageBookmark bookmark(file.c_str(), col.c_str(), line.c_str());
-
-         _controller->highlightMessage(&bookmark, STYLE_ERROR_LINE);
-      }
-
-
-*/
+      return bookmark;
+   }
 }
 
 void GTKIDEWindow::EventLog :: clearMessages()

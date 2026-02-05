@@ -39,7 +39,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Color(0,0,0), Color(0.93, 0.94, 0.95), "Monospace", 10, false, false},
    {Color(0,0,0), Color(0.75, 0.75, 0.75), "Monospace", 10, false, false},
    {Color(0.35, 0.35, 0.35), Color(0, 1, 1), "Monospace", 10, true, false},
-   {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
+   {Color(1, 1, 1), Color(1, 0, 0, 1), "Monospace", 10, false, false},
    {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
    {Color(0, 0, 1), Color(1, 1, 1), "Monospace", 10, false, false},
    {Color(0.25, 0.5, 0.5), Color(1, 1, 1), "Monospace", 10, false, false},
@@ -54,8 +54,8 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
    {Color(0.84, 0.84, 0.84), Color(0, 0, 68), "Monospace", 10, false, false},
    {Color(0.35, 0.35, 0.35), Color(0.84, 0.84, 0.84), "Monospace", 10, true, false},
    {Color(0.35, 0.35, 0.35), Color(0, 1, 1), "Monospace", 10, true, false},
-   {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
-   {Color(1, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(1, 1, 0), Color(1, 0, 0), "Monospace", 10, false, false},
+   {Color(1, 1, 0), Color(0, 0, 0.5), "Monospace", 10, false, false},
    {Color(1, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
    {Color(0.85, 0.85, 0.85), Color(0, 0, 0.5), "Monospace", 10, false, false},
    {Color(0.85, 0.85, 0.85), Color(0, 0, 0.5), "Monospace", 10, false, false},
@@ -258,6 +258,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
 
    _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
 //   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
+   _broadcaster.completion_done.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_compilation_end));
 
    return new WindowWrapper(ideWindow);
 }

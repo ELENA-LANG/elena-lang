@@ -17,22 +17,7 @@ namespace elena_lang
    class LinuxProcess : public ProcessBase
    {
       std::thread*         _outputThread;
-      //mutable std::mutex   _mutex;
 
-      void freeOutputThread();
-
-
-
-
-
-
-
-
-
-
-
-
-      char**   _args;
       int      _extraArg;
       bool     _stopped;
       int      _exitCode;
@@ -40,50 +25,18 @@ namespace elena_lang
       char     _buffer[512];
       int      _buf_len;
 
+      void freeOutputThread();
 
+      char** generateArguments(path_t cmdLine);
 
+      void writeStdOut();
+      void writeStdError(const char* error);
+      void afterExecution();
 
-
-
-
-
-
-
-
-
-
-      void setArguments(path_t cmdLine);
-      void clearArguments();
-
-
-
-      virtual void writeStdOut();
-      virtual void writeStdError(const char* error);
-      virtual void afterExecution();
-
-
-
-
-      void run(/*path_t path*/);
-
-
-
-
-
-
+      void run(path_t path, path_t cmdLine);
 
    public:
       bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly, int extraArg) override;
-
-
-
-
-
-
-
-
-
-
 
       void stop(int exitCode = 0) override;
 
