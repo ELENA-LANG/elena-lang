@@ -21,13 +21,6 @@ In development:
   --------------------------------------
   * backlog : IDE
   ====================================== 
-  - ide - disable close if no files are open
-  - ide - disable close project if the project is closed
-  - ide - closing old files on opening a project
-  - ide : react on mouse
-  - ide : context menu
-  - ide : closing unsaved file - closing unsaved
-  - ide : show hex number
   - project settings : save output path
   - close all - do not save file if it was not changed
   - IDE : close icon on the tab
@@ -36,9 +29,10 @@ In development:
   - ide : fix errors switching to error list / clear high light on click
   - ide : new menu option : open output
   --------------------------------------
-  * current : #184 : compile / project messages / output
+  * current : IDE back log
   ====================================== 
-  - display error line
+  - ide : tree - show icons
+  - ide : show hex number
   --------------------------------------
 
 

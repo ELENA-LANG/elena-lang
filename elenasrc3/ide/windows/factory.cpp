@@ -398,7 +398,7 @@ ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* n
          ParamSelectionEvent event = { EVENT_PROJECTVIEW_SELECTION_CHANGED, param };
 
          notifier->notify(&event);
-      });
+      }, true, IDR_FILETREE);
    projectView->createControl(_instance, owner);
 
    styleControl(projectView);

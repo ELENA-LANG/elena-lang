@@ -396,11 +396,7 @@ bool IDEWindow :: saveBeforeClose(int index)
          return false;
       }
       else if (result == MessageDialogBase::Answer::Yes) {
-         PathString path;
-         if (fileDialog.saveFile(_T("l"), path)) {
-            _controller->doSaveFile(_model, index, true, *path);
-         }
-         else return false;
+         saveFile(index);
       }
    }
 
@@ -1369,6 +1365,7 @@ void IDEWindow :: onLayoutChange()
    enableMenuItemById(IDM_FILE_SAVEAS, !empty, false);
    enableMenuItemById(IDM_FILE_CLOSE, !empty, true);
    enableMenuItemById(IDM_FILE_CLOSEALL, !empty, false);
+   enableMenuItemById(IDM_FILE_CLOSEALLBUT, !empty, false);
 
    if (empty) {
       enableMenuItemById(IDM_EDIT_UNDO, false, true);
@@ -1475,6 +1472,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          break;
       case NM_RCLICK:
          onRClick(hdr);
+         break;
+      case NM_SETFOCUS:
+         _children[_model->ideScheme.textFrameId]->setFocus();
          break;
       case TTN_GETDISPINFO:
          if (isTabToolTip(hdr->hwndFrom)) {
