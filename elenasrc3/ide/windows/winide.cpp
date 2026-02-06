@@ -18,6 +18,8 @@
 
 #include <windows/Resource.h>
 
+#include <windowsx.h>
+
 using namespace elena_lang;
 
 // --- Clipboard ---
@@ -1474,13 +1476,18 @@ void IDEWindow :: onNotify(NMHDR* hdr)
          onRClick(hdr);
          break;
       case NM_SETFOCUS:
-         _children[_model->ideScheme.textFrameId]->setFocus();
+         if (_children[_model->ideScheme.projectView]->checkHandle(hdr->hwndFrom))
+            _children[_model->ideScheme.textFrameId]->setFocus();
          break;
       case TTN_GETDISPINFO:
          if (isTabToolTip(hdr->hwndFrom)) {
             onTabTip((NMTTDISPINFO*)hdr);
          }
          else onToolTip((NMTTDISPINFO*)hdr);
+         break;
+      case NM_CLICK:
+         if (_children[_model->ideScheme.textFrameId]->checkHandle(hdr->hwndFrom))
+            ((ControlBase*)_children[_model->ideScheme.textFrameId])->onClick(hdr);
          break;
       default:
          break;
@@ -1675,3 +1682,20 @@ void IDEWindow :: onDropFiles(HDROP hDrop)
 
    DragFinish(hDrop);
 }
+
+//void IDEWindow :: onMouseMove(WPARAM wParam, LPARAM lParam)
+//{
+//   if (wParam != 0)
+//      return;
+//
+//   Point p(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+//
+//   TextViewFrame* textFrame = (TextViewFrame*)_children[_model->ideScheme.textFrameId];
+//   if (textFrame->isOverButton(p)) {
+//      if(textFrame->highlightButton())
+//         textFrame->refresh();
+//   }
+//   else if (textFrame->clearButton()) {
+//      textFrame->refresh();
+//   }
+//}

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Header File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINCOMMON_H
@@ -90,6 +90,8 @@ namespace elena_lang
    constexpr int STATUS_TREEITEM       = 0x104;
    constexpr int CONTEXT_MENU_ON       = 0x105;
 
+   constexpr int EVENT_APP_COMMAND     = 0x201;
+
    // --- Color ---
    class Color
    {
@@ -173,6 +175,7 @@ namespace elena_lang
       virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
       virtual void onSelChanged() {}
       virtual void onDoubleClick(NMHDR* hdr) {}
+      virtual void onClick(NMHDR* hdr) {}
 
       virtual HWND create(HINSTANCE instance, wstr_t className, ControlBase* owner, int dwExStyles);
 
@@ -193,6 +196,19 @@ namespace elena_lang
 
    // --- EventFormatterBase ---
    class WindowApp;
+
+   class AppCommandEvent : public EventBase
+   {
+   public:
+      int commandId;
+
+      int eventId() override { return EVENT_APP_COMMAND; }
+
+      AppCommandEvent(int commandId)
+         : EventBase(0), commandId(commandId)
+      {
+      }
+   };
 
    class EventFormatterBase
    {
@@ -241,6 +257,8 @@ namespace elena_lang
       EventFormatterBase*  _eventFormatter;
 
       bool initInstance(WindowBase* mainWindow, int cmdShow);
+
+      void sendAppCommand(AppCommandEvent* appCommand);
 
    public:
       int run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent) override;

@@ -22,16 +22,15 @@ In development:
   * backlog : IDE
   ====================================== 
   - project settings : save output path
-  - close all - do not save file if it was not changed
   - IDE : right click on tab - context menu : close, close all, close all but current
+  - ide : show hex number
   - ide : error messages if the debug process failed
   - ide : fix errors switching to error list / clear high light on click
   - ide : new menu option : open output
   --------------------------------------
   * current : IDE back log
   ====================================== 
-  - ide : show hex number
-  - IDE : close icon on the tab
+  - close all - do not save file if it was not changed
   --------------------------------------
 
 

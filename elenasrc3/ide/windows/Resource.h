@@ -57,6 +57,8 @@
 #define	IDR_GOTO_L                    233
 #define  IDR_FILETREE_L                234
 
+#define  IDR_TABCLOSE                  235
+
 #define IDM_FILE_NEW                   401
 #define IDM_FILE_OPEN                  402
 #define IDM_FILE_EXIT                  403

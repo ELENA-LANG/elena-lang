@@ -280,7 +280,7 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
          SelectionEvent event = { EVENT_TEXTFRAME_SELECTION_CHANGED, index };
 
          notifier->notify(&event);
-      });
+      }, IDM_FILE_CLOSE, IDR_TABCLOSE);
 
    view->create(_instance, szTextView, owner, 0);
    frame->createControl(_instance, owner);

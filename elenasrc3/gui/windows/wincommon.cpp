@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI Common Body File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincommon.h"
@@ -232,7 +232,10 @@ void WindowApp :: notify(int id, NMHDR* notification)
 
 void WindowApp :: notify(EventBase* event)
 {
-   _eventFormatter->sendMessage(event, this);
+   if (event->eventId() == EVENT_APP_COMMAND) {
+      sendAppCommand((AppCommandEvent*)event);
+   }
+   else _eventFormatter->sendMessage(event, this);
 }
 
 int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, EventBase* startEvent)
@@ -261,4 +264,9 @@ int WindowApp :: run(GUIControlBase* mainWindow, bool maximized, EventBase* star
    }
 
    return (int)msg.wParam;
+}
+
+void WindowApp :: sendAppCommand(AppCommandEvent* appCommand)
+{
+   ::SendMessage(_hwnd, WM_COMMAND, appCommand->commandId, 0);
 }

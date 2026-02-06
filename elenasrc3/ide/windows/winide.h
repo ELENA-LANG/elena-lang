@@ -180,6 +180,8 @@ namespace elena_lang
       void onActivate() override;
       bool onClose() override;
 
+      //void onMouseMove(WPARAM wParam, LPARAM lParam) override;
+
       void onComilationStart();
       void onCompilationEnd(int exitCode, int postponedAction);
       void onErrorHighlight(int index);

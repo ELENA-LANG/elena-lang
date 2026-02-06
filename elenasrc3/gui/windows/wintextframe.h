@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Win32 EditFrame container File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINTEXTFRAME_H
@@ -17,6 +17,7 @@ namespace elena_lang
    {
    protected:
       TextViewModel*          _model;
+      int                     _closeCommandId;
 
    public:
       void onDocumentNew(int index) override;
@@ -29,7 +30,9 @@ namespace elena_lang
 
       void onSelChanged() override;
 
-      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker);
+      void onClick(NMHDR* hdr) override;
+
+      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker, int closeCommandId, int closeIcon);
    };
 
 }
