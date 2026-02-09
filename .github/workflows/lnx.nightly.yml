@@ -33,6 +33,7 @@ jobs:
 
     - name: Install dependencies
       run: |
+        sudo apt update
         sudo apt-get install build-essential gcc-multilib g++-multilib alien dpkg-dev debhelper
 
     - name: Build
