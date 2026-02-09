@@ -7,6 +7,10 @@ In development:
 
   === Iteration 44 (powerpc, aarch64, mac, i386 threading samples) ===
   --------------------------------------
+  * doc
+  ====================================== 
+  - writing a program in ELENA (program entries, different types of projects)
+  --------------------------------------
   * lang
   ====================================== 
   - test threadpoolsamples for i386 Linux
@@ -21,11 +25,6 @@ In development:
   --------------------------------------
   * current : IDE back log
   ====================================== 
-  - ide : fix gighlighting the wrong row in the scrolled down position
-  - ide : show hex number
-  - project settings : save output path
-  - ide : fix errors switching to error list / clear high light on click
-  - ide : new menu option : open output
   - IDE : right click on tab - context menu : close, close all, close all but current  
   --------------------------------------
 

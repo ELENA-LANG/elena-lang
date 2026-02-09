@@ -668,6 +668,31 @@ inline void removeSource(ConfigFile& config, ConfigFile::Node root, ustr_t curre
    }
 }
 
+static inline void setSettings(ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot, ustr_t settingPath, ustr_t value)
+{
+   auto optionsOption = config.selectNode(platformRoot, settingPath);
+   if (!optionsOption.isNotFound()) {
+      optionsOption.saveContent(value);
+   }
+   else {
+      optionsOption = config.selectNode(root, settingPath);
+      if (!optionsOption.isNotFound()) {
+         optionsOption.saveContent(value);
+      }
+      else config.appendSetting(settingPath, value);
+   }
+}
+
+#if (defined(_WIN32) || defined(__WIN32__))
+
+static inline void setSettings(ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot, ustr_t settingPath, path_t path)
+{
+   IdentifierString value(path);
+   setSettings(config, root, platformRoot, settingPath, *value);
+}
+
+#endif
+
 void ProjectController :: saveConfig(ProjectModel& model, ConfigFile& config, ConfigFile::Node root, ConfigFile::Node platformRoot)
 {
    auto templateOption = config.selectNode(platformRoot, TEMPLATE_SUB_CATEGORY);
@@ -703,29 +728,9 @@ void ProjectController :: saveConfig(ProjectModel& model, ConfigFile& config, Co
       options.appendInt(model.warningLevel);
    }
 
-   auto optionsOption = config.selectNode(platformRoot, OPTIONS_SUB_CATEGORY);
-   if (!optionsOption.isNotFound()) {
-      optionsOption.saveContent(*options);
-   }
-   else {
-      optionsOption = config.selectNode(root, OPTIONS_SUB_CATEGORY);
-      if (!optionsOption.isNotFound()) {
-         optionsOption.saveContent(*options);
-      }
-      else config.appendSetting(OPTIONS_CATEGORY, *model.options);
-   }
-
-   auto targetOption = config.selectNode(platformRoot, TARGET_SUB_CATEGORY);
-   if (!targetOption.isNotFound()) {
-      targetOption.saveContent(*model.target);
-   }
-   else {
-      targetOption = config.selectNode(root, TARGET_SUB_CATEGORY);
-      if (!targetOption.isNotFound()) {
-         targetOption.saveContent(*model.target);
-      }
-      else config.appendSetting(TARGET_CATEGORY, *model.target);
-   }
+   setSettings(config, root, platformRoot, OPTIONS_SUB_CATEGORY, *options);
+   setSettings(config, root, platformRoot, OUTPUT_SUB_CATEGORY, *model.outputPath);
+   setSettings(config, root, platformRoot, TARGET_SUB_CATEGORY, *model.target);
 
    if (model.strictType == FLAG_UNDEFINED) {
       removeSetting(config, STRICT_TYPE_SETTING);

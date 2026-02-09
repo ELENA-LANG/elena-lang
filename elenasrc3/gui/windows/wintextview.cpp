@@ -241,7 +241,8 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
    if (!docView)
       return;
 
-   Point caret = docView->getCaret(false) - docView->getFrame();
+   Point frame = docView->getFrame();
+   Point caret = docView->getCaret(false) - frame;
 
    Style* defaultStyle = _styles->getStyle(STYLE_DEFAULT);
    Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
@@ -314,7 +315,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
                   y,
                   lineNumber.str(),
                   numLen,
-                  reader.row == caret.y ? currentMarginStyle : marginStyle);
+                  reader.row == (caret.y + frame.y) ? currentMarginStyle : marginStyle);
             }
 
             // !! HOTFIX: allow to see breakpoint ellipse on margin if STYLE_TRACELINe set for this line
@@ -339,7 +340,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
          else canvas.drawTextClipped(Rectangle(x, y, width + 1, lineHeight + 1), x, y,
             buffer, length, style);
 
-         x += width;
+         x += width; 
          writer.reset();
       } while (reader.readNext(writer, 255));
 

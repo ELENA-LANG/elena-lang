@@ -693,6 +693,7 @@ void IDEWindow :: onComilationStart()
    updateCompileMenu(false, false, true);
 
    openResultTab(_model->ideScheme.compilerOutputControl);
+   onTabBarChange();
 
    ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->clearValue();
 }
@@ -755,6 +756,7 @@ void IDEWindow :: onDebugStep()
 void IDEWindow :: onDebugWatch()
 {
    openResultTab(_model->ideScheme.debugWatch);
+   onTabBarChange();
 
    ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
 
@@ -1039,24 +1041,30 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_VIEW_WATCH:
          toggleTabBarWindow(_model->ideScheme.debugWatch);
+         onTabBarChange();
          break;
       case IDM_VIEW_PROJECTVIEW:
          toggleWindow(_model->ideScheme.projectView);
+         onTabBarChange();
          break;
       case IDM_VIEW_OUTPUT:
          toggleTabBarWindow(_model->ideScheme.compilerOutputControl);
+         onTabBarChange();
          break;
       case IDM_VIEW_VMCONSOLE:
          if (toggleTabBarWindow(_model->ideScheme.vmConsoleControl)) {
             _controller->doStartVMConsole(_model);
          }
          else _controller->doStopVMConsole();
+         onTabBarChange();
          break;
       case IDM_VIEW_MESSAGES:
          toggleTabBarWindow(_model->ideScheme.errorListControl);
+         onTabBarChange();
          break;
       case IDM_VIEW_CALLSTACK:
          toggleTabBarWindow(_model->ideScheme.callStackControl);
+         onTabBarChange();
          break;
       case IDM_HELP_API:
          openHelp();
@@ -1351,16 +1359,21 @@ void IDEWindow :: onDocumentSelection()
    menu->enableMenuItemById(IDM_PROJECT_EXCLUDE, docInfo && docInfo->isIncluded());
 }
 
-void IDEWindow :: onLayoutChange()
+void IDEWindow :: onTabBarChange()
 {
-   bool empty = _model->sourceViewModel.getDocumentCount() == 0;
-
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
    menu->checkMenuItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
    menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
    menu->checkMenuItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
    menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
    menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
+}
+
+void IDEWindow :: onLayoutChange()
+{
+   bool empty = _model->sourceViewModel.getDocumentCount() == 0;
+
+   onTabBarChange();
 
    enableMenuItemById(IDM_FILE_SAVE, !empty, true);
    enableMenuItemById(IDM_FILE_SAVEALL, !empty, true);

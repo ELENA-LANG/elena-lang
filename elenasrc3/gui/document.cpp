@@ -282,7 +282,7 @@ bool DocumentView::LexicalReader :: readNext(TextWriter<text_c>& writer, pos_t l
 
 // --- DocumentView ---
 
-int DocumentView::VerticalScrollOffset = 1;
+int DocumentView::VerticalScrollOffset = 0;
 
 DocumentView :: DocumentView(Text* text, TextFormatterBase* formatter, bool autoIndent) :
    _undoBuffer(UNDO_BUFFER_SIZE),
@@ -424,14 +424,14 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
       frame.x = caret.x;
    }
    else if (frame.x + _size.x - 2 <= caret.x) {
-      frame.x = caret.x - _size.x + 3;
+      frame.x = caret.x - _size.x + 1;
    }
 
    if (caret.y < frame.y) {
       frame.y = caret.y;
    }
    else if (frame.y + _size.y - 1 <= caret.y) {
-      frame.y = caret.y - _size.y + 2 + VerticalScrollOffset;
+      frame.y = caret.y - _size.y - 1 + VerticalScrollOffset;
    }
 
    if (_frame.getCaret() != frame) {

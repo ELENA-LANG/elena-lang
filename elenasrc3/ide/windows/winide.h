@@ -152,6 +152,8 @@ namespace elena_lang
       void onProjectViewSel(ParamSelectionNMHDR* rec);
       void onIDEStatusChange(ModelNMHDR* rec);
       void onStartup(ModelNMHDR* rec);
+
+      void onTabBarChange();
       void onLayoutChange();
       void onDocumentSelection();
 
