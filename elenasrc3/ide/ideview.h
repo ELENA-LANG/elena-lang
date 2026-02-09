@@ -73,6 +73,7 @@ public:
    bool                 rememberLastPath;
    bool                 rememberLastProject;
    bool                 autoSave;
+   bool                 guestMode;
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
@@ -87,6 +88,7 @@ public:
       rememberLastPath = false;
       rememberLastProject = false;
       autoSave = false;
+      guestMode = false;
    }
 };
 

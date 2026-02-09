@@ -57,6 +57,17 @@ inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
    else return defValue;
 }
 
+inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue, int minValue, int maxValue)
+{
+   int value = loadSetting(config, xpath, defValue);
+   if (value < minValue)
+      value = minValue;
+   else if (value > maxValue)
+      value = maxValue;
+
+   return value;
+}
+
 inline void loadSetting(ConfigFile& config, ustr_t xpath, IdentifierString& retVal)
 {
    // read target type; merge it with platform if required
@@ -1166,7 +1177,7 @@ bool IDEController :: loadConfig(IDEModel* model, path_t path, GUISettinngs& gui
    ConfigFile config;
    if (config.load(path, FileEncoding::UTF8)) {
       model->appMaximized = loadSetting(config, MAXIMIZED_SETTINGS, -1) != 0;
-      model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 1);
+      model->sourceViewModel.schemeIndex = loadSetting(config, SCHEME_SETTINGS, 2, 0, 2);
       model->projectModel.withPersistentConsole = loadSetting(config, PERSISTENT_CONSOLE_SETTINGS, -1) != 0;
 #ifdef _MSC_VER
       model->projectModel.includeAppPath2PathsTemporally = loadSetting(config, INCLIDE_PATH2ENV_SETTINGS, 0) != 0;
@@ -1912,9 +1923,11 @@ void IDEController :: onDebuggerStep(IDEModel* model)
 
 void IDEController :: onIDEStop(IDEModel* model, GUISettinngs& guiSettings)
 {
-   PathString path(*model->projectModel.paths.configPath);
+   if (!model->guestMode) {
+      PathString path(*model->projectModel.paths.configPath);
 
-   saveConfig(model, *path, guiSettings);
+      saveConfig(model, *path, guiSettings);
+   }
 }
 
 void IDEController :: toggleBreakpoint(IDEModel* model, int row)

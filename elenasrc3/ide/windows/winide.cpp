@@ -627,6 +627,13 @@ void IDEWindow :: toggleProjectView(bool open)
    else projectView->hide();
 }
 
+bool IDEWindow :: isResultTabOpen(int controlIndex)
+{
+   TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
+
+   return resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
+}
+
 void IDEWindow :: openResultTab(int controlIndex)
 {
    TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
@@ -673,7 +680,7 @@ void IDEWindow :: toggleWindow(int child_id)
 
 bool IDEWindow :: toggleTabBarWindow(int child_id)
 {
-   if (!_children[child_id]->visible()) {
+   if (!isResultTabOpen(child_id)) {
       openResultTab(child_id);
 
       return true;
@@ -1362,11 +1369,11 @@ void IDEWindow :: onDocumentSelection()
 void IDEWindow :: onTabBarChange()
 {
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-   menu->checkMenuItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
-   menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
-   menu->checkMenuItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
-   menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
-   menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
+   menu->checkMenuItemById(IDM_VIEW_OUTPUT, isResultTabOpen(_model->ideScheme.compilerOutputControl));
+   menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, isResultTabOpen(_model->ideScheme.projectView));
+   menu->checkMenuItemById(IDM_VIEW_MESSAGES, isResultTabOpen(_model->ideScheme.errorListControl));
+   menu->checkMenuItemById(IDM_VIEW_WATCH, isResultTabOpen(_model->ideScheme.debugWatch));
+   menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, isResultTabOpen(_model->ideScheme.vmConsoleControl));
 }
 
 void IDEWindow :: onLayoutChange()

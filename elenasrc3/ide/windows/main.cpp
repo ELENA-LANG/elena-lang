@@ -83,6 +83,9 @@ inline void setOption(IDEController* ideController, IDEModel* model, path_t para
    else if (text_str(parameter).compare(_T("-sdark"))) {
       model->sourceViewModel.schemeIndex = 2;
    }
+   else if (text_str(parameter).compare(_T("-guest"))) {
+      model->guestMode = true;
+   }
 }
 
 void loadCommandLine(IDEController* ideController, IDEModel* model, LPWSTR cmdWLine)

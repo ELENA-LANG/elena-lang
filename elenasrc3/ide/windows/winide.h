@@ -202,6 +202,8 @@ namespace elena_lang
       bool toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);
 
+      bool isResultTabOpen(int child_id);
+
       void toggleProjectView(bool open);
       void openResultTab(int controlIndex);
       void closeResultTab(int controlIndex);

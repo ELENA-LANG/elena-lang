@@ -25,6 +25,7 @@ In development:
   --------------------------------------
   * current : IDE back log
   ====================================== 
+  - remember the color scheme
   - IDE : right click on tab - context menu : close, close all, close all but current  
   --------------------------------------
 
