@@ -31,6 +31,7 @@ struct IDEScheme
    int               editorContextMenu;
    int               textControlId;
    int               callStackControl;
+   int               tabContextMenu;
 
    Map<int, text_t>  captions;
 
@@ -49,6 +50,7 @@ struct IDEScheme
       editorContextMenu(-1),
       textControlId(-1),
       callStackControl(-1),
+      tabContextMenu(-1),
       captions(nullptr)
    {
    }

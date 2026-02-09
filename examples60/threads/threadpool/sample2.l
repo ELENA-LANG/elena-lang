@@ -18,11 +18,17 @@ WorkItem4(state)
 
 public sample2()
 {
+   Console.printLine("sample2.1");
+
    var event := CountDownEvent.new(2);
+
+   Console.printLine("sample2.2");
 
    ThreadPool.queueAction(&WorkItem3, event);
    ThreadPool.queueAction(&WorkItem4, event);
    
+   Console.printLine("sample2.3");
+
    event.wait();
 
    Console.writeLine("Main thread exits")

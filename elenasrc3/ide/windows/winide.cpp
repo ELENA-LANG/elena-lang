@@ -1207,6 +1207,23 @@ void IDEWindow :: onDoubleClick(NMHDR* hdr)
    }
 }
 
+void IDEWindow::onTabRClick(size_t controlIndex)
+{
+   DWORD dwpos = ::GetMessagePos();
+   Point p(LOWORD(dwpos), HIWORD(dwpos));
+
+   TreeView* treeView = ((TreeView*)_children[controlIndex]);
+
+   HTREEITEM item = treeView->hitTest(p.x, p.x);
+   if (item) {
+      treeView->select(item);
+   }
+
+   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.tabContextMenu]);
+
+   menu->show(_handle, p);
+}
+
 void IDEWindow :: onDebugWatchRClick(size_t controlIndex)
 {
    DWORD dwpos = ::GetMessagePos();
@@ -1232,6 +1249,9 @@ void IDEWindow :: onRClick(NMHDR* hdr)
       if (_children[i]->checkHandle(hdr->hwndFrom)) {
          if (i == _model->ideScheme.debugWatch) {
             onDebugWatchRClick(i);
+         }
+         else if (i == _model->ideScheme.textFrameId) {
+            onTabRClick(i);
          }
          break;
       }

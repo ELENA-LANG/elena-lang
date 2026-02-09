@@ -64,6 +64,11 @@ WCHAR szCallstack[MAX_LOADSTRING];              // the call stack caption
 #define CONTEXT_MENU_RUNTO                      _T("Run to Cursor\tF4")
 #define CONTEXT_MENU_INSPECT                    _T("Inspect\tCtrl+I")
 
+#define TAB_CONTEXT_MENU_SAVE                   _T("Save")
+#define TAB_CONTEXT_MENU_CLOSE                  _T("Close")
+#define TAB_CONTEXT_MENU_CLOSEALL               _T("Close All")
+#define TAB_CONTEXT_MENU_CLOSEALLBUT            _T("Close Others")
+
 // !! temporally
 #define IDE_CHARSET_ANSI                        ANSI_CHARSET
 #define IDE_CHARSET_DEFAULT                     1
@@ -123,6 +128,13 @@ MenuInfo browserContextMenuInfo[3] = {
       {IDM_DEBUG_INSPECT, CONTEXT_MENU_INSPECT},
       {0, nullptr},
       {IDM_DEBUG_SWITCHHEXVIEW, CONTEXT_MENU_SHOWHEX}
+};
+
+MenuInfo tabContextMenuInfo[8] = {
+   {IDM_FILE_SAVE, TAB_CONTEXT_MENU_SAVE},
+   {IDM_FILE_CLOSE, TAB_CONTEXT_MENU_CLOSE},
+   {IDM_FILE_CLOSEALL, TAB_CONTEXT_MENU_CLOSEALL},
+   {IDM_FILE_CLOSEALLBUT, TAB_CONTEXT_MENU_CLOSEALLBUT},
 };
 
 MenuInfo contextMenuInfo[8] = {
@@ -452,6 +464,15 @@ GUIControlBase* IDEFactory :: createDebugContextMenu(ControlBase* owner)
    return menu;
 }
 
+GUIControlBase* IDEFactory :: createTabContextMenu(ControlBase* owner)
+{
+   ContextMenu* menu = new ContextMenu();
+
+   menu->create(4, tabContextMenuInfo);
+
+   return menu;
+}
+
 GUIControlBase* IDEFactory :: createEditorContextMenu(ControlBase* owner)
 {
    ContextMenu* menu = new ContextMenu();
@@ -473,7 +494,7 @@ GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner, bool largeMode)
 
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
    int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl, 
-   int toolBarControl, int contextEditor, int textIndex, int callStackControl)
+   int toolBarControl, int contextEditor, int textIndex, int callStackControl, int tabContextMenu)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
@@ -495,6 +516,7 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.editorContextMenu = contextEditor;
    _model->ideScheme.textControlId = textIndex;
    _model->ideScheme.callStackControl = callStackControl;
+   _model->ideScheme.tabContextMenu = tabContextMenu;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
@@ -515,7 +537,7 @@ GUIApp* IDEFactory :: createApp()
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess, 
    ProcessBase* vmConsoleProcess)
 {
-   GUIControlBase* children[17];
+   GUIControlBase* children[18];
    int counter = 0;
 
    int textIndex = counter++;
@@ -535,6 +557,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int contextEditor = counter++;
    int editIndex = counter++;
    int callStackIndex = counter++;
+   int tabContextMenu = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, this);
    sdi->create(_instance, szSDI, nullptr, WS_EX_ACCEPTFILES);
@@ -560,12 +583,13 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[contextEditor] = createEditorContextMenu(sdi);
    children[editIndex] = textCtrls.value2;
    children[callStackIndex] = createCallStackControl((ControlBase*)children[tabBar], notifier);
+   children[tabContextMenu] = createTabContextMenu(sdi);
 
    vb->append(children[hsplitter]);
    vb->append(children[statusBarIndex]);
 
    initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex,
-      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor, editIndex, callStackIndex);
+      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor, editIndex, callStackIndex, tabContextMenu);
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, vsplitter);

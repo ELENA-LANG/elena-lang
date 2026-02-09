@@ -13,7 +13,6 @@ In development:
   --------------------------------------
   * lang
   ====================================== 
-  - test threadpoolsamples for i386 Linux
   - test asyncsamples  for i386 Linux
   - test tasksamples  for i386 Linux
   - test examples60 for i386 Linux
@@ -23,10 +22,9 @@ In development:
   - ppc64 : fix system_tests - intTests
   - x86-64 test tasksamples  
   --------------------------------------
-  * current : IDE back log
+  * current : MTA Linux
   ====================================== 
-  - remember the color scheme
-  - IDE : right click on tab - context menu : close, close all, close all but current  
+  - test threadpoolsamples for i386 Linux
   --------------------------------------
 
 

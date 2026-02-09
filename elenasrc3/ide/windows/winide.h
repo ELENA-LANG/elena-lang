@@ -165,6 +165,7 @@ namespace elena_lang
       void onDoubleClick(NMHDR* hdr);
       void onRClick(NMHDR* hdr);
       void onDebugWatchRClick(size_t index);
+      void onTabRClick(size_t index);
       void onContextMenu(ContextMenuNMHDR* rec);
 
       void onTabSelChanged(HWND wnd);
