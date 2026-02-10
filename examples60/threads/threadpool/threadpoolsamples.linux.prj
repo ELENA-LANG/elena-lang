@@ -1,0 +1,33 @@
+<configuration>
+  <platform key="Linux_I386">
+     <project>
+        <executable>tasksamples</executable>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <executable>tasksamples64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <project>
+        <executable>tasksamples64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_ARM64">
+     <project>
+        <executable>tasksamples64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>threadpoolsamples</namespace>
+     <template>mt_console</template>
+  </project>
+  <files>
+     <module>
+        <file>sample1.l</file>
+        <file>sample2.l</file>
+        <file>threadpool.l</file>
+     </module>
+  </files>
+</configuration>

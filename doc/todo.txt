@@ -13,8 +13,6 @@ In development:
   --------------------------------------
   * lang
   ====================================== 
-  - test asyncsamples  for i386 Linux
-  - test tasksamples  for i386 Linux
   - test examples60 for i386 Linux
   --------------------------------------
   * backlog
@@ -24,9 +22,7 @@ In development:
   --------------------------------------
   * current : MTA Linux
   ====================================== 
-  - support heapalloc
-  - mutex must be perm allocated
-  - test threadpoolsamples for i386 Linux
+  - test asyncsamples  for i386 Linux
   --------------------------------------
 
 
