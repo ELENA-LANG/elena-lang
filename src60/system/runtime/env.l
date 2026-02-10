@@ -72,6 +72,8 @@ internal class SystemInfo
 
 #elif (__project["_Linux"] || __project["_FreeBSD"])
 
+const int _SC_NPROCESSORS_ONLN = 84;
+
 internal class SystemInfo
 {
    int           ProcessorCount : rprop;
@@ -79,6 +81,29 @@ internal class SystemInfo
 
    constructor()
    {
+      int numCPU := extern libc.sysconf(_SC_NPROCESSORS_ONLN);
+      if (numCPU < 0)
+         numCPU := 1;
+
+#if (__project["_Linux32"])
+
+      ProcessorType := class ProcessorType.x86;
+
+#elif (__project["_Linux64"] || __project["_FreeBSD64"])
+
+      ProcessorType := class ProcessorType.AMD64;
+
+#elif (__project["_LinuxPPC64le"])
+
+      ProcessorType := class ProcessorType.PPC64le;
+
+#elif (__project["_LinuxARM64"])
+
+      ProcessorType := class ProcessorType.ARM64;
+
+#endif
+
+      ProcessorCount := numCPU;
    }
 }
 

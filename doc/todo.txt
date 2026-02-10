@@ -24,6 +24,7 @@ In development:
   --------------------------------------
   * current : MTA Linux
   ====================================== 
+  - implement Environment.ProcessorCount for I386
   - test threadpoolsamples for i386 Linux
   --------------------------------------
 
