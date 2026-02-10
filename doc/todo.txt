@@ -24,7 +24,8 @@ In development:
   --------------------------------------
   * current : MTA Linux
   ====================================== 
-  - implement Environment.ProcessorCount for I386
+  - support heapalloc
+  - mutex must be perm allocated
   - test threadpoolsamples for i386 Linux
   --------------------------------------
 

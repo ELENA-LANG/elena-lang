@@ -200,7 +200,7 @@ public sealed struct ThreadHandle
    {
       extern
       {
-         extern libc.sleep(interval);
+         extern libc.sleep(interval / 1000);
       }
    }
 

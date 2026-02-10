@@ -45,7 +45,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>6.8.1</version>
+    <version>6.8.2</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -57,14 +57,21 @@
         <include>tests.l</include>
         <include>random.l</include>
         <include>app.l</include>
+        <include>formatter.l</include>
         <include>text/strings.l</include>
         <include>text/words.l</include>
+        <include>text/encoding.l</include>
         <include>math/functions.l</include>
         <include>math/matrix.l</include>
+        <include>io/bytearray.l</include>
      </module>
      <module name="routines">
        <include>routines/enumerating.l</include>
        <include>routines/combinations.l</include>
+       <include>routines/compound.l</include>
+     </module>
+     <module name="routines'stex">
+       <include>routines/stex/convertors.l</include>
      </module>
      <module name="scripting">
        <include>scripting/interpreter.l</include>

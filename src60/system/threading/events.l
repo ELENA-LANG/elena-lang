@@ -64,30 +64,21 @@ internal struct EventHandle
 
 #elif (__project["_Linux"] || __project["_FreeBSD"])
 
-internal struct pthread_mutex_t
-{
-   byte __size[__SIZEOF_PTHREAD_MUTEX_T];
-}
-
-internal struct pthread_cond_t
-{
-   byte __size[__SIZEOF_PTHREAD_COND_T];
-}
-
 internal struct EventHandle
 {
-   pthread_mutex_t _mutex;
-   pthread_cond_t  _cond;
-   int             _signaled;
+   pointer _mutex;
+   pointer _cond;
+   int     _signaled;
 
    internal constructor new(bool value, bool autoReset)
    {
+      _mutex := extern libc.malloc(__SIZEOF_PTHREAD_MUTEX_T);
+      _cond := extern libc.malloc(__SIZEOF_PTHREAD_COND_T);
+
       extern libc.pthread_mutex_init(_mutex, 0);
 
-      pthread_cond_t cond;
-      extern libc.pthread_cond_init(cond, 0);
-      _cond := cond;
-      
+      extern libc.pthread_cond_init(_cond, 0);
+
       _signaled := value ? 1 : 0;
       if (autoReset)
          _signaled := _signaled | 80000000h;
@@ -95,21 +86,19 @@ internal struct EventHandle
 
    wait()
    {
-      pthread_cond_t  cond := _cond;
-
       extern libc.pthread_mutex_lock(_mutex);
 
       if (_signaled < 0) {
          extern
          {
-             extern libc.pthread_cond_wait(cond, _mutex);
+             extern libc.pthread_cond_wait(_cond, _mutex);
          }
       }
       else {
          extern
          {
             while (_signaled == 0) {
-               extern libc.pthread_cond_wait(cond, _mutex);
+               extern libc.pthread_cond_wait(_cond, _mutex)
             }
          }
       };
@@ -126,14 +115,15 @@ internal struct EventHandle
    {
       extern libc.pthread_mutex_lock(_mutex);
 
-      if (_signaled == 0)
-         _signaled := 1;
+      if (_signaled != 1) {
+         if (_signaled == 0)
+            _signaled := 1;
+
+         extern libc.pthread_cond_broadcast(_cond);
+      };
 
       extern libc.pthread_mutex_unlock(_mutex);
 
-      pthread_cond_t  cond := _cond;
-      extern libc.pthread_cond_broadcast(cond);
-      _cond := cond;
    }
 
    reset()
@@ -149,12 +139,11 @@ internal struct EventHandle
 
    close()
    {
-      pthread_cond_t  cond := _cond;
-
       extern libc.pthread_mutex_destroy(_mutex);
-      extern libc.pthread_cond_destroy(cond);
+      extern libc.pthread_cond_destroy(_cond);
 
-      _cond := cond;
+      extern libc.free(_mutex);
+      extern libc.free(_cond);
    }
 }
 

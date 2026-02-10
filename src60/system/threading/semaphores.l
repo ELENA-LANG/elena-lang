@@ -43,23 +43,22 @@ public struct Semaphore
 
 #elif (__project["_Linux"] || __project["_FreeBSD"])
 
-internal struct sem_t
-{
-   byte __size[__SIZEOF_SEM_T];
-}
-
 public struct Semaphore
 {
-   sem_t _sem;
+   pointer _sem;
 
    constructor create(int initValue)
    {
+      _sem := extern libc.malloc(__SIZEOF_SEM_T);
+
       extern libc.sem_init(_sem, 0, initValue);
    }
 
    close()
    {
       extern libc.sem_destroy(_sem);
+
+      extern libc.free(_sem);
    }
 
    wait()
