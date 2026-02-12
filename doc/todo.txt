@@ -19,14 +19,10 @@ In development:
   - ppc64 : fix system_tests - intTests
   - x86-64 test tasksamples  
   --------------------------------------
-  * current : apiu backlog
+  * current : api backlog
   ====================================== 
-  - rename extern {} => excluded ()
-  - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
-  - conversion to int - raise an error if not valid
   - fix converting LongNumber.MinValue to a string
-  - review examples / api : use constant arrays when it is required
-  - textgen : do we need to free script scope after the operation?
+  - conversion to int - raise an error if not valid
   --------------------------------------
 
 

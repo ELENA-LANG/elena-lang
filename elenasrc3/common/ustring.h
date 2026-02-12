@@ -371,6 +371,14 @@ namespace elena_lang
          size_t    pos = 0;
          size_t    start = 0;
          if (n < 0) {
+            if ((unsigned long long)n == 0x8000000000000000) {
+               // HOTFIX : using a hard-coded constant
+               size_t len = 21;
+               StrConvertor::copy(s, "-9223372036854775808", len, len);
+
+               return true;
+            }
+
             start++;
             n = -n;
             s[pos++] = '-';
