@@ -18,7 +18,7 @@ internal class MbedTlsBaseSocket : INetSocket
       int retVal := 0;
 
       while (true) {
-         extern {
+         excluded {
             retVal := extern wrpmbedtls.mbedtls_context_read(_context,
                           buffer, length);
          };
@@ -60,7 +60,7 @@ internal class MbedTlsBaseSocket : INetSocket
    get bool AvailableToRead()
    {
       int retVal := 0;
-      extern {
+      excluded {
          retVal := extern wrpmbedtls.mbedtls_socket_data_available(_context);
       };
 

@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 7.0 ###
 
-  === Iteration 44 (powerpc, aarch64, mac, i386 threading samples) ===
+  === Iteration 44 (powerpc, aarch64, mac) ===
   --------------------------------------
   * doc
   ====================================== 
@@ -13,16 +13,20 @@ In development:
   --------------------------------------
   * lang
   ====================================== 
-  - test examples60 for i386 Linux
   --------------------------------------
   * backlog
   ====================================== 
   - ppc64 : fix system_tests - intTests
   - x86-64 test tasksamples  
   --------------------------------------
-  * current : MTA Linux
+  * current : apiu backlog
   ====================================== 
-  - test asyncsamples  for i386 Linux
+  - rename extern {} => excluded ()
+  - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
+  - conversion to int - raise an error if not valid
+  - fix converting LongNumber.MinValue to a string
+  - review examples / api : use constant arrays when it is required
+  - textgen : do we need to free script scope after the operation?
   --------------------------------------
 
 

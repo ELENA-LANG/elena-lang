@@ -182,9 +182,9 @@ public template try::finally(try_block,finally_block) : __included(statements)
    try_block $fnl finally_block;
 }
 
-// --- extern ---
+// --- excluded ---
 
-public template extern(body) : __included(statements)
+public template excluded(body) : __included(statements)
 {
    $ext body
 }

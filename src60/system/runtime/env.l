@@ -61,7 +61,7 @@ internal class SystemInfo
    {
       SYSTEM_INFO si := default;
 
-      extern {
+      excluded {
          extern KERNEL32.GetSystemInfo(si);
       };
 

@@ -26,7 +26,7 @@
     <collection name="threads">
       <project>threads/async/asyncsamples.prj</project>
       <project>threads/tasks/tasksamples.linux.prj</project>
-      <project>threads/threadpool/threadpoolsamples.prj</project>
+      <project>threads/threadpool/threadpoolsamples.linux.prj</project>
     </collection>
   </collections>
 </configuration>

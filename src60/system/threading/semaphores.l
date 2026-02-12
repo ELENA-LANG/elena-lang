@@ -29,7 +29,7 @@ public struct Semaphore
 
    wait()
    {
-      extern
+      excluded
       {
          extern KERNEL32.WaitForSingleObject(_handle, INFINITE);
       }      
@@ -63,7 +63,7 @@ public struct Semaphore
 
    wait()
    {
-      extern
+      excluded
       {
          extern libc.sem_wait(_sem);
       }      

@@ -14,7 +14,7 @@ public sealed const struct Symbol
    /// Loads a symbol
    constructor(string name)
    {
-      extern {
+      excluded {
          self.load(name);
       }
    }   
@@ -34,7 +34,7 @@ public sealed const struct Symbol
    {
       pointer ptr := default;
 
-      extern {
+      excluded {
          ptr := extern LoadSymbolByString2LA(ns, name);
       };
 
@@ -62,7 +62,7 @@ public sealed const struct ClassReference
    constructor(string name)
       : info("Loads a symbol")
    {
-      extern {
+      excluded {
         self.load(name);
       }
    }

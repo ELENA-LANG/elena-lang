@@ -26,7 +26,7 @@ internal struct EventHandle
 
    wait()
    {
-      extern
+      excluded
       {
          extern KERNEL32.WaitForSingleObject(_handle, INFINITE);
       }      
@@ -34,7 +34,7 @@ internal struct EventHandle
 
    wait(int timeOut)
    {
-      extern
+      excluded
       {
          extern KERNEL32.WaitForSingleObject(_handle, timeOut);
       }      
@@ -42,7 +42,7 @@ internal struct EventHandle
 
    set()
    {
-      extern
+      excluded
       {
          extern KERNEL32.SetEvent(_handle);
       }      
@@ -50,7 +50,7 @@ internal struct EventHandle
 
    reset()
    {
-      extern
+      excluded
       {
          extern KERNEL32.ResetEvent(_handle);
       }      
@@ -89,13 +89,13 @@ internal struct EventHandle
       extern libc.pthread_mutex_lock(_mutex);
 
       if (_signaled < 0) {
-         extern
+         excluded
          {
              extern libc.pthread_cond_wait(_cond, _mutex);
          }
       }
       else {
-         extern
+         excluded
          {
             while (_signaled == 0) {
                extern libc.pthread_cond_wait(_cond, _mutex)

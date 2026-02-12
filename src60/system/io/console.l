@@ -242,7 +242,7 @@ namespace io
          bool found := false;
          until (found)
          {
-            extern
+            excluded
             {
                extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead);
             };
@@ -272,7 +272,7 @@ namespace io
       {
          int len := retVal;
             
-         extern
+         excluded
          {
             extern KERNEL32.ReadConsoleW(h, dump, len, ref /*retVal*/len, 0)
          };
@@ -293,7 +293,7 @@ namespace io
          {
             numberRead := 0;
 
-            extern
+            excluded
             {
                extern KERNEL32.PeekConsoleInputW(h, dump, 1, ref numberRead)
             };
@@ -312,7 +312,7 @@ namespace io
                   { ^ true }
             };
 
-            extern
+            excluded
             {
                extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead)
             }                
@@ -440,7 +440,7 @@ namespace io
 
          extern libc.tcsetattr(STDIN_FILENO, TCSANOW, newState);
    
-         extern 
+         excluded 
          {
             ch := extern libc.getchar();      /* block (withot spinning) until we get a keypress */
          };
@@ -460,7 +460,7 @@ namespace io
          {
             retVal += 1;
 
-            extern 
+            excluded 
             {
                ch := extern libc.getchar();
             };
