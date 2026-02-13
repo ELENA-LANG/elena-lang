@@ -27,10 +27,7 @@ In development:
   * current : str to int conversion
   ====================================== 
   - fix StrConvertor :: toLong both versions
-  - fix StrConvertor :: toInt both version
-  - IntNumber : convert min & max value
   - LongNumber : convert min & max value
-  - functional tests - IntNumber : convert min & max value
   - functional tests - LongNumber : convert min & max value
 
 
