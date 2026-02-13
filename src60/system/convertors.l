@@ -589,7 +589,7 @@ public singleton LongConvertor
       };
 
       if (any < 0) {
-         val := inverted ? INT_MIN : INT_MAX;
+         val := inverted ? LONG_MIN : LONG_MAX;
       }
       else if (inverted)
          val := -val;
@@ -891,6 +891,8 @@ public singleton StringConvertor
          index := index - 1;
          len := len + 1;
       };
+      
+      index += 1;
 
       ^ String.fromByteArray(index, len, buffer);
    }

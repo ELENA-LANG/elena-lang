@@ -519,9 +519,22 @@ public conversionTests() : testCase()
     Assert.ifTrue(minStr == "-2147483648");
     Assert.ifTrue(maxStr == "2147483647");
 
-    Assert.ifTrue(min.toInt() == -2147483648);
+    Assert.ifTrue(minStr.toInt() == -2147483648);
     Assert.ifTrue(maxStr.toInt() == 2147483647);
     Console.write(".");
+
+    long minLong := -9223372036854775808l;
+    long maxLong := 9223372036854775807l;
+    string minLongStr := minLong.toString();
+    string maxLongStr := maxLong.toString();
+
+    Assert.ifTrue(minLongStr == "-9223372036854775808");
+    Assert.ifTrue(maxLongStr == "9223372036854775807");
+
+    Assert.ifTrue(minLongStr.toLong() == -9223372036854775808l);
+    Assert.ifTrue(maxLongStr.toLong() == 9223372036854775807l);
+    Console.write(".");
+
 }
 
 // --- assignTests ---
