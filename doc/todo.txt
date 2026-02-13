@@ -23,14 +23,14 @@ In development:
   * api backlog
   ====================================== 
   - conversion to int - raise an error if not valid
+  - test : long -= int constant
+  - test : long -= int
   --------------------------------------
   * current : str to int conversion
   ====================================== 
   - fix StrConvertor :: toLong both versions
   - LongNumber : convert min & max value
   - functional tests - LongNumber : convert min & max value
-  - test : long -= int constant
-  - test : long -= int
 
 
   === Iteration 45 (ide, ldoc method index; full api docs; template generator) ===

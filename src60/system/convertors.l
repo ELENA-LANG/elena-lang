@@ -869,10 +869,12 @@ public singleton StringConvertor
       // !! hotfix
       if (n < 0) {
          long rest := n.mod(r);
-         rest := -rest;
+         if (rest < 0) // rest is negative for x86
+            rest := -rest; 
 
          n := n / r;
-         n := -n;
+         if (n < 0)
+            n := -n;
 
          tmp := rest;
          tmp := tmp + 48;
@@ -1149,6 +1151,10 @@ public singleton WideConvertor
       int n := value;
       if (n < 0)
       {
+         if (n == 80000000h) {
+            ^ convert(-2147483648l, radix);
+         };
+         
          n := 0 - n;
       };   
 
@@ -1190,12 +1196,60 @@ public singleton WideConvertor
    wide convert(int value)
       <= convert(value, 10);
 
+
+   string convertUnsigned(long value, int radix)
+   {
+      long r := radix;
+      long n := value;
+
+      short buffer[24];
+      short tmp;
+      int len := 0;
+      int index := 23;
+
+      // !! hotfix
+      if (n < 0) {
+         long rest := n.mod(r);
+         if (rest < 0) // rest is negative for x86
+            rest := -rest; 
+
+         n := n / r;
+         if (n < 0)
+            n := -n;
+
+         tmp := rest;
+         tmp := tmp + 48;
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+
+      while (n != 0) {
+         long rest := n.mod(r);
+         n := n / r;
+
+         tmp := rest;
+         tmp := tmp + 48;
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+      
+      index += 1;
+
+      ^ WideString.fromByteArray(index, len, buffer);
+   }
+
    wide convert(long value, int radix)
    {
       long r := radix;
       long n := value;
       if (n < 0)
       {
+         if (n == -9223372036854775808l) {
+            ^ "-" + convertUnsigned(n, radix);
+         };
+         
          n := 0 - n;
       };   
 
