@@ -306,7 +306,7 @@ public singleton IntConvertor
          else {
             any := 1;
             val *= radix;
-            val += c;
+            val += ch;
          };
       };
 
