@@ -29,6 +29,8 @@ In development:
   - fix StrConvertor :: toLong both versions
   - LongNumber : convert min & max value
   - functional tests - LongNumber : convert min & max value
+  - test : long -= int constant
+  - test : long -= int
 
 
   === Iteration 45 (ide, ldoc method index; full api docs; template generator) ===

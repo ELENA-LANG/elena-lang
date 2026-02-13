@@ -566,7 +566,7 @@ public singleton LongConvertor
 
       for (int i := start; i < len; i := i + 1) {
          byte c := s[i];
-         long ch := c;
+         int ch := c;
          if (ch >= 48 && ch <= 57) {
             ch -= 48;
          }
