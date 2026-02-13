@@ -45,6 +45,18 @@ using namespace elena_lang;
 #define	LONG_MIN	((long)(~LONG_MAX))		/* 0x80000000 */
 #endif
 
+#ifndef ULONG_LONG_MAX
+#define	ULONG_LONG_MAX	((unsigned long long)(~0LL))		/* 0xFFFFFFFFFFFFFFFF */
+#endif
+
+#ifndef LONG_LONG_MAX
+#define	LONG_LONG_MAX	((long long)(ULONG_LONG_MAX >> 1))	/* 0x7FFFFFFFFFFFFFFF */
+#endif
+
+#ifndef LONG_LONG_MIN
+#define	LONG_LONG_MIN	((long long)(~LONG_LONG_MAX))		/* 0x8000000000000000 */
+#endif
+
 // --- Unicode coversion routines ---
 
 static const int halfShift = 10; /* used for shifting by 10 bits */
@@ -488,74 +500,132 @@ unsigned int StrConvertor :: toUInt(const char* s, int radix)
 
 long long StrConvertor :: toLong(const char* s, int radix)
 {
-   long long number = 0;
+   int any = 0;
+   long long n = 0;
+   bool neg = false;
 
-   bool negative = false;
-   if (s[0] == '-') {
-      negative = true;
+   if (*s == '-') {
+      s++;
+      neg = true;
+   }
+
+   /*
+    * Compute the cutoff value between legal numbers and illegal
+    * numbers.  That is the largest legal value, divided by the
+    * base.  An input number that is greater than this value, if
+    * followed by a legal input character, is too big.  One that
+    * is equal to this value may be valid or not; the limit
+    * between valid and invalid numbers is then based on the last
+    * digit.  For instance, if the range for longs is
+    * [-2147483648..2147483647] and the input base is 10,
+    * cutoff will be set to 214748364 and cutlim to either
+    * 7 (neg==0) or 8 (neg==1), meaning that if we have accumulated
+    * a value > 214748364, or equal but the next digit is > 7 (or 8),
+    * the number is too big, and we will return a range error.
+    *
+    * Set any if any `digits' consumed; make it negative to indicate
+    * overflow.
+    */
+   unsigned long long cutoff = (unsigned long long)(neg ? -LONG_LONG_MIN : LONG_LONG_MAX);
+   long long cutlim = cutoff % (unsigned long)radix;
+   cutoff /= (unsigned long)radix;
+
+   while (*s) {
+      register int c = *s;
+      if (c >= '0' && c <= '9') {
+         c -= '0';
+      }
+      else if (c >= 'A' && c <= 'F') {
+         c -= ('A' - 10);
+      }
+      else if (c >= 'a' && c <= 'f') {
+         c -= ('a' - 10);
+      }
+      else return 0;
+
+      if (any < 0 || (unsigned)n > cutoff || ((unsigned)n == cutoff && c > cutlim))
+         any = -1;
+      else {
+         any = 1;
+         n *= radix;
+         n += c;
+      }
+
       s++;
    }
 
-   char dump[10];
-   size_t length = getlength(s);
-   while (length > 8) {
-      memcpy(dump, (char*)s, 8);
-      dump[8] = 0;
-
-      long long temp = toUInt(dump, radix);
-      for (size_t i = 0; i < (length - 8); i++) {
-         temp *= radix;
-      }
-      number += temp;
-
-      length -= 8;
-      s += 8;
+   if (any < 0) {
+      n = neg ? LONG_LONG_MIN : LONG_LONG_MAX;
    }
-   memcpy(dump, s, length);
-   dump[length] = 0;
-   long long temp = toUInt(dump, radix);
-   number += temp;
+   else if (neg)
+      n = -n;
 
-   if (negative)
-      number = -number;
-
-   return number;
+   return n;
 }
 
 long long StrConvertor :: toLong(const wide_c* s, int radix)
 {
-   long long number = 0;
+   int any = 0;
+   long long n = 0;
+   bool neg = false;
 
-   bool negative = false;
-   if (s[0] == '-') {
-      negative = true;
+   if (*s == '-') {
+      s++;
+      neg = true;
+   }
+
+   /*
+    * Compute the cutoff value between legal numbers and illegal
+    * numbers.  That is the largest legal value, divided by the
+    * base.  An input number that is greater than this value, if
+    * followed by a legal input character, is too big.  One that
+    * is equal to this value may be valid or not; the limit
+    * between valid and invalid numbers is then based on the last
+    * digit.  For instance, if the range for longs is
+    * [-2147483648..2147483647] and the input base is 10,
+    * cutoff will be set to 214748364 and cutlim to either
+    * 7 (neg==0) or 8 (neg==1), meaning that if we have accumulated
+    * a value > 214748364, or equal but the next digit is > 7 (or 8),
+    * the number is too big, and we will return a range error.
+    *
+    * Set any if any `digits' consumed; make it negative to indicate
+    * overflow.
+    */
+   unsigned long long cutoff = (unsigned long long)(neg ? -LONG_LONG_MIN : LONG_LONG_MAX);
+   long long cutlim = cutoff % (unsigned long)radix;
+   cutoff /= (unsigned long)radix;
+
+   while (*s) {
+      register int c = *s;
+      if (c >= '0' && c <= '9') {
+         c -= '0';
+      }
+      else if (c >= 'A' && c <= 'F') {
+         c -= ('A' - 10);
+      }
+      else if (c >= 'a' && c <= 'f') {
+         c -= ('a' - 10);
+      }
+      else return 0;
+
+      if (any < 0 || (unsigned)n > cutoff || ((unsigned)n == cutoff && c > cutlim))
+         any = -1;
+      else {
+         any = 1;
+         n *= radix;
+         n += c;
+      }
+
       s++;
    }
 
-   wide_c dump[10];
-   size_t length = getlength(s);
-   while (length > 9) {
-      memcpy(dump, (wide_c*)s, 18);
-      dump[9] = 0;
-
-      long long temp = toInt(dump, radix);
-      for (size_t i = 0; i < (length - 9); i++) {
-         temp *= radix;
-      }
-      number += temp;
-
-      length -= 9;
-      s += 9;
+   if (any < 0) {
+      n = neg ? LONG_LONG_MIN : LONG_LONG_MAX;
    }
-   memcpy(dump, s, length * 2);
-   dump[length] = 0;
-   long long temp = toInt(dump, radix);
-   number += temp;
+   else if (neg)
+      n = -n;
 
-   if (negative)
-      number = -number;
-
-   return number;
+   return n;
 }
 
 double StrConvertor :: toDouble(const char* s)

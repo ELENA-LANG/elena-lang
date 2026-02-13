@@ -510,6 +510,18 @@ public conversionTests() : testCase()
     int n3 := s.toInt();
     Assert.ifTrue(n3 == n2);
     Console.write(".");
+
+    int min := -2147483648;
+    int max := 2147483647;
+    string minStr := min.toString();
+    string maxStr := max.toString();
+
+    Assert.ifTrue(minStr == "-2147483648");
+    Assert.ifTrue(maxStr == "2147483647");
+
+    Assert.ifTrue(min.toInt() == -2147483648);
+    Assert.ifTrue(maxStr.toInt() == 2147483647);
+    Console.write(".");
 }
 
 // --- assignTests ---

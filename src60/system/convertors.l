@@ -1,6 +1,10 @@
-const int INV_INT_MIN = 80000000h;
+const int INV_INT_MIN = 7FFFFFFFh;
 const int INT_MIN = -2147483648;
 const int INT_MAX = 2147483647;
+
+const int INV_LONG_MIN = 9223372036854775807l;
+const int LONG_MIN = -9223372036854775808l;
+const int LONG_MAX = 9223372036854775807l;
 
 // --- byteConvertor ---
 
@@ -326,16 +330,47 @@ public singleton IntConvertor
    {
       int len := s.Length;
       int val := 0;
-      for (int i := 0; i < len; i := i + 1) {
+      int start := 0;
+      int any := 0;
+      bool inverted := false;
+      if (s[0]==$45) {
+         start := 1;
+         inverted := true;
+      };
+
+      int cutoff := inverted ? INV_INT_MIN : INT_MAX;
+      int cutlim := cutoff mod:radix;
+      cutoff /= radix;
+
+      for (int i := start; i < len; i := i + 1) {
          short c := s[i];
          int ch := c;
-         ch := ch - 48;
-         if (ch >= radix) {
-            ch := ch - 7;
+         if (ch >= 48 && ch <= 57) {
+            ch -= 48;
+         }
+         else if (ch >= 65 && ch <= 70) {
+            ch -= 55;
+         }
+         else if (ch >= 97 && ch <= 102) {
+            ch -= 87;
+         }
+         else InvalidArgumentException.raise("s");
+
+         if (any < 0 || val > cutoff || (val == cutoff && ch > cutlim)) {
+            any := -1
+         }
+         else {
+            any := 1;
+            val *= radix;
+            val += ch;
          };
-         val := val * radix;
-         val := val + ch;
       };
+
+      if (any < 0) {
+         val := inverted ? INT_MIN : INT_MAX;
+      }
+      else if (inverted)
+         val := -val;
 
       ^ val
    }
@@ -428,6 +463,31 @@ public singleton UIntConvertor
    }
 }
 
+// --- ulongConvertor ---
+
+public singleton ULongConvertor
+{
+   long convert(string s, int radix)
+   {
+      int len := s.Length;
+      long val := 0;
+      int start := 0;
+
+      for (int i := start; i < len; i := i + 1) {
+         byte c := s[i];
+         int ch := c;
+         ch := ch - 48;
+         if (ch >= radix) {
+            ch := ch - 49;
+         };
+         val := val * radix;
+         val := val + ch;
+      };
+
+      ^ val
+   }
+}
+
 // --- longConvertor ---
 
 public singleton LongConvertor
@@ -493,26 +553,46 @@ public singleton LongConvertor
       int len := s.Length;
       long val := 0;
       int start := 0;
+      int any := 0;
       bool inverted := false;
       if (s[0]==$45) {
          start := 1;
          inverted := true;
       };
 
+      long cutoff := inverted ? INV_LONG_MIN : LONG_MAX;
+      long cutlim := cutoff mod:radix;
+      cutoff /= radix;
+
       for (int i := start; i < len; i := i + 1) {
          byte c := s[i];
-         int ch := c;
-         ch := ch - 48;
-         if (ch >= radix) {
-            ch := ch - 49;
+         long ch := c;
+         if (ch >= 48 && ch <= 57) {
+            ch -= 48;
+         }
+         else if (ch >= 65 && ch <= 70) {
+            ch -= 55;
+         }
+         else if (ch >= 97 && ch <= 102) {
+            ch -= 87;
+         }
+         else InvalidArgumentException.raise("s");
+
+         if (any < 0 || val > cutoff || (val == cutoff && ch > cutlim)) {
+            any := -1
+         }
+         else {
+            any := 1;
+            val *= radix;
+            val += ch;
          };
-         val := val * radix;
-         val := val + ch;
       };
 
-      if (inverted) {
+      if (any < 0) {
+         val := inverted ? INT_MIN : INT_MAX;
+      }
+      else if (inverted)
          val := -val;
-      };
 
       ^ val
    }
@@ -525,25 +605,46 @@ public singleton LongConvertor
       int len := s.Length;
       long val := 0;
       int start := 0;
+      int any := 0;
       bool inverted := false;
       if (s[0]==$45) {
          start := 1;
          inverted := true;
       };
+
+      long cutoff := inverted ? INV_LONG_MIN : LONG_MAX;
+      long cutlim := cutoff mod:radix;
+      cutoff /= radix;
+
       for (int i := start; i < len; i := i + 1) {
          short c := s[i];
-         int ch := c;
-         ch := ch - 48;
-         if (ch >= radix) {
-            ch := ch - 49;
+         long ch := c;
+         if (ch >= 48 && ch <= 57) {
+            ch -= 48;
+         }
+         else if (ch >= 65 && ch <= 70) {
+            ch -= 55;
+         }
+         else if (ch >= 97 && ch <= 102) {
+            ch -= 87;
+         }
+         else InvalidArgumentException.raise("s");
+
+         if (any < 0 || val > cutoff || (val == cutoff && ch > cutlim)) {
+            any := -1
+         }
+         else {
+            any := 1;
+            val *= radix;
+            val += ch;
          };
-         val := val * radix;
-         val := val + ch;
       };
 
-      if (inverted) {
+      if (any < 0) {
+         val := inverted ? INT_MIN : INT_MAX;
+      }
+      else if (inverted)
          val := -val;
-      };
 
       ^ val
    }
@@ -755,12 +856,55 @@ public singleton StringConvertor
    string convert(int value)
       <= convert(value, 10);
 
+   string convertUnsigned(long value, int radix)
+   {
+      long r := radix;
+      long n := value;
+
+      byte buffer[24];
+      byte tmp;
+      int len := 0;
+      int index := 23;
+
+      // !! hotfix
+      if (n < 0) {
+         long rest := n.mod(r);
+         rest := -rest;
+
+         n := n / r;
+         n := -n;
+
+         tmp := rest;
+         tmp := tmp + 48;
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+
+      while (n != 0) {
+         long rest := n.mod(r);
+         n := n / r;
+
+         tmp := rest;
+         tmp := tmp + 48;
+         buffer[index] := tmp;
+         index := index - 1;
+         len := len + 1;
+      };
+
+      ^ String.fromByteArray(index, len, buffer);
+   }
+
    string convert(long value, int radix)
    {
       long r := radix;
       long n := value;
       if (n < 0)
       {
+         if (n == -9223372036854775808l) {
+            ^ "-" + convertUnsigned(n, radix);
+         };
+         
          n := 0 - n;
       };   
 
