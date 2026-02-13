@@ -18,13 +18,20 @@ In development:
   ====================================== 
   - ppc64 : fix system_tests - intTests
   - x86-64 test tasksamples  
+  - fileControl support binaryReader
   --------------------------------------
-  * current : api backlog
+  * api backlog
   ====================================== 
-  - fix converting LongNumber.MinValue to a string
   - conversion to int - raise an error if not valid
   --------------------------------------
-
+  * current : str to int conversion
+  ====================================== 
+  - fix StrConvertor :: toLong both versions
+  - fix StrConvertor :: toInt both version
+  - IntNumber : convert min & max value
+  - LongNumber : convert min & max value
+  - functional tests - IntNumber : convert min & max value
+  - functional tests - LongNumber : convert min & max value
 
 
   === Iteration 45 (ide, ldoc method index; full api docs; template generator) ===

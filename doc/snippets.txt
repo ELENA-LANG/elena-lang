@@ -1,0 +1,21 @@
+============================================================================
+ ELENA Programming Language
+============================================================================
+
+----------------------------------------------------------------------------
+ Read a binary file page-by-page and print its content
+----------------------------------------------------------------------------
+
+import system'io;
+import extensions;
+
+public Program()
+{
+   byte buffer[512];
+   
+   using(auto reader := new BinaryStreamReader(FileStream.openForRead("sandbox.l"))) {
+      int len := reader.read(buffer, 512);
+      
+      Console.printLine(buffer.asEnumerable());
+   };
+}

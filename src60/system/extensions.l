@@ -198,6 +198,8 @@ public extension byteOp : ByteNumber
    {
       var retVal := self / operand * operand;
         
+      retVal := self - retVal;
+
       ^ ByteConvertor.convert(retVal)
    }
 
@@ -282,6 +284,8 @@ public extension shortOp : ShortNumber
    short mod(operand) : info("returns the remainder of an integer division")
    {
       var retVal := self / operand * operand;
+        
+      retVal := self - retVal;
         
       ^ ShortConvertor.convert(retVal)
    }    

@@ -252,6 +252,11 @@ public template operator::shl(expr, arg) : __included(statements)
 public template operator::shr(expr, arg) : __included(statements)
    = expr $shr arg;
 
+// mod:
+
+public template operator::mod(expr, arg) : __included(statements)
+   = expr - (expr / arg * arg);
+
 // :sizeof
 
 public template operator::sizeof(expr) : __included(statements)

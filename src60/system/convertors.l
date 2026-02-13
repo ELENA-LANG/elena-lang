@@ -1,3 +1,7 @@
+const int INV_INT_MIN = 80000000h;
+const int INT_MIN = -2147483648;
+const int INT_MAX = 2147483647;
+
 // --- byteConvertor ---
 
 public singleton ByteConvertor
@@ -271,26 +275,46 @@ public singleton IntConvertor
       int len := s.Length;
       int val := 0;
       int start := 0;
+      int any := 0;
       bool inverted := false;
       if (s[0]==$45) {
          start := 1;
          inverted := true;
       };
 
+      int cutoff := inverted ? INV_INT_MIN : INT_MAX;
+      int cutlim := cutoff mod:radix;
+      cutoff /= radix;
+
       for (int i := start; i < len; i := i + 1) {
          byte c := s[i];
          int ch := c;
-         ch := ch - 48;
-         if (ch >= radix) {
-            ch := ch - 7;
+         if (ch >= 48 && ch <= 57) {
+            ch -= 48;
+         }
+         else if (ch >= 65 && ch <= 70) {
+            ch -= 55;
+         }
+         else if (ch >= 97 && ch <= 102) {
+            ch -= 87;
+         }
+         else InvalidArgumentException.raise("s");
+
+         if (any < 0 || val > cutoff || (val == cutoff && ch > cutlim)) {
+            any := -1
+         }
+         else {
+            any := 1;
+            val *= radix;
+            val += c;
          };
-         val := val * radix;
-         val := val + ch;
       };
 
-      if (inverted) {
+      if (any < 0) {
+         val := inverted ? INT_MIN : INT_MAX;
+      }
+      else if (inverted)
          val := -val;
-      };
 
       ^ val
    }
