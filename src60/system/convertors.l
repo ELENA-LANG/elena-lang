@@ -1237,7 +1237,7 @@ public singleton WideConvertor
       
       index += 1;
 
-      ^ WideString.fromByteArray(index, len, buffer);
+      ^ WideString.fromShortArray(index, len, buffer);
    }
 
    wide convert(long value, int radix)
