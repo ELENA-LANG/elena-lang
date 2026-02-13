@@ -1968,6 +1968,12 @@ void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::PeekSI, 0);
          tape.write(ByteCode::Save);
          break;
+      case INT8_64_CONVERSION:
+         tape.write(ByteCode::BLoad);
+         tape.write(ByteCode::ConvL);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::LSave);
+         break;
       case INT16_32_CONVERSION:
          tape.write(ByteCode::WLoad);
          tape.write(ByteCode::PeekSI, 0);
@@ -2785,6 +2791,7 @@ inline bool doubleAssigningConverting(BuildNode lastNode)
          break;
       case INT32_64_CONVERSION:
       case INT32_FLOAT64_CONVERSION:
+      case INT8_64_CONVERSION:
          size = 8;
          break;
       default:
