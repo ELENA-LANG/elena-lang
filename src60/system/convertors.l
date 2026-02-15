@@ -812,8 +812,6 @@ public singleton StringConvertor
       if (n < 0)
       {
          if (n == 80000000h) {
-            Console.writeLine("80000000h mode");
-
             ^ convert(-2147483648l, radix);
          };
          
