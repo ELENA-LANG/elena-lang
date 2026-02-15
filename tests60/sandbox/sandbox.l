@@ -66,8 +66,8 @@ public Program()
 
 */
 
-   string s := convert(-2147483, 10);
-   Console.write(s); 
+   string s := convert(-214748364, 10);
+   Console.writeLine(s); 
 
 //   int n := 2;
 //   int m := 3;
