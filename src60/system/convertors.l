@@ -912,6 +912,8 @@ public singleton StringConvertor
          };
          
          n := 0 - n;
+
+         Console.writeLine("negative");
       };   
 
       byte buffer[24];
@@ -920,6 +922,7 @@ public singleton StringConvertor
       int index := 23;
       while (n >= r) {
          long rest := n.mod(r);
+
          n := n / r;
 
          tmp := rest;

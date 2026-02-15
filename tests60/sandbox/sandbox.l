@@ -2,7 +2,18 @@ import extensions;
 
 public Program()
 {
-   int n := 2;
+   long n := 20;
+   int r := 5;
+
+   long rest := n.mod(r);
+   n := n / r;
+
+   Console.writeLine(rest);
+   Console.writeLine(n);
+
+
+
+/*   int n := 2;
    int m := 3;
    int k := 4;
    int l := 3;
@@ -11,5 +22,5 @@ public Program()
    string s := n.toPrintable();
    Console.writeLine(s);
    Assert.ifTrue(s == "-2147483648");
-   Console.write(".");
+   Console.write("."); */
 }
