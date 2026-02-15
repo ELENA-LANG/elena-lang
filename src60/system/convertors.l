@@ -914,6 +914,7 @@ public singleton StringConvertor
          n := 0 - n;
 
          Console.writeLine("negative");
+         Console.writeLine(n);
       };   
 
       byte buffer[24];
