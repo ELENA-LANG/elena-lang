@@ -374,8 +374,8 @@ public:
       aliases(0),
       operations(0),
       cachedSizes({}),
-      cachedClassReferences(0),
-      cachedFlags(0)
+      cachedFlags(0),
+      cachedClassReferences(0)
    {
       this->module = module;
       this->debugModule = debugModule;
