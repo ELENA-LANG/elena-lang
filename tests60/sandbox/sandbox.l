@@ -22,7 +22,7 @@ public Program()
    int k := 4;
    int l := 3;
                     
-   n := /*IntNumber.MinValue*//*-2147483647*/-2147483/*64*/;
+   n := /*IntNumber.MinValue*//*-2147483647*/-214748/*364*/;
    string s := n.toPrintable();
    Console.writeLine(s);
    Assert.ifTrue(s == "-2147483648");
