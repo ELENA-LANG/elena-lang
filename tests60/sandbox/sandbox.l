@@ -22,6 +22,7 @@ public Program()
 //   long n := /*-*/2147483648l;
 
    long n := 214748364l;
+   Console.writeLine(n < 10l); 
    n := n * 10;
    n := n + 8;
 
