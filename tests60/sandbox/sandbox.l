@@ -19,14 +19,14 @@ public Program()
 
    //string s := convert(-214748364, 10);
    int r := 10;
+   long l := r;
 //   long n := /*-*/2147483648l;
 
    long n := 214748364l;
-   Console.writeLine(n < 10l); 
+   Console.writeLine(n < l); 
    n := n * 10;
    n := n + 8;
 
-   long l := r;
 //   Console.writeLine(l); 
 
    //bool b := n < r;
