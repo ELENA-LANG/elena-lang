@@ -16,17 +16,11 @@ In development:
   - x86-64 test tasksamples  
   - raise an error if an async extension is declared (until the feature is not implemented)
   --------------------------------------
-  * api backlog
+  * current : api backlog
   ====================================== 
   - conversion to int - raise an error if not valid
   - fileControl support binaryReader
   - operator templates :len, :name
-  --------------------------------------
-  * current : backlog
-  ====================================== 
-  - test : long -= int constant
-  - test : long -= int
-  - functional test  : long -= int / long += int
   --------------------------------------
 
 

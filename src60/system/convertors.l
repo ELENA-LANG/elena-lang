@@ -296,10 +296,10 @@ public singleton IntConvertor
          if (ch >= 48 && ch <= 57) {
             ch -= 48;
          }
-         else if (ch >= 65 && ch <= 70) {
+         else if (ch >= 65 && ch <= 70 && radix == 16) {
             ch -= 55;
          }
-         else if (ch >= 97 && ch <= 102) {
+         else if (ch >= 97 && ch <= 102 && radix == 16) {
             ch -= 87;
          }
          else InvalidArgumentException.raise("s");
@@ -348,10 +348,10 @@ public singleton IntConvertor
          if (ch >= 48 && ch <= 57) {
             ch -= 48;
          }
-         else if (ch >= 65 && ch <= 70) {
+         else if (ch >= 65 && ch <= 70 && radix == 16) {
             ch -= 55;
          }
-         else if (ch >= 97 && ch <= 102) {
+         else if (ch >= 97 && ch <= 102 && radix == 16) {
             ch -= 87;
          }
          else InvalidArgumentException.raise("s");
@@ -433,10 +433,18 @@ public singleton UIntConvertor
       for (int i := 0; i < len; i := i + 1) {
          byte c := s[i];
          uint ch := c;
-         ch := ch - 48;
-         if (ch >= r) {            
-            ch := ch - 7;
-         };
+
+         if (ch >= 48 && ch <= 57) {
+            ch -= 48;
+         }
+         else if (ch >= 65 && ch <= 70 && radix == 16) {
+            ch -= 55;
+         }
+         else if (ch >= 97 && ch <= 102 && radix == 16) {
+            ch -= 87;
+         }
+         else InvalidArgumentException.raise("s");
+
          val := val * r;
          val := val + ch;
       };
@@ -451,10 +459,18 @@ public singleton UIntConvertor
       for (int i := 0; i < len; i := i + 1) {
          short c := s[i];
          int ch := c;
-         ch := ch - 48;
-         if (ch >= radix) {
-            ch := ch - 49;
-         };
+
+         if (ch >= 48 && ch <= 57) {
+            ch -= 48;
+         }
+         else if (ch >= 65 && ch <= 70 && radix == 16) {
+            ch -= 55;
+         }
+         else if (ch >= 97 && ch <= 102 && radix == 16) {
+            ch -= 87;
+         }
+         else InvalidArgumentException.raise("s");
+
          val := val * radix;
          val := val + ch;
       };
@@ -570,10 +586,10 @@ public singleton LongConvertor
          if (ch >= 48 && ch <= 57) {
             ch -= 48;
          }
-         else if (ch >= 65 && ch <= 70) {
+         else if (ch >= 65 && ch <= 70 && radix == 16) {
             ch -= 55;
          }
-         else if (ch >= 97 && ch <= 102) {
+         else if (ch >= 97 && ch <= 102 && radix == 16) {
             ch -= 87;
          }
          else InvalidArgumentException.raise("s");
@@ -622,10 +638,10 @@ public singleton LongConvertor
          if (ch >= 48 && ch <= 57) {
             ch -= 48;
          }
-         else if (ch >= 65 && ch <= 70) {
+         else if (ch >= 65 && ch <= 70 && radix == 16) {
             ch -= 55;
          }
-         else if (ch >= 97 && ch <= 102) {
+         else if (ch >= 97 && ch <= 102 && radix == 16) {
             ch -= 87;
          }
          else InvalidArgumentException.raise("s");
