@@ -19,10 +19,10 @@ public Program()
 
    //string s := convert(-214748364, 10);
    int r := 10;
-   long n := /*-*//*2*/147483648l;
+   long n := /*-*/2147483648l;
 
    long l := r;
-   Console.writeLine(l); 
+//   Console.writeLine(l); 
 
    //bool b := n < r;
    bool b := n < l;
