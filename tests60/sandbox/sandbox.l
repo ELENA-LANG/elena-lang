@@ -45,7 +45,7 @@ public Program()
    string s := n.toString();
    Console.writeLine(s); 
 //   Console.writeLine(m.toString()); 
-   Console.writeLine(rest.toString()); 
+//   Console.writeLine(rest.toString()); 
 
 //   int n := 2;
 //   int m := 3;
