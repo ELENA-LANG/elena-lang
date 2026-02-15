@@ -18,7 +18,7 @@ public Program()
 */
 
    //string s := convert(-214748364, 10);
-   int n := -2147483647;
+   int n := -2147483648;
    string s := n.toString();
    Console.writeLine(s); 
 
