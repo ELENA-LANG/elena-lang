@@ -18,16 +18,9 @@ public Program()
 */
 
    //string s := convert(-214748364, 10);
-   int r := 10;
-   long l := r;
-//   long n := /*-*/2147483648l;
-
-   long n := 214748364l;
-   Console.writeLine(n < l); 
-   n := n * 10;
-   n := n + 8;
-
-//   Console.writeLine(l); 
+//   int r := 10;
+   long l := /*r*/10;
+   long n := /*-*/2147483648l;
 
    //bool b := n < r;
    bool b := n < l;
