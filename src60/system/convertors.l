@@ -911,10 +911,7 @@ public singleton StringConvertor
             ^ "-" + convertUnsigned(n, radix);
          };
          
-         n := 0 - n;
-
-         Console.writeLine("negative");
-         Console.writeLine(n);
+         n := 0l - n;
       };   
 
       byte buffer[24];

@@ -11,6 +11,10 @@ public Program()
    Console.writeLine(rest);
    Console.writeLine(n);
 
+   long m := -6;
+   m := 0 - m;
+   Console.writeLine(m);
+
 
 
 /*   int n := 2;
