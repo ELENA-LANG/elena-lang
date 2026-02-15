@@ -272,7 +272,7 @@ public longTests() : testCase()
     Console.write(".");
 
     r -= n32;
-    Assert.ifTrue(r == 12345678801222);
+    Assert.ifTrue(r == 12345678801222l);
     n32 := 100004;
     r += n32;
     Assert.ifTrue(r == 12345678901226l);
