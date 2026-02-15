@@ -21,13 +21,17 @@ public Program()
    int r := 10;
    long n := /*-*/2147483648l;
 
-      while (n >= r) {
-         long rest := n.mod(r);
+   bool b := n >= r;
+   Console.writeLine(b); 
 
-         n := n / r;
 
-   Console.writeLine(n.toString()); 
-   Console.writeLine(rest.toString()); 
+//      while (n >= r) {
+//         long rest := n.mod(r);
+
+//         n := n / r;
+
+//   Console.writeLine(n.toString()); 
+//   Console.writeLine(rest.toString()); 
 
 
 //         tmp := rest;
@@ -35,7 +39,7 @@ public Program()
 //         buffer[index] := tmp;
 //         index := index - 1;
 //         len := len + 1;
-      };
+//      };
 
 
 
