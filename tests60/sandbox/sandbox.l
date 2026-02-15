@@ -1,54 +1,5 @@
 import extensions;
 
-   string convert(int value, int radix)
-   {
-      int n := value;
-      if (n < 0)
-      {
-         if (n == 80000000h) {
-            ^ convert(-2147483648l, radix);
-         };
-         
-         n := 0 - n;
-      };   
-
-      byte buffer[36];
-      byte tmp;
-      int len := 0;
-      int index := 35;
-      while (n >= radix) {
-         int r := n.mod(radix);
-         n := n / radix;
-
-         tmp := 48 + r;
-         if (r > 9) {
-            tmp :=tmp + 7;
-         };
-
-         buffer[index] := tmp;
-         index := index - 1;
-         len := len + 1;
-      };
-      tmp := 48 + n;
-      if (n > 9) {
-         tmp :=tmp + 7;
-      };
-
-      buffer[index] := tmp;
-      len := len + 1;
-
-      if (value < 0) {
-        index := index - 1;
-        tmp := 45;
-        buffer[index] := tmp;
-        len := len + 1;
-      };
-
-      ^ system'text'UTF8Encoding.toString(index, len, buffer);
-   }
-
-
-
 public Program()
 {
 /*   long n := 20;
@@ -67,7 +18,7 @@ public Program()
 */
 
    //string s := convert(-214748364, 10);
-   int n := -214748364;
+   int n := -2147483647;
    string s := n.toString();
    Console.writeLine(s); 
 
