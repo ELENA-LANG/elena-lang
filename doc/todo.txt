@@ -18,7 +18,6 @@ In development:
   --------------------------------------
   * current : api backlog
   ====================================== 
-  - fileControl support binaryReader
   - operator templates :len, :name
   --------------------------------------
 

@@ -487,7 +487,7 @@ namespace io
       static TextReader textreader(string path) 
          = fileControl.newReader(path);         
       
-      static TextReader binaryreader(string path) 
+      static BinaryReader binaryreader(string path) 
          = fileControl.newBinaryReader(path);
    }
 
