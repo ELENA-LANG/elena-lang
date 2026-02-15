@@ -24,11 +24,15 @@ public Program()
    long l := r;
    Console.writeLine(l); 
 
-   bool b := n >= r;
+   //bool b := n < r;
+   bool b := n < l;
    Console.writeLine(b); 
 
-   bool b2 := n >= l;
-   Console.writeLine(b2); 
+//   bool b := n >= r;
+//   Console.writeLine(b); 
+
+//   bool b2 := n >= l;
+//   Console.writeLine(b2); 
 
 
 //      while (n >= r) {
