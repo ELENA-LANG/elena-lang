@@ -27,6 +27,9 @@ public Program()
    bool b := n >= r;
    Console.writeLine(b); 
 
+   bool b2 := n >= l;
+   Console.writeLine(b2); 
+
 
 //      while (n >= r) {
 //         long rest := n.mod(r);
