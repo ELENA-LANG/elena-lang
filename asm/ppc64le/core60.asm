@@ -2341,7 +2341,7 @@ inline %4C2h
   ld      r17, 0(r3)
   ld      r18, 0(r15)
 
-  cmp     r17, r18
+  cmpd    r17, r18
 
 end
 

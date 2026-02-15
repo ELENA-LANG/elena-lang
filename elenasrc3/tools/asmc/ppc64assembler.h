@@ -3,7 +3,7 @@
 //
 //		This header contains PPC64 Assembler declarations
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PPC64ASSEMBLER_H
@@ -51,6 +51,8 @@ namespace elena_lang
       void compileBCxx(ScriptToken& tokenInfo, int aa, int lk, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, PPCOperand rb,
          MemoryWriter& writer);
+      void compileCMPD(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, PPCOperand rb,
+         MemoryWriter& writer);
       void compileCMPL(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, PPCOperand rb,
          MemoryWriter& writer);
       void compileCMPI(ScriptToken& tokenInfo, int bf, int l, PPCOperand ra, int i, ref_t reference,
@@ -84,6 +86,7 @@ namespace elena_lang
       void compileBGE(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileBSO(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope);
       void compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer);
+      void compileCMPD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPLD(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPLW(ScriptToken& tokenInfo, MemoryWriter& writer);
       void compileCMPWI(ScriptToken& tokenInfo, MemoryWriter& writer);
