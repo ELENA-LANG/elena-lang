@@ -22,7 +22,7 @@ public Program()
    int k := 4;
    int l := 3;
                     
-   n := IntNumber.MinValue;
+   n := /*IntNumber.MinValue*/-2147483647;
    string s := n.toPrintable();
    Console.writeLine(s);
    Assert.ifTrue(s == "-2147483648");
