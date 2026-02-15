@@ -2,11 +2,14 @@ import extensions;
 
 public Program()
 {
-   int min := -2147483648;
-   int max := 2147483647;
-
-   Console.printLine("int min ", min);
-   Console.printLine("int max ", max);
-
-//   long l := -9223372036854775808l;
+   int n := 2;
+   int m := 3;
+   int k := 4;
+   int l := 3;
+                    
+   n := IntNumber.MinValue;
+   string s := n.toPrintable();
+   Console.writeLine(s);
+   Assert.ifTrue(s == "-2147483648");
+   Console.write(".");
 }
