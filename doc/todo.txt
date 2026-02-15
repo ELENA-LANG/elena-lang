@@ -11,26 +11,24 @@ In development:
   ====================================== 
   - writing a program in ELENA (program entries, different types of projects)
   --------------------------------------
-  * lang
-  ====================================== 
-  --------------------------------------
   * backlog
   ====================================== 
-  - ppc64 : fix system_tests - intTests
   - x86-64 test tasksamples  
-  - fileControl support binaryReader
+  - raise an error if an async extension is declared (until the feature is not implemented)
   --------------------------------------
   * api backlog
   ====================================== 
   - conversion to int - raise an error if not valid
+  - fileControl support binaryReader
+  - operator templates :len, :name
+  --------------------------------------
+  * current : backlog
+  ====================================== 
   - test : long -= int constant
   - test : long -= int
+  - functional test  : long -= int / long += int
   --------------------------------------
-  * current : str to int conversion
-  ====================================== 
-  - fix StrConvertor :: toLong both versions
-  - LongNumber : convert min & max value
-  - functional tests - LongNumber : convert min & max value
+
 
 
   === Iteration 45 (ide, ldoc method index; full api docs; template generator) ===

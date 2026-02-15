@@ -272,10 +272,10 @@ public longTests() : testCase()
     Console.write(".");
 
     r -= n32;
-    Assert.ifTrue(r == i);
+    Assert.ifTrue(r == 12345678801222);
     n32 := 100004;
     r += n32;
-    Assert.ifTrue(r == 12345679001234l);
+    Assert.ifTrue(r == 12345678901226l);
     Console.write(".");
 
     var tester := (long l, long control1, long control2) { long r1 := -l; long r2 := -r1; Assert.ifTrue(r1 == control1); Assert.ifTrue(r2 == control2);  };
@@ -283,6 +283,8 @@ public longTests() : testCase()
     tester(-1l,1l,-1l);
     tester(-5000000000l,5000000000l,-5000000000l);
     Console.write(".");
+
+
 }
 
 // --- realTests ---

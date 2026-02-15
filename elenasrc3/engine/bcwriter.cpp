@@ -699,7 +699,7 @@ static inline void longIntOp(CommandTape& tape, BuildNode& node, TapeScope&)
       tape.write(ByteCode::PeekSI);
       tape.write(ByteCode::Load);
       tape.write(ByteCode::ConvL);
-      if (operatorId == SUB_OPERATOR_ID) {
+      if (operatorId == SUB_ASSIGN_OPERATOR_ID) {
          tape.write(ByteCode::LNeg);
       }
       switch (operatorId) {
