@@ -3,7 +3,7 @@
 //
 //		This file contains PPC64 Assembler implementation
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -403,6 +403,7 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
       case NARG16_1:
       case ARG16_2:
       case NARG16_2:
+      case NARG16HI_2:
       case INV_NARG16_2:
       case ARG32HI_1:
       case ARG32LO_1:
