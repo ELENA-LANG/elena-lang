@@ -21,6 +21,9 @@ public Program()
    int r := 10;
    long n := /*-*/2147483648l;
 
+   long l := r;
+   Console.writeLine(l); 
+
    bool b := n >= r;
    Console.writeLine(b); 
 
