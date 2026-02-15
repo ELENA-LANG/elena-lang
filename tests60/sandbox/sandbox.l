@@ -44,7 +44,7 @@ import extensions;
         len := len + 1;
       };
 
-      ^ UTF8Encoding.toString(index, len, buffer);
+      ^ system'text'UTF8Encoding.toString(index, len, buffer);
    }
 
 
