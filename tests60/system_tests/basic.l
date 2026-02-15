@@ -272,10 +272,10 @@ public longTests() : testCase()
     Console.write(".");
 
     r -= n32;
-    Assert.ifTrue(r == 12345678801222l);
+    Assert.ifTrue(r == 12345678701230l);
     n32 := 100004;
     r += n32;
-    Assert.ifTrue(r == 12345678901226l);
+    Assert.ifTrue(r == 12345678801234l);
     Console.write(".");
 
     var tester := (long l, long control1, long control2) { long r1 := -l; long r2 := -r1; Assert.ifTrue(r1 == control1); Assert.ifTrue(r2 == control2);  };
