@@ -206,7 +206,7 @@ inline % GC_ALLOC
   ld      r17, gc_yg_current(r19) 
   ld      r16, gc_yg_end(r19) 
   add     r18, r18, r17 
-  cmp     r18, r16
+  cmpd    r18, r16
   bge     labYGCollect
   std     r18, gc_yg_current(r19) 
   addi    r15, r17, elObjectOffset
@@ -421,7 +421,7 @@ procedure %GC_ALLOCPERM
   ld      r17, gc_perm_current(r19) 
   ld      r16, gc_perm_end(r19) 
   add     r18, r18, r17 
-  cmp     r18, r16
+  cmpd    r18, r16
   bge     labYGCollect
   std     r18, gc_perm_current(r19) 
   addi    r15, r17, elObjectOffset
@@ -537,7 +537,7 @@ labStart:
   add     r22, r22, r16                  //; edx
 
   ld      r23, 0(r22)
-  cmp     r14, r23
+  cmpd    r14, r23
   beq     labFound
   addi    r22, r22, 16  
   blt     labSplit
@@ -653,7 +653,7 @@ end
 inline %0Dh
 
   lwz      r18, 0(r15)
-  cmp      r14, r18
+  cmpd     r14, r18
 
 end
 
@@ -835,7 +835,7 @@ end
 inline % 1Ch
 
   ld      r18, 0(r15)
-  cmp     r18, r14
+  cmpd    r18, r14
 
 end
 
@@ -2274,7 +2274,7 @@ inline %0C0h
   ld      r16, toc_code(r2)
   addis   r16, r16, __xdisp32hi_1 
   addi    r16, r16, __xdisp32lo_1 
-  cmp     r15, r16
+  cmpd    r15, r16
 
 end 
 
@@ -2282,7 +2282,7 @@ end
 inline %1C0h
 
   li      r16, 0
-  cmp     r15, r16
+  cmpd    r15, r16
 
 end 
 
@@ -2291,7 +2291,7 @@ inline %9C0h
 
   li      r16, 0
   addi    r16, r16, -1
-  cmp     r15, r16
+  cmpd    r15, r16
 
 end 
 
@@ -2411,21 +2411,21 @@ end
 inline %0C6h
 
   ld      r16, __arg16_1(r1)  
-  cmp     r14, r16
+  cmpd    r14, r16
 
 end 
 
 // ; cmpsi 0
 inline %1C6h
 
-  cmp     r14, r3
+  cmpd    r14, r3
 
 end 
 
 // ; cmpsi 1
 inline %2C6h
 
-  cmp     r14, r4
+  cmpd    r14, r4
 
 end 
 
@@ -2433,7 +2433,7 @@ end
 inline %0C8h
 
   ld      r16, __arg16_1(r31)
-  cmp     r15, r16
+  cmpd    r15, r16
 
 end 
 
@@ -2441,21 +2441,21 @@ end
 inline %0C9h
 
   ld      r16, __arg16_1(r1)  
-  cmp     r15, r16
+  cmpd    r15, r16
 
 end 
 
 // ; cmpsi 0
 inline %1C9h
 
-  cmp     r15, r3
+  cmpd    r15, r3
 
 end 
 
 // ; cmpsi 1
 inline %2C9h
 
-  cmp     r15, r4
+  cmpd    r15, r4
 
 end 
 
@@ -4746,7 +4746,7 @@ labMatching:
 
 labNextBaseClass:
 //;  cmp  rsi, rdi
-  cmp     r20, r18
+  cmpd    r20, r18
 //;  jz   labNextParam
   beq     labNextParam 
 //;  mov  rdi, [rdi - elPackageOffset]
@@ -4875,7 +4875,7 @@ labMatching:
 
 labNextBaseClass:
 //;  cmp  rsi, rdi
-  cmp     r20, r18
+  cmpd    r20, r18
 //;  jz   labNextParam
   beq     labNextParam 
 //;  mov  rdi, [rdi - elPackageOffset]
@@ -4932,7 +4932,7 @@ labCountParam:
   addi    r22, r22, 8
   ld      r24, 0(r22)
   addi    r16, r16, 1
-  cmp     r24, r23
+  cmpd    r24, r23
   bne     labCountParam
   mr      r17, r16
 
@@ -5007,7 +5007,7 @@ labMatching:
 
 labNextBaseClass:
 //;  cmp  rsi, rdi
-  cmp     r20, r18
+  cmpd    r20, r18
 //;  jz   labNextParam
   beq     labNextParam 
 //;  mov  rdi, [rdi - elPackageOffset]
@@ -5121,7 +5121,7 @@ labMatching:
 
 labNextBaseClass:
 //;  cmp  rsi, rdi
-  cmp     r20, r18
+  cmpd    r20, r18
 //;  jz   labNextParam
   beq     labNextParam 
 //;  mov  rdi, [rdi - elPackageOffset]
@@ -5178,7 +5178,7 @@ labCountParam:
   addi    r22, r22, 8
   ld      r24, 0(r22)
   addi    r16, r16, 1
-  cmp     r24, r23
+  cmpd    r24, r23
   bne     labCountParam
   mr      r17, r16
 
@@ -5255,7 +5255,7 @@ labMatching:
 
 labNextBaseClass:
 //;  cmp  rsi, rdi
-  cmp     r20, r18
+  cmpd    r20, r18
 //;  jz   labNextParam
   beq     labNextParam 
 //;  mov  rdi, [rdi - elPackageOffset]
