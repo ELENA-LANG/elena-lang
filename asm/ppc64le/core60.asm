@@ -3368,6 +3368,16 @@ inline %0E5h
 
 end
 
+// ; nsavedpn (n > 0FFFFh)
+inline %01E5h
+
+  addi    r19, r31, __arg16_1
+  lis     r17, __n16hi_2
+  addi    r17, r17, __n16_2
+  stw     r17, 0(r19)
+
+end
+
 // ; xhookdpr
 inline %0E6h
 
