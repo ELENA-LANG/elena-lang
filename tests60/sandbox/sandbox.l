@@ -20,12 +20,31 @@ public Program()
    //string s := convert(-214748364, 10);
    int r := 10;
    long n := /*-*/2147483648l;
-   long m := n / r;   
-   long rest := n.mod(r);
+
+      while (n >= r) {
+         long rest := n.mod(r);
+
+         n := n / r;
+
+   Console.writeLine(n.toString()); 
+   Console.writeLine(rest.toString()); 
+
+
+//         tmp := rest;
+//         tmp := tmp + 48;
+//         buffer[index] := tmp;
+//         index := index - 1;
+//         len := len + 1;
+      };
+
+
+
+//   long m := n / r;   
+//   long rest := n.mod(r);
 
    string s := n.toString();
    Console.writeLine(s); 
-   Console.writeLine(m.toString()); 
+//   Console.writeLine(m.toString()); 
    Console.writeLine(rest.toString()); 
 
 //   int n := 2;
