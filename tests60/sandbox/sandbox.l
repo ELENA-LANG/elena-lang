@@ -18,7 +18,7 @@ public Program()
 */
 
    //string s := convert(-214748364, 10);
-   long n := /*-2147483648l*/-22000000l;
+   long n := -2147483648l;
    string s := n.toString();
    Console.writeLine(s); 
 
