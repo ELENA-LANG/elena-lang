@@ -36,11 +36,11 @@ public Program()
 
 
 //      while (n >= r) {
-//         long rest := n.mod(r);
+         long rest := n.mod(r);
 
-//         n := n / r;
+         n := n / r;
 
-//   Console.writeLine(n.toString()); 
+   Console.writeLine(n.toString()); 
 //   Console.writeLine(rest.toString()); 
 
 
