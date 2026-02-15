@@ -3,7 +3,7 @@ import extensions;
 public Program()
 {
    long n := 20;
-   int r := 5;
+   int r := 3;
 
    long rest := n.mod(r);
    n := n / r;
