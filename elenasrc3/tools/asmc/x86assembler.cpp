@@ -3200,7 +3200,7 @@ bool X86_64Assembler::compileAdd(X86Operand source, X86Operand target, MemoryWri
       X86Helper::writeModRM(writer, target, source);
    }
    else if (source.isRX64() && target.isR64()) {
-      writer.writeByte(0x4C);
+      writer.writeByte(0x4B);
       writer.writeByte(0x01);
       X86Helper::writeModRM(writer, target, source);
    }

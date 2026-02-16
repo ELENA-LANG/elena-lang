@@ -104,6 +104,10 @@ end
 // ; in: ecx - size ; out: ebx - created object
 inline % GC_ALLOC
 
+  add  r8, rax
+
+
+
   // ; GCXT: set lock
 labStart:
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
