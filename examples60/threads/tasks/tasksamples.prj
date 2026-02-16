@@ -1,4 +1,14 @@
 <configuration>
+    <platform key="Win_x86">
+        <project>
+           <executable>tasksamples</executable>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+           <executable>tasksamples64</executable>
+        </project>
+    </platform>
     <files>
         <module>
             <file>sample1.l</file>
@@ -8,7 +18,6 @@
         </module>
     </files>
     <project>
-        <executable>tasksamples</executable>
         <options></options>
         <namespace>tasksamples</namespace>
         <template>mt_console</template>

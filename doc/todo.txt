@@ -22,7 +22,6 @@ In development:
   --------------------------------------
   * current : x86-64 samples
   ====================================== 
-  - x86-64 test tasksamples  
   - threads samples, need to have separate executable output
   --------------------------------------
 

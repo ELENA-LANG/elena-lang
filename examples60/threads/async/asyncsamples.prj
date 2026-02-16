@@ -1,4 +1,14 @@
 <configuration>
+    <platform key="Win_x86">
+        <project>
+           <executable>asyncsamples</executable>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+           <executable>asyncsamples64</executable>
+        </project>
+    </platform>
     <files>
         <module>
             <file>sample1.l</file>
@@ -7,7 +17,6 @@
         </module>
     </files>
     <project>
-        <executable>asyncsamples</executable>
         <options></options>
         <namespace>asyncsamples</namespace>
         <template>mt_console</template>
