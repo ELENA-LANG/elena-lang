@@ -242,6 +242,16 @@ public template operator::await(expr) : __included(statements)
 public template operator::lazy(expr) : __included(statements)
     = $lazy expr;
 
+// :len
+
+public template operator::len(expr) : __included(statements)
+    = $len expr;
+
+// :name
+
+public template operator::name(expr) : __included(statements)
+    = $name expr;
+
 // shl:
 
 public template operator::shl(expr, arg) : __included(statements)

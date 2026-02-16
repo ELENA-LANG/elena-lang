@@ -24,24 +24,24 @@ public singleton ByteConvertor
    byte convert(BaseVariable v)
       <= convert(*v);
 
-   byte convert(byte b)
+   byte convert(byte b) : info("Returns an argument")
       = b;
 
-   byte convert(short s)
+   byte convert(short s) : info("Converts an argument <b>s</b> to a byte value")
    {
       self.convert(s, out byte b);
 
       ^ b;      
    }
 
-   byte convert(char ch)
+   byte convert(char ch) : info("Converts an argument <b>ch</b> to a byte value")
    {
       int n := ch;
 
       ^ self.convert(n);
    }
 
-   byte convert(int n)
+   byte convert(int n) : info("Converts an argument <b>n</b> to a byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       if (n > 255 || n < 0) {
          OutOfRangeException.raise();
@@ -52,35 +52,35 @@ public singleton ByteConvertor
       ^ b;
    }
 
-   byte convert(uint n)
+   byte convert(uint n) : info("Converts an argument <b>n</b> to a byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convert(n, out byte b);
 
       ^ b;
    }
 
-   byte convert(long n)
+   byte convert(long n) : info("Converts an argument <b>n</b> to a byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convert(n, out byte b);
 
       ^ b;
    }
 
-   byte convert(real r)
+   byte convert(real r) : info("Converts an argument <b>r</b> to a byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(r);
 
       ^ self.convert(n);
    }
 
-   byte convert(string s, int radix)
+   byte convert(string s, int radix) : info("Converts a string <b>s</b> to a byte value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(s, radix);
 
       ^ self.convert(n);
    }
 
-   byte convert(wide s, int radix)
+   byte convert(wide s, int radix) : info("Converts a string <b>s</b> to a byte value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(s, radix);
 
@@ -94,7 +94,7 @@ public singleton SByteConvertor
 {
    convert(int n, out sbyte retVal) : external(system'core_routines'__intToSByte);
 
-   sbyte convert(int n)
+   sbyte convert(int n) : info("Converts an argument <b>n</b> to a signed byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       if (n > 127 || n < -128) {
          OutOfRangeException.raise();
@@ -122,59 +122,59 @@ public singleton ShortConvertor
    short convert(BaseVariable v)
       <= convert(*v);
 
-   short convert(byte b)
+   short convert(byte b) : info("Converts an argument <b>b</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convertByte(b, out short s);
 
       ^ s;
    }   
 
-   short convert(short s)
+   short convert(short s) : info("Returns an argument")
       = s;
 
-   short convert(int n)
+   short convert(int n) : info("Converts an argument <b>n</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convertInt(n, out short s);
 
       ^ s;
    }
 
-   short convert(uint n)
+   short convert(uint n) : info("Converts an argument <b>n</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convertUInt(n, out short s);
 
       ^ s;
    }
 
-   short convert(long l)
+   short convert(long l) : info("Converts an argument <b>l</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(l);
 
       ^ self.convert(n)
    }
 
-   short convert(real r)
+   short convert(real r) : info("Converts an argument <b>r</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(r);
 
       ^ self.convert(n)
    }
 
-   short convert(char ch)
+   short convert(char ch) : info("Converts an argument <b>ch</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(ch);
 
       ^ self.convert(n)
    }
 
-   short convert(string s, int radix)
+   short convert(string s, int radix) : info("Converts a string <b>s</b> to a 16-bit integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(s, radix);
 
       ^ self.convert(n)
    }
 
-   short convert(wide s, int radix)
+   short convert(wide s, int radix) : info("Converts a string <b>s</b> to a 16-bit integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(s, radix);
 
@@ -188,17 +188,17 @@ public singleton UShortConvertor
 {
    private convertInt(int n, out ushort retVal) : external(system'core_routines'__intToUShort);
 
-   ushort convert(ushort s)
+   ushort convert(ushort s) : info("Returns an argument")
       = s;
 
-   ushort convert(short s)
+   ushort convert(short s) : info("Converts an argument <b>s</b> to a 16-bit unsigned integer if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := s;
 
       ^ n
    }
 
-   ushort convert(int n)
+   ushort convert(int n) : info("Converts an argument <b>n</b> to a 16-bit unsigned integer if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convertInt(n, out ushort s);
 
@@ -216,65 +216,65 @@ public singleton IntConvertor
    private convertUInt(uint l, out int retVal) : external(system'core_routines'__uintToInt);
    private convertUShort(ushort s, out int retVal) : external(system'core_routines'__ushortToInt);
 
-   int convert(o)
+   int convert(o) : info("Tries to convert an argument to a signed 32-bit integer")
       = cast int(o);
 
    int convert(BaseVariable v)
       <= convert(*v);
 
-   int convert(int n)
+   int convert(int n) : info("Returns an argument")
       = n;
 
-   int convert(byte b)
+   int convert(byte b) : info("Converts an argument <b>b</b> to a signed 32-bit integer value")
    {
       int n := b;
 
       ^ n;
    }
 
-   int convert(short s)
+   int convert(short s) : info("Converts an argument <b>s</b> to a signed 32-bit integer value")
    {
       int n := s;
 
       ^ n;
    }
 
-   int convert(uint n)
+   int convert(uint n) : info("Converts an argument <b>n</b> to a signed 32-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convertUInt(n, out int retVal);
 
       ^ retVal
    }
 
-   int convert(ushort n)
+   int convert(ushort n) : info("Converts an argument <b>n</b> to a signed 32-bit integer value")
    {
       self.convertUShort(n, out int retVal);
 
       ^ retVal
    }
 
-   int convert(char ch)
+   int convert(char ch) : info("Converts an argument <b>ch</b> to a signed 32-bit integer value")
    {
       self.convertChar(ch, out int retVal);
 
       ^ retVal
    }
 
-   int convert(long l)
+   int convert(long l) : info("Converts an argument <b>l</b> to a signed 32-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convertLong(l, out int n);
 
       ^ n;
    }
 
-   int convert(real r)
+   int convert(real r) : info("Converts an argument <b>r</b> to a signed 32-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       self.convertReal(r, out int n);
 
       ^ n
    }   
 
-   int convert(string s, int radix)
+   int convert(string s, int radix) : info("Converts a string <b>s</b> to a 32-bit signed integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int len := s.Length;
       int val := 0;
@@ -323,10 +323,10 @@ public singleton IntConvertor
       ^ val
    }
 
-   int convert(string s)
+   int convert(string s) : info("Converts a string <b>s</b> to a 32-bit signed integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException")
       <= convert(s, 10);
 
-   int convert(wide s, int radix)
+   int convert(wide s, int radix) : info("Converts a string <b>s</b> to a 32-bit signed integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int len := s.Length;
       int val := 0;
@@ -375,7 +375,7 @@ public singleton IntConvertor
       ^ val
    }
 
-   int convert(wide s)
+   int convert(wide s) : info("Converts a string <b>s</b> to a 32-bit signed integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException")
       <= convert(s, 10);
 }
 
@@ -385,13 +385,13 @@ public singleton UIntConvertor
 {
    private copyDirectly(int n, out uint retVal) : external(system'core_routines'__intToUInt);
 
-   uint convert(o)
+   uint convert(o) : info("Tries to convert an argument to a unsigned 32-bit integer")
       = cast uint(o);
 
-   uint convert(uint n)
+   uint convert(uint n) : info("Returns an argument")
       = n;
 
-   uint convert(int n)
+   uint convert(int n) : info("Converts an argument <b>n</b> to unsigned 32-bit integer value")
    {
 //      if (n < 0) {
 //         InvalidArgumentException.raise();
@@ -402,30 +402,30 @@ public singleton UIntConvertor
       ^ retVal
    }
 
-   uint convert(byte b)
+   uint convert(byte b) : info("Converts an argument <b>b</b> to unsigned 32-bit integer value")
    {
       int n := b;
 
       ^ UIntConvertor.convert(n);
    }
 
-   uint convert(short s)
+   uint convert(short s) : info("Converts an argument <b>s</b> to unsigned 32-bit integer value")
    {
       int n := s;
 
       ^ UIntConvertor.convert(n);
    }
-   uint convert(long l)
+   uint convert(long l) : info("Converts an argument <b>l</b> to unsigned 32-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int n := IntConvertor.convert(l);
 
       ^ self.convert(n);
    }
 
-   uint convert(string s)
+   uint convert(string s) : info("Converts a string <b>s</b> to a 32-bit unsigned integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException")
       <= convert(s, 10);
 
-   uint convert(string s, int radix)
+   uint convert(string s, int radix) : info("Converts a string <b>s</b> to a 32-bit unsigned integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int len := s.Length;
       uint val := 0;
@@ -452,7 +452,7 @@ public singleton UIntConvertor
       ^ val
    }
 
-   uint convert(wide s, int radix)
+   uint convert(wide s, int radix) : info("Converts a string <b>s</b> to a 32-bit unsigned integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int len := s.Length;
       uint val := 0;
@@ -483,7 +483,7 @@ public singleton UIntConvertor
 
 public singleton ULongConvertor
 {
-   long convert(string s, int radix)
+   long convert(string s, int radix) : info("Converts a string <b>s</b> to a 64-bit unsigned integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int len := s.Length;
       long val := 0;
@@ -508,44 +508,44 @@ public singleton ULongConvertor
 
 public singleton LongConvertor
 {
-   long convert(o)
+   long convert(o) : info("Tries to convert an argument to a signed 64-bit integer")
       = cast long(o);
 
    long convert(BaseVariable v)
       <= convert(*v);
 
-   long convert(long l)
+   long convert(long l) : info("Returns an argument")
       = l;
 
-   long convert(byte b)
+   long convert(byte b) : info("Converts an argument <b>b</b> to a signed 64-bit integer value")
    {
       long l := b;
 
       ^ l
    }
 
-   long convert(short s)
+   long convert(short s) : info("Converts an argument <b>s</b> to a signed 64-bit integer value")
    {
       long l := s;
 
       ^ l
    }
 
-   long convert(int n)
+   long convert(int n) : info("Converts an argument <b>n</b> to a signed 64-bit integer value")
    {
       long l := n;
 
       ^ l
    }
 
-   long convert(uint n)
+   long convert(uint n) : info("Converts an argument <b>n</b> to a signed 64-bit integer value")
    {
       long l := n;
 
       ^ l
    }
 
-   long convert(real r)
+   long convert(real r) : info("Converts an argument <b>r</b> to signed 64-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       // !! temporal implementation
       int n := IntConvertor.convert(r);
@@ -555,7 +555,7 @@ public singleton LongConvertor
       ^ l
    }
 
-   long convert(char ch)
+   long convert(char ch) : info("Converts an argument <b>ch</b> to a signed 64-bit integer value")
    {
       int n := IntConvertor.convert(ch);
 
@@ -564,7 +564,7 @@ public singleton LongConvertor
       ^ l
    }
 
-   long convert(string s, int radix)
+   long convert(string s, int radix) : info("Converts a string <b>s</b> to a 64-bit signed integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int len := s.Length;
       long val := 0;
@@ -613,10 +613,10 @@ public singleton LongConvertor
       ^ val
    }
 
-   long convert(string s)
+   long convert(string s) : info("Converts a string <b>s</b> to a 64-bit signed integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException")
       <= convert(s, 10);
 
-   long convert(wide s, int radix)
+   long convert(wide s, int radix) : info("Converts a string <b>s</b> to a 64-bit signed integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       int len := s.Length;
       long val := 0;
@@ -665,7 +665,7 @@ public singleton LongConvertor
       ^ val
    }
 
-   long convert(wide s)
+   long convert(wide s) : info("Converts a string <b>s</b> to a 64-bit signed integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException")
       <= convert(s, 10);
 }
 
@@ -673,16 +673,16 @@ public singleton LongConvertor
 
 public singleton RealConvertor
 {
-   real convert(o)
+   real convert(o) : info("Tries to convert an argument to a 64-bit float numeric value")
       = cast real(o);
 
-   real convert(real r)
+   real convert(real r) : info("Returns an argument")
       = r;
 
    real convert(BaseVariable v)
       <= convert(*v);
 
-   real convert(string s)
+   real convert(string s) : info("Converts a string <b>s</b> to a 64-bit float numeric value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
       string intPartStr;
       string? decimalPartStr := nil;
@@ -719,38 +719,38 @@ public singleton RealConvertor
       ^ r
    }
 
-   real convert(wide w)
+   real convert(wide w) : info("Converts a string <b>s</b> to a 64-bit float numeric value if it is possible<br/>Otherwise raises an exception OutOfRangeException")
       <= convert(StringConvertor.convert(w));
 
-   real convert(byte b)
+   real convert(byte b) : info("Converts an argument <b>b</b> to a 64-bit float numeric value")
    {
       real r := b;
 
       ^ r;
    }
 
-   real convert(short s)
+   real convert(short s) : info("Converts an argument <b>s</b> to a 64-bit float numeric value")
    {
       real r := s;
 
       ^ r
    }
 
-   real convert(int n)
+   real convert(int n) : info("Converts an argument <b>n</b> to a 64-bit float numeric value")
    {
       real r := n;
 
       ^ r
    }
 
-   real convert(uint n)
+   real convert(uint n) : info("Converts an argument <b>n</b> to a 64-bit float numeric value")
    {
       real r := n;
 
       ^ r
    }
 
-   real convert(long l)
+   real convert(long l) : info("Converts an argument <b>l</b> to a 64-bit float numeric value")
    {
       int n := IntConvertor.convert(l);
 
@@ -766,7 +766,7 @@ public singleton CharConvertor
 {
    convert(int n, out char retVal) : external(system'core_routines'__intToChar);
 
-   char convert(int n)
+   char convert(int n) : info("Converts an argument <b>n</b> to a UTF32 character value")
    {
       self.convert(n, out char ch);
 
@@ -793,21 +793,21 @@ public singleton CharConvertor
       ^ ch
    }      
 
-   char convert(short w)
+   char convert(short w) : info("Converts an argument <b>w</b> to a UTF32 character value")
    {
       int n := w;
 
       ^ self.convert(n);
    }
 
-   char convert(byte b)
+   char convert(byte b) : info("Converts an argument <b>b</b> to a UTF32 character value")
    {
       int n := b;
 
       ^ self.convert(n);
    }
 
-   char convert(o)
+   char convert(o) : info("Tries to converts an argument <b>o</b> to a UTF32 character value")
       = cast char(o);
 }
 
@@ -815,14 +815,14 @@ public singleton CharConvertor
 
 public singleton StringConvertor
 {
-   string convert(byte b, int radix)
+   string convert(byte b, int radix) : info("Formats a number <b>b</b> with the specified base <b>radix</b> as a literal presentation")
    {
       int n := b;
 
       ^ self.convert(n, radix);
    }
 
-   string convert(int value, int radix)
+   string convert(int value, int radix) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       int n := value;
       if (n < 0)
@@ -869,10 +869,10 @@ public singleton StringConvertor
       ^ String.fromByteArray(index, len, buffer);
    }
 
-   string convert(int value)
+   string convert(int value) : info("Formats a number <b>b</b> with 10 base as a literal presentation")
       <= convert(value, 10);
 
-   string convertUnsigned(long value, int radix)
+   string convertUnsigned(long value, int radix) : info("Formats a 64-bit integer <b>value</b> as unsigned one the specified base <b>radix</b> as a literal presentation")
    {
       long r := radix;
       long n := value;
@@ -915,7 +915,7 @@ public singleton StringConvertor
       ^ String.fromByteArray(index, len, buffer);
    }
 
-   string convert(long value, int radix)
+   string convert(long value, int radix) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       long r := radix;
       long n := value;
@@ -958,7 +958,7 @@ public singleton StringConvertor
       ^ String.fromByteArray(index, len, buffer);
    }
 
-   string convert(uint value, int radix)
+   string convert(uint value, int radix) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       uint n := value;
       uint uradix := radix;
@@ -991,7 +991,7 @@ public singleton StringConvertor
       ^ String.fromByteArray(index, len, buffer);
    }
 
-   string convert(short value, int radix)
+   string convert(short value, int radix) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       int intValue := value;
 
@@ -1036,7 +1036,7 @@ public singleton StringConvertor
       length := len;
    }
    
-   string convert(real value)
+   string convert(real value) : info("Formats a number <b>value</b> as a literal presentation")
    {
       real r := value;
 
@@ -1116,7 +1116,7 @@ public singleton StringConvertor
       ^ String.fromByteArray(index + 1, length, buffer);      
    }
 
-   string convert(char ch)
+   string convert(char ch) : info("Converts a UTF32 value <b>ch</b> as a string")
    {
       int value := ch.Value;
 
@@ -1132,13 +1132,13 @@ public singleton StringConvertor
    string convert(BaseVariable v, int radix)
       <= convert(*v, radix);
 
-   string convert(wide w)
+   string convert(wide w) : info("Converts UTF-16 string to UTF-8 one")
       = w;
 
-   string convert(string s)
+   string convert(string s) : info("Returns an argument")
       = s;
 
-   string convert(o)
+   string convert(o) : info("Returns the string representation")
       = o.toPrintable();
 }
 
@@ -1146,7 +1146,7 @@ public singleton StringConvertor
 
 public singleton WideConvertor
 {
-   wide convert(char ch)
+   wide convert(char ch) : info("Converts a UTF32 value <b>ch</b> as a string")
    {
       int value := ch.Value;
 
@@ -1156,14 +1156,14 @@ public singleton WideConvertor
       ^ WideString.fromShortArray(0, length, buffer);      
    }  
 
-   wide convert(byte b, int radix)
+   wide convert(byte b, int radix) : info("Formats a number <b>b</b> with the specified base <b>radix</b> as a literal presentation")
    {
       int n := b;
 
       ^ self.convert(n, radix);
    }
 
-   wide convert(int value, int radix)
+   wide convert(int value, int radix) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       int n := value;
       if (n < 0)
@@ -1210,11 +1210,10 @@ public singleton WideConvertor
       ^ WideString.fromShortArray(index, len, buffer);
    }
 
-   wide convert(int value)
+   wide convert(int value) : info("Formats a number <b>b</b> with 10 base as a literal presentation")
       <= convert(value, 10);
 
-
-   string convertUnsigned(long value, int radix)
+   string convertUnsigned(long value, int radix) : info("Formats a 64-bit integer <b>value</b> as unsigned one the specified base <b>radix</b> as a literal presentation")
    {
       long r := radix;
       long n := value;
@@ -1257,7 +1256,7 @@ public singleton WideConvertor
       ^ WideString.fromShortArray(index, len, buffer);
    }
 
-   wide convert(long value, int radix)
+   wide convert(long value, int radix) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       long r := radix;
       long n := value;
@@ -1299,7 +1298,7 @@ public singleton WideConvertor
       ^ WideString.fromShortArray(index, len, buffer);
    }
 
-   wide convert(uint value, int radix)
+   wide convert(uint value, int radix) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       uint n := value;
       uint uradix := radix;
@@ -1332,7 +1331,7 @@ public singleton WideConvertor
       ^ WideString.fromShortArray(index, len, buffer);
    }
 
-   wide convert(short value, int radix)
+   wide convert(short value, int radix) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       int intValue := value;
 
@@ -1391,7 +1390,7 @@ public singleton WideConvertor
       ^ n;
    }
    
-   wide convert(real value)
+   wide convert(real value) : info("Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation")
    {
       real r := value;
 
@@ -1477,7 +1476,7 @@ public singleton WideConvertor
    wide convert(BaseVariable v, int radix)
       <= convert(*v, radix);
 
-   wide convert(o)
+   wide convert(o) : info("Returns the string representation")
       = o.toPrintable();
 }
 
@@ -1485,7 +1484,7 @@ public singleton WideConvertor
 
 public singleton ByteArrayConvertor
 {
-   int convert(wide sour, int sourLen, byte[] dest, int destIndex, int destLen)
+   int convert(wide sour, int sourLen, byte[] dest, int destIndex, int destLen) : info("Converts a UTF-16 substring <b>sour</b> from 0 with <b>sourLen</b> length into a UTF-8 array and copies into <b>dest</b> starting at <b>destIndex</b>. <b>destLen</b> defines the maximal possible length<br/>The number of copied bytes are returned")
    {
       int i := 0;
       int j := 0;
@@ -1507,7 +1506,7 @@ public singleton ByteArrayConvertor
 
 public singleton ShortArrayConvertor
 {
-   int convert(string sour, int sourLen, short[] dest, int destIndex, int destLen)
+   int convert(string sour, int sourLen, short[] dest, int destIndex, int destLen) : info("Converts a UTF-8 substring <b>sour</b> from 0 with <b>sourLen</b> length into a UTF-16 array and copies into <b>dest</b> starting at <b>destIndex</b>. <b>destLen</b> defines the maximal possible length<br/>The number of copied words are returned")
    {
       int i := 0;
       int j := 0;

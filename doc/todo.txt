@@ -9,20 +9,18 @@ In development:
   --------------------------------------
   * doc
   ====================================== 
-  - system module - provide descriptions for all classes in system & extensions, starting from IntMatrix
   - writing a program in ELENA (program entries, different types of projects)
   --------------------------------------
   * backlog
   ====================================== 
   - raise an error if an async extension is declared (until the feature is not implemented)
+  - VEH_HANDLER should exclude the current frame if it was invoked from external code (callext - should 
+      store the current frame in the extra variable, and clear it after the operation end)
+  - inside the method, "$name __decl" should return the method full name?
   --------------------------------------
-  * api backlog
+  * current : docs
   ====================================== 
-  - operator templates :len, :name
-  --------------------------------------
-  * current : x86-64 samples
-  ====================================== 
-  - threads samples, need to have separate executable output
+  - system module - provide descriptions for all classes (from pointers.l)
   --------------------------------------
 
 

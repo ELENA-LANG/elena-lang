@@ -962,7 +962,7 @@ public extension realOp : RealNumber
 
 public extension intRefOp : Reference<int>
 {
-    append(int n) 
+    append(int n) : info("Increments the target integer reference by an argument <b>n</b>")
     {
         int v := *self;
         v := v + n;
@@ -970,7 +970,7 @@ public extension intRefOp : Reference<int>
         self.Value := v
     }
     
-    reduce(int n)
+    reduce(int n) : info("Decrements the target integer reference by an argument <b>n</b>")
     {
         int v := *self;
         v := v - n;

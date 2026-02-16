@@ -202,7 +202,7 @@ public sealed const ConstArray<T> : Enumerable<T>,
 {
    embeddable /*readonly*/ __string T[] array;
 
-   constructor (T[] array)
+   constructor (T[] array) : info("Converts <b>array</b> into a constant array")
       <= allocate(array.Length)
    {
       int length := array.Length;
@@ -1643,6 +1643,7 @@ sealed class WideStringEnumerator : Enumerator<char>
    char           char;  
 
    constructor(wide s)
+      : info("Creates an enumerator to the specified <b>s</b> argument")
    {
       literal := s;
       index := -1;
@@ -1651,12 +1652,14 @@ sealed class WideStringEnumerator : Enumerator<char>
    }
 
    reset()
+      : info("Resets the enumerator")
    {
       index.Value := -1;
       diff.Value := 1
    }
 
    bool next()
+      : info("Goes to the next enumeration member and returns true if it is not the last member")
    {
       int len := literal.Length;
         
@@ -1678,14 +1681,15 @@ sealed class WideStringEnumerator : Enumerator<char>
       ^ false
    }
 
-   Enumerator cast() = new Enumerator
+   Enumerator cast() : info("Creates a weak enumerator") = new Enumerator
    {
       embeddable dispatch() => self;
    };
    
-   enumerable() = literal;
+   enumerable() : info("returns the enumerating string") = literal;
 
-   char Value = char;
+   char Value : info("Returns the current character")
+      = char;
 }
 
 // --- WideStringIndexer ---
@@ -1696,12 +1700,14 @@ sealed class WideStringIndexer : Indexer<char>
    Reference<int> index;
 
    constructor(wide s)
+      : info("Creates an indexer to the specified <b>s</b> argument")
    {
       literal := s;
       index := 0;
    }
 
    get bool Available()
+      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
    {
       int len := literal.Length;
       int val := *index;
@@ -1710,6 +1716,7 @@ sealed class WideStringIndexer : Indexer<char>
    }
    
    get char Value()
+      : info("Returns the indexed character")
    {
       int val := *index;
       char ch := literal[val];
@@ -1718,11 +1725,12 @@ sealed class WideStringIndexer : Indexer<char>
    }
    
    set Value(char ch)
+      : info("Not supported. Raises the exeception")
    {
       system'NotSupportedException.raise()
    }
 
-   int Index
+   int Index : info("Index property")
    {
       /// Reads the current index and saves it into an output parameter
       get()
@@ -1740,11 +1748,12 @@ sealed class WideStringIndexer : Indexer<char>
    }
    
    appendIndex(int val)
+      : info("Increases the current index by parameter **index**")
    {
       index.append(val)
    }
     
-   int Length
+   int Length : info("Returns the length of the indexed string")
    {
       /// Reads the length to the output parameter    
       get()
@@ -1755,7 +1764,7 @@ sealed class WideStringIndexer : Indexer<char>
       }
    }
         
-   Indexer cast() = new Indexer{ embeddable dispatch() => self; };   
+   Indexer cast() : info("Creates a weak indexer") = new Indexer{ embeddable dispatch() => self; };   
 }
 
 public sealed class Variant
@@ -2043,15 +2052,14 @@ class BitArrayIndexer : Indexer<bool>
    BitArray       _array;
    Reference<int> _index;
 
-   /// Returns the parameter indexer
-   constructor(BitArray array)
+   constructor(BitArray array) : info("Returns BitArray indexer")
    {
       _array := array;
       _index := 0
    }
     
-   /// Returns false if the index out of range
    get bool Available()
+      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
    {
       int length := _array.Length;
       int index := _index.Value;
@@ -2059,25 +2067,22 @@ class BitArrayIndexer : Indexer<bool>
       ^ index < length
    }
 
-   /// Returns the current member
-   get bool Value()
+   get bool Value() : info("Returns the current member")
    {
       int index := _index.Value;
         
       ^ _array.at(index)
    }
     
-   /// Sets the current member
-   set Value(bool val)
+   set Value(bool val) : info("Sets the current member")
    {
       int index := _index.Value;
         
       _array.setAt(_index, val)
    }
     
-   int Index
+   int Index : info("Index property")
    {
-      /// Reads the current index and saves it into an output parameter
       get()
       {
          int retVal := _index.Value;
@@ -2085,7 +2090,6 @@ class BitArrayIndexer : Indexer<bool>
          ^ retVal
       }
         
-      /// Sets the index by specified value
       set(val)
       {
          _index.Value := val
@@ -2093,13 +2097,13 @@ class BitArrayIndexer : Indexer<bool>
    }
     
    appendIndex(int val)
+      : info("Increases the current index by parameter **index**")
    {
       _index.append(val)
    }
    
-   int Length
+   int Length : info("Returns the length of the indexed array")
    {
-      /// Reads the length to the output parameter    
       get()
       {
          int retVal := _array.Length;
@@ -2119,21 +2123,20 @@ class BitArrayEnumerator : Enumerator<bool>
    BitArray       _array;
    Reference<int> _index;
     
-   /// Creates an array enumerator
-   constructor(BitArray a)
+   constructor(BitArray a) : info("Returns BitArray enumerator")
    {
       _array := a;
       _index := -1
    }
 
-   /// Resets the enumerator
    reset()
+      : info("Resets the enumerator")
    {
       _index.Value := -1
    }
 
-   /// Goes to the next enumeration member and returns true if it is not the last member
    bool next()
+      : info("Goes to the next enumeration member and returns true if it is not the last member")
    {
       int length := _array.Length;
         
@@ -2144,15 +2147,14 @@ class BitArrayEnumerator : Enumerator<bool>
       ^ index < length
    }
     
-   /// Returns the current object
-   get bool Value()
+   get bool Value() : info("Returns the current object")
    {
       int index := _index.Value;
         
       ^ _array.at(index)
    }
         
-   enumerable() = _array;
+   enumerable() : info("Returns the enumerating array") = _array;
     
    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
 }
@@ -2166,39 +2168,37 @@ class BitArray32Indexer : Indexer<bool>
    Reference<int> _index;
 
    /// Returns the parameter indexer
-   constructor(BitArray32 bs)
+   constructor(BitArray32 bs) : info("Returns BitArray32 indexer")
    {
       _array := bs;
       _index := 0
    }
     
-   /// Returns false if the index out of range
    get bool Available()
+      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
    {
       int index := _index;
         
       ^ index < 32
    }
 
-   /// Returns the current member
-   get bool Value()
+   get bool Value() : info("Returns the current member")
    {
       int index := _index;
         
       ^ _array.at(index)
    }
     
-   /// Sets the current member
    set Value(bool val)
+      : info("Set the element at the current index")
    {
       int index := _index;
         
       _array.setAt(index, val)
    }
 
-   int Index
+   int Index : info("Current index")
    {    
-      /// Reads the current index and saves it into an output parameter
       get()
       {
          int retVal := _index.Value;
@@ -2206,7 +2206,6 @@ class BitArray32Indexer : Indexer<bool>
          ^ retVal
       }
         
-      /// Sets the index by specified value
       set(val)
       {
          _index.Value := val
@@ -2214,13 +2213,13 @@ class BitArray32Indexer : Indexer<bool>
    }
     
    appendIndex(int val)
+      : info("Increases the current index by parameter **index**")
    {
       _index.append(val)
    }
     
-   int Length
+   int Length : info("Returns the array length")
    {
-      /// Reads the length to the output parameter    
       get()
          = _array.Length;
 //         => _array;
@@ -2237,21 +2236,20 @@ class BitArray32Enumerator : Enumerator<bool>
    BitArray32     _array;
    Reference<int> _index;
     
-   /// Creates an array enumerator
-   constructor(BitArray32 bs)
+   constructor(BitArray32 bs) : info("Creates an array enumerator")
    {
       _array := bs;
       _index := -1
    }
 
-   /// Resets the enumerator
    reset()
+      : info("Resets the enumerator")
    {
       _index.Value := -1
    }
 
-   /// Goes to the next enumeration member and returns true if it is not the last member
    bool next()
+      : info("Goes to the next enumeration member and returns true if it is not the last member")
    {
       _index.append(1);
 
@@ -2260,8 +2258,7 @@ class BitArray32Enumerator : Enumerator<bool>
       ^ index < 32
    }
     
-   /// Returns the current object
-   get bool Value()
+   get bool Value() : info("Returns the current object")
    {
       int index := _index;
         
