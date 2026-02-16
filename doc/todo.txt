@@ -9,16 +9,21 @@ In development:
   --------------------------------------
   * doc
   ====================================== 
+  - system module - provide descriptions for all classes in system & extensions, starting from IntMatrix
   - writing a program in ELENA (program entries, different types of projects)
   --------------------------------------
   * backlog
   ====================================== 
-  - x86-64 test tasksamples  
   - raise an error if an async extension is declared (until the feature is not implemented)
   --------------------------------------
-  * current : api backlog
+  * api backlog
   ====================================== 
   - operator templates :len, :name
+  --------------------------------------
+  * current : x86-64 samples
+  ====================================== 
+  - x86-64 test tasksamples  
+  - threads samples, need to have separate executable output
   --------------------------------------
 
 
@@ -50,7 +55,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 47 (tetris sample) ===
+  === Iteration 47 (text based adventage) ===
   * new version 7.0.2
   --------------------------------------
   --------------------------------------
@@ -63,8 +68,20 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 48 (chat sample) ===
+  === Iteration 48 (tetris sample) ===
   * new version 7.0.3
+  --------------------------------------
+  * dev
+  ====================================== 
+  * lang
+  ====================================== 
+  * doc
+  ====================================== 
+  * current
+  ====================================== 
+
+  === Iteration 49 (chat sample) ===
+  * new version 7.0.4
   --------------------------------------
   * dev
   ====================================== 
@@ -76,8 +93,8 @@ In development:
   --------------------------------------
   --------------------------------------
 
-  === Iteration 49 (upndown sample) ===
-  * new version 7.0.4
+  === Iteration 50 (upndown sample) ===
+  * new version 7.0.5
   --------------------------------------
   * dev
   ====================================== 

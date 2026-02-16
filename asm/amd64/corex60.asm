@@ -298,6 +298,7 @@ labYGNextThread:
   mov  rax, data : %CORE_THREAD_TABLE + tt_slots
   
   // ; get tls entry address
+// ; mov  esi, [eax+ebx*8]            
   mov  r8, rbx
   shl  r8, 4
   add  r8, rax
