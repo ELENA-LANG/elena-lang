@@ -104,10 +104,6 @@ end
 // ; in: ecx - size ; out: ebx - created object
 inline % GC_ALLOC
 
-  add  r8, rax
-
-
-
   // ; GCXT: set lock
 labStart:
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
@@ -302,7 +298,6 @@ labYGNextThread:
   mov  rax, data : %CORE_THREAD_TABLE + tt_slots
   
   // ; get tls entry address
-// ; mov  esi, [eax+ebx*8]            
   mov  r8, rbx
   shl  r8, 4
   add  r8, rax
@@ -311,8 +306,9 @@ labYGNextThread:
   jz   short labYGNextThreadSkip
 
   // ; get the thread local roots
+  mov  rax, rdata : %SYSTEM_ENV
+  mov  rcx, [rax + env_tls_size]
   lea  rax, [rsi + tt_size]
-  mov  rcx, [rdata : %SYSTEM_ENV + env_tls_size]
   push rax
   push rcx
 
