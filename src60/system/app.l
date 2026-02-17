@@ -10,7 +10,7 @@ singleton CommandLineFactory
     }
 }
 
-public CommandLine = 
+public CommandLine : info("An array of program command line arguments") = 
     CommandLineFactory.load();
 
 #elif (__project["_Linux"] || __project["_FreeBSD"])
@@ -36,14 +36,14 @@ singleton CommandLineFactory
     }
 }
 
-public CommandLineArguments =
+public CommandLineArguments : info("An array of program command line arguments") =
     CommandLineFactory.load();
 
 #endif
 
 // --- startUp ---
 
-public sealed class StartUpEvents
+public sealed class StartUpEvents : info("Application events")
 {
    Func OnStop : event;
     

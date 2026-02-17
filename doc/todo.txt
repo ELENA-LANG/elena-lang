@@ -20,7 +20,7 @@ In development:
   --------------------------------------
   * current : docs
   ====================================== 
-  - system module - provide descriptions for all classes (from pointers.l)
+  - system module - provide descriptions for all classes (from console.l)
   --------------------------------------
 
 
