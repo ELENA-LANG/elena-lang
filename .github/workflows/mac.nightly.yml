@@ -16,7 +16,7 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-13]
+        os: [macos-15-intel]
         platform: [amd64]
  
     steps:
