@@ -216,7 +216,7 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
    ucontext_t* u = (ucontext_t*)unused;
 
-#if defined(__FreeBSD__) || defined(__APPLE__)
+#if defined(__FreeBSD__)
 
    switch (sig) {
       case SIGFPE:
@@ -233,6 +233,26 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
          u->uc_mcontext.mc_rdx = u->uc_mcontext.mc_rip;
          u->uc_mcontext.mc_rax = ELENA_ERR_CRITICAL;
          u->uc_mcontext.mc_rip = CriticalHandler;
+         break;
+   }
+
+#elif defined(__APPLE__)
+
+   switch (sig) {
+      case SIGFPE:
+         u->uc_mcontext.__ss.__rdx = u->uc_mcontext.__ss.__rip;
+         u->uc_mcontext.__ss.__rax = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext.__ss.__rip = CriticalHandler;
+         break;
+      case SIGSEGV:
+         u->uc_mcontext.__ss.__rdx = u->uc_mcontext.__ss.__rip;
+         u->uc_mcontext.__ss.__rax = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext.__ss.__rip = CriticalHandler;
+         break;
+      default:
+         u->uc_mcontext.__ss.__rdx = u->uc_mcontext.__ss.__rip;
+         u->uc_mcontext.__ss.__rax = ELENA_ERR_CRITICAL;
+         u->uc_mcontext.__ss.__rip = CriticalHandler;
          break;
    }
 
