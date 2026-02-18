@@ -58,8 +58,7 @@
 #define DISABLE_WARNING_UNINITIALIZED_FIELD              DISABLE_WARNING(-Wunused-variable)
 #define DISABLE_WARNING_UNUSEDVARIABLE                   DISABLE_WARNING(-Wunused-variable)
 #define DISABLE_WARNING_EXPENSIVE_COPY
-//#define DISABLE_WARNING_NULLCONVERSION                   DISABLE_WARNING(-Wnull-conversion)
-#define DISABLE_WARNING_NULLCONVERSION                   ##pragma clang diagnostic ignored "-Wnull-conversion"
+#define DISABLE_WARNING_NULLCONVERSION                   DISABLE_WARNING(-Wnull-conversion)
 #define DISABLE_WARNING_ADDRESS                          DISABLE_WARNING(-Waddress)
 #define DISABLE_WARNING_HIDE_CLASSMEMBER                 
 #define DISABLE_WARNING_NONNULL

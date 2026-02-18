@@ -240,19 +240,19 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 
    switch (sig) {
       case SIGFPE:
-         u->uc_mcontext.__ss.__rdx = u->uc_mcontext.__ss.__rip;
-         u->uc_mcontext.__ss.__rax = ELENA_ERR_DIVIDE_BY_ZERO;
-         u->uc_mcontext.__ss.__rip = CriticalHandler;
+         u->uc_mcontext->__ss.__rdx = u->uc_mcontext->__ss.__rip;
+         u->uc_mcontext->__ss.__rax = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext->__ss.__rip = CriticalHandler;
          break;
       case SIGSEGV:
-         u->uc_mcontext.__ss.__rdx = u->uc_mcontext.__ss.__rip;
-         u->uc_mcontext.__ss.__rax = ELENA_ERR_ACCESS_VIOLATION;
-         u->uc_mcontext.__ss.__rip = CriticalHandler;
+         u->uc_mcontext->__ss.__rdx = u->uc_mcontext->__ss.__rip;
+         u->uc_mcontext->__ss.__rax = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext->__ss.__rip = CriticalHandler;
          break;
       default:
-         u->uc_mcontext.__ss.__rdx = u->uc_mcontext.__ss.__rip;
-         u->uc_mcontext.__ss.__rax = ELENA_ERR_CRITICAL;
-         u->uc_mcontext.__ss.__rip = CriticalHandler;
+         u->uc_mcontext->__ss.__rdx = u->uc_mcontext->__ss.__rip;
+         u->uc_mcontext->__ss.__rax = ELENA_ERR_CRITICAL;
+         u->uc_mcontext->__ss.__rip = CriticalHandler;
          break;
    }
 
