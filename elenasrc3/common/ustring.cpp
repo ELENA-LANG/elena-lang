@@ -531,7 +531,7 @@ long long StrConvertor :: toLong(const char* s, int radix)
    cutoff /= (unsigned long)radix;
 
    while (*s) {
-      register int c = *s;
+      /*register */int c = *s;
       if (c >= '0' && c <= '9') {
          c -= '0';
       }
@@ -596,7 +596,7 @@ long long StrConvertor :: toLong(const wide_c* s, int radix)
    cutoff /= (unsigned long)radix;
 
    while (*s) {
-      register int c = *s;
+      /*register */int c = *s;
       if (c >= '0' && c <= '9') {
          c -= '0';
       }
