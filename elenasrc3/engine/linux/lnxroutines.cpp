@@ -8,7 +8,12 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include "core.h"
+
+#if defined (__unix__)
+
 #include "linux/elfhelper.h"
+
+#endif
 
 #include <sys/mman.h>
 #include <signal.h>
@@ -71,12 +76,18 @@ static uintptr_t CriticalHandler = 0;
 
 void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength)
 {
+#if defined(__APPLE__)
+
+#else
+
    ImageSection header(imageBase, imageLength);
    MemoryReader reader(&header);
    addr_t addr = 0;
    if (ELFHelper::seekRODataSegment(reader, addr)) {
       return (void*)addr;
    }
+
+#endif
 
    return nullptr;
 }
