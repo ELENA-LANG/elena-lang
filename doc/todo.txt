@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 7.0 ###
 
-  === Iteration 44 (powerpc, aarch64, mac) ===
+  === Iteration 44 (aarch64) ===
   --------------------------------------
   * doc
   ====================================== 
@@ -14,18 +14,16 @@ In development:
   * backlog
   ====================================== 
   - raise an error if an async extension is declared (until the feature is not implemented)
-  - VEH_HANDLER should exclude the current frame if it was invoked from external code (callext - should 
-      store the current frame in the extra variable, and clear it after the operation end)
   - inside the method, "$name __decl" should return the method full name?
   --------------------------------------
-  * current : docs
+  * current : mac
   ====================================== 
-  - system module - provide descriptions for all classes (from console.l)
+  - compile elenart
   --------------------------------------
 
 
 
-  === Iteration 45 (ide, ldoc method index; full api docs; template generator) ===
+  === Iteration 45 (ide, ldoc method index; full api docs; template generator; mac) ===
   --------------------------------------
   * new version 6.8.3
   --------------------------------------

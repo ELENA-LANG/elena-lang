@@ -43,10 +43,10 @@ clang_ecv_amd64:
 	$(MAKE) -C elenasrc3/tools/ecv/codeblocks all -f bsd.clang_ecv_amd64.mak
 
 elenart_amd64: 
-	$(MAKE) -C elenasrc3/elenart/codeblocks all -f bsd.elenart_amd64.mak
+	$(MAKE) -C elenasrc3/elenart/make all -f bsd.elenart_amd64.mak
 
 clang_elenart_amd64: 
-	$(MAKE) -C elenasrc3/elenart/codeblocks all -f bsd.clang_elenart_amd64.mak
+	$(MAKE) -C elenasrc3/elenart/make all -f bsd.clang_elenart_amd64.mak
 
 elenasm_amd64: 
 	$(MAKE) -C elenasrc3/elenasm/codeblocks all -f bsd.elenasm_amd64.mak
@@ -84,7 +84,7 @@ clean_ecv_amd64:
 	$(MAKE) -C elenasrc3/tools/ecv/codeblocks clean -f bsd.ecv_amd64.mak
 
 clean_elenart_amd64:
-	$(MAKE) -C elenasrc3/elenart/codeblocks clean -f bsd.elenart_amd64.mak
+	$(MAKE) -C elenasrc3/elenart/make clean -f bsd.elenart_amd64.mak
 
 clean_elenasm_amd64:
 	$(MAKE) -C elenasrc3/elenasm/codeblocks clean -f bsd.elenasm_amd64.mak

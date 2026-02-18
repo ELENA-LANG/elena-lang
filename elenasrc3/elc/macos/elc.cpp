@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the macOS command-line compiler
 //
-//                                             (C)2025, by Aleksey Rakov
+//                                             (C)2025-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -80,18 +80,6 @@ ustr_t getDefaultExtension(PlatformType platform)
    }
 }
 
-JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
-{
-   switch (platform) {
-#if defined(__aarch64__)
-      case PlatformType::MacOS_ARM64:
-         return new ARM64JITCompiler();
-#endif
-      default:
-         return nullptr;
-   }
-}
-
 int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
@@ -130,7 +118,7 @@ int main(int argc, char* argv[])
       // Reading command-line arguments...
       if (argc < 2) {
          Presenter::getInstance().printLine(ELC_HELP_INFO);
-         return -2;
+         return WARNING_RET_CODE;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
          return CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],            
