@@ -11,7 +11,7 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
-CFLAGS = -Wall -std=c++20 -fPIC -march=armv8-a
+CFLAGS = -std=c++20 -fPIC -march=armv8-a
 RESINC = 
 LIBDIR = 
 LIB = 
