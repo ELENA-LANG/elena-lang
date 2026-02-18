@@ -3324,16 +3324,11 @@ namespace elena_lang
          _allocatedSize = _length = 0;
       }
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_UNINITIALIZED_FIELD
-
       CachedList()
       {
          _allocated = nullptr;
          _allocatedSize = _length = 0;
       }
-
-DISABLE_WARNING_POP
 
       ~CachedList()
       {
