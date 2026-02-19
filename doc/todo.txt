@@ -13,8 +13,6 @@ In development:
   --------------------------------------
   * current : backlog
   ====================================== 
-  - do not generate a debug info for implicit class symbols
-  - asmc : raise an error if the label was not resolved
   - JITLinker : raise an error if the action counter is overflown
   - elc : debug / release mode : set high level of optimization for release
   - raise an error if an async extension is declared (until the feature is not implemented)
