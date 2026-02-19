@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Byte code Build Tree classes
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BUILDTREE_H
@@ -268,6 +268,8 @@ namespace elena_lang
       OperatorId           = 0x8016,
       StackIndex           = 0x8017,
       StackAddress         = 0x8018,
+
+      NoDebugInfo          = 0x8100,
 
       Match                = 0x8FFE,
       Idle                 = 0x8FFF,

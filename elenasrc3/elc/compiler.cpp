@@ -8574,6 +8574,8 @@ void Compiler::compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
 {
    writer.newNode(BuildKey::Symbol, scope.reference);
 
+   writer.appendNode(BuildKey::NoDebugInfo);
+
    writer.newNode(BuildKey::Tape);
    writer.appendNode(BuildKey::OpenFrame);
    ObjectInfo retVal(ObjectKind::Class, { scope.info.header.classRef }, scope.reference, 0);

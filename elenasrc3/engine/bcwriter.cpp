@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code compiler class implementation.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -426,47 +426,47 @@ void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
 }
 
-void mssgNameLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+static inline void mssgNameLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgNameLiteralRef);
 }
 
-void propNameLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void propNameLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskPropNameLiteralRef);
 }
 
-void extMssgLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+static inline void extMssgLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskExtMssgLiteralRef);
 }
 
-void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScop*/)
+static inline void stringLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScop*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskLiteralRef);
 }
 
-void wideLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+static inline void wideLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskWideLiteralRef);
 }
 
-void charLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+static inline void charLiteral(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskCharacterRef);
 }
 
-void constant(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+static inline void constant(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskConstant);
 }
 
-void distrConstant(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+static inline void distrConstant(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskDistrTypeListRef);
 }
 
-void constantArray(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+static inline void constantArray(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskConstArray);
 }
@@ -3923,7 +3923,7 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope,
 
    Scope scope = { nullptr, &writer, moduleScope, nullptr, nullptr, minimalArgList, ptrSize };
 
-   if (moduleScope->debugModule) {
+   if (moduleScope->debugModule && !node.existChild(BuildKey::NoDebugInfo)) {
       // initialize debug info writers
       MemoryWriter debugWriter(moduleScope->debugModule->mapSection(DEBUG_LINEINFO_ID, false));
       MemoryWriter debugStringWriter(moduleScope->debugModule->mapSection(DEBUG_STRINGS_ID, false));
@@ -3934,10 +3934,10 @@ void ByteCodeWriter :: saveSymbol(BuildNode node, SectionScopeBase* moduleScope,
       pos_t sourcePathRef = savePath(node.findChild(BuildKey::Path), scope, paths);
 
       openSymbolDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef));
-      saveProcedure(node, scope, false, sourcePathRef, paths, tapeOptMode);
+      saveProcedure(node, scope, false, sourcePathRef, paths, tapeOptMode, true);
       endDebugInfo(scope);
    }
-   else saveProcedure(node, scope, false, INVALID_POS, paths, tapeOptMode);
+   else saveProcedure(node, scope, false, INVALID_POS, paths, tapeOptMode, false);
 }
 
 bool ByteCodeWriter :: applyRules(CommandTape& tape)
@@ -4020,12 +4020,12 @@ inline bool isNested(BuildKey key)
 }
 
 void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef,
-   ReferenceMap& paths, bool tapeOptMode)
+   ReferenceMap& paths, bool tapeOptMode, bool withDebugInfo)
 {
    _btAnalyzer.proceed(node.findChild(BuildKey::Tape));
    _btTransformer.proceed(node.findChild(BuildKey::Tape));
 
-   if (scope.moduleScope->debugModule)
+   if (withDebugInfo)
       openMethodDebugInfo(scope, sourcePathRef);
 
    TapeScope tapeScope = {
@@ -4057,12 +4057,12 @@ void ByteCodeWriter :: saveProcedure(BuildNode node, Scope& scope, bool classMod
    code->writePos(size);
    code->seek(endPosition);
 
-   if (scope.moduleScope->debugModule)
+   if (withDebugInfo)
       endDebugInfo(scope);
 }
 
 void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef,
-   ReferenceMap& paths, bool tapeOptMode, IndexedMessages& indexedMessages)
+   ReferenceMap& paths, bool tapeOptMode, IndexedMessages& indexedMessages, bool withDebugInfo)
 {
    BuildNode current = node.firstChild();
    while (current != BuildKey::None) {
@@ -4080,7 +4080,7 @@ void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, po
          if (pathNode != BuildKey::None)
             methodSourcePathRef = savePath(pathNode, scope, paths);
 
-         saveProcedure(current, scope, true, methodSourcePathRef, paths, tapeOptMode);
+         saveProcedure(current, scope, true, methodSourcePathRef, paths, tapeOptMode, withDebugInfo);
       }
       else if (current == BuildKey::AbstractMethod) {
          auto methodInfo = info.methods.get(current.arg.reference);
@@ -4169,10 +4169,10 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
 
       openClassDebugInfo(scope, moduleScope->module->resolveReference(node.arg.reference & ~mskAnyRef), info.header.flags);
       saveFieldDebugInfo(scope, info);
-      saveVMT(info, node, scope, sourcePath, paths, tapeOptMode, indexedMessages);
+      saveVMT(info, node, scope, sourcePath, paths, tapeOptMode, indexedMessages, true);
       endDebugInfo(scope);
    }
-   else saveVMT(info, node, scope, INVALID_POS, paths, tapeOptMode, indexedMessages);
+   else saveVMT(info, node, scope, INVALID_POS, paths, tapeOptMode, indexedMessages, false);
 
    pos_t size = vmtWriter.position() - classPosition;
    vmtSection->write(classPosition - 4, &size, sizeof(size));
