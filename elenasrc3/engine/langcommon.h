@@ -462,6 +462,7 @@ namespace elena_lang
    constexpr auto errCorruptedVMT            = -4;
    constexpr auto errMissingNamespace        = -5;
    constexpr auto errNotSupportedPlatform    = -6;
+   constexpr auto errActionOverflow          = -7;
 
    // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;

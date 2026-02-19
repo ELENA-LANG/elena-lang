@@ -131,6 +131,7 @@ namespace elena_lang
    constexpr auto errMsgCorruptedVMT         = "\nVMT structure is corrupt\n";
    constexpr auto errMsgMissingNamespace     = "\nInvalid project structure - missing namespace\n";
    constexpr auto errMsgNotSupportedPlatform = "\nThe specified platform %s is not supported for this environment\n";
+   constexpr auto errMsgActionOverflow       = "\nAction range is overflown\n";
 
    constexpr auto errMssgFailedMemoryAllocation = "\nnFatal error: cannot allocate the memory\n";
 

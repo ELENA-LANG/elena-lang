@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This file contains ELENA Image loader class implementations
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -172,6 +172,8 @@ void ReferenceMapper :: mapAction(ustr_t actionName, ref_t actionRef, ref_t sign
 {
    ref_t nextNameId = _actionNames.count() + 1;
    ref_t nameId = mapKey(_actionNames, actionName, nextNameId);
+
+   assert(nameId < ACTION_MAX);
 
    mapKey(_actions, encodeAction64(nameId, signRef), actionRef);
 }
