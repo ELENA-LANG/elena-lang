@@ -3,7 +3,7 @@
 internal const int __SIZEOF_PTHREAD_MUTEX_T = 24;
 internal const int __SIZEOF_PTHREAD_COND_T  = 48;
 
-#elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"])
+#elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"] || __project["FreeBSD_AMD64"])
 
 internal const int __SIZEOF_PTHREAD_MUTEX_T = 40;
 internal const int __SIZEOF_PTHREAD_COND_T  = 48;
