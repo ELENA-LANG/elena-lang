@@ -3641,6 +3641,10 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
          if (test(hints, (ref_t)MethodHint::Async) && test(current.arg.reference, FUNCTION_MESSAGE) 
             && current.findChild(SyntaxKey::Target).arg.reference == 0) 
          {
+            // HOTFIX : temporally async extension must not be allowed
+            if (test(scope.info.header.flags, elExtension))
+               scope.raiseError(errIllegalMethod, current);
+
             // if it is an generic async function - generate invoker
             mssg_t invoker = overwriteAsAsyncFunction(scope, current.arg.reference);
 

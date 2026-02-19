@@ -13,9 +13,9 @@ In development:
   --------------------------------------
   * current : backlog
   ====================================== 
-  - elc : debug / release mode : set high level of optimization for release
   - raise an error if an async extension is declared (until the feature is not implemented)
   - inside the method, "$name __decl" should return the method full name?
+  - elc : debug / release mode : set high level of optimization for release
   --------------------------------------
 
 
