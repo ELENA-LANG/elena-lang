@@ -21,8 +21,6 @@ In development:
   --------------------------------------
   * current : ide
   ====================================== 
-  - make sure the debugger displays all debug variable types
-	
   --------------------------------------
 
 
