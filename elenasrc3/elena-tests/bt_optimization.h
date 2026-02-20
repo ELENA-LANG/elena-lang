@@ -101,6 +101,13 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   // Optimization #6 (boxingInt) : "var o := n" => optimized boxing
+   class BTOptimization6 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
    // Optimization #7 : "native branching
    class BTOptimization7 : public BTOptimization
    {

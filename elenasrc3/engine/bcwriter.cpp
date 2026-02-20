@@ -2679,6 +2679,8 @@ static inline bool boxingInt(BuildNode lastNode)
    typeNode.setKey(BuildKey::Idle);
 
    copyNode.setKey(BuildKey::SavingIndexToAcc);
+   copyNode.setArgumentValue(0);
+
    sizeNode.setKey(BuildKey::Idle);
 
    localAddrOp.setKey(BuildKey::Idle);

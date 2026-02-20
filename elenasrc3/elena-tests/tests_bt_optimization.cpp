@@ -33,6 +33,7 @@ constexpr auto Declaration2 = "namespace (class ( nameattr (identifier \"Object\
 constexpr auto SyntaxTree2 = "expression (assign_operation (object (type (identifier \"IntNumber\" ()) identifier \"n\" ()) expression (object (integer \"2\"))))";
 constexpr auto SyntaxTree4 = "expression ( code( expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"r\" ())expression (add_operation (object (identifier \"n\" ())expression (object (integer \"2\" ()))))))))";
 constexpr auto SyntaxTree5 = "expression ( code( expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))expression (add_assign_operation (object (identifier \"n\" ())expression (object (integer \"2\" ()))))))))))";
+constexpr auto SyntaxTree6 = "expression ( code( expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))expression (assign_operation (object (attribute -2147479539 ()identifier \"o\" ())expression (object (identifier \"n\" ()))))))";
 
 constexpr auto Declaration12 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"X\" ())field (type (identifier \"IntNumber\" ())nameattr (identifier \"x\" ()))))";
 constexpr auto SyntaxTree12 = "expression (assign_operation (object (type (identifier \"X\" ())identifier \"x\" ())expression (message_operation (object (attribute -2147471342 ()identifier \"X\" ())))))";
@@ -77,6 +78,7 @@ constexpr auto BuildTree1_4 = "byrefmark -8 () local_address -8 () saving_stack 
 constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -4 ( size 4 ())";
 constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -4 (size 4 ())local_address -4 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop -12 (operator_id 4 ())local_address -12 ()copying -8 (size 4 ())";
 constexpr auto BuildTree5 = "int_literal 2 (value 3 ())copying -4 (size 4 ())int_literal 3 (value 2 ())saving_stack ()intop -4 (operator_id 3 ())";
+constexpr auto BuildTree6 = "int_literal 2 (value 3 ())copying -4 (size 4 ())local_address -4 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 2 (size 4 ()) assigning 2 () local 2 () assigning 1 ()";
 constexpr auto BuildTree12 = "class_reference 3 () direct_call_op 1056 (type 6 ()) inplacemark 4353 () assigning 1 () local 1 () copying -4 (size 4 ())";
 constexpr auto BuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack () class_reference 3 () direct_call_op 3105 (type 6 ()) inplacemark 4354 () copying -4 (size 4 ())";
 
@@ -86,6 +88,7 @@ constexpr auto OptimizedBuildTree1_4 = "local_address -4 () saving_stack 2 () in
 constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -4 (size 4 ()value 3 ())local_address -4 ()copying -8 (size 4 ())addingint -8 (value 2 ())";
 constexpr auto OptimizedBuildTree5 = "saving_int -4 (size 4 ()value 3 ())addingint -4 (value 2 ())";
+constexpr auto OptimizedBuildTree6 = "saving_int -4 (size 4 ()value 3 ()) create_struct (type 2 ()) loading_index -4 () saving_index_to_acc () assigning 2 () local 2 () assigning 1 ()";
 constexpr auto OptimizedBuildTree12 = "local_address -4 () saving_stack () direct_call_op 4353 (type 6 ()) assigning 1 () local 1 ()";
 constexpr auto OptimizedBuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack 1 () local_address -4 () saving_stack () direct_call_op 4354 (type 6 ())";
 
@@ -117,6 +120,7 @@ constexpr auto BuildTree1_4 = "byrefmark -24 () local_address -24 () saving_stac
 constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -8 ( size 4 ())";
 constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop -40 (operator_id 4 ())local_address -40 ()copying -24 (size 4 ())";
 constexpr auto BuildTree5 = "int_literal 2 (value 3 ())copying -8 (size 4 ())int_literal 3 (value 2 ())saving_stack ()intop -8 (operator_id 3 ())";
+constexpr auto BuildTree6 = "int_literal 2 (value 3 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 2 (size 4 ()) assigning 2 () local 2 () assigning 1 ()";
 constexpr auto BuildTree12 = "class_reference 3 () direct_call_op 1056 (type 6 ()) inplacemark 4353 () assigning 1 () local 1 () copying -8 (size 8 ())";
 constexpr auto BuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack () class_reference 3 () direct_call_op 3105 (type 6 ()) inplacemark 4354 () copying -8 (size 8 ())";
 
@@ -126,6 +130,7 @@ constexpr auto OptimizedBuildTree1_4 = "local_address -8 () saving_stack 2 () in
 constexpr auto OptimizedBuildTree2 = "saving_int - 8 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -8 (size 4 ()value 3 ())local_address -8 ()copying -24 (size 4 ())addingint -24 (value 2 ())";
 constexpr auto OptimizedBuildTree5 = "saving_int -8 (size 4 ()value 3 ())addingint -8 (value 2 ())";
+constexpr auto OptimizedBuildTree6 = "saving_int -8 (size 4 ()value 3 ()) create_struct (type 2 ()) loading_index -8 () saving_index_to_acc () assigning 2 () local 2 () assigning 1 ()";
 constexpr auto OptimizedBuildTree12 = "local_address -8 () saving_stack () direct_call_op 4353 (type 6 ()) assigning 1 () local 1 ()";
 constexpr auto OptimizedBuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack 1 () local_address -8 () saving_stack () direct_call_op 4354 (type 6 ())";
 
@@ -338,6 +343,19 @@ void BTOptimization5::SetUp()
 
    BuildTreeSerializer::load(BuildTree5, buildNode);
    BuildTreeSerializer::load(OptimizedBuildTree5, afterOptimization);
+}
+
+// --- BTOptimization6 ---
+
+void BTOptimization6 :: SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration2, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree6, exprNode);
+
+   BuildTreeSerializer::load(BuildTree6, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree6, afterOptimization);
 }
 
 // --- BTOptimization7 ---
