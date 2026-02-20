@@ -160,7 +160,7 @@ namespace elena_lang
          return false;
       }
 
-      TestModuleScope(bool tapeOptMode);
+      TestModuleScope(bool tapeOptMode, bool btapeOptMode);
    };
 
    class TestTemplateProssesor : public TemplateProssesorBase

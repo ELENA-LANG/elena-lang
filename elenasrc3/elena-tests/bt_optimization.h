@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Test Optimization Fixture declarations
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BTOPTIMIZATION_H
@@ -89,6 +89,13 @@ namespace elena_lang
 
    // Optimization #4 (intOpWithConsts) : "int r := n + 2" => direct op with consts
    class BTOptimization4 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization #5 (assignIntOpWithConsts) : "n += 2" => direct op with consts
+   class BTOptimization5 : public BTOptimization
    {
    protected:
       void SetUp() override;

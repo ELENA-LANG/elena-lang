@@ -11379,6 +11379,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 
    if (!moduleScope->tapeOptMode)
       moduleScope->tapeOptMode = _tapeOptMode;
+
+   if (!moduleScope->btapeOptMode)
+      moduleScope->btapeOptMode = _optMode;
 }
 
 void Compiler::validateScope(ModuleScopeBase* moduleScope)

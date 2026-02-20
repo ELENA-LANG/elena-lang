@@ -517,10 +517,13 @@ bool CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
    ByteCodeWriter bcWriter(&_libraryProvider, true);
-   if (_btRules.length() > 0)
-      bcWriter.loadBuildTreeRules(&_btRules);
-   if (_btXRules.length() > 0)
-      bcWriter.loadBuildTreeXRules(&_btXRules);
+   if (moduleScope.btapeOptMode) {
+      if (_btRules.length() > 0)
+         bcWriter.loadBuildTreeRules(&_btRules);
+      if (_btXRules.length() > 0)
+         bcWriter.loadBuildTreeXRules(&_btXRules);
+   }
+
    if (_bcRules.length() > 0)
       bcWriter.loadByteCodeRules(&_bcRules);
 

@@ -36,9 +36,9 @@ constexpr int MINIMAL_ARG_LIST = 2;
 
 // --- TestModuleScope ---
 
-TestModuleScope::TestModuleScope(bool tapeOptMode)
+TestModuleScope::TestModuleScope(bool tapeOptMode, bool btapeOptMode)
    : ModuleScopeBase(new Module(), nullptr, DEFAULT_STACKALIGNMENT, DEFAULT_RAW_STACKALIGNMENT, 
-      DEFAULT_EHTABLE_ENTRY_SIZE, MINIMAL_ARG_LIST, sizeof(uintptr_t), tapeOptMode)
+      DEFAULT_EHTABLE_ENTRY_SIZE, MINIMAL_ARG_LIST, sizeof(uintptr_t), tapeOptMode, btapeOptMode)
 {
    _anonymousRef = 0x100;
 }
@@ -261,7 +261,7 @@ CompilerEnvironment :: CompilerEnvironment()
 
 ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool withAttributes)
 {
-   auto scope = new TestModuleScope(tapeOptMode);
+   auto scope = new TestModuleScope(tapeOptMode, tapeOptMode);
 
    if (withAttributes) {
       scope->attributes.add("dispatch", V_DISPATCHER);

@@ -6,18 +6,14 @@ In development:
   ### EPIC: elena 7.0 ###
 
   === Iteration 44 ===
-  * dev
-  ====================================== 
-  - new unit test of BC optimization
-  --------------------------------------
   * doc
   ====================================== 
   - writing a program in ELENA (program entries, different types of projects)
   --------------------------------------
-  * current : backlog
+  * current : #637
   ====================================== 
-  - predefined method cannot be indexed
-  - configuration : there must be only one instance for every dll alias (the previous value must be removed)
+  - #6 - create_struct =4, assigning, local_address, saving_stack =0, local, copying_to_acc => 6;
+  - #3 - int_literal, copying => 3; (check if it is not already implemented)
   --------------------------------------
 
 

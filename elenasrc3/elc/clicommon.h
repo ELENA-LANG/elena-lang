@@ -307,6 +307,7 @@ public:
    int                  ptrSize;
 
    bool                 tapeOptMode;
+   bool                 btapeOptMode;
 
    Map<ref_t, SizeInfo> cachedSizes;
    Map<ref_t, ref_t>    cachedFlags;
@@ -367,7 +368,8 @@ public:
       pos_t ehTableEntrySize,
       int minimalArgList,
       int ptrSize,
-      bool tapeOptMode
+      bool tapeOptMode,
+      bool btapeOptMode
    ) :
       predefined(0),
       attributes(0),
@@ -385,6 +387,7 @@ public:
       this->minimalArgList = minimalArgList;
       this->ptrSize = ptrSize;
       this->tapeOptMode = tapeOptMode;
+      this->btapeOptMode = btapeOptMode;
    }
 };
 

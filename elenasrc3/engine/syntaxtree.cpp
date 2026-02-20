@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree class implementation
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -109,6 +109,9 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("band_op", SyntaxKey::BAndOperation);
    map.add("final_block", SyntaxKey::FinallyBlock);
    map.add("inline_prop_template", SyntaxKey::InlinePropertyTemplate);
+
+   map.add("add_assign_operation", SyntaxKey::AddAssignOperation);
+   map.add("sub_assign_operation", SyntaxKey::SubAssignOperation);
 }
 
 bool SyntaxTree :: save(MemoryBase* section)
