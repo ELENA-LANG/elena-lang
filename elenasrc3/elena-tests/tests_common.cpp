@@ -560,14 +560,11 @@ void ExprTest::SetUp()
    buildNode = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
-void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators, ref_t funcRef)
+void ExprTest :: initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages)
 {
-   // Arrange
-   ModuleScopeBase* moduleScope = env.createModuleScope(true, declareDefaultMessages);
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = 2;
    moduleScope->buildins.wrapperTemplateReference = 3;
-   moduleScope->buildins.closureTemplateReference = funcRef;
 
    if (declareDefaultMessages) {
       moduleScope->buildins.dispatch_message = encodeMessage(
@@ -582,6 +579,16 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
          encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
             1, STATIC_MESSAGE);
    }
+}
+
+void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators, ref_t funcRef)
+{
+   // Arrange
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, declareDefaultMessages);
+
+   initModuleScope(moduleScope, declareDefaultMessages);
+
+   moduleScope->buildins.closureTemplateReference = funcRef;
 
    Compiler* compiler = env.createCompiler();
 

@@ -12,7 +12,6 @@ In development:
   --------------------------------------
   * current : #637
   ====================================== 
-  - #8 : local_address, saving_stack, int_literal, saving_stack, intbranchop => 8;
   - #9
   - #10.1
   - #10.2

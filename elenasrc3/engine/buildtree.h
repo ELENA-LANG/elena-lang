@@ -475,6 +475,7 @@ namespace elena_lang
          map.add("true_const", BuildKey::TrueConst);
          map.add("false_const", BuildKey::FalseConst);
          map.add("saving_index_to_acc", BuildKey::SavingIndexToAcc);
+         map.add("intconst_branchop", BuildKey::IntConstBranchOp);
       }
    };
 

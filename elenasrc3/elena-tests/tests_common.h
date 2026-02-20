@@ -283,6 +283,8 @@ namespace elena_lang
    protected:
       void SetUp() override;
 
+      virtual void initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages);
+
    public:
       void runBuildTest(bool declareDefaultMessages = false, bool declareOperators = false, ref_t funcRef = 0);
    };
