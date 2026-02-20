@@ -33,9 +33,17 @@
 
 using namespace elena_lang;
 
+#ifndef UINT32_MAX
 #define	UINT32_MAX	((unsigned int)(~0))		/* 0xFFFFFFFF */
+#endif
+
+#ifndef INT32_MAX
 #define	INT32_MAX	((int)(UINT32_MAX >> 1))	/* 0x7FFFFFFF */
+#endif
+
+#ifndef INT32_MIN
 #define	INT32_MIN	((int)(~INT32_MAX))		/* 0x80000000 */
+#endif
 
 #ifndef ULONG_LONG_MAX
 #define	ULONG_LONG_MAX	((unsigned long long)(~0LL))		/* 0xFFFFFFFFFFFFFFFF */

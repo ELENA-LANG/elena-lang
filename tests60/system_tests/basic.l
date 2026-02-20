@@ -2693,6 +2693,7 @@ public retoverloadTest() : testCase()
 
    Assert.ifTrue(n == 1);
    Assert.ifTrue(m == 2l);
+   Console.write(".");
 }
 
 public utf32Test() : testCase()
@@ -2700,4 +2701,5 @@ public utf32Test() : testCase()
    int code := "𝄞".toChar().toInt();
 
    Assert.ifTrue(code == 1D11Eh);
+   Console.write(".");
 }

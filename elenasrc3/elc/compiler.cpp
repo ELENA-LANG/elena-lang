@@ -2832,7 +2832,11 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             }
             else if (methodScope.checkHint(MethodHint::Predefined)) {
                auto info = scope.info.methods.get(methodScope.message);
-               if (!info.hints) {
+               if (methodScope.checkHint(MethodHint::Indexed)) {
+                  // predefined method cannot be indexed
+                  scope.raiseError(errIllegalMethod, current);
+               }
+               else if (!info.hints) {
                   // HOTFIX : the predefined method info should be saved separately
                   scope.info.methods.add(methodScope.message, methodScope.info);
                }

@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 7.0 ###
 
-  === Iteration 44 (aarch64) ===
+  === Iteration 44 ===
   * dev
   ====================================== 
   - new unit test of BC optimization
@@ -14,18 +14,15 @@ In development:
   ====================================== 
   - writing a program in ELENA (program entries, different types of projects)
   --------------------------------------
-  * backlog
+  * current : backlog
   ====================================== 
   - predefined method cannot be indexed
   - configuration : there must be only one instance for every dll alias (the previous value must be removed)
   --------------------------------------
-  * current : ide
-  ====================================== 
-  --------------------------------------
 
 
 
-  === Iteration 45 (ide, ldoc method index; full api docs; template generator; mac) ===
+  === Iteration 45 (ide, ldoc method index; full api docs; mac) ===
   --------------------------------------
   * new version 6.8.3
   --------------------------------------
@@ -40,7 +37,7 @@ In development:
 
   ### EPIC: elena 8.0 ###
 
-  === Iteration 46 (graph sample; httpget / httpsget reliability) ===
+  === Iteration 46 (graph sample; template generator) ===
   * new version 7.0.1
   --------------------------------------
   * dev
@@ -52,7 +49,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 47 (text based adventage) ===
+  === Iteration 47 (text based adventage; httpget / httpsget reliability) ===
   * new version 7.0.2
   --------------------------------------
   --------------------------------------
