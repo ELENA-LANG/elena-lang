@@ -12,8 +12,22 @@ In development:
   --------------------------------------
   * current : #637
   ====================================== 
+  - re-implement #6 optimization
   - #6 - create_struct =4, assigning, local_address, saving_stack =0, local, copying_to_acc => 6;
   - #3 - int_literal, copying => 3; (check if it is not already implemented)
+  - #7.2 (with real)
+  - #7.3 (with nil)
+ 
+  - #8
+  - #9
+  - #10.1
+  - #10.2
+  - #11
+  - #13.1
+  - #13.2
+  - #14
+  - #15.1
+  - #15.2
   --------------------------------------
 
 

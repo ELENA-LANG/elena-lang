@@ -47,7 +47,7 @@ namespace elena_lang
       void runTest();
 
       StructTest()
-         : offsets(0)
+         : offsets(0), expectedSize(0), targetRef(0)
       {
       }
    };

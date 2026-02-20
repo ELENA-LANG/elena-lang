@@ -474,6 +474,7 @@ namespace elena_lang
          map.add("idle", BuildKey::Idle);
          map.add("true_const", BuildKey::TrueConst);
          map.add("false_const", BuildKey::FalseConst);
+         map.add("saving_index_to_acc", BuildKey::SavingIndexToAcc);
       }
    };
 

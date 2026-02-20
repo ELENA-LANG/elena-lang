@@ -2661,21 +2661,27 @@ static inline bool assignIntOpWithConsts(BuildNode lastNode)
 static inline bool boxingInt(BuildNode lastNode)
 {
    BuildNode copyNode = lastNode;
-   BuildNode localNode = getPrevious(copyNode);
-   BuildNode savingOp = getPrevious(localNode);
+   BuildNode createNode = getPrevious(copyNode);
+   BuildNode savingOp = getPrevious(createNode);
    BuildNode localAddrOp = getPrevious(savingOp);
-   BuildNode assigningOp = getPrevious(localAddrOp);
 
-   if (assigningOp.arg.value != localNode.arg.value)
+   BuildNode sizeNode = copyNode.findChild(BuildKey::Size);
+   if (sizeNode.arg.value != 4)
       return false;
 
-   localAddrOp.setKey(BuildKey::LoadingIndex);
-   localAddrOp.setArgumentValue(localAddrOp.arg.value);
+   BuildNode typeNode = createNode.findChild(BuildKey::Type);
 
-   savingOp.setKey(BuildKey::SavingIndexToAcc);
+   savingOp.setKey(createNode.key);
+   setChild(savingOp, BuildKey::Type, typeNode.arg.reference);
 
-   localNode.setKey(BuildKey::Idle);
-   copyNode.setKey(BuildKey::Idle);
+   createNode.setKey(BuildKey::LoadingIndex);
+   createNode.setArgumentValue(localAddrOp.arg.value);
+   typeNode.setKey(BuildKey::Idle);
+
+   copyNode.setKey(BuildKey::SavingIndexToAcc);
+   sizeNode.setKey(BuildKey::Idle);
+
+   localAddrOp.setKey(BuildKey::Idle);
 
    return true;
 }
@@ -3898,6 +3904,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
             // ignore special nodes
             break;
          case BuildKey::Idle:
+         case BuildKey::ByRefOpMark:
             break;
          default:
             _commands[(int)current.key](tape, current, tapeScope);

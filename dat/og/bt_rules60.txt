@@ -9,7 +9,7 @@ saving_index, addingint, local_address, copying => 15;
 saving_index, local_address, copying => 11;
 local_address, saving_stack, int_literal, saving_stack, intbranchop => 8;
 local_address, saving_stack, local_address, conversion_op, local_address, copying => 9;
-create_struct =4, assigning, local_address, saving_stack =0, local, copying_to_acc => 6;
+local_address, saving_stack =0, create_struct =4, copying_to_acc => 6;
 intcondop, assigning, local, branchop => 7;
 realcondop, assigning, local, branchop => 7;
 nilcondop, assigning, local, branchop => 7;
