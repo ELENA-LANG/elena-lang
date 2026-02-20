@@ -135,19 +135,20 @@ namespace elena_lang
 
    constexpr auto errMssgFailedMemoryAllocation = "\nnFatal error: cannot allocate the memory\n";
 
-   constexpr auto infoMsgNewMethod              = "\ninfo 701:   new method %s\n";
-   constexpr auto infoMsgCurrentMethod          = "\ninfo 702:   compiling method %s\n";
-   constexpr auto infoMsgCurrentClass           = "\ninfo 703: compiling class %s\n";
-   constexpr auto infoMsgAbstractMetod          = "\ninfo 704:   abstract method %s\n";
-   constexpr auto infoMssgMixedUpVariadic       = "\ninfo 705:   mixed-up variadic method %s\n";
-   constexpr auto infoMsgUnknownMessage         = "\ninfo 706:   unhandled message: %s\n";
-   constexpr auto infoMsgTargetClass            = "info 707:   target class: %s\n";
-   constexpr auto infoMsgScopeMethod            = "info 708:   in the method: %s\n";
-   constexpr auto infoMssgExptectedType         = "\ninfo 709: the expected type is %s, but the actual type is %s\n";
-   constexpr auto infoMsgInternalDefConstructor = "\ninfo 710: default constructor cannot be internal\n";
-   constexpr auto infoMsgMessageInfo            = "\ninfo 711:  message: %s\n";
-   constexpr auto infoMsgSourceClass            = "info 712:   source class: %s\n";
-   constexpr auto infoMsgMissingTemplate        = "info 713:   template %s is not defined\n";
+   constexpr auto infoMsgNewMethod                 = "\ninfo 701:   new method %s\n";
+   constexpr auto infoMsgCurrentMethod             = "\ninfo 702:   compiling method %s\n";
+   constexpr auto infoMsgCurrentClass              = "\ninfo 703: compiling class %s\n";
+   constexpr auto infoMsgAbstractMetod             = "\ninfo 704:   abstract method %s\n";
+   constexpr auto infoMssgMixedUpVariadic          = "\ninfo 705:   mixed-up variadic method %s\n";
+   constexpr auto infoMsgUnknownMessage            = "\ninfo 706:   unhandled message: %s\n";
+   constexpr auto infoMsgTargetClass               = "info 707:   target class: %s\n";
+   constexpr auto infoMsgScopeMethod               = "info 708:   in the method: %s\n";
+   constexpr auto infoMssgExptectedType            = "\ninfo 709: the expected type is %s, but the actual type is %s\n";
+   constexpr auto infoMsgInternalDefConstructor    = "\ninfo 710: default constructor cannot be internal\n";
+   constexpr auto infoMsgMessageInfo               = "\ninfo 711:  message: %s\n";
+   constexpr auto infoMsgSourceClass               = "info 712:   source class: %s\n";
+   constexpr auto infoMsgMissingTemplate           = "info 713:   template %s is not defined\n";
+   constexpr auto infoMsgPredefinedIndexedMethod   = "info 714: predefined method %s cannot be declared as indexed\n";
 
 } // _ELENA_
 

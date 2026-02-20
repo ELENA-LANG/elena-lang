@@ -2834,6 +2834,13 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
                auto info = scope.info.methods.get(methodScope.message);
                if (methodScope.checkHint(MethodHint::Indexed)) {
                   // predefined method cannot be indexed
+                  if (_verbose) {
+                     IdentifierString messageName;
+                     ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+
+                     _errorProcessor->info(infoPredefinedIndexedMethod, *messageName);
+                  }
+
                   scope.raiseError(errIllegalMethod, current);
                }
                else if (!info.hints) {

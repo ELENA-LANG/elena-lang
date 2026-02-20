@@ -425,44 +425,45 @@ namespace elena_lang
    constexpr auto wrnHiddenLocal                   = 432;
    constexpr auto wrnHiddenField                   = 433;
 
-   constexpr auto wrnSyntaxFileNotFound      = 500;
-   constexpr auto wrnInvalidConfig           = 501;
-   constexpr auto wrnInvalidPrjCollection    = 502;
-   constexpr auto wrnInvalidTemplateName     = 503;
+   constexpr auto wrnSyntaxFileNotFound            = 500;
+   constexpr auto wrnInvalidConfig                 = 501;
+   constexpr auto wrnInvalidPrjCollection          = 502;
+   constexpr auto wrnInvalidTemplateName           = 503;
 
-   constexpr auto errCommandSetAbsent        = 600;
-   constexpr auto errReadOnlyModule          = 601;
-   constexpr auto errNotDefinedBaseClass     = 602;
-   constexpr auto errReferenceOverflow       = 603;
-   constexpr auto errUnknownBaseClass        = 604;
-   constexpr auto errNoDispatcher            = 605;
-   constexpr auto errClosureError            = 606;
+   constexpr auto errCommandSetAbsent              = 600;
+   constexpr auto errReadOnlyModule                = 601;
+   constexpr auto errNotDefinedBaseClass           = 602;
+   constexpr auto errReferenceOverflow             = 603;
+   constexpr auto errUnknownBaseClass              = 604;
+   constexpr auto errNoDispatcher                  = 605;
+   constexpr auto errClosureError                  = 606;
 
-   constexpr auto infoNewMethod              = 701;
-   constexpr auto infoCurrentMethod          = 702;
-   constexpr auto infoCurrentClass           = 703;
-   constexpr auto infoAbstractMetod          = 704;
-   constexpr auto infoMixedUpVariadic        = 705;
-   constexpr auto infoUnknownMessage         = 706;
-   constexpr auto infoTargetClass            = 707;
-   constexpr auto infoScopeMethod            = 708;
-   constexpr auto infoExptectedType          = 709;
-   constexpr auto infoInternalDefConstructor = 710;
-   constexpr auto infoMessageInfo            = 711;
-   constexpr auto infoSourceClass            = 712;
-   constexpr auto infoMissingTemplate        = 713;
+   constexpr auto infoNewMethod                    = 701;
+   constexpr auto infoCurrentMethod                = 702;
+   constexpr auto infoCurrentClass                 = 703;
+   constexpr auto infoAbstractMetod                = 704;
+   constexpr auto infoMixedUpVariadic              = 705;
+   constexpr auto infoUnknownMessage               = 706;
+   constexpr auto infoTargetClass                  = 707;
+   constexpr auto infoScopeMethod                  = 708;
+   constexpr auto infoExptectedType                = 709;
+   constexpr auto infoInternalDefConstructor       = 710;
+   constexpr auto infoMessageInfo                  = 711;
+   constexpr auto infoSourceClass                  = 712;
+   constexpr auto infoMissingTemplate              = 713;
+   constexpr auto infoPredefinedIndexedMethod      = 714;
 
-   constexpr auto errVMBroken                = 800;
-   constexpr auto errVMNotInitialized        = 801;
-   constexpr auto errVMNotExecuted           = 802;
-   constexpr auto errVMReferenceNotFound     = 803;
+   constexpr auto errVMBroken                      = 800;
+   constexpr auto errVMNotInitialized              = 801;
+   constexpr auto errVMNotExecuted                 = 802;
+   constexpr auto errVMReferenceNotFound           = 803;
 
-   constexpr auto errFatalError              = -1;
-   constexpr auto errFatalLinker             = -2;
-   constexpr auto errCorruptedVMT            = -4;
-   constexpr auto errMissingNamespace        = -5;
-   constexpr auto errNotSupportedPlatform    = -6;
-   constexpr auto errActionOverflow          = -7;
+   constexpr auto errFatalError                    = -1;
+   constexpr auto errFatalLinker                   = -2;
+   constexpr auto errCorruptedVMT                  = -4;
+   constexpr auto errMissingNamespace              = -5;
+   constexpr auto errNotSupportedPlatform          = -6;
+   constexpr auto errActionOverflow                = -7;
 
    // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;
