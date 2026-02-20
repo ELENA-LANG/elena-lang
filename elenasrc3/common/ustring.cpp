@@ -33,9 +33,9 @@
 
 using namespace elena_lang;
 
-#define	ULONG32_MAX	((unsigned long)(~0L))		/* 0xFFFFFFFF */
-#define	LONG32_MAX	((long)(ULONG32_MAX >> 1))	/* 0x7FFFFFFF */
-#define	LONG32_MIN	((long)(~LONG32_MAX))		/* 0x80000000 */
+#define	UINT32_MAX	((unsigned int)(~0L))		/* 0xFFFFFFFF */
+#define	INT32_MAX	((int)(UINT32_MAX >> 1))	/* 0x7FFFFFFF */
+#define	INT32_MIN	((int)(~INT32_MAX))		/* 0x80000000 */
 
 #ifndef ULONG_LONG_MAX
 #define	ULONG_LONG_MAX	((unsigned long long)(~0LL))		/* 0xFFFFFFFFFFFFFFFF */
@@ -448,9 +448,9 @@ int StrConvertor :: toInt(const wide_c* s, int radix)
     * Set any if any `digits' consumed; make it negative to indicate
     * overflow.
     */
-   unsigned long cutoff = (unsigned long)(neg ? -LONG32_MIN : LONG32_MAX);
+   unsigned int cutoff = (unsigned long)(neg ? -INT32_MIN : INT32_MAX);
    int cutlim = cutoff % (unsigned long)radix;
-   cutoff /= (unsigned long)radix;
+   cutoff /= (unsigned int)radix;
 
    while (*s) {
       /*register */int c = *s;
@@ -477,7 +477,7 @@ int StrConvertor :: toInt(const wide_c* s, int radix)
    }
 
    if (any < 0) {
-      n = neg ? LONG32_MIN : LONG32_MAX;
+      n = neg ? INT32_MIN : INT32_MAX;
    }
    else if (neg)
       n = -n;
