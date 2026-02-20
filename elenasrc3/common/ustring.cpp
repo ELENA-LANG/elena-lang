@@ -33,7 +33,7 @@
 
 using namespace elena_lang;
 
-#define	UINT32_MAX	((unsigned int)(~0L))		/* 0xFFFFFFFF */
+#define	UINT32_MAX	((unsigned int)(~0))		/* 0xFFFFFFFF */
 #define	INT32_MAX	((int)(UINT32_MAX >> 1))	/* 0x7FFFFFFF */
 #define	INT32_MIN	((int)(~INT32_MAX))		/* 0x80000000 */
 
