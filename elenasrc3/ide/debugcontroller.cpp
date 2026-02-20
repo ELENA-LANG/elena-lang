@@ -636,6 +636,9 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
       case elDebugDWORDS:
          readIntArrayLocal(watch, item, address, "content", level);
          break;
+      case elDebugBytes:
+         readByteArrayLocal(watch, item, address, "content", level);
+         break;
       case elDebugFLOAT64S:
          readRealArrayLocal(watch, item, address, "content", level);
          break;

@@ -6,16 +6,28 @@ In development:
   ### EPIC: elena 7.0 ###
 
   === Iteration 44 (aarch64) ===
+  * dev
+  ====================================== 
+  - new unit test of BC optimization
   --------------------------------------
   * doc
   ====================================== 
   - writing a program in ELENA (program entries, different types of projects)
   --------------------------------------
-  * current : backlog
+  * backlog
   ====================================== 
-  - raise an error if an async extension is declared (until the feature is not implemented)
-  - inside the method, "$name __decl" should return the method full name?
-  - elc : debug / release mode : set high level of optimization for release
+  - predefined method cannot be indexed
+  - configuration : there must be only one instance for every dll alias (the previous value must be removed)
+  --------------------------------------
+  * current : ide
+  ====================================== 
+  - review / fix auto watch
+  - refreshing auto watch - with the same name, unused
+  - display byte array
+  - debug watch context menu
+  - byref parameter
+  - stack allocated array parameter
+	
   --------------------------------------
 
 
