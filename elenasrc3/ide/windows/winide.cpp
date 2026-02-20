@@ -631,7 +631,7 @@ bool IDEWindow :: isResultTabOpen(int controlIndex)
 {
    TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
 
-   return resultBar->selectTabChild((ControlBase*)_children[controlIndex]);
+   return resultBar->isChildAvailble((ControlBase*)_children[controlIndex]);
 }
 
 void IDEWindow :: openResultTab(int controlIndex)
@@ -1394,6 +1394,7 @@ void IDEWindow :: onTabBarChange()
    menu->checkMenuItemById(IDM_VIEW_MESSAGES, isResultTabOpen(_model->ideScheme.errorListControl));
    menu->checkMenuItemById(IDM_VIEW_WATCH, isResultTabOpen(_model->ideScheme.debugWatch));
    menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, isResultTabOpen(_model->ideScheme.vmConsoleControl));
+   menu->checkMenuItemById(IDM_VIEW_CALLSTACK, isResultTabOpen(_model->ideScheme.callStackControl));
 }
 
 void IDEWindow :: onLayoutChange()

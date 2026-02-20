@@ -305,6 +305,16 @@ void TabBar :: removeTabChild(ControlBase* child)
    refresh();
 }
 
+bool TabBar :: isChildAvailble(ControlBase* child)
+{
+   int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+      {
+         return current == arg;
+      });
+
+   return index != -1;
+}
+
 bool TabBar :: selectTabChild(ControlBase* child)
 {
    int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
@@ -321,6 +331,8 @@ bool TabBar :: selectTabChild(ControlBase* child)
       _current->show();
 
       selectTab(index);
+
+      int x = getCurrentIndex();
 
       ControlBase::refresh();
 

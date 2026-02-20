@@ -21,12 +21,7 @@ In development:
   --------------------------------------
   * current : ide
   ====================================== 
-  - review / fix auto watch
-  - refreshing auto watch - with the same name, unused
-  - display byte array
-  - debug watch context menu
-  - byref parameter
-  - stack allocated array parameter
+  - make sure the debugger displays all debug variable types
 	
   --------------------------------------
 

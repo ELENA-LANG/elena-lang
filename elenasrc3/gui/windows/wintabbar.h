@@ -106,6 +106,8 @@ namespace elena_lang
       void addTabChild(const wchar_t* name, ControlBase* window);
       void removeTabChild(ControlBase* window);
 
+      bool isChildAvailble(ControlBase* window);
+
       bool selectTabChild(ControlBase* window);
 
       void setRectangle(Rectangle rec) override;
