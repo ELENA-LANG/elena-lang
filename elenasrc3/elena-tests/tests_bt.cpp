@@ -33,27 +33,27 @@ using namespace elena_lang;
 *
 */
 
-TEST_F(BTOptimization1_1, BuildTapeTest)
+TEST_F(BTOptimization2_1, BuildTapeTest)
 {
    runBTTest();
 }
 
-TEST_F(BTOptimization1_2, BuildTapeTest)
+TEST_F(BTOptimization2_2, BuildTapeTest)
 {
    runBTTest();
 }
 
-TEST_F(BTOptimization1_3, BuildTapeTest)
+TEST_F(BTOptimization2_3, BuildTapeTest)
 {
    runBTTest();
 }
 
-TEST_F(BTOptimization1_4, BuildTapeTest)
+TEST_F(BTOptimization2_4, BuildTapeTest)
 {
    runBTTest();
 }
 
-TEST_F(BTOptimization2, BuildTapeTest)
+TEST_F(BTOptimization3, BuildTapeTest)
 {
    runBTTest();
 }

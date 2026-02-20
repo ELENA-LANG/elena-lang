@@ -53,35 +53,35 @@ namespace elena_lang
    };
 
    // Optimization #2 (byRefOp) : "a := b.get()" => "b.get(ref a)"
-   class BTOptimization1_1 : public BTOptimization
+   class BTOptimization2_1 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
    // Optimization #2 (byRefOp) : "a := b.Value" => "b.prop:Value(ref a)"
-   class BTOptimization1_2 : public BTOptimization
+   class BTOptimization2_2 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
    // Optimization #2 (byRefOp) : "a := *b" => "b.prop:Value(ref a)"
-   class BTOptimization1_3 : public BTOptimization
+   class BTOptimization2_3 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
    // Optimization #2 (byRefOp + boxing / unboxing) : "a := b[0]"
-   class BTOptimization1_4 : public BTOptimization
+   class BTOptimization2_4 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
-   // Optimization #3 (intCopying) : "int n := 2" => direct assigning
-   class BTOptimization2 : public BTOptimization
+   // Optimization #3 (byRefOp + boxing / unboxing) : "a := b[0]"
+   class BTOptimization3 : public BTOptimization
    {
    protected:
       void SetUp() override;
