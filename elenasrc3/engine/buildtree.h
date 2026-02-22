@@ -377,6 +377,7 @@ namespace elena_lang
          map.add("breakpoint", BuildKey::Breakpoint);
          map.add("byrefmark", BuildKey::ByRefOpMark);
          map.add("inplacemark", BuildKey::InplaceCall);
+         map.add("real_literal", BuildKey::RealLiteral);
          map.add("int_literal", BuildKey::IntLiteral);
          map.add("string_literal", BuildKey::StringLiteral);
          map.add("copying", BuildKey::Copying);

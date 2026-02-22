@@ -77,6 +77,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    //   tokens.add("variable_identifier", lxIdentifier);
    //   tokens.add("new_identifier", lxIdentifier);
    map.add("integer", SyntaxKey::integer);
+   map.add("real", SyntaxKey::real);
    map.add("parameter", SyntaxKey::Parameter);
    //   //tokens.add("forward", lxForward);
    map.add("reference", SyntaxKey::reference);

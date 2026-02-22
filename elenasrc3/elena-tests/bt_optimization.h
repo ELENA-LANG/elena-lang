@@ -133,6 +133,15 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   // Optimization #10_1 : doubleAssigningIntRealOp (r := n + 2.0)
+   class BTOptimization10_1 : public BTOptimization
+   {
+   protected:
+      void initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages) override;
+
+      void SetUp() override;
+   };
+
    // Optimization #12 (inplaceCallOp) : "struct X ( int x; ) ..  X x := new X() => call in-place constructor
    class BTOptimization12 : public BTOptimization
    {

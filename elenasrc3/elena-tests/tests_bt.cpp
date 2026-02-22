@@ -88,6 +88,11 @@ TEST_F(BTOptimization9, BuildTapeTest)
    runBTTest();
 }
 
+TEST_F(BTOptimization10_1, BuildTapeTest)
+{
+   runBTTest();
+}
+
 TEST_F(BTOptimization12, BuildTapeTest)
 {
    runBTTest();
