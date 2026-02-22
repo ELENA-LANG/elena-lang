@@ -2,8 +2,6 @@ import extensions;
 
 public Program()
 {
-   int n := 3;
-   if (n == 3) {
-     n := 1;
-   }
+   byte b := 3;
+   int n := b;
 }
