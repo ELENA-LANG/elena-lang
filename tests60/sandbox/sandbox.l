@@ -1,8 +1,23 @@
 import extensions;
 
+struct X
+{
+   int x;
+
+   constructor()
+   {
+      x := 0
+   }
+}
+
+singleton Helper
+{
+   test(X x)
+      = x;
+}
+
 public Program()
 {
-   int n := 2;
-   real r := n + 3.0;
-//   r := n + r;
+   var o := Helper;
+   var x := o.test(new X());
 }

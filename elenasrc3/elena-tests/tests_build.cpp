@@ -127,6 +127,11 @@ TEST_F(BTOptimization10_1, BuildTest)
    runBuildTest(true);
 }
 
+TEST_F(BTOptimization10_2, BuildTest)
+{
+   runBuildTest(true);
+}
+
 TEST_F(BTOptimization12, BuildTest)
 {
    runBuildTest(true);

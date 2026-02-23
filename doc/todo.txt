@@ -6,24 +6,6 @@ In development:
   ### EPIC: elena 7.0 ###
 
   === Iteration 44 ===
-  * doc
-  ====================================== 
-  - writing a program in ELENA (program entries, different types of projects)
-  --------------------------------------
-  * current : #637
-  ====================================== 
-  - #10.2 : doubleAssigningIntRealOp : real int 
-  - #11
-  - #13.1
-  - #13.2
-  - #14
-  - #15.1
-  - #15.2
-  - #7.3 (with nil)
-
-  --------------------------------------
-
-
 
   === Iteration 45 (ide, ldoc method index; full api docs; mac) ===
   --------------------------------------

@@ -87,7 +87,7 @@ namespace elena_lang
       void SetUp() override;
    };
 
-   // Optimization #4 (intOpWithConsts) : "int r := n + 2" => direct op with consts
+   // Optimization #4 (intOpWithConsts) : "int r := n + 2" => direct op with consts / #15 (optIntOpWithConsts)
    class BTOptimization4 : public BTOptimization
    {
    protected:
@@ -139,6 +139,13 @@ namespace elena_lang
    protected:
       void initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages) override;
 
+      void SetUp() override;
+   };
+
+   // Optimization #10_1 : doubleAssigningIntRealOp (r := 2.0 + n)
+   class BTOptimization10_2 : public BTOptimization10_1
+   {
+   protected:
       void SetUp() override;
    };
 
