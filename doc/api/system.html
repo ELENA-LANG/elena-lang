@@ -37,7 +37,7 @@ system'</DIV>
 <HR>
 <PRE STYLE="padding-top: 15px;">
 public class <SPAN CLASS="typeNameLabel">AbortException</SPAN><BR/>
-<I>An abort exception </I></PRE>
+<I>An abort exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -100,6 +100,8 @@ system'AbortException</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 </TABLE>
@@ -3817,6 +3819,8 @@ system'ByteArrayConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> sour, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> sourLen, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> dest, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destLen)
 </CODE>
+<div class="block">
+Converts a UTF-16 substring <b>sour</b> from 0 with <b>sourLen</b> length into a UTF-8 array and copies into <b>dest</b> starting at <b>destIndex</b>. <b>destLen</b> defines the maximal possible length<br/>The number of copied bytes are returned</div>
 </TD>
 </TR>
 </TABLE>
@@ -3920,6 +3924,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
+<div class="block">
+Returns an argument</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3929,6 +3935,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts an argument <b>s</b> to a byte value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3938,6 +3946,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Converts an argument <b>ch</b> to a byte value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3947,6 +3957,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3956,6 +3968,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3965,6 +3979,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3974,6 +3990,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> r)
 </CODE>
+<div class="block">
+Converts an argument <b>r</b> to a byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3983,6 +4001,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a byte value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3992,6 +4012,8 @@ system'ByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a byte value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 </TABLE>
@@ -5037,7 +5059,7 @@ system'CallStack</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'UnsafePointer<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>stack</CODE>
+<CODE>_stack</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -5059,6 +5081,8 @@ system'CallStack</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Collects the call stack</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -5068,6 +5092,8 @@ system'CallStack</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> trimingLevel)
 </CODE>
+<div class="block">
+Collects the call stack skipping <b>trimingLevel</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -5140,6 +5166,8 @@ system'CharConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(o)
 </CODE>
+<div class="block">
+Tries to converts an argument <b>o</b> to a UTF32 character value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -5158,6 +5186,8 @@ system'CharConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a UTF32 character value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -5189,6 +5219,8 @@ Converts a wide string into a character</div>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> w)
 </CODE>
+<div class="block">
+Converts an argument <b>w</b> to a UTF32 character value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -5198,6 +5230,8 @@ Converts a wide string into a character</div>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
+<div class="block">
+Converts an argument <b>b</b> to a UTF32 character value</div>
 </TD>
 </TR>
 </TABLE>
@@ -5642,7 +5676,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ClassReference</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ClassReference</SPAN><BR/>
+<I>A dynamic class reference</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -5692,7 +5727,7 @@ system'ClassReference</LI>
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> name)
 </CODE>
 <div class="block">
-Loads a symbol</div>
+Loads a class reference<br/>If the symbol cannot be loaded raises SymbolLoaderException</div>
 </TD>
 </TR>
 </TABLE>
@@ -5734,7 +5769,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public singleton <SPAN CLASS="typeNameLabel">Console</SPAN></PRE>
+public singleton <SPAN CLASS="typeNameLabel">Console</SPAN><BR/>
+<I>Console singleton</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -5762,6 +5798,8 @@ system'Console</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>KeyAvailable()</CODE>
+<div class="block">
+Checks if there is a record in the input stream</div>
 </TD>
 </TR>
 </TABLE>
@@ -5805,6 +5843,8 @@ Writes the specified literal value, followed by the current line terminator, to 
 <TD CLASS="colLast">
 <CODE>writeLine()
 </CODE>
+<div class="block">
+Writes the current line terminator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -5825,6 +5865,8 @@ Reads the next character from the input stream</div>
 <TD CLASS="colLast">
 <CODE>setCursorPosition(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+Sets the console cursor at the specified position<br/>Cannot be supported in the file output mode</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -5834,6 +5876,8 @@ Reads the next character from the input stream</div>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Clear the console buffer<br/>Cannot be supported in the file output mode</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -5876,7 +5920,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ConsoleHelperImpl</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ConsoleHelperImpl</SPAN><BR/>
+<I>A class implementing Console functionality</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -5933,6 +5978,8 @@ system'ConsoleHelperImpl</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IConsoleReader">IConsoleReader</A></SPAN> reader, <SPAN CLASS="memberNameLink"><A HREF="system.html#IConsoleWriter">IConsoleWriter</A></SPAN> writer)
 </CODE>
+<div class="block">
+Initializes the class with the specified input <b>reader</b> and output <b>writer</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -5953,6 +6000,8 @@ system'ConsoleHelperImpl</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>KeyAvailable()</CODE>
+<div class="block">
+Checks if there is a record in the input stream</div>
 </TD>
 </TR>
 </TABLE>
@@ -5996,6 +6045,8 @@ Writes the specified literal value, followed by the current line terminator, to 
 <TD CLASS="colLast">
 <CODE>writeLine()
 </CODE>
+<div class="block">
+Writes the current line terminator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -6016,6 +6067,8 @@ Reads the next character from the input stream</div>
 <TD CLASS="colLast">
 <CODE>setCursorPosition(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y)
 </CODE>
+<div class="block">
+Sets the console cursor at the specified position<br/>Cannot be supported in the file output mode</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -6025,6 +6078,8 @@ Reads the next character from the input stream</div>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Clear the console buffer<br/>Cannot be supported in the file output mode</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -6121,13 +6176,24 @@ system'ConstArray&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system.html#ConstArray&lt;T1&gt;">ConstArray&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> array)
+</CODE>
+<div class="block">
+Converts <b>array</b> into a constant array</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system.html#ConstArray&lt;T1&gt;">ConstArray&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 <div class="block">
 Creates an array with the specified <b>length</b></div>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system.html#ConstArray&lt;T1&gt;">ConstArray&lt;T1&gt;</A></SPAN></CODE></TD>
@@ -6171,26 +6237,6 @@ Returns the array length</div>
 <TR>
 <TH CLASS="colFirst" scope="col">Modifier and Type</TH>
 <TH CLASS="colLast" scope="col">Conversion Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-<div class="block">
-Creates a copy of the strong-typed array</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>cast</i>()</CODE>
-<div class="block">
-Creates a weak copy of the array</div>
-</TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
@@ -6400,7 +6446,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">CriticalException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">CriticalException</SPAN><BR/>
+<I>A critical exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -6463,6 +6510,8 @@ system'CriticalException</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 </TABLE>
@@ -6483,7 +6532,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">DivisionByZeroException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">DivisionByZeroException</SPAN><BR/>
+<I>A division by zero reference exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -6546,6 +6596,8 @@ system'DivisionByZeroException</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 </TABLE>
@@ -6962,6 +7014,8 @@ system'Exception</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
+<div class="block">
+Creates an exception with the provide <b>message</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -6971,6 +7025,8 @@ system'Exception</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a class name as a message</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -6992,6 +7048,8 @@ system'Exception</LI>
 <TD CLASS="colLast">
 <CODE>raise()
 </CODE>
+<div class="block">
+Raises an exception</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -7001,6 +7059,8 @@ system'Exception</LI>
 <TD CLASS="colLast">
 <CODE>raise(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
+<div class="block">
+Raises an exception with the provided <b>message</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -7021,6 +7081,8 @@ system'Exception</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Message()</CODE>
+<div class="block">
+Returns the exception message</div>
 </TD>
 </TR>
 </TABLE>
@@ -7071,6 +7133,8 @@ Returns the message and the call stack</div>
 <TD CLASS="colLast">
 <CODE>raise()
 </CODE>
+<div class="block">
+Raises an exception</div>
 </TD>
 </TR>
 </TABLE>
@@ -7091,7 +7155,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Extension</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Extension</SPAN><BR/>
+<I>A mixin class extending a target with an extender</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -7148,6 +7213,8 @@ system'Extension</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(target, extender)
 </CODE>
+<div class="block">
+Creates a mixin</div>
 </TD>
 </TR>
 </TABLE>
@@ -7261,7 +7328,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ExtensionVariable</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ExtensionVariable</SPAN><BR/>
+<I>A mixin class extending a target with an extension</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -7318,6 +7386,8 @@ system'ExtensionVariable</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(target, extension)
 </CODE>
+<div class="block">
+Creates a mixin</div>
 </TD>
 </TR>
 </TABLE>
@@ -7359,7 +7429,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">FormatException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">FormatException</SPAN><BR/>
+<I>Format exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -7422,6 +7493,8 @@ system'FormatException</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -7431,6 +7504,8 @@ system'FormatException</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
+<div class="block">
+Creates the exception with the specified <b>message</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -9090,7 +9165,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Handle</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Handle</SPAN><BR/>
+<I>Handle value</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -9139,6 +9215,8 @@ system'Handle</LI>
 <TD CLASS="colLast">
 <CODE>loadDirty(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Initializes the handler with the provided <b>value</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9148,6 +9226,8 @@ system'Handle</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty handler</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9157,6 +9237,8 @@ system'Handle</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN> ptr)
 </CODE>
+<div class="block">
+Creates a copy of <b>ptr</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -9177,6 +9259,8 @@ system'Handle</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Default()</CODE>
+<div class="block">
+Returns an empty handler</div>
 </TD>
 </TR>
 </TABLE>
@@ -9198,6 +9282,8 @@ system'Handle</LI>
 <TD CLASS="colLast">
 <CODE>isUnassigned()
 </CODE>
+<div class="block">
+Returns true if it is an empty handler<br/>Otherwise returns false</div>
 </TD>
 </TR>
 </TABLE>
@@ -9960,6 +10046,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(o)
 </CODE>
+<div class="block">
+Tries to convert an argument to a signed 32-bit integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9978,6 +10066,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Returns an argument</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -9987,6 +10077,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
+<div class="block">
+Converts an argument <b>b</b> to a signed 32-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -9996,6 +10088,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts an argument <b>s</b> to a signed 32-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10005,6 +10099,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a signed 32-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10014,6 +10110,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UShortNumber">UShortNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a signed 32-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10023,6 +10121,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Converts an argument <b>ch</b> to a signed 32-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10032,6 +10132,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> l)
 </CODE>
+<div class="block">
+Converts an argument <b>l</b> to a signed 32-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10041,6 +10143,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> r)
 </CODE>
+<div class="block">
+Converts an argument <b>r</b> to a signed 32-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10050,6 +10154,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 32-bit signed integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10059,6 +10165,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 32-bit signed integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -10068,6 +10176,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 32-bit signed integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -10077,6 +10187,8 @@ system'IntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 32-bit signed integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 </TABLE>
@@ -11429,7 +11541,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">InvalidArgumentException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">InvalidArgumentException</SPAN><BR/>
+<I>Invalid argument exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -11525,7 +11638,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">InvalidOperationException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">InvalidOperationException</SPAN><BR/>
+<I>Invalid exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -11600,7 +11714,7 @@ Creates the exception</div>
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
 <div class="block">
-Creates the exception</div>
+Creates the exception with the specified <b>message</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -11818,6 +11932,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(o)
 </CODE>
+<div class="block">
+Tries to convert an argument to a signed 64-bit integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11836,6 +11952,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> l)
 </CODE>
+<div class="block">
+Returns an argument</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11845,6 +11963,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
+<div class="block">
+Converts an argument <b>b</b> to a signed 64-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11854,6 +11974,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts an argument <b>s</b> to a signed 64-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11863,6 +11985,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a signed 64-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11872,6 +11996,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a signed 64-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11881,6 +12007,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> r)
 </CODE>
+<div class="block">
+Converts an argument <b>r</b> to signed 64-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11890,6 +12018,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Converts an argument <b>ch</b> to a signed 64-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11899,6 +12029,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 64-bit signed integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11908,6 +12040,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 64-bit signed integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -11917,6 +12051,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 64-bit signed integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -11926,6 +12062,8 @@ system'LongConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 64-bit signed integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 </TABLE>
@@ -13191,6 +13329,15 @@ system'Matrix&lt;T1&gt;</LI>
 Creates a two-dimensional array of <b>rows<b> and <b>columns<b></div>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system.html#Matrix&lt;T1&gt;">Matrix&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(params)
+</CODE>
+</TD>
+</TR>
 </TABLE>
 </LI>
 </UL>
@@ -13468,7 +13615,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">MessageLoaderException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">MessageLoaderException</SPAN><BR/>
+<I>Message cannot be loaded exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -13531,6 +13679,8 @@ system'MessageLoaderException</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> messageName)
 </CODE>
+<div class="block">
+Creates the exception with the specified <b>messageName</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -13743,7 +13893,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">MethodNotFoundException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">MethodNotFoundException</SPAN><BR/>
+<I>Method not fount exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -13806,6 +13957,8 @@ system'MethodNotFoundException</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> mssg)
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 </TABLE>
@@ -13886,7 +14039,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">NilReferenceException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">NilReferenceException</SPAN><BR/>
+<I>A nil reference exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -13949,6 +14103,8 @@ system'NilReferenceException</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 </TABLE>
@@ -14041,7 +14197,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">NotSupportedException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">NotSupportedException</SPAN><BR/>
+<I>Not supported exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -14104,6 +14261,8 @@ system'NotSupportedException</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14113,6 +14272,8 @@ system'NotSupportedException</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
+<div class="block">
+Creates an exception with the specified <b>message</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -14587,7 +14748,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">OutOfMemoryException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">OutOfMemoryException</SPAN><BR/>
+<I>Out of memory exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -14649,7 +14811,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">OutOfRangeException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">OutOfRangeException</SPAN><BR/>
+<I>Out of range exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -14712,6 +14875,8 @@ system'OutOfRangeException</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -14721,6 +14886,8 @@ system'OutOfRangeException</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
+<div class="block">
+Creates the exception with the specified <b>message</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -15095,6 +15262,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(o)
 </CODE>
+<div class="block">
+Tries to convert an argument to a 64-bit float numeric value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -15104,6 +15273,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> r)
 </CODE>
+<div class="block">
+Returns an argument</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -15122,6 +15293,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 64-bit float numeric value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -15131,6 +15304,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> w)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 64-bit float numeric value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -15140,6 +15315,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
+<div class="block">
+Converts an argument <b>b</b> to a 64-bit float numeric value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -15149,6 +15326,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts an argument <b>s</b> to a 64-bit float numeric value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -15158,6 +15337,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a 64-bit float numeric value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -15167,6 +15348,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a 64-bit float numeric value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -15176,6 +15359,8 @@ system'RealConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> l)
 </CODE>
+<div class="block">
+Converts an argument <b>l</b> to a 64-bit float numeric value</div>
 </TD>
 </TR>
 </TABLE>
@@ -16646,6 +16831,8 @@ system'SByteConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a signed byte value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 </TABLE>
@@ -17550,6 +17737,8 @@ system'ShortArrayConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> sour, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> sourLen, <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ShortNumber<I>[]</I></A></SPAN> dest, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destIndex, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> destLen)
 </CODE>
+<div class="block">
+Converts a UTF-8 substring <b>sour</b> from 0 with <b>sourLen</b> length into a UTF-16 array and copies into <b>dest</b> starting at <b>destIndex</b>. <b>destLen</b> defines the maximal possible length<br/>The number of copied words are returned</div>
 </TD>
 </TR>
 </TABLE>
@@ -17617,6 +17806,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
+<div class="block">
+Converts an argument <b>b</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17626,6 +17817,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+Returns an argument</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17635,6 +17828,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17644,6 +17839,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17653,6 +17850,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> l)
 </CODE>
+<div class="block">
+Converts an argument <b>l</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17662,6 +17861,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> r)
 </CODE>
+<div class="block">
+Converts an argument <b>r</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17671,6 +17872,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Converts an argument <b>ch</b> to a 16-bit integer if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -17680,6 +17883,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 16-bit integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -17689,6 +17894,8 @@ system'ShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 16-bit integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 </TABLE>
@@ -18895,7 +19102,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">StackOverflowException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">StackOverflowException</SPAN><BR/>
+<I>Stack overflown exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -18958,6 +19166,8 @@ system'StackOverflowException</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates an exception with a default message</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -18967,6 +19177,8 @@ system'StackOverflowException</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> message)
 </CODE>
+<div class="block">
+Creates the exception with the specified <b>message</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -19008,7 +19220,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">StartUpEvents</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">StartUpEvents</SPAN><BR/>
+<I>Application events</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -19904,6 +20117,8 @@ system'StringConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(o)
 </CODE>
+<div class="block">
+Returns the string representation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -19913,6 +20128,8 @@ system'StringConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Formats a number <b>b</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -19922,6 +20139,8 @@ system'StringConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -19931,42 +20150,52 @@ system'StringConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Formats a number <b>b</b> with 10 base as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convertUnsigned(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+<div class="block">
+Formats a 64-bit integer <b>value</b> as unsigned one the specified base <b>radix</b> as a literal presentation</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> value)
-</CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -19974,11 +20203,24 @@ system'StringConvertor</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Formats a number <b>value</b> as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
+</CODE>
+<div class="block">
+Converts a UTF32 value <b>ch</b> as a string</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
@@ -19987,7 +20229,7 @@ system'StringConvertor</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
@@ -19996,22 +20238,26 @@ system'StringConvertor</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> w)
 </CODE>
+<div class="block">
+Converts UTF-16 string to UTF-8 one</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
+<div class="block">
+Returns an argument</div>
 </TD>
 </TR>
 </TABLE>
@@ -20032,7 +20278,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Symbol</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Symbol</SPAN><BR/>
+<I>A dynamic symbol reference</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -20081,6 +20328,8 @@ system'Symbol</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> name)
 </CODE>
+<div class="block">
+Loads a symbol reference<br/>If the symbol cannot be loaded raises SymbolLoaderException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20090,6 +20339,8 @@ system'Symbol</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN> ptr)
 </CODE>
+<div class="block">
+Copies the reference from a pointer<br/>Unsafe operation</div>
 </TD>
 </TR>
 </TABLE>
@@ -20111,6 +20362,8 @@ system'Symbol</LI>
 <TD CLASS="colLast">
 <CODE>tryLoad(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> ns, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> name)
 </CODE>
+<div class="block">
+Tries to load a symbol reference<br/>If the symbol cannot be loaded returns null-reference</div>
 </TD>
 </TR>
 </TABLE>
@@ -20131,6 +20384,8 @@ system'Symbol</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Symbol">Symbol</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Default()</CODE>
+<div class="block">
+Returns null reference</div>
 </TD>
 </TR>
 </TABLE>
@@ -20161,6 +20416,8 @@ system'Symbol</LI>
 <TD CLASS="colLast">
 <CODE>equal(<SPAN CLASS="memberNameLink"><A HREF="system.html#Symbol">Symbol</A></SPAN> s)
 </CODE>
+<div class="block">
+Returns true if the object and <b>s</b> refer both the same symbol<br/>Otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20170,6 +20427,8 @@ system'Symbol</LI>
 <TD CLASS="colLast">
 <CODE>notequal(<SPAN CLASS="memberNameLink"><A HREF="system.html#Symbol">Symbol</A></SPAN> s)
 </CODE>
+<div class="block">
+Returns false if the object and <b>s</b> refer both the same symbol<br/>Otherwise returns true</div>
 </TD>
 </TR>
 </TABLE>
@@ -20190,7 +20449,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">SymbolLoaderException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">SymbolLoaderException</SPAN><BR/>
+<I>Symbol cannot be loaded exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -20253,6 +20513,8 @@ system'SymbolLoaderException</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> symbolName)
 </CODE>
+<div class="block">
+Creates an exception with the specified <b>symbolName</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -20273,7 +20535,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">TypeLoaderException</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">TypeLoaderException</SPAN><BR/>
+<I>Type cannot be loaded exception</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -20336,6 +20599,8 @@ system'TypeLoaderException</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> className)
 </CODE>
+<div class="block">
+Creates the exception with the specified <b>className</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -20385,6 +20650,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(o)
 </CODE>
+<div class="block">
+Tries to convert an argument to a unsigned 32-bit integer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20394,6 +20661,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Returns an argument</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20403,6 +20672,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to unsigned 32-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20412,6 +20683,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b)
 </CODE>
+<div class="block">
+Converts an argument <b>b</b> to unsigned 32-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20421,6 +20694,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts an argument <b>s</b> to unsigned 32-bit integer value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20430,6 +20705,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> l)
 </CODE>
+<div class="block">
+Converts an argument <b>l</b> to unsigned 32-bit integer value if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20439,6 +20716,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 32-bit unsigned integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -20448,6 +20727,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 32-bit unsigned integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -20457,6 +20738,8 @@ system'UIntConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Converts a string <b>s</b> to a 32-bit unsigned integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 </TABLE>
@@ -21634,6 +21917,57 @@ Returns true if the integer is zero</div>
 </UL>
 <HR>
 </DIV>
+<A NAME="ULongConvertor">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'</DIV>
+<H2 title="ULongConvertor" class="title">ULongConvertor</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public singleton <SPAN CLASS="typeNameLabel">ULongConvertor</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'ULongConvertor</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+<div class="block">
+Converts a string <b>s</b> to a 64-bit unsigned integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="UnsafeArray">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -21647,7 +21981,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">UnsafeArray</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">UnsafeArray</SPAN><BR/>
+<I>A unsafe pointer to an array of pointers</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -21696,6 +22031,8 @@ system'UnsafeArray</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a null pointer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21705,6 +22042,8 @@ system'UnsafeArray</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN> ptr)
 </CODE>
+<div class="block">
+Creates a copy of weak <b>ptr</b> pointer</div>
 </TD>
 </TR>
 </TABLE>
@@ -21726,6 +22065,8 @@ system'UnsafeArray</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns a pointer at the position <b>index</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -21746,7 +22087,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">UnsafePointer</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">UnsafePointer</SPAN><BR/>
+<I>Unsafe weak pointer</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -21795,6 +22137,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a null pointer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21804,6 +22148,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN> ptr)
 </CODE>
+<div class="block">
+Creates a copy of <b>ptr</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21813,6 +22159,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> obj)
 </CODE>
+<div class="block">
+Creates a pointer to <b>obj</b><br/>It is unsafe operation, because the object reference can be modified by GC routines</div>
 </TD>
 </TR>
 </TABLE>
@@ -21833,6 +22181,8 @@ system'UnsafePointer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Default()</CODE>
+<div class="block">
+Returns a null-pointer</div>
 </TD>
 </TR>
 </TABLE>
@@ -21853,6 +22203,8 @@ system'UnsafePointer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns a pointer (32 / 64 bit number depending on the platform) referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21862,6 +22214,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>Value(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> arg1)
 </CODE>
+<div class="block">
+Returns a 32-bit integer referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21871,6 +22225,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>Value(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> arg1)
 </CODE>
+<div class="block">
+Returns a 64-bit float number referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21880,6 +22236,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>Value(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> arg1)
 </CODE>
+<div class="block">
+Returns a 64-bit integer referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21889,6 +22247,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>Value(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> arg1)
 </CODE>
+<div class="block">
+Returns a UTF-8 string referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21898,6 +22258,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>Value(<I>ref</I>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> arg1)
 </CODE>
+<div class="block">
+Returns a UTF-16 string referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 </TABLE>
@@ -21918,6 +22280,8 @@ system'UnsafePointer</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns a UTF-8 string referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21926,6 +22290,8 @@ system'UnsafePointer</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns a UTF-16 string referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21934,6 +22300,8 @@ system'UnsafePointer</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>cast</i>()</CODE>
+<div class="block">
+Returns a 32-bit integer referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 </TABLE>
@@ -21955,6 +22323,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>isUnassigned()
 </CODE>
+<div class="block">
+Returns true if it is a null-pointer<br/>Otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -21982,6 +22352,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>copyToUnsafe(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> ptr, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
+<div class="block">
+Copies the buffer referred by the pointer to <b>ptr</b> with provided <b>length</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -21991,6 +22363,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>copyTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
+<div class="block">
+Copies the buffer referred by the pointer to <b>target</b> byte array with provided <b>length</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22000,6 +22374,8 @@ system'UnsafePointer</LI>
 <TD CLASS="colLast">
 <CODE>copyTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN> target, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
+<div class="block">
+Copies the buffer referred by the pointer to <b>target</b> byte sub array with provided <b>length</b> starting from <b>index</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -22020,7 +22396,8 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">UnsafePointer&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">UnsafePointer&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed unsafe pointer</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -22069,6 +22446,8 @@ system'UnsafePointer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a null pointer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22078,6 +22457,8 @@ system'UnsafePointer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer&lt;T1&gt;">UnsafePointer&lt;T1&gt;</A></SPAN> ptr)
 </CODE>
+<div class="block">
+Creates a copy of <b>ptr</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22087,6 +22468,8 @@ system'UnsafePointer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#UnsafePointer">UnsafePointer</A></SPAN> ptr)
 </CODE>
+<div class="block">
+Creates a copy of weak <b>ptr</b> pointer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22096,6 +22479,8 @@ system'UnsafePointer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private.html#T1">T1</A></SPAN> obj)
 </CODE>
+<div class="block">
+Creates a pointer to <b>obj</b><br/>It is unsafe operation, because the object reference can be modified by GC routines</div>
 </TD>
 </TR>
 </TABLE>
@@ -22116,6 +22501,8 @@ system'UnsafePointer&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns an ibstance of T type referred by the pointer<br/>It is unsafe operation</div>
 </TD>
 </TR>
 </TABLE>
@@ -22137,6 +22524,8 @@ system'UnsafePointer&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>copyTo(<SPAN CLASS="memberNameLink"><A HREF="system-$private.html#T1">T1</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> size)
 </CODE>
+<div class="block">
+Copies the buffer referred by the pointer to <b>value</b> with provided <b>length</b><br/>NotSupportedException raises if T is not a structure</div>
 </TD>
 </TR>
 </TABLE>
@@ -22186,6 +22575,8 @@ system'UShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UShortNumber">UShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+Returns an argument</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -22195,6 +22586,8 @@ system'UShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> s)
 </CODE>
+<div class="block">
+Converts an argument <b>s</b> to a 16-bit unsigned integer if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -22204,6 +22597,8 @@ system'UShortConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Converts an argument <b>n</b> to a 16-bit unsigned integer if it is possible<br/>Otherwise raises an exception OutOfRangeException</div>
 </TD>
 </TR>
 </TABLE>
@@ -23548,6 +23943,8 @@ system'WideConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(o)
 </CODE>
+<div class="block">
+Returns the string representation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -23557,6 +23954,8 @@ system'WideConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch)
 </CODE>
+<div class="block">
+Converts a UTF32 value <b>ch</b> as a string</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -23566,6 +23965,8 @@ system'WideConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN> b, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Formats a number <b>b</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -23575,6 +23976,8 @@ system'WideConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -23584,33 +23987,41 @@ system'WideConvertor</LI>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Formats a number <b>b</b> with 10 base as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convertUnsigned(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+<div class="block">
+Formats a 64-bit integer <b>value</b> as unsigned one the specified base <b>radix</b> as a literal presentation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#UIntNumber">UIntNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
-</CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -23618,11 +24029,24 @@ system'WideConvertor</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> value)
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> value, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
 </CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>convert(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> value)
+</CODE>
+<div class="block">
+Formats a number <b>value</b> with the specified base <b>radix</b> as a literal presentation</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
@@ -23631,7 +24055,7 @@ system'WideConvertor</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
@@ -24366,7 +24790,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+An array of program command line arguments</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -24383,6 +24807,8 @@ system'</DIV>
 <i>public </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>CommandLine</CODE>
+<div class="block">
+An array of program command line arguments</div>
 </TD>
 </TABLE>
 </LI>
@@ -24403,7 +24829,7 @@ system'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-</PRE>
+A console symbol<br/>Obsolete. Please use Console</PRE>
 <BR>
 </DIV>
 <DIV CLASS="contentContainer">
@@ -24420,6 +24846,8 @@ system'</DIV>
 <i>public </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ConsoleHelperImpl">ConsoleHelperImpl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>console</CODE>
+<div class="block">
+A console symbol<br/>Obsolete. Please use Console</div>
 </TD>
 </TABLE>
 </LI>

@@ -22,6 +22,9 @@ using namespace elena_lang;
 * BTOptimization4
 * ---------------
 *
+* BTOptimization5
+* ---------------
+*
 * BTOptimization12
 * ---------------
 *
@@ -30,32 +33,67 @@ using namespace elena_lang;
 *
 */
 
-TEST_F(BTOptimization1_1, BuildTapeTest)
+TEST_F(BTOptimization2_1, BuildTapeTest)
 {
    runBTTest();
 }
 
-TEST_F(BTOptimization1_2, BuildTapeTest)
+TEST_F(BTOptimization2_2, BuildTapeTest)
 {
    runBTTest();
 }
 
-TEST_F(BTOptimization1_3, BuildTapeTest)
+TEST_F(BTOptimization2_3, BuildTapeTest)
 {
    runBTTest();
 }
 
-TEST_F(BTOptimization1_4, BuildTapeTest)
+TEST_F(BTOptimization2_4, BuildTapeTest)
 {
    runBTTest();
 }
 
-TEST_F(BTOptimization2, BuildTapeTest)
+TEST_F(BTOptimization3, BuildTapeTest)
 {
    runBTTest();
 }
 
 TEST_F(BTOptimization4, BuildTapeTest)
+{
+   runBTTest();
+}
+
+TEST_F(BTOptimization5, BuildTapeTest)
+{
+   runBTTest();
+}
+
+TEST_F(BTOptimization6, BuildTapeTest)
+{
+   runBTTest();
+}
+
+TEST_F(BTOptimization7, BuildTapeTest)
+{
+   runBTTest();
+}
+
+TEST_F(BTOptimization8, BuildTapeTest)
+{
+   runBTTest();
+}
+
+TEST_F(BTOptimization9, BuildTapeTest)
+{
+   runBTTest();
+}
+
+TEST_F(BTOptimization10_1, BuildTapeTest)
+{
+   runBTTest();
+}
+
+TEST_F(BTOptimization10_2, BuildTapeTest)
 {
    runBTTest();
 }
@@ -66,11 +104,6 @@ TEST_F(BTOptimization12, BuildTapeTest)
 }
 
 TEST_F(BTOptimization12_2, BuildTapeTest)
-{
-   runBTTest();
-}
-
-TEST_F(BTOptimization7, BuildTapeTest)
 {
    runBTTest();
 }

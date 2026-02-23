@@ -1,3 +1,15 @@
+#if (__project["_Linux32"])
+
+internal const int __SIZEOF_PTHREAD_MUTEX_T = 24;
+internal const int __SIZEOF_PTHREAD_COND_T  = 48;
+
+#elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"] || __project["FreeBSD_AMD64"])
+
+internal const int __SIZEOF_PTHREAD_MUTEX_T = 40;
+internal const int __SIZEOF_PTHREAD_COND_T  = 48;
+
+#endif
+
 #if (__project["_Win"]) // Windows
 
 internal struct EventHandle
@@ -14,7 +26,7 @@ internal struct EventHandle
 
    wait()
    {
-      extern
+      excluded
       {
          extern KERNEL32.WaitForSingleObject(_handle, INFINITE);
       }      
@@ -22,7 +34,7 @@ internal struct EventHandle
 
    wait(int timeOut)
    {
-      extern
+      excluded
       {
          extern KERNEL32.WaitForSingleObject(_handle, timeOut);
       }      
@@ -30,7 +42,7 @@ internal struct EventHandle
 
    set()
    {
-      extern
+      excluded
       {
          extern KERNEL32.SetEvent(_handle);
       }      
@@ -38,7 +50,7 @@ internal struct EventHandle
 
    reset()
    {
-      extern
+      excluded
       {
          extern KERNEL32.ResetEvent(_handle);
       }      
@@ -54,7 +66,85 @@ internal struct EventHandle
 
 internal struct EventHandle
 {
-   Handle  _handle;
+   pointer _mutex;
+   pointer _cond;
+   int     _signaled;
+
+   internal constructor new(bool value, bool autoReset)
+   {
+      _mutex := extern libc.malloc(__SIZEOF_PTHREAD_MUTEX_T);
+      _cond := extern libc.malloc(__SIZEOF_PTHREAD_COND_T);
+
+      extern libc.pthread_mutex_init(_mutex, 0);
+
+      extern libc.pthread_cond_init(_cond, 0);
+
+      _signaled := value ? 1 : 0;
+      if (autoReset)
+         _signaled := _signaled | 80000000h;
+   }
+
+   wait()
+   {
+      extern libc.pthread_mutex_lock(_mutex);
+
+      if (_signaled < 0) {
+         excluded
+         {
+             extern libc.pthread_cond_wait(_cond, _mutex);
+         }
+      }
+      else {
+         excluded
+         {
+            while (_signaled == 0) {
+               extern libc.pthread_cond_wait(_cond, _mutex)
+            }
+         }
+      };
+
+      extern libc.pthread_mutex_unlock(_mutex);
+   }
+
+   wait(int timeOut)
+   {
+      NotSupportedException.raise()
+   }
+
+   set()
+   {
+      extern libc.pthread_mutex_lock(_mutex);
+
+      if (_signaled != 1) {
+         if (_signaled == 0)
+            _signaled := 1;
+
+         extern libc.pthread_cond_broadcast(_cond);
+      };
+
+      extern libc.pthread_mutex_unlock(_mutex);
+
+   }
+
+   reset()
+   {
+      if (_signaled == 1) {
+         extern libc.pthread_mutex_lock(_mutex);
+
+         _signaled := 0;
+
+         extern libc.pthread_mutex_unlock(_mutex);
+      }
+   }
+
+   close()
+   {
+      extern libc.pthread_mutex_destroy(_mutex);
+      extern libc.pthread_cond_destroy(_cond);
+
+      extern libc.free(_mutex);
+      extern libc.free(_cond);
+   }
 }
 
 #endif
@@ -132,5 +222,4 @@ public sealed class CountDownEvent
 
    close()
       => _handle;
-
 }

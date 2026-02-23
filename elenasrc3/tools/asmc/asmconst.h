@@ -3,7 +3,7 @@
 //
 //		This file contains the assembly compiler common constants
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CLICONST
@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define ASM_REVISION_NUMBER               0x0017
+   #define ASM_REVISION_NUMBER               0x001B
 
    constexpr auto N_ARGUMENT1                = "__n_1";
    constexpr auto N_ARGUMENT2                = "__n_2";
@@ -54,7 +54,7 @@ namespace elena_lang
    constexpr auto RDATA64_ARGUMENT1          = "rdata64";
    constexpr auto QWORD_ARGUMENT2            = "__arg64_2";
 
-   constexpr auto ASM_GREETING               = "ELENA Assembler Compiler %d.%d.%d (C)2011-2025 by Aleksey Rakov\n";
+   constexpr auto ASM_GREETING               = "ELENA Assembler Compiler %d.%d.%d (C)2011-2026 by Aleksey Rakov\n";
    constexpr auto ASM_HELP                   = "asmc-cli [-amd64 | -x86] [-windows | -linux] <file> <output path> [<output_name>]\n";
 
    constexpr auto ASM_COMPILE_X86            = "X86 Assembler : compiling %s\n";

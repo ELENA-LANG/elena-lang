@@ -36,9 +36,9 @@ constexpr int MINIMAL_ARG_LIST = 2;
 
 // --- TestModuleScope ---
 
-TestModuleScope::TestModuleScope(bool tapeOptMode)
+TestModuleScope::TestModuleScope(bool tapeOptMode, bool btapeOptMode)
    : ModuleScopeBase(new Module(), nullptr, DEFAULT_STACKALIGNMENT, DEFAULT_RAW_STACKALIGNMENT, 
-      DEFAULT_EHTABLE_ENTRY_SIZE, MINIMAL_ARG_LIST, sizeof(uintptr_t), tapeOptMode)
+      DEFAULT_EHTABLE_ENTRY_SIZE, MINIMAL_ARG_LIST, sizeof(uintptr_t), tapeOptMode, btapeOptMode)
 {
    _anonymousRef = 0x100;
 }
@@ -261,7 +261,7 @@ CompilerEnvironment :: CompilerEnvironment()
 
 ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool withAttributes)
 {
-   auto scope = new TestModuleScope(tapeOptMode);
+   auto scope = new TestModuleScope(tapeOptMode, tapeOptMode);
 
    if (withAttributes) {
       scope->attributes.add("dispatch", V_DISPATCHER);
@@ -560,14 +560,11 @@ void ExprTest::SetUp()
    buildNode = buildTree.readRoot().appendChild(BuildKey::Tape);
 }
 
-void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators, ref_t funcRef)
+void ExprTest :: initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages)
 {
-   // Arrange
-   ModuleScopeBase* moduleScope = env.createModuleScope(true, declareDefaultMessages);
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = 2;
    moduleScope->buildins.wrapperTemplateReference = 3;
-   moduleScope->buildins.closureTemplateReference = funcRef;
 
    if (declareDefaultMessages) {
       moduleScope->buildins.dispatch_message = encodeMessage(
@@ -582,6 +579,16 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
          encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
             1, STATIC_MESSAGE);
    }
+}
+
+void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators, ref_t funcRef)
+{
+   // Arrange
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, declareDefaultMessages);
+
+   initModuleScope(moduleScope, declareDefaultMessages);
+
+   moduleScope->buildins.closureTemplateReference = funcRef;
 
    Compiler* compiler = env.createCompiler();
 

@@ -62,6 +62,19 @@ void ConfigFile :: appendSetting(ustr_t xpath, ustr_t value)
    else node.setContent(value);
 }
 
+void ConfigFile :: appendSetting(ustr_t xpath, ustr_t attribute, ustr_t attributeValue, ustr_t value)
+{
+   XmlNode node = _tree.insertNode(xpath);
+   if (node.isNotFound()) {
+      assert(false);
+   }
+   else {
+      _tree.appendAttribute(node, attribute, attributeValue);
+
+      node.setContent(value);
+   }
+}
+
 void ConfigFile :: removeSetting(ustr_t xpath)
 {
    XmlNode node = _tree.selectNode(xpath);

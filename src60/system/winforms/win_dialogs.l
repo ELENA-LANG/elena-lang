@@ -136,7 +136,7 @@ public sealed class OpenFileDialog : BaseFileDialog
       self.prepare(struct, filters, fileName, 1024);
 
       int retVal := 0;
-      extern 
+      excluded 
       {
          retVal := extern Comdlg32.GetOpenFileNameW(struct);
       };
@@ -176,7 +176,7 @@ public sealed class SaveFileDialog : BaseFileDialog
       self.prepare(struct, filters, fileName, 1024);
 
       int retVal := 0;
-      extern 
+      excluded 
       {
          retVal := extern Comdlg32.GetSaveFileNameW(struct);
       };

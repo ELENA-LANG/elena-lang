@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TabBar Implementation File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "idecommon.h"
@@ -15,12 +15,36 @@ using namespace elena_lang;
 // --- CustomTabBar ---
 
 CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore, int width, int height)
-   : ControlBase(nullptr, 0, 0, width, height)
+   : ControlBase(nullptr, 0, 0, width, height), _hImages(nullptr)//, _highlighted(false)
 {
    _notifier = notifier;
    _selectionInvoker = nullptr;
    _withAbovescore = withAbovescore;
    _notSelected = true;
+}
+
+CustomTabBar :: ~CustomTabBar()
+{
+   if (_hImages)
+      ImageList_Destroy(_hImages);
+}
+
+bool CustomTabBar :: isOverButton(Point p)
+{
+   POINT pt = { p.x, p.y };
+   ::ScreenToClient(_handle, &pt);
+
+   RECT rect;
+
+   if (TabCtrl_GetItemRect(_handle, getCurrentIndex(), &rect)) {
+      // if it is over the tab
+      if (rect.left < pt.x && rect.right > pt.x && rect.top < pt.y && rect.bottom > pt.y) {
+         if (rect.right - pt.x <= 14)
+            return true;
+      }
+   }
+
+   return false;
 }
 
 void CustomTabBar :: onDrawItem(DRAWITEMSTRUCT* item)
@@ -37,7 +61,7 @@ void CustomTabBar :: onDrawItem(DRAWITEMSTRUCT* item)
 
    wchar_t label[0x51];
    TCITEM tci;
-   tci.mask = TCIF_TEXT;
+   tci.mask = TCIF_TEXT | TCIF_IMAGE;
    tci.pszText = label;
    tci.cchTextMax = 0x50;
    ::SendMessage(_handle, TCM_GETITEM, index, (LPARAM)&tci);
@@ -63,18 +87,30 @@ void CustomTabBar :: onDrawItem(DRAWITEMSTRUCT* item)
       //rect.topLeft.y -= ::GetSystemMetrics(SM_CYEDGE);
       rect.topLeft.y += 1;
 
-      canvas.drawText(rect, label, getlength_int(label), Color(0, 0, 0), true);
+      if (_hImages) {
+         rect.bottomRight.x -= 10;
+
+         canvas.drawText(rect, label, getlength_int(label), Color(0, 0, 0), true);
+
+         //if (_highlighted) {
+         //   canvas.drawTransparentRectangle(rect, Color(255, 255, 255));
+         //}
+
+         ImageList_Draw(_hImages, tci.iImage, item->hDC, rect.bottomRight.x - 8, rect.topLeft.y + 8, ILD_TRANSPARENT);
+      }
+      else canvas.drawText(rect, label, getlength_int(label), Color(0, 0, 0), true);
    }
    else canvas.drawText(rect, label, getlength_int(label), Color(128, 128, 128), true);
 }
 
-void CustomTabBar :: addTab(int index, wstr_t name, void* param)
+void CustomTabBar :: addTab(int index, wstr_t name, void* param, int iconIndex)
 {
    TCITEM tie;
    tie.mask = TCIF_TEXT | TCIF_IMAGE | TCIF_PARAM;
    tie.iImage = -1;
    tie.pszText = (wchar_t*)name.str();
    tie.lParam = (LPARAM)param;
+   tie.iImage = iconIndex;
 
    ::SendMessage(_handle, TCM_INSERTITEM, index, (LPARAM)&tie);
 }
@@ -94,7 +130,7 @@ void CustomTabBar :: renameTab(int index, wstr_t title)
 {
    // rename tab caption
    TCITEM tie;
-   tie.mask = TCIF_TEXT | TCIF_IMAGE;
+   tie.mask = TCIF_TEXT;
    tie.iImage = -1;
    tie.pszText = (wchar_t*)title.str();
 
@@ -118,8 +154,8 @@ int CustomTabBar :: getCurrentIndex()
 
 // --- MultiTabControl ---
 
-MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child)
-   : CustomTabBar(notifier, withAbovescore, 50, 50)
+MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child, int iconId)
+   : CustomTabBar(notifier, withAbovescore, 50, 50), _iconId(iconId)
 {
    _child = child;
 }
@@ -159,13 +195,29 @@ void MultiTabControl :: setFocus()
       _child->setFocus();  
    }
 }
-
+   
 HWND MultiTabControl :: createControl(HINSTANCE instance, ControlBase* owner)
 {
    _handle = ::CreateWindowEx(
       WS_EX_CLIENTEDGE, WC_TABCONTROL, _title,
       WS_CHILD | WS_CLIPCHILDREN | WS_CLIPSIBLINGS | WS_BORDER | TCS_FOCUSNEVER | TCS_TABS | TCS_SINGLELINE | TCS_OWNERDRAWFIXED | TCS_TOOLTIPS,
       CW_USEDEFAULT, 0, CW_USEDEFAULT, 0, owner->handle(), nullptr, instance, (LPVOID)this);
+
+   if (_iconId != 0) {
+      _hImages = ImageList_Create(GetSystemMetrics(SM_CXSMICON),
+         GetSystemMetrics(SM_CYSMICON),
+         ILC_COLOR32 | ILC_MASK, 1, 1);
+
+      ImageList_SetIconSize(_hImages, 14, 14);
+
+      //HINSTANCE hLib = LoadLibrary(_T("shell32.dll"));
+      //HICON hIcon = reinterpret_cast<HICON>(LoadImage(hLib, MAKEINTRESOURCE(240), IMAGE_ICON, 16, 16, LR_SHARED));
+
+      HICON hIcon = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(_iconId), IMAGE_ICON, 14, 14, LR_SHARED));
+      ImageList_AddIcon(_hImages, hIcon);
+
+      TabCtrl_SetImageList(_handle, _hImages);
+   }
 
    return _handle;
 }
@@ -174,7 +226,7 @@ int MultiTabControl :: addTabView(wstr_t title, void* param)
 {
    int index = getTabCount();
 
-   addTab(index, title, param);
+   addTab(index, title, param, _iconId != 0 ? 0 : -1);
 
    return index;
 }
@@ -253,6 +305,16 @@ void TabBar :: removeTabChild(ControlBase* child)
    refresh();
 }
 
+bool TabBar :: isChildAvailble(ControlBase* child)
+{
+   int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
+      {
+         return current == arg;
+      });
+
+   return index != -1;
+}
+
 bool TabBar :: selectTabChild(ControlBase* child)
 {
    int index = _pages.retrieveIndex<ControlBase*>(child, [](ControlBase* arg, ControlBase* current)
@@ -269,6 +331,8 @@ bool TabBar :: selectTabChild(ControlBase* child)
       _current->show();
 
       selectTab(index);
+
+      int x = getCurrentIndex();
 
       ControlBase::refresh();
 

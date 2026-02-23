@@ -306,8 +306,9 @@ labYGNextThread:
   jz   short labYGNextThreadSkip
 
   // ; get the thread local roots
+  mov  rax, rdata : %SYSTEM_ENV
+  mov  rcx, [rax + env_tls_size]
   lea  rax, [rsi + tt_size]
-  mov  rcx, [rdata : %SYSTEM_ENV + env_tls_size]
   push rax
   push rcx
 

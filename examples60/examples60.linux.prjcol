@@ -6,7 +6,7 @@
       <project base_path="console/binary">binary.l</project>
       <project base_path="console/bsort">bsort.l</project>
       <project base_path="console/collatz">collatz.l</project>
-      <project>console/datetime/datetime.prj</project>
+      <project>console/datetime/datetime.linux.prj</project>
       <project base_path="console/goods">goods.l</project>
       <project>console/matrix/matrix.prj</project>
       <project base_path="console/pi">pi.l</project>
@@ -22,6 +22,11 @@
     <collection name="files">
       <project base_path="files/textdb">textdb.l</project>
       <project base_path="files/textfile">textfile.l</project>
+    </collection>
+    <collection name="threads">
+      <project>threads/async/asyncsamples.prj</project>
+      <project>threads/tasks/tasksamples.linux.prj</project>
+      <project>threads/threadpool/threadpoolsamples.linux.prj</project>
     </collection>
   </collections>
 </configuration>

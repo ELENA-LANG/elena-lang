@@ -109,7 +109,7 @@ public sealed struct ThreadHandle
                                                                    
    join(int timeOut)
    {
-      extern {
+      excluded {
          extern KERNEL32.WaitForSingleObject(_handle, timeOut);
       }
    }     
@@ -128,7 +128,7 @@ public sealed struct ThreadHandle
 
    static sleep(int interval)
    {
-      extern
+      excluded
       {
          extern KERNEL32.Sleep(interval)
       }
@@ -152,12 +152,15 @@ public sealed struct ThreadHandle
 
    constructor()
    {
-      NotSupportedException.raise()
+      _handle := extern libc.pthread_self();
    }
 
    ThreadPriority getPriority()
    {
-      NotSupportedException.raise()
+      //NotSupportedException.raise()
+
+      // !! temporal
+      ^ ThreadPriority.Normal
    }
 
    setPriority(ThreadPriority priority)
@@ -172,7 +175,7 @@ public sealed struct ThreadHandle
 
    join()
    {
-      extern
+      excluded
       {
          extern libc.pthread_join(_handle);
       }
@@ -185,7 +188,7 @@ public sealed struct ThreadHandle
    
    bool checkIfAlive()
    {
-      NotSupportedException.raise()
+      ^ NotSupportedException.raise()
    }                                                                
 
    close()
@@ -195,9 +198,9 @@ public sealed struct ThreadHandle
 
    static sleep(int interval)
    {
-      extern
+      excluded
       {
-         extern libc.sleep(interval);
+         extern libc.sleep(interval / 1000);
       }
    }
 

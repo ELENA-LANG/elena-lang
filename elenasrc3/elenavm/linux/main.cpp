@@ -240,7 +240,7 @@ int EvaluateVMLA(void* tape)
    int retVal = 0;
    try
    {
-      machine->evaluate(tape);
+      machine->evaluate(tape, false);
    }
    catch (InternalError err)
    {
@@ -333,7 +333,7 @@ int ExecuteVMLA(const char* target, const char* arg, char* output, size_t maxLen
             retVal = (int)copied;
       }
       else {
-         machine->evaluate(tape.get(0));
+         machine->evaluate(tape.get(0), false);
          retVal = 0;
       }
    }

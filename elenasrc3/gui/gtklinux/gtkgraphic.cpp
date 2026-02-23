@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI graphical tools Implementation
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkgraphic.h"
@@ -154,6 +154,13 @@ void Canvas :: validateStyle(Style* style)
 void Canvas :: fillRectangle(int x, int y, int width, int height, Style* style)
 {
    cr->rectangle (x, y, width, height);
+   cr->set_source_rgb(style->background.red, style->background.green, style->background.blue);
+   cr->fill();
+}
+
+void Canvas :: drawEllipse(int x, int y, int diameter, Style* style)
+{
+   cr->arc(x, y, diameter / 4.0, 0.0, 2.0 * M_PI);
    cr->set_source_rgb(style->background.red, style->background.green, style->background.blue);
    cr->fill();
 }

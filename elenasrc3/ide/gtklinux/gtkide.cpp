@@ -1,10 +1,11 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Linux-GTK+ GTK IDE
-//                                             (C)2024-2025, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkide.h"
+#include "gtklinux/gtkoutput.h"
 #include "eng/messages.h"
 
 using namespace elena_lang;
@@ -209,17 +210,17 @@ static Glib::ustring ui_info =
         "      <section>"
         "         <item>"
         "            <attribute name='label'>Project View</attribute>"
-        "            <attribute name='action'>ProjectView</attribute>"
+        "            <attribute name='action'>win.ProjectView</attribute>"
         "         </item>"
         "      </section>"
         "      <section>"
         "         <item>"
         "            <attribute name='label'>Compiler output</attribute>"
-        "            <attribute name='action'>ProjectOutput</attribute>"
+        "            <attribute name='action'>win.ProjectOutput</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Messages</attribute>"
-        "            <attribute name='action'>ProjectMessages</attribute>"
+        "            <attribute name='action'>win.ProjectMessages</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Debug Watch</attribute>"
@@ -283,7 +284,7 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Compile</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;F9</attribute>"
-        "            <attribute name='action'>ProjectCompile</attribute>"
+        "            <attribute name='action'>win.ProjectCompile</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Clean up</attribute>"
@@ -473,7 +474,8 @@ GTKIDEWindow :: GTKIDEWindow(IDEController* controller, IDEModel* model, GtkApp*
    _model = model;
    _controller = controller;
 
-   //_projectTree = Gtk::TreeStore::create(_projectTreeColumns);
+   _projectTree = Gtk::TreeStore::create(_projectTreeColumns);
+   _messageList = Gtk::TreeStore::create(_messageLogColumns);
 
    populateUI();
 
@@ -484,15 +486,27 @@ void GTKIDEWindow :: populate(int counter, Gtk::Widget** children)
 {
    SDIWindow::populate(counter, children);
 
-//   Gtk::TreeView* projectView = (Gtk::TreeView*)_children[_model->ideScheme.projectView];
+   Gtk::TreeView* projectView = (Gtk::TreeView*)_children[_model->ideScheme.projectView];
+   Gtk::TreeView* messageList = (Gtk::TreeView*)_children[_model->ideScheme.errorListControl];
 
    // project tree
-//   projectView->set_model(_projectTree);
+   projectView->set_model(_projectTree);
 
-//   projectView->append_column("module", _projectTreeColumns._caption);
-//
-//   projectView->signal_row_activated().connect(sigc::mem_fun(*this,
-//              &GTKIDEWindow::on_projectview_row_activated));
+   projectView->append_column("module", _projectTreeColumns._caption);
+
+   projectView->signal_row_activated().connect(sigc::mem_fun(*this,
+              &GTKIDEWindow::on_projectview_row_activated));
+
+   // message log
+   messageList->set_model(_messageList);
+
+   messageList->append_column("description", _messageLogColumns._description);
+   messageList->append_column("file", _messageLogColumns._file);
+   messageList->append_column("line", _messageLogColumns._line);
+   messageList->append_column("column", _messageLogColumns._column);
+
+   messageList->signal_row_activated().connect(sigc::mem_fun(*this,
+              &GTKIDEWindow::on_errorlist_row_activated));
 }
 
 void GTKIDEWindow :: populateUI()
@@ -533,9 +547,12 @@ void GTKIDEWindow :: populateUI()
    refActions->add_action("EditComment", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_comment));
    refActions->add_action("EditUncomment", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_edit_uncomment));
 
-//   _app->add_action("ProjectView", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view));
-//   _app->add_action("ProjectOutput", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output));
-//   _app->add_action("ProjectMessages", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages));
+   _projectViewMenuItem = refActions->add_action_bool("ProjectView", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_view), true);
+   _errorListMenuItem = refActions->add_action_bool("ProjectMessages", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages), false);
+   _outputMenuItem = refActions->add_action_bool("ProjectOutput", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output), false);
+
+   refActions->add_action("ProjectCompile", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
+
 //   _app->add_action("ProjectWatch", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_watch));
 //   _app->add_action("ProjectCallstack", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_callstack));
 //   _app->add_action("ProjectConsole", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_interactive));
@@ -548,7 +565,6 @@ void GTKIDEWindow :: populateUI()
 //
 //   _app->add_action("ProjectInclude", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_include));
 //   _app->add_action("ProjectExclude", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_exclude));
-//   _app->add_action("ProjectCompile", Gtk::AccelKey("<control>F9"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
 //   _app->add_action("ProjectCleanup", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_cleanup));
 //   _app->add_action("ProjectForwards", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_forwards));
 //   _app->add_action("ProjectOptions", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));
@@ -646,6 +662,10 @@ void GTKIDEWindow :: populateUI()
       Gtk::KeyvalTrigger::create(GDK_KEY_x, Gdk::ModifierType::CONTROL_MASK),
       Gtk::NamedAction::create("win.EditCut")));
 
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F9, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.ProjectCompile")));
+
    loadUI(ui_info, "MenuBar");
 
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
@@ -668,7 +688,6 @@ void GTKIDEWindow :: populateUI()
 //
 //   _refActionGroup->add( Gtk::Action::create("ProjectInclude", "Include"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_include));
 //   _refActionGroup->add( Gtk::Action::create("ProjectExclude", "Exclude"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_exclude));
-//   _refActionGroup->add( Gtk::Action::create("ProjectCompile", "Compile"), Gtk::AccelKey("<control>F9"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
 //   _refActionGroup->add( Gtk::Action::create("ProjectCleanup", "Clean up"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_cleanup));
 //   _refActionGroup->add( Gtk::Action::create("ProjectForwards", "Forwards..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_forwards));
 //   _refActionGroup->add( Gtk::Action::create("ProjectOptions", "Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));
@@ -734,13 +753,24 @@ void GTKIDEWindow :: on_projectview_row_activated(const Gtk::TreeModel::Path& pa
    }
 }
 
+void GTKIDEWindow :: on_errorlist_row_activated(const Gtk::TreeModel::Path& path,
+    Gtk::TreeViewColumn*)
+{
+   onErrorHighlight(path);
+}
+
+void GTKIDEWindow :: on_compilation_end(CompletionEvent event)
+{
+   onCompilationEnd(event.ExitCode(), event.PostpinedAction());
+}
+
 void GTKIDEWindow :: onDocumentUpdate(DocumentChangeStatus changeStatus)
 {
 }
 
 void GTKIDEWindow :: onProjectChange(bool empty)
 {
-   Gtk::TreeView* projectView = dynamic_cast<Gtk::TreeView*>(_children[_model->ideScheme.projectView]);
+   //Gtk::TreeView* projectView = dynamic_cast<Gtk::TreeView*>(_children[_model->ideScheme.projectView]);
 
    _projectTree->clear();
 
@@ -781,7 +811,7 @@ void GTKIDEWindow :: onProjectChange(bool empty)
       }
    }
 
-//   projectView->expand(root);
+   //projectView->expand(root);
    //show_all_children();
 }
 
@@ -811,6 +841,15 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
     //  }
       //else _children[_model->ideScheme.textFrameId]->hide();
    //}
+
+   if (test(status, STATUS_COMPILING)) {
+      onComilationStart();
+   }
+
+   if (test(status, STATUS_WITHERRORS)) {
+      toggleResultTab(_model->ideScheme.errorListControl, true);
+      checkMenuItemById(_errorListMenuItem, true);
+   }
 }
 
 void GTKIDEWindow :: saveFile_finish(PathString& path, int index)
@@ -1075,3 +1114,113 @@ void GTKIDEWindow :: newProject()
 
    projectSettingsDialog.showModal();
 }
+
+void GTKIDEWindow :: toggleResultTab(int controlIndex, bool visible)
+{
+   Gtk::Notebook* tabBar = (Gtk::Notebook*)_children[_model->ideScheme.resultControl];
+   Gtk::Widget* control = (Gtk::Widget*)_children[controlIndex];
+
+   if (visible) {
+      if (control->get_visible())
+         return;
+
+      control->set_visible(true);
+
+      if (!tabBar->get_visible())
+         tabBar->set_visible(true);
+
+      int n = tabBar->append_page(*control, _model->ideScheme.captions.get(controlIndex));
+      tabBar->set_current_page(n);
+   }
+   else {
+      if (!control->get_visible())
+         return;
+
+      tabBar->remove_page(*control);
+
+      control->set_visible(false);
+
+      if (tabBar->get_n_pages()==0)
+         tabBar->set_visible(false);
+   }
+}
+
+void GTKIDEWindow :: onComilationStart()
+{
+//   updateCompileMenu(false, false, true);
+
+   toggleResultTab(_model->ideScheme.compilerOutputControl, true);
+   checkMenuItemById(_outputMenuItem, true);
+
+   ((CompilerOutput*)_children[_model->ideScheme.compilerOutputControl])->clear();
+}
+
+void GTKIDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
+{
+   Glib::ustring output = ((CompilerOutput*)_children[_model->ideScheme.compilerOutputControl])->getOutput()->get_buffer()->get_text();
+
+   EventLog logger(this);
+
+   _controller->onCompilationCompletion(_model, exitCode, output.c_str(), &logger);
+
+   if (exitCode != EXIT_FAILURE) {
+//      switch ((DebugAction)postponedAction) {
+//         case DebugAction::Run:
+//            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
+//            break;
+//         case DebugAction::StepOver:
+//            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
+//            break;
+//         case DebugAction::StepInto:
+//            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
+//            break;
+//         case DebugAction::RunTo:
+//            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
+//            break;
+//         default:
+//            break;
+//      }
+   }
+}
+
+void GTKIDEWindow :: onErrorHighlight(const Gtk::TreeModel::Path& path)
+{
+   EventLog logger(this);
+
+   auto messageInfo = logger.getMessage(path);
+   if (!messageInfo.path.empty())
+      _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+}
+
+// --- GTKIDEWindow::EventLog ---
+
+void GTKIDEWindow::EventLog :: addMessage(text_str message, text_str file, text_str row, text_str col)
+{
+   auto logRow = *(_owner->_messageList->append());
+   logRow[_owner->_messageLogColumns._description] = message.str();
+   logRow[_owner->_messageLogColumns._file] = file.str();
+   logRow[_owner->_messageLogColumns._line] = row.str();
+   logRow[_owner->_messageLogColumns._column] = col.str();
+}
+
+MessageLogInfo GTKIDEWindow::EventLog :: getMessage(const Gtk::TreeModel::Path& path)
+{
+   Gtk::TreeModel::iterator iter = _owner->_messageList->get_iter(path);
+   if(iter) {
+      Gtk::TreeModel::Row row = *iter;
+
+      Glib::ustring file = row[_owner->_messageLogColumns._file];
+      Glib::ustring col = row[_owner->_messageLogColumns._column];
+      Glib::ustring line = row[_owner->_messageLogColumns._line];
+
+      MessageLogInfo bookmark(file.c_str(), StrConvertor::toInt(line.c_str(), 10), StrConvertor::toInt(col.c_str(), 10));
+
+      return bookmark;
+   }
+}
+
+void GTKIDEWindow::EventLog :: clearMessages()
+{
+   _owner->_messageList->clear();
+}
+

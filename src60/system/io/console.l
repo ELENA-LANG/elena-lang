@@ -242,7 +242,7 @@ namespace io
          bool found := false;
          until (found)
          {
-            extern
+            excluded
             {
                extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead);
             };
@@ -272,7 +272,7 @@ namespace io
       {
          int len := retVal;
             
-         extern
+         excluded
          {
             extern KERNEL32.ReadConsoleW(h, dump, len, ref /*retVal*/len, 0)
          };
@@ -293,7 +293,7 @@ namespace io
          {
             numberRead := 0;
 
-            extern
+            excluded
             {
                extern KERNEL32.PeekConsoleInputW(h, dump, 1, ref numberRead)
             };
@@ -312,7 +312,7 @@ namespace io
                   { ^ true }
             };
 
-            extern
+            excluded
             {
                extern KERNEL32.ReadConsoleInputW(h, dump, 1, ref numberRead)
             }                
@@ -425,6 +425,8 @@ namespace io
    {
       char read()
       {
+         int ch := 0; 
+
          termios savedState;   
          termios newState;
 
@@ -437,10 +439,13 @@ namespace io
          newState[VMIN] := 1;
 
          extern libc.tcsetattr(STDIN_FILENO, TCSANOW, newState);
-
-         int ch := extern libc.getchar();      /* block (withot spinning) until we get a keypress */
-
-            /* restore the saved state */
+   
+         excluded 
+         {
+            ch := extern libc.getchar();      /* block (withot spinning) until we get a keypress */
+         };
+   
+         /* restore the saved state */
          extern libc.tcsetattr(STDIN_FILENO, TCSANOW, savedState);
                         
          ^ CharValue.load(ch);
@@ -449,12 +454,16 @@ namespace io
       private int read(byte[] buffer, int len)
       {
          int retVal := 0;
+         int ch := 0;   
 
          for (int i := 0; i < len; i++)
          {
             retVal += 1;
 
-            int ch := extern libc.getchar();
+            excluded 
+            {
+               ch := extern libc.getchar();
+            };
 
             byte b := ByteConvertor.convert(ch);
     

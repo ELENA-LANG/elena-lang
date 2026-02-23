@@ -10,6 +10,7 @@ public sealed class ThreadPool
    static constructor()
    {
       int cpuCount := Environment.ProcessorCount;
+
       for(int i := 0; i < cpuCount; i++) {
          Thread.start(
          {

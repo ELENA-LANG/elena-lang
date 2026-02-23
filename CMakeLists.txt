@@ -7,7 +7,7 @@ project(ELENA)
 
 function(add_elena_target arch)
     add_custom_target(elc_${arch}
-        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elc/codeblocks all -f elc_${arch}.mak
+        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elc/make all -f elc_${arch}.mak
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
 
@@ -32,7 +32,7 @@ function(add_elena_target arch)
     )
 
     add_custom_target(elenart_${arch}
-        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elenart/codeblocks all -f elenart_${arch}.mak
+        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elenart/make all -f elenart_${arch}.mak
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )
 
@@ -46,12 +46,12 @@ function(add_elena_target arch)
     )
 
     add_custom_target(clean_${arch}
-        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elc/codeblocks clean -f elc_${arch}.mak
+        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elc/make clean -f elc_${arch}.mak
         COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/tools/sg/codeblocks clean -f sg_${arch}.mak
         COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/tools/og/codeblocks clean -f og_${arch}.mak
         COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/tools/asmc/codeblocks clean -f asmc_${arch}.mak
         COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/tools/ecv/codeblocks clean -f ecv_${arch}.mak
-        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elenart/codeblocks clean -f elenart_${arch}.mak
+        COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elenart/make clean -f elenart_${arch}.mak
         COMMAND ${CMAKE_MAKE_PROGRAM} -C ${CMAKE_SOURCE_DIR}/elenasrc3/elenasm/codeblocks clean -f elenasm_${arch}.mak
         WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
     )

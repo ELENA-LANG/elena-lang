@@ -903,7 +903,7 @@ namespace elena_lang
       {
          Key              key = defKey;
          IdentifierString strArg;
-         int              intArg;
+         int              intArg = 0;
 
          Node current = {};
          while (reader(key, strArg, intArg, arg)) {

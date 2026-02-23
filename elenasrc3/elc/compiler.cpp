@@ -2232,10 +2232,11 @@ Compiler::Compiler(
    _withDebugInfo = true;
    _strictTypeEnforcing = false;
    _nullableTypeWarning = false;
-
    _trackingUnassigned = false;
+   _checkHiddenDeclaration = false;
 
    _lookaheadOptMode = true; // !! temporal
+
 }
 
 bool Compiler::isClassClassOperation(Scope& scope, ObjectInfo target)
@@ -2831,7 +2832,18 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             }
             else if (methodScope.checkHint(MethodHint::Predefined)) {
                auto info = scope.info.methods.get(methodScope.message);
-               if (!info.hints) {
+               if (methodScope.checkHint(MethodHint::Indexed)) {
+                  // predefined method cannot be indexed
+                  if (_verbose) {
+                     IdentifierString messageName;
+                     ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
+
+                     _errorProcessor->info(infoPredefinedIndexedMethod, *messageName);
+                  }
+
+                  scope.raiseError(errIllegalMethod, current);
+               }
+               else if (!info.hints) {
                   // HOTFIX : the predefined method info should be saved separately
                   scope.info.methods.add(methodScope.message, methodScope.info);
                }
@@ -2950,6 +2962,7 @@ ref_t Compiler::generateConstant(Scope& scope, ObjectInfo& retVal, ref_t constRe
       case ObjectKind::StringLiteral:
       case ObjectKind::WideStringLiteral:
       case ObjectKind::IntLiteral:
+      case ObjectKind::LongLiteral:
       case ObjectKind::Float64Literal:
          break;
       default:
@@ -3005,6 +3018,16 @@ ref_t Compiler::generateConstant(Scope& scope, ObjectInfo& retVal, ref_t constRe
          dataWriter.write(&value, sizeof(double));
 
          retVal.typeInfo = { scope.moduleScope->buildins.realReference };
+         break;
+      }
+      case ObjectKind::LongLiteral:
+      {
+         ustr_t valueStr = module->resolveConstant(retVal.reference);
+         long long value = StrConvertor::toLong(valueStr, 16);
+
+         dataWriter.write(&value, sizeof(double));
+
+         retVal.typeInfo = { scope.moduleScope->buildins.longReference };
          break;
       }
       default:
@@ -3629,6 +3652,10 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
          if (test(hints, (ref_t)MethodHint::Async) && test(current.arg.reference, FUNCTION_MESSAGE) 
             && current.findChild(SyntaxKey::Target).arg.reference == 0) 
          {
+            // HOTFIX : temporally async extension must not be allowed
+            if (test(scope.info.header.flags, elExtension))
+               scope.raiseError(errIllegalMethod, current);
+
             // if it is an generic async function - generate invoker
             mssg_t invoker = overwriteAsAsyncFunction(scope, current.arg.reference);
 
@@ -6858,6 +6885,20 @@ DeclarationError Compiler :: declareVariable(Scope& scope, ustr_t identifier, Ty
    }
    else return DeclarationError::Duplicate;
 
+   if (_checkHiddenDeclaration) {
+      ObjectInfo hiddenInfo = scope.mapIdentifier(identifier, false, EAttr::Superior);
+      switch (hiddenInfo.kind) {
+         case ObjectKind::Local:
+         case ObjectKind::LocalAddress:
+            return DeclarationError::HiddenLocal;
+         case ObjectKind::Field:
+         case ObjectKind::FieldAddress:
+            return DeclarationError::HiddenField;
+         default:
+            break;
+      }
+   }
+
    return DeclarationError::None;
 }
 
@@ -6906,6 +6947,12 @@ bool Compiler :: declareVariable(Scope& scope, SyntaxNode terminal, TypeInfo typ
          break;
       case DeclarationError::Operation:
          scope.raiseError(errInvalidOperation, terminal);
+         break;
+      case DeclarationError::HiddenLocal:
+         scope.raiseWarning(WARNING_LEVEL_2, wrnHiddenLocal, terminal);
+         break;
+      case DeclarationError::HiddenField:
+         scope.raiseWarning(WARNING_LEVEL_2, wrnHiddenField, terminal);
          break;
       default:
          break;
@@ -8448,6 +8495,7 @@ bool Compiler::compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
          case ObjectKind::StringLiteral:
          case ObjectKind::WideStringLiteral:
          case ObjectKind::Float64Literal:
+         case ObjectKind::LongLiteral:
             scope.info.symbolType = SymbolType::Constant;
             scope.info.valueRef = constRef;
             break;
@@ -8540,6 +8588,8 @@ void Compiler::compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, Syntax
 void Compiler::compileClassSymbol(BuildTreeWriter& writer, ClassScope& scope)
 {
    writer.newNode(BuildKey::Symbol, scope.reference);
+
+   writer.appendNode(BuildKey::NoDebugInfo);
 
    writer.newNode(BuildKey::Tape);
    writer.appendNode(BuildKey::OpenFrame);
@@ -11061,6 +11111,10 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
             Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility, _withDebugInfo);
             classHelper.load();
 
+            // HOTFIX : if the extension target is template, make sure it is compiled
+            if (classHelper.scope.extensionClassRef != 0)
+               classHelper.validateClassParent(current);
+
             compileClass(writer, classHelper.scope, current);
 
             // compile class class if it available
@@ -11325,6 +11379,9 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 
    if (!moduleScope->tapeOptMode)
       moduleScope->tapeOptMode = _tapeOptMode;
+
+   if (!moduleScope->btapeOptMode)
+      moduleScope->btapeOptMode = _optMode;
 }
 
 void Compiler::validateScope(ModuleScopeBase* moduleScope)
@@ -12390,6 +12447,16 @@ void Compiler::Class::declare(SyntaxNode node)
          scope.info.header.flags |= elFinal;
          scope.save();
       }
+   }
+}
+
+void Compiler::Class :: validateClassParent(SyntaxNode node)
+{
+   SyntaxNode parentNode = node.findChild(SyntaxKey::Parent);
+   if (parentNode.firstChild() == SyntaxKey::TemplateType) {
+      // NOTE : if the extension target is a template, it was only declared at this point
+      // the template must be compiled before it will be used further
+      compiler->resolveStrongTypeAttribute(scope, parentNode.firstChild(), false, false, false);
    }
 }
 
@@ -15466,7 +15533,7 @@ ObjectInfo Compiler::Expression::declareTempLocal(ref_t typeRef, bool dynamicOnl
    }
 }
 
-inline bool isNillable(ObjectInfo obj)
+static inline bool isNillable(ObjectInfo obj)
 {
    return obj.kind == ObjectKind::Nil || obj.typeInfo.nillable;
 }
@@ -17002,6 +17069,16 @@ ObjectInfo Compiler::Expression::compileNativeConversion(SyntaxNode node, Object
          writer->appendNode(BuildKey::ConversionOp, operationKey);
          break;
       case INT32_64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case INT8_64_CONVERSION:
          retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
 
          writeObjectInfo(retVal);

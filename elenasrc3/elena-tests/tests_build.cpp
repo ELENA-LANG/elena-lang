@@ -72,27 +72,27 @@
 
 using namespace elena_lang;
 
-TEST_F(BTOptimization1_1, BuildTest) 
+TEST_F(BTOptimization2_1, BuildTest) 
 {
    runBuildTest();
 }
 
-TEST_F(BTOptimization1_2, BuildTest)
+TEST_F(BTOptimization2_2, BuildTest)
 {
    runBuildTest();
 }
 
-TEST_F(BTOptimization1_3, BuildTest)
+TEST_F(BTOptimization2_3, BuildTest)
 {
    runBuildTest(false, true);
 }
 
-TEST_F(BTOptimization1_4, BuildTest)
+TEST_F(BTOptimization2_4, BuildTest)
 {
    runBuildTest(false, true);
 }
 
-TEST_F(BTOptimization2, BuildTest)
+TEST_F(BTOptimization3, BuildTest)
 {
    runBuildTest();
 }
@@ -100,6 +100,36 @@ TEST_F(BTOptimization2, BuildTest)
 TEST_F(BTOptimization4, BuildTest)
 {
    runBuildTest();
+}
+
+TEST_F(BTOptimization5, BuildTest)
+{
+   runBuildTest();
+}
+
+TEST_F(BTOptimization6, BuildTest)
+{
+   runBuildTest();
+}
+
+TEST_F(BTOptimization8, BuildTest)
+{
+   runBuildTest();
+}
+
+TEST_F(BTOptimization9, BuildTest)
+{
+   runBuildTest(true);
+}
+
+TEST_F(BTOptimization10_1, BuildTest)
+{
+   runBuildTest(true);
+}
+
+TEST_F(BTOptimization10_2, BuildTest)
+{
+   runBuildTest(true);
 }
 
 TEST_F(BTOptimization12, BuildTest)

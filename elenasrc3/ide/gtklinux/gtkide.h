@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Linux-GTK IDE
 //
-//                                             (C)2024-2025, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKIDE_H
@@ -24,6 +24,23 @@ public:
    {
       add(_caption);
       add(_index);
+   }
+};
+
+class MessageLogColumns : public Gtk::TreeModel::ColumnRecord
+{
+public:
+   Gtk::TreeModelColumn<Glib::ustring> _description;
+   Gtk::TreeModelColumn<Glib::ustring> _file;
+   Gtk::TreeModelColumn<Glib::ustring> _line;
+   Gtk::TreeModelColumn<Glib::ustring> _column;
+
+   MessageLogColumns()
+   {
+      add(_description);
+      add(_file);
+      add(_line);
+      add(_column);
    }
 };
 
@@ -65,6 +82,26 @@ protected:
       }
    };
 
+   class EventLog : public ErrorLogBase
+   {
+      GTKIDEWindow*  _owner;
+
+   public:
+      void addMessage(text_str message, text_str file, text_str row, text_str col) override;
+
+      MessageLogInfo getMessage(int index) override { return {}; } // !! is not used
+      MessageLogInfo getMessage(const Gtk::TreeModel::Path& path);
+
+      void clearMessages() override;
+
+      EventLog(GTKIDEWindow* owner)
+         : _owner(owner)
+      {
+      }
+   };
+
+   friend class EventLog;
+
    GtkApp*                      _app;
 
    IDEModel*                    _model;
@@ -75,6 +112,9 @@ protected:
    ProjectTreeColumns           _projectTreeColumns;
    Glib::RefPtr<Gtk::TreeStore> _projectTree;
 
+   MessageLogColumns            _messageLogColumns;
+   Glib::RefPtr<Gtk::TreeStore> _messageList;
+
    // dialogs
    FileDialog                   fileDialog;
    FileDialog                   projectDialog;
@@ -84,6 +124,13 @@ protected:
 
    bool                         _closing;
    CloseMode                    _mode;
+
+   // menu items
+   Glib::RefPtr<Gio::SimpleAction>  _projectViewMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _errorListMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _outputMenuItem;
+
+   void toggleResultTab(int controlIndex, bool visible);
 
    void populateUI();
 
@@ -249,7 +296,7 @@ protected:
    }
    void on_menu_project_compile()
    {
-      //_controller->doCompileProject();
+      _controller->doCompileProject(_model);
    }
    void on_menu_project_cleanup()
    {
@@ -272,21 +319,21 @@ protected:
    void on_menu_project_view()
    {
       bool visible = toggleVisibility(_model->ideScheme.projectView);
-      checkMenuItemById("ViewMenu/ProjectView", visible);
+      checkMenuItemById(_projectViewMenuItem, visible);
    }
    void on_menu_project_output()
    {
-//      if (!_skip) {
-//         _controller->doShowCompilerOutput(!_model->compilerOutput);
-//      }
-//      else _skip = false;
+      bool visible = toggleVisibility(_model->ideScheme.compilerOutputControl);
+      checkMenuItemById(_outputMenuItem, visible);
+
+      toggleResultTab(_model->ideScheme.compilerOutputControl, visible);
    }
    void on_menu_project_messages()
    {
-//      if (!_skip) {
-//         _controller->doShowMessages(!_model->messages);
-//      }
-//      else _skip = false;
+      bool visible = toggleVisibility(_model->ideScheme.errorListControl);
+      checkMenuItemById(_errorListMenuItem, visible);
+
+      toggleResultTab(_model->ideScheme.errorListControl, visible);
    }
    void on_menu_project_watch()
    {
@@ -367,11 +414,14 @@ protected:
 
    void on_projectview_row_activated(const Gtk::TreeModel::Path& path,
         Gtk::TreeViewColumn*);
+   void on_errorlist_row_activated(const Gtk::TreeModel::Path& path,
+        Gtk::TreeViewColumn*);
 
    void onDocumentUpdate(DocumentChangeStatus changeStatus);
    void onProjectChange(bool empty);
    void onProjectRefresh(bool empty);
    void onIDEStatusChange(int status);
+   void onErrorHighlight(const Gtk::TreeModel::Path& path);
 
    void saveFile(int index);
    void saveFileAs(int index);
@@ -394,11 +444,15 @@ protected:
    void closeAllButActive_next(int index);
    void closeAllButActive();
 
+   void onComilationStart();
+   void onCompilationEnd(int exitCode, int postponedAction);
+
 public:
    void populate(int counter, Gtk::Widget** children);
 
    void on_text_model_change(TextViewModelEvent event);
    void on_textframe_change(SelectionEvent event);
+   void on_compilation_end(CompletionEvent event);
 
    GTKIDEWindow(/*const char* caption, */IDEController* controller, IDEModel* model, GtkApp* app);
 };

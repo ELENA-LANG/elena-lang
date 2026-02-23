@@ -121,7 +121,7 @@ public:
       int ptrSize,
       int moduleHint)
       : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
-         minimalArgList, ptrSize, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr),
+         minimalArgList, ptrSize, false, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr),
          dependencies(nullptr)
    {
       this->loader = loader;

@@ -14,7 +14,6 @@ public singleton Control
       ^ $"The pattern is {pattern}";
    }
 
-
    get string Prompt
       = "Please enter a string to validate or press ENTER to exit:";
 

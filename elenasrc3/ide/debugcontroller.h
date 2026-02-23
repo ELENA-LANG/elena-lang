@@ -232,6 +232,7 @@ namespace elena_lang
 
       void readAutoContext(ContextBrowserBase* watch, int level, WatchItems* refreshedItems);
       void readContext(ContextBrowserBase* watch, void* parentItem, addr_t address, int level);
+      void readCallstack(CallstackBase* callStack);
 
       void resolveNamespace(NamespaceString& ns);
 

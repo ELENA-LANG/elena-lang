@@ -22,7 +22,7 @@ public sample2()
 
    ThreadPool.queueAction(&WorkItem3, event);
    ThreadPool.queueAction(&WorkItem4, event);
-   
+
    event.wait();
 
    Console.writeLine("Main thread exits")

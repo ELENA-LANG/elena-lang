@@ -157,7 +157,9 @@ namespace elena_lang
       Hint,
       Duplicate,
       Type,
-      Operation
+      Operation,
+      HiddenLocal,
+      HiddenField
    };
 
    struct ObjectInfo
@@ -1451,6 +1453,8 @@ namespace elena_lang
 
          void declareClassClass(ClassScope& classClassScope, SyntaxNode node, ref_t parentRef);
 
+         void validateClassParent(SyntaxNode node);
+
       public:
          bool isParentDeclared(SyntaxNode node);
 
@@ -1752,6 +1756,7 @@ namespace elena_lang
       bool                   _withDebugInfo;
       bool                   _strictTypeEnforcing;
       bool                   _nullableTypeWarning;
+      bool                   _checkHiddenDeclaration;
 
       void printErrorWithClassInfo(Scope& scope, SyntaxNode node, ref_t targerRef, ref_t sourceRef, int error);
 
@@ -2217,6 +2222,11 @@ namespace elena_lang
       void setDebugMode(bool debugMode)
       {
          _withDebugInfo = debugMode;
+      }
+
+      void setHiddenDeclarationMode(bool mode)
+      {
+         _checkHiddenDeclaration = mode;
       }
 
       void prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver,

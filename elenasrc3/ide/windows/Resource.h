@@ -19,6 +19,7 @@
 #define IDC_COMPILER_MESSAGES          114
 #define IDC_COMPILER_WATCH             115
 #define IDC_COMPILER_VMOUTPUT          116
+#define IDC_COMPILER_CALLSTACK         117
 
 #define	IDR_FILENEW                   201
 #define	IDR_FILEOPEN                  202
@@ -55,6 +56,8 @@
 #define	IDR_STEPOVER_L                232
 #define	IDR_GOTO_L                    233
 #define  IDR_FILETREE_L                234
+
+#define  IDR_TABCLOSE                  235
 
 #define IDM_FILE_NEW                   401
 #define IDM_FILE_OPEN                  402
@@ -115,6 +118,7 @@
 #define IDM_VIEW_WATCH                 603
 #define IDM_VIEW_MESSAGES              604
 #define IDM_VIEW_VMCONSOLE             605
+#define IDM_VIEW_CALLSTACK             606
 
 #define IDM_SEARCH_FIND                701
 #define IDM_SEARCH_FINDNEXT            702
@@ -126,6 +130,7 @@
 #define IDM_PROJECT_COMPILE            803
 #define IDM_PROJECT_OPTION             804
 #define IDM_DEBUGGER_OPTIONS           805
+#define IDM_PROJECT_FORWARDS           806
 
 #define IDD_SETTINGS                   850
 #define IDC_SETTINGS_TEPMPLATE         851
@@ -207,10 +212,20 @@
 #define IDC_IDE_INCLUDE_APPPATH        1718
 #define IDC_EDITOR_SCROLLOFFSET        1719
 #define IDC_EDITOR_HIGHLIGHBRACKETFLAG 1720
+#define IDC_EDITOR_HIGHLIGHLINE        1721
 
 #define IDM_EDITOR_OPTIONS             1750
 #define IDM_IDE_OPTIONS                1751
 #define IDM_EDITOR_FONT_OPTIONS        1752
+
+#define IDD_FORWARDS                   1800
+#define IDC_FORWARDS_LIST              1801
+#define IDC_FORWARDS_EDIT              1802
+#define IDC_FORWARDS_ADD               1803
+#define IDC_FORWARDS_REPLACE           1804
+#define IDC_FORWARDS_DELETE            1805
+#define IDC_FORWARDS_LABEL1            1808
+#define IDC_FORWARDS_SAVE              1809
 
 #ifndef IDC_STATIC
 #define IDC_STATIC                 -1

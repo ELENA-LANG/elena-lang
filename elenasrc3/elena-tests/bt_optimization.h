@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Test Optimization Fixture declarations
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BTOPTIMIZATION_H
@@ -47,48 +47,62 @@ namespace elena_lang
       void runTest();
 
       StructTest()
-         : offsets(0)
+         : offsets(0), expectedSize(0), targetRef(0)
       {
       }
    };
 
    // Optimization #2 (byRefOp) : "a := b.get()" => "b.get(ref a)"
-   class BTOptimization1_1 : public BTOptimization
+   class BTOptimization2_1 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
    // Optimization #2 (byRefOp) : "a := b.Value" => "b.prop:Value(ref a)"
-   class BTOptimization1_2 : public BTOptimization
+   class BTOptimization2_2 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
    // Optimization #2 (byRefOp) : "a := *b" => "b.prop:Value(ref a)"
-   class BTOptimization1_3 : public BTOptimization
+   class BTOptimization2_3 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
    // Optimization #2 (byRefOp + boxing / unboxing) : "a := b[0]"
-   class BTOptimization1_4 : public BTOptimization
+   class BTOptimization2_4 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
-   // Optimization #3 (intCopying) : "int n := 2" => direct assigning
-   class BTOptimization2 : public BTOptimization
+   // Optimization #3 (byRefOp + boxing / unboxing) : "a := b[0]"
+   class BTOptimization3 : public BTOptimization
    {
    protected:
       void SetUp() override;
    };
 
-   // Optimization #4 (intOpWithConsts) : "int r := n + 2" => direct op with consts
+   // Optimization #4 (intOpWithConsts) : "int r := n + 2" => direct op with consts / #15 (optIntOpWithConsts)
    class BTOptimization4 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization #5 (assignIntOpWithConsts) : "n += 2" => direct op with consts
+   class BTOptimization5 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization #6 (boxingInt) : "var o := n" => optimized boxing
+   class BTOptimization6 : public BTOptimization
    {
    protected:
       void SetUp() override;
@@ -96,6 +110,40 @@ namespace elena_lang
 
    // Optimization #7 : "native branching
    class BTOptimization7 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization #8 : "native int branching with constant
+   class BTOptimization8 : public BTOptimization
+   {
+   protected:
+      void initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages) override;
+
+      void SetUp() override;
+   };
+
+   // Optimization #9 : double assigning on convertion (int n := b)
+   class BTOptimization9 : public BTOptimization
+   {
+   protected:
+      void initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages) override;
+
+      void SetUp() override;
+   };
+
+   // Optimization #10_1 : doubleAssigningIntRealOp (r := n + 2.0)
+   class BTOptimization10_1 : public BTOptimization
+   {
+   protected:
+      void initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages) override;
+
+      void SetUp() override;
+   };
+
+   // Optimization #10_1 : doubleAssigningIntRealOp (r := 2.0 + n)
+   class BTOptimization10_2 : public BTOptimization10_1
    {
    protected:
       void SetUp() override;

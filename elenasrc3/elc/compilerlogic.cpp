@@ -2384,6 +2384,12 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
          return { ConversionResult::NativeConversion, INT32_FLOAT64_CONVERSION, 1 };
       }
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT8 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT8 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
+      }
    }
 
    // COMPILE MAGIC : trying to typecast primitive array

@@ -11,7 +11,7 @@ LD = clang++
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
-CFLAGS = -Wall -std=c++20 -m64 -static-libgcc -static-libstdc++
+CFLAGS = -std=c++20 -m64 -static-libgcc -static-libstdc++
 LDFLAGS = -m64 -ldl -fuse-ld=lld
 
 RESINC = 

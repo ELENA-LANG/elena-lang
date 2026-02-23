@@ -371,6 +371,11 @@ namespace elena_lang
          size_t    pos = 0;
          size_t    start = 0;
          if (n < 0) {
+            if ((unsigned long long)n == 0x8000000000000000) {
+               s[0] = '-';
+               return ulongToStr(n, s + 1, radix, maxLength - 1);
+            }
+
             start++;
             n = -n;
             s[pos++] = '-';

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //               
 //		This file contains the Win32 Debugger class implementation
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "common.h"
@@ -698,6 +698,16 @@ addr_t Win32DebugProcess :: getStackItemAddress(disp_t disp)
 addr_t Win32DebugProcess :: getStackItem(int index, disp_t offset)
 {
    return getMemoryPtr(getStackItemAddress(index * sizeof(addr_t) + offset));
+}
+
+addr_t Win32DebugProcess :: getStackFrame()
+{
+   return getBP(_current->context);
+}
+
+addr_t Win32DebugProcess :: getCurrentAddress()
+{
+   return ::getIP(_current->context);
 }
 
 addr_t Win32DebugProcess :: getMemoryPtr(addr_t address)

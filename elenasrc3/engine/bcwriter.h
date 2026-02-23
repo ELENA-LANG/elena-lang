@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA byte code writer class.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BCWRITER_H
@@ -177,10 +177,10 @@ namespace elena_lang
       void saveMethodInfo(/*CommandTape& tape, */BuildNode node, TapeScope& tapeScope);
 
       void saveProcedure(BuildNode node, Scope& scope, bool classMode, pos_t sourcePathRef, 
-         ReferenceMap& paths, bool tapeOptMode);
+         ReferenceMap& paths, bool tapeOptMode, bool withDebugInfo);
 
       void saveVMT(ClassInfo& info, BuildNode node, Scope& scope, pos_t sourcePathRef, ReferenceMap& paths,
-         bool tapeOptMod, IndexedMessages& indexes);
+         bool tapeOptMod, IndexedMessages& indexes, bool withDebugInfo);
       void saveIndexTable(Scope& scope, IndexedMessages& indexes);
 
       void saveSymbol(BuildNode node, SectionScopeBase* moduleScope, int minimalArgList, 

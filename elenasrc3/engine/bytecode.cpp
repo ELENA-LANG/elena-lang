@@ -100,7 +100,7 @@ void fixJumps(MemoryBase* code, int labelPosition, Map<int, int>& jumps, int lab
 }
 
 // return true if there is a idle jump
-inline bool fixIdleJumps(int label, int labelIndex, CachedMemoryMap<int, int, 40>& fixes, CachedMemoryMap<int, int, 40>& jumps)
+static inline bool fixIdleJumps(int label, int labelIndex, CachedMemoryMap<int, int, 40>& fixes, CachedMemoryMap<int, int, 40>& jumps)
 {
    bool idleJump = false;
 
@@ -158,7 +158,7 @@ inline void addMessageNamePrefix(IdentifierString& messageName, ref_t flags)
    }
 }
 
-inline void addMessageNamePostfix(IdentifierString& messageName, pos_t argCount)
+static inline void addMessageNamePostfix(IdentifierString& messageName, pos_t argCount)
 {
    if (argCount != 0) {
       messageName.append('[');
@@ -429,7 +429,7 @@ void ByteCodeUtil :: generateAutoSymbol(ModuleInfoList& symbolList, ModuleBase* 
 
 // --- CommandTape ---
 
-inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels,
+static inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels,
    CachedMemoryMap<int, int, 40>& jumps,
    CachedMemoryMap<int, int, 40>& fixes)
 {
@@ -441,7 +441,7 @@ inline void addJump(int label, int index, CachedMemoryMap<int, int, 20>& labels,
    else fixes.add(label, index);
 }
 
-inline bool removeIdleJump(ByteCodeIterator it)
+static inline bool removeIdleJump(ByteCodeIterator it)
 {
    while (true) {
       ByteCommand command = *it;
@@ -877,7 +877,7 @@ void CommandTape :: saveTo(MemoryWriter* writer)
 
 // --- ByteCodeTransformer ---
 
-inline bool isOperational(ByteCode code)
+static inline bool isOperational(ByteCode code)
 {
    return test((int)code, (int)ByteCode::Label)
       || (code <= ByteCode::CallExtR && code > ByteCode::Breakpoint);
@@ -959,13 +959,13 @@ void ByteCodeTransformer :: transform(ByteCodeIterator trans_it, ByteCodeTrieNod
 
 }
 
-inline void skipImport(ByteCodeIterator& bc_it)
+static inline void skipImport(ByteCodeIterator& bc_it)
 {
    while ((*bc_it).code != ByteCode::ImportOff)
       ++bc_it;
 }
 
-inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
+static inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
 {
    for (size_t i = 0; i < len; i++) {
       if (list[i] == bc)
@@ -976,7 +976,7 @@ inline bool contains(const ByteCode* list, size_t len, ByteCode bc)
 }
 
 // NOTE : the copy of an iterator must be passed
-inline bool isAccFree(ByteCodeIterator bc_it)
+static inline bool isAccFree(ByteCodeIterator bc_it)
 {
    while (!bc_it.eof()) {
       ByteCode bc = (*bc_it).code;
@@ -992,7 +992,7 @@ inline bool isAccFree(ByteCodeIterator bc_it)
    return true;
 }
 
-inline bool endOfPattern(ByteCodePattern& currentPattern, ByteCodeIterator& bc_it)
+static inline bool endOfPattern(ByteCodePattern& currentPattern, ByteCodeIterator& bc_it)
 {
    if (currentPattern.argType == ByteCodePatternType::IfAccFree) {
       return isAccFree(bc_it);

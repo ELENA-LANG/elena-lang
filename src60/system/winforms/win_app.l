@@ -16,7 +16,7 @@ public sealed class SDIApplication
       int          result := 0;
       WindowHandle handleCopy := _mainWindow;
         
-      extern
+      excluded
       {
          result := extern USER32.GetMessageW(msg, 0, 0, 0);
          while (result != 0)
@@ -39,7 +39,7 @@ public sealed class SDIApplication
       int          result := 0;
       WindowHandle handleCopy := window;
 
-      extern
+      excluded
       {
          while (handleCopy.isVisible())
          {
@@ -55,7 +55,7 @@ public sealed class SDIApplication
             }
             else 
             {
-                    extern USER32.WaitMessage()
+               extern USER32.WaitMessage()
             }
          }
       }

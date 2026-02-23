@@ -25,12 +25,12 @@ public interface IConsoleWriter
    abstract refresh();
 }
 
-public sealed class ConsoleHelperImpl
+public sealed class ConsoleHelperImpl : info("A class implementing Console functionality")
 {
    IConsoleReader reader;
    IConsoleWriter writer;
 
-   constructor new(IConsoleReader reader, IConsoleWriter writer)
+   constructor new(IConsoleReader reader, IConsoleWriter writer) : info("Initializes the class with the specified input <b>reader</b> and output <b>writer</b>")
    {
       this reader := reader;
       this writer := writer;
@@ -49,7 +49,7 @@ public sealed class ConsoleHelperImpl
       ConsoleHelper.write(NewLineConstant);
    }
 
-   writeLine()
+   writeLine() : info("Writes the current line terminator")
    {
       writer.write(NewLineConstant);
    }
@@ -62,13 +62,13 @@ public sealed class ConsoleHelperImpl
       ^ retVal
    }
 
-   get bool KeyAvailable()
+   get bool KeyAvailable() : info("Checks if there is a record in the input stream")
       => reader;   
 
-   setCursorPosition(int x, int y)
+   setCursorPosition(int x, int y) : info("Sets the console cursor at the specified position<br/>Cannot be supported in the file output mode")
       => writer;
 
-   clear()
+   clear() : info("Clear the console buffer<br/>Cannot be supported in the file output mode")
    {
       writer.clear()
    }
@@ -85,7 +85,7 @@ public sealed class ConsoleHelperImpl
 
 static ConsoleHelperImpl ConsoleHelper = ConsoleHelperImpl.new(io'stdConsoleReader, io'stdConsoleWriter);
 
-public singleton Console
+public singleton Console : info("Console singleton")
 {
    write(s) 
             : info("Writes the specified literal value to the standard output stream.")
@@ -95,19 +95,19 @@ public singleton Console
             : info("Writes the specified literal value, followed by the current line terminator, to the standard output stream.")
       => ConsoleHelper;
 
-   writeLine()
+   writeLine() : info("Writes the current line terminator")
       => ConsoleHelper;
 
    char readChar() : info("Reads the next character from the input stream")
       => ConsoleHelper;
 
-   get bool KeyAvailable()
+   get bool KeyAvailable() : info("Checks if there is a record in the input stream")
       => ConsoleHelper;   
 
-   setCursorPosition(int x, int y)
+   setCursorPosition(int x, int y) : info("Sets the console cursor at the specified position<br/>Cannot be supported in the file output mode")
       => ConsoleHelper;
 
-   clear()
+   clear() : info("Clear the console buffer<br/>Cannot be supported in the file output mode")
       => ConsoleHelper;
 
    string readLine()
@@ -120,4 +120,4 @@ public singleton Console
 }
 
 // obsolete
-public ConsoleHelperImpl console = ConsoleHelper;
+public ConsoleHelperImpl console : info("A console symbol<br/>Obsolete. Please use Console") = ConsoleHelper;

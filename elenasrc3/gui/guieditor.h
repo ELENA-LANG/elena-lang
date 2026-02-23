@@ -27,10 +27,12 @@ namespace elena_lang
    constexpr auto STYLE_NUMBER               = 9;
    constexpr auto STYLE_STRING               = 10;
    constexpr auto STYLE_HIGHLIGHTED_BRACKET  = 11;
+   constexpr auto STYLE_CURRENT_MARGIN       = 12;
+
    //#define STYLE_MESSAGE                           6
    //#define STYLE_HINT                              9  // !! not used
    //#define STYLE_TRACE                             12
-   constexpr auto STYLE_MAX                  = 11;
+   constexpr auto STYLE_MAX                  = 12;
 
    // --- ClipboardBase ----
    class ClipboardBase
@@ -110,6 +112,7 @@ namespace elena_lang
       bool              lineNumbersVisible;
       bool              highlightSyntax;
       bool              highlightBrackets;
+      bool              highlightCurrentRow;
       bool              empty;
       FontInfo          fontInfo;
       int               schemeIndex;
@@ -167,6 +170,7 @@ namespace elena_lang
          this->schemeIndex = 0;
          this->highlightSyntax = true;
          this->highlightBrackets = true;
+         this->highlightCurrentRow = true;
          this->scrollOffset = 1;
       }
    };

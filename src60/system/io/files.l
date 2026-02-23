@@ -152,6 +152,8 @@ namespace io
 
       TextWriter logger(path) = StreamWriter.new(FileStream.openForAppend(path), UTF8Encoder);
 
+      BinaryReader newBinaryReader(string path) = new BinaryStreamReader(FileStream.openForRead(path));
+
       bool isAvailable(path)
       {
          int ret := extern KERNEL32.GetFileAttributesW(cast wide(path));
@@ -329,6 +331,8 @@ namespace io
 
       TextWriter logger(path) = StreamWriter.new(FileStream.openForAppend(path), UTF8Encoder);
 
+      BinaryReader newBinaryReader(string path) = new BinaryStreamReader(FileStream.openForRead(path));
+
       bool isAvailable(string path)
       {
          int ret := extern libc.access(path, F_OK);
@@ -396,6 +400,8 @@ namespace io
       TextWriter textwriter() = fileControl.newWriter(_path);
 
       TextWriter logger() = fileControl.logger(_path);
+
+      BinaryReader binaryreader() = fileControl.newBinaryReader(_path);
 
       get int Length()
       {
@@ -481,6 +487,8 @@ namespace io
       static TextReader textreader(string path) 
          = fileControl.newReader(path);         
       
+      static BinaryReader binaryreader(string path) 
+         = fileControl.newBinaryReader(path);
    }
 
    // --- Directory ---

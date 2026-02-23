@@ -12,15 +12,15 @@ public sealed EventHandler<TF>
    {
       int len := functions.Length;
         
-      TF[] functions := new TF[](len + 1);
+      TF[] fs := new TF[](len + 1);
 
       for (int i := 0; i < len; i += 1) {
-         functions[i] := this functions[i]
+         fs[i] := this functions[i]
       };
         
-      functions[len] := func;
+      fs[len] := func;
         
-      this functions := functions
+      this functions := fs
    }
     
    dispatch() : external(system'core_routines'__event_dispatcher);

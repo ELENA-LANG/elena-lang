@@ -11,6 +11,6 @@ struct DeclB
    
    int b : prop(_b);
    
-   A a
+   DeclA a
       = _a.Value;
 }

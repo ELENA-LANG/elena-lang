@@ -1,3 +1,13 @@
+#if (__project["_Linux32"])
+
+internal const int __SIZEOF_SEM_T = 16;
+
+#elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"] || __project["FreeBSD_AMD64"])
+
+internal const int __SIZEOF_SEM_T = 32;
+
+#endif
+
 #if (__project["_Win"]) // Windows
 
 public struct Semaphore
@@ -9,6 +19,9 @@ public struct Semaphore
       _handle := extern KERNEL32.CreateSemaphoreA(0, initValue, maxValue, 0);
    }
 
+   constructor create(int initValue)
+      <= create(initValue, IntNumber.MaxValue);
+
    close()
    {
       extern KERNEL32.CloseHandle(_handle)
@@ -16,7 +29,7 @@ public struct Semaphore
 
    wait()
    {
-      extern
+      excluded
       {
          extern KERNEL32.WaitForSingleObject(_handle, INFINITE);
       }      
@@ -32,7 +45,34 @@ public struct Semaphore
 
 public struct Semaphore
 {
-   Handle  _handle;
+   pointer _sem;
+
+   constructor create(int initValue)
+   {
+      _sem := extern libc.malloc(__SIZEOF_SEM_T);
+
+      extern libc.sem_init(_sem, 0, initValue);
+   }
+
+   close()
+   {
+      extern libc.sem_destroy(_sem);
+
+      extern libc.free(_sem);
+   }
+
+   wait()
+   {
+      excluded
+      {
+         extern libc.sem_wait(_sem);
+      }      
+   }   
+
+   release()
+   {
+      extern libc.sem_post(_sem);
+   }
 }
 
 #endif

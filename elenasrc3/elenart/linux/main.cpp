@@ -114,7 +114,10 @@ void InitializeMTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 
 void* CollectGCLA(void* roots, size_t size)
 {
-   //printf("CollectGCLA %llx %llx\n", (long long)roots, size);
+#ifdef DEBUG_OUTPUT
+   printf("CollectGCLA %llx %llx\n", (long long)roots, size);
+   fflush(stdout);
+#endif
 
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
 }

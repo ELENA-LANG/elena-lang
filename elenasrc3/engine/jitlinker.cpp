@@ -752,6 +752,12 @@ ref_t JITLinker :: createAction(ustr_t actionName, ref_t weakActionRef, ref_t si
    if (!actionName.empty())
       _mapper->mapAction(actionName, actionRef, signature);
 
+#ifdef _VALIDATE_RANGE
+   if (actionRef >= ACTION_MAX) {
+      throw InternalError(errActionOverflow);
+   }
+#endif
+
    return actionRef;
 }
 

@@ -272,10 +272,10 @@ public longTests() : testCase()
     Console.write(".");
 
     r -= n32;
-    Assert.ifTrue(r == i);
+    Assert.ifTrue(r == 12345678701230l);
     n32 := 100004;
     r += n32;
-    Assert.ifTrue(r == 12345679001234l);
+    Assert.ifTrue(r == 12345678801234l);
     Console.write(".");
 
     var tester := (long l, long control1, long control2) { long r1 := -l; long r2 := -r1; Assert.ifTrue(r1 == control1); Assert.ifTrue(r2 == control2);  };
@@ -283,6 +283,8 @@ public longTests() : testCase()
     tester(-1l,1l,-1l);
     tester(-5000000000l,5000000000l,-5000000000l);
     Console.write(".");
+
+
 }
 
 // --- realTests ---
@@ -510,6 +512,31 @@ public conversionTests() : testCase()
     int n3 := s.toInt();
     Assert.ifTrue(n3 == n2);
     Console.write(".");
+
+    int min := -2147483648;
+    int max := 2147483647;
+    string minStr := min.toString();
+    string maxStr := max.toString();
+
+    Assert.ifTrue(minStr == "-2147483648");
+    Assert.ifTrue(maxStr == "2147483647");
+
+    Assert.ifTrue(minStr.toInt() == -2147483648);
+    Assert.ifTrue(maxStr.toInt() == 2147483647);
+    Console.write(".");
+
+    long minLong := -9223372036854775808l;
+    long maxLong := 9223372036854775807l;
+    string minLongStr := minLong.toString();
+    string maxLongStr := maxLong.toString();
+
+    Assert.ifTrue(minLongStr == "-9223372036854775808");
+    Assert.ifTrue(maxLongStr == "9223372036854775807");
+
+    Assert.ifTrue(minLongStr.toLong() == -9223372036854775808l);
+    Assert.ifTrue(maxLongStr.toLong() == 9223372036854775807l);
+    Console.write(".");
+
 }
 
 // --- assignTests ---
@@ -2666,6 +2693,7 @@ public retoverloadTest() : testCase()
 
    Assert.ifTrue(n == 1);
    Assert.ifTrue(m == 2l);
+   Console.write(".");
 }
 
 public utf32Test() : testCase()
@@ -2673,4 +2701,5 @@ public utf32Test() : testCase()
    int code := "𝄞".toChar().toInt();
 
    Assert.ifTrue(code == 1D11Eh);
+   Console.write(".");
 }

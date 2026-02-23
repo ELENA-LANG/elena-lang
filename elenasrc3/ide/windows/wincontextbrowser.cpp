@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Debug Context Browser Implementation File
-//                                             (C)2022-2025, by Aleksey Rakov
+//                                             (C)2022-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wincontextbrowser.h"
@@ -45,12 +45,14 @@ void* ContextBrowser :: findWatchNodeStartingWith(WatchContext* context, ustr_t 
 
    TreeViewItem item = getChild(parent);
    while (item != nullptr) {
-      size_t len = readCaption(item, caption, CAPTION_LEN);
+      if (getParam(item) == context->address) {
+         size_t len = readCaption(item, caption, CAPTION_LEN);
 
-      if (nameLen < len && wstr_t(caption).compareSub(*wideName, 0, nameLen) 
-         && caption[nameLen] == ' ')
-      {
-         return item;
+         if (nameLen < len && wstr_t(caption).compareSub(*wideName, 0, nameLen)
+            && caption[nameLen] == ' ')
+         {
+            return item;
+         }
       }
 
       item = getNext(item);

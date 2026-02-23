@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     Win32 EditFrame container File
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wintextframe.h"
@@ -11,11 +11,12 @@ using namespace elena_lang;
 
 // --- TextViewFrame ---
 
-TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker)
-   : MultiTabControl(notifier, withAbovescore, view)
+TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker, int closeCommandId, int closeIcon)
+   : MultiTabControl(notifier, withAbovescore, view, closeIcon)
 {
    _selectionInvoker = invoker;
    _model = model;
+   _closeCommandId = closeCommandId;
 
    model->attachListener(this);
 }
@@ -83,5 +84,17 @@ void TextViewFrame :: onSelChanged()
       _notSelected = true;
 
       _model->clearDocumentView();
+   }
+}
+
+void TextViewFrame :: onClick(NMHDR* hdr)
+{
+   DWORD dwpos = ::GetMessagePos();
+   Point p(LOWORD(dwpos), HIWORD(dwpos));
+
+   if (isOverButton(p)) {
+      AppCommandEvent appCommand(_closeCommandId);
+
+      _notifier->notify(&appCommand);
    }
 }

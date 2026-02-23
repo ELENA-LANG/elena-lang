@@ -160,7 +160,7 @@ namespace elena_lang
          return false;
       }
 
-      TestModuleScope(bool tapeOptMode);
+      TestModuleScope(bool tapeOptMode, bool btapeOptMode);
    };
 
    class TestTemplateProssesor : public TemplateProssesorBase
@@ -282,6 +282,8 @@ namespace elena_lang
 
    protected:
       void SetUp() override;
+
+      virtual void initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages);
 
    public:
       void runBuildTest(bool declareDefaultMessages = false, bool declareOperators = false, ref_t funcRef = 0);

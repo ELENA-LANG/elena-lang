@@ -644,6 +644,9 @@ namespace elena_lang
 
       void cut(Iterator& it)
       {
+         if (!_top)
+            return;
+
          Item* tmp = nullptr;
          Item* previous = nullptr;
 
@@ -3321,16 +3324,11 @@ namespace elena_lang
          _allocatedSize = _length = 0;
       }
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_UNINITIALIZED_FIELD
-
       CachedList()
       {
          _allocated = nullptr;
          _allocatedSize = _length = 0;
       }
-
-DISABLE_WARNING_POP
 
       ~CachedList()
       {
@@ -3822,7 +3820,7 @@ DISABLE_WARNING_POP
 
    template<class Key> Key Map_GetKey(MemoryDump* dump, pos_t position)
    {
-      Key key;
+      Key key = {};
       dump->read(position, &key, sizeof(key));
 
       return key;

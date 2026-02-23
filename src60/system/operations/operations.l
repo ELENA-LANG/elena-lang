@@ -182,9 +182,9 @@ public template try::finally(try_block,finally_block) : __included(statements)
    try_block $fnl finally_block;
 }
 
-// --- extern ---
+// --- excluded ---
 
-public template extern(body) : __included(statements)
+public template excluded(body) : __included(statements)
 {
    $ext body
 }
@@ -242,6 +242,16 @@ public template operator::await(expr) : __included(statements)
 public template operator::lazy(expr) : __included(statements)
     = $lazy expr;
 
+// :len
+
+public template operator::len(expr) : __included(statements)
+    = $len expr;
+
+// :name
+
+public template operator::name(expr) : __included(statements)
+    = $name expr;
+
 // shl:
 
 public template operator::shl(expr, arg) : __included(statements)
@@ -251,6 +261,11 @@ public template operator::shl(expr, arg) : __included(statements)
 
 public template operator::shr(expr, arg) : __included(statements)
    = expr $shr arg;
+
+// mod:
+
+public template operator::mod(expr, arg) : __included(statements)
+   = expr - (expr / arg * arg);
 
 // :sizeof
 

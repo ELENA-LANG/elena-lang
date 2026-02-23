@@ -3,7 +3,7 @@
 //
 //		This file contains the implementation of ELENA Intel X86 Assembler
 //		classes.
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -3200,7 +3200,7 @@ bool X86_64Assembler::compileAdd(X86Operand source, X86Operand target, MemoryWri
       X86Helper::writeModRM(writer, target, source);
    }
    else if (source.isRX64() && target.isR64()) {
-      writer.writeByte(0x4C);
+      writer.writeByte(0x4B);
       writer.writeByte(0x01);
       X86Helper::writeModRM(writer, target, source);
    }
@@ -3557,7 +3557,7 @@ bool X86_64Assembler :: compileShl(X86Operand source, X86Operand target, MemoryW
       writer.writeByte(target.offset);
    }
    else if (source.isRX64() && target.type == X86OperandType::DB) {
-      writer.writeByte(0x4C);
+      writer.writeByte(0x49);
       writer.writeByte(0xC1);
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 4), source);
       writer.writeByte(target.offset);

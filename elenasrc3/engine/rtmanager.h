@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //      This header contains the declaration of a class
 //      ELENA RT manager.
-//                                             (C)2023-2024, by Aleksey Rakov
+//                                             (C)2023-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef RTMANAGER_H
@@ -37,6 +37,8 @@ namespace elena_lang
       addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 
       static size_t loadClassName(addr_t classAddress, char* buffer, size_t length);
+
+      static void readCallstack(StreamReader& stack, addr_t startPosition, addr_t currentAddress, StreamWriter& output);
 
       RTManager(MemoryBase* msection, MemoryBase* dbgsection);
    };

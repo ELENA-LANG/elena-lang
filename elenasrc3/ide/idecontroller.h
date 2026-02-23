@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller header File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECONTROLLER_H
@@ -127,6 +127,7 @@ namespace elena_lang
       void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, size_t param, addr_t address);
+      void refreshCallstack(CallstackBase* callstack);
 
       bool toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row, DocumentChangeStatus& status);
 
@@ -256,6 +257,7 @@ namespace elena_lang
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
+      void refreshCallstack(CallstackBase* callstack);
 
       void toggleBreakpoint(IDEModel* model, int row);
 

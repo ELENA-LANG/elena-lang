@@ -291,9 +291,26 @@ void DebugInfoProviderBase :: defineModulePath(ustr_t name, PathString& path, pa
    path.appendExtension(extension);
 }
 
-
-DebugLineInfo* DebugInfoProviderBase :: seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath)
+ustr_t DebugInfoProviderBase :: seekClassName(addr_t lineInfoAddress)
 {
+   DebugLineInfo* current = (DebugLineInfo*)lineInfoAddress;
+   while (current->symbol != DebugSymbol::Class)
+      current = &current[-1];
+
+   ModuleBase* module = getDebugModule(lineInfoAddress);
+   MemoryBase* section = module->mapSection(DEBUG_STRINGS_ID, true);
+
+   if (section != nullptr) {
+      return (const char*)section->get(current->addresses.source.nameRef);
+   }
+
+   return "<unknown>";
+}
+
+DebugLineInfo* DebugInfoProviderBase :: seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath, ustr_t& methodName)
+{
+   methodName = nullptr;
+
    ModuleBase* module = getDebugModule(lineInfoAddress);
    if (module) {
       moduleName.copy(module->name());
@@ -312,6 +329,10 @@ DebugLineInfo* DebugInfoProviderBase :: seekDebugLineInfo(addr_t lineInfoAddress
                size_t index = sourcePath.findLast('\'');
                moduleName.copy(sourcePath, index);
                sourcePath = sourcePath + index + 1;
+            }
+
+            if (current[1].symbol == DebugSymbol::MessageInfo) {
+               methodName = (const char*)section->get(current->addresses.source.nameRef);
             }
          }
       }
