@@ -27,8 +27,6 @@ namespace elena_lang
 
       void freeOutputThread();
 
-      char** generateArguments(path_t cmdLine);
-
       void writeStdOut();
       void writeStdError(const char* error);
       void afterExecution();
@@ -36,6 +34,8 @@ namespace elena_lang
       void run(path_t path, path_t cmdLine);
 
    public:
+      static char** generateArguments(path_t cmdLine);
+
       bool start(path_t path, path_t commandLine, path_t curDir, bool readOnly, int extraArg) override;
 
       void stop(int exitCode = 0) override;

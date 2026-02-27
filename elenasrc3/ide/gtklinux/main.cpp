@@ -6,6 +6,7 @@
 
 #include "gtklinux/gtkcommon.h"
 #include "gtklinux/lnxcontroller.h"
+#include "gtklinux/lnxdebugadapter.h"
 #include "factory.h"
 
 using namespace elena_lang;
@@ -49,6 +50,8 @@ public:
    }
 };
 
+typedef LinuxDebugAdapter    DebugProcess;
+
 LinuxProcess      outputProcess;
 
 int main(int argc, char* argv[])
@@ -59,7 +62,8 @@ int main(int argc, char* argv[])
    TextViewSettings textViewSettings = { EOLMode::LF, false, 3 };
 
    IDEModel      ideModel(textViewSettings);
-   IDEController ideController(&outputProcess, /*&vmConsoleProcess*/nullptr, /*&debugProcess*/nullptr, &ideModel,
+   DebugProcess  debugProcess;
+   IDEController ideController(&outputProcess, /*&vmConsoleProcess*/nullptr, &debugProcess, &ideModel,
                         CURRENT_PLATFORM, &pathHelper, /*compareFileModifiedTime*/nullptr);
 
    // NOTE : it must be initialized before factory / controller

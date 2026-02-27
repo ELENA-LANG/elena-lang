@@ -18,6 +18,8 @@
 
 using namespace elena_lang;
 
+// --- LinuxProcess ---
+
 LinuxProcess :: LinuxProcess()
    : _outputThread(nullptr)
 {

@@ -313,7 +313,7 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Step Over</attribute>"
         "            <attribute name='accel'>F8</attribute>"
-        "            <attribute name='action'>DebugStepover</attribute>"
+        "            <attribute name='action'>win.DebugStepover</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Step In</attribute>"
@@ -569,8 +569,9 @@ void GTKIDEWindow :: populateUI()
 //   _app->add_action("ProjectForwards", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_forwards));
 //   _app->add_action("ProjectOptions", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));
 //
-//   _app->add_action("DebugRun""F9", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_run));
-//   _app->add_action("DebugStepover", "F8", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepover));
+   refActions->add_action("DebugRun", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_run));
+   refActions->add_action("DebugStepover", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepover));
+
 //   _app->add_action("DebugStepin", "F7", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepin));
 //   _app->add_action("DebugGoto", "F4", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_goto));
 //   _app->add_action("DebugToggle", "F5", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_toggle));
@@ -666,6 +667,14 @@ void GTKIDEWindow :: populateUI()
       Gtk::KeyvalTrigger::create(GDK_KEY_F9, Gdk::ModifierType::CONTROL_MASK),
       Gtk::NamedAction::create("win.ProjectCompile")));
 
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F8),
+      Gtk::NamedAction::create("win.DebugStepover")));
+
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F9),
+      Gtk::NamedAction::create("win.DebugRun")));
+
    loadUI(ui_info, "MenuBar");
 
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
@@ -693,8 +702,6 @@ void GTKIDEWindow :: populateUI()
 //   _refActionGroup->add( Gtk::Action::create("ProjectOptions", "Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));
 //
 //
-//   _refActionGroup->add( Gtk::Action::create("DebugRun", "Run"), Gtk::AccelKey("F9"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_run));
-//   _refActionGroup->add( Gtk::Action::create("DebugStepover", "Step Over"), Gtk::AccelKey("F8"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepover));
 //   _refActionGroup->add( Gtk::Action::create("DebugStepin", "Step In"), Gtk::AccelKey("F7"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepin));
 //   _refActionGroup->add( Gtk::Action::create("DebugGoto", "Go To Cursor"), Gtk::AccelKey("F4"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_goto));
 //   _refActionGroup->add( Gtk::Action::create("DebugToggle", "Toggle Breakpoint"), Gtk::AccelKey("F5"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_toggle));
@@ -1164,22 +1171,22 @@ void GTKIDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
    _controller->onCompilationCompletion(_model, exitCode, output.c_str(), &logger);
 
    if (exitCode != EXIT_FAILURE) {
-//      switch ((DebugAction)postponedAction) {
-//         case DebugAction::Run:
-//            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
-//            break;
-//         case DebugAction::StepOver:
-//            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
-//            break;
-//         case DebugAction::StepInto:
-//            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
-//            break;
-//         case DebugAction::RunTo:
-//            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
-//            break;
-//         default:
-//            break;
-//      }
+      switch ((DebugAction)postponedAction) {
+         case DebugAction::Run:
+            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
+            break;
+         case DebugAction::StepOver:
+            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
+            break;
+         case DebugAction::StepInto:
+            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
+            break;
+         case DebugAction::RunTo:
+            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
+            break;
+         default:
+            break;
+      }
    }
 }
 

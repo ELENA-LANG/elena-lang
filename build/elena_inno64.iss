@@ -7,7 +7,7 @@
 ; (To generate a new GUID, click Tools | Generate GUID inside the IDE.)
 AppId={{3CAA69D3-0F98-44B1-A73E-E864BA51D5BD}
 AppName=ELENA Programming Language
-AppVersion=6.8.2
+AppVersion=6.8.3
 ;AppVerName=ELENA Programming Language 6.8.0
 AppPublisher=Alexey Rakov
 AppPublisherURL=http://github.com/ELENA-LANG/elena-lang
@@ -18,7 +18,7 @@ DefaultGroupName=ELENA Programming Language
 AllowNoIcons=yes
 LicenseFile=..\doc\license
 InfoAfterFile=..\CHANGELOG.md
-OutputBaseFilename=elena-lang-6.8.2.x64-win-setup
+OutputBaseFilename=elena-lang-6.8.3.x64-win-setup
 Compression=lzma
 SolidCompression=yes
 ChangesEnvironment=yes
