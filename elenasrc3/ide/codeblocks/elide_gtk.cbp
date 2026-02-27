@@ -137,6 +137,8 @@
 		<Unit filename="../gtklinux/gtkoutput.h" />
 		<Unit filename="../gtklinux/lnxcontroller.cpp" />
 		<Unit filename="../gtklinux/lnxcontroller.h" />
+		<Unit filename="../gtklinux/lnxdebugadapter.cpp" />
+		<Unit filename="../gtklinux/lnxdebugadapter.h" />
 		<Unit filename="../gtklinux/main.cpp" />
 		<Unit filename="../idecommon.cpp" />
 		<Unit filename="../idecommon.h" />

@@ -364,7 +364,7 @@ protected:
       if (_model->autoSave)
          saveAll();
 
-      _controller->doDebugAction(_model, DebugAction::Run, messageDialog, false);
+      //_controller->doDebugAction(_model, DebugAction::Run, messageDialog, false);
    }
    void on_menu_debug_next()
    {
@@ -375,7 +375,7 @@ protected:
       if (_model->autoSave)
          saveAll();
 
-      _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, false);
+      //_controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, false);
    }
    void on_menu_debug_stepin()
    {

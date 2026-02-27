@@ -717,16 +717,16 @@ void IDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
    if (exitCode != EXIT_FAILURE) {
       switch ((DebugAction)postponedAction) {
          case DebugAction::Run:
-            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
+            doDebugAction(DebugAction::Run, true);
             break;
          case DebugAction::StepOver:
-            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
+            doDebugAction(DebugAction::StepOver, true);
             break;
          case DebugAction::StepInto:
-            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
+            doDebugAction(DebugAction::StepInto, true);
             break;
          case DebugAction::RunTo:
-            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
+            doDebugAction(DebugAction::RunTo, true);
             break;
          default:
             break;
@@ -821,6 +821,24 @@ void IDEWindow :: updateCompileMenu(bool compileEnable, bool debugEnable, bool s
    enableMenuItemById(IDM_DEBUG_RUNTO, debugEnable, false);
 
    enableMenuItemById(IDM_DEBUG_STOP, stopEnable, true);
+}
+
+void IDEWindow :: doDebugAction(DebugAction action, bool withoutPostponeAction)
+{
+   DebugActionResult result = {};
+   if (!_controller->doDebugAction(_model, action, result, withoutPostponeAction)) {
+      if (_model->sourceViewModel.isAnyDocumentModified())
+         messageDialog.info(INFO_RUN_UNSAVED_PROJECT);
+      else if (result.outaged) {
+         messageDialog.info(INFO_RUN_OUT_OF_DATE);
+      }
+      else if (result.targetMissing) {
+         messageDialog.info(INFO_NEED_TARGET);
+      }
+      else if (result.noDebugFile) {
+         messageDialog.info(INFO_RUN_NEED_RECOMPILE);
+      }
+   }
 }
 
 void IDEWindow :: onProjectRefresh(bool empty)
@@ -1014,25 +1032,25 @@ bool IDEWindow :: onCommand(int command)
          if (_model->autoSave)
             saveAll();
 
-         _controller->doDebugAction(_model, DebugAction::Run, messageDialog, false);
+         doDebugAction(DebugAction::Run, false);
          break;
       case IDM_DEBUG_STEPOVER:
          if (_model->autoSave)
             saveAll();
 
-         _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, false);
+         doDebugAction(DebugAction::StepOver, false);
          break;
       case IDM_DEBUG_STEPINTO:
          if (_model->autoSave)
             saveAll();
 
-         _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, false);
+         doDebugAction(DebugAction::StepInto, false);
          break;
       case IDM_DEBUG_RUNTO:
          if (_model->autoSave)
             saveAll();
 
-         _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, false);
+         doDebugAction(DebugAction::RunTo, false);
          break;
       case IDM_DEBUG_STOP:
          _controller->doDebugStop(_model);
@@ -1547,7 +1565,17 @@ void IDEWindow :: onDebuggerSourceNotFound()
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
    menu->enableMenuItemById(IDM_DEBUG_STOP, true);
 
-   _controller->onDebuggerNoSource(messageDialog, _model);
+   auto result = messageDialog.question(QUESTION_NOSOURCE_CONTINUE);
+
+   DebugActionResult debugResult = {};
+   if (!_controller->onDebuggerNoSource(_model, result == MessageDialogBase::Answer::Yes, debugResult)) {
+      if (debugResult.targetMissing) {
+         messageDialog.info(INFO_NEED_TARGET);
+      }
+      else if (debugResult.noDebugFile) {
+         messageDialog.info(INFO_RUN_NEED_RECOMPILE);
+      }
+   }
 }
 
 bool IDEWindow :: onClose()
@@ -1739,4 +1767,5 @@ void IDEWindow :: onDropFiles(HDROP hDrop)
 //   else if (textFrame->clearButton()) {
 //      textFrame->refresh();
 //   }
+//}
 //}

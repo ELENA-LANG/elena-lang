@@ -147,6 +147,8 @@ namespace elena_lang
 
       void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable);
 
+      void doDebugAction(DebugAction action, bool withoutPostponeAction);
+
       void onTextModelChange(TextViewModelNMHDR* rec);
       void onTextFrameSel(SelectionNMHDR* rec);
       void onProjectViewSel(ParamSelectionNMHDR* rec);

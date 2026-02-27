@@ -1173,16 +1173,16 @@ void GTKIDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
    if (exitCode != EXIT_FAILURE) {
       switch ((DebugAction)postponedAction) {
          case DebugAction::Run:
-            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
+            //_controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
             break;
          case DebugAction::StepOver:
-            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
+            //_controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
             break;
          case DebugAction::StepInto:
-            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
+            //_controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
             break;
          case DebugAction::RunTo:
-            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
+            //_controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
             break;
          default:
             break;

@@ -50,7 +50,7 @@ public:
    }
 };
 
-typedef LinuxDebugAdapter    DebugProcess;
+typedef LnxDebugAdapter    DebugProcess;
 
 LinuxProcess      outputProcess;
 

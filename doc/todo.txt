@@ -13,9 +13,11 @@ In development:
   ====================================== 
   * doc
   ====================================== 
-  * current : linx ide
+  * current : #187 : linx ide
   ====================================== 
+  - refactor onDebugAction, the dialog must not be passed
   - implementing a debugger for Linux
+  - uncomment onCompilationEnd, on_menu_debug_stepover, on_menu_debug_run
   --------------------------------------
 
   ### EPIC: elena 8.0 ###
