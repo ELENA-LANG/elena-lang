@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA ELFHelper.
 //		Supported platforms: Linux I386
-//                                                  (C)2022, by Aleksey Rakov
+//                                                  (C)2022-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -53,6 +53,35 @@ bool ELFHelper :: seekRODataSegment(StreamReader& reader, addr_t& rvaAddress)
 
       if (ph_header.p_type == PT_LOAD && ph_header.p_flags == PF_R) {
          rvaAddress = ph_header.p_vaddr;
+
+         return true;
+      }
+
+      count--;
+   }
+
+   return false;
+}
+
+bool ELFHelper :: seekRDataSegment(StreamReader& reader, size_t& address)
+{
+#if __i386__
+   Elf32_Ehdr header;
+   Elf32_Phdr ph_header;
+   reader.read(&header, ELF_HEADER_SIZE);
+#else
+   Elf64_Ehdr header;
+   Elf64_Phdr ph_header;
+   reader.read(&header, ELF64_HEADER_SIZE);
+#endif
+
+   int count = header.e_phnum;
+
+   while (count > 0) {
+      reader.read(&ph_header, header.e_phentsize);
+
+      if (ph_header.p_type == PT_LOAD && ph_header.p_flags == PF_R) {
+         address = ph_header.p_vaddr;
 
          return true;
       }

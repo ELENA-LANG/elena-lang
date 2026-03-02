@@ -13,32 +13,286 @@
 #include "lnxdebugadapter.h"
 #include "lnxcontroller.h"
 //#include "eng/messages.h"
-
 #include "linux/elfhelper.h"
+#include "engine/core.h"
 
 using namespace elena_lang;
 
-//// --- BreakpointContext ---
-//
-//BreakpointContext :: BreakpointContext()
-//{
-//}
+#if defined _M_IX86 || __i386__
+
+typedef VMTHeader32     VMTHeader;
+typedef ObjectPage32    ObjectHeader;
+
+constexpr auto elVMTFlagOffset   = elVMTFlagOffset32;
+constexpr auto elObjectOffset    = elObjectOffset32;
+constexpr auto elStructMask      = elStructMask32;
+
+#elif defined _M_X64 || __x86_64__
+
+typedef VMTHeader64     VMTHeader;
+typedef ObjectPage64    ObjectHeader;
+
+constexpr auto elVMTFlagOffset   = elVMTFlagOffset64;
+constexpr auto elObjectOffset    = elObjectOffset64;
+constexpr auto elStructMask      = elStructMask64;
+
+#endif
 
 // --- ThreadContext ---
 
-ThreadContext :: ThreadContext(DebugProcessController* debugger, pid_t pid)
+ThreadContext :: ThreadContext(pid_t pid)
 {
    this->_threadId = pid;
-
-   //this->state = NULL;
-   //this->atCheckPoint = false;
-
-   this->_debugger = debugger;
+   this->_state = nullptr;
+   this->_stepMode = false;
 }
 
 void ThreadContext :: refresh()
 {
-   //ptrace(PTRACE_GETREGS, _threadId, NULL, &_context);
+   ptrace(PTRACE_GETREGS, _threadId, NULL, &_context);
+}
+
+bool ThreadContext :: readDump(addr_t address, char* dump, size_t length)
+{
+   int index = 0;
+   long val;
+   while (length > 0) {
+      val = ptrace(PTRACE_PEEKDATA,
+                          _threadId, address + index * 4,
+                          NULL);
+      if (length > 3) {
+         memcpy(dump + index * 4, &val, 4);
+         length -= 4;
+      }
+      else {
+         memcpy(dump + index * 4, &val, length);
+         length = 0;
+      }
+
+      index++;
+   }
+
+   return true;
+}
+
+void ThreadContext :: writeDump(addr_t address, char* dump, size_t length)
+{
+   int index = 0;
+   long val;
+   while (length > 0) {
+      if (length > 3) {
+         memcpy(&val, dump + index * 4, 4);
+         length -= 4;
+      }
+      else {
+         val = ptrace(PTRACE_PEEKDATA,
+                          _threadId, address + index * 4,
+                          NULL);
+
+         memcpy(&val, dump + index * 4, length);
+         length = 0;
+      }
+
+      ptrace(PTRACE_POKEDATA,
+                          _threadId, address + index * 4,
+                          (void*)val);
+
+      index++;
+   }
+}
+
+char ThreadContext :: setSoftwareBreakpoint(addr_t breakpoint)
+{
+   unsigned char code = 0;
+   unsigned char terminator = 0xCC;
+
+   readDump(breakpoint, (char*)&code, 1);
+   writeDump(breakpoint, (char*)&terminator, 1);
+
+   return code;
+}
+
+void ThreadContext :: clearSoftwareBreakpoint(addr_t breakpoint, char substitute)
+{
+   writeDump(breakpoint, &substitute, 1);
+}
+
+void ThreadContext :: setTrapFlag()
+{
+   _stepMode = true;
+}
+
+void ThreadContext :: resetTrapFlag()
+{
+   _stepMode = false;
+}
+
+#if defined _M_IX86 || __i386__
+
+bool ThreadContext :: checkStepRange(addr_t minAddress, add_t maxAddress)
+{
+   return _context.eip >= minAddress && _context.eip <= maxAddress;
+}
+
+addr_t ThreadContext :: IP()
+{
+   return _context.eip;
+}
+
+void ThreadContext :: setIP(size_t address)
+{
+   ptrace(PTRACE_POKEUSER, _threadId,
+                  offsetof(struct user, regs.eip), address);
+}
+
+addr_t ThreadContext :: BP()
+{
+   return _context.ebp;
+}
+
+#elif defined _M_X64 || __x86_64__
+
+bool ThreadContext :: checkStepRange(addr_t minAddress, addr_t maxAddress)
+{
+   return _context.rip >= minAddress && _context.rip <= maxAddress;
+}
+
+addr_t ThreadContext :: IP()
+{
+   return _context.rip;
+}
+
+void ThreadContext :: setIP(addr_t address)
+{
+   ptrace(PTRACE_POKEUSER, _threadId,
+                  offsetof(struct user, regs.rip), address);
+}
+
+addr_t ThreadContext :: BP()
+{
+   return _context.rbp;
+}
+
+#endif
+
+// --- BreakpointController ---
+
+BreakpointController :: BreakpointController()
+   : breakpoints(0)
+{
+}
+
+void BreakpointController :: setTempBreakpoint(addr_t address, ThreadContext* context)
+{
+   TempBreakpoint breakpoint = { address };
+   breakpoint.substitute = context->setSoftwareBreakpoint(address);
+   breakpoint.mode = TempBreakpoint::Mode::Software;
+
+   for (size_t i = 0; i < tempBreakpoints.count(); i++) {
+      if (!tempBreakpoints[i].isAssigned()) {
+         tempBreakpoints[i] = breakpoint;
+
+         return;
+      }
+   }
+
+   tempBreakpoints.add(breakpoint);
+}
+
+bool BreakpointController :: clearTempBreakpoint(addr_t address, ThreadContext* context)
+{
+   bool proceeded = false;
+
+   for (size_t i = 0; i < tempBreakpoints.count(); i++) {
+      if (tempBreakpoints[i].isAssigned() && tempBreakpoints[i].address == address) {
+         context->clearSoftwareBreakpoint(address, tempBreakpoints[i].substitute);
+
+         tempBreakpoints[i].reset();
+
+         proceeded = true;
+      }
+   }
+
+   return proceeded;
+}
+
+void BreakpointController :: addBreakpoint(addr_t address, ThreadContext* context, bool started)
+{
+   if (started) {
+      breakpoints.add(address, context->setSoftwareBreakpoint(address));
+   }
+   else breakpoints.add(address, 0);
+}
+
+void BreakpointController :: removeBreakpoint(addr_t address, ThreadContext* context, bool started)
+{
+   if (started) {
+      context->clearSoftwareBreakpoint(address, breakpoints.get(address));
+      if (context->_resetBreakpoint.mode == TempBreakpoint::Mode::Reset && context->_resetBreakpoint.address == address) {
+         context->_resetBreakpoint.reset();
+         context->resetTrapFlag();
+      }
+   }
+   breakpoints.erase(address);
+}
+
+void BreakpointController :: setSoftwareBreakpoints(ThreadContext* context)
+{
+   for(auto breakpoint = breakpoints.start(); !breakpoint.eof(); ++breakpoint) {
+      *breakpoint = context->setSoftwareBreakpoint(breakpoint.key());
+   }
+}
+
+bool BreakpointController :: processBreakpoint(ThreadContext* context)
+{
+   bool proceeded = false;
+
+   addr_t address = context->IP() - 1;
+
+   if (clearTempBreakpoint(address, context)) {
+      proceeded = true;
+   }
+
+   if (breakpoints.exist(address)) {
+      TempBreakpoint resetBreakpoint(address, TempBreakpoint::Mode::Reset);
+      context->_resetBreakpoint = resetBreakpoint;
+
+      if (!proceeded) {
+         char substitute = breakpoints.get(resetBreakpoint.address);
+         context->clearSoftwareBreakpoint(resetBreakpoint.address, substitute);
+
+         proceeded = true;
+      }
+   }
+
+   if (proceeded) {
+      context->setIP(address);
+
+      return true;
+   }
+
+   return false;
+}
+
+bool BreakpointController :: processStep(ThreadContext* context)
+{
+   if (context->_resetBreakpoint.mode == TempBreakpoint::Mode::Reset) {
+      // reset the breakpoint if required
+      context->setSoftwareBreakpoint(context->_resetBreakpoint.address);
+
+      //if (stepMode)
+      //   context->setTrapFlag();
+
+      context->_resetBreakpoint.mode = TempBreakpoint::Mode::None;
+   }
+   else return false;
+
+   return true;
+}
+
+void BreakpointController :: clear()
+{
+   breakpoints.clear();
 }
 
 // --- ProcessException ---
@@ -92,13 +346,15 @@ void ThreadContext :: refresh()
 // --- DebugProcessController ---
 
 DebugProcessController :: DebugProcessController()
-   : _threads(nullptr)
+   : _threads(nullptr), _steps(nullptr), _exception({})
 {
    _currentId = _traceeId = 0;
    _current = nullptr;
 
    _trapped = _started = false;
    _init_breakpoint = 0;
+   _minAddress = INVALID_ADDR;
+   _maxAddress = 0;
 }
 
 bool DebugProcessController :: startProcess(const char* exePath, const char* cmdLine, const char* appPath)
@@ -118,10 +374,10 @@ bool DebugProcessController :: startProcess(const char* exePath, const char* cmd
          // enabling multi-threading debugging
          ptrace(PTRACE_SETOPTIONS, _traceeId, NULL, PTRACE_O_TRACECLONE/* | PTRACE_O_TRACEFORK*/);
 
-         _current = new ThreadContext(this, _traceeId);
+         _current = new ThreadContext(_traceeId);
          _threads.add(_traceeId, _current);
 
-         //breakpoints.setSoftwareBreakpoints(current);
+         _breakpoints.setSoftwareBreakpoints(_current);
       }
    }
    else return false;
@@ -143,7 +399,7 @@ void DebugProcessController :: processEvent()
       if(((status >> 16) & 0xffff) == PTRACE_EVENT_CLONE) {
          pid_t newThreadId;
          if(ptrace(PTRACE_GETEVENTMSG, _currentId, 0, &newThreadId) != -1) {
-            _current = new ThreadContext(this, newThreadId);
+            _current = new ThreadContext(newThreadId);
             _current->refresh();
 
             _threads.add(newThreadId, _current);
@@ -161,7 +417,6 @@ void DebugProcessController :: processEvent()
       if (_threads.count() == 0) {
          if (_current) {
             _current->refresh();
-            //_exitCheckPoint = proceedCheckPoint();
          }
 
          _started = false;
@@ -175,8 +430,189 @@ void DebugProcessController :: processEvent()
          _current->refresh();
 
       int stopCode = WSTOPSIG(status);
-      //processSignal(stopCode);
+      processSignal(stopCode);
    }
+}
+
+void DebugProcessController :: processSignal(int signal)
+{
+   if(signal == SIGTRAP && _current) {
+      if (_breakpoints.processBreakpoint(_current)) {
+         _current->_state = _steps.get(_current->IP());
+         _trapped = true;
+         _current->setTrapFlag();
+      }
+      else if (_breakpoints.processStep(_current)) {
+         return;
+      }
+      else {
+         if (_current->checkStepRange(_minAddress, _maxAddress)) {
+            processStep();
+         }
+         if (!_trapped)
+            _current->setTrapFlag();
+      }
+   }
+   else if (signal == SIGSEGV) {
+      struct __ptrace_peeksiginfo_args mask;
+      siginfo_t info;
+
+      mask.nr = 1;
+      mask.flags = 0;
+      mask.off = 0;
+
+      ptrace(PTRACE_PEEKSIGINFO, _currentId, &mask, &info);
+
+      this->_exception.code = signal;
+      this->_exception.address = (addr_t)info.si_addr;
+   }
+}
+
+void DebugProcessController :: processStep()
+{
+   _current->_state = _steps.get(_current->IP());
+   if (_current->_state != nullptr) {
+      _trapped = true;
+      _current->resetTrapFlag();
+      //proceedCheckPoint();
+   }
+}
+
+bool DebugProcessController :: isInitBreakpoint()
+{
+   return _current ? _init_breakpoint == _current->IP() : false;
+}
+
+addr_t DebugProcessController :: getBaseAddress()
+{
+   return 0x08048000u; // !! temporal
+}
+
+bool DebugProcessController :: findSignature(StreamReader& reader, char* signature, pos_t length)
+{
+   if (!_current)
+      return false;
+
+   reader.seek(0x08048000u);
+
+   size_t rva = 0;
+   ELFHelper::seekRDataSegment(reader, rva);
+
+   // load Executable image
+   _current->readDump(rva, signature, length);
+   signature[length] = 0;
+
+   return true;
+}
+
+void* DebugProcessController :: getState()
+{
+   return _current ? _current->_state : nullptr;
+}
+
+addr_t DebugProcessController :: getStackFrame()
+{
+   return _current ? _current->BP() : 0;
+}
+
+addr_t DebugProcessController :: getIP()
+{
+   return _current ? _current->IP() : 0;
+}
+
+addr_t DebugProcessController :: getMemoryPtr(addr_t address)
+{
+   addr_t retPtr = 0;
+
+   if (_current && _current->readDump(address, (char*)&retPtr, sizeof(addr_t))) {
+      return retPtr;
+   }
+   else return 0;
+}
+
+ref_t DebugProcessController :: getMemoryRef(addr_t address)
+{
+   ref_t retPtr = 0;
+
+   if (_current && _current->readDump(address, (char*)&retPtr, sizeof(ref_t))) {
+      return retPtr;
+   }
+   else return 0;
+}
+
+void DebugProcessController :: addBreakpoint(addr_t address)
+{
+   _breakpoints.addBreakpoint(address, _current, _started);
+}
+
+void DebugProcessController :: removeBreakpoint(addr_t address)
+{
+   _breakpoints.removeBreakpoint(address, _current, _started);
+}
+
+void DebugProcessController :: continueProcess()
+{
+/*   if (_current) {
+      if (breakpoints.applyPendingBreakpoints(current))
+         stepMode = false;
+   }*/
+
+   ptrace((_current && _current->_stepMode) ? PTRACE_SINGLESTEP : PTRACE_CONT, _currentId, nullptr, nullptr);
+}
+
+void DebugProcessController :: stop()
+{
+   if (!_started)
+      return;
+
+   kill(_traceeId, SIGKILL);
+
+   continueProcess();
+}
+
+void DebugProcessController :: reset()
+{
+   _trapped = false;
+
+   _threads.clear();
+   _current = nullptr;
+
+   _init_breakpoint = 0;
+   _minAddress = INVALID_ADDR;
+   _maxAddress = 0;
+
+   _steps.clear();
+   _breakpoints.clear();
+}
+
+void DebugProcessController :: setStepMode()
+{
+   if (_current)
+      _current->setTrapFlag();
+}
+
+void DebugProcessController :: addStep(addr_t address, void* state)
+{
+   _steps.add(address, state);
+   if (address < _minAddress)
+      _minAddress = address;
+
+   if (address > _maxAddress)
+      _maxAddress = address;
+}
+
+void DebugProcessController :: setBreakpoint(addr_t address)
+{
+   if (_current) {
+      _current->resetTrapFlag();
+
+      _breakpoints.setTempBreakpoint(address, _current);
+   }
+}
+
+void DebugProcessController :: resetException()
+{
+   _exception.code = 0;
 }
 
 // --- DebugEventManager ---
@@ -280,103 +716,138 @@ bool LnxDebugAdapter :: isTrapped()
 
 bool LnxDebugAdapter :: isInitBreakpoint()
 {
-   return false; // !! temporal
+   return _process.isInitBreakpoint();
 }
 
 int LnxDebugAdapter :: getDataOffset()
 {
-   return 0;
+   return sizeof(addr_t);
 }
 
 addr_t LnxDebugAdapter :: getBaseAddress()
 {
-   return 0;
+   return _process.getBaseAddress();
 }
 
 void* LnxDebugAdapter :: getState()
 {
+   return _process.getState();
 }
 
 void* LnxDebugAdapter :: retrieveState(addr_t address)
 {
+   return _process.retrieveState(address);
 }
 
 addr_t LnxDebugAdapter :: getFrame()
 {
-   return 0;
+   return _process.getStackFrame();
 }
 
 addr_t LnxDebugAdapter :: getIP()
 {
-   return 0;
+   return _process.getIP();
 }
 
 addr_t LnxDebugAdapter :: getStackItem(int index, disp_t offset)
 {
-   return 0;
+   return _process.getMemoryPtr(getStackItemAddress(index * sizeof(addr_t) + offset));
 }
 
 addr_t LnxDebugAdapter :: getStackItemAddress(disp_t disp)
 {
-   return 0;
+   return getFrame() - disp;
 }
 
 addr_t LnxDebugAdapter :: getField(addr_t address, int index)
 {
-   return 0;
+   disp_t offset = index * sizeof(addr_t);
+
+   return _process.getMemoryPtr(address + offset);
 }
 
 addr_t LnxDebugAdapter :: getFieldAddress(addr_t address, disp_t disp)
 {
-   return 0;
+   return address + disp;
 }
 
 addr_t LnxDebugAdapter :: getClassVMT(addr_t address)
 {
-   return 0;
+   return _process.getMemoryPtr(address - elObjectOffset);
 }
 
 ref_t LnxDebugAdapter :: getClassFlags(addr_t vmtAddress)
 {
-   return 0;
+   return _process.getMemoryRef(vmtAddress - elVMTFlagOffset);
 }
 
 size_t LnxDebugAdapter :: getArrayLength(addr_t address)
 {
+   ObjectHeader header;
+   if (_process.read(address - elObjectOffset, header)) {
+      return header.size & ~elStructMask;
+   }
+
    return 0;
 }
 
 char LnxDebugAdapter :: getBYTE(addr_t address)
 {
+   char value;
+   if (_process.read(address, value)) {
+      return value;
+   }
+
    return 0;
 }
 
 unsigned short LnxDebugAdapter :: getWORD(addr_t address)
 {
+   unsigned short value;
+   if (_process.read(address, value)) {
+      return value;
+   }
+
    return 0;
 }
 
 unsigned int LnxDebugAdapter :: getDWORD(addr_t address)
 {
+   unsigned int value;
+   if (_process.read(address, value)) {
+      return value;
+   }
+
    return 0;
 }
 
 unsigned long long LnxDebugAdapter :: getQWORD(addr_t address)
 {
+   unsigned long long value;
+   if (_process.read(address, value)) {
+      return value;
+   }
+
    return 0;
 }
 
 double LnxDebugAdapter :: getFLOAT64(addr_t address)
 {
-   return 0;
-}
+   double value;
+   if (_process.read(address, value)) {
+      return value;
+   }
+
+   return 0;}
 
 void LnxDebugAdapter :: addBreakpoint(addr_t address)
 {
+   _process.addBreakpoint(address);
 }
 
 void LnxDebugAdapter :: removeBreakpoint(addr_t address)
 {
+   _process.removeBreakpoint(address);
 }
 
 addr_t LnxDebugAdapter :: findEntryPoint(path_t programPath)
@@ -386,15 +857,17 @@ addr_t LnxDebugAdapter :: findEntryPoint(path_t programPath)
 
 bool LnxDebugAdapter :: findSignature(StreamReader& reader, char* signature, pos_t length)
 {
-   return false;
+   return _process.findSignature(reader, signature, length);
 }
 
 void LnxDebugAdapter :: activate()
 {
+   //_process.activateWindow();
 }
 
 void LnxDebugAdapter :: run()
 {
+   _process.continueProcess();
 }
 
 bool LnxDebugAdapter :: proceed(int)
@@ -406,27 +879,32 @@ bool LnxDebugAdapter :: proceed(int)
 
 void LnxDebugAdapter :: stop()
 {
+   _process.stop();
 }
 
 void LnxDebugAdapter :: reset()
 {
+   _process.reset();
 }
 
 void LnxDebugAdapter :: setStepMode()
 {
+   _process.setStepMode();
 }
 
 bool LnxDebugAdapter :: readDump(addr_t address, char* s, pos_t length)
 {
-   return false;
+   return _process.read(address, s, length);
 }
 
 void LnxDebugAdapter :: addStep(addr_t address, void* current)
 {
+   _process.addStep(address, current);
 }
 
-void LnxDebugAdapter :: setBreakpoint(addr_t address, bool withStackLevelControl)
+void LnxDebugAdapter :: setBreakpoint(addr_t address, bool)
 {
+   _process.setBreakpoint(address);
 }
 
 bool LnxDebugAdapter :: startThread(DebugControllerBase* controller)
@@ -442,15 +920,23 @@ bool LnxDebugAdapter :: startThread(DebugControllerBase* controller)
 
 DebugProcessException* LnxDebugAdapter :: Exception()
 {
-   return nullptr; // !! temporal
+   auto debugException = _process.getException();
+   if (debugException) {
+      _exception.address = debugException->address;
+      _exception.code = debugException->code;
+
+      return &_exception;
+   }
+
+   return nullptr;
 }
 
 void LnxDebugAdapter :: resetException()
 {
-///*   _exception.address = 0;
-//   _exception.code = 0;
-//
-//   _debugProcess.resetException();*/
+   _exception.address = 0;
+   _exception.code = 0;
+
+   _process.resetException();
 }
 
 bool LnxDebugAdapter :: startProgram(path_t exePath, path_t cmdLine, path_t appPath, StartUpSettings&)

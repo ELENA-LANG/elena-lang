@@ -8,122 +8,118 @@
 #ifndef LNXDEBUGADAPTER_H
 #define LNXDEBUGADAPTER_H
 
-#include <pthread.h>
-#include <unistd.h>
-//#include <sys/user.h>
-//#include <sys/reg.h>
-
 #include "idecommon.h"
+
+#include <unistd.h>
+#include <sys/wait.h>
+#include <sys/user.h>
+#include <pthread.h>
 
 namespace elena_lang
 {
    class DebugProcessController;
+   class BreakpointController;
+
+   struct TempBreakpoint
+   {
+      enum class Mode
+      {
+         None     = 0,
+         Software = 1,
+         Reset    = 3,
+      };
+
+      Mode   mode;
+      addr_t address;
+      char   substitute;
+
+      bool isAssigned() const { return mode != Mode::None; }
+
+      void reset()
+      {
+         mode = Mode::None;
+      }
+
+      TempBreakpoint()
+         : mode(Mode::None), address(0), substitute(0)
+      {
+      }
+      TempBreakpoint(addr_t address)
+         : mode(Mode::None), address(address), substitute(0)
+      {
+      }
+      TempBreakpoint(addr_t address, Mode mode)
+         : mode(mode), address(address), substitute(0)
+      {
+      }
+   };
 
    struct ThreadContext
    {
       friend class DebugProcessController;
-//      friend struct BreakpointContext;
+      friend struct BreakpointController;
 
    protected:
-      DebugProcessController* _debugger;
-//      void*     state;
+      void*                   _state;
       pid_t                   _threadId;
-//
-      //struct user_regs_struct _context;
 
-//      void set_breakpoint_addr(void *addr, int n);
+      struct user_regs_struct _context;
+      bool                    _stepMode;
+
+      TempBreakpoint          _resetBreakpoint;
 
    public:
-///*      ThreadBreakpoint breakpoint;
-//
-//      bool atCheckPoint;
-//      bool checkFailed;
-//
-//      void* State() const { return state; }
-//      size_t IP() { return context.eip; }
-//      size_t Frame() { return context.ebp; }
-//      size_t Local(int offset) { return context.ebp - offset * 4; }
-//      size_t Current(int offset) { return context.esp + offset * 4; }
-//      size_t ClassVMT(size_t address);
-//      size_t VMTFlags(size_t address);
-//      size_t ObjectPtr(size_t address);
-//      size_t LocalPtr(int offset) { return ObjectPtr(Local(offset)); }
-//      size_t CurrentPtr(int offset) { return ObjectPtr(Current(offset)); }
-//
-//      bool readDump(size_t address, char* dump, size_t length);
-//      void writeDump(size_t address, char* dump, size_t length);
-//
-//      size_t readDWord(size_t address)
-//      {
-//         size_t word = 0;
-//         readDump(address, (char*)&word, 4);
-//
-//         return word;
-//      }
-//
-//      size_t readWord(size_t address)
-//      {
-//         size_t word = 0;
-//         readDump(address, (char*)&word, 2);
-//
-//         return word;
-//      }
-//
-//
-//      size_t readByte(size_t address)
-//      {
-//         size_t word = 0;
-//         readDump(address, (char*)&word, 1);
-//
-//         return word;
-//      }
-//
-//      void writeDWord(size_t address, size_t word)
-//      {
-//         writeDump(address, (char*)&word, 4);
-//      }
+      bool readDump(addr_t address, char* dump, size_t length);
+      void writeDump(addr_t address, char* dump, size_t length);
 
       void refresh();
 
-//      void setCheckPoint();
-//      void setHardwareBreakpoint(size_t breakpoint);
-//      unsigned char setSoftwareBreakpoint(size_t breakpoint);
-//      void setEIP(size_t address);
-//
-//      void clearHardwareBreakpoint();
-//      void clearSoftwareBreakpoint(size_t breakpoint, char substitute);
-//
-//      void setTrapFlag();
-//      void resetTrapFlag();
-//*/
-      ThreadContext(DebugProcessController* debugger, pid_t pid);
+      void setTrapFlag();
+      void resetTrapFlag();
+
+      char setSoftwareBreakpoint(addr_t breakpoint);
+      void clearSoftwareBreakpoint(addr_t breakpoint, char substitute);
+
+      addr_t IP();
+      void setIP(addr_t address);
+
+      addr_t BP();
+
+      bool checkStepRange(addr_t minAddress, addr_t maxAddress);
+
+      ThreadContext(pid_t pid);
    };
 
-//   // --- BreakpointContext ---
-//
-//   struct BreakpointContext
-//   {
-///*      Map<size_t, char> breakpoints;
-//
-//      void addBreakpoint(size_t address, ThreadContext* context, bool started);
-//      void removeBreakpoint(size_t address, ThreadContext* context, bool started);
-//      void setSoftwareBreakpoints(ThreadContext* context);
-//      void setHardwareBreakpoint(size_t address, ThreadContext* context, bool withStackLevelControl);
-//
-//      bool processStep(ThreadContext* context, bool stepMode);
-//      bool processBreakpoint(ThreadContext* context);
-//
-//      void clear();
-//      bool applyPendingBreakpoints(ThreadContext* context);
-//*/
-//      BreakpointContext();
-//   };
+   // --- BreakpointContext ---
+
+   typedef CachedList<TempBreakpoint, 5> TempBreakpoints;
+
+   struct BreakpointController
+   {
+      TempBreakpoints   tempBreakpoints;
+      Map<addr_t, char> breakpoints;
+
+      void setTempBreakpoint(addr_t address, ThreadContext* context);
+      bool clearTempBreakpoint(addr_t address, ThreadContext* context);
+
+      bool processStep(ThreadContext* context);
+
+      void addBreakpoint(addr_t address, ThreadContext* context, bool started);
+      void removeBreakpoint(addr_t address, ThreadContext* context, bool started);
+      void setSoftwareBreakpoints(ThreadContext* context);
+
+      bool processBreakpoint(ThreadContext* context);
+
+      void clear();
+
+      BreakpointController();
+   };
 
    // --- ProcessException ---
    struct ProcessException
    {
-      int code;
-      int address;
+      int    code;
+      addr_t address;
 
       //const char* Text();
 
@@ -137,19 +133,24 @@ namespace elena_lang
    class DebugProcessController
    {
       typedef Map<pid_t, ThreadContext*, nullptr, nullptr, freeobj>  ThreadContextes;
+      typedef MemoryMap<addr_t, void*, Map_StoreAddr, Map_GetAddr>      StepMap;
 
-      ProcessException  _exception;
+      ProcessException     _exception;
 
-      bool              _started;
-      bool              _trapped;
+      bool                 _started;
+      bool                 _trapped;
 
-      pid_t             _traceeId;
-      pid_t             _currentId;
+      pid_t                _traceeId;
+      pid_t                _currentId;
 
-      ThreadContextes   _threads;
-      ThreadContext*    _current;
+      ThreadContextes      _threads;
+      StepMap              _steps;
 
-      addr_t            _init_breakpoint;
+      ThreadContext*       _current;
+      BreakpointController _breakpoints;
+
+      addr_t               _init_breakpoint;
+      addr_t               _minAddress, _maxAddress;
 
    public:
       void initHook() { _init_breakpoint = INVALID_ADDR; }
@@ -157,9 +158,53 @@ namespace elena_lang
       bool isStarted() { return _started; }
       bool isTrapped() const { return _trapped; }
 
+      bool isInitBreakpoint();
+
+      void setStepMode();
+
       bool startProcess(const char* exePath, const char* cmdLine, const char* appPath);
+      void continueProcess();
+      void stop();
+      void reset();
+
+      bool findSignature(StreamReader& reader, char* signature, pos_t length);
+
+      addr_t getBaseAddress();
+      void* getState();
+      void* retrieveState(addr_t address)
+      {
+         return _steps.get(address);
+      }
+
+      addr_t getStackFrame();
+      addr_t getIP();
+      addr_t getMemoryPtr(addr_t address);
+      ref_t getMemoryRef(addr_t address);
+      template<class T> bool read(addr_t address, T& value)
+      {
+         return _current && _current->readDump(address, (char*)&value, sizeof(T));
+      }
+      bool read(addr_t address, char* output, pos_t length)
+      {
+         return _current && _current->readDump(address, output, length);
+      }
 
       void processEvent();
+      void processSignal(int signal);
+      void processStep();
+
+      ProcessException* getException()
+      {
+         return _exception.code == 0 ? nullptr : &_exception;
+      }
+      void resetException();
+
+      void addBreakpoint(addr_t address);
+      void removeBreakpoint(addr_t address);
+
+      void setBreakpoint(addr_t address);
+
+      void addStep(addr_t address, void* state);
 
       DebugProcessController();
    };
@@ -196,6 +241,8 @@ namespace elena_lang
 
       DebugEventManager       _events;
       DebugProcessController  _process;
+
+      DebugProcessException   _exception;
 
    public:
       void initEvents() override
