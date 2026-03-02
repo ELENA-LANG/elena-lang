@@ -71,7 +71,7 @@ namespace elena_lang
       }
       ~MapItemBase()
       {
-         if (FreeKey) {
+         if (FreeKey != nullptr) {
             FreeKey(this->key);
          }
       }
@@ -635,7 +635,7 @@ namespace elena_lang
             }
             else previous->next = tmp->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -677,7 +677,7 @@ namespace elena_lang
             }
             else previous->next = tmp->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -690,7 +690,7 @@ namespace elena_lang
             Item* tmp = _top;
             _top = _top->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -778,7 +778,7 @@ namespace elena_lang
             Item* tmp = _top;
             _top = _top->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -1382,7 +1382,7 @@ namespace elena_lang
             }
          }
          if (tmp) {
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -1417,7 +1417,7 @@ namespace elena_lang
             }
          }
          if (tmp) {
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -1432,7 +1432,7 @@ namespace elena_lang
             Item* tmp = _top;
             _top = _top->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -2275,7 +2275,7 @@ namespace elena_lang
                Item* tmp = _table[i];
                _table[i] = _table[i]->next;
 
-               if (FreeT)
+               if (FreeT != nullptr)
                   FreeT(tmp->item);
 
                delete tmp;
@@ -3073,7 +3073,7 @@ namespace elena_lang
       {
          T item = exclude(key);
          if (item != _map.DefaultValue()) {
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(item);
          }
       }
@@ -3082,7 +3082,7 @@ namespace elena_lang
       {
          T itemToDelete = exclude(key, item);
          if (itemToDelete != _map.DefaultValue()) {
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(itemToDelete);
          }
       }

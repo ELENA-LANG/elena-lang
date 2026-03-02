@@ -1231,3 +1231,20 @@ void GTKIDEWindow::EventLog :: clearMessages()
    _owner->_messageList->clear();
 }
 
+void GTKIDEWindow :: doDebugAction(DebugAction action, bool withoutPostponeAction)
+{
+   DebugActionResult result = {};
+   if (!_controller->doDebugAction(_model, action, result, withoutPostponeAction)) {
+      /*if (_model->sourceViewModel.isAnyDocumentModified())
+         messageDialog.info(INFO_RUN_UNSAVED_PROJECT);
+      else if (result.outaged) {
+         messageDialog.info(INFO_RUN_OUT_OF_DATE);
+      }
+      else if (result.targetMissing) {
+         messageDialog.info(INFO_NEED_TARGET);
+      }
+      else if (result.noDebugFile) {
+         messageDialog.info(INFO_RUN_NEED_RECOMPILE);
+      }*/
+   }
+}

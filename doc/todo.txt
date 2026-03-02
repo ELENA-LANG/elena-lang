@@ -7,17 +7,23 @@ In development:
 
   === Iteration 45 (ide, ldoc method index; full api docs; mac) ===
   --------------------------------------
-  * dev
+  * dev  
   ====================================== 
+  * samples
+  ====================================== 
+  - test all x86-64  
+  --------------------------------------
   * lang
   ====================================== 
   * doc
   ====================================== 
-  * current : #187 : linx ide
+  - provide descriptions for all classes (from collections\list.l)- 
+  - add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
+  --------------------------------------
+  * current : #184 : linx ide
   ====================================== 
-  - refactor onDebugAction, the dialog must not be passed
   - implementing a debugger for Linux
-  - uncomment onCompilationEnd, on_menu_debug_stepover, on_menu_debug_run
+  - uncomment doDebugAction
   --------------------------------------
 
   ### EPIC: elena 8.0 ###

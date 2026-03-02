@@ -141,6 +141,8 @@ protected:
    void openProject();
    void openProject_finish(path_t path);
 
+   void doDebugAction(DebugAction action, bool withoutPostponeAction);
+
    bool copyToClipboard()
    {
       auto docView = _model->sourceViewModel.DocView();
@@ -364,7 +366,7 @@ protected:
       if (_model->autoSave)
          saveAll();
 
-      //_controller->doDebugAction(_model, DebugAction::Run, messageDialog, false);
+      doDebugAction(DebugAction::Run, false);
    }
    void on_menu_debug_next()
    {
@@ -375,7 +377,7 @@ protected:
       if (_model->autoSave)
          saveAll();
 
-      //_controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, false);
+      doDebugAction(DebugAction::StepOver, false);
    }
    void on_menu_debug_stepin()
    {

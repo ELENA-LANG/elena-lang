@@ -8,9 +8,8 @@
 #ifndef LNXDEBUGADAPTER_H
 #define LNXDEBUGADAPTER_H
 
-//#include <pthread.h>
-//#include <unistd.h>
-//#include <sys/ptrace.h>
+#include <pthread.h>
+#include <unistd.h>
 //#include <sys/user.h>
 //#include <sys/reg.h>
 
@@ -18,23 +17,23 @@
 
 namespace elena_lang
 {
-//   class DebugProcessController;
-//
-//   struct ThreadContext
-//   {
-//      friend class DebugProcessController;
-///*      friend struct BreakpointContext;
-//
-//   protected:
-//      Debugger* debugger;
+   class DebugProcessController;
+
+   struct ThreadContext
+   {
+      friend class DebugProcessController;
+//      friend struct BreakpointContext;
+
+   protected:
+      DebugProcessController* _debugger;
 //      void*     state;
-//      pid_t     threadId;
+      pid_t                   _threadId;
 //
-//      struct user_regs_struct context;
-//
+      //struct user_regs_struct _context;
+
 //      void set_breakpoint_addr(void *addr, int n);
-//*/
-//   public:
+
+   public:
 ///*      ThreadBreakpoint breakpoint;
 //
 //      bool atCheckPoint;
@@ -83,9 +82,9 @@ namespace elena_lang
 //      {
 //         writeDump(address, (char*)&word, 4);
 //      }
-//
-//      void refresh();
-//
+
+      void refresh();
+
 //      void setCheckPoint();
 //      void setHardwareBreakpoint(size_t breakpoint);
 //      unsigned char setSoftwareBreakpoint(size_t breakpoint);
@@ -97,9 +96,9 @@ namespace elena_lang
 //      void setTrapFlag();
 //      void resetTrapFlag();
 //*/
-//      ThreadContext(/*Debugger* debugger, pid_t pid*/);
-//   };
-//
+      ThreadContext(DebugProcessController* debugger, pid_t pid);
+   };
+
 //   // --- BreakpointContext ---
 //
 //   struct BreakpointContext
@@ -119,107 +118,120 @@ namespace elena_lang
 //*/
 //      BreakpointContext();
 //   };
-//
-//   // --- ProcessException ---
-//   struct ProcessException
-//   {
-//      int code;
-//      int address;
-//
-//      const char* Text();
-//
-//      ProcessException()
-//      {
-//         code = 0;
-//      }
-//   };
-//
-//   // --- DebugProcessController ---
-//   class DebugProcessController
-//   {
-//      typedef Map<pid_t, ThreadContext*, nullptr, nullptr, freeobj>  ThreadContextes;
-//
-//      ProcessException exception;
-//
-//      bool              started;
-//
-//      pid_t             traceeId;
-//      pid_t             currentId;
-//
-//      ThreadContextes   threads;
-//      ThreadContext*    current;
-//
-//   public:
-//      bool startProcess(const char* exePath, const char* cmdLine, const char* appPath);
-//
-//      void processEvent(/*DWORD timeout*/);
-//
-//      DebugProcessController();
-//   };
-//
-//   // --- DebugEventManager ---
-//   class DebugEventManager
-//   {
-//      int             _flag;
-//      pthread_cond_t  _event;
-//      pthread_mutex_t _lock;
-//
-//   public:
-//      void init();
-//      void resetEvent(int event);
-//      void setEvent(int event);
-//      int  waitForAnyEvent();
-//      bool waitForEvent(int event, int timeout);
-//      void close();
-//
-//      DebugEventManager()
-//      {
-//         _flag = 0;
-//      }
-//      ~DebugEventManager()
-//      {
-//         close();
-//      }
-//   };
+
+   // --- ProcessException ---
+   struct ProcessException
+   {
+      int code;
+      int address;
+
+      //const char* Text();
+
+      ProcessException()
+      {
+         code = 0;
+      }
+   };
+
+   // --- DebugProcessController ---
+   class DebugProcessController
+   {
+      typedef Map<pid_t, ThreadContext*, nullptr, nullptr, freeobj>  ThreadContextes;
+
+      ProcessException  _exception;
+
+      bool              _started;
+      bool              _trapped;
+
+      pid_t             _traceeId;
+      pid_t             _currentId;
+
+      ThreadContextes   _threads;
+      ThreadContext*    _current;
+
+      addr_t            _init_breakpoint;
+
+   public:
+      void initHook() { _init_breakpoint = INVALID_ADDR; }
+
+      bool isStarted() { return _started; }
+      bool isTrapped() const { return _trapped; }
+
+      bool startProcess(const char* exePath, const char* cmdLine, const char* appPath);
+
+      void processEvent();
+
+      DebugProcessController();
+   };
+
+   // --- DebugEventManager ---
+   class DebugEventManager
+   {
+      int             _flag;
+      pthread_cond_t  _event;
+      pthread_mutex_t _lock;
+
+   public:
+      void init();
+      void resetEvent(int event);
+      void setEvent(int event);
+      int  waitForAnyEvent();
+      bool waitForEvent(int event, int timeout);
+      void close();
+
+      DebugEventManager()
+      {
+         _flag = 0;
+      }
+      ~DebugEventManager()
+      {
+         close();
+      }
+   };
 
    // --- LnxDebugAdapter ---
    class LnxDebugAdapter : public IDEDebugProcessBase
    {
-//      DebugEventManager       _events;
-//      DebugProcessController  _debugProcess;
-//
+      pthread_t               _threadId;
+
+      DebugEventManager       _events;
+      DebugProcessController  _process;
+
    public:
       void initEvents() override
       {
-//         _events.init();
-//         _events.setEvent(DEBUG_SUSPEND);
+         _events.init();
+         _events.setEvent(DEBUG_SUSPEND);
       }
       void setEvent(int event) override
       {
-//         _events.setEvent(event);
+         _events.setEvent(event);
       }
       void resetEvent(int event) override
       {
-//         _events.resetEvent(event);
+         _events.resetEvent(event);
       }
       int waitForAnyEvent() override
       {
-         return /*_events.waitForAnyEvent()*/0;
+         return _events.waitForAnyEvent();
       }
       bool waitForEvent(int event, int timeout) override
       {
-//         return _events.waitForEvent(event, timeout);
+         return _events.waitForEvent(event, timeout);
       }
       void clearEvents() override
       {
-//         _events.close();
+         _events.close();
       }
 
       bool isStarted() override;
       bool isTrapped() override;
       bool isInitBreakpoint() override;
 
-      void initHook() override;
+      void initHook() override
+      {
+         _process.initHook();
+      }
 
       int getDataOffset() override;
 
