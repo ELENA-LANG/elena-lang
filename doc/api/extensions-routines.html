@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module extensions'routines
+ELENA Standard Library 6.8: Module extensions'routines
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module extensions'routines
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -117,18 +117,18 @@ extensions'routines'BaseRowEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -403,18 +403,18 @@ extensions'routines'CompoundEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -423,7 +423,7 @@ extensions'routines'CompoundEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -698,24 +698,6 @@ extensions'routines'ReaderEnumerator</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(source)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN> stream, <SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN> encoder)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
 <CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
@@ -726,6 +708,24 @@ extensions'routines'ReaderEnumerator</LI>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN> encoder)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(source)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#ReaderEnumerator">ReaderEnumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#Stream">Stream</A></SPAN> stream, <SPAN CLASS="memberNameLink"><A HREF="system-text.html#Encoder">Encoder</A></SPAN> encoder)
 </CODE>
 </TD>
 </TR>
@@ -764,18 +764,18 @@ extensions'routines'ReaderEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -784,7 +784,7 @@ extensions'routines'ReaderEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -875,7 +875,7 @@ extensions'routines'SequentialEnumerator</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'Object<I>[]</I></A></SPAN> arguments)
+<CODE>load(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> arguments)
 </CODE>
 </TD>
 </TR>
@@ -884,7 +884,7 @@ extensions'routines'SequentialEnumerator</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="extensions-routines.html#SequentialEnumerator">SequentialEnumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> arguments)
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'Object<I>[]</I></A></SPAN> arguments)
 </CODE>
 </TD>
 </TR>
@@ -1089,6 +1089,7 @@ public class <SPAN CLASS="typeNameLabel">File</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="File**forEachLine**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -1128,6 +1129,7 @@ public class <SPAN CLASS="typeNameLabel">Func1</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Func1**asComparator**0"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -1167,6 +1169,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**forEachWord**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -1176,19 +1179,21 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**forEvery**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>populate(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> f)
+<CODE>forEvery(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> fn)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**populate**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>forEvery(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> fn)
+<CODE>populate(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> f)
 </CODE>
 </TD>
 </TR>
@@ -1208,7 +1213,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

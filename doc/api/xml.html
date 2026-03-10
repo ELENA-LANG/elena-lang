@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module xml
+ELENA Standard Library 6.8: Module xml
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module xml
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -63,7 +63,7 @@ xml'IXmlFormatter</LI>
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>openTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+<CODE>closeTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
 </CODE>
 </TD>
 </TR>
@@ -72,7 +72,7 @@ xml'IXmlFormatter</LI>
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeElement(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+<CODE>openTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
 </CODE>
 </TD>
 </TR>
@@ -81,7 +81,7 @@ xml'IXmlFormatter</LI>
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>closeTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+<CODE>writeElement(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
 </CODE>
 </TD>
 </TR>
@@ -128,9 +128,9 @@ xml'IXmlReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isAvailable()</CODE>
+<CODE>Content()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -138,7 +138,7 @@ xml'IXmlReader</LI>
 <CODE>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isOpenTag()</CODE>
+<CODE>isAvailable()</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -160,9 +160,9 @@ xml'IXmlReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Name()</CODE>
+<CODE>isOpenTag()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -170,7 +170,7 @@ xml'IXmlReader</LI>
 <CODE>
 <i>get abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Content()</CODE>
+<CODE>Name()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -245,7 +245,7 @@ xml'TabXmlFormatter</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>openTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+<CODE>closeTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
 </CODE>
 </TD>
 </TR>
@@ -254,7 +254,7 @@ xml'TabXmlFormatter</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>writeElement(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+<CODE>openTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
 </CODE>
 </TD>
 </TR>
@@ -263,7 +263,7 @@ xml'TabXmlFormatter</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>closeTag(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
+<CODE>writeElement(<SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> level, <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> node)
 </CODE>
 </TD>
 </TR>
@@ -360,9 +360,9 @@ xml'XmlDocument</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlReader">IXmlReader</A></SPAN> reader)
+<CODE>findNode(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> xpath)
 </CODE>
 </TD>
 </TR>
@@ -371,16 +371,16 @@ xml'XmlDocument</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>save(<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlFormatter">IXmlFormatter</A></SPAN> formatter, <SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlReader">IXmlReader</A></SPAN> reader)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>findNode(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> xpath)
+<CODE>save(<SPAN CLASS="memberNameLink"><A HREF="xml.html#IXmlFormatter">IXmlFormatter</A></SPAN> formatter, <SPAN CLASS="memberNameLink"><A HREF="system-io.html#TextWriter">TextWriter</A></SPAN> output)
 </CODE>
 </TD>
 </TR>
@@ -586,31 +586,22 @@ xml'XmlNode</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setParent(<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> parent)
+<CODE>findChild(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> xpath)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setContent(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> content)
+<CODE>firstChild()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>getChildIndex(<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> child)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
@@ -619,12 +610,21 @@ xml'XmlNode</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>getChildIndex(<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> child)
+</CODE>
+</TD>
+</TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>findChild(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> xpath)
+<CODE>lastChild()
 </CODE>
 </TD>
 </TR>
@@ -649,18 +649,18 @@ xml'XmlNode</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>firstChild()
+<CODE>setContent(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> content)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>lastChild()
+<CODE>setParent(<SPAN CLASS="memberNameLink"><A HREF="xml.html#XmlNode">XmlNode</A></SPAN> parent)
 </CODE>
 </TD>
 </TR>
@@ -810,9 +810,9 @@ xml'XmlReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isAvailable()</CODE>
+<CODE>Content()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -820,7 +820,7 @@ xml'XmlReader</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isOpenTag()</CODE>
+<CODE>isAvailable()</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -842,9 +842,9 @@ xml'XmlReader</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Name()</CODE>
+<CODE>isOpenTag()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -852,7 +852,7 @@ xml'XmlReader</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Content()</CODE>
+<CODE>Name()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -892,7 +892,7 @@ xml'XmlReader</LI>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

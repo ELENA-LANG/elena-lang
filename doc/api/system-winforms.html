@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module system'winforms
+ELENA Standard Library 6.8: Module system'winforms
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module system'winforms
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -1017,7 +1017,7 @@ system'winforms'SDIApplication</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>run(window)
+<CODE>error(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN> e)
 </CODE>
 </TD>
 </TR>
@@ -1026,7 +1026,7 @@ system'winforms'SDIApplication</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>error(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN> e)
+<CODE>run(window)
 </CODE>
 </TD>
 </TR>
@@ -1139,7 +1139,7 @@ system'winforms'WindowCallback</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>onClick(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> control)
+<CODE>onChange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
@@ -1148,7 +1148,7 @@ system'winforms'WindowCallback</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>onChange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> control)
+<CODE>onClick(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
@@ -1158,6 +1158,24 @@ system'winforms'WindowCallback</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>onSize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> control, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onWMClose(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> hwnd)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onWMCommand(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> hwnd, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> wParam, <SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
@@ -1194,24 +1212,6 @@ system'winforms'WindowCallback</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>onWMSize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> hwnd, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> lParam)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>onWMCommand(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> hwnd, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> wParam, <SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> control)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>onWMClose(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> hwnd)
 </CODE>
 </TD>
 </TR>
@@ -1374,24 +1374,6 @@ system'winforms'WindowHandle</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setPosition(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> cx, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> cy, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setCaption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>getCaption()
@@ -1401,9 +1383,9 @@ system'winforms'WindowHandle</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setEnabled(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
+<CODE>isChecked()
 </CODE>
 </TD>
 </TR>
@@ -1419,18 +1401,54 @@ system'winforms'WindowHandle</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setChecked(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
+<CODE>isVisible()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>isChecked()
+<CODE>refresh()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setCaption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setChecked(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setEnabled(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setPosition(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> cx, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> cy, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> flags)
 </CODE>
 </TD>
 </TR>
@@ -1440,24 +1458,6 @@ system'winforms'WindowHandle</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>setVisible(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>isVisible()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>refresh()
 </CODE>
 </TD>
 </TR>
@@ -4782,7 +4782,7 @@ system'winforms'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

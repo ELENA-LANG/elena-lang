@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module net'http
+ELENA Standard Library 6.8: Module net'http
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module net'http
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -110,22 +110,13 @@ net'http'HttpBody</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readHeaderAsync(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpFirstHeader">HttpFirstHeader</A></SPAN> firstLine, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
+<CODE>readAsString(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>readHeader(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpFirstHeader">HttpFirstHeader</A></SPAN> firstLine, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'String&gt;</A></SPAN></CODE></TD>
@@ -134,12 +125,21 @@ net'http'HttpBody</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>readHeader(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpFirstHeader">HttpFirstHeader</A></SPAN> firstLine, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
+</CODE>
+</TD>
+</TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readAsString(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
+<CODE>readHeaderAsync(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpFirstHeader">HttpFirstHeader</A></SPAN> firstLine, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN> headers)
 </CODE>
 </TD>
 </TR>
@@ -243,24 +243,6 @@ net'http'HttpClient</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpClient&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>openAsync(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#Uri">Uri</A></SPAN> uri)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpClient&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>openAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> url)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>open(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#Uri">Uri</A></SPAN> uri)
@@ -273,6 +255,24 @@ net'http'HttpClient</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>open(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> url)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpClient&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>openAsync(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#Uri">Uri</A></SPAN> uri)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpClient&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>openAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> url)
 </CODE>
 </TD>
 </TR>
@@ -311,27 +311,9 @@ net'http'HttpClient</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpResponse&gt;</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>getAsync()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpResponse&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>getAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpResponse&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>postAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpRequest">HttpRequest</A></SPAN> request)
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -356,6 +338,24 @@ net'http'HttpClient</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpResponse&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>getAsync()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpResponse&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>getAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpResponse">HttpResponse</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>post(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpRequest">HttpRequest</A></SPAN> request)
@@ -374,9 +374,9 @@ net'http'HttpClient</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;net'http'HttpResponse&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>postAsync(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path, <SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpRequest">HttpRequest</A></SPAN> request)
 </CODE>
 </TD>
 </TR>
@@ -635,17 +635,17 @@ net'http'HttpHeaders</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'collections'Tuple&lt;system'String,system'String&gt;&gt;</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>List()</CODE>
+<CODE>Length()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'collections'Tuple&lt;system'String,system'String&gt;&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length()</CODE>
+<CODE>List()</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -787,9 +787,9 @@ net'http'HttpRequest</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Headers()</CODE>
+<CODE>Content()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -803,9 +803,9 @@ net'http'HttpRequest</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Content()</CODE>
+<CODE>Headers()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -908,9 +908,9 @@ net'http'HttpResponse</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Protocol()</CODE>
+<CODE>Headers()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -918,7 +918,7 @@ net'http'HttpResponse</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>StatusText()</CODE>
+<CODE>Protocol()</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -932,9 +932,9 @@ net'http'HttpResponse</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="net-http.html#HttpHeaders">HttpHeaders</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Headers()</CODE>
+<CODE>StatusText()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -952,22 +952,13 @@ net'http'HttpResponse</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readHeaderAsync()
+<CODE>readAsString()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>readHeader()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;system'String&gt;</A></SPAN></CODE></TD>
@@ -976,12 +967,21 @@ net'http'HttpResponse</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>readHeader()
+</CODE>
+</TD>
+</TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>readAsString()
+<CODE>readHeaderAsync()
 </CODE>
 </TD>
 </TR>
@@ -1028,9 +1028,9 @@ net'http'SocketFactory</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>private </i>&nbsp;</CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>function:#class_init()
+<CODE>assignHttpFactory(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocketFactory">INetSocketFactory</A></SPAN> factory)
 </CODE>
 </TD>
 </TR>
@@ -1055,27 +1055,27 @@ net'http'SocketFactory</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>assignHttpFactory(<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocketFactory">INetSocketFactory</A></SPAN> factory)
+<CODE>function:#class_init()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">INetListener</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>openSocket(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#Uri">Uri</A></SPAN> uri)
+<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> prefix, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetListener">INetListener</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-net.html#INetSocket">INetSocket</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>openListener(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> prefix, <SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN> port, <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> noDelay)
+<CODE>openSocket(<SPAN CLASS="memberNameLink"><A HREF="net-http.html#Uri">Uri</A></SPAN> uri)
 </CODE>
 </TD>
 </TR>
@@ -1206,34 +1206,10 @@ net'http'Uri</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Scheme()</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
 <CODE>Host()</CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>PortValue()</CODE>
-</TD>
-</TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Port()</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
@@ -1241,12 +1217,36 @@ net'http'Uri</LI>
 <CODE>Path()</CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Port()</CODE>
+</TD>
+</TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
+<CODE>PortValue()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
 <CODE>Query()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Scheme()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1376,7 +1376,7 @@ net'http'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

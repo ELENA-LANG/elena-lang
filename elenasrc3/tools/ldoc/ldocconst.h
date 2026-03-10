@@ -11,16 +11,18 @@
 
 namespace elena_lang
 {
-   #define LDOC_REVISION_NUMBER           0x001E
+   #define LDOC_REVISION_NUMBER           0x001F
 
-   constexpr auto LDOC_GREETING           = "ELENA command line Html Documentation generator %d.%d.%d (C)2021-25 by Aleksey Rakov\n";
+   constexpr auto LDOC_GREETING           = "ELENA command line Html Documentation generator %d.%d.%d (C)2021-26 by Aleksey Rakov\n";
    constexpr auto LDOC_READING            = "Reading...\n";
    constexpr auto LDOC_GENERATING         = "Generating %s...\n";
+   constexpr auto LDOC_INDEX_GENERATING   = "Generating indexes for %s...\n";
 
    constexpr auto LDOC_MODULE_NOTLOADED   = "cannot load a module: %s";
 
-   constexpr auto TITLE                   = "ELENA Standard Library 6.7: Module ";
-   constexpr auto TITLE2                  = "ELENA&nbsp;Standard&nbsp;Library<br>6.7";
+   constexpr auto TITLE                   = "ELENA Standard Library 6.8: Module ";
+   constexpr auto TITLE2                  = "ELENA&nbsp;Standard&nbsp;Library<br>6.8";
+   constexpr auto INDEX_TITLE             = "ELENA Standard Library 6.8";
 
 }
 

@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module system'dynamic
+ELENA Standard Library 6.8: Module system'dynamic
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module system'dynamic
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -119,7 +119,7 @@ system'dynamic'AllocFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -128,7 +128,7 @@ system'dynamic'AllocFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -224,7 +224,7 @@ system'dynamic'AssigningFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -233,7 +233,7 @@ system'dynamic'AssigningFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -329,7 +329,7 @@ system'dynamic'ConstantFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -338,7 +338,7 @@ system'dynamic'ConstantFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -442,7 +442,7 @@ system'dynamic'CopyToStackFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -451,7 +451,7 @@ system'dynamic'CopyToStackFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -646,7 +646,7 @@ system'dynamic'DynamicMessageFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -655,7 +655,7 @@ system'dynamic'DynamicMessageFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -766,7 +766,7 @@ system'dynamic'DynamicStruct</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>containsProperty(<SPAN CLASS="memberNameLink"><A HREF="system.html#MessageName">MessageName</A></SPAN> subj)
 </CODE>
 </TD>
 </TR>
@@ -775,7 +775,7 @@ system'dynamic'DynamicStruct</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>containsProperty(<SPAN CLASS="memberNameLink"><A HREF="system.html#MessageName">MessageName</A></SPAN> subj)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -842,18 +842,18 @@ system'dynamic'DynamicTape</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN><i>[]</i> args)
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#DynamicTape">DynamicTape</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
+<CODE><i>constructor</i>(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#TapeFunction">TapeFunction</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -998,18 +998,18 @@ system'dynamic'ExtensionDispatcher</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>system@dynamic@ExtensionDispatcher$$allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'UnsafePointer<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#ExtensionDispatcher">ExtensionDispatcher</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'UnsafePointer<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>system@dynamic@ExtensionDispatcher$$allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -1173,7 +1173,7 @@ system'dynamic'ExtensionMessageFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1182,7 +1182,7 @@ system'dynamic'ExtensionMessageFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -1304,7 +1304,7 @@ system'dynamic'FuncFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1313,7 +1313,7 @@ system'dynamic'FuncFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -1409,7 +1409,7 @@ system'dynamic'GoToFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1418,7 +1418,7 @@ system'dynamic'GoToFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -1514,7 +1514,7 @@ system'dynamic'JumpIfNotFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1523,7 +1523,7 @@ system'dynamic'JumpIfNotFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -1578,7 +1578,7 @@ system'dynamic'JumpToEnd</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1587,7 +1587,7 @@ system'dynamic'JumpToEnd</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -1692,7 +1692,7 @@ system'dynamic'LocalFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1701,7 +1701,7 @@ system'dynamic'LocalFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -1815,7 +1815,7 @@ system'dynamic'MessageFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1824,7 +1824,7 @@ system'dynamic'MessageFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -1920,7 +1920,7 @@ system'dynamic'SavingFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
@@ -1929,7 +1929,7 @@ system'dynamic'SavingFunction</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -2056,7 +2056,7 @@ system'dynamic'Struct</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>new(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'Object<I>[]</I></A></SPAN> list)
 </CODE>
 </TD>
 </TR>
@@ -2065,7 +2065,7 @@ system'dynamic'Struct</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'Object<I>[]</I></A></SPAN> list)
+<CODE>new(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
 </CODE>
 </TD>
 </TR>
@@ -2125,27 +2125,27 @@ system'dynamic'Struct</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>expand(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> gain)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;</CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#Struct">Struct</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+<CODE>expand(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> gain)
 </CODE>
 </TD>
 </TR>
@@ -2201,18 +2201,18 @@ system'dynamic'TapeFunction</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>function(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -2279,18 +2279,18 @@ system'dynamic'VariadicExtensionDispatcher</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>system@dynamic@VariadicExtensionDispatcher$$allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'UnsafePointer<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-dynamic.html#VariadicExtensionDispatcher">VariadicExtensionDispatcher</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>copy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'UnsafePointer<I>[]</I></A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+<CODE>system@dynamic@VariadicExtensionDispatcher$$allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
 </TD>
 </TR>
@@ -2368,19 +2368,21 @@ public class <SPAN CLASS="typeNameLabel">Message</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Message**__getFirstSignatureMember**0"></A>
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>__loadSignature(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'Object<I>[]</I></A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maximalLength)
+<CODE>__getFirstSignatureMember()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Message**__loadSignature**2"></A>
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>__getFirstSignatureMember()
+<CODE>__loadSignature(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'Object<I>[]</I></A></SPAN> output, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maximalLength)
 </CODE>
 </TD>
 </TR>
@@ -2416,6 +2418,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**__getMessages**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'Message<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -2425,6 +2428,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**__getProperties**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'MessageName<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -2434,15 +2438,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>respondTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> m)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
+<A NAME="Object**__injectInferface**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -2450,12 +2446,23 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**mixInto**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>mixInto(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> role)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**respondTo**1"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>respondTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Message">Message</A></SPAN> m)
 </CODE>
 </TD>
 </TR>
@@ -2475,7 +2482,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

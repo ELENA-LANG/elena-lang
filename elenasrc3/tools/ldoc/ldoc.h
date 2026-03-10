@@ -3,7 +3,7 @@
 //
 //		This is a main file containing doc generator header
 //
-//                                             (C)2021-2023, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LODC_H
@@ -43,7 +43,24 @@ namespace elena_lang
       }
    };
 
-   typedef List<ApiMethodInfo*, freeobj> ApiMethodInfoList;
+   inline int sortApiMethodInfo(ApiMethodInfo* p, ApiMethodInfo* n)
+   {
+      IdentifierString pname(*p->name);
+      IdentifierString nname(*n->name);
+
+      pname.lower();
+      nname.lower();
+
+      if ((*pname).greater((*nname))) {
+         return -1;
+      }
+      else if ((*pname).compare((*nname))) {
+         return 0;
+      }
+      else return 1;
+   }
+
+   typedef SortedList<ApiMethodInfo*, sortApiMethodInfo, freeobj> ApiMethodInfoList;
 
    struct ApiFieldInfo
    {
@@ -60,7 +77,25 @@ namespace elena_lang
       }
    };
 
+   inline int sortAnchor(ustr_t p, ustr_t n)
+   {
+      IdentifierString pname(p);
+      IdentifierString nname(n);
+
+      pname.lower();
+      nname.lower();
+
+      if ((*pname).greater((*nname))) {
+         return -1;
+      }
+      else if ((*pname).compare((*nname))) {
+         return 0;
+      }
+      else return 1;
+   }
+
    typedef List<ApiFieldInfo*, freeobj> ApiFieldInfoList;
+   typedef SortedList<ustr_t, sortAnchor, freeUStr> AnchorList;
 
    struct ApiClassInfo
    {
@@ -85,10 +120,12 @@ namespace elena_lang
       ApiMethodInfoList staticProperties;
       ApiMethodInfoList extensions;
 
+      AnchorList        methodLinks;
+
       ApiClassInfo()
          : parents(nullptr), methods(nullptr ), fields(nullptr),
             constructors(nullptr), staticMethods(nullptr), convertors(nullptr), extensions(nullptr),
-            properties(nullptr), staticProperties(nullptr)
+            properties(nullptr), staticProperties(nullptr), methodLinks(nullptr)
       {
          templateBased = false;
          virtualMode = false;
@@ -159,8 +196,35 @@ namespace elena_lang
       }
    };
 
+   struct ClassIndexInfo
+   {
+      IdentifierString link;
+      IdentifierString name;
+   };
+
+   inline int sortClassIndexInfo(ClassIndexInfo* p, ClassIndexInfo* n)
+   {
+      IdentifierString pname(*p->name);
+      IdentifierString nname(*n->name);
+
+      pname.lower();
+      nname.lower();
+
+      if ((*pname).greater((*nname))) {
+         return -1;
+      }
+      else if ((*pname).compare((*nname))) {
+         return 0;
+      }
+      else return 1;
+   }
+
+   typedef SortedList<ClassIndexInfo*, sortClassIndexInfo, freeobj> ClassIndexInfoList;
+
    typedef List<ApiModuleInfo*, freeobj> ApiModuleInfoList;
    typedef Map<ustr_t, ustr_t, allocUStr, freeUStr, freeUStr>   DescriptionMap;
+
+   typedef List<path_t, freepath> PathList;
 
    // --- DocGenerator ---
    class DocGenerator
@@ -189,11 +253,12 @@ namespace elena_lang
       ref_t findExtensionTarget(ref_t reference);
 
       void generateFieldList(TextFileWriter& bodyWriter, ApiFieldInfoList& list);
-      void generateMethodList(TextFileWriter& bodyWriter, ApiMethodInfoList& list);
+      void generateMethodList(TextFileWriter& bodyWriterm, ApiClassInfo* info, ApiMethodInfoList& list, bool withAnchor);
       void generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
       void generateSymbolDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiSymbolInfo* symbolInfo, ustr_t bodyName);
       void generateExtendedDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName);
       void generateModuleDoc(ApiModuleInfo* moduleInfo, path_t output);
+      void generateModuleIndexDoc(ApiModuleInfo* moduleInfo, path_t output);
 
       void loadMetaSections();
 
@@ -217,6 +282,8 @@ namespace elena_lang
       void loadDescriptions(ref_t reference, DescriptionMap& map);
       void loadDescriptions();
 
+      ustr_t retrieveMethodLink(ApiClassInfo* classInfo, ApiMethodInfo* info);
+
    public:
       void loadNestedModules(ApiModuleInfoList& modules);
       void loadMember(ApiModuleInfoList& modules, ref_t reference);
@@ -224,7 +291,10 @@ namespace elena_lang
       bool load(path_t path);
       bool loadByName(ustr_t name);
 
-      void generate(path_t output);
+      void generate(path_t output, bool indexContentMode);
+
+      static void generateClassIndexes(path_t output, PathList& list);
+      static void generateMessageIndexes(path_t output, PathList& list);
 
       DocGenerator(LibraryProvider* provider, PresenterBase* presenter)
          : _classDescriptions(nullptr)

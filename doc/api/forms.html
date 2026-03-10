@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module forms
+ELENA Standard Library 6.8: Module forms
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module forms
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -343,9 +343,9 @@ forms'BaseControl</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Visible()</CODE>
+<CODE>Height()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -353,7 +353,7 @@ forms'BaseControl</LI>
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Visible(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> v)
+<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -377,12 +377,37 @@ forms'BaseControl</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Region">Region</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Region()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Visible()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Visible(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> v)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Width()</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
@@ -391,24 +416,7 @@ forms'BaseControl</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Height()</CODE>
-</TD>
-</TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Height(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
@@ -416,7 +424,7 @@ forms'BaseControl</LI>
 <CODE>X()</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
@@ -425,7 +433,7 @@ forms'BaseControl</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
@@ -433,21 +441,13 @@ forms'BaseControl</LI>
 <CODE>Y()</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Y(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Region">Region</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Region()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -656,7 +656,7 @@ forms'BasePanel</LI>
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
+<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> caption)
 </CODE>
 </TD>
 </TR>
@@ -674,7 +674,7 @@ forms'BasePanel</LI>
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> caption)
+<CODE>Width(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> v)
 </CODE>
 </TD>
 </TR>
@@ -693,24 +693,6 @@ forms'BasePanel</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>appendControlInternal(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> control)
@@ -723,6 +705,24 @@ forms'BasePanel</LI>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>appendControlInternal(<SPAN CLASS="memberNameLink"><A HREF="forms.html#ImageList">ImageList</A></SPAN> control)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -888,7 +888,7 @@ forms'BaseWinContainer</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>open()
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -897,25 +897,25 @@ forms'BaseWinContainer</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>open()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
+<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> hwnd, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> hwnd, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -1085,6 +1085,23 @@ forms'BaseWinControl</LI>
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
+<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Control()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
 <CODE>Enabled(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> value)
 </CODE>
 </TD>
@@ -1095,23 +1112,6 @@ forms'BaseWinControl</LI>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Visible(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> v)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Control()</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Caption(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -1152,7 +1152,25 @@ forms'BaseWinControl</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+<CODE>change()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>click()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -1188,20 +1206,11 @@ forms'BaseWinControl</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>refresh()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
@@ -1210,21 +1219,12 @@ forms'BaseWinControl</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>refresh()
-</CODE>
-</TD>
-</TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>click()
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
@@ -1233,7 +1233,7 @@ forms'BaseWinControl</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>change()
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -1405,7 +1405,7 @@ forms'BaseWinForm</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
@@ -1414,7 +1414,7 @@ forms'BaseWinForm</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> control)
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -1754,18 +1754,18 @@ forms'ChildForm</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;</CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>createHandle()
+<CODE>close()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>createHandle()
 </CODE>
 </TD>
 </TR>
@@ -2319,6 +2319,42 @@ forms'IControl</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>change()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>click()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>open()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
@@ -2331,42 +2367,6 @@ forms'IControl</LI>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>open()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>close()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>click()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>abstract </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>change()
 </CODE>
 </TD>
 </TR>
@@ -2562,24 +2562,6 @@ forms'Imagebox</LI>
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>refresh()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
 <CODE>destroy()
 </CODE>
 </TD>
@@ -2590,6 +2572,24 @@ forms'Imagebox</LI>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>paint()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>refresh()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -2757,7 +2757,7 @@ forms'ImageList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+<CODE>appendImage(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
 </CODE>
 </TD>
 </TR>
@@ -2767,24 +2767,6 @@ forms'ImageList</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="forms.html#Paintbox">Paintbox</A></SPAN> paintbox)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>click()
 </CODE>
 </TD>
 </TR>
@@ -2802,7 +2784,7 @@ forms'ImageList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>open()
+<CODE>click()
 </CODE>
 </TD>
 </TR>
@@ -2811,7 +2793,7 @@ forms'ImageList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendImage(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> path)
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -2820,7 +2802,25 @@ forms'ImageList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>open()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -3019,24 +3019,6 @@ forms'messageDialog</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>showInformation(parent, caption, text)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>showInformation(caption, text)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
 <CODE>showExclamation(parent, caption, text)
 </CODE>
 </TD>
@@ -3055,7 +3037,7 @@ forms'messageDialog</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>showWarning(parent, caption, text)
+<CODE>showInformation(parent, caption, text)
 </CODE>
 </TD>
 </TR>
@@ -3064,7 +3046,7 @@ forms'messageDialog</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>showWarning(caption, text)
+<CODE>showInformation(caption, text)
 </CODE>
 </TD>
 </TR>
@@ -3083,6 +3065,24 @@ forms'messageDialog</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>showQuestion(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> caption, <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>showWarning(parent, caption, text)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>showWarning(caption, text)
 </CODE>
 </TD>
 </TR>
@@ -3570,9 +3570,9 @@ forms'Panel</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;</CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>createHandle()
+<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
@@ -3581,16 +3581,16 @@ forms'Panel</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> control)
+<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#ImageList">ImageList</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#ImageList">ImageList</A></SPAN> control)
+<CODE>createHandle()
 </CODE>
 </TD>
 </TR>
@@ -4031,7 +4031,7 @@ forms'RadioButtonGroup</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+<CODE>appendItem(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
 </CODE>
 </TD>
 </TR>
@@ -4049,16 +4049,16 @@ forms'RadioButtonGroup</LI>
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+<CODE>onClick(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendItem(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s)
+<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -4074,9 +4074,9 @@ forms'RadioButtonGroup</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;</CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>onClick(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -4743,7 +4743,7 @@ forms'StaticLabel</LI>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

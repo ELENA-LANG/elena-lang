@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module system'routines
+ELENA Standard Library 6.8: Module system'routines
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module system'routines
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -252,7 +252,7 @@ system'routines'ArraySortingAgent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
+<CODE>exchange(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
 </TR>
@@ -261,7 +261,7 @@ system'routines'ArraySortingAgent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>exchange(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
+<CODE>move(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
 </TR>
@@ -270,7 +270,7 @@ system'routines'ArraySortingAgent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>move(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -483,18 +483,18 @@ system'routines'CountDownEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -503,7 +503,7 @@ system'routines'CountDownEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -628,18 +628,18 @@ system'routines'Filter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -648,7 +648,7 @@ system'routines'Filter</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -789,18 +789,18 @@ system'routines'GroupingEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -809,7 +809,7 @@ system'routines'GroupingEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -999,7 +999,7 @@ system'routines'IndexerSortingAgent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
+<CODE>exchange(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
 </TR>
@@ -1008,7 +1008,7 @@ system'routines'IndexerSortingAgent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>exchange(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
+<CODE>move(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
 </TR>
@@ -1017,7 +1017,7 @@ system'routines'IndexerSortingAgent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>move(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -1175,18 +1175,18 @@ system'routines'IntervalEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -1195,7 +1195,7 @@ system'routines'IntervalEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -1327,18 +1327,18 @@ system'routines'JoinEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -1347,7 +1347,7 @@ system'routines'JoinEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -1489,18 +1489,18 @@ system'routines'OrderingEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -1509,7 +1509,7 @@ system'routines'OrderingEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -1633,18 +1633,18 @@ system'routines'PatternFilter2</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -1653,7 +1653,7 @@ system'routines'PatternFilter2</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -1785,18 +1785,18 @@ system'routines'PatternFilter3</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -1805,7 +1805,7 @@ system'routines'PatternFilter3</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -1945,18 +1945,18 @@ system'routines'PatternFilter4</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -1965,7 +1965,7 @@ system'routines'PatternFilter4</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -2113,18 +2113,18 @@ system'routines'PatternFilter5</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -2133,7 +2133,7 @@ system'routines'PatternFilter5</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -2289,18 +2289,18 @@ system'routines'PatternFilter6</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -2309,7 +2309,7 @@ system'routines'PatternFilter6</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -2525,18 +2525,18 @@ system'routines'RangeEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -2545,7 +2545,7 @@ system'routines'RangeEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -2686,18 +2686,18 @@ system'routines'Repeater</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -2706,7 +2706,7 @@ system'routines'Repeater</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -2831,18 +2831,18 @@ system'routines'Selector</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -2851,7 +2851,7 @@ system'routines'Selector</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -2975,18 +2975,18 @@ system'routines'SkipFilter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -2995,7 +2995,7 @@ system'routines'SkipFilter</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -3073,7 +3073,7 @@ system'routines'SortingAgent</LI>
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
+<CODE>exchange(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
 </TR>
@@ -3082,7 +3082,7 @@ system'routines'SortingAgent</LI>
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>exchange(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
+<CODE>move(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
 </CODE>
 </TD>
 </TR>
@@ -3091,7 +3091,7 @@ system'routines'SortingAgent</LI>
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>move(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> i, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> j)
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -3320,18 +3320,18 @@ system'routines'TopFilter</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -3340,7 +3340,7 @@ system'routines'TopFilter</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -3473,18 +3473,18 @@ system'routines'ZipEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -3493,7 +3493,7 @@ system'routines'ZipEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -3529,6 +3529,7 @@ public class <SPAN CLASS="typeNameLabel">Enumerator</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Enumerator**forEach**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -3538,6 +3539,7 @@ public class <SPAN CLASS="typeNameLabel">Enumerator</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Enumerator**selectBy**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -3577,292 +3579,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>forEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>forEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>forEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> fn)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>forEachPair(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>forEachPair(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#ExtensionMessage">ExtensionMessage</A></SPAN> extMessage)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> fn)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> selector)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> selector)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func3">Func3</A></SPAN> selector)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func4">Func4</A></SPAN> selector)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func5">Func5</A></SPAN> selector)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func6">Func6</A></SPAN> selector)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>selectBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> selector)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>groupBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> groupFunc)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>orderBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> orderFunc)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>top(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> counter)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>coundDown()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>joinBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> list, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> filter_f, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> select_f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>repeatTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>repeatTill(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>summarize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> var)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>summarize()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>seekFor(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>ifExists(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>sequenceEqual(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable">Enumerable</A></SPAN> list)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get property </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>FirstMember()</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get property </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>LastMember()</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>zipBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> enumerable, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> zipper)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>zipForEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> enumerable, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> func2)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
+<A NAME="Object**accumulate**2"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -3872,6 +3589,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**allMatchedBy**1"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -3890,6 +3608,27 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**ascendant**0"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ascendant()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**coundDown**0"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>coundDown()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**countMembers**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -3899,22 +3638,17 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**deepClone**0"></A>
 <CODE>
-<i>get property </i>&nbsp;</CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>MaximalMember()</CODE>
+<CODE>deepClone()
+</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
-<CODE>
-<i>get property </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>MinimalMember()</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
+<A NAME="Object**exchange**2"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -3922,17 +3656,237 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**filterBy**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> selector)
+</CODE>
+</TD>
+</TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>sort(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> compareFunc)
+<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> selector)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func3">Func3</A></SPAN> selector)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func4">Func4</A></SPAN> selector)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func5">Func5</A></SPAN> selector)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>filterBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func6">Func6</A></SPAN> selector)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**FirstMember**0"></A>
+<CODE>
+<i>get property </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>FirstMember()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**forEach**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>forEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>forEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>forEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> fn)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**forEachPair**2"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>forEachPair(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>forEachPair(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**forEvery**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>forEvery(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> fn)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**groupBy**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>groupBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> groupFunc)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**ifExists**1"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>ifExists(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**indexOfElement**1"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexOfElement(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> element)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**isAscendant**0"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>isAscendant()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**isSorted**1"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>isSorted(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> compareFunc)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**joinBy**3"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>joinBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> list, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> filter_f, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> select_f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**last**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>last(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> counter)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**LastMember**0"></A>
+<CODE>
+<i>get property </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>LastMember()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**MaximalMember**0"></A>
+<CODE>
+<i>get property </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>MaximalMember()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**MinimalMember**0"></A>
+<CODE>
+<i>get property </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>MinimalMember()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**orderBy**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>orderBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> orderFunc)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**populate**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -3963,7 +3917,46 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>deepClone()
+<CODE>populate(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**repeatTill**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>repeatTill(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**repeatTo**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>repeatTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**seekEach**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#ExtensionMessage">ExtensionMessage</A></SPAN> extMessage)
 </CODE>
 </TD>
 </TR>
@@ -3972,7 +3965,47 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>ascendant()
+<CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> fn)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**seekEach**2"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>seekEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> param, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**seekFor**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>seekFor(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**selectBy**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>selectBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> selector)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**sequenceEqual**1"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>sequenceEqual(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable">Enumerable</A></SPAN> list)
 </CODE>
 </TD>
 </TR>
@@ -3987,6 +4020,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**sequenceReverse**0"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -3996,6 +4030,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**sequenceReverse**2"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -4005,33 +4040,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>indexOfElement(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> element)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>isSorted(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> compareFunc)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>isAscendant()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
+<A NAME="Object**skipping**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -4039,30 +4048,63 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**sort**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>last(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> counter)
+<CODE>sort(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func2">Func2</A></SPAN> compareFunc)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**summarize**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>summarize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> var)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**summarize**0"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>populate(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> f)
+<CODE>summarize()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**top**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>forEvery(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2&gt;">Func&lt;system'IntNumber,system'Object&gt;</A></SPAN> fn)
+<CODE>top(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> counter)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**zipBy**2"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>zipBy(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> enumerable, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> zipper)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**zipForEach**2"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>zipForEach(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> enumerable, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> func2)
 </CODE>
 </TD>
 </TR>
@@ -4098,6 +4140,7 @@ public class <SPAN CLASS="typeNameLabel">String</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="String**split**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'String<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -4107,6 +4150,7 @@ public class <SPAN CLASS="typeNameLabel">String</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="String**splitBy**1"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'String<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -4125,6 +4169,7 @@ public class <SPAN CLASS="typeNameLabel">String</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="String**splitByNewLine**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'String<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -4164,6 +4209,7 @@ public class <SPAN CLASS="typeNameLabel">WideString</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="WideString**split**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'WideString<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -4173,6 +4219,7 @@ public class <SPAN CLASS="typeNameLabel">WideString</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="WideString**splitBy**1"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'WideString<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -4191,6 +4238,7 @@ public class <SPAN CLASS="typeNameLabel">WideString</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="WideString**splitByNewLine**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'WideString<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -4214,7 +4262,7 @@ public class <SPAN CLASS="typeNameLabel">WideString</SPAN></PRE>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

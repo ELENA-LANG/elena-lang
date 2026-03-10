@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module extensions
+ELENA Standard Library 6.8: Module extensions
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module extensions
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -148,24 +148,6 @@ extensions'Assert</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>ifNotFailed(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>ifTrue(b)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
 <CODE>ifFalse(b)
 </CODE>
 </TD>
@@ -175,7 +157,7 @@ extensions'Assert</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>ifNil(b)
+<CODE>ifInstanceOf(object, class)
 </CODE>
 </TD>
 </TR>
@@ -184,7 +166,25 @@ extensions'Assert</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>ifInstanceOf(object, class)
+<CODE>ifNil(b)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ifNotFailed(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>ifTrue(b)
 </CODE>
 </TD>
 </TR>
@@ -408,7 +408,7 @@ extensions'IntConvertExt</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>#generic(n)
 </CODE>
 </TD>
 </TR>
@@ -417,7 +417,7 @@ extensions'IntConvertExt</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>#generic(n)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -527,7 +527,7 @@ Initializes a variable</div>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
 </TD>
 </TR>
@@ -536,7 +536,7 @@ Initializes a variable</div>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -949,25 +949,7 @@ Initializes a variable</div>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
 <CODE>append(n)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>reduce(n)
 </CODE>
 </TD>
 </TR>
@@ -977,6 +959,24 @@ Initializes a variable</div>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> n)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>dispatch</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>reduce(n)
 </CODE>
 </TD>
 </TR>
@@ -1206,6 +1206,7 @@ public class <SPAN CLASS="typeNameLabel">Date</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Date**toShortTimeString**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -1245,6 +1246,7 @@ public class <SPAN CLASS="typeNameLabel">MessageName</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="MessageName**getPropertyValue**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -1254,6 +1256,7 @@ public class <SPAN CLASS="typeNameLabel">MessageName</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="MessageName**setPropertyValue**2"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -1293,96 +1296,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>writeTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>doWhile()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toString()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toString(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toInt()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toInt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toByte()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toShort()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toLong()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toReal()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
+<A NAME="Object**asEnumerable**0"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable">Enumerable</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -1392,24 +1306,27 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**assertFalse**0"></A>
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>toArray()
+<CODE>assertFalse()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**assertTrue**0"></A>
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#IntMatrix">IntMatrix</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>toIntMatrix()
+<CODE>assertTrue()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**convertTo**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -1420,63 +1337,9 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toChar()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>toByteArray()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>dispatch</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>print(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>printLine(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>printWide(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>printWideLine(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
 </CODE>
 </TD>
 </TR>
@@ -1494,43 +1357,7 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>printFormatted(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>printLineFormatted(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
 <CODE><i>dispatch</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>printPaddingRight(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>printPaddingLeft(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
 </CODE>
 </TD>
 </TR>
@@ -1548,12 +1375,33 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>loadLineTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> var)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**doWhile**0"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>doWhile()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**getAtOrDefault**2"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>getAtOrDefault(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**loadLine**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -1563,24 +1411,67 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**loadLineTo**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>loadLineTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> var)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**print**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>printPaddingRightChar(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+<CODE>print(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**printFormatted**2"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>printFormatted(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**printLine**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>printLine(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**printLineFormatted**2"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>printLineFormatted(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> s, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> args)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**printPaddingLeft**2"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>printPaddingLeft(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**printPaddingLeftChar**3"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
@@ -1590,37 +1481,181 @@ public class <SPAN CLASS="typeNameLabel">Object</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**printPaddingRight**2"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>getAtOrDefault(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
+<CODE>printPaddingRight(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**printPaddingRightChar**3"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>assertTrue()
+<CODE>printPaddingRightChar(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> ch, <i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="Object**printWide**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>assertFalse()
+<CODE>printWide(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
+<A NAME="Object**printWideLine**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>printWideLine(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN><i>[]</i> list)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**randomize**1"></A>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>randomize(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> count)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toArray**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toArray()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toByte**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ByteNumber">ByteNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toByte()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toByteArray**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'ByteNumber<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toByteArray()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toChar**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toChar()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toInt**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toInt()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toInt**1"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toInt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toIntMatrix**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntMatrix">IntMatrix</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toIntMatrix()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toLong**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toLong()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toReal**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toReal()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toShort**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#ShortNumber">ShortNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toShort()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toString**0"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toString()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<A NAME="Object**toString**1"></A>
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>toString(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> radix)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<A NAME="Object**writeTo**1"></A>
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>writeTo(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> target)
 </CODE>
 </TD>
 </TR>
@@ -1665,6 +1700,7 @@ public class <SPAN CLASS="typeNameLabel">String</SPAN></PRE>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
+<A NAME="String**interpolate**1"></A>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
@@ -1688,7 +1724,7 @@ public class <SPAN CLASS="typeNameLabel">String</SPAN></PRE>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

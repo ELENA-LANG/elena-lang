@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module system'threading
+ELENA Standard Library 6.8: Module system'threading
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module system'threading
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>
@@ -158,7 +158,7 @@ system'threading'AsyncStateEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
@@ -167,7 +167,7 @@ system'threading'AsyncStateEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -311,25 +311,7 @@ system'threading'BaseEvent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>wait()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>wait(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> timeOut)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>set()
+<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -347,7 +329,25 @@ system'threading'BaseEvent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>set()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>wait()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>wait(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> timeOut)
 </CODE>
 </TD>
 </TR>
@@ -443,18 +443,18 @@ system'threading'BlockingQueue&lt;T1&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> value)
+<CODE>pop()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>pop()
+<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> value)
 </CODE>
 </TD>
 </TR>
@@ -552,6 +552,24 @@ system'threading'CountDownEvent</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>signal()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
 <CODE>wait()
 </CODE>
 </TD>
@@ -562,24 +580,6 @@ system'threading'CountDownEvent</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>wait(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> timeOut)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>signal()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>close()
 </CODE>
 </TD>
 </TR>
@@ -771,7 +771,7 @@ system'threading'Semaphore</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>wait()
+<CODE>release()
 </CODE>
 </TD>
 </TR>
@@ -780,7 +780,7 @@ system'threading'Semaphore</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>release()
+<CODE>wait()
 </CODE>
 </TD>
 </TR>
@@ -873,25 +873,25 @@ system'threading'Task</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor2</i>()
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>newPromise()
+<CODE><i>constructor2</i>()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+<CODE>newPromise()
 </CODE>
 </TD>
 </TR>
@@ -921,7 +921,7 @@ system'threading'Task</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>whenAllArgs(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN><i>[]</i> tasks)
+<CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
 </CODE>
 </TD>
 </TR>
@@ -930,7 +930,7 @@ system'threading'Task</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>whenAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'threading'Task<I>[]</I></A></SPAN> tasks)
+<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> msecs)
 </CODE>
 </TD>
 </TR>
@@ -957,7 +957,7 @@ system'threading'Task</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+<CODE>whenAll(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'threading'Task<I>[]</I></A></SPAN> tasks)
 </CODE>
 </TD>
 </TR>
@@ -966,7 +966,7 @@ system'threading'Task</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> msecs)
+<CODE>whenAllArgs(<i>params</i> <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN><i>[]</i> tasks)
 </CODE>
 </TD>
 </TR>
@@ -1005,9 +1005,9 @@ system'threading'Task</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal private </i>&nbsp;</CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>getResultUnsafe()
+<CODE>continueWith(<SPAN CLASS="memberNameLink"><A HREF="system.html#Action&lt;T1&gt;">Action&lt;system'threading'Task&gt;</A></SPAN> action)
 </CODE>
 </TD>
 </TR>
@@ -1023,22 +1023,13 @@ system'threading'Task</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>internal private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>continueWith(<SPAN CLASS="memberNameLink"><A HREF="system.html#Action&lt;T1&gt;">Action&lt;system'threading'Task&gt;</A></SPAN> action)
+<CODE>getResultUnsafe()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setResult()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
@@ -1047,12 +1038,21 @@ system'threading'Task</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setResult()
+</CODE>
+</TD>
+</TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>wait()
+<CODE>start()
 </CODE>
 </TD>
 </TR>
@@ -1061,7 +1061,7 @@ system'threading'Task</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>start()
+<CODE>wait()
 </CODE>
 </TD>
 </TR>
@@ -1168,7 +1168,7 @@ system'threading'Task&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor2</i>()
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1&gt;">Func&lt;T1&gt;</A></SPAN> func)
 </CODE>
 </TD>
 </TR>
@@ -1184,18 +1184,18 @@ system'threading'Task&lt;T1&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>newPromise()
+<CODE><i>constructor2</i>()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1&gt;">Func&lt;T1&gt;</A></SPAN> func)
+<CODE>newPromise()
 </CODE>
 </TD>
 </TR>
@@ -1399,6 +1399,24 @@ Creates a new thread. It must be started later</div>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>current()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>start(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
@@ -1422,24 +1440,6 @@ Creates and starts a new thread</div>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>start(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> stackSize)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>current()
 </CODE>
 </TD>
 </TR>
@@ -1499,26 +1499,26 @@ Creates and starts a new thread</div>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>IsAlive()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Priority()</CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>set </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Priority(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN> value)
 </CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>IsAlive()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1538,20 +1538,11 @@ Creates and starts a new thread</div>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>start()
+<CODE>close()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>start(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arg)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1560,7 +1551,7 @@ Creates and starts a new thread</div>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1569,12 +1560,21 @@ Creates and starts a new thread</div>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>start()
+</CODE>
+</TD>
+</TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>start(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arg)
 </CODE>
 </TD>
 </TR>
@@ -1709,9 +1709,9 @@ system'threading'ThreadHandle</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>getPriority()
+<CODE>checkIfAlive()
 </CODE>
 </TD>
 </TR>
@@ -1720,16 +1720,16 @@ system'threading'ThreadHandle</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setPriority(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN> priority)
+<CODE>close()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>start()
+<CODE>getPriority()
 </CODE>
 </TD>
 </TR>
@@ -1754,9 +1754,9 @@ system'threading'ThreadHandle</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>checkIfAlive()
+<CODE>setPriority(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ThreadPriority">ThreadPriority</A></SPAN> priority)
 </CODE>
 </TD>
 </TR>
@@ -1765,7 +1765,7 @@ system'threading'ThreadHandle</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>close()
+<CODE>start()
 </CODE>
 </TD>
 </TR>
@@ -2233,7 +2233,7 @@ system'threading'</DIV>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>6.8
 </STRONG>
 </DIV>
 </DIV>

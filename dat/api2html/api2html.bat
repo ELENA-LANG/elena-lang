@@ -1,33 +1,34 @@
-bin\ldoc system doc\api 
-bin\ldoc system'collections'threadsafe doc\api 
-bin\ldoc system'routines doc\api
-bin\ldoc system'routines'stex doc\api
-bin\ldoc system'runtime doc\api
-bin\ldoc system'threading doc\api
-bin\ldoc system'io'threading doc\api
-bin\ldoc system'dynamic doc\api
-bin\ldoc system'drawing doc\api
-bin\ldoc system'winforms doc\api
-bin\ldoc system'net doc\api
-bin\ldoc system'text'parsing doc\api
-bin\ldoc extensions doc\api
-bin\ldoc extensions'routines doc\api
-bin\ldoc extensions'runtime doc\api
-bin\ldoc extensions'routines'stex doc\api
-bin\ldoc extensions'scripting doc\api
-bin\ldoc extensions'dynamic doc\api
-bin\ldoc extensions'threading doc\api
-bin\ldoc extensions'io doc\api
-bin\ldoc cellular doc\api
-bin\ldoc algorithms doc\api
-bin\ldoc sqlite doc\api
-bin\ldoc forms doc\api
-bin\ldoc ltests doc\api
-bin\ldoc net doc\api
-bin\ldoc net'http doc\api
-bin\ldoc net'http'server doc\api
-bin\ldoc net'server doc\api
-bin\ldoc textgen doc\api
-bin\ldoc xforms doc\api
-bin\ldoc xml doc\api
-bin\ldoc webapi doc\api
+bin\ldoc -i system doc\api 
+bin\ldoc -i system'collections'threadsafe doc\api 
+bin\ldoc -i system'routines doc\api
+bin\ldoc -i system'routines'stex doc\api
+bin\ldoc -i system'runtime doc\api
+bin\ldoc -i system'threading doc\api
+bin\ldoc -i system'io'threading doc\api
+bin\ldoc -i system'dynamic doc\api
+bin\ldoc -i system'drawing doc\api
+bin\ldoc -i system'winforms doc\api
+bin\ldoc -i system'net doc\api
+bin\ldoc -i system'text'parsing doc\api
+bin\ldoc -i extensions doc\api
+bin\ldoc -i extensions'routines doc\api
+bin\ldoc -i extensions'runtime doc\api
+bin\ldoc -i extensions'routines'stex doc\api
+bin\ldoc -i extensions'scripting doc\api
+bin\ldoc -i extensions'dynamic doc\api
+bin\ldoc -i extensions'threading doc\api
+bin\ldoc -i extensions'io doc\api
+bin\ldoc -i cellular doc\api
+bin\ldoc -i algorithms doc\api
+bin\ldoc -i sqlite doc\api
+bin\ldoc -i forms doc\api
+bin\ldoc -i ltests doc\api
+bin\ldoc -i net doc\api
+bin\ldoc -i net'http doc\api
+bin\ldoc -i net'http'server doc\api
+bin\ldoc -i net'server doc\api
+bin\ldoc -i textgen doc\api
+bin\ldoc -i xforms doc\api
+bin\ldoc -i xml doc\api
+bin\ldoc -i webapi doc\api
+bin\ldoc -g doc\api

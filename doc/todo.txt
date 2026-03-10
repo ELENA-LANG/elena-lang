@@ -21,6 +21,8 @@ In development:
   ====================================== 
   - provide descriptions for all classes (from collections\maps.l)
   - add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
+  - ldoc : support search by method name
+  - ldoc : support search by class name
   --------------------------------------
   * #184 : linux ide
   ====================================== 
@@ -30,10 +32,10 @@ In development:
   - support go to
   - fix run
   --------------------------------------
-  * current : ldoc
+  * current
   ====================================== 
-  - generate a list of methods
-  - generate a list of classes
+
+
 
   ### EPIC: elena 8.0 ###
 
