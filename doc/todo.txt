@@ -19,13 +19,21 @@ In development:
   ====================================== 
   * doc
   ====================================== 
-  - provide descriptions for all classes (from collections\list.l)- 
+  - provide descriptions for all classes (from collections\maps.l)
   - add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
   --------------------------------------
-  * current : #184 : linux ide
+  * #184 : linux ide
   ====================================== 
-  - test debugger
+  - support stop operation
+  - support step over
+  - support step into
+  - support go to
+  - fix run
   --------------------------------------
+  * current : ldoc
+  ====================================== 
+  - generate a list of methods
+  - generate a list of classes
 
   ### EPIC: elena 8.0 ###
 

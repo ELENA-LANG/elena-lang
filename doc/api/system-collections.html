@@ -1065,7 +1065,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">List&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">List&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed list</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1145,6 +1146,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> a)
 </CODE>
+<div class="block">
+Copies a strong-typed array</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1154,6 +1157,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN> e)
 </CODE>
+<div class="block">
+Copies a strong-typed enumerator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1163,6 +1168,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
+<div class="block">
+Creates an empty list with the preallocated space</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1172,6 +1179,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty list</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1181,6 +1190,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN> e)
 </CODE>
+<div class="block">
+Copies a strong-typed enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1190,6 +1201,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> a, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
+<div class="block">
+Copies a strong-typed sub array <b>a</b> from <b>index</b> element, with the provided length <b>len</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -1210,6 +1223,8 @@ system'collections'List&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the list length</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1218,6 +1233,8 @@ system'collections'List&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Empty()</CODE>
+<div class="block">
+Returns true if the list is empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1226,6 +1243,8 @@ system'collections'List&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>First()</CODE>
+<div class="block">
+Returns the first elemenet of the list</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1234,6 +1253,8 @@ system'collections'List&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Last()</CODE>
+<div class="block">
+Returns the last elemenet of the list</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1242,6 +1263,8 @@ system'collections'List&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns a shallow copy of the list as a strong-typed array</div>
 </TD>
 </TR>
 </TABLE>
@@ -1263,6 +1286,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns a list enumerator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1272,6 +1297,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns the object at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1281,6 +1308,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
 </CODE>
+<div class="block">
+Sets the element at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1290,6 +1319,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
 </CODE>
+<div class="block">
+Appends a new object to the end of the list</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1299,6 +1330,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>appendRange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN> e)
 </CODE>
+<div class="block">
+Copies an enumerable collection</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1308,6 +1341,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
 </CODE>
+<div class="block">
+Inserts the element at the specified index</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1317,6 +1352,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
 </CODE>
+<div class="block">
+Inserts the element at the top</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1326,6 +1363,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Removes an object at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1335,6 +1374,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all elemements</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1344,6 +1385,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
 </CODE>
+<div class="block">
+Trims the list at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1353,6 +1396,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns a list indexer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1362,6 +1407,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+<div class="block">
+Returns a shallow copy of the list</div>
 </TD>
 </TR>
 </TABLE>
