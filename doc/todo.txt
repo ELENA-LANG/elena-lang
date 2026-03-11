@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * dev  
   ====================================== 
+  - win ide : onDocumentUpdate & onDocumentSelection seeams like doing duplicate functionality
   - linux ide : watch
   --------------------------------------
   * samples
@@ -24,16 +25,13 @@ In development:
   - ldoc : support search by method name
   - ldoc : support search by class name
   --------------------------------------
-  * #184 : linux ide
+  * current : linux ide (#184)
   ====================================== 
   - support stop operation
   - support step over
   - support step into
   - support go to
   - fix run
-  --------------------------------------
-  * current
-  ====================================== 
 
 
 

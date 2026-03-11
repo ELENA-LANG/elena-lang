@@ -129,6 +129,11 @@ protected:
    Glib::RefPtr<Gio::SimpleAction>  _projectViewMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _errorListMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _outputMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _compileMenuItem;
+
+   Glib::RefPtr<Gio::SimpleAction>  _runMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _stepOverMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _stopMenuItem;
 
    void toggleResultTab(int controlIndex, bool visible);
 
@@ -397,6 +402,7 @@ protected:
    }
    void on_menu_debug_stop()
    {
+      _controller->doDebugStop(_model);
    }
    void on_menu_tools_editor()
    {
@@ -424,6 +430,8 @@ protected:
         Gtk::TreeViewColumn*);
    void on_errorlist_row_activated(const Gtk::TreeModel::Path& path,
         Gtk::TreeViewColumn*);
+
+   void updateCompileMenu(bool compileEnable, bool debugEnable, bool stopEnable);
 
    void onDocumentUpdate(DocumentChangeStatus changeStatus);
    void onProjectChange(bool empty);

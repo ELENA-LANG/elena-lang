@@ -257,7 +257,7 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    ideWindow->setLayout(textIndex, -1, tabBar, -1, projectView);
 
    _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
-//   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
+   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
    _broadcaster.completion_done.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_compilation_end));
 
    return new WindowWrapper(ideWindow);
