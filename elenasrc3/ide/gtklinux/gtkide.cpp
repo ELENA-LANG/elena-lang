@@ -826,6 +826,22 @@ void GTKIDEWindow :: onProjectChange(bool empty)
    //show_all_children();
 }
 
+void GTKIDEWindow :: onDebugStep()
+{
+   _controller->onDebuggerStep(_model);
+
+   enableMenuItemById(_stopMenuItem, true);
+}
+
+void GTKIDEWindow :: onDebugEnd()
+{
+   _controller->onDebuggerStop(_model);
+}
+
+void GTKIDEWindow :: onDebuggerSourceNotFound()
+{
+}
+
 void GTKIDEWindow :: onProjectRefresh(bool empty)
 {
    updateCompileMenu(!empty, !empty, false);
@@ -837,24 +853,24 @@ void GTKIDEWindow :: onProjectRefresh(bool empty)
 
 void GTKIDEWindow :: onIDEStatusChange(int status)
 {
-   if (test(rec->status, STATUS_DOC_READY)) {
+   if (test(status, STATUS_DOC_READY)) {
       _model->status = IDEStatus::Ready;
 
       //onStatusBarChange();
    }
-   else if (test(rec->status, STATUS_DEBUGGER_STOPPED)) {
+   else if (test(status, STATUS_DEBUGGER_STOPPED)) {
       _model->status = IDEStatus::Stopped;
 
       //onStatusBarChange();
       updateCompileMenu(false, true, true);
-   }   
-   else if (test(rec->status, STATUS_DEBUGGER_RUNNING)) {
+   }
+   else if (test(status, STATUS_DEBUGGER_RUNNING)) {
       _model->status = IDEStatus::Running;
 
       //onStatusBarChange();
       updateCompileMenu(false, false, true);
    }
-   else if (test(rec->status, STATUS_DEBUGGER_FINISHED)) {
+   else if (test(status, STATUS_DEBUGGER_FINISHED)) {
       _model->status = IDEStatus::Stopped;
 
       //onStatusBarChange();
@@ -862,7 +878,7 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
 
       onDebugEnd();
    }
-   else if (test(rec->status, STATUS_STATUS_CHANGED)) {
+   else if (test(status, STATUS_STATUS_CHANGED)) {
       //onStatusBarChange();
    }
 
@@ -873,7 +889,7 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
       onProjectRefresh(_model->projectModel.empty);
    }
 
-   if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
+   if (test(status, STATUS_FRAME_VISIBILITY_CHANGED)) {
    //   if (_model->sourceViewModel.isAssigned()) {
          //_children[_model->ideScheme.textFrameId]->show();
          //_children[_model->ideScheme.textFrameId]->setFocus();
@@ -885,27 +901,27 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
       onComilationStart();
    }
 
-   if (test(rec->status, STATUS_LAYOUT_CHANGED)) {
-      onLayoutChange();
-   }
+   //if (test(status, STATUS_LAYOUT_CHANGED)) {
+      //onLayoutChange();
+   //}
 
    if (test(status, STATUS_WITHERRORS)) {
       toggleResultTab(_model->ideScheme.errorListControl, true);
       checkMenuItemById(_errorListMenuItem, true);
    }
 
-   if (test(rec->status, STATUS_DEBUGGER_NOSOURCE)) {
+   if (test(status, STATUS_DEBUGGER_NOSOURCE)) {
       onDebuggerSourceNotFound();
    }
-   else if (test(rec->status, STATUS_DEBUGGER_STEP)) {
-      onDebugWatch();
-      onDebugCallstack();
+   else if (test(status, STATUS_DEBUGGER_STEP)) {
+      //onDebugWatch();
+      //onDebugCallstack();
       onDebugStep();
    }
 
-   if (test(rec->status, STATUS_FRAME_ACTIVATE)) {
-      onActivate();
-   }
+   //if (test(status, STATUS_FRAME_ACTIVATE)) {
+   //   onActivate();
+   //}
 }
 
 void GTKIDEWindow :: saveFile_finish(PathString& path, int index)
@@ -1289,6 +1305,8 @@ MessageLogInfo GTKIDEWindow::EventLog :: getMessage(const Gtk::TreeModel::Path& 
 
       return bookmark;
    }
+
+   return {};
 }
 
 void GTKIDEWindow::EventLog :: clearMessages()

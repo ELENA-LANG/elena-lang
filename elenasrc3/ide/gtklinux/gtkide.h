@@ -439,6 +439,13 @@ protected:
    void onIDEStatusChange(int status);
    void onErrorHighlight(const Gtk::TreeModel::Path& path);
 
+   void onDebugStep();
+   void onDebuggerSourceNotFound();
+   void onDebugEnd();
+
+   void onComilationStart();
+   void onCompilationEnd(int exitCode, int postponedAction);
+
    void saveFile(int index);
    void saveFileAs(int index);
    void saveFile_finish(PathString& path, int index);
@@ -459,9 +466,6 @@ protected:
    void closeAllButActive_finish();
    void closeAllButActive_next(int index);
    void closeAllButActive();
-
-   void onComilationStart();
-   void onCompilationEnd(int exitCode, int postponedAction);
 
 public:
    void populate(int counter, Gtk::Widget** children);

@@ -50,6 +50,14 @@ public:
    }
 };
 
+bool compareFileModifiedTime(path_t sour, path_t dest)
+{
+//   DateTime sourceDT = DateTime::getFileTime(sour);
+//   DateTime moduleDT = DateTime::getFileTime(dest);
+
+   return /*sourceDT > moduleDT*/false;
+}
+
 typedef LnxDebugAdapter    DebugProcess;
 
 LinuxProcess      outputProcess;
@@ -64,7 +72,7 @@ int main(int argc, char* argv[])
    IDEModel      ideModel(textViewSettings);
    DebugProcess  debugProcess;
    IDEController ideController(&outputProcess, /*&vmConsoleProcess*/nullptr, &debugProcess, &ideModel,
-                        CURRENT_PLATFORM, &pathHelper, /*compareFileModifiedTime*/nullptr);
+                        CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);
 
    // NOTE : it must be initialized before factory / controller
    IDEFactory::initPathSettings(&ideModel);

@@ -49,7 +49,7 @@ ThreadContext :: ThreadContext(pid_t pid)
 
 void ThreadContext :: refresh()
 {
-   ptrace(PTRACE_GETREGS, _threadId, NULL, &_context);
+   /*int val = */ptrace(PTRACE_GETREGS, _threadId, NULL, &_context);
 }
 
 bool ThreadContext :: readDump(addr_t address, char* dump, size_t length)
@@ -60,6 +60,7 @@ bool ThreadContext :: readDump(addr_t address, char* dump, size_t length)
       val = ptrace(PTRACE_PEEKDATA,
                           _threadId, address + index * 4,
                           NULL);
+
       if (length > 3) {
          memcpy(dump + index * 4, &val, 4);
          length -= 4;
@@ -178,15 +179,44 @@ addr_t ThreadContext :: BP()
 // --- BreakpointController ---
 
 BreakpointController :: BreakpointController()
-   : breakpoints(0)
+   : breakpoints(0), newBreakpoints(0), pendingAvailable(false)
 {
 }
 
-void BreakpointController :: setTempBreakpoint(addr_t address, ThreadContext* context)
+bool BreakpointController :: applyPendingBreakpoints(ThreadContext* context)
+{
+   if (!pendingAvailable)
+      return false;
+
+   bool resolved = false;
+   for (size_t i = 0; i < tempBreakpoints.count(); i++) {
+      if (tempBreakpoints[i].isPending()) {
+         TempBreakpoint breakpoint = tempBreakpoints[i];
+         breakpoint.substitute = context->setSoftwareBreakpoint(breakpoint.address);
+         breakpoint.mode = TempBreakpoint::Mode::Software;
+
+         tempBreakpoints[i] = breakpoint;
+
+         resolved = true;
+      }
+   }
+
+   resolved |= setSoftwareBreakpoints(context);
+
+   return resolved;
+}
+
+void BreakpointController :: setTempBreakpoint(addr_t address, ThreadContext* context, bool pendingMode)
 {
    TempBreakpoint breakpoint = { address };
-   breakpoint.substitute = context->setSoftwareBreakpoint(address);
-   breakpoint.mode = TempBreakpoint::Mode::Software;
+   if (!pendingMode) {
+      breakpoint.substitute = context->setSoftwareBreakpoint(address);
+      breakpoint.mode = TempBreakpoint::Mode::Software;
+   }
+   else {
+      breakpoint.mode = TempBreakpoint::Mode::Pending;
+      pendingAvailable = true;
+   }
 
    for (size_t i = 0; i < tempBreakpoints.count(); i++) {
       if (!tempBreakpoints[i].isAssigned()) {
@@ -205,7 +235,8 @@ bool BreakpointController :: clearTempBreakpoint(addr_t address, ThreadContext* 
 
    for (size_t i = 0; i < tempBreakpoints.count(); i++) {
       if (tempBreakpoints[i].isAssigned() && tempBreakpoints[i].address == address) {
-         context->clearSoftwareBreakpoint(address, tempBreakpoints[i].substitute);
+         if (!tempBreakpoints[i].isPending())
+            context->clearSoftwareBreakpoint(address, tempBreakpoints[i].substitute);
 
          tempBreakpoints[i].reset();
 
@@ -216,17 +247,17 @@ bool BreakpointController :: clearTempBreakpoint(addr_t address, ThreadContext* 
    return proceeded;
 }
 
-void BreakpointController :: addBreakpoint(addr_t address, ThreadContext* context, bool started)
+void BreakpointController :: addBreakpoint(addr_t address, ThreadContext* context, bool pending)
 {
-   if (started) {
+   if (!pending) {
       breakpoints.add(address, context->setSoftwareBreakpoint(address));
    }
-   else breakpoints.add(address, 0);
+   else newBreakpoints.add(address);
 }
 
 void BreakpointController :: removeBreakpoint(addr_t address, ThreadContext* context, bool started)
 {
-   if (started) {
+   if (started && breakpoints.exist(address)) {
       context->clearSoftwareBreakpoint(address, breakpoints.get(address));
       if (context->_resetBreakpoint.mode == TempBreakpoint::Mode::Reset && context->_resetBreakpoint.address == address) {
          context->_resetBreakpoint.reset();
@@ -234,13 +265,20 @@ void BreakpointController :: removeBreakpoint(addr_t address, ThreadContext* con
       }
    }
    breakpoints.erase(address);
+   newBreakpoints.cut(address);
 }
 
-void BreakpointController :: setSoftwareBreakpoints(ThreadContext* context)
+bool BreakpointController :: setSoftwareBreakpoints(ThreadContext* context)
 {
-   for(auto breakpoint = breakpoints.start(); !breakpoint.eof(); ++breakpoint) {
-      *breakpoint = context->setSoftwareBreakpoint(breakpoint.key());
+   bool applied = false;
+   for (auto it = newBreakpoints.start(); !it.eof(); ++it) {
+      addBreakpoint(*it, context, false);
+      applied = true;
    }
+
+   newBreakpoints.clear();
+
+   return applied;
 }
 
 bool BreakpointController :: processBreakpoint(ThreadContext* context)
@@ -348,7 +386,7 @@ void BreakpointController :: clear()
 DebugProcessController :: DebugProcessController()
    : _threads(nullptr), _steps(nullptr), _exception({})
 {
-   _currentId = _traceeId = 0;
+   _traceeId = 0;
    _current = nullptr;
 
    _trapped = _started = false;
@@ -485,7 +523,7 @@ bool DebugProcessController :: isInitBreakpoint()
 
 addr_t DebugProcessController :: getBaseAddress()
 {
-   return 0x08048000u; // !! temporal
+   return /*0x08048000u*/0x400000u; // !! temporal
 }
 
 bool DebugProcessController :: findSignature(StreamReader& reader, char* signature, pos_t length)
@@ -493,14 +531,23 @@ bool DebugProcessController :: findSignature(StreamReader& reader, char* signatu
    if (!_current)
       return false;
 
-   reader.seek(0x08048000u);
+   // !! temporally hard-coded
+   strcpy(signature, "ELENA.");
 
-   size_t rva = 0;
-   ELFHelper::seekRDataSegment(reader, rva);
 
-   // load Executable image
-   _current->readDump(rva, signature, length);
-   signature[length] = 0;
+//   reader.seek(/*0x08048000u*/0x400000u);
+//
+//   addr_t rva = 0;
+//   ELFHelper::seekRODataSegment(reader, rva);
+//
+//   reader.seek(rva);
+//   pos_t aSize = reader.getDWord();
+//   reader.seek(rva + aSize);
+//   pos_t mSize = reader.getDWord();
+//
+//   // load Executable image
+//   _current->readDump(rva + sizeof(addr_t), signature, length);
+//   signature[length] = 0;
 
    return true;
 }
@@ -542,7 +589,7 @@ ref_t DebugProcessController :: getMemoryRef(addr_t address)
 
 void DebugProcessController :: addBreakpoint(addr_t address)
 {
-   _breakpoints.addBreakpoint(address, _current, _started);
+   _breakpoints.addBreakpoint(address, _current, true);
 }
 
 void DebugProcessController :: removeBreakpoint(addr_t address)
@@ -552,10 +599,8 @@ void DebugProcessController :: removeBreakpoint(addr_t address)
 
 void DebugProcessController :: continueProcess()
 {
-/*   if (_current) {
-      if (breakpoints.applyPendingBreakpoints(current))
-         stepMode = false;
-   }*/
+   if (_current && _breakpoints.applyPendingBreakpoints(_current))
+      _current->resetTrapFlag();
 
    ptrace((_current && _current->_stepMode) ? PTRACE_SINGLESTEP : PTRACE_CONT, _currentId, nullptr, nullptr);
 }
@@ -606,13 +651,21 @@ void DebugProcessController :: setBreakpoint(addr_t address)
    if (_current) {
       _current->resetTrapFlag();
 
-      _breakpoints.setTempBreakpoint(address, _current);
+      _breakpoints.setTempBreakpoint(address, _current, true);
    }
 }
 
 void DebugProcessController :: resetException()
 {
    _exception.code = 0;
+}
+
+void DebugProcessController :: setInitBreakpoint()
+{
+   _init_breakpoint = getIP();
+   _trapped = true;
+
+   int err = errno;
 }
 
 // --- DebugEventManager ---
@@ -874,6 +927,11 @@ bool LnxDebugAdapter :: proceed(int)
 {
    _process.processEvent();
 
+   // stop if it is VM Hook mode
+   if (_process.isHooked()) {
+      _process.setInitBreakpoint();
+   }
+
    return !_process.isTrapped();
 }
 
@@ -943,6 +1001,7 @@ bool LnxDebugAdapter :: startProgram(path_t exePath, path_t cmdLine, path_t appP
 {
    if (_process.startProcess(exePath.str(), cmdLine.str(), appPath.str()))
    {
+      //_process.setStepMode();
       _process.processEvent();
 
       return true;

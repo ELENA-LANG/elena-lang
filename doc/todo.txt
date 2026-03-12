@@ -27,11 +27,11 @@ In development:
   --------------------------------------
   * current : linux ide (#184)
   ====================================== 
-  - support stop operation
+  - test onInitBreakpoint
   - support step over
+  - support stop operation
   - support step into
   - support go to
-  - fix run
 
 
 

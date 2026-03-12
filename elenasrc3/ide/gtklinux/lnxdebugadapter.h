@@ -25,7 +25,8 @@ namespace elena_lang
       enum class Mode
       {
          None     = 0,
-         Software = 1,
+         Pending  = 1,
+         Software = 2,
          Reset    = 3,
       };
 
@@ -34,6 +35,8 @@ namespace elena_lang
       char   substitute;
 
       bool isAssigned() const { return mode != Mode::None; }
+
+      bool isPending() const { return mode == Mode::Pending; }
 
       void reset()
       {
@@ -93,20 +96,28 @@ namespace elena_lang
    // --- BreakpointContext ---
 
    typedef CachedList<TempBreakpoint, 5> TempBreakpoints;
+   typedef List<addr_t>                  BreakpointList;
+   typedef Map<addr_t, char>             BreakpointMap;
 
    struct BreakpointController
    {
-      TempBreakpoints   tempBreakpoints;
-      Map<addr_t, char> breakpoints;
+      bool              pendingAvailable;
 
-      void setTempBreakpoint(addr_t address, ThreadContext* context);
+      TempBreakpoints   tempBreakpoints;
+
+      BreakpointList    newBreakpoints;  // list of breakpoints we need to set
+      BreakpointMap     breakpoints;
+
+      bool applyPendingBreakpoints(ThreadContext* context);
+
+      void setTempBreakpoint(addr_t address, ThreadContext* context, bool pendingMode);
       bool clearTempBreakpoint(addr_t address, ThreadContext* context);
 
       bool processStep(ThreadContext* context);
 
-      void addBreakpoint(addr_t address, ThreadContext* context, bool started);
+      void addBreakpoint(addr_t address, ThreadContext* context, bool pending);
       void removeBreakpoint(addr_t address, ThreadContext* context, bool started);
-      void setSoftwareBreakpoints(ThreadContext* context);
+      bool setSoftwareBreakpoints(ThreadContext* context);
 
       bool processBreakpoint(ThreadContext* context);
 
@@ -157,8 +168,11 @@ namespace elena_lang
 
       bool isStarted() { return _started; }
       bool isTrapped() const { return _trapped; }
+      bool isHooked() const { return _current != nullptr && _init_breakpoint == INVALID_ADDR; }
 
       bool isInitBreakpoint();
+
+      void setInitBreakpoint();
 
       void setStepMode();
 
