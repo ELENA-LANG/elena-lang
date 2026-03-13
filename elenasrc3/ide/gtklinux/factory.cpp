@@ -17,14 +17,17 @@ using namespace elena_lang;
 
 #ifdef _M_IX86
 
-#define CLI_PATH     "/usr/bin/elena-cli"
+#define CLI_PATH       "/usr/bin/elena-cli"
+#define ELENA_LIB_PATH "/usr/lib/elena/lib60"
 
 #else
 
-#define CLI_PATH     "/usr/bin/elena64-cli"
+#define CLI_PATH       "/usr/bin/elena64-cli"
+#define ELENA_LIB_PATH "/usr/lib/elena/lib60_64"
 
-#endif // DEBUG
+#endif
 
+#define ELENA_SRC_PATH "/home/alex/elena-lang/src60/"
 
 //#define MAX_LOADSTRING 100
 //
@@ -124,6 +127,9 @@ IDEFactory :: IDEFactory(int argc, char** argv,
    _controller = controller;
 
    _model->projectModel.paths.compilerPath.copy(CLI_PATH);
+
+   _model->projectModel.paths.libraryRoot.combine(ELENA_LIB_PATH);         // !! temporal
+   _model->projectModel.paths.librarySourceRoot.combine(ELENA_SRC_PATH);   // !! temporal
 
    //initializeModel(ideModel);
 }

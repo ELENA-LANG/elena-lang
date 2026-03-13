@@ -20,18 +20,18 @@ In development:
   ====================================== 
   * doc
   ====================================== 
-  - provide descriptions for all classes (from collections\maps.l)
+  - provide descriptions for all classes (from collections\queues.l)
   - add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
   - ldoc : support search by method name
   - ldoc : support search by class name
   --------------------------------------
   * current : linux ide (#184)
   ====================================== 
-  - test onInitBreakpoint
+  - loading debug info
+  - process step
   - support step over
   - support stop operation
-  - support step into
-  - support go to
+  - proceed nosource event
 
 
 
