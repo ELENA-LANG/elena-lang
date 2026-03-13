@@ -305,6 +305,7 @@ bool BreakpointController :: processBreakpoint(ThreadContext* context)
 
    if (proceeded) {
       context->setIP(address);
+      context->refresh();
 
       return true;
    }
@@ -477,7 +478,9 @@ void DebugProcessController :: processSignal(int signal)
    if(signal == SIGTRAP && _current) {
       if (_breakpoints.processBreakpoint(_current)) {
          _current->_state = _steps.get(_current->IP());
-         _trapped = true;
+         if (_current->_state != nullptr)
+            _trapped = true;
+
          _current->setTrapFlag();
       }
       else if (_breakpoints.processStep(_current)) {

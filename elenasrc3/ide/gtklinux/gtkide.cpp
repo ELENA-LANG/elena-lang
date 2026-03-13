@@ -318,7 +318,7 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Step In</attribute>"
         "            <attribute name='accel'>F7</attribute>"
-        "            <attribute name='action'>DebugStepin</attribute>"
+        "            <attribute name='action'>win.DebugStepin</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Go To Cursor</attribute>"
@@ -571,9 +571,9 @@ void GTKIDEWindow :: populateUI()
 //
    _runMenuItem = refActions->add_action("DebugRun", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_run));
    _stepOverMenuItem = refActions->add_action("DebugStepover", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepover));
+   _stepIntoMenuItem = refActions->add_action("DebugStepin", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepin));
    _stopMenuItem = refActions->add_action("DebugStop", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stop));
 
-//   _app->add_action("DebugStepin", "F7", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepin));
 //   _app->add_action("DebugGoto", "F4", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_goto));
 //   _app->add_action("DebugToggle", "F5", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_toggle));
 //   _app->add_action("DebugClearBreakpoints", "<control><shift>F5", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_clearbps));
@@ -677,6 +677,9 @@ void GTKIDEWindow :: populateUI()
    controller->add_shortcut(Gtk::Shortcut::create(
       Gtk::KeyvalTrigger::create(GDK_KEY_F8),
       Gtk::NamedAction::create("win.DebugStepover")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F7),
+      Gtk::NamedAction::create("win.DebugStepin")));
    controller->add_shortcut(Gtk::Shortcut::create(
       Gtk::KeyvalTrigger::create(GDK_KEY_F2, Gdk::ModifierType::CONTROL_MASK),
       Gtk::NamedAction::create("win.DebugStop")));
@@ -838,8 +841,27 @@ void GTKIDEWindow :: onDebugEnd()
    _controller->onDebuggerStop(_model);
 }
 
+void GTKIDEWindow :: onDebuggerSourceNotFound_finish(int result)
+{
+   DebugActionResult debugResult = {};
+   if (!_controller->onDebuggerNoSource(_model, result == MessageDialogBase::Answer::Yes, debugResult)) {
+      if (debugResult.targetMissing) {
+         messageDialog.info(INFO_NEED_TARGET);
+      }
+      else if (debugResult.noDebugFile) {
+         messageDialog.info(INFO_RUN_NEED_RECOMPILE);
+      }
+   }
+}
+
 void GTKIDEWindow :: onDebuggerSourceNotFound()
 {
+   enableMenuItemById(_stopMenuItem, true);
+
+   messageDialog.question(QUESTION_NOSOURCE_CONTINUE, this, [](void* arg, int result)
+   {
+      ((GTKIDEWindow*)arg)->onDebuggerSourceNotFound_finish(result);
+   });
 }
 
 void GTKIDEWindow :: onProjectRefresh(bool empty)
@@ -1270,12 +1292,12 @@ void GTKIDEWindow :: updateCompileMenu(bool compileEnable, bool debugEnable, boo
 
    enableMenuItemById(_runMenuItem, debugEnable);
    enableMenuItemById(_stepOverMenuItem, debugEnable);
+   enableMenuItemById(_stepIntoMenuItem, debugEnable);
 
    enableMenuItemById(_stopMenuItem, stopEnable);
 /*
    enableMenuItemById(IDM_PROJECT_OPTION, compileEnable, false);
 
-   enableMenuItemById(IDM_DEBUG_STEPINTO, debugEnable, true);
    enableMenuItemById(IDM_DEBUG_RUNTO, debugEnable, false);
 */
 }

@@ -133,6 +133,7 @@ protected:
 
    Glib::RefPtr<Gio::SimpleAction>  _runMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _stepOverMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _stepIntoMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _stopMenuItem;
 
    void toggleResultTab(int controlIndex, bool visible);
@@ -386,7 +387,10 @@ protected:
    }
    void on_menu_debug_stepin()
    {
-      //_controller->doStepInto();
+      if (_model->autoSave)
+         saveAll();
+
+      doDebugAction(DebugAction::StepInto, false);
    }
    void on_menu_debug_goto()
    {
@@ -441,6 +445,7 @@ protected:
 
    void onDebugStep();
    void onDebuggerSourceNotFound();
+   void onDebuggerSourceNotFound_finish(int result);
    void onDebugEnd();
 
    void onComilationStart();
