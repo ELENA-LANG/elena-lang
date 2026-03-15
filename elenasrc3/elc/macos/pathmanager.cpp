@@ -19,7 +19,7 @@ using namespace elena_lang;
 
 PathHelper::PathMap* PathHelper::pathCache = nullptr;
 
-inline bool loadAppPath(char* appPath, size_t len)
+inline bool loadAppPath(char* appPath, uint32_t len)
 {
    int res = _NSGetExecutablePath(appPath, &len);
    assert(res == 0);
@@ -31,7 +31,7 @@ inline bool loadAppPath(char* appPath, size_t len)
    return true;
 }
 
-path_t PathHelper :: retrievePath(const char* filesToLookFor[], size_t listLength, path_t defaultPath)
+path_t PathHelper :: retrievePath(const char* filesToLookFor[], uint32_t listLength, path_t defaultPath)
 {
    if (pathCache && pathCache->exist(defaultPath))
       return pathCache->get(defaultPath);
@@ -40,7 +40,7 @@ path_t PathHelper :: retrievePath(const char* filesToLookFor[], size_t listLengt
    if (!loadAppPath(appPath, FILENAME_MAX))
       return defaultPath;
 
-   for (size_t i = 0; i < listLength; i++) {
+   for (uint32_t i = 0; i < listLength; i++) {
       PathString fullPath(appPath, filesToLookFor[i]);
 
       if (!PathUtil::ifExist(*fullPath))

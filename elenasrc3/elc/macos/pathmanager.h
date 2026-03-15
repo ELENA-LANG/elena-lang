@@ -19,7 +19,7 @@ namespace elena_lang
       static PathMap* pathCache;
 
    public:
-      static path_t retrievePath(const char* filesToLookFor[], size_t listLength, path_t defaultPath);
+      static path_t retrievePath(const char* filesToLookFor[], uint32_t listLength, path_t defaultPath);
 
       static path_t retrieveFilePath(path_t defaultPath);
    };
