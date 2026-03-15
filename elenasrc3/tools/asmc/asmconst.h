@@ -68,6 +68,7 @@ namespace elena_lang
    constexpr auto ASM_WIN_TARGET_MODE        = "windows";
    constexpr auto ASM_LNX_TARGET_MODE        = "linux";
    constexpr auto ASM_FREEBSD_TARGET_MODE    = "freebsd";
+   constexpr auto ASM_MAC_TARGET_MODE        = "mac";
 
    constexpr auto ASM_X86_MODE               = "x86";
    constexpr auto ASM_AMD64_MODE             = "amd64";
