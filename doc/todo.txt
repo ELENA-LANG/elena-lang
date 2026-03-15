@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 7.0 ###
 
-  === Iteration 45 (mac) ===
+  === Iteration 45 ===
   ====================================== 
   * doc
   ====================================== 
@@ -22,7 +22,7 @@ In development:
 
   ### EPIC: elena 8.0 ###
 
-  === Iteration 46 (full api docs; graph sample; template generator; ide linux) ===
+  === Iteration 46 (full api docs; graph sample; template generator; ide linux; mac) ===
   * new version 7.0.1
   --------------------------------------
   * dev
@@ -36,7 +36,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 47 (text based adventage; httpget / httpsget reliability) ===
+  === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2
   --------------------------------------
   --------------------------------------
