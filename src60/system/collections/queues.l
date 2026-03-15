@@ -2,7 +2,7 @@ namespace collections
 {
    // --- Queue ---
     
-   public sealed class Queue : Enumerable
+   public sealed class Queue : Enumerable, info("A weak FIFO list")
    {
       ArrayList       _list;
       Reference<int>  _top;
@@ -111,7 +111,7 @@ namespace collections
     
    // --- Queue Template ---
     
-   public sealed Queue<T> : Enumerable<T>
+   public sealed Queue<T> : Enumerable<T>, info("A strong-typed FIFO list template")
    {
       List<T>        _array;
       Reference<int> _top;
@@ -278,7 +278,7 @@ namespace collections
 
    // --- Stack ---
     
-   public sealed class Stack : Enumerable
+   public sealed class Stack : Enumerable, info("A weak LIFO list")
    {
       ArrayList      _list;
       Reference<int> _top;
@@ -372,7 +372,7 @@ namespace collections
     
    // --- Stack Template ---
     
-   public sealed Stack<T> : Enumerable<T>
+   public sealed Stack<T> : Enumerable<T>, info("A strong-typed LIFO list template")
    {
       List<T>        _array;
       Reference<int> _top;

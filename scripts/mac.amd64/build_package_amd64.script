@@ -1,0 +1,111 @@
+#!/bin/sh
+
+mkdir -p ../../lib60_64
+mkdir -p /usr/local/share/elena
+mkdir -p /usr/local/etc/elena/
+mkdir -p /usr/local/etc/elena/templates/
+mkdir -p /usr/local/lib/elena/core/amd64/
+mkdir -p /usr/local/lib/elena/lib60_64
+
+cp ../../bin/libelenart60_64.so /usr/local/lib/elena/
+cp ../../bin/libelenasm60_64.so /usr/local/lib/elena/
+cp ../../bin/libelenavm60_64.so /usr/local/lib/elena/
+cp ../../bin/elena64-cli /usr/local/bin/
+
+cp ../../bin/elc60.config /usr/local/etc/elena/
+cp ../../bin/elenavm60.config /usr/local/etc/elena/
+cp ../../bin/templates/*.config /usr/local/etc/elena/templates/
+
+echo compiling data files
+
+../../bin/sg64-cli ../../dat/sg/syntax60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/sg64-cli ../../dat/sg/syntax67.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/og64-cli ../../dat/og/bc_rules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/og64-cli -s ../../dat/og/bt_rules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/og64-cli -s ../../dat/og/bt_xrules60.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+cp ../../dat/og/*.dat /usr/local/share/elena/
+cp ../../dat/og/*.dat ../../bin
+cp ../../dat/sg/syntax60.dat /usr/local/share/elena
+cp ../../dat/sg/syntax67.dat /usr/local/share/elena
+cp ../../dat/sg/syntax60.dat ../../bin
+cp ../../dat/sg/syntax67.dat ../../bin
+
+echo compiling assembly files
+
+../../bin/asm64-cli -freebsd -amd64 ../../asm/amd64/core60.asm /usr/local/lib/elena/core/amd64 core60_lnx.bin
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+ ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
+ ret=$?
+ if [ $ret -eq 0 ]
+ then
+   echo .
+ else
+   echo "Failure" >&2
+   exit 1
+ fi
+
+ ../../bin/elena64-cli ../../src60/elena_api.linux.prjcol
+ ret=$?
+ if [ $ret -eq 1 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ cp ../../lib60_64/*.nl /usr/local/lib/elena/lib60_64
+ cp ../../lib60_64/*.dnl /usr/local/lib/elena/lib60_64 

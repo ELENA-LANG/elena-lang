@@ -5,34 +5,24 @@ In development:
 [development]
   ### EPIC: elena 7.0 ###
 
-  === Iteration 45 (full api docs; mac) ===
-  --------------------------------------
-  * dev  
-  ====================================== 
-  - win ide : onDocumentUpdate & onDocumentSelection seeams like doing duplicate functionality
-  - linux ide : watch
-  --------------------------------------
-  * samples
-  ====================================== 
-  - test all x86-64  
-  --------------------------------------
-  * lang
+  === Iteration 45 (mac) ===
   ====================================== 
   * doc
   ====================================== 
   - provide descriptions for all classes (from collections\queues.l)
-  - add new variant using multi ret - https://www.rosettacode.org/wiki/Return_multiple_values#Elena
-  - ldoc : support search by method name
-  - ldoc : support search by class name
   --------------------------------------
-  * current : 
+  * current : #708 (linker for MacOS)
   ====================================== 
+  - add make for sg64-cli, og64-cli, asm64-cli
+  - script : build elena libraries
+  - create an archive
+  - create a snub executable
 
 
 
   ### EPIC: elena 8.0 ###
 
-  === Iteration 46 (graph sample; template generator; ide linux) ===
+  === Iteration 46 (full api docs; graph sample; template generator; ide linux) ===
   * new version 7.0.1
   --------------------------------------
   * dev
@@ -40,6 +30,8 @@ In development:
   * lang
   ====================================== 
   * doc
+  ====================================== 
+  * samples
   ====================================== 
   * current
   ====================================== 
