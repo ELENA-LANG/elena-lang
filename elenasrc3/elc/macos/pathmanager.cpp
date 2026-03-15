@@ -17,7 +17,7 @@ using namespace elena_lang;
 
 // --- PathHelper ---
 
-PathHelper::PathMap* PathHelper::pathCache = nullptr;
+MacOSPathHelper::PathMap* MacOSPathHelper::pathCache = nullptr;
 
 inline bool loadAppPath(char* appPath, unsigned int len)
 {

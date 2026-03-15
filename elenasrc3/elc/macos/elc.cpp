@@ -22,7 +22,7 @@
 #include "constants.h"
 #include "messages.h"
 #include "linux/presenter.h"
-#include "linux/pathmanager.h"
+#include "macos/pathmanager.h"
 
 #include <stdarg.h>
 
