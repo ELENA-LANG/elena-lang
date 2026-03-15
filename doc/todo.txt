@@ -13,6 +13,8 @@ In development:
   --------------------------------------
   * current : #708 (linker for MacOS)
   ====================================== 
+  - support local paths
+  - update make
   - script : build elena libraries
   - create an archive
 

@@ -22,7 +22,7 @@
 #include "constants.h"
 #include "messages.h"
 #include "linux/presenter.h"
-//#include "linux/pathmanager.h"
+#include "linux/pathmanager.h"
 
 #include <stdarg.h>
 
@@ -93,6 +93,12 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       VA_ALIGNMENT, defaultCoreSettings, CLIHelper::createJITCompiler);
 
    path_t defaultConfigPath = DEFAULT_CONFIG;
+
+   path_t defaultConfigPath = PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
+   if (defaultConfigPath.compare(LOCAL_DEFAULT_CONFIG)) {
+      // if the local config file was not found
+      defaultConfigPath = DEFAULT_CONFIG;
+   }
    PathString configPath(dataPath, defaultConfigPath);
 
    return CLIHelper::compileProject(argc, argv,
@@ -103,13 +109,13 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       defaultProfile);
 }
 
-//const char* dataFileList[] = { BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE };
+const char* dataFileList[] = { BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE };
 
 int main(int argc, char* argv[])
 {
    try
    {
-      PathString dataPath(/*PathHelper::retrievePath(dataFileList, 3, */DATA_PATH/*)*/);
+      PathString dataPath(PathHelper::retrievePath(dataFileList, 3, DATA_PATH));
 
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
 

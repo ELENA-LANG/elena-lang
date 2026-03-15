@@ -5587,7 +5587,7 @@ ref_t Compiler::declareMultiType(Scope& scope, SyntaxNode& current, ref_t elemen
    return resolveTupleClass(scope, current, items);
 }
 
-static inline ref_t resloveWeakSelfReference(ModuleScopeBase* moduleScope, ref_t weakRef, ref_t classRef)
+/*static inline ref_t resloveWeakSelfReference(ModuleScopeBase* moduleScope, ref_t weakRef, ref_t classRef)
 {
    ref_t resolvedRef = moduleScope->resolveWeakTemplateReferenceID(weakRef);
 
@@ -5596,7 +5596,7 @@ static inline ref_t resloveWeakSelfReference(ModuleScopeBase* moduleScope, ref_t
       return classRef;
    }
    else return weakRef;
-}
+}*/
 
 void Compiler::declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool exensionMode)
 {
@@ -7693,7 +7693,7 @@ static inline bool isConditionalOp(SyntaxKey key)
    }
 }
 
-static inline SyntaxNode skipNestedExpression(SyntaxNode node)
+/*static inline SyntaxNode skipNestedExpression(SyntaxNode node)
 {
    if (node == SyntaxKey::Expression) {
       SyntaxNode current = node.firstChild();
@@ -7705,7 +7705,7 @@ static inline SyntaxNode skipNestedExpression(SyntaxNode node)
       return node;
    }
    return node;
-}
+}*/
 
 ObjectInfo Compiler::mapStringConstant(Scope& scope, SyntaxNode node)
 {
@@ -8246,7 +8246,7 @@ ObjectInfo Compiler::mapObject(Scope& scope, SyntaxNode node, ExpressionAttribut
    return retVal;
 }
 
-static inline bool isNormalConstant(ObjectInfo info)
+/*static inline bool isNormalConstant(ObjectInfo info)
 {
    switch (info.kind) {
    case ObjectKind::StringLiteral:
@@ -8254,7 +8254,7 @@ static inline bool isNormalConstant(ObjectInfo info)
    default:
       return false;
    }
-}
+}*/
 
 ObjectInfo Compiler::convertIntLiteral(Scope& scope, SyntaxNode node, ObjectInfo source, ref_t targetRef, bool ignoreError)
 {
@@ -10645,7 +10645,7 @@ void Compiler::compileCustomDispatcher(BuildTreeWriter& writer, ClassScope& scop
    scope.save();
 }
 
-static inline void mapUninqueField(ClassInfo::FieldMap& fields, IdentifierString& name, FieldInfo info)
+/*static inline void mapUninqueField(ClassInfo::FieldMap& fields, IdentifierString& name, FieldInfo info)
 {
    size_t pos = name.length();
    int   index = 0;
@@ -10659,7 +10659,7 @@ static inline void mapUninqueField(ClassInfo::FieldMap& fields, IdentifierString
          return;
       }
    }
-}
+}*/
 
 void Compiler :: compileIteratorMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo)
 {
