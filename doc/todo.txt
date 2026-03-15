@@ -13,16 +13,14 @@ In development:
   --------------------------------------
   * current : #708 (linker for MacOS)
   ====================================== 
-  - add make for sg64-cli, og64-cli, asm64-cli
   - script : build elena libraries
   - create an archive
-  - create a snub executable
 
 
 
   ### EPIC: elena 8.0 ###
 
-  === Iteration 46 (full api docs; graph sample; template generator; ide linux; mac) ===
+  === Iteration 46 (graph sample; template generator; ide linux; mac) ===
   * new version 7.0.1
   --------------------------------------
   * dev

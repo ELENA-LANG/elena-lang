@@ -183,6 +183,9 @@ int main(int argc, char* argv[])
          else if (arg.compare(ASM_FREEBSD_TARGET_MODE)) {
             platform.copy(ASM_FREEBSD_TARGET);
          }
+         else if (arg.compare(ASM_MAC_TARGET_MODE)) {
+            platform.copy(ASM_MAC_TARGET);
+         }
          else if (arg.compare(BC_32_MODE)) {
             mode = CompileMode::bc32;
 #if (defined(_WIN32) || defined(__WIN32__))

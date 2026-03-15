@@ -1,20 +1,7 @@
 #!/bin/sh
 
 mkdir -p ../../lib60_64
-mkdir -p /usr/local/share/elena
-mkdir -p /usr/local/etc/elena/
-mkdir -p /usr/local/etc/elena/templates/
-mkdir -p /usr/local/lib/elena/core/amd64/
-mkdir -p /usr/local/lib/elena/lib60_64
-
-cp ../../bin/libelenart60_64.so /usr/local/lib/elena/
-cp ../../bin/libelenasm60_64.so /usr/local/lib/elena/
-#cp ../../bin/libelenavm60_64.so /usr/local/lib/elena/
-cp ../../bin/elena64-cli /usr/local/bin/
-
-cp ../../bin/elc60.config /usr/local/etc/elena/
-#cp ../../bin/elenavm60.config /usr/local/etc/elena/
-cp ../../bin/templates/*.config /usr/local/etc/elena/templates/
+mkdir -p ../../bin/amd64
 
 echo compiling data files
 
@@ -68,16 +55,13 @@ else
   exit 1
 fi
 
-cp ../../dat/og/*.dat /usr/local/share/elena/
 cp ../../dat/og/*.dat ../../bin
-cp ../../dat/sg/syntax60.dat /usr/local/share/elena
-cp ../../dat/sg/syntax67.dat /usr/local/share/elena
 cp ../../dat/sg/syntax60.dat ../../bin
 cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm64-cli -mac -amd64 ../../asm/amd64/core60.asm /usr/local/lib/elena/core/amd64 core60_mac.bin
+../../bin/asm64-cli -mac -amd64 ../../asm/amd64/core60.asm ../../bin/amd64 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -86,6 +70,8 @@ else
   echo "Failure" >&2
   exit 1
 fi
+
+# echo compiling lib60 files
 
  ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
  ret=$?
@@ -107,5 +93,11 @@ fi
    echo .
  fi
 
- cp ../../lib60_64/*.nl /usr/local/lib/elena/lib60_64
- cp ../../lib60_64/*.dnl /usr/local/lib/elena/lib60_64 
+ mkdir -p /usr/local/lib/elena/
+ ln -s $(realpath ../../bin/libelenart60_64.so) /usr/local/lib/elena/libelenart60_64.so
+# ln -s $(realpath ../../bin/libelenavm60_64.so) /usr/local/lib/elena/libelenavm60_64.so
+# ln -s $(realpath ../../bin/libelenasm60_64.so) /usr/local/lib/elena/libelenasm60_64.so
+
+ mkdir -p /usr/local/etc/elena/
+ ln -s $(realpath ../../bin/elenart60.config) /usr/local/etc/elena/elenart60.config
+# ln -s $(realpath ../../bin/local.elenavm60.config) /usr/local/etc/elena/elenavm60.config

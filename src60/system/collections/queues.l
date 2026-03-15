@@ -8,7 +8,7 @@ namespace collections
       Reference<int>  _top;
       Reference<int>  _tale;
         
-      constructor()
+      constructor() : info("Creates an empty queue")
       {
          _list := new ArrayList();
          _top := 0;
@@ -17,12 +17,12 @@ namespace collections
         
       ArrayList cast() = _list;
         
-      Enumerator enumerator() = new QueueEnumerator(self);
+      Enumerator enumerator() : info("Returns the queue enumerator") = new QueueEnumerator(self);
     
       internal int TopPointer = _top;
       internal int TalePointer = _tale;    
             
-      int Length
+      int Length : info("Returns the queue length")
       {
          get()
          {
@@ -35,7 +35,7 @@ namespace collections
          }
       }
         
-      push(object)
+      push(object) : info("Puts an element at the queue end")
       {
          int capacity := _list.Length;        
          int tale := *_tale;
@@ -51,7 +51,7 @@ namespace collections
          _tale.append(1)
       }
         
-      peek()
+      peek() : info("Returns an element at the queue top without removing it from the queue<br/>The exception is raised if the queue is empty")
       {
          int top := *_top;
          int tale := _tale;
@@ -62,7 +62,7 @@ namespace collections
          ^ _list.at(top)
       }
         
-      pop()
+      pop() : info("Returns an element at the queue top and removes it from the queue<br/>The exception is raised if the queue is empty")
       {
          int top := *_top;
          int tale := *_tale;
@@ -84,14 +84,14 @@ namespace collections
          ^ item
       }
             
-      clear()
+      clear() : info("Removes all elements from the queue")
       {
          _list.clear();
          _top.Value := 0;
          _tale.Value := 0
       }
         
-      shift(offset)
+      shift(offset) : info("Moves the element at the queue top down to <b>offset</b> postions")
       {
          int i := *_top;
          int n := (*_tale) - 1;
@@ -117,21 +117,21 @@ namespace collections
       Reference<int> _top;
       Reference<int> _tale;
         
-      constructor()
+      constructor() : info("Creates an empty queue")
       {
          _array := new List<T>(8);
          _top := 0;
          _tale := 0;
       }
         
-      constructor allocate(int capacity)
+      constructor allocate(int capacity) : info("Creates an empty queue with preallocated space")
       {
          _array := new List<T>(capacity);
          _top := 0;
          _tale := 0;
       }
             
-      int Length
+      int Length : info("Returns the queue length")
       {
          get()
          {
@@ -144,7 +144,7 @@ namespace collections
          }
       }
         
-      bool isEmpty()
+      bool isEmpty() : info("Returns true if the queue is empty")
       {
          int top := *_top;
          int tale := *_tale;
@@ -152,7 +152,7 @@ namespace collections
          ^ top == tale
       }
         
-      bool isNotEmpty()
+      bool isNotEmpty() : info("Returns true if the queue is not empty")
       {
          int top := *_top;
          int tale := *_tale;
@@ -160,7 +160,7 @@ namespace collections
          ^ top != tale
       }
         
-      push(T object)
+      push(T object) : info("Puts an element at the queue end")
       {
          int capacity := _array.Length;
          int tale := *_tale;
@@ -177,7 +177,7 @@ namespace collections
          _tale.append(1)
       }
         
-      T peek()
+      T peek() : info("Returns an element at the queue top without removing it from the queue<br/>The exception is raised if the queue is empty")
       {
          int top := *_top;
          int tale := *_tale;
@@ -188,7 +188,7 @@ namespace collections
          ^ _array.at(top)
       }        
         
-      T pop()
+      T pop() : info("Returns an element at the queue top and removes it from the queue<br/>The exception is raised if the queue is empty")
       {
          int top := *_top;
          int tale := *_tale;
@@ -210,7 +210,7 @@ namespace collections
          ^ item
       }
     
-      Enumerator<T> enumerator() = new BaseEnumerator<T>
+      Enumerator<T> enumerator() : info("Returns the queue enumerator") = new BaseEnumerator<T>
       {
          this index := -1;
             
@@ -226,7 +226,7 @@ namespace collections
          }
       };
             
-      clear()
+      clear() : info("Removes all elements from the queue")
       {
          _array.clear();
          _top.Value :=0;
@@ -236,14 +236,14 @@ namespace collections
 
    // --- QueueEnumerator ---
     
-   class QueueEnumerator : Enumerator
+   class QueueEnumerator : Enumerator, info("A weak queue enumerator")
    {
       Queue     _queue;
       ArrayList _list;
       int       _index; 
       int       _tale; 
         
-      constructor(Queue queue)
+      constructor(Queue queue) : info("Creates an enumerator of the given queue")
       {
          _queue := queue;
          _list := queue;
@@ -252,7 +252,7 @@ namespace collections
          _tale := queue.TalePointer
       }
         
-      bool next()
+      bool next() : info("Goes to the next enumeration member and returns true if it is not the last member")
       {
          _index += 1;
          if (_index < _tale)
@@ -263,17 +263,17 @@ namespace collections
          ^ false
       }
             
-      get Value()
+      get Value() : info("Returns the current queue element")
          = _list[_index];
             
-      reset()
+      reset() : info("Resets the enumerator")
       {
          _list := _queue;
          _index := _queue.TopPointer;
          _tale := _queue.TalePointer
       }   
         
-      enumerable() = _queue;
+      enumerable() : info("Returns an enumerable queue") = _queue;
    }
 
    // --- Stack ---

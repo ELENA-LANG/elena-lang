@@ -81,6 +81,7 @@ namespace elena_lang
    constexpr auto ASM_WIN_TARGET             = "_WIN";
    constexpr auto ASM_LNX_TARGET             = "_LNX";
    constexpr auto ASM_FREEBSD_TARGET         = "_FREEBSD";
+   constexpr auto ASM_MAC_TARGET             = "_MAC";
 
    constexpr auto ASM_SYNTAXERROR            = "(%d,%d): Syntax error\n";
    constexpr auto ASM_INVALID_SOURCE         = "(%d,%d): Invalid source operand\n";
