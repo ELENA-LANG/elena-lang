@@ -15,6 +15,11 @@
         <output>../../lib60_64</output>
      </project>
   </platform>
+  <platform key="MacOS_AMD64">
+     <project>
+        <output>../../lib60_64</output>
+     </project>
+  </platform>
   <platform key="Linux_PPC64le">
      <project>
         <output>../../lib60_64</output>
