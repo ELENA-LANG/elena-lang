@@ -3,7 +3,7 @@
 //
 //		This header contains implementation of PathHelper
 //              used to retrieve data / config paths
-//                                              (C)2024, by Aleksey Rakov
+//                                              (C)2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "clicommon.h"
@@ -31,7 +31,7 @@ inline bool loadAppPath(char* appPath, unsigned int len)
    return true;
 }
 
-path_t PathHelper :: retrievePath(const char* filesToLookFor[], unsigned int listLength, path_t defaultPath)
+path_t MacOSPathHelper :: retrievePath(const char* filesToLookFor[], unsigned int listLength, path_t defaultPath)
 {
    if (pathCache && pathCache->exist(defaultPath))
       return pathCache->get(defaultPath);
@@ -55,7 +55,7 @@ path_t PathHelper :: retrievePath(const char* filesToLookFor[], unsigned int lis
    return pathCache->get(defaultPath);
 }
 
-path_t PathHelper :: retrieveFilePath(path_t defaultPath)
+path_t MacOSPathHelper :: retrieveFilePath(path_t defaultPath)
 {
    if (pathCache && pathCache->exist(defaultPath))
       return pathCache->get(defaultPath);

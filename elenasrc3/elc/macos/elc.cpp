@@ -92,7 +92,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       &Presenter::getInstance(), &errorProcessor,
       VA_ALIGNMENT, defaultCoreSettings, CLIHelper::createJITCompiler);
 
-   path_t defaultConfigPath = PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
+   path_t defaultConfigPath = MacOSPathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
    if (defaultConfigPath.compare(LOCAL_DEFAULT_CONFIG)) {
       // if the local config file was not found
       defaultConfigPath = DEFAULT_CONFIG;
@@ -113,7 +113,7 @@ int main(int argc, char* argv[])
 {
    try
    {
-      PathString dataPath(PathHelper::retrievePath(dataFileList, 3, DATA_PATH));
+      PathString dataPath(MacOSPathHelper::retrievePath(dataFileList, 3, DATA_PATH));
 
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
 

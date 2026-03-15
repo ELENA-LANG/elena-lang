@@ -11,8 +11,8 @@
 
 namespace elena_lang
 {
-   // --- PathHelper ---
-   class PathHelper
+   // --- MacOSPathHelper ---
+   class MacOSPathHelper
    {
       typedef Map<path_t, path_t, allocUStr, freeUStr, freepath> PathMap;
 
