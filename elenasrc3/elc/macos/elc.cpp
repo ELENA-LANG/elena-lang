@@ -92,8 +92,6 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       &Presenter::getInstance(), &errorProcessor,
       VA_ALIGNMENT, defaultCoreSettings, CLIHelper::createJITCompiler);
 
-   path_t defaultConfigPath = DEFAULT_CONFIG;
-
    path_t defaultConfigPath = PathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
    if (defaultConfigPath.compare(LOCAL_DEFAULT_CONFIG)) {
       // if the local config file was not found
