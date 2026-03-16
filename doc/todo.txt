@@ -11,12 +11,11 @@ In development:
   ====================================== 
   - provide descriptions for all classes (from collections\queues.l)
   --------------------------------------
-  * current : #708 (linker for MacOS)
+  * current : prepare release 7.0
   ====================================== 
-  - support local paths
-  - update make
-  - script : build elena libraries
-  - create an archive
+  - update all versions
+  - build aarch64
+  - build ppc64le
 
 
 

@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.8: Module system'collections
+ELENA Standard Library 7.0: Module system'collections
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.8: Module system'collections
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.8
+ELENA&nbsp;Standard&nbsp;Library<br>7.0
 </STRONG>
 </DIV>
 </DIV>
@@ -1429,7 +1429,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Map&lt;T1,T2&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Map&lt;T1,T2&gt;</SPAN><BR/>
+<I>A strong-typed map template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1500,6 +1501,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a map with a default size (37) and a capacity (32)</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1509,6 +1512,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> hashLength)
 </CODE>
+<div class="block">
+Creates a map with the provided capacity and the length</div>
 </TD>
 </TR>
 </TABLE>
@@ -1529,6 +1534,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T2<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MapValues()</CODE>
+<div class="block">
+Returns an array of a map values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1537,6 +1544,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'collections'VarTuple&lt;T1,T2&gt;<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Values()</CODE>
+<div class="block">
+Returns an array of a key-value pairs</div>
 </TD>
 </TR>
 </TABLE>
@@ -1558,6 +1567,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key)
 </CODE>
+<div class="block">
+Returns a dictionary element with <b>key</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1567,6 +1578,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all key-value paires</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1576,6 +1589,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+<div class="block">
+Makes a shallow copy a map</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1585,6 +1600,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>containsKey(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key)
 </CODE>
+<div class="block">
+Returns true if the map contains the provided key</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1594,6 +1611,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns an enumerator of a key-value pairs</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1603,6 +1622,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> object)
 </CODE>
+<div class="block">
+Adds or updates a dictionary element with <b>key</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -1836,7 +1857,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Queue&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Queue&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed FIFO list template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1907,6 +1929,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
+<div class="block">
+Creates an empty queue with preallocated space</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1916,6 +1940,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty queue</div>
 </TD>
 </TR>
 </TABLE>
@@ -1936,6 +1962,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the queue length</div>
 </TD>
 </TR>
 </TABLE>
@@ -1957,6 +1985,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all elements from the queue</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1966,6 +1996,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the queue enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1975,6 +2007,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>isEmpty()
 </CODE>
+<div class="block">
+Returns true if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1984,6 +2018,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>isNotEmpty()
 </CODE>
+<div class="block">
+Returns true if the queue is not empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1993,6 +2029,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>peek()
 </CODE>
+<div class="block">
+Returns an element at the queue top without removing it from the queue<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2002,6 +2040,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>pop()
 </CODE>
+<div class="block">
+Returns an element at the queue top and removes it from the queue<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2011,6 +2051,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
 </CODE>
+<div class="block">
+Puts an element at the queue end</div>
 </TD>
 </TR>
 </TABLE>
@@ -3234,7 +3276,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Stack&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Stack&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed LIFO list template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -4519,7 +4562,7 @@ system'collections'VarTuple&lt;T1,T2&gt;</LI>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.8
+ELENA&nbsp;Standard&nbsp;Library<br>7.0
 </STRONG>
 </DIV>
 </DIV>
