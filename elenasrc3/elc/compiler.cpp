@@ -15566,7 +15566,7 @@ void Compiler::Expression :: handleNillableArguments(SyntaxNode node, ArgumentsI
    }
 
    if (warning) {
-      SyntaxNode messageNode = findMessageNode(node);
+      //SyntaxNode messageNode = findMessageNode(node);
 
       scope.raiseWarning(WARNING_LEVEL_1, wrnNonNillableArgument, node);
    }
