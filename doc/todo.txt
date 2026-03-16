@@ -3,22 +3,6 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 7.0 ###
-
-  === Iteration 45 ===
-  ====================================== 
-  * doc
-  ====================================== 
-  - provide descriptions for all classes (from collections\queues.l)
-  --------------------------------------
-  * current : prepare release 7.0
-  ====================================== 
-  - update all versions
-  - build aarch64
-  - build ppc64le
-
-
-
   ### EPIC: elena 8.0 ###
 
   === Iteration 46 (graph sample; template generator; ide linux; mac) ===
@@ -30,10 +14,13 @@ In development:
   ====================================== 
   * doc
   ====================================== 
+  - provide descriptions for all classes (from collections\queues.l)
+  --------------------------------------
   * samples
   ====================================== 
   * current
   ====================================== 
+  - prepare new state
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2
