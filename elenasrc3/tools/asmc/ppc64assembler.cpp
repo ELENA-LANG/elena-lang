@@ -3,7 +3,7 @@
 //
 //		This file contains PPC64 Assembler implementation
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -403,6 +403,7 @@ void PPC64Assembler :: writeDReference(ScriptToken& tokenInfo, ref_t reference, 
       case NARG16_1:
       case ARG16_2:
       case NARG16_2:
+      case NARG16HI_2:
       case INV_NARG16_2:
       case ARG32HI_1:
       case ARG32LO_1:
@@ -1045,6 +1046,17 @@ void PPC64Assembler :: compileCMP(ScriptToken& tokenInfo, MemoryWriter& writer)
    PPCOperand rb = readRegister(tokenInfo, ASM_INVALID_TARGET);
 
    compileCMP(tokenInfo, 0, 0, ra, rb, writer);
+}
+
+void PPC64Assembler :: compileCMPD(ScriptToken& tokenInfo, MemoryWriter& writer)
+{
+   PPCOperand ra = readRegister(tokenInfo, ASM_INVALID_SOURCE);
+
+   checkComma(tokenInfo);
+
+   PPCOperand rb = readRegister(tokenInfo, ASM_INVALID_TARGET);
+
+   compileCMP(tokenInfo, 0, 1, ra, rb, writer);
 }
 
 void PPC64Assembler :: compileCMPLD(ScriptToken& tokenInfo, MemoryWriter& writer)
@@ -2018,6 +2030,9 @@ bool PPC64Assembler :: compileCOpCode(ScriptToken& tokenInfo, MemoryWriter& writ
 {
    if (tokenInfo.compare("cmp")) {
       compileCMP(tokenInfo, writer);
+   }
+   else if (tokenInfo.compare("cmpd")) {
+      compileCMPD(tokenInfo, writer);
    }
    else if (tokenInfo.compare("cmpld")) {
       compileCMPLD(tokenInfo, writer);

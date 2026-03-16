@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Win32 Common header
 //      GTK graphic tools header
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef GTKGRAPHIC_H
@@ -157,6 +157,7 @@ struct Canvas
 
    void drawText(int x, int y, const char* s, Style* style);
    void drawCursor(int x, int y, Style* style);
+   void drawEllipse(int x, int y, int diameter, Style* style);
 //   void drawOverwriteCursor(int x, int y, Style& style);
 //
 ////   void copy(DoubleBuffer& buffer, int x, int y);

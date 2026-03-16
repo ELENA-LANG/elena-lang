@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA Engine Byte code Build Tree classes
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef BUILDTREE_H
@@ -269,6 +269,8 @@ namespace elena_lang
       StackIndex           = 0x8017,
       StackAddress         = 0x8018,
 
+      NoDebugInfo          = 0x8100,
+
       Match                = 0x8FFE,
       Idle                 = 0x8FFF,
 
@@ -375,6 +377,7 @@ namespace elena_lang
          map.add("breakpoint", BuildKey::Breakpoint);
          map.add("byrefmark", BuildKey::ByRefOpMark);
          map.add("inplacemark", BuildKey::InplaceCall);
+         map.add("real_literal", BuildKey::RealLiteral);
          map.add("int_literal", BuildKey::IntLiteral);
          map.add("string_literal", BuildKey::StringLiteral);
          map.add("copying", BuildKey::Copying);
@@ -387,6 +390,7 @@ namespace elena_lang
          map.add("copying_to_acc", BuildKey::CopyingToAcc);
          map.add("copying_to_acc_exact", BuildKey::CopyingToAccExact);
          map.add("copying_to_acc_field", BuildKey::CopyingToAccField);
+         map.add("copying_acc_field", BuildKey::CopyingAccField);
          map.add("create_class", BuildKey::CreatingClass);
          map.add("local", BuildKey::Local);
          map.add("intcondop", BuildKey::IntCondOp);
@@ -468,6 +472,11 @@ namespace elena_lang
          map.add("const_param", BuildKey::Const);
          map.add("stack_index", BuildKey::StackIndex);
          map.add("long_int_op", BuildKey::LongIntOp);
+         map.add("idle", BuildKey::Idle);
+         map.add("true_const", BuildKey::TrueConst);
+         map.add("false_const", BuildKey::FalseConst);
+         map.add("saving_index_to_acc", BuildKey::SavingIndexToAcc);
+         map.add("intconst_branchop", BuildKey::IntConstBranchOp);
       }
    };
 

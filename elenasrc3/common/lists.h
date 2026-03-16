@@ -71,7 +71,7 @@ namespace elena_lang
       }
       ~MapItemBase()
       {
-         if (FreeKey) {
+         if (FreeKey != nullptr) {
             FreeKey(this->key);
          }
       }
@@ -635,7 +635,7 @@ namespace elena_lang
             }
             else previous->next = tmp->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -644,6 +644,9 @@ namespace elena_lang
 
       void cut(Iterator& it)
       {
+         if (!_top)
+            return;
+
          Item* tmp = nullptr;
          Item* previous = nullptr;
 
@@ -674,7 +677,7 @@ namespace elena_lang
             }
             else previous->next = tmp->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -687,7 +690,7 @@ namespace elena_lang
             Item* tmp = _top;
             _top = _top->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -775,7 +778,7 @@ namespace elena_lang
             Item* tmp = _top;
             _top = _top->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -1379,7 +1382,7 @@ namespace elena_lang
             }
          }
          if (tmp) {
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -1414,7 +1417,7 @@ namespace elena_lang
             }
          }
          if (tmp) {
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -1429,7 +1432,7 @@ namespace elena_lang
             Item* tmp = _top;
             _top = _top->next;
 
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(tmp->item);
 
             delete tmp;
@@ -2272,7 +2275,7 @@ namespace elena_lang
                Item* tmp = _table[i];
                _table[i] = _table[i]->next;
 
-               if (FreeT)
+               if (FreeT != nullptr)
                   FreeT(tmp->item);
 
                delete tmp;
@@ -3070,7 +3073,7 @@ namespace elena_lang
       {
          T item = exclude(key);
          if (item != _map.DefaultValue()) {
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(item);
          }
       }
@@ -3079,7 +3082,7 @@ namespace elena_lang
       {
          T itemToDelete = exclude(key, item);
          if (itemToDelete != _map.DefaultValue()) {
-            if (FreeT)
+            if (FreeT != nullptr)
                FreeT(itemToDelete);
          }
       }
@@ -3286,12 +3289,12 @@ namespace elena_lang
 
                void* ptr = realloc(_allocated, _allocatedSize * sizeof(T));
 
-               assert(ptr != nullptr);
-
                if (ptr) {
                   _allocated = (T*)ptr;
                }
             }
+
+            assert(_allocated != nullptr);
 
             if (index < cacheSize) {
                for (size_t i = _length; i > cacheSize; i--)
@@ -3321,16 +3324,11 @@ namespace elena_lang
          _allocatedSize = _length = 0;
       }
 
-DISABLE_WARNING_PUSH
-DISABLE_WARNING_UNINITIALIZED_FIELD
-
       CachedList()
       {
          _allocated = nullptr;
          _allocatedSize = _length = 0;
       }
-
-DISABLE_WARNING_POP
 
       ~CachedList()
       {
@@ -3822,7 +3820,7 @@ DISABLE_WARNING_POP
 
    template<class Key> Key Map_GetKey(MemoryDump* dump, pos_t position)
    {
-      Key key;
+      Key key = {};
       dump->read(position, &key, sizeof(key));
 
       return key;

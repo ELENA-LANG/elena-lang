@@ -306,7 +306,7 @@ public sealed const struct NativeSocket
    listen(int backLog)
    {
       int retVal := 0;
-      extern {
+      excluded {
          retVal := extern WS2_32.listen(_handle, backLog);
       };
             
@@ -341,7 +341,7 @@ public sealed const struct NativeSocket
    int receive(byte[] buffer, int maxLength, int flags)
    {
       int retVal := 0;
-      extern {
+      excluded {
          retVal := extern WS2_32.recv(_handle,buffer,maxLength,flags);
       };
 
@@ -358,7 +358,7 @@ public sealed const struct NativeSocket
    NativeSocket accept()
    {
       handle socket;
-      extern {
+      excluded {
          socket := extern WS2_32.accept(_handle, 0, 0);
       };
             

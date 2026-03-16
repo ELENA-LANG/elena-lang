@@ -67,7 +67,7 @@ extension encryptOp
 
 // --- Program ---
 
-public program()
+public Program()
 {
     Console.printLine("Original text :",TestText);
         

@@ -3,7 +3,7 @@
 //
 //		This file contains the main body of the macOS command-line compiler
 //
-//                                             (C)2025, by Aleksey Rakov
+//                                             (C)2025-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -22,7 +22,7 @@
 #include "constants.h"
 #include "messages.h"
 #include "linux/presenter.h"
-//#include "linux/pathmanager.h"
+#include "macos/pathmanager.h"
 
 #include <stdarg.h>
 
@@ -80,18 +80,6 @@ ustr_t getDefaultExtension(PlatformType platform)
    }
 }
 
-JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platform)
-{
-   switch (platform) {
-#if defined(__aarch64__)
-      case PlatformType::MacOS_ARM64:
-         return new ARM64JITCompiler();
-#endif
-      default:
-         return nullptr;
-   }
-}
-
 int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& errorProcessor,
    path_t basePath = nullptr, ustr_t defaultProfile = nullptr)
 {
@@ -104,7 +92,11 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       &Presenter::getInstance(), &errorProcessor,
       VA_ALIGNMENT, defaultCoreSettings, CLIHelper::createJITCompiler);
 
-   path_t defaultConfigPath = DEFAULT_CONFIG;
+   path_t defaultConfigPath = MacOSPathHelper::retrieveFilePath(LOCAL_DEFAULT_CONFIG);
+   if (defaultConfigPath.compare(LOCAL_DEFAULT_CONFIG)) {
+      // if the local config file was not found
+      defaultConfigPath = DEFAULT_CONFIG;
+   }
    PathString configPath(dataPath, defaultConfigPath);
 
    return CLIHelper::compileProject(argc, argv,
@@ -115,13 +107,13 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
       defaultProfile);
 }
 
-//const char* dataFileList[] = { BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE };
+const char* dataFileList[] = { BC_RULES_FILE, BT_RULES_FILE, SYNTAX60_FILE };
 
 int main(int argc, char* argv[])
 {
    try
    {
-      PathString dataPath(/*PathHelper::retrievePath(dataFileList, 3, */DATA_PATH/*)*/);
+      PathString dataPath(MacOSPathHelper::retrievePath(dataFileList, 3, DATA_PATH));
 
       ErrorProcessor   errorProcessor(&Presenter::getInstance());
 
@@ -130,7 +122,7 @@ int main(int argc, char* argv[])
       // Reading command-line arguments...
       if (argc < 2) {
          Presenter::getInstance().printLine(ELC_HELP_INFO);
-         return -2;
+         return WARNING_RET_CODE;
       }
       else if (argv[argc - 1][0] != '-' && PathUtil::checkExtension(argv[argc - 1], "prjcol")) {
          return CLIHelper::compileProjectCollection(argc, argv, argv[argc - 1],            

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Common Library
 //
 //		This file contains XML Reader / Writer File class implementation
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "xmltree.h"
@@ -140,6 +140,11 @@ size_t XmlNode :: parse(ustr_t content, size_t position, size_t end, PositionLis
    NodeTag tag;
    position = loadTag(content, position, tag, nullptr);
 
+   // check if it is single tag
+   if (!tag.empty() && tag[tag.length() - 1] == '/') {
+      return position;
+   }
+
    while (position < end) {
       // skip the ending whitespaces
       skipWhitespace(content, position);
@@ -170,6 +175,9 @@ bool XmlNode :: compareTag(ustr_t tag)
 {
    NodeTag current;
    loadTag(getContent(), _position, current, nullptr);
+
+   if (!current.empty() && current[current.length() - 1] == '/')
+      current.truncate(current.length() - 1);
 
    return tag.compare(current.str());
 }
@@ -524,6 +532,18 @@ size_t XmlTree :: insert(size_t position, ustr_t tag)
    return position;
 }
 
+void XmlTree :: insertAttribute(size_t position, ustr_t name, ustr_t value)
+{
+   NodeTag tag;
+   size_t start = loadTag(getContent(), position, tag, nullptr);
+
+   _content.insert("\"", start);
+   _content.insert(value, start);
+   _content.insert("\"", start);
+   _content.insert(" ", start);
+   _content.insert(name, start);
+}
+
 XmlNode XmlTree :: insertNode(ustr_t xpath)
 {
    size_t end = 0;
@@ -556,4 +576,9 @@ void XmlTree :: removeNode(size_t position)
    size_t end = parse(_content.str(), position, _content.length(), nullptr);
 
    _content.cut(position, end - position);
+}
+
+void XmlTree :: appendAttribute(XmlNode& node, ustr_t name, ustr_t value)
+{
+   insertAttribute(node.position(), name, value);
 }

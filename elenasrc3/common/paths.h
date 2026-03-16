@@ -133,6 +133,10 @@ namespace elena_lang
          copy(root);
          combine(subPath);
       }
+      PathString(path_t path, size_t len)
+      {
+         copy(path, len);
+      }
 #if (defined(_WIN32) || defined(__WIN32__))
       bool append(const path_c* s, size_t length)
       {

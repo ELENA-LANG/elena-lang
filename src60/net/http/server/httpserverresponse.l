@@ -42,9 +42,10 @@ public sealed class HttpServerResponse
       _headers.saveTo(output);
       output.write($13$10);
 
-      Console.writeLine(*output);
-      var s := UTF8Encoding.toString(0, _buffer.Length, _buffer.Content);
-      Console.writeLine(s);      
+      // !! temporal
+      //Console.writeLine(*output);
+      //var s := UTF8Encoding.toString(0, _buffer.Length, _buffer.Content);
+      //Console.writeLine(s);      
       
       :await stream.writeStringAsync(*output);
 

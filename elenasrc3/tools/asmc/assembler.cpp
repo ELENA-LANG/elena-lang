@@ -427,6 +427,15 @@ void AssemblerBase :: skipBlock(ScriptToken& tokenInfo)
    } while (level > 0);
 }
 
+void AssemblerBase :: checkUndeclaredLabels(LabelScope& labelScope)
+{
+   for (auto it = labelScope.labelNames.start(); !it.eof(); ++it) {
+      if (!labelScope.checkDeclaredLabel(it.key())) {
+         printf("Undeclared label %s\n", it.key().str());
+      }
+   }
+}
+
 void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* helper)
 {
    PrefixInfo    prefixScope;
@@ -457,6 +466,8 @@ void AssemblerBase :: compileProcedure(ScriptToken& tokenInfo, LabelHelper* help
          else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
       }
    }
+
+   checkUndeclaredLabels(labelScope);
 }
 
 void AssemblerBase :: compileStructure(ScriptToken& tokenInfo)

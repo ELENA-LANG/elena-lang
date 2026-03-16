@@ -1,0 +1,32 @@
+<configuration>
+  <platform key="Linux_I386">
+     <project>
+        <executable>translit</executable>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <executable>translit64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_PPC64le">
+     <project>
+        <executable>translit64</executable>
+     </project>
+  </platform>
+  <platform key="Linux_ARM64">
+     <project>
+        <executable>translit64</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>translit</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>translit.l</include>
+        <include>control.l</include>
+     </module>
+  </files>
+</configuration>

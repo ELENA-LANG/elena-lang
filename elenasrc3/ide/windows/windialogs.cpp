@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //    WinAPI: Static dialog implementations
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -264,6 +264,26 @@ int WinDialog :: getListIndex(int id)
    return (int)::SendDlgItemMessage(_handle, id, LB_GETCURSEL, 0, 0);
 }
 
+void WinDialog :: getListItem(int id, int index, wchar_t** text)
+{
+   ::SendDlgItemMessage(_handle, id, LB_GETTEXT, index, (LPARAM)text);
+}
+
+void WinDialog :: insertListItem(int id, int index, const wchar_t* text)
+{
+   ::SendDlgItemMessage(_handle, id, LB_INSERTSTRING, index, (LPARAM)text);
+}
+
+void WinDialog :: removeListItem(int id, int index)
+{
+   ::SendDlgItemMessage(_handle, id, LB_DELETESTRING, index, (LPARAM)0);
+}
+
+int WinDialog :: getListCount(int id)
+{
+   return (int)::SendDlgItemMessage(_handle, id, LB_GETCOUNT, 0, 0);
+}
+
 void WinDialog :: setText(int id, const wchar_t* text)
 {
    ::SendDlgItemMessage(_handle, id, WM_SETTEXT, 0, (LPARAM)text);
@@ -470,6 +490,156 @@ bool ProjectSettings :: showModal()
    return show() == IDOK;
 }
 
+// --- ForwardsDialog ---
+
+ForwardsDialog :: ForwardsDialog(HINSTANCE instance, WindowBase* owner, ProjectModel* model)
+   : WinDialog(instance, owner, IDD_FORWARDS)
+{
+   _model = model;
+   _current = -1;
+   _changed = false;
+}
+
+bool ForwardsDialog :: showModal()
+{
+   return show() == IDOK;
+}
+
+void ForwardsDialog :: doCommand(int id, int command)
+{
+   switch (id) {
+      case IDC_FORWARDS_ADD:
+         addItem();
+         break;
+      case IDC_FORWARDS_REPLACE:
+         editItem();
+         break;
+      case IDC_FORWARDS_DELETE:
+         deleteItem();
+         break;
+      case IDC_FORWARDS_LIST:
+         if (command == LBN_DBLCLK) {
+            getItem();
+         }
+         break;
+      case IDC_FORWARDS_SAVE:
+         onOK();
+         ::EndDialog(_handle, -1);
+         break;
+      case IDOK:
+         break;
+      default:
+         WinDialog::doCommand(id, command);
+   }
+}
+
+bool ForwardsDialog :: validateItem(wchar_t*& text)
+{
+   // trim space
+   while (text[0] == ' ') text++;
+
+   while (getlength(text) > 0 && text[getlength(text) - 1] == ' ') text[getlength(text) - 1] = 0;
+
+   if (emptystr(text))
+      return false;
+   else if (text_str(text).find('=') == -1) {
+      MsgBox::show(_owner->handle(), _T("The forward should have the following structure: <forward name>=<full class name>\n(e.g. 'integer=std'basic'integer)"), MB_ICONERROR);
+      return false;
+   }
+   else return true;
+}
+
+void ForwardsDialog::addItem()
+{
+   wchar_t item[IDENTIFIER_LEN * 2 + 1];
+
+   getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), IDENTIFIER_LEN * 2);
+
+   wchar_t* s = item;
+   if (validateItem(s)) {
+      addListItem(IDC_FORWARDS_LIST, s);
+      _changed = true;
+   }
+   setText(IDC_FORWARDS_EDIT, NULL);
+   _current = -1;
+   _changed = true;
+}
+
+void ForwardsDialog :: getItem()
+{
+   _current = getListIndex(IDC_FORWARDS_LIST);
+
+   wchar_t item[IDENTIFIER_LEN * 2 + 1];
+
+   getListItem(IDC_FORWARDS_LIST, _current, (wchar_t**)(&item));
+   setText(IDC_FORWARDS_EDIT, item);
+}
+
+void ForwardsDialog :: editItem()
+{
+   if (_current != -1) {
+      wchar_t item[IDENTIFIER_LEN * 2 + 1];
+
+      getText(IDC_FORWARDS_EDIT, (wchar_t**)(&item), IDENTIFIER_LEN * 2);
+
+      wchar_t* s = item;
+      if (validateItem(s)) {
+         removeListItem(IDC_FORWARDS_LIST, _current);
+         insertListItem(IDC_FORWARDS_LIST, _current, s);
+         _changed = true;
+      }
+      setText(IDC_FORWARDS_EDIT, NULL);
+      _current = -1;
+   }
+}
+
+void ForwardsDialog :: deleteItem()
+{
+   int index = _current = getListIndex(IDC_FORWARDS_LIST);
+
+   removeListItem(IDC_FORWARDS_LIST, index);
+   setText(IDC_FORWARDS_EDIT, NULL);
+
+   _current = -1;
+   _changed = true;
+}
+
+void ForwardsDialog :: onCreate()
+{
+   IdentifierString item;
+   for (auto f_it = _model->forwards.start(); !f_it.eof(); ++f_it) {
+      item.copy(f_it.key());
+      item.append('=');
+      item.append(*f_it);
+
+      TextString caption(*item);
+      addListItem(IDC_FORWARDS_LIST, caption.str());
+   }
+}
+
+void ForwardsDialog :: onOK()
+{
+   if (_changed) {
+      _model->forwardChanged = true;
+
+      _model->forwards.clear();
+
+      int count = getListCount(IDC_FORWARDS_LIST);
+      text_c item[IDENTIFIER_LEN * 2 + 1];
+      for (int i = 0; i < count; i++) {
+         getListItem(IDC_FORWARDS_LIST, i, (wchar_t**)(&item));
+
+         IdentifierString line(item);
+
+         size_t pos = (*line).find('=');
+
+         IdentifierString name(line.str(), pos);
+
+         _model->forwards.add(*name, ustr_t(line.str() + pos + 1).clone());
+      }
+   }
+}
+
 // --- EditorSettings ---
 
 EditorSettings :: EditorSettings(HINSTANCE instance, WindowBase* owner, TextViewModelBase* model)
@@ -489,6 +659,7 @@ void EditorSettings::onCreate()
    setCheckState(IDC_EDITOR_HIGHLIGHSYNTAXFLAG, _model->highlightSyntax);
    setCheckState(IDC_EDITOR_HIGHLIGHBRACKETFLAG, _model->highlightBrackets);
    setCheckState(IDC_EDITOR_LINENUMBERFLAG, _model->lineNumbersVisible);
+   setCheckState(IDC_EDITOR_HIGHLIGHLINE, _model->highlightCurrentRow);
 
    setIntText(IDC_EDITOR_TABSIZE, _model->settings.tabSize);
    setIntText(IDC_EDITOR_SCROLLOFFSET, _model->scrollOffset);
@@ -509,6 +680,10 @@ void EditorSettings :: onOK()
       _model->highlightBrackets = value;
 
    _model->lineNumbersVisible = getCheckState(IDC_EDITOR_LINENUMBERFLAG);
+
+   value = getCheckState(IDC_EDITOR_HIGHLIGHLINE);
+   if (_model->highlightCurrentRow != value)
+      _model->highlightCurrentRow = value;
 
    int intValue = getIntText(IDC_EDITOR_TABSIZE);
    if (intValue > 0 && intValue < 100)

@@ -15,7 +15,7 @@ extension testOp
    }
 }
 
-public program()
+public Program()
 {
    Console.loadLineTo(new Integer()).bitwiseTest(Console.loadLineTo(new Integer()))
 }

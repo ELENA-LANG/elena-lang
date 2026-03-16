@@ -3,7 +3,7 @@ import extensions;
 
 // --- Program ---
 
-public program()
+public Program()
 {
     var s :="hello";
     

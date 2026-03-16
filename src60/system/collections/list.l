@@ -1,30 +1,32 @@
 namespace collections
 {
-   public sealed class ArrayList : Indexable
+   public sealed class ArrayList : Indexable, info("A weak indexable collection")
    {
       Array          _array;
       Reference<int> _length;
       Reference<int> _capacity;
 
       constructor()
+         : info("Creates an empty collection")
       {
          _length := 0;
          _capacity := 0;
       }
 
       constructor allocate(int capacity)
+         : info("Creates an empty collection with preallocated space")
       {
          _capacity := capacity;
          _array := Array.allocate(capacity);
       }
 
-      constructor allocate()
+      constructor allocate() : info("Creates an empty collection with preallocated space for 32 items")
          <= allocate(32);
 
-      constructor load(Array a)
+      constructor load(Array a) : info("Copies a weak array <b>a</b> into the collection")
          <= fromArray(a, a.Length);
 
-      constructor load(o)
+      constructor load(o) : info("Copies a weak enumerable object <b>o</b> into the collection")
       {
          Enumerator e := o.enumerator();
          while (e.next())
@@ -33,8 +35,7 @@ namespace collections
          }
       }
 
-      /// Creates the list
-      internal constructor fromArray(Array array, int length)
+      internal constructor fromArray(Array array, int length) : info("Copies first <b>length</b> elements of a weak array <b>a</b> into the collection")
       {
          int capacity := array.Length;
 
@@ -44,9 +45,8 @@ namespace collections
          _array := array.clone()
       }
 
-      int Length
+      int Length : info("Returns the collection length")
       {
-         /// Reads the number of list item to the output parameter
          get()
          {
             int retVal := *_length;
@@ -55,8 +55,7 @@ namespace collections
          }
       }
 
-      /// Returns the object at the specified position
-      at(int index)
+      at(int index) : info("Returns the element at a position <b>index</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
          int len := *_length;
          if:not (len > index)
@@ -65,14 +64,13 @@ namespace collections
          ^ _array[index]
       }      
 
-      /// Returns the object at the specified position
-      setAt(int index, object o)
+      setAt(int index, object? o) : info("Assigns <b>o</b> to the element at the position <b>index</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
          int len := *_length;
          if:not (len > index)
             { OutOfRangeException.raise() };
 
-         _array.setAt(index, o)
+         _array.setAt(index, o!)
       }
 
       private expand()
@@ -94,8 +92,7 @@ namespace collections
          }
       }
 
-      /// Appends a new object to the end of the list
-      append(item)
+      append(item) : info("Appends a new object to the end of the list")
       {
          self.expand();
 
@@ -105,7 +102,7 @@ namespace collections
          _length.append(1)
       }
 
-      appendRange(subarray)
+      appendRange(subarray) : info("Appends all emenents of an array <b>subarray</b>")
       {
          if (nil != subarray)
          {
@@ -117,7 +114,7 @@ namespace collections
          }
       }
 
-      appendRange(Indexable indexable)
+      appendRange(Indexable indexable) : info("Appends all emenents of an <b>indexable</b> object")
       {
          if (nil != indexable)
          {
@@ -132,8 +129,7 @@ namespace collections
          }
       }
 
-      /// Inserts a new object to the specified position
-      insert(int index, object object)
+      insert(int index, object object) : info("Inserts an element <b>object</b> to the specified position <b>index</b>")
       {
          if (index >= *_length)
             { OutOfRangeException.raise() };
@@ -151,8 +147,7 @@ namespace collections
          _array[i] := object
       }    
 
-      /// Removes an object at the specified position
-      remove(int index)
+      remove(int index) : info("Removes an element at the specified position <b>index</b>")
       {
          if (index >= *_length)
             { OutOfRangeException.raise() };
@@ -172,13 +167,12 @@ namespace collections
       removeAt(n)
          <= remove(cast int(n));
 
-      /// Clears the list
-      clear()
+      clear() : info("Removes all elements of the collection")
       {
          _length.Value := 0
       }
 
-      trim(int pos)
+      trim(int pos) : info("Removes the last <b>pos</b> elements of the collection")
       {
          if (pos > *_length)
             { OutOfRangeException.raise() };
@@ -186,49 +180,42 @@ namespace collections
          _length.Value := pos
       }
 
-      /// Returns the list enumerator
-      Enumerator enumerator() = new ArrayListEnumerator(self);
+      Enumerator enumerator() : info("Returns the collection enumerator") = new ArrayListEnumerator(self);
 
-      /// Returns the list indexer
-      Indexer indexer() = new ArrayListIndexer(self);
+      Indexer indexer() : info("Returns the collection indexer") = new ArrayListIndexer(self);
 
-      /// Returns a list copy
-      ArrayList clone()
+      ArrayList clone() : info("Returns a shallow copy of the collection")
          = ArrayList.fromArray(_array, *_length);
 
       Array cast()
          = Array.copy(0, *_length, _array);
 
-      get Array Value()
+      get Array Value() : info("Returns a shallow copy of the collection as a weak array")
          = Array.copy(0, *_length, _array);
    }
 
-   // --- ArrayListEnumerator ---
-    
-   /// A list enumerator
-   class ArrayListEnumerator : Enumerator
+   // --- ArrayListEnumerator ---    
+   class ArrayListEnumerator : Enumerator, info("A weak collection enumerator")
    {
       ArrayList      _list;
       Reference<int> _index;
 
       /// Creates a list indexer
-      constructor(ArrayList list)
+      constructor(ArrayList list) : info("Creates an enumerator of <b>list</b> weak collection")
       {
          _list := list;
          _index := -1
       }
 
-      /// Returns the current object
-      get Value() = _list.at(*_index);
+      get Value() : info("Returns the current element")
+         = _list.at(*_index);
         
-      /// Resets the enumerator
-      reset()
+      reset() : info("Resets the enumerator")
       {
          _index.Value := -1
       }
     
-      /// Goes to the next enumeration member and returns true if it is not the last member
-      bool next()
+      bool next() : info("Goes to the next enumeration member and returns true if it is not the last member")
       {
          _index.append(1);
             
@@ -237,65 +224,59 @@ namespace collections
          ^ len > *_index
       }
         
-      enumerable() = _list;
+      enumerable() : info("returns the enumerating collection")
+        = _list;
    }
 
     // --- ArrayListIndexer ---
     
-    /// A list indexer
-   public class ArrayListIndexer : Indexer
+   public class ArrayListIndexer : Indexer, info("A weak collection indexer")
    {
       ArrayList      _list;
       Reference<int> _index;
 
-      /// Creates a list indexer
-      constructor(ArrayList list)
+      constructor(ArrayList list) : info("Creates an indexer of <b>list</b> weak collection")
       {
          _list := list;
          _index := 0
       }
 
-      /// Returns false if the index out of range
-      get bool Available()
+      get bool Available() : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
       {
          int length := _list.Length;
             
          ^ length > *_index
       }
     
-      /// Returns the current member
-      get Value()
+      get Value() : info("Returns the indexed element")
       {
          ^ _list.at(*_index)
       }
         
-      /// Sets the current member
-      set Value(o)
+      set Value(o) : info("Set the element at the current index")
       {
          _list.setAt(*_index, o)
       }
         
-      int Index
+      int Index : info("Index property")
       {
-         /// Reads the current index into an output parameter
          get()
          {
             ^ *_index
          }
             
-         /// Sets the index by specified value
          set(n)
          {
             _index.Value := n
          }
       }
         
-      appendIndex(int n)
+      appendIndex(int n) : info("Increases the current index by parameter **index**")
       { 
          _index.append(n)
       } 
         
-      int Length
+      int Length : info("Returns the length of the indexed weak collection")
       {
          get()
          {
@@ -307,27 +288,24 @@ namespace collections
 
    }
 
-   /// Dictionary class
-   public sealed  class Dictionary : Enumerable
+   public sealed  class Dictionary : Enumerable, info("A weak dictionary class")
    {
       ArrayList _list;
       Array     _hashTable;
       int       _hashMask;
 
-      object    _default;
+      object?   _default;
 
-      /// Creates a dictionary
-      constructor new()
+      constructor new() : info("Creates a dictionary")
          <= new(32, 32, nil);
 
-      constructor new(object default)
+      constructor new(object? default) : info("Creates a dictionary with the specified default value")
          <= new(32, 32, default);
 
-      constructor new(int capacity, object default)
+      constructor new(int capacity, object? default) : info("Creates a dictionary with the specified default value and the preallocated space")
          <= new(capacity, 32, default);
 
-      /// Creates a dictionary
-      constructor new(int capacity, int hashLength, object default)
+      constructor new(int capacity, int hashLength, object? default) : info("Creates a dictionary with the specified default value and the preallocated space")
       {
          int size := 32;
          while (size < hashLength)
@@ -344,42 +322,42 @@ namespace collections
          _default := default;
       }
 
-      setAt(int key, object object)
+      setAt(int key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          self.getItem(hashCode, key).Value := object
       }
 
-      setAt(long key, object object)
+      setAt(long key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          self.getItem(hashCode, key).Value := object
       }
 
-      setAt(real key, object object)
+      setAt(real key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          self.getItem(hashCode, key).Value := object
       }
 
-      setAt(char key, object object)
+      setAt(char key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          self.getItem(hashCode, key).Value := object
       }
 
-      setAt(string key, object object)
+      setAt(string key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          self.getItem(hashCode, key).Value := object
       }
 
-      setAt(wide key, object object)
+      setAt(wide key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
@@ -438,49 +416,49 @@ namespace collections
          ^ newItem
       }    
 
-      at(int key)
+      at(int key) : info("Returns a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          ^ self.getItem(hashCode, key).Value
       }
 
-      at(long key)
+      at(long key) : info("Returns a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          ^ self.getItem(hashCode, key).Value
       }
 
-      at(real key)
+      at(real key) : info("Returns a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          ^ self.getItem(hashCode, key).Value
       }
 
-      at(char key)
+      at(char key) : info("Returns a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          ^ self.getItem(hashCode, key).Value
       }
 
-      at(string key)
+      at(string key) : info("Returns a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          ^ self.getItem(hashCode, key).Value
       }
 
-      at(wide key)
+      at(wide key) : info("Returns a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
          ^ self.getItem(hashCode, key).Value
       }
 
-      bool containsKey(object key)
+      bool containsKey(object key) : info("Returns true if the dictionary element with <b>key</b> exists in the dictionary")
       {
          int hashCode := key.Hashcode;
 
@@ -512,13 +490,11 @@ namespace collections
          ^ false
       }
 
-      /// Returns a dictionary enumerator
-      Enumerator enumerator() => _list;
+      Enumerator enumerator() : info("Returns a dictionary enumerator") => _list;
 
-      ArrayList Values = _list.clone();
+      ArrayList Values : info("Returns an array of key-value pairs") = _list.clone();
 
-      /// Clones a dictionary
-      clone()
+      clone() : info("Makes a shallow copy a dictionary")
       {
          var list := Dictionary.new();
 
@@ -533,7 +509,7 @@ namespace collections
          ^ list
       }
 
-      clear()
+      clear() : info("Clears the dictionary content")
       {
          _hashTable := Array.allocate(_hashTable.Length);
          _list.clear()
@@ -544,11 +520,11 @@ namespace collections
 
    sealed class ListItem
    {
-      object   _content;
-      ListItem _next;
+      object    _content;
+      ListItem? _next;
         
       /// Creates a new item
-      constructor new(object)
+      constructor new(object) 
       {
          _content := object
       }
@@ -562,7 +538,7 @@ namespace collections
          _content := object
       }
     
-      ListItem NextItem
+      ListItem? NextItem
       {
          /// Returns the next item
          get() = _next;
@@ -582,13 +558,12 @@ namespace collections
       ListItem?      _top;
       ListItem?      _last;
     
-      /// Creates a list
-      constructor()
+      constructor() : info("Creates a weak linked list")
       {
          _count := 0
       }
     
-      constructor(Array l)
+      constructor(Array l) : info("Copies an array")
       {
          _count := 0;
             
@@ -602,7 +577,7 @@ namespace collections
       /// Returns the top item
       internal ListItem? TopItem = _top;
     
-      append(object)
+      append(object) : info("Appends an element")
       {
          _count.append(1);
          if(nil == _top)
@@ -619,7 +594,7 @@ namespace collections
          }
       }
     
-      insert(object)
+      insert(object) : info("Inserts an element at the list top")
       {
          _count.append(1);
             
@@ -628,34 +603,30 @@ namespace collections
          _top := newItem
       }
         
-      /// Returns the list item at the specified position
       internal ListItem getItemAt(int index)
       {
-         int      currentIndex := index;
-         ListItem item := _top!;
+         int       currentIndex := index;
+         ListItem? item := _top;
             
          while (currentIndex > 0)
          {
-            item := item.NextItem;
+            item := item!.NextItem;
             if (nil == item)
                { OutOfRangeException.raise() };
                 
             currentIndex := currentIndex - 1
          };
             
-         ^ item
+         ^ item!
       }
     
-      /// Returns the object at the specified position
-      at(int index)
+      at(int index) : info("Returns the element at the specified position")
          = self.getItemAt(index).get();
     
-      /// Returns the object at the specified position
-      setAt(int index, object object)
+      setAt(int index, object object) : info("Sets the element at the specified position")
          = self.getItemAt(index).set(object);
     
-      /// Inserts a new object to the specified position
-      insert(int index, object object)
+      insert(int index, object object) : info("Inserts a new object to the specified position")
       {
          if (index == 0)
          { 
@@ -669,8 +640,7 @@ namespace collections
          }
       }
     
-      /// Removes an object at the specified position
-      remove(int index)
+      remove(int index) : info("Removes an object at the specified position")
       {
          if (nil == _top)
             { OutOfRangeException.raise() };
@@ -684,23 +654,22 @@ namespace collections
          else
          {
             ListItem previous := self.getItemAt(index - 1);
-            ListItem next := previous.NextItem;
+            ListItem? next := previous.NextItem;
                 
-            previous.NextItem := next.NextItem;
+            previous.NextItem := next!.NextItem;
                 
-            if(next.equalReference(_last))
+            if(next!.equalReference(_last))
                { _last := previous }
          };
                 
          _count.reduce(1)
       }
             
-      removeAt(index)
+      removeAt(index) : info("Removes an object at the specified position")
          <= remove(cast int(index));
     
-      int Length
+      int Length : info("Returns the list length")
       {
-         /// Reads the number of list item to the output parameter
          get()
          {
             int retVal := *_count; 
@@ -709,8 +678,7 @@ namespace collections
          }
       }
         
-      /// Clears the list
-      clear() 
+      clear() : info("Removes all list elements")
       {
          _count.Value := 0;
             
@@ -718,14 +686,13 @@ namespace collections
          _last := nil;
       }
     
-      /// Returns the list enumerator
-      Enumerator enumerator() = new ListEnumerator(self);
+      Enumerator enumerator() : info("Returns the list enumerator")
+         = new ListEnumerator(self);
     
-      /// Returns the list indexer
-      Indexer indexer() = new ListIndexer(self);
+      Indexer indexer() : info("Returns the list indexer")
+         = new ListIndexer(self);
     
-      /// Clones the list
-      List clone() 
+      List clone() : info("Creates a shallow copy of the list")
       {
          auto list := new List();
             
@@ -741,29 +708,24 @@ namespace collections
       }
    }
 
-   // --- ListEnumerator ---
-   class ListEnumerator : Enumerator
+   class ListEnumerator : Enumerator, info("A list enumerator")
    {
       List      _list;
       ListItem? _current;
         
-      /// Creates a list enumerator
-      constructor(List list)
+      constructor(List list) : info("Creates a list enumerator")
       {
          _list := list
       }
     
-      /// Returns the current object
-      get Value() = _current?.get();
+      get Value() : info("Returns the current object") = _current?.get();
         
-      /// Resets the enumerator
-      reset()
+      reset() : info("Resets the enumerator")
       {
          _current := nil
       }
     
-      /// Goes to the next enumeration member and returns true if it is not the last member
-      bool next()
+      bool next() : info("Goes to the next enumeration member and returns true if it is not the last member")
       {
          if (nil == _current)
          { 
@@ -777,50 +739,44 @@ namespace collections
          ^ nil != _current
       }
         
-      enumerable() = _list;
+      enumerable() : info("Returns an enumerable list") = _list;
    }
     
    // --- ListIndexer ---
     
-   /// A list indexer
-   class ListIndexer : Indexer
+   class ListIndexer : Indexer, info("A list indexer")
    {
       List           _list;
       ListItem?      _current;
       Reference<int> _index;
         
-      /// Creates a list indexer
-      constructor(List list)
+      constructor(List list) : info("Creates a list indexer")
       {
          _list := list;
          _current := list.TopItem;
          _index := 0;
       }
     
-      /// Returns false if the index out of range
-      get bool Available() = nil != _current;
+      get bool Available() : info("Returns false if the index out of range") = nil != _current;
    
-      /// Returns the current member
-      get Value() = _current?.get();
+      get Value() : info("Returns the current member") = _current?.get();
         
-      /// Sets the current member
-      set Value(o)
+      set Value(o) : info("Sets the current member")
       {
          _current!.set(o)
       }
         
-      /// Reads the current index into an output parameter
-      get int Index()
+      get int Index() : info("Returns the current index")
       {
          ^ _index.Value
       }
         
-      set Index(int n)
+      set Index(int n) : info("Sets the current index")
       {
          _index.Value := n
       }
         
-      appendIndex(int offs)
+      appendIndex(int offs) : info("Increases the current index by parameter **index**")
       {
          int i := _index.Value;
          i := i + offs;
@@ -828,20 +784,20 @@ namespace collections
          self.Index := i
       }
         
-      get int Length()
+      get int Length() : info("Returns the indexed list length")
       {
          ^ _list.Length
       }
    }
 
    // --- List ---
-   public sealed List<T> : Enumerable<T>
+   public sealed List<T> : Enumerable<T>, info("A strong-typed list")
    {
       T[]            _array;
       Reference<int> _length;
       Reference<int> _capacity;
     
-      constructor(T[] a)
+      constructor(T[] a) : info("Copies a strong-typed array")
       {
          int len := a.Length;
          int size := len / 32;
@@ -858,7 +814,7 @@ namespace collections
          }
       }
             
-      constructor(Enumerator<T> e)
+      constructor(Enumerator<T> e) : info("Copies a strong-typed enumerator")
       {
          _capacity := 16;
          _length := 0;
@@ -867,14 +823,14 @@ namespace collections
          self.appendRange(e)        
       }
         
-      constructor(int capacity)
+      constructor(int capacity) : info("Creates an empty list with the preallocated space")
       {
          _capacity := capacity;
          _length := 0;
          _array := new T[](capacity);
       }
         
-      constructor()
+      constructor() : info("Creates an empty list")
       {
          _capacity := 16;
          _length := 0;
@@ -884,7 +840,7 @@ namespace collections
       constructor load(source)
          <= load(cast Enumerator<T>(source));
 
-      constructor load(Enumerator<T> e)
+      constructor load(Enumerator<T> e) : info("Copies a strong-typed enumerator")
       {
          _capacity := 16;
          _length := 0;
@@ -893,7 +849,7 @@ namespace collections
          self.appendRange(e)        
       }       
 
-      constructor load(T[] a, int index, int len)
+      constructor load(T[] a, int index, int len) : info("Copies a strong-typed sub array <b>a</b> from <b>index</b> element, with the provided length <b>len</b>")
       {
          int size := len / 32;
          size := size + 1;
@@ -911,7 +867,7 @@ namespace collections
          }
       }
             
-      int Length
+      int Length : info("Returns the list length")
       {
          get()
          {
@@ -921,7 +877,7 @@ namespace collections
          }        
       }
 
-      get bool Empty()
+      get bool Empty() : info("Returns true if the list is empty")
          = *_length == 0;
         
       private expand()
@@ -947,8 +903,7 @@ namespace collections
          }
       }
         
-      /// Returns the object at the specified position
-      T at(int index)
+      T at(int index) : info("Returns the object at the specified position")
       {
          int len := *_length;
             
@@ -958,8 +913,7 @@ namespace collections
          ^ _array[index]
       }
     
-      /// Returns the object at the specified position
-      setAt(int index, T object)
+      setAt(int index, T object) : info("Sets the element at the specified position")
       {
          int len := *_length;
             
@@ -969,8 +923,7 @@ namespace collections
          _array[index] := object
       }
     
-      /// Appends a new object to the end of the list
-      append(T object)
+      append(T object) : info("Appends a new object to the end of the list")
       {
          self.expand();
             
@@ -980,7 +933,7 @@ namespace collections
          _length.append(1)
       }
     
-      appendRange(Enumerator<T> e)
+      appendRange(Enumerator<T> e) : info("Copies an enumerable collection")
       {
          while(e.next())
          {
@@ -988,7 +941,7 @@ namespace collections
          }        
       }
     
-      insert(int index, T object)
+      insert(int index, T object) : info("Inserts the element at the specified index")
       {
          _length.append(1);
             
@@ -1003,11 +956,10 @@ namespace collections
          _array[index] := object
       }
         
-      insert(T object)
+      insert(T object) : info("Inserts the element at the top")
          <= insert(0, object);
     
-      /// Removes an object at the specified position
-      remove(int index)
+      remove(int index) : info("Removes an object at the specified position")
       {
          if:not (index < *_length)
             { OutOfRangeException.raise() };
@@ -1024,18 +976,16 @@ namespace collections
          }
       }
             
-      /// Returns the top object
-      T First = _array.at(0);
+      T First : info("Returns the first elemenet of the list") = _array.at(0);
         
-      T Last = _array.at(*_length - 1);
+      T Last : info("Returns the last elemenet of the list") = _array.at(*_length - 1);
         
-      /// Clears the list
-      clear()
+      clear() : info("Removes all elemements")
       {
          _length.Value := 0        
       }
         
-      trim(int pos)
+      trim(int pos) : info("Trims the list at the specified position")
       {
          if (pos > *_length)
             { OutOfRangeException.raise() };
@@ -1043,7 +993,7 @@ namespace collections
          _length.Value := pos
       }
         
-      Enumerator<T> enumerator() = new BaseEnumerator<T>
+      Enumerator<T> enumerator() : info("Returns a list enumerator") = new BaseEnumerator<T>
       {
          this index := -1;
             
@@ -1059,7 +1009,7 @@ namespace collections
          }
       };
     
-      Indexer<T> indexer() = new BaseIndexer<T>
+      Indexer<T> indexer() : info("Returns a list indexer") = new BaseIndexer<T>
       {
          this index := 0;
             
@@ -1074,7 +1024,7 @@ namespace collections
          }
       };
             
-      get T[] Value()
+      get T[] Value() : info("Returns a shallow copy of the list as a strong-typed array")
       {
          int len := *_length;
          var T[] copy := new T[](len);
@@ -1087,7 +1037,7 @@ namespace collections
          ^ copy
       }
     
-      clone()
+      clone() : info("Returns a shallow copy of the list")
          = class List<T>.load(_array, 0, *_length);
    }
 }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Header File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef WINIDE_H
@@ -90,6 +90,7 @@ namespace elena_lang
       void sendTextFrameSelectionEvent(SelectionEvent* event, WindowApp* app);
       void sendCompilationEndEvent(CompletionEvent* event, WindowApp* app);
       void sendErrorListSelEvent(SelectionEvent* event, WindowApp* app);
+      void sendCallstackSelEvent(SelectionEvent* event, WindowApp* app);
       void sendProjectViewSelectionEvent(ParamSelectionEvent* event, WindowApp* app);
       void sendLayoutEvent(LayoutEvent* event, WindowApp* app);
       void sendStartUpEvent(StartUpEvent* event, WindowApp* app);
@@ -119,6 +120,7 @@ namespace elena_lang
       FileDialog        projectDialog;
       MessageDialog     messageDialog;
       ProjectSettings   projectSettingsDialog;
+      ForwardsDialog    forwardsDialog;
       FindDialog        findDialog, replaceDialog;
       GoToLineDialog    gotoDialog;
       WindowListDialog  windowDialog;
@@ -145,21 +147,27 @@ namespace elena_lang
 
       void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable);
 
+      void doDebugAction(DebugAction action, bool withoutPostponeAction);
+
       void onTextModelChange(TextViewModelNMHDR* rec);
       void onTextFrameSel(SelectionNMHDR* rec);
       void onProjectViewSel(ParamSelectionNMHDR* rec);
       void onIDEStatusChange(ModelNMHDR* rec);
       void onStartup(ModelNMHDR* rec);
+
+      void onTabBarChange();
       void onLayoutChange();
       void onDocumentSelection();
 
       void onDebugStep();
       void onDebugWatch();
+      void onDebugCallstack();
       void onDebugEnd();
 
       void onDoubleClick(NMHDR* hdr);
       void onRClick(NMHDR* hdr);
       void onDebugWatchRClick(size_t index);
+      void onTabRClick(size_t index);
       void onContextMenu(ContextMenuNMHDR* rec);
 
       void onTabSelChanged(HWND wnd);
@@ -177,9 +185,12 @@ namespace elena_lang
       void onActivate() override;
       bool onClose() override;
 
+      //void onMouseMove(WPARAM wParam, LPARAM lParam) override;
+
       void onComilationStart();
       void onCompilationEnd(int exitCode, int postponedAction);
       void onErrorHighlight(int index);
+      void onCallstackHighlight(int index);
       void onDebugWatchBrowse(BrowseNMHDR* rec);
 
       void updateCompileMenu(bool compileEnable, bool debugEnable, bool stopEnable);
@@ -193,6 +204,8 @@ namespace elena_lang
 
       bool toggleTabBarWindow(int child_id);
       void toggleWindow(int child_id);
+
+      bool isResultTabOpen(int child_id);
 
       void toggleProjectView(bool open);
       void openResultTab(int controlIndex);
@@ -217,6 +230,7 @@ namespace elena_lang
       void exit() override;
 
       void selectWindow();
+      void showForwards();
 
       void undo();
       void redo();

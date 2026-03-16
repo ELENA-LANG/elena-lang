@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class implementation.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "modulescope.h"
@@ -47,6 +47,11 @@ bool ModuleScope :: withPrologEpilog()
    return !test(hints, mhNoPrologEpilog);
 }
 
+bool ModuleScope :: isNoTemplateReuse()
+{
+   return test(hints, mhNoTemplateCache);
+}
+
 static inline void findUninqueName(ModuleBase* module, IdentifierString& name)
 {
    size_t pos = name.length();
@@ -70,14 +75,21 @@ ref_t ModuleScope :: mapAnonymous(ustr_t prefix)
    return module->mapReference(*name);
 }
 
+inline bool isNeedToBeGenerated(ustr_t resolved, ustr_t ns, bool noReuse)
+{
+   return resolved.empty() || (noReuse && !NamespaceString::compareNs(resolved, ns));
+}
+
 ref_t ModuleScope :: mapTemplateIdentifier(ustr_t templateName, Visibility visibility, bool& alreadyDeclared, bool declarationMode)
 {
    IdentifierString forwardName(TEMPLATE_PREFIX_NS, templateName);
 
    if (!declarationMode) {
+      ustr_t ns = module->name();
       ustr_t resolved = forwardResolver->resolveForward(templateName);
-      if (resolved.empty()) {
-         ReferenceName fullName(module->name());
+      //if (resolved.empty()) {
+      if (isNeedToBeGenerated(resolved, ns, isNoTemplateReuse())) {
+         ReferenceName fullName(ns);
          fullName.combine(templateName);
 
          forwardResolver->addForward(templateName, *fullName);

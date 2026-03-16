@@ -1,4 +1,4 @@
-public program()
+public Program()
 {
     var s := "Hello";
     var s2 := s + " literal";

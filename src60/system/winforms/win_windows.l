@@ -41,7 +41,7 @@ singleton windowClassControl
       pointer namePtr := wideName;
       struct.lpszClassName := namePtr;
         
-      extern {
+      excluded {
          extern USER32.RegisterClassW(struct);        
       };      
 
@@ -73,7 +73,7 @@ public closed class WindowCallback
 
    onWMDestoy(Handle hwnd)
    {
-      extern {
+      excluded {
          extern USER32.SetWindowLongW(hwnd, GWL_USERDATA, 0);
          extern USER32.DefWindowProcW(hwnd, WM_DESTROY, 0, 0);
       };
@@ -81,7 +81,7 @@ public closed class WindowCallback
 
    onWMPaint(Handle hwnd)
    {
-      extern {
+      excluded {
          extern USER32.DefWindowProcW(hwnd, WM_PAINT, 0, 0);
       }
    }
@@ -109,7 +109,7 @@ public closed class WindowCallback
 
    onWMClose(Handle hwnd)
    {
-      extern {
+      excluded {
          extern USER32.DefWindowProcW(hwnd, WM_CLOSE, 0, 0);
       }
    }
@@ -122,7 +122,7 @@ public class SDIWindowCallback : WindowCallback
    {
       super.onWMDestoy(hwnd);
 
-      forward program.stop()
+      forward Program.stop()
    }
 }
 

@@ -241,10 +241,12 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
    if (!docView)
       return;
 
-   Point caret = docView->getCaret(false) - docView->getFrame();
+   Point frame = docView->getFrame();
+   Point caret = docView->getCaret(false) - frame;
 
    Style* defaultStyle = _styles->getStyle(STYLE_DEFAULT);
    Style* marginStyle = _styles->getStyle(STYLE_MARGIN);
+   Style* currentMarginStyle = _styles->getStyle(STYLE_CURRENT_MARGIN);
    int lineHeight = _styles->getLineHeight();
    int marginWidth = _styles->getMarginWidth() + getLineNumberMargin();
 
@@ -313,7 +315,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
                   y,
                   lineNumber.str(),
                   numLen,
-                  marginStyle);
+                  reader.row == (caret.y + frame.y) ? currentMarginStyle : marginStyle);
             }
 
             // !! HOTFIX: allow to see breakpoint ellipse on margin if STYLE_TRACELINe set for this line
@@ -338,7 +340,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
          else canvas.drawTextClipped(Rectangle(x, y, width + 1, lineHeight + 1), x, y,
             buffer, length, style);
 
-         x += width;
+         x += width; 
          writer.reset();
       } while (reader.readNext(writer, 255));
 
@@ -362,6 +364,11 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
          } while (reader.readCurrentLine(writer, 0xFF));
 
          _caretChanged = false;
+
+         if (_model->highlightCurrentRow) {
+            Style* selStyle = _styles->getStyle(STYLE_SELECTION);
+            canvas.drawTransparentRectangle(Rectangle(clientRect.topLeft.x + marginWidth + 1, lineHeight* caret.y, clientRect.width() - clientRect.topLeft.x - marginWidth - 2, lineHeight + 1), *selStyle);
+         }
       }
 
       locateCaret(clientRect.topLeft.x + marginWidth + _caret_x,

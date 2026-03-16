@@ -3,7 +3,7 @@ import extensions;
 
 const int MAX = 50000000;
 
-public program()
+public Program()
 {
     var started := Now;
 

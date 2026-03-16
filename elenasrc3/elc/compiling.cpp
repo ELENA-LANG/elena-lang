@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor body
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -517,10 +517,13 @@ bool CompilingProcess :: compileModule(ModuleScopeBase& moduleScope, SyntaxTree&
 void CompilingProcess :: generateModule(ModuleScopeBase& moduleScope, BuildTree& tree, bool savingMode)
 {
    ByteCodeWriter bcWriter(&_libraryProvider, true);
-   if (_btRules.length() > 0)
-      bcWriter.loadBuildTreeRules(&_btRules);
-   if (_btXRules.length() > 0)
-      bcWriter.loadBuildTreeXRules(&_btXRules);
+   if (moduleScope.btapeOptMode) {
+      if (_btRules.length() > 0)
+         bcWriter.loadBuildTreeRules(&_btRules);
+      if (_btXRules.length() > 0)
+         bcWriter.loadBuildTreeXRules(&_btXRules);
+   }
+
    if (_bcRules.length() > 0)
       bcWriter.loadByteCodeRules(&_bcRules);
 
@@ -756,21 +759,39 @@ void CompilingProcess :: configurate(Project& project)
 
    int optMode = project.IntSetting(ProjectOption::OptimizationMode, optMiddle);
    _compiler->setOptimizationMode(optMode);
+   if (_verbose && optMode)
+      _presenter->printLine("Optimization mode=%x", optMode);
 
    bool withMethodParamInfo = project.BoolSetting(ProjectOption::GenerateParamNameInfo, true);
    _compiler->setMethodParamInfo(withMethodParamInfo);
+   if (_verbose && withMethodParamInfo)
+      _presenter->printLine("MethodParamInfo is on");
 
    bool withConditionalBoxing = project.BoolSetting(ProjectOption::ConditionalBoxing, DEFAULT_CONDITIONAL_BOXING);
    _compiler->setConditionalBoxing(withConditionalBoxing);
+   if (_verbose && withConditionalBoxing)
+      _presenter->printLine("ConditionalBoxing is on");
 
    bool evalOpFlag = project.BoolSetting(ProjectOption::EvaluateOp, DEFAULT_EVALUATE_OP);
    _compiler->setEvaluateOp(evalOpFlag);
+   if (_verbose && evalOpFlag)
+      _presenter->printLine("EvalOpFlag is on");
 
    bool strictTypeFlag = project.BoolSetting(ProjectOption::StrictTypeEnforcing, DEFAULT_STRICT_TYPE_ENFORCING);
    _compiler->setStrictTypeFlag(strictTypeFlag);
+   if (_verbose && strictTypeFlag)
+      _presenter->printLine("strictTypeFlag is on");
 
    bool nullableTypeWarning = project.BoolSetting(ProjectOption::NullableTypeWarning, DEFAULT_NULLABLE_TYPE_WARNING);
    _compiler->setNullableTypeFlag(nullableTypeWarning);
+   if (_verbose && nullableTypeWarning)
+      _presenter->printLine("nullableTypeWarning is on");
+
+   bool hiddenDeclarationMode = project.BoolSetting(ProjectOption::CheckHiddenDeclaration, DEFAULT_CHECK_HIDDEN_DECLARATION);
+   _compiler->setHiddenDeclarationMode(hiddenDeclarationMode);
+   if (_verbose && hiddenDeclarationMode)
+      _presenter->printLine("HiddenDeclaration is on");
+
 
    // load program forwards
    for (auto it = _forwards.start(); !it.eof(); ++it) {

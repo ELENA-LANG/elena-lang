@@ -10,7 +10,7 @@ singleton CommandLineFactory
     }
 }
 
-public CommandLine = 
+public CommandLine : info("An array of program command line arguments") = 
     CommandLineFactory.load();
 
 #elif (__project["_Linux"] || __project["_FreeBSD"])
@@ -36,14 +36,14 @@ singleton CommandLineFactory
     }
 }
 
-public CommandLineArguments =
+public CommandLineArguments : info("An array of program command line arguments") =
     CommandLineFactory.load();
 
 #endif
 
 // --- startUp ---
 
-public sealed class StartUpEvents
+public sealed class StartUpEvents : info("Application events")
 {
    Func OnStop : event;
     
@@ -68,7 +68,7 @@ entry()
 {
    try
    {
-      forward program();
+      forward Program();
    }
    catch::
    {
@@ -96,7 +96,7 @@ gui_entry()
 {
    try
    {
-      forward program();
+      forward Program();
    }
    catch::
    {
@@ -108,7 +108,7 @@ gui_entry()
       {
          startUpEvents.handlingError(err);
 
-         forward program.error("ELENA", err);
+         forward Program.error("ELENA", err);
 
          extern ExitLA(1);
       }

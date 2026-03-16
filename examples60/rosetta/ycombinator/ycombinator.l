@@ -6,7 +6,7 @@ singleton YCombinator
         = (f){(x){ x(x) }((g){ f((x){ (g(g))(x) })})}(func);
 }
  
-public program()
+public Program()
 {
     var fib := YCombinator.fix::(f => (i => (i <= 1) ? i : (f(i-1) + f(i-2)) ));
     var fact := YCombinator.fix::(f => (i => (i == 0) ? 1 : (f(i-1) * i) ));

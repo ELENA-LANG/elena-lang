@@ -27,7 +27,7 @@ extension op
     }
 }
 
-public program()
+public Program()
 {
    var array1 := new int[]{1, 1, 2, 4, 4};
    var array2 := new int[]{1, 3, 6, 6, 6, 6, 7, 7, 12, 12, 17};

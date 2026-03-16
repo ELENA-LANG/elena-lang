@@ -13,17 +13,17 @@ public singleton LScript
    {
       var ns := self.eval(script);
     
-      var s := ns.program;
+      var s := ns.Program;
       ^ s();
    }
 
    interpretLine(string script)
    {
-      string full_script := "program=" + script + ";";
+      string full_script := "Program=" + script + ";";
 
       var ns := self.eval(full_script);
     
-      var s := ns.program;
+      var s := ns.Program;
       ^ s();
    }
 
@@ -31,7 +31,7 @@ public singleton LScript
    {
       var ns := self.evalPath(path);
     
-      var s := ns.program;
+      var s := ns.Program;
       ^ s()
    }
 }

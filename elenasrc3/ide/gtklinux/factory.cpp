@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -9,10 +9,25 @@
 #include "gtklinux/gtkide.h"
 #include "gtklinux/gtkidetextview.h"
 #include "gtklinux/gtktextview.h"
+#include "gtklinux/gtkoutput.h"
 //#include "text.h"
 //#include "sourceformatter.h"
 
 using namespace elena_lang;
+
+#ifdef _M_IX86
+
+#define CLI_PATH       "/usr/bin/elena-cli"
+#define ELENA_LIB_PATH "/usr/lib/elena/lib60"
+
+#else
+
+#define CLI_PATH       "/usr/bin/elena64-cli"
+#define ELENA_LIB_PATH "/usr/lib/elena/lib60_64"
+
+#endif
+
+#define ELENA_SRC_PATH "/home/alex/elena-lang/src60/"
 
 //#define MAX_LOADSTRING 100
 //
@@ -27,7 +42,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Color(0,0,0), Color(0.93, 0.94, 0.95), "Monospace", 10, false, false},
    {Color(0,0,0), Color(0.75, 0.75, 0.75), "Monospace", 10, false, false},
    {Color(0.35, 0.35, 0.35), Color(0, 1, 1), "Monospace", 10, true, false},
-   {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
+   {Color(1, 1, 1), Color(1, 0, 0, 1), "Monospace", 10, false, false},
    {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
    {Color(0, 0, 1), Color(1, 1, 1), "Monospace", 10, false, false},
    {Color(0.25, 0.5, 0.5), Color(1, 1, 1), "Monospace", 10, false, false},
@@ -42,8 +57,8 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
    {Color(0.84, 0.84, 0.84), Color(0, 0, 68), "Monospace", 10, false, false},
    {Color(0.35, 0.35, 0.35), Color(0.84, 0.84, 0.84), "Monospace", 10, true, false},
    {Color(0.35, 0.35, 0.35), Color(0, 1, 1), "Monospace", 10, true, false},
-   {Color(1, 1, 1), Color(1, 0, 0), "Monospace", 10, false, false},
-   {Color(1, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(1, 1, 0), Color(1, 0, 0), "Monospace", 10, false, false},
+   {Color(1, 1, 0), Color(0, 0, 0.5), "Monospace", 10, false, false},
    {Color(1, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
    {Color(0.85, 0.85, 0.85), Color(0, 0, 0.5), "Monospace", 10, false, false},
    {Color(0.85, 0.85, 0.85), Color(0, 0, 0.5), "Monospace", 10, false, false},
@@ -85,6 +100,9 @@ void IDEBroadcaster :: sendMessage(EventBase* event)
       case EVENT_TEXTFRAME_SELECTION_CHANGED:
          textframe_changed.emit(*(SelectionEvent*)event);
          break;
+      case EVENT_COMPILATION_END:
+         completion_done.emit(*(CompletionEvent*)event);
+         break;
       default:
          break;
    }
@@ -107,6 +125,11 @@ IDEFactory :: IDEFactory(int argc, char** argv,
 //   _cmdShow = cmdShow;
    _model = ideModel;
    _controller = controller;
+
+   _model->projectModel.paths.compilerPath.copy(CLI_PATH);
+
+   _model->projectModel.paths.libraryRoot.combine(ELENA_LIB_PATH);         // !! temporal
+   _model->projectModel.paths.librarySourceRoot.combine(ELENA_SRC_PATH);   // !! temporal
 
    //initializeModel(ideModel);
 }
@@ -183,40 +206,79 @@ Gtk::Widget* IDEFactory :: createProjectView()
    return projectView;
 }
 
+Gtk::Widget* IDEFactory :: createErrorList()
+{
+   Gtk::TreeView* errorLog = new Gtk::TreeView();
+
+   errorLog->set_size_request(200, 100); // !! temporal
+   errorLog->set_visible(false);
+
+   return errorLog;
+}
+
+Gtk::Widget* IDEFactory :: createTabBar()
+{
+   Gtk::Notebook* tabBar = new Gtk::Notebook();
+
+   tabBar->set_size_request(200, 100); // !! temporal
+   tabBar->set_visible(false);
+
+   return tabBar;
+}
+
+Gtk::Widget* IDEFactory :: createCompilerOutput(ProcessBase* outputProcess)
+{
+   CompilerOutput* outputWindow = new CompilerOutput(&_broadcaster);
+
+   outputWindow->set_size_request(200, 100); // !! temporal
+   outputWindow->set_visible(false);
+
+   outputProcess->attachListener(outputWindow);
+
+   return outputWindow;
+}
+
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess,
          ProcessBase* vmConsoleProcess)
 {
-   Gtk::Widget** children = new Gtk::Widget*[2];
+   Gtk::Widget** children = new Gtk::Widget*[6];
    int counter = 1;
 
    int textIndex = counter++;
-//   int projectView = counter++;
+   int projectView = counter++;
+   int tabBar = counter++;
+   int errorList = counter++;
+   int compilerOutput = counter++;
    children[textIndex] = createTextControl();
-//   children[projectView] = createProjectView();
+   children[projectView] = createProjectView();
+   children[tabBar] = createTabBar();
+   children[errorList] = createErrorList();
+   children[compilerOutput] = createCompilerOutput(outputProcess);
 
    GTKIDEWindow* ideWindow = new GTKIDEWindow(_controller, _model, nullptr);
 
-   initializeScheme(textIndex/*, projectView*/);
+   initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView);
 
    ideWindow->populate(counter, children);
-   ideWindow->setLayout(textIndex, -1, -1, -1, /*projectView*/-1);
+   ideWindow->setLayout(textIndex, -1, tabBar, -1, projectView);
 
-//   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
-//   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
+   _broadcaster.textview_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_text_model_change));
+   _broadcaster.textframe_changed.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_textframe_change));
+   _broadcaster.completion_done.connect(sigc::mem_fun(*ideWindow, &GTKIDEWindow::on_compilation_end));
 
    return new WindowWrapper(ideWindow);
 }
 
 
-void IDEFactory :: initializeScheme(int frameTextIndex/*, int tabBar, int compilerOutput, int errorList,*/
-   /*int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
+void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList,
+   int projectView/*, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl,
    int toolBarControl, int contextEditor, int textIndex*/)
 {
    _model->ideScheme.textFrameId = frameTextIndex;
-//   _model->ideScheme.resultControl = tabBar;
-//   _model->ideScheme.compilerOutputControl = compilerOutput;
-//   _model->ideScheme.errorListControl = errorList;
-//   _model->ideScheme.projectView = projectView;
+   _model->ideScheme.resultControl = tabBar;
+   _model->ideScheme.compilerOutputControl = compilerOutput;
+   _model->ideScheme.errorListControl = errorList;
+   _model->ideScheme.projectView = projectView;
 //   _model->ideScheme.debugWatch = contextBrowser;
 //   _model->ideScheme.menu = menu;
 //   _model->ideScheme.statusBar = statusBar;
@@ -226,8 +288,8 @@ void IDEFactory :: initializeScheme(int frameTextIndex/*, int tabBar, int compil
 //   _model->ideScheme.editorContextMenu = contextEditor;
 //   _model->ideScheme.textControlId = textIndex;
 
-//   _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
-//   _model->ideScheme.captions.add(errorList, szErrorList);
+   _model->ideScheme.captions.add(compilerOutput, "Output");
+   _model->ideScheme.captions.add(errorList, "Messages");
 //   _model->ideScheme.captions.add(contextBrowser, szWatch);
 //   _model->ideScheme.captions.add(vmConsoleControl, szVMOutput);
 }

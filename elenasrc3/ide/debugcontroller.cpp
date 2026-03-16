@@ -3,13 +3,14 @@
 //
 //		This file contains implematioon of the DebugController class and
 //    its helpers
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 //---------------------------------------------------------------------------
 #include "debugcontroller.h"
 #include "module.h"
+#include "rtmanager.h"
 
 #ifdef _MSC_VER
 
@@ -363,7 +364,8 @@ void DebugController :: processStep()
 
       IdentifierString moduleName;
       ustr_t sourcePath = nullptr;
-      DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath);
+      ustr_t methodName = nullptr;
+      DebugLineInfo* lineInfo = _provider.seekDebugLineInfo((addr_t)_process->getState(), moduleName, sourcePath, methodName);
 
       if (_postponed.autoNextLine) {
          if (lineInfo->row == _postponed.row) {
@@ -634,6 +636,9 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
       case elDebugDWORDS:
          readIntArrayLocal(watch, item, address, "content", level);
          break;
+      case elDebugBytes:
+         readByteArrayLocal(watch, item, address, "content", level);
+         break;
       case elDebugFLOAT64S:
          readRealArrayLocal(watch, item, address, "content", level);
          break;
@@ -678,13 +683,13 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
 void* DebugController :: readByteArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
-      size_t length = _min(_process->getArrayLength(address), 100);
+      int length = _min(_process->getArrayLength(address), 100);
 
       WatchContext context = { parent, address };
       void* item = watch->addOrUpdate(&context, name, "<bytearray>");
 
       IdentifierString value;
-      for (size_t i = 0; i < length; i++) {
+      for (int i = 0; i < length; i++) {
          unsigned char b = _process->getBYTE(address + i);
 
          value.copy("[");
@@ -703,13 +708,13 @@ void* DebugController :: readByteArrayLocal(ContextBrowserBase* watch, void* par
 void* DebugController :: readShortArrayLocal(ContextBrowserBase* watch, void* parent, addr_t address, ustr_t name, int level)
 {
    if (level > 0) {
-      size_t length = _min(_process->getArrayLength(address) >> 1, 100);
+      int length = _min(_process->getArrayLength(address) >> 1, 100);
 
       WatchContext context = { parent, address };
       void* item = watch->addOrUpdate(&context, name, "<shortarray>");
 
       IdentifierString value;
-      for (size_t i = 0; i < length; i++) {
+      for (int i = 0; i < length; i++) {
          unsigned short b = _process->getWORD(address + i * 2);
 
          value.copy("[");
@@ -946,6 +951,35 @@ void DebugController :: readContext(ContextBrowserBase* watch, void* parentItem,
    }
 }
 
+void DebugController :: readCallstack(CallstackBase* callStack)
+{
+   MemoryDump retPoints;
+
+   MemoryWriter writer(&retPoints);
+   DebugReader reader(_process, 0, (pos_t)_process->getBaseAddress());
+
+   RTManager::readCallstack(reader, _process->getFrame(), _process->getIP(), writer);
+
+   MemoryReader stackReader(&retPoints);
+   while (!stackReader.eof()) {
+      IdentifierString moduleName;
+      ustr_t sourcePath = nullptr;
+      ustr_t methodName = nullptr;
+
+      addr_t address = 0;
+      stackReader.read(&address, sizeof(addr_t));
+
+      void* state = _process->retrieveState(address);
+      DebugLineInfo* lineInfo = (state != nullptr) ? _provider.seekDebugLineInfo((addr_t)state, moduleName, sourcePath, methodName) : nullptr;
+      if (lineInfo != nullptr) {
+         ustr_t className = _provider.seekClassName((addr_t)state);
+
+         callStack->write(*moduleName, className, methodName, sourcePath, lineInfo->col + 1, lineInfo->row + 1, address);
+      }
+      else callStack->write(address);
+   }
+}
+
 inline int getFPOffset(int argument, int argOffset)
 {
    return (argument - (argument < 0 ? argOffset : 0));
@@ -1098,7 +1132,7 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                item = readInlineField(watch, nullptr, _process->getStackItem(lineInfo[index].addresses.local.offset),
                   lineInfo[index].addresses.inlineField.index, level - 1);
                break;
-            }               
+            }
             default:
                break;
          }

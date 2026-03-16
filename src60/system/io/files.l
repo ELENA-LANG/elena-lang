@@ -120,7 +120,7 @@ namespace io
          int pos := self.Index;
              
          self.Index := length;
-         extern KERNEL32.SetEndOfFile(_handle);
+         int ret := extern KERNEL32.SetEndOfFile(_handle);
              
          if(length > pos)
             { self.Index := pos }
@@ -151,6 +151,8 @@ namespace io
       TextWriter newWriter(string path, Encoder encoder) = StreamWriter.new(FileStream.openForReWrite(path), encoder);
 
       TextWriter logger(path) = StreamWriter.new(FileStream.openForAppend(path), UTF8Encoder);
+
+      BinaryReader newBinaryReader(string path) = new BinaryStreamReader(FileStream.openForRead(path));
 
       bool isAvailable(path)
       {
@@ -329,6 +331,8 @@ namespace io
 
       TextWriter logger(path) = StreamWriter.new(FileStream.openForAppend(path), UTF8Encoder);
 
+      BinaryReader newBinaryReader(string path) = new BinaryStreamReader(FileStream.openForRead(path));
+
       bool isAvailable(string path)
       {
          int ret := extern libc.access(path, F_OK);
@@ -397,6 +401,8 @@ namespace io
 
       TextWriter logger() = fileControl.logger(_path);
 
+      BinaryReader binaryreader() = fileControl.newBinaryReader(_path);
+
       get int Length()
       {
          int    fileLen := 0;
@@ -405,6 +411,13 @@ namespace io
          };
             
          ^ fileLen
+      }
+
+      set Length(int value)
+      {
+         using(auto stream := FileStream.openForEdit(_path)) {
+            stream.setLength(value)
+         };
       }
 
       saveContent(string content)
@@ -443,7 +456,7 @@ namespace io
             while (reader.Available)
             {
                read := 128;
-               reader.read(buffer, ref read);
+               read := reader.read(buffer, read);
                    
                output.write(buffer, read)
             };            
@@ -474,6 +487,8 @@ namespace io
       static TextReader textreader(string path) 
          = fileControl.newReader(path);         
       
+      static BinaryReader binaryreader(string path) 
+         = fileControl.newBinaryReader(path);
    }
 
    // --- Directory ---

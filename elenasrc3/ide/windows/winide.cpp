@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI IDE Window Implementation File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <tchar.h>
@@ -17,6 +17,8 @@
 #include "windows/wintextframe.h"
 
 #include <windows/Resource.h>
+
+#include <windowsx.h>
 
 using namespace elena_lang;
 
@@ -156,6 +158,15 @@ void IDENotificationFormatter :: sendErrorListSelEvent(SelectionEvent* event, Wi
    app->notify(EVENT_ERRORLIST_SELECTION, (NMHDR*)&nw);
 }
 
+void IDENotificationFormatter::sendCallstackSelEvent(SelectionEvent* event, WindowApp* app)
+{
+   SelectionNMHDR nw = { };
+   nw.index = event->Index();
+   nw.status = event->status;
+
+   app->notify(EVENT_CALLSTACK_SELECTION, (NMHDR*)&nw);
+}
+
 void IDENotificationFormatter :: sendProjectViewSelectionEvent(ParamSelectionEvent* event, WindowApp* app)
 {
    ParamSelectionNMHDR nw = { };
@@ -234,6 +245,9 @@ void IDENotificationFormatter :: sendMessage(EventBase* event, WindowApp* app)
       case EVENT_ERRORLIST_SELECTION:
          sendErrorListSelEvent(dynamic_cast<SelectionEvent*>(event), app);
          break;
+      case EVENT_CALLSTACK_SELECTION:
+         sendCallstackSelEvent(dynamic_cast<SelectionEvent*>(event), app);
+         break;
       case EVENT_TEXT_CONTEXTMENU:
          sendTextContextMenuEvent(dynamic_cast<ContextMenuEvent*>(event), app);
          break;
@@ -263,6 +277,7 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
       *model->projectModel.paths.lastPath),
    messageDialog(this),
    projectSettingsDialog(instance, this, &model->projectModel),
+   forwardsDialog(instance, this, &model->projectModel),
    findDialog(instance, this, false, &model->findModel),
    replaceDialog(instance, this, true, &model->findModel),
    gotoDialog(instance, this),
@@ -276,7 +291,8 @@ IDEWindow :: IDEWindow(wstr_t title, IDEController* controller, IDEModel* model,
    fontSettingsDialog(instance, this),
    ideSettingsDialog(instance, this, model),
    debuggerSettingsDialog(instance, this, &model->projectModel),
-   _docViewListener(nullptr)
+   _docViewListener(nullptr),
+   _tabTTHandle(0)
 {
    this->_viewFactory = viewFactory;
 
@@ -382,11 +398,7 @@ bool IDEWindow :: saveBeforeClose(int index)
          return false;
       }
       else if (result == MessageDialogBase::Answer::Yes) {
-         PathString path;
-         if (fileDialog.saveFile(_T("l"), path)) {
-            _controller->doSaveFile(_model, index, true, *path);
-         }
-         else return false;
+         saveFile(index);
       }
    }
 
@@ -480,6 +492,11 @@ void IDEWindow :: selectWindow()
       default:
          break;
    }
+}
+
+void IDEWindow :: showForwards()
+{
+   forwardsDialog.showModal();
 }
 
 void IDEWindow :: exit()
@@ -610,6 +627,13 @@ void IDEWindow :: toggleProjectView(bool open)
    else projectView->hide();
 }
 
+bool IDEWindow :: isResultTabOpen(int controlIndex)
+{
+   TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
+
+   return resultBar->isChildAvailble((ControlBase*)_children[controlIndex]);
+}
+
 void IDEWindow :: openResultTab(int controlIndex)
 {
    TabBar* resultBar = (TabBar*)_children[_model->ideScheme.resultControl];
@@ -656,7 +680,7 @@ void IDEWindow :: toggleWindow(int child_id)
 
 bool IDEWindow :: toggleTabBarWindow(int child_id)
 {
-   if (!_children[child_id]->visible()) {
+   if (!isResultTabOpen(child_id)) {
       openResultTab(child_id);
 
       return true;
@@ -676,6 +700,7 @@ void IDEWindow :: onComilationStart()
    updateCompileMenu(false, false, true);
 
    openResultTab(_model->ideScheme.compilerOutputControl);
+   onTabBarChange();
 
    ((ControlBase*)_children[_model->ideScheme.compilerOutputControl])->clearValue();
 }
@@ -692,16 +717,16 @@ void IDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
    if (exitCode != EXIT_FAILURE) {
       switch ((DebugAction)postponedAction) {
          case DebugAction::Run:
-            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
+            doDebugAction(DebugAction::Run, true);
             break;
          case DebugAction::StepOver:
-            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
+            doDebugAction(DebugAction::StepOver, true);
             break;
          case DebugAction::StepInto:
-            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
+            doDebugAction(DebugAction::StepInto, true);
             break;
          case DebugAction::RunTo:
-            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
+            doDebugAction(DebugAction::RunTo, true);
             break;
          default:
             break;
@@ -712,6 +737,15 @@ void IDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
 void IDEWindow :: onErrorHighlight(int index)
 {
    ErrorLogBase* resultBar = dynamic_cast<ErrorLogBase*>(_children[_model->ideScheme.errorListControl]);
+
+   auto messageInfo = resultBar->getMessage(index);
+   if (!messageInfo.path.empty())
+      _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+}
+
+void IDEWindow :: onCallstackHighlight(int index)
+{
+   CallstackBase* resultBar = dynamic_cast<CallstackBase*>(_children[_model->ideScheme.callStackControl]);
 
    auto messageInfo = resultBar->getMessage(index);
    if (!messageInfo.path.empty())
@@ -729,12 +763,20 @@ void IDEWindow :: onDebugStep()
 void IDEWindow :: onDebugWatch()
 {
    openResultTab(_model->ideScheme.debugWatch);
+   onTabBarChange();
 
    ContextBrowserBase* contextBrowser = dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch]);
 
    _controller->refreshDebugContext(contextBrowser, _model);
 
    contextBrowser->expandRootNode();
+}
+
+void IDEWindow :: onDebugCallstack()
+{
+   CallstackBase* callStack = dynamic_cast<CallstackBase*>(_children[_model->ideScheme.callStackControl]);
+
+   _controller->refreshCallstack(callStack/*, _model*/);
 }
 
 void IDEWindow :: onDebugEnd()
@@ -779,6 +821,24 @@ void IDEWindow :: updateCompileMenu(bool compileEnable, bool debugEnable, bool s
    enableMenuItemById(IDM_DEBUG_RUNTO, debugEnable, false);
 
    enableMenuItemById(IDM_DEBUG_STOP, stopEnable, true);
+}
+
+void IDEWindow :: doDebugAction(DebugAction action, bool withoutPostponeAction)
+{
+   DebugActionResult result = {};
+   if (!_controller->doDebugAction(_model, action, result, withoutPostponeAction)) {
+      if (_model->sourceViewModel.isAnyDocumentModified())
+         messageDialog.info(INFO_RUN_UNSAVED_PROJECT);
+      else if (result.outaged) {
+         messageDialog.info(INFO_RUN_OUT_OF_DATE);
+      }
+      else if (result.targetMissing) {
+         messageDialog.info(INFO_NEED_TARGET);
+      }
+      else if (result.noDebugFile) {
+         messageDialog.info(INFO_RUN_NEED_RECOMPILE);
+      }
+   }
 }
 
 void IDEWindow :: onProjectRefresh(bool empty)
@@ -965,29 +1025,32 @@ bool IDEWindow :: onCommand(int command)
       case IDM_PROJECT_OPTION:
          _controller->doChangeProject(projectSettingsDialog, _model);
          break;
+      case IDM_PROJECT_FORWARDS:
+         showForwards();
+         break;
       case IDM_DEBUG_RUN:
          if (_model->autoSave)
             saveAll();
 
-         _controller->doDebugAction(_model, DebugAction::Run, messageDialog, false);
+         doDebugAction(DebugAction::Run, false);
          break;
       case IDM_DEBUG_STEPOVER:
          if (_model->autoSave)
             saveAll();
 
-         _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, false);
+         doDebugAction(DebugAction::StepOver, false);
          break;
       case IDM_DEBUG_STEPINTO:
          if (_model->autoSave)
             saveAll();
 
-         _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, false);
+         doDebugAction(DebugAction::StepInto, false);
          break;
       case IDM_DEBUG_RUNTO:
          if (_model->autoSave)
             saveAll();
 
-         _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, false);
+         doDebugAction(DebugAction::RunTo, false);
          break;
       case IDM_DEBUG_STOP:
          _controller->doDebugStop(_model);
@@ -1003,21 +1066,30 @@ bool IDEWindow :: onCommand(int command)
          break;
       case IDM_VIEW_WATCH:
          toggleTabBarWindow(_model->ideScheme.debugWatch);
+         onTabBarChange();
          break;
       case IDM_VIEW_PROJECTVIEW:
          toggleWindow(_model->ideScheme.projectView);
+         onTabBarChange();
          break;
       case IDM_VIEW_OUTPUT:
          toggleTabBarWindow(_model->ideScheme.compilerOutputControl);
+         onTabBarChange();
          break;
       case IDM_VIEW_VMCONSOLE:
          if (toggleTabBarWindow(_model->ideScheme.vmConsoleControl)) {
             _controller->doStartVMConsole(_model);
          }
          else _controller->doStopVMConsole();
+         onTabBarChange();
          break;
       case IDM_VIEW_MESSAGES:
          toggleTabBarWindow(_model->ideScheme.errorListControl);
+         onTabBarChange();
+         break;
+      case IDM_VIEW_CALLSTACK:
+         toggleTabBarWindow(_model->ideScheme.callStackControl);
+         onTabBarChange();
          break;
       case IDM_HELP_API:
          openHelp();
@@ -1153,6 +1225,23 @@ void IDEWindow :: onDoubleClick(NMHDR* hdr)
    }
 }
 
+void IDEWindow::onTabRClick(size_t controlIndex)
+{
+   DWORD dwpos = ::GetMessagePos();
+   Point p(LOWORD(dwpos), HIWORD(dwpos));
+
+   TreeView* treeView = ((TreeView*)_children[controlIndex]);
+
+   HTREEITEM item = treeView->hitTest(p.x, p.x);
+   if (item) {
+      treeView->select(item);
+   }
+
+   ContextMenu* menu = static_cast<ContextMenu*>(_children[_model->ideScheme.tabContextMenu]);
+
+   menu->show(_handle, p);
+}
+
 void IDEWindow :: onDebugWatchRClick(size_t controlIndex)
 {
    DWORD dwpos = ::GetMessagePos();
@@ -1178,6 +1267,9 @@ void IDEWindow :: onRClick(NMHDR* hdr)
       if (_children[i]->checkHandle(hdr->hwndFrom)) {
          if (i == _model->ideScheme.debugWatch) {
             onDebugWatchRClick(i);
+         }
+         else if (i == _model->ideScheme.textFrameId) {
+            onTabRClick(i);
          }
          break;
       }
@@ -1268,6 +1360,7 @@ void IDEWindow :: onIDEStatusChange(ModelNMHDR* rec)
    }
    else if (test(rec->status, STATUS_DEBUGGER_STEP)) {
       onDebugWatch();
+      onDebugCallstack();
       onDebugStep();
    }
 
@@ -1311,22 +1404,29 @@ void IDEWindow :: onDocumentSelection()
    menu->enableMenuItemById(IDM_PROJECT_EXCLUDE, docInfo && docInfo->isIncluded());
 }
 
+void IDEWindow :: onTabBarChange()
+{
+   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
+   menu->checkMenuItemById(IDM_VIEW_OUTPUT, isResultTabOpen(_model->ideScheme.compilerOutputControl));
+   menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, isResultTabOpen(_model->ideScheme.projectView));
+   menu->checkMenuItemById(IDM_VIEW_MESSAGES, isResultTabOpen(_model->ideScheme.errorListControl));
+   menu->checkMenuItemById(IDM_VIEW_WATCH, isResultTabOpen(_model->ideScheme.debugWatch));
+   menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, isResultTabOpen(_model->ideScheme.vmConsoleControl));
+   menu->checkMenuItemById(IDM_VIEW_CALLSTACK, isResultTabOpen(_model->ideScheme.callStackControl));
+}
+
 void IDEWindow :: onLayoutChange()
 {
    bool empty = _model->sourceViewModel.getDocumentCount() == 0;
 
-   MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
-   menu->checkMenuItemById(IDM_VIEW_OUTPUT, _children[_model->ideScheme.compilerOutputControl]->visible());
-   menu->checkMenuItemById(IDM_VIEW_PROJECTVIEW, _children[_model->ideScheme.projectView]->visible());
-   menu->checkMenuItemById(IDM_VIEW_MESSAGES, _children[_model->ideScheme.errorListControl]->visible());
-   menu->checkMenuItemById(IDM_VIEW_WATCH, _children[_model->ideScheme.debugWatch]->visible());
-   menu->checkMenuItemById(IDM_VIEW_VMCONSOLE, _children[_model->ideScheme.vmConsoleControl]->visible());
+   onTabBarChange();
 
    enableMenuItemById(IDM_FILE_SAVE, !empty, true);
    enableMenuItemById(IDM_FILE_SAVEALL, !empty, true);
    enableMenuItemById(IDM_FILE_SAVEAS, !empty, false);
    enableMenuItemById(IDM_FILE_CLOSE, !empty, true);
    enableMenuItemById(IDM_FILE_CLOSEALL, !empty, false);
+   enableMenuItemById(IDM_FILE_CLOSEALLBUT, !empty, false);
 
    if (empty) {
       enableMenuItemById(IDM_EDIT_UNDO, false, true);
@@ -1401,6 +1501,9 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case EVENT_ERRORLIST_SELECTION:
          onErrorHighlight(((SelectionNMHDR*)hdr)->index);
          break;
+      case EVENT_CALLSTACK_SELECTION:
+         onCallstackHighlight(((SelectionNMHDR*)hdr)->index);
+         break;
       case EVENT_STARTUP:
          onStartup((ModelNMHDR*)hdr);
          break;
@@ -1431,11 +1534,19 @@ void IDEWindow :: onNotify(NMHDR* hdr)
       case NM_RCLICK:
          onRClick(hdr);
          break;
+      case NM_SETFOCUS:
+         if (_children[_model->ideScheme.projectView]->checkHandle(hdr->hwndFrom))
+            _children[_model->ideScheme.textFrameId]->setFocus();
+         break;
       case TTN_GETDISPINFO:
          if (isTabToolTip(hdr->hwndFrom)) {
             onTabTip((NMTTDISPINFO*)hdr);
          }
          else onToolTip((NMTTDISPINFO*)hdr);
+         break;
+      case NM_CLICK:
+         if (_children[_model->ideScheme.textFrameId]->checkHandle(hdr->hwndFrom))
+            ((ControlBase*)_children[_model->ideScheme.textFrameId])->onClick(hdr);
          break;
       default:
          break;
@@ -1454,7 +1565,17 @@ void IDEWindow :: onDebuggerSourceNotFound()
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
    menu->enableMenuItemById(IDM_DEBUG_STOP, true);
 
-   _controller->onDebuggerNoSource(messageDialog, _model);
+   auto result = messageDialog.question(QUESTION_NOSOURCE_CONTINUE);
+
+   DebugActionResult debugResult = {};
+   if (!_controller->onDebuggerNoSource(_model, result == MessageDialogBase::Answer::Yes, debugResult)) {
+      if (debugResult.targetMissing) {
+         messageDialog.info(INFO_NEED_TARGET);
+      }
+      else if (debugResult.noDebugFile) {
+         messageDialog.info(INFO_RUN_NEED_RECOMPILE);
+      }
+   }
 }
 
 bool IDEWindow :: onClose()
@@ -1630,3 +1751,21 @@ void IDEWindow :: onDropFiles(HDROP hDrop)
 
    DragFinish(hDrop);
 }
+
+//void IDEWindow :: onMouseMove(WPARAM wParam, LPARAM lParam)
+//{
+//   if (wParam != 0)
+//      return;
+//
+//   Point p(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam));
+//
+//   TextViewFrame* textFrame = (TextViewFrame*)_children[_model->ideScheme.textFrameId];
+//   if (textFrame->isOverButton(p)) {
+//      if(textFrame->highlightButton())
+//         textFrame->refresh();
+//   }
+//   else if (textFrame->clearButton()) {
+//      textFrame->refresh();
+//   }
+//}
+//}

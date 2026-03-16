@@ -15,6 +15,11 @@
         <output>../../lib60_64</output>
      </project>
   </platform>
+  <platform key="MacOS_AMD64">
+     <project>
+        <output>../../lib60_64</output>
+     </project>
+  </platform>
   <platform key="Linux_PPC64le">
      <project>
         <output>../../lib60_64</output>
@@ -46,7 +51,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>6.8.0</version>
+     <version>7.0.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
@@ -134,6 +139,9 @@
        <include>threading/tasks.l</include>
        <include>threading/templates.l</include>
        <include>threading/template_tests.l</include>
+     </module>
+     <module name="io'threading">
+       <include>io/threading/async_common.l</include>
      </module>
      <module name="dynamic">
        <include>dynamic/reflection.l</include>

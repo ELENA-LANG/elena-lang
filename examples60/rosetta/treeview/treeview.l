@@ -50,7 +50,7 @@ extension treeOp
         = self.writeTree(node,"");
 }
 
-public program()
+public Program()
 {
     var tree := Node.new(
                  new Node[]{

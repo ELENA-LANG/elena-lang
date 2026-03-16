@@ -70,7 +70,7 @@ namespace elena_lang
    };
 
    // --- TextViewWindow ---
-   class TextViewWindow : public Gtk::/*Table*/ScrolledWindow
+   class TextViewWindow : public Gtk::ScrolledWindow
    {
    public:
       class TextDrawingArea : public Gtk::DrawingArea

@@ -112,6 +112,12 @@ namespace elena_lang
          drawRectangle(rect, style.foreground, style.background);
       }
 
+      void drawTransparentRectangle(Rectangle rect, Color foreground);
+      void drawTransparentRectangle(Rectangle rect, Style style)
+      {
+         drawTransparentRectangle(rect, style.foreground);
+      }
+
       void fillRectangle(Rectangle rect, Color background);
       void fillRectangle(Rectangle rect, Style* style)
       {

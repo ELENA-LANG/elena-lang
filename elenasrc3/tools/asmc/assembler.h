@@ -3,7 +3,7 @@
 //
 //		This header contains abstract Assembler declarations
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ASSEMBLER_H
@@ -160,6 +160,8 @@ namespace elena_lang
 
       bool isMacroVariableDefined(ScriptToken& tokenInfo);
       void skipBlock(ScriptToken& tokenInfo);
+
+      void checkUndeclaredLabels(LabelScope& labelScope);
 
    public:
       void compile();

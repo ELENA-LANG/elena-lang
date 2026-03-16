@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE Controller header File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDECONTROLLER_H
@@ -127,6 +127,7 @@ namespace elena_lang
       void runToCursor(ProjectModel& model, SourceViewModel& sourceModel);
       void refreshDebugContext(ContextBrowserBase* contextBrowser);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, size_t param, addr_t address);
+      void refreshCallstack(CallstackBase* callstack);
 
       bool toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row, DocumentChangeStatus& status);
 
@@ -185,6 +186,8 @@ namespace elena_lang
       SourceViewController sourceController;
       ProjectController    projectController;
 
+      void addToRecentProjects(IDEModel* model, path_t path);
+
       void loadSystemConfig(IDEModel* model, path_t configPath, ustr_t typeXPath, ustr_t platformXPath);
 
       bool loadConfig(IDEModel* model, path_t configPath, GUISettinngs& guiSettings);
@@ -237,8 +240,8 @@ namespace elena_lang
 
       bool doCompileProject(IDEModel* model);
       void doChangeProject(ProjectSettingsBase& prjDialog, IDEModel* model);
-      void doDebugAction(IDEModel* model, DebugAction action,
-         MessageDialogBase& mssgDialog, bool withoutPostponeAction);
+      bool doDebugAction(IDEModel* model, DebugAction action,
+         DebugActionResult& result, bool withoutPostponeAction);
       void doDebugStop(IDEModel* model);
 
       void doStartVMConsole(IDEModel* model);
@@ -254,6 +257,7 @@ namespace elena_lang
 
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model);
       void refreshDebugContext(ContextBrowserBase* contextBrowser, IDEModel* model, size_t item, size_t param);
+      void refreshCallstack(CallstackBase* callstack);
 
       void toggleBreakpoint(IDEModel* model, int row);
 
@@ -266,7 +270,7 @@ namespace elena_lang
       void onDebuggerHook(ProjectModel* model);
       void onDebuggerStep(IDEModel* model);
       void onDebuggerStop(IDEModel* model);
-      void onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model);
+      bool onDebuggerNoSource(IDEModel* model, bool autoStep, DebugActionResult& result);
       void onDocSelection(IDEModel* model, int index);
 
       void onIDEStop(IDEModel* model, GUISettinngs& guiSettings);

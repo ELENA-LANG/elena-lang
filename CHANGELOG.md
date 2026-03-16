@@ -1,3 +1,53 @@
+## ELENA 7.0.0
+
+- ELENA
+  - [ADDED] #592 : support const T[] array declaration
+  - [ADDED] short-cut syntax for constant array
+
+- ELC
+  - [FIXED] retoverload method
+  - [FIXED] an issue with template-based nested class fields
+  - [FIXED] calling indexed method for sealed stack-allocated method
+  - [FIXED] calling static method declared in the parent class from the closed child
+  - [FIXED] extension literal constant
+  - [ADDED] warning when passing an unsupported nullable argument
+  - [ADDED] new compiler option : -n<name> used to compile a sub collection
+  - [FIXED] assigning a struct field in sub code
+  - [FIXED] calling retoverload method in a returning expression
+  - [FIXED] in template extension the target template might be not compiled
+  - [ADDED] warn if declaration hides previous local declaration
+  - [FIXED] a minimal long constant
+  - [FIXED] generating a debug info for implicit class symbols
+  - [ADDED] an error if an async extension is declared (until the feature is not implemented)
+
+- API
+  - [ADDED] system : ConstArray<T> template
+  - [CRITICAL][ADDED] program main entry is renamed from program to Program
+  - [FIXED] __getProperties extension method
+  - [CRITICAL][ADDED] rename extern {} => excluded {} as extern is overused
+  - [ADDED] new method - File.binaryReader[1]
+
+- SM
+
+- Scripts
+
+- SAMPLES
+
+- IDE
+  - [ADDED] #820 - Launch elena64-ide.exe from the command line
+  - [ADDED] Callstack window
+  - [ADDED] Forwards dialog
+  - [ADDED] Highlighting current line
+  - [ADDED] Project View Icons
+  - [ADDED] Close icon on the tab
+
+- Tools
+  - [ADDED] ecv: new flag  - ignore internal classes
+  - [ADDED] asmc : warn if the label was not resolved
+
+- Misc
+  - [FIXED][PPC64le] system_tests - intTests
+
 ## ELENA 6.8.0
 
 - ELENA
@@ -49,12 +99,6 @@
   - [ADDED] #35 : adding net'http'server module
   - [ADDED] #35 : adding webapi module
   - [ADDED] UnsafeArray, UnsafeArray<T>
-
-- SM
-
-- Scripts
-
-- SAMPLES
 
 - IDE
   - [FIXED] an issue with a vertical splitter

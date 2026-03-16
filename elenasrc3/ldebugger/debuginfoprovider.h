@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Engine
 //
 //		This file contains the DebugInfoProviderBase class declaration
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DEBUGINFOPROVIDE_H
@@ -45,11 +45,12 @@ namespace elena_lang
          return package.compare(value) || (value.compare(package, package.length()) && (value[package.length()] == '\''));
       }
 
-      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath);
+      DebugLineInfo* seekDebugLineInfo(addr_t lineInfoAddress, IdentifierString& moduleName, ustr_t& sourcePath, ustr_t& methodName);
       DebugLineInfo* seekDebugLineInfo(size_t lineInfoAddress)
       {
          return (DebugLineInfo*)lineInfoAddress;
       }
+      ustr_t seekClassName(addr_t lineInfoAddress);
 
       addr_t getEntryPoint() const
       {
@@ -69,7 +70,7 @@ namespace elena_lang
          _debugInfoSize = size;
          _debugInfoPtr = debugInfoPtr;
       }
- 
+
       bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
 
       void clear()
@@ -81,9 +82,6 @@ namespace elena_lang
          _classes.clear();
          _modules.clear();
          _classNames.clear();
-
-         //_tape.clear();
-         //_tapeBookmarks.clear();
       }
 
       DebugInfoProviderBase();

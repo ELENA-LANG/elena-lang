@@ -3,14 +3,14 @@
 //
 //		Copmpiler messages 
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "errors.h"
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 116;
+   constexpr auto MessageLength = 122;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -26,6 +26,7 @@ namespace elena_lang
       {errInvalidSyntax, errMsgInvalidSyntax},
       {errEmptyTarget, errMsgEmptyTarget},
       {errFatalError, errMsgFatalError},
+      {errActionOverflow, errMsgActionOverflow},
       {errFatalLinker, errMsgFatalLinkerError},
       {errNotImplemented, errMsgNotImplemented},
       {wrnSyntaxFileNotFound, wrnMsgSyntaxFileNotFound},
@@ -129,6 +130,11 @@ namespace elena_lang
       {wrnUnknownRedirectMethod, wrnMsgUnknownRedirectMethod},
       {errUnknownRedirectMethod, errMsgUnknownRedirectMethod},
       {errIncompatibleClosure, errMsgIncompatibleClosure },
+      {infoMissingTemplate, infoMsgMissingTemplate},
+      {wrnNonNillableArgument, wrnMsgNonNillableArgument },
+      { wrnHiddenLocal, wrnMsgHiddenLocal },
+      { wrnHiddenField, wrnMsgHiddenField },
+      { infoPredefinedIndexedMethod, infoMsgPredefinedIndexedMethod },
    };
 
 }

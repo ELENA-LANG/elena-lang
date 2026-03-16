@@ -56,4 +56,4 @@ class ProgramLoopImpl
    }
 }
 
-public static ProgramLoop = ProgramLoopImpl.assign(forward program'control);
+public static ProgramLoop = ProgramLoopImpl.assign(forward Program'Control);

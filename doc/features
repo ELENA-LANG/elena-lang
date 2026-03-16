@@ -477,3 +477,76 @@ public program()
    f1();
    f2();
 }
+
+----------------------------------------------------------------------------
+   short-cut syntax for array
+----------------------------------------------------------------------------
+
+public program()
+{
+  string[] dirNames := new []{ ".", ".." };
+}
+	
+----------------------------------------------------------------------------
+   syntax for a constant array
+----------------------------------------------------------------------------
+
+public program()
+{
+  const string[] dirNames := new const string []{ ".", ".." };
+}
+	
+----------------------------------------------------------------------------
+   readonly fields
+----------------------------------------------------------------------------
+
+class B;
+
+class A
+{
+   readonly B b;
+
+   constructor new(B b)
+   {
+      this b := b
+   }
+
+   testReadOnly(B arg)
+   {
+      b := arg // !! raises an error 116 : Read-only field cannot be changed
+   }   
+}
+
+public program()
+{
+   A a := A.new(new B());
+   a.testReadOnly(new B());
+}
+	
+----------------------------------------------------------------------------
+   without template reusing
+----------------------------------------------------------------------------
+
+It is possible to force the compiler to generate the templates without
+reusing ones declared in the previous modules. The special module hint 
+must be provided
+
+     <module>
+        <include>common.l</include>
+        <include>mbedtlssocket.l</include>
+        <include>mbedtlslistener.l</include>
+     </module>
+     <module name="client" hints="8">                                <!-- all required templates will be generated again, so no extra link to the previous module -->
+        <include>client\registration\registration.l</include>
+     </module>
+     <module name="server" hints="8">                                <!-- all required templates will be generated again, so no extra link to the previous module -->
+       <include>server\registration\registration.l</include>
+     </module>
+
+------------------------------ 
+  clearing lexical information
+------------------------------
+
+  <lexicals>
+    <clear/>
+  </lexicals>

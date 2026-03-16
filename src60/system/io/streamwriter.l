@@ -83,7 +83,7 @@ namespace io
                s_len := 256;
             };
                
-            UTF8Encoder.toByteArray(s, index, ref s_len, buffer, 0, ref buf_len);
+            UTF8Encoder.saveToByteArray(s, index, ref s_len, buffer, 0, ref buf_len);
                
             write(buffer, buf_len);
                

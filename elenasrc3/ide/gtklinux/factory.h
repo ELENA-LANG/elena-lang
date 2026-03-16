@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2024-2025, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef FACTORY_H
@@ -12,6 +12,7 @@
 //#include "gtklinux/gtksdi.h"
 //#include "gtklinux/gtkgraphic.h"
 #include "gtklinux/gtktextview.h"
+#include "gtklinux/lnxcontroller.h"
 #include "ideview.h"
 #include "idecontroller.h"
 
@@ -19,6 +20,7 @@ namespace elena_lang
 {
    typedef sigc::signal<void(TextViewModelEvent)> type_textview_changed;
    typedef sigc::signal<void(SelectionEvent)> type_textframe_changed;
+   typedef sigc::signal<void(CompletionEvent)> type_completion_done;
 
    // --- IDEBroadcaster ---
    class IDEBroadcaster : public BroadcasterBase
@@ -26,6 +28,7 @@ namespace elena_lang
    public:
       type_textview_changed    textview_changed;
       type_textframe_changed   textframe_changed;
+      type_completion_done     completion_done;
 
       void sendMessage(EventBase* event) override;
 
@@ -53,11 +56,14 @@ namespace elena_lang
 
       Gtk::Widget* createTextControl();
       Gtk::Widget* createProjectView();
+      Gtk::Widget* createTabBar();
+      Gtk::Widget* createErrorList();
+      Gtk::Widget* createCompilerOutput(ProcessBase* outputProcess);
 
       //void initializeModel(IDEModel* ideView);
 
-      void initializeScheme(int frameTextIndex/*,
-         int projectView*/);
+      void initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList,
+         int projectView);
 
    public:
       static void initPathSettings(IDEModel* ideModel);

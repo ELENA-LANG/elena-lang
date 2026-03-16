@@ -11,7 +11,7 @@
         <template>console</template>
     </project>
     <forwards>
-       <forward key="program">extensions'ProgramLoop</forward>
-       <forward key="program'control">regex'Control</forward>
+       <forward key="Program">extensions'ProgramLoop</forward>
+       <forward key="Program'Control">regex'Control</forward>
     </forwards>
 </configuration>

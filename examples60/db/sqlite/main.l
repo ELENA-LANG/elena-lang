@@ -36,9 +36,9 @@ extension dbTestOp
     }
 }
 
-// --- program ---
+// --- Program ---
 
-public program()
+public Program()
 {
     auto dbFile := File.assign(DBFileName);
     

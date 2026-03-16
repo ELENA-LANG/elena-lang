@@ -14,7 +14,7 @@ Numbers(n)
 
 // --- Program ---
 
-public program()
+public Program()
 {
     var numbers := Numbers(N);    
     Combinator.new(M, numbers).forEach::(row)

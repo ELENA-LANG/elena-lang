@@ -1,7 +1,7 @@
 public symbol staticRules =
     calc'rules'States;
 
-public singleton control
+public singleton Control
 {
    greeting() = "Enter the expression to evaluate (e.g. 2+2) or -q to exit";
     
@@ -11,7 +11,7 @@ public singleton control
    {
       if ("-q" == line)
       {
-         forward program.stop(); ^EmptyString
+         forward Program.stop(); ^EmptyString
       }
       else
       {

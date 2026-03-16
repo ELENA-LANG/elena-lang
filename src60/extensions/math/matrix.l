@@ -138,12 +138,12 @@ namespace math
       RealMatrix add(RealMatrix b)
       {
          self.readLengthsTo(out int n, out int m);
-         b.readLengthsTo(out int i, out int j);
+         b.readLengthsTo(out int b_n, out int b_m);
             
-         if:not(n == i)
+         if:not(n == b_n)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
             
-         if:not(m == j)
+         if:not(m == b_m)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
                 
          auto r := RealMatrix.allocate(n, m);
@@ -164,12 +164,12 @@ namespace math
       RealMatrix subtract(RealMatrix b)
       {
          self.readLengthsTo(out int n, out int m);
-         b.readLengthsTo(out int i, out int j);
+         b.readLengthsTo(out int b_n, out int b_m);
             
-         if:not(n == i)
+         if:not(n == b_n)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
             
-         if:not(m == j)
+         if:not(m == b_m)
             { MatrixException.new("Two matrices must have an equal number of rows and columns to be added").raise() };
                 
          auto r := RealMatrix.allocate(n, m);
@@ -189,10 +189,10 @@ namespace math
         
       RealMatrix multiply(RealMatrix b)
       {
-         self.readLengthsTo(out int n, out int j);
+         self.readLengthsTo(out int n, out int s_m);
          b.readLengthsTo(out int m, out int p);
                     
-         if:not(j == m)
+         if:not(s_m == m)
             { MatrixException.new("Invalid argument").raise() };
     
          auto r := RealMatrix.allocate(n, p);

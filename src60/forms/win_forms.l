@@ -149,7 +149,7 @@ public closed class ChildForm : BaseWinForm
       self.open();
       _parent!.Enabled := false;
         
-      forward program.run(_handle);
+      forward Program.run(_handle);
         
       _parent!.Enabled := true
    }    

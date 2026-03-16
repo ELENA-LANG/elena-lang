@@ -14,14 +14,13 @@ public singleton Control
       ^ $"The pattern is {pattern}";
    }
 
-
    get string Prompt
       = "Please enter a string to validate or press ENTER to exit:";
 
    proceed(line)
    {
       if (line == String.MinValue) 
-        forward program.stop();
+        forward Program.stop();
 
       ^ _regEx.match(line) ? "matched" : "not matched";
    }

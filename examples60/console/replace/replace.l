@@ -3,7 +3,7 @@ import extensions'text;
 
 // --- Program ---
 
-public program()
+public Program()
 {
     var text := Console.print("Enter the text:").loadLineTo(new StringWriter());
     var searchText := Console.print("Enter the phrase to be found:").readLine();  

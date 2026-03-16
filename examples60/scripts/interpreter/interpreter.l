@@ -345,11 +345,11 @@ public solution4(string path)
     Console.writeLine(bfProgram)
 }
 
-public program()
+public Program()
 {
    int solution := 3;
 
-   if (program_arguments.Length == 1)
+   if (Program_arguments.Length == 1)
    { 
       Console.write("Please provide the path to the file to interpret"); AbortException.raise() 
    }

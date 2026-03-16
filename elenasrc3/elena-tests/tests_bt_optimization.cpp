@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Test Optimization Fixture implementation
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "bt_optimization.h"
@@ -18,45 +18,58 @@ constexpr auto BT_RULES_FILE = "bt_rules60.dat";
 
 // --- BTOptimization1 ---
 
-constexpr auto Declaration1_1 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"Struct\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147471359 () nameattr (identifier \"TestReference\" ()) field (attribute -2147475454 () type (identifier \"Struct\" ()) nameattr (identifier \"_value\" ())) ) class (attribute -2147467263 ()attribute -2147479546 () nameattr (identifier \"Tester\" ()) method (type (identifier \"Struct\" ()) nameattr (identifier \"getValue\" ())code ())))";
-constexpr auto SyntaxTree1_1 = "expression(assign_operation(object(type(identifier \"Struct\"())identifier \"r\"())expression(message_operation(object(identifier \"Tester\"())message(identifier \"getValue\" ())))))";
+constexpr auto Declaration1_1 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"Struct\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147471359 () nameattr (identifier \"TestReference\" ()) field (attribute -2147471356 () type (identifier \"Struct\" ()) nameattr (identifier \"_value\" ())) ) class (attribute -2147467263 ()attribute -2147479546 () nameattr (identifier \"Tester\" ()) method (type (identifier \"Struct\" ()) nameattr (identifier \"getValue\" ())code ())))";
+constexpr auto SyntaxTree2_1 = "expression(assign_operation(object(type(identifier \"Struct\"())identifier \"r\"())expression(message_operation(object(identifier \"Tester\"())message(identifier \"getValue\" ())))))";
 
-constexpr auto Declaration1_2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"Struct\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147471359 () nameattr (identifier \"TestReference\" ()) field (attribute -2147475454 () type (identifier \"Struct\" ()) nameattr (identifier \"_value\" ())) ) class (attribute -2147467263 ()attribute -2147479546 () nameattr (identifier \"Tester\" ()) method (attribute -2147463167 () type (identifier \"Struct\" ()) nameattr (identifier \"Value\" ())code ())))";
-constexpr auto SyntaxTree1_2 = "expression(assign_operation(object(type(identifier \"Struct\"())identifier \"r\"())expression(property_operation(object(identifier \"Tester\"())message(identifier \"Value\" ())))))";
+constexpr auto Declaration1_2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"Struct\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147471359 () nameattr (identifier \"TestReference\" ()) field (attribute -2147471356 () type (identifier \"Struct\" ()) nameattr (identifier \"_value\" ())) ) class (attribute -2147467263 ()attribute -2147479546 () nameattr (identifier \"Tester\" ()) method (attribute -2147463167 () type (identifier \"Struct\" ()) nameattr (identifier \"Value\" ())code ())))";
+constexpr auto SyntaxTree2_2 = "expression(assign_operation(object(type(identifier \"Struct\"())identifier \"r\"())expression(property_operation(object(identifier \"Tester\"())message(identifier \"Value\" ())))))";
 
 constexpr auto S_Declaration1_4 = "class (attribute -2147467263 ()attribute -2147479546 () nameattr (identifier \"Tester\" ()) method (type (identifier \"IntNumber\" ()) nameattr (identifier \"at\" ()) parameter (type (identifier \"IntNumber\" ()) nameattr (identifier \"o\" ())) code ())";
 
-constexpr auto SyntaxTree1_3 = "expression(assign_operation(object(type(identifier \"Struct\" ())identifier \"r\"())expression(value_operation(expression(object(identifier \"Tester\"()))))))";
-constexpr auto SyntaxTree1_4 = "expression(assign_operation(object(type(identifier \"IntNumber\" ())identifier \"r\"())expression(index_operation(expression(object(identifier \"Tester\"())) expression(object(integer \"0\")))))))";
+constexpr auto SyntaxTree2_3 = "expression(assign_operation(object(type(identifier \"Struct\" ())identifier \"r\"())expression(value_operation(expression(object(identifier \"Tester\"()))))))";
+constexpr auto SyntaxTree2_4 = "expression(assign_operation(object(type(identifier \"IntNumber\" ())identifier \"r\"())expression(index_operation(expression(object(identifier \"Tester\"())) expression(object(integer \"0\")))))))";
 
-constexpr auto Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147471359 () nameattr (identifier \"IntNumberReference\" ()) field (attribute -2147475454 () type (identifier \"IntNumber\" ()) nameattr (identifier \"_value\" ())) ))";
-constexpr auto SyntaxTree2 = "expression (assign_operation (object (type (identifier \"IntNumber\" ()) identifier \"n\" ()) expression (object (integer \"2\"))))";
+constexpr auto Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147471359 () nameattr (identifier \"IntNumberReference\" ()) field (attribute -2147471356 () type (identifier \"IntNumber\" ()) nameattr (identifier \"_value\" ())) ))";
+
+constexpr auto SyntaxTree3 = "expression (assign_operation (object (type (identifier \"IntNumber\" ()) identifier \"n\" ()) expression (object (integer \"2\"))))";
 constexpr auto SyntaxTree4 = "expression ( code( expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"r\" ())expression (add_operation (object (identifier \"n\" ())expression (object (integer \"2\" ()))))))))";
+constexpr auto SyntaxTree5 = "expression ( code( expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))expression (add_assign_operation (object (identifier \"n\" ())expression (object (integer \"2\" ()))))))))))";
+constexpr auto SyntaxTree6 = "expression ( code( expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))expression (assign_operation (object (attribute -2147479539 ()identifier \"o\" ())expression (object (identifier \"n\" ()))))))";
 
-constexpr auto Declaration12 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"X\" ())field (type (identifier \"IntNumber\" ())nameattr (identifier \"x\" ()))))";
-constexpr auto SyntaxTree12 = "expression (assign_operation (object (type (identifier \"X\" ())identifier \"x\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"X\" ())))))";
-//constexpr auto Declaration12_2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))             class (attribute -2147479550 ()nameattr (identifier \"X\" ()) field (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ()))     method (   nameattr (identifier \"constructor\" ()) parameter(type(identifier \"IntNumber\" ()) nameattr (identifier \"x\" ()))               code ())     ))";
-constexpr auto Declaration12_2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))             class (attribute -2147479550 ()nameattr (identifier \"X\" ()) field (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ())) method (nameattr (identifier \"constructor\" ()) parameter (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ())) code ())))";
+constexpr auto Declaration8 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( nameattr (identifier \"BoolValue\" ())))";
+constexpr auto SyntaxTree8 = "expression ( code (expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"3\" ()))))code (expression (if_operation (message_operation (object (attribute -2147471343 ()identifier \"BoolValue\" ())expression (expression (equal_operation (object (identifier \"n\" ())expression (object (integer \"3\" ()))))))expression (closure (code (expression (code (expression (assign_operation (object (identifier \"n\" ())expression (object (integer \"1\" ())))))))))))))";
+
+constexpr auto Declaration9 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147471356 () attribute -2147481596 () nameattr (identifier \"_value\" ())dimension (integer \"1\" ()))method (nameattr (identifier \"constructor\" ())parameter (type (identifier \"IntNumber\" ())nameattr (identifier \"n\" ()))returning ())))";
+constexpr auto SyntaxTree9 = "expression ( code (expression (assign_operation (object (type (identifier \"ByteNumber\" ())identifier \"b\" ())expression (object (integer \"3\" ()))))expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (identifier \"b\" ())))))";
+
+constexpr auto Declaration10 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class ( attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"RealNumber\" ()) field (attribute -2147471356 () attribute -2147481598 () nameattr (identifier \"_value\" ())dimension (integer \"8\" ()))method (nameattr (identifier \"constructor\" ())parameter (type (identifier \"IntNumber\" ())nameattr (identifier \"n\" ()))returning ())))";
+constexpr auto SyntaxTree10_1 = "expression (code (expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"2\" ()))))expression (assign_operation (object (type (identifier \"RealNumber\" ())identifier \"r\" ())expression (add_operation (object (identifier \"n\" ())expression (object (real \"3.0\" ())))))))";
+constexpr auto SyntaxTree10_2 = "expression (code (expression (assign_operation (object (type (identifier \"IntNumber\" ())identifier \"n\" ())expression (object (integer \"2\" ()))))expression (assign_operation (object (type (identifier \"RealNumber\" ())identifier \"r\" ())expression (add_operation (object (real \"3.0\" ())expression (object (identifier \"n\" ())))))))";
+
+constexpr auto Declaration12 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"X\" ())field (type (identifier \"IntNumber\" ())nameattr (identifier \"x\" ()))))";
+constexpr auto SyntaxTree12 = "expression (assign_operation (object (type (identifier \"X\" ())identifier \"x\" ())expression (message_operation (object (attribute -2147471342 ()identifier \"X\" ())))))";
+//constexpr auto Declaration12_2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))             class (attribute -2147479550 ()nameattr (identifier \"X\" ()) field (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ()))     method (   nameattr (identifier \"constructor\" ()) parameter(type(identifier \"IntNumber\" ()) nameattr (identifier \"x\" ()))               code ())     ))";
+constexpr auto Declaration12_2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147467263 () attribute -2147475455 () attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr (identifier \"_value\" ())dimension (integer \"4\" ())))             class (attribute -2147479550 ()nameattr (identifier \"X\" ()) field (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ())) method (nameattr (identifier \"constructor\" ()) parameter (type (identifier \"IntNumber\" ()) nameattr (identifier \"x\" ())) code ())))";
                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                           
 constexpr auto SyntaxTree12_2 = "expression (assign_operation (object (type (identifier \"X\" ())identifier \"x\" ())expression (object (integer \"2\" ()))))";
 
-constexpr auto Struct_Declaration1 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
-constexpr auto Struct_Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479508 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
-constexpr auto Struct_Declaration3 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147475454 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147475454 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147475454 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ()))) class (attribute -2147479550 () nameattr (identifier \"Complex\" ())field (type (identifier \"byte\" ())nameattr (identifier \"f1\" ()) ) field (type (identifier \"Aligned\" ())nameattr (identifier \"f2\" ()))))";
+constexpr auto Struct_Declaration1 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147471356 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147471356 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147471356 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
+constexpr auto Struct_Declaration2 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147471356 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147471356 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147471356 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479508 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b3\" ()))field (type (identifier \"long\" ()) nameattr (identifier \"l\" ()))))";
+constexpr auto Struct_Declaration3 = "namespace (class ( nameattr (identifier \"Object\" ())) class (attribute -2147479550 () nameattr (identifier \"IntNumber\" ()) field (attribute -2147471356 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension ( integer \"4\" ()))) class (attribute -2147479550 () nameattr (identifier \"ByteNumber\" ()) field (attribute -2147471356 () attribute -2147481596 () nameattr (identifier \"_value\" ()) dimension (integer \"1\" ())))class (attribute -2147479550 () nameattr 60 (identifier \"ShortNumber\" ()) field (attribute -2147471356 () attribute -2147481597 ()nameattr ( identifier \"_value\" ()) dimension ( integer \"2\" ()))) class (attribute -2147479550 ()nameattr (identifier \"LongNumber\" ())field (attribute -2147471356 () attribute -2147481597 () nameattr ( identifier \"_value\" ()) dimension (integer \"8\" ()))) class (attribute -2147479550 () nameattr (identifier \"Aligned\" ())field (type (identifier \"byte\" ())nameattr (identifier \"b\" ()) ) field (type (identifier \"short\" ())nameattr (identifier \"w\" ())) field (type (identifier \"byte\" ())nameattr (identifier \"b2\" ())) field (type (identifier \"int\" ())nameattr (identifier \"n\" ()))) class (attribute -2147479550 () nameattr (identifier \"Complex\" ())field (type (identifier \"byte\" ())nameattr (identifier \"f1\" ()) ) field (type (identifier \"Aligned\" ())nameattr (identifier \"f2\" ()))))";
 
 constexpr auto S1_VariadicSingleDispatch_1 = "class (attribute -2147479546 () nameattr (identifier \"E\" ()) method (nameattr (identifier \"load\" ()) parameter (attribute -2147475445 () array_type (type (identifier \"B\" ())) nameattr (identifier \"o\" ())) code ()))";
-constexpr auto S1_VariadicSingleDispatch_2 = "class (attribute -2147467263 () nameattr (identifier \"program\" ()) attribute -2147479546 () method 2592 (attribute -2147479540 ()code ( expression (assign_operation (object (attribute -2147479539 () identifier \"b\" ())expression (message_operation (object (attribute -2147479534 () identifier \"B\" ()))))) expression (assign_operation (object (attribute -2147479539 () identifier \"c\" ()) expression (message_operation (object (attribute -2147479534 ()identifier \"C\" ()))))) expression (message_operation (object (identifier \"E\" ())message (identifier \"load\" ())expression (object (identifier \"b\" ()))expression (object (identifier \"c\" ()))))))) class (nameattr (identifier \"C\" ()) method (type (identifier \"B\" ())attribute -2147479535 () returning (expression (message_operation (object (attribute -2147479534 () identifier \"B\" ())))))";
+constexpr auto S1_VariadicSingleDispatch_2 = "class (attribute -2147467263 () nameattr (identifier \"program\" ()) attribute -2147479546 () method 2592 (attribute -2147479540 ()code ( expression (assign_operation (object (attribute -2147479539 () identifier \"b\" ())expression (message_operation (object (attribute -2147471342 () identifier \"B\" ()))))) expression (assign_operation (object (attribute -2147479539 () identifier \"c\" ()) expression (message_operation (object (attribute -2147471342 ()identifier \"C\" ()))))) expression (message_operation (object (identifier \"E\" ())message (identifier \"load\" ())expression (object (identifier \"b\" ()))expression (object (identifier \"c\" ()))))))) class (nameattr (identifier \"C\" ()) method (type (identifier \"B\" ())attribute -2147471343 () returning (expression (message_operation (object (attribute -2147471343 () identifier \"B\" ())))))";
 
 constexpr auto S1_VariadicSingleDispatch_3a = "class (nameattr(identifier \"C\" ())parent (type (identifier \"B\" ())))class (nameattr (identifier \"D\" ())parent (type (identifier \"B\" ())))";
-constexpr auto S1_VariadicSingleDispatch_3b = "class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (message_operation (object (identifier \"E\" ())message (identifier \"load\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"C\" ())))expression (message_operation (object (attribute -2147479534 ()identifier \"D\" ()))))))))";
+constexpr auto S1_VariadicSingleDispatch_3b = "class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (message_operation (object (identifier \"E\" ())message (identifier \"load\" ())expression (message_operation (object (attribute -2147471342 ()identifier \"C\" ())))expression (message_operation (object (attribute -2147471342 ()identifier \"D\" ()))))))))";
 
 constexpr auto S1_DirectCall_1 = "class (nameattr (identifier \"myMethod\" ())attribute -2147479546 ()method (attribute -2147479540 ()parameter (type (identifier \"B\" ())nameattr (identifier \"arg\" ()))code ()))";
-constexpr auto S1_DirectCall_2 = "class (attribute -2147479546 ()nameattr (identifier \"TestHelper\" ())method (nameattr (identifier \"myMethodInvoker\" ())code (expression (message_operation (object (identifier \"myMethod\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"B\" ())))))))method (nameattr (identifier \"myMethod\" ())parameter (type (identifier \"B\" ())nameattr (identifier \"arg\" ()))code ()))";
+constexpr auto S1_DirectCall_2 = "class (attribute -2147479546 ()nameattr (identifier \"TestHelper\" ())method (nameattr (identifier \"myMethodInvoker\" ())code (expression (message_operation (object (identifier \"myMethod\" ())expression (message_operation (object (attribute -2147471342 ()identifier \"B\" ())))))))method (nameattr (identifier \"myMethod\" ())parameter (type (identifier \"B\" ())nameattr (identifier \"arg\" ()))code ()))";
 
 constexpr auto S1_DirectCallWithNil_1 = "class (attribute -2147479546 ()nameattr (identifier \"X\" ())method (nameattr (identifier \"printMe\" ())parameter (type (nullable (identifier \"B\" ()))nameattr (identifier \"arg\" ()))code ()))";
 constexpr auto S1_DirectCallWithNil_2 = "class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (message_operation (object (identifier \"X\" ())message (identifier \"printMe\" ())expression (object (identifier \"nil\" ())))))))";
 
-constexpr auto S1_DirectCall_3 = "class (attribute -2147479546 ()nameattr (identifier \"TestHelper\" ())method (nameattr (identifier \"myMethodInvoker\" ())code (expression (assign_operation (object (attribute -2147479539 ()identifier \"b1\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"B\" ())))))expression (assign_operation (object (attribute -2147479539 ()identifier \"b2\" ())expression (message_operation (object (attribute -2147479534 ()identifier \"B\" ())))))expression (message_operation (object (identifier \"myMethod\" ())expression (object (identifier \"b1\" ()))expression (object (identifier \"b2\" ()))))))method (nameattr (identifier \"myMethod\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"arg\" ()))code ()))";
+constexpr auto S1_DirectCall_3 = "class (attribute -2147479546 ()nameattr (identifier \"TestHelper\" ())method (nameattr (identifier \"myMethodInvoker\" ())code (expression (assign_operation (object (attribute -2147479539 ()identifier \"b1\" ())expression (message_operation (object (attribute -2147471342 ()identifier \"B\" ())))))expression (assign_operation (object (attribute -2147479539 ()identifier \"b2\" ())expression (message_operation (object (attribute -2147471342 ()identifier \"B\" ())))))expression (message_operation (object (identifier \"myMethod\" ())expression (object (identifier \"b1\" ()))expression (object (identifier \"b2\" ()))))))method (nameattr (identifier \"myMethod\" ())parameter (attribute -2147475445 ()array_type (type (identifier \"B\" ()))nameattr (identifier \"arg\" ()))code ()))";
 
 constexpr auto S1_MethodWithSignatureOfObject = "class (attribute -2147479546 ()nameattr (identifier \"Helper\" ())method (nameattr (identifier \"test\" ())parameter (type (identifier \"Object\" ())nameattr (identifier \"arg\" ()))code ())) class (attribute -2147467263 ()nameattr (identifier \"program\" ())attribute -2147479546 ()method (attribute -2147479540 ()code (expression (assign_operation (object (type (identifier \"Object\" ())identifier \"arg\" ())expression (object (integer \"2\" ()))))expression (message_operation (object (identifier \"Helper\" ()) message(identifier \"test\" ())expression (object (identifier \"arg\" ())))))))";
 
@@ -70,19 +83,31 @@ constexpr auto S2_Scenario1 = "class (attribute -2147479546 ()nameattr (identifi
 
 #ifdef _M_IX86
 
-constexpr auto BuildTree1_1 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
-constexpr auto BuildTree1_2 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
-constexpr auto BuildTree1_4 = "byrefmark -8 () local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
-constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -4 ( size 4 ())";
+constexpr auto BuildTree2_1 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
+constexpr auto BuildTree2_2 = "byrefmark -8 () local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
+constexpr auto BuildTree2_4 = "byrefmark -8 () local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -8 () copying -4 (size 4 ())";
+constexpr auto BuildTree3= "int_literal 2 (value 2 ()) copying -4 ( size 4 ())";
 constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -4 (size 4 ())local_address -4 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop -12 (operator_id 4 ())local_address -12 ()copying -8 (size 4 ())";
+constexpr auto BuildTree5 = "int_literal 2 (value 3 ())copying -4 (size 4 ())int_literal 3 (value 2 ())saving_stack ()intop -4 (operator_id 3 ())";
+constexpr auto BuildTree6 = "int_literal 2 (value 3 ())copying -4 (size 4 ())local_address -4 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 2 (size 4 ()) assigning 2 () local 2 () assigning 1 ()";
+constexpr auto BuildTree8 = "int_literal 2 (value 3 ())copying -4 (size 4 ())local_address -4 ()saving_stack ()int_literal 2 (value 3 ())saving_stack 1 ()intcondop 10 (operator_id 10 ()true_const 16 ()false_const 17 ())assigning 1 ()local 1 ()branchop 7 (const_param 16 ()tape (int_literal 3 (value 1 ())copying -4 (size 4 ())))";
+constexpr auto BuildTree9 = "int_literal 3 (value 3 ())copying -4 (size 1 ())local_address -12 ()saving_stack ()local_address -4 ()conversion_op 4 ()local_address -12 ()copying -8 (size 4 ())";
+constexpr auto BuildTree10_1 = "int_literal 3 (value 2 ())copying -4 (size 4 ())local_address -4 ()saving_stack ()real_literal 4 ()saving_stack 1 ()int_real_op -16 (operator_id 4 ())local_address -16 ()copying -8 (size 8 ())";
+constexpr auto BuildTree10_2 = "int_literal 3 (value 2 ())copying -4 (size 4 ())real_literal 4 ()saving_stack ()local_address -4 ()saving_stack 1 ()real_int_op -16 (operator_id 4 ())local_address -16 ()copying -8 (size 8 ())";
 constexpr auto BuildTree12 = "class_reference 3 () direct_call_op 1056 (type 6 ()) inplacemark 4353 () assigning 1 () local 1 () copying -4 (size 4 ())";
 constexpr auto BuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack () class_reference 3 () direct_call_op 3105 (type 6 ()) inplacemark 4354 () copying -4 (size 4 ())";
 
-constexpr auto OptimizedBuildTree1_1 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -4 ()";
-constexpr auto OptimizedBuildTree1_2 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -4 ()";
-constexpr auto OptimizedBuildTree1_4 = "local_address -4 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -4 ()";
-constexpr auto OptimizedBuildTree2 = "saving_int - 4 (size 4 ()value 2 ())";
+constexpr auto OptimizedBuildTree2_1 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -4 ()";
+constexpr auto OptimizedBuildTree2_2 = "local_address -4 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -4 ()";
+constexpr auto OptimizedBuildTree2_4 = "local_address -4 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -4 ()";
+constexpr auto OptimizedBuildTree3 = "saving_int - 4 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -4 (size 4 ()value 3 ())local_address -4 ()copying -8 (size 4 ())addingint -8 (value 2 ())";
+constexpr auto OptimizedBuildTree5 = "saving_int -4 (size 4 ()value 3 ())addingint -4 (value 2 ())";
+constexpr auto OptimizedBuildTree6 = "saving_int -4 (size 4 ()value 3 ()) create_struct (type 2 ()) loading_index -4 () saving_index_to_acc () assigning 2 () local 2 () assigning 1 ()";
+constexpr auto OptimizedBuildTree8 = "saving_int -4 (size 4 ()value 3 ())loading_index -4 ()intconst_branchop 10 (const_param 16 ()tape (saving_int -4 (size 4 ()value 1 ()))value 3 ())";
+constexpr auto OptimizedBuildTree9 = "saving_int -4 (size 1 ()value 3 ())local_address -8 ()saving_stack ()local_address -4 ()conversion_op 4 ()";
+constexpr auto OptimizedBuildTree10_1 = "saving_int -4 (size 4 ()value 2 ())local_address -4 ()saving_stack ()real_literal 4 ()saving_stack 1 ()int_real_op -8 (operator_id 4 ())";
+constexpr auto OptimizedBuildTree10_2 = "saving_int -4 (size 4 ()value 2 ())real_literal 4 ()saving_stack ()local_address -4 ()saving_stack 1 ()real_int_op -8 (operator_id 4 ())";
 constexpr auto OptimizedBuildTree12 = "local_address -4 () saving_stack () direct_call_op 4353 (type 6 ()) assigning 1 () local 1 ()";
 constexpr auto OptimizedBuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack 1 () local_address -4 () saving_stack () direct_call_op 4354 (type 6 ())";
 
@@ -108,19 +133,31 @@ constexpr auto ComplexStructSize = 16;
 
 #elif _M_X64
 
-constexpr auto BuildTree1_1 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
-constexpr auto BuildTree1_2 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
-constexpr auto BuildTree1_4 = "byrefmark -24 () local_address -24 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
-constexpr auto BuildTree2 = "int_literal 2 (value 2 ()) copying -8 ( size 4 ())";
+constexpr auto BuildTree2_1 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
+constexpr auto BuildTree2_2 = "byrefmark -24 () local_address -24 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
+constexpr auto BuildTree2_4 = "byrefmark -24 () local_address -24 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1() class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -24 () copying -8 (size 4 ())";
+constexpr auto BuildTree3 = "int_literal 2 (value 2 ()) copying -8 ( size 4 ())";
 constexpr auto BuildTree4 = "int_literal 2 (value 3 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()int_literal 3 (value 2 ())saving_stack 1 ()intop -40 (operator_id 4 ())local_address -40 ()copying -24 (size 4 ())";
+constexpr auto BuildTree5 = "int_literal 2 (value 3 ())copying -8 (size 4 ())int_literal 3 (value 2 ())saving_stack ()intop -8 (operator_id 3 ())";
+constexpr auto BuildTree6 = "int_literal 2 (value 3 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 2 (size 4 ()) assigning 2 () local 2 () assigning 1 ()";
+constexpr auto BuildTree8 = "int_literal 2 (value 3 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()int_literal 2 (value 3 ())saving_stack 1 ()intcondop 10 (operator_id 10 ()true_const 16 ()false_const 17 ())assigning 1 ()local 1 ()branchop 7 (const_param 16 ()tape (int_literal 3 (value 1 ())copying -8 (size 4 ())))";
+constexpr auto BuildTree9 = "int_literal 3 (value 3 ())copying -8 (size 1 ())local_address -40 ()saving_stack ()local_address -8 ()conversion_op 4 ()local_address -40 ()copying -24 (size 4 ())";
+constexpr auto BuildTree10_1 = "int_literal 3 (value 2 ())copying -8 (size 4 ())local_address -8 ()saving_stack ()real_literal 4 ()saving_stack 1 ()int_real_op -40 (operator_id 4 ())local_address -40 ()copying -24 (size 8 ())";
+constexpr auto BuildTree10_2 = "int_literal 3 (value 2 ())copying -8 (size 4 ())real_literal 4 ()saving_stack ()local_address -8 ()saving_stack 1 ()real_int_op -40 (operator_id 4 ())local_address -40 ()copying -24 (size 8 ())";
 constexpr auto BuildTree12 = "class_reference 3 () direct_call_op 1056 (type 6 ()) inplacemark 4353 () assigning 1 () local 1 () copying -8 (size 8 ())";
 constexpr auto BuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack () class_reference 3 () direct_call_op 3105 (type 6 ()) inplacemark 4354 () copying -8 (size 8 ())";
 
-constexpr auto OptimizedBuildTree1_1 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -8 ()";
-constexpr auto OptimizedBuildTree1_2 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -8 ()";
-constexpr auto OptimizedBuildTree1_4 = "local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -8 ()";
-constexpr auto OptimizedBuildTree2 = "saving_int - 8 (size 4 ()value 2 ())";
+constexpr auto OptimizedBuildTree2_1 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3330 (type 4 ()) local_address -8 ()";
+constexpr auto OptimizedBuildTree2_2 = "local_address -8 () saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 3458 (type 4 ()) local_address -8 ()";
+constexpr auto OptimizedBuildTree2_4 = "local_address -8 () saving_stack 2 () int_literal 2 (value 0 ()) saving_stack 1 () class_reference 4 () saving_stack () argument () direct_call_op 4355 (type 4 ()) local_address -8 ()";
+constexpr auto OptimizedBuildTree3 = "saving_int - 8 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -8 (size 4 ()value 3 ())local_address -8 ()copying -24 (size 4 ())addingint -24 (value 2 ())";
+constexpr auto OptimizedBuildTree5 = "saving_int -8 (size 4 ()value 3 ())addingint -8 (value 2 ())";
+constexpr auto OptimizedBuildTree6 = "saving_int -8 (size 4 ()value 3 ()) create_struct (type 2 ()) loading_index -8 () saving_index_to_acc () assigning 2 () local 2 () assigning 1 ()";
+constexpr auto OptimizedBuildTree8 = "saving_int -8 (size 4 ()value 3 ())loading_index -8 ()intconst_branchop 10 (const_param 16 ()tape (saving_int -8 (size 4 ()value 1 ()))value 3 ())";
+constexpr auto OptimizedBuildTree9 = "saving_int -8 (size 1 ()value 3 ())local_address -24 ()saving_stack ()local_address -8 ()conversion_op 4 ()";
+constexpr auto OptimizedBuildTree10_1 = "saving_int -8 (size 4 ()value 2 ())local_address -8 ()saving_stack ()real_literal 4 ()saving_stack 1 ()int_real_op -24 (operator_id 4 ())";
+constexpr auto OptimizedBuildTree10_2 = "saving_int -8 (size 4 ()value 2 ())real_literal 4 ()saving_stack ()local_address -8 ()saving_stack 1 ()real_int_op -24 (operator_id 4 ())";
 constexpr auto OptimizedBuildTree12 = "local_address -8 () saving_stack () direct_call_op 4353 (type 6 ()) assigning 1 () local 1 ()";
 constexpr auto OptimizedBuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack 1 () local_address -8 () saving_stack () direct_call_op 4354 (type 6 ())";
 
@@ -246,67 +283,67 @@ void StructTest :: runTest()
 
 // --- BTOptimization1_1 ---
 
-void BTOptimization1_1 :: SetUp()
+void BTOptimization2_1 :: SetUp()
 {
    BTOptimization::SetUp();
 
    SyntaxTreeSerializer::load(Declaration1_1, declarationNode);
-   SyntaxTreeSerializer::load(SyntaxTree1_1, exprNode);
+   SyntaxTreeSerializer::load(SyntaxTree2_1, exprNode);
 
-   BuildTreeSerializer::load(BuildTree1_1, buildNode);
-   BuildTreeSerializer::load(OptimizedBuildTree1_1, afterOptimization);
+   BuildTreeSerializer::load(BuildTree2_1, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree2_1, afterOptimization);
 }
 
-// --- BTOptimization1_2 ---
+// --- BTOptimization2_2 ---
 
-void BTOptimization1_2 :: SetUp()
+void BTOptimization2_2 :: SetUp()
 {
    BTOptimization::SetUp();
 
    SyntaxTreeSerializer::load(Declaration1_2, declarationNode);
-   SyntaxTreeSerializer::load(SyntaxTree1_2, exprNode);
+   SyntaxTreeSerializer::load(SyntaxTree2_2, exprNode);
 
-   BuildTreeSerializer::load(BuildTree1_2, buildNode);
-   BuildTreeSerializer::load(OptimizedBuildTree1_2, afterOptimization);
+   BuildTreeSerializer::load(BuildTree2_2, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree2_2, afterOptimization);
 }
 
-// --- BTOptimization1_3 ---
+// --- BTOptimization2_3 ---
 
-void BTOptimization1_3 :: SetUp()
+void BTOptimization2_3 :: SetUp()
 {
    BTOptimization::SetUp();
 
    SyntaxTreeSerializer::load(Declaration1_2, declarationNode);
-   SyntaxTreeSerializer::load(SyntaxTree1_3, exprNode);
+   SyntaxTreeSerializer::load(SyntaxTree2_3, exprNode);
 
-   BuildTreeSerializer::load(BuildTree1_2, buildNode);
-   BuildTreeSerializer::load(OptimizedBuildTree1_2, afterOptimization);
+   BuildTreeSerializer::load(BuildTree2_2, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree2_2, afterOptimization);
 }
 
-// --- BTOptimization1_4 ---
+// --- BTOptimization2_4 ---
 
-void BTOptimization1_4 :: SetUp()
+void BTOptimization2_4 :: SetUp()
 {
    BTOptimization::SetUp();
 
    LoadDeclarationScenario(S_DefaultNamespace_2, S_IntNumber, S_IntRefeference, S_Declaration1_4);
-   SyntaxTreeSerializer::load(SyntaxTree1_4, exprNode);
+   SyntaxTreeSerializer::load(SyntaxTree2_4, exprNode);
 
-   BuildTreeSerializer::load(BuildTree1_4, buildNode);
-   BuildTreeSerializer::load(OptimizedBuildTree1_4, afterOptimization);
+   BuildTreeSerializer::load(BuildTree2_4, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree2_4, afterOptimization);
 }
 
-// --- BTOptimization2 ---
+// --- BTOptimization3 ---
 
-void BTOptimization2 :: SetUp()
+void BTOptimization3 :: SetUp()
 {
    BTOptimization::SetUp();
 
    SyntaxTreeSerializer::load(Declaration2, declarationNode);
-   SyntaxTreeSerializer::load(SyntaxTree2, exprNode);
+   SyntaxTreeSerializer::load(SyntaxTree3, exprNode);
 
-   BuildTreeSerializer::load(BuildTree2, buildNode);
-   BuildTreeSerializer::load(OptimizedBuildTree2, afterOptimization);
+   BuildTreeSerializer::load(BuildTree3, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree3, afterOptimization);
 }
 
 // --- BTOptimization4 ---
@@ -322,6 +359,120 @@ void BTOptimization4 :: SetUp()
    BuildTreeSerializer::load(OptimizedBuildTree4, afterOptimization);
 }
 
+// --- BTOptimization5 ---
+
+void BTOptimization5::SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration2, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree5, exprNode);
+
+   BuildTreeSerializer::load(BuildTree5, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree5, afterOptimization);
+}
+
+// --- BTOptimization6 ---
+
+void BTOptimization6 :: SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration2, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree6, exprNode);
+
+   BuildTreeSerializer::load(BuildTree6, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree6, afterOptimization);
+}
+
+// --- BTOptimization7 ---
+
+void BTOptimization7::SetUp()
+{
+   BTOptimization::SetUp();
+
+   BuildTreeSerializer::load(BuildTree_StructFieldAssigning_1, buildNode);
+   BuildTreeSerializer::load(OptimizedTree_StructFieldAssigning_1, afterOptimization);
+}
+
+// --- BTOptimization8 ---
+
+void BTOptimization8 :: initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages)
+{
+   ExprTest::initModuleScope(moduleScope, declareDefaultMessages);
+
+   moduleScope->buildins.wrapperTemplateReference = 0;
+   moduleScope->branchingInfo.typeRef = 3;
+   moduleScope->branchingInfo.trueRef = 0x10;
+   moduleScope->branchingInfo.falseRef = 0x11;
+}
+
+void BTOptimization8::SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration8, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree8, exprNode);
+
+   BuildTreeSerializer::load(BuildTree8, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree8, afterOptimization);
+}
+
+// --- BTOptimization9 ---
+
+void BTOptimization9 :: initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages)
+{
+   ExprTest::initModuleScope(moduleScope, declareDefaultMessages);
+
+   moduleScope->buildins.wrapperTemplateReference = 0;
+   moduleScope->buildins.uint8Reference = 3;
+}
+
+void BTOptimization9 :: SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration9, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree9, exprNode);
+
+   BuildTreeSerializer::load(BuildTree9, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree9, afterOptimization);
+}
+
+// --- BTOptimization10_1 ---
+
+void BTOptimization10_1::initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages)
+{
+   ExprTest::initModuleScope(moduleScope, declareDefaultMessages);
+
+   moduleScope->buildins.wrapperTemplateReference = 0;
+   moduleScope->buildins.realReference = 3;
+}
+
+void BTOptimization10_1::SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration10, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree10_1, exprNode);
+
+   BuildTreeSerializer::load(BuildTree10_1, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree10_1, afterOptimization);
+}
+
+// --- BTOptimization10_2 ---
+
+void BTOptimization10_2::SetUp()
+{
+   BTOptimization::SetUp();
+
+   SyntaxTreeSerializer::load(Declaration10, declarationNode);
+   SyntaxTreeSerializer::load(SyntaxTree10_2, exprNode);
+
+   BuildTreeSerializer::load(BuildTree10_2, buildNode);
+   BuildTreeSerializer::load(OptimizedBuildTree10_2, afterOptimization);
+}
+
 // --- BTOptimization12 ---
 
 void BTOptimization12 :: SetUp()
@@ -335,7 +486,6 @@ void BTOptimization12 :: SetUp()
    BuildTreeSerializer::load(OptimizedBuildTree12, afterOptimization);
 }
 
-
 void BTOptimization12_2 :: SetUp()
 {
    BTOptimization::SetUp();
@@ -346,6 +496,7 @@ void BTOptimization12_2 :: SetUp()
    BuildTreeSerializer::load(BuildTree12_2, buildNode);
    BuildTreeSerializer::load(OptimizedBuildTree12_2, afterOptimization);
 }
+
 // --- StructAlignment ---
 
 void StructAlignment :: SetUp()
@@ -788,4 +939,21 @@ void IntermediateVar :: SetUp()
    BuildTreeSerializer::load(B_IntermediateVar, controlOutputNode);
 
    targetRef = 3;
+}
+
+// --- VariadicRuntimeSingleDispatch ---
+
+void StructFieldAssigning :: SetUp()
+{
+   MethodScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S1_StructFieldAssigning);
+
+   BuildTreeSerializer::load(BuildTree_StructFieldAssigning_1, controlOutputNode);
+
+   targetRef = 3;
+   intNumberRef = 2;
+
+   trueRef = 10;  // !! virtual references
+   falseRef = 11;
 }

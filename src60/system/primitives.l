@@ -663,6 +663,7 @@ internal singleton UTFOperations
       
       ch += ch2;
       ch += ch3;
+      ch += ch4;
       retVal := ch;            
 
       ^ 4

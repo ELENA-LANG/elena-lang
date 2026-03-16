@@ -39,7 +39,7 @@ extension op
 
 // --- Program ---
 
-public program()
+public Program()
 {
    new string[]{"abracadabra", "seesaw", "grrrrrr", "pop", "up", "a"}.forEach::(s)
    {

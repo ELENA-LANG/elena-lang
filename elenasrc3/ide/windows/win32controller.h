@@ -52,7 +52,7 @@ namespace elena_lang
 
       void stop(int exitCode = 0) override;
 
-      bool write(wchar_t ch) override;
+      bool write(text_c ch) override;
       bool write(const char* line, size_t length) override;
 
       void flush();

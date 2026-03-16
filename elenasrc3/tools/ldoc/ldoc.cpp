@@ -3,7 +3,7 @@
 //
 //		This is a main file containing doc generator code
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "ldoc.h"
@@ -50,6 +50,72 @@ void writeNs(IdentifierString& name, ApiModuleInfo* info)
       }
       else name.append(info->name[i]);
    }
+}
+
+void writeClassIndexHeader(TextFileWriter& writer, const char* prefix, char indexName)
+{
+   writer.writeTextLine("<!DOCTYPE HTML PUBLIC \"-//W3C//DTD HTML 4.0 Frameset//EN\"\"http://www.w3.org/TR/REC-html40/frameset.dtd\">");
+   writer.writeTextLine("<HTML>");
+   writer.writeTextLine("<HEAD>");
+   writer.writeTextLine("<TITLE>");
+   writer.writeText(TITLE);
+   writer.writeTextLine("</TITLE>");
+   writer.writeTextLine("<meta name=\"collection\" content=\"api\">");
+   writer.writeTextLine("<LINK REL =\"stylesheet\" TYPE=\"text/css\" HREF=\"stylesheet.css\" TITLE=\"Style\">");
+   writer.writeTextLine("</HEAD>");
+   writer.writeTextLine("<BODY BGCOLOR=\"white\">");
+
+   writer.writeTextLine("<DIV CLASS=\"topNav\">");
+
+   writer.writeTextLine("<UL CLASS=\"navList\">");
+
+   writer.writeTextLine("<LI>");
+   writer.writeTextLine("<A HREF=\"index.html\">Overview</A>");
+   writer.writeTextLine("</LI>");
+
+   writer.writeTextLine("<LI>");
+   writer.writeTextLine("<A HREF=\"content_indexes.html\">Indexes</A>");
+   writer.writeTextLine("</LI>");
+
+   writer.writeTextLine("<LI><B>");
+   writer.writeText(prefix);
+   writer.writeChar(indexName);
+   writer.writeTextLine("</B></LI>");
+
+   writer.writeTextLine("</UL>");
+
+   writer.writeTextLine("<DIV CLASS=\"aboutLanguage\">");
+   writer.writeTextLine("<STRONG>");
+   writer.writeTextLine(TITLE2);
+   writer.writeTextLine("</STRONG>");
+   writer.writeTextLine("</DIV>");
+   writer.writeTextLine("</DIV>");   
+
+   writer.writeTextLine("<DIV CLASS=\"header\">");
+   writer.writeTextLine("<H1>");
+   writer.writeTextLine(INDEX_TITLE);
+   writer.writeTextLine("</H1>");
+   writer.writeTextLine("</DIV>");
+
+   writer.writeTextLine("<DIV CLASS=\"contentContainer\">");
+   writer.writeTextLine("<UL CLASS=\"blockList\">");
+   writer.writeTextLine("<TABLE CLASS=\"memberSummary\" BORDER=\"0\" CELLPADDING=\"3\" CELLSPACING=\"0\">");
+}
+
+void writeClassIndexFooter(TextFileWriter& writer)
+{
+   writer.writeTextLine("</TABLE>");
+   writer.writeTextLine("</UL>");
+   writer.writeTextLine("</DIV>");
+
+   writer.writeTextLine("<DIV CLASS=\"aboutLanguage\">");
+   writer.writeTextLine("<STRONG>");
+   writer.writeTextLine(TITLE2);
+   writer.writeTextLine("</STRONG>");
+   writer.writeTextLine("</DIV>");
+   writer.writeTextLine("</BODY>");
+   writer.writeTextLine("</HTML>");
+
 }
 
 void writeHeader(TextFileWriter& writer, const char* package, const char* packageLink)
@@ -151,6 +217,36 @@ void writeExtendedSummaryHeader(TextFileWriter& writer)
    writer.writeTextLine("<TH CLASS=\"colLast\" scope=\"col\">Description</TH>");
    writer.writeTextLine("</TR>");
 
+}
+
+void writeClassIndexRowFirstCol(TextFileWriter& writer, bool alt, ustr_t link, ustr_t name)
+{
+   if (alt) {
+      writer.writeTextLine("<TR CLASS=\"altColor\">");
+   }
+   else {
+      writer.writeTextLine("<TR CLASS=\"rowColor\">");
+   }
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+
+   writer.writeText("<A HREF=\"");
+   writer.writeText(link);
+   writer.writeText("\">");
+   writer.writeText(name);   
+   writer.writeTextLine("</A>");
+   writer.writeTextLine("</TD>");
+}
+
+void writeClassIndexRowLastCol(TextFileWriter& writer, ustr_t link, ustr_t name)
+{
+   writer.writeTextLine("<TD CLASS=\"colLast\">");
+   writer.writeText("<A HREF=\"");
+   writer.writeText(link);
+   writer.writeText("\">");
+   writer.writeText(name);
+   writer.writeTextLine("</A>");
+   writer.writeTextLine("</TD>");
+   writer.writeTextLine("</TR>");
 }
 
 void parseNs(IdentifierString& ns, ustr_t root, ustr_t fullName)
@@ -739,6 +835,30 @@ void writeSymbolHeader(TextFileWriter& writer)
 void writeFirstColumn(TextFileWriter& writer, ApiMethodInfo* info)
 {
    writer.writeTextLine("<TD CLASS=\"colFirst\">");
+   writer.writeTextLine("<CODE>");
+   if (info->prefix.length() != 0) {
+      writer.writeText("<i>");
+      writer.writeText(*info->prefix);
+      writer.writeText("</i>");
+      writer.writeText("&nbsp;");
+   }
+   if (info->outputType.length() != 0) {
+      writeType(writer, false, *info->outputType);
+   }
+
+   writer.writeTextLine("</CODE></TD>");
+}
+
+void writeFirstColumnWithAnchor(TextFileWriter& writer, ApiMethodInfo* info, ustr_t anchor)
+{
+   writer.writeTextLine("<TD CLASS=\"colFirst\">");
+
+   if (!emptystr(anchor)) {
+      writer.writeText("<A NAME=\"");
+      writer.writeText(anchor);
+      writer.writeTextLine("\"></A>");
+   }
+
    writer.writeTextLine("<CODE>");
    if (info->prefix.length() != 0) {
       writer.writeText("<i>");
@@ -1761,7 +1881,7 @@ void DocGenerator :: loadNestedModules(ApiModuleInfoList& modules)
       });
 }
 
-void DocGenerator :: generateMethodList(TextFileWriter& bodyWriter, ApiMethodInfoList& list)
+void DocGenerator :: generateMethodList(TextFileWriter& bodyWriter, ApiClassInfo* info, ApiMethodInfoList& list, bool withAnchor)
 {
    bool alt = true;
    for (auto it = list.start(); !it.eof(); ++it) {
@@ -1773,7 +1893,15 @@ void DocGenerator :: generateMethodList(TextFileWriter& bodyWriter, ApiMethodInf
       }
       alt = !alt;
 
-      writeFirstColumn(bodyWriter, *it);
+      if (info && withAnchor) {
+         ustr_t anchor = retrieveMethodLink(info, *it);
+         if (!anchor.empty()) {
+            writeFirstColumnWithAnchor(bodyWriter, *it, anchor);
+         }
+         else writeFirstColumn(bodyWriter, *it);
+      }
+      else writeFirstColumn(bodyWriter, *it);
+      
       writeSecondColumn(bodyWriter, *it);
 
       bodyWriter.writeTextLine("</TR>");
@@ -1799,6 +1927,32 @@ void DocGenerator :: generateFieldList(TextFileWriter& bodyWriter, ApiFieldInfoL
    }
 }
 
+ustr_t DocGenerator :: retrieveMethodLink(ApiClassInfo* classInfo, ApiMethodInfo* info)
+{
+   if (info->name[0] == '#' || info->special)
+      return nullptr;
+
+   IdentifierString link(*classInfo->name, "**");
+   link.append(*info->name);
+   link.append("**");
+   link.appendInt(info->paramNames.count_int());
+
+   int index = classInfo->methodLinks.retrieveIndex<ustr_t>(*link, [](ustr_t arg, ustr_t current)
+      {
+         return current.compare(arg);
+      });
+
+   if (index == -1) {
+      ustr_t anchor = (*link).clone();
+
+      classInfo->methodLinks.add(anchor);
+
+      return anchor;
+   }
+
+   return nullptr;
+}
+
 void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWriter& bodyWriter, ApiClassInfo* classInfo, ustr_t bodyName)
 {
    IdentifierString moduleName;
@@ -1820,43 +1974,43 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
 
    if (classInfo->constructors.count() > 0) {
       writeConstructorHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->constructors);
+      generateMethodList(bodyWriter, classInfo, classInfo->constructors, false);
       writeConstructorFooter(bodyWriter, classInfo, *moduleName);
    }
 
    if (classInfo->staticMethods.count() > 0) {
       writeStaticMethodHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->staticMethods);
+      generateMethodList(bodyWriter, classInfo, classInfo->staticMethods, false);
       writeConstructorFooter(bodyWriter, classInfo, *moduleName);
    }
 
    if (classInfo->staticProperties.count() > 0) {
       writeStaticPropertyHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->staticProperties);
+      generateMethodList(bodyWriter, classInfo, classInfo->staticProperties, false);
       writeConstructorFooter(bodyWriter, classInfo, *moduleName);
    }
 
    if (classInfo->properties.count() > 0) {
       writePropertyHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->properties);
+      generateMethodList(bodyWriter, classInfo, classInfo->properties, false);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 
    if (classInfo->convertors.count() > 0) {
       writeConversionHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->convertors);
+      generateMethodList(bodyWriter, classInfo, classInfo->convertors, false);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 
    if (classInfo->methods.count() > 0) {
       writeClassMethodsHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->methods);
+      generateMethodList(bodyWriter, classInfo, classInfo->methods, false);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 
    if (classInfo->extensions.count() > 0) {
       writeExtensionsHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->extensions);
+      generateMethodList(bodyWriter, classInfo, classInfo->extensions, false);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 
@@ -1889,7 +2043,7 @@ void DocGenerator :: generateExtendedDoc(TextFileWriter& summaryWriter, TextFile
 
    if (classInfo->extensions.count() > 0) {
       writeExtensionsHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo->extensions);
+      generateMethodList(bodyWriter, classInfo, classInfo->extensions, true);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 
@@ -2014,6 +2168,52 @@ void DocGenerator :: generateModuleDoc(ApiModuleInfo* moduleInfo, path_t output)
    writeFooter(bodyWriter, *summaryname);
 }
 
+void DocGenerator :: generateModuleIndexDoc(ApiModuleInfo* moduleInfo, path_t output)
+{
+   _presenter->printLine(LDOC_INDEX_GENERATING, *moduleInfo->name);
+
+   IdentifierString name;
+   writeNs(name, moduleInfo);
+   name.append(".html");
+
+   IdentifierString indexName;
+   writeNs(indexName, moduleInfo);
+   indexName.append("--classes.txt");
+
+   IdentifierString mindexName;
+   writeNs(mindexName, moduleInfo);
+   mindexName.append("--messages.txt");
+
+   PathString outPath(output);
+   if (!output.empty()) {
+      outPath.combine(*indexName);
+   }
+   else outPath.copy(*indexName);
+
+   PathString moutPath(output);
+   if (!output.empty()) {
+      moutPath.combine(*mindexName);
+   }
+   else moutPath.copy(*mindexName);
+
+   TextFileWriter classWriter(outPath.str(), FileEncoding::UTF8, false);
+   TextFileWriter mssgWriter(moutPath.str(), FileEncoding::UTF8, false);
+
+   for (auto class_it = moduleInfo->classes.start(); !class_it.eof(); ++class_it) {
+      ApiClassInfo* classInfo = *class_it;
+
+      classWriter.writeText(*name);
+      classWriter.writeText("#");
+      classWriter.writeTextLine(*classInfo->name);
+
+      for (auto m_it = classInfo->methodLinks.start(); !m_it.eof(); ++m_it) {
+         mssgWriter.writeText(*name);
+         mssgWriter.writeText("#");
+         mssgWriter.writeTextLine(*m_it);
+      }
+   }
+}
+
 void DocGenerator :: loadDescriptions(ref_t descrRef, DescriptionMap& map)
 {
    auto section = _module->mapSection(descrRef | mskStringMapRef, true);
@@ -2086,7 +2286,7 @@ bool DocGenerator :: loadByName(ustr_t name)
    else return false;
 }
 
-void DocGenerator :: generate(path_t output)
+void DocGenerator :: generate(path_t output, bool indexContentMode)
 {
    loadDescriptions();
 
@@ -2095,5 +2295,169 @@ void DocGenerator :: generate(path_t output)
 
    for (auto it = modules.start(); !it.eof(); ++it) {
       generateModuleDoc(*it, output);
+      if (indexContentMode) {
+         generateModuleIndexDoc(*it, output);
+      }
+   }
+}
+
+inline bool checkLetter(ClassIndexInfo* info, int index)
+{
+   return (info->name[0] == ('a' + index) || info->name[0] == ('A' + index) || (index == 0 && info->name[0] == '_'));
+}
+
+void DocGenerator :: generateClassIndexes(path_t output, PathList& list)
+{
+   ClassIndexInfoList classIndexes(nullptr);
+
+   for (auto it = list.start(); !it.eof(); ++it) {
+      TextFileReader classReader((*it).str(), FileEncoding::UTF8, false);
+      if (classReader.isOpen()) {
+         char line[IDENTIFIER_LEN + 1];
+         while (classReader.read(line, IDENTIFIER_LEN)) {
+            while (line[getlength(line) - 1] <= 32)
+               line[getlength(line) - 1] = 0;
+
+            IdentifierString name;
+            size_t index = ustr_t(line).find('#');
+            if (index != NOTFOUND_POS) {
+               ClassIndexInfo* info = new ClassIndexInfo();
+               info->name.copy(line + index + 1);
+
+               size_t dotIndex = ustr_t(line).find('.');
+               if (dotIndex != NOTFOUND_POS) {
+                  info->name.append(" (");
+
+                  info->name.append(line, dotIndex);
+                  info->name.append(")");
+                  info->name.replaceAll('-', '\'', 0);
+               }
+
+               info->link.copy(line);
+
+               classIndexes.add(info);
+            }
+         }
+      }
+   }
+
+   auto it = classIndexes.start();
+   for (int i = 0; i < 26; i++) {
+      IdentifierString name("content_indexes_c_");
+      name.append('a' + i);
+      name.append(".html");
+
+      PathString outPath(output);
+      if (!output.empty()) {
+         outPath.combine(*name);
+      }
+      else outPath.copy(*name);
+
+      TextFileWriter bodyWriter(outPath.str(), FileEncoding::UTF8, false);
+      writeClassIndexHeader(bodyWriter, "Classes - ", 'A' + i);
+
+      if (!it.eof() && checkLetter(*it, i)) {
+         bool odd = false;
+         bool alt = false;
+         while (!it.eof() && checkLetter(*it, i)) {
+            auto info = *it;
+
+            if (!odd) {
+               writeClassIndexRowFirstCol(bodyWriter, alt, *info->link, *info->name);
+               alt = !alt;
+            }
+            else writeClassIndexRowLastCol(bodyWriter, *info->link, *info->name);
+
+            odd = !odd;
+
+            ++it;
+         }
+
+         if (odd)
+            writeClassIndexRowLastCol(bodyWriter, nullptr, nullptr);
+      }
+
+      writeClassIndexFooter(bodyWriter);
+   }
+}
+
+void DocGenerator :: generateMessageIndexes(path_t output, PathList& list)
+{
+   ClassIndexInfoList classIndexes(nullptr);
+
+   for (auto it = list.start(); !it.eof(); ++it) {
+      TextFileReader classReader((*it).str(), FileEncoding::UTF8, false);
+      if (classReader.isOpen()) {
+         char line[IDENTIFIER_LEN + 1];
+         while (classReader.read(line, IDENTIFIER_LEN)) {
+            while (line[getlength(line) - 1] <= 32)
+               line[getlength(line) - 1] = 0;
+
+            IdentifierString name;
+
+            size_t nameIndex = ustr_t(line).findStr("**") + 2;
+            size_t endIndex = ustr_t(line + nameIndex).findStr("**");
+            if (nameIndex != NOTFOUND_POS) {
+               ClassIndexInfo* info = new ClassIndexInfo();
+               info->name.copy(line + nameIndex, endIndex);
+               info->name.append("[");
+               info->name.append(line + nameIndex + endIndex + 2);
+               info->name.append("]");
+
+               size_t dotIndex = ustr_t(line).find('.');
+               size_t index = ustr_t(line).find('#');
+               if (dotIndex != NOTFOUND_POS) {
+                  info->name.append(" (");
+                  info->name.append(line, dotIndex);
+                  info->name.append('\'');
+                  info->name.append(line + index + 1, nameIndex - index - 3);
+                  info->name.append(")");
+                  info->name.replaceAll('-', '\'', 0);
+               }
+               info->link.copy(line);
+
+               classIndexes.add(info);
+            }
+         }
+      }
+   }
+
+   auto it = classIndexes.start();
+   for (int i = 0; i < 26; i++) {
+      IdentifierString name("content_indexes_m_");
+      name.append('a' + i);
+      name.append(".html");
+
+      PathString outPath(output);
+      if (!output.empty()) {
+         outPath.combine(*name);
+      }
+      else outPath.copy(*name);
+
+      TextFileWriter bodyWriter(outPath.str(), FileEncoding::UTF8, false);
+      writeClassIndexHeader(bodyWriter, "Extensions - ", 'A' + i);
+
+      if (!it.eof() && checkLetter(*it, i)) {
+         bool odd = false;
+         bool alt = false;
+         while (!it.eof() && checkLetter(*it, i)) {
+            auto info = *it;
+
+            if (!odd) {
+               writeClassIndexRowFirstCol(bodyWriter, alt, *info->link, *info->name);
+               alt = !alt;
+            }
+            else writeClassIndexRowLastCol(bodyWriter, *info->link, *info->name);
+
+            odd = !odd;
+
+            ++it;
+         }
+
+         if (odd)
+            writeClassIndexRowLastCol(bodyWriter, nullptr, nullptr);
+      }
+
+      writeClassIndexFooter(bodyWriter);
    }
 }

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE View class header File
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef IDEVIEW_H
@@ -30,6 +30,8 @@ struct IDEScheme
    int               toolBarControl;
    int               editorContextMenu;
    int               textControlId;
+   int               callStackControl;
+   int               tabContextMenu;
 
    Map<int, text_t>  captions;
 
@@ -47,6 +49,8 @@ struct IDEScheme
       toolBarControl(-1),
       editorContextMenu(-1),
       textControlId(-1),
+      callStackControl(-1),
+      tabContextMenu(-1),
       captions(nullptr)
    {
    }
@@ -71,6 +75,7 @@ public:
    bool                 rememberLastPath;
    bool                 rememberLastProject;
    bool                 autoSave;
+   bool                 guestMode;
 
    SourceViewModel* viewModel() { return &sourceViewModel; }
 
@@ -85,6 +90,7 @@ public:
       rememberLastPath = false;
       rememberLastProject = false;
       autoSave = false;
+      guestMode = false;
    }
 };
 

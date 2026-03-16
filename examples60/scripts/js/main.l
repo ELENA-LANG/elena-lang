@@ -18,7 +18,7 @@ import extensions'scripting;
 //    }
 //}
 
-public stat_program()
+public Stat_program()
 {
    forward jsprogram.main()
 }

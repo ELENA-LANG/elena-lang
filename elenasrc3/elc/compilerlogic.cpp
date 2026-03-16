@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler logic class implementation.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //                                             (C)2024, by ELENA-LANG Org
 //---------------------------------------------------------------------------
 
@@ -977,6 +977,9 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
          attrs.typeInfo = { V_AUTO };
          attrs.isAuto = true;
          break;
+      case V_IGNOREDUPLICATE:
+         attrs.ignoreDuplicates = true;
+         break;
       default:
          return false;
    }
@@ -1185,6 +1188,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_HEAPALLOCATED:
          attrs |= ExpressionAttribute::HeapAllocated;
          return true;
+      case V_CONST:
+         attrs |= ExpressionAttribute::ReadOnly;
+         return true;
       default:
          return false;
    }
@@ -1300,16 +1306,16 @@ static inline bool existsNormalMethod(ModuleScopeBase& scope, ClassInfo& info, m
 void CompilerLogic :: validateClassDeclaration(ModuleScopeBase& scope, ErrorProcessorBase* errorProcessor, ClassInfo& info,
    bool& emptyStructure, bool& dispatcherNotAllowed, bool& withAbstractMethods, mssg_t& mixedUpVariadicMessage)
 {
-   bool abstractOne = isAbstract(info);
-   bool withVariadic = withVariadicsMethods(info);
+   bool abstractOne = isAbstract(info.header.flags);
+   bool withVariadic = withVariadicsMethods(info.header.flags);
 
    // check abstract methods
    if (!abstractOne || withVariadic) {
       for (auto it = info.methods.start(); !it.eof(); ++it) {
          auto mssg = it.key();
-         auto methodInfo = *it;
+         //auto methodInfo = *it;
 
-         if (!abstractOne && test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
+         if (!abstractOne && test(/*methodInfo*/(*it).hints, (ref_t)MethodHint::Abstract)) {
             IdentifierString messageName;
             ByteCodeUtil::resolveMessageName(messageName, scope.module, mssg);
 
@@ -1345,7 +1351,7 @@ bool CompilerLogic :: validateAutoType(ModuleScopeBase& scope, TypeInfo& typeInf
    if (!defineClassInfo(scope, info, typeInfo.typeRef))
       return false;
 
-   while (isRole(info)) {
+   while (isRole(info.header.flags)) {
       typeInfo = { info.header.parentRef };
 
       if (!defineClassInfo(scope, info, typeInfo.typeRef))
@@ -1375,62 +1381,54 @@ ref_t CompilerLogic :: defineByRefSignature(ModuleScopeBase& scope, ref_t signRe
    return scope.module->mapSignature(targetSignatures, len, false);
 }
 
-bool CompilerLogic :: isRole(ClassInfo& info)
+bool CompilerLogic :: isRole(ref_t flags)
 {
-   return test(info.header.flags, elRole);
+   return test(flags, elRole);
 }
 
-bool CompilerLogic :: isAbstract(ClassInfo& info)
+bool CompilerLogic :: isAbstract(ref_t flags)
 {
-   return test(info.header.flags, elAbstract);
+   return test(flags, elAbstract);
 }
 
-bool CompilerLogic :: withVariadicsMethods(ClassInfo& info)
+bool CompilerLogic :: withVariadicsMethods(ref_t flags)
 {
-   return test(info.header.flags, elWithVariadics);
+   return test(flags, elWithVariadics);
 }
 
-bool CompilerLogic :: isReadOnly(ClassInfo& info)
+bool CompilerLogic :: isReadOnly(ref_t flags)
 {
-   return test(info.header.flags, elReadOnlyRole);
+   return test(flags, elReadOnlyRole);
 }
 
 bool CompilerLogic :: isEmbeddableArray(ModuleScopeBase& scope, ref_t reference)
 {
-   if (scope.cachedEmbeddableArrays.exist(reference))
-      return scope.cachedEmbeddableArrays.get(reference);
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
-      auto retVal = isEmbeddableArray(info);
-
-	   scope.cachedEmbeddableArrays.add(reference, retVal);
-
-	   return retVal;
-   }
-
-   return false;
+   return isEmbeddableArray(getFlags(scope, reference));
 }
 
-bool CompilerLogic :: isDynamic(ClassInfo& info)
+bool CompilerLogic :: isReadOnly(ModuleScopeBase& scope, ref_t reference)
 {
-   return test(info.header.flags, elDynamicRole | elWrapper);
+   return isReadOnly(getFlags(scope, reference));
 }
 
-bool CompilerLogic :: isEmbeddableArray(ClassInfo& info)
+bool CompilerLogic :: isDynamic(ref_t flags)
 {
-   return test(info.header.flags, elDynamicRole | elStructureRole | elWrapper);
+   return test(flags, elDynamicRole | elWrapper);
 }
 
-bool CompilerLogic :: isEmbeddableStruct(ClassInfo& info)
+bool CompilerLogic :: isEmbeddableArray(ref_t flags)
 {
-   return test(info.header.flags, elStructureRole)
-      && !test(info.header.flags, elDynamicRole);
+   return test(flags, elDynamicRole | elStructureRole | elWrapper);
 }
 
-bool CompilerLogic :: isNumericData(ClassInfo& info)
+bool CompilerLogic :: isEmbeddableStruct(ref_t flags)
 {
-   int dataMask = info.header.flags & elDebugMask;
+   return test(flags, elStructureRole) && !test(flags, elDynamicRole);
+}
+
+bool CompilerLogic :: isNumericData(ref_t flags)
+{
+   int dataMask = flags & elDebugMask;
 
    return dataMask == elDebugDWORD || dataMask == elDebugQWORD || dataMask == elDebugFLOAT64;
 }
@@ -1440,52 +1438,45 @@ bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
    if (typeInfo.nillable)
       return false;
 
-   if (scope.cachedEmbeddables.exist(typeInfo.typeRef))
-      return scope.cachedEmbeddables.get(typeInfo.typeRef);
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
-      auto retVal = isEmbeddable(info);
-
-      scope.cachedEmbeddables.add(typeInfo.typeRef, retVal);
-
-      return retVal;
-   }
-
-   return false;
+   return isEmbeddable(getFlags(scope, typeInfo.typeRef));
 }
 
-bool CompilerLogic :: isEmbeddable(ClassInfo& info)
+bool CompilerLogic :: isEmbeddable(ref_t flags)
 {
-   if (test(info.header.flags, elDynamicRole)) {
-      return isEmbeddableArray(info);
+   if (test(flags, elDynamicRole)) {
+      return isEmbeddableArray(flags);
    }
-   else return isEmbeddableStruct(info);
+   else return isEmbeddableStruct(flags);
 }
 
-bool CompilerLogic :: isEmbeddableAndReadOnly(ClassInfo& info)
+bool CompilerLogic :: isEmbeddableAndReadOnly(ref_t flags)
 {
-   return isReadOnly(info) && isEmbeddable(info);
+   return isReadOnly(flags) && isEmbeddable(flags);
 }
 
-bool CompilerLogic::isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo)
+ref_t CompilerLogic :: getFlags(ModuleScopeBase& scope, ref_t reference)
+{
+   ref_t flags = 0;
+   if (!scope.cachedFlags.exist(reference)) {
+      ClassInfo info;
+      if (defineClassInfo(scope, info, reference, true)) {
+         flags = info.header.flags;
+
+         scope.cachedFlags.add(reference, flags);
+
+         return flags;
+      }
+      else return 0;
+   }
+   else return scope.cachedFlags.get(reference);
+}
+
+bool CompilerLogic :: isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo)
 {
    if (typeInfo.nillable)
       return false;
 
-   if (scope.cachedEmbeddableReadonlys.exist(typeInfo.typeRef))
-      return scope.cachedEmbeddableReadonlys.get(typeInfo.typeRef);
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
-      auto retVal = isEmbeddableAndReadOnly(info);
-
-      scope.cachedEmbeddableReadonlys.add(typeInfo.typeRef, retVal);
-
-      return retVal;
-   }
-
-   return false;
+   return isEmbeddableAndReadOnly(getFlags(scope, typeInfo.typeRef));
 }
 
 bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo)
@@ -1493,89 +1484,51 @@ bool CompilerLogic :: isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeIn
    if (typeInfo.nillable)
       return false;
 
-   if (scope.cachedEmbeddableStructs.exist(typeInfo.typeRef))
-	  return scope.cachedEmbeddableStructs.get(typeInfo.typeRef);
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, typeInfo.typeRef, true)) {
-      auto retVal = isEmbeddableStruct(info);
-
-      scope.cachedEmbeddableStructs.add(typeInfo.typeRef, retVal);
-
-      return retVal;
-   }
-
-   return false;
+   return isEmbeddableStruct(getFlags(scope, typeInfo.typeRef));
 }
 
-bool CompilerLogic :: isStacksafeArg(ClassInfo& info)
+bool CompilerLogic :: isStacksafeArg(ref_t flags)
 {
-   if (test(info.header.flags, elDynamicRole)) {
-      return isEmbeddableArray(info);
+   if (test(flags, elDynamicRole)) {
+      return isEmbeddableArray(flags);
    }
-   else return isEmbeddable(info);
+   else return isEmbeddable(flags);
 }
 
 bool CompilerLogic :: isStacksafeArg(ModuleScopeBase& scope, ref_t reference)
 {
-   if (scope.cachedStacksafeArgs.exist(reference))
-	  return scope.cachedStacksafeArgs.get(reference);
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
-      auto retVal = isStacksafeArg(info);
-
-	  scope.cachedStacksafeArgs.add(reference, retVal);
-
-      return retVal;
-   }
-
-   return false;
+   return isStacksafeArg(getFlags(scope, reference));
 }
 
 bool CompilerLogic :: isWrapper(ModuleScopeBase& scope, ref_t reference)
 {
-   if (scope.cachedWrappers.exist(reference))
-	   return scope.cachedWrappers.get(reference);
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
-       auto retVal = isWrapper(info);
-
-       scope.cachedWrappers.add(reference, retVal);
-
-       return retVal;
-   }
-
-   return false;
+   return isWrapper(getFlags(scope, reference));
 }
 
-bool CompilerLogic :: isWrapper(ClassInfo& info)
+bool CompilerLogic :: isWrapper(ref_t flags)
 {
-   return test(info.header.flags, elWrapper)
-      && !test(info.header.flags, elDynamicRole);
+   return test(flags, elWrapper)
+      && !test(flags, elDynamicRole);
 }
 
 bool CompilerLogic ::isClosedClass(ModuleScopeBase& scope, ref_t reference)
 {
-   if (scope.cachedClosed.exist(reference))
-      return scope.cachedClosed.get(reference);
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, reference, true)) {
-      auto retVal = isClosedClass(info);
-
-      scope.cachedClosed.add(reference, retVal);
-
-      return retVal;
-   }
-
-   return false;
+   return isClosedClass(getFlags(scope, reference));
 }
 
-bool CompilerLogic :: isClosedClass(ClassInfo& info)
+bool CompilerLogic :: isClosedClass(ref_t flags)
 {
-   return test(info.header.flags, elClosed);
+   return test(flags, elClosed);
+}
+
+bool CompilerLogic :: isSealedClass(ModuleScopeBase& scope, ref_t reference)
+{
+   return isSealedClass(getFlags(scope, reference));
+}
+
+bool CompilerLogic :: isSealedClass(ref_t flags)
+{
+   return test(flags, elSealed);
 }
 
 bool CompilerLogic :: isMultiMethod(/*ClassInfo& info, */MethodInfo& methodInfo)
@@ -1625,7 +1578,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
       }
    }
 
-   if (isEmbeddableArray(info)) {
+   if (isEmbeddableArray(info.header.flags)) {
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32ARRAY:
@@ -1638,7 +1591,7 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             break;
       }
    }
-   else if (isWrapper(info)) {
+   else if (isWrapper(info.header.flags)) {
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32:
@@ -1679,9 +1632,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
       // verify if it is a weak interface (an interface without output type specified)
       bool isWeakInterface = true;
       for (auto it = info.methods.start(); !it.eof(); ++it) {
-         auto methodInfo = *it;
+         ref_t outputRef = (*it).outputRef;
 
-         if (!methodInfo.inherited && methodInfo.outputRef && methodInfo.outputRef != classRef) {
+         if (!(*it).inherited && outputRef && outputRef != classRef) {
             isWeakInterface = false;
             break;
          }
@@ -1962,13 +1915,13 @@ SizeInfo CompilerLogic :: defineStructSize(ClassInfo& info)
 {
    SizeInfo sizeInfo = { 0, test(info.header.flags, elReadOnlyRole), false };
 
-   if (isEmbeddableStruct(info)) {
+   if (isEmbeddableStruct(info.header.flags)) {
       sizeInfo.size = info.size;
-      sizeInfo.numeric = isNumericData(info);
+      sizeInfo.numeric = isNumericData(info.header.flags);
 
       return sizeInfo;
    }
-   else if (isEmbeddableArray(info)) {
+   else if (isEmbeddableArray(info.header.flags)) {
       sizeInfo.size = info.size;
 
       return sizeInfo;
@@ -2004,7 +1957,7 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
    if (!defineClassInfo(scope, info, elementRef, true))
       return 0;
 
-   if (isEmbeddableStruct(info) && structOne) {
+   if (isEmbeddableStruct(info.header.flags) && structOne) {
       if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
          return V_INT8ARRAY;
 
@@ -2299,7 +2252,7 @@ mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMe
 
    ClassInfo info;
    if (defineClassInfo(scope, info, targetRef)) {
-      if (isStacksafeArg(info))
+      if (isStacksafeArg(info.header.flags))
          stackSafeAttr |= 1;
 
       // check if it is non public message
@@ -2431,6 +2384,12 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
          return { ConversionResult::NativeConversion, INT32_FLOAT64_CONVERSION, 1 };
       }
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT8 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT8 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
+      }
    }
 
    // COMPILE MAGIC : trying to typecast primitive array
@@ -2512,6 +2471,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
       result.nillableArgs = methodInfo.nillableArgs;
+      result.checkNillableArgs = test(methodInfo.nillableArgs, EnforcedNillableArgs);
       result.byRefHandler = methodInfo.byRefHandler;
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
@@ -2612,9 +2572,7 @@ bool CompilerLogic :: isNeedVerification(ClassInfo& info, VirtualMethodList& imp
 {
    // HOTFIX : Make sure the multi-method methods have the same output type as generic one
    for (auto it = implicitMultimethods.start(); !it.eof(); it++) {
-      auto vm = *it;
-
-      mssg_t message = vm.message;
+      mssg_t message = (*it).message;
 
       auto methodInfo = info.methods.get(message);
       ref_t outputRef = methodInfo.outputRef;
@@ -2662,8 +2620,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
    // sort the overloadlist
    CachedList<mssg_t, 0x20> list;
    for (auto m_it = methods.start(); !m_it.eof(); ++m_it) {
-      auto methodInfo = *m_it;
-      if (methodInfo.multiMethod == message) {
+      if ((*m_it).multiMethod == message) {
          bool added = false;
          mssg_t omsg = m_it.key();
          pos_t len = list.count_pos();
@@ -2755,10 +2712,9 @@ void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_
    scope.loadClassInfo(info, parentRef);
    for (auto it = info.methods.start(); !it.eof(); ++it) {
       auto mssg = it.key();
-      auto methodInfo = *it;
 
-      if (test(methodInfo.hints, (ref_t)MethodHint::Abstract)) {
-         methods.add({ mssg, methodInfo.outputRef });
+      if (test((*it).hints, (ref_t)MethodHint::Abstract)) {
+         methods.add({ mssg, (*it).outputRef });
       }
    }
 }
@@ -3102,7 +3058,7 @@ ref_t CompilerLogic :: retrievePrimitiveType(ModuleScopeBase& scope, ref_t refer
    if (!scope.loadClassInfo(info, reference))
       return 0;
 
-   if (isWrapper(info)) {
+   if (isWrapper(info.header.flags)) {
       auto inner = *info.fields.start();
 
       if (isPrimitiveRef(inner.typeInfo.typeRef))
@@ -3249,4 +3205,26 @@ bool CompilerLogic :: validateDispatcherType(ClassInfo& classInfo)
    }
 
    return false;
+}
+
+
+ref_t CompilerLogic :: resolveStaticMethodOrigin(ModuleScopeBase& scope, ref_t targetRef, mssg_t staticMethod)
+{
+   ref_t originRef = targetRef;
+
+   while (originRef) {
+      ClassInfo info;
+      if (!defineClassInfo(scope, info, originRef))
+         return 0;
+
+      if (!info.methods.exist(staticMethod))
+         return 0;
+
+      if (!info.methods.get(staticMethod).inherited)
+         return originRef;
+
+      originRef = info.header.parentRef;
+   }
+
+   return 0;
 }

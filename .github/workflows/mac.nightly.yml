@@ -16,13 +16,13 @@ jobs:
 
     strategy:
       matrix:
-        os: [macos-13]
+        os: [macos-15-intel]
         platform: [amd64]
  
     steps:
     - uses: actions/checkout@v4
       with:
-        ref: iteration42
+        ref: iteration46
 
     - name: Set version
       run: |
@@ -35,4 +35,25 @@ jobs:
         brew install lld
 
     - name: Build
-      run: make all_mac_${{ matrix.platform }}
+      run: |
+        make all_mac_${{ matrix.platform }}
+        cd scripts/mac.${{ matrix.platform }}
+        ./local_build_package_amd64.script
+        ./local_create_package.script
+          
+    - name: Delete old release assets
+      uses: mknejp/delete-release-assets@v1
+      with:
+        token: ${{ github.token }}
+        tag: nightly
+        assets: '*amd64-mac.tar.xz'
+        fail-if-no-assets : false
+
+    - name: Upload Release
+      uses: softprops/action-gh-release@v2
+      with:
+        tag_name: nightly
+        draft: false
+        prerelease: true
+        files: |
+          ./build/*.tar.xz

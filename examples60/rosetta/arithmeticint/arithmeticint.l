@@ -6,7 +6,7 @@ import extensions;
 
 // --- Program ---
 
-public program()
+public Program()
 {
     var a := Console.loadLineTo(new Integer());
     var b := Console.loadLineTo(new Integer());

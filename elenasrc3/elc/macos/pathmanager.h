@@ -1,0 +1,28 @@
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA Compiler
+//
+//		This header contains declaration of PathHelper
+//              used to retrieve data / config paths
+//                                              (C)2026, by Aleksey Rakov
+//---------------------------------------------------------------------------
+
+#ifndef ELC_PATHMANAGER_H
+#define ELC_PATHMANAGER_H
+
+namespace elena_lang
+{
+   // --- MacOSPathHelper ---
+   class MacOSPathHelper
+   {
+      typedef Map<path_t, path_t, allocUStr, freeUStr, freepath> PathMap;
+
+      static PathMap* pathCache;
+
+   public:
+      static path_t retrievePath(const char* filesToLookFor[], unsigned int listLength, path_t defaultPath);
+
+      static path_t retrieveFilePath(path_t defaultPath);
+   };
+}
+
+#endif

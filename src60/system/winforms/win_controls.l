@@ -28,7 +28,7 @@ public sealed const struct WindowHandle
       handle hinstance := instance.Handle;
       handle h := UnsafePointer.Default;
       handle hParent := parent.Handle;
-      extern
+      excluded
       {
          h := extern USER32.CreateWindowExW(
             dwExStyle,
@@ -137,7 +137,7 @@ public sealed const struct WindowHandle
    {
       handle copy := _handle;
         
-      extern
+      excluded
       {
          extern USER32.InvalidateRect(copy, 0, 1);
          extern USER32.UpdateWindow(copy)

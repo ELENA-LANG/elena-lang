@@ -194,7 +194,7 @@ public class MainWindow : SDIDialog
       // Exit
       BtmExit.onClick := (args)
       {
-         forward program.stop()
+         forward Program.stop()
       };
             
       // About

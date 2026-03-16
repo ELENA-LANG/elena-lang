@@ -65,7 +65,7 @@ class Controller
         {
             _client.stop();
     
-            forward program.stop()
+            forward Program.stop()
         }
         else
         {

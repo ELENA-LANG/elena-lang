@@ -14,6 +14,11 @@
         <output>../../lib60_64</output>
      </project>
   </platform>
+  <platform key="MacOS_AMD64">
+     <project>
+        <output>../../lib60_64</output>
+     </project>
+  </platform>
   <platform key="Linux_PPC64le">
      <project>
         <output>../../lib60_64</output>
@@ -45,7 +50,7 @@
   </project>
   <manifest>
      <name>ELENA Cellular Library</name>
-     <version>6.8.0</version>
+     <version>7.0.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>

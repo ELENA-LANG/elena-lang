@@ -9,11 +9,11 @@
 #ifndef VMCOMMON_H
 #define VMCOMMON_H
 
-#define ELENAVM_REVISION_NUMBER        0x000E
+#define ELENAVM_REVISION_NUMBER        0x000F
 
 namespace elena_lang
 {
-   constexpr auto ELENAVM_GREETING = "ELENA VM %d.%d.%d (%s) (C)2022-2025 by Aleksey Rakov, ELENA-LANG Org";
+   constexpr auto ELENAVM_GREETING = "ELENA VM %d.%d.%d (%s) (C)2022-2026 by Aleksey Rakov, ELENA-LANG Org";
 
    constexpr auto ELENAVM_INITIALIZING = "Initializing...";
 }

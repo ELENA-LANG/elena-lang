@@ -1,10 +1,12 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      Linux-GTK+ program entry
-//                                             (C)2024, by Aleksey Rakov
+//                                             (C)2024-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "gtklinux/gtkcommon.h"
+#include "gtklinux/lnxcontroller.h"
+#include "gtklinux/lnxdebugadapter.h"
 #include "factory.h"
 
 using namespace elena_lang;
@@ -48,6 +50,18 @@ public:
    }
 };
 
+bool compareFileModifiedTime(path_t sour, path_t dest)
+{
+//   DateTime sourceDT = DateTime::getFileTime(sour);
+//   DateTime moduleDT = DateTime::getFileTime(dest);
+
+   return /*sourceDT > moduleDT*/false;
+}
+
+typedef LnxDebugAdapter    DebugProcess;
+
+LinuxProcess      outputProcess;
+
 int main(int argc, char* argv[])
 {
    PathHelper    pathHelper;
@@ -56,8 +70,9 @@ int main(int argc, char* argv[])
    TextViewSettings textViewSettings = { EOLMode::LF, false, 3 };
 
    IDEModel      ideModel(textViewSettings);
-   IDEController ideController(/*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr, /*&debugProcess*/nullptr, &ideModel,
-                        CURRENT_PLATFORM, &pathHelper, /*compareFileModifiedTime*/nullptr);
+   DebugProcess  debugProcess;
+   IDEController ideController(&outputProcess, /*&vmConsoleProcess*/nullptr, &debugProcess, &ideModel,
+                        CURRENT_PLATFORM, &pathHelper, compareFileModifiedTime);
 
    // NOTE : it must be initialized before factory / controller
    IDEFactory::initPathSettings(&ideModel);
@@ -73,7 +88,7 @@ int main(int argc, char* argv[])
    IDEFactory    factory(argc, argv, &ideModel, &ideController, guiSettings);
 
    GUIApp* app = factory.createApp();
-   GUIControlBase* ideWindow = factory.createMainWindow(app, /*&outputProcess*/nullptr, /*&vmConsoleProcess*/nullptr);
+   GUIControlBase* ideWindow = factory.createMainWindow(app, &outputProcess, /*&vmConsoleProcess*/nullptr);
 
    ideController.setNotifier(app);
 

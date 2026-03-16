@@ -3,7 +3,7 @@
 //
 //		Asm2BinX main file
 //
-//                                              (C)2021-2025, by Aleksey Rakov
+//                                              (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include <cstdarg>
@@ -40,7 +40,7 @@ void printLine(ustr_t mssg, path_t path)
    print(wmssg.str(), path.str());
 }
 
-#elif defined(__unix__)
+#elif defined(__unix__) || defined(__MACH__)
 
 void print(const char* msg, ...)
 {
@@ -64,6 +64,10 @@ void printLine(ustr_t mssg, path_t path)
 #ifdef __FreeBSD__
 
 constexpr auto targetPlatform = ASM_FREEBSD_TARGET;
+
+#elif defined(__MACH__)
+
+constexpr auto targetPlatform = ASM_MAC_TARGET_MODE;
 
 #elif __unix__
 
@@ -178,6 +182,9 @@ int main(int argc, char* argv[])
          }
          else if (arg.compare(ASM_FREEBSD_TARGET_MODE)) {
             platform.copy(ASM_FREEBSD_TARGET);
+         }
+         else if (arg.compare(ASM_MAC_TARGET_MODE)) {
+            platform.copy(ASM_MAC_TARGET);
          }
          else if (arg.compare(BC_32_MODE)) {
             mode = CompileMode::bc32;

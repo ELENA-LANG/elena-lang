@@ -46,7 +46,7 @@ playGame(Model model)
 //    playGame(Model newLoaded(LoadedSet load(testSet), gameOfLifeRuleSet)).
 //]
 
-public program()
+public Program()
 {
     playGame(Model.newRandomset(gameOfLifeRuleSet))
 }

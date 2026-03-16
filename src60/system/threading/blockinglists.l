@@ -7,7 +7,7 @@ public sealed class BlockingQueue<T>
 
    constructor()
    {
-      _semaphore := Semaphore.create(0, IntNumber.MaxValue);
+      _semaphore := Semaphore.create(0);
    }
 
    push(T value)

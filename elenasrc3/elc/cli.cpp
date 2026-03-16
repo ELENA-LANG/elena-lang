@@ -3,7 +3,7 @@
 //
 //		This file contains the compiler interface code implementation
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -72,7 +72,6 @@
 
 #if defined(__x86_64__) || defined(_M_X64)
 
-
 #include "macos/macholinker64.h"
 #include "macos/machoimage.h"
 
@@ -82,9 +81,6 @@
 #endif
 
 #endif
-
-
-
 
 //#define TIME_RECORDING 1
 
@@ -199,7 +195,7 @@ LinkerBase* CLIHelper :: createLinker(PlatformType platform, Project* project, E
 
 #if defined(__x86_64__) || defined (_M_X64)
 
-   case PlatformType::FreeBSD_x86_64:
+   case PlatformType::MacOS_x86_64:
       return new MachOAmd64Linker(errorProcessor, &MachOAmd64ImageFormatter::getInstance(project));
 
 #elif defined(__aarch64__)
@@ -262,6 +258,8 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
       case 'm':
          project.addBoolSetting(ProjectOption::MappingOutputMode, true);
          break;
+      case 'n':
+         break;
       case 'o':
          if (arg[2] == '0') {
             project.addIntSetting(ProjectOption::OptimizationMode, optNone);
@@ -312,6 +310,9 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
          }
          else if (arg[2] == 'e') {
             project.addBoolSetting(ProjectOption::EvaluateOp, arg[3] != '-');
+         }
+         else if (arg[2] == 'h') {
+            project.addBoolSetting(ProjectOption::CheckHiddenDeclaration, arg[3] != '-');
          }
          else if (arg[2] == 'j') {
             project.addBoolSetting(ProjectOption::WithJumpAlignment, arg[3] != '-');
@@ -438,8 +439,17 @@ int CLIHelper :: compileProjectCollection(int argc, path_c** argv, path_t path, 
    int retVal = 0;
    ProjectCollection collection;
 
-   if (!collection.load(platform, path)) {
+   // load name attribute
+   ustr_t nameAttr = nullptr;
+   if (argv[1][0] == '-' && argv[1][1] == 'n') {
+      IdentifierString argStr(argv[1] + 2);
+
+      nameAttr = (*argStr).clone();
+   }
+
+   if (!collection.load(platform, path, nameAttr)) {
       presenter.printPath(presenter.getMessage(wrnInvalidConfig), path);
+      freeUStr(nameAttr);
 
       return EXIT_FAILURE;
    }
@@ -457,12 +467,15 @@ int CLIHelper :: compileProjectCollection(int argc, path_c** argv, path_t path, 
 
       int result = compileSingleProject(argc, argv, appPath, errorProcessor, spec->basePath, spec->profile);
       if (result == EXIT_FAILURE) {
-         return EXIT_FAILURE;
+         retVal = EXIT_FAILURE;
+         break;
       }
       else if (result == WARNING_RET_CODE) {
          retVal = WARNING_RET_CODE;
       }
    }
+
+   freeUStr(nameAttr);
 
    return retVal;
 }

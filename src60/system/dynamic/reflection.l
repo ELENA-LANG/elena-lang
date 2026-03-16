@@ -30,7 +30,7 @@ public extension classROp
       for(int i := 0; i < retVal; i += 1)
       {
          int id := tmp_array[i] & 0C0h;
-         if (id == 0C0h)
+         if (id == 080h)
          {
             int count := tmp_array[i] & 01Fh;
             if (count == 1) {

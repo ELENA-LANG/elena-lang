@@ -6,7 +6,7 @@ import extensions;
 
 // --- Program ---
 
-public program()
+public Program()
 {
     // 1. Create
     auto map := new Map<string, string>();

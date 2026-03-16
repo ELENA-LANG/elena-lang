@@ -3,7 +3,7 @@
 //
 //		This file contains the language common constants
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef LANGCOMMON_H
@@ -16,13 +16,15 @@ namespace elena_lang
    constexpr bool DEFAULT_EVALUATE_OP              = true;
    constexpr bool DEFAULT_STRICT_TYPE_ENFORCING    = false;
    constexpr bool DEFAULT_NULLABLE_TYPE_WARNING    = true;
+   constexpr bool DEFAULT_CHECK_HIDDEN_DECLARATION = true;
 
    enum MetaHint : int
    {
-      mhNone           = 0,
-      mhStandart       = 1,
-      mhNoValidation   = 2,
-      mhNoPrologEpilog = 4,
+      mhNone            = 0,
+      mhStandart        = 1,
+      mhNoValidation    = 2,
+      mhNoPrologEpilog  = 4,
+      mhNoTemplateCache = 8, 
    };
 
    enum class MethodHint : ref_t
@@ -70,6 +72,8 @@ namespace elena_lang
    };
 
    // --- MethodInfo ---
+   constexpr int EnforcedNillableArgs = 0x80000000;
+
    struct MethodInfo
    {
       bool   inherited;
@@ -417,43 +421,49 @@ namespace elena_lang
    constexpr auto wrnUnassignedVariable            = 428;
    constexpr auto wrnLessAccessible                = 429;
    constexpr auto wrnUnknownModule                 = 430;
+   constexpr auto wrnNonNillableArgument           = 431;
+   constexpr auto wrnHiddenLocal                   = 432;
+   constexpr auto wrnHiddenField                   = 433;
 
-   constexpr auto wrnSyntaxFileNotFound      = 500;
-   constexpr auto wrnInvalidConfig           = 501;
-   constexpr auto wrnInvalidPrjCollection    = 502;
-   constexpr auto wrnInvalidTemplateName     = 503;
+   constexpr auto wrnSyntaxFileNotFound            = 500;
+   constexpr auto wrnInvalidConfig                 = 501;
+   constexpr auto wrnInvalidPrjCollection          = 502;
+   constexpr auto wrnInvalidTemplateName           = 503;
 
-   constexpr auto errCommandSetAbsent        = 600;
-   constexpr auto errReadOnlyModule          = 601;
-   constexpr auto errNotDefinedBaseClass     = 602;
-   constexpr auto errReferenceOverflow       = 603;
-   constexpr auto errUnknownBaseClass        = 604;
-   constexpr auto errNoDispatcher            = 605;
-   constexpr auto errClosureError            = 606;
+   constexpr auto errCommandSetAbsent              = 600;
+   constexpr auto errReadOnlyModule                = 601;
+   constexpr auto errNotDefinedBaseClass           = 602;
+   constexpr auto errReferenceOverflow             = 603;
+   constexpr auto errUnknownBaseClass              = 604;
+   constexpr auto errNoDispatcher                  = 605;
+   constexpr auto errClosureError                  = 606;
 
-   constexpr auto infoNewMethod              = 701;
-   constexpr auto infoCurrentMethod          = 702;
-   constexpr auto infoCurrentClass           = 703;
-   constexpr auto infoAbstractMetod          = 704;
-   constexpr auto infoMixedUpVariadic        = 705;
-   constexpr auto infoUnknownMessage         = 706;
-   constexpr auto infoTargetClass            = 707;
-   constexpr auto infoScopeMethod            = 708;
-   constexpr auto infoExptectedType          = 709;
-   constexpr auto infoInternalDefConstructor = 710;
-   constexpr auto infoMessageInfo            = 711;
-   constexpr auto infoSourceClass            = 712;
+   constexpr auto infoNewMethod                    = 701;
+   constexpr auto infoCurrentMethod                = 702;
+   constexpr auto infoCurrentClass                 = 703;
+   constexpr auto infoAbstractMetod                = 704;
+   constexpr auto infoMixedUpVariadic              = 705;
+   constexpr auto infoUnknownMessage               = 706;
+   constexpr auto infoTargetClass                  = 707;
+   constexpr auto infoScopeMethod                  = 708;
+   constexpr auto infoExptectedType                = 709;
+   constexpr auto infoInternalDefConstructor       = 710;
+   constexpr auto infoMessageInfo                  = 711;
+   constexpr auto infoSourceClass                  = 712;
+   constexpr auto infoMissingTemplate              = 713;
+   constexpr auto infoPredefinedIndexedMethod      = 714;
 
-   constexpr auto errVMBroken                = 800;
-   constexpr auto errVMNotInitialized        = 801;
-   constexpr auto errVMNotExecuted           = 802;
-   constexpr auto errVMReferenceNotFound     = 803;
+   constexpr auto errVMBroken                      = 800;
+   constexpr auto errVMNotInitialized              = 801;
+   constexpr auto errVMNotExecuted                 = 802;
+   constexpr auto errVMReferenceNotFound           = 803;
 
-   constexpr auto errFatalError              = -1;
-   constexpr auto errFatalLinker             = -2;
-   constexpr auto errCorruptedVMT            = -4;
-   constexpr auto errMissingNamespace        = -5;
-   constexpr auto errNotSupportedPlatform    = -6;
+   constexpr auto errFatalError                    = -1;
+   constexpr auto errFatalLinker                   = -2;
+   constexpr auto errCorruptedVMT                  = -4;
+   constexpr auto errMissingNamespace              = -5;
+   constexpr auto errNotSupportedPlatform          = -6;
+   constexpr auto errActionOverflow                = -7;
 
    // --- Project warning levels
    constexpr int WARNING_LEVEL_1          = 1;
@@ -499,11 +509,13 @@ namespace elena_lang
    constexpr auto V_SEALED                = 0x80003001u;
    constexpr auto V_ABSTRACT              = 0x80003002u;
    constexpr auto V_CLOSED                = 0x80003003u;
+   constexpr auto V_EMBEDDABLE            = 0x80003004u;
    constexpr auto V_PREDEFINED            = 0x80003005u;
+   constexpr auto V_CONVERSION            = 0x80003011u;
+   constexpr auto V_NEWOP                 = 0x80003012u;
 
    /// scope_prefix:
    constexpr auto V_CONST                 = 0x80002001u;
-   constexpr auto V_EMBEDDABLE            = 0x80002002u;
    constexpr auto V_WRAPPER               = 0x80002003u;
    constexpr auto V_READONLY              = 0x80002004u;
    constexpr auto V_OUTWRAPPER            = 0x80002005u;
@@ -526,8 +538,6 @@ namespace elena_lang
    constexpr auto V_VARIABLE              = 0x8000100Du;
    constexpr auto V_MEMBER                = 0x8000100Eu;
    constexpr auto V_STATIC                = 0x8000100Fu;
-   constexpr auto V_CONVERSION            = 0x80001011u;
-   constexpr auto V_NEWOP                 = 0x80001012u;
    constexpr auto V_DISPATCHER            = 0x80001013u;
    constexpr auto V_TEXTBLOCK             = 0x80001014u;
    constexpr auto V_EXTERN                = 0x80001015u;
@@ -665,6 +675,7 @@ namespace elena_lang
    constexpr auto INT32_FLOAT64_CONVERSION   = 0x002;
    constexpr auto INT16_32_CONVERSION        = 0x003;
    constexpr auto INT8_32_CONVERSION         = 0x004;
+   constexpr auto INT8_64_CONVERSION         = 0x005;
 
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;
@@ -712,7 +723,7 @@ namespace elena_lang
 
    constexpr auto VM_TAPE                    = "$elena'meta$startUpTape";
 
-   constexpr auto PROGRAM_ENTRY              = "$forwards'program";         // used by the linker to define the debug entry
+   constexpr auto PROGRAM_ENTRY              = "$forwards'Program";         // used by the linker to define the debug entry
 
    constexpr auto SYSTEM_FORWARD                = "$system_entry";   // the system entry
    constexpr auto SUPER_FORWARD                 = "$super";          // the common class predecessor
@@ -732,7 +743,8 @@ namespace elena_lang
    constexpr auto FALSE_FORWARD                 = "$false";          // the false boolean value
    constexpr auto WRAPPER_FORWARD               = "$ref";            // the wrapper template
    constexpr auto ARRAY_FORWARD                 = "$array";          // the array template
-   constexpr auto VARIADIC_ARRAY_FORWARD        = "$varray";         // the array template
+   constexpr auto CONST_ARRAY_FORWARD           = "$const_array";    // the constant array template
+   constexpr auto VARIADIC_ARRAY_FORWARD        = "$varray";         // the variadic array template
    constexpr auto MESSAGE_FORWARD               = "$message";        // the message name class
    constexpr auto PROPERTY_NAME_FORWARD         = "$prop_subject";   // the property message name class
    constexpr auto MESSAGE_NAME_FORWARD          = "$subject";        // the message class
@@ -787,6 +799,7 @@ namespace elena_lang
    constexpr auto PROFILE_ATTR                  = "profile";
    constexpr auto BASE_PATH_ATTR                = "base_path";
    constexpr auto PLATFORM_ATTR                 = "platform";
+   constexpr auto NAME_ATTR                     = "name";
 
    constexpr auto TEMPLATE_CATEGORY             = "templates/*";
    constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";

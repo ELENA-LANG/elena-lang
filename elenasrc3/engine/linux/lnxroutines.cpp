@@ -8,7 +8,12 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 #include "core.h"
+
+#if defined (__unix__)
+
 #include "linux/elfhelper.h"
+
+#endif
 
 #include <sys/mman.h>
 #include <signal.h>
@@ -71,12 +76,18 @@ static uintptr_t CriticalHandler = 0;
 
 void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength)
 {
+#if defined(__APPLE__)
+
+#else
+
    ImageSection header(imageBase, imageLength);
    MemoryReader reader(&header);
    addr_t addr = 0;
    if (ELFHelper::seekRODataSegment(reader, addr)) {
       return (void*)addr;
    }
+
+#endif
 
    return nullptr;
 }
@@ -100,7 +111,7 @@ uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSiz
 
 uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
 {
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
 
    void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -119,7 +130,7 @@ uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
 
 uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
 {
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
 
    void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
@@ -167,7 +178,7 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 {
    ucontext_t* u = (ucontext_t*)unused;
 
-#if defined(__FreeBSD__)
+#if defined(__FreeBSD__) || defined(__APPLE__)
 
    switch (sig) {
    case SIGFPE:
@@ -233,6 +244,26 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
          u->uc_mcontext.mc_rdx = u->uc_mcontext.mc_rip;
          u->uc_mcontext.mc_rax = ELENA_ERR_CRITICAL;
          u->uc_mcontext.mc_rip = CriticalHandler;
+         break;
+   }
+
+#elif defined(__APPLE__)
+
+   switch (sig) {
+      case SIGFPE:
+         u->uc_mcontext->__ss.__rdx = u->uc_mcontext->__ss.__rip;
+         u->uc_mcontext->__ss.__rax = ELENA_ERR_DIVIDE_BY_ZERO;
+         u->uc_mcontext->__ss.__rip = CriticalHandler;
+         break;
+      case SIGSEGV:
+         u->uc_mcontext->__ss.__rdx = u->uc_mcontext->__ss.__rip;
+         u->uc_mcontext->__ss.__rax = ELENA_ERR_ACCESS_VIOLATION;
+         u->uc_mcontext->__ss.__rip = CriticalHandler;
+         break;
+      default:
+         u->uc_mcontext->__ss.__rdx = u->uc_mcontext->__ss.__rip;
+         u->uc_mcontext->__ss.__rax = ELENA_ERR_CRITICAL;
+         u->uc_mcontext->__ss.__rip = CriticalHandler;
          break;
    }
 

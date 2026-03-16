@@ -148,7 +148,7 @@ altcolsingle(x)
 }
 //end
 
-public program()
+public Program()
 {
     altcol(7);
     altcol(44);

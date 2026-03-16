@@ -185,7 +185,7 @@ EXTERN_DLL_EXPORT int EvaluateVMLA(void* tape)
    int retVal = 0;
    try
    {
-      machine->evaluate(tape);
+      machine->evaluate(tape, false);
    }
    catch (InternalError err)
    {
@@ -272,7 +272,7 @@ EXTERN_DLL_EXPORT int ExecuteVMLA(const char* target, const char* arg, char* out
             retVal = (int)copied;
       }
       else {
-         machine->evaluate(tape.get(0));
+         machine->evaluate(tape.get(0), false);
          retVal = 0;
       }
    }

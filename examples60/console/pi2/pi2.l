@@ -4,7 +4,7 @@ import extensions;
 
 const int ARRAY_SIZE = 32768;
 
-public program()
+public Program()
 {
     int casas := 50;
     if(Program_arguments.Length > 1)

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     IDE windows factory
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "factory.h"
@@ -15,6 +15,7 @@
 #include "windows/winmessagelog.h"
 #include "windows/wintreeview.h"
 #include "windows/wincontextbrowser.h"
+#include "windows/wincallstack.h"
 #include "windows/winmenu.h"
 #include "windows/wintoolbar.h"
 
@@ -49,6 +50,7 @@ WCHAR szCompilerOutput[MAX_LOADSTRING];         // the compiler output caption
 WCHAR szErrorList[MAX_LOADSTRING];              // the compiler output caption
 WCHAR szWatch[MAX_LOADSTRING];                  // the debug auto watch caption
 WCHAR szVMOutput[MAX_LOADSTRING];               // the vm terminal output caption
+WCHAR szCallstack[MAX_LOADSTRING];              // the call stack caption
 
 #define CONTEXT_MENU_INSPECT                    _T("Inspect\tCtrl+I")
 #define CONTEXT_MENU_SHOWHEX                    _T("Show as hexadecimal")
@@ -61,6 +63,11 @@ WCHAR szVMOutput[MAX_LOADSTRING];               // the vm terminal output captio
 #define CONTEXT_MENU_TOGGLE                     _T("Toggle Breakpoint\tF5")
 #define CONTEXT_MENU_RUNTO                      _T("Run to Cursor\tF4")
 #define CONTEXT_MENU_INSPECT                    _T("Inspect\tCtrl+I")
+
+#define TAB_CONTEXT_MENU_SAVE                   _T("Save")
+#define TAB_CONTEXT_MENU_CLOSE                  _T("Close")
+#define TAB_CONTEXT_MENU_CLOSEALL               _T("Close All")
+#define TAB_CONTEXT_MENU_CLOSEALLBUT            _T("Close Others")
 
 // !! temporally
 #define IDE_CHARSET_ANSI                        ANSI_CHARSET
@@ -80,6 +87,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Color(0xFF, 0x80, 0x40), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0, 0x80, 0x80), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0), Color(0xFF, 0xFF, 0xFF), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(0), Color(Canvas::Chrome()), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
 };
 
 StyleInfo classicStyles[STYLE_MAX + 1] = {
@@ -95,6 +103,7 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
    {Color(0, 0xFF, 0x80), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0, 0xFF, 0xFF), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0xFF, 0xFF, 0), Color(0, 0, 0x80), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(Canvas::Chrome()), Color(0, 0, 68), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
 };
 
 StyleInfo darkStyles[STYLE_MAX + 1] = {
@@ -110,6 +119,7 @@ StyleInfo darkStyles[STYLE_MAX + 1] = {
    {Color(181, 230, 168), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(214, 157, 133), Color(50, 50, 50), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
    {Color(0xFF, 0xFF, 0xFF), Color(0x27, 0x2D, 0x60), _T("Courier New"), IDE_CHARSET_ANSI, 10, false, false},
+   {Color(164, 164, 164), Color(64, 64, 64), _T("Courier New"), IDE_CHARSET_ANSI, 10, true, false},
 };
 
 constexpr auto STYLE_SCHEME_COUNT = 3;
@@ -118,6 +128,13 @@ MenuInfo browserContextMenuInfo[3] = {
       {IDM_DEBUG_INSPECT, CONTEXT_MENU_INSPECT},
       {0, nullptr},
       {IDM_DEBUG_SWITCHHEXVIEW, CONTEXT_MENU_SHOWHEX}
+};
+
+MenuInfo tabContextMenuInfo[8] = {
+   {IDM_FILE_SAVE, TAB_CONTEXT_MENU_SAVE},
+   {IDM_FILE_CLOSE, TAB_CONTEXT_MENU_CLOSE},
+   {IDM_FILE_CLOSEALL, TAB_CONTEXT_MENU_CLOSEALL},
+   {IDM_FILE_CLOSEALLBUT, TAB_CONTEXT_MENU_CLOSEALLBUT},
 };
 
 MenuInfo contextMenuInfo[8] = {
@@ -275,7 +292,7 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
          SelectionEvent event = { EVENT_TEXTFRAME_SELECTION_CHANGED, index };
 
          notifier->notify(&event);
-      });
+      }, IDM_FILE_CLOSE, IDR_TABCLOSE);
 
    view->create(_instance, szTextView, owner, 0);
    frame->createControl(_instance, owner);
@@ -393,7 +410,7 @@ ControlBase* IDEFactory :: createProjectView(ControlBase* owner, NotifierBase* n
          ParamSelectionEvent event = { EVENT_PROJECTVIEW_SELECTION_CHANGED, param };
 
          notifier->notify(&event);
-      });
+      }, true, IDR_FILETREE);
    projectView->createControl(_instance, owner);
 
    styleControl(projectView);
@@ -416,6 +433,21 @@ ControlBase* IDEFactory :: createDebugBrowser(ControlBase* owner, NotifierBase* 
    return browser;
 }
 
+ControlBase* IDEFactory :: createCallStackControl(ControlBase* owner, NotifierBase* notifier)
+{
+   CallStackLog* control = new CallStackLog(300, 50, notifier, [](NotifierBase* notifier, int index)
+      {
+         SelectionEvent event = { EVENT_CALLSTACK_SELECTION, index };
+
+         notifier->notify(&event);
+      });
+
+   control->createControl(_instance, owner);
+   //browser->hide();
+
+   return control;
+}
+
 GUIControlBase* IDEFactory :: createMenu(ControlBase* owner)
 {
    RootMenu* menu = new RootMenu(::GetMenu(owner->handle()));
@@ -428,6 +460,15 @@ GUIControlBase* IDEFactory :: createDebugContextMenu(ControlBase* owner)
    ContextMenu* menu = new ContextMenu();
 
    menu->create(3, browserContextMenuInfo);
+
+   return menu;
+}
+
+GUIControlBase* IDEFactory :: createTabContextMenu(ControlBase* owner)
+{
+   ContextMenu* menu = new ContextMenu();
+
+   menu->create(4, tabContextMenuInfo);
 
    return menu;
 }
@@ -453,12 +494,13 @@ GUIControlBase* IDEFactory :: createToolbar(ControlBase* owner, bool largeMode)
 
 void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compilerOutput, int errorList, 
    int projectView, int contextBrowser, int menu, int statusBar, int debugContextMenu, int vmConsoleControl, 
-   int toolBarControl, int contextEditor, int textIndex)
+   int toolBarControl, int contextEditor, int textIndex, int callStackControl, int tabContextMenu)
 {
    LoadStringW(_instance, IDC_COMPILER_OUTPUT, szCompilerOutput, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_MESSAGES, szErrorList, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_WATCH, szWatch, MAX_LOADSTRING);
    LoadStringW(_instance, IDC_COMPILER_VMOUTPUT, szVMOutput, MAX_LOADSTRING);
+   LoadStringW(_instance, IDC_COMPILER_CALLSTACK, szCallstack, MAX_LOADSTRING);
 
    _model->ideScheme.textFrameId = frameTextIndex;
    _model->ideScheme.resultControl = tabBar;
@@ -473,11 +515,14 @@ void IDEFactory :: initializeScheme(int frameTextIndex, int tabBar, int compiler
    _model->ideScheme.toolBarControl = toolBarControl;
    _model->ideScheme.editorContextMenu = contextEditor;
    _model->ideScheme.textControlId = textIndex;
+   _model->ideScheme.callStackControl = callStackControl;
+   _model->ideScheme.tabContextMenu = tabContextMenu;
 
    _model->ideScheme.captions.add(compilerOutput, szCompilerOutput);
    _model->ideScheme.captions.add(errorList, szErrorList);
    _model->ideScheme.captions.add(contextBrowser, szWatch);
    _model->ideScheme.captions.add(vmConsoleControl, szVMOutput);
+   _model->ideScheme.captions.add(callStackControl, szCallstack);
 }
 
 GUIApp* IDEFactory :: createApp()
@@ -492,7 +537,7 @@ GUIApp* IDEFactory :: createApp()
 GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBase* outputProcess, 
    ProcessBase* vmConsoleProcess)
 {
-   GUIControlBase* children[16];
+   GUIControlBase* children[18];
    int counter = 0;
 
    int textIndex = counter++;
@@ -511,6 +556,8 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    int toolBarControl = counter++;
    int contextEditor = counter++;
    int editIndex = counter++;
+   int callStackIndex = counter++;
+   int tabContextMenu = counter++;
 
    SDIWindow* sdi = new IDEWindow(szTitle, _controller, _model, _instance, this);
    sdi->create(_instance, szSDI, nullptr, WS_EX_ACCEPTFILES);
@@ -535,12 +582,14 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
    children[toolBarControl] = createToolbar(sdi, _settings.withLargeToolbar);
    children[contextEditor] = createEditorContextMenu(sdi);
    children[editIndex] = textCtrls.value2;
+   children[callStackIndex] = createCallStackControl((ControlBase*)children[tabBar], notifier);
+   children[tabContextMenu] = createTabContextMenu(sdi);
 
    vb->append(children[hsplitter]);
    vb->append(children[statusBarIndex]);
 
    initializeScheme(textIndex, tabBar, compilerOutput, errorList, projectView, browser, menu, statusBarIndex,
-      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor, editIndex);
+      debugContextMenu, vmConsoleControl, toolBarControl, contextEditor, editIndex, callStackIndex, tabContextMenu);
 
    sdi->populate(counter, children);
    sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, vsplitter);

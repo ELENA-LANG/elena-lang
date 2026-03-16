@@ -9,7 +9,7 @@
   root ( 
     public_namespace (
       public_symbol (
-        nameattr ( identifier = program )
+        nameattr ( identifier = Program )
         get_expression (
           nested (
               

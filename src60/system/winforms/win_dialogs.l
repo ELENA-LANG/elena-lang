@@ -11,7 +11,7 @@ public singleton messageBox
     
    int open(string caption, string message, int flags)
    {
-      WindowHandle handle := cast WindowHandle(forward program.MainWindow) ?? defaultHandle;
+      WindowHandle handle := cast WindowHandle(forward Program.MainWindow) ?? defaultHandle;
         
       ^ messageBox.open(handle.Handle, cast wide(caption), cast wide(message), flags)
    }
@@ -136,7 +136,7 @@ public sealed class OpenFileDialog : BaseFileDialog
       self.prepare(struct, filters, fileName, 1024);
 
       int retVal := 0;
-      extern 
+      excluded 
       {
          retVal := extern Comdlg32.GetOpenFileNameW(struct);
       };
@@ -176,7 +176,7 @@ public sealed class SaveFileDialog : BaseFileDialog
       self.prepare(struct, filters, fileName, 1024);
 
       int retVal := 0;
-      extern 
+      excluded 
       {
          retVal := extern Comdlg32.GetSaveFileNameW(struct);
       };

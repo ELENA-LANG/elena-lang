@@ -107,6 +107,9 @@ namespace elena_lang
    constexpr auto wrnMsgUnassignedVariable      = "\n%s(%d:%d): warning 428: an unassigned variable - '%s'\n";
    constexpr auto wrnMsgLessAccessible          = "\n%s(%d:%d): warning 429: the returning type is less accessible than '%s'\n";
    constexpr auto wrnMsgUnknownModule           = "\n%s(%d:%d): warning 430: Unknown module '%s'\n";
+   constexpr auto wrnMsgNonNillableArgument     = "\n%s(%d:%d): warning 431: A nillable argument is not supported by the message signature\n";
+   constexpr auto wrnMsgHiddenLocal             = "\n%s(%d:%d): warning 432: declaration of '%s' hides previous local declaration\n";
+   constexpr auto wrnMsgHiddenField             = "\n%s(%d:%d): warning 433: declaration of '%s' hides previous field declaration \n";
 
    constexpr auto wrnMsgSyntaxFileNotFound   = "\nwarning 500: cannot open syntax file '%s'\n";
    constexpr auto wrnMsgInvalidConfig        = "\nwarning 501: invalid or unknown config file %s\n";
@@ -128,21 +131,24 @@ namespace elena_lang
    constexpr auto errMsgCorruptedVMT         = "\nVMT structure is corrupt\n";
    constexpr auto errMsgMissingNamespace     = "\nInvalid project structure - missing namespace\n";
    constexpr auto errMsgNotSupportedPlatform = "\nThe specified platform %s is not supported for this environment\n";
+   constexpr auto errMsgActionOverflow       = "\nAction range is overflown\n";
 
    constexpr auto errMssgFailedMemoryAllocation = "\nnFatal error: cannot allocate the memory\n";
 
-   constexpr auto infoMsgNewMethod              = "\ninfo 701:   new method %s\n";
-   constexpr auto infoMsgCurrentMethod          = "\ninfo 702:   compiling method %s\n";
-   constexpr auto infoMsgCurrentClass           = "\ninfo 703: compiling class %s\n";
-   constexpr auto infoMsgAbstractMetod          = "\ninfo 704:   abstract method %s\n";
-   constexpr auto infoMssgMixedUpVariadic       = "\ninfo 705:   mixed-up variadic method %s\n";
-   constexpr auto infoMsgUnknownMessage         = "\ninfo 706:   unhandled message: %s\n";
-   constexpr auto infoMsgTargetClass            = "info 707:   target class: %s\n";
-   constexpr auto infoMsgScopeMethod            = "info 708:   in the method: %s\n";
-   constexpr auto infoMssgExptectedType         = "\ninfo 709: the expected type is %s, but the actual type is %s\n";
-   constexpr auto infoMsgInternalDefConstructor = "\ninfo 710: default constructor cannot be internal\n";
-   constexpr auto infoMsgMessageInfo            = "\ninfo 711:  message: %s\n";
-   constexpr auto infoMsgSourceClass            = "info 712:   source class: %s\n";
+   constexpr auto infoMsgNewMethod                 = "\ninfo 701:   new method %s\n";
+   constexpr auto infoMsgCurrentMethod             = "\ninfo 702:   compiling method %s\n";
+   constexpr auto infoMsgCurrentClass              = "\ninfo 703: compiling class %s\n";
+   constexpr auto infoMsgAbstractMetod             = "\ninfo 704:   abstract method %s\n";
+   constexpr auto infoMssgMixedUpVariadic          = "\ninfo 705:   mixed-up variadic method %s\n";
+   constexpr auto infoMsgUnknownMessage            = "\ninfo 706:   unhandled message: %s\n";
+   constexpr auto infoMsgTargetClass               = "info 707:   target class: %s\n";
+   constexpr auto infoMsgScopeMethod               = "info 708:   in the method: %s\n";
+   constexpr auto infoMssgExptectedType            = "\ninfo 709: the expected type is %s, but the actual type is %s\n";
+   constexpr auto infoMsgInternalDefConstructor    = "\ninfo 710: default constructor cannot be internal\n";
+   constexpr auto infoMsgMessageInfo               = "\ninfo 711:  message: %s\n";
+   constexpr auto infoMsgSourceClass               = "info 712:   source class: %s\n";
+   constexpr auto infoMsgMissingTemplate           = "info 713:   template %s is not defined\n";
+   constexpr auto infoMsgPredefinedIndexedMethod   = "info 714: predefined method %s cannot be declared as indexed\n";
 
 } // _ELENA_
 

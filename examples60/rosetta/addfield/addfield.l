@@ -10,7 +10,7 @@ class Extender : BaseExtender
    }
 }
 
-public program()
+public Program()
 {
    var object := 234;
   

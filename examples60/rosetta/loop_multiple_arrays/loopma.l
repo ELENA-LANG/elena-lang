@@ -3,7 +3,7 @@
 import system'routines;
 import extensions;
 
-public programUsingFor()
+public ProgramUsingFor()
 {  
     var a1 := new string[]{"a","b","c"};
     var a2 := new string[]{"A","B","C"};
@@ -17,7 +17,7 @@ public programUsingFor()
     Console.readChar()
 }
 
-public programUsingZip()
+public ProgramUsingZip()
 {
     var a1 := new string[]{"a","b","c"};
     var a2 := new string[]{"A","B","C"};
@@ -34,7 +34,7 @@ public programUsingZip()
 // To build the program to use 'programUsingZip' symbol, just change
 // the forward to use programUsingZip as entry point
 // --
-// program=programUsingZip;
+//public Program=ProgramUsingZip;
 // --
-public program
-   = programUsingFor;
+public Program
+   = ProgramUsingFor;

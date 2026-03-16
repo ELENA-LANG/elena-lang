@@ -3,7 +3,7 @@
 //
 //		This file contains Module scope class declaration.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MODULESCOPE_H
@@ -34,6 +34,7 @@ public:
    bool isStandardOne() override;
    bool withValidation() override;
    bool withPrologEpilog() override;
+   bool isNoTemplateReuse() override;
 
    ref_t mapAnonymous(ustr_t prefix) override;
 
@@ -120,7 +121,7 @@ public:
       int ptrSize,
       int moduleHint)
       : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
-         minimalArgList, ptrSize, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr),
+         minimalArgList, ptrSize, false, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr),
          dependencies(nullptr)
    {
       this->loader = loader;
