@@ -129,6 +129,12 @@ protected:
    Glib::RefPtr<Gio::SimpleAction>  _projectViewMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _errorListMenuItem;
    Glib::RefPtr<Gio::SimpleAction>  _outputMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _compileMenuItem;
+
+   Glib::RefPtr<Gio::SimpleAction>  _runMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _stepOverMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _stepIntoMenuItem;
+   Glib::RefPtr<Gio::SimpleAction>  _stopMenuItem;
 
    void toggleResultTab(int controlIndex, bool visible);
 
@@ -140,6 +146,8 @@ protected:
    void closeProject(bool newMode);
    void openProject();
    void openProject_finish(path_t path);
+
+   void doDebugAction(DebugAction action, bool withoutPostponeAction);
 
    bool copyToClipboard()
    {
@@ -361,7 +369,10 @@ protected:
    }
    void on_menu_debug_run()
    {
-      //_controller->doDebugRun();
+      if (_model->autoSave)
+         saveAll();
+
+      doDebugAction(DebugAction::Run, false);
    }
    void on_menu_debug_next()
    {
@@ -369,11 +380,17 @@ protected:
    }
    void on_menu_debug_stepover()
    {
-      //_controller->doStepOver();
+      if (_model->autoSave)
+         saveAll();
+
+      doDebugAction(DebugAction::StepOver, false);
    }
    void on_menu_debug_stepin()
    {
-      //_controller->doStepInto();
+      if (_model->autoSave)
+         saveAll();
+
+      doDebugAction(DebugAction::StepInto, false);
    }
    void on_menu_debug_goto()
    {
@@ -389,6 +406,7 @@ protected:
    }
    void on_menu_debug_stop()
    {
+      _controller->doDebugStop(_model);
    }
    void on_menu_tools_editor()
    {
@@ -417,11 +435,21 @@ protected:
    void on_errorlist_row_activated(const Gtk::TreeModel::Path& path,
         Gtk::TreeViewColumn*);
 
+   void updateCompileMenu(bool compileEnable, bool debugEnable, bool stopEnable);
+
    void onDocumentUpdate(DocumentChangeStatus changeStatus);
    void onProjectChange(bool empty);
    void onProjectRefresh(bool empty);
    void onIDEStatusChange(int status);
    void onErrorHighlight(const Gtk::TreeModel::Path& path);
+
+   void onDebugStep();
+   void onDebuggerSourceNotFound();
+   void onDebuggerSourceNotFound_finish(int result);
+   void onDebugEnd();
+
+   void onComilationStart();
+   void onCompilationEnd(int exitCode, int postponedAction);
 
    void saveFile(int index);
    void saveFileAs(int index);
@@ -443,9 +471,6 @@ protected:
    void closeAllButActive_finish();
    void closeAllButActive_next(int index);
    void closeAllButActive();
-
-   void onComilationStart();
-   void onCompilationEnd(int exitCode, int postponedAction);
 
 public:
    void populate(int counter, Gtk::Widget** children);

@@ -19,22 +19,22 @@ clang_cross_elc_amd64:
 	$(MAKE) -C elenasrc3/elc/make all -f bsd.clang_cross_elc_amd64.mak
 
 sg_amd64: 
-	$(MAKE) -C elenasrc3/tools/sg/codeblocks all -f bsd.sg_amd64.mak
+	$(MAKE) -C elenasrc3/tools/sg/make all -f bsd.sg_amd64.mak
 
 clang_sg_amd64: 
-	$(MAKE) -C elenasrc3/tools/sg/codeblocks all -f bsd.clang_sg_amd64.mak
+	$(MAKE) -C elenasrc3/tools/sg/make all -f bsd.clang_sg_amd64.mak
 
 og_amd64: 
-	$(MAKE) -C elenasrc3/tools/og/codeblocks all -f bsd.og_amd64.mak
+	$(MAKE) -C elenasrc3/tools/og/make all -f bsd.og_amd64.mak
 
 clang_og_amd64: 
-	$(MAKE) -C elenasrc3/tools/og/codeblocks all -f bsd.clang_og_amd64.mak
+	$(MAKE) -C elenasrc3/tools/og/make all -f bsd.clang_og_amd64.mak
 
 asmc_amd64: 
-	$(MAKE) -C elenasrc3/tools/asmc/codeblocks all -f bsd.asmc_amd64.mak
+	$(MAKE) -C elenasrc3/tools/asmc/make all -f bsd.asmc_amd64.mak
 
 clang_asmc_amd64: 
-	$(MAKE) -C elenasrc3/tools/asmc/codeblocks all -f bsd.clang_asmc_amd64.mak
+	$(MAKE) -C elenasrc3/tools/asmc/make all -f bsd.clang_asmc_amd64.mak
 
 ecv_amd64: 
 	$(MAKE) -C elenasrc3/tools/ecv/codeblocks all -f bsd.ecv_amd64.mak
@@ -69,16 +69,16 @@ clean_cross_elc_amd64:
 	$(MAKE) -C elenasrc3/elc/make clean -f bsd.clang_cross_elc_amd64.mak
 
 clean_sg_amd64: 
-	$(MAKE) -C elenasrc3/tools/sg/codeblocks clean -f bsd.sg_amd64.mak
+	$(MAKE) -C elenasrc3/tools/sg/make clean -f bsd.sg_amd64.mak
 
 clean_og_amd64: 
-	$(MAKE) -C elenasrc3/tools/og/codeblocks clean -f bsd.og_amd64.mak
+	$(MAKE) -C elenasrc3/tools/og/make clean -f bsd.og_amd64.mak
 
 clean_og_ppc64le: 
-	$(MAKE) -C elenasrc3/tools/og/codeblocks clean -f bsd.og_ppc64le.mak
+	$(MAKE) -C elenasrc3/tools/og/make clean -f bsd.og_ppc64le.mak
 
 clean_asmc_amd64: 
-	$(MAKE) -C elenasrc3/tools/asmc/codeblocks clean -f bsd.asmc_amd64.mak
+	$(MAKE) -C elenasrc3/tools/asmc/make clean -f bsd.asmc_amd64.mak
 
 clean_ecv_amd64: 
 	$(MAKE) -C elenasrc3/tools/ecv/codeblocks clean -f bsd.ecv_amd64.mak

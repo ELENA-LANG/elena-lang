@@ -22,7 +22,7 @@ using namespace elena_lang;
 constexpr auto MAX_RECENT_FILES = 9;
 constexpr auto MAX_RECENT_PROJECTS = 9;
 
-inline ustr_t getPlatformName(PlatformType type)
+static inline ustr_t getPlatformName(PlatformType type)
 {
    switch (type) {
       case PlatformType::Win_x86:
@@ -44,7 +44,7 @@ inline ustr_t getPlatformName(PlatformType type)
    }
 }
 
-inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
+static inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
 {
    // read target type; merge it with platform if required
    ConfigFile::Node targetType = config.selectNode(xpath);
@@ -57,7 +57,7 @@ inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue)
    else return defValue;
 }
 
-inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue, int minValue, int maxValue)
+static inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue, int minValue, int maxValue)
 {
    int value = loadSetting(config, xpath, defValue);
    if (value < minValue)
@@ -68,7 +68,7 @@ inline int loadSetting(ConfigFile& config, ustr_t xpath, int defValue, int minVa
    return value;
 }
 
-inline void loadSetting(ConfigFile& config, ustr_t xpath, IdentifierString& retVal)
+static inline void loadSetting(ConfigFile& config, ustr_t xpath, IdentifierString& retVal)
 {
    // read target type; merge it with platform if required
    ConfigFile::Node targetType = config.selectNode(xpath);
@@ -81,7 +81,7 @@ inline void loadSetting(ConfigFile& config, ustr_t xpath, IdentifierString& retV
    else retVal.clear();
 }
 
-inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
+static inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
 {
    String<char, 15> number;
    number.appendInt(value);
@@ -89,12 +89,12 @@ inline void saveSetting(ConfigFile& config, ustr_t xpath, int value)
    config.appendSetting(xpath, number.str());
 }
 
-inline void saveSetting(ConfigFile& config, ustr_t xpath, ustr_t value)
+static inline void saveSetting(ConfigFile& config, ustr_t xpath, ustr_t value)
 {
    config.appendSetting(xpath, value.str());
 }
 
-inline void removeSetting(ConfigFile& config, ustr_t xpath)
+static inline void removeSetting(ConfigFile& config, ustr_t xpath)
 {
    config.removeSetting(xpath);
 }
@@ -1696,13 +1696,12 @@ path_t IDEController :: retrieveSingleProjectFile(IDEModel* model)
    else return nullptr;
 }
 
-void IDEController :: doDebugAction(IDEModel* model, DebugAction action,
-   MessageDialogBase& mssgDialog, bool withoutPostponeAction)
+bool IDEController :: doDebugAction(IDEModel* model, DebugAction action,
+   DebugActionResult& result, bool withoutPostponeAction)
 {
    if (model->running)
-      return;
+      return false;
 
-   DebugActionResult result = {};
    if (projectController.onDebugAction(model->projectModel, model->sourceViewModel,
       action, result, withoutPostponeAction))
    {
@@ -1718,18 +1717,10 @@ void IDEController :: doDebugAction(IDEModel* model, DebugAction action,
       _notifier->notify(&event);
 
       projectController.doDebugAction(model->projectModel, model->sourceViewModel, action);
+
+      return true;
    }
-   else if (model->sourceViewModel.isAnyDocumentModified())
-      mssgDialog.info(INFO_RUN_UNSAVED_PROJECT);
-   else if (result.outaged) {
-      mssgDialog.info(INFO_RUN_OUT_OF_DATE);
-   }
-   else if (result.targetMissing) {
-      mssgDialog.info(INFO_NEED_TARGET);
-   }
-   else if (result.noDebugFile) {
-      mssgDialog.info(INFO_RUN_NEED_RECOMPILE);
-   }
+   else return false;
 }
 
 void IDEController :: doDebugStop(IDEModel* model)
@@ -2053,14 +2044,14 @@ void IDEController :: doConfigureDebuggerSettings(DebuggerSettingsBase& ideDialo
    }
 }
 
-void IDEController :: onDebuggerNoSource(MessageDialogBase& mssgDialog, IDEModel* model)
+bool IDEController :: onDebuggerNoSource(IDEModel* model, bool autoStep, DebugActionResult& result)
 {
    model->running = false;
 
-   auto result = mssgDialog.question(QUESTION_NOSOURCE_CONTINUE);
-
-   if (result == MessageDialogBase::Answer::Yes)
-      doDebugAction(model, DebugAction::StepInto, mssgDialog, false);
+   if (autoStep) {
+      return doDebugAction(model, DebugAction::StepInto, result, false);
+   }
+   else return false;
 }
 
 void IDEController :: onDocSelection(IDEModel* model, int index)

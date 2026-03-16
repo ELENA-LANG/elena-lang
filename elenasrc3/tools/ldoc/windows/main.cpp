@@ -55,6 +55,31 @@ void getAppPath(PathString& appPath)
    appPath.lower();
 }
 
+bool collectIndexFiles(path_t output, path_t path, PathList& list)
+{
+   WIN32_FIND_DATA ffd;
+   HANDLE hFind = FindFirstFile(path.str(), &ffd);
+
+   if (INVALID_HANDLE_VALUE == hFind)
+   {
+      return false;
+   }
+
+   // List all the files in the directory with some info about them.
+
+   do
+   {
+      if (ffd.dwFileAttributes & FILE_ATTRIBUTE_ARCHIVE) {
+         PathString filePath(output);
+         filePath.combine(ffd.cFileName);
+
+         list.add((*filePath).clone());
+      }
+   } while (FindNextFile(hFind, &ffd) != 0);
+
+   return true;
+}
+
 int main()
 {
    printf(LDOC_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, LDOC_REVISION_NUMBER);
@@ -63,66 +88,98 @@ int main()
    int argc;
    wchar_t** argv = CommandLineToArgvW(GetCommandLineW(), &argc);
    
-   if (argc != 2 && argc != 3) {
-      printf("ldoc {<module> | <path>} <output>?\n");
+   if (argc != 2 && argc != 3 && argc != 4) {
+      printf("ldoc [-i | -g] {<module> | <path>} <output>?\n");
       return EXIT_FAILURE;
    }
 
-   // prepare library provider
-   LibraryProvider provider;
+   if (wstr_t(argv[1]).compare(L"-g")) {
+      path_t output;
+      if (argc == 3) {
+         output = argv[2];
+      }
 
-   PathString configPath;
-   getAppPath(configPath);
-   configPath.combine(DEFAULT_CONFIG);
+      PathString mask(output);
+      mask.combine("*--classes.txt");
 
-   ConfigFile config;
-   if (config.load(*configPath, FileEncoding::UTF8)) {
-      // select platform configuration
-      ustr_t key = PLATFORM_KEY;
-      ConfigFile::Node platformRoot = config.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
-         {
-            return node.compareAttribute("key", key);
-         });
+      PathList list(nullptr);
+      if (collectIndexFiles(output, *mask, list)) {
+         DocGenerator::generateClassIndexes(output, list);
+      }      
 
-      auto configNode = config.selectNode(platformRoot, LIB_PATH);
-      DynamicString<char> path;
-      configNode.readContent(path);
+      mask.copy(output);
+      mask.combine("*--messages.txt");
 
-      PathString libPath;
-      getAppPath(libPath);
-      libPath.combine("templates");
-      libPath.combine(path.str());
-      provider.setRootPath(*libPath);
-   }
+      list.clear();
 
-   Presenter presenter;
-   DocGenerator generator(&provider, &presenter);
-
-   if (wstr_t(argv[1]).endsWith(L".nl")) {
-      // if direct path is provided
-
-      PathString path(argv[1]);
-      if(!generator.load(*path)) {
-         presenter.printPathLine(LDOC_MODULE_NOTLOADED, path.str());
-
-         return EXIT_FAILURE;
+      if (collectIndexFiles(output, *mask, list)) {
+         DocGenerator::generateMessageIndexes(output, list);
       }
    }
    else {
-      IdentifierString arg(argv[1]);
-      if (!generator.loadByName(*arg)) {
-         presenter.printPathLine(LDOC_MODULE_NOTLOADED, argv[1]);
-
-         return EXIT_FAILURE;
+      bool indexContentMode = false;
+      int docIndex = 1;
+      if (wstr_t(argv[1]).compare(L"-i")) {
+         docIndex = 2;
+         indexContentMode = true;
       }
+
+      // prepare library provider
+      LibraryProvider provider;
+
+      PathString configPath;
+      getAppPath(configPath);
+      configPath.combine(DEFAULT_CONFIG);
+
+      ConfigFile config;
+      if (config.load(*configPath, FileEncoding::UTF8)) {
+         // select platform configuration
+         ustr_t key = PLATFORM_KEY;
+         ConfigFile::Node platformRoot = config.selectNode<ustr_t>(PLATFORM_CATEGORY, key, [](ustr_t key, ConfigFile::Node& node)
+            {
+               return node.compareAttribute("key", key);
+            });
+
+         auto configNode = config.selectNode(platformRoot, LIB_PATH);
+         DynamicString<char> path;
+         configNode.readContent(path);
+
+         PathString libPath;
+         getAppPath(libPath);
+         libPath.combine("templates");
+         libPath.combine(path.str());
+         provider.setRootPath(*libPath);
+      }
+
+      Presenter presenter;
+      DocGenerator generator(&provider, &presenter);
+
+      if (wstr_t(argv[docIndex]).endsWith(L".nl")) {
+         // if direct path is provided
+
+         PathString path(argv[docIndex]);
+         if (!generator.load(*path)) {
+            presenter.printPathLine(LDOC_MODULE_NOTLOADED, path.str());
+
+            return EXIT_FAILURE;
+         }
+      }
+      else {
+         IdentifierString arg(argv[docIndex]);
+         if (!generator.loadByName(*arg)) {
+            presenter.printPathLine(LDOC_MODULE_NOTLOADED, argv[1]);
+
+            return EXIT_FAILURE;
+         }
+      }
+
+      path_t output;
+      if (argc - 1 == docIndex + 1) {
+         output = argv[docIndex + 1];
+      }
+
+      generator.generate(output, indexContentMode);
    }
 
-   path_t output;
-   if (argc == 3) {
-      output = argv[2];
-   }
-
-   generator.generate(output);
-
-   return 0;
+   return EXIT_SUCCESS;
 }

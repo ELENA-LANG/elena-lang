@@ -2,7 +2,7 @@
 <HTML>
 <HEAD>
 <TITLE>
-ELENA Standard Library 6.7: Module system'collections
+ELENA Standard Library 7.0: Module system'collections
 </TITLE>
 <meta name="collection" content="api">
 <LINK REL ="stylesheet" TYPE="text/css" HREF="stylesheet.css" TITLE="Style">
@@ -19,7 +19,7 @@ ELENA Standard Library 6.7: Module system'collections
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>7.0
 </STRONG>
 </DIV>
 </DIV>
@@ -105,24 +105,6 @@ system'collections'ArrayList</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(o)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
 </TD>
@@ -141,7 +123,7 @@ system'collections'ArrayList</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> a)
+<CODE><i>constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -151,6 +133,24 @@ system'collections'ArrayList</LI>
 <i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>fromArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> a)
 </CODE>
 </TD>
 </TR>
@@ -217,9 +217,9 @@ system'collections'ArrayList</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>append(item)
 </CODE>
 </TD>
 </TR>
@@ -237,7 +237,7 @@ system'collections'ArrayList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+<CODE>appendRange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexable">Indexable</A></SPAN> indexable)
 </CODE>
 </TD>
 </TR>
@@ -246,7 +246,7 @@ system'collections'ArrayList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -255,16 +255,34 @@ system'collections'ArrayList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(item)
+<CODE>clear()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendRange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexable">Indexable</A></SPAN> indexable)
+<CODE>clone()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
@@ -300,7 +318,7 @@ system'collections'ArrayList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>clear()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
 </TD>
 </TR>
@@ -310,24 +328,6 @@ system'collections'ArrayList</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>clone()
 </CODE>
 </TD>
 </TR>
@@ -437,23 +437,6 @@ system'collections'ArrayListIndexer</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Value()</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Value(o)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
@@ -474,6 +457,23 @@ system'collections'ArrayListIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value(o)
+</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -658,76 +658,13 @@ system'collections'Dictionary</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> key)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -736,7 +673,7 @@ system'collections'Dictionary</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -745,7 +682,7 @@ system'collections'Dictionary</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -754,7 +691,7 @@ system'collections'Dictionary</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -763,7 +700,7 @@ system'collections'Dictionary</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -772,16 +709,16 @@ system'collections'Dictionary</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>containsKey(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key)
+<CODE>clear()
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -790,12 +727,75 @@ system'collections'Dictionary</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>containsKey(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
+</CODE>
+</TD>
+</TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>clear()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#LongNumber">LongNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#RealNumber">RealNumber</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#CharValue">CharValue</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#WideString">WideString</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -914,17 +914,17 @@ system'collections'List</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#ListItem">ListItem</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>TopItem()</CODE>
+<CODE>Length()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#ListItem">ListItem</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length()</CODE>
+<CODE>TopItem()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -942,9 +942,9 @@ system'collections'List</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerator()
+<CODE>append(object)
 </CODE>
 </TD>
 </TR>
@@ -953,7 +953,7 @@ system'collections'List</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(object)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
@@ -962,7 +962,25 @@ system'collections'List</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>insert(object)
+<CODE>clear()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List">List</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
 </CODE>
 </TD>
 </TR>
@@ -978,9 +996,9 @@ system'collections'List</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
@@ -989,7 +1007,7 @@ system'collections'List</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
+<CODE>insert(object)
 </CODE>
 </TD>
 </TR>
@@ -1025,25 +1043,7 @@ system'collections'List</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>clear()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>indexer()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List">List</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>clone()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
 </TD>
 </TR>
@@ -1065,7 +1065,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">List&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">List&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed list</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1134,35 +1135,21 @@ system'collections'List&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#List&lt;T1&gt;">List&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>load(source)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> a)
 </CODE>
+<div class="block">
+Copies a strong-typed array</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#List&lt;T1&gt;">List&lt;T1&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> a)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#List&lt;T1&gt;">List&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN> e)
 </CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#List&lt;T1&gt;">List&lt;T1&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
-</CODE>
+<div class="block">
+Copies a strong-typed enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1170,7 +1157,29 @@ system'collections'List&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#List&lt;T1&gt;">List&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
+</CODE>
+<div class="block">
+Creates an empty list with the preallocated space</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#List&lt;T1&gt;">List&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
 <CODE><i>constructor</i>()
+</CODE>
+<div class="block">
+Creates an empty list</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#List&lt;T1&gt;">List&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>load(source)
 </CODE>
 </TD>
 </TR>
@@ -1181,6 +1190,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN> e)
 </CODE>
+<div class="block">
+Copies a strong-typed enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1190,6 +1201,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN> a, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> len)
 </CODE>
+<div class="block">
+Copies a strong-typed sub array <b>a</b> from <b>index</b> element, with the provided length <b>len</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -1207,17 +1220,21 @@ system'collections'List&lt;T1&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length()</CODE>
+<CODE>Empty()</CODE>
+<div class="block">
+Returns true if the list is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Empty()</CODE>
+<CODE>First()</CODE>
+<div class="block">
+Returns the first elemenet of the list</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1225,15 +1242,19 @@ system'collections'List&lt;T1&gt;</LI>
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>First()</CODE>
+<CODE>Last()</CODE>
+<div class="block">
+Returns the last elemenet of the list</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Last()</CODE>
+<CODE>Length()</CODE>
+<div class="block">
+Returns the list length</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1242,6 +1263,8 @@ system'collections'List&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns a shallow copy of the list as a strong-typed array</div>
 </TD>
 </TR>
 </TABLE>
@@ -1259,91 +1282,67 @@ system'collections'List&lt;T1&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
 </CODE>
+<div class="block">
+Appends a new object to the end of the list</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>appendRange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN> e)
 </CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
-</CODE>
+<div class="block">
+Copies an enumerable collection</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns the object at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all elemements</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
+</CODE>
+<div class="block">
+Returns a shallow copy of the list</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
+<CODE>enumerator()
 </CODE>
+<div class="block">
+Returns a list enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1353,6 +1352,8 @@ system'collections'List&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns a list indexer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1360,8 +1361,54 @@ system'collections'List&lt;T1&gt;</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>clone()
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
 </CODE>
+<div class="block">
+Inserts the element at the specified index</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
+</CODE>
+<div class="block">
+Inserts the element at the top</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+<div class="block">
+Removes an object at the specified position</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
+</CODE>
+<div class="block">
+Sets the element at the specified position</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
+</CODE>
+<div class="block">
+Trims the list at the specified position</div>
 </TD>
 </TR>
 </TABLE>
@@ -1382,7 +1429,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Map&lt;T1,T2&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Map&lt;T1,T2&gt;</SPAN><BR/>
+<I>A strong-typed map template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1453,6 +1501,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a map with a default size (37) and a capacity (32)</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1462,6 +1512,8 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> hashLength)
 </CODE>
+<div class="block">
+Creates a map with the provided capacity and the length</div>
 </TD>
 </TR>
 </TABLE>
@@ -1479,17 +1531,21 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'collections'VarTuple&lt;T1,T2&gt;<I>[]</I></A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T2<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Values()</CODE>
+<CODE>MapValues()</CODE>
+<div class="block">
+Returns an array of a map values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T2<I>[]</I></A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'collections'VarTuple&lt;T1,T2&gt;<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>MapValues()</CODE>
+<CODE>Values()</CODE>
+<div class="block">
+Returns an array of a key-value pairs</div>
 </TD>
 </TR>
 </TABLE>
@@ -1507,46 +1563,34 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;system'collections'VarTuple&lt;T1,T2&gt;&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> object)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key)
 </CODE>
+<div class="block">
+Returns a dictionary element with <b>key</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>clone()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all key-value paires</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>clone()
+</CODE>
+<div class="block">
+Makes a shallow copy a map</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1556,6 +1600,30 @@ system'collections'Map&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>containsKey(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key)
 </CODE>
+<div class="block">
+Returns true if the map contains the provided key</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;system'collections'VarTuple&lt;T1,T2&gt;&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Returns an enumerator of a key-value pairs</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> object)
+</CODE>
+<div class="block">
+Adds or updates a dictionary element with <b>key</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -1664,9 +1732,9 @@ system'collections'Queue</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>TopPointer()</CODE>
+<CODE>Length()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1680,9 +1748,9 @@ system'collections'Queue</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length()</CODE>
+<CODE>TopPointer()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1720,18 +1788,18 @@ system'collections'Queue</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerator()
+<CODE>clear()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>push(object)
+<CODE>enumerator()
 </CODE>
 </TD>
 </TR>
@@ -1758,7 +1826,7 @@ system'collections'Queue</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>clear()
+<CODE>push(object)
 </CODE>
 </TD>
 </TR>
@@ -1789,7 +1857,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Queue&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Queue&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed FIFO list template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1858,8 +1927,10 @@ system'collections'Queue&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#Queue&lt;T1&gt;">Queue&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
+<div class="block">
+Creates an empty queue with preallocated space</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1867,8 +1938,10 @@ system'collections'Queue&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#Queue&lt;T1&gt;">Queue&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
+<CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty queue</div>
 </TD>
 </TR>
 </TABLE>
@@ -1889,6 +1962,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the queue length</div>
 </TD>
 </TR>
 </TABLE>
@@ -1906,19 +1981,23 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerator()
+<CODE>clear()
 </CODE>
+<div class="block">
+Removes all elements from the queue</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isEmpty()
+<CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the queue enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1926,17 +2005,21 @@ system'collections'Queue&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isNotEmpty()
+<CODE>isEmpty()
 </CODE>
+<div class="block">
+Returns true if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
+<CODE>isNotEmpty()
 </CODE>
+<div class="block">
+Returns true if the queue is not empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1946,6 +2029,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>peek()
 </CODE>
+<div class="block">
+Returns an element at the queue top without removing it from the queue<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1955,6 +2040,8 @@ system'collections'Queue&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>pop()
 </CODE>
+<div class="block">
+Returns an element at the queue top and removes it from the queue<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1962,8 +2049,10 @@ system'collections'Queue&lt;T1&gt;</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>clear()
+<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
 </CODE>
+<div class="block">
+Puts an element at the queue end</div>
 </TD>
 </TR>
 </TABLE>
@@ -2061,24 +2150,6 @@ system'collections'SortedArrayList</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN> comparator)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
 </TD>
@@ -2098,6 +2169,24 @@ system'collections'SortedArrayList</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>allocate()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedArrayList">SortedArrayList</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN> comparator)
 </CODE>
 </TD>
 </TR>
@@ -2136,6 +2225,42 @@ system'collections'SortedArrayList</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>clear()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
@@ -2147,20 +2272,11 @@ system'collections'SortedArrayList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
+<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -2169,39 +2285,12 @@ system'collections'SortedArrayList</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
 <TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>clear()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
 </CODE>
 </TD>
 </TR>
@@ -2320,17 +2409,17 @@ system'collections'SortedList</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#SortedListItem">SortedListItem</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length()</CODE>
+<CODE>FirstItem()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#SortedListItem">SortedListItem</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>FirstItem()</CODE>
+<CODE>Length()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -2348,6 +2437,24 @@ system'collections'SortedList</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>enumerator()
@@ -2357,27 +2464,9 @@ system'collections'SortedList</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
@@ -2402,9 +2491,9 @@ system'collections'SortedList</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
 </CODE>
 </TD>
 </TR>
@@ -2503,24 +2592,6 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN> comparator)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
 </TD>
@@ -2540,6 +2611,24 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>allocate()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN> comparator)
 </CODE>
 </TD>
 </TR>
@@ -2578,22 +2667,13 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> item)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
@@ -2602,25 +2682,7 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o)
-</CODE>
-</TD>
-</TR>
 <TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -2629,21 +2691,48 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T2&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+</TD>
+</TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;T2&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;T2&gt;</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
 </CODE>
 </TD>
 </TR>
@@ -2773,18 +2862,18 @@ system'collections'SortedListEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -2793,7 +2882,7 @@ system'collections'SortedListEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -2903,23 +2992,6 @@ system'collections'SortedListIndexer</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Value()</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Value(value)
-</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
@@ -2940,6 +3012,23 @@ system'collections'SortedListIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Value(value)
+</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -3061,17 +3150,17 @@ system'collections'Stack</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>TopPointer()</CODE>
+<CODE>Length()</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<i>get internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>Length()</CODE>
+<CODE>TopPointer()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -3109,18 +3198,18 @@ system'collections'Stack</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerator()
+<CODE>clear()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isEmpty()
+<CODE>enumerator()
 </CODE>
 </TD>
 </TR>
@@ -3129,16 +3218,16 @@ system'collections'Stack</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isNotEmpty()
+<CODE>isEmpty()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>push(object)
+<CODE>isNotEmpty()
 </CODE>
 </TD>
 </TR>
@@ -3165,7 +3254,7 @@ system'collections'Stack</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>clear()
+<CODE>push(object)
 </CODE>
 </TD>
 </TR>
@@ -3187,7 +3276,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Stack&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Stack&lt;T1&gt;</SPAN><BR/>
+<I>A strong-typed LIFO list template</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -3248,7 +3338,7 @@ system'collections'Stack&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#Stack&lt;T1&gt;">Stack&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>()
+<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
 </TD>
 </TR>
@@ -3257,7 +3347,7 @@ system'collections'Stack&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#Stack&lt;T1&gt;">Stack&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
+<CODE><i>constructor</i>()
 </CODE>
 </TD>
 </TR>
@@ -3296,18 +3386,18 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerator()
+<CODE>clear()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isEmpty()
+<CODE>enumerator()
 </CODE>
 </TD>
 </TR>
@@ -3316,16 +3406,16 @@ system'collections'Stack&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>isNotEmpty()
+<CODE>isEmpty()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o)
+<CODE>isNotEmpty()
 </CODE>
 </TD>
 </TR>
@@ -3352,7 +3442,7 @@ system'collections'Stack&lt;T1&gt;</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>clear()
+<CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o)
 </CODE>
 </TD>
 </TR>
@@ -3482,18 +3572,18 @@ system'collections'StackEnumerator</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>next()
+<CODE>enumerable()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>reset()
+<CODE>next()
 </CODE>
 </TD>
 </TR>
@@ -3502,7 +3592,7 @@ system'collections'StackEnumerator</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>enumerable()
+<CODE>reset()
 </CODE>
 </TD>
 </TR>
@@ -3608,18 +3698,18 @@ system'collections'Tuple&lt;T1&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -3753,18 +3843,18 @@ system'collections'Tuple&lt;T1,T2&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -3886,18 +3976,18 @@ system'collections'Tuple&lt;T1,T2,T3&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -4027,18 +4117,18 @@ system'collections'Tuple&lt;T1,T2,T3,T4&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -4176,18 +4266,18 @@ system'collections'Tuple&lt;T1,T2,T3,T4,T5&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -4325,18 +4415,18 @@ system'collections'Tuple&lt;T1,T3,T4,T5,T6&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+<CODE>indexer()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>indexer()
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
 </TD>
 </TR>
@@ -4472,7 +4562,7 @@ system'collections'VarTuple&lt;T1,T2&gt;</LI>
 </UL>
 <DIV CLASS="aboutLanguage">
 <STRONG>
-ELENA&nbsp;Standard&nbsp;Library<br>6.7
+ELENA&nbsp;Standard&nbsp;Library<br>7.0
 </STRONG>
 </DIV>
 </DIV>

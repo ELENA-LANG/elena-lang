@@ -1,6 +1,6 @@
 namespace collections
 {
-   public sealed Map<TKey, TValue> : Enumerable<VarTuple<TKey, TValue>>
+   public sealed Map<TKey, TValue> : Enumerable<VarTuple<TKey, TValue>>, info("A strong-typed map template")
    {
       int _hashMask;
 
@@ -15,12 +15,12 @@ namespace collections
          _list := new List<VarTuple<TKey, TValue>>(capacity);
       }
 
-      constructor()
+      constructor() : info("Creates a map with a default size (37) and a capacity (32)")
       {
          self.init(32,37)
       }
       
-      constructor(int capacity, int hashLength)
+      constructor(int capacity, int hashLength) : info("Creates a map with the provided capacity and the length")
       {
          self.init(capacity,hashLength)
       }      
@@ -73,7 +73,7 @@ namespace collections
          ^ new_item                
       }
 
-      setAt(TKey key, TValue object)
+      setAt(TKey key, TValue object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
          int code := key.Hashcode.Absolute;
     
@@ -84,7 +84,7 @@ namespace collections
          item.Item2 := object
       }
       
-      TValue at(TKey key)
+      TValue at(TKey key) : info("Returns a dictionary element with <b>key</b>")
       {
          int code := key.Hashcode.Absolute;
     
@@ -96,11 +96,12 @@ namespace collections
       }
           
       /// Returns a dictionary enumerator
-      Enumerator<VarTuple<TKey, TValue>> enumerator() => _list;
+      Enumerator<VarTuple<TKey, TValue>> enumerator() : info("Returns an enumerator of a key-value pairs") => _list;
         
-      Array<VarTuple<TKey, TValue>> Values = _list.Value;
+      Array<VarTuple<TKey, TValue>> Values : info("Returns an array of a key-value pairs")
+         = _list.Value;
     
-      get TValue[] MapValues()
+      get TValue[] MapValues() : info("Returns an array of a map values")
       {
          auto list := new List<TValue>();
          auto it := _list.enumerator();
@@ -113,8 +114,7 @@ namespace collections
       }
     
     
-      /// Clones a dictionary
-      clone() 
+      clone() : info("Makes a shallow copy a map")
       {
          auto list := new Map<TKey, TValue>();
     
@@ -129,13 +129,13 @@ namespace collections
          ^ list
       }
         
-      clear()
+      clear() : info("Removes all key-value paires")
       {
          _hashTable := new int[][](_hashTable.Length);
          _list.clear()
       }
         
-      bool containsKey(TKey key)
+      bool containsKey(TKey key) : info("Returns true if the map contains the provided key")
       {
          int code := key.Hashcode.Absolute;
     

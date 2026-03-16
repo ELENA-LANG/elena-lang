@@ -3,7 +3,7 @@
 //
 //      This file contains the platform dependant common constants of the command-line
 //      compiler and a ELC project class
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef MACOS_CONSTANTS_H
@@ -11,9 +11,11 @@
 
 namespace elena_lang
 {
+   constexpr auto LOCAL_DEFAULT_CONFIG = "./local.elc60.config";
+
    // compiler service files
-   constexpr auto DEFAULT_CONFIG = "/etc/elena/elc60.config";
-   constexpr auto DATA_PATH = "/usr/share/elena";
+   constexpr auto DEFAULT_CONFIG = "/usr/local/etc/elena/elc60.config";
+   constexpr auto DATA_PATH = "/usr/local/share/elena";
 
 }
 

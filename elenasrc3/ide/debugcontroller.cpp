@@ -1132,7 +1132,7 @@ void DebugController :: readAutoContext(ContextBrowserBase* watch, int level, Wa
                item = readInlineField(watch, nullptr, _process->getStackItem(lineInfo[index].addresses.local.offset),
                   lineInfo[index].addresses.inlineField.index, level - 1);
                break;
-            }               
+            }
             default:
                break;
          }

@@ -12,8 +12,8 @@
 namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
-#define ENGINE_MAJOR_VERSION              6              // ELENA Engine version
-#define ENGINE_MINOR_VERSION              9
+#define ENGINE_MAJOR_VERSION              7              // ELENA Engine version
+#define ENGINE_MINOR_VERSION              0
 
    constexpr auto LINE_LEN = 0x1000;                     // the maximal source line length
    constexpr auto IDENTIFIER_LEN = 0x0300;               // the maximal identifier length
@@ -39,7 +39,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE = "ELENA.";            // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE = "VM.ELENA.";      // the stand alone image
-   constexpr auto MODULE_SIGNATURE = "ELENA.0608";       // the module version
+   constexpr auto MODULE_SIGNATURE = "ELENA.0700";       // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE = "ED.06";
 
    // --- ELENA core module names ---

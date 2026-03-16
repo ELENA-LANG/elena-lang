@@ -70,7 +70,7 @@ namespace elena_lang
          _debugInfoSize = size;
          _debugInfoPtr = debugInfoPtr;
       }
- 
+
       bool load(StreamReader& reader, bool setEntryAddress, DebugProcessBase* process);
 
       void clear()

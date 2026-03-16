@@ -3,7 +3,7 @@
 //
 //		This file contains the compiler interface code implementation
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -72,7 +72,6 @@
 
 #if defined(__x86_64__) || defined(_M_X64)
 
-
 #include "macos/macholinker64.h"
 #include "macos/machoimage.h"
 
@@ -82,9 +81,6 @@
 #endif
 
 #endif
-
-
-
 
 //#define TIME_RECORDING 1
 
@@ -199,7 +195,7 @@ LinkerBase* CLIHelper :: createLinker(PlatformType platform, Project* project, E
 
 #if defined(__x86_64__) || defined (_M_X64)
 
-   case PlatformType::FreeBSD_x86_64:
+   case PlatformType::MacOS_x86_64:
       return new MachOAmd64Linker(errorProcessor, &MachOAmd64ImageFormatter::getInstance(project));
 
 #elif defined(__aarch64__)

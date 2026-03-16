@@ -41,6 +41,11 @@ protected:
       action->change_state(doEnable);
    }
 
+   virtual void enableMenuItemById(Glib::RefPtr<Gio::SimpleAction>& action, bool doEnable)
+   {
+      action->set_enabled(doEnable);
+   }
+
 public:
    void populate(int counter, Gtk::Widget** children);
    void setLayout(int center, int top, int bottom, int right, int left);

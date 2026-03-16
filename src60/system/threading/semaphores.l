@@ -2,7 +2,7 @@
 
 internal const int __SIZEOF_SEM_T = 16;
 
-#elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"] || __project["FreeBSD_AMD64"])
+#elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"] || __project["_FreeBSD64"])
 
 internal const int __SIZEOF_SEM_T = 32;
 

@@ -1,4 +1,4 @@
-                      ELENA Language Project V. 6.6
+                      ELENA Language Project V. 7.0
                         (C)2005-2026  By Alex Rakov
     
 The project includes ELENA documentation, standard library source code, 
@@ -31,8 +31,10 @@ For more information see at http://elenalang.sourceforge.net/
 * OS requirements
 ****************************************************************************
 
- - Windows 7 / 8 / 10, x86
- - Linux I386
+ - Windows 7 / 8 / 10 / 11, x86
+ - Linux I386 / AMD64 / Aarch64 / PPC64le
+ - FreeBSD AMD64
+ - MacOS AMD64 (in development)
 
 ****************************************************************************
 * License

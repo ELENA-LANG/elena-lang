@@ -308,17 +308,17 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Run</attribute>"
         "            <attribute name='accel'>F9</attribute>"
-        "            <attribute name='action'>DebugRun</attribute>"
+        "            <attribute name='action'>win.DebugRun</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Step Over</attribute>"
         "            <attribute name='accel'>F8</attribute>"
-        "            <attribute name='action'>DebugStepover</attribute>"
+        "            <attribute name='action'>win.DebugStepover</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Step In</attribute>"
         "            <attribute name='accel'>F7</attribute>"
-        "            <attribute name='action'>DebugStepin</attribute>"
+        "            <attribute name='action'>win.DebugStepin</attribute>"
         "         </item>"
         "         <item>"
         "            <attribute name='label'>Go To Cursor</attribute>"
@@ -348,7 +348,7 @@ static Glib::ustring ui_info =
         "         <item>"
         "            <attribute name='label'>Stop Execution</attribute>"
         "            <attribute name='accel'>&lt;Ctrl&gt;F2</attribute>"
-        "            <attribute name='action'>DebugStop</attribute>"
+        "            <attribute name='action'>win.DebugStop</attribute>"
         "         </item>"
         "      </section>"
         "    </submenu>"
@@ -551,7 +551,7 @@ void GTKIDEWindow :: populateUI()
    _errorListMenuItem = refActions->add_action_bool("ProjectMessages", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_messages), false);
    _outputMenuItem = refActions->add_action_bool("ProjectOutput", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_output), false);
 
-   refActions->add_action("ProjectCompile", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
+   _compileMenuItem = refActions->add_action("ProjectCompile", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_compile));
 
 //   _app->add_action("ProjectWatch", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_watch));
 //   _app->add_action("ProjectCallstack", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_callstack));
@@ -569,14 +569,15 @@ void GTKIDEWindow :: populateUI()
 //   _app->add_action("ProjectForwards", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_forwards));
 //   _app->add_action("ProjectOptions", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));
 //
-//   _app->add_action("DebugRun""F9", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_run));
-//   _app->add_action("DebugStepover", "F8", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepover));
-//   _app->add_action("DebugStepin", "F7", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepin));
+   _runMenuItem = refActions->add_action("DebugRun", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_run));
+   _stepOverMenuItem = refActions->add_action("DebugStepover", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepover));
+   _stepIntoMenuItem = refActions->add_action("DebugStepin", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepin));
+   _stopMenuItem = refActions->add_action("DebugStop", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stop));
+
 //   _app->add_action("DebugGoto", "F4", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_goto));
 //   _app->add_action("DebugToggle", "F5", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_toggle));
 //   _app->add_action("DebugClearBreakpoints", "<control><shift>F5", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_clearbps));
 //   _app->add_action("DebugGotoSource", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_source));
-//   _app->add_action("DebugStop", "<control>F2", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stop));
 //
 //   _app->add_action("ToolsEditor", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_tools_editor));
 //   _app->add_action("ToolsDebugger", sigc::mem_fun(*this, &GTKIDEWindow::on_menu_tools_debugger));
@@ -666,6 +667,23 @@ void GTKIDEWindow :: populateUI()
       Gtk::KeyvalTrigger::create(GDK_KEY_F9, Gdk::ModifierType::CONTROL_MASK),
       Gtk::NamedAction::create("win.ProjectCompile")));
 
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F8),
+      Gtk::NamedAction::create("win.DebugStepover")));
+
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F9),
+      Gtk::NamedAction::create("win.DebugRun")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F8),
+      Gtk::NamedAction::create("win.DebugStepover")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F7),
+      Gtk::NamedAction::create("win.DebugStepin")));
+   controller->add_shortcut(Gtk::Shortcut::create(
+      Gtk::KeyvalTrigger::create(GDK_KEY_F2, Gdk::ModifierType::CONTROL_MASK),
+      Gtk::NamedAction::create("win.DebugStop")));
+
    loadUI(ui_info, "MenuBar");
 
 //   _refActionGroup->add( Gtk::Action::create("FileRecentFiles", "Recent files") );
@@ -692,15 +710,11 @@ void GTKIDEWindow :: populateUI()
 //   _refActionGroup->add( Gtk::Action::create("ProjectForwards", "Forwards..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_forwards));
 //   _refActionGroup->add( Gtk::Action::create("ProjectOptions", "Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_project_options));
 //
-//
-//   _refActionGroup->add( Gtk::Action::create("DebugRun", "Run"), Gtk::AccelKey("F9"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_run));
-//   _refActionGroup->add( Gtk::Action::create("DebugStepover", "Step Over"), Gtk::AccelKey("F8"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepover));
 //   _refActionGroup->add( Gtk::Action::create("DebugStepin", "Step In"), Gtk::AccelKey("F7"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stepin));
 //   _refActionGroup->add( Gtk::Action::create("DebugGoto", "Go To Cursor"), Gtk::AccelKey("F4"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_goto));
 //   _refActionGroup->add( Gtk::Action::create("DebugToggle", "Toggle Breakpoint"), Gtk::AccelKey("F5"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_toggle));
 //   _refActionGroup->add( Gtk::Action::create("DebugClearBreakpoints", "Clear All Breakpoints"), Gtk::AccelKey("<control><shift>F5"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_clearbps));
 //   _refActionGroup->add( Gtk::Action::create("DebugGotoSource", "Go To Source"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_source));
-//   _refActionGroup->add( Gtk::Action::create("DebugStop", "Stop Execution"), Gtk::AccelKey("<control>F2"), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_debug_stop));
 //
 //   _refActionGroup->add( Gtk::Action::create("ToolsEditor", "Editor Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_tools_editor));
 //   _refActionGroup->add( Gtk::Action::create("ToolsDebugger", "Debugger Options..."), sigc::mem_fun(*this, &GTKIDEWindow::on_menu_tools_debugger));
@@ -815,11 +829,45 @@ void GTKIDEWindow :: onProjectChange(bool empty)
    //show_all_children();
 }
 
+void GTKIDEWindow :: onDebugStep()
+{
+   _controller->onDebuggerStep(_model);
+
+   enableMenuItemById(_stopMenuItem, true);
+}
+
+void GTKIDEWindow :: onDebugEnd()
+{
+   _controller->onDebuggerStop(_model);
+}
+
+void GTKIDEWindow :: onDebuggerSourceNotFound_finish(int result)
+{
+   DebugActionResult debugResult = {};
+   if (!_controller->onDebuggerNoSource(_model, result == MessageDialogBase::Answer::Yes, debugResult)) {
+      if (debugResult.targetMissing) {
+         messageDialog.info(INFO_NEED_TARGET);
+      }
+      else if (debugResult.noDebugFile) {
+         messageDialog.info(INFO_RUN_NEED_RECOMPILE);
+      }
+   }
+}
+
+void GTKIDEWindow :: onDebuggerSourceNotFound()
+{
+   enableMenuItemById(_stopMenuItem, true);
+
+   messageDialog.question(QUESTION_NOSOURCE_CONTINUE, this, [](void* arg, int result)
+   {
+      ((GTKIDEWindow*)arg)->onDebuggerSourceNotFound_finish(result);
+   });
+}
+
 void GTKIDEWindow :: onProjectRefresh(bool empty)
 {
-/*
    updateCompileMenu(!empty, !empty, false);
-
+/*
    enableMenuItemById(IDM_PROJECT_CLOSE, !empty, true);
    enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
 */
@@ -827,6 +875,35 @@ void GTKIDEWindow :: onProjectRefresh(bool empty)
 
 void GTKIDEWindow :: onIDEStatusChange(int status)
 {
+   if (test(status, STATUS_DOC_READY)) {
+      _model->status = IDEStatus::Ready;
+
+      //onStatusBarChange();
+   }
+   else if (test(status, STATUS_DEBUGGER_STOPPED)) {
+      _model->status = IDEStatus::Stopped;
+
+      //onStatusBarChange();
+      updateCompileMenu(false, true, true);
+   }
+   else if (test(status, STATUS_DEBUGGER_RUNNING)) {
+      _model->status = IDEStatus::Running;
+
+      //onStatusBarChange();
+      updateCompileMenu(false, false, true);
+   }
+   else if (test(status, STATUS_DEBUGGER_FINISHED)) {
+      _model->status = IDEStatus::Stopped;
+
+      //onStatusBarChange();
+      updateCompileMenu(true, true, false);
+
+      onDebugEnd();
+   }
+   else if (test(status, STATUS_STATUS_CHANGED)) {
+      //onStatusBarChange();
+   }
+
    if (test(status, STATUS_PROJECT_CHANGED)) {
       onProjectChange(_model->projectModel.empty);
    }
@@ -834,22 +911,39 @@ void GTKIDEWindow :: onIDEStatusChange(int status)
       onProjectRefresh(_model->projectModel.empty);
    }
 
-   //if (test(rec->status, STATUS_FRAME_VISIBILITY_CHANGED)) {
+   if (test(status, STATUS_FRAME_VISIBILITY_CHANGED)) {
    //   if (_model->sourceViewModel.isAssigned()) {
          //_children[_model->ideScheme.textFrameId]->show();
          //_children[_model->ideScheme.textFrameId]->setFocus();
     //  }
       //else _children[_model->ideScheme.textFrameId]->hide();
-   //}
+   }
 
    if (test(status, STATUS_COMPILING)) {
       onComilationStart();
    }
 
+   //if (test(status, STATUS_LAYOUT_CHANGED)) {
+      //onLayoutChange();
+   //}
+
    if (test(status, STATUS_WITHERRORS)) {
       toggleResultTab(_model->ideScheme.errorListControl, true);
       checkMenuItemById(_errorListMenuItem, true);
    }
+
+   if (test(status, STATUS_DEBUGGER_NOSOURCE)) {
+      onDebuggerSourceNotFound();
+   }
+   else if (test(status, STATUS_DEBUGGER_STEP)) {
+      //onDebugWatch();
+      //onDebugCallstack();
+      onDebugStep();
+   }
+
+   //if (test(status, STATUS_FRAME_ACTIVATE)) {
+   //   onActivate();
+   //}
 }
 
 void GTKIDEWindow :: saveFile_finish(PathString& path, int index)
@@ -1147,7 +1241,7 @@ void GTKIDEWindow :: toggleResultTab(int controlIndex, bool visible)
 
 void GTKIDEWindow :: onComilationStart()
 {
-//   updateCompileMenu(false, false, true);
+   updateCompileMenu(false, false, true);
 
    toggleResultTab(_model->ideScheme.compilerOutputControl, true);
    checkMenuItemById(_outputMenuItem, true);
@@ -1164,22 +1258,22 @@ void GTKIDEWindow :: onCompilationEnd(int exitCode, int postponedAction)
    _controller->onCompilationCompletion(_model, exitCode, output.c_str(), &logger);
 
    if (exitCode != EXIT_FAILURE) {
-//      switch ((DebugAction)postponedAction) {
-//         case DebugAction::Run:
-//            _controller->doDebugAction(_model, DebugAction::Run, messageDialog, true);
-//            break;
-//         case DebugAction::StepOver:
-//            _controller->doDebugAction(_model, DebugAction::StepOver, messageDialog, true);
-//            break;
-//         case DebugAction::StepInto:
-//            _controller->doDebugAction(_model, DebugAction::StepInto, messageDialog, true);
-//            break;
-//         case DebugAction::RunTo:
-//            _controller->doDebugAction(_model, DebugAction::RunTo, messageDialog, true);
-//            break;
-//         default:
-//            break;
-//      }
+      switch ((DebugAction)postponedAction) {
+         case DebugAction::Run:
+            doDebugAction(DebugAction::Run, true);
+            break;
+         case DebugAction::StepOver:
+            doDebugAction(DebugAction::StepOver, true);
+            break;
+         case DebugAction::StepInto:
+            doDebugAction(DebugAction::StepInto, true);
+            break;
+         case DebugAction::RunTo:
+            doDebugAction(DebugAction::RunTo, true);
+            break;
+         default:
+            break;
+      }
    }
 }
 
@@ -1190,6 +1284,22 @@ void GTKIDEWindow :: onErrorHighlight(const Gtk::TreeModel::Path& path)
    auto messageInfo = logger.getMessage(path);
    if (!messageInfo.path.empty())
       _controller->highlightError(_model, messageInfo.row, messageInfo.column, messageInfo.path);
+}
+
+void GTKIDEWindow :: updateCompileMenu(bool compileEnable, bool debugEnable, bool stopEnable)
+{
+   enableMenuItemById(_compileMenuItem, compileEnable);
+
+   enableMenuItemById(_runMenuItem, debugEnable);
+   enableMenuItemById(_stepOverMenuItem, debugEnable);
+   enableMenuItemById(_stepIntoMenuItem, debugEnable);
+
+   enableMenuItemById(_stopMenuItem, stopEnable);
+/*
+   enableMenuItemById(IDM_PROJECT_OPTION, compileEnable, false);
+
+   enableMenuItemById(IDM_DEBUG_RUNTO, debugEnable, false);
+*/
 }
 
 // --- GTKIDEWindow::EventLog ---
@@ -1217,6 +1327,8 @@ MessageLogInfo GTKIDEWindow::EventLog :: getMessage(const Gtk::TreeModel::Path& 
 
       return bookmark;
    }
+
+   return {};
 }
 
 void GTKIDEWindow::EventLog :: clearMessages()
@@ -1224,3 +1336,20 @@ void GTKIDEWindow::EventLog :: clearMessages()
    _owner->_messageList->clear();
 }
 
+void GTKIDEWindow :: doDebugAction(DebugAction action, bool withoutPostponeAction)
+{
+   DebugActionResult result = {};
+   if (!_controller->doDebugAction(_model, action, result, withoutPostponeAction)) {
+      /*if (_model->sourceViewModel.isAnyDocumentModified())
+         messageDialog.info(INFO_RUN_UNSAVED_PROJECT);
+      else if (result.outaged) {
+         messageDialog.info(INFO_RUN_OUT_OF_DATE);
+      }
+      else if (result.targetMissing) {
+         messageDialog.info(INFO_NEED_TARGET);
+      }
+      else if (result.noDebugFile) {
+         messageDialog.info(INFO_RUN_NEED_RECOMPILE);
+      }*/
+   }
+}

@@ -4,13 +4,18 @@
         <output>..\..\lib60</output>
      </project>
   </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>..\..\lib60_64</output>
+     </project>
+  </platform>
   <project>
      <namespace>mbedtls</namespace>
      <template>lib60</template>
   </project>
   <manifest>
      <name>ELENA SSL Socket based on MbedTls routines</name>
-     <version>6.8.3</version>
+     <version>7.0.0</version>
      <author>Aleksey Rakov</author>
   </manifest>
   <files>
