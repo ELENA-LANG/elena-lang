@@ -5,22 +5,34 @@ In development:
 [development]
   ### EPIC: elena 8.0 ###
 
-  === Iteration 46 (graph sample; template generator; ide linux; mac) ===
-  * new version 7.0.1
-  --------------------------------------
-  * dev
+  === Iteration 46 (graph sample; ide linux; mac) ===
+  * dev : template generator
   ====================================== 
+  - support help (Windows & Linux) : <command name="help">@list command;</command>
+  - support eval (Windows & Linux)
+  - support functions (Windows & Linux)
+  - support text generation (Windows & Linux)
+
+  - make possible to create a simple console app, repl console app
+  - post about using elt to create a project
+  --------------------------------------
   * lang
   ====================================== 
   * doc
   ====================================== 
-  - provide descriptions for all classes (from collections\queues.l)
+  - provide descriptions for all classes (from collections\tuples.l)
   --------------------------------------
   * samples
   ====================================== 
-  * current
+  * current : redesign elt 
   ====================================== 
-  - prepare new state
+  - command @quit
+  - support quit for Windows & Linux
+
+  - basic commands : @load, $set, $eval
+  - support existing functionality with [[ #use ]] and -i
+  - refactor elt
+  - make it open configuarble
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

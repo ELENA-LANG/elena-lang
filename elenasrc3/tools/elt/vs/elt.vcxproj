@@ -259,19 +259,27 @@
     </ResourceCompile>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <ClCompile Include="..\..\..\common\config.cpp" />
+    <ClCompile Include="..\..\..\common\dump.cpp" />
     <ClCompile Include="..\..\..\common\files.cpp" />
     <ClCompile Include="..\..\..\common\paths.cpp" />
     <ClCompile Include="..\..\..\common\ustring.cpp" />
+    <ClCompile Include="..\..\..\common\xmltree.cpp" />
+    <ClCompile Include="..\..\..\engine\scriptreader.cpp" />
     <ClCompile Include="..\..\..\engine\windows\presenter.cpp" />
     <ClCompile Include="..\vmsession.cpp" />
     <ClCompile Include="..\windows\elt.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\..\common\common.h" />
+    <ClInclude Include="..\..\..\common\config.h" />
+    <ClInclude Include="..\..\..\common\dump.h" />
     <ClInclude Include="..\..\..\common\files.h" />
     <ClInclude Include="..\..\..\common\lists.h" />
     <ClInclude Include="..\..\..\common\paths.h" />
     <ClInclude Include="..\..\..\common\ustring.h" />
+    <ClInclude Include="..\..\..\common\xmltree.h" />
+    <ClInclude Include="..\..\..\engine\scriptreader.h" />
     <ClInclude Include="..\..\..\engine\windows\presenter.h" />
     <ClInclude Include="..\elenasm.h" />
     <ClInclude Include="..\elenavm.h" />

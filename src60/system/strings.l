@@ -1226,7 +1226,7 @@ sealed class StringEnumerator : Enumerator<char>,
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       index.Value := -1;
       diff.Value := 1
@@ -1652,7 +1652,7 @@ sealed class WideStringEnumerator : Enumerator<char>
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       index.Value := -1;
       diff.Value := 1
@@ -1945,7 +1945,7 @@ public sealed ArrayEnumerator : Enumerator, info("A generic array enumerator")
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       index.Value := -1;
    }
@@ -2130,7 +2130,7 @@ class BitArrayEnumerator : Enumerator<bool>
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       _index.Value := -1
    }
@@ -2243,7 +2243,7 @@ class BitArray32Enumerator : Enumerator<bool>
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       _index.Value := -1
    }

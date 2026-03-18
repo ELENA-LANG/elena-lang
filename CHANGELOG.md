@@ -1,3 +1,23 @@
+## ELENA 7.1.0
+
+- ELENA
+
+- ELC
+
+- API
+
+- SM
+
+- Scripts
+
+- SAMPLES
+
+- IDE
+
+- Tools
+
+- Misc
+
 ## ELENA 7.0.0
 
 - ELENA

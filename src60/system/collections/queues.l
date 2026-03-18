@@ -266,7 +266,7 @@ namespace collections
       get Value() : info("Returns the current queue element")
          = _list[_index];
             
-      reset() : info("Resets the enumerator")
+      reset() : info("Resets the enumerator, so it can be used again")
       {
          _list := _queue;
          _index := _queue.TopPointer;
@@ -283,7 +283,7 @@ namespace collections
       ArrayList      _list;
       Reference<int> _top;
         
-      constructor()
+      constructor() : info("Creates an empty queue")
       {
          _list := new ArrayList();
          _top := 0
@@ -293,9 +293,9 @@ namespace collections
         
       ArrayList cast() = _list;
         
-      Enumerator enumerator() = new StackEnumerator(self);
+      Enumerator enumerator() : info("Returns the stack enumerator") = new StackEnumerator(self);
         
-      int Length
+      int Length : info("Returns the number of elements in the stack")
       {
          get()
          {
@@ -305,21 +305,21 @@ namespace collections
          }
       }        
         
-      bool isEmpty()
+      bool isEmpty() : info("Returns true if the stack is empty")
       {
          int top := *_top;
             
          ^ top == 0
       }
         
-      bool isNotEmpty()
+      bool isNotEmpty() : info("Returns true if the stack is not empty")
       {
          int top := *_top;
             
          ^ top != 0
       }
         
-      push(object)
+      push(object) : info("Puts an element at the stack top")
       {
          int capacity := _list.Length;
          int top := *_top;
@@ -336,7 +336,7 @@ namespace collections
          _top.append(1)
       }
         
-      peek()
+      peek() : info("Returns an element at the stack top without removing it from it<br/>The exception is raised if the queue is empty")
       {
          int top := *_top;
             
@@ -346,7 +346,7 @@ namespace collections
          ^ _list[top - 1]
       }        
         
-      pop()
+      pop() : info("Returns an element at the stack top and removes it from the stack<br/>The exception is raised if the queue is empty")
       {
          int top := *_top;
             
@@ -363,7 +363,7 @@ namespace collections
          ^ item
       }
         
-      clear()
+      clear() : info("Removes all elements from the stack")
       {
          _list.clear();
          _top.Value := 0
@@ -377,19 +377,19 @@ namespace collections
       List<T>        _array;
       Reference<int> _top;
         
-      constructor()
+      constructor() : info("Creates an empty queue")
       {
          _array := new List<T>(8);
          _top := 0;
       }
         
-      constructor allocate(int capacity)
+      constructor allocate(int capacity) : info("Creates an empty stack with preallocated space")
       {
          _array := new List<T>(capacity);
          _top := 0;
       }
         
-      int Length
+      int Length : info("Returns the number of elements in the stack")
       {
          get()
          {
@@ -399,13 +399,13 @@ namespace collections
          }
       }
             
-      bool isEmpty()
+      bool isEmpty() : info("Returns true if the stack is empty")
          = 0 == *_top;
         
-      bool isNotEmpty()
+      bool isNotEmpty() : info("Returns true if the stack is not empty")
          = 0 != *_top;
         
-      push(T o)
+      push(T o) : info("Puts an element at the stack top")
       {
          int capacity := _array.Length;
             
@@ -421,7 +421,7 @@ namespace collections
          _top.append(1)
       }
         
-      T peek()
+      T peek() : info("Returns an element at the stack top without removing it from it<br/>The exception is raised if the queue is empty")
       {
          if (0 == *_top)
             { InvalidOperationException.new("Stack is empty").raise() };
@@ -429,7 +429,7 @@ namespace collections
          ^ _array.at(*_top - 1)
       }
         
-      T pop()
+      T pop() : info("Returns an element at the stack top and removes it from the stack<br/>The exception is raised if the queue is empty")
       {
          if (0 == *_top)
             { InvalidOperationException.new("Stack is empty").raise() };
@@ -442,13 +442,13 @@ namespace collections
          ^ item
       }
         
-      clear()
+      clear() : info("Removes all elements from the stack")
       {
          _array.clear();
          _top.Value := 0
       }    
         
-      Enumerator<T> enumerator() = new BaseEnumerator<T>
+      Enumerator<T> enumerator() : info("Returns the queue enumerator") = new BaseEnumerator<T>
       {
          this index := -1;
             
@@ -467,20 +467,20 @@ namespace collections
     
    // --- StackEnumerator ---
     
-   public class StackEnumerator : Enumerator
+   public class StackEnumerator : Enumerator, info("A weak stack enumerator")
    {
       Stack     _stack;
       ArrayList _list;
       int       _index; 
         
-      constructor(Stack stack)
+      constructor(Stack stack) : info("Creates an enumerator of the given stack")
       {
          _stack := stack;
          _list := stack;
          _index := stack.TopPointer;
       }
         
-      bool next()
+      bool next() : info("Goes to the next enumeration member and returns true if it is not the last member")
       {
          if (_index > 0)
          {
@@ -492,15 +492,15 @@ namespace collections
          ^ false
       }
             
-      get Value()
+      get Value() : info("Returns the current stack element")
          = _list[_index];
             
-      reset()
+      reset() : info("Resets the enumerator, so it can be used again")
       {
          _list := _stack;
          _index := _stack.TopPointer
       }   
         
-      enumerable() = _stack;
+      enumerable() : info("Returns an enumerable stack") = _stack;
    }
 }

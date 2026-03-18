@@ -3,30 +3,38 @@
 //
 //		This is a main file containing VM session code
 //
-//                                             (C)2023-2025, by Aleksey Rakov
+//                                             (C)2023-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 #include "vmsession.h"
-#include "elenasm.h"
-#include "elenavm.h"
+//#include "elenasm.h"
+//#include "elenavm.h"
 #include "eltconst.h"
+
+#include "config.h"
+#include "scriptreader.h"
 
 using namespace elena_lang;
 
 constexpr auto MAX_LINE = 256;
 
-static inline const char* trim(const char* s)
+struct CommandError : ExceptionBase
 {
-   while (s[0] == 0x20)s++;
 
-   return s;
-}
+};
 
-static inline bool isLetterOrDigit(char ch)
-{
-   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9');
-}
+//static inline const char* trim(const char* s)
+//{
+//   while (s[0] == 0x20)s++;
+//
+//   return s;
+//}
+//
+//static inline bool isLetterOrDigit(char ch)
+//{
+//   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9');
+//}
 
 static inline void trimLine(IdentifierString& line)
 {
@@ -37,441 +45,532 @@ static inline void trimLine(IdentifierString& line)
       line[line.length() - 1] = 0;
 }
 
-static inline bool isAssignment(ustr_t line)
-{
-   if (line[0] != '$')
-      return false;
-
-   size_t len = line.length();
-   size_t i = 1;
-   while (i < len && (isLetterOrDigit(line[i])))
-      i++;
-
-   while (line[i] == ' ')
-      i++;
-
-   return (i < len - 1) && (line[i] == ':' && line[i + 1] == '=');
-}
-
-static inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, TemplateInfo& info)
-{
-   size_t pos = s.findSubStr(start, "$1", end - start);
-   if (pos != NOTFOUND_POS) {
-      info.prefix.copy(s + start, pos - start);
-      info.postfix.copy(s + pos + 2, end - pos - 2);
-   }
-   else info.postfix.copy(s + start, end - start);
-
-   trimLine(info.prefix);
-   trimLine(info.postfix);
-}
-
-static inline size_t findTerminator(ustr_t text, size_t index)
-{
-   bool quoteMode = false;
-   size_t i = index;
-   while (text[i]) {
-      if (text[i]=='"') {
-         if (quoteMode) {
-            if (text[i + 1] != '"') {
-               quoteMode = false;
-            }
-            else i++;
-         }
-         else quoteMode = true;
-      }
-      if (!quoteMode && text[i] == ';')
-         break;
-      i++;
-   }
-
-   return i;
-}
-
-static inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
-{
-   size_t i = index;
-   while (i < text.length()) {
-      size_t pos = ustr_t(text.str()).findSub(i, '$');
-      if (pos == NOTFOUND_POS)
-         break;
-
-      if (!isAssignment(text.str() + pos)) {
-         i = pos + 1;
-
-         continue;
-      }
-
-      IdentifierString varName;
-      size_t j = pos + 1;
-      while (isLetterOrDigit(text[j])) {
-         varName.append(text[j]);
-         j++;
-      }
-
-      size_t assignPos = ustr_t(text.str()).findSubStr(pos, ":=", text.length() - pos);
-      size_t endPos = findTerminator(text.str(), assignPos);
-      if (endPos == NOTFOUND_POS) {
-         return false;
-      }
-      IdentifierString expr(text.str() + assignPos + 2, endPos - assignPos - 2);
-
-      text.cut(pos, endPos - pos + 1);
-
-      text.insert(postfix, pos);
-      text.insert(*expr, pos);
-      text.insert("\" ,", pos);
-      text.insert(*varName, pos);
-      text.insert("\"", pos);
-      text.insert(prefix, pos);
-
-      i = pos;
-   }
-
-   return true;
-}
-
-static inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
-{
-   size_t i = index;
-   while (i < text.length()) {
-      size_t pos = ustr_t(text.str()).findSub(i, '$');
-      if (pos == NOTFOUND_POS)
-         break;
-
-      IdentifierString varName;
-      size_t j = pos + 1;
-      while (isLetterOrDigit(text[j])) {
-         varName.append(text[j]);
-         j++;
-      }
-
-      text.cut(pos, j - pos);
-
-      text.insert(postfix, pos);
-      text.insert("\"", pos);
-      text.insert(*varName, pos);
-      text.insert("\"", pos);
-      text.insert(prefix, pos);
-
-      i = pos;
-   }
-}
+//static inline bool isAssignment(ustr_t line)
+//{
+//   if (line[0] != '$')
+//      return false;
+//
+//   size_t len = line.length();
+//   size_t i = 1;
+//   while (i < len && (isLetterOrDigit(line[i])))
+//      i++;
+//
+//   while (line[i] == ' ')
+//      i++;
+//
+//   return (i < len - 1) && (line[i] == ':' && line[i + 1] == '=');
+//}
+//
+//static inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, TemplateInfo& info)
+//{
+//   size_t pos = s.findSubStr(start, "$1", end - start);
+//   if (pos != NOTFOUND_POS) {
+//      info.prefix.copy(s + start, pos - start);
+//      info.postfix.copy(s + pos + 2, end - pos - 2);
+//   }
+//   else info.postfix.copy(s + start, end - start);
+//
+//   trimLine(info.prefix);
+//   trimLine(info.postfix);
+//}
+//
+//static inline size_t findTerminator(ustr_t text, size_t index)
+//{
+//   bool quoteMode = false;
+//   size_t i = index;
+//   while (text[i]) {
+//      if (text[i]=='"') {
+//         if (quoteMode) {
+//            if (text[i + 1] != '"') {
+//               quoteMode = false;
+//            }
+//            else i++;
+//         }
+//         else quoteMode = true;
+//      }
+//      if (!quoteMode && text[i] == ';')
+//         break;
+//      i++;
+//   }
+//
+//   return i;
+//}
+//
+//static inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
+//{
+//   size_t i = index;
+//   while (i < text.length()) {
+//      size_t pos = ustr_t(text.str()).findSub(i, '$');
+//      if (pos == NOTFOUND_POS)
+//         break;
+//
+//      if (!isAssignment(text.str() + pos)) {
+//         i = pos + 1;
+//
+//         continue;
+//      }
+//
+//      IdentifierString varName;
+//      size_t j = pos + 1;
+//      while (isLetterOrDigit(text[j])) {
+//         varName.append(text[j]);
+//         j++;
+//      }
+//
+//      size_t assignPos = ustr_t(text.str()).findSubStr(pos, ":=", text.length() - pos);
+//      size_t endPos = findTerminator(text.str(), assignPos);
+//      if (endPos == NOTFOUND_POS) {
+//         return false;
+//      }
+//      IdentifierString expr(text.str() + assignPos + 2, endPos - assignPos - 2);
+//
+//      text.cut(pos, endPos - pos + 1);
+//
+//      text.insert(postfix, pos);
+//      text.insert(*expr, pos);
+//      text.insert("\" ,", pos);
+//      text.insert(*varName, pos);
+//      text.insert("\"", pos);
+//      text.insert(prefix, pos);
+//
+//      i = pos;
+//   }
+//
+//   return true;
+//}
+//
+//static inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
+//{
+//   size_t i = index;
+//   while (i < text.length()) {
+//      size_t pos = ustr_t(text.str()).findSub(i, '$');
+//      if (pos == NOTFOUND_POS)
+//         break;
+//
+//      IdentifierString varName;
+//      size_t j = pos + 1;
+//      while (isLetterOrDigit(text[j])) {
+//         varName.append(text[j]);
+//         j++;
+//      }
+//
+//      text.cut(pos, j - pos);
+//
+//      text.insert(postfix, pos);
+//      text.insert("\"", pos);
+//      text.insert(*varName, pos);
+//      text.insert("\"", pos);
+//      text.insert(prefix, pos);
+//
+//      i = pos;
+//   }
+//}
 
 // --- VMSession ---
 
 VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
-   : _appPath(appPath), _env({}), _imports(nullptr)
+   : _appPath(appPath), _encoding(FileEncoding::UTF8), /*_env({}), _imports(nullptr), */ _presenter(presenter), _commands(nullptr)
 {
-   _started = _multiLineFlag = false;
-
-   _encoding = FileEncoding::UTF8;
-
-   _presenter = presenter;
+//   _started = _multiLineFlag = false;
 }
 
-bool VMSession :: loadTemplate(TemplateType type, ustr_t name)
+bool VMSession :: loadConfig(path_t configPath)
 {
-   _presenter->print(ELT_LOADING_TEMPLATE, name);
+   DynamicString<char> name;
+   DynamicString<char> script;
 
-   if (name.find(PATH_SEPARATOR) != NOTFOUND_POS)
-      return false;
+   ConfigFile config;
+   if (config.load(configPath, FileEncoding::UTF8)) {
+      ConfigFile::Collection commands;
+      if (config.select(ELT_COMMAND_XPATH, commands)) {
+         for (auto it = commands.start(); !it.eof(); ++it) {
+            ConfigFile::Node commandNode = *it;
 
-   char buffer[1024];
+            if (!commandNode.readAttribute("name", name)) {
+               name.clear();
+            }
 
-   PathString path(*_appPath);
-   path.combine("scripts");
-   path.combine(name);
-   path.changeExtension("elt");
+            commandNode.readContent(script);
 
-   TextFileReader reader(*path, FileEncoding::UTF8, false);
+            if (name.empty()) {
+               _presenter->print(ELT_INVALID);
 
-   DynamicString<char> helpLine;
-   DynamicString<char> content;
-   if (!reader.isOpen())
-      return false;
+               return true;
+            }
 
-   while (reader.read(buffer, 1024)) {
-      if (ustr_t(buffer).startsWith("///")) {
-         helpLine.append(buffer + 3);
+            auto command = new Command();
+            command->scriptCommand.copy(script.str());
+
+            _commands.add(name.str(), command);
+         }
       }
-      else content.append(buffer);
-   }
 
-   if (!helpLine.empty())
-      _presenter->print(helpLine.str());
-
-   switch (type) {
-      case TemplateType::REPL:
-         _repl.clear();
-         copyPrefixPostfix(content.str(), 0, content.length(), _repl);
-         break;
-      case TemplateType::Multiline:
-         _multiline.clear();
-         copyPrefixPostfix(content.str(), 0, content.length(), _multiline);
-         break;
-      case TemplateType::GetVar:
-         _get_var.clear();
-         copyPrefixPostfix(content.str(), 0, content.length(), _get_var);
-         break;
-      case TemplateType::SetVar:
-         _set_var.clear();
-         copyPrefixPostfix(content.str(), 0, content.length(), _set_var);
-         break;
-      default:
-         return false;
-   }
-
-   return true;
-}
-
-void VMSession::printHelp()
-{
-   _presenter->print("@help                      - help\n");
-   _presenter->print("@quit                      - quit\n");
-   _presenter->print("@multiline                 - switching to a multi-line mode\n");
-
-   _presenter->print("<expr>                     - evaluate the expression and print the result\n");
-   _presenter->print("$<var> := <expr>;          - assign a global variable\n");
-   _presenter->print(".. $<var>  ..              - get a global variable value\n");
-
-   _presenter->print("@base <path>               - set the base path for scripts\n");
-   _presenter->print("@load <path>               - execute a script from file\n");
-   _presenter->print("@import <path>             - load the script into multi-line script\n");
-
-   _presenter->print("@use <template>            - use the template for multiline script\n");
-
-   _presenter->print("@eval                      - executing the multi-line code and switch back to REPL mode\n");
-   _presenter->print("@clear                     - clear the multi-line code and switch back to REPL mode\n");
-   _presenter->print("@print                     - print the multi-line code\n");
-   _presenter->print("@add import <reference>    - importing a module into the session\n");
-   _presenter->print("@remove import <reference> - removing a module from the session\n");
-}
-
-void VMSession::setBasePath(ustr_t baseStr)
-{
-   _basePath.copy(baseStr);
-}
-
-bool VMSession::loadScript(ustr_t pathStr)
-{
-   void* tape = nullptr;
-
-   pathStr = trim(pathStr);
-
-   if (pathStr.find(PATH_SEPARATOR) == NOTFOUND_POS) {
-      PathString totalPath(_basePath);
-      totalPath.combine(pathStr);
-      totalPath.changeExtension("es");
-
-      IdentifierString totalPathStr(*totalPath);
-      tape = InterpretFileSMLA(totalPathStr.str(), (int)_encoding, false);
-   }
-   else tape = InterpretFileSMLA(pathStr, (int)_encoding, false);
-
-   if (tape == nullptr) {
-      char error[0x200];
-      size_t length = GetStatusSMLA(error, 0x200);
-      error[length] = 0;
-      if (!emptystr(error)) {
-         _presenter->print(ELT_SCRIPT_FAILED, error);
-         return false;
-      }
       return true;
    }
-   return executeTape(tape);
+
+   return false;
 }
 
-bool VMSession::importScript(ustr_t scriptName)
+//bool VMSession :: loadTemplate(TemplateType type, ustr_t name)
+//{
+//   _presenter->print(ELT_LOADING_TEMPLATE, name);
+//
+//   if (name.find(PATH_SEPARATOR) != NOTFOUND_POS)
+//      return false;
+//
+//   char buffer[1024];
+//
+//   PathString path(*_appPath);
+//   path.combine("scripts");
+//   path.combine(name);
+//   path.changeExtension("elt");
+//
+//   TextFileReader reader(*path, FileEncoding::UTF8, false);
+//
+//   DynamicString<char> helpLine;
+//   DynamicString<char> content;
+//   if (!reader.isOpen())
+//      return false;
+//
+//   while (reader.read(buffer, 1024)) {
+//      if (ustr_t(buffer).startsWith("///")) {
+//         helpLine.append(buffer + 3);
+//      }
+//      else content.append(buffer);
+//   }
+//
+//   if (!helpLine.empty())
+//      _presenter->print(helpLine.str());
+//
+//   switch (type) {
+//      case TemplateType::REPL:
+//         _repl.clear();
+//         copyPrefixPostfix(content.str(), 0, content.length(), _repl);
+//         break;
+//      case TemplateType::Multiline:
+//         _multiline.clear();
+//         copyPrefixPostfix(content.str(), 0, content.length(), _multiline);
+//         break;
+//      case TemplateType::GetVar:
+//         _get_var.clear();
+//         copyPrefixPostfix(content.str(), 0, content.length(), _get_var);
+//         break;
+//      case TemplateType::SetVar:
+//         _set_var.clear();
+//         copyPrefixPostfix(content.str(), 0, content.length(), _set_var);
+//         break;
+//      default:
+//         return false;
+//   }
+//
+//   return true;
+//}
+//
+//void VMSession::printHelp()
+//{
+//   _presenter->print("@help                      - help\n");
+//   _presenter->print("@quit                      - quit\n");
+//   _presenter->print("@multiline                 - switching to a multi-line mode\n");
+//
+//   _presenter->print("<expr>                     - evaluate the expression and print the result\n");
+//   _presenter->print("$<var> := <expr>;          - assign a global variable\n");
+//   _presenter->print(".. $<var>  ..              - get a global variable value\n");
+//
+//   _presenter->print("@base <path>               - set the base path for scripts\n");
+//   _presenter->print("@load <path>               - execute a script from file\n");
+//   _presenter->print("@import <path>             - load the script into multi-line script\n");
+//
+//   _presenter->print("@use <template>            - use the template for multiline script\n");
+//
+//   _presenter->print("@eval                      - executing the multi-line code and switch back to REPL mode\n");
+//   _presenter->print("@clear                     - clear the multi-line code and switch back to REPL mode\n");
+//   _presenter->print("@print                     - print the multi-line code\n");
+//   _presenter->print("@add import <reference>    - importing a module into the session\n");
+//   _presenter->print("@remove import <reference> - removing a module from the session\n");
+//}
+//
+//void VMSession::setBasePath(ustr_t baseStr)
+//{
+//   _basePath.copy(baseStr);
+//}
+//
+//bool VMSession::loadScript(ustr_t pathStr)
+//{
+//   void* tape = nullptr;
+//
+//   pathStr = trim(pathStr);
+//
+//   if (pathStr.find(PATH_SEPARATOR) == NOTFOUND_POS) {
+//      PathString totalPath(_basePath);
+//      totalPath.combine(pathStr);
+//      totalPath.changeExtension("es");
+//
+//      IdentifierString totalPathStr(*totalPath);
+//      tape = InterpretFileSMLA(totalPathStr.str(), (int)_encoding, false);
+//   }
+//   else tape = InterpretFileSMLA(pathStr, (int)_encoding, false);
+//
+//   if (tape == nullptr) {
+//      char error[0x200];
+//      size_t length = GetStatusSMLA(error, 0x200);
+//      error[length] = 0;
+//      if (!emptystr(error)) {
+//         _presenter->print(ELT_SCRIPT_FAILED, error);
+//         return false;
+//      }
+//      return true;
+//   }
+//   return executeTape(tape);
+//}
+//
+//bool VMSession::importScript(ustr_t scriptName)
+//{
+//   PathString totalPath(_basePath);
+//   totalPath.combine(scriptName);
+//   totalPath.changeExtension("es");
+//
+//   TextFileReader reader(*totalPath, _encoding, false);
+//   if (!reader.isOpen())
+//      return false;
+//
+//   char buffer[1024];
+//   while (reader.read(buffer, 1024)) {
+//      _body.append(buffer);
+//   }
+//
+//   return true;
+//}
+
+static inline ustr_t readCommand(ustr_t script, IdentifierString& command)
 {
-   PathString totalPath(_basePath);
-   totalPath.combine(scriptName);
-   totalPath.changeExtension("es");
+   size_t pos = script.find(' ');
+   if (pos != NOTFOUND_POS) {
+      command.copy(script, pos);
 
-   TextFileReader reader(*totalPath, _encoding, false);
-   if (!reader.isOpen())
-      return false;
-
-   char buffer[1024];
-   while (reader.read(buffer, 1024)) {
-      _body.append(buffer);
+      return script + pos + 1;
    }
+   else {
+      command.copy(script);
 
-   return true;
+      return nullptr;
+   }
 }
 
-void VMSession :: executeCommandLine(bool preview, TemplateType type, ustr_t script)
+void readToken(PresenterBase* presenter, ScriptReader& scriptReader, ScriptToken& token, ustr_t expected, bool skipRead = false)
 {
-   DynamicString<char> command;
+   if (!skipRead)
+      scriptReader.read(token);
 
-   for (auto it = _imports.start(); !it.eof(); ++it) {
-      command.append("import ");
-      command.append(*it);
-      command.append(";\n");
+   if (!token.compare(expected)) {
+      presenter->print(ELT_INVALID);
+
+      throw CommandError();
    }
 
-   switch (type) {
-      case TemplateType::REPL:
-         command.append(*_repl.prefix);
-         command.append(script);
-         command.append(*_repl.postfix);
-         break;
-      case TemplateType::Multiline:
-         command.append(*_multiline.prefix);
-         command.append(script);
-         command.append(*_multiline.postfix);
-         break;
-      default:
-         break;
-   }
-
-   insertVariablesAssignment(command, 0, *_set_var.prefix, *_set_var.postfix);
-   insertVariables(command, 0, *_get_var.prefix, *_get_var.postfix);
-
-   if (preview) {
-      _presenter->printLine(command.str());
-   }
-   else if (!executeScript(command.str())) {
-      _presenter->print(ELT_CODE_FAILED);
-   }
+   if (skipRead)
+      scriptReader.read(token);
 }
 
-bool VMSession::executeTape(void* tape)
+void VMSession :: executeCommand(Command* command, Context& context)
 {
-   bool retVal = false;
-   if (!_started) {
-      retVal = connect(tape);
-   }
-   else retVal = execute(tape);
+   IdentifierTextReader reader(*command->scriptCommand);
+   ScriptReader scriptReader(3, &reader);
 
-   ReleaseSMLA(0);
+   ScriptToken token;
+   while (scriptReader.read(token)) {
+      readToken(_presenter, scriptReader, token, "@", true);
 
-   return retVal;
-}
+      if (token.compare("quit")) {
+         readToken(_presenter, scriptReader, token, ";");
 
-bool VMSession::executeScript(const char* script)
-{
-   void* tape = InterpretScriptSMLA(script);
-   if (tape == nullptr) {
-      char error[0x200];
-      size_t length = GetStatusSMLA(error, 0x200);
-      error[length] = 0;
-      if (!emptystr(error)) {
-         _presenter->printLine(ELT_SCRIPT_FAILED, error);
-         return false;
+         context.running = false;
       }
-      return true;
    }
-   return executeTape(tape);
 }
 
-void VMSession::start()
+void VMSession :: executeCommandLine(/*bool preview, TemplateType type, */ustr_t script, Context& context)
 {
-   executeScript("[[ #start; ]]");
+   IdentifierString commandName;
 
-   _started = true;
+   context.argument = readCommand(script, commandName);
+
+   Command* command = _commands.get(*commandName);
+   if (command != nullptr) {
+      executeCommand(command, context);
+   }
+   else _presenter->print(ELT_UNKNOWNCOMMAND, *commandName);
+
+//   DynamicString<char> command;
+//
+//   for (auto it = _imports.start(); !it.eof(); ++it) {
+//      command.append("import ");
+//      command.append(*it);
+//      command.append(";\n");
+//   }
+//
+//   switch (type) {
+//      case TemplateType::REPL:
+//         command.append(*_repl.prefix);
+//         command.append(script);
+//         command.append(*_repl.postfix);
+//         break;
+//      case TemplateType::Multiline:
+//         command.append(*_multiline.prefix);
+//         command.append(script);
+//         command.append(*_multiline.postfix);
+//         break;
+//      default:
+//         break;
+//   }
+//
+//   insertVariablesAssignment(command, 0, *_set_var.prefix, *_set_var.postfix);
+//   insertVariables(command, 0, *_get_var.prefix, *_get_var.postfix);
+//
+//   if (preview) {
+//      _presenter->printLine(command.str());
+//   }
+//   else if (!executeScript(command.str())) {
+//      _presenter->print(ELT_CODE_FAILED);
+//   }
 }
 
-bool VMSession::connect(void* tape)
-{
-   _env.gc_yg_size = 0x15000;
-   _env.gc_mg_size = 0x54000;
-
-   int retVal = InitializeVMSTLA(&_env, tape, ELT_EXCEPTION_HANDLER);
-   if (retVal != 0) {
-      _presenter->printLine(ELT_STARTUP_FAILED);
-
-      return false;
-   }
-
-   return true;
-}
-
-bool VMSession::execute(void* tape)
-{
-   if (EvaluateVMLA(tape) != 0) {
-      return false;
-   }
-
-   return true;
-}
-
-bool VMSession :: executeCommand(const char* line, bool& running)
-{
-   size_t len = getlength(line);
-   if (len < 2)
-      return false;
-
-   // check commands
-   if (line[1] == 'q' || (len > 2 && ustr_t(line).compare("@quit"))) {
-      running = false;
-   }
-   else if (line[1] == 'h' || (len > 2 && ustr_t(line).compare("@help"))) {
-      printHelp();
-   }
-   else if (ustr_t(line).compare("@multiline")) {
-      _multiLineFlag = true;
-   }
-   else if (ustr_t(line).startsWith("@base ")) {
-      IdentifierString basePath(line + 6);
-
-      setBasePath(*basePath);
-   }
-   else if (line[1] == 'l') {
-      if (line[2] == ' ') {
-         loadScript(line + 2);
-      }
-      else if (ustr_t(line).startsWith("@load ")) {
-         loadScript(line + 6);
-      }
-   }
-   else if (ustr_t(line).startsWith("@use ")) {
-      IdentifierString pluginName(line + 5);
-
-      if(!loadTemplate(TemplateType::Multiline, *pluginName))
-         _presenter->printLine(ELT_CANNOT_LOAD_TEMPLATE, *pluginName);
-   }
-   else if (ustr_t(line).startsWith("@import ")) {
-      IdentifierString scriptPath(line + 8);
-
-      importScript(*scriptPath);
-   }
-   else if (ustr_t(line).compare("@eval")) {
-      executeCommandLine(false, TemplateType::Multiline, _body.str());
-
-      _multiLineFlag = false;
-      _body.clear();
-   }
-   else if (ustr_t(line).compare("@print")) {
-      executeCommandLine(true, TemplateType::Multiline, _body.str());
-   }
-   else if (ustr_t(line).compare("@clear")) {
-      _multiLineFlag = false;
-      _body.clear();
-   }
-   else if (line[1] == 'a' && ustr_t(line).startsWith("@add import ")) {
-      IdentifierString module(line + 12);
-
-      _imports.add((*module).clone());
-   }
-   else if (line[1] == 'r' && ustr_t(line).startsWith("@remove import ")) {
-      IdentifierString module(line + 15);
-
-      _imports.cut(*module);
-   }
-   else return false;
-
-   return true;
-}
+//bool VMSession::executeTape(void* tape)
+//{
+//   bool retVal = false;
+//   if (!_started) {
+//      retVal = connect(tape);
+//   }
+//   else retVal = execute(tape);
+//
+//   ReleaseSMLA(0);
+//
+//   return retVal;
+//}
+//
+//bool VMSession::executeScript(const char* script)
+//{
+//   void* tape = InterpretScriptSMLA(script);
+//   if (tape == nullptr) {
+//      char error[0x200];
+//      size_t length = GetStatusSMLA(error, 0x200);
+//      error[length] = 0;
+//      if (!emptystr(error)) {
+//         _presenter->printLine(ELT_SCRIPT_FAILED, error);
+//         return false;
+//      }
+//      return true;
+//   }
+//   return executeTape(tape);
+//}
+//
+//void VMSession::start()
+//{
+//   executeScript("[[ #start; ]]");
+//
+//   _started = true;
+//}
+//
+//bool VMSession::connect(void* tape)
+//{
+//   _env.gc_yg_size = 0x15000;
+//   _env.gc_mg_size = 0x54000;
+//
+//   int retVal = InitializeVMSTLA(&_env, tape, ELT_EXCEPTION_HANDLER);
+//   if (retVal != 0) {
+//      _presenter->printLine(ELT_STARTUP_FAILED);
+//
+//      return false;
+//   }
+//
+//   return true;
+//}
+//
+//bool VMSession::execute(void* tape)
+//{
+//   if (EvaluateVMLA(tape) != 0) {
+//      return false;
+//   }
+//
+//   return true;
+//}
+//
+//bool VMSession :: executeCommand(const char* line, bool& running)
+//{
+//   size_t len = getlength(line);
+//   if (len < 2)
+//      return false;
+//
+//   // check commands
+//   if (line[1] == 'q' || (len > 2 && ustr_t(line).compare("@quit"))) {
+//      running = false;
+//   }
+//   else if (line[1] == 'h' || (len > 2 && ustr_t(line).compare("@help"))) {
+//      printHelp();
+//   }
+//   else if (ustr_t(line).compare("@multiline")) {
+//      _multiLineFlag = true;
+//   }
+//   else if (ustr_t(line).startsWith("@base ")) {
+//      IdentifierString basePath(line + 6);
+//
+//      setBasePath(*basePath);
+//   }
+//   else if (line[1] == 'l') {
+//      if (line[2] == ' ') {
+//         loadScript(line + 2);
+//      }
+//      else if (ustr_t(line).startsWith("@load ")) {
+//         loadScript(line + 6);
+//      }
+//   }
+//   else if (ustr_t(line).startsWith("@use ")) {
+//      IdentifierString pluginName(line + 5);
+//
+//      if(!loadTemplate(TemplateType::Multiline, *pluginName))
+//         _presenter->printLine(ELT_CANNOT_LOAD_TEMPLATE, *pluginName);
+//   }
+//   else if (ustr_t(line).startsWith("@import ")) {
+//      IdentifierString scriptPath(line + 8);
+//
+//      importScript(*scriptPath);
+//   }
+//   else if (ustr_t(line).compare("@eval")) {
+//      executeCommandLine(false, TemplateType::Multiline, _body.str());
+//
+//      _multiLineFlag = false;
+//      _body.clear();
+//   }
+//   else if (ustr_t(line).compare("@print")) {
+//      executeCommandLine(true, TemplateType::Multiline, _body.str());
+//   }
+//   else if (ustr_t(line).compare("@clear")) {
+//      _multiLineFlag = false;
+//      _body.clear();
+//   }
+//   else if (line[1] == 'a' && ustr_t(line).startsWith("@add import ")) {
+//      IdentifierString module(line + 12);
+//
+//      _imports.add((*module).clone());
+//   }
+//   else if (line[1] == 'r' && ustr_t(line).startsWith("@remove import ")) {
+//      IdentifierString module(line + 15);
+//
+//      _imports.cut(*module);
+//   }
+//   else return false;
+//
+//   return true;
+//}
 
 void VMSession :: run()
 {
    char          buffer[MAX_LINE];
-   bool          running = true;
+
+   Context       context = { true };
 
    do {
       try {
-         if (!_multiLineFlag)
+//         if (!_multiLineFlag)
             _presenter->print("\n>");
 
          _presenter->readLine(buffer, MAX_LINE);
@@ -479,27 +578,21 @@ void VMSession :: run()
          IdentifierString line(buffer, getlength(buffer));
          trimLine(line);
 
-         while (!line.empty() && line[line.length() - 1] == '\r' || line[line.length() - 1] == '\n')
-            line[line.length() - 1] = 0;
-
-         while (!line.empty() && line[line.length() - 1] == ' ')
-            line[line.length() - 1] = 0;
-
-         if (line[0] == '@') {
-            if (!executeCommand(*line, running))
-               _presenter->print("Invalid command, use -h to get the list of the commands\n");
-         }
-         else if (_multiLineFlag) {
-            _body.append(*line);
-            _body.append("\n");
-         }
-         else if (isAssignment(*line)) {
-            executeCommandLine(false, TemplateType::Multiline, *line);
-         }
-         else executeCommandLine(false, TemplateType::REPL, *line);
+//         if (line[0] == '@') {
+//            if (!executeCommand(*line, running))
+//               _presenter->print("Invalid command, use -h to get the list of the commands\n");
+//         }
+//         else if (_multiLineFlag) {
+//            _body.append(*line);
+//            _body.append("\n");
+//         }
+//         else if (isAssignment(*line)) {
+//            executeCommandLine(false, TemplateType::Multiline, *line);
+//         }
+         /*else */executeCommandLine(/*false, TemplateType::REPL, */*line, context);
       }
       catch (...) {
          _presenter->print("Invalid operation");
       }
-   } while (running);
+   } while (context.running);
 }
