@@ -15,19 +15,19 @@ namespace collections
       }
    }
 
-   public sealed class SortedList : Enumerable
+   public sealed class SortedList : Enumerable, info("A sorted weak-typed list")
    {
       SortedListItem? _top;
       Reference<int>  _length;
    
       Func<object,object,int> _comparator;
    
-      constructor new()
+      constructor new() : info("Creates a weak-typed list sorted by ascending value")
          <= new((object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1)))
       {
       }
    
-      constructor new(Func<object,object,int> comparator)
+      constructor new(Func<object,object,int> comparator) : info("Creates a weak-typed list with a custom sort function<br/>A function must return -1 if in the right order, 1 if the order is opposite and 0 if they are the same")
       {
          _comparator := comparator;
          _length := 0;

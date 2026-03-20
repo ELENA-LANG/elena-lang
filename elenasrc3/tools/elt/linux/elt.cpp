@@ -3,13 +3,21 @@
 //
 //		This is a main linux / freebsd file containing VM terminal
 //
-//                                              (C)2021-2025, by Aleksey Rakov
+//                                              (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 #include "eltconst.h"
 #include "vmsession.h"
 #include "linux/presenter.h"
+
+#include <unistd.h>
+
+#if defined(__FreeBSD__)
+
+#include <sys/sysctl.h>
+
+#endif
 
 using namespace elena_lang;
 
@@ -23,15 +31,15 @@ public:
    }
 };
 
-//// default script mode
-//void startInDefaultMode(VMSession& session)
-//{
-//   session.start();
-//
-//   session.loadScript(ELT_GRAMMAR_CONFIG);
-//   session.loadScript(ELT_LSCRIPT_CONFIG);
-//}
-//
+// default script mode
+void startInDefaultMode(VMSession& session)
+{
+   session.start();
+
+   session.loadScript(ELT_GRAMMAR_CONFIG);
+   session.loadScript(ELT_LSCRIPT_CONFIG);
+}
+
 //inline void loadTemplate(ELTPresenter& presenter, VMSession& session, TemplateType type, ustr_t name)
 //{
 //   if (!session.loadTemplate(type, name))
@@ -76,7 +84,10 @@ int main(int argc, char* argv[])
    ELTPresenter presenter;
    VMSession session(*appPath, &presenter);
 
-   PathString configPath(*appPath, ELT_COMMAND_CONFIG);
+   PathString basePath(*appPath);
+   session.setBasePath("scripts");
+
+   PathString configPath(*appPath, LOCAL_ELT_COMMAND_CONFIG);
    if (!session.loadConfig(*configPath)) {
       presenter.printPath(ELT_CANNOT_LOAD_TEMPLATE, *configPath);
 
@@ -88,7 +99,7 @@ int main(int argc, char* argv[])
    //loadTemplate(presenter, session, TemplateType::GetVar, GETVAR_TEMPLATE_NAME);
    //loadTemplate(presenter, session, TemplateType::SetVar, SETVAR_TEMPLATE_NAME);
 
-   //session.loadScript(ELT_CONFIG);
+   session.loadScript(ELT_CONFIG);
 
    //// load script passed via command line arguments
    //if (argc > 1) {
@@ -109,7 +120,7 @@ int main(int argc, char* argv[])
    //      else session.executeScript(*cmd);
    //   }
    //}
-   //else startInDefaultMode(session);
+   /*else */startInDefaultMode(session);
 
    //session.printHelp();
 

@@ -36,6 +36,8 @@ namespace elena_lang
 
 #else
 
+   constexpr auto LOCAL_ELT_COMMAND_CONFIG   = "elt60.cfg";
+
    constexpr auto ELT_CONFIG_PATH            = "/etc/elena";
    constexpr auto ELT_CONFIG                 = "/etc/elena/elt60.es";
    constexpr auto ELT_GRAMMAR_CONFIG         = "/etc/elena/scripts/grammar60.es";
@@ -55,7 +57,7 @@ namespace elena_lang
    constexpr auto ELT_CANNOT_LOAD_TEMPLATE   = "Cannot load %s template\n";
 
    constexpr auto ELT_UNKNOWNCOMMAND         = "Unknown command %s\n";
-   constexpr auto ELT_INVALID                = "Invalid command\n";
+   constexpr auto ELT_INVALID                = "Invalid comman %sd\n";
 }
 
 #endif

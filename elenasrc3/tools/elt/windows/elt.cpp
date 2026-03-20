@@ -35,15 +35,15 @@ public:
    }
 };
 
-//// default script mode
-//void startInDefaultMode(VMSession& session)
-//{
-//   session.start();
-//
-//   session.loadScript(ELT_GRAMMAR_CONFIG);
-//   session.loadScript(ELT_LSCRIPT_CONFIG);
-//}
-//
+// default script mode
+void startInDefaultMode(VMSession& session)
+{
+   session.start();
+
+   session.loadScript(ELT_GRAMMAR_CONFIG);
+   session.loadScript(ELT_LSCRIPT_CONFIG);
+}
+
 //inline void loadTemplate(ELTPresenter& presenter, VMSession& session, TemplateType type, ustr_t name)
 //{
 //   if (!session.loadTemplate(type, name))
@@ -67,13 +67,17 @@ int main(int argc, char* argv[])
       return EXIT_FAILURE;
    }      
 
+   PathString basePath(*appPath);
+   basePath.combine(L"scripts");
+   session.setBasePath(*basePath);
+
 //   loadTemplate(presenter, session, TemplateType::REPL, REPL_TEMPLATE_NAME);
 //   loadTemplate(presenter, session, TemplateType::Multiline, MULTILINE_TEMPLATE_NAME);
 //   loadTemplate(presenter, session, TemplateType::GetVar, GETVAR_TEMPLATE_NAME);
 //   loadTemplate(presenter, session, TemplateType::SetVar, SETVAR_TEMPLATE_NAME);
-//
-//   session.loadScript(ELT_CONFIG);
-//
+
+   session.loadScript(ELT_CONFIG);
+
 //   // load script passed via command line arguments
 //   if (argc > 1) {
 //      for (int i = 1; i < argc; i++) {
@@ -93,8 +97,8 @@ int main(int argc, char* argv[])
 //         else session.executeScript(*cmd);
 //      }
 //   }
-//   else startInDefaultMode(session);
-//
+   /*else */startInDefaultMode(session);
+
 //   session.printHelp();
 
    session.run();

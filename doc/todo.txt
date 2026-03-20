@@ -8,8 +8,6 @@ In development:
   === Iteration 46 (graph sample; ide linux; mac) ===
   * dev : template generator
   ====================================== 
-  - support help (Windows & Linux) : <command name="help">@list command;</command>
-  - support eval (Windows & Linux)
   - support functions (Windows & Linux)
   - support text generation (Windows & Linux)
 
@@ -20,16 +18,20 @@ In development:
   ====================================== 
   * doc
   ====================================== 
-  - provide descriptions for all classes (from collections\tuples.l)
+  - provide descriptions for all classes (from collections\sorted_lists.l)
   --------------------------------------
   * samples
   ====================================== 
   * current : redesign elt 
   ====================================== 
-  - command @quit
-  - support quit for Windows & Linux
+  - test eval Windows
+  - test eval Linux
+  - support preview mode (preview on / off)
 
-  - basic commands : @load, $set, $eval
+  - basic commands : $set
+  - provide the description to the command
+  - print the help line (that you can get list of commands)
+  - validate that help command is available and has correct value
   - support existing functionality with [[ #use ]] and -i
   - refactor elt
   - make it open configuarble
