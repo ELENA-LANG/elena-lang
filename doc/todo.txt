@@ -25,6 +25,7 @@ In development:
   * current : redesign elt 
   ====================================== 
   - test eval Windows
+  - test eval Windows x86-64
   - test eval Linux
   - support preview mode (preview on / off)
 

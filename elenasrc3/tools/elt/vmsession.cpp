@@ -516,7 +516,7 @@ bool VMSession :: readScriptTemplate(Context* context)
 
 bool VMSession :: evalScript(Context* context)
 {
-   if (context->directiveArg1.empty() || context->isDirectiveArg1Variable)
+   if (context->directiveArg1.empty() || !context->isDirectiveArg1Variable)
       return false;
 
    DynamicString<char> content;
@@ -530,7 +530,8 @@ bool VMSession :: evalScript(Context* context)
       content.append(_variables.get(*context->directiveArg2));
    }
     
-
+   if(!executeScript(content.str()))
+      _presenter->print(ELT_CODE_FAILED);
 
    return true;
 }
