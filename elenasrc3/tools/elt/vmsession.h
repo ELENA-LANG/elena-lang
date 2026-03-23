@@ -44,6 +44,7 @@ namespace elena_lang
       struct Command
       {
          IdentifierString scriptCommand;
+         IdentifierString variable;
          IdentifierString argument;
       };
 
@@ -55,6 +56,7 @@ namespace elena_lang
          bool              isDirectiveArg1Variable;
          bool              isDirectiveArg2Variable;
 
+         IdentifierString  variableArg;
          IdentifierString  directiveArg1;
          IdentifierString  directiveArg2;
 

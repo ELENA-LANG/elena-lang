@@ -205,6 +205,7 @@ bool VMSession :: loadConfig(path_t configPath)
 {
    DynamicString<char> name;
    DynamicString<char> arg;
+   DynamicString<char> variable;
    DynamicString<char> script;
 
    ConfigFile config;
@@ -220,6 +221,9 @@ bool VMSession :: loadConfig(path_t configPath)
             if (!commandNode.readAttribute("arg", arg)) {
                arg.clear();
             }
+            if (!commandNode.readAttribute("variable", variable)) {
+               variable.clear();
+            }
 
             commandNode.readContent(script);
 
@@ -232,6 +236,7 @@ bool VMSession :: loadConfig(path_t configPath)
             auto command = new Command();
             command->scriptCommand.copy(script.str());
             command->argument.copy(arg.str());
+            command->variable.copy(variable.str());
 
             _commands.add(name.str(), command);
          }
@@ -344,6 +349,9 @@ static inline ustr_t readCommand(ustr_t script, IdentifierString& command)
    size_t pos = script.find(' ');
    if (pos != NOTFOUND_POS) {
       command.copy(script, pos);
+
+      while (command[pos + 1] == ' ')
+         pos++;
 
       return script + pos + 1;
    }
@@ -609,10 +617,29 @@ void VMSession :: executeCommandLine(/*bool preview, TemplateType type, */ustr_t
 {
    IdentifierString commandName;
 
+   context.variableArg.clear();
    context.commandLineArgument = readCommand(script, commandName);
 
    Command* command = _commands.get(*commandName);
    if (command != nullptr) {
+      if (!command->variable.empty()) {
+         if (context.commandLineArgument[0] != '@') {
+            _presenter->print(ELT_INVALID, *commandName);
+
+            return;
+         }
+         context.commandLineArgument = readCommand(context.commandLineArgument + 1, context.variableArg);
+         if (!context.commandLineArgument.startsWith(":=")) {
+            _presenter->print(ELT_INVALID, *commandName);
+
+            return;
+         }
+
+         setVariable(command->variable.str(), *context.variableArg);
+
+         context.commandLineArgument = trim(context.commandLineArgument + 2);
+      }
+
       if (!command->argument.empty()) {
          setVariable(command->argument.str(), context.commandLineArgument);
       }
