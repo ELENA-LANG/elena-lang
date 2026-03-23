@@ -194,6 +194,10 @@ VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
       {
          return session->evalScript(context);
       });
+   _directives.add("set", [](VMSession* session, Context* context)
+      {
+         return session->assignVariable(context);
+      });
 }
 
 void VMSession :: setBasePath(path_t baseStr)
@@ -457,6 +461,17 @@ size_t seekEnd(const char* str, size_t index)
    return index;
 }
 
+static inline void replaceAll(DynamicString<char>& content, ustr_t oriValue, ustr_t newValue)
+{
+   size_t pos = ustr_t(content.str()).findStr(oriValue);
+   while (pos != NOTFOUND_POS) {
+      content.cut(pos, oriValue.length());
+      content.insert(newValue.str(), pos);
+
+      pos = ustr_t(content.str()).findSubStr(pos + newValue.length(), oriValue, content.length());
+   }
+}
+
 bool VMSession :: readScriptTemplate(path_t pathStr, ustr_t targetVariable)
 {
    if (pathStr.find(PATH_SEPARATOR) == NOTFOUND_POS) {
@@ -474,32 +489,39 @@ bool VMSession :: readScriptTemplate(path_t pathStr, ustr_t targetVariable)
          content.append(buffer);
       }
 
-      size_t start = 0;
-      size_t pos = ustr_t(content.str()).find('@');
-      while (pos != NOTFOUND_POS) {
-         if (content[pos + 1] == '@') {
-            content.cut(pos, 1);
-
-            start = pos + 1;
-         }
-         else {
-            size_t pos_end = seekEnd(content.str(), pos + 1);
-
-            IdentifierString variableName(content.str() + pos + 1, pos_end - pos - 1);
-            content.cut(pos, pos_end - pos);
-
-            ustr_t varValue = _variables.get(*variableName);
-            if (!varValue.empty()) {
-               content.insert(varValue.str(), pos);
-
-               start = pos + varValue.length();
+      bool replacing = true;
+      // NOTE : check the script several times to support nested variables
+      while (replacing) {
+         replacing = false;
+         size_t start = 0;
+         size_t pos = ustr_t(content.str()).find('@');
+         while (pos != NOTFOUND_POS) {
+            if (content[pos + 1] == '@') {
+               start = pos + 2;
             }
-            else start = pos;
-         }
+            else {
+               size_t pos_end = seekEnd(content.str(), pos + 1);
 
-         pos = ustr_t(content.str()).findSub(start, '@');
+               IdentifierString variableName(content.str() + pos + 1, pos_end - pos - 1);
+               content.cut(pos, pos_end - pos);
+
+               ustr_t varValue = _variables.get(*variableName);
+               if (!varValue.empty()) {
+                  content.insert(varValue.str(), pos);
+
+                  start = pos + varValue.length();
+               }
+               else start = pos;
+
+               replacing = true;
+            }
+
+            pos = ustr_t(content.str()).findSub(start, '@');
+         }
       }
    
+      replaceAll(content, "@@", "@");
+
       if (!targetVariable.empty())
          setVariable(targetVariable, content.str());
 
@@ -547,6 +569,21 @@ bool VMSession :: evalScript(Context* context)
 bool VMSession :: quit(Context* context)
 {
    context->running = false;
+
+   return true;
+}
+
+bool VMSession :: assignVariable(Context* context)
+{
+   if (context->directiveArg1.empty() || !context->isDirectiveArg1Variable)
+      return false;
+
+   if (context->directiveArg2.empty() || !context->isDirectiveArg2Variable)
+      return false;
+
+   ustr_t value = _variables.get(*context->directiveArg1);
+
+   setVariable(*context->directiveArg2, value);
 
    return true;
 }

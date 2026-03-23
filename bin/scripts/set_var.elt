@@ -1,3 +1,3 @@
 public Program() { 
-  extensions'scripting'Globals.setAt(@name, @current_expression);
+  extensions'scripting'Globals.setAt("@name", @current_expression);
 }

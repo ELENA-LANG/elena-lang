@@ -24,8 +24,7 @@ In development:
   ====================================== 
   * current : redesign elt 
   ====================================== 
-  - set variable
-  - use variable
+  - test : set & use variable
   - exec command line without printing the content
   - execute user-defined script (in lscripts60)
   - define imports for eval command
