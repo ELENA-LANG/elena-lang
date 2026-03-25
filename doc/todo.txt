@@ -25,18 +25,8 @@ In development:
   ====================================== 
   * current : redesign elt 
   ====================================== 
-  - support ask directive (please enter {prompt}[{default value}]:)
-  - display the current content so if the user press enter the value is not changed
-  - supports relative path  ~\textgen\comma_quibbling.ltg
+  - work on REPL (elt), generate project template
 
-  - execute script to generate text based on the parameter from file
-
-
-  - execute user-defined script (in lscripts60)
-  - exec command line without printing the content
-  - define imports for eval command
-  - support multi-line
-  - execute script to generate text based on the parameter from command line
   - execute script to create a console program 
   - execute script to create REPL console program
 
@@ -44,7 +34,6 @@ In development:
   - print the help line (that you can get list of commands)
   - validate that help command is available and has correct value
   - support existing functionality with [[ #use ]] and -i
-  - basic commands : $set
   - support preview mode (preview on / off)
   - remove unused script templates
   - refactor elt

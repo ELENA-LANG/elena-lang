@@ -31,6 +31,25 @@ static inline const char* trim(const char* s)
    return s;
 }
 
+static inline void replaceAll(DynamicString<char>& content, ustr_t oriValue, ustr_t newValue)
+{
+   size_t pos = ustr_t(content.str()).findStr(oriValue);
+   while (pos != NOTFOUND_POS) {
+      content.cut(pos, oriValue.length());
+      content.insert(newValue.str(), pos);
+
+      pos = ustr_t(content.str()).findSubStr(pos + newValue.length(), oriValue, content.length());
+   }
+}
+
+static inline void replaceAll(DynamicString<char>& content, char oriValue, char newValue)
+{
+   for (size_t i = 0; i < content.length(); i++) {
+      if (content[i] == oriValue)
+         content[i] = newValue;
+   }
+}
+
 //static inline bool isLetterOrDigit(char ch)
 //{
 //   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9');
@@ -203,6 +222,10 @@ VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
       {
          return session->evalScript(context);
       });
+   _directives.add("file-eval", [](VMSession* session, Context* context)
+      {
+         return session->evalScriptPath(context);
+      });
    _directives.add("set", [](VMSession* session, Context* context)
       {
          return session->assignVariable(context);
@@ -227,6 +250,26 @@ bool VMSession :: loadConfig(path_t configPath)
 
    ConfigFile config;
    if (config.load(configPath, FileEncoding::UTF8)) {
+      ConfigFile::Collection paths;
+      if (config.select(ELT_PATH_XPATH, paths)) {
+         for (auto it = paths.start(); !it.eof(); ++it) {
+            ConfigFile::Node pathNode = *it;
+
+            if (!pathNode.readAttribute("name", name)) {
+               name.clear();
+            }
+
+            if (ustr_t(name.str()).compare("lscripts")) {
+               pathNode.readContent(script);
+
+               replaceAll(script, '/', PATH_SEPARATOR);
+
+               _scriptsPath.copy(*_appPath);
+               _scriptsPath.combine(script.str());
+            }
+         }
+      }
+
       ConfigFile::Collection commands;
       if (config.select(ELT_COMMAND_XPATH, commands)) {
          for (auto it = commands.start(); !it.eof(); ++it) {
@@ -474,17 +517,6 @@ size_t seekEnd(const char* str, size_t index)
    return index;
 }
 
-static inline void replaceAll(DynamicString<char>& content, ustr_t oriValue, ustr_t newValue)
-{
-   size_t pos = ustr_t(content.str()).findStr(oriValue);
-   while (pos != NOTFOUND_POS) {
-      content.cut(pos, oriValue.length());
-      content.insert(newValue.str(), pos);
-
-      pos = ustr_t(content.str()).findSubStr(pos + newValue.length(), oriValue, content.length());
-   }
-}
-
 bool VMSession :: readScriptTemplate(path_t pathStr, ustr_t targetVariable)
 {
    if (pathStr.find(PATH_SEPARATOR) == NOTFOUND_POS) {
@@ -579,6 +611,29 @@ bool VMSession :: evalScript(Context* context)
    return true;
 }
 
+bool VMSession :: evalScriptPath(Context* context)
+{
+   if (context->directiveArg1.empty() || !context->isDirectiveArg1Variable)
+      return false;
+
+   ustr_t path = _variables.get(*context->directiveArg1);
+
+   bool retVal = false;
+   if (path.startsWith("~/") || path.startsWith("~\\")) {
+      IdentifierString fullPath(*_scriptsPath);
+
+      fullPath.append(path.str() + 1);
+
+      retVal = executeScriptFile(*fullPath);
+   }
+   else retVal = executeScriptFile(path);
+
+   if (!retVal)
+      _presenter->print(ELT_CODE_FAILED);
+
+   return true;
+}
+
 bool VMSession :: quit(Context* context)
 {
    context->running = false;
@@ -634,7 +689,14 @@ bool VMSession :: inputVariable(Context* context)
    _presenter->readLine(buffer, 1024);
    trimLine(buffer);
 
-   if (getlength(buffer) != 0)
+   if (ustr_t(buffer).startsWith("~/") || ustr_t(buffer).startsWith("~\\")) {
+      IdentifierString arg(*_scriptsPath);
+
+      arg.append(buffer + 1);
+
+      setVariable(var_name, *arg);
+   }
+   else if (getlength(buffer) != 0)
       setVariable(var_name, buffer);
 
    return true;
@@ -710,6 +772,16 @@ void VMSession :: executeCommandLine(/*bool preview, TemplateType type, */ustr_t
    context.commandLineArgument = readCommand(script, commandName);
 
    Command* command = _commands.get(*commandName);
+   if (command == nullptr) {
+      IdentifierString secondName;
+      context.commandLineArgument = readCommand(context.commandLineArgument, secondName);
+
+      commandName.append('-');
+      commandName.append(*secondName);
+
+      command = _commands.get(*commandName);
+   }
+
    if (command != nullptr) {
       if (!command->variable.empty()) {
          if (context.commandLineArgument[0] != '@') {
@@ -736,39 +808,6 @@ void VMSession :: executeCommandLine(/*bool preview, TemplateType type, */ustr_t
       executeCommand(command, context);
    }
    else _presenter->print(ELT_UNKNOWNCOMMAND, *commandName);
-
-//   DynamicString<char> command;
-//
-//   for (auto it = _imports.start(); !it.eof(); ++it) {
-//      command.append("import ");
-//      command.append(*it);
-//      command.append(";\n");
-//   }
-//
-//   switch (type) {
-//      case TemplateType::REPL:
-//         command.append(*_repl.prefix);
-//         command.append(script);
-//         command.append(*_repl.postfix);
-//         break;
-//      case TemplateType::Multiline:
-//         command.append(*_multiline.prefix);
-//         command.append(script);
-//         command.append(*_multiline.postfix);
-//         break;
-//      default:
-//         break;
-//   }
-//
-//   insertVariablesAssignment(command, 0, *_set_var.prefix, *_set_var.postfix);
-//   insertVariables(command, 0, *_get_var.prefix, *_get_var.postfix);
-//
-//   if (preview) {
-//      _presenter->printLine(command.str());
-//   }
-//   else if (!executeScript(command.str())) {
-//      _presenter->print(ELT_CODE_FAILED);
-//   }
 }
 
 bool VMSession :: executeTape(void* tape)
@@ -787,6 +826,22 @@ bool VMSession :: executeTape(void* tape)
 bool VMSession :: executeScript(const char* script)
 {
    void* tape = InterpretScriptSMLA(script);
+   if (tape == nullptr) {
+      char error[0x200];
+      size_t length = GetStatusSMLA(error, 0x200);
+      error[length] = 0;
+      if (!emptystr(error)) {
+         _presenter->printLine(ELT_SCRIPT_FAILED, error);
+         return false;
+      }
+      return true;
+   }
+   return executeTape(tape);
+}
+
+bool VMSession :: executeScriptFile(const char* path)
+{
+   void* tape = InterpretFileSMLA(path, (int)_encoding, false);
    if (tape == nullptr) {
       char error[0x200];
       size_t length = GetStatusSMLA(error, 0x200);
@@ -830,74 +885,6 @@ bool VMSession :: execute(void* tape)
 
    return true;
 }
-
-//bool VMSession :: executeCommand(const char* line, bool& running)
-//{
-//   size_t len = getlength(line);
-//   if (len < 2)
-//      return false;
-//
-//   // check commands
-//   if (line[1] == 'q' || (len > 2 && ustr_t(line).compare("@quit"))) {
-//      running = false;
-//   }
-//   else if (line[1] == 'h' || (len > 2 && ustr_t(line).compare("@help"))) {
-//      printHelp();
-//   }
-//   else if (ustr_t(line).compare("@multiline")) {
-//      _multiLineFlag = true;
-//   }
-//   else if (ustr_t(line).startsWith("@base ")) {
-//      IdentifierString basePath(line + 6);
-//
-//      setBasePath(*basePath);
-//   }
-//   else if (line[1] == 'l') {
-//      if (line[2] == ' ') {
-//         loadScript(line + 2);
-//      }
-//      else if (ustr_t(line).startsWith("@load ")) {
-//         loadScript(line + 6);
-//      }
-//   }
-//   else if (ustr_t(line).startsWith("@use ")) {
-//      IdentifierString pluginName(line + 5);
-//
-//      if(!loadTemplate(TemplateType::Multiline, *pluginName))
-//         _presenter->printLine(ELT_CANNOT_LOAD_TEMPLATE, *pluginName);
-//   }
-//   else if (ustr_t(line).startsWith("@import ")) {
-//      IdentifierString scriptPath(line + 8);
-//
-//      importScript(*scriptPath);
-//   }
-//   else if (ustr_t(line).compare("@eval")) {
-//      executeCommandLine(false, TemplateType::Multiline, _body.str());
-//
-//      _multiLineFlag = false;
-//      _body.clear();
-//   }
-//   else if (ustr_t(line).compare("@print")) {
-//      executeCommandLine(true, TemplateType::Multiline, _body.str());
-//   }
-//   else if (ustr_t(line).compare("@clear")) {
-//      _multiLineFlag = false;
-//      _body.clear();
-//   }
-//   else if (line[1] == 'a' && ustr_t(line).startsWith("@add import ")) {
-//      IdentifierString module(line + 12);
-//
-//      _imports.add((*module).clone());
-//   }
-//   else if (line[1] == 'r' && ustr_t(line).startsWith("@remove import ")) {
-//      IdentifierString module(line + 15);
-//
-//      _imports.cut(*module);
-//   }
-//   else return false;
-//
-//   return true;
-//}
 
 void VMSession :: run()
 {

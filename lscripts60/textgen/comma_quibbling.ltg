@@ -1,0 +1,12 @@
+for (var i := 0; i < self.Length; i := i + 1) {
+      if (i > 0) {
+        if (i == self.Length - 1) {
+           <= and =>
+        }
+        else {
+           <=, =>
+        }
+      };
+         
+      <={self[i]}=>
+   }

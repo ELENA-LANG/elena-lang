@@ -86,6 +86,7 @@ namespace elena_lang
 
       PathString           _appPath;
       PathString           _basePath;
+      PathString           _scriptsPath;
 
       FileEncoding         _encoding;
 
@@ -128,6 +129,7 @@ namespace elena_lang
       bool quit(Context* context);
       bool readScriptTemplate(Context* context);
       bool evalScript(Context* context);
+      bool evalScriptPath(Context* context);
       bool assignVariable(Context* context);
       bool inputVariable(Context* context);
 
@@ -136,6 +138,7 @@ namespace elena_lang
 //      bool loadTemplate(TemplateType type, ustr_t name);
 
       bool executeScript(const char* line);
+      bool executeScriptFile(const char* path);
 //      bool executeCommand(const char* line, bool& running);
 
       bool loadScript(ustr_t pathStr);

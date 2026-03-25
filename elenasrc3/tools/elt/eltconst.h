@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define ELT_REVISION_NUMBER               0x0003
+   #define ELT_REVISION_NUMBER               0x0004
 
    constexpr auto ELT_GREETING               = "ELENA command line VM terminal %d.%d.%d (C)2021-26 by Aleksey Rakov\n";
 
@@ -46,6 +46,7 @@ namespace elena_lang
 #endif
 
    constexpr auto ELT_COMMAND_XPATH          = "configuration/commands/*";
+   constexpr auto ELT_PATH_XPATH             = "configuration/paths/*";
 
    constexpr auto ELT_STARTUP_FAILED         = "ELENAVM: Start has failed";
    constexpr auto ELT_CODE_FAILED            = "ELENAVM: Operation has failed";
