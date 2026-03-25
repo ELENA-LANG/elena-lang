@@ -53,7 +53,7 @@ namespace io
                           0);
                           
             if(-1 == _handle)
-                { IOException.new("Cannot open the file").raise() }
+                { IOException.new($"Cannot open the file {path}").raise() }
       }
         
       write(byte[] dump, int length)
@@ -252,7 +252,7 @@ namespace io
                           attributes);
                           
          if(-1 == _handle)
-                { IOException.new("Cannot open the file").raise() }
+                { IOException.new($"Cannot open the file {path}").raise() }
       }
         
       write(byte[] dump, int length)
