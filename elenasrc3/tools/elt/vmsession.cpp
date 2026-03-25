@@ -36,13 +36,22 @@ static inline const char* trim(const char* s)
 //   return (ch >= 'a' && ch <= 'z') || (ch >= 'A' && ch <= 'Z') || ch == '_' || (ch >= '0' && ch <= '9');
 //}
 
-static inline void trimLine(IdentifierString& line)
-{
-   while (!line.empty() && line[line.length() - 1] == '\r' || line[line.length() - 1] == '\n')
-      line[line.length() - 1] = 0;
+//static inline void trimLine(IdentifierString& line)
+//{
+//   while (!line.empty() && line[line.length() - 1] == '\r' || line[line.length() - 1] == '\n')
+//      line[line.length() - 1] = 0;
+//
+//   while (!line.empty() && line[line.length() - 1] == ' ')
+//      line[line.length() - 1] = 0;
+//}
 
-   while (!line.empty() && line[line.length() - 1] == ' ')
-      line[line.length() - 1] = 0;
+static inline void trimLine(char* line)
+{
+   while (line[0] != 0 && (line[getlength(line) - 1] == '\r' || line[getlength(line) - 1] == '\n'))
+      line[getlength(line) - 1] = 0;
+
+   while (line[0] != 0 && line[getlength(line) - 1] == ' ')
+      line[getlength(line) - 1] = 0;
 }
 
 //static inline bool isAssignment(ustr_t line)
@@ -623,6 +632,7 @@ bool VMSession :: inputVariable(Context* context)
 
    char buffer[1024];
    _presenter->readLine(buffer, 1024);
+   trimLine(buffer);
 
    if (getlength(buffer) != 0)
       setVariable(var_name, buffer);
@@ -902,8 +912,7 @@ void VMSession :: run()
 
          _presenter->readLine(buffer, MAX_LINE);
 
-         IdentifierString line(buffer, getlength(buffer));
-         trimLine(line);
+         trimLine(buffer);
 
 //         if (line[0] == '@') {
 //            if (!executeCommand(*line, running))
@@ -916,7 +925,7 @@ void VMSession :: run()
 //         else if (isAssignment(*line)) {
 //            executeCommandLine(false, TemplateType::Multiline, *line);
 //         }
-         /*else */executeCommandLine(/*false, TemplateType::REPL, */*line, context);
+         /*else */executeCommandLine(/*false, TemplateType::REPL, */buffer, context);
       }
       catch (...) {
          _presenter->print("Invalid operation");

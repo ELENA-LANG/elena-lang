@@ -25,6 +25,13 @@ public extension objectOp
       ^ len == 0;
    }
         
+   bool isNilOrEmpty() : info("Returns true if the object length is 0 or it is nil")
+   {
+      int len := self?.Length ?? 0;
+        
+      ^ len == 0;
+   }
+
    bool isNonempty() : info("Returns true if the object length is not 0")
    {
       int len := self.Length;

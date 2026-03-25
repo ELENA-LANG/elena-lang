@@ -5,7 +5,9 @@ public Program() {
   var output := textgen'TextGen.parseAsLineSeparated(list, script);
 
   var path := "@output_path";
-  if (path != nil) {
+  if (path.isNonempty()) {
     system'io'File.saveContent(path, output) 
   };
+
+  system'Console.writeLine(output);
 }

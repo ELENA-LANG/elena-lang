@@ -18,6 +18,7 @@ In development:
   ====================================== 
   * doc
   ====================================== 
+  - list extension properties in indexes
   - provide descriptions for all classes (from collections\sorted_lists.l)
   --------------------------------------
   * samples
