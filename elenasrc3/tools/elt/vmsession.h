@@ -129,6 +129,7 @@ namespace elena_lang
       bool readScriptTemplate(Context* context);
       bool evalScript(Context* context);
       bool assignVariable(Context* context);
+      bool inputVariable(Context* context);
 
 //      void printHelp();
 //

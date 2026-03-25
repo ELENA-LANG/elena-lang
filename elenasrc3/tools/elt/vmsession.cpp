@@ -198,6 +198,10 @@ VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
       {
          return session->assignVariable(context);
       });
+   _directives.add("ask", [](VMSession* session, Context* context)
+      {
+         return session->inputVariable(context);
+      });
 }
 
 void VMSession :: setBasePath(path_t baseStr)
@@ -581,9 +585,47 @@ bool VMSession :: assignVariable(Context* context)
    if (context->directiveArg2.empty() || !context->isDirectiveArg2Variable)
       return false;
 
-   ustr_t value = _variables.get(*context->directiveArg1);
+   ustr_t var_name = _variables.get(*context->directiveArg1);
+   ustr_t value = _variables.get(*context->directiveArg2);
 
-   setVariable(*context->directiveArg2, value);
+   setVariable(var_name, value);
+
+   return true;
+}
+
+bool VMSession :: inputVariable(Context* context)
+{
+   if (context->directiveArg1.empty() || !context->isDirectiveArg1Variable)
+      return false;
+
+   IdentifierString caption("Please enter ");
+   if (!context->directiveArg2.empty()) {
+      caption.append(*context->directiveArg2);
+   }
+   else caption.append(*context->directiveArg1);
+
+   ustr_t var_name = *context->directiveArg1;
+
+   ustr_t prev_value = _variables.get(*context->directiveArg1);
+   if (!prev_value.empty()) {
+      caption.append("[");
+      if (prev_value.length() > 20) {
+         caption.append(prev_value, 20);
+         caption.append("..");
+      }
+      else caption.append(prev_value);
+
+      caption.append("]:");
+   }
+   else caption.append(":");
+
+   _presenter->print(*caption);
+
+   char buffer[1024];
+   _presenter->readLine(buffer, 1024);
+
+   if (getlength(buffer) != 0)
+      setVariable(var_name, buffer);
 
    return true;
 }

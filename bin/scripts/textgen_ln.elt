@@ -1,14 +1,11 @@
-///$output:=the output path
-///$script:=the textgen script
-///$target:= the multi-line text to be parsed
 public Program() {
-$1
+  var list := system'io'File.readContent(@list_path);
+  var script := system'io'File.readContent(@script_path);
 
-  var output := textgen'TextGen.parseAsLineSeparated($target, $script);
+  var output := textgen'TextGen.parseAsLineSeparated(list, script);
 
-  if ($output != nil) {
-    system'io'File.saveContent($output, output) 
+  var path := @output_path;
+  if (path != nil) {
+    system'io'File.saveContent(path, output) 
   };
-
-  system'Console.writeLine(output);
 }
