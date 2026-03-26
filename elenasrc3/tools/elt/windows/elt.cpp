@@ -87,7 +87,7 @@ int main(int argc, char* argv[])
    }
    else startInDefaultMode(session);
 
-//   session.printHelp();
+   session.printHelp();
 
    session.run();
 

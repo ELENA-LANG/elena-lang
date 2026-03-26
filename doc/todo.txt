@@ -24,15 +24,7 @@ In development:
   ====================================== 
   * current : redesign elt 
   ====================================== 
-  - test new repl
-  - test new library
-  - provide the description to the command
-  - print the help line (that you can get list of commands)
-  - validate that help command is available and has correct value
-  - support existing functionality with [[ #use ]] and -i
-  - support preview mode (preview on / off)
   - remove unused script templates
-  - refactor elt
 
   - post about using elt to create a project
   - post about using elt to call you class in design-time

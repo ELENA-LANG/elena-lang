@@ -14,8 +14,8 @@ public Program() {
      </module>
   </files>
   <forwards>
-     <forward key="Program">extensions'ProgramLoop</forward>
-     <forward key="Program'Control">$rootnamespace'Control</forward>
+     <forward key=""Program"">extensions'ProgramLoop</forward>
+     <forward key=""Program'Control"">$rootnamespace'Control</forward>
   </forwards>
 </configuration>";
 
@@ -23,12 +23,19 @@ public Program() {
 
 public singleton Control
 {
+    greeting()
+        = ""Type quit to exit"";
+
     get string Prompt
-        = ">";
+        = "">"";
 
     proceed(command)
     {
-       ^ $"Invalid command - {command}"
+       if (command == ""quit"") {
+          forward Program.stop(); ^ ""Quiting""
+       };
+
+       ^ $""Invalid command - {command}""
     }
 }";
 

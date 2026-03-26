@@ -251,6 +251,7 @@ bool VMSession :: loadConfig(path_t configPath)
    DynamicString<char> arg;
    DynamicString<char> variable;
    DynamicString<char> script;
+   DynamicString<char> help;
 
    ConfigFile config;
    if (config.load(configPath, FileEncoding::UTF8)) {
@@ -274,6 +275,23 @@ bool VMSession :: loadConfig(path_t configPath)
          }
       }
 
+      ConfigFile::Collection prompts;
+      if (config.select(ELT_PROMPTS_XPATH, prompts)) {
+         for (auto it = prompts.start(); !it.eof(); ++it) {
+            ConfigFile::Node promptNode = *it;
+
+            if (!promptNode.readAttribute("name", name)) {
+               name.clear();
+            }
+
+            if (ustr_t(name.str()).compare("name")) {
+               promptNode.readContent(script);
+
+               _helpPrompt.copy(script.str());
+            }
+         }
+      }
+
       ConfigFile::Collection commands;
       if (config.select(ELT_COMMAND_XPATH, commands)) {
          for (auto it = commands.start(); !it.eof(); ++it) {
@@ -288,6 +306,9 @@ bool VMSession :: loadConfig(path_t configPath)
             if (!commandNode.readAttribute("variable", variable)) {
                variable.clear();
             }
+            if (!commandNode.readAttribute("help", help)) {
+               help.clear();
+            }
 
             commandNode.readContent(script);
 
@@ -301,6 +322,7 @@ bool VMSession :: loadConfig(path_t configPath)
             command->scriptCommand.copy(script.str());
             command->argument.copy(arg.str());
             command->variable.copy(variable.str());
+            command->helpPrompt.copy(help.str());
 
             _commands.add(name.str(), command);
          }
@@ -312,28 +334,10 @@ bool VMSession :: loadConfig(path_t configPath)
    return false;
 }
 
-//void VMSession::printHelp()
-//{
-//   _presenter->print("@help                      - help\n");
-//   _presenter->print("@quit                      - quit\n");
-//   _presenter->print("@multiline                 - switching to a multi-line mode\n");
-//
-//   _presenter->print("<expr>                     - evaluate the expression and print the result\n");
-//   _presenter->print("$<var> := <expr>;          - assign a global variable\n");
-//   _presenter->print(".. $<var>  ..              - get a global variable value\n");
-//
-//   _presenter->print("@base <path>               - set the base path for scripts\n");
-//   _presenter->print("@load <path>               - execute a script from file\n");
-//   _presenter->print("@import <path>             - load the script into multi-line script\n");
-//
-//   _presenter->print("@use <template>            - use the template for multiline script\n");
-//
-//   _presenter->print("@eval                      - executing the multi-line code and switch back to REPL mode\n");
-//   _presenter->print("@clear                     - clear the multi-line code and switch back to REPL mode\n");
-//   _presenter->print("@print                     - print the multi-line code\n");
-//   _presenter->print("@add import <reference>    - importing a module into the session\n");
-//   _presenter->print("@remove import <reference> - removing a module from the session\n");
-//}
+void VMSession::printHelp()
+{
+   _presenter->printLine(_helpPrompt.str());
+}
 
 //bool VMSession::importScript(ustr_t scriptName)
 //{
@@ -414,7 +418,11 @@ void VMSession :: setVariable(ustr_t name, ustr_t value)
 void VMSession :: listCommands()
 {
    for (auto it = _commands.start(); !it.eof(); ++it) {
-      _presenter->printLine(it.key());
+      Command* command = *it;
+      if (command->helpPrompt.empty()) {
+         _presenter->printLine(it.key());
+      }
+      else _presenter->printLine(*command->helpPrompt);
    }
 }
 

@@ -13,26 +13,6 @@
 
 namespace elena_lang
 {
-//   enum class TemplateType
-//   {
-//      REPL,
-//      Multiline,
-//      GetVar,
-//      SetVar
-//   };
-//
-//   struct TemplateInfo
-//   {
-//      IdentifierString     prefix;
-//      IdentifierString     postfix;
-//
-//      void clear()
-//      {
-//         prefix.clear();
-//         postfix.clear();
-//      }
-//   };
-
    class VMSession
    {
       enum GroupType
@@ -46,6 +26,7 @@ namespace elena_lang
          IdentifierString scriptCommand;
          IdentifierString variable;
          IdentifierString argument;
+         IdentifierString helpPrompt;
       };
 
       struct Context
@@ -88,6 +69,8 @@ namespace elena_lang
       PathString           _basePath;
       PathString           _scriptsPath;
 
+      IdentifierString     _helpPrompt;
+
       FileEncoding         _encoding;
 
       PresenterBase*       _presenter;
@@ -125,7 +108,7 @@ namespace elena_lang
       bool copyVariable(Context* context);
       bool inputVariable(Context* context);
 
-//      void printHelp();
+      void printHelp();
 
       bool executeScript(const char* line);
       bool executeScriptFile(const char* path);

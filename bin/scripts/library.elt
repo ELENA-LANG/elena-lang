@@ -9,13 +9,9 @@ public Program() {
   </project>
   <files>
      <module>
-        <include>@name.l</include>
+        <include>MyClass.l</include>
      </module>
   </files>
-  <forwards>
-     <forward key="Program">extensions'ProgramLoop</forward>
-     <forward key="Program'Control">$rootnamespace'Control</forward>
-  </forwards>
 </configuration>";
 
   var source := "import extensions;
