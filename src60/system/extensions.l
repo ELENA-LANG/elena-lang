@@ -1010,9 +1010,9 @@ public extension stringOp : String
    int indexOf(char ch) : info("Returns the index of the first occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
       = self.indexOf(0, ch);
 
-   int lastIndexOf(string s) : info("Returns the index of the last occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
+   int lastIndexOf(string subStr) : info("Returns the index of the last occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
    {
-      int subLen := s.Length;
+      int subLen := subStr.Length;
 
       int lastIndex := -1;
 
@@ -1116,7 +1116,7 @@ public extension stringOp : String
             ^ false
          };
 
-         ^ (start + subStr.Length == self.Length);
+         ^ (index + subStr.Length == self.Length);
       };
 
       ^ false
@@ -1124,9 +1124,6 @@ public extension stringOp : String
         
    bool containing(string s) : info("Returns true if the string contains the specified string <b>s</b>")
    {
-      int l1 := self.Length;
-      int l2 := s.Length;
-
       int n := self.indexOf(0, s);
         
       ^ n != -1
@@ -1342,9 +1339,9 @@ public extension wideOp : WideString
       = self.indexOf(0, ch);
 
 
-   int lastIndexOf(wide s) : info("Returns the index of the last occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
+   int lastIndexOf(wide subStr) : info("Returns the index of the last occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
    {
-      int subLen := s.Length;
+      int subLen := subStr.Length;
 
       int lastIndex := -1;
 
@@ -1361,7 +1358,7 @@ public extension wideOp : WideString
 
    int lastIndexOf(char ch) : info("Returns the index of the last occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
    {
-      int subLen := ch.Length;
+      int subLen := ch.WideLength;
 
       int lastIndex := -1;
 
@@ -1433,7 +1430,7 @@ public extension wideOp : WideString
       ^ 0 == n
    }
         
-   bool endingWith(wide s) : info("Returns true if the string ends with the specified string <b>s</b>")
+   bool endingWith(wide subStr) : info("Returns true if the string ends with the specified string <b>s</b>")
    {
       if (!subStr.isNilOrEmpty()) {
          int index := self.lastIndexOf(subStr);
@@ -1441,7 +1438,7 @@ public extension wideOp : WideString
             ^ false
          };
 
-         ^ (start + subStr.Length == self.Length);
+         ^ (index + subStr.Length == self.Length);
       };
 
       ^ false
@@ -1449,9 +1446,6 @@ public extension wideOp : WideString
         
    bool containing(wide s) : info("Returns true if the string contains the specified string <b>s</b>")
    {
-      int l1 := self.Length;
-      int l2 := s.Length;
-
       int n := self.indexOf(0, s);
         
       ^ n != -1

@@ -388,6 +388,19 @@ public stringTests() : testCase()
     Assert.ifFalse("s2" < "s1");
 
     Console.write(".");
+
+    string s4 := "abbxdfb";
+
+    Assert.ifEqual(s4.lastIndexOf("b"), 6);
+    Assert.ifEqual(s4.lastIndexOf("y"), -1);
+    Assert.ifEqual(s4.lastIndexOf("a"), 0);
+    Assert.ifEqual(s4.lastIndexOf("d"), 4);
+
+    Assert.ifTrue(s4.endingWith("dfb"));
+    Assert.ifFalse(s4.endingWith("df"));
+    Assert.ifFalse(s4.endingWith("xx"));
+
+    Console.write(".");
 }
 
 // --- wideTests ---
@@ -424,6 +437,19 @@ public wideTests() : testCase()
     Assert.ifTrue("s1"w < "s2"w);
     Assert.ifTrue("s2"w < "s2"w);
     Assert.ifFalse("s2"w < "s1"w);
+
+    Console.write(".");
+
+    wide s4 := "abbxdfb"w;
+
+    Assert.ifEqual(s4.lastIndexOf("b"w), 6);
+    Assert.ifEqual(s4.lastIndexOf("y"w), -1);
+    Assert.ifEqual(s4.lastIndexOf("a"w), 0);
+    Assert.ifEqual(s4.lastIndexOf("d"w), 4);
+
+    Assert.ifTrue(s4.endingWith("dfb"w));
+    Assert.ifFalse(s4.endingWith("df"w));
+    Assert.ifFalse(s4.endingWith("xx"w));
 
     Console.write(".");
 }
@@ -2703,3 +2729,15 @@ public utf32Test() : testCase()
    Assert.ifTrue(code == 1D11Eh);
    Console.write(".");
 }
+
+#if (__project["_Win"]) // Windows
+
+public pathUtilsTest() : testCase()
+{
+   string fullPath := PathUtil.combine("c:\alex", "readme", "md");
+
+   Assert.ifEqual(fullPath, "c:\alex\readme.md");
+   Console.write(".");
+}
+
+#endif

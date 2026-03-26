@@ -24,10 +24,6 @@ In development:
   ====================================== 
   * current : redesign elt 
   ====================================== 
-  - test LastIndexOf
-  - test endingWith
-  - test PathUtil.combine
-
   - execute script to create a console program 
   - execute script to create REPL console program
   - execute script to create a library

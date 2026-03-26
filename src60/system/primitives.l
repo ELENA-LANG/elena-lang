@@ -387,14 +387,14 @@ internal singleton PrimitiveWideStringOperations
 
       sLen -= length;
       int i := index;
-      while (i < sLen) {
+      while (i <= sLen) {
          bool isEqual := true;
          int j := 0;         
          while (j < length) {
             char ch1 := s[i + j];
             char ch2 := subs[j];
-            int len1 := ch2.Length;
-            int len2 := ch2.Length;
+            int len1 := ch2.WideLength;
+            int len2 := ch2.WideLength;
             if (len1 != len2 || ch1 != ch2) {
                isEqual := false;
                :break

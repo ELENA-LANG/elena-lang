@@ -184,14 +184,14 @@ namespace io
    {
       bool isRelativePath(string path)
       {
-         int retVal := extern KERNEL32.PathIsRelativeA(path);
+         int retVal := extern SHLWAPI.PathIsRelativeA(path);
 
          ^ retVal == -1
       }
 
       bool isRelativePath(wide path)
       {
-         int retVal := extern KERNEL32.PathIsRelativeW(path);
+         int retVal := extern SHLWAPI.PathIsRelativeW(path);
 
          ^ retVal == -1
       }
@@ -644,10 +644,10 @@ namespace io
       }
 
       bool isRelative(string path)
-         directoryControl.isRelativePath(path);
+         = directoryControl.isRelativePath(path);
 
       bool isRelative(wide path)
-         directoryControl.isRelativePath(path);
+         = directoryControl.isRelativePath(path);
 
       string combine(string path, string name, string extension)
       {         
@@ -681,7 +681,7 @@ namespace io
 
       string combinePaths(string basePath, string extraPath)
       {
-         if (basePath.isEmpty() || !directoryControl.isRelativePath(extraPath)) {
+         if (basePath.isEmpty() || (!directoryControl.isRelativePath(extraPath))) {
             ^ extraPath
          };
 
@@ -698,7 +698,7 @@ namespace io
 
       wide combinePaths(wide basePath, wide extraPath)
       {
-         if (basePath.isEmpty() || !directoryControl.isRelativePath(extraPath)) {
+         if (basePath.isEmpty() || (!directoryControl.isRelativePath(extraPath))) {
             ^ extraPath
          };
 
