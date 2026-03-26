@@ -12,7 +12,6 @@ In development:
   - support text generation (Windows & Linux)
 
   - make possible to create a simple console app, repl console app
-  - post about using elt to create a project
   --------------------------------------
   * lang
   ====================================== 
@@ -25,10 +24,17 @@ In development:
   ====================================== 
   * current : redesign elt 
   ====================================== 
-  - work on REPL (elt), generate project template
+  - test LastIndexOf
+  - test endingWith
+  - test PathUtil.combine
 
   - execute script to create a console program 
   - execute script to create REPL console program
+  - execute script to create a library
+
+
+  - work on REPL (elt), generate project template
+
 
   - provide the description to the command
   - print the help line (that you can get list of commands)
@@ -37,6 +43,8 @@ In development:
   - support preview mode (preview on / off)
   - remove unused script templates
   - refactor elt
+
+  - post about using elt to create a project
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

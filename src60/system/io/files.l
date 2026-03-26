@@ -5,6 +5,8 @@ namespace io
 {
 #if (__project["_Win"]) // Windows
 
+   const string PathSeparator         = "\";
+
    // --- File Access Modes ---
    const IntNumber FILE_READ_DATA     = 00000001h;
    const IntNumber FILE_APPEND_DATA   = 00000004h;
@@ -180,6 +182,20 @@ namespace io
 
    singleton directoryControl
    {
+      bool isRelativePath(string path)
+      {
+         int retVal := extern KERNEL32.PathIsRelativeA(path);
+
+         ^ retVal == -1
+      }
+
+      bool isRelativePath(wide path)
+      {
+         int retVal := extern KERNEL32.PathIsRelativeW(path);
+
+         ^ retVal == -1
+      }
+
       bool isAvailable(path)
       {
          int ret := extern KERNEL32.GetFileAttributesW(cast wide(path));
@@ -217,6 +233,8 @@ namespace io
    }
 
 #elif (__project["_Linux"] || __project["_FreeBSD"])
+
+   const string PathSeparator         = "/";
 
    const int F_OK     = 0;
 
@@ -350,6 +368,24 @@ namespace io
 
    singleton directoryControl
    {
+      bool isRelativePath(string path)
+      {
+         if (path.Length > 0) {
+            ^ path[0] != PathSeparator;
+         };
+
+         ^ true;
+      }
+
+      bool isRelativePath(wide path)
+      {
+         if (path.Length > 0) {
+            ^ path[0] != PathSeparator;
+         };
+
+         ^ true;
+      }
+
       create(string path)
       {
          int ret := extern libc.mkdir(path, S_IRWXU|S_IRGRP|S_IXGRP);
@@ -530,4 +566,151 @@ namespace io
          ^l.Value;         
       }
    }   
+
+   // --- PathUtil ---
+   public singleton PathUtil
+   {
+      string Separator 
+         = PathSeparator;
+
+      string getDirectoryPath(string fullPath)
+      {
+         int index := fullPath.lastIndexOf(PathSeparator);
+         if (index != -1) {
+            ^ fullPath.Substring(0, index);
+         };
+
+         ^ String.MinValue;
+      }
+
+      wide getDirectoryPath(wide fullPath)
+      {
+         int index := fullPath.lastIndexOf(PathSeparator);
+         if (index != -1) {
+            ^ fullPath.Substring(0, index);
+         };
+
+         ^ WideString.MinValue;
+      }
+
+      string getFileName(string fullPath)
+      {
+         int index := fullPath.lastIndexOf(PathSeparator);
+         if (index != -1) {
+            ^ fullPath.Substring(index + 1);
+         };
+
+         ^ String.MinValue;
+      }
+
+      wide getFileName(wide fullPath)
+      {
+         int index := fullPath.lastIndexOf(PathSeparator);
+         if (index != -1) {
+            ^ fullPath.Substring(index + 1);
+         };
+
+         ^ WideString.MinValue;
+      }
+
+      string getFileExtension(string fullPath)
+      {
+         int index := fullPath.lastIndexOf(PathSeparator);
+         if (index == -1) {
+            index := 0;
+         };
+
+         int dotIndex := fullPath.lastIndexOf(PathSeparator);
+         if (dotIndex > index) {
+            ^ fullPath.Substring(dotIndex + 1);
+         };
+
+         ^ String.MinValue;
+      }
+
+      wide getFileExtension(wide fullPath)
+      {
+         int index := fullPath.lastIndexOf(PathSeparator);
+         if (index == -1) {
+            index := 0;
+         };
+
+         int dotIndex := fullPath.lastIndexOf(PathSeparator);
+         if (dotIndex > index) {
+            ^ fullPath.Substring(dotIndex + 1);
+         };
+
+         ^ WideString.MinValue;
+      }
+
+      bool isRelative(string path)
+         directoryControl.isRelativePath(path);
+
+      bool isRelative(wide path)
+         directoryControl.isRelativePath(path);
+
+      string combine(string path, string name, string extension)
+      {         
+         string fullPath;
+
+         if (path.isEmpty()) {
+            fullPath := $"{name}.{extension}";
+         }
+         else if (!path.endingWith(PathSeparator)) {
+            fullPath := $"{path}{PathSeparator}{name}.{extension}";
+         }
+         else fullPath := $"{path}{name}.{extension}";
+       
+         ^ fullPath
+      }
+
+      wide combine(wide path, wide name, wide extension)
+      {         
+         wide fullPath;
+
+         if (path.isEmpty()) {
+            fullPath := $"{name}.{extension}";
+         }
+         else if (!path.endingWith(PathSeparator)) {
+            fullPath := $"{path}{PathSeparator}{name}.{extension}";
+         }
+         else fullPath := $"{path}{name}.{extension}";
+       
+         ^ fullPath
+      }
+
+      string combinePaths(string basePath, string extraPath)
+      {
+         if (basePath.isEmpty() || !directoryControl.isRelativePath(extraPath)) {
+            ^ extraPath
+         };
+
+         string fullPath;
+         if (basePath.endingWith(PathSeparator)) {
+            fullPath := basePath + extraPath;
+         }
+         else {
+            fullPath := $"{basePath}{PathSeparator}{extraPath}";
+         };
+
+        ^ fullPath;
+      }
+
+      wide combinePaths(wide basePath, wide extraPath)
+      {
+         if (basePath.isEmpty() || !directoryControl.isRelativePath(extraPath)) {
+            ^ extraPath
+         };
+
+         wide fullPath;
+         if (basePath.endingWith(PathSeparator)) {
+            fullPath := basePath + extraPath;
+         }
+         else {
+            fullPath := $"{basePath}{PathSeparator}{extraPath}";
+         };
+
+        ^ fullPath;
+      }
+   }
 }

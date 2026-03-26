@@ -23,7 +23,7 @@
     </project>
     <manifest>
         <name>ELENA Standard Library</name>
-        <version>7.0.0</version>
+        <version>7.0.1</version>
         <author>Aleksey Rakov</author>
     </manifest>
     <files>
