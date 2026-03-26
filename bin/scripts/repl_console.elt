@@ -13,13 +13,23 @@ public Program() {
         <include>@name.l</include>
      </module>
   </files>
+  <forwards>
+     <forward key="Program">extensions'ProgramLoop</forward>
+     <forward key="Program'Control">$rootnamespace'Control</forward>
+  </forwards>
 </configuration>";
 
   var source := "import extensions;
 
-public Program()
+public singleton Control
 {
-   Console.printLine(""Hello World!"")
+    get string Prompt
+        = ">";
+
+    proceed(command)
+    {
+       ^ $"Invalid command - {command}"
+    }
 }";
 
   var path := "@output_path";

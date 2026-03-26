@@ -96,15 +96,6 @@ namespace elena_lang
       LocalMap             _commands;
       VariableMap          _variables;
 
-//      TemplateInfo         _repl;
-//      TemplateInfo         _multiline;
-//      TemplateInfo         _get_var;
-//      TemplateInfo         _set_var;
-//
-//      DynamicString<char>  _body;
-//
-//      IdentifierList       _imports;
-
       SystemEnv            _env;
 
       bool connect(void* tape);
@@ -118,7 +109,7 @@ namespace elena_lang
       void list(GroupType type);
 
       void executeCommand(Command* command, Context& context);
-      void executeCommandLine(/*bool preview, TemplateType type, */ustr_t script, Context& context);
+      void executeCommandLine(ustr_t script, Context& context);
 
       bool executeTape(void* tape);
 
@@ -131,15 +122,13 @@ namespace elena_lang
       bool evalScript(Context* context);
       bool evalScriptPath(Context* context);
       bool assignVariable(Context* context);
+      bool copyVariable(Context* context);
       bool inputVariable(Context* context);
 
 //      void printHelp();
-//
-//      bool loadTemplate(TemplateType type, ustr_t name);
 
       bool executeScript(const char* line);
       bool executeScriptFile(const char* path);
-//      bool executeCommand(const char* line, bool& running);
 
       bool loadScript(ustr_t pathStr);
 

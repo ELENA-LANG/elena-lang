@@ -24,14 +24,8 @@ In development:
   ====================================== 
   * current : redesign elt 
   ====================================== 
-  - execute script to create a console program 
-  - execute script to create REPL console program
-  - execute script to create a library
-
-
-  - work on REPL (elt), generate project template
-
-
+  - test new repl
+  - test new library
   - provide the description to the command
   - print the help line (that you can get list of commands)
   - validate that help command is available and has correct value
@@ -41,6 +35,7 @@ In development:
   - refactor elt
 
   - post about using elt to create a project
+  - post about using elt to call you class in design-time
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

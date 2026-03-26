@@ -230,6 +230,10 @@ VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
       {
          return session->assignVariable(context);
       });
+   _directives.add("copy", [](VMSession* session, Context* context)
+      {
+         return session->copyVariable(context);
+      });
    _directives.add("ask", [](VMSession* session, Context* context)
       {
          return session->inputVariable(context);
@@ -308,61 +312,6 @@ bool VMSession :: loadConfig(path_t configPath)
    return false;
 }
 
-//bool VMSession :: loadTemplate(TemplateType type, ustr_t name)
-//{
-//   _presenter->print(ELT_LOADING_TEMPLATE, name);
-//
-//   if (name.find(PATH_SEPARATOR) != NOTFOUND_POS)
-//      return false;
-//
-//   char buffer[1024];
-//
-//   PathString path(*_appPath);
-//   path.combine("scripts");
-//   path.combine(name);
-//   path.changeExtension("elt");
-//
-//   TextFileReader reader(*path, FileEncoding::UTF8, false);
-//
-//   DynamicString<char> helpLine;
-//   DynamicString<char> content;
-//   if (!reader.isOpen())
-//      return false;
-//
-//   while (reader.read(buffer, 1024)) {
-//      if (ustr_t(buffer).startsWith("///")) {
-//         helpLine.append(buffer + 3);
-//      }
-//      else content.append(buffer);
-//   }
-//
-//   if (!helpLine.empty())
-//      _presenter->print(helpLine.str());
-//
-//   switch (type) {
-//      case TemplateType::REPL:
-//         _repl.clear();
-//         copyPrefixPostfix(content.str(), 0, content.length(), _repl);
-//         break;
-//      case TemplateType::Multiline:
-//         _multiline.clear();
-//         copyPrefixPostfix(content.str(), 0, content.length(), _multiline);
-//         break;
-//      case TemplateType::GetVar:
-//         _get_var.clear();
-//         copyPrefixPostfix(content.str(), 0, content.length(), _get_var);
-//         break;
-//      case TemplateType::SetVar:
-//         _set_var.clear();
-//         copyPrefixPostfix(content.str(), 0, content.length(), _set_var);
-//         break;
-//      default:
-//         return false;
-//   }
-//
-//   return true;
-//}
-//
 //void VMSession::printHelp()
 //{
 //   _presenter->print("@help                      - help\n");
@@ -657,6 +606,22 @@ bool VMSession :: assignVariable(Context* context)
    return true;
 }
 
+bool VMSession :: copyVariable(Context* context)
+{
+   if (context->directiveArg1.empty() || !context->isDirectiveArg1Variable)
+      return false;
+
+   if (context->directiveArg2.empty() || !context->isDirectiveArg2Variable)
+      return false;
+
+   ustr_t var_name = *context->directiveArg1;
+   ustr_t value = _variables.get(*context->directiveArg2);
+
+   setVariable(var_name, value);
+
+   return true;
+}
+
 bool VMSession :: inputVariable(Context* context)
 {
    if (context->directiveArg1.empty() || !context->isDirectiveArg1Variable)
@@ -764,7 +729,7 @@ void VMSession :: executeCommand(Command* command, Context& context)
    }
 }
 
-void VMSession :: executeCommandLine(/*bool preview, TemplateType type, */ustr_t script, Context& context)
+void VMSession :: executeCommandLine(ustr_t script, Context& context)
 {
    IdentifierString commandName;
 
