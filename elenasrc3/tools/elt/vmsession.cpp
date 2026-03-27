@@ -73,127 +73,6 @@ static inline void trimLine(char* line)
       line[getlength(line) - 1] = 0;
 }
 
-//static inline bool isAssignment(ustr_t line)
-//{
-//   if (line[0] != '$')
-//      return false;
-//
-//   size_t len = line.length();
-//   size_t i = 1;
-//   while (i < len && (isLetterOrDigit(line[i])))
-//      i++;
-//
-//   while (line[i] == ' ')
-//      i++;
-//
-//   return (i < len - 1) && (line[i] == ':' && line[i + 1] == '=');
-//}
-//
-//static inline void copyPrefixPostfix(ustr_t s, size_t start, size_t end, TemplateInfo& info)
-//{
-//   size_t pos = s.findSubStr(start, "$1", end - start);
-//   if (pos != NOTFOUND_POS) {
-//      info.prefix.copy(s + start, pos - start);
-//      info.postfix.copy(s + pos + 2, end - pos - 2);
-//   }
-//   else info.postfix.copy(s + start, end - start);
-//
-//   trimLine(info.prefix);
-//   trimLine(info.postfix);
-//}
-//
-//static inline size_t findTerminator(ustr_t text, size_t index)
-//{
-//   bool quoteMode = false;
-//   size_t i = index;
-//   while (text[i]) {
-//      if (text[i]=='"') {
-//         if (quoteMode) {
-//            if (text[i + 1] != '"') {
-//               quoteMode = false;
-//            }
-//            else i++;
-//         }
-//         else quoteMode = true;
-//      }
-//      if (!quoteMode && text[i] == ';')
-//         break;
-//      i++;
-//   }
-//
-//   return i;
-//}
-//
-//static inline bool insertVariablesAssignment(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
-//{
-//   size_t i = index;
-//   while (i < text.length()) {
-//      size_t pos = ustr_t(text.str()).findSub(i, '$');
-//      if (pos == NOTFOUND_POS)
-//         break;
-//
-//      if (!isAssignment(text.str() + pos)) {
-//         i = pos + 1;
-//
-//         continue;
-//      }
-//
-//      IdentifierString varName;
-//      size_t j = pos + 1;
-//      while (isLetterOrDigit(text[j])) {
-//         varName.append(text[j]);
-//         j++;
-//      }
-//
-//      size_t assignPos = ustr_t(text.str()).findSubStr(pos, ":=", text.length() - pos);
-//      size_t endPos = findTerminator(text.str(), assignPos);
-//      if (endPos == NOTFOUND_POS) {
-//         return false;
-//      }
-//      IdentifierString expr(text.str() + assignPos + 2, endPos - assignPos - 2);
-//
-//      text.cut(pos, endPos - pos + 1);
-//
-//      text.insert(postfix, pos);
-//      text.insert(*expr, pos);
-//      text.insert("\" ,", pos);
-//      text.insert(*varName, pos);
-//      text.insert("\"", pos);
-//      text.insert(prefix, pos);
-//
-//      i = pos;
-//   }
-//
-//   return true;
-//}
-//
-//static inline void insertVariables(DynamicString<char>& text, size_t index, ustr_t prefix, ustr_t postfix)
-//{
-//   size_t i = index;
-//   while (i < text.length()) {
-//      size_t pos = ustr_t(text.str()).findSub(i, '$');
-//      if (pos == NOTFOUND_POS)
-//         break;
-//
-//      IdentifierString varName;
-//      size_t j = pos + 1;
-//      while (isLetterOrDigit(text[j])) {
-//         varName.append(text[j]);
-//         j++;
-//      }
-//
-//      text.cut(pos, j - pos);
-//
-//      text.insert(postfix, pos);
-//      text.insert("\"", pos);
-//      text.insert(*varName, pos);
-//      text.insert("\"", pos);
-//      text.insert(prefix, pos);
-//
-//      i = pos;
-//   }
-//}
-
 // --- VMSession ---
 
 VMSession :: VMSession(path_t appPath, PresenterBase* presenter)
@@ -284,7 +163,7 @@ bool VMSession :: loadConfig(path_t configPath)
                name.clear();
             }
 
-            if (ustr_t(name.str()).compare("name")) {
+            if (ustr_t(name.str()).compare("help")) {
                promptNode.readContent(script);
 
                _helpPrompt.copy(script.str());

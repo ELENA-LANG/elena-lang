@@ -6,6 +6,12 @@ In development:
   ### EPIC: elena 8.0 ###
 
   === Iteration 46 (graph sample; ide linux; mac) ===
+  * dev : backlog
+  ====================================== 
+  - ppc : fpi, fsin, fcos
+  - User-defined string literals 
+  - nested extension inside a class
+  --------------------------------------
   * dev : template generator
   ====================================== 
   - support functions (Windows & Linux)
@@ -17,17 +23,18 @@ In development:
   ====================================== 
   * doc
   ====================================== 
+  - post about using elt to call you class in design-time
   - list extension properties in indexes
   - provide descriptions for all classes (from collections\sorted_lists.l)
   --------------------------------------
   * samples
   ====================================== 
-  * current : redesign elt 
+  * current : #590 : implementing interface injection : strong interface
   ====================================== 
-  - remove unused script templates
-
-  - post about using elt to create a project
-  - post about using elt to call you class in design-time
+  - review
+  - design
+  - implement
+  - unit / functional tests
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

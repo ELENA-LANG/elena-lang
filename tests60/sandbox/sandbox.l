@@ -1,23 +1,55 @@
-import extensions;
-
-struct X
+public interface IFunction
 {
-   int x;
+   abstract real calculate(real arg);
+}
 
-   constructor()
+public class LinearFunction : IFunction
+{
+   real a;
+   real b;
+
+   constructor(real a, real b)
    {
-      x := 0
+      this a := a;
+      this b := b;
+   }
+
+   real calculate(real x)
+      = x*a + b;
+}
+
+public class Mockup
+{
+   field object;
+
+   constructor(object)
+   {
+      this object := object;
+   }
+
+   generic cast()
+   {
+      var type := __received.__getFirstSignatureMember();
+
+      var proxy := ::{ dispatch() => object; };
+      proxy.__injectInferface(type);
+   
+      ^ __received(proxy);
    }
 }
 
-singleton Helper
+public singleton Actor
 {
-   test(X x)
-      = x;
+   invoke(IFunction function)
+   {
+      Console.printLine("Calculating f(1)", function.calculate(1));
+   }
 }
 
 public Program()
 {
-   var o := Helper;
-   var x := o.test(new X());
+   var mockup := new Mocup(::{ real calculate(real x) = x * x; });
+
+   Actor.invoke(new LinearFunction(2, 3));
+   Actor.invoke(mockup);
 }
