@@ -10423,7 +10423,7 @@ void Compiler::initializeMethod(ClassScope& scope, MethodScope& methodScope, Syn
    }
 }
 
-void Compiler::compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
+void Compiler :: compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node)
 {
    SyntaxNode objNode = node.firstChild(SyntaxKey::DeclarationMask).firstChild();
 
@@ -10440,8 +10440,13 @@ void Compiler::compileProxyDispatcher(BuildTreeWriter& writer, CodeScope& codeSc
          writer.appendNode(BuildKey::Argument);
          writer.appendNode(BuildKey::Field, target.reference);
          break;
+      case ObjectKind::OuterField:
+         writer.appendNode(BuildKey::Argument);
+         writer.appendNode(BuildKey::Field, target.reference);
+         writer.appendNode(BuildKey::Field, target.extra);
+         break;
       default:
-         codeScope.raiseError(errInvalidOperation, node);
+         codeScope.raiseError(errInvalidProxyRedirect, node);
          break;
    }
 

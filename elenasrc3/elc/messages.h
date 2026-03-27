@@ -10,7 +10,7 @@
 
 namespace elena_lang
 {
-   constexpr auto MessageLength = 122;
+   constexpr auto MessageLength = 123;
    const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
@@ -132,9 +132,10 @@ namespace elena_lang
       {errIncompatibleClosure, errMsgIncompatibleClosure },
       {infoMissingTemplate, infoMsgMissingTemplate},
       {wrnNonNillableArgument, wrnMsgNonNillableArgument },
-      { wrnHiddenLocal, wrnMsgHiddenLocal },
-      { wrnHiddenField, wrnMsgHiddenField },
-      { infoPredefinedIndexedMethod, infoMsgPredefinedIndexedMethod },
+      {wrnHiddenLocal, wrnMsgHiddenLocal},
+      {wrnHiddenField, wrnMsgHiddenField},
+      {infoPredefinedIndexedMethod, infoMsgPredefinedIndexedMethod},
+      {errInvalidProxyRedirect, errMsgInvalidProxyRedirect},
    };
 
 }

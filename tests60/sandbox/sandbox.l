@@ -1,3 +1,5 @@
+import extensions;
+
 public interface IFunction
 {
    abstract real calculate(real arg);
@@ -48,7 +50,7 @@ public singleton Actor
 
 public Program()
 {
-   var mockup := new Mocup(::{ real calculate(real x) = x * x; });
+   var mockup := new Mockup(::{ real calculate(real x) = x * x; });
 
    Actor.invoke(new LinearFunction(2, 3));
    Actor.invoke(mockup);

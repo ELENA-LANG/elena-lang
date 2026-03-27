@@ -350,6 +350,7 @@ namespace elena_lang
    constexpr auto errRedirectToItself        = 115;
    constexpr auto errAssigningRealOnly       = 116;
    constexpr auto errIncompatibleClosure     = 117;
+   constexpr auto errInvalidProxyRedirect    = 118;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;
    constexpr auto errCannotEval              = 140;
