@@ -488,7 +488,7 @@ JITLinker :: JITLinker(ReferenceMapperBase* mapper,
    _virtualMode = settings->virtualMode;
    _classSymbolAutoLoadMode = settings->autoLoadMode;
    _withDebugInfo = false;
-   _withOutputList = false;
+   _withOutputList = settings->withOutputList;
 
    _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
    _constantSettings.longLiteralClass = forwardResolver->resolveForward(LONGLITERAL_FORWARD);

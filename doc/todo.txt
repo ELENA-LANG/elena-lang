@@ -29,12 +29,27 @@ In development:
   --------------------------------------
   * samples
   ====================================== 
-  * current : #590 : implementing interface injection : strong interface
+  * #590 : implementing interface injection : strong interface
   ====================================== 
-  - review
-  - design
+  - special dispatcher, which typecast the return value
+
+  - design : argument types (use multimethod dispatcher)
   - implement
-  - unit / functional tests
+  - design : output type
+  - implement
+  - unit / functional tests (strong typed, strong output type)
+  - look at indexed methods
+  - implement InjectProxyTypeLA for elenavm
+  - Mockup class must be declared in extensions so it can be reused
+  - supporting possibility to dynamically typecast the object
+  --------------------------------------
+  * current : #590 - it must be possible dynamically to check the method output
+  ====================================== 
+  - add an option to generate the output type list as command-line and project setting
+  - implement a rt function to return the method output type
+  - test it
+  - check how it is affect the executable size; if it is significant - probably we need to do it only for interfaces
+
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

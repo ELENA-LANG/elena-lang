@@ -15,7 +15,7 @@ namespace collections
       }
    }
 
-   public sealed class SortedList : Enumerable, info("A sorted weak-typed list")
+   public sealed class SortedList : Enumerable, info("A sorted generic list of key value pairs")
    {
       SortedListItem? _top;
       Reference<int>  _length;
@@ -33,13 +33,13 @@ namespace collections
          _length := 0;
       }   
 
-      int Length
+      int Length : info("Returns the number of elements in the collection")
          = *_length;
 
       internal SortedListItem? FirstItem
          = _top;
 
-      append(object key, object item)
+      append(object key, object item) : info("Appends a new key-value element to the end of the list<br/>The element position is defined by its sorted order")
       {
          auto item := new SortedListItem(key, item);
    
@@ -74,21 +74,21 @@ namespace collections
          ^ current!
       }
    
-      object at(int index)
+      object at(int index) : info("Returns the value at a position <b>index</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
          SortedListItem current := retrieve(index);
    
          ^ current.Item;
       }   
    
-      setAt(int index, object item)
+      setAt(int index, object item) : info("Sets the element value at a position <b>index</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
          SortedListItem current := retrieve(index);
          
          current.Item := item;
       }
 
-      int indexOfKey(object key)
+      int indexOfKey(object key) : info("Returns the element position based on its key value<br/>If there is no element with the specified key, it returns -1")
       {
          int index := 1;
          SortedListItem? current := _top;
@@ -102,7 +102,7 @@ namespace collections
          ^ -1
       }
 
-      removeAt(int index)
+      removeAt(int index) : info("Removes the element at the specified position")
       {
          int n := index;
          SortedListItem? prev := nil;
@@ -123,28 +123,30 @@ namespace collections
          _length--
       }
 
-      Enumerator enumerator() = new SortedListEnumerator(self);
+      Enumerator enumerator() : info("Returns the collection enumerator")
+         = new SortedListEnumerator(self);
 
-      Indexer indexer() = new SortedListIndexer(self);
+      Indexer indexer() : info("Returns the collection indexer")
+         = new SortedListIndexer(self);
    }
 
    // --- SortedListEnumerator ---
-   public class SortedListEnumerator : Enumerator
+   public class SortedListEnumerator : Enumerator, info("A sorted collection enumerator")
    {
       SortedList      _list;
       SortedListItem? _current;
       bool            _started; 
 
-      constructor(SortedList list)
+      constructor(SortedList list) : info("Creates an enumerator of <b>list</b> sorted collection")
       {
          _list := list;
          _started := false;
       }
 
-      Value
+      Value : info("Returns the current element value")
          = _current?.Item;
 
-      bool next()
+      bool next() : info("Goes to the next enumeration member and returns true if it is not the last member")
       {
          if (!_started) {
             _current := _list.FirstItem
@@ -154,31 +156,31 @@ namespace collections
          ^ _current != nil
       }
 
-      reset()
+      reset() : info("Resets the enumerator")
       {
          _started := false
       }
 
-      enumerable()
+      enumerable() : info("returns the enumerating sorted collection")
          = _list;
    }
    
    // --- SortedListIndexer ---
-   public class SortedListIndexer : Indexer
+   public class SortedListIndexer : Indexer, info("A sorted collection indexer")
    {      
       SortedList     _list;
       Reference<int> _index;
 
-      constructor(SortedList list)
+      constructor(SortedList list) : info("Creates an indexer of <b>list</b> sorted collection")
       {
          _list := list;
          _index := 0
       }
 
-      bool Available
+      bool Available : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
          = *_index < _list.Length;
 
-      Value
+      Value : info("The indexed element value getter / setter")
       {
          get()
             = _list[*_index];
@@ -189,7 +191,7 @@ namespace collections
          }
       }
 
-      int Index
+      int Index : info("Index property")
       {
          get()
             = *_index;
@@ -200,10 +202,10 @@ namespace collections
          }
       }
 
-      int Length
+      int Length : info("Returns the length of the indexed sorted collection")
          = _list.Length;
 
-      appendIndex(int index)
+      appendIndex(int index) : info("Increases the current index by parameter **index**")
       {
          _index.Value := *_index + index
       }

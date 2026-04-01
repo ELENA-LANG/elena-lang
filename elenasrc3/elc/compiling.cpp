@@ -792,6 +792,8 @@ void CompilingProcess :: configurate(Project& project)
    if (_verbose && hiddenDeclarationMode)
       _presenter->printLine("HiddenDeclaration is on");
 
+   if (_verbose && project.BoolSetting(ProjectOption::WithMethodOutput, DEFAULT_METHOD_OUTPUT))
+      _presenter->printLine("WithMethodOutput is on");
 
    // load program forwards
    for (auto it = _forwards.start(); !it.eof(); ++it) {
@@ -870,6 +872,7 @@ void CompilingProcess :: link(Project& project, LinkerBase& linker, bool withTLS
    imageInfo.codeAlignment = _codeAlignment;
    imageInfo.autoClassSymbol = project.BoolSetting(ProjectOption::ClassSymbolAutoLoad, _defaultCoreSettings.classSymbolAutoLoad);
    imageInfo.coreSettings.withAlignedJump = project.BoolSetting(ProjectOption::WithJumpAlignment, _defaultCoreSettings.withAlignedJump);
+   imageInfo.withOutputList = project.BoolSetting(ProjectOption::WithMethodOutput, false);
    imageInfo.autoModuleExtension = project.BoolSetting(ProjectOption::ModuleExtensionAutoLoad, false);
    imageInfo.coreSettings.mgSize = project.IntSetting(ProjectOption::GCMGSize, _defaultCoreSettings.mgSize);
    imageInfo.coreSettings.ygSize = project.IntSetting(ProjectOption::GCYGSize, _defaultCoreSettings.ygSize);

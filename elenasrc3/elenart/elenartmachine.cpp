@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Machine declaration
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -104,7 +104,7 @@ addr_t ELENARTMachine :: retrieveGlobalAttribute(int attribute, ustr_t name)
    ImageSection msection(_mdata, 0x1000000);
    RTManager rtmanager(&msection, nullptr);
 
-   return rtmanager.retrieveGlobalAttribute(attribute, name);
+   return rtmanager.retrieveGlobalStrAttribute(attribute, name);
 }
 
 size_t ELENARTMachine :: loadClassName(addr_t classAddress, char* buffer, size_t length)

@@ -111,6 +111,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
 
    _settings.autoLoadMode = _configuration->BoolSetting(ProjectOption::ClassSymbolAutoLoad);
    _settings.jitSettings.withAlignedJump = _configuration->BoolSetting(ProjectOption::WithJumpAlignment);
+   _settings.withOutputList = false;
    _settings.virtualMode = false;
    _settings.alignment = codeAlignment;
 

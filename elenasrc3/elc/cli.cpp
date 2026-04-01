@@ -323,6 +323,9 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
          else if (arg[2] == 'm') {
             project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, arg[3] != '-');
          }
+         else if (arg[2] == 'o') {
+            project.addBoolSetting(ProjectOption::WithMethodOutput, arg[3] != '-');
+         }
          else if (arg[2] == 'p') {
             project.addBoolSetting(ProjectOption::GenerateParamNameInfo, arg[3] != '-');
          }

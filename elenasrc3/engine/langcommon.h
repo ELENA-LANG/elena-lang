@@ -17,6 +17,7 @@ namespace elena_lang
    constexpr bool DEFAULT_STRICT_TYPE_ENFORCING    = false;
    constexpr bool DEFAULT_NULLABLE_TYPE_WARNING    = true;
    constexpr bool DEFAULT_CHECK_HIDDEN_DECLARATION = true;
+   constexpr bool DEFAULT_METHOD_OUTPUT            = false;
 
    enum MetaHint : int
    {
@@ -682,6 +683,7 @@ namespace elena_lang
    constexpr auto GA_SYMBOL_NAME             = 0x0001;
    constexpr auto GA_CLASS_NAME              = 0x0002;
    constexpr auto GA_EXT_OVERLOAD_LIST       = 0x0003;
+   constexpr auto GA_CLASS_OUTPUT_LIST       = 0x1004;
 
    // === VM Command ===
    constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;
@@ -826,6 +828,7 @@ namespace elena_lang
    constexpr auto AUTOEXTENSION_PATH            = "project/autoextension";
    constexpr auto STRICT_TYPE_ENFORCING_PATH    = "project/stricttype";
    constexpr auto JUMP_ALIGNMENT_PATH           = "project/alignedjump";
+   constexpr auto METHOD_OUTPUT_PATH            = "project/outputlist";
 
    constexpr auto PLATFORMTYPE_KEY              = "system/platform";
 

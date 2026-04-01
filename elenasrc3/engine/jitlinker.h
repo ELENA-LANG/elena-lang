@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef JITLINKER_H
@@ -46,6 +46,7 @@ namespace elena_lang
       ProcessSettings jitSettings;
       bool            virtualMode;
       bool            autoLoadMode;
+      bool            withOutputList;
    };
 
    // --- JITLinker ---

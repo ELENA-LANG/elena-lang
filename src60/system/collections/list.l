@@ -45,7 +45,7 @@ namespace collections
          _array := array.clone()
       }
 
-      int Length : info("Returns the collection length")
+      int Length : info("Returns the number of elements in the collection")
       {
          get()
          {

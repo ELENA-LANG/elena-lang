@@ -12,8 +12,8 @@
 namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
-#define ENGINE_MAJOR_VERSION              7              // ELENA Engine version
-#define ENGINE_MINOR_VERSION              0
+   #define ENGINE_MAJOR_VERSION              7              // ELENA Engine version
+   #define ENGINE_MINOR_VERSION              0
 
    constexpr auto LINE_LEN = 0x1000;                     // the maximal source line length
    constexpr auto IDENTIFIER_LEN = 0x0300;               // the maximal identifier length
@@ -185,6 +185,9 @@ namespace elena_lang
    constexpr ref_t elProxy = 0x000A0000;
    constexpr ref_t elInterface = 0x000B0000;
    constexpr ref_t elWeakInterface = 0x000C0000;
+
+   // === Global Attributes Types ===
+   constexpr auto GA_REFERENCE = 0x1000;
 
    // --- LoadResult enum ---
    enum class LoadResult

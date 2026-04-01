@@ -337,6 +337,7 @@ void Project :: loadConfig(ConfigFile& config, path_t configPath, ConfigFile::No
       loadBoolSetting(config, root, AUTOEXTENSION_PATH, ProjectOption::ModuleExtensionAutoLoad);
       loadBoolSetting(config, root, STRICT_TYPE_ENFORCING_PATH, ProjectOption::StrictTypeEnforcing);
       loadBoolSetting(config, root, JUMP_ALIGNMENT_PATH, ProjectOption::WithJumpAlignment);
+      loadBoolSetting(config, root, METHOD_OUTPUT_PATH, ProjectOption::WithMethodOutput);
 
       loadParserTargets(config, root, PARSER_TARGET_CATEGORY);
 

@@ -260,8 +260,10 @@ ref_t RTManager :: loadSubject(ustr_t actionName)
    return 0;
 }
 
-addr_t RTManager :: retrieveGlobalAttribute(int attribute, ustr_t name)
+addr_t RTManager :: retrieveGlobalStrAttribute(int attribute, ustr_t name)
 {
+   assert((attribute & GA_REFERENCE) == 0);
+
    IdentifierString currentName;
    pos_t size = MemoryBase::getDWord(msection, 0);
 
