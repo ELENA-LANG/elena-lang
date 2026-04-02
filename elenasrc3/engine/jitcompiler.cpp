@@ -3199,7 +3199,7 @@ void JITCompiler32 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 
       writer.writeDWord(info.value1);
       writer.writeDWord(0);
-      helper->writeReference(*writer.Memory(), writer.position() - 4, info.value2, 0, mskRef32);
+      helper->writeReference(*writer.Memory(), writer.position() - 4, info.value2 | mskVMTRef, 0, mskRef32);
    }
 }
 
@@ -3470,14 +3470,16 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       else vmtWriter.writeDWord((pos_t)*it);
    }
 
-   vmtWriter.seek(position);
-
    if (fixInfo.outputListAddress) {
+      vmtWriter.seek(position + fixInfo.count * sizeof(VMTEntry32) + (fixInfo.indexCount + 1) * sizeof(VMTEntry32) - 4);
+
       if (virtualMode) {
          vmtWriter.writeDReference(addrToUInt32(fixInfo.outputListAddress) | mskRef32, 0);
       }
       else vmtWriter.writeDWord(addrToUInt32(fixInfo.outputListAddress));
    }
+
+   vmtWriter.seek(position);
 }
 
 pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
@@ -3757,7 +3759,7 @@ void JITCompiler64 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 
       writer.writeQWord(info.value1);
       writer.writeQWord(0);
-      helper->writeReference(*writer.Memory(), writer.position() - 8, info.value2, 0, mskRef32);
+      helper->writeReference(*writer.Memory(), writer.position() - 8, info.value2 | mskVMTRef, 0, mskRef64);
    }
 }
 
@@ -3998,14 +4000,16 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       else vmtWriter.writeQWord(*it);
    }
 
-   vmtWriter.seek(position);
-
    if (fixInfo.outputListAddress) {
+      vmtWriter.seek(position + fixInfo.count * sizeof(VMTEntry64) + (fixInfo.indexCount + 1) * sizeof(VMTEntry64) - 8);
+
       if (virtualMode) {
          vmtWriter.writeQReference(addrToUInt32(fixInfo.outputListAddress | mskRef64), 0);
       }
       else vmtWriter.writeQWord(fixInfo.outputListAddress);
    }
+
+   vmtWriter.seek(position);
 }
 
 pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,

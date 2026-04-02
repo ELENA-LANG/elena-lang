@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -913,7 +913,7 @@ void JITLinker :: fillMethodTable(addr_t vaddress, pos_t position, MemoryReader&
          _compiler->addVMTEntry(message, methodPosition,
             vmtImage->get(position), count);
 
-         if (withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
+         if (withOutputList && entry.outputRef) {
             // NOTE : the list must contain already resolved message constants, so only type references must be resolved
             outputTypeList.add({ message, entry.outputRef });
          }
@@ -954,7 +954,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 #endif // FULL_OUTOUT_INFO
 
    referenceInfo.module = sectionInfo.module;
-   referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);
+   referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);   
 
    // VMT just in time compilation
    MemoryReader vmtReader(sectionInfo.vmtSection);
@@ -1011,9 +1011,10 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       FieldAddressMap staticValues(INVALID_REF);
       resolveStaticFields(referenceInfo, vmtReader, staticValues);
 
-      resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress);
+      bool runTimeLoadable = false;
+      resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress, runTimeLoadable);
 
-      addr_t outputListAddress = withOutputList ?
+      addr_t outputListAddress = (withOutputList && runTimeLoadable) ?
          resolveOutputTypeList(referenceInfo, outputTypeList) : 0;
 
       // update VMT
@@ -1048,13 +1049,15 @@ void JITLinker :: generateOverloadListMetaAttribute(ModuleBase* module, mssg_t m
    createGlobalAttribute(GA_EXT_OVERLOAD_LIST, *fullName, address);
 }
 
-void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress)
+void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress, bool& runtimeLoadable)
 {
    pos_t attrCount = vmtReader.getPos();
    while (attrCount > 0) {
       ClassAttribute attr = (ClassAttribute)vmtReader.getDWord();
       switch (attr) {
          case ClassAttribute::RuntimeLoadable:
+            runtimeLoadable = true;
+
             if (referenceInfo.isRelative()) {
                IdentifierString fullName(referenceInfo.module->name(), referenceInfo.referenceName);
 

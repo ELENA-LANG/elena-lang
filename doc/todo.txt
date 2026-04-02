@@ -45,7 +45,10 @@ In development:
   --------------------------------------
   * current : #590 - it must be possible dynamically to check the method output
   ====================================== 
-  - add an option to generate the output type list as command-line and project setting
+  - output list : skip not runtime loadable
+  - review size
+  - output list : skip super object reference
+  - output list : it must be restricted to public ones (skip protected)
   - implement a rt function to return the method output type
   - test it
   - check how it is affect the executable size; if it is significant - probably we need to do it only for interfaces

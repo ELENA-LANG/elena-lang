@@ -43,7 +43,7 @@ static inline BuildKey operator & (const BuildKey& l, const BuildKey& r)
    return (BuildKey)((uint32_t)l & (uint32_t)r);
 }
 
-inline BuildKey operator ~ (BuildKey arg1)
+static inline BuildKey operator ~ (BuildKey arg1)
 {
    return (BuildKey)(~static_cast<unsigned int>(arg1));
 }
@@ -4096,7 +4096,7 @@ void ByteCodeWriter :: saveVMT(ClassInfo& info, BuildNode node, Scope& scope, po
          if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed))
             indexedMessages.add(current.arg.reference);
 
-         MethodEntry entry = { current.arg.reference, INVALID_POS };
+         MethodEntry entry = { current.arg.reference, INVALID_POS, methodInfo.outputRef };
          scope.vmt->write(&entry, sizeof(MethodEntry));
       }
 

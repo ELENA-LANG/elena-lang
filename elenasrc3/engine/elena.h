@@ -950,7 +950,7 @@ namespace elena_lang
    {
       mssg_t message;
       pos_t  codeOffset;
-      ref_t  outputRef;
+      ref_t  outputRef; // NOTE : the field is filled only if the output type can be discuver
 
       MethodEntry() = default;
 
