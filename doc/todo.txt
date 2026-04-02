@@ -46,6 +46,8 @@ In development:
   * current : #590 - it must be possible dynamically to check the method output
   ====================================== 
   - test it
+  - post about this functionality
+  - implement in elenavm
 
   - output list : can we reduce the list (skip protected, super object reference, ...)
 

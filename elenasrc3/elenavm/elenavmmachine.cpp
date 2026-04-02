@@ -777,9 +777,9 @@ size_t ELENAVMMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
 
 bool ELENAVMMachine :: checkClassMessage(void* classPtr, mssg_t message)
 {
-   MemoryBase* msection = getMDataSection();
+   //MemoryBase* msection = getMDataSection();
 
-   return SystemRoutineProvider::CheckMessage(msection, classPtr, message);
+   return SystemRoutineProvider::CheckMessage(/*msection, */classPtr, message);
 }
 
 int ELENAVMMachine :: loadSignature(mssg_t message, addr_t* output, pos_t maximalCount)

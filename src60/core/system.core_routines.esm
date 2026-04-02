@@ -1537,8 +1537,9 @@ procedure __classref_assign (self, ptr)
 
   open       (2),[]
 
+  peek       fp:ptr
+  $load
   peek       fp:self
-  $load      fp:ptr
   $save
 
   close      []
