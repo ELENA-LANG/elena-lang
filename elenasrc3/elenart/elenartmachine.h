@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Machine declaration
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENARTMACHINE_H
@@ -58,6 +58,8 @@ namespace elena_lang
       size_t loadClassName(addr_t classAddress, char* buffer, size_t length);
 
       size_t loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength);
+
+      void* loadClassMessageOutput(void* classPtr, mssg_t message);
 
       bool checkClassMessage(void* classPtr, mssg_t message);
 

@@ -1,7 +1,8 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                         DLL Main Entry
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -304,6 +305,11 @@ mssg_t LoadActionLA(const char* actionName)
 size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
 {
    return machine->loadClassMessages(classPtr, output, skip, maxLength);
+}
+
+void* LoadMessageOutputLA(void* classPtr, mssg_t message)
+{
+   return machine->loadClassMessageOutput(classPtr, message);
 }
 
 bool CheckClassMessageLA(void* classPtr, mssg_t message)

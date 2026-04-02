@@ -86,6 +86,19 @@ namespace elena_lang
       pos_t  address;
    };
 
+   // --- VMTOutputList32 ---
+   struct VMTOutputItem32
+   {
+      mssg_t message;
+      pos_t  classRef;
+   };
+
+   struct VMTOutputList32
+   {
+      pos_t           counter;
+      VMTOutputItem32 entries[32];  // NOTE : the array size is virtual and defined by counter;
+   };
+
    constexpr auto VMTHeader64ParentRefOffs = 0;
    constexpr auto VMTHeader64ClassRefOffs = 16;
    struct VMTHeader64
@@ -100,6 +113,19 @@ namespace elena_lang
    {
       mssg64_t message;
       pos64_t  address;
+   };
+
+   // --- VMTOutputList64 ---
+   struct VMTOutputItem64
+   {
+      mssg64_t message;
+      pos64_t  classRef;
+   };
+
+   struct VMTOutputList64
+   {
+      pos64_t           counter;
+      VMTOutputItem64 entries[32];  // NOTE : the array size is virtual and defined by counter;
    };
 
    // --- GCTable ---

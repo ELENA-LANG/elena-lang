@@ -1530,6 +1530,35 @@ labExit:
 
 end
 
+procedure __classref_assign (self, ptr)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:self
+  $load      fp:ptr
+  $save
+
+  close      []
+
+end
+
+procedure __classref_get (self)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:self
+  get        i:0
+
+  close      []
+
+end
+
 procedure __classref_dispatcher
 
   redirect

@@ -52,6 +52,16 @@ public extension classROp
 
       ^ retVal != 0
    }
+
+   ClassReference __getMethodOutput(Message m)
+   {
+      pointer retVal := extern CheckClassMessageLA(self, m);
+      if (!retVal.isUnassigned()) {
+          ^ ClassReference.loadUnsafe(retVal);
+      };
+
+      ^ nil;
+   }
 }
 
 public extension signatureOp : Message

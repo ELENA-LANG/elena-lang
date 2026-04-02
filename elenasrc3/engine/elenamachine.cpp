@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common routines implementation
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -13,9 +13,10 @@ using namespace elena_lang;
 
 #if _M_IX86 || __i386__
 
-typedef VMTHeader32  VMTHeader;
-typedef VMTEntry32   VMTEntry;
-typedef ObjectPage32 ObjectPage;
+typedef VMTHeader32     VMTHeader;
+typedef VMTEntry32      VMTEntry;
+typedef VMTOutputList32 VMTOutputList;
+typedef ObjectPage32    ObjectPage;
 
 constexpr int elVMTClassOffset = elVMTClassOffset32;
 constexpr int gcPageSize = gcPageSize32;
@@ -24,9 +25,10 @@ constexpr int struct_mask = elStructMask32;
 
 #else
 
-typedef VMTHeader64  VMTHeader;
-typedef VMTEntry64   VMTEntry;
-typedef ObjectPage64 ObjectPage;
+typedef VMTHeader64     VMTHeader;
+typedef VMTEntry64      VMTEntry;
+typedef VMTOutputList64 VMTOutputList;
+typedef ObjectPage64    ObjectPage;
 
 constexpr int elVMTClassOffset = elVMTClassOffset64;
 constexpr int gcPageSize = gcPageSize64;
@@ -362,9 +364,9 @@ size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPt
    return counter;
 }
 
-bool SystemRoutineProvider :: CheckMessage(MemoryBase* msection, void* classPtr, mssg_t message)
+bool SystemRoutineProvider :: CheckMessage(/*MemoryBase* msection, */void* classPtr, mssg_t message)
 {
-   RTManager manager(msection, nullptr);
+   //RTManager manager(msection, nullptr);
 
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
    // NOTE : skip the dispatcher
@@ -373,6 +375,30 @@ bool SystemRoutineProvider :: CheckMessage(MemoryBase* msection, void* classPtr,
          return true;
    }
    return false;
+}
+
+addr_t SystemRoutineProvider :: GetMessageOutput(void* classPtr, mssg_t message)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+   VMTEntry* entries = (VMTEntry*)classPtr;
+
+   // NOTE : if VMT does not have output list - return immediately
+   if (!test(header->flags, elWithOutputList))
+      return 0;
+
+   size_t index = header->count;
+   // skip index table
+   while (entries[index].message)
+      index++;
+
+
+   VMTOutputList* outputList = (VMTOutputList*)((uintptr_t)classPtr + sizeof(VMTEntry) * index);
+   for (size_t outputIndex = 1; outputIndex <= outputList->counter; outputIndex++) {
+      if (outputList->entries[outputIndex].message == message)
+         return outputList->entries[outputIndex].classRef;
+   }
+
+   return 0;
 }
 
 // --- ELENAMachine ---

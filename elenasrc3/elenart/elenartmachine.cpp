@@ -366,9 +366,9 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
 
 bool ELENARTMachine :: checkClassMessage(void* classPtr, mssg_t message)
 {
-   ImageSection msection(_mdata, 0x1000000);
+   //ImageSection msection(_mdata, 0x1000000);
 
-   return SystemRoutineProvider::CheckMessage(&msection, classPtr, message);
+   return SystemRoutineProvider::CheckMessage(/*&msection, */classPtr, message);
 }
 
 size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
@@ -377,4 +377,9 @@ size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
 
    return SystemRoutineProvider::LoadMessages(&msection, classPtr, output, skip, 
       maxLength, false);
+}
+
+void* ELENARTMachine :: loadClassMessageOutput(void* classPtr, mssg_t message)
+{
+   return (void*)SystemRoutineProvider::GetMessageOutput(classPtr, message);
 }

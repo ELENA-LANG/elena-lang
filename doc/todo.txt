@@ -45,13 +45,9 @@ In development:
   --------------------------------------
   * current : #590 - it must be possible dynamically to check the method output
   ====================================== 
-  - output list : skip not runtime loadable
-  - review size
-  - output list : skip super object reference
-  - output list : it must be restricted to public ones (skip protected)
-  - implement a rt function to return the method output type
   - test it
-  - check how it is affect the executable size; if it is significant - probably we need to do it only for interfaces
+
+  - output list : can we reduce the list (skip protected, super object reference, ...)
 
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===

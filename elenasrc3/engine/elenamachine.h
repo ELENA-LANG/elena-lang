@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAMACHINE_H
@@ -153,7 +153,9 @@ namespace elena_lang
       static pos_t GetFlags(void* classPtr);
       static bool overrideClass(void* ptr, void* classPtr);
 
-      static bool CheckMessage(MemoryBase* msection, void* classPtr, mssg_t message);
+      static bool CheckMessage(/*MemoryBase* msection, */void* classPtr, mssg_t message);
+
+      static addr_t GetMessageOutput(void* classPtr, mssg_t message);
 
       static void RaiseError(int code);
 
