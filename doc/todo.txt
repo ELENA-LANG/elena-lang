@@ -45,7 +45,11 @@ In development:
   --------------------------------------
   * current : #590 - it must be possible dynamically to check the method output
   ====================================== 
-  - test it
+  - introduce StrongTypedMessage, which can be converted into Message to invoke the message
+  - there must be functionality to get the list of strong typed class methods
+
+  - it must be possible to get strongly typed message (but it still must invoke weak message) 
+  - example : print the method lists with output types
   - post about this functionality
   - implement in elenavm
 
