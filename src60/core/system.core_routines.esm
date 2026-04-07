@@ -1611,6 +1611,30 @@ labExit:
 
 end
 
+procedure __strong_message_load (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadMessageLA(s)
+  cmp  n:0
+  jne  labExit
+
+  xstore     sp:0, class : "system'InvalidArgumentException"
+
+  set        mssgconst : "new[1]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
 procedure __mssgname_load(self, m)
 
   peek      sp:1

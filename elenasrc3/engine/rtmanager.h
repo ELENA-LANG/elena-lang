@@ -24,6 +24,7 @@ namespace elena_lang
       void loadRootPackage(LibraryProviderBase& provider, path_t rootPath);
 
       ref_t loadSubject(ustr_t actionName);
+      ref_t loadStrongSubject(ref_t weakRef, ArgumentAddressList& list);
 
       mssg_t loadWeakMessage(mssg_t message, bool vmMode);
 

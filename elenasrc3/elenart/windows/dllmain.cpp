@@ -209,6 +209,11 @@ EXTERN_DLL_EXPORT mssg_t LoadMessageLA(const char* messageName)
    return machine->loadMessage(messageName);
 }
 
+EXTERN_DLL_EXPORT mssg_t LoadStrongMessageLA(const char* messageName)
+{
+   return machine->loadStrongMessage(messageName);
+}
+
 EXTERN_DLL_EXPORT mssg_t LoadActionLA(const char* actionName)
 {
    return machine->loadAction(actionName);

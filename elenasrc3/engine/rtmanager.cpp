@@ -236,6 +236,47 @@ void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef
    else loadSubjectName(actionName, actionPtr);
 }
 
+ref_t RTManager :: loadStrongSubject(ref_t weakRef, ArgumentAddressList& list)
+{
+   // search for the subject
+   pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
+
+   for (ref_t subjectRef = 1; true; subjectRef++) {
+      if (MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen) == weakRef) {
+         // get the current signature
+         addr_t signPtr = 0;
+         msection->read(mtableOffset + subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &signPtr, sizeof(addr_t));
+
+         // validate if the subject list matches
+         bool found = true;
+         size_t counter = list.count();
+         for (size_t i = 0; i < counter; i++) {
+            addr_t argTypeRef = 0;
+            msection->read(signPtr + i * sizeof(addr_t), &argTypeRef, sizeof(addr_t));
+
+            if (list[i] != argTypeRef) {
+               found = false;
+
+               break;
+            }
+         }
+
+         if (found)
+            return subjectRef;
+      }
+      else {
+         // check the end of the table
+         addr_t namePtr = 0;
+         msection->read(mtableOffset + subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &namePtr, sizeof(addr_t));
+
+         if (!namePtr)
+            break;
+      }
+   }
+
+   return 0;
+}
+
 ref_t RTManager :: loadSubject(ustr_t actionName)
 {
    pos_t mtableOffset = MemoryBase::getDWord(msection, 0);

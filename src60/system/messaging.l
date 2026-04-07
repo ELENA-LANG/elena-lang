@@ -33,6 +33,23 @@ public sealed const struct Message
                   external(system'core_routines'__message_dispatcher);
 }
 
+// --- StrongMessage ---
+public sealed const struct StrongMessage
+   : info("A strong message constant")
+{
+   embeddable __mssg value[4];
+
+   private load(string name) : external(system'core_routines'__strong_message_load);
+  
+   static Message Default : info("Returns a default value")
+      = default;
+
+   constructor(string name) : info("Loads the message with the specified signature <b>name</b>")
+   {
+      self.load(name);
+   }
+}
+
 public sealed const struct ExtensionMessage
    : info("An extended message constant")
 {

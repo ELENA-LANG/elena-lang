@@ -45,15 +45,21 @@ In development:
   --------------------------------------
   * current : #590 - it must be possible dynamically to check the method output
   ====================================== 
-  - introduce StrongTypedMessage, which can be converted into Message to invoke the message
+  - test StrongMessage
+  - usability StrongMessage - check if the class response to the strong message
+  - functional test for StrongMessage
+
   - there must be functionality to get the list of strong typed class methods
 
   - it must be possible to get strongly typed message (but it still must invoke weak message) 
   - example : print the method lists with output types
-  - post about this functionality
+  - post about this functionality - LoadStrongMessageLA
+  - implement in linux elenart
   - implement in elenavm
 
   - output list : can we reduce the list (skip protected, super object reference, ...)
+
+
 
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===

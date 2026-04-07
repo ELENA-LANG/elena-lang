@@ -133,6 +133,7 @@ namespace elena_lang
    // --- Lists ---
    typedef List<ustr_t, freeUStr>                                             IdentifierList;
    typedef SerializableMemoryList<ustr_t, Map_StoreUStrAligned4, Map_GetUStr> DependecyList;
+   typedef CachedList<addr_t, 5>                                              ArgumentAddressList;
 
    // --- Tuples ---
 

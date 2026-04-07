@@ -38,6 +38,8 @@ namespace elena_lang
 
       addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
+      bool loadArgumentList(ustr_t argumentList, ArgumentAddressList& list);
+
       void Exit(int exitCode);
 
    public:
@@ -53,6 +55,7 @@ namespace elena_lang
       addr_t loadClassReference(ustr_t name);
 
       mssg_t loadMessage(ustr_t messageName);
+      mssg_t loadStrongMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
 
       size_t loadClassName(addr_t classAddress, char* buffer, size_t length);
