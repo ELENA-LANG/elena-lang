@@ -53,6 +53,13 @@ public extension classROp
       ^ retVal != 0
    }
 
+   bool respondTo(StrongMessage m)
+   {
+      int retVal := extern CheckClassMessageLA(self, m);
+
+      ^ retVal != 0
+   }
+
    ClassReference? __getMethodOutput(Message m)
    {
       pointer retVal := extern CheckClassMessageLA(self, m);

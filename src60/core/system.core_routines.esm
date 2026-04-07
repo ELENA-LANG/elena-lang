@@ -1618,7 +1618,7 @@ procedure __strong_message_load (self, s)
 
   open       (2),[]
 
-  call extern:LoadMessageLA(s)
+  call extern:LoadStrongMessageLA(s)
   cmp  n:0
   jne  labExit
 

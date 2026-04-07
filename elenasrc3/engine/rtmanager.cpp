@@ -21,8 +21,6 @@ constexpr int elVMTClassOffset = elVMTClassOffset64;
 
 #endif
 
-
-
 // --- RTManager ---
 
 RTManager :: RTManager(MemoryBase* msection, MemoryBase* dbgsection)
@@ -238,6 +236,8 @@ void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef
 
 ref_t RTManager :: loadStrongSubject(ref_t weakRef, ArgumentAddressList& list)
 {
+   addr_t startPtr = (addr_t)msection->get(0);
+
    // search for the subject
    pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
 
@@ -247,12 +247,16 @@ ref_t RTManager :: loadStrongSubject(ref_t weakRef, ArgumentAddressList& list)
          addr_t signPtr = 0;
          msection->read(mtableOffset + subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &signPtr, sizeof(addr_t));
 
+         assert(signPtr != 0);
+
+         // make the address relative to use it as a position
+         signPtr -= startPtr;
+
          // validate if the subject list matches
          bool found = true;
          size_t counter = list.count();
          for (size_t i = 0; i < counter; i++) {
-            addr_t argTypeRef = 0;
-            msection->read(signPtr + i * sizeof(addr_t), &argTypeRef, sizeof(addr_t));
+            addr_t argTypeRef = MemoryBase::getAddrT(msection, signPtr + i * sizeof(addr_t));
 
             if (list[i] != argTypeRef) {
                found = false;

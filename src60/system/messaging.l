@@ -44,6 +44,14 @@ public sealed const struct StrongMessage
    static Message Default : info("Returns a default value")
       = default;
 
+   string toPrintable() : info("Returns a message literal constant")
+   {
+      byte buffer[256];
+      int len := extern LoadMessageNameLA(value, buffer, 255);
+
+      ^ String.fromByteArray(0, len, buffer);
+   }
+
    constructor(string name) : info("Loads the message with the specified signature <b>name</b>")
    {
       self.load(name);

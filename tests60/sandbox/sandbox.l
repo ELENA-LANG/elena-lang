@@ -50,9 +50,14 @@ public singleton Actor
 */
 public Program()
 {
-   IFunction f := new LinearFunction(2, 3);
+   //IFunction f := new LinearFunction(2, 3);
+   IFunction f := new LinearFunction(2.3, 3.3);
 
-   auto mssg := new StrongMessage("calculate<system'Real>[2]");
+   auto mssg := new StrongMessage("calculate<system'RealNumber>[2]");
+
+   var found := f.__getClass().respondTo(mssg);
+
+   Console.printLine(f, found ? " responds to " : " does not respond to ", mssg);   
 
    /*var mockup := new Mockup(::{ real calculate(real x) = x * x; });
 

@@ -43,11 +43,17 @@ In development:
   - Mockup class must be declared in extensions so it can be reused
   - supporting possibility to dynamically typecast the object
   --------------------------------------
+  * #590 : backlog
+  ====================================== 
+  - fix : IFunction f := new LinearFunction(2, 3);
+  --------------------------------------
   * current : #590 - it must be possible dynamically to check the method output
   ====================================== 
-  - test StrongMessage
   - usability StrongMessage - check if the class response to the strong message
-  - functional test for StrongMessage
+  - functional test for StrongMessage (successful & unsuccessful)
+  - post the example
+
+  - rename feature to knowhow.md and move to root
 
   - there must be functionality to get the list of strong typed class methods
 
