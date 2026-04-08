@@ -60,7 +60,7 @@ public extension classROp
       ^ retVal != 0
    }
 
-   ClassReference? __getMethodOutput(Message m)
+   ClassReference? __getMethodOutput(StrongMessage m)
    {
       pointer retVal := extern CheckClassMessageLA(self, m);
       if (!retVal.isUnassigned()) {

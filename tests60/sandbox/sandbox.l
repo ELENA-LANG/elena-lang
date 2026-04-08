@@ -59,6 +59,9 @@ public Program()
 
    Console.printLine(f, found ? " responds to " : " does not respond to ", mssg);   
 
+   if (found)
+      Console.printLine(mssg, " returns an instance of ", f.__getMethodOutput(mssg));
+
    /*var mockup := new Mockup(::{ real calculate(real x) = x * x; });
 
    Actor.invoke(new LinearFunction(2, 3));
