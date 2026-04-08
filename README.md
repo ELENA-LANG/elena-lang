@@ -69,6 +69,10 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 - **BluSky:** <https://bsky.app/profile/alexrakov.bsky.social>
 - **Rosetta code:** <https://rosettacode.org/wiki/Category:Elena>
 
+## Code snippets
+
+Start to learn the language by going through [code snippets](knowhow.md)
+
 ## Contact Us
 
 Reach out with any questions you may have and we'll make sure to answer them as soon as possible!

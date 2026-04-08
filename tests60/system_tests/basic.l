@@ -2741,3 +2741,22 @@ public pathUtilsTest() : testCase()
 }
 
 #endif
+
+public extension strongMessageOp
+{
+   bool validateMessage(StrongMessage mssg)
+      = self.__getClass().respondTo(mssg);
+}
+
+public strongMessageTest() : testCase()
+{
+   var o := CharValue.load(32);
+
+   auto mssg := new StrongMessage("equal<system'IntNumber>[2]");
+   auto mssg2 := new StrongMessage("equal<system'ShortNumber>[2]");
+
+   Assert.ifTrue(o.validateMessage(mssg));
+   Assert.ifFalse(o.validateMessage(mssg2));
+
+   Console.write(".");
+}

@@ -2672,6 +2672,7 @@ static inline bool boxingInt(BuildNode lastNode)
    BuildNode typeNode = createNode.findChild(BuildKey::Type);
 
    savingOp.setKey(createNode.key);
+   savingOp.setArgumentValue(createNode.arg.value);
    setChild(savingOp, BuildKey::Type, typeNode.arg.reference);
 
    createNode.setKey(BuildKey::LoadingIndex);

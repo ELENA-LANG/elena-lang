@@ -1,6 +1,6 @@
-# ============================================================================
-# ELENA Programming Language
-# ============================================================================
+# =============================================
+# ELENA Programming Language v 7.0
+# =============================================
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -558,6 +558,7 @@ must be provided
 ## ------------------------------
 
     import extensions;
+    import system'dynamic;
        
     public interface IFunction
     {
@@ -588,4 +589,22 @@ must be provided
        var found := f.__getClass().respondTo(mssg);
     
        Console.printLine(f, found ? " responds to " : " does not respond to ", mssg);
+    }
+
+## ----------------------------------------------------------------------------
+##  Read a binary file page-by-page and print its content
+## ----------------------------------------------------------------------------
+
+    import system'io;
+    import extensions;
+    
+    public Program()
+    {
+       byte buffer[512];
+       
+       using(auto reader := new BinaryStreamReader(FileStream.openForRead("sandbox.l"))) {
+          int len := reader.read(buffer, 512);
+          
+          Console.printLine(buffer.asEnumerable());
+       };
     }
