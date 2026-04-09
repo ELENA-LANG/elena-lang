@@ -57,6 +57,7 @@ extern "C"
    DLL_PUBLIC elena_lang::mssg_t LoadActionLA(const char* actionName);
    DLL_PUBLIC size_t LoadClassMessagesLA(void* classPtr, elena_lang::mssg_t* output, size_t skip, size_t maxLength);
    DLL_PUBLIC void* LoadMessageOutputLA(void* classPtr, elena_lang::mssg_t message);
+   DLL_PUBLIC elena_lang::mssg_t LoadStrongMessageLA(const char* messageName)
    DLL_PUBLIC bool CheckClassMessageLA(void* classPtr, elena_lang::mssg_t message);
    DLL_PUBLIC void* CreateThreadLA(void* arg, void* threadProc, int stackSize, int flags);
    DLL_PUBLIC void InitThreadLA(elena_lang::SystemEnv* env, void* criricalHandler, int index);

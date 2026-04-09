@@ -317,6 +317,11 @@ bool CheckClassMessageLA(void* classPtr, mssg_t message)
    return machine->checkClassMessage(classPtr, message);
 }
 
+mssg_t LoadStrongMessageLA(const char* messageName)
+{
+   return machine->loadStrongMessage(messageName);
+}
+
 void* CreateThreadLA(void* arg, void* threadProc, int stackSize, int flags)
 {
    return machine->allocateThread(systemEnv, arg, threadProc, stackSize, flags);
