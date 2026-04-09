@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //             Linux Shared Library Declaration
-//                                             (C)2022-2025, by Aleksey Rakov
+//                                             (C)2022-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENART_H_INCLUDED

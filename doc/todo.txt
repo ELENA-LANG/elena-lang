@@ -49,10 +49,6 @@ In development:
   --------------------------------------
   * current : #590 - it must be possible dynamically to check the method output
   ====================================== 
-  - returns the method output type : classROp.__getOutput<StrongMessage>[2]
-  - know how example
-  - example : print the method lists with output types
-  - post about this functionality - LoadStrongMessageLA
   - implement in linux elenart
   - implement in elenavm
 
