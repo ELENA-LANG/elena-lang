@@ -391,9 +391,8 @@ addr_t SystemRoutineProvider :: GetMessageOutput(void* classPtr, mssg_t message)
    while (entries[index].message)
       index++;
 
-
-   VMTOutputList* outputList = (VMTOutputList*)((uintptr_t)classPtr + sizeof(VMTEntry) * index);
-   for (size_t outputIndex = 1; outputIndex <= outputList->counter; outputIndex++) {
+   VMTOutputList* outputList = *(VMTOutputList**)((uintptr_t)classPtr + sizeof(VMTEntry) * index + sizeof(addr_t));
+   for (size_t outputIndex = 0; outputIndex < outputList->counter; outputIndex++) {
       if (outputList->entries[outputIndex].message == message)
          return outputList->entries[outputIndex].classRef;
    }

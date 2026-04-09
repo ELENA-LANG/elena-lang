@@ -608,3 +608,44 @@ must be provided
           Console.printLine(buffer.asEnumerable());
        };
     }
+
+## ----------------------------------------------------------------------------
+##  Checking a method result type
+## ----------------------------------------------------------------------------
+
+    import extensions;
+    import system'dynamic;
+
+    public interface IFunction
+    {
+       abstract real calculate(real arg);
+    }
+    
+    public class LinearFunction : IFunction
+    {
+       real a;
+       real b;
+    
+       constructor(real a, real b)
+       {
+          this a := a;
+          this b := b;
+       }
+    
+       real calculate(real x)
+          = x*a + b;
+    }
+
+    public Program()
+    {
+       IFunction f := new LinearFunction(2.3, 3.3);
+    
+       auto mssg := new StrongMessage("calculate<system'RealNumber>[2]");
+    
+       var found := f.__getClass().respondTo(mssg);
+    
+       Console.printLine(f, found ? " responds to " : " does not respond to ", mssg);   
+    
+       if (found)
+          Console.printLine(mssg, " returns an instance of ", f.__getClass().__getMethodOutput(mssg).getTypeUnsafe());
+    }

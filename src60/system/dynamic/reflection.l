@@ -62,7 +62,7 @@ public extension classROp
 
    ClassReference? __getMethodOutput(StrongMessage m)
    {
-      pointer retVal := extern CheckClassMessageLA(self, m);
+      pointer retVal := extern LoadMessageOutputLA(self, m);
       if (!retVal.isUnassigned()) {
           ^ ClassReference.loadUnsafe(retVal);
       };
