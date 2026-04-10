@@ -11,6 +11,8 @@ In development:
   - ppc : fpi, fsin, fcos
   - User-defined string literals 
   - nested extension inside a class
+  - output list : can we reduce the list (skip protected, super object reference, ...)
+  - migrate LoadStrongMessageLA, LoadMessageOutputLA, CheckClassMessageLA into elenavm
   --------------------------------------
   * dev : template generator
   ====================================== 
@@ -29,7 +31,11 @@ In development:
   --------------------------------------
   * samples
   ====================================== 
-  * #590 : implementing interface injection : strong interface
+  * #590 : backlog
+  ====================================== 
+  - fix : IFunction f := new LinearFunction(2, 3);
+  --------------------------------------
+  * current : #590 : implementing interface injection : strong interface
   ====================================== 
   - special dispatcher, which typecast the return value
 
@@ -42,17 +48,8 @@ In development:
   - implement InjectProxyTypeLA for elenavm
   - Mockup class must be declared in extensions so it can be reused
   - supporting possibility to dynamically typecast the object
-  --------------------------------------
-  * #590 : backlog
-  ====================================== 
-  - fix : IFunction f := new LinearFunction(2, 3);
-  --------------------------------------
-  * current : #590 - it must be possible dynamically to check the method output
-  ====================================== 
-  - implement in linux elenart
-  - implement in elenavm
-
-  - output list : can we reduce the list (skip protected, super object reference, ...)
+  - functional test for run-time typecast
+  - know-how code snippet
   --------------------------------------
 
 

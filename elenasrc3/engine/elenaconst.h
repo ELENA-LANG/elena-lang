@@ -97,7 +97,8 @@ namespace elena_lang
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE = "#dispatch";
    constexpr auto CONSTRUCTOR_MESSAGE = "#constructor";
-   constexpr auto CONSTRUCTOR_MESSAGE2 = "#constructor2";   // protected constructor
+   constexpr auto CONSTRUCTOR_MESSAGE2 = "#constructor2";      // protected constructor
+   constexpr auto CAST_DISPATCH_MESSAGE = "#dispatch_cast";    // special type of dispatcher which typecasts the dispatch result
    constexpr auto CAST_MESSAGE = "#cast";
    constexpr auto INVOKE_MESSAGE = "#invoke";
    constexpr auto ASYNC_INVOKE_MESSAGE = "#async_invoke";

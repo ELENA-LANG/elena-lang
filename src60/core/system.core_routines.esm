@@ -56,6 +56,47 @@ procedure __object_dispatcher
 
 end
 
+procedure __object_cast_dispatcher_caller
+
+  xopen      (2),[target],[mssg, typecast_mssg] // ; the actual frame must be opened and populated in __object_cast_dispatcher
+
+  store      fp:arr
+
+  // ; copy the call stack
+  load       dp:mssg
+  mlen
+
+  cmp        n:0
+  jeq        labCopyEnd
+
+  dalloc
+  set        sp:0
+  alloc      i:1
+  store      sp:0
+
+  set        fp:-1
+  swap       sp:0
+  dtrans
+  free       i:1
+
+labCopyEnd:
+  peek       fp:arr
+  load       dp:mssg
+
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  call       vt:0
+
+  // ; typecast the result
+  load      dp:typecast_mssg
+  call       vt:0
+
+  close      []
+  quit
+
+end
+
 procedure __object_equal
 
   peek        sp:0
