@@ -11254,6 +11254,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.uintReference = safeMapReference(moduleScope, forwardResolver, UINT_FORWARD);
    moduleScope->buildins.pointerReference = safeMapReference(moduleScope, forwardResolver, PTR_FORWARD);
    moduleScope->buildins.taskReference = safeMapReference(moduleScope, forwardResolver, TASK_FORWARD);
+   moduleScope->buildins.castDispatcherReference = safeMapReference(moduleScope, forwardResolver, CAST_DISPATCHER_FUN_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);

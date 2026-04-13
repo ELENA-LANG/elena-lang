@@ -763,6 +763,7 @@ namespace elena_lang
    constexpr auto NULLABLE_FORWARD              = "$nullable";
    constexpr auto PRELOADED_FORWARD             = "system@preloadedSymbols";
    constexpr auto START_FORWARD                 = "$symbol_entry";
+   constexpr auto CAST_DISPATCHER_FUN_FORWARD   = "$cast_dispatch_fun";
 
    // --- Configuration xpaths ---
    constexpr auto WIN_X86_KEY                   = "Win_x86";

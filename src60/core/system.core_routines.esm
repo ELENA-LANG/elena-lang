@@ -56,11 +56,11 @@ procedure __object_dispatcher
 
 end
 
-procedure __object_cast_dispatcher_caller
+procedure __object_cast_dispatcher_function
 
   xopen      (2),[target],[mssg, typecast_mssg] // ; the actual frame must be opened and populated in __object_cast_dispatcher
 
-  store      fp:arr
+  store      fp:target
 
   // ; copy the call stack
   load       dp:mssg
@@ -80,14 +80,18 @@ procedure __object_cast_dispatcher_caller
   free       i:1
 
 labCopyEnd:
-  peek       fp:arr
+  peek       fp:target
   load       dp:mssg
 
   xrefresh   sp:0
   xrefresh   sp:1
 
+  tst             mssg:"#cast[2]"
+  jne             labSkip
+
   call       vt:0
 
+labSkip:
   // ; typecast the result
   load      dp:typecast_mssg
   call       vt:0
