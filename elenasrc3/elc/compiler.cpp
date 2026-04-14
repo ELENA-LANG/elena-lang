@@ -3340,11 +3340,11 @@ mssg_t Compiler::defineMultimethod(Scope& scope, mssg_t messageRef, bool extensi
 void Compiler::injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased)
 {
    if (test(scope.info.header.flags, elClassClass)) {
-      if (scope.info.attributes.exist({ 0, ClassAttribute::RuntimeLoadable })) {
-         injectCastDispacher(scope, classNode, 
-            scope.moduleScope->buildins.cast_dispatch_message,
-            (static_cast<ClassClassScope*>(&scope))->getProperClassRef());
-      }
+      //if (scope.info.attributes.exist({ 0, ClassAttribute::RuntimeLoadable })) {
+      //   injectCastDispacher(scope, classNode, 
+      //      scope.moduleScope->buildins.cast_dispatch_message,
+      //      (static_cast<ClassClassScope*>(&scope))->getProperClassRef());
+      //}
    }
    else {
       if (!evalInitializers(scope, classNode)) {
