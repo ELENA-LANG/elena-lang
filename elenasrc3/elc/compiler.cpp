@@ -3340,6 +3340,11 @@ mssg_t Compiler::defineMultimethod(Scope& scope, mssg_t messageRef, bool extensi
 void Compiler::injectVirtualCode(SyntaxNode classNode, ClassScope& scope, bool interfaceBased)
 {
    if (test(scope.info.header.flags, elClassClass)) {
+      if (scope.info.attributes.exist({ 0, ClassAttribute::RuntimeLoadable })) {
+         injectCastDispacher(scope, classNode, 
+            scope.moduleScope->buildins.cast_dispatch_message,
+            (static_cast<ClassClassScope*>(&scope))->getProperClassRef());
+      }
    }
    else {
       if (!evalInitializers(scope, classNode)) {
@@ -10525,6 +10530,38 @@ static inline bool hasVariadicFunctionDispatcher(Compiler::ClassScope* classScop
    else return false;
 }
 
+void Compiler :: compileDispatchAndCastMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node)
+{
+   beginMethod(writer, scope, node, BuildKey::Method, false);
+
+   assert(node != SyntaxKey::None);
+
+   SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+   assert(current.key == SyntaxKey::RedirectCastDispatch);
+
+   CodeScope codeScope(&scope);
+   Expression expression(this, codeScope, writer, false, nullptr);
+
+   // allocate place for target variable
+   ObjectInfo targetVar = expression.declareTempLocal(0);
+   writer.appendNode(BuildKey::Assigning, targetVar.reference);
+   ObjectInfo mssgVar = expression.declareTempStructure({ sizeof(mssg_t) });
+   writer.appendNode(BuildKey::SavingIndex, mssgVar.reference);
+
+   ObjectInfo castMssgVar = expression.declareTempStructure({ sizeof(mssg_t) });
+   ref_t signRef = scope.module->mapSignature(&scope.info.outputRef, 1, false);
+   ref_t actionRef = scope.module->mapAction(CAST_MESSAGE, signRef, false);
+   writer.appendNode(BuildKey::SetMessage, encodeMessage(actionRef, 1, CONVERSION_MESSAGE));
+   writer.appendNode(BuildKey::SavingIndex, castMssgVar.reference);
+
+   writer.appendNode(BuildKey::ProcRedirect, current.arg.reference);
+
+   expression.scope.syncStack();
+   codeScope.syncStack(&scope);
+
+   endMethod(writer, scope);
+}
+
 void Compiler::compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node,
    bool withGenerics, bool withOpenArgGenerics)
 {
@@ -10538,18 +10575,18 @@ void Compiler::compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& sco
       // if it is an explicit dispatcher
       SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
       switch (current.key) {
-      case SyntaxKey::Importing:
-         writer.appendNode(BuildKey::Import, current.arg.reference);
-         break;
-      case SyntaxKey::Redirect:
-         if (node.existChild(SyntaxKey::ProxyDispatcher)) {
-            compileProxyDispatcher(writer, codeScope, current);
-         }
-         else compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics, false);
-         break;
-      default:
-         scope.raiseError(errInvalidOperation, node);
-         break;
+         case SyntaxKey::Importing:
+            writer.appendNode(BuildKey::Import, current.arg.reference);
+            break;
+         case SyntaxKey::Redirect:
+            if (node.existChild(SyntaxKey::ProxyDispatcher)) {
+               compileProxyDispatcher(writer, codeScope, current);
+            }
+            else compileRedirectDispatcher(writer, scope, codeScope, current, withGenerics, false);
+            break;
+         default:
+            scope.raiseError(errInvalidOperation, node);
+            break;
       }
    }
    else {
@@ -11254,7 +11291,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.uintReference = safeMapReference(moduleScope, forwardResolver, UINT_FORWARD);
    moduleScope->buildins.pointerReference = safeMapReference(moduleScope, forwardResolver, PTR_FORWARD);
    moduleScope->buildins.taskReference = safeMapReference(moduleScope, forwardResolver, TASK_FORWARD);
-   moduleScope->buildins.castDispatcherReference = safeMapReference(moduleScope, forwardResolver, CAST_DISPATCHER_FUN_FORWARD);
+   moduleScope->buildins.dispatchNCastReference = safeMapReference(moduleScope, forwardResolver, CAST_DISPATCHER_FUN_FORWARD);
 
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);
@@ -11271,6 +11308,8 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->buildins.constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
+   moduleScope->buildins.cast_dispatch_message = encodeMessage(
+      moduleScope->module->mapAction(CAST_DISPATCH_MESSAGE, 0, false), 1, 0);
    moduleScope->buildins.protected_constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
          0, FUNCTION_MESSAGE);
@@ -11827,6 +11866,17 @@ void Compiler::injectDefaultConstructor(ClassScope& scope, SyntaxNode node,
 
    if (withClearOption)
       methodNode.appendChild(SyntaxKey::FillingAttr);
+}
+
+void Compiler :: injectCastDispacher(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t targetRef)
+{
+   SyntaxNode methNode = classNode.appendChild(SyntaxKey::StaticMethod, message);
+   methNode.appendChild(SyntaxKey::Autogenerated, -1); // -1 indicates autogenerated method
+   methNode.appendChild(SyntaxKey::Hints, (ref_t)MethodHint::Sealed);
+
+   addTypeInfo(scope, methNode, SyntaxKey::OutputInfo, targetRef);
+
+   methNode.appendChild(SyntaxKey::RedirectCastDispatch, scope.moduleScope->buildins.dispatchNCastReference);
 }
 
 void Compiler::injectVirtualReturningMethod(Scope& scope, SyntaxNode classNode,
@@ -12656,6 +12706,10 @@ void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
       compiler->compileDispatcherMethod(writer, scope, current,
          test(classScope->info.header.flags, elWithGenerics),
          test(classScope->info.header.flags, elWithVariadics));
+   }
+   // if it is a dispatch & cast handler
+   else if (scope.message == scope.moduleScope->buildins.cast_dispatch_message) {
+      compiler->compileDispatchAndCastMethod(writer, scope, current);
    }
    // if it is an abstract one
    else if (scope.checkHint(MethodHint::Abstract)) {

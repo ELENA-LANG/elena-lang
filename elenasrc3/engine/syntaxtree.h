@@ -236,6 +236,8 @@ namespace elena_lang
       ExternalTree            = 0x000301,
       ExternalFunction        = 0x000302,
 
+      RedirectCastDispatch    = 0x000401,
+
       Idle                    = 0x000F01,
    };
 

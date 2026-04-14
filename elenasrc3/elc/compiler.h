@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILER_H
@@ -2084,6 +2084,7 @@ namespace elena_lang
 
       void compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node,
          bool withGenerics, bool withOpenArgGenerics);
+      void compileDispatchAndCastMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode classNode);
       //void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
@@ -2236,6 +2237,7 @@ namespace elena_lang
 
       void injectVirtualReturningMethod(Scope& scope, SyntaxNode classNode,
          mssg_t message, ustr_t retVar, TypeInfo outputTypeInfo);
+      void injectCastDispacher(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t targetRef);
 
       ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo typeInfo,
          bool declarationMode = false) override;

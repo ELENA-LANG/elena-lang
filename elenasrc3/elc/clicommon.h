@@ -199,10 +199,11 @@ struct BuiltinReferences
    ref_t   lazyExpressionReference;
    ref_t   pointerReference;
    ref_t   taskReference;
-   ref_t   castDispatcherReference;
+   ref_t   dispatchNCastReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
+   mssg_t  cast_dispatch_message;
    mssg_t  protected_constructor_message;
    mssg_t  invoke_message;
    mssg_t  init_message, static_init_message;
@@ -235,9 +236,9 @@ struct BuiltinReferences
       nullableTemplateReference = 0;
       closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;
       asyncStatemachineReference = yielditTemplateReference = 0;
-      taskReference = pointerReference = castDispatcherReference = 0;
+      taskReference = pointerReference = dispatchNCastReference = 0;
 
-      dispatch_message = constructor_message = 0;
+      dispatch_message = constructor_message = cast_dispatch_message = 0;
       protected_constructor_message = 0;
       invoke_message = init_message = static_init_message = 0;
       add_message = sub_message = mul_message = div_message = 0;

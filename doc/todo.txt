@@ -37,7 +37,6 @@ In development:
   --------------------------------------
   * current : #590 : implementing interface injection : strong interface
   ====================================== 
-  - special dispatcher, which typecast the return value
   - supporting possibility to dynamically typecast the object
   - functional test for run-time typecast
   - know-how code snippet for run-time typecast

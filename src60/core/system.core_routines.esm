@@ -60,8 +60,6 @@ procedure __object_cast_dispatcher_function
 
   xopen      (2),[target],[mssg, typecast_mssg] // ; the actual frame must be opened and populated in __object_cast_dispatcher
 
-  store      fp:target
-
   // ; copy the call stack
   load       dp:mssg
   mlen
@@ -86,8 +84,8 @@ labCopyEnd:
   xrefresh   sp:0
   xrefresh   sp:1
 
-  tst             mssg:"#cast[2]"
-  jne             labSkip
+  tst        mssg:"__type_cast[2]"
+  jeq        labSkip
 
   call       vt:0
 

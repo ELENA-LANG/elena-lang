@@ -48,22 +48,47 @@ public singleton Actor
    }
 }
 */
+//public Program()
+//{
+   //IFunction f := new LinearFunction(2, 3);
+//   IFunction f := new LinearFunction(2.3, 3.3);
+//
+//   auto mssg := new StrongMessage("calculate<system'RealNumber>[2]");
+//
+//   var found := f.__getClass().respondTo(mssg);
+//
+//   Console.printLine(f, found ? " responds to " : " does not respond to ", mssg);   
+//
+//   if (found)
+//      Console.printLine(mssg, " returns an instance of ", f.__getMethodOutput(mssg));
+//
+// var mockup := new Mockup(::{ real calculate(real x) = x * x; });
+
+//   Actor.invoke(new LinearFunction(2, 3));
+//   Actor.invoke(mockup);
+//}
+
+A;
+
+B
+{
+   A cast() = new A();
+};
+
+dynamic_typecast(type_instance,object)
+{
+   var type := type_instance.__getClass();
+
+   ^ type.__typecast(object);
+}
+
 public Program()
 {
-   //IFunction f := new LinearFunction(2, 3);
-   IFunction f := new LinearFunction(2.3, 3.3);
+   var o1 := new A();
+   var o2 := new B();
 
-   auto mssg := new StrongMessage("calculate<system'RealNumber>[2]");
-
-   var found := f.__getClass().respondTo(mssg);
-
-   Console.printLine(f, found ? " responds to " : " does not respond to ", mssg);   
-
-   if (found)
-      Console.printLine(mssg, " returns an instance of ", f.__getMethodOutput(mssg));
-
-   /*var mockup := new Mockup(::{ real calculate(real x) = x * x; });
-
-   Actor.invoke(new LinearFunction(2, 3));
-   Actor.invoke(mockup);*/
+   var r := dynamic_typecast(o1, o2);
+   
 }
+
+
