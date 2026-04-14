@@ -260,7 +260,7 @@ namespace elena_lang
 
       void compileExternCall(ScriptToken& tokenInfo, MemoryWriter& writer) override;
 
-      bool compileDec(X86Operand source, MemoryWriter& writer) override
+      bool compileDec(X86Operand/* source*/, MemoryWriter&/* writer*/) override
       {
          return false;
       }

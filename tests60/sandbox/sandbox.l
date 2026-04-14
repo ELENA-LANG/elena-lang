@@ -73,7 +73,7 @@ A;
 B
 {
    A cast() = new A();
-};
+}
 
 dynamic_typecast(type_instance,object)
 {
