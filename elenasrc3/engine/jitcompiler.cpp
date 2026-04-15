@@ -2674,6 +2674,9 @@ void elena_lang :: compileExtOpen(JITCompilerScope* scope)
 void elena_lang :: compileXOpen(JITCompilerScope* scope)
 {
    scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2, false);
+   // HOTFIX : if the first argument is 0, clear the stack offset, indicating that the frame was already open
+   if (scope->command.arg1 == 0)
+      scope->stackOffset = 0;
 }
 
 void elena_lang :: compileAlloc(JITCompilerScope* scope)

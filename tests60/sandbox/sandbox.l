@@ -1,4 +1,5 @@
 import extensions;
+import system'dynamic;
 
 public interface IFunction
 {
@@ -68,11 +69,27 @@ public singleton Actor
 //   Actor.invoke(mockup);
 //}
 
-A;
+A
+{
+   string _origin;
+   
+   constructor()
+   {
+      _origin := "created directly"
+   }
+   
+   constructor(B b)
+   {
+      _origin := "created from B"
+   }
+   
+   string toPrintable()
+      = $"A - {_origin}";
+}
 
 B
 {
-   A cast() = new A();
+   A cast() = new A(self);
 }
 
 dynamic_typecast(type_instance,object)
@@ -87,6 +104,5 @@ public Program()
    var o1 := new A();
    var o2 := new B();
 
-   var r := dynamic_typecast(o1, o2);
-   
+   Console.printLine("An instance of ", o1.__getClass(), " ", dynamic_typecast(o1, o2))   
 }

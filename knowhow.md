@@ -649,3 +649,46 @@ must be provided
        if (found)
           Console.printLine(mssg, " returns an instance of ", f.__getClass().__getMethodOutput(mssg).getTypeUnsafe());
     }
+
+## ----------------------------------------------------------------------------
+##  Converting an object to a type obtained in run-time
+## ----------------------------------------------------------------------------
+    
+    A
+    {
+       string _origin;
+   
+       constructor()
+       {
+          _origin := "created directly"
+       }
+       
+       constructor(B b)
+       {
+          _origin := "created from B"
+       }
+       
+       string toPrintable()
+          = $"A - {_origin}";
+    }
+    
+    B
+    {
+       A cast() = new A(self);
+    }
+    
+    // convert object to a type of type_instance in run-time
+    dynamic_typecast(type_instance,object)
+    {
+       var type := type_instance.__getClass();
+    
+       ^ type.__typecast(object);
+    }
+    
+    public Program()
+    {
+       var o1 := new A(); // the target type
+       var o2 := new B(); // the source object
+    
+       Console.printLine("An instance of ", o1.__getClass(), " ", dynamic_typecast(o1, o2))       
+    }

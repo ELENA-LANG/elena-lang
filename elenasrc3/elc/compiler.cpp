@@ -10542,12 +10542,11 @@ void Compiler :: compileDispatchAndCastMethod(BuildTreeWriter& writer, MethodSco
    SyntaxNode outputNode = current.findChild(SyntaxKey::OutputInfo);
    assert(outputNode.arg.reference != 0);
 
+   // new stack frame
+   writer.appendNode(BuildKey::OpenFrame);
+
    CodeScope codeScope(&scope);
    Expression expression(this, codeScope, writer, false, nullptr);
-
-   // allocate place for target variable
-   ObjectInfo targetVar = expression.declareTempLocal(0);
-   writer.appendNode(BuildKey::Assigning, targetVar.reference);
 
    ObjectInfo mssgVar = expression.declareTempStructure({ sizeof(mssg_t) });
    writer.appendNode(BuildKey::SavingIndex, mssgVar.reference);
