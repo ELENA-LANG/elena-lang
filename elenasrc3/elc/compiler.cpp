@@ -11322,7 +11322,7 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
    moduleScope->buildins.cast_dispatch_message = encodeMessage(
-      moduleScope->module->mapAction(CAST_DISPATCH_MESSAGE, 0, false), 1, 0);
+      moduleScope->module->mapAction(CAST_DISPATCH_MESSAGE, 0, false), 2, 0);
    moduleScope->buildins.protected_constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
          0, FUNCTION_MESSAGE);

@@ -69,6 +69,8 @@ public extension classROp
 
       ^ nil;
    }
+
+   __typecast(source) : external(system'core_routines'__type_cast); 
 }
 
 public extension signatureOp : Message

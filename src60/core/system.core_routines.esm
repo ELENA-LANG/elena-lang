@@ -84,7 +84,7 @@ labCopyEnd:
   xrefresh   sp:0
   xrefresh   sp:1
 
-  tst        mssg:"__type_cast[2]"
+  tst        mssg:"#dispatch_cast[2]"
   jeq        labSkip
 
   call       vt:0
@@ -96,6 +96,13 @@ labSkip:
 
   close      []
   quit
+
+end
+
+procedure __type_cast
+
+  mov        mssg:"#dispatch_cast[2]"
+  jump       vt:0
 
 end
 

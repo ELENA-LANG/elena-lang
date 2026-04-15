@@ -1736,8 +1736,6 @@ void JITLinker :: prepare(ProcessSettings& jitSettings)
    resolveWeakAction(CONSTRUCTOR_MESSAGE2);
    // constructor message should be the third
    resolveWeakAction(CONSTRUCTOR_MESSAGE);
-   // cast dispatcher message should be the fourth
-   resolveWeakAction(CAST_DISPATCH_MESSAGE);
 
    // prepare jit compiler
    _compiler->prepare(_loader, _imageProvider, &helper, nullptr, jitSettings, _virtualMode);

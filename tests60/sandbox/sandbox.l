@@ -68,7 +68,6 @@ public singleton Actor
 //   Actor.invoke(mockup);
 //}
 
-/*
 A;
 
 B
@@ -91,28 +90,3 @@ public Program()
    var r := dynamic_typecast(o1, o2);
    
 }
-*/
-
-    const int CTRL_C_EVENT = 0;
-    const int CTRL_BREAK_EVENT = 1;
-    
-    extern int myFunction(uint fdwCtrlType)
-    {
-       fdwCtrlType =>
-          CTRL_C_EVENT : { Console.writeLine("Ctrl-C event"); ^ -1 }
-          CTRL_BREAK_EVENT : { Console.writeLine("Ctrl-Break event"); ^ 0 };
-          
-       ^ 0;      
-    }
-
-    public Program()
-    {
-       extern KERNEL32.SetConsoleCtrlHandler(&myFunction, -1);
-       
-       Console.writeLine("The Control Handler is installed.");
-       Console.writeLine("-- Now try pressing Ctrl+C or Ctrl+Break");
-       
-       while(true) {}
-    }
-
-
