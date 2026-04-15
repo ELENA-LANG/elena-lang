@@ -37,8 +37,7 @@ In development:
   --------------------------------------
   * current : #590 : implementing interface injection : strong interface
   ====================================== 
-  - know-how code snippet for run-time typecast
-  - functional test for run-time typecast
+  - fix dynamicTypecastTest for 64bit version
 
 
   - design : argument types (use multimethod dispatcher)

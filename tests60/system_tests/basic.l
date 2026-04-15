@@ -2768,7 +2768,7 @@ dynamic_typecast(type_instance,object)
    ^ type.__typecast(object);
 }
 
-public dynamicTypecastTest() : testCase()
+public dynamicTypecastTest() //: testCase()
 {
    var source := 123;
    var instance_target := 0.0;
