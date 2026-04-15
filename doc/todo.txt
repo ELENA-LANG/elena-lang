@@ -37,6 +37,7 @@ In development:
   --------------------------------------
   * current : #590 : implementing interface injection : strong interface
   ====================================== 
+  - investigate procedureref
   - supporting possibility to dynamically typecast the object
   - functional test for run-time typecast
   - know-how code snippet for run-time typecast

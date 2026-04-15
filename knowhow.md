@@ -292,7 +292,7 @@
        ^ 0;      
     }
 
-    public program()
+    public Program()
     {
        extern KERNEL32.SetConsoleCtrlHandler(&myFunction, -1);
        
