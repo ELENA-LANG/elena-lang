@@ -2760,3 +2760,22 @@ public strongMessageTest() : testCase()
 
    Console.write(".");
 }
+
+dynamic_typecast(type_instance,object)
+{
+   var type := type_instance.__getClass();
+
+   ^ type.__typecast(object);
+}
+
+public dynamicTypecastTest() : testCase()
+{
+   var source := 123;
+   var instance_target := 0.0;
+
+   var result := dynamic_typecast(instance_target, source);
+   Assert.ifEqual(result, 123.0);
+   Assert.ifEqual(result.__getClass(), RealNumber);
+
+   Console.write(".")   
+}
