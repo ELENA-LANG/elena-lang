@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: ARM64
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ARM64COMPILER_H
@@ -27,6 +27,8 @@ namespace elena_lang
 
       friend void ARM64loadCallOp(JITCompilerScope* scope);
       friend void ARM64compileOpenIN(JITCompilerScope* scope);
+      friend void ARM64compileXOpenIN(JITCompilerScope* scope);
+      friend void ARM64compileExtOpenIN(JITCompilerScope* scope);
 
    public:
       static JITCompilerSettings getSettings()
@@ -62,6 +64,8 @@ namespace elena_lang
 
    void ARM64loadCallOp(JITCompilerScope* scope);
    void ARM64compileOpenIN(JITCompilerScope* scope);
+   void ARM64compileXOpenIN(JITCompilerScope* scope);
+   void ARM64compileExtOpenIN(JITCompilerScope* scope);
 }
 
 #endif

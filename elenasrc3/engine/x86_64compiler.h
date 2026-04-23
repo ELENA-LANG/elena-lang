@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: x86-64
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef X86_64COMPILER_H
@@ -39,6 +39,7 @@ namespace elena_lang
       friend void x86_64compileStackOp(JITCompilerScope* scope);
       friend void x86_64compileOpenIN(JITCompilerScope* scope);
       friend void x86_64compileExtOpenIN(JITCompilerScope* scope);
+      friend void x86_64compileXOpenIN(JITCompilerScope* scope);
 
    public:
       static JITCompilerSettings getSettings()
@@ -79,6 +80,7 @@ namespace elena_lang
    void x86_64compileStackOp(JITCompilerScope* scope);
    void x86_64compileOpenIN(JITCompilerScope* scope);
    void x86_64compileExtOpenIN(JITCompilerScope* scope);
+   void x86_64compileXOpenIN(JITCompilerScope* scope);
 }
 
 #endif

@@ -13,12 +13,13 @@
 
 using namespace elena_lang;
 
-constexpr auto OverloadsCount = 3;
+constexpr auto OverloadsCount = 4;
 const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[OverloadsCount] =
 {
    { ByteCode::CallExtR, ARM64loadCallOp},
    { ByteCode::OpenIN, ARM64compileOpenIN},
-   { ByteCode::ExtOpenIN, ARM64compileOpenIN},
+   { ByteCode::ExtOpenIN, ARM64compileExtOpenIN},
+   { ByteCode::XOpenIN, ARM64compileXOpenIN},
 };
 
 void elena_lang::ARM64loadCallOp(JITCompilerScope* scope)
@@ -112,6 +113,24 @@ void elena_lang::ARM64compileOpenIN(JITCompilerScope* scope)
    scope->command.arg2 = align(scope->command.arg2, 16);
 
    elena_lang::compileOpen(scope);
+}
+
+void elena_lang::ARM64compileExtOpenIN(JITCompilerScope* scope)
+{
+   // NOTE : stack should be aligned to 16 bytes
+   scope->command.arg1 = align(scope->command.arg1, 2);
+   scope->command.arg2 = align(scope->command.arg2, 16);
+
+   elena_lang::compileExtOpen(scope);
+}
+
+void elena_lang::ARM64compileXOpenIN(JITCompilerScope* scope)
+{
+   // NOTE : stack should be aligned to 16 bytes
+   scope->command.arg1 = align(scope->command.arg1, 2);
+   scope->command.arg2 = align(scope->command.arg2, 16);
+
+   elena_lang::compileXOpen(scope);
 }
 
 // --- ARM64JITCompiler ---
