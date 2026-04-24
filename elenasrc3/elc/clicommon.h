@@ -303,8 +303,8 @@ public:
    IdentifierString     receivedVar;
    IdentifierString     projectVar;
 
-   pos_t                stackAlingment, rawStackAlingment;
-   pos_t                ehTableEntrySize;
+   int                  stackAlignment, rawStackAlignment, localAlignment;
+   int                  ehTableEntrySize;
    int                  minimalArgList;
    int                  ptrSize;
 
@@ -365,11 +365,7 @@ public:
 
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,
-      pos_t stackAlingment, 
-      pos_t rawStackAlingment,
-      pos_t ehTableEntrySize,
-      int minimalArgList,
-      int ptrSize,
+      const PlatformSettings* platformSettings,
       bool tapeOptMode,
       bool btapeOptMode
    ) :
@@ -383,11 +379,12 @@ public:
    {
       this->module = module;
       this->debugModule = debugModule;
-      this->stackAlingment = stackAlingment;
-      this->rawStackAlingment = rawStackAlingment;
-      this->ehTableEntrySize = ehTableEntrySize;
-      this->minimalArgList = minimalArgList;
-      this->ptrSize = ptrSize;
+      this->stackAlignment = platformSettings->stackAlignment;
+      this->rawStackAlignment = platformSettings->rawStackAlignment;
+      this->localAlignment = platformSettings->localAlignment;
+      this->ehTableEntrySize = platformSettings->ehTableEntrySize;
+      this->minimalArgList = platformSettings->minimalStackLength;
+      this->ptrSize = platformSettings->ptrSize;
       this->tapeOptMode = tapeOptMode;
       this->btapeOptMode = btapeOptMode;
    }

@@ -651,20 +651,17 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
    VariableResolverBase* variableResolver,
-   ModuleSettings& moduleSettings,
-   int minimalArgList,
-   int ptrSize)
+   bool debugMode,
+   PlatformSettings* platformSettings,
+   ManifestInfo* manifestInfo)
 {
    ModuleScope moduleScope(
       &_libraryProvider,
       forwardResolver,
       variableResolver,
       _libraryProvider.createModule(module_it.name()),
-      moduleSettings.debugMode ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
-      moduleSettings.stackAlingment,
-      moduleSettings.rawStackAlingment,
-      moduleSettings.ehTableEntrySize,
-      minimalArgList, ptrSize,
+      debugMode ? _libraryProvider.createDebugModule(module_it.name()) : nullptr,
+      platformSettings,
       module_it.hints());
 
    _libraryProvider.addListener(&moduleScope);
@@ -683,7 +680,7 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
       ++lexical_it;
    }
 
-   _compiler->prepare(&moduleScope, forwardResolver, moduleSettings.manifestInfo);
+   _compiler->prepare(&moduleScope, forwardResolver, *manifestInfo);
 
    SyntaxTreeBuilder builder(syntaxTree, _errorProcessor,
       &moduleScope, &_templateGenerator);
@@ -808,7 +805,7 @@ void CompilingProcess :: configurate(Project& project)
    }
 }
 
-void CompilingProcess :: compile(ProjectBase& project, JITCompilerSettings& jitSettings)
+void CompilingProcess :: compile(ProjectBase& project, PlatformSettings* platformSettings)
 {
    if (_parser == nullptr) {
       _errorProcessor->raiseInternalError(errParserNotInitialized);
@@ -826,17 +823,10 @@ void CompilingProcess :: compile(ProjectBase& project, JITCompilerSettings& jitS
    bool compiled = false;
    auto module_it = project.allocModuleIterator();
    while (!module_it->eof()) {
-      ModuleSettings moduleSettings =
-      {
-         project.UIntSetting(ProjectOption::StackAlignment, jitSettings.stackAlignment),
-         project.UIntSetting(ProjectOption::RawStackAlignment, jitSettings.rawStackAlignment),
-         project.UIntSetting(ProjectOption::EHTableEntrySize, jitSettings.ehTableEntrySize),
-         project.BoolSetting(ProjectOption::DebugMode, true),
-         {
-            project.StringSetting(ProjectOption::ManifestName),
-            project.StringSetting(ProjectOption::ManifestVersion),
-            project.StringSetting(ProjectOption::ManifestAuthor)
-         }
+      ManifestInfo manifestInfo = {
+         project.StringSetting(ProjectOption::ManifestName),
+         project.StringSetting(ProjectOption::ManifestVersion),
+         project.StringSetting(ProjectOption::ManifestAuthor)
       };
 
       LexicalMap::Iterator lexical_it = project.getLexicalIterator();
@@ -844,9 +834,9 @@ void CompilingProcess :: compile(ProjectBase& project, JITCompilerSettings& jitS
          env,
          lexical_it,
          *module_it, &syntaxTree, &project, &project,
-         moduleSettings,
-         jitSettings.minimalStackLength,
-         sizeof(uintptr_t));
+         project.BoolSetting(ProjectOption::DebugMode, true),
+         platformSettings,
+         &manifestInfo);
 
       ++(*module_it);
    }
@@ -964,7 +954,7 @@ int CompilingProcess :: clean(Project& project)
 
 int CompilingProcess :: build(Project& project,
    LinkerBase& linker,
-   JITCompilerSettings& jitSettings,
+   PlatformSettings* platformSettings,
    ustr_t profile)
 {
    try
@@ -991,7 +981,7 @@ int CompilingProcess :: build(Project& project,
       _presenter->printLine(ELC_CLEANING);
       cleanUp(project);
 
-      compile(project, jitSettings);
+      compile(project, platformSettings);
 
       // generating target when required
       switch (targetType) {

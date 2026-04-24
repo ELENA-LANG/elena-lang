@@ -114,14 +114,9 @@ public:
       VariableResolverBase* variableResolver,
       ModuleBase* module,
       ModuleBase* debugModule,
-      pos_t stackAlingment,
-      pos_t rawStackAlingment,
-      pos_t ehTableEntrySize,
-      int minimalArgList,
-      int ptrSize,
+      PlatformSettings* platformSettings,
       int moduleHint)
-      : ModuleScopeBase(module, debugModule, stackAlingment, rawStackAlingment, ehTableEntrySize, 
-         minimalArgList, ptrSize, false, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr),
+      : ModuleScopeBase(module, debugModule, platformSettings, false, false), reusedTemplates(nullptr), declaredImportLibraries(nullptr),
          dependencies(nullptr)
    {
       this->loader = loader;

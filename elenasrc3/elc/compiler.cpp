@@ -6866,7 +6866,7 @@ DeclarationError Compiler :: declareVariable(Scope& scope, ustr_t identifier, Ty
    }
    else if (_logic->isEmbeddableStruct(localInfo.header.flags) && size == 0 && !variable.typeInfo.nillable) {
       size = align(_logic->defineStructSize(localInfo).size,
-         scope.moduleScope->rawStackAlingment);
+         scope.moduleScope->rawStackAlignment);
 
       variable.reference = allocateLocalAddress(*codeScope, size, false);
    }
@@ -8477,8 +8477,8 @@ ObjectInfo Compiler::compileRootExpression(BuildTreeWriter& writer, CodeScope& c
 
 void Compiler::saveFrameAttributes(BuildTreeWriter& writer, Scope& scope, pos_t reserved, pos_t reservedN)
 {
-   reserved = align(reserved, scope.moduleScope->stackAlingment);
-   reservedN = align(reservedN, scope.moduleScope->rawStackAlingment);
+   reserved = align(reserved, scope.moduleScope->stackAlignment);
+   reservedN = align(reservedN, scope.moduleScope->rawStackAlignment);
 
    if (reserved)
       writer.appendNode(BuildKey::Reserved, reserved);
@@ -15121,7 +15121,7 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRe
    pos_t count = arguments.count_pos();
 
    writer->appendNode(BuildKey::Allocating,
-      align(count, scope.moduleScope->stackAlingment));
+      align(count, scope.moduleScope->stackAlignment));
 
    TypeInfo retType = { V_INT32 };
    ref_t intArgType = 0;
@@ -15189,7 +15189,7 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRe
 
    if (!stdCall)
       writer->appendNode(BuildKey::Freeing, align(count,
-         scope.moduleScope->stackAlingment));
+         scope.moduleScope->stackAlignment));
 
    if (compiler->_logic->isCompatible(*scope.moduleScope, retType, { expectedRef }, true)) {
       retType = { expectedRef };
@@ -17439,7 +17439,7 @@ bool Compiler::Expression::resolveAutoType(ObjectInfo source, ObjectInfo& target
    if (compiler->_logic->isEmbeddableStruct(*scope.moduleScope, sourceInfo) && target.kind == ObjectKind::Local) {
       // Bad luck : it is a auto structure, we have to reallocate the variable
       size = align(compiler->_logic->defineStructSize(*scope.moduleScope, sourceInfo.typeRef).size,
-         scope.moduleScope->rawStackAlingment);
+         scope.moduleScope->rawStackAlignment);
 
       extra = allocateLocalAddress(scope, size, false);
    }

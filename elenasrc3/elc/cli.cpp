@@ -88,7 +88,7 @@ using namespace elena_lang;
 
 // --- CommandHelper ---
 
-JITCompilerSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor)
+PlatformSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor)
 {
    switch (platform) {
 #if defined(__x86_64__) || defined (_M_X64)
@@ -351,7 +351,7 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
 
 int CLIHelper :: compileProject(int argc, path_c** argv,
    CompilingProcess& process,
-   PlatformType platform, JITCompilerSettings& jitSettings,
+   PlatformType platform, PlatformSettings* platformSettings,
    PresenterBase& presenter, ErrorProcessor& errorProcessor,
    path_t dataPath, path_t basePath, path_t configPath,
    ustr_t defaultProfile)
@@ -420,7 +420,7 @@ int CLIHelper :: compileProject(int argc, path_c** argv,
       start = clock();
 #endif
       // Building...
-      int retVal = process.build(project, *linker, jitSettings,
+      int retVal = process.build(project, *linker, platformSettings,
          *profile);
 
 #ifdef TIME_RECORDING

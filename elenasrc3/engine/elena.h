@@ -520,15 +520,23 @@ namespace elena_lang
    typedef CachedList<Pair<mssg_t, ref_t>, 10> CachedOutputTypeList;
 
    // --- JITCompilerSettings ---
-   struct JITCompilerSettings
+   struct PlatformSettings
    {
+      // shadow stack, depends on the number of stack caching
       int minimalStackLength;
 
+      // total managed stack length alignment (1 / 2)
       int stackAlignment;
 
+      // total raw stack length alignment (4 / 16)
       int rawStackAlignment;
 
       int ehTableEntrySize;
+
+      // a single variable raw stack alignment (4 / 8)
+      int localAlignment;
+
+      int ptrSize;
    };
 
    // --- JITCompilerBase ---

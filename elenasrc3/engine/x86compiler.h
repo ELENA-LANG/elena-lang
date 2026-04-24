@@ -25,9 +25,9 @@ namespace elena_lang
          bool virtualMode) override;
 
    public:
-      static JITCompilerSettings getSettings()
+      static PlatformSettings getSettings()
       {
-         return { 1, 1, 4, 16 };
+         return { 1, 1, 4, 16, 4, 4 };
       }
 
       void writeImm9(MemoryWriter* writer, int value, int type) override;

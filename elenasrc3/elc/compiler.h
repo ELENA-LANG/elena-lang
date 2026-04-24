@@ -713,7 +713,7 @@ namespace elena_lang
          {
             int retVal = reserved2;
 
-            reserved2 += align(size, moduleScope->rawStackAlingment);
+            reserved2 += align(size, moduleScope->localAlignment);
 
             return retVal;
          }
@@ -1067,7 +1067,7 @@ namespace elena_lang
          {
             int retVal = allocated2;
 
-            allocated2 += align(size, moduleScope->rawStackAlingment);
+            allocated2 += align(size, moduleScope->localAlignment);
             if (allocated2 > reserved2)
                reserved2 = allocated2;
 
@@ -1106,7 +1106,7 @@ namespace elena_lang
             return { ObjectKind::Shortcut, index };
          }
 
-         void mapShortcut(int index, ObjectInfo info)
+         void mapShortcut(int index, ObjectInfo info) const
          {
             assert(index >= 0);
 

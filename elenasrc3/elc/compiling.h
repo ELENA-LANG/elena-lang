@@ -3,7 +3,7 @@
 //
 //		This file contains the compiling processor header
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPLING_H
@@ -21,15 +21,6 @@ namespace elena_lang
    // --- CompilingProcess ---
    class CompilingProcess
    {
-      struct ModuleSettings
-      {
-         pos_t          stackAlingment;
-         pos_t          rawStackAlingment;
-         pos_t          ehTableEntrySize;
-         bool           debugMode;
-         ManifestInfo   manifestInfo;
-      };
-
       // --- TemplateGenerator ---
       class TemplateGenerator : public TemplateProssesorBase
       {
@@ -128,15 +119,15 @@ namespace elena_lang
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
          VariableResolverBase* variableResolver,
-         ModuleSettings& moduleSettings,
-         int minimalArgList,
-         int ptrSize);
+         bool debugMode,
+         PlatformSettings* platformSettings,
+         ManifestInfo* manifestInfo);
 
       void configurateParser(SyntaxVersion version);
 
       void configurate(Project& project);
       void cleanUp(ProjectBase& project);
-      void compile(ProjectBase& project, JITCompilerSettings& jitSettings);
+      void compile(ProjectBase& project, PlatformSettings* platformSettings);
       void link(Project& project, LinkerBase& linker, bool withTLS);
 
    public:
@@ -149,7 +140,7 @@ namespace elena_lang
 
       int build(Project& project, 
          LinkerBase& linker, 
-         JITCompilerSettings& jitSettings,
+         PlatformSettings* platformSettings,
          ustr_t profile);
       int clean(Project& project);
 

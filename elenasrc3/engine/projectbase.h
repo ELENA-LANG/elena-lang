@@ -55,11 +55,8 @@ namespace elena_lang
       WithJumpAlignment,
       WithMethodOutput,
       ModuleExtensionAutoLoad,
-      StackAlignment,
-      RawStackAlignment,
       GCMGSize,
       GCYGSize,
-      EHTableEntrySize,
       ThreadCounter,
       StackReserved,
 

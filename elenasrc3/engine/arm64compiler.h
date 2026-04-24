@@ -31,9 +31,9 @@ namespace elena_lang
       friend void ARM64compileExtOpenIN(JITCompilerScope* scope);
 
    public:
-      static JITCompilerSettings getSettings()
+      static PlatformSettings getSettings()
       {
-         return { 2, 2, 16, 32 };
+         return { 2, 2, 16, 32, 8, 8 };
       }
 
       void writeImm9(MemoryWriter* writer, int value, int type) override;

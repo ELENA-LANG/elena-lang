@@ -13,11 +13,11 @@
 
 #if defined(__x86_64__)
 
-#define EXT_OFFSET 64
+constexpr int EXT_OFFSET = 64;
 
 #else
 
-#define EXT_OFFSET 104
+constexpr int EXT_OFFSET = 104;
 
 #endif
 
@@ -42,9 +42,9 @@ namespace elena_lang
       friend void x86_64compileXOpenIN(JITCompilerScope* scope);
 
    public:
-      static JITCompilerSettings getSettings()
+      static PlatformSettings getSettings()
       {
-         return { 2, 2, 16, 32 };
+         return { 2, 2, 16, 32, 8, 8 };
       }
 
       int calcFrameOffset(int argument, bool extMode) override
