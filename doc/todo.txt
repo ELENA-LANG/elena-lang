@@ -37,12 +37,8 @@ In development:
   --------------------------------------
   * current : #590 : implementing interface injection : strong interface
   ====================================== 
-  - fix dynamicTypecastTest for 64bit version
-
-
-  - design : argument types (use multimethod dispatcher)
-  - implement
-  - design : output type
+  - design : allow strong typed messages; check the output type; if the output type supports dispatch and cast
+             handler - use it, otherwise returns nil;
   - implement
   - unit / functional tests (strong typed, strong output type)
   - look at indexed methods
