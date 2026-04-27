@@ -692,3 +692,113 @@ must be provided
     
        Console.printLine("An instance of ", o1.__getClass(), " ", dynamic_typecast(o1, o2))       
     }
+
+## ----------------------------------------------------------------------------
+##  Checking the method output type in run-time
+## ----------------------------------------------------------------------------
+    
+To be able to check the method output type, the project must be compiled with "-xo" option:
+
+    elena-cli -xo example.l
+
+NOTE : The output type can be retrieve only for public methods / public classes
+
+The code is:
+
+    import extensions;
+    import system'dynamic;
+    
+    public class A
+    {
+       real getValue()
+         = 2.0;
+    }
+    
+    public class B
+    {
+       int getValue()
+         = 2;
+    }
+    
+    public class C
+    {
+       getValue()
+         = "Any";
+    }
+    
+    extension op
+    {
+       checkOutput(string messageName)
+       {
+          auto mssg := new Message(messageName);
+    
+          var outputType := self.__getClass().__getMethodOutput(mssg)?.getTypeUnsafe();
+          if:not:nil(outputType) {
+             Console.printLine("The output type of ",self,".",messageName," is ", outputType);
+          }
+          else Console.printLine(self,".",messageName," has no declared output type");
+       }
+    }
+    
+    public Program()
+    {
+       var a := new A();
+       var b := new B();
+       var c := new C();
+    
+       a.checkOutput("getValue[1]");
+       b.checkOutput("getValue[1]");
+       c.checkOutput("getValue[1]");
+    }
+
+## ----------------------------------------------------------------------------
+##  Mocking an interface
+## ----------------------------------------------------------------------------
+    
+To be able to check the method output type, the project must be compiled with "-xo" option:
+
+    elena-cli -xo example.l
+
+The code is:
+
+    import extensions;
+    import system'dynamic;
+    
+    public interface IFunction
+    {
+       abstract real calculate(real arg);
+    }
+    
+    public class Mockup
+    {
+       field object;
+    
+       constructor(object)
+       {
+          this object := object;
+       }
+    
+       generic cast()
+       {
+          var type := __received.__getFirstSignatureMember();
+    
+          var proxy := object.mockInferface(type);
+       
+          ^ __received(proxy);
+       }
+    }
+    
+    public singleton Actor
+    {
+       invoke(IFunction function)
+       {
+          Console.printLine("Calculating f(2) = ", function.calculate(2));
+       }
+    }
+    
+    public Program()
+    {
+       var mockup := new Mockup(::{ real calculate(real x) = x * x; });
+    
+       Actor.invoke(mockup);
+    }

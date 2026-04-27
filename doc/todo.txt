@@ -37,13 +37,10 @@ In development:
   --------------------------------------
   * current : #590 : implementing interface injection : strong interface
   ====================================== 
-  - unit / functional tests (strong typed)
-  - modify tutorial decorator example
-  - implement InjectProxyTypeLA for elenavm
-  - Mockup class must be declared in extensions so it can be reused
   - functional test for Mockup
-  - know-how code snippet for Mockup
+  - modify tutorial decorator example
   - test with indexed methods (must be copied as well)
+  - implement GetClassOutput & InjectProxyTypeLA for elenavm
   - proxy : field cannot be used (due to current implementation)
   --------------------------------------
 

@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  Win32 ELENA System Routines
 //
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -51,7 +51,7 @@ uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
    // allocate
    LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
 
-   assert(r == allocPtr);
+   assert(r != 0);
 
    return !r ? 0 : (uintptr_t)allocPtr;
 }
@@ -61,7 +61,7 @@ uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
    // allocate
    LPVOID r = VirtualAlloc(allocPtr, newSize, MEM_COMMIT, PAGE_READWRITE);
 
-   assert(r == allocPtr);
+   assert(r != 0);
 
    return !r ? 0 : (uintptr_t)allocPtr;
 }
