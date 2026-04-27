@@ -32,7 +32,7 @@ namespace elena_lang
 
       bool loadDebugSection();
 
-      ref_t loadSubject(ustr_t actionName);
+      ref_t loadSubject(ustr_t actionName) override;
 
       addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 

@@ -37,15 +37,14 @@ In development:
   --------------------------------------
   * current : #590 : implementing interface injection : strong interface
   ====================================== 
-  - design : allow strong typed messages; check the output type; if the output type supports dispatch and cast
-             handler - use it, otherwise returns nil;
-  - implement
-  - unit / functional tests (strong typed, strong output type)
-  - look at indexed methods
+  - unit / functional tests (strong typed)
+  - modify tutorial decorator example
   - implement InjectProxyTypeLA for elenavm
   - Mockup class must be declared in extensions so it can be reused
   - functional test for Mockup
   - know-how code snippet for Mockup
+  - test with indexed methods (must be copied as well)
+  - proxy : field cannot be used (due to current implementation)
   --------------------------------------
 
 

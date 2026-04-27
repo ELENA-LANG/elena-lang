@@ -2162,8 +2162,7 @@ class DecoratorA
    {
       var type := __received.__getFirstSignatureMember();
 
-      var proxy := ::{ dispatch() => self; };
-      proxy.__injectInferface(type);
+      var proxy := self.mockInferface(type);
    
       ^ __received(proxy);
    }

@@ -1,5 +1,11 @@
 import system'collections;
 
+public class InvalidMockOperationException : InvalidOperationException
+{
+   constructor new()
+      <= super new("Cannot mock an interface. Probably the executable contains no method output information");
+}
+
 public extension classROp
 {
    Message[] __getMessages()
@@ -92,8 +98,18 @@ public extension signatureOp : Message
    }
 }
 
-public extension proxyTypeOp
+extension reflectionOp
 {
    __injectInferface(type)
-       : external(system'core_routines'__createProxy);
+     : external(system'core_routines'__createProxy);
+}
+
+public extension proxyTypeOp
+{
+   mockInferface(type)
+   {
+      var proxy := ::{ dispatch() => self; };
+
+      ^ proxy.__injectInferface(type);
+   }
 }

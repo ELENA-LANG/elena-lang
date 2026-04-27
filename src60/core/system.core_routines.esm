@@ -56,7 +56,7 @@ procedure __object_dispatcher
 
 end
 
-procedure __object_cast_dispatcher_function
+procedure __proxy_cast_dispatcher_function
 
   xopen      (0),[],[mssg, typecast_mssg] // ; the actual frame must be opened and populated in __object_cast_dispatcher
 
@@ -86,6 +86,8 @@ labCopyEnd:
   mov        mssg:"#dispatch_cast[2]"
   xcmp       dp:mssg
   jeq        labSkip
+
+  get        i:0
 
   load       dp:mssg
   call       vt:0
@@ -2871,7 +2873,7 @@ procedure __createProxy (proxy, type)
   cmp        n:-1
   jne        labSkip
 
-  xstore     sp:0, class : "system'InvalidArgumentException"
+  xstore     sp:0, class : "system'dynamic'InvalidMockOperationException"
   set        mssgconst : "new[1]"
   throw
 

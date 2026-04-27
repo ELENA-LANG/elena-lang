@@ -443,5 +443,7 @@ size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
 
 void* ELENARTMachine :: loadClassMessageOutput(void* classPtr, mssg_t message)
 {
-   return (void*)SystemRoutineProvider::GetMessageOutput(classPtr, message);
+   addr_t typeRef = SystemRoutineProvider::GetMessageOutput(classPtr, message);
+
+   return typeRef == INVALID_ADDR ? nullptr : (void*)typeRef;
 }

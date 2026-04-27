@@ -4205,10 +4205,13 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    CachedList<ref_t, 4> globalAttributes;
    for (auto it = info.attributes.start(); !it.eof(); ++it) {
       auto key = it.key();
-      if (!testany(info.header.flags, elClassClass | elAbstract)
-         && (key.value2 == ClassAttribute::RuntimeLoadable))
-      {
-         globalAttributes.add((unsigned int)ClassAttribute::RuntimeLoadable);
+      if (key.value2 == ClassAttribute::RuntimeLoadable) {
+         if (!testany(info.header.flags, elClassClass | elAbstract)) {
+            globalAttributes.add((unsigned int)ClassAttribute::RuntimeLoadable);
+         }
+         else if ((info.header.flags & elDebugMask) == elInterface) {
+            globalAttributes.add((unsigned int)ClassAttribute::RuntimeDiscovered);
+         }
       }
       else if (key.value2 == ClassAttribute::Initializer) {
          ref_t symbolRef = *it;

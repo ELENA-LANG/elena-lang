@@ -85,7 +85,11 @@ namespace elena_lang
       uintptr_t createPermString(SystemEnv* env, ustr_t s, uintptr_t classPtr);
       uintptr_t createPermVMT(SystemEnv* env, size_t size);
 
+      addr_t retrieveDispatchAndCast(void* vMTPtr);
+
    public:
+      virtual ref_t loadSubject(ustr_t actionName) = 0;
+
       addr_t injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex/*, addr_t* addresses, size_t length*/);
 
       addr_t execute(void* symbolListEntry);

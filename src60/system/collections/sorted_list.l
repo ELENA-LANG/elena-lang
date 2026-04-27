@@ -211,7 +211,7 @@ namespace collections
       }
    }
 
-   public sealed class SortedArrayList : Indexable
+   public sealed class SortedArrayList : Indexable, info("A sorted weak list")
    {
       VarTuple<object, object>[] _array;
       Reference<int>             _length;
@@ -219,24 +219,24 @@ namespace collections
 
       Func<object,object,int>    _comparator;
 
-      constructor()
+      constructor() : info("Creates an empty list sorted by ascending value")
       {
          _length := 0;
          _capacity := 0;
          _comparator := (object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1));
       }
 
-      constructor(Func<object,object,int> comparator)
+      constructor(Func<object,object,int> comparator) : info("Creates an empty list with a custom oredering function<br/>The function returns -1 if a pair of items is ordered, 0 if they are equal and 1 otherwise")
       {
          _length := 0;
          _capacity := 0;
          _comparator := comparator;
       }
 
-      constructor allocate(int capacity)
+      constructor allocate(int capacity) : info("Creates an empty list sorted by ascending value with pre-allocated slots")
          <= allocate(capacity, (object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1)));
 
-      constructor allocate(int capacity, Func<object,object,int> comparator)
+      constructor allocate(int capacity, Func<object,object,int> comparator) : info("Creates an empty list with a custom oredering function with pre-allocated slots<br/>The function returns -1 if a pair of items is ordered, 0 if they are equal and 1 otherwise")
       {
          _length := 0;
          _capacity := capacity;
@@ -244,10 +244,10 @@ namespace collections
          _comparator := comparator;
       }
 
-      constructor allocate()
+      constructor allocate() : info("Creates an empty list sorted by ascending value with 24 pre-allocated slots")
          <= allocate(32);
 
-      int Length
+      int Length : info("Returns the number of elements in the list")
       {
          /// Reads the number of list item to the output parameter
          get()

@@ -89,7 +89,7 @@ namespace elena_lang
       AddressMap::Iterator externals() override;
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
-      ref_t loadSubject(ustr_t actionName);
+      ref_t loadSubject(ustr_t actionName) override;
       addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
       void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
@@ -180,4 +180,4 @@ namespace elena_lang
    };
 }
 
-#endif   
+#endif

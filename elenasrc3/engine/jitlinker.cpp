@@ -953,6 +953,11 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       printf("linking %s\n", referenceInfo.referenceName.str());
 #endif // FULL_OUTOUT_INFO
 
+// =================
+   if (referenceInfo.referenceName.findStr("IFunction") != NOTFOUND_POS)
+      referenceInfo.module = referenceInfo.module;
+// =================
+
    referenceInfo.module = sectionInfo.module;
    referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);   
 
@@ -1011,10 +1016,10 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       FieldAddressMap staticValues(INVALID_REF);
       resolveStaticFields(referenceInfo, vmtReader, staticValues);
 
-      bool runTimeLoadable = false;
-      resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress, runTimeLoadable);
+      bool runTimeDiscovered = false;
+      resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress, runTimeDiscovered);
 
-      addr_t outputListAddress = (withOutputList && runTimeLoadable) ?
+      addr_t outputListAddress = (withOutputList && runTimeDiscovered) ?
          resolveOutputTypeList(referenceInfo, outputTypeList) : 0;
 
       // update VMT
@@ -1049,14 +1054,14 @@ void JITLinker :: generateOverloadListMetaAttribute(ModuleBase* module, mssg_t m
    createGlobalAttribute(GA_EXT_OVERLOAD_LIST, *fullName, address);
 }
 
-void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress, bool& runtimeLoadable)
+void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress, bool& runTimeDiscovered)
 {
    pos_t attrCount = vmtReader.getPos();
    while (attrCount > 0) {
       ClassAttribute attr = (ClassAttribute)vmtReader.getDWord();
       switch (attr) {
          case ClassAttribute::RuntimeLoadable:
-            runtimeLoadable = true;
+            runTimeDiscovered = true;
 
             if (referenceInfo.isRelative()) {
                IdentifierString fullName(referenceInfo.module->name(), referenceInfo.referenceName);
@@ -1064,6 +1069,9 @@ void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, Memo
                createGlobalAttribute(GA_CLASS_NAME, *fullName, vaddress);
             }
             else createGlobalAttribute(GA_CLASS_NAME, referenceInfo.referenceName, vaddress);
+            break;
+         case ClassAttribute::RuntimeDiscovered:
+            runTimeDiscovered = true;
             break;
          case ClassAttribute::Initializer:
          {

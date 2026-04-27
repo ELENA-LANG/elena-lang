@@ -78,18 +78,38 @@ uintptr_t ELENAMachine :: createPermVMT(SystemEnv* env, size_t size)
    return (uintptr_t)header + elObjectOffset;
 }
 
-inline bool isValidProxy(uintptr_t vmtPtr)
+static inline bool isValidProxy(uintptr_t vmtPtr)
 {
    int flags = SystemRoutineProvider::GetFlags((void*)vmtPtr);
 
    return (flags & elDebugMask) == elProxy;
 }
 
-inline bool isWeakInterface(void* vmtPtr)
+static inline bool isWeakInterface(void* vmtPtr)
 {
    int flags = SystemRoutineProvider::GetFlags(vmtPtr);
 
    return (flags & elDebugMask) == elWeakInterface;
+}
+
+addr_t ELENAMachine :: retrieveDispatchAndCast(void* vmtPtr)
+{
+   ref_t actionRef = loadSubject("#dispatch_cast");
+   if (!actionRef)
+      return 0;
+
+   mssg_t message = encodeMessage(actionRef, 2, 0);
+
+   addr_t classPtr = SystemRoutineProvider::GetClass(vmtPtr);
+   size_t length = SystemRoutineProvider::GetVMTLength((void*)classPtr);
+   VMTEntry* entries = (VMTEntry*)classPtr;
+   for (size_t i = 0; i < length; i++) {
+      if (entries[i].message == message) {
+         return entries[i].address;
+      }
+   }
+
+   return 0;
 }
 
 addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex)
@@ -100,9 +120,7 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    if (!isValidProxy(proxyVMTPtr))
       return INVALID_ADDR;
 
-   // verify if it is a correct interface
-   if (!isWeakInterface(srcVMTPtr))
-      return INVALID_ADDR;
+   bool weakInterface = isWeakInterface(srcVMTPtr);
 
    assert(nameIndex < 0);
 
@@ -162,8 +180,21 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
             entries[i] = src[i];
          }
          else {
+            addr_t handler = base[0].address;
+
+            addr_t outputPtr = SystemRoutineProvider::GetMessageOutput(srcVMTPtr, src[i].message);
+            if (outputPtr == INVALID_ADDR) {
+               if (!weakInterface)
+                  return INVALID_ADDR;
+            }
+            else if (outputPtr != 0) {
+               handler = retrieveDispatchAndCast((void*)outputPtr);
+               if (!handler)
+                  return INVALID_ADDR;
+            }            
+
             entries[i].message = src[i].message;
-            entries[i].address = base[0].address;
+            entries[i].address = handler;
          }
 
          i++;
@@ -384,7 +415,7 @@ addr_t SystemRoutineProvider :: GetMessageOutput(void* classPtr, mssg_t message)
 
    // NOTE : if VMT does not have output list - return immediately
    if (!test(header->flags, elWithOutputList))
-      return 0;
+      return INVALID_ADDR;
 
    size_t index = header->count;
    // skip index table

@@ -323,6 +323,7 @@ namespace elena_lang
       Initializer = 0x10B,
       YieldContextSize = 0x80C,
       SourceTemplateRef = 0x10D,
+      RuntimeDiscovered = 0x00E,
    };
 
    // === Reference constants ====
