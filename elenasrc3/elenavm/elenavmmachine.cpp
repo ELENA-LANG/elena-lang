@@ -775,6 +775,13 @@ size_t ELENAVMMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
       skip, maxLength, true);
 }
 
+void* ELENAVMMachine :: loadClassMessageOutput(void* classPtr, mssg_t message)
+{
+   addr_t typeRef = SystemRoutineProvider::GetMessageOutput(classPtr, message);
+
+   return typeRef == INVALID_ADDR ? nullptr : (void*)typeRef;
+}
+
 bool ELENAVMMachine :: checkClassMessage(void* classPtr, mssg_t message)
 {
    //MemoryBase* msection = getMDataSection();

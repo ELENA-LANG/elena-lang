@@ -44,6 +44,8 @@ extern "C"
    DLL_PUBLIC elena_lang::mssg_t LoadActionLA(const char* actionName);
    DLL_PUBLIC size_t LoadActionNameLA(size_t message, char* buffer, size_t length);
    DLL_PUBLIC size_t LoadClassMessagesLA(void* classPtr, elena_lang::mssg_t* output, size_t skip, size_t maxLength);
+   DLL_PUBLIC elena_lang::mssg_t LoadStrongMessageLA(const char* messageName);
+   DLL_PUBLIC void* LoadMessageOutputLA(void* classPtr, elena_lang::mssg_t message);
    DLL_PUBLIC bool CheckClassMessageLA(void* classPtr, elena_lang::mssg_t message);
    DLL_PUBLIC void GetRandomSeedLA(elena_lang::SeedStruct& seed);
    DLL_PUBLIC unsigned int GetRandomIntLA(elena_lang::SeedStruct& seed);

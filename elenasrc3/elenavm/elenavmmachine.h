@@ -128,6 +128,8 @@ namespace elena_lang
 
       size_t loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength);
 
+      void* loadClassMessageOutput(void* classPtr, mssg_t message);
+
       bool checkClassMessage(void* classPtr, mssg_t message);
 
       int loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output);

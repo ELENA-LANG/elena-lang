@@ -3,13 +3,13 @@
 //
 //		This file contains the compiler common interfaces & types
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef VMCOMMON_H
 #define VMCOMMON_H
 
-#define ELENAVM_REVISION_NUMBER        0x0001
+#define ELENAVM_REVISION_NUMBER        0x0002
 
 namespace elena_lang
 {

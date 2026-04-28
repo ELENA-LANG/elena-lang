@@ -6,13 +6,6 @@ In development:
   ### EPIC: elena 8.0 ###
 
   === Iteration 46 (graph sample; ide linux; mac) ===
-  * dev : backlog
-  ====================================== 
-  - ppc : fpi, fsin, fcos
-  - User-defined string literals 
-  - nested extension inside a class
-  - output list : can we reduce the list (skip protected, super object reference, ...)
-  - migrate LoadStrongMessageLA, LoadMessageOutputLA, CheckClassMessageLA into elenavm
   --------------------------------------
   * dev : template generator
   ====================================== 
@@ -31,17 +24,9 @@ In development:
   --------------------------------------
   * samples
   ====================================== 
-  * #590 : backlog
+  * current : backlog
   ====================================== 
-  - fix : IFunction f := new LinearFunction(2, 3);
-  --------------------------------------
-  * current : #590 : implementing interface injection : strong interface
-  ====================================== 
-  - test with indexed methods (must be copied as well)
-
-  - modify tutorial decorator example
-  - implement GetClassOutput & InjectProxyTypeLA for elenavm
-  - proxy : field cannot be used (due to current implementation)
+  - test elenavm
   --------------------------------------
 
 

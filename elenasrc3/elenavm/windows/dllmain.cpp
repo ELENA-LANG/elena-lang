@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA VM
+//
+//                         DLL Main Entry
+//                                             (C)2021-2026, by Aleksey Rakov
+//---------------------------------------------------------------------------
+
 #include "elena.h"
 // --------------------------------------------------------------------------------
 #include "langcommon.h"
@@ -402,6 +409,11 @@ EXTERN_DLL_EXPORT int LoadExtensionDispatcherLA(const char* moduleList, mssg_t m
 EXTERN_DLL_EXPORT size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
 {
    return machine->loadClassMessages(classPtr, output, skip, maxLength);
+}
+
+EXTERN_DLL_EXPORT void* LoadMessageOutputLA(void* classPtr, mssg_t message)
+{
+   return machine->loadClassMessageOutput(classPtr, message);
 }
 
 EXTERN_DLL_EXPORT bool CheckClassMessageLA(void* classPtr, mssg_t message)

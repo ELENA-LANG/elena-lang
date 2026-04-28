@@ -433,6 +433,16 @@ size_t LoadActionNameLA(size_t message, char* buffer, size_t length)
    return machine->loadActionName((mssg_t)message, buffer, length);
 }
 
+mssg_t LoadStrongMessageLA(const char* messageName)
+{
+   return machine->loadStrongMessage(messageName);
+}
+
+void* LoadMessageOutputLA(void* classPtr, mssg_t message)
+{
+   return machine->loadClassMessageOutput(classPtr, message);
+}
+
 /// <summary>
 /// Fills the passed dispatch list with references to extension message overload list
 /// </summary>
