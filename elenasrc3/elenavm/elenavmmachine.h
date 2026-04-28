@@ -125,6 +125,7 @@ namespace elena_lang
       mssg_t loadMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
       size_t loadActionName(mssg_t message, char* buffer, size_t length);
+      mssg_t loadStrongMessage(ustr_t messageName);
 
       size_t loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength);
 

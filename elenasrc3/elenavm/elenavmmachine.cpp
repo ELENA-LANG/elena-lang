@@ -625,6 +625,45 @@ ref_t ELENAVMMachine :: loadSubject(ustr_t actionName)
    return actionRef;
 }
 
+mssg_t ELENAVMMachine :: loadStrongMessage(ustr_t messageName)
+{
+   return 0;
+
+   //pos_t argCount = 0;
+   //ref_t flags = 0;
+
+   //IdentifierString actionName;
+   //IdentifierString argumentString;
+   //ByteCodeUtil::parseMessageName(messageName, actionName, flags, argCount);
+
+   //size_t argIndex = (*actionName).find('<');
+   //if (argIndex == NOTFOUND_POS)
+   //   return 0;
+
+   //assert((*actionName).endsWith(">"));
+
+   //argumentString.copy(actionName.str() + argIndex + 1);
+   //argumentString.cut(argumentString.length() - 1, 1);
+   //actionName.cut(argIndex, actionName.length() - argIndex);
+
+   //mssg_t weakAction = loadSubject(*actionName);
+   //if (weakAction == 0)
+   //   return 0;
+
+   //ArgumentAddressList list;
+   //if (!loadArgumentList(*argumentString, list))
+   //   return false;
+
+   //ImageSection msection(_mdata, 0x1000000);
+   //RTManager rtmanager(&msection, nullptr);
+
+   //ref_t actionRef = rtmanager.loadStrongSubject(weakAction, list);
+   //if (actionRef == 0)
+   //   return 0;
+
+   //return encodeMessage(actionRef, argCount, flags);
+}
+
 mssg_t ELENAVMMachine :: loadMessage(ustr_t messageName)
 {
    pos_t argCount = 0;

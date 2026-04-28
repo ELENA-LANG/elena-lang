@@ -416,6 +416,11 @@ EXTERN_DLL_EXPORT void* LoadMessageOutputLA(void* classPtr, mssg_t message)
    return machine->loadClassMessageOutput(classPtr, message);
 }
 
+EXTERN_DLL_EXPORT mssg_t LoadStrongMessageLA(const char* messageName)
+{
+   return machine->loadStrongMessage(messageName);
+}
+
 EXTERN_DLL_EXPORT bool CheckClassMessageLA(void* classPtr, mssg_t message)
 {
    return machine->checkClassMessage(classPtr, message);

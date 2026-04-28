@@ -7,13 +7,6 @@ In development:
 
   === Iteration 46 (graph sample; ide linux; mac) ===
   --------------------------------------
-  * dev : template generator
-  ====================================== 
-  - support functions (Windows & Linux)
-  - support text generation (Windows & Linux)
-
-  - make possible to create a simple console app, repl console app
-  --------------------------------------
   * lang
   ====================================== 
   * doc
@@ -26,7 +19,8 @@ In development:
   ====================================== 
   * current : backlog
   ====================================== 
-  - test elenavm
+  - implement LoadStrongMessageLA for VM
+  - test elenavm for Linux
   --------------------------------------
 
 
