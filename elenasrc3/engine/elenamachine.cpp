@@ -139,8 +139,9 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    if (!proxyVMTAddress) {
       // NOTE : probably better to create a custom package, but for a moment we can simply copy it
       uintptr_t nameAddr = createPermString(env, *dynamicName, stringVMT);
-      size_t srcLength = SystemRoutineProvider::GetTotalVMTLength(srcVMTPtr);
-      size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset + staticLen * sizeof(uintptr_t);
+      size_t srcLength = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
+      size_t srcHiddenLength = SystemRoutineProvider::GetHiddenVMTLength(srcVMTPtr);
+      size_t size = ((srcLength + srcHiddenLength) * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset + staticLen * sizeof(uintptr_t);
       int flags = SystemRoutineProvider::GetFlags(srcVMTPtr);
 
       proxyVMTAddress = createPermVMT(env, size);
@@ -162,7 +163,7 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
       VMTEntry* src = (VMTEntry*)srcVMTPtr;
 
       header->parentRef = (addr_t)srcVMTPtr;
-      header->count = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
+      header->count = srcLength;
       header->flags = flags & ~elDebugMask;
       header->classRef = (addr_t)base;
 
@@ -198,6 +199,10 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
          }
 
          i++;
+      }
+      // copy hidden VMT
+      for (size_t hiddenIndex = 0; hiddenIndex < srcHiddenLength; hiddenIndex++) {
+         entries[i + hiddenIndex] = src[i + hiddenIndex];
       }
 
       // skip a class header
@@ -329,17 +334,18 @@ size_t SystemRoutineProvider :: GetVMTLength(void* classPtr)
    return header->count;
 }
 
-size_t SystemRoutineProvider :: GetTotalVMTLength(void* classPtr)
+size_t SystemRoutineProvider :: GetHiddenVMTLength(void* classPtr)
 {
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
 
-   size_t totalLength = header->count;
+   size_t i = header->count;
+   size_t hiddenLength = 0;
 
    VMTEntry* entries = (VMTEntry*)classPtr;
-   while (entries[totalLength].message != 0)
-      totalLength++;
+   while (entries[i].message != 0)
+      hiddenLength++;
 
-   return totalLength;
+   return hiddenLength;
 }
 
 addr_t SystemRoutineProvider :: GetParent(void* classPtr)

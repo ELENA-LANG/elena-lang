@@ -152,7 +152,7 @@ namespace elena_lang
       static size_t LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip,
          size_t maxLength, bool vmMode);
       static size_t GetVMTLength(void* classPtr);
-      static size_t GetTotalVMTLength(void* classPtr);
+      static size_t GetHiddenVMTLength(void* classPtr);
       static addr_t GetClass(void* ptr);
       static addr_t GetParent(void* classPtr);
       static pos_t GetFlags(void* classPtr);
