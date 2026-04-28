@@ -92,7 +92,7 @@ static inline bool isWeakInterface(void* vmtPtr)
    return (flags & elDebugMask) == elWeakInterface;
 }
 
-addr_t ELENAMachine :: retrieveDispatchAndCast(void* vmtPtr)
+addr_t ELENAMachine::retrieveDispatchAndCast(void* vmtPtr)
 {
    ref_t actionRef = loadSubject("#dispatch_cast");
    if (!actionRef)
@@ -342,7 +342,7 @@ size_t SystemRoutineProvider :: GetHiddenVMTLength(void* classPtr)
    size_t hiddenLength = 0;
 
    VMTEntry* entries = (VMTEntry*)classPtr;
-   while (entries[i].message != 0)
+   while (entries[i + hiddenLength].message != 0)
       hiddenLength++;
 
    return hiddenLength;
