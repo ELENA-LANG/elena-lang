@@ -953,11 +953,6 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       printf("linking %s\n", referenceInfo.referenceName.str());
 #endif // FULL_OUTOUT_INFO
 
-// =================
-   if (referenceInfo.referenceName.findStr("IFunction") != NOTFOUND_POS)
-      referenceInfo.module = referenceInfo.module;
-// =================
-
    referenceInfo.module = sectionInfo.module;
    referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);   
 

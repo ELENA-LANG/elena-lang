@@ -76,6 +76,16 @@ public extension classROp
       ^ nil;
    }
 
+   ClassReference? __getMethodOutput(Message m)
+   {
+      pointer retVal := extern LoadMessageOutputLA(self, m);
+      if (!retVal.isUnassigned()) {
+          ^ ClassReference.loadUnsafe(retVal);
+      };
+
+      ^ nil;
+   }
+
    __typecast(source) : external(system'core_routines'__type_cast); 
 }
 

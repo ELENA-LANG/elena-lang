@@ -3955,6 +3955,9 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
 {
    pos_t position = vmtWriter.position();
 
+   if (fixInfo.outputListAddress)
+      fixInfo.flags |= elWithOutputList;
+
    vmtWriter.seek(position - sizeof(VMTHeader64));
    VMTHeader64 header = { 0 };
    header.flags = fixInfo.flags;

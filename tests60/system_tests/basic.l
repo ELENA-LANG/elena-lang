@@ -2778,3 +2778,17 @@ public dynamicTypecastTest() : testCase()
 
    Console.write(".")   
 }
+
+public interface IFunction
+{
+   abstract real calculate(real arg);
+}
+
+public mockupTest() : testCase()
+{
+   IFunction mockup := new Mockup<IFunction>(::{ real calculate(real x) = x * x; });
+
+   Assert.ifEqual(mockup.calculate(2), 4.0);
+
+   Console.write(".");
+}

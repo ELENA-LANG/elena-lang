@@ -30,7 +30,7 @@ public class Mockup<T>
     
     T cast()
     {
-       var proxy := object.mockInferface(T);
+       var proxy := object.mockInferface(class T);
        
        ^ proxy;
    }
