@@ -139,7 +139,7 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    return found;
 }
 
-inline void copy(char* buffer, ustr_t word, size_t& copied, size_t maxLength)
+static inline void copy(char* buffer, ustr_t word, size_t& copied, size_t maxLength)
 {
    size_t length = getlength(word);
 
@@ -152,7 +152,7 @@ inline void copy(char* buffer, ustr_t word, size_t& copied, size_t maxLength)
    copied += length;
 }
 
-inline void copy(char* buffer, int value, size_t& copied)
+static inline void copy(char* buffer, int value, size_t& copied)
 {
    String<char, 10> tmp;
    tmp.appendInt(value);
@@ -205,7 +205,7 @@ bool RTManager :: loadSignature(ref_t subjectRef, pos_t argCount, addr_t* addres
    ref_t actionPtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen);
    if (actionPtr != 0) {
       uintptr_t singPtr = 0;
-      msection->read(mtableOffset + subjectRef * MessageEntryLen + sizeof(uintptr_t), &singPtr, sizeof(uintptr_t));
+      msection->read(mtableOffset + subjectRef * MessageEntryLen + (int)sizeof(uintptr_t), &singPtr, sizeof(uintptr_t));
 
       for (pos_t i = 0; i < argCount; i++) {
          addresses[i] = ((addr_t*)singPtr)[i];
@@ -256,7 +256,7 @@ ref_t RTManager :: loadStrongSubject(ref_t weakRef, ArgumentAddressList& list)
          bool found = true;
          size_t counter = list.count();
          for (size_t i = 0; i < counter; i++) {
-            addr_t argTypeRef = MemoryBase::getAddrT(msection, signPtr + i * sizeof(addr_t));
+            addr_t argTypeRef = MemoryBase::getAddrT(msection, (pos_t)(signPtr + i * sizeof(addr_t)));
 
             if (list[i] != argTypeRef) {
                found = false;

@@ -37,11 +37,9 @@ In development:
   --------------------------------------
   * current : #590 : implementing interface injection : strong interface
   ====================================== 
-  - fix Mockup for x64
-  - remove tracing code
+  - test with indexed methods (must be copied as well)
 
   - modify tutorial decorator example
-  - test with indexed methods (must be copied as well)
   - implement GetClassOutput & InjectProxyTypeLA for elenavm
   - proxy : field cannot be used (due to current implementation)
   --------------------------------------

@@ -37,14 +37,14 @@ constexpr int struct_mask = elStructMask64;
 
 #endif
 
-inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
+static inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
 {
    uintptr_t str = *(uintptr_t*)(ptr - sizeof(VMTHeader) + index * sizeof(uintptr_t));
 
    return str;
 }
 
-inline uintptr_t RetrieveVMT(uintptr_t ptr)
+static inline uintptr_t RetrieveVMT(uintptr_t ptr)
 {
    return *(uintptr_t*)(ptr - elObjectOffset);
 }
@@ -139,7 +139,7 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    if (!proxyVMTAddress) {
       // NOTE : probably better to create a custom package, but for a moment we can simply copy it
       uintptr_t nameAddr = createPermString(env, *dynamicName, stringVMT);
-      size_t srcLength = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
+      size_t srcLength = SystemRoutineProvider::GetTotalVMTLength(srcVMTPtr);
       size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset + staticLen * sizeof(uintptr_t);
       int flags = SystemRoutineProvider::GetFlags(srcVMTPtr);
 
@@ -162,7 +162,7 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
       VMTEntry* src = (VMTEntry*)srcVMTPtr;
 
       header->parentRef = (addr_t)srcVMTPtr;
-      header->count = srcLength;
+      header->count = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
       header->flags = flags & ~elDebugMask;
       header->classRef = (addr_t)base;
 
@@ -182,7 +182,7 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
          else {
             addr_t handler = base[0].address;
 
-            addr_t outputPtr = SystemRoutineProvider::GetMessageOutput(srcVMTPtr, src[i].message);
+            addr_t outputPtr = SystemRoutineProvider::GetMessageOutput(srcVMTPtr, (mssg_t)src[i].message);
             if (outputPtr == INVALID_ADDR) {
                if (!weakInterface)
                   return INVALID_ADDR;
@@ -191,7 +191,7 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
                handler = retrieveDispatchAndCast((void*)outputPtr);
                if (!handler)
                   return INVALID_ADDR;
-            }            
+            }
 
             entries[i].message = src[i].message;
             entries[i].address = handler;
@@ -235,7 +235,7 @@ void SystemRoutineProvider :: InitGC(SystemEnv* env, SystemSettings settings)
    int page_mask = settings.page_mask;
 
    // ; allocate memory heap
-   env->gc_table->gc_header = NewHeap(settings.yg_total_size,  settings.yg_committed_size);
+   env->gc_table->gc_header = NewHeap(settings.yg_total_size, settings.yg_committed_size);
 
    uintptr_t mg_ptr = NewHeap(settings.mg_total_size, settings.mg_committed_size);
    env->gc_table->gc_start = mg_ptr;
@@ -271,7 +271,7 @@ void SystemRoutineProvider :: InitApp(SystemEnv* env)
    InitGC(env, settings);
 }
 
-inline uintptr_t getContent(uintptr_t ptr)
+static inline uintptr_t getContent(uintptr_t ptr)
 {
    return *(uintptr_t*)ptr;
 }
@@ -329,7 +329,20 @@ size_t SystemRoutineProvider :: GetVMTLength(void* classPtr)
    return header->count;
 }
 
-addr_t SystemRoutineProvider::GetParent(void* classPtr)
+size_t SystemRoutineProvider :: GetTotalVMTLength(void* classPtr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+
+   size_t totalLength = header->count;
+
+   VMTEntry* entries = (VMTEntry*)classPtr;
+   while (entries[totalLength].message != 0)
+      totalLength++;
+
+   return totalLength;
+}
+
+addr_t SystemRoutineProvider :: GetParent(void* classPtr)
 {
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
 
@@ -363,7 +376,7 @@ pos_t SystemRoutineProvider :: GetFlags(void* classPtr)
    return (pos_t)header->flags;
 }
 
-size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip, 
+size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip,
    size_t maxLength, bool vmMode)
 {
    RTManager manager(msection, nullptr);
@@ -382,12 +395,12 @@ size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPt
             if (output[j] == weakMessage) {
                duplicate = true;
                break;
-            }              
+            }
          }
          if (!duplicate) {
             output[counter] = manager.loadWeakMessage(weakMessage, vmMode);
             counter++;
-         }         
+         }
       }
       else break;
    }
