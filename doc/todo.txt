@@ -17,16 +17,11 @@ In development:
   --------------------------------------
   * samples
   ====================================== 
-  * elenavm : LoadStrongMessageLA
+  * current - elenavm : LoadStrongMessageLA
   ====================================== 
   - implement
   - test
   --------------------------------------
-  * current - #618 ldoc
-  ====================================== 
-  - support search by class name
-  - fix Func<T1,T1,system'IntNumber> - no need to be created
-
 
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
