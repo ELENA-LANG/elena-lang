@@ -82,14 +82,18 @@ namespace elena_lang
    protected:
       AddressMap  _generatedClasses;
 
+      bool loadArgumentList(ustr_t argumentList, ArgumentAddressList& list);
+      bool parseStrongMessage(ustr_t messageName, pos_t& argCount, ref_t& flags, ref_t& weakAction, ArgumentAddressList& list);
+
       uintptr_t createPermString(SystemEnv* env, ustr_t s, uintptr_t classPtr);
       uintptr_t createPermVMT(SystemEnv* env, size_t size);
 
       addr_t retrieveDispatchAndCast(void* vMTPtr);
 
+      virtual addr_t loadClassReference(ustr_t name) = 0;
+
    public:
       virtual ref_t loadSubject(ustr_t actionName) = 0;
-
       addr_t injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex/*, addr_t* addresses, size_t length*/);
 
       addr_t execute(void* symbolListEntry);

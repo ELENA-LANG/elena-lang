@@ -120,7 +120,7 @@ namespace elena_lang
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
 
       addr_t loadSymbol(ustr_t name);
-      addr_t loadClassReference(ustr_t name);
+      addr_t loadClassReference(ustr_t name) override;
 
       mssg_t loadMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);

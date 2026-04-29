@@ -211,7 +211,7 @@ namespace collections
       }
    }
 
-   public sealed class SortedArrayList : Indexable, info("A sorted weak list")
+   public sealed class SortedArrayList : Indexable, info("A sorted weak list of key-value pairs")
    {
       VarTuple<object, object>[] _array;
       Reference<int>             _length;
@@ -219,24 +219,24 @@ namespace collections
 
       Func<object,object,int>    _comparator;
 
-      constructor() : info("Creates an empty list sorted by ascending value")
+      constructor() : info("Creates an empty list sorted by ascending key")
       {
          _length := 0;
          _capacity := 0;
          _comparator := (object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1));
       }
 
-      constructor(Func<object,object,int> comparator) : info("Creates an empty list with a custom oredering function<br/>The function returns -1 if a pair of items is ordered, 0 if they are equal and 1 otherwise")
+      constructor(Func<object,object,int> comparator) : info("Creates an empty list with a custom oredering function<br/>The function returns -1 if a pair of item keys is ordered, 0 if they are equal and 1 otherwise")
       {
          _length := 0;
          _capacity := 0;
          _comparator := comparator;
       }
 
-      constructor allocate(int capacity) : info("Creates an empty list sorted by ascending value with pre-allocated slots")
+      constructor allocate(int capacity) : info("Creates an empty list sorted by ascending key with pre-allocated slots")
          <= allocate(capacity, (object l,object r => (l < r) ? -1 : ((l == r) ? 0 : 1)));
 
-      constructor allocate(int capacity, Func<object,object,int> comparator) : info("Creates an empty list with a custom oredering function with pre-allocated slots<br/>The function returns -1 if a pair of items is ordered, 0 if they are equal and 1 otherwise")
+      constructor allocate(int capacity, Func<object,object,int> comparator) : info("Creates an empty list with a custom oredering function with pre-allocated slots<br/>The function returns -1 if a pair of item keys is ordered, 0 if they are equal and 1 otherwise")
       {
          _length := 0;
          _capacity := capacity;
@@ -244,12 +244,11 @@ namespace collections
          _comparator := comparator;
       }
 
-      constructor allocate() : info("Creates an empty list sorted by ascending value with 24 pre-allocated slots")
+      constructor allocate() : info("Creates an empty list sorted by ascending key with 32 pre-allocated slots")
          <= allocate(32);
 
       int Length : info("Returns the number of elements in the list")
       {
-         /// Reads the number of list item to the output parameter
          get()
          {
             int retVal := *_length;
@@ -277,7 +276,7 @@ namespace collections
          }
       }
 
-      append(object key, object item)
+      append(object key, object item) : info("Adds a key-value pair, the position of the element is defined by key using the given comparator")
       {
          expand();
 
@@ -308,8 +307,7 @@ namespace collections
          _length.append(1);
       }
 
-      /// Returns the object at the specified position
-      at(int index)
+      at(int index) : info("Returns the value of a key-value pair at the specified position")
       {
          int len := *_length;
          if:not (len > index)
@@ -318,8 +316,7 @@ namespace collections
          ^ _array[index].Item2
       }      
 
-      /// Returns the object at the specified position
-      setAt(int index, object o)
+      setAt(int index, object o) : info("Sets the value of a key-value pair at the specified position")
       {
          int len := *_length;
          if:not (len > index)
@@ -329,8 +326,7 @@ namespace collections
          item.Item2 := o
       }
 
-      /// Removes an object at the specified position
-      remove(int index)
+      remove(int index) : info("Removes a key-value pair at the specified position")
       {
          if (index >= *_length)
             { OutOfRangeException.raise() };
@@ -347,13 +343,12 @@ namespace collections
          }
       }
 
-      /// Clears the list
-      clear()
+      clear() : info("Removes all key-value paires")
       {
          _length.Value := 0
       }
 
-      trim(int pos)
+      trim(int pos) : info("Removes the last <b>pos</b> key-value pairs of the collection")
       {
          if (pos > *_length)
             { OutOfRangeException.raise() };
@@ -361,8 +356,7 @@ namespace collections
          _length.Value := pos
       }
 
-      /// Returns the list enumerator
-      Enumerator enumerator() = new BaseEnumerator
+      Enumerator enumerator() : info("Returns the list enumerator") = new BaseEnumerator
       {
          this index := -1;
            
@@ -378,8 +372,7 @@ namespace collections
          }
       };
 
-      /// Returns the list indexer
-      Indexer indexer() = new BaseIndexer
+      Indexer indexer() : info("Returns the list indexer") = new BaseIndexer
       {
          this index := 0;
            
@@ -395,8 +388,8 @@ namespace collections
       };
    }
 
-   // --- SortedList<TKey,TValue> ---
-   public sealed class SortedList<TKey, TValue> : Enumerable<TValue>
+   // --- SortedList<TKey,TValue> ---                                                      
+   public sealed class SortedList<TKey, TValue> : Enumerable<TValue>, info("A sorted strong typed list of key-value pairs")
    {
       VarTuple<TKey, TValue>[] _array;
       Reference<int>           _length;
@@ -404,24 +397,24 @@ namespace collections
 
       Func<TKey,TKey,int>    _comparator;
 
-      constructor()
+      constructor() : info("Creates an empty list sorted by an ascending key")
       {
          _length := 0;
          _capacity := 0;
          _comparator := (TKey l,TKey r => (l < r) ? -1 : ((l == r) ? 0 : 1));
       }
 
-      constructor(Func<TKey,TKey,int> comparator)
+      constructor(Func<TKey,TKey,int> comparator) : info("Creates an empty list with a custom oredering function<br/>The function returns -1 if a pair of keys is ordered, 0 if they are equal and 1 otherwise")
       {
          _length := 0;
          _capacity := 0;
          _comparator := comparator;
       }
 
-      constructor allocate(int capacity)
+      constructor allocate(int capacity) : info("Creates an empty list sorted by ascending key with pre-allocated slots")
          <= allocate(capacity, (TKey l,TKey r => (l < r) ? -1 : ((l == r) ? 0 : 1)));
 
-      constructor allocate(int capacity, Func<TKey,TKey,int> comparator)
+      constructor allocate(int capacity, Func<TKey,TKey,int> comparator) : info("Creates an empty list with a custom oredering function with pre-allocated slots<br/>The function returns -1 if a pair of items is ordered, 0 if they are equal and 1 otherwise")
       {
          _length := 0;
          _capacity := capacity;
@@ -429,12 +422,11 @@ namespace collections
          _comparator := comparator;
       }
 
-      constructor allocate()
+      constructor allocate() : info("Creates an empty list sorted by ascending value with 32 pre-allocated slots")
          <= allocate(32);
 
-      int Length
+      int Length : info("Returns the number of elements in the list")
       {
-         /// Reads the number of list item to the output parameter
          get()
          {
             int retVal := *_length;
@@ -462,7 +454,7 @@ namespace collections
          }
       }
 
-      append(TKey key, TValue item)
+      append(TKey key, TValue item) : info("Adds a key-value pair, the position of the element is defined by key using the given comparator")
       {
          expand();
 
@@ -493,8 +485,7 @@ namespace collections
          _length.append(1);
       }
 
-      /// Returns the object at the specified position
-      TValue at(int index)
+      TValue at(int index) : info("Returns the value of a key-value pair at the specified position")
       {
          int len := *_length;
          if:not (len > index)
@@ -503,8 +494,7 @@ namespace collections
          ^ _array[index].Item2
       }      
 
-      /// Returns the object at the specified position
-      setAt(int index, TValue o)
+      setAt(int index, TValue o) : info("Sets the value of a key-value pair at the specified position")
       {
          int len := *_length;
          if:not (len > index)
@@ -514,8 +504,7 @@ namespace collections
          item.Item2 := o
       }
 
-      /// Removes an object at the specified position
-      remove(int index)
+      remove(int index) : info("Removes a key-value pair at the specified position")
       {
          if (index >= *_length)
             { OutOfRangeException.raise() };
@@ -532,13 +521,12 @@ namespace collections
          }
       }
 
-      /// Clears the list
-      clear()
+      clear() : info("Removes all key-value paires")
       {
          _length.Value := 0
       }
 
-      trim(int pos)
+      trim(int pos) : info("Removes the last <b>pos</b> key-value pairs of the collection")
       {
          if (pos > *_length)
             { OutOfRangeException.raise() };
@@ -546,8 +534,7 @@ namespace collections
          _length.Value := pos
       }
 
-      /// Returns the list enumerator
-      Enumerator<TValue> enumerator() = new BaseEnumerator<TValue>
+      Enumerator<TValue> enumerator() : info("Returns the list enumerator") = new BaseEnumerator<TValue>
       {
          this index := -1;
            
@@ -563,8 +550,7 @@ namespace collections
          }
       };
 
-      /// Returns the list indexer
-      Indexer<TValue> indexer() = new BaseIndexer<TValue>
+      Indexer<TValue> indexer() : info("Returns the list indexer") = new BaseIndexer<TValue>
       {
          this index := 0;
            

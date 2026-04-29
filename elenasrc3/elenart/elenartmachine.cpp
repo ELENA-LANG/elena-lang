@@ -239,30 +239,13 @@ mssg_t ELENARTMachine :: loadMessage(ustr_t messageName)
 
 mssg_t ELENARTMachine :: loadStrongMessage(ustr_t messageName)
 {
+   ref_t weakAction = 0;
    pos_t argCount = 0;
    ref_t flags = 0;
 
-   IdentifierString actionName;
-   IdentifierString argumentString;
-   ByteCodeUtil::parseMessageName(messageName, actionName, flags, argCount);
-
-   size_t argIndex = (*actionName).find('<');
-   if (argIndex == NOTFOUND_POS)
-      return 0;
-
-   assert((*actionName).endsWith(">"));
-
-   argumentString.copy(actionName.str() + argIndex + 1);
-   argumentString.cut(argumentString.length() - 1, 1);
-   actionName.cut(argIndex, actionName.length() - argIndex);
-
-   mssg_t weakAction = loadSubject(*actionName);
-   if (weakAction == 0)
-      return 0;
-
    ArgumentAddressList list;
-   if (!loadArgumentList(*argumentString, list))
-      return false;
+   if (!parseStrongMessage(messageName, argCount, flags, weakAction, list))
+      return 0;
 
    ImageSection msection(_mdata, 0x1000000);
    RTManager rtmanager(&msection, nullptr);
@@ -289,31 +272,6 @@ mssg_t ELENARTMachine :: loadAction(ustr_t actionName)
 addr_t ELENARTMachine :: loadDispatcherOverloadlist(ustr_t referenceName)
 {
    return retrieveGlobalAttribute(GA_EXT_OVERLOAD_LIST, referenceName);
-}
-
-bool ELENARTMachine :: loadArgumentList(ustr_t argumentList, ArgumentAddressList& list)
-{
-   IdentifierString arg;
-
-   size_t start = 0;
-   size_t end = NOTFOUND_POS;
-   do {
-      end = argumentList.findSub(start, ',');
-      if (end == NOTFOUND_POS) {
-         arg.copy(argumentList + start);
-      }
-      else arg.copy(argumentList + start, end - start);
-
-      addr_t classAddr = loadClassReference(*arg);
-      if (classAddr == 0)
-         return false;
-
-      list.add(classAddr);
-
-      start = end + 1;
-   } while (end != NOTFOUND_POS);
-
-   return true;
 }
 
 int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t message, void* output)

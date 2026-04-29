@@ -2010,7 +2010,7 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
 
    if (classInfo->extensions.count() > 0) {
       writeExtensionsHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo, classInfo->extensions, false);
+      generateMethodList(bodyWriter, classInfo, classInfo->extensions, true);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 

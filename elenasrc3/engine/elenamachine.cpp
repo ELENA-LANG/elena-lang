@@ -6,6 +6,7 @@
 
 #include "elena.h"
 // --------------------------------------------------------------------------
+#include "bytecode.h"
 #include "elenamachine.h"
 #include "rtmanager.h"
 
@@ -214,6 +215,57 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    SystemRoutineProvider::overrideClass(proxy, (void*)proxyVMTAddress);
 
    return (addr_t)proxy;
+}
+
+bool ELENAMachine :: loadArgumentList(ustr_t argumentList, ArgumentAddressList& list)
+{
+   IdentifierString arg;
+
+   size_t start = 0;
+   size_t end = NOTFOUND_POS;
+   do {
+      end = argumentList.findSub(start, ',');
+      if (end == NOTFOUND_POS) {
+         arg.copy(argumentList + start);
+      }
+      else arg.copy(argumentList + start, end - start);
+
+      addr_t classAddr = loadClassReference(*arg);
+      if (classAddr == 0)
+         return false;
+
+      list.add(classAddr);
+
+      start = end + 1;
+   } while (end != NOTFOUND_POS);
+
+   return true;
+}
+
+bool ELENAMachine :: parseStrongMessage(ustr_t messageName, pos_t& argCount, ref_t& flags, ref_t& weakAction, ArgumentAddressList& list)
+{
+   IdentifierString actionName;
+   IdentifierString argumentString;
+   ByteCodeUtil::parseMessageName(messageName, actionName, flags, argCount);
+
+   size_t argIndex = (*actionName).find('<');
+   if (argIndex == NOTFOUND_POS)
+      return 0;
+
+   assert((*actionName).endsWith(">"));
+
+   argumentString.copy(actionName.str() + argIndex + 1);
+   argumentString.cut(argumentString.length() - 1, 1);
+   actionName.cut(argIndex, actionName.length() - argIndex);
+
+   weakAction = loadSubject(*actionName);
+   if (weakAction == 0)
+      return false;
+
+   if (!loadArgumentList(*argumentString, list))
+      return false;
+
+   return true;
 }
 
 // --- SystemRoutineProvider ---

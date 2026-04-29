@@ -13,16 +13,19 @@ In development:
   ====================================== 
   - post about using elt to call you class in design-time
   - list extension properties in indexes
-  - provide descriptions for all classes (from collections\sorted_lists.l)
+  - provide descriptions for all classes (from math\math.l)
   --------------------------------------
   * samples
   ====================================== 
-  * current : backlog
+  * elenavm : LoadStrongMessageLA
   ====================================== 
-  - implement LoadStrongMessageLA for VM
-  - test elenavm for Linux
+  - implement
+  - test
   --------------------------------------
-
+  * current - #618 ldoc
+  ====================================== 
+  - support search by class name
+  - fix Func<T1,T1,system'IntNumber> - no need to be created
 
 
 
