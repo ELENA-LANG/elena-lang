@@ -18,11 +18,8 @@ public sealed Reference<T> : BaseVariable,
       value := val
    }
 
-   get T Value()
-      : info("Returns the variable value")
-   {
-      ^ value
-   }
+   get T Value() : info("Returns the variable value")
+      = value;
 
    set Value(T val)
       : info("Set the variable value")

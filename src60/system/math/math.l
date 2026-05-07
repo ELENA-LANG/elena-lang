@@ -47,31 +47,31 @@ namespace math
 
    public extension mathOp
    {            
-      Rounded
+      real Rounded : info("Returns a number rounded to the closest integer number as a real number")
          = cast real(self).Rounded;
       
-      RoundedInt
+      int RoundedInt : info("Returns a number rounded to the closest integer number as an integer")
          = IntConvertor.convert(cast real(self).Rounded);
       
-      Integer
+      real Integer : info("Returns an integer part of the number as a real number")
          = cast real(self).Integer;
       
-      IntegerInt
+      int IntegerInt : info("Returns an integer part of the number as an integer")
          = IntConvertor.convert(cast real(self).Integer);
 
-      mod(n)
+      mod(n) : info("Returns the remainder of an integer division")
          = MathController.mod(self, n);
     
-      frac()
+      real frac() : info("Returns the fractional part of the real number")
          = cast real(self).frac();
     
-      real exp()
+      real exp() : info("Returns the result of e raised to the power of the number")
          = cast real(self).exp();
     
-      ln()
+      real ln() : info("Returns the natural logarithm of the number")
          = cast real(self).ln();
     
-      real log10()
+      real log10() : info("Returns the base 10 logarithm of the real number")
       {
          real x := mathOp.ln(self).ln();
          real y := mathOp.ln(10);
@@ -79,28 +79,28 @@ namespace math
          ^ x / y
       }
 
-      sin()
+      real sin() : info("Returns the trigonometric sines of the number")
          = cast real(self).sin();
     
-      cos()
+      real cos() : info("Returns the trigonometric cosines of the number")
          = cast real(self).cos();
     
-      tan()
+      real tan() : info("Returns the trigonometric tangents of the number")
          = cast real(self).tan();
     
-      arctan()
+      real arctan() : info("Returns the trigonometric inverse tangents (arctan) of the number")
          = cast real(self).arctan();
                 
-      arcsin()
+      real arcsin() : info("Returns the trigonometric inverse sines (arcsin) of the number")
          = cast real(self).arcsin();
                         
-      arccos()
+      real arccos() : info("Returns the trigonometric inverse cosines (arccos) of the number")
          = cast real(self).arccos();
    }      
 
-   public real Pi
+   public real Pi : info("A Pi number")
       = MathController.pi();
 
-   public real E
+   public real E : info("Euler's number")
       = MathController.e();
 }

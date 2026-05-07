@@ -681,7 +681,7 @@ namespace io
 
       string combinePaths(string basePath, string extraPath)
       {
-         if (basePath.isEmpty() || (!directoryControl.isRelativePath(extraPath))) {
+         if (basePath.isEmpty() || !directoryControl.isRelativePath(extraPath)) {
             ^ extraPath
          };
 

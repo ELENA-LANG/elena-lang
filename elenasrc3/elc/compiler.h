@@ -106,6 +106,8 @@ namespace elena_lang
       ProjectVariable,
       ExternalVar,
       Shortcut,
+      EncapseField,  // the internal field, used for direct access to the field
+      EncapseFieldAddress
    };
 
    enum TargetMode
@@ -1551,6 +1553,7 @@ namespace elena_lang
          ObjectInfo compileAltMessageOperation(SyntaxNode node/*, ref_t expectedRef, ExpressionAttribute attrs*/);
 
          ObjectInfo compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode);
+         ObjectInfo compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode);
          ObjectInfo compileEvalOnlySpecialOperation(SyntaxNode node);
          ObjectInfo compileSpecialOperation(/*SyntaxNode node, */int operatorId/*, ref_t expectedRef*/);
          ObjectInfo compileAssignOperation(SyntaxNode node, int operatorId, ref_t expectedRef);
@@ -1630,6 +1633,7 @@ namespace elena_lang
          ObjectInfo boxRefArgumentLocallyInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxVariadicArgument(ObjectInfo info);
+         ObjectInfo boxEncapseField(ObjectInfo info, bool stackSafe);
 
          ObjectInfo unboxArguments(ObjectInfo retVal, bool clearInfo);
 
@@ -1805,6 +1809,8 @@ namespace elena_lang
       bool checkifSingleObject(Scope& scope, SyntaxNode node);
 
       static int defineFieldSize(Scope& scope, ObjectInfo info);
+
+      static ObjectInfo defineEncapseSource(ObjectInfo info);
 
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode, bool readOnly);
       ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode);

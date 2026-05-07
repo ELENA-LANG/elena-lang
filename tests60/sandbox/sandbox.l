@@ -1,70 +1,21 @@
 import extensions;
-import system'dynamic;
 
-public interface IFunction
+struct X
 {
-   abstract real calculate(real arg);
-}
-
-public class LinearFunction : IFunction
-{
-   real a;
-   real b;
-
-   constructor(real a, real b)
-   {
-      this a := a;
-      this b := b;
-   }
-
-   real calculate(real x)
-      = x*a + b;
-}
-
-public class Mockup
-{
-   field object;
-
-   constructor(object)
-   {
-      this object := object;
-   }
-
-   generic cast()
-   {
-      var type := __received.__getFirstSignatureMember();
-
-      var proxy := ::{ dispatch() => object; };
-      proxy.__injectInferface(type);
+   int value;
    
-      ^ __received(proxy);
-   }
-}
-
-public singleton Actor
-{
-   invoke(IFunction function)
+   int Value
+      = value;
+      
+   constructor()
    {
-      Console.printLine("Calculating f(1)", function.calculate(1));
+      value := 2
    }
 }
 
 public Program()
 {
-   //IFunction f := new LinearFunction(2, 3);
-   IFunction f := new LinearFunction(2.3, 3.3);
+   X x := default;
 
-   auto mssg := new StrongMessage("calculate<system'RealNumber>[2]");
-
-   var found := f.__getClass().respondTo(mssg);
-
-   Console.printLine(f, found ? " responds to " : " does not respond to ", mssg);   
-
-   if (found)
-      Console.printLine(mssg, " returns an instance of ", f.__getMethodOutput(mssg));
-
-   var mockup := new Mockup(::{ real calculate(real x) = x * x; });
-
-   Actor.invoke(f);
-   Actor.invoke(mockup);
+   int r := *x
 }

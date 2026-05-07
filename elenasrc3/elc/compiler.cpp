@@ -5288,6 +5288,17 @@ static inline bool isBoxingRequired(ObjectInfo info, bool allowByRefParam)
    }
 }
 
+ObjectInfo Compiler :: defineEncapseSource(ObjectInfo info)
+{
+   if (info.kind == ObjectKind::EncapseFieldAddress) {
+      return { ObjectKind::LocalAddress, {}, info.extra};
+   }
+   if (info.mode == TargetMode::None) {
+      return { ObjectKind::Local, {}, info.extra };
+   }
+   else return {};
+}
+
 int Compiler::defineFieldSize(Scope& scope, ObjectInfo info)
 {
    int size = 0;
@@ -12716,6 +12727,26 @@ void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
    compiler->_errorProcessor->info(infoCurrentMethod, *messageName);
 #endif // FULL_OUTOUT_INFO
 
+   // if it is a value operator
+   if (scope.message == scope.moduleScope->buildins.value_message) {
+      // try to define Field Getter
+      classScope->info.attributes.exclude({ scope.message, ClassAttribute::FieldGetter });
+
+      if (compiler->_optMode) {
+         Interpreter interpreter(scope.moduleScope, compiler->_logic);
+
+         ObjectInfo retVal = compiler->evalExpression(interpreter, scope, current.findChild(SyntaxKey::ReturnExpression).firstChild(), {}, true);
+         switch (retVal.kind) {
+            case ObjectKind::FieldAddress:
+            case ObjectKind::Field:
+               classScope->info.attributes.add({ scope.message, ClassAttribute::FieldGetter }, retVal.argument);
+               break;
+            default:
+               break;
+         }
+      }
+   }
+
    // if it is a dispatch handler
    if (scope.message == scope.moduleScope->buildins.dispatch_message) {
       compiler->compileDispatcherMethod(writer, scope, current,
@@ -13032,7 +13063,6 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
       case SyntaxKey::NotLessOperation:
       case SyntaxKey::NotGreaterOperation:
       case SyntaxKey::NestedExpression:
-      case SyntaxKey::ValueOperation:
       case SyntaxKey::BAndOperation:
       case SyntaxKey::BOrOperation:
       case SyntaxKey::BXorOperation:
@@ -13042,6 +13072,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
       case SyntaxKey::NegateOperation:
       case SyntaxKey::XorOperation:
          retVal = compileOperation(current, (int)current.key - OPERATOR_MAKS, targetRef, mode);
+         break;
+      case SyntaxKey::ValueOperation:
+         retVal = compileValueOperation(current, (int)current.key - OPERATOR_MAKS, targetRef, mode);
          break;
       case SyntaxKey::ExprValOperation:
       case SyntaxKey::SizeOperation:
@@ -13755,6 +13788,32 @@ ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t
       expectedRef, true, false, true, attrs);
 
    return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode)
+{
+   ObjectInfo loperand = compile(node.firstChild(), 0,
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
+
+   // validate if direct getter exists for the loperand
+   mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
+   CheckMethodResult result = {};
+   result.retrieveGetter = compiler->_optMode;
+   bool found =  EAttrs::test(mode, EAttr::RetValExpected) && compiler->_logic->resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
+      loperand.typeInfo), message, result);
+
+   if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true) 
+      && (loperand.kind == ObjectKind::LocalAddress || loperand.kind == ObjectKind::Local))
+   {
+      return { loperand.kind == ObjectKind::LocalAddress ? ObjectKind::EncapseFieldAddress : ObjectKind::EncapseField,
+         result.outputInfo, result.getterFieldOffset, loperand.argument };
+   }
+   else {
+      ArgumentsInfo arguments;
+      arguments.add(loperand);
+
+      return compileOperation(node, arguments, operatorId, targetRef);
+   }
 }
 
 ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode)
@@ -16280,6 +16339,9 @@ ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
             return boxPtrLocally(info);
          }
          else return info;
+      case ObjectKind::EncapseField:
+      case ObjectKind::EncapseFieldAddress:
+         return boxEncapseField(info, stackSafe & !forced);
       default:
          return info;
    }
@@ -16438,6 +16500,7 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
    bool localFieldMode = false;
    bool accMode = false;
    bool lenRequired = false;
+   bool localTarget = false;
 
    switch (target.kind) {
       case ObjectKind::Local:
@@ -16473,6 +16536,7 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          if (size > 0) {
             operationType = BuildKey::Copying;
             operand = target.reference;
+            localTarget = true;
          }
          else {
             lenRequired = true;
@@ -16573,7 +16637,18 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          return false;
    }
 
-   if (!writeObjectInfo(boxArgument(exprVal, stackSafe, true, false)))
+   if (localTarget && (exprVal.kind == ObjectKind::EncapseField || exprVal.kind == ObjectKind::EncapseFieldAddress)) {
+      ObjectInfo encapseSource = defineEncapseSource(exprVal);
+      if (encapseSource.kind == ObjectKind::Unknown)
+         return false;
+
+      writeObjectInfo(target);
+      writer->appendNode(BuildKey::SavingInStack, 0);
+      writeObjectInfo(encapseSource);
+      operationType = BuildKey::CopyingAccField;
+      operand = exprVal.argument;
+   }
+   else if (!writeObjectInfo(boxArgument(exprVal, stackSafe, true, false)))
       return false;
 
    if (fieldMode) {
@@ -17597,6 +17672,16 @@ ObjectInfo Compiler::Expression::boxPtrLocally(ObjectInfo info)
    writer->appendNode(BuildKey::SetImmediateField);
 
    return tempLocal;
+}
+
+ObjectInfo Compiler::Expression :: boxEncapseField(ObjectInfo info, bool stackSafe)
+{
+   ObjectInfo tempLocal = declareTempLocal(info.typeInfo.typeRef, false);
+
+   bool dummy = false;
+   compileAssigningOp(tempLocal, info, dummy);
+
+   return boxArgumentLocally(tempLocal, stackSafe, false);
 }
 
 void Compiler::Expression::unboxArgumentLocaly(ObjectInfo temp, ObjectKey key)

@@ -324,6 +324,7 @@ namespace elena_lang
       YieldContextSize = 0x80C,
       SourceTemplateRef = 0x10D,
       RuntimeDiscovered = 0x00E,
+      FieldGetter = 0x80F,
    };
 
    // === Reference constants ====

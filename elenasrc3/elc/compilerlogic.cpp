@@ -2482,6 +2482,11 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          result.kind = (ref_t)MethodHint::Sealed;
       }
 
+      if (result.retrieveGetter && info.attributes.exist({ message, ClassAttribute::FieldGetter }) && result.kind == (ref_t)MethodHint::Sealed) {
+         result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldGetter });
+      }
+      else result.retrieveGetter = false;
+
       return true;
    }
    else return false;

@@ -13,16 +13,48 @@ In development:
   ====================================== 
   - post about using elt to call you class in design-time
   - list extension properties in indexes
-  - provide descriptions for all classes (from math\math.l)
+  - provide descriptions for all classes (from calendar\date_routines.l)
   --------------------------------------
   * samples
   ====================================== 
-  * current - elenavm : LoadStrongMessageLA
+  * elenavm : LoadStrongMessageLA
   ====================================== 
   - implement
   - test
   --------------------------------------
+  * backlog
+  ====================================== 
+  - preloaded symbols must be inside try catch statement
+  - StrongMessage - display the message name correctly
+  - support : int[] a := Range.for(0, 1000000).toArray();
+  - xml : support attributes
+  - xml : xmlreader, xmlwriter
+  - implement toUInt, toSByte
+  - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
+  - refactore - Compiler :: declareVMTMessage - the function is too long
+  - auto loading only used namespaces (instead of all)
+  - Warn if the implicit conversion is used
+  - optimization : jumping, offset aligning
+  - pi optimization : at least 10% 
+  --------------------------------------
+  * current : native support for Value operator with a pointer / reference
+  ====================================== 
+  - recognize field-getter
+  - case 1 - a local struct; make sure the types are compatible
+  - case 2 - a local object
+  - case 3 - a field struct
+  - case 4 - a field object
+  - case 5 - others
+  - checl if works for a pointer and a reference
 
+  - design : if Value returns the struct / class field: "int x := *r" can be replaced with direct operation with a field;
+    xcopy can be used for copying to local temp; only for sealed method
+  - implement as a struct local field
+  - implement as an object field
+  - implement as field; as local; as result of operation; as a symbol
+  - unit test
+  - add to chagelog
+  - review is possible to replace arithmetic operation : "int x := *r + 1";
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2
