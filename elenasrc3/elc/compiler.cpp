@@ -3676,7 +3676,25 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
 
             //ref_t hints = current.findChild(SyntaxKey::Hints).arg.value;
          }
-         // check for possible
+         // check for possible field getter
+         if (current.arg.reference == scope.moduleScope->buildins.value_message) {
+            scope.info.attributes.exclude({ current.arg.reference, ClassAttribute::FieldGetter });
+
+            if (_optMode) {
+               Interpreter interpreter(scope.moduleScope, _logic);
+
+               ObjectInfo retVal = evalExpression(interpreter, scope, current.findChild(SyntaxKey::ReturnExpression).firstChild(), {}, true);
+               switch (retVal.kind) {
+               case ObjectKind::FieldAddress:
+               case ObjectKind::Field:
+                  scope.info.attributes.add({ current.arg.reference, ClassAttribute::FieldGetter }, retVal.argument);
+                  break;
+               default:
+                  break;
+               }
+            }
+         }
+
       }
       current = current.nextNode();
    }
@@ -12726,26 +12744,6 @@ void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
 
    compiler->_errorProcessor->info(infoCurrentMethod, *messageName);
 #endif // FULL_OUTOUT_INFO
-
-   // if it is a value operator
-   if (scope.message == scope.moduleScope->buildins.value_message) {
-      // try to define Field Getter
-      classScope->info.attributes.exclude({ scope.message, ClassAttribute::FieldGetter });
-
-      if (compiler->_optMode) {
-         Interpreter interpreter(scope.moduleScope, compiler->_logic);
-
-         ObjectInfo retVal = compiler->evalExpression(interpreter, scope, current.findChild(SyntaxKey::ReturnExpression).firstChild(), {}, true);
-         switch (retVal.kind) {
-            case ObjectKind::FieldAddress:
-            case ObjectKind::Field:
-               classScope->info.attributes.add({ scope.message, ClassAttribute::FieldGetter }, retVal.argument);
-               break;
-            default:
-               break;
-         }
-      }
-   }
 
    // if it is a dispatch handler
    if (scope.message == scope.moduleScope->buildins.dispatch_message) {

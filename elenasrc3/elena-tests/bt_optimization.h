@@ -287,6 +287,7 @@ namespace elena_lang
    protected:
       ref_t intReference;
       int   expectedError;
+      int   optMode;
 
       void SetUp() override;
 
@@ -325,6 +326,12 @@ namespace elena_lang
    };
 
    class StructFieldAssigning : public MethodScenarioTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class IntValueOperator : public IntOperation
    {
    protected:
       void SetUp() override;

@@ -39,8 +39,11 @@ In development:
   --------------------------------------
   * current : native support for Value operator with a pointer / reference
   ====================================== 
-  - recognize field-getter
+  - recognize field-getter : can it be done in declare mode?
   - case 1 - a local struct; make sure the types are compatible
+  - unit test - with optimization
+  - unit test - without optimization
+
   - case 2 - a local object
   - case 3 - a field struct
   - case 4 - a field object

@@ -848,6 +848,7 @@ void Lambda_CallingPrivateMethod :: SetUp()
 void IntOperation :: SetUp()
 {
    ScenarioTest::SetUp();
+   optMode = 0;
 }
 
 void IntOperation :: runTest(bool exceptionExpected, int scenario)
@@ -859,12 +860,16 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
    moduleScope->buildins.constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
+   moduleScope->buildins.value_message = 
+      encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
 
    moduleScope->aliases.add("int", intReference);
 
    moduleScope->predefined.add("nil", V_NIL);
+   moduleScope->predefined.add("default", V_DEFAULT);
 
-   Compiler* compiler = env.createCompiler();
+   Compiler* compiler = env.createCompiler(optMode);
 
    BuildTree output;
    BuildTreeWriter writer(output);
@@ -892,6 +897,8 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
    // Assess
    bool matched = false;
    if (!exceptionExpected) {
+      EXPECT_TRUE(catchedError == 0);
+
       matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
    }
    else matched = catchedError == expectedError;
@@ -957,3 +964,19 @@ void StructFieldAssigning :: SetUp()
    trueRef = 10;  // !! virtual references
    falseRef = 11;
 }
+
+// --- IntValueOperator ---
+
+void IntValueOperator :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntValueOperator);
+
+   BuildTreeSerializer::load(B_IntValueOperator, controlOutputNode);
+
+   intReference = 2;
+   targetRef = 4;
+}
+

@@ -298,12 +298,15 @@ void CompilerEnvironment :: setUpTemplateMockup(ref_t templateRef, ref_t element
    _templateMapping.add({ templateRef, elementRef }, reference);
 }
 
-Compiler* CompilerEnvironment :: createCompiler()
+Compiler* CompilerEnvironment :: createCompiler(int optMode)
 {
    auto compiler = new Compiler(nullptr, TestErrorProcessor::getInstance(), TestTemplateProssesor::getInstance(&_templateMapping), CompilerLogic::getInstance());
 
    compiler->setNoValidation();
    compiler->setDebugMode(false);
+
+   if (optMode > 0)
+      compiler->setOptimizationMode(optMode);
 
    return compiler;
 }
