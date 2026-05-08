@@ -5,7 +5,7 @@ struct X
    int value;
    
    int Value
-      = value;
+      = value + 2;
 /*      
    constructor()
    {

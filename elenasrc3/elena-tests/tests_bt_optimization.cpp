@@ -980,3 +980,17 @@ void IntValueOperator :: SetUp()
    targetRef = 4;
 }
 
+// --- IntValueOperatorNoOptimization ---
+
+void IntValueOperatorNoOptimization :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntValueOperator2);
+
+   BuildTreeSerializer::load(B_IntValueOperator2, controlOutputNode);
+
+   intReference = 2;
+   targetRef = 4;
+}

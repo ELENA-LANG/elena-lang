@@ -227,3 +227,8 @@ TEST_F(IntValueOperator, BuildTest)
 {
    runTest();
 }
+
+TEST_F(IntValueOperatorNoOptimization, BuildTest)
+{
+   runTest();
+}
