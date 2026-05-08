@@ -849,6 +849,8 @@ void IntOperation :: SetUp()
 {
    ScenarioTest::SetUp();
    optMode = 0;
+   byRefTemplateRef = INVALID_REF;
+   intByRefRef = 0;
 }
 
 void IntOperation :: runTest(bool exceptionExpected, int scenario)
@@ -868,6 +870,12 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
 
    moduleScope->predefined.add("nil", V_NIL);
    moduleScope->predefined.add("default", V_DEFAULT);
+
+   if (byRefTemplateRef != INVALID_REF) {
+      moduleScope->buildins.wrapperTemplateReference = byRefTemplateRef;
+
+      env.setUpTemplateMockup(byRefTemplateRef, intReference, intByRefRef);
+   }
 
    Compiler* compiler = env.createCompiler(optMode);
 
@@ -987,10 +995,13 @@ void IntValueOperatorNoOptimization :: SetUp()
    IntOperation::SetUp();
    optMode = 1;
 
-   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntValueOperator2);
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntRefeference, S_IntValueOperator2);
 
    BuildTreeSerializer::load(B_IntValueOperator2, controlOutputNode);
 
+   byRefTemplateRef = 0x80;
+
    intReference = 2;
-   targetRef = 4;
+   intByRefRef = 3;
+   targetRef = 5;
 }

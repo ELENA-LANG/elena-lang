@@ -285,7 +285,8 @@ namespace elena_lang
    class IntOperation : public ScenarioTest
    {
    protected:
-      ref_t intReference;
+      ref_t intReference, intByRefRef;
+      ref_t byRefTemplateRef;
       int   expectedError;
       int   optMode;
 
