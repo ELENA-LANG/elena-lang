@@ -1005,3 +1005,18 @@ void IntValueOperatorNoOptimization :: SetUp()
    intByRefRef = 3;
    targetRef = 5;
 }
+
+// --- ValueOperator ---
+
+void ValueOperator::SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntValueOperator3);
+
+   BuildTreeSerializer::load(B_IntValueOperator3, controlOutputNode);
+
+   intReference = 2;
+   targetRef = 4;
+}

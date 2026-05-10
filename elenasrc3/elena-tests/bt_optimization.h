@@ -343,6 +343,12 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+
+   class ValueOperator : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
 }
 
 #endif

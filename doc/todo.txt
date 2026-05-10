@@ -39,11 +39,8 @@ In development:
   --------------------------------------
   * current : native support for Value operator with a pointer / reference
   ====================================== 
-  - case 2 - a local object
-  - unit test - with optimization
-
-  - case 3 - a field struct
-  - case 4 - a field object
+  - case 3 - a field object
+  - case 4 - a field struct
   - case 5 - others
   - checl if works for a pointer and a reference
 
