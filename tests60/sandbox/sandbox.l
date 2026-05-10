@@ -1,21 +1,21 @@
 import extensions;
 
-struct X
+sealed class X
 {
    int value;
    
    int Value
-      = value + 2;
-/*      
+      = value;
+
    constructor()
    {
       value := 2
-   }*/
+   }
 }
 
 public Program()
 {
-   X x := default;
+   X x := new X();
 
-   int r := *x
+   var r := *x
 }

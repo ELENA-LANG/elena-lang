@@ -16506,6 +16506,7 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          scope.markAsAssigned(target);
          operationType = BuildKey::Assigning;
          operand = target.reference;
+         localTarget = true;
          break;
       case ObjectKind::ByRefParam:
          operationType = BuildKey::RefParamAssigning;
@@ -16640,11 +16641,17 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
       if (encapseSource.kind == ObjectKind::Unknown)
          return false;
 
-      writeObjectInfo(target);
-      writer->appendNode(BuildKey::SavingInStack, 0);
-      writeObjectInfo(encapseSource);
-      operationType = BuildKey::CopyingAccField;
-      operand = exprVal.argument;
+      if (exprVal.kind == ObjectKind::EncapseFieldAddress) {
+         writeObjectInfo(target);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+         writeObjectInfo(encapseSource);
+         operationType = BuildKey::CopyingAccField;
+         operand = exprVal.argument;
+      }
+      else {
+         writeObjectInfo(encapseSource);
+         writer->appendNode(BuildKey::Field, exprVal.reference);
+      }
    }
    else if (!writeObjectInfo(boxArgument(exprVal, stackSafe, true, false)))
       return false;
@@ -17674,7 +17681,7 @@ ObjectInfo Compiler::Expression::boxPtrLocally(ObjectInfo info)
 
 ObjectInfo Compiler::Expression :: boxEncapseField(ObjectInfo info, bool stackSafe)
 {
-   ObjectInfo tempLocal = declareTempLocal(info.typeInfo.typeRef, false);
+   ObjectInfo tempLocal = declareTempLocal(info.typeInfo.typeRef, info.kind == ObjectKind::EncapseField);
 
    bool dummy = false;
    compileAssigningOp(tempLocal, info, dummy);
