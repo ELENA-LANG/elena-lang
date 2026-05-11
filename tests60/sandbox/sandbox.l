@@ -9,31 +9,32 @@ struct Y
    foo()
    {
       int n := *self;
+      Console.writeLine(n);
    }
 }
 
-sealed class X
-{
-   Reference<int> index;
+//sealed class X
+//{
+//   Reference<int> index;
 //   Reference</*int*/string> index;
    
-   constructor() { index := 3 }
+//   constructor() { index := 3 }
 //   constructor() { index := /*3*/"3" }
 //   constructor() { index := new Reference<string>("3") }
 
-   foo()
-   {
+//   foo()
+//   {
 //       index.append(2);
 
-      /*int*/var value := *index;
+//      /*int*/var value := *index;
 
-      Console.printLine("foo=", value);
+//      Console.printLine("foo=", value);
 //      Console.printLine("foo=", *index);
-   }
-}
+//   }
+//}
 
 public Program()
 {
-   new X().foo();
+//   new X().foo();
    new Y().foo();
 }
