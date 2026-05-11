@@ -13805,11 +13805,6 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
          case ObjectKind::LocalAddress:
          case ObjectKind::Local:
             break;
-         case ObjectKind::Field:
-         case ObjectKind::Outer:
-         case ObjectKind::OuterField:
-         case ObjectKind::StaticField:
-         case ObjectKind::StaticThreadField:
          case ObjectKind::ReadOnlyFieldAddress:
          case ObjectKind::FieldAddress:
             loperand = boxLocally(loperand, true, true);
