@@ -40,9 +40,9 @@ In development:
   * current : native support for Value operator with a pointer / reference
   ====================================== 
   - case 3 - a field object
-  - unit test - a field struct
-  - unit test - a field object
-  - unit test - a field object and a variable
+  - unit test - a struct field
+  - unit test - a normal field
+  - unit test - value operator with self
 
   - case 4 - a field struct
   - case 5 - others

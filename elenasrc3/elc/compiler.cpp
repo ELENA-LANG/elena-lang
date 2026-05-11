@@ -13801,6 +13801,7 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
       loperand.typeInfo), message, result);
 
    if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true)) {
+      bool embeddable = false;
       switch (loperand.kind) {
          case ObjectKind::LocalAddress:
          case ObjectKind::Local:
@@ -13811,10 +13812,11 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
             break;
          default:
             loperand = saveToTempLocal(loperand);
+            embeddable = compiler->_logic->isEmbeddable(*scope.moduleScope, loperand.typeInfo);
             break;
       }
 
-      return { loperand.kind == ObjectKind::LocalAddress || loperand.kind == ObjectKind::TempLocalAddress ? ObjectKind::EncapseFieldAddress : ObjectKind::EncapseField, result.outputInfo, result.getterFieldOffset, loperand.argument };
+      return { loperand.kind == ObjectKind::LocalAddress || loperand.kind == ObjectKind::TempLocalAddress || embeddable ? ObjectKind::EncapseFieldAddress : ObjectKind::EncapseField, result.outputInfo, result.getterFieldOffset, loperand.argument };
    }
    else {
       ArgumentsInfo arguments;
