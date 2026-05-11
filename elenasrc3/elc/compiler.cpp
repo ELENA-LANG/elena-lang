@@ -5309,10 +5309,10 @@ static inline bool isBoxingRequired(ObjectInfo info, bool allowByRefParam)
 ObjectInfo Compiler :: defineEncapseSource(ObjectInfo info)
 {
    if (info.kind == ObjectKind::EncapseFieldAddress) {
-      return { ObjectKind::LocalAddress, {}, info.extra};
+      return { ObjectKind::LocalAddress, info.typeInfo, info.extra};
    }
    if (info.mode == TargetMode::None) {
-      return { ObjectKind::Local, {}, info.extra };
+      return { ObjectKind::Local, info.typeInfo, info.extra };
    }
    else return {};
 }
@@ -16514,7 +16514,6 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
    bool accMode = false;
    bool lenRequired = false;
    bool localTarget = false;
-   bool localAddressTarget = false;
 
    switch (target.kind) {
       case ObjectKind::Local:
@@ -16551,7 +16550,7 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          if (size > 0) {
             operationType = BuildKey::Copying;
             operand = target.reference;
-            localAddressTarget = true;
+            localTarget = true;
          }
          else {
             lenRequired = true;
@@ -16652,17 +16651,20 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          return false;
    }
 
-   if ((localTarget && exprVal.kind == ObjectKind::EncapseField) || (localAddressTarget && exprVal.kind == ObjectKind::EncapseFieldAddress)) {
+   if (localTarget && (exprVal.kind == ObjectKind::EncapseField || exprVal.kind == ObjectKind::EncapseFieldAddress)) {
       ObjectInfo encapseSource = defineEncapseSource(exprVal);
       if (encapseSource.kind == ObjectKind::Unknown)
          return false;
 
       if (exprVal.kind == ObjectKind::EncapseFieldAddress) {
-         writeObjectInfo(target);
-         writer->appendNode(BuildKey::SavingInStack, 0);
-         writeObjectInfo(encapseSource);
-         operationType = BuildKey::CopyingAccField;
-         operand = exprVal.argument;
+         if (size > 0) {
+            writeObjectInfo(target);
+            writer->appendNode(BuildKey::SavingInStack, 0);
+            writeObjectInfo(encapseSource);
+            operationType = BuildKey::CopyingAccField;
+            operand = exprVal.argument;
+         }
+         else writeObjectInfo(boxArgument(encapseSource, false, true, false));
       }
       else {
          writeObjectInfo(encapseSource);

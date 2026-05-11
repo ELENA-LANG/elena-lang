@@ -6,7 +6,7 @@ sealed class X
    
    foo()
    {
-      /*int*/var value := *index;
+      int value := *index;
 
       Console.printLine("foo=", value);
    }
