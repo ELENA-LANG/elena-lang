@@ -41,6 +41,7 @@ In development:
   ====================================== 
   - case 3 - a field object
   - unit test - a field object
+  - unit test - a field object and a variable
 
   - case 4 - a field struct
   - case 5 - others

@@ -16514,6 +16514,7 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
    bool accMode = false;
    bool lenRequired = false;
    bool localTarget = false;
+   bool localAddressTarget = false;
 
    switch (target.kind) {
       case ObjectKind::Local:
@@ -16550,7 +16551,7 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          if (size > 0) {
             operationType = BuildKey::Copying;
             operand = target.reference;
-            localTarget = true;
+            localAddressTarget = true;
          }
          else {
             lenRequired = true;
@@ -16651,7 +16652,7 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          return false;
    }
 
-   if (localTarget && (exprVal.kind == ObjectKind::EncapseField || exprVal.kind == ObjectKind::EncapseFieldAddress)) {
+   if ((localTarget && exprVal.kind == ObjectKind::EncapseField) || (localAddressTarget && exprVal.kind == ObjectKind::EncapseFieldAddress)) {
       ObjectInfo encapseSource = defineEncapseSource(exprVal);
       if (encapseSource.kind == ObjectKind::Unknown)
          return false;
