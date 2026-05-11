@@ -39,10 +39,12 @@ In development:
   --------------------------------------
   * current : native support for Value operator with a pointer / reference
   ====================================== 
+  - fix string enumeration test
   - case 3 - a field object
   - unit test - a struct field
   - unit test - a normal field
-  - unit test - value operator with self
+  - unit test - value operator with embeddable self (index = 0)
+  - unit test - value operator with embeddable self (index > 0)
 
   - case 4 - a field struct
   - case 5 - others

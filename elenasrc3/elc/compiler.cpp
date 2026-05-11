@@ -17703,7 +17703,7 @@ ObjectInfo Compiler::Expression::boxPtrLocally(ObjectInfo info)
 
 ObjectInfo Compiler::Expression :: boxEncapseField(ObjectInfo info, bool stackSafe)
 {
-   ObjectInfo tempLocal = declareTempLocal(info.typeInfo.typeRef, info.kind == ObjectKind::EncapseField);
+   ObjectInfo tempLocal = declareTempLocal(info.typeInfo.typeRef, false);
 
    bool dummy = false;
    compileAssigningOp(tempLocal, info, dummy);

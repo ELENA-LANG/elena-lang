@@ -1,6 +1,9 @@
+import system'routines;
+
+
 import extensions;
 
-struct Y
+/*struct Y
 {
    int val := 2;
 
@@ -11,7 +14,40 @@ struct Y
       int n := *self;
       Console.writeLine(n);
    }
+}*/
+
+
+class Y
+{
+   Reference<int> index;
+   Reference<int> diff;
+
+   constructor()
+   {
+      index := -1;
+      diff := 1;
+   }
+
+   foo()
+   {
+      index.append(*diff);
+   }
 }
+
+
+//class Y
+//{
+//   int xxx := 3;
+//   int val := 2;
+
+//   int Value = val;
+
+//   foo()
+//   {
+//      /*int*/var n := *self;
+//      Console.writeLine(n);
+//   }
+//}
 
 //sealed class X
 //{
@@ -37,4 +73,11 @@ public Program()
 {
 //   new X().foo();
    new Y().foo();
+
+/*    var s := String.MinValue;
+    "123".forEach::(x)
+    {
+        s := x.toPrintable() + s;
+    };*/
+
 }
