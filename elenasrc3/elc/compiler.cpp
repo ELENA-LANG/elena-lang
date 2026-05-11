@@ -16665,6 +16665,8 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          if (exprVal.reference > 0) {
             operationType = BuildKey::CopyingAccField;
             operand = exprVal.argument;
+            writeObjectInfo(target);
+            writer->appendNode(BuildKey::SavingInStack, 0);
          }
          writeObjectInfo(encapseSource);
       }
