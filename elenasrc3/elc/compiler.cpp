@@ -13788,7 +13788,7 @@ ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t
    return retVal;
 }
 
-ObjectInfo Compiler::Expression::compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode)
 {
    ObjectInfo loperand = compile(node.firstChild(), 0,
       EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
@@ -13801,15 +13801,25 @@ ObjectInfo Compiler::Expression::compileValueOperation(SyntaxNode node, int oper
       loperand.typeInfo), message, result);
 
    if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true)) {
-      if (loperand.kind != ObjectKind::LocalAddress && loperand.kind != ObjectKind::Local) {
-         if (loperand.kind == ObjectKind::FieldAddress || loperand.kind == ObjectKind::ReadOnlyFieldAddress) {
-            loperand = boxArgumentLocally(loperand, true, false);
-         }
-         else loperand = saveToTempLocal(loperand);
+      switch (loperand.kind) {
+         case ObjectKind::LocalAddress:
+         case ObjectKind::Local:
+            break;
+         case ObjectKind::Field:
+         case ObjectKind::Outer:
+         case ObjectKind::OuterField:
+         case ObjectKind::StaticField:
+         case ObjectKind::StaticThreadField:
+         case ObjectKind::ReadOnlyFieldAddress:
+         case ObjectKind::FieldAddress:
+            loperand = boxLocally(loperand, true, true);
+            break;
+         default:
+            loperand = saveToTempLocal(loperand);
+            break;
       }
 
-      return { loperand.kind == ObjectKind::LocalAddress ? ObjectKind::EncapseFieldAddress : ObjectKind::EncapseField,
-         result.outputInfo, result.getterFieldOffset, loperand.argument };
+      return { loperand.kind == ObjectKind::LocalAddress || loperand.kind == ObjectKind::TempLocalAddress ? ObjectKind::EncapseFieldAddress : ObjectKind::EncapseField, result.outputInfo, result.getterFieldOffset, loperand.argument };
    }
    else {
       ArgumentsInfo arguments;

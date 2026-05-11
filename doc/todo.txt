@@ -40,6 +40,8 @@ In development:
   * current : native support for Value operator with a pointer / reference
   ====================================== 
   - case 3 - a field object
+  - unit test - a field object
+
   - case 4 - a field struct
   - case 5 - others
   - checl if works for a pointer and a reference
