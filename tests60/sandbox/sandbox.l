@@ -2,20 +2,17 @@ import extensions;
 
 sealed class X
 {
-   int value;
+   Reference<int> index;
    
-   int Value
-      = value;
-
-   constructor()
+   foo()
    {
-      value := 2
+      int value := *index;
+
+      Console.printLine("foo=", value);
    }
 }
 
 public Program()
 {
-   X x := new X();
-
-   var r := *x
+   new X().foo()
 }

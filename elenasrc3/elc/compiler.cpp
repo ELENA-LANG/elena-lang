@@ -13702,69 +13702,69 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
    ObjectInfo retVal = { };
    ObjectInfo source = {};
 
-   ArgumentsInfo arguments;
-   ArgumentListType argListType = ArgumentListType::Normal;
+ArgumentsInfo arguments;
+ArgumentListType argListType = ArgumentListType::Normal;
 
-   SyntaxNode current = node.firstChild();
-   if (isDirectMethodCall(current, false)) {
-      // if direct method call is possible (without specifying target)
-      source = scope.mapSelf(true);
+SyntaxNode current = node.firstChild();
+if (isDirectMethodCall(current, false)) {
+   // if direct method call is possible (without specifying target)
+   source = scope.mapSelf(true);
 
-      return compileMessageOperationR(node, current, source, arguments,
-         expectedRef, false, false, false, attrs);
-   }
-   else source = compileObject(current, EAttr::Parameter);
+   return compileMessageOperationR(node, current, source, arguments,
+      expectedRef, false, false, false, attrs);
+}
+else source = compileObject(current, EAttr::Parameter);
 
-   bool probeMode = source.mode == TargetMode::Probe;
-   switch (source.mode) {
-      case TargetMode::External:
-      {
-         compileMessageArguments(current, arguments, 0, EAttr::None, argListType, 0);
-         if (argListType != ArgumentListType::Normal)
-            scope.raiseError(errInvalidOperation, current);
+bool probeMode = source.mode == TargetMode::Probe;
+switch (source.mode) {
+case TargetMode::External:
+{
+   compileMessageArguments(current, arguments, 0, EAttr::None, argListType, 0);
+   if (argListType != ArgumentListType::Normal)
+      scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileExternalOp(current, source.reference, arguments, expectedRef);
-         break;
-      }
-      case TargetMode::CreatingArray:
-      {
-         compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, argListType, 0);
-         if (argListType != ArgumentListType::Normal)
-            scope.raiseError(errInvalidOperation, current);
+   retVal = compileExternalOp(current, source.reference, arguments, expectedRef);
+   break;
+}
+case TargetMode::CreatingArray:
+{
+   compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, argListType, 0);
+   if (argListType != ArgumentListType::Normal)
+      scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileNewArrayOp(node, source, expectedRef, arguments);
-         break;
-      }
-      case TargetMode::Creating:
-      {
-         ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, argListType, 0);
-         if (argListType != ArgumentListType::Normal)
-            scope.raiseError(errInvalidOperation, current);
+   retVal = compileNewArrayOp(node, source, expectedRef, arguments);
+   break;
+}
+case TargetMode::Creating:
+{
+   ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, argListType, 0);
+   if (argListType != ArgumentListType::Normal)
+      scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileNewOp(node, Compiler::mapClassSymbol(scope,
-            compiler->resolveStrongType(scope, source.typeInfo)), signRef, arguments);
-         break;
-      }
-      case TargetMode::Casting:
-      {
-         retVal = compileMessageOperationR(source, current, false);
-         break;
-      }
-      default:
-      {
-         // NOTE : the operation target shouldn't be a primtive type
-         source = validateObject(node, source, 0, true, true, false, false);
+   retVal = compileNewOp(node, Compiler::mapClassSymbol(scope,
+      compiler->resolveStrongType(scope, source.typeInfo)), signRef, arguments);
+   break;
+}
+case TargetMode::Casting:
+{
+   retVal = compileMessageOperationR(source, current, false);
+   break;
+}
+default:
+{
+   // NOTE : the operation target shouldn't be a primtive type
+   source = validateObject(node, source, 0, true, true, false, false);
 
-         current = current.nextNode();
+   current = current.nextNode();
 
-         retVal = compileMessageOperationR(node, current, source, arguments,
-            expectedRef, false, probeMode, false, attrs);
+   retVal = compileMessageOperationR(node, current, source, arguments,
+      expectedRef, false, probeMode, false, attrs);
 
-         break;
-      }
-   }
+   break;
+}
+}
 
-   return retVal;
+return retVal;
 }
 
 ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs)
@@ -13788,7 +13788,7 @@ ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t
    return retVal;
 }
 
-ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression::compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode)
 {
    ObjectInfo loperand = compile(node.firstChild(), 0,
       EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
@@ -13797,12 +13797,17 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
    mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
    CheckMethodResult result = {};
    result.retrieveGetter = compiler->_optMode;
-   bool found =  EAttrs::test(mode, EAttr::RetValExpected) && compiler->_logic->resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
+   bool found = EAttrs::test(mode, EAttr::RetValExpected) && compiler->_logic->resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
       loperand.typeInfo), message, result);
 
-   if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true) 
-      && (loperand.kind == ObjectKind::LocalAddress || loperand.kind == ObjectKind::Local))
-   {
+   if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true)) {
+      if (loperand.kind != ObjectKind::LocalAddress && loperand.kind != ObjectKind::Local) {
+         if (loperand.kind == ObjectKind::FieldAddress || loperand.kind == ObjectKind::ReadOnlyFieldAddress) {
+            loperand = boxArgumentLocally(loperand, true, false);
+         }
+         else loperand = saveToTempLocal(loperand);
+      }
+
       return { loperand.kind == ObjectKind::LocalAddress ? ObjectKind::EncapseFieldAddress : ObjectKind::EncapseField,
          result.outputInfo, result.getterFieldOffset, loperand.argument };
    }

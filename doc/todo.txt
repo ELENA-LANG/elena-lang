@@ -44,12 +44,7 @@ In development:
   - case 5 - others
   - checl if works for a pointer and a reference
 
-  - design : if Value returns the struct / class field: "int x := *r" can be replaced with direct operation with a field;
-    xcopy can be used for copying to local temp; only for sealed method
-  - implement as a struct local field
-  - implement as an object field
   - implement as field; as local; as result of operation; as a symbol
-  - unit test
   - add to chagelog
   - review is possible to replace arithmetic operation : "int x := *r + 1";
 
