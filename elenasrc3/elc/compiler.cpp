@@ -13809,6 +13809,14 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
          case ObjectKind::FieldAddress:
             loperand = boxLocally(loperand, true, true);
             break;
+         case ObjectKind::SelfBoxableLocal:
+         {
+            bool dummy = false;
+            ObjectInfo tempLocal = declareTempLocal(loperand.typeInfo.typeRef, false);
+            compileAssigningOp(tempLocal, loperand, dummy);
+            loperand = tempLocal;
+            break;
+         }
          default:
             loperand = saveToTempLocal(loperand);
             break;
@@ -16662,13 +16670,12 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          else writeObjectInfo(boxArgument(encapseSource, false, true, false));
       }
       else if (size > 0) {
-         if (exprVal.reference > 0) {
-            operationType = BuildKey::CopyingAccField;
-            operand = exprVal.argument;
-            writeObjectInfo(target);
-            writer->appendNode(BuildKey::SavingInStack, 0);
-         }
+         operationType = BuildKey::CopyingAccField;
+         operand = exprVal.argument;
+         writeObjectInfo(target);
+         writer->appendNode(BuildKey::SavingInStack, 0);
          writeObjectInfo(encapseSource);
+         writer->appendNode(BuildKey::Field, exprVal.reference);
       }
       else {
          writeObjectInfo(encapseSource);

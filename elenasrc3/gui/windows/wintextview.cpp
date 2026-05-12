@@ -367,7 +367,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
          if (_model->highlightCurrentRow) {
             Style* selStyle = _styles->getStyle(STYLE_SELECTION);
-            canvas.drawTransparentRectangle(Rectangle(clientRect.topLeft.x + marginWidth + 1, lineHeight* caret.y, clientRect.width() - clientRect.topLeft.x - marginWidth - 2, lineHeight + 1), *selStyle);
+            canvas.drawTransparentRectangle(Rectangle(clientRect.topLeft.x + marginWidth, lineHeight* caret.y, clientRect.width() - clientRect.topLeft.x - marginWidth - 2, lineHeight + 1), *selStyle);
          }
       }
 
