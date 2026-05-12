@@ -13803,22 +13803,26 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
    if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true)) {
       switch (loperand.kind) {
          case ObjectKind::LocalAddress:
-         case ObjectKind::Local:
             break;
          case ObjectKind::ReadOnlyFieldAddress:
          case ObjectKind::FieldAddress:
             loperand = boxLocally(loperand, true, true);
             break;
-         case ObjectKind::SelfBoxableLocal:
-         {
-            bool dummy = false;
-            ObjectInfo tempLocal = declareTempLocal(loperand.typeInfo.typeRef, false);
-            compileAssigningOp(tempLocal, loperand, dummy);
-            loperand = tempLocal;
-            break;
-         }
          default:
-            loperand = saveToTempLocal(loperand);
+            if (compiler->_logic->isEmbeddable(*scope.moduleScope, loperand.typeInfo)) {
+               ObjectInfo tempLocal = declareTempLocal(result.outputInfo.typeRef, false);
+               if (loperand.kind != ObjectKind::Local) {
+                  loperand = saveToTempLocal(loperand);
+               }
+
+               bool dummy = false;
+               compileAssigningOp(tempLocal, { ObjectKind::EncapseFieldAddress, result.outputInfo, result.getterFieldOffset, tempLocal.argument }, dummy);
+
+               return tempLocal;
+            }
+            else if (loperand.kind != ObjectKind::Local) {
+               loperand = saveToTempLocal(loperand);
+            }
             break;
       }
 
@@ -16675,11 +16679,7 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          writeObjectInfo(target);
          writer->appendNode(BuildKey::SavingInStack, 0);
          writeObjectInfo(encapseSource);
-         if (compiler->_logic->isEmbeddable(*scope.moduleScope, exprVal.typeInfo)) {
-            operationType = BuildKey::CopyingAccField;
-            operand = exprVal.argument;
-         }
-         else writer->appendNode(BuildKey::Field, exprVal.reference);
+         writer->appendNode(BuildKey::Field, exprVal.reference);
       }
       else {
          writeObjectInfo(encapseSource);

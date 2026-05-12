@@ -40,8 +40,7 @@ In development:
   * current : native support for Value operator with a pointer / reference
   ====================================== 
   - fix an issue with a class; if it is not an embeddable class / struct
-  - fix an issue with a boxable self
-  - functional test
+  - functional test?
   - modify knowhow post with correct bytecode
   - review is possible to replace arithmetic operation : "int x := *r + 1";
 
