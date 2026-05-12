@@ -129,7 +129,8 @@ namespace elena_lang
       Conditional,
       ConditionalUnboxingRequired,
       Weak,
-      ThrowOp
+      ThrowOp,
+      StackAllocated
    };
 
    enum class TrackingMode
@@ -279,6 +280,14 @@ namespace elena_lang
          this->kind = kind;
          this->typeInfo = typeInfo;
          this->reference = reference;
+         this->extra = extra;
+         this->mode = mode;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, int argument, int extra, TargetMode mode)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->argument = argument;
          this->extra = extra;
          this->mode = mode;
       }

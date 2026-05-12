@@ -5308,13 +5308,10 @@ static inline bool isBoxingRequired(ObjectInfo info, bool allowByRefParam)
 
 ObjectInfo Compiler :: defineEncapseSource(ObjectInfo info)
 {
-   if (info.kind == ObjectKind::EncapseFieldAddress) {
+   if (info.kind == ObjectKind::EncapseFieldAddress && info.mode == TargetMode::StackAllocated) {
       return { ObjectKind::LocalAddress, info.typeInfo, info.extra};
    }
-   if (info.mode == TargetMode::None) {
-      return { ObjectKind::Local, info.typeInfo, info.extra };
-   }
-   else return {};
+   else return { ObjectKind::Local, info.typeInfo, info.extra };
 }
 
 int Compiler::defineFieldSize(Scope& scope, ObjectInfo info)
@@ -13801,32 +13798,31 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
       loperand.typeInfo), message, result);
 
    if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true)) {
-      switch (loperand.kind) {
-         case ObjectKind::LocalAddress:
-            break;
-         case ObjectKind::ReadOnlyFieldAddress:
-         case ObjectKind::FieldAddress:
-            loperand = boxLocally(loperand, true, true);
-            break;
-         default:
-            if (compiler->_logic->isEmbeddable(*scope.moduleScope, loperand.typeInfo)) {
-               ObjectInfo tempLocal = declareTempLocal(result.outputInfo.typeRef, false);
-               if (loperand.kind != ObjectKind::Local) {
-                  loperand = saveToTempLocal(loperand);
-               }
-
-               bool dummy = false;
-               compileAssigningOp(tempLocal, { ObjectKind::EncapseFieldAddress, result.outputInfo, result.getterFieldOffset, tempLocal.argument }, dummy);
-
-               return tempLocal;
-            }
-            else if (loperand.kind != ObjectKind::Local) {
+      if (compiler->_logic->isEmbeddable(*scope.moduleScope, loperand.typeInfo)) {
+         TargetMode mode = TargetMode::StackAllocated;
+         switch (loperand.kind) {
+            case ObjectKind::LocalAddress:
+            case ObjectKind::TempLocalAddress:
+               break;
+            case ObjectKind::ReadOnlyFieldAddress:
+            case ObjectKind::FieldAddress:
+               loperand = boxLocally(loperand, true, true);
+               break;
+            default:
                loperand = saveToTempLocal(loperand);
-            }
-            break;
-      }
+               mode = TargetMode::None;
+               break;
+         }
 
-      return { loperand.kind == ObjectKind::LocalAddress || loperand.kind == ObjectKind::TempLocalAddress ? ObjectKind::EncapseFieldAddress : ObjectKind::EncapseField, result.outputInfo, result.getterFieldOffset, loperand.argument };
+         return { ObjectKind::EncapseFieldAddress, result.outputInfo, result.getterFieldOffset, loperand.argument, mode };
+      }
+      else {
+         if (loperand.kind != ObjectKind::Local && loperand.kind != ObjectKind::TempLocal) {
+            loperand = saveToTempLocal(loperand);
+         }
+
+         return { ObjectKind::EncapseField, result.outputInfo, result.getterFieldOffset, loperand.argument };
+      }
    }
    else {
       ArgumentsInfo arguments;

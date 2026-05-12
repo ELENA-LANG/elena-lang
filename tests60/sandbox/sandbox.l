@@ -1,14 +1,15 @@
 import extensions;
 
-//class Y
-//{
-//   Reference</*int*/string> index /*:= 2*/;
+class Y
+{
+   Reference<int> index := 2;
 
-//   foo()
-//   {
-//      /*int*/string n := *index;
-//   }
-//}
+   foo()
+   {
+      int n := *index;
+//      Console.writeLine(n);
+   }
+}
 
 class IntWrapper 
 {
@@ -22,7 +23,7 @@ class IntWrapper
 
 public Program()
 {
-//   new Y().foo();
+   new Y().foo();
 
    auto o := new IntWrapper(3);
 
