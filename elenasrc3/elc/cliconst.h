@@ -13,7 +13,7 @@
 
 namespace elena_lang
 {
-   #define ELC_REVISION_NUMBER               0x0010
+   #define ELC_REVISION_NUMBER               0x0011
 
    constexpr auto WARNING_RET_CODE           =  2;
 

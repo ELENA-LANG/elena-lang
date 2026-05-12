@@ -16675,7 +16675,11 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          writeObjectInfo(target);
          writer->appendNode(BuildKey::SavingInStack, 0);
          writeObjectInfo(encapseSource);
-         writer->appendNode(BuildKey::Field, exprVal.reference);
+         if (compiler->_logic->isEmbeddable(*scope.moduleScope, exprVal.typeInfo)) {
+            operationType = BuildKey::CopyingAccField;
+            operand = exprVal.argument;
+         }
+         else writer->appendNode(BuildKey::Field, exprVal.reference);
       }
       else {
          writeObjectInfo(encapseSource);
