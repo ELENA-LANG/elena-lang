@@ -9,6 +9,8 @@ constexpr auto OptimizedTree_StructFieldAssigning_1 = "tape (open_frame ()assign
 constexpr auto B_IntValueOperator = "tape (open_frame ()assigning 1 ()class_reference 3 ()direct_call_op 544 (type 7 ())inplacemark 3841 () copying -4 (size 4 ()) local_address -8 ()saving_stack ()local_address -4 ()copying_acc_field (size 4 ())local 1 ()close_frame () exit ()) reserved 2 () reserved_n 8 ())";
 constexpr auto B_IntValueOperator2 = "tape (open_frame ()assigning 1 ()class_reference 4 ()direct_call_op 544 (type 9 ())inplacemark 4865 () copying -4 (size 4 ()) byrefmark -12 () local_address -12 ()saving_stack 1 ()local_address -4 ()saving_stack ()argument ()direct_call_op 4482 (type 4 ())local_address -12 () copying -8 (size 4()) local 1 ()close_frame ()exit ())reserved 3 ()reserved_n 12 ()))";
 constexpr auto B_IntValueOperator3 = "tape (open_frame ()assigning 1 ()class_reference 3 ()direct_call_op 544 (type 7 ())assigning 3 ()local 3 ()assigning 2 ()local 2 ()field ()assigning 3 ()local 1 ()close_frame ()exit ()) reserved 4 ()))";
+constexpr auto B_IntValueOperator4 = "tape (open_frame ()assigning 1 ()local 1 ()assigning 2 ()local 2 ()copying -4 (size 4 ())local 1 ()close_frame ()exit ())reserved 3 ()reserved_n 4 ()))";
+constexpr auto B_IntValueOperator5 = "tape (open_frame ()assigning 1 ()local 1 ()field ()assigning 2 ()local 2 ()copying -4 (size 4 ())local 1 ()close_frame ()exit ())reserved 3 ()reserved_n 4 ()))";
 
 #elif _M_X64
 
@@ -21,5 +23,7 @@ constexpr auto OptimizedTree_StructFieldAssigning_1 = "tape (open_frame ()assign
 constexpr auto B_IntValueOperator = "tape (open_frame ()assigning 1 ()class_reference 3 ()direct_call_op 544 (type 7 ())inplacemark 3841 () copying -8 (size 8 ()) local_address -24 ()saving_stack ()local_address -8 ()copying_acc_field (size 4 ())local 1 ()close_frame () exit ()) reserved 4 () reserved_n 32 ())";
 constexpr auto B_IntValueOperator2 = "tape (open_frame ()assigning 1 ()class_reference 4 ()direct_call_op 544 (type 9 ())inplacemark 4865 () copying -8 (size 8 ()) byrefmark -40 () local_address -40 ()saving_stack 1 ()local_address -8 ()saving_stack ()argument ()direct_call_op 4482 (type 4 ())local_address -40 () copying -24 (size 4()) local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 48()))";
 constexpr auto B_IntValueOperator3 = "tape (open_frame ()assigning 1 ()class_reference 3 ()direct_call_op 544 (type 7 ())assigning 3 ()local 3 ()assigning 2 ()local 2 ()field ()assigning 3 ()local 1 ()close_frame ()exit ()) reserved 6 ()))";
+constexpr auto B_IntValueOperator4 = "tape (open_frame ()assigning 1 ()local 1 ()assigning 2 ()local 2 ()copying -8 (size 4 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 16 ()))";
+constexpr auto B_IntValueOperator5 = "tape (open_frame ()assigning 1 ()local 1 ()field ()assigning 2 ()local 2 ()copying -8 (size 4 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 16 ()))";
 
 #endif

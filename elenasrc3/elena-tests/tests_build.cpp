@@ -238,7 +238,12 @@ TEST_F(ValueOperator, BuildTest)
    runTest();
 }
 
-//TEST_F(IntValueOperatorNoOptimization, BuildTest)
-//{
-//   runTest();
-//}
+TEST_F(IntValueOperatorSelf, BuildTest)
+{
+   runTest();
+}
+
+TEST_F(IntValueOperatorField, BuildTest)
+{
+   runTest();
+}

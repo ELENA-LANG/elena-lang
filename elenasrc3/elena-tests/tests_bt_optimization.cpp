@@ -870,6 +870,7 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
 
    moduleScope->predefined.add("nil", V_NIL);
    moduleScope->predefined.add("default", V_DEFAULT);
+   moduleScope->selfVar.copy("self");
 
    if (byRefTemplateRef != INVALID_REF) {
       moduleScope->buildins.wrapperTemplateReference = byRefTemplateRef;
@@ -1018,5 +1019,38 @@ void ValueOperator::SetUp()
    BuildTreeSerializer::load(B_IntValueOperator3, controlOutputNode);
 
    intReference = 2;
+   targetRef = 4;
+}
+
+// --- IntValueOperatorSelf ---
+
+void IntValueOperatorSelf :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntValueOperator4);
+
+   BuildTreeSerializer::load(B_IntValueOperator4, controlOutputNode);
+
+   intReference = 2;
+   targetRef = 3;
+}
+
+// --- IntValueOperatorField ---
+
+void IntValueOperatorField :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntRefeference2, S_IntValueOperator5);
+
+   BuildTreeSerializer::load(B_IntValueOperator5, controlOutputNode);
+
+   byRefTemplateRef = 0x80;
+
+   intReference = 2;
+   intByRefRef = 3;
    targetRef = 4;
 }

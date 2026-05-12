@@ -349,6 +349,18 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+
+   class IntValueOperatorSelf : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class IntValueOperatorField : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
 }
 
 #endif

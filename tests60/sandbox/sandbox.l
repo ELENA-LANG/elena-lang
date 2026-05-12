@@ -1,83 +1,18 @@
-import system'routines;
-
-
 import extensions;
 
-/*struct Y
-{
-   int val := 2;
-
-   int Value = val;
-
-   foo()
-   {
-      int n := *self;
-      Console.writeLine(n);
-   }
-}*/
-
-
-class Y
+sealed class X
 {
    Reference<int> index;
-   Reference<int> diff;
-
-   constructor()
-   {
-      index := -1;
-      diff := 1;
-   }
+   
+//   constructor() { index := 3 }
 
    foo()
    {
-      index.append(*diff);
+      int value := *index;
    }
 }
 
-
-//class Y
-//{
-//   int xxx := 3;
-//   int val := 2;
-
-//   int Value = val;
-
-//   foo()
-//   {
-//      /*int*/var n := *self;
-//      Console.writeLine(n);
-//   }
-//}
-
-//sealed class X
-//{
-//   Reference<int> index;
-//   Reference</*int*/string> index;
-   
-//   constructor() { index := 3 }
-//   constructor() { index := /*3*/"3" }
-//   constructor() { index := new Reference<string>("3") }
-
-//   foo()
-//   {
-//       index.append(2);
-
-//      /*int*/var value := *index;
-
-//      Console.printLine("foo=", value);
-//      Console.printLine("foo=", *index);
-//   }
-//}
-
 public Program()
 {
-//   new X().foo();
-   new Y().foo();
-
-/*    var s := String.MinValue;
-    "123".forEach::(x)
-    {
-        s := x.toPrintable() + s;
-    };*/
-
+   new X().foo();
 }

@@ -39,18 +39,9 @@ In development:
   --------------------------------------
   * current : native support for Value operator with a pointer / reference
   ====================================== 
-  - fix string enumeration test
-  - case 3 - a field object
-  - unit test - a struct field
   - unit test - a normal field
-  - unit test - value operator with embeddable self (index = 0)
-  - unit test - value operator with embeddable self (index > 0)
 
-  - case 4 - a field struct
-  - case 5 - others
-  - checl if works for a pointer and a reference
-
-  - implement as field; as local; as result of operation; as a symbol
+  - add to knowhow; post
   - add to chagelog
   - review is possible to replace arithmetic operation : "int x := *r + 1";
 
