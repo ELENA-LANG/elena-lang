@@ -39,10 +39,8 @@ In development:
   --------------------------------------
   * current : native support for Value operator with a pointer / reference
   ====================================== 
-  - fix an issue with a class; if it is not an embeddable class / struct
+  - operation with self
   - functional test?
-  - modify knowhow post with correct bytecode
-  - review is possible to replace arithmetic operation : "int x := *r + 1";
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

@@ -2792,3 +2792,25 @@ public mockupTest() : testCase()
 
    Console.write(".");
 }
+
+// --- intValueOperationTest ---
+
+class IntValueTester
+{
+   int _value;
+
+   constructor(int v) { _value := v }
+
+   int Value = _value;
+}
+
+public intValueOperationTest() : testCase()
+{
+   auto t := new IntValueTester(321);
+
+   int r := *t;
+
+   Assert.ifEqual(r, 321);
+
+   Console.write(".");
+}
