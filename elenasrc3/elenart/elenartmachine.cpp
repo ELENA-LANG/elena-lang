@@ -169,6 +169,10 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
       ImageSection msection(_mdata, 0x1000000);
       RTManager rtmanager(&msection, nullptr);
 
+      // skip the self for the normal message
+      if ((flags & PREFIX_MESSAGE_MASK) != CONVERSION_MESSAGE)
+         argCount--;
+
       addr_t signatures[ARG_COUNT] = {};
       if(rtmanager.loadSignature(actionRef, argCount, signatures)) {
          for (pos_t i = 0; i < argCount; i++) {
@@ -187,7 +191,7 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
             }
 
             messageName.insert(tmp, position);
-            position += (len + 1);
+            position += len;
          }
       }
    }
