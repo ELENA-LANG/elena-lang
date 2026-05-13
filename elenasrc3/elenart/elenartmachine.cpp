@@ -151,7 +151,7 @@ int ELENARTMachine :: loadSignature(mssg_t message, addr_t* output, pos_t maxima
    return 0;
 }
 
-size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
+size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t length, bool withSignature)
 {
    ref_t actionRef, flags;
    pos_t argCount = 0;
@@ -163,7 +163,7 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
    IdentifierString messageName;
    ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
 
-   if ((message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE) {
+   if (withSignature) {
       size_t position = (*messageName).find('[');
 
       ImageSection msection(_mdata, 0x1000000);
@@ -278,7 +278,7 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
-   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN);
+   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN, false);
    messageName[mssgLen] = 0;
 
    int len = 1;

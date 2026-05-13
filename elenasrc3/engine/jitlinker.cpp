@@ -1487,10 +1487,9 @@ Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, 
    return retVal;
 }
 
-ustr_t JITLinker :: retrieveResolvedAction(ref_t reference)
+ustr_t JITLinker :: retrieveResolvedAction(ref_t reference, ref_t& signRef)
 {
-   ref_t dummy = 0;
-   return _mapper->retrieveAction(reference, dummy);
+   return _mapper->retrieveAction(reference, signRef);
 }
 
 addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask)

@@ -254,7 +254,7 @@ namespace elena_lang
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
-      ustr_t retrieveResolvedAction(ref_t reference);
+      ustr_t retrieveResolvedAction(ref_t reference, ref_t& signRef);
 
       ref_t resolveAction(ustr_t actionName);
       ref_t resolveStrongAction(ref_t weakAction, ArgumentAddressList& list);

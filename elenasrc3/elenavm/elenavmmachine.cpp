@@ -426,7 +426,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    ByteCodeUtil::write(writer, ByteCode::ExtCloseN);
    ByteCodeUtil::write(writer, ByteCode::XQuit);
 
-   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
+   pos_t size = writer.position() - sizePlaceholder - static_cast<pos_t>(sizeof(pos_t));
 
    writer.seek(sizePlaceholder);
    writer.writePos(size);
@@ -551,21 +551,29 @@ addr_t ELENAVMMachine :: resolveExternal(ustr_t referenceName)
    return resolveExternal(*dll, functionName);
 }
 
-void ELENAVMMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
+void ELENAVMMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef, bool withSignature)
 {
-   ustr_t name = _jitLinker->retrieveResolvedAction(subjectRef);
+   ref_t signRef = 0;
+   ustr_t name = _jitLinker->retrieveResolvedAction(subjectRef, signRef);
 
    actionName.copy(name);
+
+   if (withSignature && signRef != 0) {
+      actionName.append('<');
+      ref_t dummy = 0;
+      actionName.append(_jitLinker->retrieveResolvedAction(signRef | 0x80000000, dummy));
+      actionName.append('>');
+   }
 }
 
-size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
+size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t length, bool withSignature)
 {
    ref_t actionRef, flags;
    pos_t argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
    IdentifierString actionName;
-   loadSubjectName(actionName, actionRef);
+   loadSubjectName(actionName, actionRef, withSignature);
 
    IdentifierString messageName;
    ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
@@ -681,7 +689,7 @@ size_t ELENAVMMachine :: loadActionName(mssg_t message, char* buffer, size_t len
    decodeMessage(message, actionRef, argCount, flags);
 
    IdentifierString actionName;
-   loadSubjectName(actionName, actionRef);
+   loadSubjectName(actionName, actionRef, false);
 
    StrConvertor::copy(buffer, *actionName, actionName.length(), length);
 
@@ -749,7 +757,7 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
-   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN);
+   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN, false);
    messageName[mssgLen] = 0;
 
    int len = 1;

@@ -60,7 +60,7 @@ static ELENAVMMachine* machine = nullptr;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-void loadDLLPath(PathString& rootPath, HMODULE hModule)
+static inline void loadDLLPath(PathString& rootPath, HMODULE hModule)
 {
    TCHAR path[MAX_PATH + 1];
 
@@ -335,7 +335,12 @@ EXTERN_DLL_EXPORT void* ForcedCollectGCLA(void* roots, int fullMode)
 
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
 {
-   return machine->loadMessageName((mssg_t)message, buffer, length);
+   return machine->loadMessageName((mssg_t)message, buffer, length, (message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE);
+}
+
+EXTERN_DLL_EXPORT size_t LoadStrongMessageNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadMessageName((mssg_t)message, buffer, length, true);
 }
 
 EXTERN_DLL_EXPORT size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)

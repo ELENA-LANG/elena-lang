@@ -155,7 +155,12 @@ EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size, bool fullMode)
 
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
 {
-   return machine->loadMessageName((mssg_t)message, buffer, length);
+   return machine->loadMessageName((mssg_t)message, buffer, length, (message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE);
+}
+
+EXTERN_DLL_EXPORT size_t LoadStrongMessageNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadMessageName((mssg_t)message, buffer, length, true);
 }
 
 EXTERN_DLL_EXPORT size_t LoadActionNameLA(size_t message, char* buffer, size_t length)

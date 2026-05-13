@@ -25,7 +25,6 @@ In development:
   * backlog
   ====================================== 
   - preloaded symbols must be inside try catch statement
-  - StrongMessage - display the message name correctly
   - support : int[] a := Range.for(0, 1000000).toArray();
   - xml : support attributes
   - xml : xmlreader, xmlwriter
@@ -37,10 +36,11 @@ In development:
   - optimization : jumping, offset aligning
   - pi optimization : at least 10% 
   --------------------------------------
-  * current : native support for Value operator with a pointer / reference
+  * current : StrongMessage - display the message name correctly
   ====================================== 
-  - operation with self
-  - functional test?
+  - review
+  - implement for rt & vm
+  - new functional test
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

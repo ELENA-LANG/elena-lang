@@ -130,7 +130,12 @@ void* CollectPermGCLA(size_t size)
 
 size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
 {
-   return machine->loadMessageName((mssg_t)message, buffer, length);
+   return machine->loadMessageName((mssg_t)message, buffer, length, (message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE);
+}
+
+size_t LoadStrongMessageNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadMessageName((mssg_t)message, buffer, length, true);
 }
 
 size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)
