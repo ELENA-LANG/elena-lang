@@ -2758,6 +2758,11 @@ public strongMessageTest() : testCase()
    Assert.ifFalse(o.validateMessage(mssg2));
 
    Console.write(".");
+
+   string mssgName := mssg.toPrintable();
+   Assert.ifEqual(mssgName, "equal<system'IntNumber>[2]");
+
+   Console.write(".");
 }
 
 dynamic_typecast(type_instance,object)
