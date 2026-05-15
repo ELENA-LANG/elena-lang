@@ -645,7 +645,29 @@ mssg_t ELENAVMMachine :: loadStrongMessage(ustr_t messageName)
 
    ArgumentAddressList list;
    if (parseStrongMessage(messageName, argCount, flags, weakAction, list)) {
-      ref_t actionRef = _jitLinker->resolveStrongAction(weakAction, list);
+      bool variadicOne = (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+
+      // resolve the signature name
+      IdentifierString signatureName;
+
+      size_t count = list.count();
+      if (count != 0 && variadicOne) {
+         // HOTFIX : to tell apart vardiatic signature from normal ones (see further)
+         signatureName.append("#params");
+      }
+
+      for (size_t i = 0; i < count; i++) {
+         signatureName.append('$');
+
+         addr_t classAddr = list[i];
+         char buffer[IDENTIFIER_LEN + 1];
+         size_t buf_len = RTManager::loadClassName(classAddr, buffer, IDENTIFIER_LEN);
+
+         signatureName.append(buffer, buf_len);
+      }
+
+      ref_t actionRef = _jitLinker->resolveStrongAction(weakAction, *signatureName, list, variadicOne);
+
       if (actionRef)
          message = encodeMessage(actionRef, argCount, flags);
    }

@@ -38,9 +38,10 @@ In development:
   --------------------------------------
   * current : StrongMessage - display the message name correctly
   ====================================== 
-  - review
-  - implement for rt & vm
-  - new functional test
+  - implement resolveStrongAction for VM
+  - implement for vm
+  - test for rt / vm
+  - new functional test?
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

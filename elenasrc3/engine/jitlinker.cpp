@@ -822,39 +822,6 @@ ref_t JITLinker :: createSignature(ModuleBase* module, ref_t signature, bool var
    return resolvedSignature;
 }
 
-ref_t JITLinker :: resolveStrongAction()
-{
-   //MemoryBase* messageBody = _imageProvider->getMBDataSection();
-   //MemoryWriter writer(messageBody);
-
-   //resolvedSignature = writer.position();
-
-   //IdentifierString typeName;
-   //for (size_t i = 0; i < count; i++) {
-   //   // NOTE : indicate weak class reference, to be later resolved if required
-   //   ref_t addressMask = 0;
-   //   auto typeClassRef = _mapper->resolveReference(
-   //      _loader->retrieveReferenceInfo(module, signReferences[i], mskVMTRef, _forwardResolver),
-   //      mskVMTRef);
-
-   //   pos_t position = _compiler->addSignatureEntry(writer, typeClassRef, addressMask, _virtualMode);
-   //   if (typeClassRef == INVALID_ADDR) {
-   //      _mapper->addLazyReference(
-   //         { mskMessageBodyRef, position, module, signReferences[i] | mskVMTRef, addressMask });
-   //   }
-   //}
-
-   //if (variadicOne) {
-   //   // HOTFIX : variadic signature should end with zero for correct multi-dispatching operation
-   //   _compiler->addSignatureStopper(writer);
-   //}
-
-   //// HOTFIX : adding a mask to tell apart a message name from a signature in meta module
-   //_mapper->mapAction(*signatureName, resolvedSignature | SIGNATURE_MASK, 0u);
-
-   return 0; // !! temporal
-}
-
 mssg_t JITLinker :: createMessage(ModuleBase* module, mssg_t message/*, VAddressMap& references*/)
 {
    ref_t actionRef, flags;
@@ -1969,9 +1936,37 @@ ref_t JITLinker :: resolveAction(ustr_t actionName)
    return resolveWeakAction(actionName);
 }
 
-ref_t JITLinker :: resolveStrongAction(ref_t weakAction, ArgumentAddressList& list)
+ref_t JITLinker :: resolveStrongAction(ref_t weakAction, ustr_t signatureName, ArgumentAddressList& list, bool variadicOne)
 {
-   return 0; // !! temporal
+   ref_t resolvedSignature = _mapper->resolveAction(signatureName, 0) & ~SIGNATURE_MASK;
+   if (!resolvedSignature)
+      return resolvedSignature;
+
+   MemoryBase* messageBody = _imageProvider->getMBDataSection();
+   MemoryWriter writer(messageBody);
+
+   resolvedSignature = writer.position();
+
+   ref_t signRef = 0;
+   ustr_t actionName = _mapper->retrieveAction(weakAction, signRef);
+
+   size_t count = list.count();
+
+   //IdentifierString typeName;
+   for (size_t i = 0; i < count; i++) {
+      ref_t addressMask = 0;
+      _compiler->addSignatureEntry(writer, list[i], addressMask, _virtualMode);
+   }
+
+   if (variadicOne) {
+      // HOTFIX : variadic signature should end with zero for correct multi-dispatching operation
+      _compiler->addSignatureStopper(writer);
+   }
+
+   // HOTFIX : adding a mask to tell apart a message name from a signature in meta module
+   _mapper->mapAction(signatureName, resolvedSignature | SIGNATURE_MASK, 0u);
+
+   return resolvedSignature;
 }
 
 void JITLinker :: loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions)

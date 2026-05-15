@@ -200,7 +200,6 @@ namespace elena_lang
          VAddressMap& references);
 
       ref_t resolveWeakAction(ustr_t actionName);
-      ref_t resolveStrongAction();
 
       ref_t createAction(ustr_t actionName, ref_t weakAction, ref_t signature);
       ref_t createSignature(ModuleBase* module, ref_t signature, bool variadicOne/*,
@@ -257,7 +256,7 @@ namespace elena_lang
       ustr_t retrieveResolvedAction(ref_t reference, ref_t& signRef);
 
       ref_t resolveAction(ustr_t actionName);
-      ref_t resolveStrongAction(ref_t weakAction, ArgumentAddressList& list);
+      ref_t resolveStrongAction(ref_t weakAction, ustr_t signatureName, ArgumentAddressList& list, bool variadicOne);
 
       void loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions);
       void prepare(ProcessSettings& jitSettings);
