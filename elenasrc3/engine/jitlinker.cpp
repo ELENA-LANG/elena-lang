@@ -1938,35 +1938,34 @@ ref_t JITLinker :: resolveAction(ustr_t actionName)
 
 ref_t JITLinker :: resolveStrongAction(ref_t weakAction, ustr_t signatureName, ArgumentAddressList& list, bool variadicOne)
 {
-   ref_t resolvedSignature = _mapper->resolveAction(signatureName, 0) & ~SIGNATURE_MASK;
-   if (!resolvedSignature)
-      return resolvedSignature;
-
-   MemoryBase* messageBody = _imageProvider->getMBDataSection();
-   MemoryWriter writer(messageBody);
-
-   resolvedSignature = writer.position();
-
    ref_t signRef = 0;
    ustr_t actionName = _mapper->retrieveAction(weakAction, signRef);
 
-   size_t count = list.count();
+   ref_t resolvedSignature = _mapper->resolveAction(signatureName, 0) & ~SIGNATURE_MASK;
+   if (!resolvedSignature) {
+      MemoryBase* messageBody = _imageProvider->getMBDataSection();
+      MemoryWriter writer(messageBody);
 
-   //IdentifierString typeName;
-   for (size_t i = 0; i < count; i++) {
-      ref_t addressMask = 0;
-      _compiler->addSignatureEntry(writer, list[i], addressMask, _virtualMode);
+      resolvedSignature = writer.position();
+
+      size_t count = list.count();
+
+      //IdentifierString typeName;
+      for (size_t i = 0; i < count; i++) {
+         ref_t addressMask = 0;
+         _compiler->addSignatureEntry(writer, list[i], addressMask, _virtualMode);
+      }
+
+      if (variadicOne) {
+         // HOTFIX : variadic signature should end with zero for correct multi-dispatching operation
+         _compiler->addSignatureStopper(writer);
+      }
+
+      // HOTFIX : adding a mask to tell apart a message name from a signature in meta module
+      _mapper->mapAction(signatureName, resolvedSignature | SIGNATURE_MASK, 0u);
    }
 
-   if (variadicOne) {
-      // HOTFIX : variadic signature should end with zero for correct multi-dispatching operation
-      _compiler->addSignatureStopper(writer);
-   }
-
-   // HOTFIX : adding a mask to tell apart a message name from a signature in meta module
-   _mapper->mapAction(signatureName, resolvedSignature | SIGNATURE_MASK, 0u);
-
-   return resolvedSignature;
+   return _mapper->resolveAction(actionName, resolvedSignature);
 }
 
 void JITLinker :: loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions)
