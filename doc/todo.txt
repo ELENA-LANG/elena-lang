@@ -24,7 +24,6 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - support : int[] a := Range.for(0, 1000000).toArray();
   - xml : support attributes
   - xml : xmlreader, xmlwriter
   - implement toUInt, toSByte
@@ -35,7 +34,7 @@ In development:
   - optimization : jumping, offset aligning
   - pi optimization : at least 10% 
   --------------------------------------
-  * current : preloaded symbols must be inside try catch statement
+  * current : create a very big object (int[] a := Range.for(0, 1000000).toArray();)
   ====================================== 
   - investigate
   - design

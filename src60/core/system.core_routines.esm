@@ -2926,11 +2926,25 @@ end
 
 procedure default_exception_handler
 
+  tst        flag:elMessage
+  jeq        labSkip
+  load
+  peek       sp:0
+  call       vt:0
+
+labSkip:
   store      sp:0
+
   set        class:"$forwards'DefaultHandler"
 
   mov        mssg:"function:#invoke[1]" 
   call       vt:0 
+
+  call       extern:ExitLA (err_ret)
+
+end
+
+procedure default_vm_exception_handler
 
   call extern:ExitLA (err_ret)
 
@@ -3089,7 +3103,7 @@ symbol vm_sta_start
 
   open        [arg1],[envptr,ex_struct:ex_struct_size]
   
-  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_vm_exception_handler"
 
   mov         env
   $save       dp:envptr
