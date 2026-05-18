@@ -2926,6 +2926,12 @@ end
 
 procedure default_exception_handler
 
+  store      sp:0
+  set        class:"$forwards'DefaultHandler"
+
+  mov        mssg:"function:#invoke[1]" 
+  call       vt:0 
+
   call extern:ExitLA (err_ret)
 
 end

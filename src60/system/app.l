@@ -64,6 +64,13 @@ public sealed class StartUpEvents : info("Application events")
 
 public static StartUpEvents startUpEvents = StartUpEvents.new();
 
+ConsoleDefaultHandler(err)
+{
+   try {
+     Console.writeLine(err);
+   }
+}
+
 entry()
 {
    try
