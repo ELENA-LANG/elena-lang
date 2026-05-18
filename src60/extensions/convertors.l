@@ -65,6 +65,10 @@ public singleton arrayConvertorEx
       var arr := cast Array(o) ?? nil;
       if (arr == nil)
       {
+         if(o.enumerator(); is Enumerator en) {
+             ^ arrayConvertorEx.convert(en);
+         };
+
          var it := o.indexer();
          int len := it.Length;
          arr := Array.allocate(len);
