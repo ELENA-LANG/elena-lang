@@ -1742,8 +1742,8 @@ end
 inline %80h
 
 #if _MAC
-  adrp    x10, __ptr32hi_1
-  add     x10, x10, __ptr32lo_1
+  adrp    x10, __ptr32page_1
+  add     x10, x10, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x10,  __ptr32lo_1
   movk    x10,  __ptr32hi_1, lsl #16
@@ -1837,8 +1837,8 @@ end
 inline %84h
 
 #if _MAC
-  adrp    x11, __ptr32hi_1
-  add     x11, x11, __ptr32lo_1
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movk    x11,  __ptr32hi_1, lsl #16
@@ -1851,8 +1851,8 @@ end
 inline %85h
 
 #if _MAC
-  adrp    x11, __ptr32hi_1
-  add     x11, x11, __ptr32lo_1
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movk    x11,  __ptr32hi_1, lsl #16
@@ -2018,8 +2018,8 @@ inline %08Fh
   lsl     x18, x19, #3
 
 #if _MAC
-  adrp    x19, __ptr32hi_1
-  add     x19, x19, __ptr32lo_1
+  adrp    x19, __ptr32page_1
+  add     x19, x19, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_1
   movk    x19,  __ptr32hi_1, lsl #16
@@ -2692,8 +2692,8 @@ inline % 0ADh
   lsl     x11, x11, #3
 
 #if _MAC
-  adrp    x12, __ptr32hi_1
-  add     x12, x12, __ptr32lo_1
+  adrp    x12, __ptr32page_1
+  add     x12, x12, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x12,  __ptr32lo_1
   movk    x12,  __ptr32hi_1, lsl #16
@@ -2750,8 +2750,8 @@ end
 inline %0B0h
 
 #if _MAC
-  adrp    x17, __ptr32hi_1
-  add     x17, x17, __ptr32lo_1
+  adrp    x17, __ptr32page_1
+  add     x17, x17, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x17,  __ptr32lo_1
   movk    x17,  __ptr32hi_1, lsl #16
@@ -2856,8 +2856,8 @@ end
 inline %0C0h
 
 #if _MAC
-  adrp    x11, __ptr32hi_1
-  add     x11, x11, __ptr32lo_1
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movk    x11,  __ptr32hi_1, lsl #16
@@ -3234,8 +3234,8 @@ inline %0CEh
   lsl     x18, x19, #3
 
 #if _MAC
-  adrp    x19, __ptr32hi_1
-  add     x19, x19, __ptr32lo_1
+  adrp    x19, __ptr32page_1
+  add     x19, x19, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_1
   movk    x19,  __ptr32hi_1, lsl #16
@@ -3373,8 +3373,8 @@ inline %0D6h
   add     x13, x29, __arg12_1
 
 #if _MAC
-  adrp    x16, __ptr32hi_2
-  add     x16, x16, __ptr32lo_2
+  adrp    x16, __ptr32page_2
+  add     x16, x16, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x16,  __ptr32lo_2
   movk    x16,  __ptr32hi_2, lsl #16
@@ -3388,10 +3388,10 @@ end
 inline %0D7h
 
 #if _MAC
-  adrp    x11, __ptr32hi_1
-  add     x11, x11, __ptr32lo_1
-  adrp    x12, __ptr32hi_2
-  add     x12, x12, __ptr32lo_2
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
@@ -3745,10 +3745,10 @@ inline %0DFh
   cmp     x17, x18
 
 #if _MAC
-  adrp    x11, __ptr32hi_1
-  add     x11, x11, __ptr32lo_1
-  adrp    x12, __ptr32hi_2
-  add     x12, x12, __ptr32lo_2
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
@@ -4074,8 +4074,8 @@ inline %0E6h
   mov     x18, x13
 
 #if _MAC
-  adrp    x16, __ptr32hi_2
-  add     x16, x16, __ptr32lo_2
+  adrp    x16, __ptr32page_2
+  add     x16, x16, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x16,  __ptr32lo_2
   movk    x16,  __ptr32hi_2, lsl #16
@@ -4100,8 +4100,8 @@ inline %0E7h
   movz    x18, __n16lo_1
   movk    x18, __n16hi_1, lsl #16
 #if _MAC
-  adrp    x19, __ptr32hi_2
-  add     x19, x19, __ptr32lo_2
+  adrp    x19, __ptr32page_2
+  add     x19, x19, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
@@ -4250,8 +4250,8 @@ end
 inline %0EDh
 
 #if _MAC
-  adrp    x17, __ptr32hi_2
-  add     x17, x17, __ptr32lo_2
+  adrp    x17, __ptr32page_2
+  add     x17, x17, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x17,  __ptr32lo_2
   movk    x17,  __ptr32hi_2, lsl #16
@@ -4264,10 +4264,10 @@ end
 inline %0EEh
 
 #if _MAC
-  adrp    x11, __ptr32hi_1
-  add     x11, x11, __ptr32lo_1
-  adrp    x12, __ptr32hi_2
-  add     x12, x12, __ptr32lo_2
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
@@ -4283,10 +4283,10 @@ end
 inline %0EFh
 
 #if _MAC
-  adrp    x11, __ptr32hi_1
-  add     x11, x11, __ptr32lo_1
-  adrp    x12, __ptr32hi_2
-  add     x12, x12, __ptr32lo_2
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
@@ -4418,8 +4418,8 @@ end
 inline %0F1h
 
 #if _MAC
-  adrp    x11, __ptr32hi_2
-  add     x11, x11, __ptr32lo_2
+  adrp    x11, __ptr32page_2
+  add     x11, x11, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_2
   movk    x11,  __ptr32hi_2, lsl #16
@@ -4434,8 +4434,8 @@ end
 inline %1F1h
 
 #if _MAC
-  adrp    x0, __ptr32hi_2
-  add     x0, x0, __ptr32lo_2
+  adrp    x0, __ptr32page_2
+  add     x0, x0, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x0,  __ptr32lo_2
   movk    x0,  __ptr32hi_2, lsl #16
@@ -4447,8 +4447,8 @@ end
 inline %2F1h
 
 #if _MAC
-  adrp    x1, __ptr32hi_2
-  add     x1, x1, __ptr32lo_2
+  adrp    x1, __ptr32page_2
+  add     x1, x1, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x1,  __ptr32lo_2
   movk    x1,  __ptr32hi_2, lsl #16
@@ -4871,8 +4871,8 @@ inline %0F4h
   blr     x17
   mov     x18, __n16_1
 #if _MAC
-  adrp    x19, __ptr32hi_2
-  add     x19, x19, __ptr32lo_2
+  adrp    x19, __ptr32page_2
+  add     x19, x19, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
@@ -4898,8 +4898,8 @@ inline %0F5h
   movz    x18, __n16lo_1
   movk    x18, __n16hi_1, lsl #16
 #if _MAC
-  adrp    x19, __ptr32hi_2
-  add     x19, x19, __ptr32lo_2
+  adrp    x19, __ptr32page_2
+  add     x19, x19, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
@@ -5000,8 +5000,8 @@ inline %0F7h
   orr     x18, x18, x19
 
 #if _MAC
-  adrp    x19, __ptr32hi_2
-  add     x19, x19, __ptr32lo_2
+  adrp    x19, __ptr32page_2
+  add     x19, x19, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
@@ -5016,8 +5016,8 @@ end
 inline %0F8h
 
 #if _MAC
-  adrp    x12, __ptr32hi_2
-  add     x12, x12, __ptr32lo_2
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x12,  __ptr32lo_2
   movk    x12,  __ptr32hi_2, lsl #16
@@ -5132,8 +5132,8 @@ end
 inline %0F9h
 
 #if _MAC
-  adrp    x11, __ptr32hi_2
-  add     x11, x11, __ptr32lo_2
+  adrp    x11, __ptr32page_2
+  add     x11, x11, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_2
   movk    x11,  __ptr32hi_2, lsl #16
@@ -5148,8 +5148,8 @@ end
 inline %4F9h
 
 #if _MAC
-  adrp    x11, __ptr32hi_2
-  add     x11, x11, __ptr32lo_2
+  adrp    x11, __ptr32page_2
+  add     x11, x11, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_2
   movk    x11,  __ptr32hi_2, lsl #16
@@ -5194,8 +5194,8 @@ inline % 0FAh
 
 //;  mov  rsi, __ptr64_2
 #if _MAC
-  adrp    x21, __ptr32hi_2
-  add     x21, x21, __ptr32lo_2
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
@@ -5332,8 +5332,8 @@ inline % 5FAh
 
 //;  mov  rsi, __ptr64_2
 #if _MAC
-  adrp    x21, __ptr32hi_2
-  add     x21, x21, __ptr32lo_2
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
@@ -5501,8 +5501,8 @@ inline % 0FBh
 
 //;  mov  rsi, __ptr64_2
 #if _MAC
-  adrp    x21, __ptr32hi_2
-  add     x21, x21, __ptr32lo_2
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
@@ -5641,8 +5641,8 @@ inline % 5FBh
 
 //;  mov  rsi, __ptr64_2
 #if _MAC
-  adrp    x21, __ptr32hi_2
-  add     x21, x21, __ptr32lo_2
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
@@ -5800,8 +5800,8 @@ inline % 6FBh
 
 //;  mov  rsi, __ptr64_2
 #if _MAC
-  adrp    x21, __ptr32hi_2
-  add     x21, x21, __ptr32lo_2
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
@@ -5945,8 +5945,8 @@ inline % 0BFBh
 
 //;  mov  rsi, __ptr64_2
 #if _MAC
-  adrp    x21, __ptr32hi_2
-  add     x21, x21, __ptr32lo_2
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
@@ -6126,8 +6126,8 @@ end
 inline %0FDh
 
 #if _MAC
-  adrp    x17, __ptr32hi_2
-  add     x17, x17, __ptr32lo_2
+  adrp    x17, __ptr32page_2
+  add     x17, x17, __ptr32pageoff_2
 #elif (_LNX || _FREEBSD)
   movz    x17,  __ptr32lo_2
   movk    x17,  __ptr32hi_2, lsl #16
@@ -6144,8 +6144,8 @@ inline %0FEh
   ldr     x3, [x15, #8]  
 
 #if _MAC
-  adrp    x16, __ptr32hi_1
-  add     x16, x16, __ptr32lo_1
+  adrp    x16, __ptr32page_1
+  add     x16, x16, __ptr32pageoff_1
 #elif (_LNX || _FREEBSD)
   movz    x16,  __ptr32lo_1
   movk    x16,  __ptr32hi_1, lsl #16

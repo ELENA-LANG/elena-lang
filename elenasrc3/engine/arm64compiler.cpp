@@ -86,9 +86,19 @@ void elena_lang::ARM64loadCallOp(JITCompilerScope* scope)
             ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_1:
+         {
+            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_1:
          {
             ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_1:
+         {
+            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -134,22 +144,6 @@ void elena_lang::ARM64compileXOpenIN(JITCompilerScope* scope)
 }
 
 // --- ARM64JITCompiler ---
-
-ref_t ARM64JITCompiler :: normalizeAddressMask(ref_t addressMask)
-{
-   if (_picMode) {
-      switch (addressMask) {
-         case mskRef32Hi:
-            return mskRelRef32Hi4k;
-         case mskRef32Lo:
-            return mskRef32Lo12;
-         default:
-            break;
-      }
-   }
-
-   return addressMask;
-}
 
 void ARM64JITCompiler :: writeImm9(MemoryWriter* writer, int imm, int type)
 {
@@ -252,6 +246,20 @@ void ARM64JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, p
       case mskRef32Lo:
       {
          writer->Memory()->addReference((_picMode ? mskCodeRef32Lo12 : mskCodeRef32Lo) + offset, position);
+
+         break;
+      }
+      case mskRelRef32Hi4k:
+      {
+         assert(offset < ~mskAnyRef);
+
+         writer->Memory()->addReference(mskCodeRelRef32Hi4k + offset, position);
+
+         break;
+      }
+      case mskRef32Lo12:
+      {
+         writer->Memory()->addReference(mskCodeRef32Lo12 + offset, position);
 
          break;
       }

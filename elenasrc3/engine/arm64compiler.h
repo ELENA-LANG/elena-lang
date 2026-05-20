@@ -19,8 +19,6 @@ namespace elena_lang
       bool _picMode;
 
    protected:
-      ref_t normalizeAddressMask(ref_t addressMask) override;
-
       void prepare(
          LibraryLoaderBase* loader, 
          ImageProviderBase* imageProvider, 

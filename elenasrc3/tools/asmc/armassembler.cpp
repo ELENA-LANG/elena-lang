@@ -925,6 +925,10 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
       case PTR32LO_1:
       case PTR32HI_2:
       case PTR32LO_2:
+      case PTR32PAGE_1:
+      case PTR32PAGEOFF_1:
+      case PTR32PAGE_2:
+      case PTR32PAGEOFF_2:
          writer.Memory()->addReference(reference, writer.position() - 4);
          break;
       default:

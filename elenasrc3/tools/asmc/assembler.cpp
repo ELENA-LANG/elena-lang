@@ -249,6 +249,22 @@ bool AssemblerBase :: getArgReference(ScriptToken& tokenInfo, int& offset, ref_t
       reference = PTR32LO_1;
       offset = 0;
    }
+   else if (tokenInfo.compare(PTR32PAGE_ARGUMENT1)) {
+      reference = PTR32PAGE_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(PTR32PAGEOFF_ARGUMENT1)) {
+      reference = PTR32PAGEOFF_1;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(PTR32PAGE_ARGUMENT2)) {
+      reference = PTR32PAGE_2;
+      offset = 0;
+   }
+   else if (tokenInfo.compare(PTR32PAGEOFF_ARGUMENT2)) {
+      reference = PTR32PAGEOFF_2;
+      offset = 0;
+   }
    else if (tokenInfo.compare(RDATA32_ARGUMENT1)) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
       read(tokenInfo);
@@ -537,5 +553,4 @@ void AssemblerBase :: compile()
       else throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
    }
 }
-
 

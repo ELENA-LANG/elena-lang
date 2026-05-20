@@ -91,10 +91,6 @@ namespace elena_lang
       virtual int calcFrameOffset(int argument, bool extMode) = 0;
       virtual int calcTotalSize(int numberOfFields) = 0;
       virtual int calcTotalStructSize(int size) = 0;
-      virtual ref_t normalizeAddressMask(ref_t addressMask)
-      {
-         return addressMask;
-      }
 
       void writeArgAddress(JITCompilerScope* scope, ref_t arg, pos_t offset, ref_t addressMask);
       void writeVMTMethodArg(JITCompilerScope* scope, ref_t arg, pos_t offset, mssg_t message, ref_t addressMask);
