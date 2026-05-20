@@ -14,6 +14,26 @@
 
 using namespace elena_lang;
 
+static ARMOperandType clearOperandFlag(ARMOperandType type, ARMOperandType flag)
+{
+   return (ARMOperandType)((unsigned int)type & ~(unsigned int)flag);
+}
+
+static ARMOperand toUnsignedPtrOperand(ARMOperand ptr)
+{
+   ptr.type = clearOperandFlag(ptr.type, ARMOperandType::Postindex) | ARMOperandType::Unsigned;
+
+   return ptr;
+}
+
+static ARMOperand normalizeZeroPostindexPtr(ARMOperand ptr)
+{
+   if (ptr.isPostindex() && ptr.imm == 0 && !ptr.reference)
+      ptr = toUnsignedPtrOperand(ptr);
+
+   return ptr;
+}
+
 // an alternative DFA tablem where # is separate from the following digits
 const char* alt_token_dfa[17] =
 {
@@ -581,6 +601,150 @@ ARMOperand Arm64Assembler :: readOperand(ScriptToken& tokenInfo, ustr_t errorMes
             }
             else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
          }
+         else if (tokenInfo.compare("code_page")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskCodeRelRef32Hi4k, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("code_pageoff")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskCodeRef32Lo12, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("code_pageoff8")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskCodeRef32Lo12_8, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("rdata_page")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskRDataRelRef32Hi4k, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("rdata_pageoff")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskRDataRef32Lo12, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("rdata_pageoff8")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskRDataRef32Lo12_8, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("data_page")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskDataRelRef32Hi4k, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("data_pageoff")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskDataRef32Lo12, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("data_pageoff8")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskDataRef32Lo12_8, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("mdata_page")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskMDataRelRef32Hi4k, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("mdata_pageoff")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskMDataRef32Lo12, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("mdata_pageoff8")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskMDataRef32Lo12_8, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("stat_page")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskStatDataRelRef32Hi4k, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("stat_pageoff")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskStatDataRef32Lo12, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("stat_pageoff8")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandReference(tokenInfo, mskStatDataRef32Lo12_8, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("import_page")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandExternalReference(tokenInfo, mskImportRelRef32Hi4k, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("import_pageoff")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandExternalReference(tokenInfo, mskImportRef32Lo12, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
+         else if (tokenInfo.compare("import_pageoff8")) {
+            read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
+
+            if (readOperandExternalReference(tokenInfo, mskImportRef32Lo12_8, operand.imm, operand.reference)) {
+               operand.type = ARMOperandType::Imm;
+            }
+            else throw SyntaxError(errorMessage, tokenInfo.lineInfo);
+         }
          else if (getIntConstant(tokenInfo, operand.imm, operand.reference)) {
             operand.type = ARMOperandType::Imm;
 
@@ -767,20 +931,38 @@ void Arm64Assembler :: writeReference(ScriptToken& tokenInfo, ref_t reference, M
          switch (reference & mskAnyRef) {
             case mskRDataRef32Hi:
             case mskRDataRef32Lo:
+            case mskRDataRelRef32Hi4k:
+            case mskRDataRef32Lo12:
+            case mskRDataRef32Lo12_8:
             case mskRDataDisp32Hi:
             case mskRDataDisp32Lo:
             case mskDataDisp32Hi:
             case mskDataDisp32Lo:
             case mskDataRef32Hi:
             case mskDataRef32Lo:
+            case mskDataRelRef32Hi4k:
+            case mskDataRef32Lo12:
+            case mskDataRef32Lo12_8:
             case mskCodeRef32Hi:
             case mskCodeRef32Lo:
+            case mskCodeRelRef32Hi4k:
+            case mskCodeRef32Lo12:
+            case mskCodeRef32Lo12_8:
             case mskCodeDisp32Hi:
             case mskCodeDisp32Lo:
             case mskMDataRef32Hi:
             case mskMDataRef32Lo:
+            case mskMDataRelRef32Hi4k:
+            case mskMDataRef32Lo12:
+            case mskMDataRef32Lo12_8:
             case mskStatDataRef32Hi:
             case mskStatDataRef32Lo:
+            case mskStatDataRelRef32Hi4k:
+            case mskStatDataRef32Lo12:
+            case mskStatDataRef32Lo12_8:
+            case mskImportRelRef32Hi4k:
+            case mskImportRef32Lo12:
+            case mskImportRef32Lo12_8:
             case mskImportRef32Hi:
             case mskImportRef32Lo:
                writer.Memory()->addReference(reference, writer.position() - 4);
@@ -1188,17 +1370,28 @@ bool Arm64Assembler :: compileFMSUB(ScriptToken&/* tokenInfo*/, ARMOperand rd, A
 
 bool Arm64Assembler::compileLDP(ARMOperand rt1, ARMOperand rt2, ARMOperand n1, ARMOperand n2, MemoryWriter& writer)
 {
+   if (n2.type == ARMOperandType::Imm) {
+      n1.imm = n2.imm;
+      n1 = normalizeZeroPostindexPtr(n1);
+   }
+
    if (rt1.isXR() && rt2.isXR() && n1.isPostindex() && n2.type == ARMOperandType::Imm) {
       writer.writeDWord(ARMHelper::makeOpcode(2, 5, 0, 1, 1, n2.imm >> 3, rt2.type, n1.type, rt1.type));
    }
    else if (rt1.isXR() && rt2.isXR() && n1.isPreindex() && n2.type == ARMOperandType::Imm) {
       writer.writeDWord(ARMHelper::makeOpcode(2, 5, 0, 3, 1, n2.imm >> 3, rt2.type, n1.type, rt1.type));
    }
+   else if (rt1.isXR() && rt2.isXR() && n1.isUnsigned() && n2.type == ARMOperandType::Imm) {
+      writer.writeDWord(ARMHelper::makeOpcode(2, 5, 0, 2, 1, n2.imm >> 3, rt2.type, n1.type, rt1.type));
+   }
    else if (rt1.isDR() && rt2.isDR() && n1.isPostindex() && n2.type == ARMOperandType::Imm) {
       writer.writeDWord(ARMHelper::makeOpcode(1, 5, 1, 1, 1, n2.imm >> 3, rt2.type, n1.type, rt1.type));
    }
    else if (rt1.isDR() && rt2.isDR() && n1.isPreindex() && n2.type == ARMOperandType::Imm) {
       writer.writeDWord(ARMHelper::makeOpcode(1, 5, 1, 3, 1, n2.imm >> 3, rt2.type, n1.type, rt1.type));
+   }
+   else if (rt1.isDR() && rt2.isDR() && n1.isUnsigned() && n2.type == ARMOperandType::Imm) {
+      writer.writeDWord(ARMHelper::makeOpcode(1, 5, 1, 2, 1, n2.imm >> 3, rt2.type, n1.type, rt1.type));
    }
    else return false;
 
@@ -1207,6 +1400,8 @@ bool Arm64Assembler::compileLDP(ARMOperand rt1, ARMOperand rt2, ARMOperand n1, A
 
 bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (rt.isXR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
    }
@@ -1247,6 +1442,8 @@ bool Arm64Assembler :: compileLDR(ScriptToken& tokenInfo, ARMOperand rt, ARMOper
 
 bool Arm64Assembler :: compileLDRSB(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (rt.isXR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 2, 0, ptr.imm, 3, ptr.type, rt.type));
    }
@@ -1266,6 +1463,8 @@ bool Arm64Assembler :: compileLDRSB(ScriptToken& tokenInfo, ARMOperand rt, ARMOp
 
 bool Arm64Assembler :: compileLDRB(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (rt.isWR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 1, 0, ptr.imm, 3, ptr.type, rt.type));
    }
@@ -1285,6 +1484,8 @@ bool Arm64Assembler :: compileLDRB(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
 
 bool Arm64Assembler :: compileLDRSW(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (rt.isXR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(2, 7, 0, 0, 2, 0, ptr.imm, 3, ptr.type, rt.type));
    }
@@ -1304,6 +1505,8 @@ bool Arm64Assembler :: compileLDRSW(ScriptToken& tokenInfo, ARMOperand rt, ARMOp
 
 bool Arm64Assembler :: compileLDRSH(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (rt.isXR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(1, 7, 0, 0, 2, 0, ptr.imm, 3, ptr.type, rt.type));
    }
@@ -1477,11 +1680,16 @@ bool Arm64Assembler :: compileUDIV(ARMOperand rd, ARMOperand rn, ARMOperand rm, 
 
 bool Arm64Assembler :: compileSTP(ARMOperand t1, ARMOperand t2, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (t1.isXR() && t2.isXR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeOpcode(2, 5, 0, 3, 0, ptr.imm >> 3, t2.type, ptr.type, t1.type));
    }
    else if (t1.isXR() && t2.isXR() && ptr.isPostindex()) {
       writer.writeDWord(ARMHelper::makeOpcode(2, 5, 0, 1, 0, ptr.imm >> 3, t2.type, ptr.type, t1.type));
+   }
+   else if (t1.isXR() && t2.isXR() && ptr.isUnsigned()) {
+      writer.writeDWord(ARMHelper::makeOpcode(2, 5, 0, 2, 0, ptr.imm >> 3, t2.type, ptr.type, t1.type));
    }
    else return false;
 
@@ -1490,6 +1698,8 @@ bool Arm64Assembler :: compileSTP(ARMOperand t1, ARMOperand t2, ARMOperand ptr, 
 
 bool Arm64Assembler :: compileSTRB(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (rt.isWR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(0, 7, 0, 0, 0, 0, ptr.imm, 3, ptr.type, rt.type));
 
@@ -1509,6 +1719,8 @@ bool Arm64Assembler :: compileSTRB(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
 
 bool Arm64Assembler :: compileSTRH(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (rt.isWR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(1, 7, 0, 0, 0, 0, ptr.imm, 3, ptr.type, rt.type));
 
@@ -1528,6 +1740,8 @@ bool Arm64Assembler :: compileSTRH(ScriptToken& tokenInfo, ARMOperand rt, ARMOpe
 
 bool Arm64Assembler :: compileSTR(ScriptToken& tokenInfo, ARMOperand rt, ARMOperand ptr, MemoryWriter& writer)
 {
+   ptr = normalizeZeroPostindexPtr(ptr);
+
    if (rt.isXR() && ptr.isPreindex()) {
       writer.writeDWord(ARMHelper::makeImm9Opcode(3, 7, 0, 0, 0, 0, ptr.imm, 3, ptr.type, rt.type));
 
@@ -2211,6 +2425,12 @@ void Arm64Assembler :: compileLDP(ScriptToken& tokenInfo, MemoryWriter& writer)
 
    }
    else if (n1.isPreindex()) {
+      ARMOperand n2(ARMOperandType::Imm, n1.imm);
+
+      if (!compileLDP(rt1, rt2, n1, n2, writer))
+         throw SyntaxError(ASM_INVALID_COMMAND, tokenInfo.lineInfo);
+   }
+   else if (n1.isUnsigned()) {
       ARMOperand n2(ARMOperandType::Imm, n1.imm);
 
       if (!compileLDP(rt1, rt2, n1, n2, writer))

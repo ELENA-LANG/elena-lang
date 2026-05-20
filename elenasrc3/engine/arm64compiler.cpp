@@ -135,6 +135,22 @@ void elena_lang::ARM64compileXOpenIN(JITCompilerScope* scope)
 
 // --- ARM64JITCompiler ---
 
+ref_t ARM64JITCompiler :: normalizeAddressMask(ref_t addressMask)
+{
+   if (_picMode) {
+      switch (addressMask) {
+         case mskRef32Hi:
+            return mskRelRef32Hi4k;
+         case mskRef32Lo:
+            return mskRef32Lo12;
+         default:
+            break;
+      }
+   }
+
+   return addressMask;
+}
+
 void ARM64JITCompiler :: writeImm9(MemoryWriter* writer, int imm, int type)
 {
    switch (type) {
@@ -229,19 +245,13 @@ void ARM64JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, p
       {
          assert(offset < ~mskAnyRef);
 
-         //offset >>= 16;
-
-         //MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
-         writer->Memory()->addReference(mskCodeRef32Hi + offset, position);
+         writer->Memory()->addReference((_picMode ? mskCodeRelRef32Hi4k : mskCodeRef32Hi) + offset, position);
 
          break;
       }
       case mskRef32Lo:
       {
-         //offset &= 0xFFFF;
-
-         //MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
-         writer->Memory()->addReference(mskCodeRef32Lo + offset, position);
+         writer->Memory()->addReference((_picMode ? mskCodeRef32Lo12 : mskCodeRef32Lo) + offset, position);
 
          break;
       }

@@ -2,6 +2,10 @@
 
 internal const int __SIZEOF_SEM_T = 16;
 
+#elif (__project["_MacOSARM64"])
+
+internal const int __SIZEOF_SEM_T = 4;
+
 #elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"] || __project["_FreeBSD64"])
 
 internal const int __SIZEOF_SEM_T = 32;
@@ -72,6 +76,35 @@ public struct Semaphore
    release()
    {
       extern libc.sem_post(_sem);
+   }
+}
+
+#elif (__project["_MacOS"])
+
+public struct Semaphore
+{
+   pointer _sem;
+
+   constructor create(int initValue)
+   {
+      _sem := extern libc.dispatch_semaphore_create(initValue);
+   }
+
+   close()
+   {
+   }
+
+   wait()
+   {
+      excluded
+      {
+         extern libc.dispatch_semaphore_wait(_sem, -1l);
+      }
+   }
+
+   release()
+   {
+      extern libc.dispatch_semaphore_signal(_sem);
    }
 }
 

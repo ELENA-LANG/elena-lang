@@ -13,46 +13,6 @@
 
 namespace elena_lang
 {
-   struct MachOHeader_64
-   {
-      uint32_t       magic;
-
-      CPUType        cputype;
-
-      CPUSubType     cpusubtype;
-
-      uint32_t       filetype;
-
-      uint32_t       ncmds;
-
-      uint32_t       sizeofcmds;
-
-      uint32_t       flags;
-
-      uint32_t       reserved;
-   };
-
-   struct SegmentCommand_64 : public Command
-   {  
-      char       segname[16];   /* segment name */
-
-      uint64_t   vmaddr;        /* memory address of this segment */
-
-      uint64_t   vmsize;        /* memory size of this segment */
-
-      uint64_t   fileoff;       /* file offset of this segment */
-
-      uint64_t   filesize;      /* amount to map from the file */
-
-      vm_prot_t  maxprot;       /* maximum VM protection */
-
-      vm_prot_t  initprot;      /* initial VM protection */
-
-      uint32_t   nsects;        /* number of sections in segment */
-
-      uint32_t   flags;         /* flags */
-   };
-
    // --- MachOLinker64 ---
    class MachOLinker64 : public MachOLinker
    {
@@ -62,9 +22,10 @@ namespace elena_lang
          return MH_MAGIC_64;
       }
 
-      Command* createSegmentCommand(ImageSectionHeader& header, pos_t& fileOffset) override;
+      Command* createSegmentCommand(ImageSectionHeader& header, int headerIndex,
+         ImageSections& sections, pos_t& fileOffset, addr_t imageBase) override;
 
-      void writeMachOHeader(MachOExecutableImage& image, FileWriter* file) override;
+      void writeMachOHeader(MachOExecutableImage& image, StreamWriter* file) override;
 
    public:
       MachOLinker64(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
@@ -77,14 +38,14 @@ namespace elena_lang
    class MachOAmd64Linker : public MachOLinker64
    {
    protected:
-      CPUType getCPUType() override
+      cpu_type_t getCPUType() override
       {
-         return CPUType::x86;
+         return CPU_TYPE_X86;
       }
 
-      CPUSubType getCPUSubType() override
+      cpu_subtype_t getCPUSubType() override
       {
-         return CPUSubType::X86_ALL;
+         return CPU_SUBTYPE_X86_ALL;
       }
 
    public:

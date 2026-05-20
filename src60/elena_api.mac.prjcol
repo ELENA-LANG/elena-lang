@@ -1,0 +1,10 @@
+<configuration>
+  <collection>
+    <project>system/system.mac.prj</project>
+    <project>extensions/extensions.mac.prj</project>
+    <project>ltests/ltests.mac.prj</project>
+    <project>algorithms/algorithms.mac.prj</project>
+    <project>cellular/cellular.mac.prj</project>
+    <project>xml/xml.mac.prj</project>
+  </collection>
+</configuration>

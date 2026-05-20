@@ -10,8 +10,14 @@
 
 namespace elena_lang
 {
+   struct MessageEntry
+   {
+      int         value1;
+      const char* value2;
+   };
+
    constexpr auto MessageLength = 123;
-   const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
+   const MessageEntry Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
       {errDuplicatedDictionary, errMsgDuplicatedDictionary},

@@ -137,17 +137,22 @@ namespace elena_lang
          void writeStatRef64(MemoryBase& target, pos_t position, pos64_t disp,
             ref_t addressMask) override;
          void writeVAddress32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
-            ref_t addressMask) override;
-         void writeVAddress32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
-            ref_t addressMask) override;
-         void writeDisp32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
-            ref_t addressMask) override;
+         ref_t addressMask) override;
+      void writeVAddress32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+         ref_t addressMask) override;
+      void writeVAddress32Hi4k(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+         ref_t addressMask) override;
+      void writeVAddress32Lo12(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+         ref_t addressMask, int shift) override;
+      void writeDisp32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+         ref_t addressMask) override;
          void writeDisp32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
             ref_t addressMask) override;
 
          mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) override;
 
          addr_t resolveMDataVAddress() override;
+         addr_t resolveStatVAddress() override;
 
          addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) override
          {

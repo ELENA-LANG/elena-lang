@@ -77,6 +77,8 @@ namespace elena_lang
             case PlatformType::Linux_ARM64:
             case PlatformType::FreeBSD_x86_64:
                return givenPlatformName.compare("unix");
+            case PlatformType::MacOS_ARM64:
+               return givenPlatformName.compare("macos");
             default:
                return false;
          }

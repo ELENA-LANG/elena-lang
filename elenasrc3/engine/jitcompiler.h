@@ -91,6 +91,10 @@ namespace elena_lang
       virtual int calcFrameOffset(int argument, bool extMode) = 0;
       virtual int calcTotalSize(int numberOfFields) = 0;
       virtual int calcTotalStructSize(int size) = 0;
+      virtual ref_t normalizeAddressMask(ref_t addressMask)
+      {
+         return addressMask;
+      }
 
       void writeArgAddress(JITCompilerScope* scope, ref_t arg, pos_t offset, ref_t addressMask);
       void writeVMTMethodArg(JITCompilerScope* scope, ref_t arg, pos_t offset, mssg_t message, ref_t addressMask);
@@ -101,6 +105,8 @@ namespace elena_lang
       friend void writeCoreReference(JITCompilerScope* scope, ref_t reference, 
          pos_t disp, void* code, ModuleBase* module);
       friend void writeMDataReference(JITCompilerScope* scope, ref_t reference,
+         pos_t disp, void* code, ModuleBase* module);
+      friend void writeStatDataReference(JITCompilerScope* scope, ref_t reference,
          pos_t disp, void* code, ModuleBase* module);
       friend void allocateCode(JITCompilerScope* scope, void* code);
       friend void loadCode(JITCompilerScope* scope, void* code, ModuleBase* module);
@@ -412,6 +418,7 @@ namespace elena_lang
 
    void writeCoreReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
    void writeMDataReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
+   void writeStatDataReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
    void loadCode(JITCompilerScope* scope, void* code, ModuleBase* module);
    void allocateCode(JITCompilerScope* scope, void* code);
 

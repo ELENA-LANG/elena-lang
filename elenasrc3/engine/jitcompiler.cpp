@@ -208,6 +208,18 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
          scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             properRef | mskExternalRef, 0, mskRef32Lo, module);
          break;
+      case mskImportRelRef32Hi4k:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskRelRef32Hi4k, module);
+         break;
+      case mskImportRef32Lo12:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskRef32Lo12, module);
+         break;
+      case mskImportRef32Lo12_8:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskRef32Lo12_8, module);
+         break;
       case mskImportRef64:
          if (properRef) {
             scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
@@ -228,21 +240,68 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
          break;
       case mskDataRef32Lo:
       case mskRDataRef32Lo:
-      case mskMDataRef32Lo:
       case mskCodeRef32Lo:
-      case mskStatDataRef32Lo:
          scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             0, mask);
          break;
+      case mskStatDataRef32Lo:
+         writeStatDataReference(scope, reference, disp, code, module);
+         break;
+      case mskMDataRef32Lo:
+         writeMDataReference(scope, reference, disp, code, module);
+         break;
+      case mskDataRef32Lo12:
+      case mskRDataRef32Lo12:
+      case mskCodeRef32Lo12:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
+            0, mask, 0);
+         break;
+      case mskStatDataRef32Lo12:
+         writeStatDataReference(scope, reference, disp, code, module);
+         break;
+      case mskMDataRef32Lo12:
+         writeMDataReference(scope, reference, disp, code, module);
+         break;
+      case mskDataRef32Lo12_8:
+      case mskRDataRef32Lo12_8:
+      case mskCodeRef32Lo12_8:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
+            0, mask, 3);
+         break;
+      case mskStatDataRef32Lo12_8:
+         writeStatDataReference(scope, reference, disp, code, module);
+         break;
+      case mskMDataRef32Lo12_8:
+         writeMDataReference(scope, reference, disp, code, module);
+         break;
       case mskDataRef32Hi:
       case mskRDataRef32Hi:
-      case mskMDataRef32Hi:
       case mskCodeRef32Hi:
-      case mskStatDataRef32Hi:
          scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             0, mask);
+         break;
+      case mskStatDataRef32Hi:
+         writeStatDataReference(scope, reference, disp, code, module);
+         break;
+      case mskMDataRef32Hi:
+         writeMDataReference(scope, reference, disp, code, module);
+         break;
+      case mskDataRelRef32Hi4k:
+      case mskRDataRelRef32Hi4k:
+      case mskCodeRelRef32Hi4k:
+         scope->helper->writeVAddress32Hi4k(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
+            0, mask);
+         break;
+      case mskStatDataRelRef32Hi4k:
+         writeStatDataReference(scope, reference, disp, code, module);
+         break;
+      case mskMDataRelRef32Hi4k:
+         writeMDataReference(scope, reference, disp, code, module);
          break;
       case mskDataDisp32Hi:
       case mskRDataDisp32Hi:
@@ -289,6 +348,21 @@ void elena_lang :: writeMDataReference(JITCompilerScope* scope, ref_t mask,
             scope->helper->resolveMDataVAddress(),
             0, mask);
          break;
+      case mskMDataRelRef32Hi4k:
+         scope->helper->writeVAddress32Hi4k(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            0, mask);
+         break;
+      case mskMDataRef32Lo12:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            0, mask, 0);
+         break;
+      case mskMDataRef32Lo12_8:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            0, mask, 3);
+         break;
       case mskMDataDisp32Hi:
          scope->helper->writeDisp32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             scope->helper->resolveMDataVAddress(),
@@ -298,6 +372,51 @@ void elena_lang :: writeMDataReference(JITCompilerScope* scope, ref_t mask,
          scope->helper->writeDisp32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             scope->helper->resolveMDataVAddress(),
             *(pos_t*)((char*)code + disp), mask);
+         break;
+      default:
+         // to make compiler happy
+         break;
+   }
+}
+
+void elena_lang :: writeStatDataReference(JITCompilerScope* scope, ref_t mask,
+   pos_t disp, void* code, ModuleBase*)
+{
+   switch (mask) {
+      case mskStatDataRef32:
+         scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            *(pos_t*)((char*)code + disp), mask);
+         break;
+      case mskStatDataRef64:
+         scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            *(pos_t*)((char*)code + disp), mask);
+         break;
+      case mskStatDataRef32Lo:
+         scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask);
+         break;
+      case mskStatDataRef32Hi:
+         scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask);
+         break;
+      case mskStatDataRelRef32Hi4k:
+         scope->helper->writeVAddress32Hi4k(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask);
+         break;
+      case mskStatDataRef32Lo12:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask, 0);
+         break;
+      case mskStatDataRef32Lo12_8:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask, 3);
          break;
       default:
          // to make compiler happy
@@ -2999,13 +3118,18 @@ CodeGenerator* JITCompiler :: codeGenerators()
 void JITCompiler :: writeArgAddress(JITCompilerScope* scope, ref_t arg, pos_t offset, ref_t addressMask)
 {
    scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
-      arg, offset, addressMask);
+      arg, offset, normalizeAddressMask(addressMask));
 }
 
 void JITCompiler :: writeVMTMethodArg(JITCompilerScope* scope, ref_t arg, pos_t offset, mssg_t message, ref_t addressMask)
 {
+   ref_t referenceMask = arg & mskAnyRef;
+   ref_t effectiveAddressMask = (referenceMask == mskVMTMethodOffset || referenceMask == mskHMTMethodOffset)
+      ? addressMask
+      : normalizeAddressMask(addressMask);
+
    scope->helper->writeVMTMethodReference(/**scope->codeWriter->Memory(), */scope->codeWriter->position(),
-      arg, offset, message, addressMask);
+      arg, offset, message, effectiveAddressMask);
 }
 
 void JITCompiler :: compileTape(ReferenceHelperBase* helper, MemoryReader& bcReader, pos_t endPos,
