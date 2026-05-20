@@ -82,11 +82,49 @@ public singleton arrayConvertorEx
       ^ arr
    }
     
+   Array convert(object o, int capacity)
+   {
+      var arr := cast Array(o) ?? nil;
+      if (arr == nil)
+      {
+         if(o.enumerator(); is Enumerator en) {
+             ^ arrayConvertorEx.convert(en, capacity);
+         };
+
+         var it := o.indexer();
+         int len := it.Length;
+         if (len < capacity)
+            len := capacity;
+
+         arr := Array.allocate(len);
+         for (int i := 0; i < len; i += 1)
+         {
+            arr[i] := *it;
+            it.appendIndex(1)
+         }
+      };
+        
+      ^ arr
+   }
+    
    Array convert(Enumerator en)
    {
       ArrayList retVal := new ArrayList();
 
       en.forEach::(x){ retVal.append(x) };
+
+      ^ retVal
+   }
+
+   Array convert(Enumerator en, int length)
+   {
+      ArrayList retVal := ArrayList.allocate(length);
+      for(int i := 0; i < length; i++) {
+         if (en.next()) {
+            retVal.append(*en);
+         }
+         else { :break; }
+      };
 
       ^ retVal
    }
@@ -272,6 +310,8 @@ public extension arrayConvertOp
    Array toArray()
       = arrayConvertorEx.convert(self);
 
+   Array toArray(int capacity)
+      = arrayConvertorEx.convert(self, capacity);
 }
 
 // --- intArrayConvertOp ---
