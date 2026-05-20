@@ -89,6 +89,13 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
    GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE, THREAD_WAIT
 };
 
+static inline addr_t resolveMDataOrStatVAddress(JITCompilerScope* scope, ref_t mask)
+{
+   return (mask & mskImageType) == mskStatDataRef
+      ? scope->helper->resolveStatVAddress()
+      : scope->helper->resolveMDataVAddress();
+}
+
 // preloaded bc commands
 constexpr size_t bcCommandNumber = 180;
 constexpr ByteCode bcCommands[bcCommandNumber] =
@@ -246,10 +253,10 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             0, mask);
          break;
       case mskStatDataRef32Lo:
-         writeStatDataReference(scope, reference, disp, code, module);
-         break;
       case mskMDataRef32Lo:
-         writeMDataReference(scope, reference, disp, code, module);
+         scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask);
          break;
       case mskDataRef32Lo12:
       case mskRDataRef32Lo12:
@@ -259,10 +266,10 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             0, mask, 0);
          break;
       case mskStatDataRef32Lo12:
-         writeStatDataReference(scope, reference, disp, code, module);
-         break;
       case mskMDataRef32Lo12:
-         writeMDataReference(scope, reference, disp, code, module);
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask, 0);
          break;
       case mskDataRef32Lo12_8:
       case mskRDataRef32Lo12_8:
@@ -272,10 +279,10 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             0, mask, 3);
          break;
       case mskStatDataRef32Lo12_8:
-         writeStatDataReference(scope, reference, disp, code, module);
-         break;
       case mskMDataRef32Lo12_8:
-         writeMDataReference(scope, reference, disp, code, module);
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask, 3);
          break;
       case mskDataRef32Hi:
       case mskRDataRef32Hi:
@@ -285,10 +292,10 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             0, mask);
          break;
       case mskStatDataRef32Hi:
-         writeStatDataReference(scope, reference, disp, code, module);
-         break;
       case mskMDataRef32Hi:
-         writeMDataReference(scope, reference, disp, code, module);
+         scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask);
          break;
       case mskDataRelRef32Hi4k:
       case mskRDataRelRef32Hi4k:
@@ -298,10 +305,10 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
             0, mask);
          break;
       case mskStatDataRelRef32Hi4k:
-         writeStatDataReference(scope, reference, disp, code, module);
-         break;
       case mskMDataRelRef32Hi4k:
-         writeMDataReference(scope, reference, disp, code, module);
+         scope->helper->writeVAddress32Hi4k(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask);
          break;
       case mskDataDisp32Hi:
       case mskRDataDisp32Hi:
