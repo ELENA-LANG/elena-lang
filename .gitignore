@@ -33,3 +33,4 @@
 examples60/db/sqlite/bin
 .vs/
 .DS_Store
+.idea

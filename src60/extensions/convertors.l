@@ -82,11 +82,46 @@ public singleton arrayConvertorEx
       ^ arr
    }
     
+   Array convert(object o, int capacity)
+   {
+      var arr := cast Array(o) ?? nil;
+      if (arr == nil)
+      {
+         if(o.enumerator(); is Enumerator en) {
+             ^ arrayConvertorEx.convert(en, capacity);
+         };
+
+         var it := o.indexer();
+         int len := it.Length;
+         if (len < capacity)
+            len := capacity;
+
+         arr := Array.allocate(len);
+         for (int i := 0; i < len; i += 1)
+         {
+            arr[i] := *it;
+            it.appendIndex(1)
+         }
+      };
+        
+      ^ arr
+   }
+    
    Array convert(Enumerator en)
    {
       ArrayList retVal := new ArrayList();
 
       en.forEach::(x){ retVal.append(x) };
+
+      ^ retVal
+   }
+
+   Array convert(Enumerator en, int length)
+   {
+      ArrayList retVal := ArrayList.allocate(length);
+      for(int i := 0; i < length && en.next(); i++) {
+         retVal.append(*en);
+      };
 
       ^ retVal
    }
@@ -169,6 +204,29 @@ singleton EnumerableConvertor
     
    Enumerable convert(o)
       = new Enumerable { Enumerator enumerator() = o.enumerator(); };
+}
+
+public singleton IntArrayExConvertor
+{
+   int[] convert(Enumerable<int> collection, int length)
+   {
+      auto en := collection.enumerator();
+
+      int[] retVal := new int[](length);
+      for(int i := 0; i < length && en.next(); i++) {
+         retVal[i] := *en;
+      };
+
+      ^ retVal
+
+   }
+
+   int[] convert(Enumerable<int> collection)
+   {
+      List<int> list := new List<int>(collection.enumerator());
+
+      ^ *list
+   }
 }
 
 public singleton ByteArrayExConvertor
@@ -272,6 +330,8 @@ public extension arrayConvertOp
    Array toArray()
       = arrayConvertorEx.convert(self);
 
+   Array toArray(int capacity)
+      = arrayConvertorEx.convert(self, capacity);
 }
 
 // --- intArrayConvertOp ---
@@ -279,6 +339,12 @@ public extension intArrayConvertOp
 {
    IntMatrix toIntMatrix()
       = IntmatrixExConvertor.convert(self);
+
+   int[] toIntArray(int length)
+      = IntArrayExConvertor.convert(self, length);
+
+   int[] toIntArray()
+      = IntArrayExConvertor.convert(self);
 }
 
 // --- convertorOp ---
