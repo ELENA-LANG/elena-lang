@@ -119,11 +119,8 @@ public singleton arrayConvertorEx
    Array convert(Enumerator en, int length)
    {
       ArrayList retVal := ArrayList.allocate(length);
-      for(int i := 0; i < length; i++) {
-         if (en.next()) {
-            retVal.append(*en);
-         }
-         else { :break; }
+      for(int i := 0; i < length && en.next(); i++) {
+         retVal.append(*en);
       };
 
       ^ retVal
@@ -207,6 +204,29 @@ singleton EnumerableConvertor
     
    Enumerable convert(o)
       = new Enumerable { Enumerator enumerator() = o.enumerator(); };
+}
+
+public singleton IntArrayExConvertor
+{
+   int[] convert(Enumerable<int> collection, int length)
+   {
+      auto en := collection.enumerator();
+
+      int[] retVal := new int[](length);
+      for(int i := 0; i < length && en.next(); i++) {
+         retVal[i] := *en;
+      };
+
+      ^ retVal
+
+   }
+
+   int[] convert(Enumerable<int> collection)
+   {
+      List<int> list := new List<int>(collection.enumerator());
+
+      ^ *list
+   }
 }
 
 public singleton ByteArrayExConvertor
@@ -319,6 +339,12 @@ public extension intArrayConvertOp
 {
    IntMatrix toIntMatrix()
       = IntmatrixExConvertor.convert(self);
+
+   int[] toIntArray(int length)
+      = IntArrayExConvertor.convert(self, length);
+
+   int[] toIntArray()
+      = IntArrayExConvertor.convert(self);
 }
 
 // --- convertorOp ---
