@@ -293,8 +293,8 @@ clean_og_mac_amd64:
 clean_og_mac_arm64:
 	$(MAKE) -C elenasrc3/tools/og/make clean -f og_mac_arm64.mak
 
-clean_sg_mac_amd64: 
-	$(MAKE) -C elenasrc3/tools/sg/make clean -f og_mac_amd64.mak
+clean_sg_mac_amd64:
+	$(MAKE) -C elenasrc3/tools/sg/make clean -f sg_mac_amd64.mak
 
 clean_sg_mac_arm64:
 	$(MAKE) -C elenasrc3/tools/sg/make clean -f sg_mac_arm64.mak
