@@ -80,8 +80,6 @@ struct ImageItem
 {
    MemoryBase* section;
    bool        isAligned;
-   pos_t       fileOffset;
-   const char* name = nullptr;
 };
 
 struct ImageSections
@@ -90,7 +88,7 @@ struct ImageSections
    Map<int, ImageItem>      items;
 
    ImageSections()
-      : headers(ImageSectionHeader()), items({ nullptr, false, 0 })
+      : headers(ImageSectionHeader()), items({ nullptr, false })
    {
    }
 };

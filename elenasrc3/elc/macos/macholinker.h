@@ -36,6 +36,12 @@ namespace elena_lang
    typedef List<ustr_t, freeUStr>          MachOLibraryList;
    typedef List<pos_t>                     MachORebaseList;
 
+   struct MachOSectionInfo
+   {
+      const char* name;
+      pos_t       fileOffset;
+   };
+
    struct MachOExecutableImage
    {
       unsigned int    sectionAlignment;
@@ -125,8 +131,11 @@ namespace elena_lang
       virtual cpu_type_t getCPUType() = 0;
       virtual cpu_subtype_t getCPUSubType() = 0;
 
+      static MachOSectionInfo getSectionInfo(ImageSectionHeader& header, pos_t itemIndex,
+         AddressSpace& addressMap);
+
       virtual Command* createSegmentCommand(ImageSectionHeader& header, int headerIndex,
-         ImageSections& sections, pos_t& fileOffset, addr_t imageBase) = 0;
+         ImageSections& sections, AddressSpace& addressMap) = 0;
 
       virtual void prepareMachOImage(ForwardResolverBase* resolver, ImageProviderBase& provider, MachOExecutableImage& image);
       virtual void prepareCommands(MachOExecutableImage& image);

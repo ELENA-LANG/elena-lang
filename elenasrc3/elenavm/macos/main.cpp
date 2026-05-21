@@ -6,7 +6,7 @@
 
 #include "elena.h"
 // -------------------------------------------------------------------
-#include "elenavmapi.h"
+#include "elenavm.h"
 #include "langcommon.h"
 #include "linux/presenter.h"
 #include "elenavmmachine.h"

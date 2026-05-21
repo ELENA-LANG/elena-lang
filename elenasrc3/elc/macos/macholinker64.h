@@ -23,7 +23,7 @@ namespace elena_lang
       }
 
       Command* createSegmentCommand(ImageSectionHeader& header, int headerIndex,
-         ImageSections& sections, pos_t& fileOffset, addr_t imageBase) override;
+         ImageSections& sections, AddressSpace& addressMap) override;
 
       void writeMachOHeader(MachOExecutableImage& image, StreamWriter* file) override;
 

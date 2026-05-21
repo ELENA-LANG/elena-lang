@@ -552,14 +552,18 @@ static Command* createSourceVersionCommand()
 
 static pos_t getExecutableSectionSize(MachOExecutableImage& image)
 {
-   for (auto it = image.imageSections.items.start(); !it.eof(); ++it) {
-      if ((*it).name && strcmp((*it).name, "__text") == 0 && (*it).section != nullptr)
-         return (*it).section->length();
-   }
-
+   int headerIndex = 1;
    for (auto it = image.imageSections.headers.start(); !it.eof(); ++it) {
-      if ((*it).name.compare(__TEXT_SEGMENT))
+      if ((*it).name.compare(__TEXT_SEGMENT)) {
+         for (auto itemIt = image.imageSections.items.start(); !itemIt.eof(); ++itemIt) {
+            if (itemIt.key() == headerIndex && (*itemIt).section != nullptr)
+               return (*itemIt).section->length();
+         }
+
          return (*it).fileSize;
+      }
+
+      headerIndex++;
    }
 
    return 0;
@@ -882,13 +886,25 @@ void MachOLinker :: writeSection(StreamWriter* file, MemoryBase* section)
 
 void MachOLinker :: writeSegments(MachOExecutableImage& image, StreamWriter* file)
 {
+   int headerIndex = 0;
+   pos_t itemIndex = 0;
+
    for (auto it = image.imageSections.items.start(); !it.eof(); ++it) {
-      if ((*it).fileOffset != 0 && file->position() < (*it).fileOffset)
-         file->writeBytes(0, (*it).fileOffset - file->position());
+      if (headerIndex != it.key()) {
+         headerIndex = it.key();
+         itemIndex = 0;
+      }
+
+      ImageSectionHeader header = image.imageSections.headers.get(headerIndex);
+      MachOSectionInfo sectionInfo = getSectionInfo(header, itemIndex, image.addressMap);
+      if (sectionInfo.fileOffset != 0 && file->position() < sectionInfo.fileOffset)
+         file->writeBytes(0, sectionInfo.fileOffset - file->position());
 
       writeSection(file, (*it).section);
       if ((*it).isAligned)
          file->writeBytes(0, align(file->position(), image.fileAlignment) - file->position());
+
+      itemIndex++;
    }
    if (file->position() < image.linkEditOffset)
       file->writeBytes(0, image.linkEditOffset - file->position());
@@ -1137,14 +1153,54 @@ void MachOLinker :: addCommand(MachOExecutableImage& image, Command* command)
    image.totalCommandSize += command->size();
 }
 
+MachOSectionInfo MachOLinker :: getSectionInfo(ImageSectionHeader& header, pos_t itemIndex,
+   AddressSpace& addressMap)
+{
+   if (header.name.compare(__TEXT_SEGMENT)) {
+      switch (itemIndex) {
+         case 0:
+            return { "__text", addressMap.code };
+         default:
+            break;
+      }
+   }
+   else if (header.name.compare(__DATA_CONST_SEGMENT)) {
+      switch (itemIndex) {
+         case 0:
+            return { "__adata", addressMap.adata };
+         case 1:
+            return { "__mdata", addressMap.mdata };
+         case 2:
+            return { "__mbdata", addressMap.mbdata };
+         case 3:
+            return { "__const", addressMap.rdata };
+         default:
+            break;
+      }
+   }
+   else if (header.name.compare(__DATA_SEGMENT)) {
+      switch (itemIndex) {
+         case 0:
+            return { "__import", addressMap.import };
+         case 1:
+            return { "__data", addressMap.data };
+         case 2:
+            return { "__stat", addressMap.stat };
+         default:
+            break;
+      }
+   }
+
+   return { nullptr, 0 };
+}
+
 void MachOLinker :: prepareCommands(MachOExecutableImage& image)
 {
-   pos_t fileOffset = 0;
    int headerIndex = 1;
    for (auto it = image.imageSections.headers.start(); !it.eof(); ++it) {
       ImageSectionHeader header = *it;
 
-      Command* command = createSegmentCommand(header, headerIndex, image.imageSections, fileOffset, image.addressMap.imageBase);
+      Command* command = createSegmentCommand(header, headerIndex, image.imageSections, image.addressMap);
       addCommand(image, command);
       headerIndex++;
    }

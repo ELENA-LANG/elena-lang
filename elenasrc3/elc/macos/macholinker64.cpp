@@ -21,25 +21,26 @@ static pos_t countSegmentSections(ImageSections& sections, int headerIndex)
    return counter;
 }
 
-static void fillSectionCommand(section_64& command, ImageSectionHeader& header, ImageItem& item, addr_t imageBase)
+static void fillSectionCommand(section_64& command, ImageSectionHeader& header, ImageItem& item,
+   MachOSectionInfo sectionInfo, addr_t imageBase)
 {
-   strncpy(command.sectname, item.name, 16);
+   strncpy(command.sectname, sectionInfo.name, 16);
    strncpy(command.segname, header.name.str(), 16);
 
-   command.addr = imageBase + item.fileOffset;
+   command.addr = imageBase + sectionInfo.fileOffset;
    command.size = item.section->length();
-   command.offset = item.fileOffset;
-   command.align = (item.name && strcmp(item.name, "__import") == 0)
+   command.offset = sectionInfo.fileOffset;
+   command.align = (sectionInfo.name && strcmp(sectionInfo.name, "__import") == 0)
       ? 3
       : ((header.type == ImageSectionHeader::SectionType::Text
-         || (item.name && (strcmp(item.name, "__adata") == 0 || strcmp(item.name, "__mdata") == 0
-            || strcmp(item.name, "__mbdata") == 0 || strcmp(item.name, "__const") == 0))) ? 2 : 0);
+         || (sectionInfo.name && (strcmp(sectionInfo.name, "__adata") == 0 || strcmp(sectionInfo.name, "__mdata") == 0
+            || strcmp(sectionInfo.name, "__mbdata") == 0 || strcmp(sectionInfo.name, "__const") == 0))) ? 2 : 0);
    command.reloff = 0;
    command.nreloc = 0;
-   if (header.type == ImageSectionHeader::SectionType::Text && item.name && strcmp(item.name, "__text") == 0) {
+   if (header.type == ImageSectionHeader::SectionType::Text && sectionInfo.name && strcmp(sectionInfo.name, "__text") == 0) {
       command.flags = S_ATTR_PURE_INSTRUCTIONS | S_ATTR_SOME_INSTRUCTIONS;
    }
-   else if (item.name && strcmp(item.name, "__import") == 0) {
+   else if (sectionInfo.name && strcmp(sectionInfo.name, "__import") == 0) {
       command.flags = S_NON_LAZY_SYMBOL_POINTERS;
    }
    else command.flags = 0;
@@ -66,7 +67,7 @@ void MachOLinker64 :: writeMachOHeader(MachOExecutableImage& image, StreamWriter
 }
 
 Command* MachOLinker64 :: createSegmentCommand(ImageSectionHeader& header, int headerIndex,
-   ImageSections& sections, pos_t& fileOffset, addr_t imageBase)
+   ImageSections& sections, AddressSpace& addressMap)
 {
    pos_t sectionCounter = countSegmentSections(sections, headerIndex);
    pos_t commandSize = sizeof(segment_command_64) + sectionCounter * sizeof(section_64);
@@ -80,13 +81,13 @@ Command* MachOLinker64 :: createSegmentCommand(ImageSectionHeader& header, int h
    strncpy(segment->segname, header.name.str(), header.name.length() + 1);
    if (header.name.compare(__PAGEZERO_SEGMENT)) {
       segment->vmaddr = 0;
-      segment->vmsize = imageBase;
+      segment->vmsize = addressMap.imageBase;
       segment->fileoff = 0;
       segment->filesize = 0;
       segment->initprot = segment->maxprot = 0;
    }
    else {
-      segment->vmaddr = imageBase + header.vaddress;
+      segment->vmaddr = addressMap.imageBase + header.vaddress;
       segment->vmsize = header.memorySize;
       segment->fileoff = header.name.compare(__TEXT_SEGMENT) ? 0 : header.vaddress;
       segment->filesize = header.fileSize;
@@ -105,16 +106,19 @@ Command* MachOLinker64 :: createSegmentCommand(ImageSectionHeader& header, int h
            assert(false);
            break;
       }
-
-      fileOffset = segment->fileoff + segment->filesize;
    }
    segment->nsects = sectionCounter;
    segment->flags = header.name.compare(__DATA_CONST_SEGMENT) ? SG_READ_ONLY : 0;
 
    pos_t sectionIndex = 0;
+   pos_t itemIndex = 0;
    for (auto it = sections.items.start(); !it.eof(); ++it) {
-      if (it.key() == headerIndex && (*it).section != nullptr && (*it).section->length() > 0) {
-         fillSectionCommand(section[sectionIndex++], header, *it, imageBase);
+      if (it.key() == headerIndex) {
+         if ((*it).section != nullptr && (*it).section->length() > 0) {
+            MachOSectionInfo sectionInfo = getSectionInfo(header, itemIndex, addressMap);
+            fillSectionCommand(section[sectionIndex++], header, *it, sectionInfo, addressMap.imageBase);
+         }
+         itemIndex++;
       }
    }
 

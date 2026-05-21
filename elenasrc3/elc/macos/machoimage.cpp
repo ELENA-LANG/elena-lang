@@ -51,7 +51,7 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    sections.headers.add(ImageSectionHeader::get(__TEXT_SEGMENT, sectionOffset, ImageSectionHeader::SectionType::Text,
       sectionSize, fileSize));
 
-   sections.items.add(sections.headers.count(), { text, true, map.code, "__text" });
+   sections.items.add(sections.headers.count(), { text, true });
 
    // --- __DATA_CONST (adata & mdata & mbdata & rdata) ---
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
@@ -76,10 +76,10 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    sections.headers.add(ImageSectionHeader::get(__DATA_CONST_SEGMENT, sectionOffset, ImageSectionHeader::SectionType::Data,
       sectionSize, fileSize));
 
-   sections.items.add(sections.headers.count(), { adata, false, map.adata, "__adata" });
-   sections.items.add(sections.headers.count(), { mdata, false, map.mdata, "__mdata" });
-   sections.items.add(sections.headers.count(), { mbdata, true, map.mbdata, "__mbdata" });
-   sections.items.add(sections.headers.count(), { rdata, true, map.rdata, "__const" });
+   sections.items.add(sections.headers.count(), { adata, false });
+   sections.items.add(sections.headers.count(), { mdata, false });
+   sections.items.add(sections.headers.count(), { mbdata, true });
+   sections.items.add(sections.headers.count(), { rdata, true });
 
    // --- __DATA (data & stat) segment ---
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
@@ -101,9 +101,9 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    sections.headers.add(ImageSectionHeader::get(__DATA_SEGMENT, sectionOffset, ImageSectionHeader::SectionType::Data,
       sectionSize, fileSize));
 
-   sections.items.add(sections.headers.count(), { import, true, map.import, "__import" });
-   sections.items.add(sections.headers.count(), { data, true, map.data, "__data" });
-   sections.items.add(sections.headers.count(), { stat, true, map.stat, "__stat" });
+   sections.items.add(sections.headers.count(), { import, true });
+   sections.items.add(sections.headers.count(), { data, true });
+   sections.items.add(sections.headers.count(), { stat, true });
 
    // --- __LINKEDIT segment ---
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);

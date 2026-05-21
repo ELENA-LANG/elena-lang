@@ -9,7 +9,7 @@
 // -------------------------------------------------------------------
 #include <unistd.h>
 
-#include "elenartapi.h"
+#include "elenart.h"
 #include "elenartmachine.h"
 #include <mach-o/dyld.h>
 
