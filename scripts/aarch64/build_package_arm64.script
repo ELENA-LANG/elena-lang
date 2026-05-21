@@ -75,7 +75,7 @@ cp ../../dat/sg/syntax67.dat /usr/share/elena
 
 echo compiling assembly files
 
-../../bin/asm64-cli -linux -arm64 ../../asm/aarch64/core60.asm /usr/lib/elena/core/aarch64 core60_lnx.bin
+../../bin/asm64-cli -arm64 ../../asm/aarch64/core60.asm /usr/lib/elena/core/aarch64
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -85,7 +85,17 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -arm64 ../../asm/aarch64/core60_client.asm /usr/lib/elena/core/aarch64 core60_lnx_client.bin 
+../../bin/asm64-cli -arm64 ../../asm/aarch64/core60_lnx.asm /usr/lib/elena/core/aarch64
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
+../../bin/asm64-cli -linux -arm64 ../../asm/aarch64/core60_client.asm /usr/lib/elena/core/aarch64 core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
