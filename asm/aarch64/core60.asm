@@ -177,8 +177,13 @@ procedure % VEH_HANDLER
   mov     x0, x9
   mov     x9, x17
 
+#if _MAC
   adrp    x20, data_page : %CORE_SINGLE_CONTENT
   add     x20, x20, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
+  movz    x20,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x20,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
 
   ldr     x17, [x20]
   br      x17
