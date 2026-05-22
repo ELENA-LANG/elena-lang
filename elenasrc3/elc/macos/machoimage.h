@@ -4,6 +4,7 @@
 //		This header contains ELENA Executive MachO Image class declaration
 //       supported platform: ARM64
 //                                              (C)2025, by Aleksey Rakov
+//                                              (C)2026, by Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef MACHOIMAGE_H

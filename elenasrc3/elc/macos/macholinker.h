@@ -4,6 +4,7 @@
 //		This header contains ELENA Executive Linker class declaration
 //		Supported platforms: MacOS
 //                                             (C)2025, by Aleksey Rakov
+//                                             (C)2026, by Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef MACHOLINKER_H

@@ -3,6 +3,7 @@
 //
 //		This header contains Common MachO types
 //                                              (C)2025, by Aleksey Rakov
+//                                              (C)2026, by Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef MACHOCOMMON_H
