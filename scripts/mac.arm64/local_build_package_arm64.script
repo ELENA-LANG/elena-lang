@@ -1,0 +1,82 @@
+#!/bin/sh
+
+run_step()
+{
+  "$@"
+  ret=$?
+  if [ $ret -eq 0 ]
+  then
+    echo .
+  else
+    echo "Failure" >&2
+    exit 1
+  fi
+}
+
+run_elena()
+{
+  "$@"
+  ret=$?
+  if [ $ret -eq 1 ]
+  then
+    echo "Failure" >&2
+    exit 1
+  else
+    echo .
+  fi
+}
+
+mkdir -p ../../lib60_64
+mkdir -p ../../bin/aarch64
+mkdir -p /usr/local/lib/elena
+mkdir -p /usr/local/lib/elena/core/aarch64
+mkdir -p /usr/local/lib/elena/lib60_64
+mkdir -p /usr/local/etc/elena
+mkdir -p /usr/local/etc/elena/templates
+
+echo compiling data files
+
+run_step ../../bin/sg64-cli ../../dat/sg/syntax60.txt
+run_step ../../bin/sg64-cli ../../dat/sg/syntax67.txt
+run_step ../../bin/og64-cli ../../dat/og/bc_rules60.txt
+run_step ../../bin/og64-cli -s ../../dat/og/bt_rules60.txt
+run_step ../../bin/og64-cli -s ../../dat/og/bt_xrules60.txt
+
+cp ../../dat/og/*.dat ../../bin
+cp ../../dat/sg/syntax60.dat ../../bin
+cp ../../dat/sg/syntax67.dat ../../bin
+
+echo compiling assembly files
+
+run_step ../../bin/asm64-cli -aarch64 ../../asm/aarch64/core60.asm ../../bin/aarch64 core60.bin
+run_step ../../bin/asm64-cli -aarch64 -mac ../../asm/aarch64/core60.asm ../../bin/aarch64 core60_mac.bin
+run_step ../../bin/asm64-cli -aarch64 -mac ../../asm/aarch64/core60_client.asm ../../bin/aarch64 core60_mac_client.bin
+
+echo compiling lib60 files
+
+run_step ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
+run_elena ../../bin/elena64-cli ../../src60/elena_api.mac.prjcol
+
+echo installing local links
+
+ln -sf "$(realpath ../../bin/libelenart60_64.dylib)" /usr/local/lib/elena/libelenart60_64.dylib
+ln -sf "$(realpath ../../bin/libelenavm60_64.dylib)" /usr/local/lib/elena/libelenavm60_64.dylib
+ln -sf "$(realpath ../../bin/elc60.config)" /usr/local/etc/elena/elc60.config
+ln -sf "$(realpath ../../bin/elenart60.config)" /usr/local/etc/elena/elenart60.config
+ln -sf "$(realpath ../../bin/elenavm60.config)" /usr/local/etc/elena/elenavm60.config
+
+for file in ../../bin/templates/*.config
+do
+  ln -sf "$(realpath "$file")" "/usr/local/etc/elena/templates/$(basename "$file")"
+done
+
+ln -sf "$(realpath ../../bin/aarch64/core60.bin)" /usr/local/lib/elena/core/aarch64/core60.bin
+ln -sf "$(realpath ../../bin/aarch64/core60_mac.bin)" /usr/local/lib/elena/core/aarch64/core60_mac.bin
+ln -sf "$(realpath ../../bin/aarch64/core60_mac_client.bin)" /usr/local/lib/elena/core/aarch64/core60_mac_client.bin
+
+for file in ../../lib60_64/*.nl ../../lib60_64/*.dnl
+do
+  ln -sf "$(realpath "$file")" "/usr/local/lib/elena/lib60_64/$(basename "$file")"
+done
+
+exit 0

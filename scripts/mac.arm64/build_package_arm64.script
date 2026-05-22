@@ -1,0 +1,106 @@
+#!/bin/sh
+
+RELEASE=elena-7.0.17.arm64-mac
+
+run_step()
+{
+  "$@"
+  ret=$?
+  if [ $ret -eq 0 ]
+  then
+    echo .
+  else
+    echo "Failure" >&2
+    exit 1
+  fi
+}
+
+run_elena()
+{
+  "$@"
+  ret=$?
+  if [ $ret -eq 1 ]
+  then
+    echo "Failure" >&2
+    exit 1
+  else
+    echo .
+  fi
+}
+
+mkdir -p ../../lib60_64
+mkdir -p /usr/local/share/elena
+mkdir -p /usr/local/etc/elena
+mkdir -p /usr/local/etc/elena/templates
+mkdir -p /usr/local/lib/elena/core/aarch64
+mkdir -p /usr/local/lib/elena/lib60_64
+mkdir -p /usr/local/bin
+
+cp ../../bin/libelenart60_64.dylib /usr/local/lib/elena/
+cp ../../bin/libelenavm60_64.dylib /usr/local/lib/elena/
+cp ../../bin/elena64-cli /usr/local/bin/
+
+cp ../../bin/elc60.config /usr/local/etc/elena/
+cp ../../bin/elenart60.config /usr/local/etc/elena/
+cp ../../bin/elenavm60.config /usr/local/etc/elena/
+cp ../../bin/templates/*.config /usr/local/etc/elena/templates/
+
+echo compiling data files
+
+run_step ../../bin/sg64-cli ../../dat/sg/syntax60.txt
+run_step ../../bin/sg64-cli ../../dat/sg/syntax67.txt
+run_step ../../bin/og64-cli ../../dat/og/bc_rules60.txt
+run_step ../../bin/og64-cli -s ../../dat/og/bt_rules60.txt
+run_step ../../bin/og64-cli -s ../../dat/og/bt_xrules60.txt
+
+cp ../../dat/og/*.dat /usr/local/share/elena/
+cp ../../dat/og/*.dat ../../bin
+cp ../../dat/sg/syntax60.dat /usr/local/share/elena
+cp ../../dat/sg/syntax67.dat /usr/local/share/elena
+cp ../../dat/sg/syntax60.dat ../../bin
+cp ../../dat/sg/syntax67.dat ../../bin
+
+echo compiling assembly files
+
+run_step ../../bin/asm64-cli -aarch64 ../../asm/aarch64/core60.asm /usr/local/lib/elena/core/aarch64 core60.bin
+run_step ../../bin/asm64-cli -aarch64 -mac ../../asm/aarch64/core60.asm /usr/local/lib/elena/core/aarch64 core60_mac.bin
+run_step ../../bin/asm64-cli -aarch64 -mac ../../asm/aarch64/core60_client.asm /usr/local/lib/elena/core/aarch64 core60_mac_client.bin
+
+echo compiling lib60 files
+
+run_step ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
+run_elena ../../bin/elena64-cli ../../src60/elena_api.mac.prjcol
+
+cp ../../lib60_64/*.nl /usr/local/lib/elena/lib60_64
+cp ../../lib60_64/*.dnl /usr/local/lib/elena/lib60_64
+
+mkdir -p ../../build/$RELEASE/bin
+mkdir -p ../../build/$RELEASE/bin/templates
+mkdir -p ../../build/$RELEASE/bin/aarch64
+mkdir -p ../../build/$RELEASE/lib60_64
+mkdir -p ../../build/$RELEASE/examples60
+mkdir -p ../../build/$RELEASE/src60
+
+echo copying package files
+
+cp ../../bin/*.config ../../build/$RELEASE/bin
+cp ../../bin/templates/*.config ../../build/$RELEASE/bin/templates
+cp ../../dat/og/*.dat ../../build/$RELEASE/bin
+cp ../../dat/sg/syntax60.dat ../../build/$RELEASE/bin
+cp ../../dat/sg/syntax67.dat ../../build/$RELEASE/bin
+cp ../../bin/elena64-cli ../../build/$RELEASE/bin
+cp ../../bin/libelenart60_64.dylib ../../build/$RELEASE/bin
+cp ../../bin/libelenavm60_64.dylib ../../build/$RELEASE/bin
+cp /usr/local/lib/elena/core/aarch64/*.bin ../../build/$RELEASE/bin/aarch64
+cp /usr/local/lib/elena/lib60_64/*.* ../../build/$RELEASE/lib60_64
+
+cp -r ../../examples60 ../../build/$RELEASE/examples60
+cp -r ../../src60 ../../build/$RELEASE
+cp -r ../../LICENSE ../../build/$RELEASE
+cp -r ../../CHANGELOG.md ../../build/$RELEASE
+cp -r ../../README.md ../../build/$RELEASE
+cp -r ../../CONTRIBUTING.md ../../build/$RELEASE
+
+tar -cJf ../../build/$RELEASE.tar.xz ../../build/$RELEASE
+
+exit 0

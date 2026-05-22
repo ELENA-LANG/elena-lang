@@ -659,7 +659,7 @@ namespace calendar
       }
    }
 
-#elif (__project["_Linux64"] || __project["_FreeBSD64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"])
+#elif (__project["_Linux64"] || __project["_FreeBSD64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"] || __project["_MacOSARM64"])
 
    const int TMSize = 56;
    
@@ -1026,7 +1026,7 @@ namespace calendar
       }
    }
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
    public singleton systemTimeFactory
    {

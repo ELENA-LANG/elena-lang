@@ -883,7 +883,7 @@ internal singleton PrimitivePointerOperations
       ^ s
    }
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
    string readString(pointer ptr)
    {

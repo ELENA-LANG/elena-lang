@@ -16,6 +16,8 @@ namespace elena_lang
    // --- ARM64JITCompiler --
    class ARM64JITCompiler : public JITCompiler64
    {
+      bool _picMode;
+
    protected:
       void prepare(
          LibraryLoaderBase* loader, 
@@ -53,9 +55,11 @@ namespace elena_lang
       void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase* lh) override;
 
-      ARM64JITCompiler()
+      ARM64JITCompiler(bool picMode = false)
          : JITCompiler64()
       {
+         _picMode = picMode;
+
          _constants.mediumForm = 0xFFF;
          _constants.extendedForm = 0xFFFF;
          _constants.noNegative = true; // affects frame operations

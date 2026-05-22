@@ -232,7 +232,7 @@ namespace io
       }
    }
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
    const string PathSeparator         = "/";
 

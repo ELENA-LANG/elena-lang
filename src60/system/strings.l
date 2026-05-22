@@ -2275,7 +2275,7 @@ class BitArray32Enumerator : Enumerator<bool>
 public const String NewLineConstant : info("New line characters")
     = $13$10;
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
 public const string NewLineConstant : info("A new line character")
     = ""$10;

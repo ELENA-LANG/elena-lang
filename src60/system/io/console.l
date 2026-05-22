@@ -357,7 +357,7 @@ namespace io
    public IConsoleReader stdConsoleReader = ConsoleFactory.newReader();
 
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
    const int STDIN_FILENO = 0;
    const int STDOUT_FILENO = 1;

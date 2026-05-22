@@ -8,49 +8,55 @@
 #ifndef MACHOCOMMON_H
 #define MACHOCOMMON_H
 
+#include <mach-o/loader.h>
+
 namespace elena_lang
 {
    constexpr auto SECTION_ALIGNMENT = 0x1000;
+   constexpr auto ARM64_SECTION_ALIGNMENT = 0x4000;
    constexpr auto FILE_ALIGNMENT = 0x0010;
-
-   constexpr unsigned long MH_MAGIC_64 = 0xFEEDFACF;
-
-   constexpr unsigned long FILE_EXECUTABLE = 2;
-
-   enum class CPUType : int32_t
-   {
-      None     = 0,
-      AARCH64  = 0x1000000C,
-      x86      = 0x00000007,
-   };
-
-   enum class CPUSubType : int32_t
-   {
-      None    = 0,
-      ARM_ALL = 0,
-      X86_ALL = 3,
-   };
 
    constexpr auto __PAGEZERO_SEGMENT = "__PAGEZERO";
    constexpr auto __TEXT_SEGMENT = "__TEXT";
+   constexpr auto __DATA_CONST_SEGMENT = "__DATA_CONST";
    constexpr auto __DATA_SEGMENT = "__DATA";
+   constexpr auto __LINKEDIT_SEGMENT = "__LINKEDIT";
 
-   constexpr int Flags_NoUndefs = 0x000001;
-   constexpr int Flags_DyldLink = 0x000004;
-   constexpr int Flags_TwoLevel = 0x000080;
-   
-   constexpr int Command_Segment_64 = 0x00000019;
+   constexpr addr_t MACHO64_IMAGE_BASE = 0x100000000;
+
+   constexpr int MacOS_11_0_0 = 0x000B0000;
+
+   constexpr size_t MaxLoadCommandPath = 256;
 
    struct Command
    {
-      uint32_t commandType;
+      MemoryDump image;
 
-      uint32_t commandSize;
+      template<class T> T* as()
+      {
+         return static_cast<T*>(image.get(0));
+      }
+
+      void* bytes() const
+      {
+         return image.get(0);
+      }
+
+      pos_t size() const
+      {
+         auto command = static_cast<load_command*>(image.get(0));
+
+         return command ? command->cmdsize : 0;
+      }
+
+      Command(pos_t capacity)
+         : image(capacity)
+      {
+         image.writeBytes(0, 0, capacity);
+      }
    };
 
    typedef List<Command*, freeobj> Commands;
-
-   typedef int                     vm_prot_t ;
 
    constexpr int PROT_R = 1;
    constexpr int PROT_W = 2;

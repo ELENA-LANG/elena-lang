@@ -4,10 +4,10 @@
 
 WORKDIR = `pwd`
 
-CC = gcc
-CXX = g++
+CC = clang
+CXX = clang++
 AR = ar
-LD = g++
+LD = clang++
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
@@ -15,7 +15,7 @@ CFLAGS = -Wall -std=c++20 -march=armv8-a
 RESINC = 
 LIBDIR = 
 LIB = 
-LDFLAGS = -static-libgcc -static-libstdc++ -ldl -march=armv8-a
+LDFLAGS = -ldl -march=armv8-a
 
 INC_RELEASE = $(INC)
 CFLAGS_RELEASE = $(CFLAGS) -O3
@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../temp/elena64-cli
 DEP_RELEASE = 
 OUT_RELEASE = ../../../bin/elena64-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o  $(OBJDIR_RELEASE)/__/__/common/xmltree.o $(OBJDIR_RELEASE)/__/__/engine/bcwriter.o $(OBJDIR_RELEASE)/__/__/engine/codescope.o $(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o $(OBJDIR_RELEASE)/__/__/engine/jitlinker.o $(OBJDIR_RELEASE)/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/engine/parsertable.o $(OBJDIR_RELEASE)/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/engine/arm64compiler.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/xmlprojectbase.o $(OBJDIR_RELEASE)/__/codeimage.o $(OBJDIR_RELEASE)/__/compiler.o $(OBJDIR_RELEASE)/__/compiling.o $(OBJDIR_RELEASE)/__/derivation.o $(OBJDIR_RELEASE)/__/macos/elc.o $(OBJDIR_RELEASE)/__/parser.o $(OBJDIR_RELEASE)/__/separser.o $(OBJDIR_RELEASE)/__/project.o $(OBJDIR_RELEASE)/__/source.o $(OBJDIR_RELEASE)/__/modulescope.o $(OBJDIR_RELEASE)/__/compilerlogic.o $(OBJDIR_RELEASE)/__/__/engine/serializer.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o  $(OBJDIR_RELEASE)/__/cli.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/common/ustring.o  $(OBJDIR_RELEASE)/__/__/common/xmltree.o $(OBJDIR_RELEASE)/__/__/engine/bcwriter.o $(OBJDIR_RELEASE)/__/__/engine/codescope.o $(OBJDIR_RELEASE)/__/__/engine/jitcompiler.o $(OBJDIR_RELEASE)/__/__/engine/jitlinker.o $(OBJDIR_RELEASE)/__/__/engine/libman.o $(OBJDIR_RELEASE)/__/__/engine/module.o $(OBJDIR_RELEASE)/__/__/engine/parsertable.o $(OBJDIR_RELEASE)/__/__/engine/section.o $(OBJDIR_RELEASE)/__/__/engine/arm64compiler.o $(OBJDIR_RELEASE)/__/__/engine/syntaxtree.o $(OBJDIR_RELEASE)/__/__/engine/bytecode.o $(OBJDIR_RELEASE)/__/__/engine/xmlprojectbase.o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o $(OBJDIR_RELEASE)/__/codeimage.o $(OBJDIR_RELEASE)/__/compiler.o $(OBJDIR_RELEASE)/__/compiling.o $(OBJDIR_RELEASE)/__/derivation.o $(OBJDIR_RELEASE)/__/macos/elc.o $(OBJDIR_RELEASE)/__/macos/machoimage.o $(OBJDIR_RELEASE)/__/macos/machoarmimage.o $(OBJDIR_RELEASE)/__/macos/macholinker.o $(OBJDIR_RELEASE)/__/macos/macholinker64.o $(OBJDIR_RELEASE)/__/macos/machoarmlinker64.o $(OBJDIR_RELEASE)/__/parser.o $(OBJDIR_RELEASE)/__/separser.o $(OBJDIR_RELEASE)/__/project.o $(OBJDIR_RELEASE)/__/source.o $(OBJDIR_RELEASE)/__/modulescope.o $(OBJDIR_RELEASE)/__/compilerlogic.o $(OBJDIR_RELEASE)/__/__/engine/serializer.o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o  $(OBJDIR_RELEASE)/__/cli.o $(OBJDIR_RELEASE)/__/macos/pathmanager.o
 
 all: release
 
@@ -38,6 +38,7 @@ before_release:
 	test -d ../../../bin || mkdir -p ../../../bin
 	test -d $(OBJDIR_RELEASE)/__ || mkdir -p $(OBJDIR_RELEASE)/__
 	test -d $(OBJDIR_RELEASE)/__/__/engine || mkdir -p $(OBJDIR_RELEASE)/__/__/engine
+	test -d $(OBJDIR_RELEASE)/__/__/engine/linux || mkdir -p $(OBJDIR_RELEASE)/__/__/engine/linux
 	test -d $(OBJDIR_RELEASE)/__/__/engine/macos || mkdir -p $(OBJDIR_RELEASE)/__/__/engine/macos
 	test -d $(OBJDIR_RELEASE)/__/macos || mkdir -p $(OBJDIR_RELEASE)/__/macos
 	test -d $(OBJDIR_RELEASE)/__/__/common || mkdir -p $(OBJDIR_RELEASE)/__/__/common
@@ -109,6 +110,9 @@ $(OBJDIR_RELEASE)/__/__/engine/serializer.o: ../../engine/serializer.cpp
 $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o: ../../engine/scriptreader.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/scriptreader.cpp -o $(OBJDIR_RELEASE)/__/__/engine/scriptreader.o
 
+$(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o: ../../engine/linux/presenter.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/engine/linux/presenter.o
+
 $(OBJDIR_RELEASE)/__/codeimage.o: ../codeimage.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../codeimage.cpp -o $(OBJDIR_RELEASE)/__/codeimage.o
 
@@ -130,6 +134,24 @@ $(OBJDIR_RELEASE)/__/modulescope.o: ../modulescope.cpp
 $(OBJDIR_RELEASE)/__/macos/elc.o: ../macos/elc.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/elc.cpp -o $(OBJDIR_RELEASE)/__/macos/elc.o
 
+$(OBJDIR_RELEASE)/__/macos/machoimage.o: ../macos/machoimage.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/machoimage.cpp -o $(OBJDIR_RELEASE)/__/macos/machoimage.o
+
+$(OBJDIR_RELEASE)/__/macos/machoarmimage.o: ../macos/machoarmimage.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/machoarmimage.cpp -o $(OBJDIR_RELEASE)/__/macos/machoarmimage.o
+
+$(OBJDIR_RELEASE)/__/macos/macholinker.o: ../macos/macholinker.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/macholinker.cpp -o $(OBJDIR_RELEASE)/__/macos/macholinker.o
+
+$(OBJDIR_RELEASE)/__/macos/macholinker64.o: ../macos/macholinker64.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/macholinker64.cpp -o $(OBJDIR_RELEASE)/__/macos/macholinker64.o
+
+$(OBJDIR_RELEASE)/__/macos/machoarmlinker64.o: ../macos/machoarmlinker64.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/machoarmlinker64.cpp -o $(OBJDIR_RELEASE)/__/macos/machoarmlinker64.o
+
+$(OBJDIR_RELEASE)/__/macos/pathmanager.o: ../macos/pathmanager.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../macos/pathmanager.cpp -o $(OBJDIR_RELEASE)/__/macos/pathmanager.o
+
 $(OBJDIR_RELEASE)/__/parser.o: ../parser.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../parser.cpp -o $(OBJDIR_RELEASE)/__/parser.o
 
@@ -149,6 +171,7 @@ clean_release:
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)
 	rm -rf $(OBJDIR_RELEASE)/__
 	rm -rf $(OBJDIR_RELEASE)/__/__/engine
+	rm -rf $(OBJDIR_RELEASE)/__/__/engine/linux
 	rm -rf $(OBJDIR_RELEASE)/__/macos
 	rm -rf $(OBJDIR_RELEASE)/__/__/common
 

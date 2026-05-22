@@ -122,6 +122,28 @@ namespace elena_lang
    };
 #pragma pack(pop)
 
+   template <class T1, class T2, T1 def1 = 0, T2 def2 = 0> struct AlignedPair
+   {
+      T1 value1;
+      T2 value2;
+
+      bool operator ==(AlignedPair pair) const
+      {
+         return (this->value1 == pair.value1 && this->value2 == pair.value2);
+      }
+
+      AlignedPair()
+      {
+         this->value1 = def1;
+         this->value2 = def2;
+      }
+      AlignedPair(T1 value1, T2 value2)
+      {
+         this->value1 = value1;
+         this->value2 = value2;
+      }
+   };
+
    template <class T1, class T2, class T3, T1 def1 = 0, T2 def2 = 0, T3 def3 = 0> struct Triple
    {
       T1 value1;
