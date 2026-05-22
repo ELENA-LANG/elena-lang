@@ -17,7 +17,12 @@ public sealed class ThreadPool
             while (true) {
                Func f := _actions.pop();
 
-               f();
+               try {
+                  f();
+               }
+               catch (Exception e) {
+                  Console.writeLine(e);
+               }
             }
          });
       }

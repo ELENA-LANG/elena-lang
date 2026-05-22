@@ -9,6 +9,11 @@
         <executable>async_tests64.exe</executable>
      </project>
   </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <executable>async_tests</executable>
+     </project>
+  </platform>
   <project>
      <namespace>async_tests</namespace>
      <template>mt_console</template>

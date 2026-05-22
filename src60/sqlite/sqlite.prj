@@ -9,6 +9,14 @@
         <output>..\..\lib60_64</output>
      </project>
   </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <output>../../lib60_64</output>
+     </project>
+     <externals>
+        <dll key="sqlite3">libsqlite3.so.0</dll>
+     </externals>
+  </platform>
   <project>
      <namespace>sqlite</namespace>
      <template>lib60</template>

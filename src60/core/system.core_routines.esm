@@ -2291,13 +2291,17 @@ procedure __thread_create(self,arg,flags,stackSize,ptr)
   xflush     sp:0
   xflush     sp:1
 
-  open       (2),[]
+  open       (2),[],[argValue:ptr_size]
+
+  peek       fp:arg
+  $load
+  $save      dp:argValue
 
   // ; == enter GC critical section ==
   system      6 
 
   call extern:CreateThreadLA (
-     *arg, 
+     *$argValue, 
      procedure:"system'core_routines'thread_start",
      *stackSize,
      *flags)

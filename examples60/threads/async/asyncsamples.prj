@@ -9,6 +9,11 @@
            <executable>asyncsamples64</executable>
         </project>
     </platform>
+    <platform key="Linux_AMD64">
+        <project>
+           <executable>asyncsamples64</executable>
+        </project>
+    </platform>
     <files>
         <module>
             <file>sample1.l</file>

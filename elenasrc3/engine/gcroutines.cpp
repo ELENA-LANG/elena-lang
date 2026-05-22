@@ -8,6 +8,9 @@
 // --------------------------------------------------------------------------
 #include "elenamachine.h"
 
+#include <atomic>
+#include <mutex>
+
 using namespace elena_lang;
 
 #if _M_IX86 || __i386__
@@ -60,8 +63,9 @@ typedef ObjectPage64    ObjectPage;
 
 #endif
 
-static size_t minorCollections = 0;
-static size_t majorCollections = 0;
+static std::atomic_size_t minorCollections = 0;
+static std::atomic_size_t majorCollections = 0;
+static std::mutex gcRoutineLock;
 
 inline ObjectPage* getObjectPage(uintptr_t objptr)
 {
@@ -417,6 +421,8 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
 
 void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode)
 {
+   std::lock_guard<std::mutex> guard(gcRoutineLock);
+
    //printf("GCRoutine %llx,%llx\n", (long long)roots, (long long)size);
 
    // ; collect yg roots
@@ -509,6 +515,8 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
 
 void* SystemRoutineProvider :: GCRoutinePerm(GCTable* table, size_t size)
 {
+   std::lock_guard<std::mutex> guard(gcRoutineLock);
+
    if (table->gc_perm_current + size > table->gc_perm_end) {
       size_t permSize = AlignHeapSize(size);
 
@@ -561,12 +569,12 @@ void SystemRoutineProvider :: CalcGCStatistics(SystemEnv* systemEnv, GCStatistic
    statistics->permInfo.allocated = (unsigned int)(table->gc_perm_current - table->gc_perm_start);
    statistics->permInfo.free = (unsigned int)(table->gc_perm_end - table->gc_perm_current);
 
-   statistics->minorCollections = (unsigned int)minorCollections;
-   statistics->majorCollections = (unsigned int)majorCollections;
+   statistics->minorCollections = (unsigned int)minorCollections.load();
+   statistics->majorCollections = (unsigned int)majorCollections.load();
 }
 
 void SystemRoutineProvider :: ResetGCStatistics()
 {
-   minorCollections = 0;
-   majorCollections = 0;
+   minorCollections.store(0);
+   majorCollections.store(0);
 }

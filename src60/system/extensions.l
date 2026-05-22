@@ -1194,29 +1194,27 @@ public extension stringOp : String
 
    string replace(string replacee, string replacer) : info("Replaces all the occurrences of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
-      string target := EmptyString;
-      int    start := 0;
-      int    end := self.indexOf(start, replacee);
-      int    replaceeLen := replacee.Length;
-        
+      int end := self.indexOf(0, replacee);
+      if (end == -1)
+         { ^ self };
+
+      int  replaceeLen := replacee.Length;
+      auto builder := new text'TextBuilder();
+      int  start := 0;
+
       while (end != -1)
       {
-         target := target
-                     .add(self.Substring(start, end - start))
-                     .add(replacer);
-            
+         builder.write(self.Substring(start, end - start));
+         builder.write(replacer);
+
          start := end + replaceeLen;
-            
          end := self.indexOf(start, replacee)
       };
-    
-      if(start != 0)
-      {
-         ^ target.add(self.Substring(start))
-      };
 
-      ^ self
-   }   
+      builder.write(self.Substring(start));
+
+      ^ builder.Value
+   }
 
    string replaceFirst(string replacee, string replacer) : info("Replaces the first occurrence of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {

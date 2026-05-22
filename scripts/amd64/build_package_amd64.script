@@ -87,6 +87,16 @@ else
   exit 1
 fi
 
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/corex60.asm /usr/lib/elena/core/amd64 corex60_lnx.bin
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 ../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm /usr/lib/elena/core/amd64  core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]

@@ -1,9 +1,11 @@
+import system'collections;
+
 public class Task
 {
    bool           _completed;
 
    Exception?     _exception;
-   Action<Task>   _continuation;
+   ArrayList      _continuations := new ArrayList();
 
    Func           _action; 
 
@@ -37,31 +39,41 @@ public class Task
          = _exception;
    }
 
+   private queueContinuation(Action<Task> action)
+   {
+      ThreadPool.queueAction({ action(self); });
+   }
+
    private continueWithUnsafe(Action<Task> action)
    {
       if (_completed) {
-         ThreadPool.queueAction({ action(self) });
-      }
-      else if:not:nil(_continuation) {
-         Console.writeLine("Only a single continuation is supported currently");
-
-         InvalidOperationException.raise("Only a single continuation is supported currently")
+         queueContinuation(action);
       }
       else {
-         _continuation := action;            
+         _continuations.append(action);
       }
    }
 
    sealed continueWith(Action<Task> action)
    {
+      bool executeNow := false;
       lock(self) {
-         continueWithUnsafe(action);
+         if (_completed) {
+            executeNow := true;
+         }
+         else {
+            _continuations.append(action);
+         }
+      };
+
+      if (executeNow) {
+         queueContinuation(action);
       }
    }
 
    private complete(Exception? ex)
    {
-      Action<Task>? contCopy := nil;
+      ArrayList contCopy := new ArrayList();
       lock(self) {
          if (_completed) {
             Console.writeLine("The task is already completed");
@@ -70,11 +82,15 @@ public class Task
          };
 
          _exception := ex;
-         contCopy := _continuation;
          _completed := true;
+
+         contCopy := _continuations.clone();
+         _continuations.clear();
       };
-      if:not:nil(contCopy) {
-         contCopy(self);
+
+      int len := contCopy.Length;
+      for (int i := 0; i < len; i++) {
+         queueContinuation(cast Action<Task>(contCopy.at(i)));
       }
    }
 
@@ -86,15 +102,6 @@ public class Task
 
    sealed wait()
    {
-      if (_completed) {
-         if:not:nil (_exception)
-         {
-            _exception.raise()
-         };
-
-         ^ self
-      };   
-
       ManualResetEvent? mres := nil;
       lock (self)
       {
@@ -129,57 +136,21 @@ public class Task
    }
 
    static Task whenAllArgs(params Task[] tasks)
-   {
-      auto t := new Task();
-
-      int len := tasks.Length;
-      int remaining := len;
-
-      Exception? e := nil;
-
-      Action<Task> continuation := (Task completed)
-      {
-         e := e ?? completed.Exception;
-         lock(t) {
-            remaining := remaining - 1;
-         };
-         if (remaining == 0) {
-            if:not:nil (e) {
-               t.setException(e)
-            }
-            else t.setResult();
-         };
-      };
-
-      for (int i := 0; i < len; i++) {
-         tasks[i].continueWith(continuation);
-      };
-
-      ^ t;      
-   }
+      = whenAll(tasks);
 
    static Task whenAll(Task[] tasks)
    {
       auto t := new Task();
 
       int len := tasks.Length;
-      int remaining := len;
+      if (len == 0) {
+         t.setResult();
 
-      Exception? e := nil;
-
-      Action<Task> continuation := (Task completed)
-      {
-         e := e ?? completed.Exception;
-         lock(t) {
-            remaining := remaining - 1;
-         };
-         if (remaining == 0) {
-            if:not:nil (e) {
-               t.setException(e)
-            }
-            else t.setResult();
-         };
+         ^ t
       };
+
+      auto helper := new WhenAllHelper(t, len);
+      Action<Task> continuation := new WhenAllContinuation(helper);
 
       for (int i := 0; i < len; i++) {
          tasks[i].continueWith(continuation);
@@ -226,6 +197,58 @@ public class Task
 
    static Task sleep(int msecs)
       = run({ Thread.sleep(msecs); });
+}
+
+internal sealed class WhenAllHelper
+{
+   Task       _task;
+   int        _remaining;
+   Exception? _exception;
+
+   constructor(Task task, int remaining)
+   {
+      _task := task;
+      _remaining := remaining;
+   }
+
+   proceed(Task completed)
+   {
+      bool completeNow := false;
+      Exception? exception := nil;
+
+      lock(_task) {
+         _exception := _exception ?? completed.Exception;
+         _remaining := _remaining - 1;
+         if (_remaining == 0) {
+            completeNow := true;
+            exception := _exception;
+         }
+      };
+
+      if (completeNow) {
+         if:not:nil (exception) {
+            _task.setException(exception!)
+         }
+         else {
+            _task.setResult();
+         }
+      };
+   }
+}
+
+internal sealed class WhenAllContinuation : Action<Task>
+{
+   WhenAllHelper _helper;
+
+   constructor(WhenAllHelper helper)
+   {
+      _helper := helper;
+   }
+
+   function(Task completed)
+   {
+      _helper.proceed(completed);
+   }
 }
 
 // --- Task<TResult> ---

@@ -352,6 +352,8 @@ void ELENARTMachine :: startApp(SystemEnv* env, void* entry)
 
 size_t ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
 {
+   std::lock_guard<std::mutex> guard(_threadTableLock);
+
    if (env->th_table && env->th_table->counter < env->threadCounter) {
       size_t index = env->th_table->counter;
 
@@ -365,6 +367,8 @@ size_t ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
 
 void ELENARTMachine :: clearThreadEntry(SystemEnv* env, size_t index)
 {
+   std::lock_guard<std::mutex> guard(_threadTableLock);
+
    env->th_table->slots[index].content = nullptr;
    env->th_table->slots[index].arg = nullptr;
 }

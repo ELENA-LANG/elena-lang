@@ -38,6 +38,10 @@
      <module>
         <include>main.l</include>
         <include>basic.l</include>
+        <include>collections_tests.l</include>
+        <include>string_tests.l</include>
+        <include>text_tests.l</include>
+        <include>sqlite_tests.l</include>
         <include>declarations.l</include>
      </module>
   </files>

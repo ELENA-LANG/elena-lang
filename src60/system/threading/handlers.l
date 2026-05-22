@@ -19,9 +19,9 @@ public const int THREAD_PRIORITY_LOWEST = -2;
 public sealed struct ThreadHandle
 {
    Handle  _handle;
-   pointer _actionPtr;
+   Handle  _actionPtr;
 
-   private handle createThreadHandle(pointer arg, int flags, int stackSafe) : external(system'core_routines'__thread_create);
+   private handle createThreadHandle(handle arg, int flags, int stackSafe) : external(system'core_routines'__thread_create);
 
    private create(int stackSize)
    {
@@ -177,7 +177,7 @@ public sealed struct ThreadHandle
    {
       excluded
       {
-         extern libc.pthread_join(_handle);
+         extern libc.pthread_join(_handle, 0);
       }
    }
                                                                    

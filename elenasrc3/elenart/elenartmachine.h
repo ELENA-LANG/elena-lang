@@ -11,6 +11,8 @@
 #include "libman.h"
 #include "config.h"
 
+#include <mutex>
+
 namespace elena_lang
 {
    // --- ELENARTMachine ---
@@ -26,6 +28,7 @@ namespace elena_lang
       MemoryDump        _debugSection;
 
       void*             _mdata;
+      std::mutex        _threadTableLock;
 
       void loadConfig(path_t path);
       void loadConfig(ConfigFile& config, path_t configPath, ConfigFile::Node root);

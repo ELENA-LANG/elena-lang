@@ -307,7 +307,8 @@ namespace elena_lang
       {
          unsigned int destType = (unsigned int)dest.type;
 
-         if (test(dest.type, X86OperandType::M64disp32) && dest.prefix == SegmentPrefix::GS) {
+         if (test(dest.type, X86OperandType::M64disp32)
+            && (dest.prefix == SegmentPrefix::GS || dest.prefix == SegmentPrefix::FS)) {
             // HOTFIX : for direct m64 disp mode - use SIB mode
             destType = 0x25000004;
          }
