@@ -102,6 +102,8 @@ namespace elena_lang
          pos_t disp, void* code, ModuleBase* module);
       friend void writeMDataReference(JITCompilerScope* scope, ref_t reference,
          pos_t disp, void* code, ModuleBase* module);
+      friend void writeStatDataReference(JITCompilerScope* scope, ref_t reference,
+         pos_t disp, void* code, ModuleBase* module);
       friend void allocateCode(JITCompilerScope* scope, void* code);
       friend void loadCode(JITCompilerScope* scope, void* code, ModuleBase* module);
 
@@ -412,6 +414,7 @@ namespace elena_lang
 
    void writeCoreReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
    void writeMDataReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
+   void writeStatDataReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
    void loadCode(JITCompilerScope* scope, void* code, ModuleBase* module);
    void allocateCode(JITCompilerScope* scope, void* code);
 

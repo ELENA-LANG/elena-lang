@@ -17,19 +17,26 @@ namespace elena_lang
    class MachOARM64Linker : public MachOLinker64
    {
    protected:
-      CPUType getCPUType() override
+      void prepareMachOImage(ForwardResolverBase* resolver, ImageProviderBase& provider, MachOExecutableImage& image) override
       {
-         return CPUType::AARCH64;
+         image.sectionAlignment = ARM64_SECTION_ALIGNMENT;
+
+         MachOLinker64::prepareMachOImage(resolver, provider, image);
       }
 
-      CPUSubType getCPUSubType() override
+      cpu_type_t getCPUType() override
       {
-         return CPUSubType::ARM_ALL;
+         return CPU_TYPE_ARM64;
+      }
+
+      cpu_subtype_t getCPUSubType() override
+      {
+         return CPU_SUBTYPE_ARM64_ALL;
       }
 
    public:
-      MachOARM64Linker(ErrorProcessorBase* errorProcessor)
-         : MachOLinker64(errorProcessor)
+      MachOARM64Linker(ErrorProcessorBase* errorProcessor, ImageFormatter* imageFormatter)
+         : MachOLinker64(errorProcessor, imageFormatter)
       {
 
       }

@@ -67,8 +67,13 @@ inline %4CFh
 
   mov     x12, sp
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_root
   str     x12, [x14]
 

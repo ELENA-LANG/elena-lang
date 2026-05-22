@@ -222,7 +222,7 @@ namespace io
       }
    }
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
    public SearchFiles(string path, string mask, List<string> output)
    {

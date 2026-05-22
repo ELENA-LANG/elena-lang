@@ -32,3 +32,5 @@
 /elenasrc3/ldebugger/vs
 examples60/db/sqlite/bin
 .vs/
+.DS_Store
+.idea

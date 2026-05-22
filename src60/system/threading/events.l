@@ -3,6 +3,11 @@
 internal const int __SIZEOF_PTHREAD_MUTEX_T = 24;
 internal const int __SIZEOF_PTHREAD_COND_T  = 48;
 
+#elif (__project["_MacOSARM64"])
+
+internal const int __SIZEOF_PTHREAD_MUTEX_T = 64;
+internal const int __SIZEOF_PTHREAD_COND_T  = 48;
+
 #elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"] || __project["_FreeBSD64"])
 
 internal const int __SIZEOF_PTHREAD_MUTEX_T = 40;
@@ -62,7 +67,7 @@ internal struct EventHandle
    }
 }
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
 internal struct EventHandle
 {

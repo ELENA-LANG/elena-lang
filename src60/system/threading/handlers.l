@@ -134,7 +134,7 @@ public sealed struct ThreadHandle
       }
    }
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
    int _stackSize;
 

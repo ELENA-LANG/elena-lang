@@ -6,8 +6,8 @@
 //                                             (C)2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
-#ifndef MACHOPPCIMAGE_H
-#define MACHOPPCIMAGE_H
+#ifndef MACHOARMIMAGE_H
+#define MACHOARMIMAGE_H
 
 #include "machoimage.h"
 
@@ -29,8 +29,8 @@ namespace elena_lang
       //void writePLTStartEntry(MemoryWriter& codeWriter, ref_t gotReference, pos_t disp) override;
       //pos_t writePLTEntry(MemoryWriter& codeWriter, pos_t symbolIndex, ref_t gotReference, pos_t gofOffset, int entryIndex) override;
 
-      //void fixSection(MemoryBase* section, AddressSpace& map) override;
-      //void fixImportSection(MemoryBase* section, AddressSpace& map) override;
+      void fixSection(MemoryBase* section, AddressSpace& map) override;
+      void fixImportSection(MemoryBase* section, AddressSpace& map) override;
 
    public:
       static MachOARM64ImageFormatter& getInstance(ForwardResolverBase* resolver)

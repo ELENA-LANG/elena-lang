@@ -78,6 +78,13 @@
 #include "x86compiler.h"
 #include "x86_64compiler.h"
 
+#elif defined(__aarch64__)
+
+#include "macos/machoarmlinker64.h"
+#include "macos/machoarmimage.h"
+
+#include "arm64compiler.h"
+
 #endif
 
 #endif
@@ -139,8 +146,9 @@ JITCompilerBase* CLIHelper :: createJITCompiler(PlatformType platform)
 #endif
 #if defined(__aarch64__)
       case PlatformType::Linux_ARM64:
-      case PlatformType::MacOS_ARM64:
          return new ARM64JITCompiler();
+      case PlatformType::MacOS_ARM64:
+         return new ARM64JITCompiler(true);
 #endif
       default:
          return nullptr;
@@ -201,8 +209,7 @@ LinkerBase* CLIHelper :: createLinker(PlatformType platform, Project* project, E
 #elif defined(__aarch64__)
 
    case PlatformType::MacOS_ARM64:
-      errorProcessor->raiseError(errNotSupportedPlatform, getPlatformName(platform)); // !! temporally
-      return nullptr;
+      return new MachOARM64Linker(errorProcessor, &MachOARM64ImageFormatter::getInstance(project));
 
 #endif
 

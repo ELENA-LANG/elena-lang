@@ -95,7 +95,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -arm64 ../../asm/aarch64/core60_client.asm /usr/lib/elena/core/aarch64 core60_lnx_client.bin 
+../../bin/asm64-cli -linux -arm64 ../../asm/aarch64/core60_client.asm /usr/lib/elena/core/aarch64 core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then

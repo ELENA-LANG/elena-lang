@@ -1,0 +1,53 @@
+<configuration>
+  <platform key="MacOS_ARM64">
+     <project>
+        <output>../../lib60_64</output>
+     </project>
+  </platform>
+  <project>
+     <namespace>extensions</namespace>
+     <template>lib60</template>
+  </project>
+  <manifest>
+    <name>ELENA Extension Library</name>
+    <version>7.0.2</version>
+    <author>Alex Rakov</author>
+  </manifest>
+  <files>
+     <module>
+        <include>control.l</include>
+        <include>convertors.l</include>
+        <include>console.l</include>
+        <include>basic.l</include>
+        <include>tests.l</include>
+        <include>random.l</include>
+        <include>app.l</include>
+        <include>formatter.l</include>
+        <include>text/strings.l</include>
+        <include>text/words.l</include>
+        <include>text/encoding.l</include>
+        <include>math/functions.l</include>
+        <include>math/matrix.l</include>
+        <include>io/bytearray.l</include>
+     </module>
+     <module name="routines">
+       <include>routines/enumerating.l</include>
+       <include>routines/combinations.l</include>
+       <include>routines/compound.l</include>
+     </module>
+     <module name="routines'stex">
+       <include>routines/stex/convertors.l</include>
+     </module>
+     <module name="scripting">
+       <include>scripting/interpreter.l</include>
+     </module>
+     <module name="threading">
+       <include>threading/threading.l</include>
+       <include>threading/console.l</include>
+     </module>
+     <module name="runtime">
+       <include>runtime/systemmonitor.l</include>
+       <include>runtime/package.l</include>
+     </module>
+  </files>
+</configuration>

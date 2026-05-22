@@ -48,6 +48,10 @@ namespace elena_lang
    constexpr auto PTR32LO_ARGUMENT1          = "__ptr32lo_1";
    constexpr auto PTR32HI_ARGUMENT2          = "__ptr32hi_2";
    constexpr auto PTR32LO_ARGUMENT2          = "__ptr32lo_2";
+   constexpr auto PTR32PAGE_ARGUMENT1        = "__ptr32page_1";
+   constexpr auto PTR32PAGEOFF_ARGUMENT1     = "__ptr32pageoff_1";
+   constexpr auto PTR32PAGE_ARGUMENT2        = "__ptr32page_2";
+   constexpr auto PTR32PAGEOFF_ARGUMENT2     = "__ptr32pageoff_2";
    constexpr auto PTR64_ARGUMENT1            = "__ptr64_1";
    constexpr auto PTR64_ARGUMENT2            = "__ptr64_2";
    constexpr auto RDATA32_ARGUMENT1          = "rdata32";

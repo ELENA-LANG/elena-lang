@@ -11,7 +11,7 @@
 namespace elena_lang
 {
    constexpr auto MessageLength = 123;
-   const Pair<int, const char*, 0, nullptr> Messages[MessageLength] =
+   const AlignedPair<int, const char*, 0, nullptr> Messages[MessageLength] =
    {
       {errDuplicatedSymbol, errMsgDuplicatedSymbol},
       {errDuplicatedDictionary, errMsgDuplicatedDictionary},

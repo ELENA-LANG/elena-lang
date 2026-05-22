@@ -10,7 +10,7 @@ public static Program_arguments =
 // obosolete
 public program_arguments = Program_arguments;
   
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
 // --- Arguments ---
 

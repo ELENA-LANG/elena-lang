@@ -78,6 +78,7 @@ DISABLE_WARNING_POP
 #endif
 #if defined(__aarch64__)
             case PlatformType::Linux_ARM64:
+            case PlatformType::MacOS_ARM64:
                return { 688128, 204800, 0x200000, 1, true, true };
 #endif
          default:

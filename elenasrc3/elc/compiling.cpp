@@ -350,7 +350,7 @@ CompilingProcess :: CompilingProcess(path_t appPath, path_t exeExtension,
 
    PathString btXRulesPath(appPath, BT_XRULES_FILE);
    FileReader btXRuleReader(*btXRulesPath, FileRBMode, FileEncoding::Raw, false);
-   if (btRuleReader.isOpen()) {
+   if (btXRuleReader.isOpen()) {
       _btXRules.load(btXRuleReader, btXRuleReader.length());
    }
 

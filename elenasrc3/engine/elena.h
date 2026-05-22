@@ -436,6 +436,10 @@ namespace elena_lang
          pos_t disp, ref_t addressMask) = 0;
       virtual void writeVAddress32Lo(MemoryBase& target, pos_t position, addr_t vaddress,
          pos_t disp, ref_t addressMask) = 0;
+      virtual void writeVAddress32Hi4k(MemoryBase& target, pos_t position, addr_t vaddress,
+         pos_t disp, ref_t addressMask) = 0;
+      virtual void writeVAddress32Lo12(MemoryBase& target, pos_t position, addr_t vaddress,
+         pos_t disp, ref_t addressMask, int shift) = 0;
       virtual void writeDisp32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
          ref_t addressMask) = 0;
       virtual void writeDisp32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
@@ -454,6 +458,7 @@ namespace elena_lang
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
 
       virtual addr_t resolveMDataVAddress() = 0;
+      virtual addr_t resolveStatVAddress() = 0;
 
       virtual void resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position) = 0;
    };
