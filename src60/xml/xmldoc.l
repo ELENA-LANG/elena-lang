@@ -22,6 +22,10 @@ public interface IXmlReader
    get abstract bool isCloseTag();
    
    get abstract bool isContent();
+
+   get abstract isAttribute();
+   
+   get abstract isAttributeValue();
    
    get abstract string Name();
    

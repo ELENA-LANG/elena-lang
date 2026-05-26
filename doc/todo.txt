@@ -16,6 +16,8 @@ In development:
   - provide descriptions for all classes (from calendar\date_routines.l)
   --------------------------------------
   * samples
+  --------------------------------------
+  - xml sample : reading xml as a database - for examples contacts, provide search functionality
   ====================================== 
   * elenavm : LoadStrongMessageLA
   ====================================== 
@@ -35,9 +37,11 @@ In development:
   --------------------------------------
   * current : #731 xml : support attributes
   ====================================== 
-  - design
-  - implement
-  - new functional test 
+  - test api_tests
+  - test with single attribute
+  - test with several attribute  
+  - implement multi line tag
+  - implement multi line content
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2
