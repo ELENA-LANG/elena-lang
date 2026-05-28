@@ -113,7 +113,7 @@ public class XmlReader : IXmlReader
          if (attributeMode) {
             tokenMode := TokenType.Attribute;
 
-            if (!currentLine[offs].isLToken())
+            if (!currentLine[offs].isLetter())
                InvalidOperationException.raise($"Invalid xml line:{lineNumber}");
 
             while (offs < lineLen && currentLine[offs].isLToken())
@@ -156,12 +156,15 @@ public class XmlReader : IXmlReader
             tokenMode := TokenType.OpenTag;               
          };
 
-         until (offs >= lineLen || currentLine[offs].isWhitespace())
+         while (offs < lineLen && currentLine[offs].isLetter())
             offs += currentLine[offs].Length;
 
          tagName := currentLine.Substring(start, offs - start);
 
-         if (offs == lineLen || currentLine[offs] != $62) {
+         if (offs < lineLen && currentLine[offs] == $62) {
+            offs += currentLine[offs].Length
+         }
+         else {
             if(tokenMode == TokenType.OpenTag) {
                attributeMode := true;
             }
