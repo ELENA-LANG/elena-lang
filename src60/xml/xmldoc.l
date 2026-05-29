@@ -1,6 +1,7 @@
 import system'collections;
 import system'text;
 import system'io;
+import extensions;
 
 public interface IXmlFormatter
 {
@@ -36,6 +37,29 @@ public class XmlDocument
 {
    XmlNode _root;
    
+   constructor loadFromFile(string path)
+      <= loadFromFile(path, UTF8Encoder);
+   
+   constructor loadFromFile(string path, Encoder encoder)
+   {
+      using(auto reader := TextStreamReader.new(path, encoder)) {
+         load(XmlReader.open(reader));
+      };      
+   }
+   
+   constructor loadFromString(string xml)
+   {
+      auto stream := MemoryStream.load(xml.toByteArray());      
+      using(auto reader := TextStreamReader.new(stream, UTF8Encoder)) {
+         load(XmlReader.open(reader));
+      };      
+   }
+   
+   constructor load(TextReader reader)
+   {
+      load(XmlReader.open(reader));
+   }
+   
    constructor new(XmlNode root)
    {
       _root := root;
@@ -44,6 +68,9 @@ public class XmlDocument
    constructor new()
    {
    }
+
+   XmlNode Root
+      = _root;
 
    load(IXmlReader reader)
    {

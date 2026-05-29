@@ -39,7 +39,7 @@ In development:
   --------------------------------------
   * current : #731 xml : support attributes
   ====================================== 
-  - test api_tests
+  - api : support attributes
   - test with single attribute
   - test with several attribute  
   - implement multi line tag

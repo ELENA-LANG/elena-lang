@@ -1,15 +1,36 @@
 import extensions;
+import xml;
 
-class Y
-{
-   calculate(real r)
-   {
+printNode(int indent, XmlNode root)
+{   
+   Console.fillString(" ", indent);
+   Console.print("<", root.Name);
+   
+   
+   
+   Console.print(">");
+   
+   if (root.ChildCounter > 0) {
+      Console.writeLine();
+      XmlNode? current := root.firstChild();
+      while (current != nil) {
+         printNode(indent + 3, current);
+         
+         current := current.nextSibling();
+      };
+      
+      Console.fillString(" ", indent);
    }
+   else {
+      Console.write(root.Content);
+   };
+   Console.printLine("</", root.Name, ">");
 }
 
 public Program()
 {
-   auto mssg := new StrongMessage("calculate<system'RealNumber>[2]");
+   auto xmlDoc := XmlDocument.loadFromFile("db.xml");
 
-   Console.writeLine(mssg.toPrintable());
+   printNode(0, xmlDoc.Root);
+
 }
