@@ -103,13 +103,16 @@ void TextViewWindow :: resizeDocument()
 {
    if (_model->isAssigned()) {
       Point     size;
-      Rectangle client = getRectangle();
+      Rectangle client = getClientRectangle();
       auto style = _styles->getStyle(STYLE_DEFAULT);
 
       int marginWidth = getLineNumberMargin();
 
-      size.x = (client.width() - marginWidth) / style->avgCharWidth;
+      size.x = (client.width() - marginWidth) / style->avgCharWidth - 1;
       size.y = client.height() / _styles->getLineHeight();
+
+      if (size.x < 0)
+         size.x = 0;
 
       _needToResize = false;
 

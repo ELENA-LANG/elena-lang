@@ -423,15 +423,15 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
    if (caret.x < frame.x) {
       frame.x = caret.x;
    }
-   else if (frame.x + _size.x - 2 <= caret.x) {
+   else if (frame.x + _size.x <= caret.x) {
       frame.x = caret.x - _size.x + 1;
    }
 
    if (caret.y < frame.y) {
       frame.y = caret.y;
    }
-   else if (frame.y + _size.y - 1 <= caret.y) {
-      frame.y = caret.y - _size.y - 1 + VerticalScrollOffset;
+   else if (frame.y + _size.y <= caret.y) {
+      frame.y = caret.y - _size.y + VerticalScrollOffset;
    }
 
    if (_frame.getCaret() != frame) {

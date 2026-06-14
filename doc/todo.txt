@@ -34,10 +34,9 @@ In development:
   - Warn if the implicit conversion is used
   - optimization : jumping, offset aligning
   - pi optimization : at least 10% 
-  - debugger over if - else statement (xmlreader.l - 164 - if (offs < lineLen && currentLine[offs] == $62) {offs += currentLine[offs].Length} else ...)
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created)
   --------------------------------------
-  * current : #731 xml : support attributes
+  * #731 xml : support attributes
   ====================================== 
   - api : support attributes
   - test with single attribute
@@ -45,6 +44,12 @@ In development:
   - implement multi line tag
   - implement multi line content
   - support comments
+  --------------------------------------
+  * IDE : bugs
+  ====================================== 
+  - fix auto scroll issues
+  - debugger over if - else statement (xmlreader.l - 164 - if (offs < lineLen && currentLine[offs] == $62) {offs += currentLine[offs].Length} else ...)
+  - fix an issue with step into for : "if (tokenMode == TokenType.AttributeValue) {"
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2
