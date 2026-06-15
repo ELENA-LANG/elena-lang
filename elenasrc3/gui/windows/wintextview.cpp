@@ -322,10 +322,11 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
             }
 
             // !! HOTFIX: allow to see breakpoint ellipse on margin if STYLE_TRACELINe set for this line
-            if (reader.toggleMark) {
-               canvas.drawEllipse(Rectangle(3, y + 2, 12, 12), *style);
+            if (reader.toggleStyle != 0) {
+               auto toggleStyle = _styles->getStyle(reader.toggleStyle);
+               canvas.drawEllipse(Rectangle(3, y + 2, 12, 12), *toggleStyle);
 
-               reader.toggleMark = false;
+               reader.toggleStyle = 0;
             }
          }
          if (reader.bandStyle) {

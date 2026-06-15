@@ -104,14 +104,18 @@ bool LexicalFormatter :: checkMarker(ReaderInfo& info)
    Marker marker = { INVALID_POS };
    for (auto it = _markers->start(); !it.eof(); ++it) {
       if (it.key() == info.row + 1) {
-         marker = *it;
+         if ((*it).toggleMark) {
+            info.toggleStyle = (*it).style;
+            if (marker.style == INVALID_POS)
+               marker = *it;
+         }
+         else marker = *it;
       }
    }
 
    if (marker.style != INVALID_POS) {
       info.bandStyle = true;
       info.style = marker.style;
-      info.toggleMark = marker.toggleMark;
       info.step = 0;
 
       return true;
@@ -234,9 +238,8 @@ bool DocumentView::LexicalReader :: readCurrentLine(TextWriter<text_c>& writer, 
 
 void DocumentView::LexicalReader :: readFirst(TextWriter<text_c>& writer, pos_t length)
 {
-   style = step = 0;
+   toggleStyle = style = step = 0;
    newLine = true;
-   toggleMark = false;
 
    region.topLeft = docView->_frame.getCaret();
    region.bottomRight = region.topLeft + docView->_size;

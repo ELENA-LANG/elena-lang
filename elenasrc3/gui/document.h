@@ -26,13 +26,13 @@ namespace elena_lang
    struct ReaderInfo
    {
       pos_t style;
+      pos_t toggleStyle;
       pos_t step;
 
       int   row;
 
       bool  newLine;
       bool  bandStyle;
-      bool  toggleMark;
    };
 
    struct Marker
@@ -182,11 +182,10 @@ namespace elena_lang
          LexicalReader(DocumentView* docView)
          {
             this->docView = docView;
-            this->step = this->style = 0;
+            this->step = this->style = this->toggleStyle = 0;
             this->row = 0;
             this->newLine = false;
             this->bandStyle = false;
-            this->toggleMark = false;
 
             this->bm.invalidate();
          }

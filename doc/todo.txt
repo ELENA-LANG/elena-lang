@@ -47,10 +47,23 @@ In development:
   --------------------------------------
   * IDE : bugs
   ====================================== 
-  - show breakpoint sign
+  - menu - clear all breakpoints
+  - ide : editor context menu
+  - ide : show project name as a app title (new / existing projects / single file project)
   - fix highlighting if-else (recognize if-else)
   - fix highlight : /*String.MinValue*/">12n";
   - fix an issue with step into for : "if (tokenMode == TokenType.AttributeValue) {"
+  - highlight close button when the mouse over it
+  - window list - close several windows
+  - editor - edit text
+  - editor - correctly destroy tabbar / frame / view
+  - smart spaces
+  - project settings : turn on / off verbose output
+  - open output tab on auto compile
+  - editor settings - tab
+  - ide : "is:" must be marked with a special color as inline template
+  - ide : support copying the output content - Ctrl+A, Ctrl+C
+
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2
