@@ -47,9 +47,6 @@ In development:
   --------------------------------------
   * IDE : bugs
   ====================================== 
-  - menu - clear all breakpoints
-  - ide : editor context menu
-  - ide : show project name as a app title (new / existing projects / single file project)
   - fix highlighting if-else (recognize if-else)
   - fix highlight : /*String.MinValue*/">12n";
   - fix an issue with step into for : "if (tokenMode == TokenType.AttributeValue) {"

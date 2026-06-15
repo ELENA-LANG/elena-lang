@@ -167,6 +167,8 @@ namespace elena_lang
 
       bool setColor(int, Color) override;
 
+      virtual void setCaption(const_text_t title);
+
       SDIWindow(wstr_t title)
          : WindowBase(title, 800, 600)
       {

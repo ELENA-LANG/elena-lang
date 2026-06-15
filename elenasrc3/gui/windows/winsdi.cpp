@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI SDI Window body File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "winsdi.h"
@@ -539,4 +539,9 @@ void SDIWindow :: setBackgroundColor(Color color)
       ::DeleteObject(_bkBrush);
 
    _bkBrush = CreateSolidBrush(static_cast<long>(color));
+}
+
+void SDIWindow :: setCaption(const_text_t title)
+{
+   ::SetWindowText(_handle, title);
 }

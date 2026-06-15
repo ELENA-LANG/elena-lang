@@ -849,6 +849,14 @@ void IDEWindow :: onProjectRefresh(bool empty)
    enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
 }
 
+void IDEWindow :: setProjectTitle()
+{
+   WideMessage title(APP_NAME, _T(" - ["));
+   title.append(*_model->projectModel.name);
+   title.append(_T("]"));
+   setCaption(*title);
+}
+
 void IDEWindow :: onProjectChange(bool empty)
 {
    TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
@@ -856,6 +864,8 @@ void IDEWindow :: onProjectChange(bool empty)
    projectTree->clear(nullptr);
 
    if (!empty) {
+      setProjectTitle();
+
       TreeViewItem root = projectTree->insertTo(nullptr, *_model->projectModel.name, -1, true);
 
       PathString diskCriteria(":\\");
@@ -901,6 +911,7 @@ void IDEWindow :: onProjectChange(bool empty)
 
       projectTree->expand(root);
    }
+   else setCaption(APP_NAME);
 
    toggleProjectView(!empty);
 
