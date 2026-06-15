@@ -1056,6 +1056,32 @@ bool ProjectController :: toggleBreakpoint(ProjectModel& model, SourceViewModel&
    return false;
 }
 
+bool ProjectController :: removeBreakpoints(ProjectModel& model, SourceViewModel& sourceModel, DocumentChangeStatus& status)
+{
+   if (model.breakpoints.count() == 0)
+      return false;
+
+   bool started = _debugController.isStarted();
+   while (model.breakpoints.count() > 0) {
+      auto bm = model.breakpoints.get(1);
+      if (started)
+         _debugController.toggleBreakpoint(bm, false);
+
+      IdentifierString docName(*bm->module, ":", *bm->source);
+
+      int index = sourceModel.getDocumentIndex(*docName);
+      assert(index != -1);
+
+      auto doc = sourceModel.getDocument(index);
+      if (doc)
+         doc->removeMarker(bm->row, STYLE_BREAKPOINT, status);
+
+      model.breakpoints.cut(bm);
+   }
+
+   return true;
+}
+
 void ProjectController :: loadBreakpoints(ProjectModel& model)
 {
    for (auto it = model.breakpoints.start(); !it.eof(); ++it) {
@@ -1926,6 +1952,16 @@ void IDEController :: toggleBreakpoint(IDEModel* model, int row)
    DocumentChangeStatus status = {};
 
    if (projectController.toggleBreakpoint(model->projectModel, model->sourceViewModel, row, status)) {
+      TextViewModelEvent event = { 0, status };
+      _notifier->notify(&event);
+   }
+}
+
+void IDEController :: removeBreakpoints(IDEModel* model)
+{
+   DocumentChangeStatus status = {};
+
+   if (projectController.removeBreakpoints(model->projectModel, model->sourceViewModel, status)) {
       TextViewModelEvent event = { 0, status };
       _notifier->notify(&event);
    }

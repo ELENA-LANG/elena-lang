@@ -130,7 +130,7 @@ namespace elena_lang
       void refreshCallstack(CallstackBase* callstack);
 
       bool toggleBreakpoint(ProjectModel& model, SourceViewModel& sourceModel, int row, DocumentChangeStatus& status);
-
+      bool removeBreakpoints(ProjectModel& model, SourceViewModel& sourceModel, DocumentChangeStatus& status);
       void loadBreakpoints(ProjectModel& model);
 
       void setNotifier(NotifierBase* notifier)
@@ -260,6 +260,7 @@ namespace elena_lang
       void refreshCallstack(CallstackBase* callstack);
 
       void toggleBreakpoint(IDEModel* model, int row);
+      void removeBreakpoints(IDEModel* model);
 
       void doSelectNextWindow(IDEModel* model);
       void doSelectPrevWindow(IDEModel* model);

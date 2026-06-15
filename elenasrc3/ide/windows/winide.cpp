@@ -1058,6 +1058,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_DEBUG_BREAKPOINT:
          _controller->toggleBreakpoint(_model, -1);
          break;
+      case IDM_DEBUG_CLEARBREAKPOINT:
+         _controller->removeBreakpoints(_model);
+         break;
       case IDM_WINDOW_NEXT:
          _controller->doSelectNextWindow(_model);
          break;
