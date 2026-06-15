@@ -37,6 +37,16 @@ namespace elena_lang
 
       bool isAssigned() const { return mode != Mode::None; }
 
+      bool operator ==(Win32TempBreakpoint b) const
+      {
+         return (this->mode == b.mode && this->address == b.address);
+      }
+
+      bool operator !=(Win32TempBreakpoint b) const
+      {
+         return (this->mode != b.mode || this->address != b.address);
+      }
+
       void reset()
       {
          mode = Mode::None;
@@ -132,6 +142,7 @@ namespace elena_lang
       bool                       _started;
       bool                       _trapped;
       bool                       _stepMode;
+      bool                       _tempStepMode;
       bool                       _newThread;
 
       HANDLE                     _hProcess;

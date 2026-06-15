@@ -88,7 +88,11 @@ public class XmlReader : IXmlReader
       if (tokenMode == TokenType.AttributeValue) {
          tokenMode := TokenType.OpenTag;
 
-         attributeMode := currentLine[offs] != $62
+         if (currentLine[offs] == $62) {
+            attributeMode := false;
+            offs++
+         }
+         else attributeMode := true
       };
 
       if (tokenMode == TokenType.Attribute) {

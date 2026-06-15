@@ -47,8 +47,9 @@ In development:
   --------------------------------------
   * IDE : bugs
   ====================================== 
-  - fix auto scroll issues
-  - debugger over if - else statement (xmlreader.l - 164 - if (offs < lineLen && currentLine[offs] == $62) {offs += currentLine[offs].Length} else ...)
+  - show breakpoint sign
+  - fix highlighting if-else (recognize if-else)
+  - fix highlight : /*String.MinValue*/">12n";
   - fix an issue with step into for : "if (tokenMode == TokenType.AttributeValue) {"
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===

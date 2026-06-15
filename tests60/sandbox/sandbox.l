@@ -1,5 +1,32 @@
 import extensions;
 import xml;
+import system'io;
+
+singleton Tester
+{
+   read()
+   {
+//      bool available := true;
+//      bool attributeMode := false;
+      auto tokenMode := 1;
+   
+      string currentLine := ">12n";
+      
+      
+      int offs := 0;
+      
+      if (tokenMode == /*TokenType.AttributeValue*/1) {
+//         tokenMode := TokenType.OpenTag;
+
+         if (currentLine[offs] == $62) {
+//            attributeMode := false;
+            offs++
+         }
+      //   else attributeMode := true
+      };
+
+   }      
+}
 
 printNode(int indent, XmlNode root)
 {   
@@ -29,8 +56,14 @@ printNode(int indent, XmlNode root)
 
 public Program()
 {
+   Tester.read();
+   
+//   var reader := XmlReader.open();
+//   reader.read();
+   
+   
+   
    auto xmlDoc := XmlDocument.loadFromFile("db.xml");
 
    printNode(0, xmlDoc.Root);
-
 }
