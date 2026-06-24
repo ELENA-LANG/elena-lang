@@ -23,6 +23,7 @@ const text_c lexSpace = 'c';
 const text_c lexOperator = 'd';
 const text_c lexDigit = 'e';
 const text_c lexString = 'i';
+const text_c lexNamedOperator = 'm';
 
 const text_c lexResolvedDefault = 'A';
 const text_c lexTerminal = 'Z';
@@ -69,11 +70,11 @@ const text_c* lexDFA[] =
 
 const text_c* lexDFA[] =
 {
-     _T("AAAAAAAAAaaAAaAAAAAAAAAAAAAAAAAAaAhAAAAAddAddddfeeeeeeeeeedCdddAAbbbbbbbbbbbbbbbbbbbbbbbbbbdAdAbAGGGGGGGGGGGGGGGGGGGGGGGGGGEAFAb"),
-     _T("AAAAAAAAAJJAAJAAAAAAAAAAAAAAAAAAJAAAAAAAIHAKKKKbbbbbbbbbbbKCKKKAAbbbbbbbbbbbbbbbbbbbbbbbbbbKAKAbAbbbbbbbbbbbbbbbbbbbbbbbbbbEAFAb"),
-     _T("AAAAAAAAAccAAAAAAAAAAAAAAAAAAAAAcAAAAAAAIHAKKKKAAAAAAAAAAAKAKKKAABBBBBBBBBBBBBBBBBBBBBBBBBBKAKABABBBBBBBBBBBBBBBBBBBBBBBBBBEAFAB"),
-     _T("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDIHDddddDDDDDDDDDDDdCdddDDDDDDDDDDDDDDDDDDDDDDDDDDDDdDdDDDDDDDDDDDDDDDDDDDDDDDDDDDDDEDFDD"),
-     _T("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLHLKKKKLeeeeeeeeeeLCLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLKLKLLLLLLLLLLLLLLLLLLLLLLLLLLLLLELFLL"),
+     _T("AAAAAAAAAaaAAaAAAAAAAAAAAAAAAAAAadhAmAdAdddddddfeeeeeeeeeedCddddAbbbbbbbbbbbbbbbbbbbbbbbbbbddddbAGGGGGGGGGGGGGGGGGGGGGGGGGGEdFdb"),
+     _T("AAAAAAAAAJJAAJAAAAAAAAAAAAAAAAAAJKAAAAKAIHKKKKKbbbbbbbbbbbKCKKKKAbbbbbbbbbbbbbbbbbbbbbbbbbbKKKKbAbbbbbbbbbbbbbbbbbbbbbbbbbbEKFKb"),
+     _T("AAAAAAAAAccAAAAAAAAAAAAAAAAAAAAAcKAAQAKAIHKKKKKQAAAAAAAAAAKAKKKKABBBBBBBBBBBBBBBBBBBBBBBBBBKKKKBABBBBBBBBBBBBBBBBBBBBBBBBBBEKFKB"),
+     _T("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDdDDDDdDIHdddddDDDDDDDDDDDdCddddDDDDDDDDDDDDDDDDDDDDDDDDDDDddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDEdFdD"),
+     _T("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLHKKKKKLeeeeeeeeeeLCLLLLLeeeeeeLLLLLLLLLLLLLLLLLLLLKLKLLLLLLLLLLeLLLeLLLLLeLLLLLLLLELFLL"),
      _T("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDjDDDDgDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"),
      _T("MgggggggggMggMgggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"),
      _T("hhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhihhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhhh"),
@@ -81,10 +82,18 @@ const text_c* lexDFA[] =
      _T("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjkjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"),
      _T("jjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjljjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjjj"),
      _T("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"),
+     _T("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPnnnnnnnnnnPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPmmmmmmmmmmmmmmmmmmmmmmmmmmPPPPP"),
+     _T("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOnnnnnnnnnnOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"),
+};
+
+const pos_t styleMapping[] =
+{
+   STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_OPERATOR, STYLE_NUMBER, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT,
+   STYLE_STRING, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_OPERATOR, STYLE_DEFAULT,
 };
 
 const size_t operation_keywords_len = 2;
-const text_c* operation_keywords[] = { _T("if"), _T("while") };
+const text_c* operation_keywords[] = { _T("for"), _T("if"), _T("while") };
 
 static bool binarySearchKeywords(text_str buffer) {
    int low = 0, high = operation_keywords_len - 1;
@@ -113,10 +122,13 @@ typedef text_c(*StepMaker)(text_c ch, FormatterInfo& info);
 
 pos_t defineStyle(text_c state)
 {
-   pos_t retVal = state == lexOperator ? STYLE_OPERATOR : STYLE_DEFAULT;
-   retVal = state == lexString ? STYLE_STRING : retVal;
+   return styleMapping[state - lexStart];
 
-   return state == lexDigit ? STYLE_NUMBER : retVal;
+   //pos_t retVal = state == lexOperator ? STYLE_OPERATOR : STYLE_DEFAULT;
+   //retVal = state == lexNamedOperator ? STYLE_OPERATOR : retVal;
+   //retVal = state == lexString ? STYLE_STRING : retVal;
+
+   //return state == lexDigit ? STYLE_NUMBER : retVal;
 }
 
 inline static text_c makeStep(text_c ch, FormatterInfo& info)
@@ -171,7 +183,7 @@ inline static bool defaultStyle(FormatterInfo& info, text_c)
 inline static bool keywordStyle(FormatterInfo& info, text_c)
 {
    info.style = STYLE_KEYWORD;
-   info.state = lexStart;
+   info.state = lexKeyword;
 
    info.context.argument = makeStep;
 
@@ -187,16 +199,6 @@ inline static bool digitStyle(FormatterInfo& info, text_c)
 
    return true;
 }
-
-//inline static bool digitStyleOperator(FormatterInfo& info)
-//{
-//   info.style = STYLE_NUMBER;
-//   info.state = lexOperator;
-//
-//   info.context.argument = makeStep;
-//
-//   return true;
-//}
 
 inline static bool operatorStyle(FormatterInfo& info, text_c ch)
 {
@@ -217,40 +219,16 @@ inline static bool operatorState(FormatterInfo& info, text_c)
    return retVal;
 }
 
-//inline static bool operatorDefaultStyle(FormatterInfo& info, text_c)
-//{
-//   info.style = /*defineStyle(info.state)*/STYLE_DEFAULT;
-//   info.state = lexOperator;
-//
-//   return true;
-//}
-
-//inline static bool operatorKeywordStyle(FormatterInfo& info)
-//{
-//   info.style = STYLE_OPERATOR;
-//   info.state = lexKeyword;
-//
-//   return true;
-//}
-
 inline static bool semicolonScope(FormatterInfo& info, text_c)
 {
    bool retVal = info.state != lexOperator;
 
    info.context.mode &= ~CODE_QUERY_MODE;
-   info.style = STYLE_DEFAULT;
+   info.style = defineStyle(info.state);
    info.state = lexOperator;
 
    return retVal;
 }
-
-//inline static bool semicolonCode2(FormatterInfo& info)
-//{
-//   info.context.mode &= ~(CODE_QUERY_MODE | CODE_OP_MODE);
-//   info.state = lexOperator;
-//
-//   return false;
-//}
 
 inline static bool semicolonCode(FormatterInfo& info, text_c)
 {
@@ -267,8 +245,8 @@ inline static bool closingBracketScope(FormatterInfo& info, text_c)
 {
    bool retVal = info.state != lexOperator;
 
-   info.state = lexOperator;
    info.style = defineStyle(info.state);
+   info.state = lexOperator;
    info.context.mode |= CODE_QUERY_MODE;
 
    return retVal;
@@ -303,21 +281,6 @@ inline static bool openingBracket(FormatterInfo& info, text_c)
 
    return retVal;
 }
-
-//inline static bool openingBracket2(FormatterInfo& info)
-//{
-//   if (test(info.context.mode, CODE_OP_MODE) && info.context.bufLen > 2) {
-//      info.context.buffer[info.context.bufLen - 1] = 0;
-//
-//      info.style = binarySearchKeywords(info.context.buffer) ? STYLE_KEYWORD : STYLE_DEFAULT;
-//      info.context.bufLen = 0;
-//   }
-//   else info.style = STYLE_DEFAULT;
-//
-//   info.state = lexOperator;
-//
-//   return true;
-//}
 
 inline static bool curlyBracketsOpeningScope(FormatterInfo& info, text_c)
 {
@@ -397,14 +360,6 @@ inline static bool lineCommentStyle(FormatterInfo& info, text_c ch)
    return true;
 }
 
-//inline static bool lineCommentNumberStyle(FormatterInfo& info)
-//{
-//   info.state = lexDigit;
-//   info.style = STYLE_COMMENT;
-//
-//   return true;
-//}
-
 inline static bool stringStyle(FormatterInfo& info, text_c ch)
 {
    info.style = STYLE_STRING;
@@ -414,46 +369,50 @@ inline static bool stringStyle(FormatterInfo& info, text_c ch)
    return true;
 }
 
+inline static bool charStyle(FormatterInfo& info, text_c ch)
+{
+   info.state = lexStart;
+   SourceFormatter::repeat(ch, info);
+
+   info.style = STYLE_STRING;
+
+   return true;
+}
+
+inline static bool namedOperatorStyle(FormatterInfo& info, text_c ch)
+{
+   info.state = lexStart;
+   SourceFormatter::repeat(ch, info);
+   info.style = STYLE_OPERATOR;
+
+   return true;
+}
+
+inline static bool identifierStyle(FormatterInfo& info, text_c ch)
+{
+   info.style = STYLE_DEFAULT;
+   info.state = lexStart;
+   SourceFormatter::repeat(ch, info);
+
+   return true;
+}
+
 Resolver scopeResolver[] = { 
    defaultStyle, keywordStyle, semicolonScope, operatorStyle, curlyBracketsOpeningScope, curlyBracketsClosingScope, startLineScope,
-/*   operatorDefaultStyle,*/ closingBracketScope, operatorState, spaceState, operatorState, //operatorDefaultStyle,
-   digitStyle, /*digitStyleOperator, operatorKeywordStyle, */lineCommentStyle, stringStyle, //lineCommentNumberStyle,
+   closingBracketScope, operatorState, spaceState, operatorState, digitStyle, lineCommentStyle, stringStyle, charStyle,
+   namedOperatorStyle, identifierStyle,
 };
 
 Resolver codeResolver[] = { 
    defaultStyle, keywordStyle, semicolonCode, operatorStyle, curlyBracketsOpening, curlyBracketsClosing, startLineCode, 
-/*   operatorDefaultStyle, */closingBracket, openingBracket, spaceState, operatorState, //openingBracket2,
-   digitStyle, /*digitStyleOperator, operatorKeywordStyle,*/ lineCommentStyle, stringStyle, //lineCommentNumberStyle,
+   closingBracket, openingBracket, spaceState, operatorState, digitStyle, lineCommentStyle, stringStyle, charStyle,
+   namedOperatorStyle, identifierStyle,
 };
-
-//pos_t defineStyle(text_c state, pos_t style)
-//{
-//   switch (state) {
-//      case lexStart:
-//      //case lexObject:
-//         return STYLE_DEFAULT;
-//      //case lexKeyword:
-//      //   return STYLE_KEYWORD;
-//      //case lexOperator:
-//      //   return STYLE_OPERATOR;
-//      //case lexComment:
-//      //case lexComment2:
-//      //   return STYLE_COMMENT;
-//      //case lexDigit:
-//      //   return STYLE_NUMBER;
-//      //case lexQuote:
-//      //case lexChar:
-//      //   return STYLE_STRING;
-//      default:
-//         return INVALID_POS;
-//   }
-//}
 
 // --- SourceFormatter ---
 
 void SourceFormatter :: start(FormatterInfo& info)
 {
-   //info.lookAhead = false;
    info.state = lexStart;
    info.style = STYLE_DEFAULT;
 
@@ -486,22 +445,6 @@ bool SourceFormatter :: next(text_c ch, FormatterInfo& info)
       retVal = resolveMap[state - lexResolvedDefault](info, ch);
    }
    else info.state = state;
-
-   //pos_t currentStyle = defineStyle(info.state, info.style);
-
-   ///*if (info.lookAhead) {
-   //   info.style = currentStyle;
-   //}
-   //else */if (currentStyle != INVALID_POS) {
-   //   info.style = currentStyle;
-   //   definedStyle = currentStyle;
-
-   //   info.state = makeStep(ch, info.state);
-
-   //   retVal = true;
-   //}
-
-   ////info.lookAhead = info.state == lexLookahead;
 
    return retVal;
 }
