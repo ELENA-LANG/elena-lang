@@ -48,7 +48,10 @@ In development:
   * IDE : bugs
   ====================================== 
   - fix highlighting if-else (recognize if-else)
+  - fix highlighting while (recognize if-else)
   - fix highlight : /*String.MinValue*/">12n";
+  - fix highlight : int[] arg - recognize the array type
+  - fix highlight : several spaces must be combined
   - fix an issue with step into for : "if (tokenMode == TokenType.AttributeValue) {"
   - highlight close button when the mouse over it
   - window list - close several windows
@@ -60,6 +63,18 @@ In development:
   - editor settings - tab
   - ide : "is:" must be marked with a special color as inline template
   - ide : support copying the output content - Ctrl+A, Ctrl+C
+  - debugger : display int array (see sandbox4)
+  --------------------------------------
+  * IDE : highlighting
+  ====================================== 
+  - statement operators
+  - attributes / types
+  - postfix attributes
+  - single line comment
+  - comments
+  - numbers
+  - strings
+
 
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===

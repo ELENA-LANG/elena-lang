@@ -7,12 +7,11 @@ singleton Tester
    read()
    {
 //      bool available := true;
-//      bool attributeMode := false;
+      bool attributeMode := false;
       auto tokenMode := 1;
    
       string currentLine := ">12n";
-      
-      
+            
       int offs := 0;
       
       if (tokenMode == /*TokenType.AttributeValue*/1) {
@@ -22,7 +21,7 @@ singleton Tester
 //            attributeMode := false;
             offs++
          }
-      //   else attributeMode := true
+         else attributeMode := true
       };
 
    }      

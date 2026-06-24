@@ -122,6 +122,7 @@ namespace elena_lang
 
       bool empty() const { return getlength(_string) == 0;  }
 
+      bool less(const char* s) const;
       bool compare(const char* s) const;
       bool compare(const char* s, size_t length) const;
       bool compareSub(const char* s, size_t index, size_t length) const;
@@ -204,6 +205,7 @@ namespace elena_lang
 
       bool empty() const { return getlength(_string) == 0; }
 
+      bool less(const wide_c* s) const;
       bool compare(const wide_c* s) const;
       bool compareSub(const wide_c* s, size_t index, size_t length) const;
 

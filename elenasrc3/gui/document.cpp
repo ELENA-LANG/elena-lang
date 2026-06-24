@@ -73,7 +73,6 @@ void LexicalFormatter :: format()
 
    indexWriter.writePos(0);
    _formatter->start(info);
-   pos_t        style = info.style;
    while (true) {
       if (reader.position() == indexedPos) {
          indexWriter.writePos(writer.position());
@@ -82,8 +81,8 @@ void LexicalFormatter :: format()
 
       s = reader.readLine(length);
       for (pos_t i = 0; i < length; i++) {
-         if(_formatter->next(s[i], info, style)) {
-            writer.writePos(style);
+         if(_formatter->next(s[i], info)) {
+            writer.writePos(info.style);
             writer.writePos(reader.position() + i);
          }
       }
@@ -92,8 +91,8 @@ void LexicalFormatter :: format()
          break;
    }
 
-   if (_formatter->next(0, info, style)) {
-      writer.writePos(style);
+   if (_formatter->next(0, info)) {
+      writer.writePos(info.style);
    }
    else writer.writePos(0);
    writer.writePos(reader.position() + length);
