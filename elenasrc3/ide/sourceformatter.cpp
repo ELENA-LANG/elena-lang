@@ -31,15 +31,7 @@ const text_c lexTerminal = 'Z';
 const int CODE_QUERY_MODE = 1;
 const int CODE_MODE = 2;
 const int CODE_OP_MODE = 4;
-
-//const text_c lexKeyword = 'd';
-//const text_c lexObject = 'e';
-//const text_c lexOperator = 'g';
-//const text_c lexComment = 'j';
-//const text_c lexComment2 = 'n';
-//const text_c lexDigit = 'p';
-//const text_c lexQuote = 's';
-//const text_c lexChar = 'u';
+const int POSTFIX_MODE = 8;
 
 /*
 const text_c* lexDFA[] =
@@ -70,9 +62,9 @@ const text_c* lexDFA[] =
 
 const text_c* lexDFA[] =
 {
-     _T("AAAAAAAAAaaAAaAAAAAAAAAAAAAAAAAAadhAmAdAdddddddfeeeeeeeeeedCddddAbbbbbbbbbbbbbbbbbbbbbbbbbbddddbAGGGGGGGGGGGGGGGGGGGGGGGGGGEdFdb"),
+     _T("AAAAAAAAAaaAAaAAAAAAAAAAAAAAAAAAadhomAdAdddddddfeeeeeeeeeeSCTTddAbbbbbbbbbbbbbbbbbbbbbbbbbbddddbAGGGGGGGGGGGGGGGGGGGGGGGGGGEdFdb"),
      _T("AAAAAAAAAJJAAJAAAAAAAAAAAAAAAAAAJKAAAAKAIHKKKKKbbbbbbbbbbbKCKKKKAbbbbbbbbbbbbbbbbbbbbbbbbbbKKKKbAbbbbbbbbbbbbbbbbbbbbbbbbbbEKFKb"),
-     _T("AAAAAAAAAccAAAAAAAAAAAAAAAAAAAAAcKAAQAKAIHKKKKKQAAAAAAAAAAKAKKKKABBBBBBBBBBBBBBBBBBBBBBBBBBKKKKBABBBBBBBBBBBBBBBBBBBBBBBBBBEKFKB"),
+     _T("AAAAAAAAAccAAAAAAAAAAAAAAAAAAAAAcKAAQAKAIHKKKKKQAAAAAAAAAASAKKKKABBBBBBBBBBBBBBBBBBBBBBBBBBKKKKBABBBBBBBBBBBBBBBBBBBBBBBBBBEKFKB"),
      _T("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDdDDDDdDIHdddddDDDDDDDDDDDdCddddDDDDDDDDDDDDDDDDDDDDDDDDDDDddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDEdFdD"),
      _T("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLHKKKKKLeeeeeeeeeeLCLLLLLeeeeeeLLLLLLLLLLLLLLLLLLLLKLKLLLLLLLLLLeLLLeLLLLLeLLLLLLLLELFLL"),
      _T("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDjDDDDgDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD"),
@@ -84,16 +76,17 @@ const text_c* lexDFA[] =
      _T("MMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMMM"),
      _T("PPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPnnnnnnnnnnPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPPmmmmmmmmmmmmmmmmmmmmmmmmmmPPPPP"),
      _T("OOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOnnnnnnnnnnOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOOO"),
+     _T("RRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRRooooooooooooooooooooooooooRRRRR"),
 };
 
 const pos_t styleMapping[] =
 {
    STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_OPERATOR, STYLE_NUMBER, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT,
-   STYLE_STRING, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_OPERATOR, STYLE_DEFAULT,
+   STYLE_STRING, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_OPERATOR, STYLE_DEFAULT, STYLE_DEFAULT,
 };
 
-const size_t operation_keywords_len = 2;
-const text_c* operation_keywords[] = { _T("for"), _T("if"), _T("while") };
+const size_t operation_keywords_len = 5;
+const text_c* operation_keywords[] = { _T("else"), _T("for"), _T("if"), _T("try"), _T("while") };
 
 static bool binarySearchKeywords(text_str buffer) {
    int low = 0, high = operation_keywords_len - 1;
@@ -144,11 +137,6 @@ inline static text_c makeStepWithStoring(text_c ch, FormatterInfo& info)
 
    return (unsigned)ch < 128 ? lexDFA[info.state - lexStart][ch] : lexDFA[info.state - lexStart][127];
 }
-//
-//inline static text_c defineNextStep(text_c ch)
-//{
-//   return (unsigned)ch < 128 ? lexDFA[lexNextStep - lexStart][ch] : lexDFA[lexNextStep - lexStart][127];
-//}
 
 inline static bool startLineScope(FormatterInfo& info, text_c)
 {
@@ -219,11 +207,33 @@ inline static bool operatorState(FormatterInfo& info, text_c)
    return retVal;
 }
 
+inline static bool equalScopeState(FormatterInfo& info, text_c)
+{
+   bool retVal = info.state != lexOperator;
+
+   info.style = defineStyle(info.state);
+   info.state = lexOperator;
+   info.context.mode &= ~POSTFIX_MODE;
+
+   return retVal;
+}
+
+inline static bool postfixStart(FormatterInfo& info, text_c)
+{
+   bool retVal = info.state != lexOperator;
+
+   info.style = defineStyle(info.state);
+   info.state = lexOperator;
+   info.context.mode |= POSTFIX_MODE;
+
+   return retVal;
+}
+
 inline static bool semicolonScope(FormatterInfo& info, text_c)
 {
    bool retVal = info.state != lexOperator;
 
-   info.context.mode &= ~CODE_QUERY_MODE;
+   info.context.mode &= ~(CODE_QUERY_MODE | POSTFIX_MODE);
    info.style = defineStyle(info.state);
    info.state = lexOperator;
 
@@ -262,6 +272,16 @@ inline static bool closingBracket(FormatterInfo& info, text_c)
    return retVal;
 }
 
+inline static bool openingBracketScope(FormatterInfo& info, text_c)
+{
+   bool retVal = info.state != lexOperator;
+
+   info.style = test(info.context.mode, POSTFIX_MODE) ? STYLE_META : defineStyle(info.state);
+   info.state = lexOperator;
+
+   return retVal;
+}
+
 inline static bool openingBracket(FormatterInfo& info, text_c)
 {
    bool retVal = info.state != lexOperator;
@@ -286,6 +306,7 @@ inline static bool curlyBracketsOpeningScope(FormatterInfo& info, text_c)
 {
    bool retVal = info.state != lexOperator;
 
+   info.context.mode &= ~POSTFIX_MODE;
    if (test(info.context.mode, CODE_QUERY_MODE)) {
       info.context.mode &= ~CODE_QUERY_MODE;
       info.context.mode |= CODE_MODE;
@@ -302,9 +323,19 @@ inline static bool curlyBracketsOpening(FormatterInfo& info, text_c)
 {
    bool retVal = info.state != lexOperator;
 
+   if (test(info.context.mode, CODE_OP_MODE) && info.context.bufLen > 1) {
+      //if (info.context.buffer[info.context.bufLen - 1] == '(')
+      //   info.context.bufLen--;
+
+      info.context.buffer[info.context.bufLen] = 0;
+
+      info.style = binarySearchKeywords(info.context.buffer) ? STYLE_KEYWORD : STYLE_DEFAULT;
+      info.context.bufLen = 0;
+   }
+   else info.style = STYLE_DEFAULT;
+
    info.context.argument = makeStep;
    info.state = lexOperator;
-   info.style = /*defineStyle(info.state)*/STYLE_DEFAULT;
    info.context.mode &= ~CODE_OP_MODE;
 
    info.context.level++;
@@ -397,16 +428,25 @@ inline static bool identifierStyle(FormatterInfo& info, text_c ch)
    return true;
 }
 
+inline static bool directiveStyle(FormatterInfo& info, text_c ch)
+{
+   info.style = STYLE_OPERATOR;
+   info.state = lexStart;
+   SourceFormatter::repeat(ch, info);
+
+   return true;
+}
+
 Resolver scopeResolver[] = { 
    defaultStyle, keywordStyle, semicolonScope, operatorStyle, curlyBracketsOpeningScope, curlyBracketsClosingScope, startLineScope,
-   closingBracketScope, operatorState, spaceState, operatorState, digitStyle, lineCommentStyle, stringStyle, charStyle,
-   namedOperatorStyle, identifierStyle,
+   closingBracketScope, openingBracketScope, spaceState, operatorState, digitStyle, lineCommentStyle, stringStyle, charStyle,
+   namedOperatorStyle, identifierStyle, directiveStyle, postfixStart, equalScopeState,
 };
 
 Resolver codeResolver[] = { 
    defaultStyle, keywordStyle, semicolonCode, operatorStyle, curlyBracketsOpening, curlyBracketsClosing, startLineCode, 
    closingBracket, openingBracket, spaceState, operatorState, digitStyle, lineCommentStyle, stringStyle, charStyle,
-   namedOperatorStyle, identifierStyle,
+   namedOperatorStyle, identifierStyle, directiveStyle, operatorState, operatorState,
 };
 
 // --- SourceFormatter ---

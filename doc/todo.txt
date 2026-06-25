@@ -47,14 +47,8 @@ In development:
   --------------------------------------
   * IDE : bugs
   ====================================== 
-  - fix highlighting if-else (variables.l)
-  - review syntax highlighting (variables.l) 
-  - fix highlighting : support try
-  - fix highlight : /*String.MinValue*/">12n";
-  - fix highlight : int[] arg - recognize the array type
-  - fix highlight : several spaces must be combined
-  - fix highlight : postfixes - special style
-  - fix an issue with step into for : "if (tokenMode == TokenType.AttributeValue) {"
+  - highlight - if:not
+  - review syntax highlighting (strings.l) 
   - highlight close button when the mouse over it
   - window list - close several windows
   - editor - edit text

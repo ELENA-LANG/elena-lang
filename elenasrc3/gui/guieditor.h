@@ -28,11 +28,9 @@ namespace elena_lang
    constexpr auto STYLE_STRING               = 10;
    constexpr auto STYLE_HIGHLIGHTED_BRACKET  = 11;
    constexpr auto STYLE_CURRENT_MARGIN       = 12;
+   constexpr auto STYLE_META                 = 13;
 
-   //#define STYLE_MESSAGE                           6
-   //#define STYLE_HINT                              9  // !! not used
-   //#define STYLE_TRACE                             12
-   constexpr auto STYLE_MAX                  = 12;
+   constexpr auto STYLE_MAX                  = 13;
 
    // --- ClipboardBase ----
    class ClipboardBase

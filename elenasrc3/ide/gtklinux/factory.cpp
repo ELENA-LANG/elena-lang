@@ -50,6 +50,7 @@ StyleInfo defaultStyles[STYLE_MAX + 1] = {
    {Color(1, 0.5, 0.25), Color(1, 1, 1), "Monospace", 10, false, false},
    {Color(0, 0.5, 0.5), Color(1, 1, 1), "Monospace", 10, false, false},
    {Color(0,0,0), Color(0.1, 0.7, 0.8), "Monospace", 10, false, false},
+   {Color(0, 0, 1), Color(1, 1, 1), "Monospace", 10, false, false},
 };
 
 StyleInfo classicStyles[STYLE_MAX + 1] = {
@@ -65,6 +66,7 @@ StyleInfo classicStyles[STYLE_MAX + 1] = {
    {Color(0, 1, 0.5), Color(0, 0, 0.5), "Monospace", 10, false, false},
    {Color(0, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
    {Color(1, 1, 0), Color(0, 0, 0.5), "Monospace", 10, false, false},
+   {Color(1, 1, 1), Color(0, 0, 0.5), "Monospace", 10, false, false},
 };
 
 StyleInfo darkStyles[STYLE_MAX + 1] = {
@@ -80,6 +82,7 @@ StyleInfo darkStyles[STYLE_MAX + 1] = {
    {Color(0.78, 0.8, 0.70), Color(0.3, 0.3, 0.3), "Monospace", 10, false, false},
    {Color(0.8, 0.55, 0.6), Color(0.3, 0.3, 0.3), "Monospace", 10, false, false},
    {Color(1, 1, 1), Color(0.20, 0.20, 0.50), "Monospace", 10, false, false},
+   {Color(0.5, 1, 0.9), Color(0.3, 0.3, 0.3), "Monospace", 10, false, false},
 };
 
 constexpr auto STYLE_SCHEME_COUNT = 3;

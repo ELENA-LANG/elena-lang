@@ -1,3 +1,10 @@
+interface Enumerator
+{
+   Enumerator enumerator() : info("returns")
+      = self;
+}
+
+
 import extensions;
 import xml;
 import system'io;
@@ -6,6 +13,8 @@ singleton Tester
 {
    read()
    {
+     /*String.MinValue*/">12n";
+
 //      bool available := true;
       bool attributeMode := false;
       auto tokenMode := 1;
