@@ -86,8 +86,8 @@ const pos_t styleMapping[] =
    STYLE_STRING, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_OPERATOR, STYLE_DEFAULT, STYLE_DEFAULT,
 };
 
-const size_t operation_keywords_len = 6;
-const text_c* operation_keywords[] = { _T("else"), _T("for"), _T("if"), _T("if:not"), _T("try"), _T("while") };
+const size_t operation_keywords_len = 7;
+const text_c* operation_keywords[] = { _T("else"), _T("for"), _T("if"), _T("if:"), _T("if:not"), _T("try"), _T("while") };
 
 static bool binarySearchKeywords(text_str buffer) {
    int low = 0, high = operation_keywords_len - 1;
@@ -214,17 +214,17 @@ inline static bool operatorState(FormatterInfo& info, text_c)
 
 inline static bool doublecolonState(FormatterInfo& info, text_c ch)
 {
-   bool retVal = false;
-   if (test(info.context.mode, CODE_OP_MODE)) {
-      info.context.mode |= COMPLEX_MODE;
+   if (test(info.context.mode, CODE_OP_MODE) && info.context.bufLen > 1) {
+      info.context.buffer[info.context.bufLen] = 0;
+      if (binarySearchKeywords(info.context.buffer)) {
+         bool retVal = operatorState(info, ch);
+         info.context.mode |= COMPLEX_MODE;
+         info.style = STYLE_KEYWORD;
 
-      retVal = operatorState(info, ch);
-
-      info.style = STYLE_KEYWORD;
+         return retVal;
+      }
    }
-   else retVal = operatorState(info, ch);
-
-   return retVal;
+   return operatorState(info, ch);
 }
 
 inline static bool equalScopeState(FormatterInfo& info, text_c)
@@ -253,7 +253,7 @@ inline static bool semicolonScope(FormatterInfo& info, text_c)
 {
    bool retVal = info.state != lexOperator;
 
-   info.context.mode &= ~(CODE_QUERY_MODE | POSTFIX_MODE);
+   info.context.mode &= ~(CODE_QUERY_MODE | POSTFIX_MODE | COMPLEX_MODE);
    info.style = defineStyle(info.state);
    info.state = lexOperator;
 

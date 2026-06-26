@@ -6,13 +6,14 @@ singleton Tester
 {
    read()
    {
+      bool attributeMode := false;
+      
+//      bool available := true;
+      auto tokenMode := 1;
+   
       if:not(b) {
       }
 
-//      bool available := true;
-      bool attributeMode := false;
-      auto tokenMode := 1;
-   
       string currentLine := ">12n";
             
       int offs := 0;

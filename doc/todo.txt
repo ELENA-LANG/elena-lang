@@ -47,7 +47,6 @@ In development:
   --------------------------------------
   * IDE : bugs
   ====================================== 
-  - highlight - if:not
   - review syntax highlighting (strings.l) 
   - highlight close button when the mouse over it
   - window list - close several windows
