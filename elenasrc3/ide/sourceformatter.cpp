@@ -30,8 +30,9 @@ const text_c lexTerminal = 'Z';
 
 const int CODE_QUERY_MODE = 1;
 const int CODE_MODE = 2;
-const int CODE_OP_MODE = 4;
-const int POSTFIX_MODE = 8;
+const int CODE_OP_MODE = 0x04;
+const int POSTFIX_MODE = 0x08;
+const int COMPLEX_MODE = 0x10;
 
 /*
 const text_c* lexDFA[] =
@@ -63,7 +64,7 @@ const text_c* lexDFA[] =
 const text_c* lexDFA[] =
 {
      _T("AAAAAAAAAaaAAaAAAAAAAAAAAAAAAAAAadhomAdAdddddddfeeeeeeeeeeSCTTddAbbbbbbbbbbbbbbbbbbbbbbbbbbddddbAGGGGGGGGGGGGGGGGGGGGGGGGGGEdFdb"),
-     _T("AAAAAAAAAJJAAJAAAAAAAAAAAAAAAAAAJKAAAAKAIHKKKKKbbbbbbbbbbbKCKKKKAbbbbbbbbbbbbbbbbbbbbbbbbbbKKKKbAbbbbbbbbbbbbbbbbbbbbbbbbbbEKFKb"),
+     _T("AAAAAAAAAJJAAJAAAAAAAAAAAAAAAAAAJKAAAAKAIHKKKKKbbbbbbbbbbbSCKKKKAbbbbbbbbbbbbbbbbbbbbbbbbbbKKKKbAbbbbbbbbbbbbbbbbbbbbbbbbbbEKFKb"),
      _T("AAAAAAAAAccAAAAAAAAAAAAAAAAAAAAAcKAAQAKAIHKKKKKQAAAAAAAAAASAKKKKABBBBBBBBBBBBBBBBBBBBBBBBBBKKKKBABBBBBBBBBBBBBBBBBBBBBBBBBBEKFKB"),
      _T("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDdDDDDdDIHdddddDDDDDDDDDDDdCddddDDDDDDDDDDDDDDDDDDDDDDDDDDDddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDEdFdD"),
      _T("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLHKKKKKLeeeeeeeeeeLCLLLLLeeeeeeLLLLLLLLLLLLLLLLLLLLKLKLLLLLLLLLLeLLLeLLLLLeLLLLLLLLELFLL"),
@@ -85,8 +86,8 @@ const pos_t styleMapping[] =
    STYLE_STRING, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_OPERATOR, STYLE_DEFAULT, STYLE_DEFAULT,
 };
 
-const size_t operation_keywords_len = 5;
-const text_c* operation_keywords[] = { _T("else"), _T("for"), _T("if"), _T("try"), _T("while") };
+const size_t operation_keywords_len = 6;
+const text_c* operation_keywords[] = { _T("else"), _T("for"), _T("if"), _T("if:not"), _T("try"), _T("while") };
 
 static bool binarySearchKeywords(text_str buffer) {
    int low = 0, high = operation_keywords_len - 1;
@@ -155,6 +156,10 @@ inline static bool startLineCode(FormatterInfo& info, text_c ch)
       info.context.argument = makeStepWithStoring;
       info.context.mode |= CODE_OP_MODE;
    }
+   else if (test(info.context.mode, COMPLEX_MODE)) {
+      info.context.mode &= ~COMPLEX_MODE;
+      info.context.bufLen--;
+   }
    else info.context.argument = makeStep;
 
    return false;
@@ -203,6 +208,21 @@ inline static bool operatorState(FormatterInfo& info, text_c)
 
    info.style = defineStyle(info.state);
    info.state = lexOperator;
+
+   return retVal;
+}
+
+inline static bool doublecolonState(FormatterInfo& info, text_c ch)
+{
+   bool retVal = false;
+   if (test(info.context.mode, CODE_OP_MODE)) {
+      info.context.mode |= COMPLEX_MODE;
+
+      retVal = operatorState(info, ch);
+
+      info.style = STYLE_KEYWORD;
+   }
+   else retVal = operatorState(info, ch);
 
    return retVal;
 }
@@ -446,7 +466,7 @@ Resolver scopeResolver[] = {
 Resolver codeResolver[] = { 
    defaultStyle, keywordStyle, semicolonCode, operatorStyle, curlyBracketsOpening, curlyBracketsClosing, startLineCode, 
    closingBracket, openingBracket, spaceState, operatorState, digitStyle, lineCommentStyle, stringStyle, charStyle,
-   namedOperatorStyle, identifierStyle, directiveStyle, operatorState, operatorState,
+   namedOperatorStyle, identifierStyle, directiveStyle, doublecolonState, operatorState,
 };
 
 // --- SourceFormatter ---
