@@ -6,6 +6,13 @@ singleton Tester
 {
    read()
    {
+      if:not:nil(_port) {
+         ^ ShortConvertor.convert(_port, 10);
+      };
+
+      val /= 1000;
+
+
       bool attributeMode := false;
       
 //      bool available := true;

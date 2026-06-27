@@ -20,7 +20,7 @@ namespace elena_lang
       int    mode;
       int    level;
       int    bufLen;
-      text_c buffer[11];
+      text_c buffer[12];
       void*  argument;
    };
 

@@ -47,7 +47,6 @@ In development:
   --------------------------------------
   * IDE : bugs
   ====================================== 
-  - review syntax highlighting (strings.l) 
   - highlight close button when the mouse over it
   - window list - close several windows
   - editor - edit text
@@ -59,6 +58,7 @@ In development:
   - ide : "is:" must be marked with a special color as inline template
   - ide : support copying the output content - Ctrl+A, Ctrl+C
   - debugger : display int array (see sandbox4)
+  - syntax highlighting - "if:not:nil"
   --------------------------------------
   * IDE : highlighting
   ====================================== 

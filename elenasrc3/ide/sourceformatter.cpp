@@ -86,8 +86,8 @@ const pos_t styleMapping[] =
    STYLE_STRING, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_DEFAULT, STYLE_OPERATOR, STYLE_DEFAULT, STYLE_DEFAULT,
 };
 
-const size_t operation_keywords_len = 7;
-const text_c* operation_keywords[] = { _T("else"), _T("for"), _T("if"), _T("if:"), _T("if:not"), _T("try"), _T("while") };
+const size_t operation_keywords_len = 12;
+const text_c* operation_keywords[] = { _T("else"), _T("excluded"), _T("for"), _T("if"), _T("if:"), _T("if:nil"), _T("if:not"), _T("if:not:nil"), _T("lock"), _T("try"), _T("until"), _T("while")};
 
 static bool binarySearchKeywords(text_str buffer) {
    int low = 0, high = operation_keywords_len - 1;
@@ -132,7 +132,7 @@ inline static text_c makeStep(text_c ch, FormatterInfo& info)
 
 inline static text_c makeStepWithStoring(text_c ch, FormatterInfo& info)
 {
-   if (info.context.bufLen < 10) {
+   if (info.context.bufLen < 11) {
       info.context.buffer[info.context.bufLen++] = ch;
    }
 
@@ -195,9 +195,10 @@ inline static bool digitStyle(FormatterInfo& info, text_c)
 
 inline static bool operatorStyle(FormatterInfo& info, text_c ch)
 {
-   info.style = /*defineStyle(info.state)*/STYLE_OPERATOR;
    info.state = lexStart;
    SourceFormatter::repeat(ch, info);
+
+   info.style = /*defineStyle(info.state)*/STYLE_OPERATOR;
 
    return true;
 }
