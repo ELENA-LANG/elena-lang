@@ -4,6 +4,8 @@
 //                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
+#include <windowsx.h>
+//---------------------------------------------------------------------------
 #include "wintextframe.h"
 #include "elena.h"
 
@@ -11,8 +13,9 @@ using namespace elena_lang;
 
 // --- TextViewFrame ---
 
-TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker, int closeCommandId, int closeIcon)
-   : MultiTabControl(notifier, withAbovescore, view, closeIcon)
+TextViewFrame :: TextViewFrame(NotifierBase* notifier, bool withAbovescore, bool withHighlighting, ControlBase* view,
+   TextViewModel* model, SelectionEventInvoker invoker, int closeCommandId, int closeIcon, int activeCloseIcon)
+   : MultiTabControl(notifier, withAbovescore, withHighlighting, view, closeIcon, activeCloseIcon)
 {
    _selectionInvoker = invoker;
    _model = model;
@@ -90,9 +93,9 @@ void TextViewFrame :: onSelChanged()
 void TextViewFrame :: onClick(NMHDR* hdr)
 {
    DWORD dwpos = ::GetMessagePos();
-   Point p(LOWORD(dwpos), HIWORD(dwpos));
+   Point p(GET_X_LPARAM(dwpos), GET_Y_LPARAM(dwpos));
 
-   if (isOverButton(p)) {
+   if (isOverButton(&p)) {
       AppCommandEvent appCommand(_closeCommandId);
 
       _notifier->notify(&appCommand);

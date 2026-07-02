@@ -32,7 +32,8 @@ namespace elena_lang
 
       void onClick(NMHDR* hdr) override;
 
-      TextViewFrame(NotifierBase* notifier, bool withAbovescore, ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker, int closeCommandId, int closeIcon);
+      TextViewFrame(NotifierBase* notifier, bool withAbovescore, bool withHighlighting,
+         ControlBase* view, TextViewModel* model, SelectionEventInvoker invoker, int closeCommandId, int closeIcon, int activeCloseIcon);
    };
 
 }

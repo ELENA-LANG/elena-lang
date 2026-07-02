@@ -47,7 +47,8 @@ In development:
   --------------------------------------
   * IDE : bugs
   ====================================== 
-  - highlight close button when the mouse over it
+  - fix drag and drop text
+  --------------------------------------
   - window list - close several windows
   - editor - edit text
   - editor - correctly destroy tabbar / frame / view

@@ -10,12 +10,12 @@
 #include "guicommon.h"
 
 #ifndef _WIN32_IE
-#define _WIN32_IE 0x500
+#define _WIN32_IE 0x502
 #endif
-#define _WIN32_WINNT 0x500
+#define _WIN32_WINNT 0x502
 
 #ifndef WINVER
-#define WINVER 0x0500
+#define WINVER 0x0502
 #endif
 
 #include <windows.h>
@@ -172,7 +172,10 @@ namespace elena_lang
       void refresh() override;
       void invalidate() override;;
 
-      virtual void onDrawItem(DRAWITEMSTRUCT* item) {}
+      virtual void onDrawItem(DRAWITEMSTRUCT*) {}
+      //virtual bool onMouseMove(Point*) { return false; }
+      //virtual void onMouseHover() {}
+      //virtual void onMouseLeave() {}
       virtual void onSelChanged() {}
       virtual void onDoubleClick(NMHDR* hdr) {}
       virtual void onClick(NMHDR* hdr) {}

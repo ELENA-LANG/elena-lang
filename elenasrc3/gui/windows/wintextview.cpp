@@ -5,6 +5,7 @@
 //---------------------------------------------------------------------------
 
 #include "wintextview.h"
+#include <windowsx.h>
 
 #include <tchar.h>
 
@@ -610,7 +611,7 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          onMouseWheel(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
          return 0;
       case WM_MOUSEMOVE:
-         onMouseMove(Point(LOWORD(lParam), HIWORD(lParam)), (wParam & MK_LBUTTON) != 0);
+         onMouseMove(Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)), (wParam & MK_LBUTTON) != 0);
          return 0;
       case WM_KEYDOWN:
          if (onKeyDown((int)wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {
