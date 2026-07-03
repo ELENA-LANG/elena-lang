@@ -6,21 +6,11 @@ singleton Tester
 {
    read()
    {
-      if:not:nil(_port) {
-         ^ ShortConvertor.convert(_port, 10);
-      };
-
-      val /= 1000;
-
-
       bool attributeMode := false;
       
 //      bool available := true;
       auto tokenMode := 1;
    
-      if:not(b) {
-      }
-
       string currentLine := ">12n";
             
       int offs := 0;
@@ -66,6 +56,11 @@ printNode(int indent, XmlNode root)
 
 public Program()
 {
+   var offset := 3;
+   int top := 0;
+   int target := top + offset as:int;
+   
+   
    Tester.read();
    
 //   var reader := XmlReader.open();
