@@ -79,7 +79,10 @@ namespace collections
          int len := *_length;
          if (cap <= len)
          {
-            _capacity.append(32);
+            int delta := cap;
+            if (delta < 32)
+               { delta := 32 };
+            _capacity.append(delta);
 
             cap := *_capacity;
             Array newArray := Array.allocate(cap);
@@ -134,6 +137,7 @@ namespace collections
          if (index >= *_length)
             { OutOfRangeException.raise() };
 
+         _length.append(1);
          self.expand();
 
          int i := *_length;
@@ -145,7 +149,7 @@ namespace collections
          };
 
          _array[i] := object
-      }    
+      }
 
       remove(int index) : info("Removes an element at the specified position <b>index</b>")
       {
@@ -185,7 +189,14 @@ namespace collections
       Indexer indexer() : info("Returns the collection indexer") = new ArrayListIndexer(self);
 
       ArrayList clone() : info("Returns a shallow copy of the collection")
-         = ArrayList.fromArray(_array, *_length);
+      {
+         int len := *_length;
+         if (len == 0) {
+            ^ new ArrayList()
+         };
+
+         ^ ArrayList.fromArray(_array, len)
+      }
 
       Array cast()
          = Array.copy(0, *_length, _array);
@@ -322,42 +333,7 @@ namespace collections
          _default := default;
       }
 
-      setAt(int key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         self.getItem(hashCode, key).Value := object
-      }
-
-      setAt(long key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         self.getItem(hashCode, key).Value := object
-      }
-
-      setAt(real key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         self.getItem(hashCode, key).Value := object
-      }
-
-      setAt(char key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         self.getItem(hashCode, key).Value := object
-      }
-
-      setAt(string key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         self.getItem(hashCode, key).Value := object
-      }
-
-      setAt(wide key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
+      setAt(object key, object object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
@@ -416,42 +392,7 @@ namespace collections
          ^ newItem
       }    
 
-      at(int key) : info("Returns a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         ^ self.getItem(hashCode, key).Value
-      }
-
-      at(long key) : info("Returns a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         ^ self.getItem(hashCode, key).Value
-      }
-
-      at(real key) : info("Returns a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         ^ self.getItem(hashCode, key).Value
-      }
-
-      at(char key) : info("Returns a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         ^ self.getItem(hashCode, key).Value
-      }
-
-      at(string key) : info("Returns a dictionary element with <b>key</b>")
-      {
-         int hashCode := key.Hashcode;
-
-         ^ self.getItem(hashCode, key).Value
-      }
-
-      at(wide key) : info("Returns a dictionary element with <b>key</b>")
+      at(object key) : info("Returns a dictionary element with <b>key</b>")
       {
          int hashCode := key.Hashcode;
 
@@ -466,15 +407,9 @@ namespace collections
 
          var hashItem := _hashTable.at(hashCode);
          if (nil == hashItem)
-         {
-            hashItem := new int[](5);
+            { ^ false };
 
-            hashItem[0] := 1;
-
-            _hashTable.setAt(hashCode, hashItem)
-         };
-
-         var int[] backet := /*cast int[](*/hashItem/*)*/;
+         var int[] backet := hashItem;
          int  length := backet[0];
 
          for (int i := 1; i < length; i += 1)
@@ -796,18 +731,18 @@ namespace collections
       T[]            _array;
       Reference<int> _length;
       Reference<int> _capacity;
-    
+
       constructor(T[] a) : info("Copies a strong-typed array")
       {
          int len := a.Length;
          int size := len / 32;
          size := size + 1;
          size := size * 32;
-            
+
          _length := len;
          _capacity := size;
          _array := new T[](size);
-            
+
          for(int i := 0; i < len; i += 1)
          {
             _array[i] := a[i]
@@ -854,15 +789,15 @@ namespace collections
          int size := len / 32;
          size := size + 1;
          size := size * 32;
-            
+
          _length := len;
          _capacity := size;
          _array := new T[](size);
-            
+
          for(int i := 0; i < len; i += 1)
          {
             int j := i + index;
-                
+
             _array[i] := a[j]
          }
       }
@@ -884,21 +819,23 @@ namespace collections
       {
          int cap := *_capacity;
          int len := *_length;
-            
+
          if (cap <= len)
          {
-            _capacity.append(32);
-            cap += 32;
-                
+            int delta := cap;
+            if (delta < 16)
+               { delta := 16 };
+            _capacity.append(delta);
+            cap := *_capacity;
+
             var T[] newArray := new T[](cap);
-    
+
             for(int i := 0; i < len; i += 1)
             {
-               //newArray[i] := theArray[i]
                T tmp := _array[i];
                newArray[i] := tmp
             };
-                
+
             _array := newArray
          }
       }

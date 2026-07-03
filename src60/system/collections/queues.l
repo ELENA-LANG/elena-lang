@@ -91,21 +91,26 @@ namespace collections
          _tale.Value := 0
       }
         
-      shift(offset) : info("Moves the element at the queue top down to <b>offset</b> postions")
+      shift(offset) : info("Moves the element at the queue top down by <b>offset</b> positions")
       {
-         int i := *_top;
-         int n := (*_tale) - 1;
-            
-         var topItem := _list.at(i);
-            
-         while (i < n)
+         int top := *_top;
+         int tale := *_tale;
+         int target := top + cast int(offset);
+         int last := tale - 1;
+         if (target > last)
+            { target := last };
+
+         var topItem := _list.at(top);
+
+         int i := top;
+         while (i < target)
          {
             _list.setAt(i, _list.at(i + 1));
-                                
+
             i := i + 1
          };
-            
-         _list.setAt(i, topItem)
+
+         _list.setAt(target, topItem)
       }
    }
     
