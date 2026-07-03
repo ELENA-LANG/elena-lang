@@ -3798,16 +3798,16 @@ void ByteCodeWriter :: saveArgumentsInfo(/*CommandTape& tape, */BuildNode node, 
                tapeScope, current.findChild(BuildKey::ClassName).identifier());
             break;
          case BuildKey::ByteArrayParameter:
-            saveDebugSymbol(DebugSymbol::ByteArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            saveParameterDebugSymbol(DebugSymbol::ByteArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::ShortArrayParameter:
-            saveDebugSymbol(DebugSymbol::ShortArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            saveParameterDebugSymbol(DebugSymbol::ShortArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::IntArrayParameter:
-            saveDebugSymbol(DebugSymbol::IntArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            saveParameterDebugSymbol(DebugSymbol::IntArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::RealArrayParameter:
-            saveDebugSymbol(DebugSymbol::RealArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            saveParameterDebugSymbol(DebugSymbol::RealArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::InlineField:
             saveInlineFieldDebugSymbol(DebugSymbol::InlineField, current.findChild(BuildKey::StackIndex).arg.value, current.arg.value, tapeScope);

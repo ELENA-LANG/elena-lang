@@ -45,10 +45,6 @@ In development:
   - implement multi line content
   - support comments
   --------------------------------------
-  * IDE : bugs
-  ====================================== 
-  - debugger : display int array (see sandbox4)
-  --------------------------------------
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2
