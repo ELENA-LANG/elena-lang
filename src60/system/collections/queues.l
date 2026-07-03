@@ -75,7 +75,7 @@ namespace collections
          _top.append(1);
             
          // reuse the space if the queue is empty
-         if(tale == top)
+         if(tale == top + 1)
          {
             _top.Value := 0;
             _tale.Value := 0
@@ -206,7 +206,7 @@ namespace collections
          _top.append(1);
             
          // reuse the space if the queue is empty
-         if(tale == top)
+         if(tale == top + 1)
          {
             _top.Value := 0;
             _tale.Value := 0

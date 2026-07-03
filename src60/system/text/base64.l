@@ -32,7 +32,7 @@ namespace text
                buffer_index := 0;
                
                if (dest_len - dest_index < 5) {
-                  src_len := end - i;
+                  src_len := i - src_index + 1;
                   
                   :break;
                }
@@ -87,7 +87,7 @@ namespace text
                buffer_index := 0;
                               
                if (dest_len - dest_index < 5) {
-                  src_len := end - i;
+                  src_len := i - src_index + 1;
                   
                   :break;
                }               
