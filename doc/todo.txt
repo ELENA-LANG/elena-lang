@@ -38,12 +38,9 @@ In development:
   --------------------------------------
   * #731 xml : support attributes
   ====================================== 
-  - api : support attributes
-  - test with single attribute
-  - test with several attribute  
+  - support comments
   - implement multi line tag
   - implement multi line content
-  - support comments
   --------------------------------------
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===

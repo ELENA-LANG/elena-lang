@@ -11,6 +11,20 @@ public class XmlNode
    
    string Content : rprop(_content);
    
+   bool HasAttributes
+      = !_attributes.isEmpty();
+
+   bool HasContent
+      = !_content.isEmpty();
+
+   Tuple<string, string>[] Attributes
+      = *_attributes;
+
+   appendAttribute(string key, string value)
+   {
+      _attributes.append(new Tuple<string, string>(key, value))
+   }
+
    appendChild(XmlNode child)
    {
       if:not:nil(_content)

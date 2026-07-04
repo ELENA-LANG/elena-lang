@@ -45,7 +45,16 @@ public class XmlReader : IXmlReader
    
    string Name
       = tagName;
-      
+
+   get string AttributeValue()
+   {
+      if (tokenMode != TokenType.AttributeValue) {
+         ^ String.MinValue
+      };
+        
+      ^ content;
+   }
+            
    get string Content()
    {
       if (tokenMode != TokenType.Content) {
@@ -120,6 +129,7 @@ public class XmlReader : IXmlReader
             if (!currentLine[offs].isLetter())
                InvalidOperationException.raise($"Invalid xml line:{lineNumber}");
 
+            start := offs;
             while (offs < lineLen && currentLine[offs].isLToken())
                offs += currentLine[offs].Length;
 

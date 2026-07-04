@@ -31,6 +31,8 @@ public interface IXmlReader
    get abstract string Name();
    
    get abstract string Content();
+   
+   get abstract string AttributeValue();
 }
 
 public class XmlDocument
@@ -74,6 +76,7 @@ public class XmlDocument
 
    load(IXmlReader reader)
    {
+      string? key := nil;
       Stack<XmlNode> nodes := new Stack<XmlNode>();
       
       reader.read();
@@ -93,6 +96,12 @@ public class XmlDocument
             }            
             else _root := node;
          }
+         else if (reader.isAttribute) {
+            key := reader.Name
+         }         
+         else if (reader.isAttributeValue) {
+            nodes.peek().appendAttribute(key!, reader.AttributeValue)
+         }         
          else if (reader.isContent) {
             nodes.peek().setContent(reader.Content);
          };
