@@ -4151,9 +4151,7 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
             // NOTE : that node variable can be updated inside importPropertyTemplate, pointing to a actual field!
             if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)) {
                if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node))
-               {
                   scope.raiseError(errUnknownTemplate, node);
-               }
             }
 
             break;
