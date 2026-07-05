@@ -41,22 +41,22 @@ namespace collections
 
       append(object key, object item) : info("Appends a new key-value element to the end of the list<br/>The element position is defined by its sorted order")
       {
-         auto item := new SortedListItem(key, item);
-   
+         auto newItem := new SortedListItem(key, item);
+
          SortedListItem? prev := nil;
          SortedListItem? current := _top;
          while (current != nil && _comparator(current.Key, key) < 0) {
             prev := current;
             current := current.Next;
          };
-   
+
          if (prev == nil) {
-            item.Next := _top;
-            _top := item;
+            newItem.Next := _top;
+            _top := newItem;
          }
          else {
-            item.Next := prev;
-            prev.Next := item;
+            newItem.Next := current;
+            prev.Next := newItem;
          };
 
          _length++
@@ -96,6 +96,7 @@ namespace collections
             if (current.Key == key) {
                ^ index;
             };
+            current := current.Next;
             index++;
          };
 
