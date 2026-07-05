@@ -768,6 +768,32 @@ inline %35h
 
 end
 
+// ; loadz (zero-extend 32 -> 64)
+inline %33h
+
+  movsxd rdx, dword ptr [rbx]
+  and    edx, 0FFFFFFFFh
+
+end
+
+// ; wloadz (zero-extend 16 -> 64)
+inline %36h
+
+  movsxd rdx, dword ptr [rbx]
+  and    edx, 0FFFFh
+
+end
+
+// ; lfsave (signed 64-bit integer -> float)
+inline %37h
+
+  push rdx
+  fild qword ptr [rsp]
+  fstp qword ptr [rbx]
+  add  rsp, 8
+
+end
+
 // ; fadd
 inline %070h
 

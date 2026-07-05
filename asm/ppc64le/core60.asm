@@ -1015,6 +1015,30 @@ inline % 35h
 
 end
 
+// ; loadz (zero-extend 32 -> 64)
+inline %33h
+
+  lwz     r14, 0(r15)
+
+end
+
+// ; wloadz (zero-extend 16 -> 64)
+inline %36h
+
+  lhz     r14, 0(r15)
+
+end
+
+// ; lfsave (signed 64-bit integer -> float)
+inline %37h
+
+  std     r14, 0(r1)
+  lfd     f17, 0(r1)
+  fcfid   f17, f17
+  stfd    f17, 0(r15)
+
+end
+
 // ; fiadd
 inline %070h
 

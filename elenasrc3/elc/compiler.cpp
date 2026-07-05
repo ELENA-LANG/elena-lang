@@ -4150,8 +4150,12 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
          case SyntaxKey::InlineTemplate:
             // NOTE : that node variable can be updated inside importPropertyTemplate, pointing to a actual field!
             if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)) {
-               if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node))
+               // NOTE : fall back to a general inline template (e.g. info) if no property-scoped template matches
+               if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)
+                  && !importInlineTemplate(scope, current, INLINE_PREFIX, node))
+               {
                   scope.raiseError(errUnknownTemplate, node);
+               }
             }
 
             break;
@@ -17273,6 +17277,48 @@ ObjectInfo Compiler::Expression::compileNativeConversion(SyntaxNode node, Object
          writer->appendNode(BuildKey::ConversionOp, operationKey);
          break;
       case INT32_FLOAT64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case INT16_64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case INT16_FLOAT64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case UINT32_64_CONVERSION:
+      case UINT16_64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case UINT32_FLOAT64_CONVERSION:
+      case UINT16_FLOAT64_CONVERSION:
          retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
 
          writeObjectInfo(retVal);
