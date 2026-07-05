@@ -2838,6 +2838,122 @@ public arrayListInsertTest() : testCase()
    Console.write(".");
 }
 
+// Regression: the Dictionary single object-key overload must handle every basic key type;
+// Hashcode and safeEqual are resolved through extension methods on the boxed key.
+public dictionaryObjectKeyTest() : testCase()
+{
+   auto d := Dictionary.new(0);
+
+   // mixed basic key types, all through the single object-key overload
+   d[1] := 10;
+   d[2] := 20;
+   d["a"] := 100;
+   d["bb"] := 200;
+   d[5000000000l] := 400;
+   char c := $65;
+   d[c] := 300;
+
+   Assert.ifTrue(d[1] == 10);
+   Assert.ifTrue(d[2] == 20);
+   Assert.ifTrue(d["a"] == 100);
+   Assert.ifTrue(d["bb"] == 200);
+   Assert.ifTrue(d[5000000000l] == 400);
+   Assert.ifTrue(d[c] == 300);
+
+   // updating an existing key must replace the value, not add a duplicate
+   d[2] := 25;
+   d["a"] := 150;
+   Assert.ifTrue(d[2] == 25);
+   Assert.ifTrue(d["a"] == 150);
+
+   // containsKey: present and absent, across key types
+   Assert.ifTrue(d.containsKey(1));
+   Assert.ifTrue(d.containsKey("bb"));
+   Assert.ifTrue(d.containsKey(5000000000l));
+   Assert.ifFalse(d.containsKey(999));
+   Assert.ifFalse(d.containsKey("zzz"));
+
+   Console.write(".");
+}
+
+// Regression: hash buckets must grow with the key count and updates must overwrite
+// in place rather than appending duplicate entries.
+public dictionaryBucketGrowthTest() : testCase()
+{
+   auto d := Dictionary.new(0);
+
+   for (int i := 0; i < 200; i += 1)
+      { d[i] := i * 2 };
+
+   for (int i := 0; i < 200; i += 1)
+      { Assert.ifTrue(d[i] == i * 2) };
+
+   // updating every key must overwrite in place, not append duplicates
+   for (int i := 0; i < 200; i += 1)
+      { d[i] := i + 1 };
+
+   for (int i := 0; i < 200; i += 1)
+   {
+      Assert.ifTrue(d[i] == i + 1);
+      Assert.ifTrue(d.containsKey(i))
+   };
+
+   Assert.ifFalse(d.containsKey(1000));
+
+   Console.write(".");
+}
+
+// a user-defined key type: it exposes Hashcode and an equal that compares the other
+// instance through public accessors (a private field is not reachable as other._field)
+sealed class DictKeyPoint
+{
+   int _x;
+   int _y;
+
+   constructor new(int x, int y)
+   {
+      _x := x;
+      _y := y
+   }
+
+   int X = _x;
+   int Y = _y;
+
+   int Hashcode = (_x * 31) + _y;
+
+   bool equal(o)
+   {
+      bool r := false;
+      if (o; is DictKeyPoint p)
+         { r := (_x == p.X) && (_y == p.Y) };
+
+      ^ r
+   }
+}
+
+// Regression: a custom object may be used as a dictionary key when it implements Hashcode
+// and equal; an equal-but-distinct instance must resolve to the same entry.
+public dictionaryCustomKeyTest() : testCase()
+{
+   auto d := Dictionary.new(0);
+
+   d[DictKeyPoint.new(1, 2)] := 10;
+   d[DictKeyPoint.new(3, 4)] := 20;
+
+   // a freshly built key with the same coordinates must find the existing entry
+   Assert.ifTrue(d[DictKeyPoint.new(1, 2)] == 10);
+   Assert.ifTrue(d[DictKeyPoint.new(3, 4)] == 20);
+
+   // updating through an equal-but-distinct instance overwrites in place
+   d[DictKeyPoint.new(1, 2)] := 15;
+   Assert.ifTrue(d[DictKeyPoint.new(1, 2)] == 15);
+
+   Assert.ifTrue(d.containsKey(DictKeyPoint.new(3, 4)));
+   Assert.ifFalse(d.containsKey(DictKeyPoint.new(9, 9)));
+
+   Console.write(".");
+}
+
 extension dummyOp
 {
    testMe2(Func f)

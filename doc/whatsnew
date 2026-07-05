@@ -9,6 +9,7 @@
   - [ADDED] native support for Value operator with a pointer / reference
   - [FIXED] creating big objects
   - [ADDED] native widening conversions : short / uint / ushort to long and real
+  - [FIXED] info attribute (general inline templates) on properties
 
 - VM
 
@@ -35,6 +36,13 @@
   - [FIXED] LongConvertor : decimal string overflow saturates at LONG_MIN / LONG_MAX
   - [FIXED] RealConvertor : negative zero string keeps its sign
   - [FIXED] UTF-16 decoding and length handling (surrogate pairs, WideLength, unsigned code units)
+  - [FIXED] collections : Dictionary at / setAt resolved through a single object key overload
+  - [FIXED] collections : Queue shift offset handling
+  - [FIXED] collections : SortedList insertion order and indexOf infinite loop
+  - [FIXED] Base64 : multi-chunk encode / decode used the wrong source offset
+  - [FIXED] String : replace now replaces all occurrences
+  - [ADDED] SQLite : added to the Linux build
+  - [FIXED] SQLite : commands released through using blocks
 
 - Scripts
 

@@ -79,10 +79,7 @@ namespace collections
          int len := *_length;
          if (cap <= len)
          {
-            int delta := cap;
-            if (delta < 32)
-               { delta := 32 };
-            _capacity.append(delta);
+            _capacity.append(32);
 
             cap := *_capacity;
             Array newArray := Array.allocate(cap);
@@ -137,7 +134,6 @@ namespace collections
          if (index >= *_length)
             { OutOfRangeException.raise() };
 
-         _length.append(1);
          self.expand();
 
          int i := *_length;
@@ -148,7 +144,8 @@ namespace collections
             i := i - 1
          };
 
-         _array[i] := object
+         _array[i] := object;
+         _length.append(1)
       }
 
       remove(int index) : info("Removes an element at the specified position <b>index</b>")
@@ -822,10 +819,7 @@ namespace collections
 
          if (cap <= len)
          {
-            int delta := cap;
-            if (delta < 16)
-               { delta := 16 };
-            _capacity.append(delta);
+            _capacity.append(32);
             cap := *_capacity;
 
             var T[] newArray := new T[](cap);
@@ -880,17 +874,16 @@ namespace collections
     
       insert(int index, T object) : info("Inserts the element at the specified index")
       {
-         _length.append(1);
-            
          self.expand();
-            
+
          int len := *_length;
          for (int i := len; i > index; i -= 1)
          {
             _array[i] := _array[i - 1]
          };
-            
-         _array[index] := object
+
+         _array[index] := object;
+         _length.append(1)
       }
         
       insert(T object) : info("Inserts the element at the top")

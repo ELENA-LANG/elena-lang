@@ -91,11 +91,11 @@ namespace collections
          _tale.Value := 0
       }
         
-      shift(offset) : info("Moves the element at the queue top down by <b>offset</b> positions")
+      shift(int offset) : info("Moves the element at the queue top down by <b>offset</b> positions")
       {
          int top := *_top;
          int tale := *_tale;
-         int target := top + cast int(offset);
+         int target := top + offset;
          int last := tale - 1;
          if (target > last)
             { target := last };
