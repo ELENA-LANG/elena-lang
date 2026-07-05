@@ -2825,8 +2825,6 @@ public intValueOperationTest() : testCase()
 // UIntNumber long/real arithmetic and bitwise used to ignore self (op(n,n))
 public uintWideArithmeticRegressionTest() : testCase()
 {
-   Console.write("uintWideArithmeticRegression:");
-
    uint x := 100u;
 
    Assert.ifEqual(x.add(30l), 130l);
@@ -2850,8 +2848,6 @@ public uintWideArithmeticRegressionTest() : testCase()
 // ByteNumber widened bitwise used to return the operand (op(n,n))
 public byteBitwiseRegressionTest() : testCase()
 {
-   Console.write("byteBitwiseRegression:");
-
    byte b := 12;
 
    short s10 := 10;
@@ -2873,8 +2869,6 @@ public byteBitwiseRegressionTest() : testCase()
 // SByteNumber widened bitwise used to return the operand (op(n,n))
 public sbyteBitwiseRegressionTest() : testCase()
 {
-   Console.write("sbyteBitwiseRegression:");
-
    sbyte b := 12;
 
    short s10 := 10;
@@ -2892,8 +2886,6 @@ public sbyteBitwiseRegressionTest() : testCase()
 // WideString decoding used to sign-extend units and mishandle surrogates
 public utf16DecodeRegressionTest() : testCase()
 {
-   Console.write("utf16DecodeRegression:");
-
    // BMP code point above 08000h (fullwidth '!', 0FF01h)
    char fw := $65281;
    Assert.ifEqual(fw.WideLength, 1);
@@ -2920,8 +2912,6 @@ public utf16DecodeRegressionTest() : testCase()
 // wide indexOf(char) used to step by the UTF-8 length instead of the unit length
 public wideIndexOfRegressionTest() : testCase()
 {
-   Console.write("wideIndexOfRegression:");
-
    // "eX" where the first character is a 2-byte / 1-unit code point (0E9h)
    wide w := (cast wide($233)).add(cast wide($88));
 
@@ -2933,8 +2923,6 @@ public wideIndexOfRegressionTest() : testCase()
 // numeric string convertors: sign of small reals and long saturation
 public numericConvertorRegressionTest() : testCase()
 {
-   Console.write("numericConvertorRegression:");
-
    // "-0.x" used to lose its sign because the integer part is zero
    real neg := 0.0r - 0.5r;
    Assert.ifEqual("-0.5".toReal(), neg);
@@ -2954,8 +2942,6 @@ public numericConvertorRegressionTest() : testCase()
 // native primitive widening: short/ushort/uint -> long/real
 public numericWideningRegressionTest() : testCase()
 {
-   Console.write("numericWideningRegression:");
-
    // signed short -> long / real (sign-extending)
    short sn := -30000;
    Assert.ifEqual(cast long(sn), -30000l);

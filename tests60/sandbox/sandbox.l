@@ -34,6 +34,10 @@ printNode(int indent, XmlNode root)
 
 public Program()
 {
+   short l := 3;
+   short m := 3;
+   short r := l | m;
+
    auto xmlDoc := XmlDocument.loadFromFile("db.xml");
 
    printNode(0, xmlDoc.Root);
