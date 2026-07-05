@@ -4150,9 +4150,7 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
          case SyntaxKey::InlineTemplate:
             // NOTE : that node variable can be updated inside importPropertyTemplate, pointing to a actual field!
             if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)) {
-               // NOTE : fall back to a general inline template (e.g. info) if no property-scoped template matches
-               if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)
-                  && !importInlineTemplate(scope, current, INLINE_PREFIX, node))
+               if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node))
                {
                   scope.raiseError(errUnknownTemplate, node);
                }
