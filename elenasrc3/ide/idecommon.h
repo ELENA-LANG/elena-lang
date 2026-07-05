@@ -406,6 +406,7 @@ namespace elena_lang
    struct GUISettinngs
    {
       bool withTabAboverscore;
+      bool withHighlighting;
       bool withLargeToolbar;
    };
 

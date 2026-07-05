@@ -3031,3 +3031,150 @@ public intValueOperationTest() : testCase()
 
    Console.write(".");
 }
+
+// --- regression tests for primitive number wrappers ---
+
+// UIntNumber long/real arithmetic and bitwise used to ignore self (op(n,n))
+public uintWideArithmeticRegressionTest() : testCase()
+{
+   uint x := 100u;
+
+   Assert.ifEqual(x.add(30l), 130l);
+   Assert.ifEqual(x.subtract(30l), 70l);
+   Assert.ifEqual(x.multiply(3l), 300l);
+   Assert.ifEqual(x.divide(20l), 5l);
+
+   Assert.ifEqual(x.add(0.5r), 100.5r);
+   Assert.ifEqual(x.subtract(0.5r), 99.5r);
+   Assert.ifEqual(x.multiply(2.0r), 200.0r);
+   Assert.ifEqual(x.divide(8.0r), 12.5r);
+
+   uint m := 12u;
+   Assert.ifEqual(m.band(10l), 8l);
+   Assert.ifEqual(m.bor(1l), 13l);
+   Assert.ifEqual(m.bxor(6l), 10l);
+
+   Console.write(".");
+}
+
+// ByteNumber widened bitwise used to return the operand (op(n,n))
+public byteBitwiseRegressionTest() : testCase()
+{
+   byte b := 12;
+
+   short s10 := 10;
+   Assert.ifEqual(b.band(s10), 8);
+   Assert.ifEqual(b.band(10), 8);
+   Assert.ifEqual(b.bor(1), 13);
+   Assert.ifEqual(b.bxor(6), 10);
+   Assert.ifEqual(b.band(10l), 8l);
+   Assert.ifEqual(b.bor(1l), 13l);
+   Assert.ifEqual(b.bxor(6l), 10l);
+
+   // byte + long is a long result, not a truncated int
+   byte one := 1;
+   Assert.ifEqual(one.add(5000000000l), 5000000001l);
+
+   Console.write(".");
+}
+
+// SByteNumber widened bitwise used to return the operand (op(n,n))
+public sbyteBitwiseRegressionTest() : testCase()
+{
+   sbyte b := 12;
+
+   short s10 := 10;
+   Assert.ifEqual(b.band(s10), 8);
+   Assert.ifEqual(b.band(10), 8);
+   Assert.ifEqual(b.bor(1), 13);
+   Assert.ifEqual(b.bxor(6), 10);
+   Assert.ifEqual(b.band(10l), 8l);
+
+   Console.write(".");
+}
+
+// --- regression tests for UTF-16 / conversions ---
+
+// WideString decoding used to sign-extend units and mishandle surrogates
+public utf16DecodeRegressionTest() : testCase()
+{
+   // BMP code point above 08000h (fullwidth '!', 0FF01h)
+   char fw := $65281;
+   Assert.ifEqual(fw.WideLength, 1);
+
+   wide wf := cast wide(fw);
+   Assert.ifEqual(wf.Length, 1);
+
+   char fwBack := wf[0];
+   Assert.ifEqual(fwBack.toInt(), 65281);
+
+   // supplementary code point (emoji U+1F600) needs a surrogate pair
+   char em := $128512;
+   Assert.ifEqual(em.WideLength, 2);
+
+   wide we := cast wide(em);
+   Assert.ifEqual(we.Length, 2);
+
+   char emBack := we[0];
+   Assert.ifEqual(emBack.toInt(), 128512);
+
+   Console.write(".");
+}
+
+// wide indexOf(char) used to step by the UTF-8 length instead of the unit length
+public wideIndexOfRegressionTest() : testCase()
+{
+   // "eX" where the first character is a 2-byte / 1-unit code point (0E9h)
+   wide w := (cast wide($233)).add(cast wide($88));
+
+   Assert.ifEqual(w.indexOf(0, $88), 1);
+
+   Console.write(".");
+}
+
+// numeric string convertors: sign of small reals and long saturation
+public numericConvertorRegressionTest() : testCase()
+{
+   // "-0.x" used to lose its sign because the integer part is zero
+   real neg := 0.0r - 0.5r;
+   Assert.ifEqual("-0.5".toReal(), neg);
+
+   real neg2 := 0.0r - 0.25r;
+   Assert.ifEqual("-0.25".toReal(), neg2);
+
+   Assert.ifEqual("0.75".toReal(), 0.75r);
+   Assert.ifEqual("-2.5".toReal(), 0.0r - 2.5r);
+
+   // decimal string overflow saturates at the long boundary
+   Assert.ifEqual("99999999999999999999999".toLong(), 9223372036854775807l);
+
+   Console.write(".");
+}
+
+// native primitive widening: short/ushort/uint -> long/real
+public numericWideningRegressionTest() : testCase()
+{
+   // signed short -> long / real (sign-extending)
+   short sn := -30000;
+   Assert.ifEqual(cast long(sn), -30000l);
+   short sn2 := -5;
+   Assert.ifEqual(cast real(sn2), 0.0r - 5.0r);
+
+   // unsigned uint -> long (zero-extending): the high-bit value stays positive
+   uint uh := 2147483648u;                 // 0x80000000
+   Assert.ifEqual(cast long(uh), 2147483648l);
+   uint umax := 4294967295u;               // 0xFFFFFFFF
+   Assert.ifEqual(cast long(umax), 4294967295l);
+
+   // unsigned uint -> real stays positive (a sign-extension bug would go negative)
+   real ur := uh;
+   Assert.ifTrue(ur > 2000000000.0r);
+
+   // unsigned ushort -> long / real
+   ushort us := 65535;
+   Assert.ifEqual(cast long(us), 65535l);
+   real usr := us;
+   Assert.ifTrue(usr > 60000.0r);
+
+   Console.write(".");
+}

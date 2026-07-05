@@ -2,48 +2,16 @@ import extensions;
 import xml;
 import system'io;
 
-singleton Tester
-{
-   read()
-   {
-      if:not:nil(_port) {
-         ^ ShortConvertor.convert(_port, 10);
-      };
-
-      val /= 1000;
-
-
-      bool attributeMode := false;
-      
-//      bool available := true;
-      auto tokenMode := 1;
-   
-      if:not(b) {
-      }
-
-      string currentLine := ">12n";
-            
-      int offs := 0;
-      
-      if (tokenMode == /*TokenType.AttributeValue*/1) {
-//         tokenMode := TokenType.OpenTag;
-
-         if (currentLine[offs] == $62) {
-//            attributeMode := false;
-            offs++
-         }
-         else attributeMode := true
-      };
-
-   }      
-}
-
 printNode(int indent, XmlNode root)
 {   
    Console.fillString(" ", indent);
    Console.print("<", root.Name);
    
-   
+   if (root.HasAttributes) {
+      foreach(var t; in root.Attributes) {
+         Console.print(" ", t.Item1,"=""", t.Item2, """")
+      }
+   };
    
    Console.print(">");
    
@@ -66,13 +34,10 @@ printNode(int indent, XmlNode root)
 
 public Program()
 {
-   Tester.read();
-   
-//   var reader := XmlReader.open();
-//   reader.read();
-   
-   
-   
+   short l := 3;
+   short m := 3;
+   short r := l | m;
+
    auto xmlDoc := XmlDocument.loadFromFile("db.xml");
 
    printNode(0, xmlDoc.Root);

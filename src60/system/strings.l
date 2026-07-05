@@ -1371,11 +1371,11 @@ public const struct WideString : BaseValue,
    /// Creates the literal string with specified length fills with specified character value        
    constructor fill(int size, char ch)
         : info("Creates the literal string with specified length <b>size</b> fills with character <b>ch</b>")
-      <= allocate(ch.Length * size)
+      <= allocate(ch.WideLength * size)
    {
       short buffer[4];
       int chVal := ch.Value;
-      int  length := ch.Length;
+      int  length := ch.WideLength;
       length := UTFOperations.convertUTF32_2_16(chVal, buffer, 0, length);
         
       int offs := 0;

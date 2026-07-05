@@ -23,14 +23,24 @@ namespace elena_lang
 
       bool                    _withAbovescore;
       bool                    _notSelected;
-      //bool                    _highlighted;
+      bool                    _highlighted;
+      bool                    _withHighlighting;
+      bool                    _isTracked;
 
       HIMAGELIST              _hImages;
 
+      virtual int getImageId() { return -1; }
+
+      void setHighligthed(bool value);
+
    public:
-      bool isOverButton(Point p);
+      bool isOverButton(Point* screenPoint);
+      bool isOverTab(Point* screenPoint);
 
       void onDrawItem(DRAWITEMSTRUCT* item) override;
+      bool onMouseMove(Point* p)/* override*/;
+      void onMouseHover()/* override*/;
+      void onMouseLeave()/* override*/;
 
       int getCurrentIndex();
       int getTabCount();
@@ -60,7 +70,7 @@ namespace elena_lang
       //   return false;
       //}
 
-      CustomTabBar(NotifierBase* notifier, bool withAbovescore, int width, int height);
+      CustomTabBar(NotifierBase* notifier, bool withAbovescore, bool withHighlighting, int width, int height);
       virtual ~CustomTabBar();
    };
 
@@ -71,8 +81,13 @@ namespace elena_lang
       ControlBase* _child;
 
       int          _iconId;
+      int          _acticeIconId;
 
       void onSetFocus() override;
+
+      virtual LRESULT proceed(UINT message, WPARAM wParam, LPARAM lParam);
+
+      int getImageId() override { return _highlighted ? 1 : 0; }
 
    public:
       void show() override;
@@ -88,7 +103,9 @@ namespace elena_lang
 
       HWND createControl(HINSTANCE instance, ControlBase* owner);
 
-      MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child, int iconId = 0);
+      static LRESULT CALLBACK TabBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData);
+
+      MultiTabControl(NotifierBase* notifier, bool withAbovescore, bool withHighlighting, ControlBase* child, int iconId = 0, int acticeIconId = 0);
    };
 
    // --- TabBar ---

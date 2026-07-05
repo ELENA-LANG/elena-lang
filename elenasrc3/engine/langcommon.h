@@ -678,6 +678,12 @@ namespace elena_lang
    constexpr auto INT16_32_CONVERSION        = 0x003;
    constexpr auto INT8_32_CONVERSION         = 0x004;
    constexpr auto INT8_64_CONVERSION         = 0x005;
+   constexpr auto INT16_64_CONVERSION        = 0x006;
+   constexpr auto INT16_FLOAT64_CONVERSION   = 0x007;
+   constexpr auto UINT32_64_CONVERSION       = 0x008;
+   constexpr auto UINT16_64_CONVERSION       = 0x009;
+   constexpr auto UINT32_FLOAT64_CONVERSION  = 0x00A;
+   constexpr auto UINT16_FLOAT64_CONVERSION  = 0x00B;
 
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;

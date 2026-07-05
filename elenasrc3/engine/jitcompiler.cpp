@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, compileAltMode, loadXNop, loadNop, loadOp, loadOp, loadNop, loadNop,
+   loadOp, compileAltMode, loadXNop, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -97,7 +97,7 @@ static inline addr_t resolveMDataOrStatVAddress(JITCompilerScope* scope, ref_t m
 }
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 180;
+constexpr size_t bcCommandNumber = 183;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -136,6 +136,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave,
    ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg, ByteCode::Parent,
    ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS, ByteCode::DFree, ByteCode::XLAddDP,
+   ByteCode::LoadZ, ByteCode::WLoadZ, ByteCode::LFSave,
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,

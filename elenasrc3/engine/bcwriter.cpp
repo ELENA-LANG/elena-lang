@@ -2001,6 +2001,37 @@ static inline void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::PeekSI, 0);
          tape.write(ByteCode::FSave);
          break;
+      case INT16_64_CONVERSION:
+         tape.write(ByteCode::WLoad);
+         tape.write(ByteCode::ConvL);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::LSave);
+         break;
+      case INT16_FLOAT64_CONVERSION:
+         tape.write(ByteCode::WLoad);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::FSave);
+         break;
+      case UINT32_64_CONVERSION:
+         tape.write(ByteCode::LoadZ);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::LSave);
+         break;
+      case UINT16_64_CONVERSION:
+         tape.write(ByteCode::WLoadZ);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::LSave);
+         break;
+      case UINT32_FLOAT64_CONVERSION:
+         tape.write(ByteCode::LoadZ);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::LFSave);
+         break;
+      case UINT16_FLOAT64_CONVERSION:
+         tape.write(ByteCode::WLoadZ);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::LFSave);
+         break;
       default:
          break;
    }
@@ -2812,6 +2843,12 @@ static inline bool doubleAssigningConverting(BuildNode lastNode)
       case INT32_64_CONVERSION:
       case INT32_FLOAT64_CONVERSION:
       case INT8_64_CONVERSION:
+      case INT16_64_CONVERSION:
+      case INT16_FLOAT64_CONVERSION:
+      case UINT32_64_CONVERSION:
+      case UINT16_64_CONVERSION:
+      case UINT32_FLOAT64_CONVERSION:
+      case UINT16_FLOAT64_CONVERSION:
          size = 8;
          break;
       default:
@@ -3798,16 +3835,16 @@ void ByteCodeWriter :: saveArgumentsInfo(/*CommandTape& tape, */BuildNode node, 
                tapeScope, current.findChild(BuildKey::ClassName).identifier());
             break;
          case BuildKey::ByteArrayParameter:
-            saveDebugSymbol(DebugSymbol::ByteArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            saveParameterDebugSymbol(DebugSymbol::ByteArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::ShortArrayParameter:
-            saveDebugSymbol(DebugSymbol::ShortArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            saveParameterDebugSymbol(DebugSymbol::ShortArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::IntArrayParameter:
-            saveDebugSymbol(DebugSymbol::IntArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            saveParameterDebugSymbol(DebugSymbol::IntArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::RealArrayParameter:
-            saveDebugSymbol(DebugSymbol::RealArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
+            saveParameterDebugSymbol(DebugSymbol::RealArrayParameter, current.findChild(BuildKey::StackIndex).arg.value, current.identifier(), tapeScope);
             break;
          case BuildKey::InlineField:
             saveInlineFieldDebugSymbol(DebugSymbol::InlineField, current.findChild(BuildKey::StackIndex).arg.value, current.arg.value, tapeScope);
