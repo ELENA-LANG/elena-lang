@@ -119,6 +119,8 @@ namespace elena_lang
       size_t           _childCounter;
       GUIControlBase** _children;
       LayoutManager    _layoutManager;
+      ControlBase*     _hoverControl;
+      int              _hoverCtrl;
 
       HBRUSH           _bkBrush;
 
@@ -127,11 +129,14 @@ namespace elena_lang
       void onResize() override;
       virtual void onActivate();
       virtual void onResizing(RECT* rect);
-      void onDrawItem(DRAWITEMSTRUCT* item) override;
+      //bool onMouseMove(Point* point) override;
+      //void onMouseHover() override;
+      //void onMouseLeave() override;
       virtual bool onCommand(int command) { return false; }
       virtual void onNotify(NMHDR* hdr);
+
+      void onDrawItem(DRAWITEMSTRUCT* item) override;
       bool onSetCursor() override;
-      //virtual void onMouseMove(WPARAM wParam, LPARAM lParam) {}
 
       virtual void onDropFiles(HDROP hDrop) {}
 
@@ -154,6 +159,11 @@ namespace elena_lang
       }
       void setLayout(int center, int top, int bottom, int right, int left);
 
+      void setHover(int ctrl)
+      {
+         _hoverCtrl = ctrl;
+      }
+
       void close();
 
       void refresh() override
@@ -175,6 +185,8 @@ namespace elena_lang
          _children = nullptr;
          _childCounter = 0;
          _bkBrush = nullptr;
+         _hoverControl = nullptr;
+         _hoverCtrl = -1;
       }
       ~SDIWindow() override
       {

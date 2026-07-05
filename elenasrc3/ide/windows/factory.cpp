@@ -289,13 +289,13 @@ ControlPair IDEFactory :: createTextControl(WindowBase* owner, NotifierBase* not
             notifier->notify(&event);
          });
 
-   TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, view, 
+   TextViewFrame* frame = new TextViewFrame(notifier, _settings.withTabAboverscore, _settings.withHighlighting, view,
       _model->viewModel(), [](NotifierBase* notifier, int index)
       {
          SelectionEvent event = { EVENT_TEXTFRAME_SELECTION_CHANGED, index };
 
          notifier->notify(&event);
-      }, IDM_FILE_CLOSE, IDR_TABCLOSE);
+      }, IDM_FILE_CLOSE, IDR_TABCLOSE, IDR_TABCLOSE_ACTIVE);
 
    view->create(_instance, szTextView, owner, 0);
    frame->createControl(_instance, owner);
@@ -595,6 +595,10 @@ GUIControlBase* IDEFactory :: createMainWindow(NotifierBase* notifier, ProcessBa
       debugContextMenu, vmConsoleControl, toolBarControl, contextEditor, editIndex, callStackIndex, tabContextMenu);
 
    sdi->populate(counter, children);
+
+   if (_settings.withHighlighting)
+      sdi->setHover(textIndex);
+
    sdi->setLayout(textIndex, toolBarControl, bottomBox, -1, vsplitter);
 
    styleControl(sdi);

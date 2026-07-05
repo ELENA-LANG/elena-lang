@@ -38,39 +38,10 @@ In development:
   --------------------------------------
   * #731 xml : support attributes
   ====================================== 
-  - api : support attributes
-  - test with single attribute
-  - test with several attribute  
+  - support comments
   - implement multi line tag
   - implement multi line content
-  - support comments
   --------------------------------------
-  * IDE : bugs
-  ====================================== 
-  - highlight close button when the mouse over it
-  - window list - close several windows
-  - editor - edit text
-  - editor - correctly destroy tabbar / frame / view
-  - smart spaces
-  - project settings : turn on / off verbose output
-  - open output tab on auto compile
-  - editor settings - tab
-  - ide : "is:" must be marked with a special color as inline template
-  - ide : support copying the output content - Ctrl+A, Ctrl+C
-  - debugger : display int array (see sandbox4)
-  - syntax highlighting - "if:not:nil"
-  --------------------------------------
-  * IDE : highlighting
-  ====================================== 
-  - statement operators
-  - attributes / types
-  - postfix attributes
-  - single line comment
-  - comments
-  - numbers
-  - strings
-
-
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.2

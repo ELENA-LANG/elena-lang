@@ -481,6 +481,11 @@ bool ProjectController :: compileProject(ProjectModel& model, int postponedActio
       cmdLine.append(" ");
    }
 
+   if (!model.options.empty()) {
+      cmdLine.append(" ");
+      cmdLine.append(*model.options);
+   }
+
    cmdLine.append(*model.projectFile);
 
    PathString curDir;
@@ -512,6 +517,11 @@ bool ProjectController :: compileSingleFile(ProjectModel& model, int postponedAc
    }
    else if (model.strictType == -1) {
       cmdLine.append(" -xs-");
+   }
+
+   if (!model.options.empty()) {
+      cmdLine.append(" ");
+      cmdLine.append(*model.options);
    }
 
    PathString curDir;

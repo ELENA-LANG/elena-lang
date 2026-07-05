@@ -9,17 +9,20 @@
 #include "wincanvas.h"
 
 #include <tchar.h>
+#include <commctrl.h>
+#include <windowsx.h>
 
 using namespace elena_lang;
 
 // --- CustomTabBar ---
 
-CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore, int width, int height)
-   : ControlBase(nullptr, 0, 0, width, height), _hImages(nullptr)//, _highlighted(false)
+CustomTabBar :: CustomTabBar(NotifierBase* notifier, bool withAbovescore, bool withHighlighting, int width, int height)
+   : ControlBase(nullptr, 0, 0, width, height), _hImages(nullptr), _highlighted(false), _isTracked(false)
 {
    _notifier = notifier;
    _selectionInvoker = nullptr;
    _withAbovescore = withAbovescore;
+   _withHighlighting = withHighlighting;
    _notSelected = true;
 }
 
@@ -29,9 +32,9 @@ CustomTabBar :: ~CustomTabBar()
       ImageList_Destroy(_hImages);
 }
 
-bool CustomTabBar :: isOverButton(Point p)
+bool CustomTabBar :: isOverButton(Point* screenPoint)
 {
-   POINT pt = { p.x, p.y };
+   POINT pt = { screenPoint->x, screenPoint->y };
    ::ScreenToClient(_handle, &pt);
 
    RECT rect;
@@ -45,6 +48,78 @@ bool CustomTabBar :: isOverButton(Point p)
    }
 
    return false;
+}
+
+bool CustomTabBar :: isOverTab(Point* p)
+{
+   POINT pt = { p->x, p->y };
+   //::ScreenToClient(_handle, &pt);
+
+   RECT rect;
+   if (TabCtrl_GetItemRect(_handle, getCurrentIndex(), &rect)) {
+      if (pt.y > -3)
+         pt.y = rect.top;
+
+      // if it is over the tab
+      if (rect.left < pt.x && rect.right > pt.x && rect.top <= pt.y && rect.bottom >= pt.y) {
+         return true;
+      }
+   }
+
+   return false;
+}
+
+bool CustomTabBar :: onMouseMove(Point* p)
+{
+   if (isOverTab(p)) {
+      if (!_isTracked) {
+         TRACKMOUSEEVENT tme = {};
+         tme.cbSize = sizeof(TRACKMOUSEEVENT);
+         tme.dwFlags = TME_LEAVE | TME_HOVER;
+         tme.hwndTrack = _handle;
+         tme.dwHoverTime = 40;
+         TrackMouseEvent(&tme);
+
+         _isTracked = true;
+      }
+
+      return true;
+   }
+
+   return false;
+}
+
+void CustomTabBar :: setHighligthed(bool value)
+{
+   if (value != _highlighted) {
+      _highlighted = value;
+
+      int imageId = getImageId();
+      if (imageId != -1) {
+         TCITEM tie;
+         tie.mask = TCIF_IMAGE;
+         tie.iImage = imageId;
+
+         ::SendMessage(_handle, TCM_SETITEM, getCurrentIndex(), (LPARAM)&tie);
+      }
+
+      invalidate();
+   }
+}
+
+void CustomTabBar :: onMouseHover()
+{
+   DWORD dwpos = ::GetMessagePos();
+   Point p(GET_X_LPARAM(dwpos), GET_Y_LPARAM(dwpos));
+
+   setHighligthed(isOverButton(&p));
+   _isTracked = false;
+}
+
+void CustomTabBar::onMouseLeave()
+{
+   _isTracked = false;
+   setHighligthed(false);
 }
 
 void CustomTabBar :: onDrawItem(DRAWITEMSTRUCT* item)
@@ -93,7 +168,9 @@ void CustomTabBar :: onDrawItem(DRAWITEMSTRUCT* item)
          canvas.drawText(rect, label, getlength_int(label), Color(0, 0, 0), true);
 
          //if (_highlighted) {
-         //   canvas.drawTransparentRectangle(rect, Color(255, 255, 255));
+         //   Rectangle hrect = { rect.bottomRight.x - 8, rect.topLeft.y + 8, 20, 20 };
+
+         //   canvas./*drawTransparentRectangle*/fillRectangle(hrect, Color(0, 0, 0));
          //}
 
          ImageList_Draw(_hImages, tci.iImage, item->hDC, rect.bottomRight.x - 8, rect.topLeft.y + 8, ILD_TRANSPARENT);
@@ -107,7 +184,6 @@ void CustomTabBar :: addTab(int index, wstr_t name, void* param, int iconIndex)
 {
    TCITEM tie;
    tie.mask = TCIF_TEXT | TCIF_IMAGE | TCIF_PARAM;
-   tie.iImage = -1;
    tie.pszText = (wchar_t*)name.str();
    tie.lParam = (LPARAM)param;
    tie.iImage = iconIndex;
@@ -154,8 +230,8 @@ int CustomTabBar :: getCurrentIndex()
 
 // --- MultiTabControl ---
 
-MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, ControlBase* child, int iconId)
-   : CustomTabBar(notifier, withAbovescore, 50, 50), _iconId(iconId)
+MultiTabControl :: MultiTabControl(NotifierBase* notifier, bool withAbovescore, bool withHighlighting, ControlBase* child, int iconId, int acticeIconId)
+   : CustomTabBar(notifier, withAbovescore, withHighlighting, 50, 50), _iconId(iconId), _acticeIconId(acticeIconId)
 {
    _child = child;
 }
@@ -206,20 +282,61 @@ HWND MultiTabControl :: createControl(HINSTANCE instance, ControlBase* owner)
    if (_iconId != 0) {
       _hImages = ImageList_Create(GetSystemMetrics(SM_CXSMICON),
          GetSystemMetrics(SM_CYSMICON),
-         ILC_COLOR32 | ILC_MASK, 1, 1);
+         ILC_COLOR32 | ILC_MASK, 2, 1);
 
-      ImageList_SetIconSize(_hImages, 14, 14);
+      ImageList_SetIconSize(_hImages, 12, 12);
 
-      //HINSTANCE hLib = LoadLibrary(_T("shell32.dll"));
-      //HICON hIcon = reinterpret_cast<HICON>(LoadImage(hLib, MAKEINTRESOURCE(240), IMAGE_ICON, 16, 16, LR_SHARED));
-
-      HICON hIcon = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(_iconId), IMAGE_ICON, 14, 14, LR_SHARED));
+      HICON hIcon = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(_iconId), IMAGE_ICON, 12, 12, LR_SHARED));
       ImageList_AddIcon(_hImages, hIcon);
 
+      HICON hIconActive = reinterpret_cast<HICON>(LoadImage(GetModuleHandle(0), MAKEINTRESOURCE(_acticeIconId), IMAGE_ICON, 12, 12, LR_SHARED));
+      ImageList_AddIcon(_hImages, hIconActive);
+
       TabCtrl_SetImageList(_handle, _hImages);
+
+      ::SetWindowSubclass(_handle, TabBarProc, 1, reinterpret_cast<DWORD_PTR>(this));
    }
 
    return _handle;
+}
+
+LRESULT MultiTabControl :: TabBarProc(HWND hWnd, UINT message, WPARAM wParam, LPARAM lParam, UINT_PTR uIdSubclass, DWORD_PTR dwRefData)
+{
+   MultiTabControl* window = (MultiTabControl*)dwRefData;
+
+   switch (message) {
+      case WM_NCDESTROY:
+         ::RemoveWindowSubclass(hWnd, TabBarProc, uIdSubclass);
+         break;
+      default:
+         return window->proceed(message, wParam, lParam);
+   }
+
+   return ::DefSubclassProc(hWnd, message, wParam, lParam);
+}
+
+LRESULT MultiTabControl :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
+{
+   switch (message) {
+      case WM_MOUSEMOVE:
+         if (_withHighlighting) {
+            Point p = { GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam) };
+
+            onMouseMove(&p);
+         }
+         break;
+      case WM_MOUSEHOVER:
+         onMouseHover();
+         break;
+      case WM_MOUSELEAVE:
+         if (_withHighlighting)
+            onMouseLeave();
+         break;
+      default:
+         break;
+   }
+
+   return ::DefSubclassProc(_handle, message, wParam, lParam);
 }
 
 int MultiTabControl :: addTabView(wstr_t title, void* param)
@@ -252,7 +369,7 @@ void MultiTabControl :: refresh()
 // --- TabBar ---
 
 TabBar :: TabBar(NotifierBase* notifier, bool withAbovescore, int height)
-   : CustomTabBar(notifier, withAbovescore, 800, height),
+   : CustomTabBar(notifier, withAbovescore, false, 800, height),
    _current(nullptr), _pages(nullptr)
 {
    _title = _T("Tabbar");
