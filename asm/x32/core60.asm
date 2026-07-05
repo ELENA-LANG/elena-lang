@@ -762,6 +762,34 @@ inline %35h
 
 end
 
+// ; loadz (zero-extend 32 -> 64 ; edx:eax pair, edx = high)
+inline %33h
+
+  mov  eax, dword ptr [ebx]
+  xor  edx, edx
+
+end
+
+// ; wloadz (zero-extend 16 -> 64 ; edx:eax pair, edx = high)
+inline %36h
+
+  mov  eax, dword ptr [ebx]
+  and  eax, 0FFFFh
+  xor  edx, edx
+
+end
+
+// ; lfsave (signed 64-bit integer edx:eax -> float)
+inline %37h
+
+  push edx
+  push eax
+  fild qword ptr [esp]
+  fstp qword ptr [ebx]
+  add  esp, 8
+
+end
+
 // ; fiadd
 inline %070h
 

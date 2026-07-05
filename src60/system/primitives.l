@@ -49,10 +49,10 @@ internal singleton PrimitiveArrayOperations
       for (int i := 0; i < size; i := i + 1) {
          char ch := sour[index + i];
          int chVal := ch.Value;
-         int chLen := ch.Length;
-         
+         int chLen := ch.WideLength;
+
          UTFOperations.convertUTF32_2_16(chVal, dest, j, destLen);
-         
+
          j += chLen;
       };
 
@@ -298,7 +298,7 @@ internal singleton PrimitiveStringOperations
          while (j < length) {
             char ch1 := s[i + j];
             char ch2 := subs[j];
-            int len1 := ch2.Length;
+            int len1 := ch1.Length;
             int len2 := ch2.Length;
             if (len1 != len2 || ch1 != ch2) {
                isEqual := false;
@@ -393,7 +393,7 @@ internal singleton PrimitiveWideStringOperations
          while (j < length) {
             char ch1 := s[i + j];
             char ch2 := subs[j];
-            int len1 := ch2.WideLength;
+            int len1 := ch1.WideLength;
             int len2 := ch2.WideLength;
             if (len1 != len2 || ch1 != ch2) {
                isEqual := false;
@@ -420,7 +420,7 @@ internal singleton PrimitiveWideStringOperations
             ^ i + index
          };
 
-         int len1 := ch2.Length;
+         int len1 := ch2.WideLength;
          i += len1;
       };
 
@@ -436,10 +436,11 @@ internal singleton PrimitiveWideStringOperations
 
          dest[j] := ch;
 
-         int len := ch.Length;
+         int len := ch.WideLength;
          i += len;
+         j += 1;
       };
-      
+
       ^ j
    }
 
@@ -452,7 +453,7 @@ internal singleton PrimitiveWideStringOperations
 
          dest[j] := ch;
 
-         int len := ch.Length;
+         int len := ch.WideLength;
          i += len;
          j += 1;
       };
@@ -672,35 +673,38 @@ internal singleton UTFOperations
    int convertUTF16_2_32(short[] sour, int index, int length, ref int retVal)
    {
       int ch := sour[index];
-      
-      if (ch < 0D800h) {
+      ch := ch & 0FFFFh;               // the code unit is unsigned; avoid sign extension
+
+      // a BMP character (this range also covers 0E000h..0FFFFh above the surrogates)
+      if (ch < 0D800h || ch >= 0E000h) {
          retVal := ch;
 
          ^ 1;
       };
 
-      int checkVal := ch - 0D800h;
-      if (checkVal < 2048) 
-         InvalidOperationException.raise();
+      // ch is a surrogate; only a high surrogate (0D800h..0DBFFh) can start a pair
+      if (ch < 0DC00h) {
+         int ch2 := sour[index + 1];
+         ch2 := ch2 & 0FFFFh;
 
-      int ch2 := sour[index];
+         // the second unit must be a low surrogate (0DC00h..0DFFFh)
+         if (ch2 >= 0DC00h && ch2 < 0E000h) {
+            int hi := ch - 0D800h;
+            int lo := ch2 - 0DC00h;
 
-      int high_surrogate := ch & 0FFFFFC00h;
-      int low_surrogate := ch2 & 0FFFFFC00h;
-      
-      if (high_surrogate == 0D800h && low_surrogate == 0DC00h) {
-         high_surrogate := high_surrogate $shl 10;
+            hi := hi $shl 10;
+            hi += lo;
+            hi += 010000h;
 
-         high_surrogate += low_surrogate;
-         high_surrogate -= 35FDC00h;
+            retVal := hi;
 
-         retVal := high_surrogate;
-         ^ 2;
+            ^ 2;
+         };
       };
 
       InvalidOperationException.raise();
 
-      ^ 0;   
+      ^ 0;
    }
 
    int convertUTF32_2_8(int value, byte[] dest, int index, int length)
@@ -829,7 +833,9 @@ internal singleton UTFOperations
 
    int getCharWideLength(int code)
    {
-      if (code < 0D800h)
+      // only supplementary code points (>= 010000h) need a surrogate pair;
+      // the whole BMP (including 0E000h..0FFFFh) is a single UTF-16 unit
+      if (code < 010000h)
       {
          ^ 1
       };

@@ -17282,6 +17282,48 @@ ObjectInfo Compiler::Expression::compileNativeConversion(SyntaxNode node, Object
 
          writer->appendNode(BuildKey::ConversionOp, operationKey);
          break;
+      case INT16_64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case INT16_FLOAT64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case UINT32_64_CONVERSION:
+      case UINT16_64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_INT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
+      case UINT32_FLOAT64_CONVERSION:
+      case UINT16_FLOAT64_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
+
+         writeObjectInfo(retVal);
+         writer->appendNode(BuildKey::SavingInStack, 0);
+
+         writeObjectInfo(source);
+
+         writer->appendNode(BuildKey::ConversionOp, operationKey);
+         break;
       default:
          scope.raiseError(errInvalidOperation, node);
          break;

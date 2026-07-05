@@ -1100,6 +1100,28 @@ inline % 35h
 
 end
 
+// ; loadz (zero-extend 32 -> 64)
+inline %33h
+
+  ldr     w9, [x10]
+
+end
+
+// ; wloadz (zero-extend 16 -> 64)
+inline %36h
+
+  ldrh    w9, [x10]
+
+end
+
+// ; lfsave (signed 64-bit integer -> float)
+inline %37h
+
+  scvtf   d17, x9
+  str     d17, [x10]
+
+end
+
 // ; fiadd
 inline %070h
 

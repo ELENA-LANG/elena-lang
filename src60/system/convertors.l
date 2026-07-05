@@ -127,7 +127,16 @@ public singleton ShortConvertor
       self.convertByte(b, out short s);
 
       ^ s;
-   }   
+   }
+
+   short convert(sbyte b) : info("Converts an argument <b>b</b> to a 16-bit integer")
+   {
+      // widen through int (there is no sbyte->short primitive, and a direct
+      // "short s := b" would recurse through SByteNumber.cast short)
+      int n := b;
+
+      ^ self.convert(n);
+   }
 
    short convert(short s) : info("Returns an argument")
       = s;
@@ -492,10 +501,17 @@ public singleton ULongConvertor
       for (int i := start; i < len; i := i + 1) {
          byte c := s[i];
          int ch := c;
-         ch := ch - 48;
-         if (ch >= radix) {
-            ch := ch - 49;
-         };
+         if (ch >= 48 && ch <= 57) {
+            ch -= 48;
+         }
+         else if (ch >= 65 && ch <= 70 && radix == 16) {
+            ch -= 55;
+         }
+         else if (ch >= 97 && ch <= 102 && radix == 16) {
+            ch -= 87;
+         }
+         else InvalidArgumentException.raise("s");
+
          val := val * radix;
          val := val + ch;
       };
@@ -540,7 +556,14 @@ public singleton LongConvertor
 
    long convert(uint n) : info("Converts an argument <b>n</b> to a signed 64-bit integer value")
    {
-      long l := n;
+      long l := n;   // native uint -> long (zero-extending) widening
+
+      ^ l
+   }
+
+   long convert(ushort n) : info("Converts an argument <b>n</b> to a signed 64-bit integer value")
+   {
+      long l := n;   // native ushort -> long (zero-extending) widening
 
       ^ l
    }
@@ -657,7 +680,7 @@ public singleton LongConvertor
       };
 
       if (any < 0) {
-         val := inverted ? INT_MIN : INT_MAX;
+         val := inverted ? LONG_MIN : LONG_MAX;
       }
       else if (inverted)
          val := -val;
@@ -697,10 +720,14 @@ public singleton RealConvertor
       };
 
       bool inverted := false;
+      // derive the sign from the literal so that "-0.x" keeps its sign
+      if (intPartStr.Length != 0 && intPartStr[0] == $45) {
+         inverted := true;
+      };
+
       int intPart := IntConvertor.convert(intPartStr, 10);
       if (intPart < 0) {
          intPart := -intPart;
-         inverted := true;
       };
 
       real r := intPart;
@@ -745,7 +772,14 @@ public singleton RealConvertor
 
    real convert(uint n) : info("Converts an argument <b>n</b> to a 64-bit float numeric value")
    {
-      real r := n;
+      real r := n;   // native uint -> real (zero-extending) widening
+
+      ^ r
+   }
+
+   real convert(ushort n) : info("Converts an argument <b>n</b> to a 64-bit float numeric value")
+   {
+      real r := n;   // native ushort -> real (zero-extending) widening
 
       ^ r
    }

@@ -77,9 +77,13 @@ ELENA byte codes (or ecodes)
    loads                    - index := [acc].action;
                               loading the message name
 
+   loadz                    - long:index := udword([acc]) ; zero-extends dword (unsigned 32 to 64)
+
    lsave                    - long:[acc] := index
 
    fsave                    - double:[acc] := index
+
+   lfsave                   - double:[acc] := long:index ; signed 64-bit integer to double
 
    mov env                  - %SYSTEM_ENV => index 
                               NOTE: for 64 bit, to save it correctly lsave and lsavedp should be used
@@ -127,6 +131,8 @@ ELENA byte codes (or ecodes)
    store r                  - acc => [r]
 
    wload                    - index := word([acc])
+
+   wloadz                   - long:index := uword([acc]) ; zero-extends word (unsigned 16 to 64)
 
    xassign                  - acc[index] := sp[0];
                               direct operation

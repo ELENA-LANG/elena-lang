@@ -351,19 +351,19 @@ public const struct ByteNumber : IntBaseNumber,
             : info("Returns the result of integer division")
       = new IntNumber(_value).divide(n);   
 
-   int add(long n)
+   long add(long n)
             : info("Returns the sum")
       = new LongNumber(_value).add(n);   
 
-   int subtract(long n)
+   long subtract(long n)
             : info("Returns the difference")
       = new LongNumber(_value).subtract(n);   
 
-   int multiply(long n)
+   long multiply(long n)
             : info("Returns the product")
       = new LongNumber(_value).multiply(n);   
 
-   int divide(long n)
+   long divide(long n)
             : info("Returns the result of integer division")
       = new LongNumber(_value).divide(n);   
 
@@ -464,39 +464,39 @@ public const struct ByteNumber : IntBaseNumber,
 
    short band(short n)
             : info("Returns the result of bitwise AND operation")
-      = new ShortNumber(n).band(n);
+      = new ShortNumber(self).band(n);
 
    short bor(short n)
             : info("Returns the result of bitwise OR operation")
-      = new ShortNumber(n).bor(n);
+      = new ShortNumber(self).bor(n);
 
    short bxor(short n)
             : info("Returns the result of bitwise XOR operation")
-      = new ShortNumber(n).bxor(n);
+      = new ShortNumber(self).bxor(n);
 
    int band(int n)
             : info("Returns the result of bitwise AND operation")
-      = new IntNumber(n).band(n);
+      = new IntNumber(self).band(n);
 
    int bor(int n)
             : info("Returns the result of bitwise OR operation")
-      = new IntNumber(n).bor(n);
+      = new IntNumber(self).bor(n);
 
    int bxor(int n)
             : info("Returns the result of bitwise XOR operation")
-      = new IntNumber(n).bxor(n);
+      = new IntNumber(self).bxor(n);
 
    long band(long n)
             : info("Returns the result of bitwise AND operation")
-      = new LongNumber(n).band(n);
+      = new LongNumber(self).band(n);
 
    long bor(long n)
             : info("Returns the result of bitwise OR operation")
-      = new LongNumber(n).bor(n);
+      = new LongNumber(self).bor(n);
 
    long bxor(long n)
             : info("Returns the result of bitwise XOR operation")
-      = new LongNumber(n).bxor(n);
+      = new LongNumber(self).bxor(n);
 
    short cast()
             : info("Returns the value as a short integer")
@@ -634,19 +634,19 @@ public const struct SByteNumber : IntBaseNumber,
             : info("Returns the result of integer division")
       = new IntNumber(self).divide(n);   
 
-   int add(long n)
+   long add(long n)
             : info("Returns the sum")
       = new LongNumber(self).add(n);   
 
-   int subtract(long n)
+   long subtract(long n)
             : info("Returns the difference")
       = new LongNumber(self).subtract(n);   
 
-   int multiply(long n)
+   long multiply(long n)
             : info("Returns the product")
       = new LongNumber(self).multiply(n);   
 
-   int divide(long n)
+   long divide(long n)
             : info("Returns the result of integer division")
       = new LongNumber(self).divide(n);   
 
@@ -747,39 +747,66 @@ public const struct SByteNumber : IntBaseNumber,
 
    short band(short n)
             : info("Returns the result of bitwise AND operation")
-      = new ShortNumber(n).band(n);
+   {
+      short v := self;
+      ^ v & n;
+   }
 
    short bor(short n)
             : info("Returns the result of bitwise OR operation")
-      = new ShortNumber(n).bor(n);
+   {
+      short v := self;
+      ^ v | n;
+   }
 
    short bxor(short n)
             : info("Returns the result of bitwise XOR operation")
-      = new ShortNumber(n).bxor(n);
+   {
+      short v := self;
+      ^ (v ^ n);
+   }
 
    int band(int n)
             : info("Returns the result of bitwise AND operation")
-      = new IntNumber(n).band(n);
+   {
+      int v := self;
+      ^ v & n;
+   }
 
    int bor(int n)
             : info("Returns the result of bitwise OR operation")
-      = new IntNumber(n).bor(n);
+   {
+      int v := self;
+       ^ v | n;
+   }
 
    int bxor(int n)
             : info("Returns the result of bitwise XOR operation")
-      = new IntNumber(n).bxor(n);
+   {
+      int v := self;
+      ^ (v ^ n );
+   }
 
    long band(long n)
             : info("Returns the result of bitwise AND operation")
-      = new LongNumber(n).band(n);
+   {
+      long v := self;
+      ^ v & n;
+   }
 
    long bor(long n)
             : info("Returns the result of bitwise OR operation")
-      = new LongNumber(n).bor(n);
+   {
+      long v := self;
+       ^ v | n;
+   }
 
    long bxor(long n)
             : info("Returns the result of bitwise XOR operation")
-      = new LongNumber(n).bxor(n);
+   {
+      long v := self;
+      ^ (v ^ n );
+   }
 
    short cast()
             : info("Returns the value as a short integer")
@@ -2028,35 +2055,35 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    long add(long n)
             : info("Returns the sum as a long integer")
-      = new LongNumber(n).add(n);
+      = new LongNumber(self).add(n);
 
    long subtract(long n)
             : info("Returns the difference as a long integer")
-      = new LongNumber(n).subtract(n);
+      = new LongNumber(self).subtract(n);
 
    long multiply(long n)
             : info("Returns the product as a long integer")
-      = new LongNumber(n).multiply(n);
+      = new LongNumber(self).multiply(n);
 
    long divide(long n)
             : info("Returns the result of integer division as a long integer")
-      = new LongNumber(n).divide(n);
+      = new LongNumber(self).divide(n);
 
    real add(real n)
             : info("Returns the sum as a real number")
-      = new RealNumber(n).add(n);
+      = new RealNumber(self).add(n);
 
    real subtract(real n)
             : info("Returns the difference as a real number")
-      = new RealNumber(n).subtract(n);
+      = new RealNumber(self).subtract(n);
 
    real multiply(real n)
             : info("Returns the product as a real number")
-      = new RealNumber(n).multiply(n);
+      = new RealNumber(self).multiply(n);
 
    real divide(real n)
             : info("Returns the result of the division as a real number")
-      = new RealNumber(n).divide(n);
+      = new RealNumber(self).divide(n);
 
    band(n)
             : info("Returns the result of bitwise AND operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the UIntNumber type")
@@ -2120,15 +2147,15 @@ public sealed const struct UIntNumber : IntBaseNumber,
 
    long band(long n)
             : info("Returns the result of bitwise AND operation")
-      = new LongNumber(n).band(n);
+      = new LongNumber(self).band(n);
 
    long bor(long n)
             : info("Returns the result of bitwise OR operation")
-      = new LongNumber(n).bor(n);
+      = new LongNumber(self).bor(n);
 
    long bxor(long n)
             : info("Returns the result of bitwise XOR operation")
-      = new LongNumber(n).bxor(n);
+      = new LongNumber(self).bxor(n);
 
    uint shiftLeft(uint val)
             : info("shifts an integer value to the left by a specified number of bits")
@@ -2389,11 +2416,11 @@ public sealed const struct LongNumber : IntBaseNumber,
 
    bor(n)
             : info("Returns the result of bitwise OR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
-      <= band(cast long(n));
+      <= bor(cast long(n));
 
    bxor(n)
             : info("Returns the result of bitwise XOR operation;<br/>If no appropriate method overloading is found, an argument <b>o</b> is converted to the LongNumber type")
-      <= band(cast long(n));
+      <= bxor(cast long(n));
 
    long band(long n)
             : info("Returns the result of bitwise AND operation")
