@@ -749,63 +749,63 @@ public const struct SByteNumber : IntBaseNumber,
             : info("Returns the result of bitwise AND operation")
    {
       short v := self;
-      ^ v.band(n)
+      ^ v & n;
    }
 
    short bor(short n)
             : info("Returns the result of bitwise OR operation")
    {
       short v := self;
-      ^ v.bor(n)
+      ^ v | n;
    }
 
    short bxor(short n)
             : info("Returns the result of bitwise XOR operation")
    {
       short v := self;
-      ^ v.bxor(n)
+      ^ (v ^ n);
    }
 
    int band(int n)
             : info("Returns the result of bitwise AND operation")
    {
       int v := self;
-      ^ v.band(n)
+      ^ v & n;
    }
 
    int bor(int n)
             : info("Returns the result of bitwise OR operation")
    {
       int v := self;
-      ^ v.bor(n)
+       ^ v | n;
    }
 
    int bxor(int n)
             : info("Returns the result of bitwise XOR operation")
    {
       int v := self;
-      ^ v.bxor(n)
+      ^ (v ^ n );
    }
 
    long band(long n)
             : info("Returns the result of bitwise AND operation")
    {
       long v := self;
-      ^ v.band(n)
+      ^ v & n;
    }
 
    long bor(long n)
             : info("Returns the result of bitwise OR operation")
    {
       long v := self;
-      ^ v.bor(n)
+       ^ v | n;
    }
 
    long bxor(long n)
             : info("Returns the result of bitwise XOR operation")
    {
       long v := self;
-      ^ v.bxor(n)
+      ^ (v ^ n );
    }
 
    short cast()
