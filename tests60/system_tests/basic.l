@@ -2859,12 +2859,14 @@ public dictionaryObjectKeyTest() : testCase()
    Assert.ifTrue(d["bb"] == 200);
    Assert.ifTrue(d[5000000000l] == 400);
    Assert.ifTrue(d[c] == 300);
+   Console.write(".");
 
    // updating an existing key must replace the value, not add a duplicate
    d[2] := 25;
    d["a"] := 150;
    Assert.ifTrue(d[2] == 25);
    Assert.ifTrue(d["a"] == 150);
+   Console.write(".");
 
    // containsKey: present and absent, across key types
    Assert.ifTrue(d.containsKey(1));
