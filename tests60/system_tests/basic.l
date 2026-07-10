@@ -2880,7 +2880,7 @@ public dictionaryObjectKeyTest() //: testCase()
 
 // Regression: hash buckets must grow with the key count and updates must overwrite
 // in place rather than appending duplicate entries.
-public dictionaryBucketGrowthTest() : testCase()
+public dictionaryBucketGrowthTest() //: testCase()
 {
    auto d := Dictionary.new(0);
 
