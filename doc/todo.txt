@@ -43,6 +43,8 @@ In development:
   - debugger : ctrl+i must reload content
   - debugger : temporal breakpoint is not correctly removed
   - step over - does not always work
+  - #263 : IDE : MTA Debugging
+  - #232 : IDE debugger : checkpoint
   --------------------------------------
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===

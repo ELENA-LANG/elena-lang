@@ -959,6 +959,10 @@ int ProjectController :: closeProject(ProjectModel& model)
    model.profileList.clear();
    model.profile.clear();
 
+   model.breakpoints.clear();
+
+   _debugController.release();
+
    return STATUS_PROJECT_CHANGED;
 }
 

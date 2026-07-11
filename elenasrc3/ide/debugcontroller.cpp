@@ -554,11 +554,6 @@ bool DebugController :: startThread()
    return _process->isStarted();
 }
 
-void DebugController :: clearBreakpoints()
-{
-
-}
-
 bool DebugController :: start(path_t programPath, path_t arguments, bool debugMode, StartUpSettings startUpSettings)
 {
    _currentModule.clear();
@@ -577,8 +572,6 @@ bool DebugController :: start(path_t programPath, path_t arguments, bool debugMo
    }
    else {
       _provider.setEntryPoint(0);
-
-      clearBreakpoints();
    }
 
    return startThread();

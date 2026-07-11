@@ -213,6 +213,7 @@ bool Win32BreakpointContext :: processBreakpoint(Win32ThreadContext* context)
 void Win32BreakpointContext :: clear()
 {
    breakpoints.clear();
+   tempBreakpoints.clear();
 }
 
 // --- Win32ThreadContext ---
