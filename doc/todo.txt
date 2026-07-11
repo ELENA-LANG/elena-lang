@@ -26,8 +26,8 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - debugger : breakpoints are not correctly removed (when a new project is open)
-  - xml : xmlreader, xmlwriter
+  - comparing with enum type - try to use directly
+  - xml : xmlwriter
   - implement toUInt, toSByte
   - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
   - refactore - Compiler :: declareVMTMessage - the function is too long
@@ -37,11 +37,12 @@ In development:
   - pi optimization : at least 10% 
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created)
   --------------------------------------
-  * #731 xml : support attributes
+  * debugger
   ====================================== 
-  - suppoert one line tag (e.g. <A/>)
-  - implement multi line tag
-  - implement multi line content
+  - debugger : breakpoints are not correctly removed (when a new project is open)
+  - debugger : ctrl+i must reload content
+  - debugger : temporal breakpoint is not correctly removed
+  - step over - does not always work
   --------------------------------------
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===

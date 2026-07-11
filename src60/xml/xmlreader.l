@@ -158,6 +158,15 @@ public class XmlReader : IXmlReader
       }
       else if (tokenMode == TokenType.OpenTag && currentLine[offs] != $60) {
          if (attributeMode) {
+            if (currentLine[offs] == $47) {
+               if (currentLine[offs + 1] != $62)
+                  InvalidOperationException.raise($"Invalid xml line:{lineNumber}");
+                              
+               currentOffset.Value := offs + 2;
+               tokenMode := TokenType.CloseTag;
+               ^ self
+            };
+            
             tokenMode := TokenType.Attribute;
 
             if (!currentLine[offs].isLetter())

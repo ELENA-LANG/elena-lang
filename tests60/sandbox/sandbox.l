@@ -27,7 +27,7 @@ printNode(int indent, XmlNode root)
       Console.fillString(" ", indent);
    }
    else {
-      Console.write(root.Content);
+      Console.write(root.Content ?? String.MinValue);
    };
    Console.printLine("</", root.Name, ">");
 }
