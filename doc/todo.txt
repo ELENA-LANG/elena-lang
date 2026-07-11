@@ -26,6 +26,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - debugger : breakpoints are not correctly removed (when a new project is open)
   - xml : xmlreader, xmlwriter
   - implement toUInt, toSByte
   - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
@@ -38,7 +39,7 @@ In development:
   --------------------------------------
   * #731 xml : support attributes
   ====================================== 
-  - support comments
+  - suppoert one line tag (e.g. <A/>)
   - implement multi line tag
   - implement multi line content
   --------------------------------------

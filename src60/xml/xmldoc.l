@@ -20,6 +20,8 @@ public interface IXmlReader
    
    get abstract bool isOpenTag();
    
+   get abstract bool isCommentTag();
+   
    get abstract bool isCloseTag();
    
    get abstract bool isContent();
@@ -27,6 +29,10 @@ public interface IXmlReader
    get abstract isAttribute();
    
    get abstract isAttributeValue();
+   
+   get abstract isCommentAttribute();
+   
+   get abstract isCommentValue();
    
    get abstract string Name();
    
