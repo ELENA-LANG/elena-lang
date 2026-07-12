@@ -1,6 +1,6 @@
 #!/bin/sh
 
- RELEASE=elena-7.0.0.amd64-mac
+ RELEASE=elena-7.0.1.amd64-mac
 
  mkdir -p ../../build/$RELEASE/bin/
  mkdir -p ../../build/$RELEASE/bin/templates/

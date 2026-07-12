@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      DocumentView class header
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DOCUMENT_H
@@ -15,24 +15,34 @@ namespace elena_lang
    constexpr auto INDEX_ORDER = 8;
 
    // --- FormatterInfo ---
+   struct FormatterContext
+   {
+      int    mode;
+      int    level;
+      int    bufLen;
+      text_c buffer[12];
+      void*  argument;
+   };
+
    struct FormatterInfo
    {
-      pos_t  style;
-      bool   lookAhead;
-      text_c state;
+      pos_t            style;
+      text_c           state;
+
+      FormatterContext context;
    };
 
    // --- ReaderInfo ---
    struct ReaderInfo
    {
       pos_t style;
+      pos_t toggleStyle;
       pos_t step;
 
       int   row;
 
       bool  newLine;
       bool  bandStyle;
-      bool  toggleMark;
    };
 
    struct Marker
@@ -58,7 +68,7 @@ namespace elena_lang
    public:
       virtual void start(FormatterInfo& info) = 0;
 
-      virtual bool next(text_c ch, FormatterInfo& info, pos_t& lastStyle) = 0;
+      virtual bool next(text_c ch, FormatterInfo& info) = 0;
    };
 
    // --- LexicalFormatter ---
@@ -182,11 +192,10 @@ namespace elena_lang
          LexicalReader(DocumentView* docView)
          {
             this->docView = docView;
-            this->step = this->style = 0;
+            this->step = this->style = this->toggleStyle = 0;
             this->row = 0;
             this->newLine = false;
             this->bandStyle = false;
-            this->toggleMark = false;
 
             this->bm.invalidate();
          }

@@ -2,7 +2,7 @@
 //		E L E N A   P r o j e c t:  ELENA Compiler
 //
 //		This header contains ELENA Image class declarations
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CODEIMAGE_H
@@ -21,6 +21,7 @@ namespace elena_lang
       bool              autoClassSymbol;
       bool              autoModuleExtension;
       bool              withTLS;
+      bool              withOutputList;
       ProcessSettings   coreSettings;
       ustr_t            ns;
 
@@ -29,6 +30,7 @@ namespace elena_lang
          type = PlatformType::None;
          codeAlignment = 0;
          autoClassSymbol = autoModuleExtension = withTLS = false;
+         withOutputList = DEFAULT_METHOD_OUTPUT;
          coreSettings = {};
          ns = nullptr;
       }

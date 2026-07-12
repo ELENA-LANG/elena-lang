@@ -12,8 +12,8 @@
 namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
-#define ENGINE_MAJOR_VERSION              7              // ELENA Engine version
-#define ENGINE_MINOR_VERSION              0
+   #define ENGINE_MAJOR_VERSION              7              // ELENA Engine version
+   #define ENGINE_MINOR_VERSION              0
 
    constexpr auto LINE_LEN = 0x1000;                     // the maximal source line length
    constexpr auto IDENTIFIER_LEN = 0x0300;               // the maximal identifier length
@@ -97,7 +97,8 @@ namespace elena_lang
    // --- ELENA verb messages ---
    constexpr auto DISPATCH_MESSAGE = "#dispatch";
    constexpr auto CONSTRUCTOR_MESSAGE = "#constructor";
-   constexpr auto CONSTRUCTOR_MESSAGE2 = "#constructor2";   // protected constructor
+   constexpr auto CONSTRUCTOR_MESSAGE2 = "#constructor2";      // protected constructor
+   constexpr auto CAST_DISPATCH_MESSAGE = "#dispatch_cast";    // special type of dispatcher which typecasts the dispatch result
    constexpr auto CAST_MESSAGE = "#cast";
    constexpr auto INVOKE_MESSAGE = "#invoke";
    constexpr auto ASYNC_INVOKE_MESSAGE = "#async_invoke";
@@ -185,6 +186,9 @@ namespace elena_lang
    constexpr ref_t elProxy = 0x000A0000;
    constexpr ref_t elInterface = 0x000B0000;
    constexpr ref_t elWeakInterface = 0x000C0000;
+
+   // === Global Attributes Types ===
+   constexpr auto GA_REFERENCE = 0x1000;
 
    // --- LoadResult enum ---
    enum class LoadResult
@@ -319,6 +323,8 @@ namespace elena_lang
       Initializer = 0x10B,
       YieldContextSize = 0x80C,
       SourceTemplateRef = 0x10D,
+      RuntimeDiscovered = 0x00E,
+      FieldGetter = 0x80F,
    };
 
    // === Reference constants ====
@@ -405,6 +411,9 @@ namespace elena_lang
    constexpr ref_t mskCodeDisp32Lo = 0xE1000000u;
    constexpr ref_t mskCodeRef32Hi = 0x21000000u;
    constexpr ref_t mskCodeRef32Lo = 0xA1000000u;
+   constexpr ref_t mskCodeRelRef32Hi4k = 0x11000000u;
+   constexpr ref_t mskCodeRef32Lo12 = 0x91000000u;
+   constexpr ref_t mskCodeRef32Lo12_8 = 0x51000000u;
    constexpr ref_t mskCodeXDisp32Hi = 0x31000000u;
    constexpr ref_t mskCodeXDisp32Lo = 0x71000000u;
 
@@ -412,6 +421,9 @@ namespace elena_lang
    constexpr ref_t mskRDataRef64 = 0xC2000000u;
    constexpr ref_t mskRDataRef32Hi = 0x22000000u;
    constexpr ref_t mskRDataRef32Lo = 0xA2000000u;
+   constexpr ref_t mskRDataRelRef32Hi4k = 0x12000000u;
+   constexpr ref_t mskRDataRef32Lo12 = 0x92000000u;
+   constexpr ref_t mskRDataRef32Lo12_8 = 0x52000000u;
    constexpr ref_t mskRDataDisp32Hi = 0x62000000u;
    constexpr ref_t mskRDataDisp32Lo = 0xE2000000u;
    constexpr ref_t mskRDataXDisp32Hi = 0x32000000u;
@@ -433,6 +445,9 @@ namespace elena_lang
    constexpr ref_t mskDataRef64 = 0xC3000000u;
    constexpr ref_t mskDataRef32Hi = 0x23000000u;
    constexpr ref_t mskDataRef32Lo = 0xA3000000u;
+   constexpr ref_t mskDataRelRef32Hi4k = 0x13000000u;
+   constexpr ref_t mskDataRef32Lo12 = 0x93000000u;
+   constexpr ref_t mskDataRef32Lo12_8 = 0x53000000u;
    constexpr ref_t mskDataDisp32Hi = 0x63000000u;
    constexpr ref_t mskDataDisp32Lo = 0xE3000000u;
    constexpr ref_t mskDataXDisp32Hi = 0x33000000u;
@@ -445,6 +460,9 @@ namespace elena_lang
    constexpr ref_t mskMDataRef64 = 0xC6000000u;
    constexpr ref_t mskMDataRef32Hi = 0x26000000u;
    constexpr ref_t mskMDataRef32Lo = 0xA6000000u;
+   constexpr ref_t mskMDataRelRef32Hi4k = 0x16000000u;
+   constexpr ref_t mskMDataRef32Lo12 = 0x96000000u;
+   constexpr ref_t mskMDataRef32Lo12_8 = 0x56000000u;
    constexpr ref_t mskMDataDisp32Hi = 0x66000000u;
    constexpr ref_t mskMDataDisp32Lo = 0xE6000000u;
 
@@ -453,6 +471,9 @@ namespace elena_lang
    constexpr ref_t mskStatDataRef64 = 0xC7000000u;
    constexpr ref_t mskStatDataRef32Hi = 0x27000000u;
    constexpr ref_t mskStatDataRef32Lo = 0xA7000000u;
+   constexpr ref_t mskStatDataRelRef32Hi4k = 0x17000000u;
+   constexpr ref_t mskStatDataRef32Lo12 = 0x97000000u;
+   constexpr ref_t mskStatDataRef32Lo12_8 = 0x57000000u;
    constexpr ref_t mskStatXDisp32Hi = 0x37000000u;
    constexpr ref_t mskStatXDisp32Lo = 0x77000000u;
 
@@ -503,6 +524,10 @@ namespace elena_lang
    constexpr ref_t NARG16LO_1 = 0x00000028u;
    constexpr ref_t NARG16HI_2 = 0x00000029u;
    constexpr ref_t INV_ARG12_2 = 0x0000002Au;
+   constexpr ref_t PTR32PAGE_1 = 0x0000002Bu;
+   constexpr ref_t PTR32PAGEOFF_1 = 0x0000002Cu;
+   constexpr ref_t PTR32PAGE_2 = 0x0000002Du;
+   constexpr ref_t PTR32PAGEOFF_2 = 0x0000002Eu;
 
    // predefined debug module sections
    constexpr ref_t DEBUG_LINEINFO_ID = (ref_t)-1;

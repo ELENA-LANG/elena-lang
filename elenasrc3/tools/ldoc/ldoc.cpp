@@ -1638,7 +1638,7 @@ bool isTemplateDeclaration(ustr_t referenceName)
    if (referenceName.findSub(index + 1, '#') != NOTFOUND_POS)
       return false;
 
-   return referenceName.findStr("@T1") != NOTFOUND_POS/* && referenceName.findStr("$private") != NOTFOUND_POS*/;
+   return referenceName.findStr("@T1") != NOTFOUND_POS && referenceName.findStr("&system@IntNumber") == NOTFOUND_POS && referenceName.findSubStr(referenceName.findStr("@T1") + 1, "@T1", referenceName.length()) == NOTFOUND_POS;
 }
 
 bool isOwnTemplate(ustr_t referenceName, ustr_t ns, NamespaceString& templateNs)
@@ -2010,7 +2010,7 @@ void DocGenerator :: generateClassDoc(TextFileWriter& summaryWriter, TextFileWri
 
    if (classInfo->extensions.count() > 0) {
       writeExtensionsHeader(bodyWriter, classInfo, *moduleName);
-      generateMethodList(bodyWriter, classInfo, classInfo->extensions, false);
+      generateMethodList(bodyWriter, classInfo, classInfo->extensions, true);
       writeClassMethodsFooter(bodyWriter, classInfo, *moduleName);
    }
 

@@ -3,7 +3,7 @@
 //
 //		This file contains the compiler interface code declaration
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef CLI_H
@@ -78,6 +78,7 @@ DISABLE_WARNING_POP
 #endif
 #if defined(__aarch64__)
             case PlatformType::Linux_ARM64:
+            case PlatformType::MacOS_ARM64:
                return { 688128, 204800, 0x200000, 1, true, true };
 #endif
          default:
@@ -85,7 +86,7 @@ DISABLE_WARNING_POP
          }
       }
 
-      static JITCompilerSettings getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor);
+      static PlatformSettings getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor);
       static JITCompilerBase* createJITCompiler(PlatformType platform);
       static LinkerBase* createLinker(PlatformType platform, Project* project, ErrorProcessorBase* errorProcessor);
 
@@ -96,7 +97,7 @@ DISABLE_WARNING_POP
 
       static int compileProject(int argc, path_c** argv,
          CompilingProcess& process, 
-         PlatformType platform, JITCompilerSettings& jitSettings,
+         PlatformType platform, PlatformSettings* platformSettings,
          PresenterBase& presenter, ErrorProcessor& errorProcessor,
          path_t dataPath, path_t basePath, path_t configPath,
          ustr_t defaultProfile);

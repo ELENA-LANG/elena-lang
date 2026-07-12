@@ -25,6 +25,13 @@ public extension objectOp
       ^ len == 0;
    }
         
+   bool isNilOrEmpty() : info("Returns true if the object length is 0 or it is nil")
+   {
+      int len := self?.Length ?? 0;
+        
+      ^ len == 0;
+   }
+
    bool isNonempty() : info("Returns true if the object length is not 0")
    {
       int len := self.Length;
@@ -1003,6 +1010,40 @@ public extension stringOp : String
    int indexOf(char ch) : info("Returns the index of the first occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
       = self.indexOf(0, ch);
 
+   int lastIndexOf(string subStr) : info("Returns the index of the last occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
+   {
+      int subLen := subStr.Length;
+
+      int lastIndex := -1;
+
+      int start := 0;
+      int index := self.indexOf(start, subStr);
+      while (index != -1) {
+         lastIndex := index;
+         start := index + subLen;
+         index := self.indexOf(start, subStr);
+      };
+
+      ^ lastIndex;
+   }
+
+   int lastIndexOf(char ch) : info("Returns the index of the last occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
+   {
+      int subLen := ch.Length;
+
+      int lastIndex := -1;
+
+      int start := 0;
+      int index := self.indexOf(start, ch);
+      while (index != -1) {
+         lastIndex := index;
+         start := index + subLen;
+         index := self.indexOf(start, ch);
+      };
+
+      ^ lastIndex;
+   }
+
    int Hashcode : info("Returns the hash code of the string")
    {
       get()
@@ -1020,6 +1061,13 @@ public extension stringOp : String
       ^ len == 0;
    }
         
+   bool isNilOrEmpty() : info("Returns true if the object length is 0 or it is nil")
+   {
+      int len := self?.Length ?? 0;
+        
+      ^ len == 0;
+   }
+
    bool isNonempty() : info("Returns true if the string has a length greater then 0")
    {
       int len := self.Length;
@@ -1060,21 +1108,22 @@ public extension stringOp : String
       ^ 0 == n
    }
         
-   bool endingWith(string s) : info("Returns true if the string ends with the specified string <b>s</b>")
+   bool endingWith(string subStr) : info("Returns true if the string ends with the specified string <b>s</b>")
    {
-      int l1 := self.Length;
-      int l2 := s.Length;
+      if (!subStr.isNilOrEmpty()) {
+         int index := self.lastIndexOf(subStr);
+         if (index == -1) {
+            ^ false
+         };
 
-      int n := self.indexOf(l1 - l2, s);
-        
-      ^ n != -1
+         ^ (index + subStr.Length == self.Length);
+      };
+
+      ^ false
    }
         
    bool containing(string s) : info("Returns true if the string contains the specified string <b>s</b>")
    {
-      int l1 := self.Length;
-      int l2 := s.Length;
-
       int n := self.indexOf(0, s);
         
       ^ n != -1
@@ -1145,29 +1194,27 @@ public extension stringOp : String
 
    string replace(string replacee, string replacer) : info("Replaces all the occurrences of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
-      string target := EmptyString;
-      int    start := 0;
-      int    end := self.indexOf(start, replacee);
-      int    replaceeLen := replacee.Length;
-        
+      int end := self.indexOf(0, replacee);
+      if (end == -1)
+         { ^ self };
+
+      int  replaceeLen := replacee.Length;
+      auto builder := new text'TextBuilder();
+      int  start := 0;
+
       while (end != -1)
       {
-         target := target
-                     .add(self.Substring(start, end - start))
-                     .add(replacer);
-            
+         builder.write(self.Substring(start, end - start));
+         builder.write(replacer);
+
          start := end + replaceeLen;
-            
          end := self.indexOf(start, replacee)
       };
-    
-      if(start != 0)
-      {
-         ^ target.add(self.Substring(start))
-      };
 
-      ^ self
-   }   
+      builder.write(self.Substring(start));
+
+      ^ builder.Value
+   }
 
    string replaceFirst(string replacee, string replacer) : info("Replaces the first occurrence of <b>replacee</b> with <b>replacer</b> and returns a new string")
    {
@@ -1289,6 +1336,41 @@ public extension wideOp : WideString
    int indexOf(char ch) : info("Returns the index of the first occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
       = self.indexOf(0, ch);
 
+
+   int lastIndexOf(wide subStr) : info("Returns the index of the last occurence of the specified string <b>s</b><br/>If the substring is not found. returns -1")
+   {
+      int subLen := subStr.Length;
+
+      int lastIndex := -1;
+
+      int start := 0;
+      int index := self.indexOf(start, subStr);
+      while (index != -1) {
+         lastIndex := index;
+         start := index + subLen;
+         index := self.indexOf(start, subStr);
+      };
+
+      ^ lastIndex;
+   }
+
+   int lastIndexOf(char ch) : info("Returns the index of the last occurence of the specified character <b>ch</b>.<br/>If the substring is not found. returns -1")
+   {
+      int subLen := ch.WideLength;
+
+      int lastIndex := -1;
+
+      int start := 0;
+      int index := self.indexOf(start, ch);
+      while (index != -1) {
+         lastIndex := index;
+         start := index + subLen;
+         index := self.indexOf(start, ch);
+      };
+
+      ^ lastIndex;
+   }
+
    int Hashcode : info("Returns the hash code of the string")
    {
       get()
@@ -1346,21 +1428,22 @@ public extension wideOp : WideString
       ^ 0 == n
    }
         
-   bool endingWith(wide s) : info("Returns true if the string ends with the specified string <b>s</b>")
+   bool endingWith(wide subStr) : info("Returns true if the string ends with the specified string <b>s</b>")
    {
-      int l1 := self.Length;
-      int l2 := s.Length;
+      if (!subStr.isNilOrEmpty()) {
+         int index := self.lastIndexOf(subStr);
+         if (index == -1) {
+            ^ false
+         };
 
-      int n := self.indexOf(l1 - l2, s);
-        
-      ^ n != -1
+         ^ (index + subStr.Length == self.Length);
+      };
+
+      ^ false
    }
         
    bool containing(wide s) : info("Returns true if the string contains the specified string <b>s</b>")
    {
-      int l1 := self.Length;
-      int l2 := s.Length;
-
       int n := self.indexOf(0, s);
         
       ^ n != -1

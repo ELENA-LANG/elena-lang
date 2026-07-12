@@ -28,7 +28,7 @@ OBJDIR_RELEASE = ../../../temp/elt-cli/
 DEP_RELEASE = 
 OUT_RELEASE = ../../../../bin/elt-cli
 
-OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/vmsession.o $(OBJDIR_RELEASE)/__/linux/elt.o $(OBJDIR_RELEASE)/__/__/__/engine/linux/presenter.o
+OBJ_RELEASE = $(OBJDIR_RELEASE)/__/__/__/common/dump.o $(OBJDIR_RELEASE)/__/__/__/common/files.o $(OBJDIR_RELEASE)/__/__/__/common/paths.o $(OBJDIR_RELEASE)/__/__/__/common/ustring.o $(OBJDIR_RELEASE)/__/vmsession.o $(OBJDIR_RELEASE)/__/linux/elt.o $(OBJDIR_RELEASE)/__/__/__/engine/linux/presenter.o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o $(OBJDIR_RELEASE)/__/__/__/common/config.o $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o
 
 all: release
 
@@ -49,6 +49,9 @@ release: before_release out_release after_release
 out_release: before_release $(OBJ_RELEASE) $(DEP_RELEASE)
 	$(LD) $(LIBDIR_RELEASE) -o $(OUT_RELEASE) $(OBJ_RELEASE)  $(LDFLAGS_RELEASE) $(LIB_RELEASE)
 
+$(OBJDIR_RELEASE)/__/__/__/common/dump.o: ../../../common/dump.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/dump.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/dump.o
+
 $(OBJDIR_RELEASE)/__/__/__/common/files.o: ../../../common/files.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/files.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/files.o
 
@@ -66,6 +69,15 @@ $(OBJDIR_RELEASE)/__/linux/elt.o  : ../linux/elt.cpp
 
 $(OBJDIR_RELEASE)/__/__/__/engine/linux/presenter.o: ../../../engine/linux/presenter.cpp
 	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/linux/presenter.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/linux/presenter.o
+
+$(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o: ../../../engine/scriptreader.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../engine/scriptreader.cpp -o $(OBJDIR_RELEASE)/__/__/__/engine/scriptreader.o
+
+$(OBJDIR_RELEASE)/__/__/__/common/xmltree.o: ../../../common/xmltree.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/xmltree.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/xmltree.o
+
+$(OBJDIR_RELEASE)/__/__/__/common/config.o: ../../../common/config.cpp
+	$(CXX) $(CFLAGS_RELEASE) $(INC_RELEASE) -c ../../../common/config.cpp -o $(OBJDIR_RELEASE)/__/__/__/common/config.o
 
 clean_release: 
 	rm -f $(OBJ_RELEASE) $(OUT_RELEASE)

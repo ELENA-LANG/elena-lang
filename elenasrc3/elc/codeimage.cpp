@@ -37,7 +37,8 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
       imageInfo.codeAlignment,
       imageInfo.coreSettings,
       true,
-      imageInfo.autoClassSymbol
+      imageInfo.autoClassSymbol,
+      imageInfo.withOutputList,
    };
 
    JITLinker linker(

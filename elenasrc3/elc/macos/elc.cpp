@@ -86,7 +86,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
    PlatformType platform = CLIHelper::definePlatform(argc, argv, CURRENT_PLATFORM);
 
    ProcessSettings defaultCoreSettings = CLIHelper::getProcessSettings(platform);
-   JITCompilerSettings jitSettings = CLIHelper::getJITCompilerSettings(platform, &errorProcessor);
+   PlatformSettings platformSettings = CLIHelper::getJITCompilerSettings(platform, &errorProcessor);
 
    CompilingProcess process(dataPath, getDefaultExtension(platform), "<moduleProlog>", "<prolog>", "<epilog>",
       &Presenter::getInstance(), &errorProcessor,
@@ -101,7 +101,7 @@ int compileProject(int argc, char** argv, path_t dataPath, ErrorProcessor& error
 
    return CLIHelper::compileProject(argc, argv,
       process,
-      platform, jitSettings,
+      platform, &platformSettings,
       Presenter::getInstance(), errorProcessor,
       dataPath, basePath, *configPath,
       defaultProfile);

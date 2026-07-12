@@ -1,7 +1,8 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Engine
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                         DLL Main Entry
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -129,7 +130,12 @@ void* CollectPermGCLA(size_t size)
 
 size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
 {
-   return machine->loadMessageName((mssg_t)message, buffer, length);
+   return machine->loadMessageName((mssg_t)message, buffer, length, (message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE);
+}
+
+size_t LoadStrongMessageNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadMessageName((mssg_t)message, buffer, length, true);
 }
 
 size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)
@@ -306,9 +312,19 @@ size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, size_t skip, size_t m
    return machine->loadClassMessages(classPtr, output, skip, maxLength);
 }
 
+void* LoadMessageOutputLA(void* classPtr, mssg_t message)
+{
+   return machine->loadClassMessageOutput(classPtr, message);
+}
+
 bool CheckClassMessageLA(void* classPtr, mssg_t message)
 {
    return machine->checkClassMessage(classPtr, message);
+}
+
+mssg_t LoadStrongMessageLA(const char* messageName)
+{
+   return machine->loadStrongMessage(messageName);
 }
 
 void* CreateThreadLA(void* arg, void* threadProc, int stackSize, int flags)

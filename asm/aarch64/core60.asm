@@ -170,6 +170,26 @@ structure %SYSTEM_ENV
 
 end
 
+// VEH_HANDLER()
+procedure % VEH_HANDLER
+
+  mov     x17, x0
+  mov     x0, x9
+  mov     x9, x17
+
+#if _MAC
+  adrp    x20, data_page : %CORE_SINGLE_CONTENT
+  add     x20, x20, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
+  movz    x20,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x20,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
+
+  ldr     x17, [x20]
+  br      x17
+
+end
+
 structure %VOID
 
   dq 0
@@ -192,8 +212,13 @@ end
 // ; in: x11 - size ; out: x10 - created object
 inline % GC_ALLOC
 
+#if _MAC
+  adrp    x12, data_page : %CORE_GC_TABLE
+  add     x12, x12, data_pageoff : %CORE_GC_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x12,  data_ptr32lo : %CORE_GC_TABLE
   movk    x12,  data_ptr32hi : %CORE_GC_TABLE, lsl #16
+#endif
   add     x13, x12, gc_yg_current
   ldr     x15, [x13]
   add     x14, x12, gc_yg_end
@@ -214,8 +239,13 @@ labYGCollect:
   mov     x29, sp              // ; set frame pointer
 
   // ; lock frame
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x12, sp
@@ -229,11 +259,21 @@ labYGCollect:
   stp     x18, x18, [sp, #-16]! 
 
   // ;   save static roots
+#if _MAC
+  adrp    x17, rdata_page : %SYSTEM_ENV
+  add     x17, x17, rdata_pageoff : %SYSTEM_ENV
+#elif (_LNX || _FREEBSD)
   movz    x17, rdata_ptr32lo : %SYSTEM_ENV
   movk    x17, rdata_ptr32hi : %SYSTEM_ENV, lsl #16
+#endif
 
+#if _MAC
+  adrp    x19, stat_page : #0
+  add     x19, x19, stat_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x19, stat_ptr32lo : #0
   movk    x19, stat_ptr32hi : #0, lsl #16
+#endif
   ldr     x18, [x17]
   lsl     x18, x18, #3
   stp     x18, x19, [sp, #-16]! 
@@ -270,8 +310,13 @@ labYGNextFrame:
   ldr     x29, [x29]
 
   // ; call GC routine
+#if _MAC
+  adrp    x16, import_page : "$rt.CollectGCLA"
+  add     x16, x16, import_pageoff : "$rt.CollectGCLA"
+#elif (_LNX || _FREEBSD)
   movz    x16,  import_ptr32lo : "$rt.CollectGCLA"
   movk    x16,  import_ptr32hi : "$rt.CollectGCLA", lsl #16
+#endif
 
   ldr     x17, [x16]
   blr     x17
@@ -298,8 +343,13 @@ inline % GC_COLLECT
   mov     x29, sp              // ; set frame pointer
 
   // ; lock frame
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x12, sp
@@ -313,11 +363,21 @@ inline % GC_COLLECT
   stp     x18, x18, [sp, #-16]! 
 
   // ;   save static roots
+#if _MAC
+  adrp    x17, rdata_page : %SYSTEM_ENV
+  add     x17, x17, rdata_pageoff : %SYSTEM_ENV
+#elif (_LNX || _FREEBSD)
   movz    x17, rdata_ptr32lo : %SYSTEM_ENV
   movk    x17, rdata_ptr32hi : %SYSTEM_ENV, lsl #16
+#endif
 
+#if _MAC
+  adrp    x19, stat_page : #0
+  add     x19, x19, stat_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x19, stat_ptr32lo : #0
   movk    x19, stat_ptr32hi : #0, lsl #16
+#endif
   ldr     x18, [x17]
   lsl     x18, x18, #3
   stp     x18, x19, [sp, #-16]! 
@@ -354,8 +414,13 @@ labYGNextFrame:
   ldr     x29, [x29]
 
   // ; call GC routine
+#if _MAC
+  adrp    x16, import_page : "$rt.CollectGCLA"
+  add     x16, x16, import_pageoff : "$rt.CollectGCLA"
+#elif (_LNX || _FREEBSD)
   movz    x16,  import_ptr32lo : "$rt.CollectGCLA"
   movk    x16,  import_ptr32hi : "$rt.CollectGCLA", lsl #16
+#endif
 
   ldr     x17, [x16]
   blr     x17
@@ -376,8 +441,13 @@ end
 // --- GC_ALLOCPERM ---
 procedure %GC_ALLOCPERM
 
+#if _MAC
+  adrp    x12, data_page : %CORE_GC_TABLE
+  add     x12, x12, data_pageoff : %CORE_GC_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x12,  data_ptr32lo : %CORE_GC_TABLE
   movk    x12,  data_ptr32hi : %CORE_GC_TABLE, lsl #16
+#endif
   add     x13, x12, gc_perm_current
   ldr     x15, [x13]
   add     x14, x12, gc_perm_end
@@ -398,8 +468,13 @@ labYGCollect:
   mov     x29, sp              // ; set frame pointer
 
   // ; lock frame
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x12, sp
@@ -420,8 +495,13 @@ labYGCollect:
   ldr     x29, [x29]
 
   // ; call GC routine
+#if _MAC
+  adrp    x16, import_page : "$rt.CollectPermGCLA"
+  add     x16, x16, import_pageoff : "$rt.CollectPermGCLA"
+#elif (_LNX || _FREEBSD)
   movz    x16,  import_ptr32lo : "$rt.CollectPermGCLA"
   movk    x16,  import_ptr32hi : "$rt.CollectPermGCLA", lsl #16
+#endif
 
   ldr     x17, [x16]
   blr     x17
@@ -444,8 +524,13 @@ procedure %PREPARE
   stp     x29, x30, [sp, #-16]! 
 
   // ; call GC routine
+#if _MAC
+  adrp    x16, import_page : "$rt.PrepareLA"
+  add     x16, x16, import_pageoff : "$rt.PrepareLA"
+#elif (_LNX || _FREEBSD)
   movz    x16,  import_ptr32lo : "$rt.PrepareLA"
   movk    x16,  import_ptr32hi : "$rt.PrepareLA", lsl #16
+#endif
 
   mov     x0, x12
 
@@ -518,8 +603,13 @@ end
 // ; movenv
 inline %5
 
+#if _MAC
+  adrp    x9, rdata_page : %SYSTEM_ENV
+  add     x9, x9, rdata_pageoff : %SYSTEM_ENV
+#elif (_LNX || _FREEBSD)
   movz    x9,  rdata_ptr32lo : %SYSTEM_ENV
   movk    x9,  rdata_ptr32hi : %SYSTEM_ENV, lsl #16
+#endif
 
 end
 
@@ -558,8 +648,13 @@ end
 // ; throw
 inline %0Ah
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
 
   ldr     x14, [x14, # et_current]!
   ldr     x17, [x14, # es_catch_addr]!
@@ -571,8 +666,13 @@ end
 // ; unhook
 inline %0Bh
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
 
   add     x14, x14, # et_current
   ldr     x13, [x14]
@@ -631,20 +731,37 @@ end
 // ; exclude
 inline % 10h
 
-  mov      x18, 0
-
-  stp      x18, x29, [sp, #-16]! 
-
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
+  ldr     x18, [x14]
+
+  stp     x29, x18, [sp, #-16]!
+  mov     x18, sp
+  str     x18, [x14]
 
 end
 
 // ; include
 inline % 11h
 
+  ldr     x18, [sp, #8]
   add     sp, sp, 10h          // ; free stack
+
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
+  add     x14, x14, # tt_stack_frame
+  str     x18, [x14]
 
 end
 
@@ -655,8 +772,13 @@ inline %12h
   add     x11, x11, x10
 
   // calculate write-barrier address
+#if _MAC
+  adrp    x12, data_page : %CORE_GC_TABLE
+  add     x12, x12, data_pageoff : %CORE_GC_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x12, data_ptr32lo : %CORE_GC_TABLE
   movk    x12, data_ptr32hi : %CORE_GC_TABLE, lsl #16
+#endif
 
   add     x13, x12, gc_start
   add     x15, x12, gc_header
@@ -684,8 +806,13 @@ end
 inline % 14h
 
   ldr     x22, [x10]
+#if _MAC
+  adrp    x24, mdata_page : #0               //;--
+  add     x24, x24, mdata_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x24,  mdata_ptr32lo : #0               //;--
   movk    x24,  mdata_ptr32hi : #0, lsl #16
+#endif
   lsr     x22, x22, # ACTION_ORDER
   add     x22, x22, x24 
   ldr     x9, [x22]
@@ -727,8 +854,13 @@ end
 // ; tststck
 inline %17h
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_root
   ldr     x14, [x14]
 
@@ -968,6 +1100,28 @@ inline % 35h
 
 end
 
+// ; loadz (zero-extend 32 -> 64)
+inline %33h
+
+  ldr     w9, [x10]
+
+end
+
+// ; wloadz (zero-extend 16 -> 64)
+inline %36h
+
+  ldrh    w9, [x10]
+
+end
+
+// ; lfsave (signed 64-bit integer -> float)
+inline %37h
+
+  scvtf   d17, x9
+  str     d17, [x10]
+
+end
+
 // ; fiadd
 inline %070h
 
@@ -1080,8 +1234,13 @@ end
 // ; fexpdp
 inline %07Ah
 
+#if _MAC
+  adrp    x17, rdata_page : %CORE_MATH_TABLE
+  add     x17, x17, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x17, rdata_ptr32lo : %CORE_MATH_TABLE
   movk    x17, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
 
   add     x19, x29, __arg12_1 // ; dest (x19)
 
@@ -1158,8 +1317,13 @@ end
 // ; fln
 inline %07Bh
 
+#if _MAC
+  adrp    x17, rdata_page : %CORE_MATH_TABLE
+  add     x17, x17, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x17, rdata_ptr32lo : %CORE_MATH_TABLE
   movk    x17, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
 
   add     x19, x29, __arg12_1 // ; dest (x19)
 
@@ -1310,8 +1474,13 @@ labStart:
 
   add     x19, x29, __arg12_1 // ; dest (x19)
 
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
 
   ldr     d1, [x20, #176] //; d1 <- PI_4
   adr     x23, sin2a0     //; origin of jump table
@@ -1364,8 +1533,13 @@ sin2a7:
   fsub    d0, d0, d1
 
 sin1a:
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE             // ; sin1a1
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE             // ; sin1a1
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
   add     x20, x20, #192
 
   ldp     d4, d5, [x20], #16
@@ -1381,8 +1555,13 @@ sin1a:
   b       labEnd
 
 cos1a_neg:
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE             // ; cos1a1
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE             // ; cos1a1
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
   add     x20, x20, #224
 
   ldp     d4, d5, [x20], #16
@@ -1399,8 +1578,13 @@ cos1a_neg:
   b       labEnd
 
 cos1a:
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE             // ; cos1a1
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE             // ; cos1a1
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
   add     x20, x20, #224
 
   ldp     d4,d5,[x20],16
@@ -1425,8 +1609,13 @@ inline %07Dh
 labStart:
   ldr     d0, [x0]           // ; x (d0)
 
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
 
   ldr     d1, [x20, #184] //; d1 <- PI_2
   fsub    d0, d1, d0
@@ -1484,8 +1673,13 @@ sin2a7:
   fsub    d0, d0, d1
 
 sin1a:
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE             // ; sin1a1
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE             // ; sin1a1
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
   add     x20, x20, #192
 
   ldp     d4, d5, [x20], #16
@@ -1501,8 +1695,13 @@ sin1a:
   b       labEnd
 
 cos1a_neg:
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE             // ; cos1a1
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE             // ; cos1a1
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
   add     x20, x20, #224
 
   ldp     d4, d5, [x20], #16
@@ -1519,8 +1718,13 @@ cos1a_neg:
   b       labEnd
 
 cos1a:
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE             // ; cos1a1
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE             // ; cos1a1
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
   add     x20, x20, #224
 
   ldp     d4,d5,[x20],16
@@ -1548,8 +1752,13 @@ inline %07Fh
 
   add     x19, x29, __arg12_1 // ; dest (x19)
 
+#if _MAC
+  adrp    x20, rdata_page : %CORE_MATH_TABLE
+  add     x20, x20, rdata_pageoff : %CORE_MATH_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x20, rdata_ptr32lo : %CORE_MATH_TABLE
   movk    x20, rdata_ptr32hi : %CORE_MATH_TABLE, lsl #16
+#endif
 
   ldr     d0, [x20, #168] //; d1 <- PI
   str     d0, [x19]
@@ -1559,8 +1768,13 @@ end
 // ; setr
 inline %80h
 
+#if _MAC
+  adrp    x10, __ptr32page_1
+  add     x10, x10, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x10,  __ptr32lo_1
   movk    x10,  __ptr32hi_1, lsl #16
+#endif
 
 end 
 
@@ -1649,8 +1863,13 @@ end
 // ; peekr
 inline %84h
 
+#if _MAC
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movk    x11,  __ptr32hi_1, lsl #16
+#endif
   ldr     x10, [x11]
 
 end 
@@ -1658,8 +1877,13 @@ end
 // ; storer
 inline %85h
 
+#if _MAC
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movk    x11,  __ptr32hi_1, lsl #16
+#endif
   str     x10, [x11]
 
 end 
@@ -1808,15 +2032,25 @@ inline %08Fh
   add     x19, x19, page_ceil
   and     x11, x19, page_mask
 
+#if _MAC
+  adrp    x17, code_page : %GC_ALLOC
+  add     x17, x17, code_pageoff : %GC_ALLOC
+#elif (_LNX || _FREEBSD)
   movz    x17,  code_ptr32lo : %GC_ALLOC
   movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
+#endif
   blr     x17
 
   ldr     w19, [x0]
   lsl     x18, x19, #3
 
+#if _MAC
+  adrp    x19, __ptr32page_1
+  add     x19, x19, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_1
   movk    x19,  __ptr32hi_1, lsl #16
+#endif
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
@@ -2357,8 +2591,13 @@ inline %0A6h
   add     x11, x10, __arg12_1
 
   // calculate write-barrier address
+#if _MAC
+  adrp    x12, data_page : %CORE_GC_TABLE
+  add     x12, x12, data_pageoff : %CORE_GC_TABLE
+#elif (_LNX || _FREEBSD)
   movz    x12, data_ptr32lo : %CORE_GC_TABLE
   movk    x12, data_ptr32hi : %CORE_GC_TABLE, lsl #16
+#endif
 
   add     x13, x12, gc_start
   add     x15, x12, gc_header
@@ -2479,8 +2718,13 @@ inline % 0ADh
   ldr     w11, [x0]
   lsl     x11, x11, #3
 
+#if _MAC
+  adrp    x12, __ptr32page_1
+  add     x12, x12, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x12,  __ptr32lo_1
   movk    x12,  __ptr32hi_1, lsl #16
+#endif
   mov     x13, x10
 
 labLoop:
@@ -2532,8 +2776,13 @@ end
 // ; callr
 inline %0B0h
 
+#if _MAC
+  adrp    x17, __ptr32page_1
+  add     x17, x17, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x17,  __ptr32lo_1
   movk    x17,  __ptr32hi_1, lsl #16
+#endif
   blr     x17
 
 end
@@ -2633,8 +2882,13 @@ end
 // ; cmpr
 inline %0C0h
 
+#if _MAC
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movk    x11,  __ptr32hi_1, lsl #16
+#endif
   cmp     x10, x11
 
 end 
@@ -2869,6 +3123,16 @@ inline %0CAh
   mov     sp, x29
   ldp     x29, x30, [sp], #16
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
+  ldr     x12, [x29, #8]
+  str     x12, [x14, # tt_stack_frame]
+
   add     x29, x29, #16
   mov     sp, x29
 
@@ -2886,6 +3150,16 @@ inline %1CAh
 
   mov     sp, x29
   ldp     x29, x30, [sp], #16
+
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
+  movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
+  movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
+  ldr     x12, [x29, #8]
+  str     x12, [x14, # tt_stack_frame]
 
   add     x29, x29, #16
   mov     sp, x29
@@ -2974,15 +3248,25 @@ inline %0CEh
   add     x19, x19, page_ceil
   and     x11, x19, page_mask
 
+#if _MAC
+  adrp    x17, code_page : %GC_ALLOCPERM
+  add     x17, x17, code_pageoff : %GC_ALLOCPERM
+#elif (_LNX || _FREEBSD)
   movz    x17,  code_ptr32lo : %GC_ALLOCPERM
   movk    x17,  code_ptr32hi : %GC_ALLOCPERM, lsl #16
+#endif
   blr     x17
 
   ldr     w19, [x0]
   lsl     x18, x19, #3
 
+#if _MAC
+  adrp    x19, __ptr32page_1
+  add     x19, x19, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_1
   movk    x19,  __ptr32hi_1, lsl #16
+#endif
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
@@ -2999,13 +3283,23 @@ inline %4CFh
 
   mov     x12, sp
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_root
   str     x12, [x14]
 
+#if _MAC
+  adrp    x17, code_page : %PREPARE
+  add     x17, x17, code_pageoff : %PREPARE
+#elif (_LNX || _FREEBSD)
   movz    x17,  code_ptr32lo : %PREPARE
   movk    x17,  code_ptr32hi : %PREPARE, lsl #16
+#endif
   blr     x17
 
 end
@@ -3105,8 +3399,13 @@ inline %0D6h
 
   add     x13, x29, __arg12_1
 
+#if _MAC
+  adrp    x16, __ptr32page_2
+  add     x16, x16, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x16,  __ptr32lo_2
   movk    x16,  __ptr32hi_2, lsl #16
+#endif
 
   str     x16, [x13]
 
@@ -3115,10 +3414,17 @@ end
 // ; selgrrr
 inline %0D7h
 
+#if _MAC
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
   movk    x11,  __ptr32hi_1, lsl #16
   movk    x12,  __ptr32hi_2, lsl #16
+#endif
 
   csel    x10, x11, x12, gt
 
@@ -3465,10 +3771,17 @@ inline %0DFh
   ldrsw   x18, [x10]
   cmp     x17, x18
 
+#if _MAC
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
   movk    x11,  __ptr32hi_1, lsl #16
   movk    x12,  __ptr32hi_2, lsl #16
+#endif
 
   csel    x10, x11, x12, cc
 
@@ -3778,12 +4091,22 @@ inline %0E6h
 
   add     x13, x29, __arg12_1
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   mov     x18, x13
 
+#if _MAC
+  adrp    x16, __ptr32page_2
+  add     x16, x16, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x16,  __ptr32lo_2
   movk    x16,  __ptr32hi_2, lsl #16
+#endif
   add     x14, x14, # et_current
 
   mov     x17, sp
@@ -3803,8 +4126,13 @@ inline %0E7h
   add     x10, x10, elObjectOffset
   movz    x18, __n16lo_1
   movk    x18, __n16hi_1, lsl #16
+#if _MAC
+  adrp    x19, __ptr32page_2
+  add     x19, x19, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
+#endif
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
@@ -3948,8 +4276,13 @@ end
 // ; jumpmr
 inline %0EDh
 
+#if _MAC
+  adrp    x17, __ptr32page_2
+  add     x17, x17, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x17,  __ptr32lo_2
   movk    x17,  __ptr32hi_2, lsl #16
+#endif
   br      x17
 
 end
@@ -3957,10 +4290,17 @@ end
 // ; seleqrr
 inline %0EEh
 
+#if _MAC
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
   movk    x11,  __ptr32hi_1, lsl #16
   movk    x12,  __ptr32hi_2, lsl #16
+#endif
 
   csel    x10, x11, x12, eq
 
@@ -3969,10 +4309,17 @@ end
 // ; selltrr
 inline %0EFh
 
+#if _MAC
+  adrp    x11, __ptr32page_1
+  add     x11, x11, __ptr32pageoff_1
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_1
   movz    x12,  __ptr32lo_2
   movk    x11,  __ptr32hi_1, lsl #16
   movk    x12,  __ptr32hi_2, lsl #16
+#endif
 
   csel    x10, x11, x12, lt
 
@@ -4097,8 +4444,13 @@ end
 // ; xstoresir
 inline %0F1h
 
+#if _MAC
+  adrp    x11, __ptr32page_2
+  add     x11, x11, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_2
   movk    x11,  __ptr32hi_2, lsl #16
+#endif
 
   add     x12, sp, __arg12_1
   str     x11, [x12]
@@ -4108,16 +4460,26 @@ end
 // ; xstoresir :0, ...
 inline %1F1h
 
+#if _MAC
+  adrp    x0, __ptr32page_2
+  add     x0, x0, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x0,  __ptr32lo_2
   movk    x0,  __ptr32hi_2, lsl #16
+#endif
 
 end
 
 // ; xstoresir :1, ...
 inline %2F1h
 
+#if _MAC
+  adrp    x1, __ptr32page_2
+  add     x1, x1, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x1,  __ptr32lo_2
   movk    x1,  __ptr32hi_2, lsl #16
+#endif
 
 end
 
@@ -4179,8 +4541,13 @@ inline %0F2h
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x3, 0
@@ -4189,7 +4556,7 @@ inline %0F2h
 
   mov     x29, sp
 
-  stp     x29, x3, [sp, #-16]! 
+  stp     x29, x30, [sp, #-16]! 
   mov     x29, sp
 
   sub     sp, sp, __n12_2 // ; allocate raw stack
@@ -4226,8 +4593,13 @@ inline %1F2h
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x3, 0
@@ -4258,8 +4630,13 @@ inline %6F2h
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x3, 0
@@ -4297,8 +4674,13 @@ inline %7F2h
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x3, 0
@@ -4322,8 +4704,13 @@ inline %8F2h
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x3, 0
@@ -4349,8 +4736,13 @@ inline %9F2h
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x3, 0
@@ -4376,8 +4768,13 @@ inline %0AF2h
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x3, 0
@@ -4404,8 +4801,13 @@ inline %0BF2h
   stp     x27, x28, [sp, #-16]! 
   stp     x29, x30, [sp, #-16]! 
 
+#if _MAC
+  adrp    x14, data_page : %CORE_SINGLE_CONTENT
+  add     x14, x14, data_pageoff : %CORE_SINGLE_CONTENT
+#elif (_LNX || _FREEBSD)
   movz    x14,  data_ptr32lo : %CORE_SINGLE_CONTENT
   movk    x14,  data_ptr32hi : %CORE_SINGLE_CONTENT, lsl #16
+#endif
   add     x14, x14, # tt_stack_frame
 
   mov     x3, 0
@@ -4486,12 +4888,22 @@ end
 inline %0F4h
 
   mov     x11, __arg16_1
+#if _MAC
+  adrp    x17, code_page : %GC_ALLOC
+  add     x17, x17, code_pageoff : %GC_ALLOC
+#elif (_LNX || _FREEBSD)
   movz    x17,  code_ptr32lo : %GC_ALLOC
   movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
+#endif
   blr     x17
   mov     x18, __n16_1
+#if _MAC
+  adrp    x19, __ptr32page_2
+  add     x19, x19, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
+#endif
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
@@ -4502,13 +4914,23 @@ end
 inline %0F5h
 
   mov     x11, __arg16_1
+#if _MAC
+  adrp    x17, code_page : %GC_ALLOC
+  add     x17, x17, code_pageoff : %GC_ALLOC
+#elif (_LNX || _FREEBSD)
   movz    x17,  code_ptr32lo : %GC_ALLOC
   movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
+#endif
   blr     x17
   movz    x18, __n16lo_1
   movk    x18, __n16hi_1, lsl #16
+#if _MAC
+  adrp    x19, __ptr32page_2
+  add     x19, x19, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
+#endif
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
@@ -4586,8 +5008,13 @@ inline %0F7h
   add     x19, x19, page_ceil
   and     x11, x19, page_mask
 
+#if _MAC
+  adrp    x17, code_page : %GC_ALLOC
+  add     x17, x17, code_pageoff : %GC_ALLOC
+#elif (_LNX || _FREEBSD)
   movz    x17,  code_ptr32lo : %GC_ALLOC
   movk    x17,  code_ptr32hi : %GC_ALLOC, lsl #16
+#endif
   blr     x17
 
   ldr     w19, [x0]
@@ -4599,8 +5026,13 @@ inline %0F7h
   movk    x19, struct_mask_hi, lsl #16
   orr     x18, x18, x19
 
+#if _MAC
+  adrp    x19, __ptr32page_2
+  add     x19, x19, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x19,  __ptr32lo_2
   movk    x19,  __ptr32hi_2, lsl #16
+#endif
   sub     x20, x10, elVMTOffset
   str     x19, [x20]
   str     w18, [x20, #12]!
@@ -4610,8 +5042,13 @@ end
 // ; fillir
 inline %0F8h
 
+#if _MAC
+  adrp    x12, __ptr32page_2
+  add     x12, x12, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x12,  __ptr32lo_2
   movk    x12,  __ptr32hi_2, lsl #16
+#endif
 
   mov     x11, __arg12_1
   mov     x13, x10
@@ -4721,8 +5158,13 @@ end
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0F9h
 
+#if _MAC
+  adrp    x11, __ptr32page_2
+  add     x11, x11, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_2
   movk    x11,  __ptr32hi_2, lsl #16
+#endif
   sub     x12, x29, -__arg12_1
   str     x11, [x12]
 
@@ -4732,8 +5174,13 @@ end
 // ; NOTE : it is presumed that arg1 > 0 (it is inverted in jitcompiler)
 inline %4F9h
 
+#if _MAC
+  adrp    x11, __ptr32page_2
+  add     x11, x11, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x11,  __ptr32lo_2
   movk    x11,  __ptr32hi_2, lsl #16
+#endif
   add     x12, x29, __arg12_1
   str     x11, [x12]
 
@@ -4773,8 +5220,13 @@ inline % 0FAh
   sub     x17, x17, #8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
+#if _MAC
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
+#endif
 
 //;  xor  edx, edx
   mov     x25, #0
@@ -4783,8 +5235,13 @@ inline % 0FAh
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
+#if _MAC
+  adrp    x24, mdata_page : #0               //;--
+  add     x24, x24, mdata_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x24,  mdata_ptr32lo : #0               //;--
   movk    x24,  mdata_ptr32hi : #0, lsl #16
+#endif
 
 //;  shr  ebx, ACTION_ORDER
   lsr     x22, x22, # ACTION_ORDER
@@ -4831,8 +5288,13 @@ labMatching:
 
   //; check nil
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+#if _MAC
+  adrp    x20, rdata_page : %VOIDPTR
+  add     x20, x20, rdata_pageoff : %VOIDPTR
+#elif (_LNX || _FREEBSD)
   movz    x20,  rdata_ptr32lo : %VOIDPTR
   movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+#endif
   add     x20, x20, elObjectOffset
 
 //;  test  rdi, rdi                                              
@@ -4896,8 +5358,13 @@ inline % 5FAh
   sub     x17, x17, #8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
+#if _MAC
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
+#endif
 
 //;  xor  edx, edx
   mov     x25, #0
@@ -4919,8 +5386,13 @@ labCountParam:
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
+#if _MAC
+  adrp    x24, mdata_page : #0               //;--
+  add     x24, x24, mdata_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x24,  mdata_ptr32lo : #0               //;--
   movk    x24,  mdata_ptr32hi : #0, lsl #16
+#endif
 
 //;  shr  ebx, ACTION_ORDER
   lsr     x22, x22, # ACTION_ORDER
@@ -4970,8 +5442,13 @@ labMatching:
 
   //; check nil
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+#if _MAC
+  adrp    x20, rdata_page : %VOIDPTR
+  add     x20, x20, rdata_pageoff : %VOIDPTR
+#elif (_LNX || _FREEBSD)
   movz    x20,  rdata_ptr32lo : %VOIDPTR
   movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+#endif
   add     x20, x20, elObjectOffset
 
 //;  test  rdi, rdi                                              
@@ -5050,8 +5527,13 @@ inline % 0FBh
   sub     x17, x17, #8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
+#if _MAC
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
+#endif
 
 //;  xor  edx, edx
   mov     x25, #0
@@ -5060,8 +5542,13 @@ inline % 0FBh
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
+#if _MAC
+  adrp    x24, mdata_page : #0               //;--
+  add     x24, x24, mdata_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x24,  mdata_ptr32lo : #0               //;--
   movk    x24,  mdata_ptr32hi : #0, lsl #16
+#endif
 
 //;  shr  ebx, ACTION_ORDER
   lsr     x22, x22, # ACTION_ORDER
@@ -5110,8 +5597,13 @@ labMatching:
 
   //; check nil
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+#if _MAC
+  adrp    x20, rdata_page : %VOIDPTR
+  add     x20, x20, rdata_pageoff : %VOIDPTR
+#elif (_LNX || _FREEBSD)
   movz    x20,  rdata_ptr32lo : %VOIDPTR
   movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+#endif
   add     x20, x20, elObjectOffset
 
 //;  test  rdi, rdi                                              
@@ -5175,8 +5667,13 @@ inline % 5FBh
   sub     x17, x17, #8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
+#if _MAC
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
+#endif
 
 //;  xor  edx, edx
   mov     x25, #0
@@ -5199,8 +5696,13 @@ labCountParam:
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
+#if _MAC
+  adrp    x24, mdata_page : #0               //;--
+  add     x24, x24, mdata_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x24,  mdata_ptr32lo : #0               //;--
   movk    x24,  mdata_ptr32hi : #0, lsl #16
+#endif
 
 //;  shr  ebx, ACTION_ORDER
   lsr     x22, x22, # ACTION_ORDER
@@ -5254,8 +5756,13 @@ labMatching:
 
   //; check nil
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+#if _MAC
+  adrp    x20, rdata_page : %VOIDPTR
+  add     x20, x20, rdata_pageoff : %VOIDPTR
+#elif (_LNX || _FREEBSD)
   movz    x20,  rdata_ptr32lo : %VOIDPTR
   movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+#endif
   add     x20, x20, elObjectOffset
 
 //;  test  rdi, rdi                                              
@@ -5319,8 +5826,13 @@ inline % 6FBh
   sub     x17, x17, #8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
+#if _MAC
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
+#endif
 
 //;  xor  edx, edx
   mov     x25, #0
@@ -5329,8 +5841,13 @@ inline % 6FBh
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
+#if _MAC
+  adrp    x24, mdata_page : #0               //;--
+  add     x24, x24, mdata_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x24,  mdata_ptr32lo : #0               //;--
   movk    x24,  mdata_ptr32hi : #0, lsl #16
+#endif
 
 //;  shr  ebx, ACTION_ORDER
   lsr     x22, x22, # ACTION_ORDER
@@ -5384,8 +5901,13 @@ labMatching:
 
   //; check nil
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+#if _MAC
+  adrp    x20, rdata_page : %VOIDPTR
+  add     x20, x20, rdata_pageoff : %VOIDPTR
+#elif (_LNX || _FREEBSD)
   movz    x20,  rdata_ptr32lo : %VOIDPTR
   movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+#endif
   add     x20, x20, elObjectOffset
 
 //;  test  rdi, rdi                                              
@@ -5449,8 +5971,13 @@ inline % 0BFBh
   sub     x17, x17, #8                      // ; HOTFIX : caller address is not in the stack
 
 //;  mov  rsi, __ptr64_2
+#if _MAC
+  adrp    x21, __ptr32page_2
+  add     x21, x21, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x21,  __ptr32lo_2
   movk    x21,  __ptr32hi_2, lsl #16
+#endif
 
 //;  xor  edx, edx
   mov     x25, #0
@@ -5473,8 +6000,13 @@ labCountParam:
 
 labNextOverloadlist:
 //;  mov  r9, mdata : %0
+#if _MAC
+  adrp    x24, mdata_page : #0               //;--
+  add     x24, x24, mdata_pageoff : #0
+#elif (_LNX || _FREEBSD)
   movz    x24,  mdata_ptr32lo : #0               //;--
   movk    x24,  mdata_ptr32hi : #0, lsl #16
+#endif
 
 //;  shr  ebx, ACTION_ORDER
   lsr     x22, x22, # ACTION_ORDER
@@ -5533,8 +6065,13 @@ labMatching:
 
   //; check nil
 //;  mov   rsi, rdata : %VOIDPTR + elObjectOffset
+#if _MAC
+  adrp    x20, rdata_page : %VOIDPTR
+  add     x20, x20, rdata_pageoff : %VOIDPTR
+#elif (_LNX || _FREEBSD)
   movz    x20,  rdata_ptr32lo : %VOIDPTR
   movk    x20,  rdata_ptr32hi : %VOIDPTR, lsl #16
+#endif
   add     x20, x20, elObjectOffset
 
 //;  test  rdi, rdi                                              
@@ -5615,8 +6152,13 @@ end
 // ; callmr
 inline %0FDh
 
+#if _MAC
+  adrp    x17, __ptr32page_2
+  add     x17, x17, __ptr32pageoff_2
+#elif (_LNX || _FREEBSD)
   movz    x17,  __ptr32lo_2
   movk    x17,  __ptr32hi_2, lsl #16
+#endif
   blr     x17
 
 end
@@ -5628,8 +6170,13 @@ inline %0FEh
   ldr     x2, [x15]  
   ldr     x3, [x15, #8]  
 
+#if _MAC
+  adrp    x16, __ptr32page_1
+  add     x16, x16, __ptr32pageoff_1
+#elif (_LNX || _FREEBSD)
   movz    x16,  __ptr32lo_1
   movk    x16,  __ptr32hi_1, lsl #16
+#endif
   ldr     x17, [x16]
   blr     x17
   mov     x9, x0

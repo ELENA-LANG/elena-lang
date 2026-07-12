@@ -1,0 +1,30 @@
+import system'io;
+
+public Program() { 
+  var project := "<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <project>
+     <executable>@name</executable>
+     <namespace>@namespace</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>@name.l</include>
+     </module>
+  </files>
+</configuration>";
+
+  var source := "import extensions;
+
+public Program()
+{
+   Console.printLine(""Hello World!"")
+}";
+
+  var path := "@output_path";
+  var name := "@name";
+
+  File.saveContent(PathUtil.combine(path, name, "l"), source);
+  File.saveContent(PathUtil.combine(path, name, "prj"), project);
+}

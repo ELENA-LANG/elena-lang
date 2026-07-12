@@ -102,7 +102,7 @@
 		<Unit filename="../../engine/rtmanager.h" />
 		<Unit filename="../elenartmachine.cpp" />
 		<Unit filename="../elenartmachine.h" />
-		<Unit filename="../linux/elenart.h" />
+		<Unit filename="../elenart.h" />
 		<Unit filename="../linux/main.cpp" />
 		<Unit filename="../rtcommon.h" />
 		<Extensions />

@@ -88,8 +88,8 @@ namespace elena_lang
 
       AddressMap::Iterator externals() override;
 
-      void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
-      ref_t loadSubject(ustr_t actionName);
+      void loadSubjectName(IdentifierString& actionName, ref_t subjectRef, bool withSignature);
+      ref_t loadSubject(ustr_t actionName) override;
       addr_t loadDispatcherOverloadlist(ustr_t referenceName);
 
       void fillPreloadedSymbols(MemoryWriter& writer, ModuleBase* dummyModule);
@@ -116,17 +116,20 @@ namespace elena_lang
 
       bool evaluateAndReturn(void* tape, char* output, size_t maxLength, size_t& copied);
 
-      size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
+      size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length, bool withSignature);
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
 
       addr_t loadSymbol(ustr_t name);
-      addr_t loadClassReference(ustr_t name);
+      addr_t loadClassReference(ustr_t name) override;
 
       mssg_t loadMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
       size_t loadActionName(mssg_t message, char* buffer, size_t length);
+      mssg_t loadStrongMessage(ustr_t messageName);
 
       size_t loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength);
+
+      void* loadClassMessageOutput(void* classPtr, mssg_t message);
 
       bool checkClassMessage(void* classPtr, mssg_t message);
 
@@ -180,4 +183,4 @@ namespace elena_lang
    };
 }
 
-#endif   
+#endif

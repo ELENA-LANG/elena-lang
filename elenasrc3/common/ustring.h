@@ -122,6 +122,7 @@ namespace elena_lang
 
       bool empty() const { return getlength(_string) == 0;  }
 
+      bool less(const char* s) const;
       bool compare(const char* s) const;
       bool compare(const char* s, size_t length) const;
       bool compareSub(const char* s, size_t index, size_t length) const;
@@ -204,6 +205,7 @@ namespace elena_lang
 
       bool empty() const { return getlength(_string) == 0; }
 
+      bool less(const wide_c* s) const;
       bool compare(const wide_c* s) const;
       bool compareSub(const wide_c* s, size_t index, size_t length) const;
 
@@ -281,28 +283,28 @@ namespace elena_lang
             rem = (unsigned int)n % radix;
             n /= radix;
             switch (rem) {
-            case 10:
-               s[pos++] = 'a';
-               break;
-            case 11:
-               s[pos++] = 'b';
-               break;
-            case 12:
-               s[pos++] = 'c';
-               break;
-            case 13:
-               s[pos++] = 'd';
-               break;
-            case 14:
-               s[pos++] = 'e';
-               break;
-            case 15:
-               s[pos++] = 'f';
-               break;
-            default:
-               if (rem < 10) {
-                  s[pos++] = (T)(rem + 0x30);
-               }
+               case 10:
+                  s[pos++] = 'a';
+                  break;
+               case 11:
+                  s[pos++] = 'b';
+                  break;
+               case 12:
+                  s[pos++] = 'c';
+                  break;
+               case 13:
+                  s[pos++] = 'd';
+                  break;
+               case 14:
+                  s[pos++] = 'e';
+                  break;
+               case 15:
+                  s[pos++] = 'f';
+                  break;
+               default:
+                  if (rem < 10) {
+                     s[pos++] = (T)(rem + 0x30);
+                  }
             }
          } while (n != 0);
 

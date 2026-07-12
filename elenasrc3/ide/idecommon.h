@@ -331,6 +331,7 @@ namespace elena_lang
       virtual void reset() = 0;
 
       virtual void setStepMode() = 0;
+      virtual void resetStepMode() = 0;
 
       virtual DebugProcessException* Exception() = 0;
       virtual void resetException() = 0;
@@ -406,6 +407,7 @@ namespace elena_lang
    struct GUISettinngs
    {
       bool withTabAboverscore;
+      bool withHighlighting;
       bool withLargeToolbar;
    };
 

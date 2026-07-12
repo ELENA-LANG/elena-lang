@@ -849,6 +849,14 @@ void IDEWindow :: onProjectRefresh(bool empty)
    enableMenuItemById(IDM_FILE_SAVEPROJECT, !empty, false);
 }
 
+void IDEWindow :: setProjectTitle()
+{
+   WideMessage title(APP_NAME, _T(" - ["));
+   title.append(*_model->projectModel.name);
+   title.append(_T("]"));
+   setCaption(*title);
+}
+
 void IDEWindow :: onProjectChange(bool empty)
 {
    TreeView* projectTree = dynamic_cast<TreeView*>(_children[_model->ideScheme.projectView]);
@@ -856,6 +864,8 @@ void IDEWindow :: onProjectChange(bool empty)
    projectTree->clear(nullptr);
 
    if (!empty) {
+      setProjectTitle();
+
       TreeViewItem root = projectTree->insertTo(nullptr, *_model->projectModel.name, -1, true);
 
       PathString diskCriteria(":\\");
@@ -901,6 +911,7 @@ void IDEWindow :: onProjectChange(bool empty)
 
       projectTree->expand(root);
    }
+   else setCaption(APP_NAME);
 
    toggleProjectView(!empty);
 
@@ -1058,6 +1069,9 @@ bool IDEWindow :: onCommand(int command)
       case IDM_DEBUG_BREAKPOINT:
          _controller->toggleBreakpoint(_model, -1);
          break;
+      case IDM_DEBUG_CLEARBREAKPOINT:
+         _controller->removeBreakpoints(_model);
+         break;
       case IDM_WINDOW_NEXT:
          _controller->doSelectNextWindow(_model);
          break;
@@ -1175,7 +1189,9 @@ bool IDEWindow :: onCommand(int command)
 
 void IDEWindow :: refreshDebugNode()
 {
-   dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
+   ControlBase* dlg = (ControlBase*)_children[_model->ideScheme.debugWatch];
+   if (dlg && dlg->visible())
+      dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
 }
 
 void IDEWindow :: switchHexMode()

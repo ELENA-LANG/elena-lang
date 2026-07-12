@@ -28,28 +28,36 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    MemoryBase* adata = provider.getADataSection();
    MemoryBase* mdata = provider.getMDataSection();
    MemoryBase* mbdata = provider.getMBDataSection();
-   //MemoryBase* import = provider.getImportSection();
+   MemoryBase* import = provider.getImportSection();
    MemoryBase* data = provider.getDataSection();
    MemoryBase* stat = provider.getStatSection();
 
    // === address space mapping ===
 
-   sectionSize = map.headerSize;
+   sectionSize = (pos_t)map.imageBase;
    sections.headers.add(ImageSectionHeader::get(__PAGEZERO_SEGMENT, 0, ImageSectionHeader::SectionType::Data,
       sectionSize, 0));
 
-   // --- __TEXT (code & rdata & adata & mdata & mbdata & rdata) ---
-   sectionOffset = sectionSize;
+   // --- __TEXT (code) ---
+   sectionOffset = 0;
 
    map.code = map.headerSize;               // code section should always be first
-   map.codeSize = text->length();
+   map.codeSize = text->length() + map.headerSize;
    map.entryPoint += map.code;
 
-   fileOffset += align(map.codeSize, fileAlignment);
+   fileOffset = map.code + align(map.codeSize, fileAlignment);
+   sectionSize = fileSize = align(fileOffset, sectionAlignment);
 
-   // adata & mdata & mbdata
+   sections.headers.add(ImageSectionHeader::get(__TEXT_SEGMENT, sectionOffset, ImageSectionHeader::SectionType::Text,
+      sectionSize, fileSize));
+
+   sections.items.add(sections.headers.count(), { text, true });
+
+   // --- __DATA_CONST (adata & mdata & mbdata & rdata) ---
+   sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
+
    map.dataSize = adata->length();
-   map.adata = fileOffset;
+   map.adata = sectionOffset;
 
    map.dataSize += mdata->length();
    map.mdata = map.adata + adata->length();
@@ -57,38 +65,52 @@ void MachOImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& 
    map.dataSize += mbdata->length();
    map.mbdata = map.mdata + mdata->length();
 
-   fileOffset += align(map.dataSize, fileAlignment);
+   fileOffset = align(map.mbdata + mbdata->length(), fileAlignment);
 
-   // rdata
    map.dataSize += rdata->length();
    map.rdata = fileOffset;
 
    fileOffset += align(rdata->length(), fileAlignment);
-   sectionSize = fileSize = fileOffset;
+   sectionSize = fileSize = align(fileOffset - sectionOffset, sectionAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(__TEXT_SEGMENT, map.code, ImageSectionHeader::SectionType::Text,
+   sections.headers.add(ImageSectionHeader::get(__DATA_CONST_SEGMENT, sectionOffset, ImageSectionHeader::SectionType::Data,
       sectionSize, fileSize));
 
-   sections.items.add(sections.headers.count() + 1, { text, true });
-   sections.items.add(sections.headers.count() + 1, { adata, false });
-   sections.items.add(sections.headers.count() + 1, { mdata, false });
-   sections.items.add(sections.headers.count() + 1, { mbdata, true });
-   sections.items.add(sections.headers.count() + 1, { rdata, true });
+   sections.items.add(sections.headers.count(), { adata, false });
+   sections.items.add(sections.headers.count(), { mdata, false });
+   sections.items.add(sections.headers.count(), { mbdata, true });
+   sections.items.add(sections.headers.count(), { rdata, true });
 
    // --- __DATA (data & stat) segment ---
    sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
    
+   map.importSize = import->length();
+   map.import = sectionOffset;
+
+   fileSize = sectionSize = align(map.importSize, fileAlignment);
+
    map.dataSize += data->length();
-   map.data = sectionOffset;
+   map.data = map.import + fileSize;
 
    map.dataSize += stat->length();
    map.stat = map.data + align(data->length(), fileAlignment);
 
-   fileSize = 0;
-   sectionSize = align(stat->length(), fileAlignment) + align(data->length(), fileAlignment);
+   fileSize += align(data->length(), fileAlignment) + align(stat->length(), fileAlignment);
+   sectionSize = fileSize = align(fileSize, sectionAlignment);
 
-   sections.headers.add(ImageSectionHeader::get(__DATA_SEGMENT, map.data, ImageSectionHeader::SectionType::Data,
+   sections.headers.add(ImageSectionHeader::get(__DATA_SEGMENT, sectionOffset, ImageSectionHeader::SectionType::Data,
       sectionSize, fileSize));
+
+   sections.items.add(sections.headers.count(), { import, true });
+   sections.items.add(sections.headers.count(), { data, true });
+   sections.items.add(sections.headers.count(), { stat, true });
+
+   // --- __LINKEDIT segment ---
+   sectionOffset = align(sectionOffset + sectionSize, sectionAlignment);
+   map.imageSize = sectionOffset;
+
+   sections.headers.add(ImageSectionHeader::get(__LINKEDIT_SEGMENT, sectionOffset, ImageSectionHeader::SectionType::RData,
+      0, 0));
 }
 
 void MachOImageFormatter :: prepareImage(ImageProviderBase& provider, AddressSpace& map, ImageSections& sections,

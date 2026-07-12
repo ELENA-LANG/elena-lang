@@ -1,6 +1,6 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA VM Engine
-//             Linux Shared Library Declaration
+//             Shared Library Declaration
 //                                              (C)2022-2025, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
@@ -34,6 +34,7 @@ extern "C"
    DLL_PUBLIC void* CollectPermGCLA(size_t size);
    DLL_PUBLIC void* ForcedCollectGCLA(void* roots, int fullMode);
    DLL_PUBLIC size_t LoadMessageNameLA(size_t message, char* buffer, size_t length);
+   DLL_PUBLIC size_t LoadStrongMessageNameLA(size_t message, char* buffer, size_t length);
    DLL_PUBLIC size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length);
    DLL_PUBLIC size_t LoadAddressInfoLM(size_t retPoint, char* lineInfo, size_t length);
    DLL_PUBLIC elena_lang::addr_t LoadSymbolByStringLA(const char* symbolName);
@@ -44,6 +45,8 @@ extern "C"
    DLL_PUBLIC elena_lang::mssg_t LoadActionLA(const char* actionName);
    DLL_PUBLIC size_t LoadActionNameLA(size_t message, char* buffer, size_t length);
    DLL_PUBLIC size_t LoadClassMessagesLA(void* classPtr, elena_lang::mssg_t* output, size_t skip, size_t maxLength);
+   DLL_PUBLIC elena_lang::mssg_t LoadStrongMessageLA(const char* messageName);
+   DLL_PUBLIC void* LoadMessageOutputLA(void* classPtr, elena_lang::mssg_t message);
    DLL_PUBLIC bool CheckClassMessageLA(void* classPtr, elena_lang::mssg_t message);
    DLL_PUBLIC void GetRandomSeedLA(elena_lang::SeedStruct& seed);
    DLL_PUBLIC unsigned int GetRandomIntLA(elena_lang::SeedStruct& seed);
@@ -58,4 +61,4 @@ extern "C"
    DLL_PUBLIC int FreeVMLA();
 }
 
-#endif // ELENART_H_INCLUDED
+#endif // ELENAVM_H_INCLUDED

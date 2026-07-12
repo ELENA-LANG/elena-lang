@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA compiler class.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef COMPILER_H
@@ -106,6 +106,8 @@ namespace elena_lang
       ProjectVariable,
       ExternalVar,
       Shortcut,
+      EncapseField,  // the internal field, used for direct access to the field
+      EncapseFieldAddress
    };
 
    enum TargetMode
@@ -127,7 +129,8 @@ namespace elena_lang
       Conditional,
       ConditionalUnboxingRequired,
       Weak,
-      ThrowOp
+      ThrowOp,
+      StackAllocated
    };
 
    enum class TrackingMode
@@ -277,6 +280,14 @@ namespace elena_lang
          this->kind = kind;
          this->typeInfo = typeInfo;
          this->reference = reference;
+         this->extra = extra;
+         this->mode = mode;
+      }
+      ObjectInfo(ObjectKind kind, TypeInfo typeInfo, int argument, int extra, TargetMode mode)
+      {
+         this->kind = kind;
+         this->typeInfo = typeInfo;
+         this->argument = argument;
          this->extra = extra;
          this->mode = mode;
       }
@@ -713,7 +724,7 @@ namespace elena_lang
          {
             int retVal = reserved2;
 
-            reserved2 += align(size, moduleScope->rawStackAlingment);
+            reserved2 += align(size, moduleScope->localAlignment);
 
             return retVal;
          }
@@ -1067,7 +1078,7 @@ namespace elena_lang
          {
             int retVal = allocated2;
 
-            allocated2 += align(size, moduleScope->rawStackAlingment);
+            allocated2 += align(size, moduleScope->localAlignment);
             if (allocated2 > reserved2)
                reserved2 = allocated2;
 
@@ -1106,7 +1117,7 @@ namespace elena_lang
             return { ObjectKind::Shortcut, index };
          }
 
-         void mapShortcut(int index, ObjectInfo info)
+         void mapShortcut(int index, ObjectInfo info) const
          {
             assert(index >= 0);
 
@@ -1551,6 +1562,7 @@ namespace elena_lang
          ObjectInfo compileAltMessageOperation(SyntaxNode node/*, ref_t expectedRef, ExpressionAttribute attrs*/);
 
          ObjectInfo compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode);
+         ObjectInfo compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode);
          ObjectInfo compileEvalOnlySpecialOperation(SyntaxNode node);
          ObjectInfo compileSpecialOperation(/*SyntaxNode node, */int operatorId/*, ref_t expectedRef*/);
          ObjectInfo compileAssignOperation(SyntaxNode node, int operatorId, ref_t expectedRef);
@@ -1630,6 +1642,7 @@ namespace elena_lang
          ObjectInfo boxRefArgumentLocallyInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxRefArgumentInPlace(ObjectInfo info, ref_t targetRef = 0);
          ObjectInfo boxVariadicArgument(ObjectInfo info);
+         ObjectInfo boxEncapseField(ObjectInfo info, bool stackSafe);
 
          ObjectInfo unboxArguments(ObjectInfo retVal, bool clearInfo);
 
@@ -1805,6 +1818,8 @@ namespace elena_lang
       bool checkifSingleObject(Scope& scope, SyntaxNode node);
 
       static int defineFieldSize(Scope& scope, ObjectInfo info);
+
+      static ObjectInfo defineEncapseSource(ObjectInfo info);
 
       ObjectInfo defineArrayType(Scope& scope, ObjectInfo info, bool declarationMode, bool readOnly);
       ref_t defineArrayType(Scope& scope, ref_t elementRef, bool declarationMode);
@@ -2084,6 +2099,7 @@ namespace elena_lang
 
       void compileDispatcherMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node,
          bool withGenerics, bool withOpenArgGenerics);
+      void compileDispatchAndCastMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
       void compileInitializerMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode classNode);
       void compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScope& scope, SyntaxNode classNode);
       //void compileClosureMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node);
@@ -2236,6 +2252,7 @@ namespace elena_lang
 
       void injectVirtualReturningMethod(Scope& scope, SyntaxNode classNode,
          mssg_t message, ustr_t retVar, TypeInfo outputTypeInfo);
+      void injectCastDispacher(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t targetRef);
 
       ref_t resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo typeInfo,
          bool declarationMode = false) override;

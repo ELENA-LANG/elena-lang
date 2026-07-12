@@ -2573,7 +2573,7 @@ bool X86Assembler::compileAOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, 
    return true;
 }
 
-bool X86Assembler :: compileBOpCode(ScriptToken& tokenInfo, MemoryWriter& writer, LabelScope& labelScope)
+bool X86Assembler :: compileBOpCode(ScriptToken&/* tokenInfo*/, MemoryWriter&/* writer*/, LabelScope&/* labelScope*/)
 {
    return false;
 }

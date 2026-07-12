@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class implementation.
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -27,7 +27,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, compileAltMode, loadXNop, loadNop, loadOp, loadOp, loadNop, loadNop,
+   loadOp, compileAltMode, loadXNop, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
 
    loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop, loadNop,
@@ -89,8 +89,15 @@ constexpr ref_t coreFunctions[coreFunctionNumber] =
    GC_ALLOC, EXCEPTION_HANDLER, GC_COLLECT, GC_ALLOCPERM, PREPARE, THREAD_WAIT
 };
 
+static inline addr_t resolveMDataOrStatVAddress(JITCompilerScope* scope, ref_t mask)
+{
+   return (mask & mskImageType) == mskStatDataRef
+      ? scope->helper->resolveStatVAddress()
+      : scope->helper->resolveMDataVAddress();
+}
+
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 180;
+constexpr size_t bcCommandNumber = 183;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -129,6 +136,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave,
    ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg, ByteCode::Parent,
    ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS, ByteCode::DFree, ByteCode::XLAddDP,
+   ByteCode::LoadZ, ByteCode::WLoadZ, ByteCode::LFSave,
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -208,6 +216,18 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
          scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             properRef | mskExternalRef, 0, mskRef32Lo, module);
          break;
+      case mskImportRelRef32Hi4k:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskRelRef32Hi4k, module);
+         break;
+      case mskImportRef32Lo12:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskRef32Lo12, module);
+         break;
+      case mskImportRef32Lo12_8:
+         scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            properRef | mskExternalRef, 0, mskRef32Lo12_8, module);
+         break;
       case mskImportRef64:
          if (properRef) {
             scope->helper->writeReference(*scope->codeWriter->Memory(), scope->codeWriter->position(),
@@ -228,20 +248,67 @@ void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
          break;
       case mskDataRef32Lo:
       case mskRDataRef32Lo:
-      case mskMDataRef32Lo:
       case mskCodeRef32Lo:
-      case mskStatDataRef32Lo:
          scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
             0, mask);
          break;
+      case mskStatDataRef32Lo:
+      case mskMDataRef32Lo:
+         scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask);
+         break;
+      case mskDataRef32Lo12:
+      case mskRDataRef32Lo12:
+      case mskCodeRef32Lo12:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
+            0, mask, 0);
+         break;
+      case mskStatDataRef32Lo12:
+      case mskMDataRef32Lo12:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask, 0);
+         break;
+      case mskDataRef32Lo12_8:
+      case mskRDataRef32Lo12_8:
+      case mskCodeRef32Lo12_8:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
+            0, mask, 3);
+         break;
+      case mskStatDataRef32Lo12_8:
+      case mskMDataRef32Lo12_8:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask, 3);
+         break;
       case mskDataRef32Hi:
       case mskRDataRef32Hi:
-      case mskMDataRef32Hi:
       case mskCodeRef32Hi:
-      case mskStatDataRef32Hi:
          scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
+            0, mask);
+         break;
+      case mskStatDataRef32Hi:
+      case mskMDataRef32Hi:
+         scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
+            0, mask);
+         break;
+      case mskDataRelRef32Hi4k:
+      case mskRDataRelRef32Hi4k:
+      case mskCodeRelRef32Hi4k:
+         scope->helper->writeVAddress32Hi4k(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            (addr_t)scope->compiler->_preloaded.get(reference & ~mskAnyRef),
+            0, mask);
+         break;
+      case mskStatDataRelRef32Hi4k:
+      case mskMDataRelRef32Hi4k:
+         scope->helper->writeVAddress32Hi4k(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            resolveMDataOrStatVAddress(scope, mask),
             0, mask);
          break;
       case mskDataDisp32Hi:
@@ -289,6 +356,21 @@ void elena_lang :: writeMDataReference(JITCompilerScope* scope, ref_t mask,
             scope->helper->resolveMDataVAddress(),
             0, mask);
          break;
+      case mskMDataRelRef32Hi4k:
+         scope->helper->writeVAddress32Hi4k(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            0, mask);
+         break;
+      case mskMDataRef32Lo12:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            0, mask, 0);
+         break;
+      case mskMDataRef32Lo12_8:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveMDataVAddress(),
+            0, mask, 3);
+         break;
       case mskMDataDisp32Hi:
          scope->helper->writeDisp32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             scope->helper->resolveMDataVAddress(),
@@ -298,6 +380,51 @@ void elena_lang :: writeMDataReference(JITCompilerScope* scope, ref_t mask,
          scope->helper->writeDisp32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
             scope->helper->resolveMDataVAddress(),
             *(pos_t*)((char*)code + disp), mask);
+         break;
+      default:
+         // to make compiler happy
+         break;
+   }
+}
+
+void elena_lang :: writeStatDataReference(JITCompilerScope* scope, ref_t mask,
+   pos_t disp, void* code, ModuleBase*)
+{
+   switch (mask) {
+      case mskStatDataRef32:
+         scope->helper->writeVAddress32(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            *(pos_t*)((char*)code + disp), mask);
+         break;
+      case mskStatDataRef64:
+         scope->helper->writeVAddress64(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            *(pos_t*)((char*)code + disp), mask);
+         break;
+      case mskStatDataRef32Lo:
+         scope->helper->writeVAddress32Lo(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask);
+         break;
+      case mskStatDataRef32Hi:
+         scope->helper->writeVAddress32Hi(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask);
+         break;
+      case mskStatDataRelRef32Hi4k:
+         scope->helper->writeVAddress32Hi4k(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask);
+         break;
+      case mskStatDataRef32Lo12:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask, 0);
+         break;
+      case mskStatDataRef32Lo12_8:
+         scope->helper->writeVAddress32Lo12(*scope->codeWriter->Memory(), scope->codeWriter->position(),
+            scope->helper->resolveStatVAddress(),
+            0, mask, 3);
          break;
       default:
          // to make compiler happy
@@ -1047,9 +1174,19 @@ void elena_lang::loadIROp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -1169,9 +1306,19 @@ void elena_lang :: loadROp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_1:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_1:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_1:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -1247,9 +1394,19 @@ void elena_lang :: loadRROp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_1:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32HI_2:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
+            break;
+         }
+         case PTR32PAGE_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
             break;
          }
          case PTR32LO_1:
@@ -1257,9 +1414,19 @@ void elena_lang :: loadRROp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
             break;
          }
+         case PTR32PAGEOFF_1:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo12);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -1415,9 +1582,19 @@ void elena_lang :: loadCallROp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_1:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_1:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_1:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -1525,6 +1702,16 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
             else scope->compiler->writeImm16(writer, 0, 0);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            if (scope->command.arg2 == -1) {
+               writer->writeShort((short)-1);
+            }
+            else if (scope->command.arg2) {
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
+            }
+            break;
+         }
          case PTR32LO_2:
          {
             if (scope->command.arg2 == -1) {
@@ -1534,6 +1721,17 @@ void elena_lang::loadStackIndexROp(JITCompilerScope* scope)
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
             }
             else scope->compiler->writeImm16(writer, 0, 0);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            if (scope->command.arg2 == -1) {
+               scope->compiler->writeImm12(writer, -1, 0);
+            }
+            else if (scope->command.arg2) {
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
+            }
+            else scope->compiler->writeImm12(writer, 0, 0);
             break;
          }
          default:
@@ -1614,10 +1812,22 @@ void elena_lang::loadFrameIndexROp(JITCompilerScope* scope)
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            if (scope->command.arg2)
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             if (scope->command.arg2)
                scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            if (scope->command.arg2)
+               scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -1875,9 +2085,19 @@ void elena_lang :: loadNewOp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -1947,9 +2167,19 @@ void elena_lang::loadNewNOp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -2013,9 +2243,19 @@ void elena_lang::loadCreateNOp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -2081,10 +2321,22 @@ void elena_lang :: loadMROp(JITCompilerScope* scope)
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
+               0, scope->helper->importMessage(scope->command.arg1), mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
                0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->compiler->writeVMTMethodArg(scope, arg2 | argMask,
+               0, scope->helper->importMessage(scope->command.arg1), mskRef32Lo12);
             break;
          }
          default:
@@ -2499,9 +2751,19 @@ void elena_lang::loadDPROp(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -2571,9 +2833,19 @@ void elena_lang::loadDPLabelOp(JITCompilerScope* scope)
             scope->lh->writeLabelAddress(scope->command.arg2 & ~mskAnyRef, *writer, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            scope->lh->writeLabelAddress(scope->command.arg2 & ~mskAnyRef, *writer, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->lh->writeLabelAddress(scope->command.arg2 & ~mskAnyRef, *writer, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->lh->writeLabelAddress(scope->command.arg2 & ~mskAnyRef, *writer, mskRef32Lo12);
             break;
          }
          default:
@@ -2674,6 +2946,9 @@ void elena_lang :: compileExtOpen(JITCompilerScope* scope)
 void elena_lang :: compileXOpen(JITCompilerScope* scope)
 {
    scope->frameOffset = scope->compiler->calcFrameOffset(scope->command.arg2, false);
+   // HOTFIX : if the first argument is 0, clear the stack offset, indicating that the frame was already open
+   if (scope->command.arg1 == 0)
+      scope->stackOffset = 0;
 }
 
 void elena_lang :: compileAlloc(JITCompilerScope* scope)
@@ -2859,9 +3134,19 @@ void elena_lang::compileDispatchMR(JITCompilerScope* scope)
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_2:
          {
             scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_2:
+         {
+            scope->compiler->writeArgAddress(scope, scope->command.arg2, 0, mskRef32Lo12);
             break;
          }
          case NARG_2:
@@ -3199,7 +3484,7 @@ void JITCompiler32 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 
       writer.writeDWord(info.value1);
       writer.writeDWord(0);
-      helper->writeReference(*writer.Memory(), writer.position() - 4, info.value2, 0, mskRef32);
+      helper->writeReference(*writer.Memory(), writer.position() - 4, info.value2 | mskVMTRef, 0, mskRef32);
    }
 }
 
@@ -3470,14 +3755,16 @@ void JITCompiler32 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       else vmtWriter.writeDWord((pos_t)*it);
    }
 
-   vmtWriter.seek(position);
-
    if (fixInfo.outputListAddress) {
+      vmtWriter.seek(position + fixInfo.count * sizeof(VMTEntry32) + (fixInfo.indexCount + 1) * sizeof(VMTEntry32) - 4);
+
       if (virtualMode) {
          vmtWriter.writeDReference(addrToUInt32(fixInfo.outputListAddress) | mskRef32, 0);
       }
       else vmtWriter.writeDWord(addrToUInt32(fixInfo.outputListAddress));
    }
+
+   vmtWriter.seek(position);
 }
 
 pos_t JITCompiler32 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,
@@ -3757,7 +4044,7 @@ void JITCompiler64 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 
       writer.writeQWord(info.value1);
       writer.writeQWord(0);
-      helper->writeReference(*writer.Memory(), writer.position() - 8, info.value2, 0, mskRef32);
+      helper->writeReference(*writer.Memory(), writer.position() - 8, info.value2 | mskVMTRef, 0, mskRef64);
    }
 }
 
@@ -3950,6 +4237,9 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
 {
    pos_t position = vmtWriter.position();
 
+   if (fixInfo.outputListAddress)
+      fixInfo.flags |= elWithOutputList;
+
    vmtWriter.seek(position - sizeof(VMTHeader64));
    VMTHeader64 header = { 0 };
    header.flags = fixInfo.flags;
@@ -3998,14 +4288,16 @@ void JITCompiler64 :: updateVMTHeader(MemoryWriter& vmtWriter, VMTFixInfo& fixIn
       else vmtWriter.writeQWord(*it);
    }
 
-   vmtWriter.seek(position);
-
    if (fixInfo.outputListAddress) {
+      vmtWriter.seek(position + fixInfo.count * sizeof(VMTEntry64) + (fixInfo.indexCount + 1) * sizeof(VMTEntry64) - 8);
+
       if (virtualMode) {
          vmtWriter.writeQReference(addrToUInt32(fixInfo.outputListAddress | mskRef64), 0);
       }
       else vmtWriter.writeQWord(fixInfo.outputListAddress);
    }
+
+   vmtWriter.seek(position);
 }
 
 pos_t JITCompiler64 :: addActionEntry(MemoryWriter& messageWriter, MemoryWriter& messageBodyWriter, ustr_t actionName,

@@ -21,8 +21,6 @@ constexpr int elVMTClassOffset = elVMTClassOffset64;
 
 #endif
 
-
-
 // --- RTManager ---
 
 RTManager :: RTManager(MemoryBase* msection, MemoryBase* dbgsection)
@@ -141,7 +139,7 @@ bool RTManager :: readAddressInfo(addr_t retAddress, LibraryLoaderBase& provider
    return found;
 }
 
-inline void copy(char* buffer, ustr_t word, size_t& copied, size_t maxLength)
+static inline void copy(char* buffer, ustr_t word, size_t& copied, size_t maxLength)
 {
    size_t length = getlength(word);
 
@@ -154,7 +152,7 @@ inline void copy(char* buffer, ustr_t word, size_t& copied, size_t maxLength)
    copied += length;
 }
 
-inline void copy(char* buffer, int value, size_t& copied)
+static inline void copy(char* buffer, int value, size_t& copied)
 {
    String<char, 10> tmp;
    tmp.appendInt(value);
@@ -207,7 +205,7 @@ bool RTManager :: loadSignature(ref_t subjectRef, pos_t argCount, addr_t* addres
    ref_t actionPtr = MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen);
    if (actionPtr != 0) {
       uintptr_t singPtr = 0;
-      msection->read(mtableOffset + subjectRef * MessageEntryLen + sizeof(uintptr_t), &singPtr, sizeof(uintptr_t));
+      msection->read(mtableOffset + subjectRef * MessageEntryLen + (int)sizeof(uintptr_t), &singPtr, sizeof(uintptr_t));
 
       for (pos_t i = 0; i < argCount; i++) {
          addresses[i] = ((addr_t*)singPtr)[i];
@@ -236,6 +234,53 @@ void RTManager :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef
    else loadSubjectName(actionName, actionPtr);
 }
 
+ref_t RTManager :: loadStrongSubject(ref_t weakRef, ArgumentAddressList& list)
+{
+   addr_t startPtr = (addr_t)msection->get(0);
+
+   // search for the subject
+   pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
+
+   for (ref_t subjectRef = 1; true; subjectRef++) {
+      if (MemoryBase::getDWord(msection, mtableOffset + subjectRef * MessageEntryLen) == weakRef) {
+         // get the current signature
+         addr_t signPtr = 0;
+         msection->read(mtableOffset + subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &signPtr, sizeof(addr_t));
+
+         assert(signPtr != 0);
+
+         // make the address relative to use it as a position
+         signPtr -= startPtr;
+
+         // validate if the subject list matches
+         bool found = true;
+         size_t counter = list.count();
+         for (size_t i = 0; i < counter; i++) {
+            addr_t argTypeRef = MemoryBase::getAddrT(msection, (pos_t)(signPtr + i * sizeof(addr_t)));
+
+            if (list[i] != argTypeRef) {
+               found = false;
+
+               break;
+            }
+         }
+
+         if (found)
+            return subjectRef;
+      }
+      else {
+         // check the end of the table
+         addr_t namePtr = 0;
+         msection->read(mtableOffset + subjectRef * sizeof(uintptr_t) * 2 + sizeof(uintptr_t), &namePtr, sizeof(addr_t));
+
+         if (!namePtr)
+            break;
+      }
+   }
+
+   return 0;
+}
+
 ref_t RTManager :: loadSubject(ustr_t actionName)
 {
    pos_t mtableOffset = MemoryBase::getDWord(msection, 0);
@@ -260,8 +305,10 @@ ref_t RTManager :: loadSubject(ustr_t actionName)
    return 0;
 }
 
-addr_t RTManager :: retrieveGlobalAttribute(int attribute, ustr_t name)
+addr_t RTManager :: retrieveGlobalStrAttribute(int attribute, ustr_t name)
 {
+   assert((attribute & GA_REFERENCE) == 0);
+
    IdentifierString currentName;
    pos_t size = MemoryBase::getDWord(msection, 0);
 

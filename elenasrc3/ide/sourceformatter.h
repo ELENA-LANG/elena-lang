@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //                E L E N A P r o j e c t: ELENA IDE
 //                      ELENA Document formatter headers
-//                                             (C)2021-2022, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SOURCEFORMATTER_H
@@ -16,10 +16,12 @@ namespace elena_lang
    class SourceFormatter : TextFormatterBase
    {
    public:
+      static void repeat(text_c ch, FormatterInfo& info);
+
       SourceFormatter() = default;
 
       void start(FormatterInfo& info) override;
-      bool next(text_c ch, FormatterInfo& info, pos_t& lastState) override;
+      bool next(text_c ch, FormatterInfo& info) override;
 
       static TextFormatterBase* getInstance()
       {

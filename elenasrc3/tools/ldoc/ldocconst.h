@@ -3,7 +3,7 @@
 //
 //		This file contains the ldoc common interfaces & types
 //
-//                                             (C)2022-2025, by Aleksey Rakov
+//                                             (C)2022-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ECVCONST_H
@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define LDOC_REVISION_NUMBER           0x001F
+   #define LDOC_REVISION_NUMBER           0x0003
 
    constexpr auto LDOC_GREETING           = "ELENA command line Html Documentation generator %d.%d.%d (C)2021-26 by Aleksey Rakov\n";
    constexpr auto LDOC_READING            = "Reading...\n";

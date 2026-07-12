@@ -1,0 +1,31 @@
+import system'io;
+
+public Program() { 
+  var project := "<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <project>
+     <namespace>@namespace</namespace>
+     <template>lib60</template>
+  </project>
+  <files>
+     <module>
+        <include>MyClass.l</include>
+     </module>
+  </files>
+</configuration>";
+
+  var source := "import extensions;
+
+public class MyClass
+{
+   constructor()
+   {
+   }
+}";
+
+  var path := "@output_path";
+  var name := "@name";
+
+  File.saveContent(PathUtil.combine(path, "MyClass", "l"), source);
+  File.saveContent(PathUtil.combine(path, name, "prj"), project);
+}

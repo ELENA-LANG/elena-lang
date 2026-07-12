@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Machine declaration
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENARTMACHINE_H
@@ -32,7 +32,7 @@ namespace elena_lang
 
       bool loadDebugSection();
 
-      ref_t loadSubject(ustr_t actionName);
+      ref_t loadSubject(ustr_t actionName) override;
 
       addr_t retrieveGlobalAttribute(int attribute, ustr_t name);
 
@@ -45,19 +45,22 @@ namespace elena_lang
       void startThread(SystemEnv* env, void* entryPoint, int index);
 
       void loadSubjectName(IdentifierString& actionName, ref_t subjectRef);
-      size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length);
+      size_t loadMessageName(mssg_t messageRef, char* buffer, size_t length, bool withSignature);
       size_t loadActionName(mssg_t messageRef, char* buffer, size_t length);
       size_t loadAddressInfo(addr_t retPoint, char* lineInfo, size_t length);
 
       addr_t loadSymbol(ustr_t name);
-      addr_t loadClassReference(ustr_t name);
+      addr_t loadClassReference(ustr_t name) override;
 
       mssg_t loadMessage(ustr_t messageName);
+      mssg_t loadStrongMessage(ustr_t messageName);
       mssg_t loadAction(ustr_t actionName);
 
       size_t loadClassName(addr_t classAddress, char* buffer, size_t length);
 
       size_t loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength);
+
+      void* loadClassMessageOutput(void* classPtr, mssg_t message);
 
       bool checkClassMessage(void* classPtr, mssg_t message);
 

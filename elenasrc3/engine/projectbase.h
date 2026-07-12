@@ -53,12 +53,10 @@ namespace elena_lang
 
       ClassSymbolAutoLoad,
       WithJumpAlignment,
+      WithMethodOutput,
       ModuleExtensionAutoLoad,
-      StackAlignment,
-      RawStackAlignment,
       GCMGSize,
       GCYGSize,
-      EHTableEntrySize,
       ThreadCounter,
       StackReserved,
 

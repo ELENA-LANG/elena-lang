@@ -3,7 +3,7 @@
 //
 //      This header contains the declaration of abstract stream reader
 //      and writer classes
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef STREAMS_H
@@ -40,6 +40,14 @@ namespace elena_lang
       static unsigned long long getQWord(MemoryBase* source, pos_t position)
       {
          unsigned long long value = 0;
+         source->read(position, &value, sizeof(value));
+
+         return value;
+      }
+
+      static addr_t getAddrT(MemoryBase* source, pos_t position)
+      {
+         addr_t value = 0;
          source->read(position, &value, sizeof(value));
 
          return value;

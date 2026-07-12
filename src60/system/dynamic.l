@@ -59,6 +59,8 @@ public sealed const struct ClassReference : info("A dynamic class reference")
 
    private load(string name) : external(system'core_routines'__classref_load);
   
+   private assign(pointer ptr) : external(system'core_routines'__classref_assign);
+  
    constructor(string name)
       : info("Loads a class reference<br/>If the symbol cannot be loaded raises SymbolLoaderException")
    {
@@ -66,7 +68,14 @@ public sealed const struct ClassReference : info("A dynamic class reference")
         self.load(name);
       }
    }
+
+   constructor loadUnsafe(pointer ptr) : info("Loads a class reference directly<br/>NOTE : the operation can be unsafe")
+   {
+      assign(ptr);
+   }
    
+   getTypeUnsafe() : info("Returns the reference class.<br/>NOTE : the operation can be unsafe"), external(system'core_routines'__classref_get);
+
    dispatch() : external(system'core_routines'__classref_dispatcher);
 }
 

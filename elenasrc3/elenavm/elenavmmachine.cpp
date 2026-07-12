@@ -111,6 +111,7 @@ ELENAVMMachine :: ELENAVMMachine(path_t configPath, PresenterBase* presenter, Pl
 
    _settings.autoLoadMode = _configuration->BoolSetting(ProjectOption::ClassSymbolAutoLoad);
    _settings.jitSettings.withAlignedJump = _configuration->BoolSetting(ProjectOption::WithJumpAlignment);
+   _settings.withOutputList = false;
    _settings.virtualMode = false;
    _settings.alignment = codeAlignment;
 
@@ -425,7 +426,7 @@ bool ELENAVMMachine :: compileVMTape(MemoryReader& reader, MemoryDump& tapeSymbo
    ByteCodeUtil::write(writer, ByteCode::ExtCloseN);
    ByteCodeUtil::write(writer, ByteCode::XQuit);
 
-   pos_t size = writer.position() - sizePlaceholder - sizeof(pos_t);
+   pos_t size = writer.position() - sizePlaceholder - static_cast<pos_t>(sizeof(pos_t));
 
    writer.seek(sizePlaceholder);
    writer.writePos(size);
@@ -550,21 +551,29 @@ addr_t ELENAVMMachine :: resolveExternal(ustr_t referenceName)
    return resolveExternal(*dll, functionName);
 }
 
-void ELENAVMMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef)
+void ELENAVMMachine :: loadSubjectName(IdentifierString& actionName, ref_t subjectRef, bool withSignature)
 {
-   ustr_t name = _jitLinker->retrieveResolvedAction(subjectRef);
+   ref_t signRef = 0;
+   ustr_t name = _jitLinker->retrieveResolvedAction(subjectRef, signRef);
 
    actionName.copy(name);
+
+   if (withSignature && signRef != 0) {
+      actionName.append('<');
+      ref_t dummy = 0;
+      actionName.append(_jitLinker->retrieveResolvedAction(signRef | 0x80000000, dummy));
+      actionName.append('>');
+   }
 }
 
-size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
+size_t ELENAVMMachine :: loadMessageName(mssg_t message, char* buffer, size_t length, bool withSignature)
 {
    ref_t actionRef, flags;
    pos_t argCount = 0;
    decodeMessage(message, actionRef, argCount, flags);
 
    IdentifierString actionName;
-   loadSubjectName(actionName, actionRef);
+   loadSubjectName(actionName, actionRef, withSignature);
 
    IdentifierString messageName;
    ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
@@ -624,6 +633,50 @@ ref_t ELENAVMMachine :: loadSubject(ustr_t actionName)
    return actionRef;
 }
 
+mssg_t ELENAVMMachine :: loadStrongMessage(ustr_t messageName)
+{
+   mssg_t message = 0;
+
+   stopVM();
+
+   ref_t weakAction = 0;
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   ArgumentAddressList list;
+   if (parseStrongMessage(messageName, argCount, flags, weakAction, list)) {
+      bool variadicOne = (flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE;
+
+      // resolve the signature name
+      IdentifierString signatureName;
+
+      size_t count = list.count();
+      if (count != 0 && variadicOne) {
+         // HOTFIX : to tell apart vardiatic signature from normal ones (see further)
+         signatureName.append("#params");
+      }
+
+      for (size_t i = 0; i < count; i++) {
+         signatureName.append('$');
+
+         addr_t classAddr = list[i];
+         char buffer[IDENTIFIER_LEN + 1];
+         size_t buf_len = RTManager::loadClassName(classAddr, buffer, IDENTIFIER_LEN);
+
+         signatureName.append(buffer, buf_len);
+      }
+
+      ref_t actionRef = _jitLinker->resolveStrongAction(weakAction, *signatureName, list, variadicOne);
+
+      if (actionRef)
+         message = encodeMessage(actionRef, argCount, flags);
+   }
+
+   resumeVM(_env, nullptr);
+
+   return message;
+}
+
 mssg_t ELENAVMMachine :: loadMessage(ustr_t messageName)
 {
    pos_t argCount = 0;
@@ -658,7 +711,7 @@ size_t ELENAVMMachine :: loadActionName(mssg_t message, char* buffer, size_t len
    decodeMessage(message, actionRef, argCount, flags);
 
    IdentifierString actionName;
-   loadSubjectName(actionName, actionRef);
+   loadSubjectName(actionName, actionRef, false);
 
    StrConvertor::copy(buffer, *actionName, actionName.length(), length);
 
@@ -726,7 +779,7 @@ int ELENAVMMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
-   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN);
+   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN, false);
    messageName[mssgLen] = 0;
 
    int len = 1;
@@ -774,11 +827,18 @@ size_t ELENAVMMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
       skip, maxLength, true);
 }
 
+void* ELENAVMMachine :: loadClassMessageOutput(void* classPtr, mssg_t message)
+{
+   addr_t typeRef = SystemRoutineProvider::GetMessageOutput(classPtr, message);
+
+   return typeRef == INVALID_ADDR ? nullptr : (void*)typeRef;
+}
+
 bool ELENAVMMachine :: checkClassMessage(void* classPtr, mssg_t message)
 {
-   MemoryBase* msection = getMDataSection();
+   //MemoryBase* msection = getMDataSection();
 
-   return SystemRoutineProvider::CheckMessage(msection, classPtr, message);
+   return SystemRoutineProvider::CheckMessage(/*msection, */classPtr, message);
 }
 
 int ELENAVMMachine :: loadSignature(mssg_t message, addr_t* output, pos_t maximalCount)

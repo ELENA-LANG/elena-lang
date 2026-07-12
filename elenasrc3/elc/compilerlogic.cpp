@@ -2390,6 +2390,24 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT8 }, sourceInfo, false)) {
          return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
       }
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT16_64_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, INT16_FLOAT64_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT32 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, UINT32_64_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT16 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, UINT16_64_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_UINT32 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, UINT32_FLOAT64_CONVERSION, 1 };
+      }
+      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_UINT16 }, sourceInfo, false)) {
+         return { ConversionResult::NativeConversion, UINT16_FLOAT64_CONVERSION, 1 };
+      }
    }
 
    // COMPILE MAGIC : trying to typecast primitive array
@@ -2481,6 +2499,11 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       if (test(methodInfo.hints, (ref_t)MethodHint::Initializer)) {
          result.kind = (ref_t)MethodHint::Sealed;
       }
+
+      if (result.retrieveGetter && info.attributes.exist({ message, ClassAttribute::FieldGetter }) && result.kind == (ref_t)MethodHint::Sealed) {
+         result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldGetter });
+      }
+      else result.retrieveGetter = false;
 
       return true;
    }

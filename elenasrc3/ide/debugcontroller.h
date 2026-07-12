@@ -58,7 +58,7 @@ namespace elena_lang
 
       DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
 
-      DebugLineInfo* seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags);
+      DebugLineInfo* seekClassInfo(IdentifierString& className, addr_t vmtAddress);
 
       void fixNamespace(NamespaceString& str);
 
@@ -220,8 +220,6 @@ namespace elena_lang
 
       bool start(path_t programPath, path_t arguments, bool debugMode, StartUpSettings startUpSettings);
 
-      void clearBreakpoints();
-
       void run();
       void stepOver();
       void stepInto();
@@ -239,10 +237,20 @@ namespace elena_lang
       virtual void clearDebugInfo()
       {
          _provider.clear();
+         _debuggee.clear();
+         _arguments.clear();
+         _postponed.clear();
+
+         _currentModule.clear();
+         _currentPath = nullptr;
       }
 
       void release()
       {
+         if (isStarted()) {
+            stop();
+         }
+
          _process->reset();
          clearDebugInfo();
       }

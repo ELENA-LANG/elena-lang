@@ -17,6 +17,7 @@ namespace elena_lang
    constexpr bool DEFAULT_STRICT_TYPE_ENFORCING    = false;
    constexpr bool DEFAULT_NULLABLE_TYPE_WARNING    = true;
    constexpr bool DEFAULT_CHECK_HIDDEN_DECLARATION = true;
+   constexpr bool DEFAULT_METHOD_OUTPUT            = false;
 
    enum MetaHint : int
    {
@@ -350,6 +351,7 @@ namespace elena_lang
    constexpr auto errRedirectToItself        = 115;
    constexpr auto errAssigningRealOnly       = 116;
    constexpr auto errIncompatibleClosure     = 117;
+   constexpr auto errInvalidProxyRedirect    = 118;
    constexpr auto errDuplicatedDefinition    = 119;
    constexpr auto errInvalidIntNumber        = 130;
    constexpr auto errCannotEval              = 140;
@@ -676,11 +678,18 @@ namespace elena_lang
    constexpr auto INT16_32_CONVERSION        = 0x003;
    constexpr auto INT8_32_CONVERSION         = 0x004;
    constexpr auto INT8_64_CONVERSION         = 0x005;
+   constexpr auto INT16_64_CONVERSION        = 0x006;
+   constexpr auto INT16_FLOAT64_CONVERSION   = 0x007;
+   constexpr auto UINT32_64_CONVERSION       = 0x008;
+   constexpr auto UINT16_64_CONVERSION       = 0x009;
+   constexpr auto UINT32_FLOAT64_CONVERSION  = 0x00A;
+   constexpr auto UINT16_FLOAT64_CONVERSION  = 0x00B;
 
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;
    constexpr auto GA_CLASS_NAME              = 0x0002;
    constexpr auto GA_EXT_OVERLOAD_LIST       = 0x0003;
+   constexpr auto GA_CLASS_OUTPUT_LIST       = 0x1004;
 
    // === VM Command ===
    constexpr pos_t VM_STR_COMMAND_MASK       = 0x100;
@@ -760,6 +769,7 @@ namespace elena_lang
    constexpr auto NULLABLE_FORWARD              = "$nullable";
    constexpr auto PRELOADED_FORWARD             = "system@preloadedSymbols";
    constexpr auto START_FORWARD                 = "$symbol_entry";
+   constexpr auto CAST_DISPATCHER_FUN_FORWARD   = "$cast_dispatch_fun";
 
    // --- Configuration xpaths ---
    constexpr auto WIN_X86_KEY                   = "Win_x86";
@@ -825,6 +835,7 @@ namespace elena_lang
    constexpr auto AUTOEXTENSION_PATH            = "project/autoextension";
    constexpr auto STRICT_TYPE_ENFORCING_PATH    = "project/stricttype";
    constexpr auto JUMP_ALIGNMENT_PATH           = "project/alignedjump";
+   constexpr auto METHOD_OUTPUT_PATH            = "project/outputlist";
 
    constexpr auto PLATFORMTYPE_KEY              = "system/platform";
 

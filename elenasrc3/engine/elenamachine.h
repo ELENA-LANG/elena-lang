@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common types
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ELENAMACHINE_H
@@ -82,10 +82,18 @@ namespace elena_lang
    protected:
       AddressMap  _generatedClasses;
 
+      bool loadArgumentList(ustr_t argumentList, ArgumentAddressList& list);
+      bool parseStrongMessage(ustr_t messageName, pos_t& argCount, ref_t& flags, ref_t& weakAction, ArgumentAddressList& list);
+
       uintptr_t createPermString(SystemEnv* env, ustr_t s, uintptr_t classPtr);
       uintptr_t createPermVMT(SystemEnv* env, size_t size);
 
+      addr_t retrieveDispatchAndCast(void* vMTPtr);
+
+      virtual addr_t loadClassReference(ustr_t name) = 0;
+
    public:
+      virtual ref_t loadSubject(ustr_t actionName) = 0;
       addr_t injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex/*, addr_t* addresses, size_t length*/);
 
       addr_t execute(void* symbolListEntry);
@@ -148,12 +156,15 @@ namespace elena_lang
       static size_t LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip,
          size_t maxLength, bool vmMode);
       static size_t GetVMTLength(void* classPtr);
+      static size_t GetHiddenVMTLength(void* classPtr);
       static addr_t GetClass(void* ptr);
       static addr_t GetParent(void* classPtr);
       static pos_t GetFlags(void* classPtr);
       static bool overrideClass(void* ptr, void* classPtr);
 
-      static bool CheckMessage(MemoryBase* msection, void* classPtr, mssg_t message);
+      static bool CheckMessage(/*MemoryBase* msection, */void* classPtr, mssg_t message);
+
+      static addr_t GetMessageOutput(void* classPtr, mssg_t message);
 
       static void RaiseError(int code);
 

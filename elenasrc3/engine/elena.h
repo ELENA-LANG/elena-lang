@@ -133,6 +133,7 @@ namespace elena_lang
    // --- Lists ---
    typedef List<ustr_t, freeUStr>                                             IdentifierList;
    typedef SerializableMemoryList<ustr_t, Map_StoreUStrAligned4, Map_GetUStr> DependecyList;
+   typedef CachedList<addr_t, 5>                                              ArgumentAddressList;
 
    // --- Tuples ---
 
@@ -435,6 +436,10 @@ namespace elena_lang
          pos_t disp, ref_t addressMask) = 0;
       virtual void writeVAddress32Lo(MemoryBase& target, pos_t position, addr_t vaddress,
          pos_t disp, ref_t addressMask) = 0;
+      virtual void writeVAddress32Hi4k(MemoryBase& target, pos_t position, addr_t vaddress,
+         pos_t disp, ref_t addressMask) = 0;
+      virtual void writeVAddress32Lo12(MemoryBase& target, pos_t position, addr_t vaddress,
+         pos_t disp, ref_t addressMask, int shift) = 0;
       virtual void writeDisp32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
          ref_t addressMask) = 0;
       virtual void writeDisp32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
@@ -453,6 +458,7 @@ namespace elena_lang
       virtual mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) = 0;
 
       virtual addr_t resolveMDataVAddress() = 0;
+      virtual addr_t resolveStatVAddress() = 0;
 
       virtual void resolveLabel(MemoryWriter& writer, ref_t mask, pos_t position) = 0;
    };
@@ -519,15 +525,23 @@ namespace elena_lang
    typedef CachedList<Pair<mssg_t, ref_t>, 10> CachedOutputTypeList;
 
    // --- JITCompilerSettings ---
-   struct JITCompilerSettings
+   struct PlatformSettings
    {
+      // shadow stack, depends on the number of stack caching
       int minimalStackLength;
 
+      // total managed stack length alignment (1 / 2)
       int stackAlignment;
 
+      // total raw stack length alignment (4 / 16)
       int rawStackAlignment;
 
       int ehTableEntrySize;
+
+      // a single variable raw stack alignment (4 / 8)
+      int localAlignment;
+
+      int ptrSize;
    };
 
    // --- JITCompilerBase ---
@@ -950,7 +964,7 @@ namespace elena_lang
    {
       mssg_t message;
       pos_t  codeOffset;
-      ref_t  outputRef;
+      ref_t  outputRef; // NOTE : the field is filled only if the output type can be discuver
 
       MethodEntry() = default;
 

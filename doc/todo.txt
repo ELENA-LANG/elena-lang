@@ -3,54 +3,26 @@ In development:
 ------         
 
 [development]
-  ### EPIC: elena 7.0 ###
-
-  === Iteration 45 ===
-  ====================================== 
-  * doc
-  ====================================== 
-  - provide descriptions for all classes (from collections\queues.l)
-  --------------------------------------
-  * current : prepare release 7.0
-  ====================================== 
-  - update all versions
-  - build aarch64
-  - build ppc64le
-
-
-
   ### EPIC: elena 8.0 ###
 
-  === Iteration 46 (graph sample; template generator; ide linux; mac) ===
-  * new version 7.0.1
-  --------------------------------------
-  * dev
-  ====================================== 
-  * lang
-  ====================================== 
-  * doc
-  ====================================== 
-  * samples
-  ====================================== 
-  * current
-  ====================================== 
-
-  === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
-  * new version 7.0.2
-  --------------------------------------
-  --------------------------------------
-  * dev
-  ====================================== 
-  * lang
-  ====================================== 
-  * doc
-  ====================================== 
-  * current
-  ====================================== 
-
-  === Iteration 48 (tetris sample) ===
+  === Iteration 47 (graph sample; ide linux; mac) ===
   * new version 7.0.3
   --------------------------------------
+  * backlog
+  ====================================== 
+  - implement heap data structure
+  - comparing with enum type - try to use directly
+  - xml : xmlwriter
+  - implement toUInt, toSByte
+  - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
+  - refactore - Compiler :: declareVMTMessage - the function is too long
+  - auto loading only used namespaces (instead of all)
+  - Warn if the implicit conversion is used
+  - optimization : jumping, offset aligning
+  - pi optimization : at least 10% 
+  - optimization (xmlreader - currentOffset := offs; - make sure new object is not created)
+  - debugger : ctrl+i - correctly refresh int stack / ...
+  --------------------------------------
   * dev
   ====================================== 
   * lang
@@ -60,7 +32,20 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 49 (chat sample) ===
+  === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===
+  * new version 7.0.3
+  --------------------------------------
+  --------------------------------------
+  * dev
+  ====================================== 
+  * lang
+  ====================================== 
+  * doc
+  ====================================== 
+  * current
+  ====================================== 
+
+  === Iteration 49 (tetris sample) ===
   * new version 7.0.4
   --------------------------------------
   * dev
@@ -70,11 +55,23 @@ In development:
   * doc
   ====================================== 
   * current
+  ====================================== 
+
+  === Iteration 50 (chat sample) ===
+  * new version 7.0.5
+  --------------------------------------
+  * dev
+  ====================================== 
+  * lang
+  ====================================== 
+  * doc
+  ====================================== 
+  * current
   --------------------------------------
   --------------------------------------
 
-  === Iteration 50 (upndown sample) ===
-  * new version 7.0.5
+  === Iteration 51 (upndown sample) ===
+  * new version 7.0.6
   --------------------------------------
   * dev
   ====================================== 

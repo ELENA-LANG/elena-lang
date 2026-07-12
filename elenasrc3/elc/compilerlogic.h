@@ -19,6 +19,8 @@ namespace elena_lang
 
    struct CheckMethodResult
    {
+      bool        retrieveGetter;
+
       mssg_t      message;
       ref_t       kind;
       TypeInfo    outputInfo;
@@ -31,6 +33,7 @@ namespace elena_lang
       bool        checkNillableArgs;
       int         nillableArgs;
       mssg_t      byRefHandler;
+      int         getterFieldOffset;
 
       CheckMethodResult() = default;
    };

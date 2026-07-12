@@ -13,7 +13,7 @@ singleton CommandLineFactory
 public CommandLine : info("An array of program command line arguments") = 
     CommandLineFactory.load();
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
 // --- CommandLine ---
 
@@ -63,6 +63,13 @@ public sealed class StartUpEvents : info("Application events")
 }
 
 public static StartUpEvents startUpEvents = StartUpEvents.new();
+
+ConsoleDefaultHandler(err)
+{
+   try {
+     Console.writeLine(err);
+   }
+}
 
 entry()
 {

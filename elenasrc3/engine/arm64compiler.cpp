@@ -13,12 +13,13 @@
 
 using namespace elena_lang;
 
-constexpr auto OverloadsCount = 3;
+constexpr auto OverloadsCount = 4;
 const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[OverloadsCount] =
 {
    { ByteCode::CallExtR, ARM64loadCallOp},
    { ByteCode::OpenIN, ARM64compileOpenIN},
-   { ByteCode::ExtOpenIN, ARM64compileOpenIN},
+   { ByteCode::ExtOpenIN, ARM64compileExtOpenIN},
+   { ByteCode::XOpenIN, ARM64compileXOpenIN},
 };
 
 void elena_lang::ARM64loadCallOp(JITCompilerScope* scope)
@@ -85,9 +86,19 @@ void elena_lang::ARM64loadCallOp(JITCompilerScope* scope)
             ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Hi);
             break;
          }
+         case PTR32PAGE_1:
+         {
+            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRelRef32Hi4k);
+            break;
+         }
          case PTR32LO_1:
          {
             ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo);
+            break;
+         }
+         case PTR32PAGEOFF_1:
+         {
+            ((ARM64JITCompiler*)scope->compiler)->writeArgAddress(scope, scope->command.arg1, 0, mskRef32Lo12);
             break;
          }
          default:
@@ -112,6 +123,24 @@ void elena_lang::ARM64compileOpenIN(JITCompilerScope* scope)
    scope->command.arg2 = align(scope->command.arg2, 16);
 
    elena_lang::compileOpen(scope);
+}
+
+void elena_lang::ARM64compileExtOpenIN(JITCompilerScope* scope)
+{
+   // NOTE : stack should be aligned to 16 bytes
+   scope->command.arg1 = align(scope->command.arg1, 2);
+   scope->command.arg2 = align(scope->command.arg2, 16);
+
+   elena_lang::compileExtOpen(scope);
+}
+
+void elena_lang::ARM64compileXOpenIN(JITCompilerScope* scope)
+{
+   // NOTE : stack should be aligned to 16 bytes
+   scope->command.arg1 = align(scope->command.arg1, 2);
+   scope->command.arg2 = align(scope->command.arg2, 16);
+
+   elena_lang::compileXOpen(scope);
 }
 
 // --- ARM64JITCompiler ---
@@ -210,19 +239,27 @@ void ARM64JITCompiler :: resolveLabelAddress(MemoryWriter* writer, ref_t mask, p
       {
          assert(offset < ~mskAnyRef);
 
-         //offset >>= 16;
-
-         //MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
-         writer->Memory()->addReference(mskCodeRef32Hi + offset, position);
+         writer->Memory()->addReference((_picMode ? mskCodeRelRef32Hi4k : mskCodeRef32Hi) + offset, position);
 
          break;
       }
       case mskRef32Lo:
       {
-         //offset &= 0xFFFF;
+         writer->Memory()->addReference((_picMode ? mskCodeRef32Lo12 : mskCodeRef32Lo) + offset, position);
 
-         //MemoryBase::maskDWord(writer->Memory(), position, (offset & 0xFFFF) << 5);
-         writer->Memory()->addReference(mskCodeRef32Lo + offset, position);
+         break;
+      }
+      case mskRelRef32Hi4k:
+      {
+         assert(offset < ~mskAnyRef);
+
+         writer->Memory()->addReference(mskCodeRelRef32Hi4k + offset, position);
+
+         break;
+      }
+      case mskRef32Lo12:
+      {
+         writer->Memory()->addReference(mskCodeRef32Lo12 + offset, position);
 
          break;
       }

@@ -103,7 +103,7 @@ constexpr auto OptimizedBuildTree2_4 = "local_address -4 () saving_stack 2 () in
 constexpr auto OptimizedBuildTree3 = "saving_int - 4 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -4 (size 4 ()value 3 ())local_address -4 ()copying -8 (size 4 ())addingint -8 (value 2 ())";
 constexpr auto OptimizedBuildTree5 = "saving_int -4 (size 4 ()value 3 ())addingint -4 (value 2 ())";
-constexpr auto OptimizedBuildTree6 = "saving_int -4 (size 4 ()value 3 ()) create_struct (type 2 ()) loading_index -4 () saving_index_to_acc () assigning 2 () local 2 () assigning 1 ()";
+constexpr auto OptimizedBuildTree6 = "saving_int -4 (size 4 ()value 3 ()) create_struct 4 (type 2 ()) loading_index -4 () saving_index_to_acc () assigning 2 () local 2 () assigning 1 ()";
 constexpr auto OptimizedBuildTree8 = "saving_int -4 (size 4 ()value 3 ())loading_index -4 ()intconst_branchop 10 (const_param 16 ()tape (saving_int -4 (size 4 ()value 1 ()))value 3 ())";
 constexpr auto OptimizedBuildTree9 = "saving_int -4 (size 1 ()value 3 ())local_address -8 ()saving_stack ()local_address -4 ()conversion_op 4 ()";
 constexpr auto OptimizedBuildTree10_1 = "saving_int -4 (size 4 ()value 2 ())local_address -4 ()saving_stack ()real_literal 4 ()saving_stack 1 ()int_real_op -8 (operator_id 4 ())";
@@ -153,7 +153,7 @@ constexpr auto OptimizedBuildTree2_4 = "local_address -8 () saving_stack 2 () in
 constexpr auto OptimizedBuildTree3 = "saving_int - 8 (size 4 ()value 2 ())";
 constexpr auto OptimizedBuildTree4 = "saving_int -8 (size 4 ()value 3 ())local_address -8 ()copying -24 (size 4 ())addingint -24 (value 2 ())";
 constexpr auto OptimizedBuildTree5 = "saving_int -8 (size 4 ()value 3 ())addingint -8 (value 2 ())";
-constexpr auto OptimizedBuildTree6 = "saving_int -8 (size 4 ()value 3 ()) create_struct (type 2 ()) loading_index -8 () saving_index_to_acc () assigning 2 () local 2 () assigning 1 ()";
+constexpr auto OptimizedBuildTree6 = "saving_int -8 (size 4 ()value 3 ()) create_struct 4 (type 2 ()) loading_index -8 () saving_index_to_acc () assigning 2 () local 2 () assigning 1 ()";
 constexpr auto OptimizedBuildTree8 = "saving_int -8 (size 4 ()value 3 ())loading_index -8 ()intconst_branchop 10 (const_param 16 ()tape (saving_int -8 (size 4 ()value 1 ()))value 3 ())";
 constexpr auto OptimizedBuildTree9 = "saving_int -8 (size 1 ()value 3 ())local_address -24 ()saving_stack ()local_address -8 ()conversion_op 4 ()";
 constexpr auto OptimizedBuildTree10_1 = "saving_int -8 (size 4 ()value 2 ())local_address -8 ()saving_stack ()real_literal 4 ()saving_stack 1 ()int_real_op -24 (operator_id 4 ())";
@@ -161,7 +161,7 @@ constexpr auto OptimizedBuildTree10_2 = "saving_int -8 (size 4 ()value 2 ())real
 constexpr auto OptimizedBuildTree12 = "local_address -8 () saving_stack () direct_call_op 4353 (type 6 ()) assigning 1 () local 1 ()";
 constexpr auto OptimizedBuildTree12_2 = "int_literal 2 (value 2 ()) saving_stack 1 () local_address -8 () saving_stack () direct_call_op 4354 (type 6 ())";
 
-constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 11 (message 3138 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop -8 (operator_id 6 ()) unbox_call_message -2 (value 1 () length -8 () temp_var -24 () message 1217 ()) local 1 () saving_stack() argument() direct_call_op 2626 (type 5 ()) loading_index -8() free_varstack() close_frame() exit()) reserved 4 ()reserved_n 32 ())";
+constexpr auto BuildTree_VariadicSingleDispatch_1 = "tape(sealed_dispatching 11 (message 3138 ()) open_frame() assigning 1 () local_reference -2 () saving_stack() varg_sop -8 (operator_id 6 ()) unbox_call_message -2 (value 1 () length -8 () temp_var -16 () message 1217 ()) local 1 () saving_stack() argument() direct_call_op 2626 (type 5 ()) loading_index -8() free_varstack() close_frame() exit()) reserved 4 ()reserved_n 16 ())";
 constexpr auto BuildTree_VariadicSingleDispatch_2 = "tape(open_frame() assigning 1 () class_reference 2 () direct_call_op 544 (type 10 ()) assigning 2 () class_reference 8 () direct_call_op 544 (type 15 ()) assigning 3 () local 2 () saving_stack() argument() call_op 1217 () assigning 4 () local 3 () saving_stack() argument() call_op 1217 () assigning 5 () terminator() saving_stack 3 () local 5 () saving_stack 2 () local 4 () saving_stack 1 () class_reference 5 () saving_stack() argument() direct_call_op 2626 (type 5 ()) local 1 () close_frame() exit()) reserved 10 ()";
 
 constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assigning 1 ()class_reference 8 ()direct_call_op 544 (type 16 ())assigning 2 ()class_reference 9 ()direct_call_op 544 (type 17 ())assigning 3 ()terminator ()saving_stack 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 7 ()saving_stack ()argument ()direct_call_op 4162 (type 7 ())local 1 ()close_frame ()exit ())reserved 8 ())";
@@ -169,8 +169,8 @@ constexpr auto BuildTree_VariadicSingleDispatch_4 = "tape (open_frame ()assignin
 constexpr auto BuildTree_CallMethodWithoutTarget = "tape (open_frame ()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 6 ())assigning 2 ()local 2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()direct_call_op 3074 (type 4 ())local 1 ()close_frame ()exit ())reserved 4 ()";
 constexpr auto BuildTree_CallVariadicMethodWithoutTarget = "tape(open_frame()assigning 1 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 2 ()class_reference 2 ()direct_call_op 544 (type 8 ())assigning 3 ()local 2 ()saving_stack()argument()call_op 1217 ()assigning 4 ()local 3 ()saving_stack()argument()call_op 1217 ()assigning 5 ()terminator()saving_stack 3 ()local 5 ()saving_stack 2 ()local 4 ()saving_stack 1 ()local 1 ()saving_stack()argument()direct_call_op 3138 (type 4 ())local 1 ()close_frame()exit())reserved 10 ()";
 constexpr auto BuildTree_CallMethodWithNil = "tape (open_frame ()assigning 1 ()nil_reference ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 1538 (type 3 ())local 1 ()close_frame ()exit ())reserved 4 ()";
-constexpr auto BuildTree_DirectByteOperation = "tape (open_frame ()assigning 1 ()local_address -24 ()saving_stack ()int_literal 3 (value 10 ())saving_stack 1 ()bytearray_op -56 (operator_id 1 ()) local_address -56 ()copying -40 (size 1 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 64 ()";
-constexpr auto BuildTree_DirectByteOperation2 = "tape (open_frame ()assigning 1 ()local_address -24 ()saving_stack ()local_address -40 ()saving_stack 1 ()bytearray_op -72 (operator_id 1 ())local_address -72 ()copying -56 (size 1 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 80 ()";
+constexpr auto BuildTree_DirectByteOperation = "tape (open_frame ()assigning 1 ()local_address -16 ()saving_stack ()int_literal 3 (value 10 ())saving_stack 1 ()bytearray_op -48 (operator_id 1 ()) local_address -48 ()copying -32 (size 1 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 48 ()";
+constexpr auto BuildTree_DirectByteOperation2 = "tape (open_frame ()assigning 1 ()local_address -16 ()saving_stack ()local_address -32 ()saving_stack 1 ()bytearray_op -64 (operator_id 1 ())local_address -64 ()copying -48 (size 1 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 64 ()";
 
 constexpr auto BuildTree_LambdaCallPrivate = "tape (open_frame ()assigning 1 ()local 1 ()field ()saving_stack ()argument ()direct_call_op 3329 (type 3 ())close_frame ()exit ())reserved 4 ()";
 
@@ -848,6 +848,9 @@ void Lambda_CallingPrivateMethod :: SetUp()
 void IntOperation :: SetUp()
 {
    ScenarioTest::SetUp();
+   optMode = 0;
+   byRefTemplateRef = INVALID_REF;
+   intByRefRef = 0;
 }
 
 void IntOperation :: runTest(bool exceptionExpected, int scenario)
@@ -859,12 +862,23 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
    moduleScope->buildins.constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
+   moduleScope->buildins.value_message = 
+      encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
 
    moduleScope->aliases.add("int", intReference);
 
    moduleScope->predefined.add("nil", V_NIL);
+   moduleScope->predefined.add("default", V_DEFAULT);
+   moduleScope->selfVar.copy("self");
 
-   Compiler* compiler = env.createCompiler();
+   if (byRefTemplateRef != INVALID_REF) {
+      moduleScope->buildins.wrapperTemplateReference = byRefTemplateRef;
+
+      env.setUpTemplateMockup(byRefTemplateRef, intReference, intByRefRef);
+   }
+
+   Compiler* compiler = env.createCompiler(optMode);
 
    BuildTree output;
    BuildTreeWriter writer(output);
@@ -892,6 +906,8 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
    // Assess
    bool matched = false;
    if (!exceptionExpected) {
+      EXPECT_TRUE(catchedError == 0);
+
       matched = BuildTree::compare(output.readRoot(), controlOutputNode, true);
    }
    else matched = catchedError == expectedError;
@@ -956,4 +972,85 @@ void StructFieldAssigning :: SetUp()
 
    trueRef = 10;  // !! virtual references
    falseRef = 11;
+}
+
+// --- IntValueOperator ---
+
+void IntValueOperator :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntValueOperator);
+
+   BuildTreeSerializer::load(B_IntValueOperator, controlOutputNode);
+
+   intReference = 2;
+   targetRef = 4;
+}
+
+// --- IntValueOperatorNoOptimization ---
+
+void IntValueOperatorNoOptimization :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntRefeference, S_IntValueOperator2);
+
+   BuildTreeSerializer::load(B_IntValueOperator2, controlOutputNode);
+
+   byRefTemplateRef = 0x80;
+
+   intReference = 2;
+   intByRefRef = 3;
+   targetRef = 5;
+}
+
+// --- ValueOperator ---
+
+void ValueOperator::SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntValueOperator3);
+
+   BuildTreeSerializer::load(B_IntValueOperator3, controlOutputNode);
+
+   intReference = 2;
+   targetRef = 4;
+}
+
+// --- IntValueOperatorSelf ---
+
+void IntValueOperatorSelf :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntValueOperator4);
+
+   BuildTreeSerializer::load(B_IntValueOperator4, controlOutputNode);
+
+   intReference = 2;
+   targetRef = 3;
+}
+
+// --- IntValueOperatorField ---
+
+void IntValueOperatorField :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_IntRefeference2, S_IntValueOperator5);
+
+   BuildTreeSerializer::load(B_IntValueOperator5, controlOutputNode);
+
+   byRefTemplateRef = 0x80;
+
+   intReference = 2;
+   intByRefRef = 3;
+   targetRef = 4;
 }

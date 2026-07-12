@@ -3,7 +3,7 @@
 //
 //		This file contains the common ELENA Project routine functions
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef TOOLS_H
@@ -220,6 +220,20 @@ inline unsigned long long ptrToUInt64(void* ptr)
    uintptr_t ptrVal = (uintptr_t)ptr;
 
    return static_cast<unsigned long long>(ptrVal);
+}
+
+// --- isValidLetter ---
+
+inline bool isValidLetter(char ch)
+{
+   return ch == '_' || (ch >= 0x41 && ch <= 0x5A) || (ch >= 0x61 && ch <= 0x7A) || (ch >= 0x370 && ch <= 0x3FB) || (ch >= 0x400 && ch <= 0x4FF);
+}
+
+// --- isValidLetter ---
+
+inline bool isValidDigit(char ch)
+{
+   return ch >= '0' && ch <= '9';
 }
 
 } // _ELENA_

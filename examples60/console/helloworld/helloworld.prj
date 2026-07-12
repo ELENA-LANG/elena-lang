@@ -35,4 +35,18 @@
         </project>
      </profile>
   </platform>
+  <platform key="MacOS_ARM64">
+     <profile key="virtual">
+        <project>
+           <template>vm_console</template>
+           <executable>vm_helloworld64</executable>
+        </project>
+     </profile>
+     <profile key="default">
+        <project>
+           <template>console</template>
+           <executable>helloworld64</executable>
+        </project>
+     </profile>
+  </platform>
 </configuration>

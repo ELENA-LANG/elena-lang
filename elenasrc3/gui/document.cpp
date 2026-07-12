@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //      DocumentView class body
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "guicommon.h"
@@ -73,7 +73,6 @@ void LexicalFormatter :: format()
 
    indexWriter.writePos(0);
    _formatter->start(info);
-   pos_t        style = info.style;
    while (true) {
       if (reader.position() == indexedPos) {
          indexWriter.writePos(writer.position());
@@ -82,8 +81,8 @@ void LexicalFormatter :: format()
 
       s = reader.readLine(length);
       for (pos_t i = 0; i < length; i++) {
-         if(_formatter->next(s[i], info, style)) {
-            writer.writePos(style);
+         if(_formatter->next(s[i], info)) {
+            writer.writePos(info.style);
             writer.writePos(reader.position() + i);
          }
       }
@@ -92,8 +91,8 @@ void LexicalFormatter :: format()
          break;
    }
 
-   if (_formatter->next(0, info, style)) {
-      writer.writePos(style);
+   if (_formatter->next(0, info)) {
+      writer.writePos(info.style);
    }
    else writer.writePos(0);
    writer.writePos(reader.position() + length);
@@ -104,14 +103,18 @@ bool LexicalFormatter :: checkMarker(ReaderInfo& info)
    Marker marker = { INVALID_POS };
    for (auto it = _markers->start(); !it.eof(); ++it) {
       if (it.key() == info.row + 1) {
-         marker = *it;
+         if ((*it).toggleMark) {
+            info.toggleStyle = (*it).style;
+            if (marker.style == INVALID_POS)
+               marker = *it;
+         }
+         else marker = *it;
       }
    }
 
    if (marker.style != INVALID_POS) {
       info.bandStyle = true;
       info.style = marker.style;
-      info.toggleMark = marker.toggleMark;
       info.step = 0;
 
       return true;
@@ -234,9 +237,8 @@ bool DocumentView::LexicalReader :: readCurrentLine(TextWriter<text_c>& writer, 
 
 void DocumentView::LexicalReader :: readFirst(TextWriter<text_c>& writer, pos_t length)
 {
-   style = step = 0;
+   toggleStyle = style = step = 0;
    newLine = true;
-   toggleMark = false;
 
    region.topLeft = docView->_frame.getCaret();
    region.bottomRight = region.topLeft + docView->_size;
@@ -423,15 +425,15 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
    if (caret.x < frame.x) {
       frame.x = caret.x;
    }
-   else if (frame.x + _size.x - 2 <= caret.x) {
+   else if (frame.x + _size.x <= caret.x) {
       frame.x = caret.x - _size.x + 1;
    }
 
    if (caret.y < frame.y) {
       frame.y = caret.y;
    }
-   else if (frame.y + _size.y - 1 <= caret.y) {
-      frame.y = caret.y - _size.y - 1 + VerticalScrollOffset;
+   else if (frame.y + _size.y <= caret.y) {
+      frame.y = caret.y - _size.y + VerticalScrollOffset;
    }
 
    if (_frame.getCaret() != frame) {

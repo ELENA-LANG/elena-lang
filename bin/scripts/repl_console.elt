@@ -1,0 +1,47 @@
+import system'io;
+
+public Program() { 
+  var project := "<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <project>
+     <executable>@name</executable>
+     <namespace>@namespace</namespace>
+     <template>console</template>
+  </project>
+  <files>
+     <module>
+        <include>@name.l</include>
+     </module>
+  </files>
+  <forwards>
+     <forward key=""Program"">extensions'ProgramLoop</forward>
+     <forward key=""Program'Control"">$rootnamespace'Control</forward>
+  </forwards>
+</configuration>";
+
+  var source := "import extensions;
+
+public singleton Control
+{
+    greeting()
+        = ""Type quit to exit"";
+
+    get string Prompt
+        = "">"";
+
+    proceed(command)
+    {
+       if (command == ""quit"") {
+          forward Program.stop(); ^ ""Quiting""
+       };
+
+       ^ $""Invalid command - {command}""
+    }
+}";
+
+  var path := "@output_path";
+  var name := "@name";
+
+  File.saveContent(PathUtil.combine(path, name, "l"), source);
+  File.saveContent(PathUtil.combine(path, name, "prj"), project);
+}

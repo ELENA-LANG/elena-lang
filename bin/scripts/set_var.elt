@@ -1,1 +1,3 @@
-extensions'scripting'Globals.setAt($1);
+public Program() { 
+  extensions'scripting'Globals.setAt("@name", @current_expression);
+}

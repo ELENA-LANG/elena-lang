@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA RT Machine declaration
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -104,7 +104,7 @@ addr_t ELENARTMachine :: retrieveGlobalAttribute(int attribute, ustr_t name)
    ImageSection msection(_mdata, 0x1000000);
    RTManager rtmanager(&msection, nullptr);
 
-   return rtmanager.retrieveGlobalAttribute(attribute, name);
+   return rtmanager.retrieveGlobalStrAttribute(attribute, name);
 }
 
 size_t ELENARTMachine :: loadClassName(addr_t classAddress, char* buffer, size_t length)
@@ -151,7 +151,7 @@ int ELENARTMachine :: loadSignature(mssg_t message, addr_t* output, pos_t maxima
    return 0;
 }
 
-size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t length)
+size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t length, bool withSignature)
 {
    ref_t actionRef, flags;
    pos_t argCount = 0;
@@ -163,11 +163,15 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
    IdentifierString messageName;
    ByteCodeUtil::formatMessageName(messageName, nullptr, *actionName, nullptr, 0, argCount, flags);
 
-   if ((message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE) {
+   if (withSignature) {
       size_t position = (*messageName).find('[');
 
       ImageSection msection(_mdata, 0x1000000);
       RTManager rtmanager(&msection, nullptr);
+
+      // skip the self for the normal message
+      if ((flags & PREFIX_MESSAGE_MASK) != CONVERSION_MESSAGE)
+         argCount--;
 
       addr_t signatures[ARG_COUNT] = {};
       if(rtmanager.loadSignature(actionRef, argCount, signatures)) {
@@ -187,7 +191,7 @@ size_t ELENARTMachine :: loadMessageName(mssg_t message, char* buffer, size_t le
             }
 
             messageName.insert(tmp, position);
-            position += (len + 1);
+            position += len;
          }
       }
    }
@@ -237,6 +241,26 @@ mssg_t ELENARTMachine :: loadMessage(ustr_t messageName)
    return encodeMessage(actionRef, argCount, flags);
 }
 
+mssg_t ELENARTMachine :: loadStrongMessage(ustr_t messageName)
+{
+   ref_t weakAction = 0;
+   pos_t argCount = 0;
+   ref_t flags = 0;
+
+   ArgumentAddressList list;
+   if (!parseStrongMessage(messageName, argCount, flags, weakAction, list))
+      return 0;
+
+   ImageSection msection(_mdata, 0x1000000);
+   RTManager rtmanager(&msection, nullptr);
+
+   ref_t actionRef = rtmanager.loadStrongSubject(weakAction, list);
+   if (actionRef == 0)
+      return 0;
+
+   return encodeMessage(actionRef, argCount, flags);
+}
+
 mssg_t ELENARTMachine :: loadAction(ustr_t actionName)
 {
    pos_t argCount = 0;
@@ -258,7 +282,7 @@ int ELENARTMachine :: loadExtensionDispatcher(const char* moduleList, mssg_t mes
 {
    // load message name
    char messageName[IDENTIFIER_LEN];
-   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN);
+   size_t mssgLen = loadMessageName(message | FUNCTION_MESSAGE, messageName, IDENTIFIER_LEN, false);
    messageName[mssgLen] = 0;
 
    int len = 1;
@@ -366,9 +390,9 @@ void ELENARTMachine :: startThread(SystemEnv* env, void* entry, int index)
 
 bool ELENARTMachine :: checkClassMessage(void* classPtr, mssg_t message)
 {
-   ImageSection msection(_mdata, 0x1000000);
+   //ImageSection msection(_mdata, 0x1000000);
 
-   return SystemRoutineProvider::CheckMessage(&msection, classPtr, message);
+   return SystemRoutineProvider::CheckMessage(/*&msection, */classPtr, message);
 }
 
 size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
@@ -377,4 +401,11 @@ size_t ELENARTMachine :: loadClassMessages(void* classPtr, mssg_t* output, size_
 
    return SystemRoutineProvider::LoadMessages(&msection, classPtr, output, skip, 
       maxLength, false);
+}
+
+void* ELENARTMachine :: loadClassMessageOutput(void* classPtr, mssg_t message)
+{
+   addr_t typeRef = SystemRoutineProvider::GetMessageOutput(classPtr, message);
+
+   return typeRef == INVALID_ADDR ? nullptr : (void*)typeRef;
 }

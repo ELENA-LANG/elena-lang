@@ -1,10 +1,11 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI TextView Control Body File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "wintextview.h"
+#include <windowsx.h>
 
 #include <tchar.h>
 
@@ -103,13 +104,16 @@ void TextViewWindow :: resizeDocument()
 {
    if (_model->isAssigned()) {
       Point     size;
-      Rectangle client = getRectangle();
+      Rectangle client = getClientRectangle();
       auto style = _styles->getStyle(STYLE_DEFAULT);
 
       int marginWidth = getLineNumberMargin();
 
-      size.x = (client.width() - marginWidth) / style->avgCharWidth;
+      size.x = (client.width() - marginWidth) / style->avgCharWidth - 1;
       size.y = client.height() / _styles->getLineHeight();
+
+      if (size.x < 0)
+         size.x = 0;
 
       _needToResize = false;
 
@@ -319,10 +323,11 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
             }
 
             // !! HOTFIX: allow to see breakpoint ellipse on margin if STYLE_TRACELINe set for this line
-            if (reader.toggleMark) {
-               canvas.drawEllipse(Rectangle(3, y + 2, 12, 12), *style);
+            if (reader.toggleStyle != 0) {
+               auto toggleStyle = _styles->getStyle(reader.toggleStyle);
+               canvas.drawEllipse(Rectangle(3, y + 2, 12, 12), *toggleStyle);
 
-               reader.toggleMark = false;
+               reader.toggleStyle = 0;
             }
          }
          if (reader.bandStyle) {
@@ -367,7 +372,7 @@ void TextViewWindow :: paint(Canvas& canvas, Rectangle clientRect)
 
          if (_model->highlightCurrentRow) {
             Style* selStyle = _styles->getStyle(STYLE_SELECTION);
-            canvas.drawTransparentRectangle(Rectangle(clientRect.topLeft.x + marginWidth + 1, lineHeight* caret.y, clientRect.width() - clientRect.topLeft.x - marginWidth - 2, lineHeight + 1), *selStyle);
+            canvas.drawTransparentRectangle(Rectangle(clientRect.topLeft.x + marginWidth, lineHeight* caret.y, clientRect.width() - clientRect.topLeft.x - marginWidth - 2, lineHeight + 1), *selStyle);
          }
       }
 
@@ -606,7 +611,7 @@ LRESULT TextViewWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
          onMouseWheel(HIWORD(wParam), (wParam & MK_CONTROL) != 0);
          return 0;
       case WM_MOUSEMOVE:
-         onMouseMove(Point(LOWORD(lParam), HIWORD(lParam)), (wParam & MK_LBUTTON) != 0);
+         onMouseMove(Point(GET_X_LPARAM(lParam), GET_Y_LPARAM(lParam)), (wParam & MK_LBUTTON) != 0);
          return 0;
       case WM_KEYDOWN:
          if (onKeyDown((int)wParam, isKeyDown(VK_SHIFT), isKeyDown(VK_CONTROL))) {

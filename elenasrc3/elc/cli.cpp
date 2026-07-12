@@ -78,6 +78,13 @@
 #include "x86compiler.h"
 #include "x86_64compiler.h"
 
+#elif defined(__aarch64__)
+
+#include "macos/machoarmlinker64.h"
+#include "macos/machoarmimage.h"
+
+#include "arm64compiler.h"
+
 #endif
 
 #endif
@@ -88,7 +95,7 @@ using namespace elena_lang;
 
 // --- CommandHelper ---
 
-JITCompilerSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor)
+PlatformSettings CLIHelper :: getJITCompilerSettings(PlatformType platform, ErrorProcessorBase* errorProcessor)
 {
    switch (platform) {
 #if defined(__x86_64__) || defined (_M_X64)
@@ -139,8 +146,9 @@ JITCompilerBase* CLIHelper :: createJITCompiler(PlatformType platform)
 #endif
 #if defined(__aarch64__)
       case PlatformType::Linux_ARM64:
-      case PlatformType::MacOS_ARM64:
          return new ARM64JITCompiler();
+      case PlatformType::MacOS_ARM64:
+         return new ARM64JITCompiler(true);
 #endif
       default:
          return nullptr;
@@ -201,8 +209,7 @@ LinkerBase* CLIHelper :: createLinker(PlatformType platform, Project* project, E
 #elif defined(__aarch64__)
 
    case PlatformType::MacOS_ARM64:
-      errorProcessor->raiseError(errNotSupportedPlatform, getPlatformName(platform)); // !! temporally
-      return nullptr;
+      return new MachOARM64Linker(errorProcessor, &MachOARM64ImageFormatter::getInstance(project));
 
 #endif
 
@@ -323,6 +330,9 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
          else if (arg[2] == 'm') {
             project.addBoolSetting(ProjectOption::ModuleExtensionAutoLoad, arg[3] != '-');
          }
+         else if (arg[2] == 'o') {
+            project.addBoolSetting(ProjectOption::WithMethodOutput, arg[3] != '-');
+         }
          else if (arg[2] == 'p') {
             project.addBoolSetting(ProjectOption::GenerateParamNameInfo, arg[3] != '-');
          }
@@ -348,7 +358,7 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
 
 int CLIHelper :: compileProject(int argc, path_c** argv,
    CompilingProcess& process,
-   PlatformType platform, JITCompilerSettings& jitSettings,
+   PlatformType platform, PlatformSettings* platformSettings,
    PresenterBase& presenter, ErrorProcessor& errorProcessor,
    path_t dataPath, path_t basePath, path_t configPath,
    ustr_t defaultProfile)
@@ -417,7 +427,7 @@ int CLIHelper :: compileProject(int argc, path_c** argv,
       start = clock();
 #endif
       // Building...
-      int retVal = process.build(project, *linker, jitSettings,
+      int retVal = process.build(project, *linker, platformSettings,
          *profile);
 
 #ifdef TIME_RECORDING

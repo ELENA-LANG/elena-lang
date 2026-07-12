@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: PPC64le
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef PPC64COMPILER_H
@@ -29,12 +29,13 @@ namespace elena_lang
       friend void PPC64loadCallOp(JITCompilerScope* scope);
       friend void PPC64compileOpenIN(JITCompilerScope* scope);
       friend void PPC64compileExtOpenIN(JITCompilerScope* scope);
+      friend void PPC64compileXOpenIN(JITCompilerScope* scope);
       //friend void x86_64compileFreeI(JITCompilerScope* scope);
 
    public:
-      static JITCompilerSettings getSettings()
+      static PlatformSettings getSettings()
       {
-         return { 2, 2, 16, 32 };
+         return { 2, 2, 16, 32, 8, 8 };
       }
 
       void writeImm9(MemoryWriter* writer, int value, int type) override;
@@ -67,6 +68,7 @@ namespace elena_lang
    void PPC64loadCallOp(JITCompilerScope* scope);
    void PPC64compileOpenIN(JITCompilerScope* scope);
    void PPC64compileExtOpenIN(JITCompilerScope* scope);
+   void PPC64compileXOpenIN(JITCompilerScope* scope);
    //void x86_64compileFreeI(JITCompilerScope* scope);
 }
 

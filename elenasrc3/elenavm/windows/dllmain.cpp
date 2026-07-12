@@ -1,3 +1,10 @@
+//---------------------------------------------------------------------------
+//		E L E N A   P r o j e c t:  ELENA VM
+//
+//                         DLL Main Entry
+//                                             (C)2021-2026, by Aleksey Rakov
+//---------------------------------------------------------------------------
+
 #include "elena.h"
 // --------------------------------------------------------------------------------
 #include "langcommon.h"
@@ -53,7 +60,7 @@ static ELENAVMMachine* machine = nullptr;
 
 #define EXTERN_DLL_EXPORT extern "C" __declspec(dllexport)
 
-void loadDLLPath(PathString& rootPath, HMODULE hModule)
+static inline void loadDLLPath(PathString& rootPath, HMODULE hModule)
 {
    TCHAR path[MAX_PATH + 1];
 
@@ -328,7 +335,12 @@ EXTERN_DLL_EXPORT void* ForcedCollectGCLA(void* roots, int fullMode)
 
 EXTERN_DLL_EXPORT size_t LoadMessageNameLA(size_t message, char* buffer, size_t length)
 {
-   return machine->loadMessageName((mssg_t)message, buffer, length);
+   return machine->loadMessageName((mssg_t)message, buffer, length, (message & PREFIX_MESSAGE_MASK) == CONVERSION_MESSAGE);
+}
+
+EXTERN_DLL_EXPORT size_t LoadStrongMessageNameLA(size_t message, char* buffer, size_t length)
+{
+   return machine->loadMessageName((mssg_t)message, buffer, length, true);
 }
 
 EXTERN_DLL_EXPORT size_t LoadCallStackLA(uintptr_t framePtr, uintptr_t* list, size_t length)
@@ -402,6 +414,16 @@ EXTERN_DLL_EXPORT int LoadExtensionDispatcherLA(const char* moduleList, mssg_t m
 EXTERN_DLL_EXPORT size_t LoadClassMessagesLA(void* classPtr, mssg_t* output, size_t skip, size_t maxLength)
 {
    return machine->loadClassMessages(classPtr, output, skip, maxLength);
+}
+
+EXTERN_DLL_EXPORT void* LoadMessageOutputLA(void* classPtr, mssg_t message)
+{
+   return machine->loadClassMessageOutput(classPtr, message);
+}
+
+EXTERN_DLL_EXPORT mssg_t LoadStrongMessageLA(const char* messageName)
+{
+   return machine->loadStrongMessage(messageName);
 }
 
 EXTERN_DLL_EXPORT bool CheckClassMessageLA(void* classPtr, mssg_t message)

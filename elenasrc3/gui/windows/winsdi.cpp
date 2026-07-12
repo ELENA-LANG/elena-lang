@@ -1,7 +1,7 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA IDE
 //                     WinAPI SDI Window body File
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "winsdi.h"
@@ -454,9 +454,6 @@ LRESULT SDIWindow :: proceed(UINT message, WPARAM wParam, LPARAM lParam)
       case WM_DROPFILES:
          onDropFiles((HDROP)wParam);
          break;
-      //case WM_MOUSEMOVE:
-      //   onMouseMove(wParam, lParam);
-      //   break;
       //case WM_PAINT:
       //   break;
       //case WM_CTLCOLORLISTBOX:
@@ -494,6 +491,43 @@ void SDIWindow :: onDrawItem(DRAWITEMSTRUCT* item)
       }
    }
 }
+
+//void SDIWindow :: onMouseLeave()
+//{
+//   if (_hoverControl) {
+//      _hoverControl->onMouseLeave();
+//
+//      _hoverControl = nullptr;
+//   }
+//}
+//
+//void SDIWindow :: onMouseHover()
+//{
+//   if (_hoverControl) {
+//      _hoverControl->onMouseHover();
+//   }
+//}
+//
+//bool SDIWindow :: onMouseMove(Point* point)
+//{
+//   if (_hoverControl) {
+//      if (!_hoverControl->onMouseMove(point)) {
+//         _hoverControl->onMouseLeave();
+//         _hoverControl = nullptr;
+//
+//         return false;
+//      }
+//   }
+//   else if (_hoverCtrl >= 0) {
+//      if (((ControlBase*)_children[_hoverCtrl])->onMouseMove(point)) {
+//         _hoverControl = (ControlBase*)_children[_hoverCtrl];
+//
+//         return true;
+//      }
+//   }
+//
+//   return false;
+//}
 
 void SDIWindow :: close()
 {
@@ -539,4 +573,9 @@ void SDIWindow :: setBackgroundColor(Color color)
       ::DeleteObject(_bkBrush);
 
    _bkBrush = CreateSolidBrush(static_cast<long>(color));
+}
+
+void SDIWindow :: setCaption(const_text_t title)
+{
+   ::SetWindowText(_handle, title);
 }

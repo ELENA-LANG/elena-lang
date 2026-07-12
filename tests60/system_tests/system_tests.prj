@@ -32,6 +32,7 @@
   <project>
      <namespace>system_tests</namespace>
      <template>console</template>
+     <outputlist>-1</outputlist>
   </project>
   <files>
      <module>

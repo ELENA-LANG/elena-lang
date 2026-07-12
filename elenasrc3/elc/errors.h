@@ -3,7 +3,7 @@
 //
 //		This file contains the ELENA Compiler error messages
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ERRORS_H
@@ -33,6 +33,7 @@ namespace elena_lang
    constexpr auto errMsgRedirectToItself        = "\n%s(%d:%d): error 115: Redirecting message '%s' to itself\n";
    constexpr auto errMssgAssigningRealOnly      = "\n%s(%d:%d): error 116: Read-only field '%s' cannot be changed\n";
    constexpr auto errMsgIncompatibleClosure     = "\n%s(%d:%d): error 117: The function closure '%s' is incompatible with an expected type %s\n";
+   constexpr auto errMsgInvalidProxyRedirect    = "\n%s(%d:%d): error 118: A redirect operation to '%s' is not allowed\n";
    constexpr auto errMsgDuplicatedDefinition    = "\n%s(%d:%d): error 119: Duplicate definition: '%s' already declared\n";
    constexpr auto errMsgInvalidIntNumber        = "\n%s(%d:%d): error 130: Invalid integer value %s\n";
    constexpr auto errMsgCannotEval              = "\n%s(%d:%d): error 140: Cannot evaluate the expression %s\n";

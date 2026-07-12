@@ -285,8 +285,10 @@ namespace elena_lang
    class IntOperation : public ScenarioTest
    {
    protected:
-      ref_t intReference;
+      ref_t intReference, intByRefRef;
+      ref_t byRefTemplateRef;
       int   expectedError;
+      int   optMode;
 
       void SetUp() override;
 
@@ -325,6 +327,36 @@ namespace elena_lang
    };
 
    class StructFieldAssigning : public MethodScenarioTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class IntValueOperator : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class IntValueOperatorNoOptimization : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class ValueOperator : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class IntValueOperatorSelf : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class IntValueOperatorField : public IntOperation
    {
    protected:
       void SetUp() override;

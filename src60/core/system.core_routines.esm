@@ -56,6 +56,61 @@ procedure __object_dispatcher
 
 end
 
+procedure __proxy_cast_dispatcher_function
+
+  xopen      (0),[],[mssg, typecast_mssg] // ; the actual frame must be opened and populated in __object_cast_dispatcher
+
+  // ; copy the call stack
+  load       dp:mssg
+  mlen
+
+  cmp        n:0
+  jeq        labCopyEnd
+
+  dalloc
+  set        sp:0
+  alloc      i:1
+  store      sp:0
+
+  set        fp:-1
+  swap       sp:0
+  dtrans
+  free       i:1
+
+labCopyEnd:
+  xrefresh   sp:0
+  xrefresh   sp:1
+
+  peek       sp:0
+
+  mov        mssg:"#dispatch_cast[2]"
+  xcmp       dp:mssg
+  jeq        labSkip
+
+  get        i:0
+
+  load       dp:mssg
+  call       vt:0
+
+labSkip:
+  // ; typecast the result
+  load       dp:typecast_mssg
+  call       vt:0
+
+  close      []
+  quit
+
+end
+
+procedure __type_cast
+
+  mov        mssg:"#dispatch_cast[2]"
+  peek       sp:0
+  xswap      sp:1
+  jump       vt:0
+
+end
+
 procedure __object_equal
 
   peek        sp:0
@@ -1530,6 +1585,36 @@ labExit:
 
 end
 
+procedure __classref_assign (self, ptr)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:ptr
+  $load
+  peek       fp:self
+  $save
+
+  close      []
+
+end
+
+procedure __classref_get (self)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  peek       fp:self
+  get        i:0
+
+  close      []
+
+end
+
 procedure __classref_dispatcher
 
   redirect
@@ -1565,6 +1650,30 @@ procedure __message_load (self, s)
   open       (2),[]
 
   call extern:LoadMessageLA(s)
+  cmp  n:0
+  jne  labExit
+
+  xstore     sp:0, class : "system'InvalidArgumentException"
+
+  set        mssgconst : "new[1]"
+  throw
+
+labExit:
+  peek       fp:self
+  save
+
+  close      []
+
+end
+
+procedure __strong_message_load (self, s)
+
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+
+  call extern:LoadStrongMessageLA(s)
   cmp  n:0
   jne  labExit
 
@@ -2764,7 +2873,7 @@ procedure __createProxy (proxy, type)
   cmp        n:-1
   jne        labSkip
 
-  xstore     sp:0, class : "system'InvalidArgumentException"
+  xstore     sp:0, class : "system'dynamic'InvalidMockOperationException"
   set        mssgconst : "new[1]"
   throw
 
@@ -2816,6 +2925,26 @@ labStackOverflow:
 end
 
 procedure default_exception_handler
+
+  tst        flag:elMessage
+  jeq        labSkip
+  load
+  peek       sp:0
+  call       vt:0
+
+labSkip:
+  store      sp:0
+
+  set        class:"$forwards'DefaultHandler"
+
+  mov        mssg:"function:#invoke[1]" 
+  call       vt:0 
+
+  call       extern:ExitLA (err_ret)
+
+end
+
+procedure default_vm_exception_handler
 
   call extern:ExitLA (err_ret)
 
@@ -2974,7 +3103,7 @@ symbol vm_sta_start
 
   open        [arg1],[envptr,ex_struct:ex_struct_size]
   
-  xhook       dp:ex_struct, procedure:"system'core_routines'default_exception_handler"
+  xhook       dp:ex_struct, procedure:"system'core_routines'default_vm_exception_handler"
 
   mov         env
   $save       dp:envptr

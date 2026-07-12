@@ -199,9 +199,11 @@ struct BuiltinReferences
    ref_t   lazyExpressionReference;
    ref_t   pointerReference;
    ref_t   taskReference;
+   ref_t   dispatchNCastReference;
 
    mssg_t  dispatch_message;
    mssg_t  constructor_message;
+   mssg_t  cast_dispatch_message;
    mssg_t  protected_constructor_message;
    mssg_t  invoke_message;
    mssg_t  init_message, static_init_message;
@@ -234,9 +236,9 @@ struct BuiltinReferences
       nullableTemplateReference = 0;
       closureTemplateReference = lazyExpressionReference = tupleTemplateReference = 0;
       asyncStatemachineReference = yielditTemplateReference = 0;
-      taskReference = pointerReference = 0;
+      taskReference = pointerReference = dispatchNCastReference = 0;
 
-      dispatch_message = constructor_message = 0;
+      dispatch_message = constructor_message = cast_dispatch_message = 0;
       protected_constructor_message = 0;
       invoke_message = init_message = static_init_message = 0;
       add_message = sub_message = mul_message = div_message = 0;
@@ -301,8 +303,8 @@ public:
    IdentifierString     receivedVar;
    IdentifierString     projectVar;
 
-   pos_t                stackAlingment, rawStackAlingment;
-   pos_t                ehTableEntrySize;
+   int                  stackAlignment, rawStackAlignment, localAlignment;
+   int                  ehTableEntrySize;
    int                  minimalArgList;
    int                  ptrSize;
 
@@ -363,11 +365,7 @@ public:
 
    ModuleScopeBase(ModuleBase* module,
       ModuleBase* debugModule,
-      pos_t stackAlingment, 
-      pos_t rawStackAlingment,
-      pos_t ehTableEntrySize,
-      int minimalArgList,
-      int ptrSize,
+      const PlatformSettings* platformSettings,
       bool tapeOptMode,
       bool btapeOptMode
    ) :
@@ -381,11 +379,12 @@ public:
    {
       this->module = module;
       this->debugModule = debugModule;
-      this->stackAlingment = stackAlingment;
-      this->rawStackAlingment = rawStackAlingment;
-      this->ehTableEntrySize = ehTableEntrySize;
-      this->minimalArgList = minimalArgList;
-      this->ptrSize = ptrSize;
+      this->stackAlignment = platformSettings->stackAlignment;
+      this->rawStackAlignment = platformSettings->rawStackAlignment;
+      this->localAlignment = platformSettings->localAlignment;
+      this->ehTableEntrySize = platformSettings->ehTableEntrySize;
+      this->minimalArgList = platformSettings->minimalStackLength;
+      this->ptrSize = platformSettings->ptrSize;
       this->tapeOptMode = tapeOptMode;
       this->btapeOptMode = btapeOptMode;
    }

@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class implementation.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -199,6 +199,42 @@ static inline void writeRef32Hi(JITCompilerBase* compiler, MemoryBase* image, po
    }
 }
 
+static inline void writeRef32Hi4k(MemoryBase* image, pos_t position, addr_t vaddress, pos_t disp,
+   ref_t addressMask, bool virtualMode)
+{
+   vaddress += disp;
+
+   if (virtualMode) {
+      ref_t reference = (ref_t)vaddress | addressMask;
+
+      image->addReference(reference, position);
+   }
+   else {
+      addr_t codeAddress = (addr_t)image->get(position);
+      long long pageDisp = ((long long)(vaddress >> 12) - (long long)(codeAddress >> 12));
+      unsigned int imm = (unsigned int)pageDisp & 0x1FFFFF;
+
+      MemoryBase::maskDWord(image, position, (((imm >> 2) & 0x7FFFF) << 5) | ((imm & 0x3) << 29));
+   }
+}
+
+static inline void writeRef32Lo12(JITCompilerBase* compiler, MemoryBase* image, pos_t position, addr_t vaddress,
+   pos_t disp, ref_t addressMask, bool virtualMode, int shift)
+{
+   vaddress += disp;
+
+   if (virtualMode) {
+      ref_t reference = (ref_t)vaddress | addressMask;
+
+      image->addReference(reference, position);
+   }
+   else {
+      MemoryWriter writer(image, position);
+
+      compiler->writeImm12(&writer, (int)((vaddress & 0xFFF) >> shift), 0);
+   }
+}
+
 JITLinker::JITLinkerReferenceHelper :: JITLinkerReferenceHelper(JITLinker* owner, ModuleBase* module, VAddressMap* references)
 {
    this->_owner = owner;
@@ -358,6 +394,15 @@ void JITLinker::JITLinkerReferenceHelper :: writeReference(MemoryBase& target, p
          case mskRef32Lo:
             ::writeRef32Lo(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode);
             break;
+         case mskRelRef32Hi4k:
+            ::writeRef32Hi4k(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
+            break;
+         case mskRef32Lo12:
+            ::writeRef32Lo12(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode, 0);
+            break;
+         case mskRef32Lo12_8:
+            ::writeRef32Lo12(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode, 3);
+            break;
          case mskOffset32:
             ::writeVOffset32(&target, position, vaddress, disp);
             break;
@@ -434,6 +479,18 @@ void JITLinker::JITLinkerReferenceHelper :: writeVAddress32Lo(MemoryBase& target
    ::writeRef32Lo(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode);
 }
 
+void JITLinker::JITLinkerReferenceHelper :: writeVAddress32Hi4k(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+   ref_t addressMask)
+{
+   ::writeRef32Hi4k(&target, position, vaddress, disp, addressMask, _owner->_virtualMode);
+}
+
+void JITLinker::JITLinkerReferenceHelper :: writeVAddress32Lo12(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+   ref_t addressMask, int shift)
+{
+   ::writeRef32Lo12(_owner->_compiler, &target, position, vaddress, disp, addressMask, _owner->_virtualMode, shift);
+}
+
 void JITLinker::JITLinkerReferenceHelper ::writeDisp32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
    ref_t addressMask)
 {
@@ -468,6 +525,15 @@ addr_t JITLinker::JITLinkerReferenceHelper :: resolveMDataVAddress()
    return (addr_t)_owner->_imageProvider->getMDataSection()->get(0);
 }
 
+addr_t JITLinker::JITLinkerReferenceHelper :: resolveStatVAddress()
+{
+   if (_owner->_virtualMode) {
+      // for the virtual mode, zero should be returned - indicating the start of the section
+      return 0;
+   }
+   return (addr_t)_owner->_imageProvider->getStatSection()->get(0);
+}
+
 // --- JITLinker ---
 
 JITLinker :: JITLinker(ReferenceMapperBase* mapper,
@@ -488,7 +554,7 @@ JITLinker :: JITLinker(ReferenceMapperBase* mapper,
    _virtualMode = settings->virtualMode;
    _classSymbolAutoLoadMode = settings->autoLoadMode;
    _withDebugInfo = false;
-   _withOutputList = false;
+   _withOutputList = settings->withOutputList;
 
    _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
    _constantSettings.longLiteralClass = forwardResolver->resolveForward(LONGLITERAL_FORWARD);
@@ -658,6 +724,15 @@ void JITLinker :: fixReferences(VAddressMap& relocations, MemoryBase* image)
             break;
          case mskRef32Lo:
             ::writeRef32Lo(_compiler, image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
+            break;
+         case mskRelRef32Hi4k:
+            ::writeRef32Hi4k(image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode);
+            break;
+         case mskRef32Lo12:
+            ::writeRef32Lo12(_compiler, image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode, 0);
+            break;
+         case mskRef32Lo12_8:
+            ::writeRef32Lo12(_compiler, image, it.key(), vaddress, info.disp, info.addressMask, _virtualMode, 3);
             break;
          case mskOffset32:
             ::writeVOffset32(image, it.key(), vaddress, info.disp);
@@ -913,7 +988,7 @@ void JITLinker :: fillMethodTable(addr_t vaddress, pos_t position, MemoryReader&
          _compiler->addVMTEntry(message, methodPosition,
             vmtImage->get(position), count);
 
-         if (withOutputList && entry.outputRef && entry.outputRef != sectionInfo.reference) {
+         if (withOutputList && entry.outputRef) {
             // NOTE : the list must contain already resolved message constants, so only type references must be resolved
             outputTypeList.add({ message, entry.outputRef });
          }
@@ -954,7 +1029,7 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
 #endif // FULL_OUTOUT_INFO
 
    referenceInfo.module = sectionInfo.module;
-   referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);
+   referenceInfo.referenceName = referenceInfo.module->resolveReference(sectionInfo.reference);   
 
    // VMT just in time compilation
    MemoryReader vmtReader(sectionInfo.vmtSection);
@@ -1011,9 +1086,10 @@ addr_t JITLinker :: createVMTSection(ReferenceInfo referenceInfo, ClassSectionIn
       FieldAddressMap staticValues(INVALID_REF);
       resolveStaticFields(referenceInfo, vmtReader, staticValues);
 
-      resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress);
+      bool runTimeDiscovered = false;
+      resolveClassGlobalAttributes(referenceInfo, vmtReader, vaddress, runTimeDiscovered);
 
-      addr_t outputListAddress = withOutputList ?
+      addr_t outputListAddress = (withOutputList && runTimeDiscovered) ?
          resolveOutputTypeList(referenceInfo, outputTypeList) : 0;
 
       // update VMT
@@ -1048,19 +1124,24 @@ void JITLinker :: generateOverloadListMetaAttribute(ModuleBase* module, mssg_t m
    createGlobalAttribute(GA_EXT_OVERLOAD_LIST, *fullName, address);
 }
 
-void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress)
+void JITLinker :: resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress, bool& runTimeDiscovered)
 {
    pos_t attrCount = vmtReader.getPos();
    while (attrCount > 0) {
       ClassAttribute attr = (ClassAttribute)vmtReader.getDWord();
       switch (attr) {
          case ClassAttribute::RuntimeLoadable:
+            runTimeDiscovered = true;
+
             if (referenceInfo.isRelative()) {
                IdentifierString fullName(referenceInfo.module->name(), referenceInfo.referenceName);
 
                createGlobalAttribute(GA_CLASS_NAME, *fullName, vaddress);
             }
             else createGlobalAttribute(GA_CLASS_NAME, referenceInfo.referenceName, vaddress);
+            break;
+         case ClassAttribute::RuntimeDiscovered:
+            runTimeDiscovered = true;
             break;
          case ClassAttribute::Initializer:
          {
@@ -1448,10 +1529,9 @@ Pair<mssg_t, addr_t> JITLinker :: parseExtMessageLiteral(ustr_t messageLiteral, 
    return retVal;
 }
 
-ustr_t JITLinker :: retrieveResolvedAction(ref_t reference)
+ustr_t JITLinker :: retrieveResolvedAction(ref_t reference, ref_t& signRef)
 {
-   ref_t dummy = 0;
-   return _mapper->retrieveAction(reference, dummy);
+   return _mapper->retrieveAction(reference, signRef);
 }
 
 addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMask)
@@ -1929,6 +2009,38 @@ addr_t JITLinker :: resolveTLSSection(JITCompilerBase* compiler)
 ref_t JITLinker :: resolveAction(ustr_t actionName)
 {
    return resolveWeakAction(actionName);
+}
+
+ref_t JITLinker :: resolveStrongAction(ref_t weakAction, ustr_t signatureName, ArgumentAddressList& list, bool variadicOne)
+{
+   ref_t signRef = 0;
+   ustr_t actionName = _mapper->retrieveAction(weakAction, signRef);
+
+   ref_t resolvedSignature = _mapper->resolveAction(signatureName, 0) & ~SIGNATURE_MASK;
+   if (!resolvedSignature) {
+      MemoryBase* messageBody = _imageProvider->getMBDataSection();
+      MemoryWriter writer(messageBody);
+
+      resolvedSignature = writer.position();
+
+      size_t count = list.count();
+
+      //IdentifierString typeName;
+      for (size_t i = 0; i < count; i++) {
+         ref_t addressMask = 0;
+         _compiler->addSignatureEntry(writer, list[i], addressMask, _virtualMode);
+      }
+
+      if (variadicOne) {
+         // HOTFIX : variadic signature should end with zero for correct multi-dispatching operation
+         _compiler->addSignatureStopper(writer);
+      }
+
+      // HOTFIX : adding a mask to tell apart a message name from a signature in meta module
+      _mapper->mapAction(signatureName, resolvedSignature | SIGNATURE_MASK, 0u);
+   }
+
+   return _mapper->resolveAction(actionName, resolvedSignature);
 }
 
 void JITLinker :: loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions)

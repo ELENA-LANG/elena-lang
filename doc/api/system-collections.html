@@ -2515,7 +2515,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">SortedList&lt;T1,T2&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">SortedList&lt;T1,T2&gt;</SPAN><BR/>
+<I>A sorted strong typed list of key-value pairs</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -2594,6 +2595,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
+<div class="block">
+Creates an empty list sorted by ascending key with pre-allocated slots</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2603,6 +2606,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN> comparator)
 </CODE>
+<div class="block">
+Creates an empty list with a custom oredering function with pre-allocated slots<br/>The function returns -1 if a pair of items is ordered, 0 if they are equal and 1 otherwise</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2612,6 +2617,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>allocate()
 </CODE>
+<div class="block">
+Creates an empty list sorted by ascending value with 32 pre-allocated slots</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2621,6 +2628,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty list sorted by an ascending key</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2630,6 +2639,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN> comparator)
 </CODE>
+<div class="block">
+Creates an empty list with a custom oredering function<br/>The function returns -1 if a pair of keys is ordered, 0 if they are equal and 1 otherwise</div>
 </TD>
 </TR>
 </TABLE>
@@ -2650,6 +2661,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the number of elements in the list</div>
 </TD>
 </TR>
 </TABLE>
@@ -2671,6 +2684,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> item)
 </CODE>
+<div class="block">
+Adds a key-value pair, the position of the element is defined by key using the given comparator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2680,6 +2695,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns the value of a key-value pair at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2689,6 +2706,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all key-value paires</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2698,6 +2717,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the list enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2707,6 +2728,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the list indexer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2716,6 +2739,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Removes a key-value pair at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2725,6 +2750,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o)
 </CODE>
+<div class="block">
+Sets the value of a key-value pair at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2734,6 +2761,8 @@ system'collections'SortedList&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
 </CODE>
+<div class="block">
+Removes the last <b>pos</b> key-value pairs of the collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -3340,6 +3369,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
+<div class="block">
+Creates an empty stack with preallocated space</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3349,6 +3380,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty queue</div>
 </TD>
 </TR>
 </TABLE>
@@ -3369,6 +3402,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the number of elements in the stack</div>
 </TD>
 </TR>
 </TABLE>
@@ -3390,6 +3425,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all elements from the stack</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3399,6 +3436,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the queue enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3408,6 +3447,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>isEmpty()
 </CODE>
+<div class="block">
+Returns true if the stack is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3417,6 +3458,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>isNotEmpty()
 </CODE>
+<div class="block">
+Returns true if the stack is not empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3426,6 +3469,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>peek()
 </CODE>
+<div class="block">
+Returns an element at the stack top without removing it from it<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3435,6 +3480,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>pop()
 </CODE>
+<div class="block">
+Returns an element at the stack top and removes it from the stack<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3444,6 +3491,8 @@ system'collections'Stack&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o)
 </CODE>
+<div class="block">
+Puts an element at the stack top</div>
 </TD>
 </TR>
 </TABLE>
@@ -3614,7 +3663,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1&gt;</SPAN><BR/>
+<I>An immutable fixed-size collection of one elemenet</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -3663,6 +3713,8 @@ system'collections'Tuple&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3672,6 +3724,8 @@ system'collections'Tuple&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1)
 </CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
 </TD>
 </TR>
 </TABLE>
@@ -3693,24 +3747,30 @@ system'collections'Tuple&lt;T1&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
-</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -3731,7 +3791,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2&gt;</SPAN><BR/>
+<I>An immutable fixed-size collection of two elemenet</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -3788,6 +3849,8 @@ system'collections'Tuple&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3797,6 +3860,8 @@ system'collections'Tuple&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2)
 </CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
 </TD>
 </TR>
 </TABLE>
@@ -3838,24 +3903,30 @@ system'collections'Tuple&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
-</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -3876,7 +3947,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2,T3&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2,T3&gt;</SPAN><BR/>
+<I>An immutable fixed-size collection of three elemenet</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -3941,6 +4013,8 @@ system'collections'Tuple&lt;T1,T2,T3&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3950,6 +4024,28 @@ system'collections'Tuple&lt;T1,T2,T3&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o3)
 </CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Tuple&lt;T1,T2,T3&gt;">Tuple&lt;system'Object,system'Object,system'Object&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -3971,24 +4067,30 @@ system'collections'Tuple&lt;T1,T2,T3&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
-</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -4009,7 +4111,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2,T3,T4&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2,T3,T4&gt;</SPAN><BR/>
+<I>An immutable fixed-size collection of four elemenet</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -4082,6 +4185,8 @@ system'collections'Tuple&lt;T1,T2,T3,T4&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4091,6 +4196,28 @@ system'collections'Tuple&lt;T1,T2,T3,T4&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o3, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN> o4)
 </CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Tuple&lt;T1,T2,T3,T4&gt;">Tuple&lt;system'Object,system'Object,system'Object,system'Object&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -4112,24 +4239,30 @@ system'collections'Tuple&lt;T1,T2,T3,T4&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
-</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -4150,7 +4283,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2,T3,T4,T5&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2,T3,T4,T5&gt;</SPAN><BR/>
+<I>An immutable fixed-size collection of five elemenet</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -4231,6 +4365,8 @@ system'collections'Tuple&lt;T1,T2,T3,T4,T5&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4240,6 +4376,28 @@ system'collections'Tuple&lt;T1,T2,T3,T4,T5&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o3, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN> o4, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN> o5)
 </CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Tuple&lt;T1,T2,T3,T4,T5&gt;">Tuple&lt;system'Object,system'Object,system'Object,system'Object,system'Object&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -4261,24 +4419,41 @@ system'collections'Tuple&lt;T1,T2,T3,T4,T5&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
+<div class="block">
+Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 </TABLE>
@@ -4286,20 +4461,21 @@ system'collections'Tuple&lt;T1,T2,T3,T4,T5&gt;</LI>
 </UL>
 <HR>
 </DIV>
-<A NAME="Tuple&lt;T1,T3,T4,T5,T6&gt;">
+<A NAME="Tuple&lt;T1,T2,T3,T4,T5,T6&gt;">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
 <DIV CLASS="header">
 <DIV CLASS="subTitle">
 system'collections'</DIV>
-<H2 title="Tuple&lt;T1,T3,T4,T5,T6&gt;" class="title">Tuple&lt;T1,T3,T4,T5,T6&gt;</H2>
+<H2 title="Tuple&lt;T1,T2,T3,T4,T5,T6&gt;" class="title">Tuple&lt;T1,T2,T3,T4,T5,T6&gt;</H2>
 </DIV>
 <DIV CLASS="contentContainer">
 <DIV CLASS="description">
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T3,T4,T5,T6&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T2,T3,T4,T5,T6&gt;</SPAN><BR/>
+<I>An immutable fixed-size collection of six elemenet</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -4308,7 +4484,7 @@ public template <SPAN CLASS="typeNameLabel">Tuple&lt;T1,T3,T4,T5,T6&gt;</SPAN></
 <LI>
 <UL CLASS="inheritance">
 <LI>
-system'collections'Tuple&lt;T1,T3,T4,T5,T6&gt;</LI>
+system'collections'Tuple&lt;T1,T2,T3,T4,T5,T6&gt;</LI>
 </UL>
 </LI>
 </UL>
@@ -4332,7 +4508,7 @@ system'collections'Tuple&lt;T1,T3,T4,T5,T6&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Item2</CODE>
 </TD>
@@ -4340,7 +4516,7 @@ system'collections'Tuple&lt;T1,T3,T4,T5,T6&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Item3</CODE>
 </TD>
@@ -4348,7 +4524,7 @@ system'collections'Tuple&lt;T1,T3,T4,T5,T6&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Item4</CODE>
 </TD>
@@ -4356,9 +4532,17 @@ system'collections'Tuple&lt;T1,T3,T4,T5,T6&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T6">T6</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Item5</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T6">T6</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item6</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -4376,19 +4560,43 @@ system'collections'Tuple&lt;T1,T3,T4,T5,T6&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#Tuple&lt;T1,T2,T3,T4,T5&gt;">Tuple&lt;T1,T3,T4,T5,T6&gt;</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#Tuple&lt;T1,T2,T3,T4,T5,T6&gt;">Tuple&lt;T1,T2,T3,T4,T5,T6&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#Tuple&lt;T1,T2,T3,T4,T5&gt;">Tuple&lt;T1,T3,T4,T5,T6&gt;</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#Tuple&lt;T1,T2,T3,T4,T5,T6&gt;">Tuple&lt;T1,T2,T3,T4,T5,T6&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN> o3, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN> o4, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T6">T6</A></SPAN> o5)
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o3, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN> o4, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN> o5, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T6">T6</A></SPAN> o6)
 </CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Conversion Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Conversion Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Tuple&lt;T1,T2,T3,T4,T5,T6&gt;">Tuple&lt;system'Object,system'Object,system'Object,system'Object,system'Object,system'Object&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>cast</i>()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -4410,24 +4618,30 @@ system'collections'Tuple&lt;T1,T3,T4,T5,T6&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
-</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
 </TD>
 </TR>
 </TABLE>
@@ -4448,7 +4662,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">VarTuple&lt;T1,T2&gt;</SPAN></PRE>
+public template <SPAN CLASS="typeNameLabel">VarTuple&lt;T1,T2&gt;</SPAN><BR/>
+<I>A variable fixed-size collection of two elemenet</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -4505,6 +4720,8 @@ system'collections'VarTuple&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4514,6 +4731,8 @@ system'collections'VarTuple&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2)
 </CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
 </TD>
 </TR>
 </TABLE>
@@ -4535,6 +4754,30 @@ system'collections'VarTuple&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -4544,6 +4787,665 @@ system'collections'VarTuple&lt;T1,T2&gt;</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
 </CODE>
+<div class="block">
+Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="VarTuple&lt;T1,T2,T3&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'collections'</DIV>
+<H2 title="VarTuple&lt;T1,T2,T3&gt;" class="title">VarTuple&lt;T1,T2,T3&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public template <SPAN CLASS="typeNameLabel">VarTuple&lt;T1,T2,T3&gt;</SPAN><BR/>
+<I>A variable fixed-size collection of three elemenet</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'collections'VarTuple&lt;T1,T2,T3&gt;</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item1</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item2</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item3</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2,T3&gt;">VarTuple&lt;T1,T2,T3&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2,T3&gt;">VarTuple&lt;T1,T2,T3&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o3)
+</CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+</CODE>
+<div class="block">
+Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="VarTuple&lt;T1,T2,T3,T4&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'collections'</DIV>
+<H2 title="VarTuple&lt;T1,T2,T3,T4&gt;" class="title">VarTuple&lt;T1,T2,T3,T4&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public template <SPAN CLASS="typeNameLabel">VarTuple&lt;T1,T2,T3,T4&gt;</SPAN><BR/>
+<I>A variable fixed-size collection of four elemenet</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'collections'VarTuple&lt;T1,T2,T3,T4&gt;</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item1</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item2</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item3</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item4</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2,T3,T4&gt;">VarTuple&lt;T1,T2,T3,T4&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2,T3,T4&gt;">VarTuple&lt;T1,T2,T3,T4&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o3, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN> o4)
+</CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+</CODE>
+<div class="block">
+Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="VarTuple&lt;T1,T2,T3,T4,T5&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'collections'</DIV>
+<H2 title="VarTuple&lt;T1,T2,T3,T4,T5&gt;" class="title">VarTuple&lt;T1,T2,T3,T4,T5&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public template <SPAN CLASS="typeNameLabel">VarTuple&lt;T1,T2,T3,T4,T5&gt;</SPAN><BR/>
+<I>A variable fixed-size collection of five elemenet</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'collections'VarTuple&lt;T1,T2,T3,T4,T5&gt;</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item1</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item2</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item3</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item4</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item5</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2,T3,T4,T5&gt;">VarTuple&lt;T1,T2,T3,T4,T5&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2,T3,T4,T5&gt;">VarTuple&lt;T1,T2,T3,T4,T5&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o3, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN> o4, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN> o5)
+</CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'collections'</DIV>
+<H2 title="VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;" class="title">VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public template <SPAN CLASS="typeNameLabel">VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;</SPAN><BR/>
+<I>A variable fixed-size collection of six elemenet</I></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'collections'VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item1</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item2</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item3</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item4</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item5</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T6">T6</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Item6</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;">VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>()
+</CODE>
+<div class="block">
+Creates a fixed-size collection with default values</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;">VarTuple&lt;T1,T2,T3,T4,T5,T6&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T3">T3</A></SPAN> o3, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T4">T4</A></SPAN> o4, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T5">T5</A></SPAN> o5, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T6">T6</A></SPAN> o6)
+</CODE>
+<div class="block">
+Creates a fixed-size collection with specified values</div>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
+</CODE>
+<div class="block">
+Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>enumerator()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection enumerator</div>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer">Indexer</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>indexer()
+</CODE>
+<div class="block">
+Creates a fixed-sized collection indexer</div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
+</CODE>
+<div class="block">
+Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 </TABLE>

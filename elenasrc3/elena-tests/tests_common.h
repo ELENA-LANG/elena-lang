@@ -217,7 +217,7 @@ namespace elena_lang
 
       void setUpTemplateMockup(ref_t templateRef, ref_t elementRef, ref_t reference);
 
-      Compiler* createCompiler();
+      Compiler* createCompiler(int optMode = 0);
 
       CompilerEnvironment();
    };

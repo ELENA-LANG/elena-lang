@@ -145,6 +145,8 @@ namespace elena_lang
 
       DocumentNotifiers _docViewListener;
 
+      void setProjectTitle();
+
       void enableMenuItemById(int id, bool doEnable, bool toolBarItemAvailable);
 
       void doDebugAction(DebugAction action, bool withoutPostponeAction);

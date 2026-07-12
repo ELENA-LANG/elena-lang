@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT linker class.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef JITLINKER_H
@@ -46,6 +46,7 @@ namespace elena_lang
       ProcessSettings jitSettings;
       bool            virtualMode;
       bool            autoLoadMode;
+      bool            withOutputList;
    };
 
    // --- JITLinker ---
@@ -136,17 +137,22 @@ namespace elena_lang
          void writeStatRef64(MemoryBase& target, pos_t position, pos64_t disp,
             ref_t addressMask) override;
          void writeVAddress32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
-            ref_t addressMask) override;
-         void writeVAddress32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
-            ref_t addressMask) override;
-         void writeDisp32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
-            ref_t addressMask) override;
+         ref_t addressMask) override;
+      void writeVAddress32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+         ref_t addressMask) override;
+      void writeVAddress32Hi4k(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+         ref_t addressMask) override;
+      void writeVAddress32Lo12(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+         ref_t addressMask, int shift) override;
+      void writeDisp32Hi(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
+         ref_t addressMask) override;
          void writeDisp32Lo(MemoryBase& target, pos_t position, addr_t vaddress, pos_t disp,
             ref_t addressMask) override;
 
          mssg_t importMessage(mssg_t message, ModuleBase* module = nullptr) override;
 
          addr_t resolveMDataVAddress() override;
+         addr_t resolveStatVAddress() override;
 
          addr_t calculateVAddress(MemoryWriter& writer, ref_t addressMask) override
          {
@@ -231,7 +237,7 @@ namespace elena_lang
       void resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader& vmtReader, FieldAddressMap& staticValues);
 
       void resolveSymbolAttributes(ReferenceInfo referenceInfo, addr_t vaddress, SectionInfo sectionInfo);
-      void resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress);
+      void resolveClassGlobalAttributes(ReferenceInfo referenceInfo, MemoryReader& vmtReader, addr_t vaddress, bool& runTimeDiscovered);
 
       pos_t createNativeSymbolDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
       pos_t createNativeClassDebugInfo(ReferenceInfo referenceInfo, addr_t vaddress);
@@ -252,9 +258,10 @@ namespace elena_lang
 
       addr_t resolve(ustr_t referenceName, ref_t sectionMask, bool silentMode);
 
-      ustr_t retrieveResolvedAction(ref_t reference);
+      ustr_t retrieveResolvedAction(ref_t reference, ref_t& signRef);
 
       ref_t resolveAction(ustr_t actionName);
+      ref_t resolveStrongAction(ref_t weakAction, ustr_t signatureName, ArgumentAddressList& list, bool variadicOne);
 
       void loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExtensions);
       void prepare(ProcessSettings& jitSettings);

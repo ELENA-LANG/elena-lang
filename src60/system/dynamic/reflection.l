@@ -1,5 +1,11 @@
 import system'collections;
 
+public class InvalidMockOperationException : InvalidOperationException
+{
+   constructor new()
+      <= super new("Cannot mock an interface. Probably the executable contains no method output information");
+}
+
 public extension classROp
 {
    Message[] __getMessages()
@@ -52,6 +58,35 @@ public extension classROp
 
       ^ retVal != 0
    }
+
+   bool respondTo(StrongMessage m)
+   {
+      int retVal := extern CheckClassMessageLA(self, m);
+
+      ^ retVal != 0
+   }
+
+   ClassReference? __getMethodOutput(StrongMessage m)
+   {
+      pointer retVal := extern LoadMessageOutputLA(self, m);
+      if (!retVal.isUnassigned()) {
+          ^ ClassReference.loadUnsafe(retVal);
+      };
+
+      ^ nil;
+   }
+
+   ClassReference? __getMethodOutput(Message m)
+   {
+      pointer retVal := extern LoadMessageOutputLA(self, m);
+      if (!retVal.isUnassigned()) {
+          ^ ClassReference.loadUnsafe(retVal);
+      };
+
+      ^ nil;
+   }
+
+   __typecast(source) : external(system'core_routines'__type_cast); 
 }
 
 public extension signatureOp : Message
@@ -73,8 +108,18 @@ public extension signatureOp : Message
    }
 }
 
-public extension proxyTypeOp
+extension reflectionOp
 {
    __injectInferface(type)
-       : external(system'core_routines'__createProxy);
+     : external(system'core_routines'__createProxy);
+}
+
+public extension proxyTypeOp
+{
+   mockInferface(type)
+   {
+      var proxy := ::{ dispatch() => self; };
+
+      ^ proxy.__injectInferface(type);
+   }
 }

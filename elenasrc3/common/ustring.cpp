@@ -698,6 +698,12 @@ wchar_t* StrConvertor :: toString(double value, int precision, wchar_t* s, size_
 
 // --- internal functions ---
 
+static inline bool util_less(const char* s1, const char* s2)
+{
+   if (s1 && s2) return (strcmp(s1, s2) < 0);
+   else return (s1 == s2);
+}
+
 static inline bool util_compare(const char* s1, const char* s2)
 {
    if (s1 && s2) return (strcmp(s1, s2) == 0);
@@ -816,6 +822,12 @@ static inline wchar_t* util_clone(const wchar_t* s, size_t length)
 static inline void append(wchar_t* dest, const wchar_t* sour, size_t length)
 {
    wcsncat(dest, sour, length);
+}
+
+static inline bool util_less(const wchar_t* s1, const wchar_t* s2)
+{
+   if (s1 && s2) return (wcscmp(s1, s2) < 0);
+   else return (s1 == s2);
 }
 
 static inline bool util_compare(const wchar_t* s1, const wchar_t* s2)
@@ -964,6 +976,23 @@ void append(unsigned short* dest, const unsigned short* sour, size_t length)
       p[i] = sour[i];
 
    p[length] = 0;
+}
+
+inline bool util_less(const unsigned short* s1, const unsigned short* s2)
+{
+   if (s1 && s2) {
+      while (*s1 || *s2) {
+         if (*s1 < *s2)
+            return true;
+         else if (*s1 > *s2)
+            return false;
+
+         s1++;
+         s2++;
+      }
+      return true;
+   }
+   else return s2 != nullptr;
 }
 
 inline bool util_compare(const unsigned short* s1, const unsigned short* s2)
@@ -1296,6 +1325,11 @@ unsigned short* StrFactory::reallocate(unsigned short* s, size_t size)
 
 // --- ustr_t ---
 
+bool ustr_t :: less(const char* s) const
+{
+   return util_less(_string, s);
+}
+
 bool ustr_t :: compare(const char* s) const
 {
    return util_compare(_string, s);
@@ -1390,6 +1424,11 @@ bool ustr_t::copyTo(wide_c* dest, size_t length, size_t& destLength)
 }
 
 // --- wstr_t ---
+
+bool wstr_t :: less(const wide_c* s) const
+{
+   return util_less(_string, s);
+}
 
 bool wstr_t :: compare(const wide_c* s) const
 {

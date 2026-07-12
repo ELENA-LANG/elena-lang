@@ -1,11 +1,12 @@
 //---------------------------------------------------------------------------
 //		E L E N A   P r o j e c t:  ELENA Machine common routines implementation
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
 // --------------------------------------------------------------------------
+#include "bytecode.h"
 #include "elenamachine.h"
 #include "rtmanager.h"
 
@@ -13,9 +14,10 @@ using namespace elena_lang;
 
 #if _M_IX86 || __i386__
 
-typedef VMTHeader32  VMTHeader;
-typedef VMTEntry32   VMTEntry;
-typedef ObjectPage32 ObjectPage;
+typedef VMTHeader32     VMTHeader;
+typedef VMTEntry32      VMTEntry;
+typedef VMTOutputList32 VMTOutputList;
+typedef ObjectPage32    ObjectPage;
 
 constexpr int elVMTClassOffset = elVMTClassOffset32;
 constexpr int gcPageSize = gcPageSize32;
@@ -24,9 +26,10 @@ constexpr int struct_mask = elStructMask32;
 
 #else
 
-typedef VMTHeader64  VMTHeader;
-typedef VMTEntry64   VMTEntry;
-typedef ObjectPage64 ObjectPage;
+typedef VMTHeader64     VMTHeader;
+typedef VMTEntry64      VMTEntry;
+typedef VMTOutputList64 VMTOutputList;
+typedef ObjectPage64    ObjectPage;
 
 constexpr int elVMTClassOffset = elVMTClassOffset64;
 constexpr int gcPageSize = gcPageSize64;
@@ -35,14 +38,14 @@ constexpr int struct_mask = elStructMask64;
 
 #endif
 
-inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
+static inline uintptr_t RetrieveStaticField(uintptr_t ptr, int index)
 {
    uintptr_t str = *(uintptr_t*)(ptr - sizeof(VMTHeader) + index * sizeof(uintptr_t));
 
    return str;
 }
 
-inline uintptr_t RetrieveVMT(uintptr_t ptr)
+static inline uintptr_t RetrieveVMT(uintptr_t ptr)
 {
    return *(uintptr_t*)(ptr - elObjectOffset);
 }
@@ -76,18 +79,38 @@ uintptr_t ELENAMachine :: createPermVMT(SystemEnv* env, size_t size)
    return (uintptr_t)header + elObjectOffset;
 }
 
-inline bool isValidProxy(uintptr_t vmtPtr)
+static inline bool isValidProxy(uintptr_t vmtPtr)
 {
    int flags = SystemRoutineProvider::GetFlags((void*)vmtPtr);
 
    return (flags & elDebugMask) == elProxy;
 }
 
-inline bool isWeakInterface(void* vmtPtr)
+static inline bool isWeakInterface(void* vmtPtr)
 {
    int flags = SystemRoutineProvider::GetFlags(vmtPtr);
 
    return (flags & elDebugMask) == elWeakInterface;
+}
+
+addr_t ELENAMachine::retrieveDispatchAndCast(void* vmtPtr)
+{
+   ref_t actionRef = loadSubject("#dispatch_cast");
+   if (!actionRef)
+      return 0;
+
+   mssg_t message = encodeMessage(actionRef, 2, 0);
+
+   addr_t classPtr = SystemRoutineProvider::GetClass(vmtPtr);
+   size_t length = SystemRoutineProvider::GetVMTLength((void*)classPtr);
+   VMTEntry* entries = (VMTEntry*)classPtr;
+   for (size_t i = 0; i < length; i++) {
+      if (entries[i].message == message) {
+         return entries[i].address;
+      }
+   }
+
+   return 0;
 }
 
 addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, int staticLen, int nameIndex)
@@ -98,9 +121,7 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    if (!isValidProxy(proxyVMTPtr))
       return INVALID_ADDR;
 
-   // verify if it is a correct interface
-   if (!isWeakInterface(srcVMTPtr))
-      return INVALID_ADDR;
+   bool weakInterface = isWeakInterface(srcVMTPtr);
 
    assert(nameIndex < 0);
 
@@ -120,7 +141,8 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
       // NOTE : probably better to create a custom package, but for a moment we can simply copy it
       uintptr_t nameAddr = createPermString(env, *dynamicName, stringVMT);
       size_t srcLength = SystemRoutineProvider::GetVMTLength(srcVMTPtr);
-      size_t size = (srcLength * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset + staticLen * sizeof(uintptr_t);
+      size_t srcHiddenLength = SystemRoutineProvider::GetHiddenVMTLength(srcVMTPtr);
+      size_t size = ((srcLength + srcHiddenLength) * sizeof(VMTEntry)) + sizeof(VMTHeader) + elObjectOffset + staticLen * sizeof(uintptr_t);
       int flags = SystemRoutineProvider::GetFlags(srcVMTPtr);
 
       proxyVMTAddress = createPermVMT(env, size);
@@ -160,11 +182,28 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
             entries[i] = src[i];
          }
          else {
+            addr_t handler = base[0].address;
+
+            addr_t outputPtr = SystemRoutineProvider::GetMessageOutput(srcVMTPtr, (mssg_t)src[i].message);
+            if (outputPtr == INVALID_ADDR) {
+               if (!weakInterface)
+                  return INVALID_ADDR;
+            }
+            else if (outputPtr != 0) {
+               handler = retrieveDispatchAndCast((void*)outputPtr);
+               if (!handler)
+                  return INVALID_ADDR;
+            }
+
             entries[i].message = src[i].message;
-            entries[i].address = base[0].address;
+            entries[i].address = handler;
          }
 
          i++;
+      }
+      // copy hidden VMT
+      for (size_t hiddenIndex = 0; hiddenIndex < srcHiddenLength; hiddenIndex++) {
+         entries[i + hiddenIndex] = src[i + hiddenIndex];
       }
 
       // skip a class header
@@ -176,6 +215,57 @@ addr_t ELENAMachine :: injectType(SystemEnv* env, void* proxy, void* srcVMTPtr, 
    SystemRoutineProvider::overrideClass(proxy, (void*)proxyVMTAddress);
 
    return (addr_t)proxy;
+}
+
+bool ELENAMachine :: loadArgumentList(ustr_t argumentList, ArgumentAddressList& list)
+{
+   IdentifierString arg;
+
+   size_t start = 0;
+   size_t end = NOTFOUND_POS;
+   do {
+      end = argumentList.findSub(start, ',');
+      if (end == NOTFOUND_POS) {
+         arg.copy(argumentList + start);
+      }
+      else arg.copy(argumentList + start, end - start);
+
+      addr_t classAddr = loadClassReference(*arg);
+      if (classAddr == 0)
+         return false;
+
+      list.add(classAddr);
+
+      start = end + 1;
+   } while (end != NOTFOUND_POS);
+
+   return true;
+}
+
+bool ELENAMachine :: parseStrongMessage(ustr_t messageName, pos_t& argCount, ref_t& flags, ref_t& weakAction, ArgumentAddressList& list)
+{
+   IdentifierString actionName;
+   IdentifierString argumentString;
+   ByteCodeUtil::parseMessageName(messageName, actionName, flags, argCount);
+
+   size_t argIndex = (*actionName).find('<');
+   if (argIndex == NOTFOUND_POS)
+      return 0;
+
+   assert((*actionName).endsWith(">"));
+
+   argumentString.copy(actionName.str() + argIndex + 1);
+   argumentString.cut(argumentString.length() - 1, 1);
+   actionName.cut(argIndex, actionName.length() - argIndex);
+
+   weakAction = loadSubject(*actionName);
+   if (weakAction == 0)
+      return false;
+
+   if (!loadArgumentList(*argumentString, list))
+      return false;
+
+   return true;
 }
 
 // --- SystemRoutineProvider ---
@@ -202,7 +292,7 @@ void SystemRoutineProvider :: InitGC(SystemEnv* env, SystemSettings settings)
    int page_mask = settings.page_mask;
 
    // ; allocate memory heap
-   env->gc_table->gc_header = NewHeap(settings.yg_total_size,  settings.yg_committed_size);
+   env->gc_table->gc_header = NewHeap(settings.yg_total_size, settings.yg_committed_size);
 
    uintptr_t mg_ptr = NewHeap(settings.mg_total_size, settings.mg_committed_size);
    env->gc_table->gc_start = mg_ptr;
@@ -238,7 +328,7 @@ void SystemRoutineProvider :: InitApp(SystemEnv* env)
    InitGC(env, settings);
 }
 
-inline uintptr_t getContent(uintptr_t ptr)
+static inline uintptr_t getContent(uintptr_t ptr)
 {
    return *(uintptr_t*)ptr;
 }
@@ -296,7 +386,21 @@ size_t SystemRoutineProvider :: GetVMTLength(void* classPtr)
    return header->count;
 }
 
-addr_t SystemRoutineProvider::GetParent(void* classPtr)
+size_t SystemRoutineProvider :: GetHiddenVMTLength(void* classPtr)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+
+   size_t i = header->count;
+   size_t hiddenLength = 0;
+
+   VMTEntry* entries = (VMTEntry*)classPtr;
+   while (entries[i + hiddenLength].message != 0)
+      hiddenLength++;
+
+   return hiddenLength;
+}
+
+addr_t SystemRoutineProvider :: GetParent(void* classPtr)
 {
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
 
@@ -330,7 +434,7 @@ pos_t SystemRoutineProvider :: GetFlags(void* classPtr)
    return (pos_t)header->flags;
 }
 
-size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip, 
+size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPtr, mssg_t* output, size_t skip,
    size_t maxLength, bool vmMode)
 {
    RTManager manager(msection, nullptr);
@@ -349,12 +453,12 @@ size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPt
             if (output[j] == weakMessage) {
                duplicate = true;
                break;
-            }              
+            }
          }
          if (!duplicate) {
             output[counter] = manager.loadWeakMessage(weakMessage, vmMode);
             counter++;
-         }         
+         }
       }
       else break;
    }
@@ -362,9 +466,9 @@ size_t SystemRoutineProvider :: LoadMessages(MemoryBase* msection, void* classPt
    return counter;
 }
 
-bool SystemRoutineProvider :: CheckMessage(MemoryBase* msection, void* classPtr, mssg_t message)
+bool SystemRoutineProvider :: CheckMessage(/*MemoryBase* msection, */void* classPtr, mssg_t message)
 {
-   RTManager manager(msection, nullptr);
+   //RTManager manager(msection, nullptr);
 
    VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
    // NOTE : skip the dispatcher
@@ -373,6 +477,29 @@ bool SystemRoutineProvider :: CheckMessage(MemoryBase* msection, void* classPtr,
          return true;
    }
    return false;
+}
+
+addr_t SystemRoutineProvider :: GetMessageOutput(void* classPtr, mssg_t message)
+{
+   VMTHeader* header = (VMTHeader*)((uintptr_t)classPtr - elVMTClassOffset);
+   VMTEntry* entries = (VMTEntry*)classPtr;
+
+   // NOTE : if VMT does not have output list - return immediately
+   if (!test(header->flags, elWithOutputList))
+      return INVALID_ADDR;
+
+   size_t index = header->count;
+   // skip index table
+   while (entries[index].message)
+      index++;
+
+   VMTOutputList* outputList = *(VMTOutputList**)((uintptr_t)classPtr + sizeof(VMTEntry) * index + sizeof(addr_t));
+   for (size_t outputIndex = 0; outputIndex < outputList->counter; outputIndex++) {
+      if (outputList->entries[outputIndex].message == message)
+         return outputList->entries[outputIndex].classRef;
+   }
+
+   return 0;
 }
 
 // --- ELENAMachine ---

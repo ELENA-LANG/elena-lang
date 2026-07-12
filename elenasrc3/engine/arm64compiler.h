@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT-X linker class.
 //		Supported platforms: ARM64
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef ARM64COMPILER_H
@@ -16,6 +16,8 @@ namespace elena_lang
    // --- ARM64JITCompiler --
    class ARM64JITCompiler : public JITCompiler64
    {
+      bool _picMode;
+
    protected:
       void prepare(
          LibraryLoaderBase* loader, 
@@ -27,11 +29,13 @@ namespace elena_lang
 
       friend void ARM64loadCallOp(JITCompilerScope* scope);
       friend void ARM64compileOpenIN(JITCompilerScope* scope);
+      friend void ARM64compileXOpenIN(JITCompilerScope* scope);
+      friend void ARM64compileExtOpenIN(JITCompilerScope* scope);
 
    public:
-      static JITCompilerSettings getSettings()
+      static PlatformSettings getSettings()
       {
-         return { 2, 2, 16, 32 };
+         return { 2, 2, 16, 32, 8, 8 };
       }
 
       void writeImm9(MemoryWriter* writer, int value, int type) override;
@@ -51,9 +55,11 @@ namespace elena_lang
       void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase* lh) override;
 
-      ARM64JITCompiler()
+      ARM64JITCompiler(bool picMode = false)
          : JITCompiler64()
       {
+         _picMode = picMode;
+
          _constants.mediumForm = 0xFFF;
          _constants.extendedForm = 0xFFFF;
          _constants.noNegative = true; // affects frame operations
@@ -62,6 +68,8 @@ namespace elena_lang
 
    void ARM64loadCallOp(JITCompilerScope* scope);
    void ARM64compileOpenIN(JITCompilerScope* scope);
+   void ARM64compileXOpenIN(JITCompilerScope* scope);
+   void ARM64compileExtOpenIN(JITCompilerScope* scope);
 }
 
 #endif

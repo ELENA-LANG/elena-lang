@@ -107,7 +107,7 @@ bool Win32BreakpointContext :: processStep(Win32ThreadContext* context, bool ste
       context->setSoftwareBreakpoint(context->resetBreakpoint.address);
 
       if (stepMode)
-         context->setTrapFlag();
+         context->setTrapFlag();         
 
       context->resetBreakpoint.mode = Win32TempBreakpoint::Mode::None;
    }
@@ -186,15 +186,14 @@ bool Win32BreakpointContext :: processBreakpoint(Win32ThreadContext* context)
 
    addr_t address = getIP(context->context) - 1;
 
-   if (clearTempBreakpoint(address, context)) {
+   if (clearTempBreakpoint(address, context))
       proceeded = true;
-   }
 
    if (breakpoints.exist(address)) {
       Win32TempBreakpoint resetBreakpoint(address, Win32TempBreakpoint::Mode::Reset);
-      context->resetBreakpoint = resetBreakpoint;
+      if (resetBreakpoint != context->resetBreakpoint) {
+         context->resetBreakpoint = resetBreakpoint;
 
-      if (!proceeded) {
          char substitute = breakpoints.get(resetBreakpoint.address);
          context->clearSoftwareBreakpoint(resetBreakpoint.address, substitute);
 
@@ -214,6 +213,7 @@ bool Win32BreakpointContext :: processBreakpoint(Win32ThreadContext* context)
 void Win32BreakpointContext :: clear()
 {
    breakpoints.clear();
+   tempBreakpoints.clear();
 }
 
 // --- Win32ThreadContext ---
@@ -362,7 +362,7 @@ void Win32DebugProcess :: reset()
    _breakpoints.clear();
    
    _init_breakpoint = 0;
-   _stepMode = false;
+   _tempStepMode = _stepMode = false;
    _needToHandle = false;
    
    //_vmHook = 0;
@@ -484,7 +484,6 @@ void Win32DebugProcess :: processEvent(DWORD timeout)
             _current = _threads.get(_dwCurrentThreadId);
             if (_current) {
                _current->refresh();
-               //exitCheckPoint = proceedCheckPoint();
             }
             processEnd();
             break;
@@ -543,7 +542,7 @@ void Win32DebugProcess :: processException(EXCEPTION_DEBUG_INFO* exception)
 {
    switch (exception->ExceptionRecord.ExceptionCode) {
       case EXCEPTION_SINGLE_STEP:
-         if (_breakpoints.processStep(_current, _stepMode))
+         if (_breakpoints.processStep(_current, _stepMode || _tempStepMode))
             break;
 
          // stop if it is VM Hook mode
@@ -561,6 +560,7 @@ void Win32DebugProcess :: processException(EXCEPTION_DEBUG_INFO* exception)
       case EXCEPTION_BREAKPOINT:
          if (_breakpoints.processBreakpoint(_current)) {
             _current->setTrapFlag();
+            _tempStepMode = true;
 
             if (getIP(_current->context) >= _minAddress && getIP(_current->context) <= _maxAddress) {
                processStep();
@@ -589,8 +589,7 @@ void Win32DebugProcess :: processStep()
    _current->state = _steps.get(getIP(_current->context));
    if (_current->state != nullptr) {
       _trapped = true;
-      _stepMode = false;
-      //proceedCheckPoint();
+      _tempStepMode = _stepMode = false;
    }
 }
 
@@ -651,6 +650,12 @@ void Win32DebugProcess :: setStepMode()
    
    _current->setTrapFlag();
    _stepMode = true;
+}
+
+void Win32DebugProcess :: resetStepMode()
+{
+   _current->resetTrapFlag();
+   _stepMode = false;
 }
 
 void Win32DebugProcess :: addStep(addr_t address, void* state)

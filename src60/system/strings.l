@@ -1226,7 +1226,7 @@ sealed class StringEnumerator : Enumerator<char>,
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       index.Value := -1;
       diff.Value := 1
@@ -1371,11 +1371,11 @@ public const struct WideString : BaseValue,
    /// Creates the literal string with specified length fills with specified character value        
    constructor fill(int size, char ch)
         : info("Creates the literal string with specified length <b>size</b> fills with character <b>ch</b>")
-      <= allocate(ch.Length * size)
+      <= allocate(ch.WideLength * size)
    {
       short buffer[4];
       int chVal := ch.Value;
-      int  length := ch.Length;
+      int  length := ch.WideLength;
       length := UTFOperations.convertUTF32_2_16(chVal, buffer, 0, length);
         
       int offs := 0;
@@ -1652,7 +1652,7 @@ sealed class WideStringEnumerator : Enumerator<char>
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       index.Value := -1;
       diff.Value := 1
@@ -1945,7 +1945,7 @@ public sealed ArrayEnumerator : Enumerator, info("A generic array enumerator")
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       index.Value := -1;
    }
@@ -2130,7 +2130,7 @@ class BitArrayEnumerator : Enumerator<bool>
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       _index.Value := -1
    }
@@ -2243,7 +2243,7 @@ class BitArray32Enumerator : Enumerator<bool>
    }
 
    reset()
-      : info("Resets the enumerator")
+      : info("Resets the enumerator, so it can be used again")
    {
       _index.Value := -1
    }
@@ -2275,7 +2275,7 @@ class BitArray32Enumerator : Enumerator<bool>
 public const String NewLineConstant : info("New line characters")
     = $13$10;
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
 public const string NewLineConstant : info("A new line character")
     = ""$10;

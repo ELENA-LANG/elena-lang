@@ -53,9 +53,6 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 - **Windows** : x86 (32-bit) / x86-64 (64-bit) 
 - **Linux** : x86 (32-bit) / x86-64 (64-bit)  / ppc64le / arm64 (a64)
 - **FreeBSD** :x86-64 (64-bit)
-
-## Platforms to be supported
-
 - **macOS** : arm64 (a64)
 
 ## Resources
@@ -68,6 +65,10 @@ ELENA is a general-purpose language with late binding. It is multi-paradigm, com
 - **Source code:** <https://github.com/ELENA-LANG/elena-lang>
 - **BluSky:** <https://bsky.app/profile/alexrakov.bsky.social>
 - **Rosetta code:** <https://rosettacode.org/wiki/Category:Elena>
+
+## Code snippets
+
+Start to learn the language by going through [code snippets](knowhow.md)
 
 ## Contact Us
 

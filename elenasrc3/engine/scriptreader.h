@@ -60,6 +60,11 @@ namespace elena_lang
 
       bool read(ScriptToken& token);
 
+      bool read(ScriptToken& token, ustr_t expected)
+      {
+         return read(token) && token.compare(expected);
+      }
+
       void resetReader()
       {
          reset();

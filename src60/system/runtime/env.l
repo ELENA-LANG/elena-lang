@@ -70,9 +70,17 @@ internal class SystemInfo
    }
 }
 
-#elif (__project["_Linux"] || __project["_FreeBSD"])
+#elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
+
+#if (__project["_MacOS"])
+
+const int _SC_NPROCESSORS_ONLN = 58;
+
+#else
 
 const int _SC_NPROCESSORS_ONLN = 84;
+
+#endif
 
 internal class SystemInfo
 {
@@ -97,7 +105,7 @@ internal class SystemInfo
 
       ProcessorType := class ProcessorType.PPC64le;
 
-#elif (__project["_LinuxARM64"])
+#elif (__project["_LinuxARM64"] || __project["_MacOSARM64"])
 
       ProcessorType := class ProcessorType.ARM64;
 

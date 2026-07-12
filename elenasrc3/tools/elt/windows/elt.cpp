@@ -3,7 +3,7 @@
 //
 //		This is a main file containing VM terminal
 //
-//                                              (C)2021-2025, by Aleksey Rakov
+//                                              (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -44,12 +44,6 @@ void startInDefaultMode(VMSession& session)
    session.loadScript(ELT_LSCRIPT_CONFIG);
 }
 
-inline void loadTemplate(ELTPresenter& presenter, VMSession& session, TemplateType type, ustr_t name)
-{
-   if (!session.loadTemplate(type, name))
-      presenter.printLine(ELT_CANNOT_LOAD_TEMPLATE, name);
-}
-
 int main(int argc, char* argv[])
 {
    printf(ELT_GREETING, ENGINE_MAJOR_VERSION, ENGINE_MINOR_VERSION, ELT_REVISION_NUMBER);
@@ -60,10 +54,16 @@ int main(int argc, char* argv[])
    ELTPresenter presenter;
    VMSession session(*appPath, &presenter);
 
-   loadTemplate(presenter, session, TemplateType::REPL, REPL_TEMPLATE_NAME);
-   loadTemplate(presenter, session, TemplateType::Multiline, MULTILINE_TEMPLATE_NAME);
-   loadTemplate(presenter, session, TemplateType::GetVar, GETVAR_TEMPLATE_NAME);
-   loadTemplate(presenter, session, TemplateType::SetVar, SETVAR_TEMPLATE_NAME);
+   PathString configPath(*appPath, ELT_COMMAND_CONFIG);
+   if (!session.loadConfig(*configPath)) {
+      presenter.printPath(ELT_CANNOT_LOAD_TEMPLATE, *configPath);
+
+      return EXIT_FAILURE;
+   }      
+
+   PathString basePath(*appPath);
+   basePath.combine(L"scripts");
+   session.setBasePath(*basePath);
 
    session.loadScript(ELT_CONFIG);
 
@@ -76,8 +76,7 @@ int main(int argc, char* argv[])
             bool running = true;
             if (argv[i][1] == 'i') {
                startInDefaultMode(session);
-            }
-            else session.executeCommand(*cmd, running);
+            }            
 
             // check exit command
             if (!running)
@@ -92,5 +91,5 @@ int main(int argc, char* argv[])
 
    session.run();
 
-   return 0;
+   return EXIT_SUCCESS;
 }

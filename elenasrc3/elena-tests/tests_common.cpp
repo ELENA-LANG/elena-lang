@@ -34,11 +34,20 @@ constexpr int MINIMAL_ARG_LIST = 2;
 
 #endif
 
+constexpr PlatformSettings platformSettings =
+{
+   MINIMAL_ARG_LIST,
+   DEFAULT_STACKALIGNMENT,
+   DEFAULT_RAW_STACKALIGNMENT,
+   DEFAULT_EHTABLE_ENTRY_SIZE,
+   sizeof(uintptr_t),
+   sizeof(uintptr_t)
+};
+
 // --- TestModuleScope ---
 
 TestModuleScope::TestModuleScope(bool tapeOptMode, bool btapeOptMode)
-   : ModuleScopeBase(new Module(), nullptr, DEFAULT_STACKALIGNMENT, DEFAULT_RAW_STACKALIGNMENT, 
-      DEFAULT_EHTABLE_ENTRY_SIZE, MINIMAL_ARG_LIST, sizeof(uintptr_t), tapeOptMode, btapeOptMode)
+   : ModuleScopeBase(new Module(), nullptr, &platformSettings, tapeOptMode, btapeOptMode)
 {
    _anonymousRef = 0x100;
 }
@@ -102,7 +111,7 @@ ExternalInfo TestModuleScope :: mapExternal(ustr_t dllAlias, ustr_t functionName
    return {};
 }
 
-inline ref_t mapExistingIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
+static inline ref_t mapExistingIdentifier(ModuleBase* module, ustr_t identifier, Visibility visibility)
 {
    ustr_t prefix = CompilerLogic::getVisibilityPrefix(visibility);
 
@@ -289,12 +298,15 @@ void CompilerEnvironment :: setUpTemplateMockup(ref_t templateRef, ref_t element
    _templateMapping.add({ templateRef, elementRef }, reference);
 }
 
-Compiler* CompilerEnvironment :: createCompiler()
+Compiler* CompilerEnvironment :: createCompiler(int optMode)
 {
    auto compiler = new Compiler(nullptr, TestErrorProcessor::getInstance(), TestTemplateProssesor::getInstance(&_templateMapping), CompilerLogic::getInstance());
 
    compiler->setNoValidation();
    compiler->setDebugMode(false);
+
+   if (optMode > 0)
+      compiler->setOptimizationMode(optMode);
 
    return compiler;
 }

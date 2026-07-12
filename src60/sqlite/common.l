@@ -94,31 +94,27 @@ public sealed class DBConnection
    numberOfTable()
    {
       if:not (_open) { DBException.new("SQLite database is not open.").raise() };
-      
-      auto command := DBCommand.new(self, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
-      
-      var numberOfTable := command.evalScalar();
-      
-      command.close();
-      
-      ^ numberOfTable
+
+      using(auto command := DBCommand.new(self, "SELECT COUNT(*) FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';"))
+      {
+         ^ command.evalScalar()
+      }
    }
-   
+
    tables()
    {
       if:not (_open) { DBException.new("SQLite database is not open.").raise() };
-      
-      auto command := DBCommand.new(self, "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';");
-      
+
       auto nameOfTables := new ArrayList();
-      
-      while (command.evalNext())
+
+      using(auto command := DBCommand.new(self, "SELECT name FROM sqlite_master WHERE type='table' AND name NOT LIKE 'sqlite_%';"))
       {
-         nameOfTables.append(command.at(0))
+         while (command.evalNext())
+         {
+            nameOfTables.append(command.at(0))
+         }
       };
-      
-      command.close();
-      
+
       ^ nameOfTables
    }
    

@@ -1,5 +1,5 @@
 #!/bin/bash
-RELEASE=elena-7.0.0.aarch64-linux
+RELEASE=elena-7.0.1.aarch64-linux
 
 mkdir -p ../lib60_64
 mkdir -p /usr/share/elena
@@ -95,7 +95,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -arm64 ../../asm/aarch64/core60_client.asm /usr/lib/elena/core/aarch64 core60_lnx_client.bin 
+../../bin/asm64-cli -linux -arm64 ../../asm/aarch64/core60_client.asm /usr/lib/elena/core/aarch64 core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then

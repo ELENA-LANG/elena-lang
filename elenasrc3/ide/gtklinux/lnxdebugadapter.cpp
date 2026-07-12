@@ -515,7 +515,6 @@ void DebugProcessController :: processStep()
    if (_current->_state != nullptr) {
       _trapped = true;
       _current->resetTrapFlag();
-      //proceedCheckPoint();
    }
 }
 
