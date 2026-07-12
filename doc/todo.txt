@@ -40,7 +40,6 @@ In development:
   --------------------------------------
   * debugger
   ====================================== 
-  - #232 : IDE debugger : checkpoint
   - #263 : IDE : MTA Debugging
   - step over - does not always work
   - debugger : ctrl+i - correctly refresh int stack / ...

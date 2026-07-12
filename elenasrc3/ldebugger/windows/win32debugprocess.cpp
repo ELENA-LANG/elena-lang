@@ -484,7 +484,6 @@ void Win32DebugProcess :: processEvent(DWORD timeout)
             _current = _threads.get(_dwCurrentThreadId);
             if (_current) {
                _current->refresh();
-               //exitCheckPoint = proceedCheckPoint();
             }
             processEnd();
             break;
@@ -591,7 +590,6 @@ void Win32DebugProcess :: processStep()
    if (_current->state != nullptr) {
       _trapped = true;
       _tempStepMode = _stepMode = false;
-      //proceedCheckPoint();
    }
 }
 
