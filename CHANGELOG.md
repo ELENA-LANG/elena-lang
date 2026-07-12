@@ -1,10 +1,44 @@
 ## ELENA 7.1.0
 
 - ELENA
+  - [ADDED] #708 : Mac OS silicon 
 
 - ELC
+  - [CRITICAL][FIXED] invalid int boxing transformation rule
+  - [ADDED] #590 : Mixins should support interfaces 
+  - [ADDED] native support for Value operator with a pointer / reference
+  - [FIXED] creating big objects
+  - [ADDED] native widening conversions : short / uint / ushort to long and real
+  - [FIXED] info attribute (general inline templates) on properties
+
+- RT
+  - [ADDED] new core opcodes : loadz, wloadz, lfsave (amd64, aarch64, ppc64le, x32)
 
 - API
+  - [ADDED] new helper class : system'io'PathUtils
+  - [ADDED] system'StrongMessage
+  - [ADDED] classROp.__getMethodOutput<StrongMessage>[2]
+  - [ADDED] new extension : system'dynamic'classROp.__typecast[2]
+  - [ADDED] ltests'Mockup, ltests'Mockup<T>
+  - [ADDED] new extension : extensions'arrayConvertOp.toArray(int length)
+  - [ADDED] new extension : extensions'intArrayConvertOp.toIntArray(int length) / toIntArray()
+  - [FIXED] preloaded symbols must be inside try catch statement
+  - [ADDED] #731 : xml library - supporting attributes
+  - [FIXED] ByteNumber / SByteNumber / UIntNumber : arithmetic and bitwise overloads used the argument instead of self
+  - [FIXED] byte / sbyte long arithmetic now returns long instead of a truncated int
+  - [FIXED] LongNumber : bor / bxor delegated to band
+  - [ADDED] convertors : sbyte to short, ushort to long, ushort to real
+  - [FIXED] ULongConvertor : hexadecimal digit parsing
+  - [FIXED] LongConvertor : decimal string overflow saturates at LONG_MIN / LONG_MAX
+  - [FIXED] RealConvertor : negative zero string keeps its sign
+  - [FIXED] UTF-16 decoding and length handling (surrogate pairs, WideLength, unsigned code units)
+  - [FIXED] collections : Dictionary at / setAt resolved through a single object key overload
+  - [FIXED] collections : Queue shift offset handling
+  - [FIXED] collections : SortedList insertion order and indexOf infinite loop
+  - [FIXED] Base64 : multi-chunk encode / decode used the wrong source offset
+  - [FIXED] String : replace now replaces all occurrences
+  - [ADDED] SQLite : added to the Linux build
+  - [FIXED] SQLite : commands released through using blocks
 
 - SM
 
@@ -13,8 +47,17 @@
 - SAMPLES
 
 - IDE
+  - [FIXED] vertical auto-scrolling
+  - [FIXED] breakpoint handling
+  - [FIXED] display breakpoint toggle mark for the current line
+  - [ADDED] Debug menu : clear all breakpoints
+  - [ADDED] number of improvements
+  - [ADDED] highlight close button when the mouse over it
+  - [FIXED] correctly remove breakpoints on the project closure
 
 - Tools
+  - [CRITICAL][ELT] Improving usability / refactoring
+  - [FIXED] ldocs : not all extensions are listed
 
 - Misc
 
