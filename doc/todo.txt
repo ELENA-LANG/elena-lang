@@ -5,24 +5,8 @@ In development:
 [development]
   ### EPIC: elena 8.0 ###
 
-  === Iteration 46 (graph sample; ide linux; mac) ===
-  --------------------------------------
-  * lang
-  ====================================== 
-  * doc
-  ====================================== 
-  - post about using elt to call you class in design-time
-  - list extension properties in indexes
-  - provide descriptions for all classes (from calendar\date_routines.l)
-  --------------------------------------
-  * samples
-  --------------------------------------
-  - xml sample : reading xml as a database - for examples contacts, provide search functionality
-  ====================================== 
-  * elenavm : LoadStrongMessageLA
-  ====================================== 
-  - implement
-  - test
+  === Iteration 47 (graph sample; ide linux; mac) ===
+  * new version 7.0.3
   --------------------------------------
   * backlog
   ====================================== 
@@ -37,18 +21,8 @@ In development:
   - optimization : jumping, offset aligning
   - pi optimization : at least 10% 
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created)
-  --------------------------------------
-  * debugger
-  ====================================== 
-  - #263 : IDE : MTA Debugging
-  - step over - does not always work
   - debugger : ctrl+i - correctly refresh int stack / ...
   --------------------------------------
-
-  === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===
-  * new version 7.0.2
-  --------------------------------------
-  --------------------------------------
   * dev
   ====================================== 
   * lang
@@ -58,9 +32,10 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 48 (tetris sample) ===
+  === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.3
   --------------------------------------
+  --------------------------------------
   * dev
   ====================================== 
   * lang
@@ -70,7 +45,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 49 (chat sample) ===
+  === Iteration 49 (tetris sample) ===
   * new version 7.0.4
   --------------------------------------
   * dev
@@ -80,11 +55,23 @@ In development:
   * doc
   ====================================== 
   * current
+  ====================================== 
+
+  === Iteration 50 (chat sample) ===
+  * new version 7.0.5
+  --------------------------------------
+  * dev
+  ====================================== 
+  * lang
+  ====================================== 
+  * doc
+  ====================================== 
+  * current
   --------------------------------------
   --------------------------------------
 
-  === Iteration 50 (upndown sample) ===
-  * new version 7.0.5
+  === Iteration 51 (upndown sample) ===
+  * new version 7.0.6
   --------------------------------------
   * dev
   ====================================== 

@@ -2,7 +2,7 @@ name: Sync to GitLab
 
 on:
   push:
-    branches: [iteration46]
+    branches: [iteration47]
 
 jobs:
   sync:
