@@ -98,6 +98,7 @@ namespace elena_lang
       void activate() override;
 
       void setStepMode() override;
+      void resetStepMode() override;
 
       bool startThread(DebugControllerBase* controller) override;
 

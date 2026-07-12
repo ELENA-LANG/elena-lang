@@ -1189,7 +1189,9 @@ bool IDEWindow :: onCommand(int command)
 
 void IDEWindow :: refreshDebugNode()
 {
-   dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
+   ControlBase* dlg = (ControlBase*)_children[_model->ideScheme.debugWatch];
+   if (dlg && dlg->visible())
+      dynamic_cast<ContextBrowserBase*>(_children[_model->ideScheme.debugWatch])->refreshCurrentNode();
 }
 
 void IDEWindow :: switchHexMode()

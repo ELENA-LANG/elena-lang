@@ -59,5 +59,6 @@
   - [ADDED] Debug menu : clear all breakpoints
   - [ADDED] number of improvements
   - [ADDED] highlight close button when the mouse over it
+  - [FIXED] correctly remove breakpoints on the project closure
 
 - Misc

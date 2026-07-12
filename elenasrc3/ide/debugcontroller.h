@@ -58,7 +58,7 @@ namespace elena_lang
 
       DebugLineInfo* getNextStep(DebugLineInfo* step, bool stepOverMode);
 
-      DebugLineInfo* seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags);
+      DebugLineInfo* seekClassInfo(IdentifierString& className, addr_t vmtAddress);
 
       void fixNamespace(NamespaceString& str);
 

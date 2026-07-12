@@ -283,28 +283,28 @@ namespace elena_lang
             rem = (unsigned int)n % radix;
             n /= radix;
             switch (rem) {
-            case 10:
-               s[pos++] = 'a';
-               break;
-            case 11:
-               s[pos++] = 'b';
-               break;
-            case 12:
-               s[pos++] = 'c';
-               break;
-            case 13:
-               s[pos++] = 'd';
-               break;
-            case 14:
-               s[pos++] = 'e';
-               break;
-            case 15:
-               s[pos++] = 'f';
-               break;
-            default:
-               if (rem < 10) {
-                  s[pos++] = (T)(rem + 0x30);
-               }
+               case 10:
+                  s[pos++] = 'a';
+                  break;
+               case 11:
+                  s[pos++] = 'b';
+                  break;
+               case 12:
+                  s[pos++] = 'c';
+                  break;
+               case 13:
+                  s[pos++] = 'd';
+                  break;
+               case 14:
+                  s[pos++] = 'e';
+                  break;
+               case 15:
+                  s[pos++] = 'f';
+                  break;
+               default:
+                  if (rem < 10) {
+                     s[pos++] = (T)(rem + 0x30);
+                  }
             }
          } while (n != 0);
 

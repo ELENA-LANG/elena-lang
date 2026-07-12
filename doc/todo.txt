@@ -26,6 +26,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - implement heap data structure
   - comparing with enum type - try to use directly
   - xml : xmlwriter
   - implement toUInt, toSByte
@@ -39,12 +40,10 @@ In development:
   --------------------------------------
   * debugger
   ====================================== 
-  - debugger : breakpoints are not correctly removed (when a new project is open)
-  - debugger : ctrl+i must reload content
-  - debugger : temporal breakpoint is not correctly removed
-  - step over - does not always work
-  - #263 : IDE : MTA Debugging
   - #232 : IDE debugger : checkpoint
+  - #263 : IDE : MTA Debugging
+  - step over - does not always work
+  - debugger : ctrl+i - correctly refresh int stack / ...
   --------------------------------------
 
   === Iteration 47 (text based adventage; httpget / httpsget reliability; vscode extension) ===

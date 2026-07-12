@@ -209,6 +209,7 @@ namespace elena_lang
       void removeBreakpoint(addr_t address);
 
       void setStepMode();
+      void resetStepMode();
 
       void addStep(addr_t address, void* state);
 

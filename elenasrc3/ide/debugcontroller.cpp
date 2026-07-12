@@ -194,7 +194,7 @@ DebugLineInfo* DebugInfoProvider :: getNextStep(DebugLineInfo* step, bool stepOv
    return next;
 }
 
-DebugLineInfo* DebugInfoProvider :: seekClassInfo(addr_t address, IdentifierString& className, addr_t vmtAddress, ref_t flags)
+DebugLineInfo* DebugInfoProvider :: seekClassInfo(IdentifierString& className, addr_t vmtAddress)
 {
    if (!vmtAddress || vmtAddress == INVALID_ADDR)
       return nullptr;
@@ -421,6 +421,7 @@ void DebugController :: run()
    _started = true;
 
    _process->setEvent(DEBUG_RESUME);
+   _process->resetStepMode();
 
    _process->activate();
 }
@@ -655,7 +656,7 @@ void* DebugController :: readObject(ContextBrowserBase* watch, void* parent, add
          classNameStr.copy(className);
       }
 
-      DebugLineInfo* info = _provider.seekClassInfo(address, classNameStr, vmtAddress, flags);
+      DebugLineInfo* info = _provider.seekClassInfo(classNameStr, vmtAddress);
 
       WatchContext context = { parent, address };
       void* item = watch->addOrUpdate(&context, name, *classNameStr);
@@ -890,7 +891,7 @@ void* DebugController :: readInlineField(ContextBrowserBase* watch, void* parent
    addr_t vmtAddress = _process->getClassVMT(address);
 
    ref_t flags = 0;
-   DebugLineInfo* info = _provider.seekClassInfo(address, classNameStr, vmtAddress, flags);
+   DebugLineInfo* info = _provider.seekClassInfo(classNameStr, vmtAddress);
 
    ustr_t name = (const char*)info[index].addresses.field.nameRef;
    addr_t fieldAddress = _process->getField(address, info[index].addresses.field.offset);
@@ -935,12 +936,12 @@ void DebugController :: readContext(ContextBrowserBase* watch, void* parentItem,
 {
    if (_process->isStarted() && level > 0) {
       addr_t vmtAddress = _process->getClassVMT(address);
-      ref_t flags = vmtAddress ? _process->getClassFlags(vmtAddress) : 0;
 
       IdentifierString className;
-      DebugLineInfo* info = _provider.seekClassInfo(address, className, vmtAddress, flags);
-
-      readObjectContent(watch, parentItem, address, level, info, vmtAddress);
+      DebugLineInfo* info = _provider.seekClassInfo(className, vmtAddress);
+      if (info != nullptr) {
+         readObjectContent(watch, parentItem, address, level, info, vmtAddress);
+      }      
    }
 }
 

@@ -107,22 +107,37 @@ void ContextBrowser :: clearNode(void* item)
 
 void ContextBrowser :: populateNode(void* item, ustr_t value)
 {
-   text_c caption[CAPTION_LEN];
-   size_t len = readCaption((TreeViewItem)item, caption, CAPTION_LEN);
+   String<text_c, CAPTION_LEN> caption;
+   size_t len = readCaption((TreeViewItem)item, (wchar_t*)caption.str(), CAPTION_LEN);
 
    // cut the value from the caption if any
-   wstr_t s = caption;
+   bool renamed = false;
+   wstr_t s = caption.str();
+   if (s.findStr(L" = {", NOTFOUND_POS) == NOTFOUND_POS) {
+      wstr_t type = s + s.find('{');
+
+      pos_t pos = s.find('=');
+      size_t len = CAPTION_LEN;
+      type.copyTo((wchar_t*)caption.str() + pos + 2, len);
+      caption[len + pos + 2] = 0;
+      renamed = true;
+   }
 
    WideMessage wideValue(value);
    if (s.length() + value.length() > CAPTION_LEN) {
+      if (renamed)
+         setCaption((TreeViewItem)item, (wchar_t*)caption.str(), caption.length());
+
       insertTo((TreeViewItem)item, *wideValue, 0, false);
    }
    else {
       pos_t pos = s.find('{');
-      if (pos != NOTFOUND_POS)
-         StrUtil::insert(caption, pos, value.length(), wideValue.str());
 
-      setCaption((TreeViewItem)item, caption, getlength(caption));
+      if (pos != NOTFOUND_POS)
+         caption.insert(*wideValue, pos);
+         //StrUtil::insert(caption, pos, value.length(), wideValue.str());
+
+      setCaption((TreeViewItem)item, (wchar_t*)caption.str(), caption.length());
    }
 
 }

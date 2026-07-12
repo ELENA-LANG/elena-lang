@@ -654,6 +654,12 @@ void Win32DebugProcess :: setStepMode()
    _stepMode = true;
 }
 
+void Win32DebugProcess :: resetStepMode()
+{
+   _current->resetTrapFlag();
+   _stepMode = false;
+}
+
 void Win32DebugProcess :: addStep(addr_t address, void* state)
 {
    _steps.add(address, state);

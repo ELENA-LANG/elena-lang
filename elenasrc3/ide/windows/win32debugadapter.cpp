@@ -139,6 +139,11 @@ void Win32DebugAdapter :: setStepMode()
    _debugProcess.setStepMode();
 }
 
+void Win32DebugAdapter :: resetStepMode()
+{
+   _debugProcess.resetStepMode();
+}
+
 void Win32DebugAdapter :: addStep(addr_t address, void* state)
 {
    _debugProcess.addStep(address, state);
