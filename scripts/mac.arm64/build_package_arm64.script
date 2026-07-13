@@ -1,6 +1,6 @@
 #!/bin/sh
 
-RELEASE=elena-7.0.17.arm64-mac
+RELEASE=elena-7.0.2.arm64-mac
 
 run_step()
 {

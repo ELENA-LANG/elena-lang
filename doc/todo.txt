@@ -5,8 +5,8 @@ In development:
 [development]
   ### EPIC: elena 8.0 ###
 
-  === Iteration 47 (graph sample; ide linux; mac) ===
-  * new version 7.0.3
+  === Iteration 47 (graph sample; ide linux) ===
+  * new version 7.0.2
   --------------------------------------
   * backlog
   ====================================== 
@@ -14,14 +14,13 @@ In development:
   - comparing with enum type - try to use directly
   - xml : xmlwriter
   - implement toUInt, toSByte
-  - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
   - refactore - Compiler :: declareVMTMessage - the function is too long
   - auto loading only used namespaces (instead of all)
   - Warn if the implicit conversion is used
   - optimization : jumping, offset aligning
   - pi optimization : at least 10% 
-  - optimization (xmlreader - currentOffset := offs; - make sure new object is not created)
-  - debugger : ctrl+i - correctly refresh int stack / ...
+  - optimization (xmlreader - currentOffset := offs; - make sure new object is not created) 
+  - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
   --------------------------------------
   * dev
   ====================================== 
@@ -29,7 +28,7 @@ In development:
   ====================================== 
   * doc
   ====================================== 
-  * current
+  * current - backlog
   ====================================== 
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===

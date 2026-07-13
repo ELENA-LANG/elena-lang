@@ -1,5 +1,5 @@
 Package: elena-lang
-Version: 7.0.1
+Version: 7.0.2
 Architecture: i386
 Maintainer: Alex Rakov <arakov@yandex.ru>
 Depends: libc6 (>= 2.1)
