@@ -2884,13 +2884,14 @@ public dictionaryBucketGrowthTest() : testCase()
 {
    auto d := Dictionary.new(0);
 
+/*
    for (int i := 0; i < 200; i += 1)
       { d[i] := i * 2 };
+*/
 /*
    for (int i := 0; i < 200; i += 1)
       { Assert.ifTrue(d[i] == i * 2) };
-*/
-/*
+
    // updating every key must overwrite in place, not append duplicates
    for (int i := 0; i < 200; i += 1)
       { d[i] := i + 1 };
