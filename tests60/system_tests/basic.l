@@ -2884,25 +2884,29 @@ public dictionaryBucketGrowthTest() : testCase()
 {
    auto d := Dictionary.new(0);
 
-   Console.writeLine("Start");
+   for (int i := 0; i < 200; i += 1)
+      { d[i] := i * 2 };
+
+   Console.writeLine("1");
 
    for (int i := 0; i < /*200*/100; i += 1)
-      { d[i] := i * 2; Console.writeLine(i) };
+      { Assert.ifTrue(d[i] == i * 2); Console.writeLine(i) };
 
-   Console.writeLine("End");
-
-   for (int i := 0; i < /*200*/100; i += 1)
-      { Assert.ifTrue(d[i] == i * 2) };
+   Console.writeLine("2");
 
    // updating every key must overwrite in place, not append duplicates
    for (int i := 0; i < /*200*/100; i += 1)
       { d[i] := i + 1 };
+
+   Console.writeLine("3");
 
    for (int i := 0; i < /*200*/100; i += 1)
    {
       Assert.ifTrue(d[i] == i + 1);
       Assert.ifTrue(d.containsKey(i))
    };
+
+   Console.writeLine("4");
 
    Assert.ifFalse(d.containsKey(1000));
 
