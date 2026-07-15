@@ -13803,7 +13803,7 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
 
    if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true)) {
       if (compiler->_logic->isEmbeddable(*scope.moduleScope, loperand.typeInfo)) {
-         TargetMode mode = TargetMode::StackAllocated;
+         TargetMode targetMode = TargetMode::StackAllocated;
          switch (loperand.kind) {
             case ObjectKind::LocalAddress:
             case ObjectKind::TempLocalAddress:
@@ -13814,11 +13814,11 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
                break;
             default:
                loperand = saveToTempLocal(loperand);
-               mode = TargetMode::None;
+               targetMode = TargetMode::None;
                break;
          }
 
-         return { ObjectKind::EncapseFieldAddress, result.outputInfo, result.getterFieldOffset, loperand.argument, mode };
+         return { ObjectKind::EncapseFieldAddress, result.outputInfo, result.getterFieldOffset, loperand.argument, targetMode };
       }
       else {
          if (loperand.kind != ObjectKind::Local && loperand.kind != ObjectKind::TempLocal) {
@@ -16361,7 +16361,7 @@ ObjectInfo Compiler::Expression :: boxArgumentLocally(ObjectInfo info,
          else return info;
       case ObjectKind::EncapseField:
       case ObjectKind::EncapseFieldAddress:
-         return boxEncapseField(info, stackSafe & !forced);
+         return boxEncapseField(info, stackSafe && !forced);
       default:
          return info;
    }

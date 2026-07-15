@@ -30,7 +30,7 @@ In development:
   ====================================== 
   * backlog
   ====================================== 
-  - implement toUInt, toSByte
+  - implement toSByte
   --------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===

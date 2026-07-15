@@ -597,11 +597,17 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
 
    int type = flags & elDebugMask;
    switch (type) {
-      case elDebugDWORD:
-         watch->populateDWORD(&context, _process->getDWORD(address));
+      case elDebugINT:
+         watch->populateINT(&context, _process->getDWORD(address));
          break;
-      case elDebugQWORD:
-         watch->populateQWORD(&context, _process->getQWORD(address));
+      case elDebugUINT:
+         watch->populateUINT(&context, _process->getDWORD(address));
+         break;
+      case elDebugLONG:
+         watch->populateLONG(&context, _process->getQWORD(address));
+         break;
+      case elDebugULONG:
+         watch->populateULONG(&context, _process->getQWORD(address));
          break;
       case elDebugFLOAT64:
          watch->populateFLOAT64(&context, _process->getFLOAT64(address));

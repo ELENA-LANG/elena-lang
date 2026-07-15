@@ -39,7 +39,7 @@ namespace elena_lang
    // --- ELENA Module structure constants ---
    constexpr auto ELENA_SIGNITURE = "ELENA.";            // the stand alone image
    constexpr auto ELENA_VM_SIGNITURE = "VM.ELENA.";      // the stand alone image
-   constexpr auto MODULE_SIGNATURE = "ELENA.0700";       // the module version
+   constexpr auto MODULE_SIGNATURE = "ELENA.0701";       // the module version
    constexpr auto DEBUG_MODULE_SIGNATURE = "ED.06";
 
    // --- ELENA core module names ---
@@ -173,19 +173,24 @@ namespace elena_lang
    constexpr ref_t elTemplatebased = 0x40000000;
    constexpr ref_t elWithOutputList = 0x80000000; // NOTE : this flag is set automatically by JIT linker
 
-   constexpr ref_t elDebugMask = 0x001F0000;
-   constexpr ref_t elDebugDWORD = 0x00010000;
-   constexpr ref_t elDebugQWORD = 0x00020000;
-   constexpr ref_t elDebugFLOAT64 = 0x00030000;
-   constexpr ref_t elDebugDWORDS = 0x00040000;
-   constexpr ref_t elDebugLiteral = 0x00050000;
-   constexpr ref_t elDebugWideLiteral = 0x00060000;
-   constexpr ref_t elDebugArray = 0x00070000;
-   constexpr ref_t elDebugFLOAT64S = 0x00080000;
-   constexpr ref_t elDebugBytes = 0x00090000;
-   constexpr ref_t elProxy = 0x000A0000;
-   constexpr ref_t elInterface = 0x000B0000;
-   constexpr ref_t elWeakInterface = 0x000C0000;
+   constexpr ref_t elDebugMask      = 0x001F0000;
+   // numeric in range from elDebugINT till elDebugULONG
+   constexpr ref_t elDebugINT       = 0x00010000; // signed int32
+   constexpr ref_t elDebugLONG      = 0x00020000; // signed int64
+   constexpr ref_t elDebugFLOAT64   = 0x00030000;
+   constexpr ref_t elDebugDWORDS    = 0x00040000;
+   constexpr ref_t elDebugUINT      = 0x00050000; // unsigned int32
+   constexpr ref_t elDebugULONG     = 0x00060000; //  unsigned int64
+
+   constexpr ref_t elDebugLiteral   = 0x00070000;
+   constexpr ref_t elDebugWideLiteral = 0x00080000;
+   constexpr ref_t elDebugArray     = 0x00090000;
+   constexpr ref_t elDebugFLOAT64S  = 0x000A0000;
+   constexpr ref_t elDebugBytes     = 0x000B0000;
+
+   constexpr ref_t elProxy          = 0x000C0000;
+   constexpr ref_t elInterface      = 0x000D0000;
+   constexpr ref_t elWeakInterface  = 0x000E0000;
 
    // === Global Attributes Types ===
    constexpr auto GA_REFERENCE = 0x1000;

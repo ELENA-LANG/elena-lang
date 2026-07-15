@@ -550,7 +550,7 @@ namespace elena_lang
          return intToStr(value, _string + pos, radix, size - pos);
       }
 
-      bool appendUInt(int value, int radix = 10)
+      bool appendUInt(unsigned int value, int radix = 10)
       {
          size_t pos = getlength(_string);
 
@@ -562,6 +562,13 @@ namespace elena_lang
          size_t pos = getlength(_string);
 
          return longToStr(value, _string + pos, radix, size - pos);
+      }
+
+      bool appendULong(long long value, int radix = 10)
+      {
+         size_t pos = getlength(_string);
+
+         return ulongToStr(value, _string + pos, radix, size - pos);
       }
 
       bool copy(const T* s)

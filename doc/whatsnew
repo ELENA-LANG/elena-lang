@@ -11,6 +11,7 @@
 - SM
 
 - API
+  - [ADDED] extensions toUInt, toSByte (extensions module)
 
 - Scripts
 
@@ -21,3 +22,4 @@
 - IDE
 
 - Misc
+  - [UPDATED] API Docs

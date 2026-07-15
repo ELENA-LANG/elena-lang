@@ -73,16 +73,22 @@ public singleton ByteConvertor
       ^ self.convert(n);
    }
 
+   byte convert(string s) : info("Converts a decimal representation of a string <b>s</b> to a byte value, if it is possible<br/>Otherwise raises an exception OutOfRangeException")
+      <= convert(s, 10);
+
    byte convert(string s, int radix) : info("Converts a string <b>s</b> to a byte value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
-      int n := IntConvertor.convert(s, radix);
+      uint n := UIntConvertor.convert(s, radix);
 
       ^ self.convert(n);
    }
 
+   byte convert(wide s) : info("Converts a decimal representation of a string <b>s</b> to a byte value, if it is possible<br/>Otherwise raises an exception OutOfRangeException")
+      <= convert(s, 10);
+
    byte convert(wide s, int radix) : info("Converts a string <b>s</b> to a byte value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {
-      int n := IntConvertor.convert(s, radix);
+      uint n := UIntConvertor.convert(s, radix);
 
       ^ self.convert(n);
    }
@@ -103,6 +109,26 @@ public singleton SByteConvertor
       self.convert(n, out sbyte b);
 
       ^ b;
+   }
+
+   sbyte convert(string s) : info("Converts a decimal representation of a string <b>s</b> to a signed byte value, if it is possible<br/>Otherwise raises an exception OutOfRangeException")
+      <= convert(s, 10);
+
+   sbyte convert(string s, int radix) : info("Converts a string <b>s</b> to a signed byte value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
+   {
+      int n := IntConvertor.convert(s, radix);
+
+      ^ self.convert(n);
+   }
+
+   sbyte convert(wide s) : info("Converts a decimal representation of a string <b>s</b> to a signed byte value, if it is possible<br/>Otherwise raises an exception OutOfRangeException")
+      <= convert(s, 10);
+
+   sbyte convert(wide s, int radix) : info("Converts a string <b>s</b> to a signed byte value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
+   {
+      int n := IntConvertor.convert(s, radix);
+
+      ^ self.convert(n);
    }
 }
 
@@ -460,6 +486,9 @@ public singleton UIntConvertor
 
       ^ val
    }
+
+   uint convert(wide s) : info("Converts a string <b>s</b> to a 32-bit unsigned integer value in a decimal representation if it is possible<br/>Otherwise raises an exception OutOfRangeException")
+      <= convert(s, 10);
 
    uint convert(wide s, int radix) : info("Converts a string <b>s</b> to a 32-bit unsigned integer value with a specified base value <b>radix</b> if it is possible<br/>Otherwise raises an exception OutOfRangeException")
    {

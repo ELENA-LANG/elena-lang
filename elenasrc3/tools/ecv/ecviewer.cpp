@@ -759,14 +759,20 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
 
    ref_t debugFlag = flags & elDebugMask;
    switch (debugFlag) {
-      case elDebugDWORD:
-         printLineAndCount("@flag ", "elDebugDWORD", row, pageSize);
+      case elDebugINT:
+         printLineAndCount("@flag ", "elDebugINT", row, pageSize);
+         break;
+      case elDebugUINT:
+         printLineAndCount("@flag ", "elDebugUINT", row, pageSize);
          break;
       case elDebugFLOAT64:
          printLineAndCount("@flag ", "elDebugFLOAT64", row, pageSize);
          break;
-      case elDebugQWORD:
-         printLineAndCount("@flag ", "elDebugQWORD", row, pageSize);
+      case elDebugLONG:
+         printLineAndCount("@flag ", "elDebugLONG", row, pageSize);
+         break;
+      case elDebugULONG:
+         printLineAndCount("@flag ", "elDebugULONG", row, pageSize);
          break;
       case elDebugDWORDS:
          printLineAndCount("@flag ", "elDebugDWORDS", row, pageSize);

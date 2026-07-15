@@ -1430,7 +1430,7 @@ bool CompilerLogic :: isNumericData(ref_t flags)
 {
    int dataMask = flags & elDebugMask;
 
-   return dataMask == elDebugDWORD || dataMask == elDebugQWORD || dataMask == elDebugFLOAT64;
+   return dataMask == elDebugINT || dataMask == elDebugLONG || dataMask == elDebugFLOAT64 || dataMask == elDebugUINT || dataMask == elDebugULONG;
 }
 
 bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
@@ -1595,19 +1595,24 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
       auto inner = *info.fields.start();
       switch (inner.typeInfo.typeRef) {
          case V_INT32:
-         case V_UINT32:
          case V_INT8:
-         case V_UINT8:
-         case V_PTR32:
          case V_WORD32:
          case V_INT16:
+            info.header.flags |= elDebugINT;
+            break;
+         case V_PTR32:
+         case V_UINT8:
+         case V_UINT32:
          case V_UINT16:
-            info.header.flags |= elDebugDWORD;
+            info.header.flags |= elDebugUINT;
             break;
          case V_INT64:
-         case V_PTR64:
          case V_WORD64:
-            info.header.flags |= elDebugQWORD;
+            info.header.flags |= elDebugLONG;
+            break;
+         case V_UINT64:
+         case V_PTR64:
+            info.header.flags |= elDebugULONG;
             break;
          case V_FLOAT64:
             info.header.flags |= elDebugFLOAT64;
@@ -1831,10 +1836,14 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
    switch (reference)
    {
       case V_INT64:
-      case V_PTR64:
       case V_WORD64:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = elDebugQWORD | elStructureRole | elReadOnlyRole;
+         info.header.flags = elDebugLONG | elStructureRole | elReadOnlyRole;
+         info.size = 8;
+         break;
+      case V_PTR64:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugULONG | elStructureRole | elReadOnlyRole;
          info.size = 8;
          break;
       case V_FLOAT64:
@@ -1843,23 +1852,35 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 8;
          break;
       case V_INT32:
-      case V_UINT32:
-      case V_PTR32:
       case V_WORD32:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
+         info.header.flags = elDebugINT | elStructureRole | elReadOnlyRole;
+         info.size = 4;
+         break;
+      case V_PTR32:
+      case V_UINT32:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugUINT | elStructureRole | elReadOnlyRole;
          info.size = 4;
          break;
       case V_INT8:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugINT | elStructureRole | elReadOnlyRole;
+         info.size = 1;
+         break;
       case V_UINT8:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
+         info.header.flags = elDebugUINT | elStructureRole | elReadOnlyRole;
          info.size = 1;
          break;
       case V_INT16:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugINT | elStructureRole | elReadOnlyRole;
+         info.size = 2;
+         break;
       case V_UINT16:
          info.header.parentRef = scope.buildins.superReference;
-         info.header.flags = elDebugDWORD | elStructureRole | elReadOnlyRole;
+         info.header.flags = elDebugUINT | elStructureRole | elReadOnlyRole;
          info.size = 2;
          break;
       case V_INT8ARRAY:

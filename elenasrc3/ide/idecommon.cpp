@@ -34,7 +34,7 @@ void* ContextBrowserBase :: addOrUpdateDWORD(WatchContext* context, ustr_t varia
 
    WatchContext dwordContext = { item };
 
-   populateDWORD(&dwordContext, value);
+   populateINT(&dwordContext, value);
 
    return item;
 }
@@ -79,7 +79,7 @@ void* ContextBrowserBase :: addOrUpdateBYTE(WatchContext* context, ustr_t variab
 
    WatchContext dwordContext = { item };
 
-   populateDWORD(&dwordContext, value);
+   populateINT(&dwordContext, value);
 
    return item;
 }
@@ -98,7 +98,7 @@ void ContextBrowserBase :: populateWORD(WatchContext* context, unsigned short va
 
 }
 
-void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned int value)
+void ContextBrowserBase :: populateINT(WatchContext* context, int value)
 {
    String<char, 20> number;
    if (_model->hexadecimalMode) {
@@ -109,7 +109,6 @@ void ContextBrowserBase :: populateDWORD(WatchContext* context, unsigned int val
 
    clearNode(context->root);
    populateNode(context->root, number.str());
-
 }
 
 void ContextBrowserBase :: populateUINT(WatchContext* context, unsigned int value)
@@ -150,12 +149,12 @@ void* ContextBrowserBase :: addOrUpdateQWORD(WatchContext* context, ustr_t varia
 
    WatchContext dwordContext = { item };
 
-   populateQWORD(&dwordContext, value);
+   populateLONG(&dwordContext, value);
 
    return item;
 }
 
-void ContextBrowserBase :: populateQWORD(WatchContext* context, long long value)
+void ContextBrowserBase :: populateLONG(WatchContext* context, long long value)
 {
    String<char, 40> number;
    if (_model->hexadecimalMode) {
@@ -163,6 +162,19 @@ void ContextBrowserBase :: populateQWORD(WatchContext* context, long long value)
       number.append('h');
    }
    else number.appendLong(value);
+
+   clearNode(context->root);
+   populateNode(context->root, number.str());
+}
+
+void ContextBrowserBase :: populateULONG(WatchContext* context, unsigned long long value)
+{
+   String<char, 40> number;
+   if (_model->hexadecimalMode) {
+      number.appendLongHex(value);
+      number.append('h');
+   }
+   else number.appendULong(value);
 
    clearNode(context->root);
    populateNode(context->root, number.str());

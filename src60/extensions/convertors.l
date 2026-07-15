@@ -287,12 +287,37 @@ public extension intConvertOp
      = IntConvertor.convert(self, radix);
 }
 
+// --- uintConvertOp ---
+
+public extension uintConvertOp
+{
+   uint toUInt()
+     = UIntConvertor.convert(self);
+
+   uint toUInt(int radix)
+     = UIntConvertor.convert(self, radix);
+}
+
 // --- byteConvertOp ---
 
 public extension byteConvertOp
 {
    byte toByte()
      = ByteConvertor.convert(self);
+     
+   byte toByte(int radix)
+     = ByteConvertor.convert(self, radix);
+}
+
+// --- sbyteConvertOp ---
+
+public extension sbyteConvertOp
+{
+   sbyte toByte()
+     = SByteConvertor.convert(self);
+     
+   sbyte toByte(int radix)
+     = SByteConvertor.convert(self, radix);
 }
 
 // --- shortConvertOp ---

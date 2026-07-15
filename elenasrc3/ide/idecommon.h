@@ -163,8 +163,8 @@ namespace elena_lang
    struct MessageLogInfo
    {
       path_t path;
-      int    row;
-      int    column;
+      int    row = 0;
+      int    column = 0;
    };
 
    class ErrorLogBase
@@ -229,9 +229,10 @@ namespace elena_lang
       virtual void removeUnused(WatchItems& refreshedItems) = 0;
 
       virtual void populateWORD(WatchContext* root, unsigned short value);
-      virtual void populateDWORD(WatchContext* root, unsigned int value);
+      virtual void populateINT(WatchContext* root, int value);
       virtual void populateUINT(WatchContext* root, unsigned int value);
-      virtual void populateQWORD(WatchContext* root, long long value);
+      virtual void populateLONG(WatchContext* root, long long value);
+      virtual void populateULONG(WatchContext* root, unsigned long long value);
       virtual void populateFLOAT64(WatchContext* root, double value);
       virtual void populateString(WatchContext* root, const char* value);
       virtual void populateWideString(WatchContext* root, const wide_c* value);

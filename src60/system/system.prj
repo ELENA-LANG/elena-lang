@@ -17,7 +17,7 @@
     </platform>
     <project>
         <executable></executable>
-        <options>-v</options>
+        <options></options>
         <namespace>system</namespace>
         <template>lib60</template>
     </project>
