@@ -28,9 +28,9 @@ In development:
   --------------------------------------
   - provide descriptions for all classes (from culture)
   ====================================== 
-  * backlog
+  * current : #862 - dictionaryBucketGrowthTest fails in Linux Nightly Build
   ====================================== 
-  - implement toSByte
+  - review
   --------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===
