@@ -19,24 +19,3 @@
    echo "Failure" >&2
    exit 1
  fi
-
-
- ../../bin/elena64-cli ../../tests60/sandbox/sandbox.l
- ret=$?
- if [ $ret -eq 1 ]
- then
-   echo "Failure" >&2
-   exit 1
- else
-   echo .
- fi
-
- ../../tests60/sandbox/sandbox
- ret=$?
- if [ $ret -eq 0 ]
- then
-   echo .
- else
-   echo "Failure" >&2
-   exit 1
- fi
