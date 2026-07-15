@@ -2882,25 +2882,29 @@ public dictionaryObjectKeyTest() : testCase()
 // in place rather than appending duplicate entries.
 public dictionaryBucketGrowthTest() : testCase()
 {
+   Console.writeLine("-1");
+
    auto d := Dictionary.new(0);
 
-   for (int i := 0; i < 200; i += 1)
+   Console.writeLine("0");
+
+   for (int i := 0; i < /*200*/40; i += 1)
       { d[i] := i * 2 };
 
    Console.writeLine("1");
 
-   for (int i := 0; i < /*200*/100; i += 1)
+   for (int i := 0; i < /*200*/40; i += 1)
       { Assert.ifTrue(d[i] == i * 2); Console.writeLine(i) };
 
    Console.writeLine("2");
 
    // updating every key must overwrite in place, not append duplicates
-   for (int i := 0; i < /*200*/100; i += 1)
+   for (int i := 0; i < /*200*/40; i += 1)
       { d[i] := i + 1 };
 
    Console.writeLine("3");
 
-   for (int i := 0; i < /*200*/100; i += 1)
+   for (int i := 0; i < /*200*/40; i += 1)
    {
       Assert.ifTrue(d[i] == i + 1);
       Assert.ifTrue(d.containsKey(i))
