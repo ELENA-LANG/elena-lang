@@ -7,21 +7,21 @@ namespace calendar
    const IntNumber DATE_LONGDATE   = 00000002h;
     
    // --- SystemTime ---
-   public sealed const struct SystemTime : BaseValue
+   public sealed const struct SystemTime : BaseValue, info("An system time")
    {
       embeddable __word _value[8];
 
       private assign(long value) : external(system'core_routines'__st_assign);
 
-      static SystemTime Default
+      static SystemTime Default : info("Returns a default system time")
          = 0l;
 
-      constructor(long value)
+      constructor(long value) : info("Initializes a system time with the number of 100-nanosecond intervals since January 1, 1601 (UTC)")
       {
          self.assign(value);
       }
 
-      constructor(SystemTime value)
+      constructor(SystemTime value) : info("Creates a copy of the system time")
          = value;
 
       internal constructor loadAsTimespan(int days, int hours, int minutes, int seconds)
@@ -47,15 +47,15 @@ namespace calendar
          self.assign(value);         
       }
 
-      get long Value()
+      get long Value() : info("Returns the system time as a number of 100-nanosecond intervals since January 1, 1601")
       {
          ^ _value
       }
 
-      bool equal(SystemTime operand)
+      bool equal(SystemTime operand) : info("Returns true if the system time equals to <b>operand</b>")
          = _value == operand;
     
-      bool less(SystemTime operand)
+      bool less(SystemTime operand) : info("Returns true if the system time less than <b>operand</b>")
       {
          long n1 := self.Value;
          long n2 := operand.Value;
@@ -63,7 +63,7 @@ namespace calendar
          ^ n1 < n2;
       }
     
-      SystemTime subtract(SystemTime operand)
+      SystemTime subtract(SystemTime operand) : info("Returns a difference between the system time and <b>operand</b>")
       {
          long n1 := self.Value;
          long n2 := operand.Value;
@@ -73,7 +73,7 @@ namespace calendar
          ^ new SystemTime(n1)
       }
     
-      SystemTime add(SystemTime operand)
+      SystemTime add(SystemTime operand) : info("Returns a sum of the system time and <b>operand</b>")
       {
          long n1 := self.Value;
          long n2 := operand.Value;
@@ -85,7 +85,7 @@ namespace calendar
    }
 
    // --- TimeStruct ---
-   public sealed struct TimeStruct
+   public sealed struct TimeStruct : info("A date / time structure")
    {
       short _year;
       short _month;
@@ -101,12 +101,12 @@ namespace calendar
          extern KERNEL32.FileTimeToSystemTime(ref fileTime, self)
       }
 
-      constructor(SystemTime time)
+      constructor(SystemTime time) : info("Initializes the date/time structure by a system time")
       {
          self.init(time)
       }
 
-      constructor()
+      constructor() : info("Creates an empty structure")
       {
          _year := 0;
          _month := 0;
@@ -118,7 +118,7 @@ namespace calendar
          _millisecond := 0;
       }
 
-      int Year
+      int Year : info("A year component of the date/time structure")
       {
          get()
          {
@@ -135,7 +135,7 @@ namespace calendar
          }
       }
     
-      int Month
+      int Month : info("A month component of the date/time structure")
       {
          get()
          {
@@ -152,7 +152,7 @@ namespace calendar
          }
       }
     
-      int DayOfWeek
+      int DayOfWeek : info("A day of week component of the date/time structure")
       {
          get()
          {
@@ -162,7 +162,7 @@ namespace calendar
          }
       }
     
-      int Day
+      int Day : info("A day component of the date/time structure")
       {
          get()
          {
@@ -179,7 +179,7 @@ namespace calendar
          }
       }
     
-      int Hour
+      int Hour : info("An hour component of the date/time structure")
       {
          get()
          {
@@ -195,7 +195,7 @@ namespace calendar
          }
       }
     
-      int Minute
+      int Minute : info("An minute component of the date/time structure")
       {
          get()
          {
@@ -212,7 +212,7 @@ namespace calendar
          }
       }
     
-      int Second
+      int Second : info("A second component of the date/time structure")
       {
          get()
          {
@@ -229,7 +229,7 @@ namespace calendar
          }
       }
     
-      int Millisecond
+      int Millisecond : info("A millisecond component of the date/time structure")
       {
          get()
          {
@@ -246,7 +246,7 @@ namespace calendar
          }
       }
 
-      readTo(out SystemTime retVal)
+      readTo(out SystemTime retVal) : info("Converts the date / time structure into a system time")
       {
          SystemTime value := 0l;
          extern KERNEL32.SystemTimeToFileTime(self, ref value);
@@ -306,16 +306,16 @@ namespace calendar
          ^ WideString.fromShortArray(0, length - 1, buffer)
       }
 
-      wide toShortDate()
+      wide toShortDate() : info("Returns a short date representation of the date / time structure")
          = self.dateToWide(DATE_SHORTDATE);
 
-      wide toShortTime()
+      wide toShortTime() : info("Returns a short time representation of the date / time structure")
          = self.timeToWide(0);
 
-      retoverload string toShortDate()
+      retoverload string toShortDate() : info("Returns a short date representation of the date / time structure")
          = self.dateToString(DATE_SHORTDATE);
 
-      retoverload string toShortTime()
+      retoverload string toShortTime() : info("Returns a short time representation of the date / time structure")
          = self.timeToString(0);
 
    }
@@ -325,15 +325,15 @@ namespace calendar
    const int TMSize = 44;
    
    // --- SystemTime ---
-   public sealed const struct SystemTime : BaseValue
+   public sealed const struct SystemTime : BaseValue, info("A system time")
    {
       int tv_sec;
       int tv_usec;
 
-      static SystemTime Default
+      static SystemTime Default : info("Returns a default system time")
          = 0l;
 
-      constructor(long nanosec)
+      constructor(long nanosec) : info("Initializes a system time with the number of nanosecond intervals since January 1, 1970 (UTC)")
       {
          long secs := nanosec / 1000000000l;
             
@@ -369,7 +369,7 @@ namespace calendar
          tv_usec := 0;
       }
 
-      constructor(SystemTime value)
+      constructor(SystemTime value) : info("Creates a copy of the system time")
          = value;
 
       internal constructor new(int seconds, int microSeconds)
@@ -389,7 +389,7 @@ namespace calendar
          microSeconds := tv_usec;
       }
 
-      bool equal(SystemTime operand)
+      bool equal(SystemTime operand) : info("Returns true if the system time equals to <b>operand</b>")
       {
          operand.read(out int sec, out int usec);
             
@@ -399,7 +399,7 @@ namespace calendar
          ^ false            
       }
     
-      bool less(SystemTime operand)
+      bool less(SystemTime operand) : info("Returns true if the system time less than <b>operand</b>")
       {
          operand.read(out int sec, out int usec);
             
@@ -411,7 +411,7 @@ namespace calendar
     
       long cast() = self.Value;
 
-      get long Value()
+      get long Value() : info("Returns the system time as a number of nanosecond intervals since January 1, 1970")
       {
          long l := LongConvertor.convert(tv_sec);
                 
@@ -425,7 +425,7 @@ namespace calendar
          ^ l
       }
     
-      SystemTime subtract(SystemTime operand)
+      SystemTime subtract(SystemTime operand) : info("Returns a difference between the system time and <b>operand</b>")
       {
          operand.read(out int sec, out int usec);
             
@@ -438,7 +438,7 @@ namespace calendar
          ^ SystemTime.new(tv_sec - sec, ms);
       }
     
-      SystemTime add(SystemTime operand)
+      SystemTime add(SystemTime operand) : info("Returns a sum of the system time and <b>operand</b>")
       {
          operand.read(out int sec, out int usec);
             
@@ -452,7 +452,7 @@ namespace calendar
    }
 
    // --- TimeStruct ---
-   public sealed struct TimeStruct
+   public sealed struct TimeStruct : info("A date / time structure")
    {
       int tm_sec;         /* seconds */
       int tm_min;         /* minutes */
@@ -469,17 +469,17 @@ namespace calendar
         
       int tm_usec;        
 
-      constructor(SystemTime time)
+      constructor(SystemTime time) : info("Initializes the date/time structure by a system time")
       {
          self.write(time)
       }
 
-      constructor()
+      constructor() : info("Creates an empty structure")
       {
          tm_isdst := -1
       }
 
-      int Year
+      int Year : info("A year component of the date/time structure")
       {
          get()
          {
@@ -497,7 +497,7 @@ namespace calendar
          }
       }
     
-      int Month
+      int Month : info("A month component of the date/time structure")
       {
          get()
          {
@@ -515,7 +515,7 @@ namespace calendar
          }
       }
     
-      int DayOfWeek
+      int DayOfWeek : info("A day of week component of the date/time structure")
       {
          get()
          {
@@ -525,7 +525,7 @@ namespace calendar
          }
       }
     
-      int Day
+      int Day : info("A day component of the date/time structure")
       {
          get()
          {
@@ -542,7 +542,7 @@ namespace calendar
          }
       }
     
-      int Hour
+      int Hour : info("An hour component of the date/time structure")
       {
          get()
          {
@@ -558,7 +558,7 @@ namespace calendar
          }
       }
     
-      int Minute
+      int Minute : info("An minute component of the date/time structure")
       {
          get()
          {
@@ -575,7 +575,7 @@ namespace calendar
          }
       }
     
-      int Second
+      int Second : info("A second component of the date/time structure")
       {
          get()
          {
@@ -592,7 +592,7 @@ namespace calendar
          }
       }
     
-      int Millisecond
+      int Millisecond : info("A millisecond component of the date/time structure")
       {
          get()
          {
@@ -610,7 +610,7 @@ namespace calendar
          }
       }
 
-      readTo(out SystemTime retVal)
+      readTo(out SystemTime retVal) : info("Converts the date / time structure into a system time")
       {
          // HOTFIX
          tm_isdst := -1;
@@ -641,7 +641,7 @@ namespace calendar
          tm_usec := tmp
       }
 
-      string toShortDate()
+      string toShortDate() : info("Returns a short date representation of the date / time structure")
       {
          int year := self.Year;
          int month := self.Month;
@@ -651,7 +651,7 @@ namespace calendar
                + "." + year.toPrintable().padLeft($48, 2)
       }
     
-      string toShortTime()
+      string toShortTime() : info("Returns a short time representation of the date / time structure")
       {
          ^ tm_hour.toPrintable().padLeft($48, 2)
                + ":" + tm_min.toPrintable().padLeft($48, 2)
@@ -664,15 +664,15 @@ namespace calendar
    const int TMSize = 56;
    
    // --- SystemTime ---
-   public sealed const struct SystemTime : BaseValue
+   public sealed const struct SystemTime : BaseValue, info("A system time")
    {
       long tv_sec;
       long tv_usec;
 
-      static SystemTime Default
+      static SystemTime Default : info("Returns a default system time")
          = 0l;
 
-      constructor(long nanosec)
+      constructor(long nanosec) : info("Initializes a system time with the number of nanosecond intervals since January 1, 1970 (UTC)")
       {
          long secs := nanosec / 1000000000l;
             
@@ -705,7 +705,7 @@ namespace calendar
          tv_usec := 0;
       }
 
-      constructor(SystemTime value)
+      constructor(SystemTime value) : info("Creates a copy of the system time")
          = value;
 
       internal constructor new(long seconds, long microSeconds)
@@ -725,7 +725,7 @@ namespace calendar
          microSeconds := tv_usec;
       }
 
-      bool equal(SystemTime operand)
+      bool equal(SystemTime operand) : info("Returns true if the system time equals to <b>operand</b>")
       {
          operand.read(ref long sec, ref long usec);
             
@@ -735,7 +735,7 @@ namespace calendar
          ^ false            
       }
     
-      bool less(SystemTime operand)
+      bool less(SystemTime operand) : info("Returns true if the system time less than <b>operand</b>")
       {
          operand.read(ref long sec, ref long usec);
             
@@ -747,7 +747,7 @@ namespace calendar
     
       long cast() = self.Value;
 
-      get long Value()
+      get long Value() : info("Returns the system time as a number of nanosecond intervals since January 1, 1970")
       {
          long l := tv_sec;
                 
@@ -761,7 +761,7 @@ namespace calendar
          ^ l
       }
     
-      SystemTime subtract(SystemTime operand)
+      SystemTime subtract(SystemTime operand) : info("Returns a difference between the system time and <b>operand</b>")
       {
          operand.read(ref long sec, ref long usec);
             
@@ -774,7 +774,7 @@ namespace calendar
          ^ SystemTime.new(tv_sec - sec, ms);
       }
     
-      SystemTime add(SystemTime operand)
+      SystemTime add(SystemTime operand) : info("Returns a sum of the system time and <b>operand</b>")
       {
          operand.read(ref long sec, ref long usec);
             
@@ -789,7 +789,7 @@ namespace calendar
 
 
    // --- TimeStruct ---
-   public sealed struct TimeStruct
+   public sealed struct TimeStruct : info("A date / time structure")
    {
       int tm_sec;         /* seconds */
       int tm_min;         /* minutes */
@@ -806,17 +806,17 @@ namespace calendar
         
       long tm_usec;        
 
-      constructor(SystemTime time)
+      constructor(SystemTime time) : info("Initializes the date/time structure by a system time")
       {
          self.write(time)
       }
 
-      constructor()
+      constructor() : info("Creates an empty structure")
       {
          tm_isdst := -1
       }
 
-      int Year
+      int Year : info("A year component of the date/time structure")
       {
          get()
          {
@@ -834,7 +834,7 @@ namespace calendar
          }
       }
     
-      int Month
+      int Month : info("A month component of the date/time structure")
       {
          get()
          {
@@ -852,7 +852,7 @@ namespace calendar
          }
       }
     
-      int DayOfWeek
+      int DayOfWeek : info("A day of week component of the date/time structure")
       {
          get()
          {
@@ -862,7 +862,7 @@ namespace calendar
          }
       }
     
-      int Day
+      int Day : info("A day component of the date/time structure")
       {
          get()
          {
@@ -879,7 +879,7 @@ namespace calendar
          }
       }
     
-      int Hour
+      int Hour : info("An hour component of the date/time structure")
       {
          get()
          {
@@ -895,7 +895,7 @@ namespace calendar
          }
       }
     
-      int Minute
+      int Minute : info("An minute component of the date/time structure")
       {
          get()
          {
@@ -912,7 +912,7 @@ namespace calendar
          }
       }
     
-      int Second
+      int Second : info("A second component of the date/time structure")
       {
          get()
          {
@@ -929,7 +929,7 @@ namespace calendar
          }
       }
     
-      int Millisecond
+      int Millisecond : info("A millisecond component of the date/time structure")
       {
          get()
          {
@@ -950,7 +950,7 @@ namespace calendar
          }
       }
 
-      readTo(ref SystemTime retVal)
+      readTo(ref SystemTime retVal) : info("Converts the date / time structure into a system time")
       {
          // HOTFIX
          tm_isdst := -1;
@@ -981,7 +981,7 @@ namespace calendar
          tm_usec := tmp
       }
 
-      string toShortDate()
+      string toShortDate() : info("Returns a short date representation of the date / time structure")
       {
          int year := self.Year;
          int month := self.Month;
@@ -991,7 +991,7 @@ namespace calendar
                + "." + year.toPrintable().padLeft($48, 2)
       }
     
-      string toShortTime()
+      string toShortTime() : info("Returns a short time representation of the date / time structure")
       {
          ^ tm_hour.toPrintable().padLeft($48, 2)
                + ":" + tm_min.toPrintable().padLeft($48, 2)
@@ -1028,9 +1028,9 @@ namespace calendar
 
 #elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
-   public singleton systemTimeFactory
+   public singleton systemTimeFactory : info("A current device system time helper")
    {
-      SystemTime getUtcNow()
+      SystemTime getUtcNow() : info("Returns the current system time")
       {
          SystemTime time := 0l;        
          extern libc.gettimeofday(time, 0);
@@ -1043,7 +1043,7 @@ namespace calendar
          ^ time
       }
         
-      SystemTime getNow()
+      SystemTime getNow() : info("Returns the current local time")
       {
          SystemTime time := 0l;
          extern libc.gettimeofday(time, 0);

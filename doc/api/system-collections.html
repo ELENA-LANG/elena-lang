@@ -36,7 +36,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ArrayList</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ArrayList</SPAN><BR/>
+<I>A weak indexable collection</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -107,6 +108,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
+<div class="block">
+Creates an empty collection with preallocated space</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -116,6 +119,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>allocate()
 </CODE>
+<div class="block">
+Creates an empty collection with preallocated space for 32 items</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -125,6 +130,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty collection</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -134,6 +141,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>fromArray(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> array, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> length)
 </CODE>
+<div class="block">
+Copies first <b>length</b> elements of a weak array <b>a</b> into the collection</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -143,6 +152,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>load(o)
 </CODE>
+<div class="block">
+Copies a weak enumerable object <b>o</b> into the collection</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -152,6 +163,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>load(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> a)
 </CODE>
+<div class="block">
+Copies a weak array <b>a</b> into the collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -172,6 +185,8 @@ system'collections'ArrayList</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the number of elements in the collection</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -180,6 +195,8 @@ system'collections'ArrayList</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns a shallow copy of the collection as a weak array</div>
 </TD>
 </TR>
 </TABLE>
@@ -221,6 +238,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>append(item)
 </CODE>
+<div class="block">
+Appends a new object to the end of the list</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -230,6 +249,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>appendRange(subarray)
 </CODE>
+<div class="block">
+Appends all emenents of an array <b>subarray</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -239,6 +260,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>appendRange(<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexable">Indexable</A></SPAN> indexable)
 </CODE>
+<div class="block">
+Appends all emenents of an <b>indexable</b> object</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -248,6 +271,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns the element at a position <b>index</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -257,6 +282,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all elements of the collection</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -266,6 +293,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+<div class="block">
+Returns a shallow copy of the collection</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -275,6 +304,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the collection enumerator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -284,6 +315,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the collection indexer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -293,6 +326,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
+<div class="block">
+Inserts an element <b>object</b> to the specified position <b>index</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -302,6 +337,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Removes an element at the specified position <b>index</b></div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -320,6 +357,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+Assigns <b>o</b> to the element at the position <b>index</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -329,6 +368,8 @@ system'collections'ArrayList</LI>
 <TD CLASS="colLast">
 <CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
 </CODE>
+<div class="block">
+Removes the last <b>pos</b> elements of the collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -349,7 +390,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">ArrayListIndexer</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">ArrayListIndexer</SPAN><BR/>
+<I>A weak collection indexer</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -412,6 +454,8 @@ system'collections'ArrayListIndexer</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN> list)
 </CODE>
+<div class="block">
+Creates an indexer of <b>list</b> weak collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -432,6 +476,8 @@ system'collections'ArrayListIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Available()</CODE>
+<div class="block">
+Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -440,6 +486,8 @@ system'collections'ArrayListIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -449,6 +497,8 @@ system'collections'ArrayListIndexer</LI>
 <TD CLASS="colLast">
 <CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -457,6 +507,8 @@ system'collections'ArrayListIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the length of the indexed weak collection</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -465,6 +517,8 @@ system'collections'ArrayListIndexer</LI>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns the indexed element</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -474,6 +528,8 @@ system'collections'ArrayListIndexer</LI>
 <TD CLASS="colLast">
 <CODE>Value(o)
 </CODE>
+<div class="block">
+Set the element at the current index</div>
 </TD>
 </TR>
 </TABLE>
@@ -495,6 +551,8 @@ system'collections'ArrayListIndexer</LI>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> n)
 </CODE>
+<div class="block">
+Increases the current index by parameter **index**</div>
 </TD>
 </TR>
 </TABLE>
@@ -515,7 +573,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Dictionary</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Dictionary</SPAN><BR/>
+<I>A weak dictionary class</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -594,6 +653,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates a dictionary</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -603,6 +664,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
 </CODE>
+<div class="block">
+Creates a dictionary with the specified default value</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -612,6 +675,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
 </CODE>
+<div class="block">
+Creates a dictionary with the specified default value and the preallocated space</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -621,6 +686,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> hashLength, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> default)
 </CODE>
+<div class="block">
+Creates a dictionary with the specified default value and the preallocated space</div>
 </TD>
 </TR>
 </TABLE>
@@ -641,6 +708,8 @@ system'collections'Dictionary</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#ArrayList">ArrayList</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Values()</CODE>
+<div class="block">
+Returns an array of key-value pairs</div>
 </TD>
 </TR>
 </TABLE>
@@ -662,6 +731,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key)
 </CODE>
+<div class="block">
+Returns a dictionary element with <b>key</b></div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -671,6 +742,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Clears the dictionary content</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -680,6 +753,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+<div class="block">
+Makes a shallow copy a dictionary</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -689,6 +764,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>containsKey(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key)
 </CODE>
+<div class="block">
+Returns true if the dictionary element with <b>key</b> exists in the dictionary</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -698,6 +775,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns a dictionary enumerator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -707,6 +786,8 @@ system'collections'Dictionary</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
+<div class="block">
+Adds or updates a dictionary element with <b>key</b></div>
 </TD>
 </TR>
 </TABLE>
@@ -727,7 +808,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">List</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">List</SPAN><BR/>
+<I>A list of objects</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -798,6 +880,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates a weak linked list</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -807,6 +891,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Array">Array</A></SPAN> l)
 </CODE>
+<div class="block">
+Copies an array</div>
 </TD>
 </TR>
 </TABLE>
@@ -827,6 +913,8 @@ system'collections'List</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the list length</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -856,6 +944,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>append(object)
 </CODE>
+<div class="block">
+Appends an element</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -865,6 +955,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns the element at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -874,6 +966,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all list elements</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -883,6 +977,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>clone()
 </CODE>
+<div class="block">
+Creates a shallow copy of the list</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -892,6 +988,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the list enumerator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -910,6 +1008,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the list indexer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -919,6 +1019,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>insert(object)
 </CODE>
+<div class="block">
+Inserts an element at the list top</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -928,6 +1030,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
+<div class="block">
+Inserts a new object to the specified position</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -937,6 +1041,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Removes an object at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -946,6 +1052,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>removeAt(index)
 </CODE>
+<div class="block">
+Removes an object at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -955,6 +1063,8 @@ system'collections'List</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> object)
 </CODE>
+<div class="block">
+Sets the element at the specified position</div>
 </TD>
 </TR>
 </TABLE>
@@ -1554,7 +1664,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Queue</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Queue</SPAN><BR/>
+<I>A weak FIFO list</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -1625,6 +1736,8 @@ system'collections'Queue</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty queue</div>
 </TD>
 </TR>
 </TABLE>
@@ -1645,6 +1758,8 @@ system'collections'Queue</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the queue length</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1702,6 +1817,8 @@ system'collections'Queue</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all elements from the queue</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1711,6 +1828,8 @@ system'collections'Queue</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the queue enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1720,6 +1839,8 @@ system'collections'Queue</LI>
 <TD CLASS="colLast">
 <CODE>peek()
 </CODE>
+<div class="block">
+Returns an element at the queue top without removing it from the queue<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1729,6 +1850,8 @@ system'collections'Queue</LI>
 <TD CLASS="colLast">
 <CODE>pop()
 </CODE>
+<div class="block">
+Returns an element at the queue top and removes it from the queue<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1738,6 +1861,8 @@ system'collections'Queue</LI>
 <TD CLASS="colLast">
 <CODE>push(object)
 </CODE>
+<div class="block">
+Puts an element at the queue end</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1747,6 +1872,8 @@ system'collections'Queue</LI>
 <TD CLASS="colLast">
 <CODE>shift(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> offset)
 </CODE>
+<div class="block">
+Moves the element at the queue top down by <b>offset</b> positions</div>
 </TD>
 </TR>
 </TABLE>
@@ -1983,7 +2110,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">SortedArrayList</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">SortedArrayList</SPAN><BR/>
+<I>A sorted weak list of key-value pairs</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -2062,6 +2190,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
 </CODE>
+<div class="block">
+Creates an empty list sorted by ascending key with pre-allocated slots</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2071,6 +2201,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN> comparator)
 </CODE>
+<div class="block">
+Creates an empty list with a custom oredering function with pre-allocated slots<br/>The function returns -1 if a pair of item keys is ordered, 0 if they are equal and 1 otherwise</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2080,6 +2212,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>allocate()
 </CODE>
+<div class="block">
+Creates an empty list sorted by ascending key with 32 pre-allocated slots</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2089,6 +2223,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty list sorted by ascending key</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2098,6 +2234,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN> comparator)
 </CODE>
+<div class="block">
+Creates an empty list with a custom oredering function<br/>The function returns -1 if a pair of item keys is ordered, 0 if they are equal and 1 otherwise</div>
 </TD>
 </TR>
 </TABLE>
@@ -2118,6 +2256,8 @@ system'collections'SortedArrayList</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the number of elements in the list</div>
 </TD>
 </TR>
 </TABLE>
@@ -2139,6 +2279,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
 </CODE>
+<div class="block">
+Adds a key-value pair, the position of the element is defined by key using the given comparator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2148,6 +2290,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns the value of a key-value pair at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2157,6 +2301,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all key-value paires</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2166,6 +2312,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the list enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2175,6 +2323,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the list indexer</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2184,6 +2334,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Removes a key-value pair at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2193,6 +2345,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
+<div class="block">
+Sets the value of a key-value pair at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2202,6 +2356,8 @@ system'collections'SortedArrayList</LI>
 <TD CLASS="colLast">
 <CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
 </CODE>
+<div class="block">
+Removes the last <b>pos</b> key-value pairs of the collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -2222,7 +2378,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">SortedList</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">SortedList</SPAN><BR/>
+<I>A sorted generic list of key value pairs</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -2293,6 +2450,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>new()
 </CODE>
+<div class="block">
+Creates a weak-typed list sorted by ascending value</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2302,6 +2461,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;system'Object,system'Object,system'IntNumber&gt;</A></SPAN> comparator)
 </CODE>
+<div class="block">
+Creates a weak-typed list with a custom sort function<br/>A function must return -1 if in the right order, 1 if the order is opposite and 0 if they are the same</div>
 </TD>
 </TR>
 </TABLE>
@@ -2330,6 +2491,8 @@ system'collections'SortedList</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the number of elements in the collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -2351,6 +2514,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
 </CODE>
+<div class="block">
+Appends a new key-value element to the end of the list<br/>The element position is defined by its sorted order</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2360,6 +2525,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Returns the value at a position <b>index</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2369,6 +2536,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the collection enumerator</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2378,6 +2547,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>indexer()
 </CODE>
+<div class="block">
+Returns the collection indexer</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2387,6 +2558,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>indexOfKey(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> key)
 </CODE>
+<div class="block">
+Returns the element position based on its key value<br/>If there is no element with the specified key, it returns -1</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2396,6 +2569,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>removeAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Removes the element at the specified position</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2405,274 +2580,8 @@ system'collections'SortedList</LI>
 <TD CLASS="colLast">
 <CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> item)
 </CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<HR>
-</DIV>
-<A NAME="SortedList&lt;T1,T2&gt;">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'collections'</DIV>
-<H2 title="SortedList&lt;T1,T2&gt;" class="title">SortedList&lt;T1,T2&gt;</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">SortedList&lt;T1,T2&gt;</SPAN><BR/>
-<I>A sorted strong typed list of key-value pairs</I></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerable&lt;T1&gt;">system'Enumerable&lt;T2&gt;</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'collections'SortedList&lt;T1,T2&gt;</LI>
-</UL>
-</LI>
-</UL>
-</LI>
-</UL>
-<!-- ========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'collections'VarTuple&lt;T1,T2&gt;<I>[]</I></A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_array</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_length</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_capacity</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>_comparator</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity)
-</CODE>
 <div class="block">
-Creates an empty list sorted by ascending key with pre-allocated slots</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>allocate(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> capacity, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN> comparator)
-</CODE>
-<div class="block">
-Creates an empty list with a custom oredering function with pre-allocated slots<br/>The function returns -1 if a pair of items is ordered, 0 if they are equal and 1 otherwise</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>allocate()
-</CODE>
-<div class="block">
-Creates an empty list sorted by ascending value with 32 pre-allocated slots</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-<div class="block">
-Creates an empty list sorted by an ascending key</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#SortedList&lt;T1,T2&gt;">SortedList&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1,T2,T3&gt;">Func&lt;T1,T1,system'IntNumber&gt;</A></SPAN> comparator)
-</CODE>
-<div class="block">
-Creates an empty list with a custom oredering function<br/>The function returns -1 if a pair of keys is ordered, 0 if they are equal and 1 otherwise</div>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Property Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Length()</CODE>
-<div class="block">
-Returns the number of elements in the list</div>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>append(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> key, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> item)
-</CODE>
-<div class="block">
-Adds a key-value pair, the position of the element is defined by key using the given comparator</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-<div class="block">
-Returns the value of a key-value pair at the specified position</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>clear()
-</CODE>
-<div class="block">
-Removes all key-value paires</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator&lt;T1&gt;">Enumerator&lt;T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-<div class="block">
-Returns the list enumerator</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Indexer&lt;T1&gt;">Indexer&lt;T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>indexer()
-</CODE>
-<div class="block">
-Returns the list indexer</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>remove(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-<div class="block">
-Removes a key-value pair at the specified position</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o)
-</CODE>
-<div class="block">
-Sets the value of a key-value pair at the specified position</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>trim(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> pos)
-</CODE>
-<div class="block">
-Removes the last <b>pos</b> key-value pairs of the collection</div>
+Sets the element value at a position <b>index</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 </TABLE>
@@ -2693,7 +2602,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">SortedListEnumerator</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">SortedListEnumerator</SPAN><BR/>
+<I>A sorted collection enumerator</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -2764,6 +2674,8 @@ system'collections'SortedListEnumerator</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedList">SortedList</A></SPAN> list)
 </CODE>
+<div class="block">
+Creates an enumerator of <b>list</b> sorted collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -2784,6 +2696,8 @@ system'collections'SortedListEnumerator</LI>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns the current element value</div>
 </TD>
 </TR>
 </TABLE>
@@ -2805,6 +2719,8 @@ system'collections'SortedListEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>enumerable()
 </CODE>
+<div class="block">
+returns the enumerating sorted collection</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2814,6 +2730,8 @@ system'collections'SortedListEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>next()
 </CODE>
+<div class="block">
+Goes to the next enumeration member and returns true if it is not the last member</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2823,6 +2741,8 @@ system'collections'SortedListEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>reset()
 </CODE>
+<div class="block">
+Resets the enumerator</div>
 </TD>
 </TR>
 </TABLE>
@@ -2843,7 +2763,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">SortedListIndexer</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">SortedListIndexer</SPAN><BR/>
+<I>A sorted collection indexer</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -2906,6 +2827,8 @@ system'collections'SortedListIndexer</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#SortedList">SortedList</A></SPAN> list)
 </CODE>
+<div class="block">
+Creates an indexer of <b>list</b> sorted collection</div>
 </TD>
 </TR>
 </TABLE>
@@ -2926,6 +2849,8 @@ system'collections'SortedListIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Available()</CODE>
+<div class="block">
+Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2934,6 +2859,8 @@ system'collections'SortedListIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Index()</CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2943,6 +2870,8 @@ system'collections'SortedListIndexer</LI>
 <TD CLASS="colLast">
 <CODE>Index(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> value)
 </CODE>
+<div class="block">
+Index property</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2951,6 +2880,8 @@ system'collections'SortedListIndexer</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the length of the indexed sorted collection</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2959,6 +2890,8 @@ system'collections'SortedListIndexer</LI>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+The indexed element value getter / setter</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2968,6 +2901,8 @@ system'collections'SortedListIndexer</LI>
 <TD CLASS="colLast">
 <CODE>Value(value)
 </CODE>
+<div class="block">
+The indexed element value getter / setter</div>
 </TD>
 </TR>
 </TABLE>
@@ -2989,6 +2924,8 @@ system'collections'SortedListIndexer</LI>
 <TD CLASS="colLast">
 <CODE>appendIndex(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
 </CODE>
+<div class="block">
+Increases the current index by parameter **index**</div>
 </TD>
 </TR>
 </TABLE>
@@ -3009,7 +2946,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">Stack</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">Stack</SPAN><BR/>
+<I>A weak LIFO list</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -3072,6 +3010,8 @@ system'collections'Stack</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>()
 </CODE>
+<div class="block">
+Creates an empty queue</div>
 </TD>
 </TR>
 </TABLE>
@@ -3092,6 +3032,8 @@ system'collections'Stack</LI>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>Length()</CODE>
+<div class="block">
+Returns the number of elements in the stack</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3141,6 +3083,8 @@ system'collections'Stack</LI>
 <TD CLASS="colLast">
 <CODE>clear()
 </CODE>
+<div class="block">
+Removes all elements from the stack</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3150,6 +3094,8 @@ system'collections'Stack</LI>
 <TD CLASS="colLast">
 <CODE>enumerator()
 </CODE>
+<div class="block">
+Returns the stack enumerator</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3159,6 +3105,8 @@ system'collections'Stack</LI>
 <TD CLASS="colLast">
 <CODE>isEmpty()
 </CODE>
+<div class="block">
+Returns true if the stack is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3168,6 +3116,8 @@ system'collections'Stack</LI>
 <TD CLASS="colLast">
 <CODE>isNotEmpty()
 </CODE>
+<div class="block">
+Returns true if the stack is not empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3177,6 +3127,8 @@ system'collections'Stack</LI>
 <TD CLASS="colLast">
 <CODE>peek()
 </CODE>
+<div class="block">
+Returns an element at the stack top without removing it from it<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3186,6 +3138,8 @@ system'collections'Stack</LI>
 <TD CLASS="colLast">
 <CODE>pop()
 </CODE>
+<div class="block">
+Returns an element at the stack top and removes it from the stack<br/>The exception is raised if the queue is empty</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3195,6 +3149,8 @@ system'collections'Stack</LI>
 <TD CLASS="colLast">
 <CODE>push(object)
 </CODE>
+<div class="block">
+Puts an element at the stack top</div>
 </TD>
 </TR>
 </TABLE>
@@ -3423,7 +3379,8 @@ system'collections'</DIV>
 <BR>
 <HR>
 <PRE STYLE="padding-top: 15px;">
-public class <SPAN CLASS="typeNameLabel">StackEnumerator</SPAN></PRE>
+public class <SPAN CLASS="typeNameLabel">StackEnumerator</SPAN><BR/>
+<I>A weak stack enumerator</I></PRE>
 <BR>
 </DIV>
 <UL CLASS="inheritance">
@@ -3494,6 +3451,8 @@ system'collections'StackEnumerator</LI>
 <TD CLASS="colLast">
 <CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#Stack">Stack</A></SPAN> stack)
 </CODE>
+<div class="block">
+Creates an enumerator of the given stack</div>
 </TD>
 </TR>
 </TABLE>
@@ -3514,6 +3473,8 @@ system'collections'StackEnumerator</LI>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
+<div class="block">
+Returns the current stack element</div>
 </TD>
 </TR>
 </TABLE>
@@ -3535,6 +3496,8 @@ system'collections'StackEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>enumerable()
 </CODE>
+<div class="block">
+Returns an enumerable stack</div>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -3544,6 +3507,8 @@ system'collections'StackEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>next()
 </CODE>
+<div class="block">
+Goes to the next enumeration member and returns true if it is not the last member</div>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -3553,6 +3518,8 @@ system'collections'StackEnumerator</LI>
 <TD CLASS="colLast">
 <CODE>reset()
 </CODE>
+<div class="block">
+Resets the enumerator, so it can be used again</div>
 </TD>
 </TR>
 </TABLE>

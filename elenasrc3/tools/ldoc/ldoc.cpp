@@ -1662,6 +1662,22 @@ bool isOwnTemplate(ustr_t referenceName, ustr_t ns, NamespaceString& templateNs)
    else return true;
 }
 
+void DocGenerator :: loadMethodDescriptions(ustr_t referenceName, DescriptionMap& descriptions, bool includeNs)
+{
+   IdentifierString descrName("$");
+   descrName.append(referenceName);
+   descrName.replaceAll('\'', '@', 0);
+   descrName.insert(DESCRIPTION_SECTION, 0);
+   if (includeNs) {
+      NamespaceString ns(referenceName);
+      if (!ns.empty()) {
+         descrName.insert(*ns, 0);
+      }
+   }
+
+   loadDescriptions(_module->mapReference(*descrName), descriptions);
+}
+
 void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 {
    auto referenceName = _module->resolveReference(reference);
@@ -1709,7 +1725,7 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
       ReferenceName fullName(*_rootNs, referenceName + 1);
 
       // HOTFIX : skip internal class
-      if (properName[0] == '$')
+      if (properName[0] == '$' || (*properName).startsWith("const$"))
          return;
 
       NamespaceString ns(*fullName);
@@ -1748,6 +1764,8 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          if (!moduleInfo) {
             moduleInfo = new ApiModuleInfo();
             moduleInfo->name.copy(*ns);
+
+            loadDescriptions(*ns + _module->name().length() + 1);
 
             modules.add(moduleInfo);
          }
@@ -1789,13 +1807,8 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
 
          if (classClassRef != 0) {
             DescriptionMap descriptions(nullptr);
-            IdentifierString descrName("$");
-            descrName.append(referenceName);
-            descrName.replaceAll('\'', '@', 0);
-            descrName.insert(DESCRIPTION_SECTION, 0);
 
-            loadDescriptions(_module->mapReference(*descrName), descriptions);
-
+            loadMethodDescriptions(referenceName, descriptions, !templateBased);
             loadConstructors(info, classClassRef, &descriptions);
 
             // HOTFIX : to skip duplicates
@@ -1803,24 +1816,14 @@ void DocGenerator :: loadMember(ApiModuleInfoList& modules, ref_t reference)
          }
          else if (extensionRef != 0) {
             DescriptionMap descriptions(nullptr);
-            IdentifierString descrName("$");
-            descrName.append(_module->resolveReference(extensionRef));
-            descrName.replaceAll('\'', '@', 0);
-            descrName.insert(DESCRIPTION_SECTION, 0);
 
-            loadDescriptions(_module->mapReference(*descrName), descriptions);
-
+            loadMethodDescriptions(_module->resolveReference(extensionRef), descriptions, !templateBased);
             loadExtensions(info, extensionRef, &descriptions);
          }
          else {
             DescriptionMap descriptions(nullptr);
-            IdentifierString descrName("$");
-            descrName.append(referenceName);
-            descrName.replaceAll('\'', '@', 0);
-            descrName.insert(DESCRIPTION_SECTION, 0);
 
-            loadDescriptions(_module->mapReference(*descrName), descriptions);
-
+            loadMethodDescriptions(referenceName, descriptions, !templateBased);
             loadClassMembers(info, reference, &descriptions);
 
             // HOTFIX : to skip duplicates
@@ -2236,9 +2239,15 @@ void DocGenerator :: loadDescriptions(ref_t descrRef, DescriptionMap& map)
    }
 }
 
-void DocGenerator :: loadDescriptions()
+void DocGenerator :: loadDescriptions(ustr_t ns)
 {
-   ref_t descrRef = _module->mapReference(DESCRIPTION_SECTION, true);
+   ref_t descrRef = 0;
+   if (!ns.empty()) {
+      IdentifierString fullName("'", ns, DESCRIPTION_SECTION);
+
+      descrRef = _module->mapReference(*fullName, true);
+   }
+   else descrRef = _module->mapReference(DESCRIPTION_SECTION, true);
 
    loadDescriptions(descrRef, _classDescriptions);
 }
@@ -2288,7 +2297,7 @@ bool DocGenerator :: loadByName(ustr_t name)
 
 void DocGenerator :: generate(path_t output, bool indexContentMode)
 {
-   loadDescriptions();
+   loadDescriptions(nullptr);
 
    ApiModuleInfoList modules(nullptr);
    loadNestedModules(modules);

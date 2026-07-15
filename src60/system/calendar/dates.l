@@ -1,37 +1,37 @@
 namespace calendar
 {
    // --- TimeSpan --
-   public sealed struct Timespan : BaseValue
+   public sealed struct Timespan : BaseValue, info("A time interval")
    {
       SystemTime _value;
 
-      static Timespan Default
+      static Timespan Default : info("Returns a zero interval")
          = new Timespan();
 
-      static Timespan MinValue 
+      static Timespan MinValue  : info("Returns a zero interval")
          = new SystemTime(0l);
 
-      constructor()
+      constructor() : info("Creates a zero interval")
       {
          _value := 0l
       }
       
-      constructor(SystemTime val)
+      constructor(SystemTime val) : info("Converts a system time to an interval")
       {
          _value := val
       }
 
-      constructor new(int hours, int minutes, int seconds)
+      constructor new(int hours, int minutes, int seconds) : info("Initializes an interval")
       {
          _value := SystemTime.loadAsTimespan(0, hours, minutes, seconds);
       }
 
-      constructor new(int days, int hours, int minutes, int seconds)
+      constructor new(int days, int hours, int minutes, int seconds) : info("Initializes an interval")
       {
          _value := SystemTime.loadAsTimespan(days, hours, minutes, seconds);
       }
 
-      SystemTime SystemTime
+      SystemTime SystemTime : info("Returns the interval as a system time")
       {
          get()
          {
@@ -39,14 +39,14 @@ namespace calendar
          }
       }
 
-      bool isEmpty()
+      bool isEmpty() : info("Returns true if the interval is zero")
       {
          long val := _value.Value;
 
          ^ val == 0;
       }
 
-      get int Days()
+      get int Days() : info("Gets the days component of the time interval represented by the interval")
       {
          long retVal := _value.Value;
             
@@ -55,7 +55,7 @@ namespace calendar
          ^ IntConvertor.convert(retVal)
       }
     
-      get int Hours()
+      get int Hours() : info("Gets the hours component of the time interval represented by the interval")
       {
          long retVal := _value.Value;
             
@@ -64,7 +64,7 @@ namespace calendar
          ^ IntConvertor.convert(retVal)
       }
                             
-      get int Minutes()
+      get int Minutes() : info("Gets the minute component of the time interval represented by the interval")
       {
          long retVal := _value.Value;
             
@@ -73,7 +73,7 @@ namespace calendar
          ^ IntConvertor.convert(retVal)
       }
     
-      get int Seconds()
+      get int Seconds() : info("Gets the seconds component of the time interval represented by the interval")
       {
          long retVal := _value.Value;
             
@@ -82,7 +82,7 @@ namespace calendar
          ^ IntConvertor.convert(retVal)
       }
     
-      get long Milliseconds()
+      get long Milliseconds() : info("Gets the milliseconds component of the time interval represented by the interval")
       {
          long retVal := _value.Value;
             
@@ -91,24 +91,24 @@ namespace calendar
          ^ new LongNumber(retVal)
       }
 
-      bool equal(Timespan span)
+      bool equal(Timespan span) : info("Returns the true if the interval equals to <b>span</b>")
       {
          SystemTime value := span.SystemTime;
     
          ^ value.equal(_value)
       }
 
-      bool less(Timespan span)
+      bool less(Timespan span) : info("Returns the true if the interval is less than <b>span</b>")
       {
          SystemTime value := span.SystemTime;
     
          ^ _value.less(value)
       }
     
-      add(Date date)
+      Date add(Date date) : info("Adds the interval to the provided<b>date</b> and returns a new date")
          = date.add(self);
 
-      add(Timespan span)
+      Timespan add(Timespan span) : info("Returns the sum of the interval and <b>span</b>")
       {
          SystemTime value := span.SystemTime;
     
@@ -117,7 +117,7 @@ namespace calendar
          ^ new Timespan(retVal)
       }
     
-      subtract(Timespan span)
+      Timespan subtract(Timespan span) : info("Returns the difference betwen the interval and <b>span</b>")
       {
          SystemTime value := span.SystemTime;
     
@@ -126,7 +126,7 @@ namespace calendar
          ^ new Timespan(retVal)
       }
     
-      string toPrintable()
+      string toPrintable() : info("Returns a string representation of the interval")
       {
          TimeStruct value := _value;
     
@@ -135,43 +135,43 @@ namespace calendar
          ^ self.Days.toPrintable() + "." + s
       }
     
-      Timespan clone()
+      Timespan clone() : info("Returns the copy of the interval")
          = new Timespan(_value);      
    }
 
    // --- Date ---
-   public sealed struct Date : BaseValue
+   public sealed struct Date : BaseValue, info("A date / time structure")
    {
       SystemTime _value;
 
-      constructor()
+      constructor() : info("Creates the minimal date/time value")
       {
          _value := 0l
       }
         
-      static Date Default = new Date();
+      static Date Default : info("Returns the minimal date/time value") = new Date();
     
-      static Date MinValue = new Date();
+      static Date MinValue : info("Returns the minimal date/time value") = new Date();
 
-      get constructor Now()
+      get constructor Now() : info("Returns the current local date / time")
       {
          SystemTime nowValue := systemTimeFactory.getNow();
 
          _value := nowValue
       }
           
-      get constructor UtcNow()
+      get constructor UtcNow() : info("Returns the current UTC date / time")
       {
            SystemTime v := systemTimeFactory.getUtcNow(); 
            _value := v
       }
 
-      constructor(SystemTime val)
+      constructor(SystemTime val) : info("Converts a system time to the date / time structure")
       {
          _value := val
       }
 
-      constructor new(int year, int month, int day, int hour, int minute, int second)
+      constructor new(int year, int month, int day, int hour, int minute, int second) : info("Creates a date / time with the provided values")
       {
          TimeStruct systemTime := new TimeStruct();
          systemTime.Year        := year;
@@ -186,7 +186,7 @@ namespace calendar
          _value := value
       }      
         
-      constructor new(int year, int month, int day)
+      constructor new(int year, int month, int day) : info("Creates a date / time with the provided values")
          <= new(year, month, day, 0, 0, 0);
       
       SystemTime cast() = new SystemTime(_value);
@@ -194,7 +194,7 @@ namespace calendar
       TimeStruct cast()
          = new TimeStruct(_value);
     
-      SystemTime SystemTime
+      SystemTime SystemTime : info("Returns the date / time as a system time")
       {
          get()
          {
@@ -202,42 +202,42 @@ namespace calendar
          }
       }
 
-      bool equal(Date date)
+      bool equal(Date date) : info("Returns the true if the date / time equals to <b>date</b>")
       {
          SystemTime value := date.SystemTime;
             
          ^ value.equal(_value)
       }
 
-      bool less(Date date)
+      bool less(Date date) : info("Returns the true if the date / time is earlier than <b>date</b>")
       {
          SystemTime value := date.SystemTime;
             
          ^ _value.less(value)
       }
       
-      subtract(Date dt)
+      Timespan subtract(Date dt) : info("Returns the difference of the date / time and <b>dt</b> as an interval")
       {
          SystemTime val := dt.SystemTime;
     
          ^ new Timespan(_value.subtract(val))
       }
       
-      subtract(Timespan timeSpan)
+      Date subtract(Timespan timeSpan) : info("Returns the difference of the date / time and <b>timeSpan</b> as a date")
       {
          SystemTime value := timeSpan.SystemTime;
             
          ^ new Date(_value.subtract(value))
       }
       
-      add(Timespan timeSpan)
+      Date add(Timespan timeSpan) : info("Returns the sum of the current date / time and <b>timeSpan</b> as a new date")
       {
          SystemTime value := timeSpan.SystemTime;
             
          ^ new Date(_value.add(value))
       }
     
-      int Year
+      int Year : info("Gets the year component of the date / time")
       {
          get()
          {
@@ -249,7 +249,7 @@ namespace calendar
          }
       }
     
-      int Month
+      int Month : info("Gets the month component of the date / time")
       {
          get()
          {
@@ -261,7 +261,7 @@ namespace calendar
          }
       }
     
-      int Day
+      int Day : info("Gets the day component of the date / time")
       {
          get()
          {
@@ -273,7 +273,7 @@ namespace calendar
          }
       }
     
-      int DayOfWeek
+      int DayOfWeek : info("Gets the day of the week component of the date / time")
       {
          get()
          {
@@ -285,7 +285,7 @@ namespace calendar
          }
       }
     
-      int Hour
+      int Hour : info("Gets the hour component of the date / time")
       {
          get()
          {
@@ -297,7 +297,7 @@ namespace calendar
          }
       }
     
-      int Minute
+      int Minute : info("Gets the minute component of the date / time")
       {
          get()
          {
@@ -309,7 +309,7 @@ namespace calendar
          }
       }
     
-      int Second
+      int Second : info("Gets the second component of the date / time")
       {
          get()
          {
@@ -321,7 +321,7 @@ namespace calendar
          }
       }
     
-      int Millisecond
+      int Millisecond : info("Gets the millisecond component of the date / time")
       {
          get()
          {
@@ -333,7 +333,7 @@ namespace calendar
          }
       }
     
-      addYears(int val)
+      Date addYears(int val) : info("Adds the number of years to the current date and returns a new date")
       {
          TimeStruct st := _value;
     
@@ -346,7 +346,7 @@ namespace calendar
          ^ new Date(retVal)
       }
     
-      addMonths(int val)
+      Date addMonths(int val) : info("Adds the number of months to the current date and returns a new date")
       {
          TimeStruct st := _value;
             
@@ -369,19 +369,19 @@ namespace calendar
          ^ new Date(retVal)
       }
     
-      addDays(int val)
+      addDays(int val) : info("Adds the number of days to the current date and returns a new date")
          = self.add(Timespan.new(val, 0, 0, 0));
     
-      addHours(int val)
+      addHours(int val) : info("Adds the number of hours to the current date and returns a new date")
          = self.add(Timespan.new(0, val, 0, 0));
     
-      addMinutes(int val)
+      addMinutes(int val) : info("Adds the number of minutes to the current date and returns a new date")
          = self.add(Timespan.new(0, 0, val, 0));
     
-      addSeconds(int val)
+      addSeconds(int val) : info("Adds the number of seconds to the current date and returns a new date")
          = self.add(Timespan.new(0, 0, 0, val));
     
-      string toPrintable()
+      string toPrintable() : info("Returns the string representation of the date as a short date and time")
       {
          TimeStruct struct := _value;
     
@@ -392,7 +392,7 @@ namespace calendar
          ^ dateValue + " " + timeValue
       }
     
-      Date clone()
+      Date clone() : info("Returns a copy")
          = new Date(_value);
    }
 
@@ -402,6 +402,6 @@ namespace calendar
    public Date utcNow = Date.UtcNow;
 
    // --- now ---    
-   public Date Now = Date.Now;
-   public Date UtcNow = Date.UtcNow;
+   public Date Now : info("A current local date") = Date.Now;
+   public Date UtcNow : info("A current UTC date") = Date.UtcNow;
 }

@@ -6,14 +6,12 @@ In development:
   ### EPIC: elena 8.0 ###
 
   === Iteration 47 (graph sample; ide linux) ===
-  * new version 7.0.2
   --------------------------------------
   * backlog
   ====================================== 
   - implement heap data structure
   - comparing with enum type - try to use directly
   - xml : xmlwriter
-  - implement toUInt, toSByte
   - refactore - Compiler :: declareVMTMessage - the function is too long
   - auto loading only used namespaces (instead of all)
   - Warn if the implicit conversion is used
@@ -27,9 +25,13 @@ In development:
   * lang
   ====================================== 
   * doc
+  --------------------------------------
+  - provide descriptions for all classes (from culture)
   ====================================== 
-  * current - backlog
+  * backlog
   ====================================== 
+  - implement toUInt, toSByte
+  --------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.3

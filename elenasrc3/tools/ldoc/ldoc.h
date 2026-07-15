@@ -280,9 +280,11 @@ namespace elena_lang
       void loadExtensions(ApiClassInfo* apiClassInfo, ref_t reference, DescriptionMap* descriptions);
 
       void loadDescriptions(ref_t reference, DescriptionMap& map);
-      void loadDescriptions();
+      void loadDescriptions(ustr_t ns);
 
       ustr_t retrieveMethodLink(ApiClassInfo* classInfo, ApiMethodInfo* info);
+
+      void loadMethodDescriptions(ustr_t referenceName, DescriptionMap& descriptions, bool includeNs);
 
    public:
       void loadNestedModules(ApiModuleInfoList& modules);

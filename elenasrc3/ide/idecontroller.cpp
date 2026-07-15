@@ -484,6 +484,7 @@ bool ProjectController :: compileProject(ProjectModel& model, int postponedActio
    if (!model.options.empty()) {
       cmdLine.append(" ");
       cmdLine.append(*model.options);
+      cmdLine.append(" ");
    }
 
    cmdLine.append(*model.projectFile);
