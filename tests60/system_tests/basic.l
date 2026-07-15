@@ -2884,10 +2884,13 @@ public dictionaryBucketGrowthTest() : testCase()
 {
    auto d := Dictionary.new(0);
 
-/*
+   Console.writeLine("Start");
+
    for (int i := 0; i < 200; i += 1)
-      { d[i] := i * 2 };
-*/
+      { d[i] := i * 2; Console.writeLine(i) };
+
+   Console.writeLine("End");
+
 /*
    for (int i := 0; i < 200; i += 1)
       { Assert.ifTrue(d[i] == i * 2) };
