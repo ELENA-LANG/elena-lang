@@ -3298,3 +3298,39 @@ public numericWideningRegressionTest() : testCase()
 
    Console.write(".");
 }
+
+public binaryHeapTest() : testCase()
+{
+   var apply := (heap){
+      heap.push(5);   
+      heap.push(1);
+      heap.push(3);
+      heap.push(2);
+      heap.push(4);
+      
+      heap.remove(3);      
+   };
+   
+   auto minHeap := new BinaryHeap<int>();
+   auto maxHeap := BinaryHeap<int>.newMaxHeap();
+   
+   apply(minHeap);
+   apply(maxHeap);
+   
+   Assert.ifEqual(minHeap.pop(), 1);
+   Assert.ifEqual(minHeap.pop(), 2);
+   Assert.ifEqual(minHeap.pop(), 4);
+   Assert.ifEqual(minHeap.pop(), 5);
+   Assert.ifEqual(minHeap.Length, 0);
+   
+   Console.write(".");
+   
+   Assert.ifEqual(maxHeap.pop(), 5);
+   Assert.ifEqual(maxHeap.pop(), 4);
+   Assert.ifEqual(maxHeap.pop(), 2);
+   Assert.ifEqual(maxHeap.pop(), 1);
+   Assert.ifEqual(maxHeap.Length, 0);
+   
+   Console.write(".");
+}
+

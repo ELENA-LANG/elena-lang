@@ -26,5 +26,6 @@ namespace collections
       Queue<T1>? o3 := nil;
       Stack<T1>? o4 := nil;
       SortedList<T1,T2>? sl := nil;
+      BinaryHeap<T1>? h1 := nil;
    }
 }

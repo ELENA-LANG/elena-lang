@@ -9,14 +9,34 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - implement heap data structure
+  - simplified syntax - Template<int> t := new auto();
+  - implement *_length := len - as native operation
+  - use *_length := len in BinaryHeap
+  - Array<T> must support Enumerable interface as well
+
+  - optimization:
+           set          dp:-20
+           store        sp:2
+           set          dp:-4
+           store        sp:1
+           peek         fp:1
+           get           i:1
+           store        sp:0
+           mov        mssg:static:at#byref<system'IntNumber,'$auto'system@Reference#1&system@IntNumber>[3]
+           call       mssg:static:at#byref<system'IntNumber,'$auto'system@Reference#1&system@IntNumber>[3], class:sandbox'$auto'system@Array#1&system@IntNumber
+           set          dp:-20 <- we do not need it
+
+
+  - ide : create two new lines instead of one when new lined inserted after "}" bracket
+  - ide : by debugging - jump for more than 1 line (put the cursor into the middle)
   - comparing with enum type - try to use directly
-  - xml : xmlwriter
-  - refactore - Compiler :: declareVMTMessage - the function is too long
-  - auto loading only used namespaces (instead of all)
   - Warn if the implicit conversion is used
   - optimization : jumping, offset aligning
   - pi optimization : at least 10% 
+
+  - xml : xmlwriter
+  - refactore - Compiler :: declareVMTMessage - the function is too long
+  - auto loading only used namespaces (instead of all)
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created) 
   - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
   --------------------------------------
@@ -24,13 +44,16 @@ In development:
   ====================================== 
   * lang
   ====================================== 
-  * doc
   --------------------------------------
+  * doc
+  ====================================== 
+  - knowhow - foreach statement
   - provide descriptions for all classes (from culture)
+  --------------------------------------
+  * current : BinaryHeap<T1>
   ====================================== 
-  * current : #862 - dictionaryBucketGrowthTest fails in Linux Nightly Build
-  ====================================== 
-  - review
+  - review getParent, getLeftChild, getParentIndex - make sure no dynamic object is created
+  - example - heap sort
   --------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===

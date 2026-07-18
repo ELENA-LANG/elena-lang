@@ -23,7 +23,7 @@
     </project>
     <manifest>
         <name>ELENA Standard Library</name>
-        <version>7.0.10</version>
+        <version>7.0.11</version>
         <author>Aleksey Rakov</author>
     </manifest>
     <files>
@@ -65,6 +65,7 @@
             <include>collections\tuples.l</include>
             <include>collections\maps.l</include>
             <include>collections\sorted_list.l</include>
+            <include>collections\heap.l</include>
             <include>collections\template_tests.l</include>
             <include>math\math.l</include>
             <include>calendar\date_routines.l</include>

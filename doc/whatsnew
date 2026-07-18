@@ -3,6 +3,7 @@
 - ELENA
 
 - ELC  
+  - [FIXED] multi-argument implicit lambda-function
 
 - VM
 
@@ -12,6 +13,7 @@
 
 - API
   - [ADDED] extensions toUInt, toSByte (extensions module)
+  - [ADDED] system'collections'BinaryHeap<T1>
 
 - Scripts
 

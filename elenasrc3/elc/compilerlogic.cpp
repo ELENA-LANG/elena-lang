@@ -15,6 +15,11 @@
 
 using namespace elena_lang;
 
+static inline bool checkCompatibleMode(CompatibleMode mode, CompatibleMode mask)
+{
+   return ((int)mode & (int)mask) == (int)mask;
+}
+
 static inline MethodHint operator | (const MethodHint& l, const MethodHint& r)
 {
    return (MethodHint)((unsigned int)l | (unsigned int)r);
@@ -736,7 +741,7 @@ bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo tar
       case V_INT64:
          return source.typeRef == V_PTR64 || source.typeRef == V_WORD64;
       case V_FLAG:
-         return isCompatible(scope, { scope.branchingInfo.typeRef }, source, true);
+         return isCompatible(scope, { scope.branchingInfo.typeRef }, source, CompatibleMode::IgnoreNils);
       case V_WORD32:
          return source.typeRef == V_INT32;
       case V_WORD64:
@@ -765,16 +770,23 @@ bool CompilerLogic :: isValidOp(int operatorId, const int* validOperators, size_
    return false;
 }
 
-BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length,
+BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, bool unwrapTarget, ref_t* arguments, size_t length,
    ref_t& outputRef)
 {
+   TypeInfo largument = { arguments[0] };
+   if (unwrapTarget) {
+      largument = retrieveInnerField(scope, arguments[0]);
+      // elementRef must be cleared to correctly recognize len operation
+      largument.elementRef = 0;
+   }
+
    auto it = _operations.getIt(operatorId);
    while (!it.eof()) {
       Op op = *it;
 
-      bool compatible = isCompatible(scope, { op.loperand }, { arguments[0] }, false);
-      compatible = compatible && (length <= 1 || isCompatible(scope, { op.roperand }, { arguments[1] }, false));
-      compatible = compatible && (length <= 2 || isCompatible(scope, { op.ioperand }, { arguments[2] }, false));
+      bool compatible = isCompatible(scope, { op.loperand }, largument, CompatibleMode::None);
+      compatible = compatible && (length <= 1 || isCompatible(scope, { op.roperand }, { arguments[1] }, CompatibleMode::None));
+      compatible = compatible && (length <= 2 || isCompatible(scope, { op.ioperand }, { arguments[2] }, CompatibleMode::None));
       if (compatible) {
          outputRef = op.output;
 
@@ -790,7 +802,7 @@ BuildKey CompilerLogic :: resolveOp(ModuleScopeBase& scope, int operatorId, ref_
 BuildKey CompilerLogic :: resolveNewOp(ModuleScopeBase& scope, ref_t loperand, ref_t* signatures, pos_t signatureLen)
 {
    if (signatureLen == 1 &&
-      isCompatible(scope, { V_INT32 }, { signatures[0] }, false))
+      isCompatible(scope, { V_INT32 }, { signatures[0] }, CompatibleMode::None))
    {
       ClassInfo info;
       if (defineClassInfo(scope, info, loperand, true)) {
@@ -1416,6 +1428,11 @@ bool CompilerLogic :: isDynamic(ref_t flags)
    return test(flags, elDynamicRole | elWrapper);
 }
 
+bool CompilerLogic :: isDynamic(ModuleScopeBase& scope, ref_t reference)
+{
+   return isDynamic(getFlags(scope, reference));
+}
+
 bool CompilerLogic :: isEmbeddableArray(ref_t flags)
 {
    return test(flags, elDynamicRole | elStructureRole | elWrapper);
@@ -1979,19 +1996,19 @@ ref_t CompilerLogic :: definePrimitiveArray(ModuleScopeBase& scope, ref_t elemen
       return 0;
 
    if (isEmbeddableStruct(info.header.flags) && structOne) {
-      if (isCompatible(scope, { V_INT8 }, { elementRef }, true) && info.size == 1)
+      if (isCompatible(scope, { V_INT8 }, { elementRef }, CompatibleMode::IgnoreNils) && info.size == 1)
          return V_INT8ARRAY;
 
-      if (isCompatible(scope, { V_UINT8 }, { elementRef }, true) && info.size == 1)
+      if (isCompatible(scope, { V_UINT8 }, { elementRef }, CompatibleMode::IgnoreNils) && info.size == 1)
          return V_UINT8ARRAY;
 
-      if (isCompatible(scope, { V_INT16 }, { elementRef }, true) && info.size == 2)
+      if (isCompatible(scope, { V_INT16 }, { elementRef }, CompatibleMode::IgnoreNils) && info.size == 2)
          return V_INT16ARRAY;
 
-      if (isCompatible(scope, { V_INT32 }, { elementRef }, true) && info.size == 4)
+      if (isCompatible(scope, { V_INT32 }, { elementRef }, CompatibleMode::IgnoreNils) && info.size == 4)
          return V_INT32ARRAY;
 
-      if (isCompatible(scope, { V_FLOAT64 }, { elementRef }, true) && info.size == 8)
+      if (isCompatible(scope, { V_FLOAT64 }, { elementRef }, CompatibleMode::IgnoreNils) && info.size == 8)
          return V_FLOAT64ARRAY;
 
       return V_BINARYARRAY;
@@ -2033,7 +2050,7 @@ bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetR
       ref_t targetArgRef = scope.mapFullReference(*targetArg);
       ref_t sourceArgRef = scope.mapFullReference(*sourceArg);
 
-      if (!isCompatible(scope, { targetArgRef }, { sourceArgRef }, true))
+      if (!isCompatible(scope, { targetArgRef }, { sourceArgRef }, CompatibleMode::IgnoreNils))
          return false;
 
       if (targetEndPos >= targetName.length() || sourceEndPos >= sourceName.length())
@@ -2046,7 +2063,7 @@ bool CompilerLogic :: isTemplateCompatible(ModuleScopeBase& scope, ref_t targetR
    return true;
 }
 
-bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils)
+bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, CompatibleMode mode)
 {
    if ((!targetInfo.typeRef || targetInfo.typeRef == scope.buildins.superReference) && !sourceInfo.isPrimitive())
       return true;
@@ -2055,7 +2072,7 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
       case V_NIL:
          // nil is compatible with a super class for the message dispatching
          // and with all types for all other cases
-         if (!ignoreNils || targetInfo.typeRef == scope.buildins.superReference)
+         if (!checkCompatibleMode(mode, CompatibleMode::IgnoreNils) || targetInfo.typeRef == scope.buildins.superReference)
             return true;
 
          break;
@@ -2063,16 +2080,16 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
          if (targetInfo == sourceInfo) {
             return true;
          }
-         else return isCompatible(scope, targetInfo, { scope.buildins.literalReference }, ignoreNils);
+         else return isCompatible(scope, targetInfo, { scope.buildins.literalReference }, mode);
          break;
       case V_WIDESTRING:
          if (targetInfo == sourceInfo) {
             return true;
          }
-         else return isCompatible(scope, targetInfo, { scope.buildins.wideReference }, ignoreNils);
+         else return isCompatible(scope, targetInfo, { scope.buildins.wideReference }, mode);
          break;
       case V_FLAG:
-         return isCompatible(scope, targetInfo, { scope.branchingInfo.typeRef }, ignoreNils);
+         return isCompatible(scope, targetInfo, { scope.branchingInfo.typeRef }, mode);
       default:
          break;
    }
@@ -2099,7 +2116,7 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
          if (targetInfo.isPrimitive() && test(info.header.flags, elWrapper)) {
             if (info.fields.count() > 0) {
                auto inner = *info.fields.start();
-               if (isCompatible(scope, targetInfo, inner.typeInfo, ignoreNils))
+               if (isCompatible(scope, targetInfo, inner.typeInfo, mode))
                   return true;
             }
          }
@@ -2140,7 +2157,7 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* 
    for (size_t i = 0; i < sourceLen; i++) {
       ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
 
-      if (!isCompatible(scope, { ImportHelper::importReference(targetModule, targetSign, scope.module) }, { sourceSignatures[i] }, true))
+      if (!isCompatible(scope, { ImportHelper::importReference(targetModule, targetSign, scope.module) }, { sourceSignatures[i] }, CompatibleMode::IgnoreNils))
          return false;
    }
 
@@ -2160,7 +2177,7 @@ bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t target
 
    for (size_t i = 0; i < sourceLen; i++) {
       ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
-      if (!isCompatible(scope, { targetSign }, { sourceSignatures[i] }, true))
+      if (!isCompatible(scope, { targetSign }, { sourceSignatures[i] }, CompatibleMode::IgnoreNils))
          return false;
    }
 
@@ -2385,48 +2402,48 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       auto inner = *info.fields.start();
 
       bool compatible = false;
-      compatible = isCompatible(scope, inner.typeInfo, sourceInfo, false);
+      compatible = isCompatible(scope, inner.typeInfo, sourceInfo, CompatibleMode::None);
 
       if (compatible)
          return { ConversionResult::BoxingRequired };
 
-      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_UINT8 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_UINT8 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT8_32_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT8 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT8 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT8_32_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT16 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT16_32_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT32 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT32_64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT32 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT32 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT32_FLOAT64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT8 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT8 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT8 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT8 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT16 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT16_64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT16 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT16 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, INT16_FLOAT64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT32 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT32 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, UINT32_64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT16 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT16 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, UINT16_64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_UINT32 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_UINT32 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, UINT32_FLOAT64_CONVERSION, 1 };
       }
-      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_UINT16 }, sourceInfo, false)) {
+      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_UINT16 }, sourceInfo, CompatibleMode::None)) {
          return { ConversionResult::NativeConversion, UINT16_FLOAT64_CONVERSION, 1 };
       }
    }
@@ -2435,7 +2452,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
    if (isPrimitiveArrRef(sourceInfo.typeRef) && test(info.header.flags, elDynamicRole)) {
       auto inner = *info.fields.start();
 
-      bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, false);
+      bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, CompatibleMode::None);
       if (compatible)
          return { ConversionResult::BoxingRequired };
    }
@@ -2443,7 +2460,7 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
    else if (sourceInfo.typeRef == V_ARGARRAY && test(info.header.flags, elDynamicRole)) {
       auto inner = *info.fields.start();
 
-      bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, false);
+      bool compatible = isCompatible(scope, { inner.typeInfo.elementRef }, { sourceInfo.elementRef }, CompatibleMode::None);
       if (compatible)
          return { ConversionResult::VariadicBoxingRequired };
    }
@@ -2640,7 +2657,7 @@ bool CompilerLogic :: verifyMultimethod(ModuleScopeBase& scope, ClassInfo& info,
          if (outputRef == 0) {
             return false;
          }
-         else if (!isCompatible(scope, { outputRefMulti }, { outputRef }, true)) {
+         else if (!isCompatible(scope, { outputRefMulti }, { outputRef }, CompatibleMode::IgnoreNils)) {
             return false;
          }
       }
@@ -2955,7 +2972,7 @@ ref_t CompilerLogic :: resolveExtensionTemplate(ModuleScopeBase& scope, Compiler
          }
          else {
             ref_t argRef = scope.mapFullReference(*argType, true);
-            matched = isCompatible(scope, { argRef }, { signatures[signIndex] }, true);
+            matched = isCompatible(scope, { argRef }, { signatures[signIndex] }, CompatibleMode::IgnoreNils);
          }
 
          i = end + 1;
@@ -3004,28 +3021,28 @@ ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& s
 
 bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
 {
-   if (isCompatible(scope, { V_INT8 }, { reference }, false)) {
+   if (isCompatible(scope, { V_INT8 }, { reference }, CompatibleMode::None)) {
       reference = V_INT8;
 
       return true;
    }
-   if (isCompatible(scope, { V_UINT8 }, { reference }, false)) {
+   if (isCompatible(scope, { V_UINT8 }, { reference }, CompatibleMode::None)) {
       reference = V_UINT8;
 
       return true;
    }
-   if (isCompatible(scope, { V_INT16 }, { reference }, false)) {
+   if (isCompatible(scope, { V_INT16 }, { reference }, CompatibleMode::None)) {
       reference = V_INT16;
 
       return true;
    }
-   if (isCompatible(scope, { V_INT64 }, { reference }, false) && !isCompatible(scope, { V_PTR64 }, { reference }, false)) {
+   if (isCompatible(scope, { V_INT64 }, { reference }, CompatibleMode::None) && !isCompatible(scope, { V_PTR64 }, { reference }, CompatibleMode::None)) {
       // HOTFIX : ignore pointer
       reference = V_INT64;
 
       return true;
    }
-   if (isCompatible(scope, { V_FLOAT64 }, { reference }, false)) {
+   if (isCompatible(scope, { V_FLOAT64 }, { reference }, CompatibleMode::None)) {
       reference = V_FLOAT64;
 
       return true;
@@ -3112,6 +3129,43 @@ ref_t CompilerLogic :: retrievePrimitiveType(ModuleScopeBase& scope, ref_t refer
    }
 
    return 0;
+}
+
+ref_t CompilerLogic :: retrieveElementRef(ModuleScopeBase& scope, ref_t reference)
+{
+   if (!reference || isPrimitiveRef(reference))
+      return 0;
+
+   ClassInfo info;
+   if (!scope.loadClassInfo(info, reference))
+      return 0;
+
+   if (isDynamic(info.header.flags)) {
+      auto inner = *info.fields.start();
+      if (isPrimitiveArrRef(inner.typeInfo.typeRef)) {
+         return inner.typeInfo.elementRef;
+      }
+   }
+
+   return 0;
+}
+
+TypeInfo CompilerLogic :: retrieveInnerField(ModuleScopeBase& scope, ref_t reference)
+{
+   if (!reference || isPrimitiveRef(reference))
+      return { reference };
+
+   ClassInfo info;
+   if (!scope.loadClassInfo(info, reference))
+      return { reference };
+
+   if (isDynamic(info.header.flags)) {
+      auto inner = *info.fields.start();
+
+      return inner.typeInfo;
+   }
+
+   return { reference };
 }
 
 ref_t CompilerLogic :: loadClassInfo(ClassInfo& info, ModuleInfo& moduleInfo, ModuleBase* target, bool headerOnly, bool fieldsOnly)

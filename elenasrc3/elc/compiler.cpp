@@ -4945,7 +4945,7 @@ ObjectInfo Compiler::evalOperation(Interpreter& interpreter, Scope& scope, Synta
    }
 
    ref_t outputRef = 0;
-   BuildKey opKey = _logic->resolveOp(*scope.moduleScope, operator_id, argumentRefs, argCount, outputRef);
+   BuildKey opKey = _logic->resolveOp(*scope.moduleScope, operator_id, false, argumentRefs, argCount, outputRef);
 
    ObjectInfo retVal = loperand;
    if (!interpreter.eval(opKey, operator_id, arguments, retVal)) {
@@ -5064,7 +5064,7 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
          }
 
          if (!isConstant(argInfo.kind)
-            || (elementTypeRef && !_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, true)))
+            || (elementTypeRef && !_logic->isCompatible(*scope.moduleScope, { elementTypeRef }, argInfo.typeInfo, CompatibleMode::IgnoreNils)))
          {
             return {};
          }
@@ -6064,7 +6064,7 @@ void Compiler::declareDictionaryAttributes(Scope& scope, SyntaxNode node, TypeIn
       else if (current == SyntaxKey::Type) {
          TypeAttributes typeAttributes = {};
          TypeInfo dictTypeInfo = resolveTypeAttribute(scope, current, typeAttributes, true, false, false);
-         if (!typeAttributes.isNonempty() && _logic->isCompatible(*scope.moduleScope, dictTypeInfo, { V_STRING }, true)) {
+         if (!typeAttributes.isNonempty() && _logic->isCompatible(*scope.moduleScope, dictTypeInfo, { V_STRING }, CompatibleMode::IgnoreNils)) {
             typeInfo.typeRef = V_DICTIONARY;
             typeInfo.elementRef = V_STRING;
          }
@@ -7366,7 +7366,7 @@ mssg_t Compiler::resolveOperatorMessage(ModuleScopeBase* scope, int operatorId)
       case BNOT_OPERATOR_ID:
          return scope->buildins.bnot_message;
       default:
-         throw InternalError(errFatalError);
+         return 0;
    }
 }
 
@@ -8707,25 +8707,25 @@ void Compiler :: addVariableInfo(BuildNode node, Scope& scope, ustr_t name, Para
    if (localInfo.size > 0) {
       if (embeddableArray) {
          if (_logic->isCompatible(*moduleScope,
-            { V_INT8 }, { localInfo.typeInfo.elementRef }, false))
+            { V_INT8 }, { localInfo.typeInfo.elementRef }, CompatibleMode::None))
          {
             BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, name);
             varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
          }
          else if (_logic->isCompatible(*moduleScope,
-            { V_UINT8 }, { localInfo.typeInfo.elementRef }, false))
+            { V_UINT8 }, { localInfo.typeInfo.elementRef }, CompatibleMode::None))
          {
             BuildNode varNode = node.appendChild(BuildKey::ByteArrayAddress, name);
             varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
          }
          else if (_logic->isCompatible(*moduleScope,
-            { V_INT16 }, { localInfo.typeInfo.elementRef }, false))
+            { V_INT16 }, { localInfo.typeInfo.elementRef }, CompatibleMode::None))
          {
             BuildNode varNode = node.appendChild(BuildKey::ShortArrayAddress, name);
             varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
          }
          else if (_logic->isCompatible(*moduleScope,
-            { V_INT32 }, { localInfo.typeInfo.elementRef }, false))
+            { V_INT32 }, { localInfo.typeInfo.elementRef }, CompatibleMode::None))
          {
             BuildNode varNode = node.appendChild(BuildKey::IntArrayAddress, name);
             varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
@@ -8760,13 +8760,13 @@ void Compiler :: addVariableInfo(BuildNode node, Scope& scope, ustr_t name, Para
          varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (_logic->isCompatible(*moduleScope,
-         { V_INT32 }, { localInfo.typeInfo.typeRef }, false))
+         { V_INT32 }, { localInfo.typeInfo.typeRef }, CompatibleMode::None))
       {
          BuildNode varNode = node.appendChild(BuildKey::IntVariableAddress, name);
          varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
       }
       else if (_logic->isCompatible(*moduleScope,
-         { V_INT64 }, { localInfo.typeInfo.typeRef }, false))
+         { V_INT64 }, { localInfo.typeInfo.typeRef }, CompatibleMode::None))
       {
          BuildNode varNode = node.appendChild(BuildKey::LongVariableAddress, name);
          varNode.appendChild(BuildKey::StackIndex, localInfo.offset);
@@ -9666,15 +9666,15 @@ void Compiler :: compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& metho
 
 static inline bool isArg32(CompilerLogic* logic, ModuleScopeBase* moduleScope, ref_t typeRef)
 {
-   return logic->isCompatible(*moduleScope, { V_INT32 }, { typeRef }, false)
-      || logic->isCompatible(*moduleScope, { V_PTR32 }, { typeRef }, false)
-      || logic->isCompatible(*moduleScope, { V_UINT32 }, { typeRef }, false);
+   return logic->isCompatible(*moduleScope, { V_INT32 }, { typeRef }, CompatibleMode::None)
+      || logic->isCompatible(*moduleScope, { V_PTR32 }, { typeRef }, CompatibleMode::None)
+      || logic->isCompatible(*moduleScope, { V_UINT32 }, { typeRef }, CompatibleMode::None);
 }
 
 static inline bool isArg64(CompilerLogic* logic, ModuleScopeBase* moduleScope, ref_t typeRef)
 {
-   return logic->isCompatible(*moduleScope, { V_INT64 }, { typeRef }, false)
-      || logic->isCompatible(*moduleScope, { V_PTR64 }, { typeRef }, false);
+   return logic->isCompatible(*moduleScope, { V_INT64 }, { typeRef }, CompatibleMode::None)
+      || logic->isCompatible(*moduleScope, { V_PTR64 }, { typeRef }, CompatibleMode::None);
 }
 
 void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node)
@@ -10133,7 +10133,7 @@ bool Compiler::isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, 
    if (source.typeInfo.isPrimitive() && resolvePrimitives)
       source.typeInfo = { resolvePrimitiveType(*scope.moduleScope, source.typeInfo, false) };
 
-   return _logic->isCompatible(*scope.moduleScope, target.typeInfo, source.typeInfo, true);
+   return _logic->isCompatible(*scope.moduleScope, target.typeInfo, source.typeInfo, CompatibleMode::IgnoreNils);
 }
 
 bool Compiler::isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst)
@@ -13796,12 +13796,16 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
 
    // validate if direct getter exists for the loperand
    mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
+   assert(message != 0);
+
    CheckMethodResult result = {};
    result.retrieveGetter = compiler->_optMode;
    bool found = EAttrs::test(mode, EAttr::RetValExpected) && compiler->_logic->resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
       loperand.typeInfo), message, result);
 
-   if (found && result.retrieveGetter && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, true)) {
+   if (found && result.retrieveGetter 
+      && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, CompatibleMode::IgnoreNils)) 
+   {
       if (compiler->_logic->isEmbeddable(*scope.moduleScope, loperand.typeInfo)) {
          TargetMode targetMode = TargetMode::StackAllocated;
          switch (loperand.kind) {
@@ -13933,7 +13937,7 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
 
    if (valueExpected) {
       // to ingnore the compatibility errors, replace Task with Task<T> type, if applicable
-      if (compiler->_logic->isCompatible(*scope.moduleScope, currentField.typeInfo, exprVal.typeInfo, false))
+      if (compiler->_logic->isCompatible(*scope.moduleScope, currentField.typeInfo, exprVal.typeInfo, CompatibleMode::None))
          currentField.typeInfo = exprVal.typeInfo;
 
       return retMode ? currentField : convertObject(node, currentField, targetRef, dynamicRequired, false, false, false);
@@ -14062,7 +14066,7 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
    }
 
    ref_t dummy = 0;
-   BuildKey op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, dummy);
+   BuildKey op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, false, arguments, argLen, dummy);
    // !! temporal : use weak operation when assigning outer variable requiring a special type of unboxing (to avoid duplicate boxing)
    if (op != BuildKey::None && loperand.mode != TargetMode::LocalAddressUnboxingRequired) {
       // HTOFIX : mutable operation is not allowed for read-only loperand
@@ -14113,6 +14117,8 @@ ObjectInfo Compiler::Expression::compileAssignOperation(SyntaxNode node, int ope
       }
 
       mssg_t message = Compiler::resolveOperatorMessage(scope.moduleScope, operatorId);
+      assert(message != 0);
+
       ArgumentsInfo messageArguments;
       messageArguments.add(loperand);
 
@@ -14148,7 +14154,7 @@ ObjectInfo Compiler::Expression::compileBoolOperation(SyntaxNode node, int opera
       loperand = compile(lnode, 0, EAttr::Parameter);
 
       nativeOp = compiler->_logic->isCompatible(*scope.moduleScope,
-         { scope.moduleScope->branchingInfo.typeRef }, loperand.typeInfo, true);
+         { scope.moduleScope->branchingInfo.typeRef }, loperand.typeInfo, CompatibleMode::IgnoreNils);
    }
    else nativeOp = true;
 
@@ -14200,6 +14206,7 @@ ObjectInfo Compiler::Expression::compileBoolOperation(SyntaxNode node, int opera
       messageArguments.add(roperand);
 
       mssg_t message = compiler->resolveOperatorMessage(scope.moduleScope, operatorId);
+      assert(message != 0);
 
       return compileWeakOperation(node, arguments, 2, loperand,
          messageArguments, message, 0);
@@ -15233,23 +15240,23 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRe
             break;
          default:
             if (compiler->_logic->isCompatible(*scope.moduleScope, { intArgType },
-               arg.typeInfo, true))
+               arg.typeInfo, CompatibleMode::IgnoreNils))
             {
                writer->appendNode(intArgOp, i - 1);
             }
             // NOTE : it is a duplicate for 32 bit target, but is required for 64 bit one
             else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_INT32 },
-               arg.typeInfo, true))
+               arg.typeInfo, CompatibleMode::IgnoreNils))
             {
                writer->appendNode(BuildKey::SavingNInStack, i - 1);
             }
             else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_INT16 },
-               arg.typeInfo, true))
+               arg.typeInfo, CompatibleMode::IgnoreNils))
             {
                writer->appendNode(BuildKey::SavingNInStack, i - 1);
             }
             else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_INT8 },
-               arg.typeInfo, true))
+               arg.typeInfo, CompatibleMode::IgnoreNils))
             {
                writer->appendNode(BuildKey::SavingNInStack, i - 1);
             }
@@ -15270,24 +15277,24 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRe
       writer->appendNode(BuildKey::Freeing, align(count,
          scope.moduleScope->stackAlignment));
 
-   if (compiler->_logic->isCompatible(*scope.moduleScope, retType, { expectedRef }, true)) {
+   if (compiler->_logic->isCompatible(*scope.moduleScope, retType, { expectedRef }, CompatibleMode::IgnoreNils)) {
       retType = { expectedRef };
    }
    else if (retType.typeRef == V_INT64 &&
-      compiler->_logic->isCompatible(*scope.moduleScope, { V_INT32 }, { expectedRef }, true))
+      compiler->_logic->isCompatible(*scope.moduleScope, { V_INT32 }, { expectedRef }, CompatibleMode::IgnoreNils))
    {
       // HOTFIX 64bit : allow to convert the external operation to int32
       retType = { expectedRef };
    }
    else if (retType.typeRef == V_INT32 &&
-      compiler->_logic->isCompatible(*scope.moduleScope, { V_INT64 }, { expectedRef }, true))
+      compiler->_logic->isCompatible(*scope.moduleScope, { V_INT64 }, { expectedRef }, CompatibleMode::IgnoreNils))
    {
       retType = { expectedRef };
 
       // HOTFIX : special case - returning long in 32 bit mode
       opNode.appendChild(BuildKey::LongMode);
    }
-   else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_FLOAT64 }, { expectedRef }, true)) {
+   else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_FLOAT64 }, { expectedRef }, CompatibleMode::IgnoreNils)) {
       retType = { expectedRef };
 
       return { ObjectKind::FloatExtern, retType, 0 };
@@ -15455,7 +15462,7 @@ ObjectInfo Compiler::Expression::compileNewArrayOp(SyntaxNode node, ObjectInfo s
 ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo source,
    ref_t targetRef, bool dynamicRequired, bool withoutBoxing, bool nillable, bool directConversion)
 {
-   if (!compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, source.typeInfo, false)) {
+   if (!compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, source.typeInfo, CompatibleMode::None)) {
       if (source.kind == ObjectKind::Default) {
          if (compiler->_logic->isEmbeddable(*scope.moduleScope, targetRef)) {
             ObjectInfo classSymbol = mapClassSymbol(scope, targetRef);
@@ -15481,7 +15488,7 @@ ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo sourc
       else if (source.kind == ObjectKind::SelfLocal) {
          ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
          if (test(classScope->info.header.flags, elNestedClass)) {
-            if (compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, { ((InlineClassScope*)classScope)->expectedRef }, false))
+            if (compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, { ((InlineClassScope*)classScope)->expectedRef }, CompatibleMode::None))
                return source;
          }
       }
@@ -16764,7 +16771,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, Ob
    }
 
    ref_t outputRef = 0;
-   op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef);
+   op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, false, arguments, argLen, outputRef);
 
    if (op != BuildKey::None) {
       if (hasToBePresaved(loperand)) {
@@ -16797,6 +16804,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, Ob
       }
       else {
          context.weakMessage = compiler->resolveOperatorMessage(scope.moduleScope, operatorId);
+         assert(context.weakMessage != 0);
 
          // HOTFIX : to deal with conflicting unboxing captured locals
          scope.trackingClosureLocals = true;
@@ -17103,15 +17111,23 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
       arguments[argLen++] = compiler->retrieveType(scope, messageArguments[2]);
    }
 
+   bool unwrapTarget = false;
    if (operatorId == SET_INDEXER_OPERATOR_ID) {
-      if (CompilerLogic::isPrimitiveArrRef(arguments[0]) && compiler->_logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, false))
+      if (CompilerLogic::isPrimitiveArrRef(arguments[0])
+         && compiler->_logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, CompatibleMode::None))
+      {
          // HOTFIX : for the generic binary array, recognize the element type
          arguments[1] = V_ELEMENT;
+      }
+   }
+   else if (operatorId == LEN_OPERATOR_ID) {
+      if (!isPrimitiveRef(arguments[0]) && compiler->_logic->isDynamic(*scope.moduleScope, arguments[0]))
+         unwrapTarget = true;
    }
 
    ref_t outputRef = 0;
    bool  needToAlloc = false;
-   BuildKey op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, arguments, argLen, outputRef);
+   BuildKey op = compiler->_logic->resolveOp(*scope.moduleScope, operatorId, unwrapTarget, arguments, argLen, outputRef);
 
    ObjectInfo retVal = {};
    if (op != BuildKey::None) {
@@ -17128,7 +17144,10 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
          ioperand = messageArguments[2];
 
       if (outputRef == V_ELEMENT) {
-         outputRef = loperand.typeInfo.elementRef;
+         if (!loperand.typeInfo.isPrimitive() || !loperand.typeInfo.elementRef) {
+            outputRef = compiler->_logic->retrieveElementRef(*scope.moduleScope, loperand.typeInfo.typeRef);
+         }
+         else outputRef = loperand.typeInfo.elementRef;
       }
 
       if (op == BuildKey::NilCondOp) {
@@ -17206,6 +17225,9 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
    }
    else {
       mssg_t message = resolveOperatorMessage(scope.moduleScope, operatorId);
+      if (!message)
+         scope.raiseError(errInvalidOperation, node);
+
       if (messageArguments.count() > 2) {
          overwriteArgCount(message, 3);
 
@@ -18263,7 +18285,7 @@ void Compiler::LambdaClosure :: compile(SyntaxNode node)
    if (!lazyExpression) {
       ref_t closureRef = resolveClosure(methodScope.message, methodScope.info.outputRef);
       if (closureRef) {
-         if (!compiler->_logic->isCompatible(*scope.moduleScope, { parentRef }, { closureRef }, true)) {
+         if (!compiler->_logic->isCompatible(*scope.moduleScope, { parentRef }, { closureRef }, CompatibleMode::IgnoreNils)) {
             compiler->printErrorWithClassInfo(scope, node, parentRef, closureRef, errIncompatibleClosure);
          }
          else parentRef = closureRef;
@@ -18378,6 +18400,8 @@ void Compiler::LambdaClosure :: declareClosureMessage(MethodScope& methodScope, 
             auto param_it = methodScope.parameters.start();
             for (size_t i = 0; i < signLen; i++) {
                (*param_it).typeInfo = { signArgs[i] };
+
+               ++param_it;
             }
          }
       }

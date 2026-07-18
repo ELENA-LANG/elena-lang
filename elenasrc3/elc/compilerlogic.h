@@ -17,6 +17,12 @@ namespace elena_lang
    DISABLE_WARNING_PUSH
    DISABLE_WARNING_UNINITIALIZED_FIELD
 
+   enum class CompatibleMode : int
+   {
+      None = 0,
+      IgnoreNils = 1,
+   };
+
    struct CheckMethodResult
    {
       bool        retrieveGetter;
@@ -99,7 +105,7 @@ namespace elena_lang
       ref_t getFlags(ModuleScopeBase& scope, ref_t reference);
 
    public:
-      BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, ref_t* arguments, size_t length, ref_t& outputRef);
+      BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, bool unwrapTarget, ref_t* arguments, size_t length, ref_t& outputRef);
       BuildKey resolveNewOp(ModuleScopeBase& scope, ref_t loperand, ref_t* arguments, pos_t length);
 
       bool defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false);
@@ -140,6 +146,7 @@ namespace elena_lang
 
       bool isReadOnly(ModuleScopeBase& scope, ref_t reference);
 
+      bool isDynamic(ModuleScopeBase& scope, ref_t reference);
       bool isDynamic(ref_t flags);
       bool isEmbeddableArray(ref_t flags);
       bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
@@ -170,6 +177,9 @@ namespace elena_lang
       bool isNumericType(ModuleScopeBase& scope, ref_t& reference);
 
       ref_t retrievePrimitiveType(ModuleScopeBase& scope, ref_t reference);
+      ref_t retrieveElementRef(ModuleScopeBase& scope, ref_t reference);
+
+      TypeInfo retrieveInnerField(ModuleScopeBase& scope, ref_t reference);
 
       void tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, ClassInfo& info, bool classClassMode);
       void tweakPrimitiveClassFlags(ClassInfo& info, ref_t classRef);
@@ -194,7 +204,7 @@ namespace elena_lang
       bool readExtMessageEntry(ModuleBase* module, MemoryBase* section, ExtensionMap& map, 
          ExtensionTemplateMap& extensionTemplates, ModuleScopeBase* scope);
 
-      bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, bool ignoreNils);
+      bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, CompatibleMode mode);
       bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
       bool isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible);
 
