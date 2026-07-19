@@ -50,10 +50,17 @@ In development:
   - knowhow - foreach statement
   - provide descriptions for all classes (from culture)
   --------------------------------------
-  * current : BinaryHeap<T1>
+  * Rosetta sample
   ====================================== 
-  - review getParent, getLeftChild, getParentIndex - make sure no dynamic object is created
   - example - heap sort
+  --------------------------------------
+  * current : new feature
+  ====================================== 
+  - support extension methods (nested extension inside a class)
+  - entry in knowhow.md
+  - support template extension methods
+  - entry in knowhow.md
+  - extension cannot be used directly
   --------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===
