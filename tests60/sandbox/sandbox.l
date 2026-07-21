@@ -1,24 +1,21 @@
-//import extensions;
+import extensions;
 
-singleton A
+class A
 {
-   class B
+   public extension op
    {
-      testMe()
+      printMe()
       {
-         Console.writeLine("A::B testMe")
+         Console.writeLine(self.toPrintable())
       }
-   }
-
-   testB()
-   {
-      B b := new B();
-
-      b.testMe();
    }
 }
 
 public Program()
 {
-   A.testB()
+   auto a := new A();
+   
+   a.printMe();
+   
+   Assert.ifFailed({ 2.printMe() });
 }

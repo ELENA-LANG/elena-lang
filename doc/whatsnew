@@ -2,6 +2,7 @@
 
 - ELENA
   - [ADDED] Nested (named) classes
+  - [ADDED] Nested extensions
      
 - ELC  
   - [FIXED] multi-argument implicit lambda-function

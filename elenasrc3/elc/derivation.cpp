@@ -1517,7 +1517,8 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       {
          SyntaxNode headerNode = writer.CurrentNode();
          bool nestedClass = SyntaxTree::ifChildExists(headerNode, SyntaxKey::Attribute, V_CLASS);
-         if (nestedClass) {
+         bool nestedExtension = SyntaxTree::ifChildExists(headerNode, SyntaxKey::Attribute, V_EXTENSION);
+         if (nestedClass || nestedExtension) {
             headerNode.setKey(SyntaxKey::Class);
             flushClass(writer, scope, node, false, true);
             break;

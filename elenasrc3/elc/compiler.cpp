@@ -356,6 +356,14 @@ static inline ref_t getArgumentSignature(ModuleBase* module, ref_t signatureRef)
    return module->mapSignature(signatures + 1, len - 1, false);
 }
 
+static bool inline isExtensionDeclaration(SyntaxNode node)
+{
+   if (SyntaxTree::ifChildExists(node, SyntaxKey::Attribute, V_EXTENSION))
+      return true;
+
+   return false;
+}
+
 // --- Interpreter ---
 
 Interpreter::Interpreter(ModuleScopeBase* scope, CompilerLogic* logic)
@@ -2810,12 +2818,14 @@ void Compiler :: declareSubClass(ClassScope& ownerScope, SyntaxNode node)
 
    // set a sub class reference; by default it is a private
    Class classHelper(this, &ownerScope, 0, Visibility::Private, _withDebugInfo);
+   classHelper.nestedMode = true;
 
    ref_t flags = classHelper.scope.info.header.flags;
    bool externalOp = false;
+   bool extenion = isExtensionDeclaration(node);
    declareClassAttributes(classHelper.scope, node, flags, externalOp);
 
-   if (classHelper.scope.visibility != Visibility::Private || externalOp)
+   if (!extenion && (classHelper.scope.visibility != Visibility::Private || externalOp))
       ownerScope.raiseError(errInvalidOperation, node);
 
    SyntaxNode name = node.findChild(SyntaxKey::Name);
@@ -2828,8 +2838,10 @@ void Compiler :: declareSubClass(ClassScope& ownerScope, SyntaxNode node)
 
    classHelper.declare(node);
 
-   SyntaxNode nestedNode = node.parentNode().insertNode(SyntaxKey::NestedNamedClass, name.firstChild(SyntaxKey::TerminalMask).identifier());
-   nestedNode.appendChild(SyntaxKey::Target, classHelper.scope.reference);
+   if (!extenion) {
+      SyntaxNode nestedNode = node.parentNode().insertNode(SyntaxKey::NestedNamedClass, name.firstChild(SyntaxKey::TerminalMask).identifier());
+      nestedNode.appendChild(SyntaxKey::Target, classHelper.scope.reference);
+   }
 }
 
 void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
@@ -4789,14 +4801,6 @@ void Compiler::inheritStaticMethods(ClassScope& scope, SyntaxNode classNode)
          scope.info.attributes.add({ key, ClassAttribute::SealedStatic }, scope.reference);
       }
    }
-}
-
-static bool inline isExtensionDeclaration(SyntaxNode node)
-{
-   if (SyntaxTree::ifChildExists(node, SyntaxKey::Attribute, V_EXTENSION))
-      return true;
-
-   return false;
 }
 
 bool Compiler :: evalCondStatement(Scope& scope, SyntaxNode& node)
@@ -12519,12 +12523,12 @@ Compiler::Symbol::Symbol(Compiler* compiler, NamespaceScope* parent, ref_t refer
 
 // --- Compiler::Class ---
 Compiler::Class::Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility, bool debugInfo)
-   : CommonHelper(compiler), scope(parent, reference, visibility, debugInfo)
+   : CommonHelper(compiler), scope(parent, reference, visibility, debugInfo), nestedMode(false)
 {
 }
 
 Compiler::Class::Class(Namespace& ns, ref_t reference, Visibility visibility, bool debugInfo)
-   : CommonHelper(ns.compiler), scope(&ns.scope, reference, visibility, debugInfo)
+   : CommonHelper(ns.compiler), scope(&ns.scope, reference, visibility, debugInfo), nestedMode(false)
 {
 }
 
@@ -12730,7 +12734,13 @@ void Compiler::Class::resolveClassPostfixes(SyntaxNode node, bool extensionMode)
 
    if (extensionMode) {
       //COMPLIER MAGIC : treat the parent declaration in the special way for the extension
-      scope.extensionClassRef = parentRef;
+      //NOTE : in nested mode, if the extension target is missing - it is an owner class
+      if (nestedMode && parentRef == scope.info.header.parentRef) {
+         ClassScope* ownerScope = Scope::getScope<ClassScope>(*scope.parent, Scope::ScopeLevel::Class);
+         assert(ownerScope != nullptr);
+         scope.extensionClassRef = ownerScope->reference;
+      }
+      else scope.extensionClassRef = parentRef;
 
       compiler->declareClassParent(scope.moduleScope->buildins.superReference, scope, parentNode);
    }

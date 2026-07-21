@@ -6,6 +6,45 @@ Content
 ========
 
 + [A class method invoke closure](#a-class-method-invoke-closure)
++ [A shared code](#a-shared-code)
++ [Preloaded symbols](#preloaded-symbols)
++ [String interpolation](#string-interpolation)
++ [user-defined literals](#user-defined-literals)
++ [function reference](#function-reference)
++ [threads](#threads)
++ [Environment](#environment)
++ [Accessing a variable from the upper scope](#accessing-a-variable-from-the-upper-scope)
++ [Module info](#module-info)
++ [Async program entry](#async*program-entry)
++ [Evaluating a script without compilation](#evaluating-a-script-without-compilation)
++ [Using a callback function declared in ELENA](#using-a-callback-function-declared-in-elena)
++ [Enumerations](#enumerations)
++ [Type short-cuts](#type-short-cuts)
++ [Providing an external library name](#providing-an-external-library-name)
++ [Conditional compilation](#conditional-compilation)
++ [Calling extension template directly](#calling-extension-template-directly)
++ [Specify the lambda function returning value](#specify-the-lambda-function-returning-value)
++ [Declaring a parametrized template](#declaring-a-parametrized-template)
++ [Calling property with message constant](#calling-property-with-message-constant)
++ [Declaring a record](#declaring-a-record)
++ [Not nil operation](#not-nil-operation)
++ [Platform attribute](#platform-attribute)
++ [__nonboxable attribute](#__nonboxable-attribute)
++ [lambda function without arguments](#lambda-function-without-arguments)
++ [short-cut syntax for array](#short-cut-syntax-for-array)
++ [syntax for a constant array](#syntax-for-a-constant-array)
++ [readonly fields](#readonly-fields)
++ [without template reusing](#without-template-reusing)
++ [clearing lexical information](#clearing-lexical-information)
++ [Checks if the object reacts to the strong typed message](#checks-if-the-object-reacts-to-the-strong-typed-message)
++ [Read a binary file page-by-page and print its content](#read-a-binary-file-page-by-page-and-print-its-content)
++ [Checking a method result type](#checking-a-method-result-type)
++ [Converting an object to a type obtained in run-time](#converting-an-object-to-a-type-obtained-in-run-time)
++ [Checking the method output type in run-time](#checking-the-method-output-type-in-run-time)
++ [Mocking an interface](#mocking-an-interface)
++ [Primitive Value operation](#primitive-value-operation)
++ [Safe typecasting operation](#safe-typecasting-operation)
++ [Nested named classes](#nested-named-classes)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -905,4 +944,32 @@ The nested class is available only inside the owner one
     public Program()
     {
        A.testB()
+    }
+
+## ----------------------------------------------------------------------------
+##  Nested extension
+## ----------------------------------------------------------------------------
+
+It is now possible to declared a nested extension, which automatically extends the owner class
+
+    import extensions;
+    
+    class A
+    {
+       extension op
+       {
+          printMe()
+          {
+             Console.writeLine(self.toPrintable())
+          }
+       }
+    }
+    
+    public Program()
+    {
+       auto a := new A();
+       
+       a.printMe(); // an extension can be applied to the owner
+       
+       Assert.ifFailed({ 2.printMe() }); // an extension is not available for other classes
     }

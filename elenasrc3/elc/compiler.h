@@ -765,10 +765,10 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
-         void addNestedNamedClass(ustr_t name, ref_t reference)
+         void addNestedNamedClass(ustr_t name, ref_t classRef)
          {
             assert(reference != 0);
-            nestedNamedClasses.add(name, reference);
+            nestedNamedClasses.add(name, classRef);
          }
 
          void addMssgAttribute(mssg_t message, ClassAttribute attribute, mssg_t value)
@@ -1477,6 +1477,7 @@ namespace elena_lang
          friend class Compiler;
 
          ClassScope        scope;
+         bool              nestedMode;
 
          void resolveClassPostfixes(SyntaxNode node, bool extensionMode);
 
