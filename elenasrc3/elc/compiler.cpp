@@ -1284,6 +1284,20 @@ ObjectInfo Compiler::NamespaceScope::mapDictionary(ustr_t identifier, bool refer
    return mapIdentifier(*metaIdentifier, referenceOne, mode | EAttr::Meta);
 }
 
+ObjectInfo Compiler::NamespaceScope::mapType(SyntaxKey type, ustr_t identifier)
+{
+   ObjectInfo identInfo = {};
+   if (type == SyntaxKey::reference && isWeakReference(identifier)) {
+      identInfo = mapWeakReference(identifier, false);
+   }
+   else if (type == SyntaxKey::globalreference) {
+      identInfo = mapGlobal(identifier, EAttr::None);
+   }
+   else identInfo = mapIdentifier(identifier, type == SyntaxKey::reference, EAttr::None);
+
+   return identInfo;
+}
+
 // --- Compiler::FieldScope ---
 
 Compiler::FieldScope::FieldScope(Scope* parent, ustr_t fieldName)
@@ -1414,7 +1428,7 @@ Compiler::TemplateScope::TemplateScope(Scope* parent, ref_t reference, Visibilit
 // --- Compiler::ClassScope ---
 
 Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibility, bool debugInfo)
-   : SourceScope(ns, reference, visibility, debugInfo)
+   : SourceScope(ns, reference, visibility, debugInfo), nestedNamedClasses(0)
 {
    info.header.flags = elStandartVMT;
    info.header.parentRef = moduleScope->buildins.superReference;
@@ -1520,12 +1534,19 @@ ObjectInfo Compiler::ClassScope::mapPrivateField(ustr_t identifier, ExpressionAt
    return mapClassInfoField(info, *privateName, attr, false);
 }
 
-ObjectInfo Compiler::ClassScope::mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
+ObjectInfo Compiler::ClassScope :: mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
 {
    if (!referenceOne) {
       ObjectInfo fieldInfo = mapField(identifier, attr);
       if (fieldInfo.kind != ObjectKind::Unknown)
          return fieldInfo;
+
+      ref_t nestedRef = nestedNamedClasses.get(identifier);
+      if (nestedRef) {
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
+
+         return nsScope->defineObjectInfo(nestedRef, EAttr::None, true);
+      }
    }
    return Scope::mapIdentifier(identifier, referenceOne, attr);
 }
@@ -1548,6 +1569,20 @@ ObjectInfo Compiler::ClassScope::mapDictionary(ustr_t identifier, bool reference
 ObjectInfo Compiler::ClassScope::mapMember(ustr_t identifier)
 {
    return mapField(identifier, EAttr::InitializerScope);
+}
+
+ObjectInfo Compiler::ClassScope :: mapType(SyntaxKey type, ustr_t identifier)
+{
+   if (type == SyntaxKey::identifier) {
+      ref_t nestedRef = nestedNamedClasses.get(identifier);
+      if (nestedRef) {
+         NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(*this, ScopeLevel::Namespace);
+
+         return nsScope->defineObjectInfo(nestedRef, EAttr::None, true);
+      }
+   }
+
+   return Scope::mapType(type, identifier);
 }
 
 void Compiler::ClassScope::save()
@@ -2322,7 +2357,7 @@ void Compiler :: printErrorWithClassInfo(Scope& scope, SyntaxNode node, ref_t ta
    scope.raiseError(error, node, *className);
 }
 
-ref_t Compiler::mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix,
+ref_t Compiler :: mapNewTerminal(Scope& scope, ustr_t prefix, SyntaxNode nameNode, ustr_t postfix,
    Visibility visibility, bool ignoreDuplicates)
 {
    if (nameNode == SyntaxKey::Name) {
@@ -2768,12 +2803,44 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    node.setKey(SyntaxKey::Idle);
 }
 
+void Compiler :: declareSubClass(ClassScope& ownerScope, SyntaxNode node)
+{
+   ReferenceProperName prefix(ownerScope.module->resolveReference(ownerScope.reference));
+   prefix.append(":");
+
+   // set a sub class reference; by default it is a private
+   Class classHelper(this, &ownerScope, 0, Visibility::Private, _withDebugInfo);
+
+   ref_t flags = classHelper.scope.info.header.flags;
+   bool externalOp = false;
+   declareClassAttributes(classHelper.scope, node, flags, externalOp);
+
+   if (classHelper.scope.visibility != Visibility::Private || externalOp)
+      ownerScope.raiseError(errInvalidOperation, node);
+
+   SyntaxNode name = node.findChild(SyntaxKey::Name);
+   classHelper.scope.reference = mapNewTerminal(classHelper.scope, *prefix,
+      name, nullptr, classHelper.scope.visibility);
+
+   classHelper.scope.module->mapSection(classHelper.scope.reference | mskSymbolRef, false);
+
+   node.setArgumentReference(classHelper.scope.reference);
+
+   classHelper.declare(node);
+
+   SyntaxNode nestedNode = node.parentNode().insertNode(SyntaxKey::NestedNamedClass, name.firstChild(SyntaxKey::TerminalMask).identifier());
+   nestedNode.appendChild(SyntaxKey::Target, classHelper.scope.reference);
+}
+
 void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
    bool yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased)
 {
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
+         case SyntaxKey::Class:
+            declareSubClass(scope, current);
+            break;
          case SyntaxKey::MetaExpression:
          {
             MetaScope metaScope(&scope, Scope::ScopeLevel::Class);
@@ -2798,63 +2865,74 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
             skipCondStatement(current);
             break;
          case SyntaxKey::Method:
-         {
-            MethodScope methodScope(&scope);
-            methodScope.isExtension = scope.extensionClassRef != 0;
-            declareMethodAttributes(methodScope, current, methodScope.isExtension);
-
-            if (!current.arg.reference) {
-               // NOTE : an extension method must be strong-resolved
-               declareVMTMessage(methodScope, current,
-                  methodScope.checkHint(MethodHint::Extension), true, templateBased);
-
-               current.setArgumentReference(methodScope.message);
+            if (SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_EXTENSION)) {
+               // COMPILER MAGIC : if the extension method is declared - inject nested extension
+               SyntaxNode extNode = current;
+               current = current.prevNode();
+               injectNestedExtension(extNode);
+               if (current == SyntaxKey::None) {
+                  // if it was the first element - start again
+                  current = current.firstChild();
+                  continue;
+               }               
             }
-            else methodScope.message = current.arg.reference;
+            else {
+               MethodScope methodScope(&scope);
+               methodScope.isExtension = scope.extensionClassRef != 0;
+               declareMethodAttributes(methodScope, current, methodScope.isExtension);
 
-            declareMethodMetaInfo(methodScope, current);
-            declareMethod(methodScope, current, scope.abstractMode, staticNotAllowed, yieldMethodNotAllowed);
+               if (!current.arg.reference) {
+                  // NOTE : an extension method must be strong-resolved
+                  declareVMTMessage(methodScope, current,
+                     methodScope.checkHint(MethodHint::Extension), true, templateBased);
 
-            if (methodScope.checkHint(MethodHint::Constructor)) {
-               withConstructors = true;
-               if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
-                  withDefaultConstructor = true;
+                  current.setArgumentReference(methodScope.message);
                }
-               else if (getArgCount(methodScope.message) == 0 && (MethodInfo::checkVisibility(methodScope.info, MethodHint::Protected)
-                  || MethodInfo::checkVisibility(methodScope.info, MethodHint::Internal)))
-               {
-                  // check if it is protected / iternal default constructor
-                  ref_t dummy = 0;
-                  ustr_t actionName = scope.module->resolveAction(getAction(methodScope.message), dummy);
-                  if (actionName.endsWith(CONSTRUCTOR_MESSAGE2) || actionName.endsWith(CONSTRUCTOR_MESSAGE))
+               else methodScope.message = current.arg.reference;
+
+               declareMethodMetaInfo(methodScope, current);
+               declareMethod(methodScope, current, scope.abstractMode, staticNotAllowed, yieldMethodNotAllowed);
+
+               if (methodScope.checkHint(MethodHint::Constructor)) {
+                  withConstructors = true;
+                  if ((methodScope.message & ~STATIC_MESSAGE) == scope.moduleScope->buildins.constructor_message) {
                      withDefaultConstructor = true;
-               }
-            }
-            else if (methodScope.checkHint(MethodHint::Predefined)) {
-               auto info = scope.info.methods.get(methodScope.message);
-               if (methodScope.checkHint(MethodHint::Indexed)) {
-                  // predefined method cannot be indexed
-                  if (_verbose) {
-                     IdentifierString messageName;
-                     ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
-
-                     _errorProcessor->info(infoPredefinedIndexedMethod, *messageName);
                   }
+                  else if (getArgCount(methodScope.message) == 0 && (MethodInfo::checkVisibility(methodScope.info, MethodHint::Protected)
+                     || MethodInfo::checkVisibility(methodScope.info, MethodHint::Internal)))
+                  {
+                     // check if it is protected / iternal default constructor
+                     ref_t dummy = 0;
+                     ustr_t actionName = scope.module->resolveAction(getAction(methodScope.message), dummy);
+                     if (actionName.endsWith(CONSTRUCTOR_MESSAGE2) || actionName.endsWith(CONSTRUCTOR_MESSAGE))
+                        withDefaultConstructor = true;
+                  }
+               }
+               else if (methodScope.checkHint(MethodHint::Predefined)) {
+                  auto info = scope.info.methods.get(methodScope.message);
+                  if (methodScope.checkHint(MethodHint::Indexed)) {
+                     // predefined method cannot be indexed
+                     if (_verbose) {
+                        IdentifierString messageName;
+                        ByteCodeUtil::resolveMessageName(messageName, scope.module, methodScope.message);
 
+                        _errorProcessor->info(infoPredefinedIndexedMethod, *messageName);
+                     }
+
+                     scope.raiseError(errIllegalMethod, current);
+                  }
+                  else if (!info.hints) {
+                     // HOTFIX : the predefined method info should be saved separately
+                     scope.info.methods.add(methodScope.message, methodScope.info);
+                  }
+                  else scope.raiseError(errIllegalMethod, current);
+               }
+
+               if (!_logic->validateMessage(*scope.moduleScope, methodScope.info.hints, methodScope.message)) {
                   scope.raiseError(errIllegalMethod, current);
                }
-               else if (!info.hints) {
-                  // HOTFIX : the predefined method info should be saved separately
-                  scope.info.methods.add(methodScope.message, methodScope.info);
-               }
-               else scope.raiseError(errIllegalMethod, current);
-            }
-
-            if (!_logic->validateMessage(*scope.moduleScope, methodScope.info.hints, methodScope.message)) {
-               scope.raiseError(errIllegalMethod, current);
             }
             break;
-         }
          default:
             break;
       }
@@ -6212,17 +6290,7 @@ void Compiler::validateType(Scope& scope, ref_t typeRef, SyntaxNode node, bool i
 ref_t Compiler::resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type,
    bool declarationMode, bool allowRole)
 {
-   ObjectInfo identInfo;
-
-   NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-   if (type == SyntaxKey::reference && isWeakReference(identifier)) {
-      identInfo = ns->mapWeakReference(identifier, false);
-   }
-   else if (type == SyntaxKey::globalreference) {
-      identInfo = ns->mapGlobal(identifier, EAttr::None);
-   }
-   else identInfo = ns->mapIdentifier(identifier, type == SyntaxKey::reference, EAttr::None);
+   ObjectInfo identInfo = scope.mapType(type, identifier);
 
    switch (identInfo.kind) {
       case ObjectKind::Class:
@@ -10822,6 +10890,24 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
          case SyntaxKey::HasStaticConstructor:
             scope.withStaticConstructor = true;
             break;
+         case SyntaxKey::NestedNamedClass:
+            scope.addNestedNamedClass(current.identifier(), current.findChild(SyntaxKey::Target).arg.reference);
+            break;
+         case SyntaxKey::Class:
+         {
+            BuildNode bNode = writer.CurrentNode();
+            while (bNode != BuildKey::Root)
+               bNode = bNode.parentNode();
+
+            BuildTreeWriter nestedWriter(bNode);
+            NamespaceScope* ns = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
+
+            Class classHelper(this, &scope, current.arg.reference, Visibility::Private, _withDebugInfo);
+            classHelper.load();
+            classHelper.compile(nestedWriter, *ns, current);
+
+            break;
+         }
          case SyntaxKey::Method:
          {
             if (exclusiveMode
@@ -11185,24 +11271,8 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
          {
             Class classHelper(this, &ns, current.arg.reference, ns.defaultVisibility, _withDebugInfo);
             classHelper.load();
+            classHelper.compile(writer, ns, current);
 
-            // HOTFIX : if the extension target is template, make sure it is compiled
-            if (classHelper.scope.extensionClassRef != 0)
-               classHelper.validateClassParent(current);
-
-            compileClass(writer, classHelper.scope, current);
-
-            // compile class class if it available
-            if (classHelper.scope.info.header.classRef != classHelper.scope.reference && classHelper.scope.info.header.classRef != 0) {
-               ClassClassScope classClassScope(&ns, classHelper.scope.info.header.classRef, classHelper.scope.visibility,
-                  &classHelper.scope.info, classHelper.scope.reference, classHelper.scope.withDebugInfo);
-               ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
-
-               if (test(classHelper.scope.info.header.flags, elTemplatebased))
-                  classClassScope.info.header.flags |= elTemplatebased;
-
-               compileClassClass(writer, classClassScope, classHelper.scope, current);
-            }
             break;
          }
          case SyntaxKey::ExternalFunction:
@@ -11936,6 +12006,12 @@ void Compiler::injectVirtualReturningMethod(Scope& scope, SyntaxNode classNode,
    exprNode.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::identifier, retVar);
 }
 
+void Compiler :: injectNestedExtension(SyntaxNode extNode)
+{
+   // !! temporal - code stub
+   assert(false);
+}
+
 void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef,
    mssg_t messageRef, MethodHint type)
 {
@@ -12548,6 +12624,27 @@ void Compiler::Class::declare(SyntaxNode node)
          scope.info.header.flags |= elFinal;
          scope.save();
       }
+   }
+}
+
+void Compiler::Class :: compile(BuildTreeWriter& writer, NamespaceScope& ns, SyntaxNode node)
+{
+   // HOTFIX : if the extension target is template, make sure it is compiled
+   if (scope.extensionClassRef != 0)
+      validateClassParent(node);
+
+   compiler->compileClass(writer, scope, node);
+
+   // compile class class if it available
+   if (scope.info.header.classRef != scope.reference && scope.info.header.classRef != 0) {
+      ClassClassScope classClassScope(&ns, scope.info.header.classRef, scope.visibility,
+         &scope.info, scope.reference, scope.withDebugInfo);
+      ns.moduleScope->loadClassInfo(classClassScope.info, classClassScope.reference, false);
+
+      if (test(scope.info.header.flags, elTemplatebased))
+         classClassScope.info.header.flags |= elTemplatebased;
+
+      compiler->compileClassClass(writer, classClassScope, scope, node);
    }
 }
 

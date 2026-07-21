@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - switch with class types
   - simplified syntax - Template<int> t := new auto();
   - implement *_length := len - as native operation
   - use *_length := len in BinaryHeap
@@ -56,8 +57,11 @@ In development:
   --------------------------------------
   * current : new feature
   ====================================== 
-  - support extension methods (nested extension inside a class)
+  - nested extension - can be both private or public
   - entry in knowhow.md
+  - support extension methods (nested extension inside a class) ; inject the extension method into a virtual nested extension class
+  - entry in knowhow.md
+  - modify code for streamasyncreader (put extension methods inside the main class and test http / https get samples)
   - support template extension methods
   - entry in knowhow.md
   - extension cannot be used directly

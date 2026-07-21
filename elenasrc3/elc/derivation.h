@@ -3,7 +3,7 @@
 //               
 //		This file contains Syntax Tree Builder class declaration
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef DERIVATION_H
@@ -241,7 +241,7 @@ namespace elena_lang
 
       void flushDescriptor(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool withNameNode = true, 
          bool typeDescriptor = false, bool exprMode = false);
-      void flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode);
+      void flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode, bool subMode);
       void flushInlineTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushExpressionTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode& node);

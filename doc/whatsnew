@@ -1,7 +1,8 @@
 ## ELENA 7.0.2
 
 - ELENA
-
+  - [ADDED] Nested (named) classes
+     
 - ELC  
   - [FIXED] multi-argument implicit lambda-function
 

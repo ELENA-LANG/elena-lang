@@ -3,7 +3,7 @@
 //
 //		This file contains Syntax Tree Builder class implementation
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elena.h"
@@ -583,7 +583,7 @@ void SyntaxTreeBuilder :: flushNested(SyntaxTreeWriter& writer, Scope& scope, Sy
    ref_t attributeCategory = V_CATEGORY_MAX;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::NestedExpression) {
-         flushClass(writer, scope, current, false);
+         flushClass(writer, scope, current, false, false);
       }
       else if (current == SyntaxKey::TemplateType) {
          writer.newNode(SyntaxKey::TemplateType);
@@ -1516,10 +1516,18 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       case SyntaxKey::Declaration:
       {
          SyntaxNode headerNode = writer.CurrentNode();
-         writer.closeNode();
+         bool nestedClass = SyntaxTree::ifChildExists(headerNode, SyntaxKey::Attribute, V_CLASS);
+         if (nestedClass) {
+            headerNode.setKey(SyntaxKey::Class);
+            flushClass(writer, scope, node, false, true);
+            break;
+         }
+         else {
+            writer.closeNode();
 
-         flushSubScope(writer, scope, node, headerNode);
-         return;
+            flushSubScope(writer, scope, node, headerNode);
+            return;
+         }         
       }
       case SyntaxKey::InitExpression:
       case SyntaxKey::AccumExpression:
@@ -1552,9 +1560,10 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
    writer.closeNode();
 }
 
-void SyntaxTreeBuilder :: flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode)
+void SyntaxTreeBuilder :: flushClass(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode, bool subMode)
 {
-   flushClassPostfixes(writer, scope, node);
+   if (!subMode)
+      flushClassPostfixes(writer, scope, node);
 
    if (functionMode) {
       writer.appendNode(SyntaxKey::Attribute, V_SINGLETON);
@@ -1989,7 +1998,7 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode&
          case DeclarationType::Class:
             writer.CurrentNode().setKey(SyntaxKey::Class);
 
-            flushClass(writer, scope, node, node.existChild(SyntaxKey::CodeBlock, SyntaxKey::ReturnExpression));
+            flushClass(writer, scope, node, node.existChild(SyntaxKey::CodeBlock, SyntaxKey::ReturnExpression), false);
             break;
          default:
             break;

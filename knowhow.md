@@ -2,6 +2,11 @@
 # ELENA Programming Language v 7.0
 # =============================================
 
+Content
+========
+
++ [A class method invoke closure](#a-class-method-invoke-closure)
+
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
 ## ----------------------------------------------------------------------------
@@ -871,3 +876,33 @@ Safe typecasting operation can be done using "if is" operation:
 
 The statement tries to typecast the first argument to the second one *Enumerator*. If the typecasting was successful the code in 
 the code brackets is executed and a variable *en* contains the converted object.
+
+## ----------------------------------------------------------------------------
+##  Nested named classes
+## ----------------------------------------------------------------------------
+
+It is now possible to declared a nested private class inside another class.
+The nested class is available only inside the owner one
+
+    singleton A
+    {
+       class B
+       {
+          testMe()
+          {
+             Console.writeLine("A::B testMe")
+          }
+       }
+    
+       testB()
+       {
+          B b := new B();
+    
+          b.testMe();
+       }
+    }
+    
+    public Program()
+    {
+       A.testB()
+    }

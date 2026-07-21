@@ -229,6 +229,7 @@ namespace elena_lang
       AsyncInvoker            = 0x000117,
       SourceRef               = 0x000118,
       Shortcut                = 0x000119,
+      NestedNamedClass        = 0x00011A,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

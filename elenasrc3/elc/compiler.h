@@ -503,6 +503,13 @@ namespace elena_lang
          {
             return {};
          }
+         virtual ObjectInfo mapType(SyntaxKey type, ustr_t identifier)
+         {
+            if (parent) {
+               return parent->mapType(type, identifier);
+            }
+            else return {};
+         }
 
          virtual ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode)
          {
@@ -634,6 +641,7 @@ namespace elena_lang
          ObjectInfo mapGlobal(ustr_t identifier, ExpressionAttribute mode) override;
          ObjectInfo mapWeakReference(ustr_t identifier, bool directResolved);
          ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
+         ObjectInfo mapType(SyntaxKey type, ustr_t identifier) override;
 
          void defineIntConstant(ref_t reference, int value)
          {
@@ -747,12 +755,20 @@ namespace elena_lang
          bool        withPrivateField;
          bool        withStaticConstructor;
 
+         ForwardMap  nestedNamedClasses;
+
          Scope* getScope(ScopeLevel level) override
          {
             if (level == ScopeLevel::Class || level == ScopeLevel::OwnerClass) {
                return this;
             }
             else return Scope::getScope(level);
+         }
+
+         void addNestedNamedClass(ustr_t name, ref_t reference)
+         {
+            assert(reference != 0);
+            nestedNamedClasses.add(name, reference);
          }
 
          void addMssgAttribute(mssg_t message, ClassAttribute attribute, mssg_t value)
@@ -805,6 +821,8 @@ namespace elena_lang
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
 
          ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
+
+         ObjectInfo mapType(SyntaxKey type, ustr_t identifier) override;
 
          void save();
 
@@ -1476,6 +1494,8 @@ namespace elena_lang
 
          void declare(SyntaxNode node);
 
+         void compile(BuildTreeWriter& writer, NamespaceScope& ns, SyntaxNode node);
+
          void load();
 
          Class(Compiler* compiler, Scope* parent, ref_t reference, Visibility visibility, bool debugInfo);
@@ -1871,6 +1891,8 @@ namespace elena_lang
       void injectSpecialArgumentInfo(BuildTreeWriter& writer, MethodScope& scope);
       void injectInplaceConstructors(ClassScope& classClassScope, ClassScope& classScope, SyntaxNode node);
 
+      void injectNestedExtension(SyntaxNode extNode);
+
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 
       static int allocateLocalAddress(Scope& scope, int size, bool binaryArray);
@@ -1897,6 +1919,8 @@ namespace elena_lang
 
       void declareDictionary(Scope& scope, SyntaxNode node, Visibility visibility,
          Scope::ScopeLevel level, bool shareMode);
+
+      void declareSubClass(ClassScope& ownerScope, SyntaxNode node);
 
       void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
          bool yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased);

@@ -518,6 +518,13 @@ namespace elena_lang
 
             return Node::read(_tree, child);
          }
+         Node insertNode(Key key, ustr_t argument)
+         {
+            pos_t strPos = _tree->saveStrArgument(argument);
+            pos_t child = _tree->insertChild(_position, key, 0, strPos);
+
+            return Node::read(_tree, child);
+         }
 
          // inject a child node between the current one and its children
          Node injectNode(Key key, int argument = 0)
