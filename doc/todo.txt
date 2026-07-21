@@ -57,8 +57,8 @@ In development:
   --------------------------------------
   * current : new feature
   ====================================== 
-  - support extension methods (nested extension inside a class) ; inject the extension method into a virtual nested extension class
-  - entry in knowhow.md
+  - extension method cannot be private
+  - extension method can be internal
   - modify code for streamasyncreader (put extension methods inside the main class and test http / https get samples)
   - support template extension methods
   - entry in knowhow.md

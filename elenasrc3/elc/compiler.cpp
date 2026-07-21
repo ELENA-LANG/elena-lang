@@ -52,15 +52,15 @@ static inline bool isUnboxingRequired(TargetMode mode)
       || mode == TargetMode::ConditionalUnboxingRequired;
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 //inline void testNodes(BuildNode node)
 //{
@@ -12012,8 +12012,27 @@ void Compiler::injectVirtualReturningMethod(Scope& scope, SyntaxNode classNode,
 
 void Compiler :: injectNestedExtension(SyntaxNode extNode)
 {
-   // !! temporal - code stub
-   assert(false);
+   SyntaxNode ownerNode = extNode.parentNode();
+
+   // COMPILER MAGIC : create a nested extension
+   SyntaxNode extensionScope = ownerNode.appendChild(SyntaxKey::Class);
+   extensionScope.appendChild(SyntaxKey::Attribute, V_EXTENSION);
+   extensionScope.appendChild(SyntaxKey::Attribute, V_PUBLIC);
+   extensionScope.appendChild(SyntaxKey::Name).appendChild(SyntaxKey::identifier, "__extension");
+
+   // COMPILER MAGIC : move extension methods into the nested extension
+   while (extNode != SyntaxKey::None) {
+      SyntaxNode next = extNode.nextNode();
+
+      SyntaxNode attrNode = SyntaxTree::gotoChild(extNode, SyntaxKey::Attribute, V_EXTENSION);
+      if (extNode == SyntaxKey::Method && attrNode != SyntaxKey::None) {
+         attrNode.setArgumentValue(0);
+
+         extensionScope.mergeNodes(extNode);
+      }
+
+      extNode = next;
+   }
 }
 
 void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRef, ref_t classRef,

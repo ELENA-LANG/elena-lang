@@ -45,6 +45,8 @@ Content
 + [Primitive Value operation](#primitive-value-operation)
 + [Safe typecasting operation](#safe-typecasting-operation)
 + [Nested named classes](#nested-named-classes)
++ [Nested extension](#nested-extension)
++ [Inplace extension method](#inplace-extension-method)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -972,4 +974,38 @@ It is now possible to declared a nested extension, which automatically extends t
        a.printMe(); // an extension can be applied to the owner
        
        Assert.ifFailed({ 2.printMe() }); // an extension is not available for other classes
+    }
+
+## ----------------------------------------------------------------------------
+##  Inplace extension method
+## ----------------------------------------------------------------------------
+
+It is possible to declare an extension method directly in the extending class
+
+    import extensions;
+    
+    interface I;
+    
+    sealed A : I
+    {
+       indexed internal callMethodOutsideInterface()
+       {
+          Console.writeLine("Invoking a private method");
+       }
+       
+       extension callMe()
+       {
+          self.callMethodOutsideInterface()
+       }
+    
+       constructor() {}
+    }
+    
+    public Program()
+    {
+       auto a := new A();
+       
+       a.callMe();
+       
+       Assert.ifFailed({ 2.callMe() });
     }

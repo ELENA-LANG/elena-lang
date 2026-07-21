@@ -1,21 +1,27 @@
 import extensions;
 
-class A
+interface I;
+
+sealed A : I
 {
-   public extension op
+   indexed internal callMethodOutsideInterface()
    {
-      printMe()
-      {
-         Console.writeLine(self.toPrintable())
-      }
+      Console.writeLine("Invoking a private method");
    }
+   
+   extension callMe()
+   {
+      self.callMethodOutsideInterface()
+   }
+
+   constructor() {}
 }
 
 public Program()
 {
    auto a := new A();
    
-   a.printMe();
+   a.callMe();
    
-   Assert.ifFailed({ 2.printMe() });
+   Assert.ifFailed({ 2.callMe() });
 }
