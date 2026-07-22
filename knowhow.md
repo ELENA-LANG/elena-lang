@@ -1041,3 +1041,29 @@ which automatically extends the owner class.
        Assert.ifFailed({ 2.printMe(2) });
     }
 
+
+## ----------------------------------------------------------------------------
+##  Inplace extension template method
+## ----------------------------------------------------------------------------
+
+It is possible to declare an extension template method directly in the extending class
+
+    import extensions;
+    
+    class A
+    {
+       extension printMe<T>(T arg)
+       {
+          Console.printLine(arg, " was called from ", self)
+       }
+    
+       constructor() {}
+    }
+        
+    public Program()
+    {
+       auto a := new A();
+       
+       a.printMe(2);
+       Assert.ifFailed({ 2.printMe(2) });
+    }

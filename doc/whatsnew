@@ -5,6 +5,7 @@
   - [ADDED] Nested extensions
   - [ADDED] Nested extensions template
   - [ADDED] inplace extension method
+  - [ADDED] inplace extension template method
      
 - ELC  
   - [FIXED] multi-argument implicit lambda-function

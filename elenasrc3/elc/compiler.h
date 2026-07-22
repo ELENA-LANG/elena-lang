@@ -1895,6 +1895,7 @@ namespace elena_lang
       void injectInplaceConstructors(ClassScope& classClassScope, ClassScope& classScope, SyntaxNode node);
 
       void injectNestedExtension(SyntaxNode extNode);
+      void injectNestedTemplateExtension(SyntaxNode extNode);
 
       void readFieldAttributes(ClassScope& scope, SyntaxNode node, FieldAttributes& attrs, bool declarationMode);
 

@@ -1407,6 +1407,11 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            if (SyntaxTree::ifChildExists(node, SyntaxKey::Attribute, V_EXTENSION))
+               _errorProcessor->raiseTerminalError(errDuplicatedDefinition, retrievePath(node), node);
+            flushTemplateArgDescr(writer, scope, current);
+            break;
          case SyntaxKey::Parameter:
             flushMethodMember(writer, scope, current);
             break;

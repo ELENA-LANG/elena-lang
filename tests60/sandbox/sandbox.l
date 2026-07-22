@@ -2,17 +2,9 @@ import extensions;
 
 class A
 {
-/*   extension printMe<T>(T arg)
+   extension printMe<T>(T arg)
    {
       Console.printLine(arg, " was called from ", self)
-   }*/
-
-   extension op<T>
-   {
-      /*extension */printMe<T>(T arg)
-      {
-         Console.printLine(arg, " was called from ", self)
-      }
    }
 
    constructor() {}

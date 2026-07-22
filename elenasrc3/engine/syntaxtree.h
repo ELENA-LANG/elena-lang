@@ -230,6 +230,7 @@ namespace elena_lang
       SourceRef               = 0x000118,
       Shortcut                = 0x000119,
       NestedNamedClass        = 0x00011A,
+      Commented               = 0x00011B,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

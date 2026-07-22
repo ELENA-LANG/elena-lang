@@ -52,15 +52,15 @@ static inline bool isUnboxingRequired(TargetMode mode)
       || mode == TargetMode::ConditionalUnboxingRequired;
 }
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 //inline void testNodes(BuildNode node)
 //{
@@ -2896,7 +2896,10 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
                // COMPILER MAGIC : if the extension method is declared - inject nested extension
                SyntaxNode extNode = current;
                current = current.prevNode();
-               injectNestedExtension(extNode);
+               if (extNode.existChild(SyntaxKey::TemplateArg)) {
+                  injectNestedTemplateExtension(extNode);
+               }
+               else injectNestedExtension(extNode);
                if (current == SyntaxKey::None) {
                   // if it was the first element - start again
                   current = current.firstChild();
@@ -12063,6 +12066,103 @@ void Compiler :: injectNestedExtension(SyntaxNode extNode)
          attrNode.setArgumentValue(0);
 
          extensionScope.mergeNodes(extNode);
+      }
+
+      extNode = next;
+   }
+}
+
+typedef MemoryMap<ustr_t, int, Map_StoreUStrAligned4, Map_GetUStr>  SignatureMap;
+
+inline void mapParameters(SyntaxNode node, SignatureMap& args)
+{
+   SyntaxNode current = node.findChild(SyntaxKey::Parameter);
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Parameter) {
+         SyntaxNode typeNode = current.findChild(SyntaxKey::Type);
+         if (typeNode == SyntaxKey::Type) {
+            int index = args.get(typeNode.findChild(SyntaxKey::identifier).identifier());
+            if (index > 0) {
+               typeNode.setKey(SyntaxKey::TemplateArgParameter);
+               typeNode.setArgumentValue(index);
+            }
+         }
+      }
+
+      current = current.nextNode();
+   }
+}
+
+inline void formatSignName(IdentifierString& signName, SyntaxNode node, SignatureMap& args)
+{
+   signName.append("ext");
+
+   SyntaxNode current = node.findChild(SyntaxKey::TemplateArg);
+   while (current == SyntaxKey::TemplateArg) {
+      ustr_t name = current.firstChild(SyntaxKey::TerminalMask).identifier();
+
+      args.add(name, args.count() + 1);
+
+      signName.append("-");
+      signName.append(name);
+
+      current = current.nextNode();
+   }
+}
+
+void Compiler :: injectNestedTemplateExtension(SyntaxNode extNode)
+{
+   SyntaxNode ownerNode = extNode.parentNode();
+   SyntaxNode lastNode = ownerNode.lastChild();
+
+   int index = 0;
+   SignatureMap map(0);
+   SignatureMap args(0);
+
+   while (extNode != SyntaxKey::None) {
+      args.clear();
+
+      SyntaxNode next = extNode.nextNode();
+
+      SyntaxNode attrNode = SyntaxTree::gotoChild(extNode, SyntaxKey::Attribute, V_EXTENSION);
+      if (extNode == SyntaxKey::Method && attrNode != SyntaxKey::None) {
+         IdentifierString signName;
+         formatSignName(signName, extNode, args);
+
+         SyntaxNode extensionScope = {};
+         if (!map.exist(*signName)) {
+            map.add(*signName, ++index);
+
+            extensionScope = ownerNode.appendChild(SyntaxKey::ExtensionTemplate);
+            extensionScope.appendChild(SyntaxKey::Attribute, V_EXTENSION);
+            extensionScope.appendChild(SyntaxKey::Attribute, V_PUBLIC);
+            extensionScope.appendChild(SyntaxKey::Name).appendChild(SyntaxKey::identifier, *signName);
+
+            // copy template args
+            SyntaxNode current = extNode.findChild(SyntaxKey::TemplateArg);
+            while (current == SyntaxKey::TemplateArg) {
+               SyntaxNode arg = extensionScope.appendChild(SyntaxKey::TemplateArg);
+               SyntaxTreeWriter writer(arg);
+               SyntaxTree::copyNodeSafe(writer, current);
+
+               current.setKey(SyntaxKey::Commented);
+
+               current = current.nextNode();
+            }
+         }
+         else {
+            int key = map.get(*signName);
+
+            extensionScope = lastNode;
+            for (int i = 0; i < key; i++) {
+               extensionScope = extensionScope.nextNode();
+            }
+         }
+
+         attrNode.setArgumentValue(0);
+
+         extensionScope.mergeNodes(extNode);
+         mapParameters(extNode, args);
       }
 
       extNode = next;
