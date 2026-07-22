@@ -43,6 +43,74 @@ static inline ustr_t retrievePath(SyntaxNode node)
    return "<undefined>";
 }
 
+static inline bool isTemplate(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::Attribute && (current.arg.reference == V_INLINE || current.arg.reference == V_TEMPLATE)) {
+         return true;
+      }
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+static inline bool isTextblock(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current == SyntaxKey::Attribute) {
+      if (current.arg.reference == V_TEXTBLOCK) {
+         return true;
+      }
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
+static inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration, bool& withComplexName)
+{
+   bool withPostfix = false;
+
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::TemplateArg:
+            return true;
+         case SyntaxKey::Postfix:
+            withPostfix = true;
+            break;
+         case SyntaxKey::ComplexName:
+            withComplexName = true;
+            break;
+         case SyntaxKey::Parameter:
+            if (withPostfix || isTemplate(declaration)) {
+               return true;
+            }
+            break;
+         case SyntaxKey::CodeBlock:
+            if ((!withPostfix || withComplexName) && isTemplate(declaration)) {
+               // HOTFIX : recognize inline template with no arguments
+               return true;
+            }
+            break;
+         case SyntaxKey::identifier:
+            if (isTextblock(declaration)) {
+               // HOTFIX : recognize text blocks
+               return true;
+            }
+            break;
+         default:
+            return false;
+      }
+
+      current = current.nextNode();
+   }
+
+   return false;
+}
+
 void SyntaxTreeBuilder :: flushNode(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)
 {
    SyntaxTree::copyNewNode(writer, node);
@@ -1516,9 +1584,21 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       case SyntaxKey::Declaration:
       {
          SyntaxNode headerNode = writer.CurrentNode();
+         bool dummy = false;
          bool nestedClass = SyntaxTree::ifChildExists(headerNode, SyntaxKey::Attribute, V_CLASS);
          bool nestedExtension = SyntaxTree::ifChildExists(headerNode, SyntaxKey::Attribute, V_EXTENSION);
-         if (nestedClass || nestedExtension) {
+         bool templateOne = isTemplateDeclaration(node, headerNode, dummy);
+         if (nestedExtension && templateOne) {
+            headerNode.setKey(SyntaxKey::ExtensionTemplate);
+            scope.type = defineTemplateType(headerNode);
+            flushTemplate(writer, scope, node);
+            break;
+         }
+         else if (templateOne) {
+            // HOTFIX : currently nested template is not supported
+            _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(member), member);
+         }
+         else if (nestedClass || nestedExtension) {
             headerNode.setKey(SyntaxKey::Class);
             flushClass(writer, scope, node, false, true);
             break;
@@ -1826,74 +1906,6 @@ static inline DeclarationType defineDeclarationType(SyntaxNode node)
    }
 
    return type;
-}
-
-static inline bool isTemplate(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      if (current == SyntaxKey::Attribute && (current.arg.reference == V_INLINE || current.arg.reference == V_TEMPLATE)) {
-         return true;
-      }
-      current = current.nextNode();
-   }
-
-   return false;
-}
-
-static inline bool isTextblock(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current == SyntaxKey::Attribute) {
-      if (current.arg.reference == V_TEXTBLOCK) {
-         return true;
-      }
-      current = current.nextNode();
-   }
-
-   return false;
-}
-
-static inline bool isTemplateDeclaration(SyntaxNode node, SyntaxNode declaration, bool& withComplexName)
-{
-   bool withPostfix = false;
-
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::TemplateArg:
-            return true;
-         case SyntaxKey::Postfix:
-            withPostfix = true;
-            break;
-         case SyntaxKey::ComplexName:
-            withComplexName = true;
-            break;
-         case SyntaxKey::Parameter:
-            if (withPostfix || isTemplate(declaration)) {
-               return true;
-            }
-            break;
-         case SyntaxKey::CodeBlock:
-            if ((!withPostfix || withComplexName) && isTemplate(declaration)) {
-               // HOTFIX : recognize inline template with no arguments
-               return true;
-            }
-            break;
-         case SyntaxKey::identifier:
-            if (isTextblock(declaration)) {
-               // HOTFIX : recognize text blocks
-               return true;
-            }
-            break;
-         default:
-            return false;
-      }
-
-      current = current.nextNode();
-   }
-
-   return false;
 }
 
 SyntaxTreeBuilder::ScopeType SyntaxTreeBuilder :: defineTemplateType(SyntaxNode node)

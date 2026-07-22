@@ -1,17 +1,18 @@
 import extensions;
 
-interface I;
-
-sealed A : I
+class A
 {
-   indexed internal callMethodOutsideInterface()
+/*   extension printMe<T>(T arg)
    {
-      Console.writeLine("Invoking a private method");
-   }
-   
-   extension callMe()
+      Console.printLine(arg, " was called from ", self)
+   }*/
+
+   extension op<T>
    {
-      self.callMethodOutsideInterface()
+      /*extension */printMe<T>(T arg)
+      {
+         Console.printLine(arg, " was called from ", self)
+      }
    }
 
    constructor() {}
@@ -21,7 +22,6 @@ public Program()
 {
    auto a := new A();
    
-   a.callMe();
-   
-   Assert.ifFailed({ 2.callMe() });
+   a.printMe(2);
+   Assert.ifFailed({ 2.printMe(2) });
 }

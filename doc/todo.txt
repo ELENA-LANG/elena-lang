@@ -9,6 +9,8 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - fix httpget (it fails time to time)
+  - fix httpsget ()
   - switch with class types
   - simplified syntax - Template<int> t := new auto();
   - implement *_length := len - as native operation
@@ -57,9 +59,6 @@ In development:
   --------------------------------------
   * current : new feature
   ====================================== 
-  - extension method cannot be private
-  - extension method can be internal
-  - modify code for streamasyncreader (put extension methods inside the main class and test http / https get samples)
   - support template extension methods
   - entry in knowhow.md
   - extension cannot be used directly

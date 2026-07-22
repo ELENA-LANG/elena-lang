@@ -47,6 +47,7 @@ Content
 + [Nested named classes](#nested-named-classes)
 + [Nested extension](#nested-extension)
 + [Inplace extension method](#inplace-extension-method)
++ [Nested extension template](#nested-extension-template)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1009,3 +1010,34 @@ It is possible to declare an extension method directly in the extending class
        
        Assert.ifFailed({ 2.callMe() });
     }
+
+## ----------------------------------------------------------------------------
+##  Nested extension template
+## ----------------------------------------------------------------------------
+
+It is possible to declare an extension template inside the class,
+which automatically extends the owner class.
+
+    import extensions;
+    
+    class A
+    {
+       extension op<T>
+       {
+          printMe<T>(T arg)
+          {
+             Console.printLine(arg, " was called from ", self)
+          }
+       }
+    
+       constructor() {}
+    }
+    
+    public Program()
+    {
+       auto a := new A();
+       
+       a.printMe(2);
+       Assert.ifFailed({ 2.printMe(2) });
+    }
+

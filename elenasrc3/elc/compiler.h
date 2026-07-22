@@ -699,6 +699,8 @@ namespace elena_lang
       struct TemplateScope : SourceScope
       {
          TemplateType type;
+         bool         nestedMode;
+         ustr_t       nestedPrefix;
 
          Scope* getScope(ScopeLevel level) override
          {
@@ -1922,6 +1924,7 @@ namespace elena_lang
          Scope::ScopeLevel level, bool shareMode);
 
       void declareSubClass(ClassScope& ownerScope, SyntaxNode node);
+      void declareSubExtensionTemplate(ClassScope& ownerScope, SyntaxNode node);
 
       void declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstructors, bool& withDefaultConstructor,
          bool yieldMethodNotAllowed, bool staticNotAllowed, bool templateBased);

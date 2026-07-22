@@ -178,31 +178,55 @@ public class NetworkStream : Stream
 
       _socket.close()
    }   
-}
-
-public extension AsyncStreamExtension : NetworkStream
-{
-   Task<int> readAsync(byte[] dump, int length)
-      = self.readAsync(dump, length);
-
-   Task<int> writeAsync(byte[] dump, int length)
+   
+   extension Task<int> readAsync(byte[] dump, int length)
+      = self.readAsync(dump, length);   
+      
+   extension Task<int> writeAsync(byte[] dump, int length)
       = self.writeAsync(dump, length);
 
-   Task writeStringAsync(string s)
+   extension Task writeStringAsync(string s)
       = self.writeStringAsync(s);
 
-   writeString(string s)
+   extension writeString(string s)
       = self.writeString(s);
 
-   Task<int> readAsync(MemoryBuffer buffer)
+   extension Task<int> readAsync(MemoryBuffer buffer)
       = self.readAsync(buffer);
 
-   Task readAllAsync(MemoryBuffer buffer, bool nonBlocking)
+   extension Task readAllAsync(MemoryBuffer buffer, bool nonBlocking)
       = self.readAllAsync(buffer, nonBlocking);
 
-   Task<string> readAllAsStringAsync(bool nonBlocking)
+   extension Task<string> readAllAsStringAsync(bool nonBlocking)
       = self.readAllAsStringAsync(nonBlocking);
 
-   bool isDataAvailable
-      = self.isDataAvailable;
+   extension bool isDataAvailable
+      = self.isDataAvailable;      
 }
+
+//public extension AsyncStreamExtension : NetworkStream
+//{
+//   Task<int> readAsync(byte[] dump, int length)
+//      = self.readAsync(dump, length);
+//
+//   Task<int> writeAsync(byte[] dump, int length)
+//      = self.writeAsync(dump, length);
+//
+//   Task writeStringAsync(string s)
+//      = self.writeStringAsync(s);
+//
+//   writeString(string s)
+//      = self.writeString(s);
+//
+//   Task<int> readAsync(MemoryBuffer buffer)
+//      = self.readAsync(buffer);
+//
+//   Task readAllAsync(MemoryBuffer buffer, bool nonBlocking)
+//      = self.readAllAsync(buffer, nonBlocking);
+//
+//   Task<string> readAllAsStringAsync(bool nonBlocking)
+//      = self.readAllAsStringAsync(nonBlocking);
+//
+//   bool isDataAvailable
+//      = self.isDataAvailable;
+//}

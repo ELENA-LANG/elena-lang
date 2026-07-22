@@ -1428,7 +1428,7 @@ void Compiler::SymbolScope::save()
 // --- Compiler::TemplateScope ---
 
 Compiler::TemplateScope::TemplateScope(Scope* parent, ref_t reference, Visibility visibility, bool withDebugInfo)
-   : SourceScope(parent, reference, visibility, withDebugInfo)
+   : SourceScope(parent, reference, visibility, withDebugInfo), nestedMode(false)
 {
    type = TemplateType::None;
 }
@@ -2811,6 +2811,18 @@ void Compiler :: declareDictionary(Scope& scope, SyntaxNode node, Visibility vis
    node.setKey(SyntaxKey::Idle);
 }
 
+void Compiler :: declareSubExtensionTemplate(ClassScope& ownerScope, SyntaxNode node)
+{
+   ReferenceProperName prefix(ownerScope.module->resolveReference(ownerScope.reference));
+   prefix.append(":");
+
+   TemplateScope templateScope(&ownerScope, 0, Visibility::Private, _withDebugInfo);
+   templateScope.nestedMode = true;
+   templateScope.nestedPrefix = *prefix;
+   declareTemplateClass(templateScope, node);
+
+}
+
 void Compiler :: declareSubClass(ClassScope& ownerScope, SyntaxNode node)
 {
    ReferenceProperName prefix(ownerScope.module->resolveReference(ownerScope.reference));
@@ -2852,6 +2864,9 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
       switch (current.key) {
          case SyntaxKey::Class:
             declareSubClass(scope, current);
+            break;
+         case SyntaxKey::ExtensionTemplate:
+            declareSubExtensionTemplate(scope, current);
             break;
          case SyntaxKey::MetaExpression:
          {
@@ -5966,6 +5981,22 @@ void Compiler::saveTemplate(TemplateScope& scope, SyntaxNode& node)
       registerExtensionTemplate(scope, node);
    }
 
+   // HOTFIX : inject the target for nested named extension
+   if (scope.nestedMode && !node.existChild(SyntaxKey::Parent)) {
+      SyntaxNode parentNode = node.insertNode(SyntaxKey::Parent);
+
+      ClassScope* ownerScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
+      assert(ownerScope != nullptr);
+
+      ustr_t refName = scope.module->resolveReference(ownerScope->reference);
+      if (isWeakReference(refName)) {
+         IdentifierString fullName(scope.module->name(), refName);
+
+         parentNode.appendChild(SyntaxKey::globalreference, *fullName);
+      }
+      else parentNode.appendChild(SyntaxKey::globalreference, refName);
+   }
+
    SyntaxTree::saveNode(node, target);
 }
 
@@ -6098,6 +6129,9 @@ void Compiler::declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
       postfix.append(WEAK_POSTFIX);
 
    IdentifierString prefix;
+   if (scope.nestedMode)
+      prefix.copy(scope.nestedPrefix);
+
    switch (scope.type) {
       case TemplateType::InlineProperty:
          prefix.append(INLINE_PROPERTY_PREFIX);
