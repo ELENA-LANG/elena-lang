@@ -66,5 +66,3 @@ public Program()
    HeapSortAlgorithm::heapSort<string>(s);
    Console.printLine(s.asEnumerable());
 }
-
-

@@ -53,5 +53,6 @@
     <project base_path="rosetta/ycombinator">ycombinator.l</project>
     <project base_path="rosetta/zeckendorf_arithm">zeckendorf_arithm.l</project>
     <project base_path="rosetta/zhangsuen">zhangsuen.l</project>
+    <project base_path="rosetta/heapsort">heapsort.l</project>
   </collection>
 </configuration>
