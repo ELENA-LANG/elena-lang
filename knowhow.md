@@ -1024,7 +1024,7 @@ which automatically extends the owner class.
     {
        extension op<T>
        {
-          printMe<T>(T arg)
+          printMe(T arg)
           {
              Console.printLine(arg, " was called from ", self)
           }

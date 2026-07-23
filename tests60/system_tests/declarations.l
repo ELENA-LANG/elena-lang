@@ -40,3 +40,19 @@ struct InfoDeclStruct
    int sumZ()
       = z;
 }
+
+class ExtensionMethodOwner
+{
+   extension printMe<T>(T arg)
+   {
+      Console.writeLine($"{arg} was called from {self}")
+   }
+    
+   constructor() {}
+}
+        
+public ExtensionMethodInvoker()
+{
+   auto a := new ExtensionMethodOwner();       
+   a.printMe(2);
+}

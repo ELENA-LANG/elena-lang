@@ -1852,7 +1852,7 @@ namespace elena_lang
 
       ref_t retrieveType(Scope& scope, ObjectInfo info);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type,
-         bool declarationMode, bool allowRole);
+         bool declarationMode, bool allowRole, bool allowSingleton);
       TypeInfo resolveTypeTemplate(Scope& scope, SyntaxNode node,
          TypeAttributes& attributes, bool declarationMode, bool objectMode = false);
 
@@ -1867,10 +1867,11 @@ namespace elena_lang
 
       int resolveSize(Scope& scope, SyntaxNode node);
       TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
-         bool declarationMode, bool allowRole, bool constAttr);
+         bool declarationMode, bool allowRole, bool constAttr, bool allowSingleton);
       TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
-         bool declarationMode, bool allowRole, bool constAttr);
-      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr, bool allowPrimitive = false);
+         bool declarationMode, bool allowRole, bool constAttr, bool allowSingleton);
+      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr,
+         bool allowPrimitive = false, bool allowSingleton = false);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters,
          ustr_t prefix, SyntaxKey argKey, ustr_t postFix);

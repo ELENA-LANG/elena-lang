@@ -41,10 +41,12 @@ In development:
   - refactore - Compiler :: declareVMTMessage - the function is too long
   - auto loading only used namespaces (instead of all)
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created) 
-  - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected 
+  - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected   
+  - Static decorator (mixin inheritance)
   --------------------------------------
   * dev
   ====================================== 
+  --------------------------------------
   * lang
   ====================================== 
   --------------------------------------
@@ -53,14 +55,16 @@ In development:
   - knowhow - foreach statement
   - provide descriptions for all classes (from culture)
   --------------------------------------
-  * Rosetta sample
+  * heap sort example 
   ====================================== 
-  - example - heap sort
+  - try to use singleton 
+  - implement
+  - publish on Rosetta Code sample
   --------------------------------------
-  * current : new feature
+  * fixing calling extension inside extension
   ====================================== 
-  - extension cannot be used directly
-  --------------------------------------
+  - fix
+  - get rid of duplications in readExtMessageEntry ()
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===
   * new version 7.0.3

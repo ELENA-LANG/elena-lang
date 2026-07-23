@@ -231,6 +231,7 @@ namespace elena_lang
       Shortcut                = 0x000119,
       NestedNamedClass        = 0x00011A,
       Commented               = 0x00011B,
+      MethodArgBlock          = 0x00011C,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

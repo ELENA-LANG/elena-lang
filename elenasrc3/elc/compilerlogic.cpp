@@ -1835,7 +1835,8 @@ bool CompilerLogic :: readExtMessageEntry(ModuleBase* extModule, MemoryBase* sec
          // if it is an extension template
          ustr_t pattern = reader.getString(DEFAULT_STR);
 
-         extensionTemplates.add(message, pattern.clone());
+         if (!extensionTemplates.exist(message, pattern))
+            extensionTemplates.add(message, pattern.clone());
       }
       else map.add(message, { extRef, strongMessage });
    }

@@ -1407,11 +1407,6 @@ void SyntaxTreeBuilder :: flushMethod(SyntaxTreeWriter& writer, Scope& scope, Sy
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
-         case SyntaxKey::TemplateArg:
-            if (SyntaxTree::ifChildExists(writer.CurrentNode(), SyntaxKey::Attribute, V_EXTENSION)) {
-               flushTemplateArgDescr(writer, scope, current);
-            }
-            break;
          case SyntaxKey::Parameter:
             flushMethodMember(writer, scope, current);
             break;
@@ -1553,6 +1548,8 @@ static inline void copyFunctionAttributes(SyntaxTreeWriter& writer, SyntaxNode n
 
 void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode)
 {
+   SyntaxNode templateArg = SyntaxTree::gotoNode(node.lastChild(SyntaxKey::TerminalMask), SyntaxKey::TemplateArg);
+
    writer.newNode(node.key);
 
    if (!functionMode) {
@@ -1576,7 +1573,13 @@ void SyntaxTreeBuilder :: flushClassMember(SyntaxTreeWriter& writer, Scope& scop
       case SyntaxKey::ResendDispatch:
       case SyntaxKey::Redirect:
          writer.CurrentNode().setKey(SyntaxKey::Method);
-         flushMethod(writer, scope, node);
+         if (templateArg == SyntaxKey::TemplateArg) {
+            if (SyntaxTree::ifChildExists(writer.CurrentNode(), SyntaxKey::Attribute, V_EXTENSION)) {
+               flushTemplateMethod(writer, ScopeType::ExtensionTemplate, node, templateArg);
+            }
+            else _errorProcessor->raiseTerminalError(errInvalidOperation, retrievePath(node), node);
+         }
+         else flushMethod(writer, scope, node);
          break;
       case SyntaxKey::GetExpression:
          writer.CurrentNode().setKey(SyntaxKey::Method);
@@ -1808,6 +1811,24 @@ void SyntaxTreeBuilder :: flushInlineTemplate(SyntaxTreeWriter& writer, Scope& s
 
       current = current.nextNode();
    }
+}
+
+void SyntaxTreeBuilder :: flushTemplateMethod(SyntaxTreeWriter& writer, ScopeType type, SyntaxNode node, SyntaxNode argNodes)
+{
+   writer.newNode(SyntaxKey::MethodArgBlock);
+
+   Scope nestedScope;
+   nestedScope.type = type;
+   while (argNodes == SyntaxKey::TemplateArg) {
+      flushTemplateArgDescr(writer, nestedScope, argNodes);
+      argNodes = argNodes.nextNode();
+   }
+
+   writer.closeNode();
+
+   nestedScope.initTemplateFlags();
+
+   flushMethod(writer, nestedScope, node);
 }
 
 void SyntaxTreeBuilder :: flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node)

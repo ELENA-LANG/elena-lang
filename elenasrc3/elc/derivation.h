@@ -224,6 +224,7 @@ namespace elena_lang
 
       void flushClassMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool functionMode = false);
       void flushMethod(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
+      void flushTemplateMethod(SyntaxTreeWriter& writer, ScopeType type, SyntaxNode node, SyntaxNode argNodes);
       void flushMethodMember(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node, bool exprMode = false);
       void flushParameterBlock(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
       void flushTemplate(SyntaxTreeWriter& writer, Scope& scope, SyntaxNode& node);
