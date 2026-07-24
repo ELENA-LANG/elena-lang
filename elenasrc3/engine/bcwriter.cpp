@@ -2818,9 +2818,11 @@ static inline bool intConstBranchingOp(BuildNode lastNode)
 
    savingOp2.setKey(BuildKey::Idle);
    intNode.setKey(BuildKey::Idle);
-   savingOp1.setKey(BuildKey::Idle);
-
-   localOp.setKey(BuildKey::LoadingIndex);
+   if (localOp == BuildKey::LocalAddress) {
+      savingOp1.setKey(BuildKey::Idle);
+      localOp.setKey(BuildKey::LoadingIndex);
+   }
+   else savingOp1.setKey(BuildKey::LoadingAccToIndex);
 
    return true;
 }

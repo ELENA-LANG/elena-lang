@@ -64,22 +64,22 @@ DISABLE_WARNING_POP
 #if defined(__i386__) || defined(__x86_64__) || defined (_M_IX86) || defined (_M_X64) || defined(CROSS_COMPILE_MODE)
             case PlatformType::Linux_x86:
             case PlatformType::Win_x86:
-               return { 344064, 86016, 0x200000, 1, true, true };
+               return { 344064, 86016, 0x200000, 1, true, false };
 #endif
 #if defined(__x86_64__) || defined (_M_X64) || defined(CROSS_COMPILE_MODE)
             case PlatformType::Linux_x86_64:
             case PlatformType::FreeBSD_x86_64:
             case PlatformType::Win_x86_64:
-               return { 688128, 204800, 0x200000, 1, true, true };
+               return { 688128, 204800, 0x200000, 1, true, false };
 #endif
 #if defined(__PPC64__)
             case PlatformType::Linux_PPC64le:
-               return { 688128, 204800, 0x200000, 1, true, true };
+               return { 688128, 204800, 0x200000, 1, true, false };
 #endif
 #if defined(__aarch64__)
             case PlatformType::Linux_ARM64:
             case PlatformType::MacOS_ARM64:
-               return { 688128, 204800, 0x200000, 1, true, true };
+               return { 688128, 204800, 0x200000, 1, true, false };
 #endif
          default:
             return {};

@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 8.0 ###
 
-  === Iteration 47 (graph sample; ide linux) ===
+  === Iteration 47 (ide linux; api refactoring; lang features) ===
   --------------------------------------
   * backlog
   ====================================== 
@@ -17,25 +17,11 @@ In development:
   - use *_length := len in BinaryHeap
   - Array<T> must support Enumerable interface as well
 
-  - optimization:
-           set          dp:-20
-           store        sp:2
-           set          dp:-4
-           store        sp:1
-           peek         fp:1
-           get           i:1
-           store        sp:0
-           mov        mssg:static:at#byref<system'IntNumber,'$auto'system@Reference#1&system@IntNumber>[3]
-           call       mssg:static:at#byref<system'IntNumber,'$auto'system@Reference#1&system@IntNumber>[3], class:sandbox'$auto'system@Array#1&system@IntNumber
-           set          dp:-20 <- we do not need it
-
 
   - ide : create two new lines instead of one when new lined inserted after "}" bracket
   - ide : by debugging - jump for more than 1 line (put the cursor into the middle)
   - comparing with enum type - try to use directly
   - Warn if the implicit conversion is used
-  - optimization : jumping, offset aligning
-  - pi optimization : at least 10% 
 
   - xml : xmlwriter
   - refactore - Compiler :: declareVMTMessage - the function is too long
@@ -55,18 +41,13 @@ In development:
   - knowhow - foreach statement
   - provide descriptions for all classes (from culture)
   --------------------------------------
-  * heap sort example 
+  * current : graph sample
   ====================================== 
-  - try to use singleton 
-  - implement
-  - publish on Rosetta Code sample
-  --------------------------------------
-  * fixing calling extension inside extension
-  ====================================== 
-  - fix
-  - get rid of duplications in readExtMessageEntry ()
+  - stage 1 : compile-time script 
 
-  === Iteration 48 (text based adventage; httpget / httpsget reliability; vscode extension) ===
+  - stage 2 : run-time script 
+
+  === Iteration 48 (text based adventage; httpget / httpsget reliability; pi optimization) ===
   * new version 7.0.3
   --------------------------------------
   --------------------------------------
@@ -79,7 +60,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 49 (tetris sample) ===
+  === Iteration 49 (tetris sample; vscode extension) ===
   * new version 7.0.4
   --------------------------------------
   * dev
