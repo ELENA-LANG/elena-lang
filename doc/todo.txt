@@ -46,19 +46,13 @@ In development:
   ====================================== 
   - initial design : three actors - Function & Plotter & Controller;
     script will inject the functionality into Function & Plotter; Controller is not affected
-  - stage 0a : current function; use Plotter
-  - stage 0b : sin function
+  - try to use dependency injection
+  - stage 0b : select function - sin / cos / current one function
   - stage 0c : switch to xforms
   - stage 1 : compile-time script 
 
   - stage 2 : run-time script 
   ---------------------------------------
-  current : Union template (similar to record?)
-  ====================================== 
-  - implement simple one
-  - implement template one
-  - try to create using #for directive
-  - knowhow entry
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; pi optimization) ===
   * new version 7.0.3
