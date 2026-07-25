@@ -57,7 +57,8 @@ public template if::nil::else<expr>(truePart,falsePart) : __included(statements)
 
 public template if::not::nil<expr>(falsePart) : __included(statements)
 {
-   (cast bool(expr == nil))
+   __intermediate v := expr;
+   (cast bool(v == nil))
      ! { falsePart }
 }
 
@@ -65,7 +66,8 @@ public template if::not::nil<expr>(falsePart) : __included(statements)
 
 public template if::not::nil::else<expr>(falsePart,truePart) : __included(statements)
 {
-   (cast bool(expr == nil))
+   __intermediate v := expr;
+   (cast bool(v == nil))
      ? { truePart } 
      ! { falsePart }
 }

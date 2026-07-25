@@ -27,5 +27,6 @@ namespace collections
       Stack<T1>? o4 := nil;
       SortedList<T1,T2>? sl := nil;
       BinaryHeap<T1>? h1 := nil;
+      Union<T1,T2>? u1 := nil;
    }
 }

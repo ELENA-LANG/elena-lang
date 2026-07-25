@@ -1,21 +1,23 @@
 import extensions;
 
-singleton Helper
+A;
+B;
+
+testUnion(Union<A,B> union)
 {
-   int test(real y)
-   {
-      real z := 2;
-      if (y == 0) {
-         ^ 3;
-      };
-      
-      ^ 2
+   if:not:nil(var A? a := *union) {
+      Console.writeLine("A is passed");
    }
+   else if:not:nil(var B? b := union.Value) {
+      Console.writeLine("B is passed");
+   };
 }
 
 public Program()
 {
-   int n := Helper.test(2)
+   auto u1 := new Union<A,B>(new A());
+   auto u2 := new Union<A,B>(new B());
+   
+   testUnion(u1);
+   testUnion(u2);
 }
-
-

@@ -1837,7 +1837,10 @@ ObjectInfo Compiler::CodeScope::mapByRefReturnArg()
 {
    MethodScope* scope = Scope::getScope<MethodScope>(*this, ScopeLevel::Method);
 
-   return scope->mapParameter(RETVAL_ARG, EAttr::None);
+   auto retVal = scope->mapParameter(RETVAL_ARG, EAttr::None);
+   retVal.typeInfo.nillable = scope->checkHint(MethodHint::Nillable);
+
+   return retVal;
 }
 
 void Compiler::CodeScope::syncStack(MethodScope* methodScope) const
@@ -10605,6 +10608,7 @@ void Compiler::initializeMethod(ClassScope& scope, MethodScope& methodScope, Syn
             sizeInfo = _logic->defineStructSize(*scope.moduleScope,
                resolvePrimitiveType(*scope.moduleScope, refType, false));
          }
+         else resolvePrimitiveType(*scope.moduleScope, refType, false);
 
          int offset = methodScope.parameters.count() + 1u;
          methodScope.parameters.add(RETVAL_ARG, { offset, refType, sizeInfo.size });

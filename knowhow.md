@@ -48,6 +48,7 @@ Content
 + [Nested extension](#nested-extension)
 + [Inplace extension method](#inplace-extension-method)
 + [Nested extension template](#nested-extension-template)
++ [Union](#Union)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1066,4 +1067,35 @@ It is possible to declare an extension template method directly in the extending
        
        a.printMe(2);
        Assert.ifFailed({ 2.printMe(2) });
+    }
+
+## ----------------------------------------------------------------------------
+##  Union
+## ----------------------------------------------------------------------------
+
+It is possible to declare a simple tuple allowing to pass one of unrelated objects
+as a single parameter
+
+    import extensions;
+    
+    A;
+    B;
+    
+    testUnion(Union<A,B> union)
+    {
+       if:not:nil(var A? a := *union) {
+          Console.writeLine("A is passed");
+       }
+       else if:not:nil(var B? b := union.Value) {
+          Console.writeLine("B is passed");
+       };
+    }
+    
+    public Program()
+    {
+       auto u1 := new Union<A,B>(new A());
+       auto u2 := new Union<A,B>(new B());
+       
+       testUnion(u1);
+       testUnion(u2);
     }

@@ -770,4 +770,29 @@ namespace collections
          }
       };
    }
+
+   public sealed class Union<T1, T2>
+   {
+      T1? _instance1;
+      T2? _instance2;
+      
+      constructor(T1 instance)
+      {
+         _instance1 := instance;
+      }
+      
+      constructor(T2 instance)
+      {
+         _instance2 := instance;
+      }
+   
+      get retoverload T1? Value()
+         = _instance1;
+   
+      get retoverload T2? Value()
+         = _instance2;
+         
+      get Value()
+         = _instance1 ?? _instance2;
+   }
 }
