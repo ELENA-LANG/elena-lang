@@ -17,6 +17,7 @@
      <module>
         <include>interfaces.l</include>
         <include>controller.l</include>
+        <include>factory.l</include>
         <include>graphs.l</include>
      </module>
   </files>

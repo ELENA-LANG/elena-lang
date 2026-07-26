@@ -5,7 +5,8 @@ namespace collections
       int _hashMask;
 
       List<VarTuple<TKey, TValue>> _list;
-      int[][]                   _hashTable; 
+      int[][]                      _hashTable; 
+      Func<object, int>            _hashFunction;
 
       private init(int capacity, int hashLength)
       {
@@ -13,6 +14,12 @@ namespace collections
             
          _hashTable := new int[][](hashLength);
          _list := new List<VarTuple<TKey, TValue>>(capacity);
+         _hashFunction := (key => key.Hashcode.Absolute);
+      }
+
+      constructor new(Func<object, int> hashFunction) : info("Creates a map with a default size (37) and a capacity (32); the custom hash function is provided")
+      {
+         _hashFunction := hashFunction;
       }
 
       constructor() : info("Creates a map with a default size (37) and a capacity (32)")

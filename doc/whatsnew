@@ -20,6 +20,7 @@
   - [ADDED] extensions toUInt, toSByte (extensions module)
   - [ADDED] system'collections'BinaryHeap<T1>
   - [ADDED] system'collections'Union<T1,T2>
+  - [ADDED] extension ClassHashCode (system'runtime)
 
 - Scripts
 

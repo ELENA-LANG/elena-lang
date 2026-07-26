@@ -44,15 +44,19 @@ In development:
   --------------------------------------
   * graph sample
   ====================================== 
-  - initial design : three actors - Function & Plotter & Controller;
-    script will inject the functionality into Function & Plotter; Controller is not affected
   - try to use dependency injection
   - stage 0b : select function - sin / cos / current one function
   - stage 0c : switch to xforms
   - stage 1 : compile-time script 
 
   - stage 2 : run-time script 
+  - post
   ---------------------------------------
+  * current : design dependency injection
+  ====================================== 
+  - design manual mode
+  - design automatic mode
+  - post / knowhow
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; pi optimization) ===
   * new version 7.0.3

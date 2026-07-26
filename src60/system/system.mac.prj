@@ -11,8 +11,8 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>7.0.12</version>
-     <author>Aleksey Rakov</author>
+     <version>7.0.13</version>
+     <author>Aleksey Rakov, ELENA-LANG Org</author>
   </manifest>
   <files>
      <module name="attributes" hints="6">

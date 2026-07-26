@@ -3334,3 +3334,16 @@ public binaryHeapTest() : testCase()
    Console.write(".");
 }
 
+public mapKeyTest() : testCase()
+{
+   auto d := new Map<int, int>();
+
+   d[1] := 10;
+   d[2] := 20;
+   d[202] := 300;
+
+   Assert.ifTrue(d[1] == 10);
+   Assert.ifTrue(d[2] == 20);
+   Assert.ifTrue(d[202] == 300);
+   Console.write(".");
+}

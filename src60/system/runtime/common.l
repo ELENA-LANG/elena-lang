@@ -30,6 +30,25 @@ public extension commonOp
    }
 }
 
+// --- classExtensions ---
+
+singleton ClassExtensionsHelper
+{
+   int readPtr(object o, out int retVal) : external(system'core_routines'__classToInt);
+}  
+   
+public extension classExtensions
+{
+   
+   get int ClassHashCode()
+   {
+      ClassExtensionsHelper.readPtr(self, out int hcode);
+      
+      ^ hcode;
+   }
+   
+}
+
 // --- ProcessorType ---
 
 public const struct ProcessorType : enum<int>(x86 = 0, AMD64 = 1, ARM = 2, ARM64 = 2, IA64 = 3, PPC64le = 4, Unknown = 255);

@@ -29,6 +29,7 @@ define __realSize                     8;
 
 define elMessage              00200000h;
 define elSubject              01000000h;
+define elClassClass           00000002h;
 
 define err_ret           1;
 define nameconst_index  -1;
@@ -2283,6 +2284,21 @@ procedure __jump_closure
   save       dp:index
 
 labSkip:
+
+end
+
+procedure __classToInt
+
+  peek       sp:1
+  tst        flag:elClassClass
+  jne        labSkip
+  class
+  store      sp:1 
+  
+labSkip:
+  load       sp:1
+  peek       sp:2
+  save
 
 end
 
