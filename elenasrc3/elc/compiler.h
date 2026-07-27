@@ -744,7 +744,7 @@ namespace elena_lang
 
          static void saveSymbolInfo(ModuleBase* module, SymbolInfo& info, ref_t reference);
 
-         SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility, bool withDebugInfo);
+         SymbolScope(Scope* ns, ref_t reference, Visibility visibility, bool withDebugInfo);
       };
 
       struct ClassScope : SourceScope

@@ -1398,7 +1398,7 @@ Compiler::SourceScope::SourceScope(Scope* parent, ref_t reference, Visibility vi
 
 // --- Compiler::SymbolScope ---
 
-Compiler::SymbolScope :: SymbolScope(NamespaceScope* ns, ref_t reference, Visibility visibility, bool withDebugInfo)
+Compiler::SymbolScope :: SymbolScope(Scope* ns, ref_t reference, Visibility visibility, bool withDebugInfo)
    : SourceScope(ns, reference, visibility, withDebugInfo), info({})
 {
    type = SymbolKind::Normal;
@@ -9247,12 +9247,16 @@ void Compiler::compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScop
    nestedWriter.newNode(BuildKey::Tape);
    nestedWriter.appendNode(BuildKey::OpenFrame);
 
+   SymbolScope symbolScope(&scope, 0, scope.visibility, scope.withDebugInfo);
+
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::AssignOperation) {
-         Expression expression(this, scope, nestedWriter);
+         Expression expression(this, symbolScope, nestedWriter);
 
          expression.compileRoot(current, EAttr::None);
+
+         expression.scope.syncStack();
       }
       current = current.nextNode();
    }
@@ -9268,13 +9272,15 @@ void Compiler::compileStaticInitializerMethod(BuildTreeWriter& writer, ClassScop
 
       expression.compileMessageCall(node, mapClassSymbol(scope, scope.reference), context, resolution,
          args, EAttr::None);
+
+      expression.scope.syncStack();
    }
 
    nestedWriter.appendNode(BuildKey::CloseFrame);
    nestedWriter.appendNode(BuildKey::Exit);
 
    nestedWriter.closeNode();
-   saveFrameAttributes(nestedWriter, scope, scope.moduleScope->minimalArgList, 0);
+   saveFrameAttributes(nestedWriter, symbolScope, symbolScope.reserved1 + symbolScope.reservedArgs, symbolScope.reserved2);
    nestedWriter.closeNode();
 }
 
@@ -15909,13 +15915,16 @@ Compiler::MessageResolution Compiler::Expression :: resolveByRefHandler(ObjectIn
          ref_t dummySignRef = 0;
          ustr_t actionName = scope.module->resolveAction(actionRef, dummySignRef);
 
-         ref_t byRefType = compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef });
+         ref_t byRefType = compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef }, true);
          ref_t byRefSignature = compiler->_logic->defineByRefSignature(*scope.moduleScope, byRefContext.implicitSignatureRef, byRefType);
 
          ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, flags);
 
          CheckMethodResult dummy = {};
          if (compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, byRefMessage, dummy)) {
+            // NOTE : we need to generate a wrapper to proper use it
+            compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef }, false);
+
             // NOTE : the original signature is extended with byref handler
             byRefContext.implicitSignatureRef = compiler->_logic->defineByRefSignature(*scope.moduleScope, byRefContext.implicitSignatureRef, byRefType);
 

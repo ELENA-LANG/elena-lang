@@ -1,7 +1,8 @@
 import extensions;
+import system'collections;
 import system'dynamic;
 import system'runtime;
-
+/*
 interface I
 {
    abstract string WhoAmI();
@@ -15,18 +16,18 @@ A : interface<I>
       = "I'm A";
 }
 
-//B : interface<I>
-//{
-//   constructor new() {}
-//   
-//   string WhoAmI()
-//      = "I'm B";
-//}
-//
-//public singleton DependencyInjector
-//{
-//   static Map<object, object> _typeFactories := Map<object, object>.new((type => type.ClassHashCode ));
-//   
+B : interface<I>
+{
+   constructor new() {}
+   
+   string WhoAmI()
+      = "I'm B";
+}
+*/
+public singleton DependencyInjector
+{
+   static Map<object, object> _typeFactories := ::Map<object, object>.new((type => (type.ClassHashCode) shl:4));
+   
 //   generic cast()
 //   {
 //      var type := __received.__getFirstSignatureMember();
@@ -35,8 +36,8 @@ A : interface<I>
 //   
 //      ^ __received(obj);
 //   }   
-//}
-//
+}
+
 //class ClassToBeInjected
 //{
 //   readonly I _i;
@@ -49,10 +50,9 @@ A : interface<I>
 
 public Program()
 {
-   int id := A.ClassHashCode;
-   int id2 := (A.new()).ClassHashCode;
+   var o := DependencyInjector
    
-//   var obj := ClassToBeInjected.new(TypeInjector);
+//   var obj := ClassToBeInjected.new(DependencyInjector);
 //   obj.WhoAmI();
 
    
