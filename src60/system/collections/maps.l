@@ -82,7 +82,7 @@ namespace collections
 
       setAt(TKey key, TValue object) : info("Adds or updates a dictionary element with <b>key</b>")
       {
-         int code := key.Hashcode.Absolute;
+         int code := _hashFunction(key);
     
          code := code.mod(_hashMask);
             
@@ -93,7 +93,7 @@ namespace collections
       
       TValue at(TKey key) : info("Returns a dictionary element with <b>key</b>")
       {
-         int code := key.Hashcode.Absolute;
+         int code := _hashFunction(key);
     
          code := code.mod(_hashMask);
             
@@ -144,7 +144,7 @@ namespace collections
         
       bool containsKey(TKey key) : info("Returns true if the map contains the provided key")
       {
-         int code := key.Hashcode.Absolute;
+         int code := _hashFunction(key);
     
          code := code.mod(_hashMask);
             

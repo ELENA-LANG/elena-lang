@@ -48,7 +48,8 @@ Content
 + [Nested extension](#nested-extension)
 + [Inplace extension method](#inplace-extension-method)
 + [Nested extension template](#nested-extension-template)
-+ [Union](#Union)
++ [Union](#union)
+- [Resolving type ambiguities for a template declaration](#resolving-type-ambiguities-for-a-template-declaration)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1099,3 +1100,49 @@ as a single parameter
        testUnion(u1);
        testUnion(u2);
     }
+
+## ----------------------------------------------------------------------------
+##  Resolving type ambiguities for a template declaration
+## ----------------------------------------------------------------------------
+
+Sometimes it is required to use a template argument as a normal identifier (a class class symbol).
+In this case the compiler cannot recognize it as a template parameter and treats it as a normal identifier
+leading to "unknown identifier" error. For example:
+
+    import system'collections;
+
+    public singleton DependencyInjector
+    {
+       static Map<object, object> _typeFactories := ::Map<object, object>.new((type => (type.ClassHashCode) shl:4));
+       
+       extension register<T>(object factory)
+       {
+          _typeFactories[T] := factory; // an error is raised : Unknown object 'T'
+       }
+    }
+    
+    public Program()
+    {   
+       DependencyInjector::register<I>(A);
+    }
+
+So we need to explicitly tell the compiler that it is a type declaration. And now it works!
+
+    import system'collections;
+
+    public singleton DependencyInjector
+    {
+       static Map<object, object> _typeFactories := ::Map<object, object>.new((type => (type.ClassHashCode) shl:4));
+       
+       extension register<T>(object factory)
+       {
+          _typeFactories[type T] := factory;
+       }
+    }
+    
+    public Program()
+    {   
+       DependencyInjector::register<I>(A);
+    }
+
+

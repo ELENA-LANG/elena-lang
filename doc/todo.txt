@@ -54,10 +54,8 @@ In development:
   ---------------------------------------
   * current : design dependency injection
   ====================================== 
-  - fix hanging code
-  - fix hanging IDE
-  - make sure the preloaded symbols declared in another module is loaded when that module is used
   - design manual mode
+  - make sure the preloaded symbols declared in another module is loaded when that module is used
   - design automatic mode
   - post / knowhow
 

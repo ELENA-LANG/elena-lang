@@ -9,6 +9,7 @@
      
 - ELC  
   - [FIXED] multi-argument implicit lambda-function
+  - [FIXED] critical error : initializing static fields
 
 - VM
 
