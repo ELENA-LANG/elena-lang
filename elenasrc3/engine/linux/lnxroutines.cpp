@@ -98,34 +98,11 @@ size_t SystemRoutineProvider :: AlignHeapSize(size_t size)
    return alignSize(size, 0x10);
 }
 
-uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSize)
-{
-   void* allocPtr = mmap(nullptr, totalSize, PROT_READ | PROT_WRITE,
-      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-   // MAP_FAILED is (void*)-1; INVALID_REF is a 32 bit ref_t and would never
-   // match it on a 64 bit target, letting a failed mmap go unnoticed
-   if (allocPtr == MAP_FAILED) {
-      ::exit(errno);
-   }
-
-   return (uintptr_t)allocPtr;
-}
-
-// NewHeap maps the whole reservation up-front, so there is nothing left to commit
-// mprotect is used to validate that [allocPtr, allocPtr + newSize) still lies inside
-// that mapping : it fails with ENOMEM once the heap grows past the reservation, which
-// is exactly the out-of-memory condition the caller tests for
-//
-// This file is built for Linux, FreeBSD and MacOS x86-64 alike, and the routine is
-// platform neutral : all three map the whole heap in NewHeap, and mprotect is POSIX
-//
-// The previous code called mremap with mmap's argument list (new_size receiving
-// PROT_READ|PROT_WRITE == 3 and flags receiving MAP_SHARED|MAP_ANONYMOUS == 0x21),
-// so it always failed with EINVAL and returned MAP_FAILED - which, being non-zero,
-// was reported to the caller as success. The FreeBSD / MacOS branch called mmap
-// without MAP_FIXED, so the kernel was free to place the range anywhere while the
-// caller kept assuming the heap had grown contiguously
+// Commits a range inside the reservation NewHeap made. mmap already maps it all
+// read/write, so mprotect is really here to check the range : it returns ENOMEM once
+// it leaves the mapping, which is the out of memory condition the callers look for.
+// The old code passed mmap's argument list to mremap, so it always failed with EINVAL
+// and returned MAP_FAILED - non-zero, hence read as success.
 static uintptr_t commitRange(void* allocPtr, size_t newSize)
 {
    // mprotect requires a page aligned address, while the heap is only 16 byte aligned
@@ -135,6 +112,25 @@ static uintptr_t commitRange(void* allocPtr, size_t newSize)
 
    if (mprotect((void*)start, length, PROT_READ | PROT_WRITE) != 0)
       return 0;
+
+   return (uintptr_t)allocPtr;
+}
+
+uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSize)
+{
+   void* allocPtr = mmap(nullptr, totalSize, PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+   // the old test used INVALID_REF, a 32 bit ref_t that never matches MAP_FAILED
+   // on a 64 bit target, so a failed mmap went unnoticed
+   if (allocPtr == MAP_FAILED) {
+      ::exit(errno);
+   }
+
+   // commit the initial range, as the Windows version does after reserving
+   if (committedSize && !commitRange(allocPtr, committedSize)) {
+      ::exit(errno);
+   }
 
    return (uintptr_t)allocPtr;
 }

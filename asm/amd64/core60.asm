@@ -169,11 +169,9 @@ labYGCollect:
   sub  rcx, rax
   xor  edx, edx
 
-  // ; NOTE : GC_COLLECT is also entered directly by the system 1 / 2 commands, which
-  // ;        call it from the generated code. Reaching it through GC_ALLOC puts one
-  // ;        extra return address on the stack, so an 8 byte filler is pushed here to
-  // ;        make both paths enter GC_COLLECT with the same 16-byte alignment.
-  // ;        The filler must be nil : this area is scanned as a root range.
+  // ; system 1 / 2 call GC_COLLECT directly, without the return address this path
+  // ; adds, so pad here to make both enter with the same alignment.
+  // ; it has to be nil - this range is scanned for roots
   xor  eax, eax
   push rax
 

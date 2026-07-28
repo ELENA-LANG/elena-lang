@@ -238,11 +238,12 @@ labYGNextFrame:
   mov  ebp, [ecx+8]
 
   // ; call GC routine
-  // ; NOTE : the stack must be 16-byte aligned on the call (System V i386 ABI).
-  // ;        The pushes above do not keep it aligned - 11 of them (44 bytes) plus
-  // ;        8 bytes per collected frame - so it is forced here. ESP is restored
-  // ;        from EBP below, and the 4 argument pushes preserve the alignment.
+#if (_LNX || _FREEBSD)
+  // ; System V wants esp % 16 == 0 here. The caller cannot help : x86 keeps no
+  // ; 16-byte invariant, and the frame loop above pushes 8 bytes per frame.
   and  esp, 0FFFFFFF0h
+#endif
+
   push ecx
   push edx
   push ebx
@@ -281,17 +282,24 @@ labPERMCollect:
   // ; lock frame
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
-  // ; NOTE : the stack must be 16-byte aligned on the call (System V i386 ABI).
-  // ;        esi is callee-saved, so it keeps the original esp across the call.
-  // ;        and/sub leave esp so that the argument push lands on a 16-byte boundary.
+#if (_LNX || _FREEBSD)
+  // ; System V wants esp % 16 == 0 on the call. esi is callee-saved, so it keeps the
+  // ; old esp; the sub leaves room for the argument push to land on the boundary.
   mov  esi, esp
   and  esp, 0FFFFFFF0h
   sub  esp, 12
+#endif
 
   push ecx
   call extern "$rt.CollectPermGCLA"
   mov  ebx, eax
+
+#if (_LNX || _FREEBSD)
   mov  esp, esi
+#elif _WIN
+  add  esp, 4
+#endif
+
   pop  esi
 
   ret

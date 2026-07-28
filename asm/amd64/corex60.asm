@@ -135,7 +135,16 @@ labYGCollect:
   // ; save registers
   sub  rcx, rax
   xor  edx, edx
+
+  // ; system 1 / 2 call GC_COLLECT directly, without the return address this path
+  // ; adds, so pad here to make both enter with the same alignment.
+  // ; it has to be nil - this range is scanned for roots
+  xor  eax, eax
+  push rax
+
   call %GC_COLLECT
+
+  pop  rax
   ret
 
 end
@@ -350,10 +359,8 @@ labYGNextThreadSkip:
   mov  rbp, [rax+16]
 
   // ; call GC routine
-  // ; NOTE : the stack must be 16-byte aligned on the call. The pushes above do not
-  // ;        keep it aligned (and their number varies with the thread / frame count),
-  // ;        so it is forced here. RSP is restored from RBP below.
-  and  rsp, 0FFFFFFF0h
+  // ; rsp is aligned : both entry paths arrive at rsp % 16 == 8, the entry pushes
+  // ; cancel it out, and the thread list was dropped by the mov rsp, rbp above
   sub  rsp, 30h
   mov  [rsp+28h], rax
   call extern "$rt.CollectGCLA"
@@ -541,8 +548,8 @@ labSkipWait:
 
   // ==== GCXT end ==============
 
-  // ; NOTE : force the 16-byte stack alignment required on the call
-  and  rsp, 0FFFFFFF0h
+  // ; rsp is aligned : the generated code calls us aligned, the entry pushes cancel
+  // ; the return address, and the thread list was dropped by the mov rsp, rbp above
   sub  rsp, 30h
 
   mov  rcx, [rbp]

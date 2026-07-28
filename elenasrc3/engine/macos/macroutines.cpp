@@ -130,27 +130,11 @@ size_t SystemRoutineProvider :: AlignHeapSize(size_t size)
    return alignSize(size, 0x10);
 }
 
-uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSize)
-{
-   void* allocPtr = mmap(nullptr, totalSize, PROT_READ | PROT_WRITE,
-      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-   // NOTE : MAP_FAILED is (void*)-1; INVALID_REF is a 32 bit ref_t and would never
-   //        match it on a 64 bit target, letting a failed mmap go unnoticed
-   if (allocPtr == MAP_FAILED) {
-      ::exit(errno);
-   }
-
-   return (uintptr_t)allocPtr;
-}
-
-// NOTE : NewHeap maps the whole reservation up-front, so there is nothing left to commit.
-//        mprotect is used to validate that [allocPtr, allocPtr + newSize) still lies inside
-//        that mapping : it fails with ENOMEM once the heap grows past the reservation, which
-//        is exactly the out-of-memory condition the caller tests for.
-//        The previous code called mmap without MAP_FIXED, so the kernel was free to place the
-//        new range anywhere - it never extended the heap, and ExpandHeap then returned that
-//        unrelated address while the caller kept assuming the heap grew contiguously.
+// NOTE : commits a range inside the reservation NewHeap made. mmap already maps it all
+//        read/write, so mprotect is really here to check the range : it returns ENOMEM
+//        once it leaves the mapping, which is the out of memory condition the callers
+//        look for. The old code called mmap without MAP_FIXED, so the kernel was free to
+//        place the range anywhere and the heap never actually grew.
 static uintptr_t commitRange(void* allocPtr, size_t newSize)
 {
    // mprotect requires a page aligned address, while the heap is only 16 byte aligned
@@ -160,6 +144,25 @@ static uintptr_t commitRange(void* allocPtr, size_t newSize)
 
    if (mprotect((void*)start, length, PROT_READ | PROT_WRITE) != 0)
       return 0;
+
+   return (uintptr_t)allocPtr;
+}
+
+uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSize)
+{
+   void* allocPtr = mmap(nullptr, totalSize, PROT_READ | PROT_WRITE,
+      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
+
+   // NOTE : the old test used INVALID_REF, a 32 bit ref_t that never matches MAP_FAILED
+   //        on a 64 bit target, so a failed mmap went unnoticed
+   if (allocPtr == MAP_FAILED) {
+      ::exit(errno);
+   }
+
+   // NOTE : commit the initial range, as the Windows version does after reserving
+   if (committedSize && !commitRange(allocPtr, committedSize)) {
+      ::exit(errno);
+   }
 
    return (uintptr_t)allocPtr;
 }

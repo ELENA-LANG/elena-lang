@@ -328,10 +328,12 @@ labYGNextThreadSkip:
   mov  ebp, [ecx+8]
 
   // ; call GC routine
-  // ; NOTE : the stack must be 16-byte aligned on the call (System V i386 ABI).
-  // ;        The pushes above do not keep it aligned, so it is forced here.
-  // ;        ESP is restored from EBP below, and the 4 argument pushes preserve it.
+#if (_LNX || _FREEBSD)
+  // ; System V wants esp % 16 == 0 here. The caller cannot help : x86 keeps no
+  // ; 16-byte invariant, and the pushes above vary with the thread and frame count.
   and  esp, 0FFFFFFF0h
+#endif
+
   push ecx
   push edx
   push ebx
