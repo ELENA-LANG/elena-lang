@@ -168,7 +168,18 @@ labYGCollect:
   // ; save registers
   sub  rcx, rax
   xor  edx, edx
+
+  // ; NOTE : GC_COLLECT is also entered directly by the system 1 / 2 commands, which
+  // ;        call it from the generated code. Reaching it through GC_ALLOC puts one
+  // ;        extra return address on the stack, so an 8 byte filler is pushed here to
+  // ;        make both paths enter GC_COLLECT with the same 16-byte alignment.
+  // ;        The filler must be nil : this area is scanned as a root range.
+  xor  eax, eax
+  push rax
+
   call %GC_COLLECT
+
+  pop  rax
   ret
 
 end
@@ -251,16 +262,12 @@ labYGNextFrame:
   mov  rbp, [rax+16]
 
   // ; call GC routine
-  // ; NOTE : 38h (and not 30h) is reserved to keep RSP 16-byte aligned on the call
-  // ;        13 pushes above (104 bytes) leave RSP at 8 mod 16, and the System V ABI
-  // ;        requires a 16-byte aligned stack... GCC emits aligned SSE (movaps) into
-  // ;        the frame of GCRoutine, which faults otherwise
-  sub  rsp, 38h
-  mov  [rsp+30h], rax
+  sub  rsp, 30h
+  mov  [rsp+28h], rax
   call extern "$rt.CollectGCLA"
 
-  mov  rbp, [rsp+30h]
-  add  rsp, 38h
+  mov  rbp, [rsp+28h]
+  add  rsp, 30h
   mov  rbx, rax
 
   mov  rsp, rbp 
