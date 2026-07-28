@@ -168,7 +168,16 @@ labYGCollect:
   // ; save registers
   sub  rcx, rax
   xor  edx, edx
+
+  // ; system 1 / 2 call GC_COLLECT directly, without the return address this path
+  // ; adds, so pad here to make both enter with the same alignment.
+  // ; it has to be nil - this range is scanned for roots
+  xor  eax, eax
+  push rax
+
   call %GC_COLLECT
+
+  pop  rax
   ret
 
 end
@@ -255,7 +264,7 @@ labYGNextFrame:
   mov  [rsp+28h], rax
   call extern "$rt.CollectGCLA"
 
-  mov  rbp, [rsp+28h] 
+  mov  rbp, [rsp+28h]
   add  rsp, 30h
   mov  rbx, rax
 
@@ -292,6 +301,13 @@ labPERMCollect:
 
   // ; lock frame
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
+
+#if (_LNX || _FREEBSD)
+
+  // ; the first argument goes in rdi under the System V ABI
+  mov  rdi, rcx
+
+#endif
 
   // ; call GC routine
   sub  rsp, 30h
@@ -2173,7 +2189,8 @@ end
 // ; system minor collect
 inline %1CFh
 
-  xor  ecx, ecx
+  xor  ecx, ecx                 // ; size = 0
+  xor  edx, edx                 // ; fullMode = 0
   call %GC_COLLECT
 
 end
@@ -2181,7 +2198,8 @@ end
 // ; system full collect
 inline %2CFh
 
-  mov  ecx, 1
+  xor  ecx, ecx                 // ; size = 0
+  mov  edx, 1                   // ; fullMode = 1 (edx, not ecx - ecx is the size)
   call %GC_COLLECT
 
 end
@@ -3939,8 +3957,8 @@ inline % 7F8h
 
   xor  eax, eax
   mov  [rbx], rax
+  mov  [rbx+8], rax
   mov  [rbx+16], rax
-  mov  [rbx+24], rax
 
 end
 

@@ -328,6 +328,12 @@ labYGNextThreadSkip:
   mov  ebp, [ecx+8]
 
   // ; call GC routine
+#if (_LNX || _FREEBSD)
+  // ; System V wants esp % 16 == 0 here. The caller cannot help : x86 keeps no
+  // ; 16-byte invariant, and the pushes above vary with the thread and frame count.
+  and  esp, 0FFFFFFF0h
+#endif
+
   push ecx
   push edx
   push ebx

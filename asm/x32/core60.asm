@@ -238,16 +238,22 @@ labYGNextFrame:
   mov  ebp, [ecx+8]
 
   // ; call GC routine
+#if (_LNX || _FREEBSD)
+  // ; System V wants esp % 16 == 0 here. The caller cannot help : x86 keeps no
+  // ; 16-byte invariant, and the frame loop above pushes 8 bytes per frame.
+  and  esp, 0FFFFFFF0h
+#endif
+
   push ecx
   push edx
   push ebx
   push eax
   call extern "$rt.CollectGCLA"
 
-  mov  ebp, [esp+12] 
+  mov  ebp, [esp+12]
   mov  ebx, eax
 
-  mov  esp, ebp 
+  mov  esp, ebp
   pop  ecx 
   pop  edx 
   pop  ebp
@@ -276,10 +282,24 @@ labPERMCollect:
   // ; lock frame
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
+#if (_LNX || _FREEBSD)
+  // ; System V wants esp % 16 == 0 on the call. esi is callee-saved, so it keeps the
+  // ; old esp; the sub leaves room for the argument push to land on the boundary.
+  mov  esi, esp
+  and  esp, 0FFFFFFF0h
+  sub  esp, 12
+#endif
+
   push ecx
   call extern "$rt.CollectPermGCLA"
   mov  ebx, eax
+
+#if (_LNX || _FREEBSD)
+  mov  esp, esi
+#elif _WIN
   add  esp, 4
+#endif
+
   pop  esi
 
   ret

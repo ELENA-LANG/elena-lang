@@ -7,6 +7,7 @@ import system'text'parsing;
 import system'io;
 import system'collections;
 import system'collections'threadsafe;
+import system'runtime;
 import ltests;
 
 // --- ControlTest ---
@@ -2880,29 +2881,89 @@ public dictionaryObjectKeyTest() : testCase()
 
 // Regression: hash buckets must grow with the key count and updates must overwrite
 // in place rather than appending duplicate entries.
-// NOTE : currently the number of keys reduced to 40 to prevent critical bug in GC for Linux. 
-//       After the issue will be resolved, the original value will be restored
 public dictionaryBucketGrowthTest() : testCase()
 {
    auto d := Dictionary.new(0);
 
-   for (int i := 0; i < /*200*/40; i += 1)
+   for (int i := 0; i < 200; i += 1)
       { d[i] := i * 2 };
 
-   for (int i := 0; i < /*200*/40; i += 1)
+   for (int i := 0; i < 200; i += 1)
       { Assert.ifTrue(d[i] == i * 2) };
 
    // updating every key must overwrite in place, not append duplicates
-   for (int i := 0; i < /*200*/40; i += 1)
+   for (int i := 0; i < 200; i += 1)
       { d[i] := i + 1 };
 
-   for (int i := 0; i < /*200*/40; i += 1)
+   for (int i := 0; i < 200; i += 1)
    {
       Assert.ifTrue(d[i] == i + 1);
       Assert.ifTrue(d.containsKey(i))
    };
 
    Assert.ifFalse(d.containsKey(1000));
+
+   Console.write(".");
+}
+
+// Regression: an explicitly requested collection must actually run, must reclaim the
+// garbage, and must leave every reachable object intact.
+// This is the only test that reaches GC_COLLECT through the system 1 / system 2 commands
+// instead of through GC_ALLOC, and the two paths do not enter the routine alike.
+public gcExplicitCollectTest() : testCase()
+{
+   // live data : it must survive both collections with its contents unchanged,
+   // even though a copying collector is free to move it
+   auto survivors := new ArrayList();
+   for (int i := 0; i < 100; i += 1)
+      { survivors.append(i * 7) };
+
+   auto d := Dictionary.new(0);
+   for (int i := 0; i < 100; i += 1)
+      { d[i] := i * 3 };
+
+   auto text := "survivor";
+
+   auto before := GCManager.calcStatistics();
+
+   // garbage : dropped right away, several times the size of the young generation
+   for (int i := 0; i < 5000; i += 1)
+      { auto tmp := new ArrayList(); tmp.append(i) };
+
+   // a minor collection must be recorded
+   GCManager.collectMinor();
+   auto afterMinor := GCManager.calcStatistics();
+   Assert.ifTrue(afterMinor.minorCollections > before.minorCollections);
+   Console.write(".");
+
+   // and a full one must be recorded as a major collection, not just a minor one :
+   // if fullMode is dropped on the way to the collector, this is what catches it
+   GCManager.collectFull();
+   auto afterFull := GCManager.calcStatistics();
+   Assert.ifTrue(afterFull.majorCollections > before.majorCollections);
+   Console.write(".");
+
+   // every reachable object must have survived, with its contents intact
+   Assert.ifTrue(survivors.Length == 100);
+   for (int i := 0; i < 100; i += 1)
+      { Assert.ifTrue(survivors[i] == i * 7) };
+
+   for (int i := 0; i < 100; i += 1)
+   {
+      Assert.ifTrue(d.containsKey(i));
+      Assert.ifTrue(d[i] == i * 3)
+   };
+
+   Assert.ifTrue(text == "survivor");
+   Console.write(".");
+
+   // the heap must still be usable for new allocations afterwards
+   auto fresh := new ArrayList();
+   for (int i := 0; i < 100; i += 1)
+      { fresh.append(i) };
+
+   Assert.ifTrue(fresh.Length == 100);
+   Assert.ifTrue(fresh[99] == 99);
 
    Console.write(".");
 }

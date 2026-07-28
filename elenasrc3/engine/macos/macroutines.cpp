@@ -17,6 +17,7 @@
 #include <errno.h>
 #include <ctime>
 #include <cstring>
+#include <unistd.h>
 
 #include <pthread.h>
 
@@ -129,12 +130,37 @@ size_t SystemRoutineProvider :: AlignHeapSize(size_t size)
    return alignSize(size, 0x10);
 }
 
+// NOTE : commits a range inside the reservation NewHeap made. mmap already maps it all
+//        read/write, so mprotect is really here to check the range : it returns ENOMEM
+//        once it leaves the mapping, which is the out of memory condition the callers
+//        look for. The old code called mmap without MAP_FIXED, so the kernel was free to
+//        place the range anywhere and the heap never actually grew.
+static uintptr_t commitRange(void* allocPtr, size_t newSize)
+{
+   // mprotect requires a page aligned address, while the heap is only 16 byte aligned
+   uintptr_t pageSize = (uintptr_t)sysconf(_SC_PAGESIZE);
+   uintptr_t start = (uintptr_t)allocPtr & ~(pageSize - 1);
+   size_t    length = ((uintptr_t)allocPtr + newSize) - start;
+
+   if (mprotect((void*)start, length, PROT_READ | PROT_WRITE) != 0)
+      return 0;
+
+   return (uintptr_t)allocPtr;
+}
+
 uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSize)
 {
    void* allocPtr = mmap(nullptr, totalSize, PROT_READ | PROT_WRITE,
       MAP_SHARED | MAP_ANONYMOUS, -1, 0);
 
-   if (allocPtr == (void*)INVALID_REF) {
+   // NOTE : the old test used INVALID_REF, a 32 bit ref_t that never matches MAP_FAILED
+   //        on a 64 bit target, so a failed mmap went unnoticed
+   if (allocPtr == MAP_FAILED) {
+      ::exit(errno);
+   }
+
+   // NOTE : commit the initial range, as the Windows version does after reserving
+   if (committedSize && !commitRange(allocPtr, committedSize)) {
       ::exit(errno);
    }
 
@@ -143,40 +169,12 @@ uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSiz
 
 uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
 {
-#if defined(__FreeBSD__) || defined(__APPLE__)
-
-   void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
-      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-#else
-
-   void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
-      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-#endif
-
-   //assert(r == allocPtr);
-
-   return !r ? 0 : (uintptr_t)r;
+   return commitRange(allocPtr, newSize);
 }
 
 uintptr_t SystemRoutineProvider :: ExpandPerm(void* allocPtr, size_t newSize)
 {
-#if defined(__FreeBSD__) || defined(__APPLE__)
-
-   void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
-      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-#else
-
-   void* r = mremap(allocPtr, newSize, PROT_READ | PROT_WRITE,
-      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-#endif
-
-   //assert(r == allocPtr);
-
-   return !r ? 0 : (uintptr_t)allocPtr;
+   return commitRange(allocPtr, newSize);
 }
 
 typedef void*(*thread_proc_t)(void*);
