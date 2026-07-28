@@ -11,7 +11,7 @@ LD = g++
 WINDRES = windres
 
 INC = -I.. -I../../engine -I../../common
-CFLAGS = -march=pentium3 -Wall -std=c++20 -m32
+CFLAGS = -march=pentium3 -Wall -std=c++20 -m32 -fPIC
 RESINC = 
 LIBDIR = 
 LIB = 
