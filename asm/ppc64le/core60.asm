@@ -278,6 +278,7 @@ labYGNextFrame:
 
   ld      r4, 8(r31)
   mr      r3, r1
+  li      r5, 0           // ; fullMode - GC_COLLECT is only reached from GC_ALLOC here
 
   // ; call GC routine
   std     r2, -8h(r1)     // ; storing toc pointer
@@ -379,6 +380,7 @@ labYGNextFrame:
 
   ld      r4, 8(r31)
   mr      r3, r1
+  li      r5, 0           // ; fullMode - GC_COLLECT is only reached from GC_ALLOC here
 
   // ; call GC routine
   std     r2, -8h(r1)     // ; storing toc pointer

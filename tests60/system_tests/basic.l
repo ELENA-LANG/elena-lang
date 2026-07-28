@@ -2880,23 +2880,21 @@ public dictionaryObjectKeyTest() : testCase()
 
 // Regression: hash buckets must grow with the key count and updates must overwrite
 // in place rather than appending duplicate entries.
-// NOTE : currently the number of keys reduced to 40 to prevent critical bug in GC for Linux. 
-//       After the issue will be resolved, the original value will be restored
 public dictionaryBucketGrowthTest() : testCase()
 {
    auto d := Dictionary.new(0);
 
-   for (int i := 0; i < /*200*/40; i += 1)
+   for (int i := 0; i < 200; i += 1)
       { d[i] := i * 2 };
 
-   for (int i := 0; i < /*200*/40; i += 1)
+   for (int i := 0; i < 200; i += 1)
       { Assert.ifTrue(d[i] == i * 2) };
 
    // updating every key must overwrite in place, not append duplicates
-   for (int i := 0; i < /*200*/40; i += 1)
+   for (int i := 0; i < 200; i += 1)
       { d[i] := i + 1 };
 
-   for (int i := 0; i < /*200*/40; i += 1)
+   for (int i := 0; i < 200; i += 1)
    {
       Assert.ifTrue(d[i] == i + 1);
       Assert.ifTrue(d.containsKey(i))

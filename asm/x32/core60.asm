@@ -238,16 +238,21 @@ labYGNextFrame:
   mov  ebp, [ecx+8]
 
   // ; call GC routine
+  // ; NOTE : the stack must be 16-byte aligned on the call (System V i386 ABI).
+  // ;        The pushes above do not keep it aligned - 11 of them (44 bytes) plus
+  // ;        8 bytes per collected frame - so it is forced here. ESP is restored
+  // ;        from EBP below, and the 4 argument pushes preserve the alignment.
+  and  esp, 0FFFFFFF0h
   push ecx
   push edx
   push ebx
   push eax
   call extern "$rt.CollectGCLA"
 
-  mov  ebp, [esp+12] 
+  mov  ebp, [esp+12]
   mov  ebx, eax
 
-  mov  esp, ebp 
+  mov  esp, ebp
   pop  ecx 
   pop  edx 
   pop  ebp
@@ -276,10 +281,17 @@ labPERMCollect:
   // ; lock frame
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], esp
 
+  // ; NOTE : the stack must be 16-byte aligned on the call (System V i386 ABI).
+  // ;        esi is callee-saved, so it keeps the original esp across the call.
+  // ;        and/sub leave esp so that the argument push lands on a 16-byte boundary.
+  mov  esi, esp
+  and  esp, 0FFFFFFF0h
+  sub  esp, 12
+
   push ecx
   call extern "$rt.CollectPermGCLA"
   mov  ebx, eax
-  add  esp, 4
+  mov  esp, esi
   pop  esi
 
   ret

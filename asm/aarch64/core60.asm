@@ -303,9 +303,10 @@ labYGNextFrame:
   add     x19, x29, #8
   ldr     x1, [x19]
   mov     x0, sp
+  mov     x2, #0               // ; fullMode - GC_COLLECT is only reached from GC_ALLOC here
 
   // ; restore frame to correctly display a call stack
-  stp     x29, x29, [sp, #-16]! 
+  stp     x29, x29, [sp, #-16]!
 
   ldr     x29, [x29]
 
@@ -407,9 +408,10 @@ labYGNextFrame:
   add     x19, x29, #8
   ldr     x1, [x19]
   mov     x0, sp
+  mov     x2, #0               // ; fullMode - GC_COLLECT is only reached from GC_ALLOC here
 
   // ; restore frame to correctly display a call stack
-  stp     x29, x29, [sp, #-16]! 
+  stp     x29, x29, [sp, #-16]!
 
   ldr     x29, [x29]
 
@@ -488,9 +490,10 @@ labYGCollect:
   add     x19, x29, #8
   ldr     x1, [x19]
   mov     x0, sp
+  mov     x2, #0               // ; fullMode - GC_COLLECT is only reached from GC_ALLOC here
 
   // ; restore frame to correctly display a call stack
-  stp     x29, x29, [sp, #-16]! 
+  stp     x29, x29, [sp, #-16]!
 
   ldr     x29, [x29]
 

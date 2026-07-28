@@ -350,6 +350,10 @@ labYGNextThreadSkip:
   mov  rbp, [rax+16]
 
   // ; call GC routine
+  // ; NOTE : the stack must be 16-byte aligned on the call. The pushes above do not
+  // ;        keep it aligned (and their number varies with the thread / frame count),
+  // ;        so it is forced here. RSP is restored from RBP below.
+  and  rsp, 0FFFFFFF0h
   sub  rsp, 30h
   mov  [rsp+28h], rax
   call extern "$rt.CollectGCLA"
@@ -537,6 +541,8 @@ labSkipWait:
 
   // ==== GCXT end ==============
 
+  // ; NOTE : force the 16-byte stack alignment required on the call
+  and  rsp, 0FFFFFFF0h
   sub  rsp, 30h
 
   mov  rcx, [rbp]

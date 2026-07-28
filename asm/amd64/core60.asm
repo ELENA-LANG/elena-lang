@@ -251,12 +251,16 @@ labYGNextFrame:
   mov  rbp, [rax+16]
 
   // ; call GC routine
-  sub  rsp, 30h
-  mov  [rsp+28h], rax
+  // ; NOTE : 38h (and not 30h) is reserved to keep RSP 16-byte aligned on the call
+  // ;        13 pushes above (104 bytes) leave RSP at 8 mod 16, and the System V ABI
+  // ;        requires a 16-byte aligned stack... GCC emits aligned SSE (movaps) into
+  // ;        the frame of GCRoutine, which faults otherwise
+  sub  rsp, 38h
+  mov  [rsp+30h], rax
   call extern "$rt.CollectGCLA"
 
-  mov  rbp, [rsp+28h] 
-  add  rsp, 30h
+  mov  rbp, [rsp+30h]
+  add  rsp, 38h
   mov  rbx, rax
 
   mov  rsp, rbp 
@@ -292,6 +296,13 @@ labPERMCollect:
 
   // ; lock frame
   mov  [data : %CORE_SINGLE_CONTENT + tt_stack_frame], rsp
+
+#if (_LNX || _FREEBSD)
+
+  // ; the first argument goes in rdi under the System V ABI
+  mov  rdi, rcx
+
+#endif
 
   // ; call GC routine
   sub  rsp, 30h
@@ -2173,7 +2184,8 @@ end
 // ; system minor collect
 inline %1CFh
 
-  xor  ecx, ecx
+  xor  ecx, ecx                 // ; size = 0
+  xor  edx, edx                 // ; fullMode = 0
   call %GC_COLLECT
 
 end
@@ -2181,7 +2193,8 @@ end
 // ; system full collect
 inline %2CFh
 
-  mov  ecx, 1
+  xor  ecx, ecx                 // ; size = 0
+  mov  edx, 1                   // ; fullMode = 1 (edx, not ecx - ecx is the size)
   call %GC_COLLECT
 
 end
@@ -3939,8 +3952,8 @@ inline % 7F8h
 
   xor  eax, eax
   mov  [rbx], rax
+  mov  [rbx+8], rax
   mov  [rbx+16], rax
-  mov  [rbx+24], rax
 
 end
 

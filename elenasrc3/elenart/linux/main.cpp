@@ -113,14 +113,14 @@ void InitializeMTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
    machine->startApp(env, entryList);
 }
 
-void* CollectGCLA(void* roots, size_t size)
+void* CollectGCLA(void* roots, size_t size, bool fullMode)
 {
 #ifdef DEBUG_OUTPUT
    printf("CollectGCLA %llx %llx\n", (long long)roots, size);
    fflush(stdout);
 #endif
 
-   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, false);
+   return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, fullMode);
 }
 
 void* CollectPermGCLA(size_t size)
