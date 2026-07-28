@@ -117,21 +117,17 @@ uintptr_t SystemRoutineProvider :: NewHeap(size_t totalSize, size_t committedSiz
 // that mapping : it fails with ENOMEM once the heap grows past the reservation, which
 // is exactly the out-of-memory condition the caller tests for
 //
+// This file is built for Linux, FreeBSD and MacOS x86-64 alike, and the routine is
+// platform neutral : all three map the whole heap in NewHeap, and mprotect is POSIX
+//
 // The previous code called mremap with mmap's argument list (new_size receiving
 // PROT_READ|PROT_WRITE == 3 and flags receiving MAP_SHARED|MAP_ANONYMOUS == 0x21),
 // so it always failed with EINVAL and returned MAP_FAILED - which, being non-zero,
-// was reported to the caller as success
+// was reported to the caller as success. The FreeBSD / MacOS branch called mmap
+// without MAP_FIXED, so the kernel was free to place the range anywhere while the
+// caller kept assuming the heap had grown contiguously
 static uintptr_t commitRange(void* allocPtr, size_t newSize)
 {
-#if defined(__FreeBSD__) || defined(__APPLE__)
-
-   void* r = mmap(allocPtr, newSize, PROT_READ | PROT_WRITE,
-      MAP_SHARED | MAP_ANONYMOUS, -1, 0);
-
-   return (r == MAP_FAILED) ? 0 : (uintptr_t)allocPtr;
-
-#else
-
    // mprotect requires a page aligned address, while the heap is only 16 byte aligned
    uintptr_t pageSize = (uintptr_t)sysconf(_SC_PAGESIZE);
    uintptr_t start = (uintptr_t)allocPtr & ~(pageSize - 1);
@@ -141,8 +137,6 @@ static uintptr_t commitRange(void* allocPtr, size_t newSize)
       return 0;
 
    return (uintptr_t)allocPtr;
-
-#endif
 }
 
 uintptr_t SystemRoutineProvider :: ExpandHeap(void* allocPtr, size_t newSize)
