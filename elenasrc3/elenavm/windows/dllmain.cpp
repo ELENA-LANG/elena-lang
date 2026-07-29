@@ -318,9 +318,9 @@ EXTERN_DLL_EXPORT void ExitLA(int retVal)
    machine->Exit(retVal);
 }
 
-EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size)
+EXTERN_DLL_EXPORT void* CollectGCLA(void* roots, size_t size, bool fullMode)
 {
-   return __routineProvider.GCRoutine(machine->getSystemEnv()->gc_table, (GCRoot*)roots, size, false);
+   return __routineProvider.GCRoutine(machine->getSystemEnv()->gc_table, (GCRoot*)roots, size, fullMode);
 }
 
 EXTERN_DLL_EXPORT void* CollectPermGCLA(size_t size)

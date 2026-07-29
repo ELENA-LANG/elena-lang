@@ -7549,18 +7549,8 @@ static inline bool isLOperandMutable(int operatorId)
    }
 }
 
-mssg_t Compiler::mapMessage(Scope& scope, SyntaxNode current, bool propertyMode,
-   bool extensionMode, bool probeMode)
+static inline void parseMessageAndGoToArguments(SyntaxNode& current, IdentifierString& messageStr)
 {
-   if (current.key == SyntaxKey::Message && current.arg.reference)
-      return current.arg.reference;
-
-   ref_t flags = propertyMode ? PROPERTY_MESSAGE : 0;
-   if (extensionMode)
-      flags |= FUNCTION_MESSAGE;
-
-   IdentifierString messageStr;
-
    if (current == SyntaxKey::Message) {
       SyntaxNode terminal = current.firstChild(SyntaxKey::TerminalMask);
 
@@ -7580,10 +7570,27 @@ mssg_t Compiler::mapMessage(Scope& scope, SyntaxNode current, bool propertyMode,
    // HOTFIX : skip tempalte args
    while (current == SyntaxKey::TemplateArg)
       current = current.nextNode();
+}
+
+mssg_t Compiler::mapMessage(Scope& scope, SyntaxNode current, bool propertyMode,
+   bool extensionMode, bool probeMode)
+{
+   if (current.key == SyntaxKey::Message && current.arg.reference)
+      return current.arg.reference;
+
+   ref_t flags = propertyMode ? PROPERTY_MESSAGE : 0;
+   if (extensionMode)
+      flags |= FUNCTION_MESSAGE;
+
+   IdentifierString messageStr;
+   parseMessageAndGoToArguments(current, messageStr);
 
    pos_t argCount = 1;
    while (current != SyntaxKey::None) {
-      argCount++;
+      if (current == SyntaxKey::SpreadOperation) {         
+         scope.raiseError(errInvalidOperation, current);
+      }
+      else argCount++;
 
       current = current.nextNode(SyntaxKey::ScopeMask);
    }
@@ -13682,10 +13689,79 @@ static inline bool isFunctionCall(ModuleBase* module, mssg_t message, pos_t argC
    return message == expected;
 }
 
+mssg_t Compiler::Expression :: resolveMessageAtCompileTime(ObjectInfo source, bool ignoreVariadics, bool asyncOp, MessageCallContext& callContext,
+   ref_t& expectedSignRef, int& resolvedNillableArgs, EAttr& paramMode)
+{
+   if (callContext.templateArgCount > 0) {
+      // try to resolve the extension expected signature
+      resolvedExtensionTemplate(source, callContext);
+      if (callContext.implicitSignatureRef)
+         expectedSignRef = getArgumentSignature(scope.module, callContext.implicitSignatureRef);
+   }
+
+   mssg_t resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
+      compiler->retrieveType(scope, source), callContext.weakMessage, isSelfCall(source), resolvedNillableArgs);
+
+   if (test(callContext.weakMessage, FUNCTION_MESSAGE) && asyncOp && resolvedMessage) {
+      ref_t functionRef = compiler->retrieveType(scope, source);
+
+      // check if the async function exists
+      mssg_t asyncMessage = compiler->overwriteAsAsyncFunction(scope, resolvedMessage);
+
+      CheckMethodResult dummy = {};
+      if (compiler->_logic->checkMethod(*scope.moduleScope, functionRef, asyncMessage, dummy)) {
+         callContext.weakMessage = asyncMessage;
+         resolvedMessage = asyncMessage;
+      }
+   }
+
+   if (!resolvedMessage && !ignoreVariadics) {
+      ref_t variadicMssg = resolveVariadicMessage(scope, callContext.weakMessage);
+
+      resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
+         compiler->retrieveType(scope, source), variadicMssg, isSelfCall(source), resolvedNillableArgs);
+      if (resolvedMessage) {
+         callContext.weakMessage = variadicMssg;
+         paramMode = paramMode | EAttr::WithVariadicArg;
+      }
+   }
+   else paramMode = paramMode | EAttr::AllowGenericSignature;
+
+   if (resolvedMessage)
+      scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
+
+   return resolvedMessage;
+}
+
+bool Compiler::Expression :: checkDynamicSpeadOperationArg(SyntaxNode current)
+{
+   if (SyntaxTree::gotoNode(current, SyntaxKey::SpreadOperation) != SyntaxKey::SpreadOperation)
+      return false;
+
+   IdentifierString messageStr;
+   parseMessageAndGoToArguments(current, messageStr);
+
+   while (current != SyntaxKey::None) {
+      if (current == SyntaxKey::SpreadOperation) {
+         return true;
+      }
+
+      current = current.nextNode(SyntaxKey::ScopeMask);
+   }
+
+
+   return false;
+}
+
 ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
    ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = {};
+
+   if (checkDynamicSpeadOperationArg(messageNode)) {
+      // !! temporal
+      scope.raiseError(errInvalidOperation, node);
+   }
 
    ref_t templateArgs[ARG_COUNT] = {};
    MessageCallContext callContext = {};
@@ -13706,52 +13782,13 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
 
       callContext.templateArgs = templateArgs;
    }
-
-   mssg_t resolvedMessage = 0;
-   int resolvedNillableArgs = 0;
-
+   
    EAttr paramMode = EAttr::NoPrimitives;
    ref_t expectedSignRef = 0;
-   if (source.mode != TargetMode::Weak) {
-      if (callContext.templateArgCount > 0) {
-         // try to resolve the extension expected signature
-         resolvedExtensionTemplate(source, callContext);
-         if (callContext.implicitSignatureRef)
-            expectedSignRef = getArgumentSignature(scope.module, callContext.implicitSignatureRef);
-      }
-
-      if(!resolvedMessage)
-         resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-            compiler->retrieveType(scope, source), callContext.weakMessage, isSelfCall(source), resolvedNillableArgs);
-
-      if (test(callContext.weakMessage, FUNCTION_MESSAGE) && EAttrs::testAndExclude(attrs, EAttr::AsyncOp) && resolvedMessage) {
-         ref_t functionRef = compiler->retrieveType(scope, source);
-
-         // check if the async function exists
-         mssg_t asyncMessage = compiler->overwriteAsAsyncFunction(scope, resolvedMessage);
-
-         CheckMethodResult dummy = {};
-         if (compiler->_logic->checkMethod(*scope.moduleScope, functionRef, asyncMessage, dummy)) {
-            callContext.weakMessage = asyncMessage;
-            resolvedMessage = asyncMessage;
-         }            
-      }
-
-      if (!resolvedMessage && !ignoreVariadics) {
-         ref_t variadicMssg = resolveVariadicMessage(scope, callContext.weakMessage);
-
-         resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
-            compiler->retrieveType(scope, source), variadicMssg, isSelfCall(source), resolvedNillableArgs);
-         if (resolvedMessage) {
-            callContext.weakMessage = variadicMssg;
-            paramMode = paramMode | EAttr::WithVariadicArg;
-         }
-      }
-      else paramMode = paramMode | EAttr::AllowGenericSignature;
-   }
-
-   if (resolvedMessage)
-      scope.module->resolveAction(getAction(resolvedMessage), expectedSignRef);
+   int resolvedNillableArgs = 0;
+   mssg_t resolvedMessage = (source.mode != TargetMode::Weak) 
+      ? resolveMessageAtCompileTime(source, ignoreVariadics, EAttrs::testAndExclude(attrs, EAttr::AsyncOp), 
+         callContext, expectedSignRef, resolvedNillableArgs, paramMode) : 0;
 
    ArgumentListType argListType = ArgumentListType::Normal;
    callContext.implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, paramMode,

@@ -162,6 +162,7 @@ namespace elena_lang
       ClosureOperation        = 0x0018A2,
       Interpolation           = 0x0018A3,
       LTExpression            = 0x0018A4,
+      SpreadOperation         = 0x0018A5,
       FieldInitializer        = 0x0018B0,
       Message                 = 0x0010C0,
       MessageOperation        = 0x0018C1,

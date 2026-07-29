@@ -1,4 +1,4 @@
-import extensions;
+/*import extensions;
 import system'collections;
 import system'dynamic;
 import system'runtime;
@@ -62,4 +62,31 @@ public Program()
 
    var obj := ClassToBeInjected.new(DependencyInjector);
    Console.writeLine(obj.WhoAmI());
+}
+*/
+
+A;
+
+class Tester
+{
+   object arg1;
+   object arg2;
+   
+   constructor new(arg1, arg2)
+   {
+      this arg1 := arg1;
+      this arg2 := arg2;
+   }
+   
+//   test(arg1)
+//   {
+//      var o:= arg;
+//   }
+}
+
+public Program()
+{             
+   Tester.new(...(2, 3));
+   
+//   Tester.new(...0);
 }

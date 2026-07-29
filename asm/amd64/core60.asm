@@ -296,6 +296,7 @@ inline % GC_ALLOCPERM
 labPERMCollect:
   // ; save registers
   sub  rcx, rax
+  push rbp
   push r10
   push r11
 
@@ -319,6 +320,7 @@ labPERMCollect:
 
   pop  r11
   pop  r10
+  pop  rbp
 
   ret
 

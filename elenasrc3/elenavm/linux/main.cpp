@@ -358,9 +358,9 @@ int ExecuteVMLA(const char* target, const char* arg, char* output, size_t maxLen
    return retVal;
 }
 
-void* CollectGCLA(void* roots, size_t size)
+void* CollectGCLA(void* roots, size_t size, bool fullMode)
 {
-   return __routineProvider.GCRoutine(machine->getSystemEnv()->gc_table, (GCRoot*)roots, size, false);
+   return __routineProvider.GCRoutine(machine->getSystemEnv()->gc_table, (GCRoot*)roots, size, fullMode);
 }
 
 void* CollectPermGCLA(size_t size)
