@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - make sure the preloaded symbols declared in another module is loaded when that module is used
   - fix httpget (it fails time to time)
   - fix httpsget ()
   - switch with class types
@@ -16,8 +17,6 @@ In development:
   - implement *_length := len - as native operation
   - use *_length := len in BinaryHeap
   - Array<T> must support Enumerable interface as well
-
-
   - ide : create two new lines instead of one when new lined inserted after "}" bracket
   - ide : by debugging - jump for more than 1 line (put the cursor into the middle)
   - comparing with enum type - try to use directly
@@ -29,6 +28,7 @@ In development:
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created) 
   - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected   
   - Static decorator (mixin inheritance)
+  - #866 : spread operator
   --------------------------------------
   * dev
   ====================================== 
@@ -52,12 +52,27 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * current : design dependency injection
+  * design dependency injection
   ====================================== 
-  - design manual mode
-  - make sure the preloaded symbols declared in another module is loaded when that module is used
   - design automatic mode
   - post / knowhow
+  ---------------------------------------
+  * auto filling
+  ====================================== 
+  - syntax
+      Tester.new(...(A..))
+  - design compile-time auto filling
+  - implement
+  - unit test
+  - know-how entry
+  ---------------------------------------
+  * current : spreading tuple
+  ====================================== 
+  - syntax:
+        a.test(...(n, m));
+  - design compile-time spreading
+  - implement
+  - unit test
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; pi optimization) ===
   * new version 7.0.3

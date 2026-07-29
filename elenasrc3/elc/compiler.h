@@ -1573,7 +1573,12 @@ namespace elena_lang
          bool checkValidity(ObjectInfo target, CheckMethodResult& result, bool allowPrivateCall);
          bool checkValidity(ObjectInfo target, MessageResolution& resolution, bool allowPrivateCall);
 
+         bool checkDynamicSpeadOperationArg(SyntaxNode node);
+
          void prepareConflictResolution();
+
+         mssg_t resolveMessageAtCompileTime(ObjectInfo source, bool ignoreVariadics, bool asyncOp, MessageCallContext& callContext,
+            ref_t& expectedSignRef, int& resolvedNillableArgs, ExpressionAttribute& paramMode);
 
          ObjectInfo compileLookAhead(SyntaxNode node,
             ref_t targetRef, ExpressionAttribute attrs);

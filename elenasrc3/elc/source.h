@@ -46,7 +46,8 @@ namespace elena_lang
       {
          return (state == dfaOperator || state == dfaAltOperator 
             || state == dfaGrOperator || state == dfaIncOperator
-            || state == dfaIfOperator || state == dfaElseOperator || state == dfaAltOpOperator);
+            || state == dfaIfOperator || state == dfaElseOperator 
+            || state == dfaAltOpOperator || state == dfaAltDotOperator);
       }
 
       void resolveSignAmbiguity(SourceInfo& info)

@@ -30,7 +30,7 @@ extern "C"
    DLL_PUBLIC int EvaluateVMLA(void* tape);
    DLL_PUBLIC int PrepareVMLA(const char* configName, const char* ns, const char* path, const char* exceptionHandler);
    DLL_PUBLIC int ExecuteVMLA(const char* target, const char* arg, char* output, size_t maxLength);
-   DLL_PUBLIC void* CollectGCLA(void* roots, size_t size);
+   DLL_PUBLIC void* CollectGCLA(void* roots, size_t size, bool fullMode);
    DLL_PUBLIC void* CollectPermGCLA(size_t size);
    DLL_PUBLIC void* ForcedCollectGCLA(void* roots, int fullMode);
    DLL_PUBLIC size_t LoadMessageNameLA(size_t message, char* buffer, size_t length);
