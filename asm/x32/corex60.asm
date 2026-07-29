@@ -172,9 +172,9 @@ labStart:
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
 
-  // ; stop until GC is ended. The barrier is gc_signal itself, not the event of the
-  // ; thread that happens to be collecting : that event is reset by the table scan of
-  // ; the next collection, and its owner may never collect again
+  // ; stop until this collection ends. The barrier is the collection state, not the
+  // ; event of the thread that happens to be collecting : the table scan of every
+  // ; collection resets every event, that one included
 #if (_LNX || _FREEBSD)
   mov  esi, esp
   and  esp, 0FFFFFFF0h
@@ -496,7 +496,7 @@ labPERMCollect:
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
 
-  // ; stop until GC is ended, on gc_signal itself, see the note in GC_COLLECT
+  // ; stop until this collection ends, see the note in GC_COLLECT
 #if (_LNX || _FREEBSD)
   mov  esi, esp
   and  esp, 0FFFFFFF0h
@@ -626,13 +626,11 @@ procedure % THREAD_WAIT
   push ebp
   mov  edi, esp
 
-  // ; esi is the cached arg0 of the x86 runtime, the mirror of sp:0, and eax and edx
-  // ; are the halves of the long accumulator. snop is the only caller and it saves
-  // ; nothing, while being emitted at the top of every loop, so whatever is clobbered
-  // ; here comes back as corruption in the caller. In STA this routine is empty, and in
-  // ; amd64 the cached argument lives in r10 and r11, which is why the translation
-  // ; missed it. Pushed below the frame marker above, so the chain the collector walks
-  // ; keeps its shape
+  // ; snop is the only caller and it saves nothing, while sitting at the top of every
+  // ; loop, so whatever is clobbered here comes back as corruption in the caller. esi is
+  // ; the cached arg0, the mirror of sp:0, and eax and edx are the halves of the long
+  // ; accumulator. Pushed below the frame marker so the chain the collector walks keeps
+  // ; its shape
   push esi
   push eax
   push edx
@@ -675,7 +673,7 @@ labWait:
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
 
-  // ; stop until GC is ended, on gc_signal itself, see the note in GC_COLLECT
+  // ; stop until this collection ends, see the note in GC_COLLECT
 #if (_LNX || _FREEBSD)
   mov  esi, esp
   and  esp, 0FFFFFFF0h
@@ -1057,14 +1055,13 @@ inline %7CFh
 end
 
 // ; system : safe point for a thread that has just been registered
-// ; The collector only walks the thread table under gc_lock, so a thread that reaches
-// ; system 3 after that walk is invisible to the collection already running, and would
-// ; go on to read its argument out of the heap while the collector compacts. Stop here
-// ; instead, right after the critical section is left.
-// ; THREAD_WAIT publishes the stack as the head of the frame chain, and the root scan
-// ; walks it from there. This thread has run no ELENA code and owns no roots, so build
-// ; a chain that terminates at once and point ebp at it, instead of letting the scan
-// ; read whatever the stack happens to hold. Four slots keep esp 16 byte aligned
+// ; The collector only walks the thread table under gc_lock, so a thread reaching
+// ; system 3 after that walk is invisible to the collection already running and would
+// ; read its argument out of the heap while the collector compacts. Stop here instead,
+// ; right after the critical section is left.
+// ; THREAD_WAIT publishes the stack as the head of the frame chain and the root scan
+// ; walks it from there. This thread owns no roots yet, so build a chain that terminates
+// ; at once and point ebp at it. Four slots keep esp 16 byte aligned
 inline %8CFh
 
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]

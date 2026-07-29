@@ -5,7 +5,7 @@ import ltests;
 // Layer A, thread local storage
 //
 // Separate file because declaring a __threadvar makes this the one part of the suite
-// that cannot be compiled against an STA target, compiling.cpp:882-886
+// that cannot be compiled against an STA target
 
 // The only __threadvar in the tree other than Thread._currentThread
 public sealed class TlsProbe
@@ -91,7 +91,7 @@ tlsWorker(arg)
 // from env_tls_size
 //
 // Expected to fail on Linux, and the failure is the point. The image writes the TLS
-// section as [ThreadContent | var0 ...], jitcompiler.cpp:3385-3398, and the collector
+// section as [ThreadContent | var0 ...], laid out by the JIT compiler, and the collector
 // agrees, but the _LNX branch of peektls and storetls puts the variables below the
 // ThreadContent. Confirm with readelf -lW, PT_TLS MemSiz against tt_size
 public mtaThreadLocalStorageTest() : testCase()

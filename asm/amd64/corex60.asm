@@ -22,10 +22,6 @@ define ARG_MASK               01Fh
 define ARG_ACTION_MASK        1DFh
 
 // ; --- Object header fields ---
-// ; 8 and not the 1 of the x32 core, and that is right : ObjectPage64 in core.h has a
-// ; lock_flag field of its own at header+8, while ObjectPage32 has none and borrows the
-// ; top byte of size. Putting 1 here makes mtaCriticalSectionTest abort, the byte lands
-// ; on the size flags. What was missing is the initialisation, see GC_ALLOC
 define elSyncOffset          0008h
 define elSizeOffset          0004h
 define elVMTOffset           0010h 
@@ -125,12 +121,10 @@ labWait:
   jae  short labYGCollect
   mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
 
-  // ; GCXT: clear the lock flag. ObjectPage64 has a field of its own for it at header+8,
-  // ; where ObjectPage32 has none and uses the top byte of size, which every creation
-  // ; template writes anyway. Nothing writes this one, so the page comes back from the
-  // ; heap carrying whatever the dead object left there and trylock spins on a byte that
-  // ; never reads zero. Only shows up once a collection has recycled the YG, a fresh one
-  // ; is zero filled by the OS
+  // ; GCXT: clear the lock flag. Nothing else writes it, so the page comes back carrying
+  // ; whatever the dead object left there and trylock spins on a byte that never reads
+  // ; zero. Only shows up once a collection has recycled the YG, a fresh one is zero
+  // ; filled by the OS
   xor  edx, edx
   mov  dword ptr [rax + 8], edx
 
@@ -148,9 +142,9 @@ labYGCollect:
   sub  rcx, rax
   xor  edx, edx
 
-  // ; system 1 / 2 call GC_COLLECT directly, without the return address this path
-  // ; adds, so pad here to make both enter with the same alignment.
-  // ; it has to be nil - this range is scanned for roots
+  // ; the entry through GC_ALLOC carries one return address more than the one through
+  // ; system 1 and system 2, so pad here to make both arrive with the same alignment.
+  // ; it has to be nil, this range is scanned for roots
   xor  eax, eax
   push rax
 
@@ -190,16 +184,11 @@ labStart:
   mov  rsi, [rax + tt_sync_event]
   mov  [rax + tt_stack_frame], rsp
 
-  // ; the table walk below keeps its cursor and its counter live across a call. On the
-  // ; System V ABI rsi and rdi are the argument registers and are caller saved, so they
-  // ; cannot hold either one. r13 is callee saved under both ABIs, and rbx is free here,
-  // ; which keeps the loop free of per-OS branches
-  // ; They are saved BELOW the frame marker on purpose. The range the root scan hands to
-  // ; the collector starts at the marker and runs up the stack, and GC_ALLOC leaves
-  // ; gc_yg_end in r12. A raw heap address inside that range is read as an object
-  // ; reference, marks a page that holds no object, and the linear walk of the compaction
-  // ; desyncs from there : pages end up with no mapping entry and FixObject dereferences
-  // ; the null it reads back
+  // ; the table walk uses r13 as its cursor and rbx as its counter, because rsi and rdi
+  // ; are argument registers on System V and do not survive a call.
+  // ; Saved below the frame marker on purpose : the range the root scan hands to the
+  // ; collector starts at the marker and runs up, and GC_ALLOC leaves gc_yg_end in r12.
+  // ; A heap address in that range is taken for an object reference
   push r12
   push r13
 
@@ -229,9 +218,9 @@ labStart:
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
-  // ; stop until GC is ended. The barrier is gc_signal itself, not the event of the
-  // ; thread that happens to be collecting : that event is reset by the table scan of
-  // ; the next collection, and its owner may never collect again
+  // ; stop until this collection ends. The barrier is the collection state, not the
+  // ; event of the thread that happens to be collecting : the table scan of every
+  // ; collection resets every event, that one included
   call extern "$rt.WaitForCollectionGCLA"
   add  rsp, 30h
   // ; restore registers and try again
@@ -551,16 +540,7 @@ labPERMCollect:
   mov  rsi, [rax + tt_sync_event]
   mov  [rax + tt_stack_frame], rsp
 
-  // ; the table walk below keeps its cursor and its counter live across a call. On the
-  // ; System V ABI rsi and rdi are the argument registers and are caller saved, so they
-  // ; cannot hold either one. r13 is callee saved under both ABIs, and rbx is free here,
-  // ; which keeps the loop free of per-OS branches
-  // ; They are saved BELOW the frame marker on purpose. The range the root scan hands to
-  // ; the collector starts at the marker and runs up the stack, and GC_ALLOC leaves
-  // ; gc_yg_end in r12. A raw heap address inside that range is read as an object
-  // ; reference, marks a page that holds no object, and the linear walk of the compaction
-  // ; desyncs from there : pages end up with no mapping entry and FixObject dereferences
-  // ; the null it reads back
+  // ; saved below the frame marker, see the note in GC_COLLECT
   push r12
   push r13
 
@@ -590,7 +570,7 @@ labPERMCollect:
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
-  // ; stop until GC is ended, on gc_signal itself, see the note in GC_COLLECT
+  // ; stop until this collection ends, see the note in GC_COLLECT
   call extern "$rt.WaitForCollectionGCLA"
   add  rsp, 30h
   // ; restore registers and try again
@@ -723,21 +703,17 @@ end
 
 procedure % THREAD_WAIT
 
-  // ; rbx carries the object accumulator, and the collection this thread is about to
-  // ; wait for may move that object. Saved above the frame marker, so it falls inside
-  // ; the range the root scan walks and comes back relocated. Held in a register it
-  // ; comes back stale, and r12 belongs to the caller anyway
+  // ; rbx is the object accumulator and the collection this thread waits for may move
+  // ; that object. Saved above the frame marker, inside the range the root scan walks,
+  // ; so it comes back relocated instead of stale
   push rbx
   push rbp
   mov  rdi, rsp
 
-  // ; rax carries the accumulator and rsi is scratch the generated code may still need,
-  // ; and r10 and r11 are the cached arguments, the amd64 counterpart of esi in the x32
-  // ; core. Nothing here writes them, but both calls below do : they are caller saved
-  // ; under System V and under the MS ABI alike, so the callee is free to leave anything
-  // ; in them. snop is the only caller and it saves nothing, while being emitted at the
-  // ; top of every loop. Pushed below the frame marker above, so the chain the collector
-  // ; walks keeps its shape
+  // ; snop is the only caller and it saves nothing, while sitting at the top of every
+  // ; loop. rax is the accumulator, rsi is scratch, r10 and r11 are the cached arguments,
+  // ; and the two calls below are free to clobber all four. Pushed below the frame marker
+  // ; so the chain the collector walks keeps its shape
   push rsi
   push rax
   push r10
@@ -787,7 +763,7 @@ labWait:
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
-  // ; stop until GC is ended, on gc_signal itself, see the note in GC_COLLECT. The
+  // ; stop until this collection ends, see the note in GC_COLLECT. The
   // ; shadow space above is still reserved, the callee is free to spill into it
   call extern "$rt.WaitForCollectionGCLA"
   add  rsp, 38h
@@ -1205,14 +1181,13 @@ inline %7CFh
 end
 
 // ; system : safe point for a thread that has just been registered
-// ; The collector only walks the thread table under gc_lock, so a thread that reaches
-// ; system 3 after that walk is invisible to the collection already running, and would
-// ; go on to read its argument out of the heap while the collector compacts. Stop here
-// ; instead, right after the critical section is left.
-// ; THREAD_WAIT publishes the stack as the head of the frame chain, and the root scan
-// ; walks it from there. This thread has run no ELENA code and owns no roots, so build
-// ; a chain that terminates at once and point rbp at it, instead of letting the scan
-// ; read whatever the stack happens to hold. Four slots keep rsp 16 byte aligned
+// ; The collector only walks the thread table under gc_lock, so a thread reaching
+// ; system 3 after that walk is invisible to the collection already running and would
+// ; read its argument out of the heap while the collector compacts. Stop here instead,
+// ; right after the critical section is left.
+// ; THREAD_WAIT publishes the stack as the head of the frame chain and the root scan
+// ; walks it from there. This thread owns no roots yet, so build a chain that terminates
+// ; at once and point rbp at it. Four slots keep rsp 16 byte aligned
 inline %8CFh
 
   mov  rdx, [data : %CORE_GC_TABLE + gc_signal]

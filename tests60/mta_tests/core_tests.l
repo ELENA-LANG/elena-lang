@@ -49,7 +49,7 @@ lockWorker(state)
 }
 
 // Regression, the trylock and freelock templates plus the __enterCritical spin loop at
-// system.core_routines.esm:2862-2871
+// __enterCritical in system.core_routines.esm
 //
 // A lock that does not exclude loses updates and the total comes up short, never long.
 // Vacuous under STA, where trylock is xor eax,eax, so this must not move to
@@ -203,7 +203,7 @@ churnRounds(int waves, int workersPerWave, int whenCollect)
 // Regression, the labNext scan of GC_COLLECT and GC_ALLOCPERM
 //
 // clearThreadEntry leaves null slots in the middle of the table,
-// elenartmachine.cpp:366-370, and the scan has to walk past them. With the cursor
+// ELENARTMachine::clearThreadEntry, and the scan has to walk past them. With the cursor
 // advance inside the non-null branch a null slot pins the loop on the same entry and
 // every higher index thread keeps running while the collector relocates objects
 //

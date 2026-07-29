@@ -243,9 +243,8 @@ void SystemRoutineProvider :: GCSignalClear(void* handle)
    ::ResetEvent((HANDLE)handle);
 }
 
-// ; see the comment in linux/lnxroutines.cpp : the barrier waits on gc_signal itself
-// ; rather than on the personal event of whichever thread is collecting. Only the x32
-// ; core calls these so far, the amd64 core still uses the older path
+// ; see the comment in linux/lnxroutines.cpp : the barrier waits on the collection
+// ; state rather than on the personal event of whichever thread is collecting
 // ; SRWLOCK and CONDITION_VARIABLE have static initialisers, so there is nothing to
 // ; construct at run time. A lazy InitializeCriticalSection would need a guard of its
 // ; own here, and the first two threads to reach the barrier race for it

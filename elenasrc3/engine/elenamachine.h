@@ -152,8 +152,8 @@ namespace elena_lang
       static void GCWaitForSignals(size_t count, void* handles);
 
       // the barrier that releases the stopped threads has to outlive any single
-      // collector. Waiting on gc_signal itself, instead of on an event owned by
-      // whichever thread happens to be collecting, is what makes that possible
+      // collector, so it waits on the collection state rather than on an event owned
+      // by whichever thread happens to be collecting
       static void GCWaitForCollection(GCTable* table);
       static void GCSignalCollectionEnd();
 

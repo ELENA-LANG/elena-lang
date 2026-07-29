@@ -5,13 +5,13 @@ import system'runtime;
 // MTA test harness
 //
 // Four runtime limitations shape everything here
-//  * Thread.join is unusable on Linux, handlers.l:180 passes one argument to
+//  * Thread.join is unusable on Linux, it passes one argument to
 //    pthread_join, so Latch stands in for it
-//  * Thread.sleep is a no-op below one second, handlers.l:203, nothing may use it to
+//  * Thread.sleep is a no-op below one second, nothing may use it to
 //    order events
-//  * no wait with a deadline exists, events.l:114-117, so the only watchdog is the
+//  * no wait with a deadline exists in EventHandle, so the only watchdog is the
 //    external timeout in the runtests script
-//  * thread table slots are never recycled, elenartmachine.cpp:353-370, so workers are
+//  * thread table slots are never recycled, so workers are
 //    created once and repeat inside instead of one set per round
 
 public singleton MtaLoad
@@ -60,7 +60,7 @@ public sealed class SharedCounter
    {
       get()
       {
-         // the lock template declares an intermediate named v, operations.l:207, so a
+         // the lock template declares an intermediate named v, so a
          // local of that name here would be shadowed
          int current := 0;
 
@@ -123,7 +123,7 @@ public sealed class ErrorBox
          {
             _failed := true;
 
-            // toPrintable carries the call stack, exceptions.l:33-38
+            // toPrintable carries the call stack
             _message := e.toPrintable()
          }
       }

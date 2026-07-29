@@ -282,7 +282,7 @@ EXTERN_DLL_EXPORT void WaitForSignalsGCLA(size_t count, void* handles)
 }
 
 // ; the collection barrier, see the comment in engine/windows/winroutines.cpp. No handle
-// ; is passed : the condition is gc_signal itself
+// ; is passed : the condition is the collection state
 EXTERN_DLL_EXPORT void WaitForCollectionGCLA()
 {
    SystemRoutineProvider::GCWaitForCollection(systemEnv->gc_table);

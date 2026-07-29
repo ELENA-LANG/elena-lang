@@ -41,7 +41,7 @@ countDownWorker(state)
    }
 }
 
-// Regression, events.l:198-230
+// Regression, ManualResetEvent
 //
 // signal decrements under lock and only opens the event at zero, and the _counter > 0
 // guard keeps extra signals harmless
@@ -145,7 +145,7 @@ broadcastWorker(state)
    }
 }
 
-// Regression, events.l:119-132 and :92-112
+// Regression, CountDownEvent
 //
 // One set must release every waiter, and an already signalled event must not block.
 // With pthread_cond_signal instead of broadcast only one waiter wakes and the rest

@@ -461,8 +461,8 @@ void SystemRoutineProvider::GCSignalClear(void* handle)
    ((EventImpl*)handle)->reset();
 }
 
-// ; see the comment in linux/lnxroutines.cpp : the barrier waits on gc_signal itself
-// ; rather than on the personal event of whichever thread is collecting
+// ; see the comment in linux/lnxroutines.cpp : the barrier waits on the collection
+// ; state rather than on the personal event of whichever thread is collecting
 static pthread_mutex_t CollectionMutex = PTHREAD_MUTEX_INITIALIZER;
 static pthread_cond_t  CollectionCond = PTHREAD_COND_INITIALIZER;
 static size_t          CollectionGeneration = 0;
