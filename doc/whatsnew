@@ -59,7 +59,7 @@
   - [FIXED] CountDownEvent held the object lock across a blocking call
 
 - Scripts
-  - [ADDED] MTA functional tests to the i386 test runner, with a timeout
+  - [ADDED] MTA functional tests to the i386 and amd64 test runners, with a timeout
   - [ADDED] the MTA console template and the MTA core to the amd64 package (Linux, amd64)
   - [FIXED] the MTA console template resolved to Linux_ARM32 on a 64 bit host, and set no thread counter (Linux, x32)
 

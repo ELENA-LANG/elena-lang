@@ -3062,12 +3062,11 @@ X86Operand X86_64Assembler :: defineRDisp(X86Operand operand)
       operand.type = operand.type | X86OperandType::M64disp8;
       operand.offset = 0;
    }
-   // ; r13 lands on the same rm field as rbp, and mod 00 over that field is the RIP
-   // ; relative form, not a base register. So [r13] needs the explicit zero
-   // ; displacement that ebpReg gives [rbp] : without it the instruction comes out
-   // ; three bytes long and the CPU reads the next one as the displacement
-   else if (operand.type == X86OperandType::MX64 + 5) {
-      operand.type = X86OperandType::MX64disp8 + 5;
+   // ; r13 shares the rm field with rbp, so [r13] needs the same explicit zero
+   // ; displacement : without it mod 00 over that field is the RIP relative form and the
+   // ; CPU reads the next instruction as the displacement
+   else if (operand.ebpReg && test(operand.type, X86OperandType::MX64)) {
+      operand.type = operand.type | X86OperandType::MX64disp8;
       operand.offset = 0;
    }
    else if (operand.type == X86OperandType::M64 && !operand.accReg) {

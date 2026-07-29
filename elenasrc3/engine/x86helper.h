@@ -172,7 +172,7 @@ namespace elena_lang
    // --- X86Operand ---
    struct X86Operand
    {
-      bool           ebpReg;     // to resolve conflict between [ebp] and disp32
+      bool           ebpReg;     // to resolve conflict between [ebp] or [r13] and disp32
       bool           factorReg;   // to implement [r*factor] SIB
       bool           accReg;
 
@@ -274,7 +274,9 @@ namespace elena_lang
          this->reference = 0;
          this->offset = 0;
          this->factorReg = false;
-         this->ebpReg = (type == X86OperandType::EBP || this->type == X86OperandType::RBP);
+         // ; r13 shares the rm field with rbp and hits the same conflict
+         this->ebpReg = (type == X86OperandType::EBP || this->type == X86OperandType::RBP
+            || this->type == X86OperandType::RX13);
          this->accReg = (type == X86OperandType::EAX || this->type == X86OperandType::RAX);
          this->prefix = SegmentPrefix::None;
       }
