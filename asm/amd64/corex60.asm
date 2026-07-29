@@ -22,6 +22,10 @@ define ARG_MASK               01Fh
 define ARG_ACTION_MASK        1DFh
 
 // ; --- Object header fields ---
+// ; 8 and not the 1 of the x32 core, and that is right : ObjectPage64 in core.h has a
+// ; lock_flag field of its own at header+8, while ObjectPage32 has none and borrows the
+// ; top byte of size. Putting 1 here makes mtaCriticalSectionTest abort, the byte lands
+// ; on the size flags. What was missing is the initialisation, see GC_ALLOC
 define elSyncOffset          0008h
 define elSizeOffset          0004h
 define elVMTOffset           0010h 
@@ -121,10 +125,18 @@ labWait:
   jae  short labYGCollect
   mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
 
-  // ; GCXT: clear sync field
+  // ; GCXT: clear the lock flag. ObjectPage64 has a field of its own for it at header+8,
+  // ; where ObjectPage32 has none and uses the top byte of size, which every creation
+  // ; template writes anyway. Nothing writes this one, so the page comes back from the
+  // ; heap carrying whatever the dead object left there and trylock spins on a byte that
+  // ; never reads zero. Only shows up once a collection has recycled the YG, a fresh one
+  // ; is zero filled by the OS
+  xor  edx, edx
+  mov  dword ptr [rax + 8], edx
+
   mov  edx, 0FFFFFFFFh
   lea  rbx, [rax + elObjectOffset]
-  
+
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
   lock xadd [rdi], edx
@@ -155,13 +167,21 @@ inline % GC_COLLECT
 
 labStart:
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  rdi, gs:[58h]
+#elif _LNX
+  mov  rdi, fs:[0]
+#endif
 
   push r10
   push r11
 
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  rax, [rdi]
+#elif _LNX
+  lea  rax, [rdi-tt_size]
+#endif
 
   push rbp
 
@@ -169,6 +189,19 @@ labStart:
   // ; get current thread event
   mov  rsi, [rax + tt_sync_event]
   mov  [rax + tt_stack_frame], rsp
+
+  // ; the table walk below keeps its cursor and its counter live across a call. On the
+  // ; System V ABI rsi and rdi are the argument registers and are caller saved, so they
+  // ; cannot hold either one. r13 is callee saved under both ABIs, and rbx is free here,
+  // ; which keeps the loop free of per-OS branches
+  // ; They are saved BELOW the frame marker on purpose. The range the root scan hands to
+  // ; the collector starts at the marker and runs up the stack, and GC_ALLOC leaves
+  // ; gc_yg_end in r12. A raw heap address inside that range is read as an object
+  // ; reference, marks a page that holds no object, and the linear walk of the compaction
+  // ; desyncs from there : pages end up with no mapping entry and FixObject dereferences
+  // ; the null it reads back
+  push r12
+  push r13
 
   push rdx
   push rcx
@@ -183,9 +216,11 @@ labStart:
   sub  rsp, 30h
 
   // ; signal the collecting thread that it is stopped
-  mov  r12, rdx
-
+#if _WIN
   mov  rcx, rsi
+#elif (_LNX || _FREEBSD)
+  mov  rdi, rsi
+#endif
   call extern "$rt.SignalStopGCLA"
 
   // ; free lock
@@ -194,20 +229,38 @@ labStart:
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
-  // ; stop until GC is ended
-  mov  rcx, r12
-  call extern "$rt.WaitForSignalGCLA"
+  // ; stop until GC is ended. The barrier is gc_signal itself, not the event of the
+  // ; thread that happens to be collecting : that event is reset by the table scan of
+  // ; the next collection, and its owner may never collect again
+  call extern "$rt.WaitForCollectionGCLA"
   add  rsp, 30h
   // ; restore registers and try again
 
   pop  rcx
   pop  rdx
+  pop  r13
+  pop  r12
   pop  rbp
   pop  r11
   pop  r10
 
   test rcx, rcx
-  jz   labStart
+  jnz  short labRepeatAlloc
+
+  // ; the lock was released before the wait above, but labStart runs under it :
+  // ; labConinue publishes gc_signal and walks the thread table, then releases a lock
+  // ; this thread no longer owns. Only system 1 and system 2 come through here, they
+  // ; are the ones that call with a zero size
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+labRetakeLock:
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labRetakeLock
+
+  jmp  labStart
+
+labRepeatAlloc:
 
   // ; repeat the alloc operation if required
   call %GC_ALLOC
@@ -222,11 +275,16 @@ labConinue:
   // ; create list of threads need to be stopped
   mov  rax, rsi
   // ; get tls entry address  
-  mov  rsi, data : %CORE_THREAD_TABLE + tt_slots
+  mov  r13, data : %CORE_THREAD_TABLE + tt_slots
   xor  ecx, ecx
-  mov  rdi, [rsi - 8]
+  mov  rbx, [r13 - 8]
 labNext:
-  mov  rdx, [rsi]
+  mov  rdx, [r13]
+
+  // ; advance on both paths, a null slot used to make the loop re-scan the same entry
+  // ; and leave every higher index thread unstopped
+  lea  r13, [r13 + 16]
+
   test rdx, rdx
   jz   short labSkipTT
   cmp  rax, [rdx + tt_sync_event]
@@ -240,14 +298,17 @@ labSkipSave:
 
   // ; reset all signal events
   sub  rsp, 30h
+#if _WIN
   mov  rcx, [rdx + tt_sync_event]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, [rdx + tt_sync_event]
+#endif
   call extern "$rt.SignalClearGCLA"
   add  rsp, 30h
 
-  lea  rsi, [rsi + 16]
   mov  rax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
-  sub  edi, 1
+  sub  rbx, 1
   jnz  short labNext
 
   mov  rsi, data : %CORE_GC_TABLE + gc_lock
@@ -265,21 +326,38 @@ labSkipTT:
   // ; wait until they all stopped
   shr  ebx, 3
   sub  rsp, 30h
+#if _WIN
   mov  ecx, ebx
+#elif (_LNX || _FREEBSD)
+  // ; rdx still holds the base of the wait list, set before the frame was reserved
+  mov  edi, ebx
+  mov  rsi, rdx
+#endif
   call extern "$rt.WaitForSignalsGCLA"
   add  rsp, 30h
 
 labSkipWait:
   // ; remove list
-  mov  rsp, rbp     
+  mov  rsp, rbp
 
   // ==== GCXT end ==============
+
+  // ; take gc_lock again for the root scan and the collection. Every thread that had
+  // ; to stop has signalled by now, so nobody needs the lock to make progress, while a
+  // ; thread in teardown does : without this it can null its slot and let the OS free
+  // ; the TLS holding its ThreadContent while the scan below is walking it
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+labRootLock:
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labRootLock
 
   // ; create set of roots
   mov  rbp, rsp
   xor  ecx, ecx
-  push rcx        // ; reserve place 
-  push rcx        
+  push rcx        // ; reserve place
+  push rcx
   push rcx
   push rcx
 
@@ -310,6 +388,7 @@ labYGNextThread:
   mov  r8, rbx
   shl  r8, 4
   add  r8, rax
+
   mov  rsi, [r8]            
   test rsi, rsi
   jz   short labYGNextThreadSkip
@@ -323,6 +402,13 @@ labYGNextThread:
 
   // ; get the top frame pointer
   mov  rax, [rsi + tt_stack_frame]
+
+  // ; a thread that has registered its slot but not yet reached a safe point or an
+  // ; allocation still has a null frame chain, and walking it from zero faults right
+  // ; here, while gc_lock is held : the handler then allocates and spins on that lock
+  test rax, rax
+  jz   short labYGNextThreadSkip
+
   mov  rcx, rax
 
 labYGNextFrame:
@@ -350,13 +436,20 @@ labYGNextThreadSkip:
 
   mov [rbp-8], rsp      // ; save position for roots
 
+#if _WIN
   mov  r8,  [rbp+8]
   mov  rdx, [rbp]
   mov  rcx, rsp
+#elif (_LNX || _FREEBSD)
+  mov  rdx, [rbp+8]
+  mov  rsi, [rbp]
+  mov  rdi, rsp
+#endif
 
   // ; restore frame to correctly display a call stack
+  // ; 32 and not 16 : r13 and r12 now sit between the saved rcx/rdx and the saved rbp
   mov  rax, rbp
-  mov  rbp, [rax+16]
+  mov  rbp, [rax+32]
 
   // ; call GC routine
   // ; rsp is aligned : both entry paths arrive at rsp % 16 == 8, the entry pushes
@@ -365,26 +458,30 @@ labYGNextThreadSkip:
   mov  [rsp+28h], rax
   call extern "$rt.CollectGCLA"
 
-  mov  rbp, [rsp+28h] 
-  mov  rdi, rax
+  mov  r12, rax
 
   mov  rbp, [rsp+28h]
 
-  // ; GCXT: signal the collecting thread that GC is ended
-  // ; should it be placed into critical section?
+  // ; GCXT: release every thread stopped by this collection. Clearing gc_signal is what
+  // ; the barrier waits on, so it has to come first
   xor  ebx, ebx
-  mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
-  // ; clear thread signal var
   mov  [data : %CORE_GC_TABLE + gc_signal], rbx
-  call extern "$rt.SignalStopGCLA"
+  call extern "$rt.SignalCollectionEndGCLA"
 
   add  rsp, 30h
 
-  mov  rbx, rdi
+  mov  rbx, r12
 
-  mov  rsp, rbp 
+  // ; release the lock taken for the root scan
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  lock xadd [rdi], edx
+
+  mov  rsp, rbp
   pop  rcx
   pop  rdx
+  pop  r13
+  pop  r12
   pop  rbp
   pop  r11
   pop  r10
@@ -414,10 +511,13 @@ labWait:
   jae  short labPERMCollect
   mov  [data : %CORE_GC_TABLE + gc_perm_current], rcx
 
-  // ; GCXT: clear sync field
+  // ; GCXT: clear the lock flag, see the note in GC_ALLOC
+  xor  edx, edx
+  mov  dword ptr [rax + 8], edx
+
   mov  edx, 0FFFFFFFFh
   lea  rbx, [rax + elObjectOffset]
-  
+
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
   lock xadd [rdi], edx
@@ -428,13 +528,21 @@ labPERMCollect:
   sub  rcx, rax
 
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  rdi, gs:[58h]
+#elif _LNX
+  mov  rdi, fs:[0]
+#endif
 
   push r10
   push r11
 
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  rax, [rdi]
+#elif _LNX
+  lea  rax, [rdi-tt_size]
+#endif
 
   push rbp
 
@@ -442,6 +550,19 @@ labPERMCollect:
   // ; get current thread event
   mov  rsi, [rax + tt_sync_event]
   mov  [rax + tt_stack_frame], rsp
+
+  // ; the table walk below keeps its cursor and its counter live across a call. On the
+  // ; System V ABI rsi and rdi are the argument registers and are caller saved, so they
+  // ; cannot hold either one. r13 is callee saved under both ABIs, and rbx is free here,
+  // ; which keeps the loop free of per-OS branches
+  // ; They are saved BELOW the frame marker on purpose. The range the root scan hands to
+  // ; the collector starts at the marker and runs up the stack, and GC_ALLOC leaves
+  // ; gc_yg_end in r12. A raw heap address inside that range is read as an object
+  // ; reference, marks a page that holds no object, and the linear walk of the compaction
+  // ; desyncs from there : pages end up with no mapping entry and FixObject dereferences
+  // ; the null it reads back
+  push r12
+  push r13
 
   push rdx
   push rcx
@@ -456,9 +577,11 @@ labPERMCollect:
   sub  rsp, 30h
 
   // ; signal the collecting thread that it is stopped
-  mov  r12, rdx
-
+#if _WIN
   mov  rcx, rsi
+#elif (_LNX || _FREEBSD)
+  mov  rdi, rsi
+#endif
   call extern "$rt.SignalStopGCLA"
 
   // ; free lock
@@ -467,14 +590,15 @@ labPERMCollect:
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
-  // ; stop until GC is ended
-  mov  rcx, r12
-  call extern "$rt.WaitForSignalGCLA"
+  // ; stop until GC is ended, on gc_signal itself, see the note in GC_COLLECT
+  call extern "$rt.WaitForCollectionGCLA"
   add  rsp, 30h
   // ; restore registers and try again
 
   pop  rcx
   pop  rdx
+  pop  r13
+  pop  r12
   pop  rbp
   pop  r11
   pop  r10
@@ -495,11 +619,16 @@ labConinue:
   // ; create list of threads need to be stopped
   mov  rax, rsi
   // ; get tls entry address  
-  mov  rsi, data : %CORE_THREAD_TABLE + tt_slots
+  mov  r13, data : %CORE_THREAD_TABLE + tt_slots
   xor  ecx, ecx
-  mov  rdi, [rsi - 8]
+  mov  rbx, [r13 - 8]
 labNext:
-  mov  rdx, [rsi]
+  mov  rdx, [r13]
+
+  // ; advance on both paths, a null slot used to make the loop re-scan the same entry
+  // ; and leave every higher index thread unstopped
+  lea  r13, [r13 + 16]
+
   test rdx, rdx
   jz   short labSkipTT
   cmp  rax, [rdx + tt_sync_event]
@@ -513,14 +642,17 @@ labSkipSave:
 
   // ; reset all signal events
   sub  rsp, 30h
+#if _WIN
   mov  rcx, [rdx + tt_sync_event]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, [rdx + tt_sync_event]
+#endif
   call extern "$rt.SignalClearGCLA"
   add  rsp, 30h
 
-  lea  rsi, [rsi + 16]
   mov  rax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
-  sub  edi, 1
+  sub  rbx, 1
   jnz  short labNext
 
   mov  rsi, data : %CORE_GC_TABLE + gc_lock
@@ -538,7 +670,13 @@ labSkipTT:
   // ; wait until they all stopped
   shr  ebx, 3
   sub  rsp, 30h
+#if _WIN
   mov  ecx, ebx
+#elif (_LNX || _FREEBSD)
+  // ; rdx still holds the base of the wait list, set before the frame was reserved
+  mov  edi, ebx
+  mov  rsi, rdx
+#endif
   call extern "$rt.WaitForSignalsGCLA"
   add  rsp, 30h
 
@@ -552,22 +690,27 @@ labSkipWait:
   // ; the return address, and the thread list was dropped by the mov rsp, rbp above
   sub  rsp, 30h
 
+#if _WIN
   mov  rcx, [rbp]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, [rbp]
+#endif
   call extern "$rt.CollectPermGCLA"
 
-  mov  rdi, rax
+  mov  r12, rax
 
-  // ; GCXT: signal the collecting thread that GC is ended
-  // ; should it be placed into critical section?
+  // ; GCXT: release every thread stopped by this collection, see the note in GC_COLLECT
   xor  ebx, ebx
-  mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
-  // ; clear thread signal var
   mov  [data : %CORE_GC_TABLE + gc_signal], rbx
-  call extern "$rt.SignalStopGCLA"
+  call extern "$rt.SignalCollectionEndGCLA"
 
-  mov  rbx, rdi
+  mov  rbx, r12
+
+  // ; 40h drops the shadow space plus the rcx and rdx pushed on entry
   add  rsp, 40h
 
+  pop  r13
+  pop  r12
   pop  rbp
   pop  r11
   pop  r10
@@ -576,51 +719,100 @@ labSkipWait:
 end
 
 // --- THREAD_WAIT ---
-// GCXT: it is presumed that gc lock is on, rdx - contains the collecting thread event handle
+// GCXT: it is presumed that gc lock is off, it is taken here
 
 procedure % THREAD_WAIT
 
+  // ; rbx carries the object accumulator, and the collection this thread is about to
+  // ; wait for may move that object. Saved above the frame marker, so it falls inside
+  // ; the range the root scan walks and comes back relocated. Held in a register it
+  // ; comes back stale, and r12 belongs to the caller anyway
+  push rbx
   push rbp
   mov  rdi, rsp
 
-  mov  r12, rbx
-  mov  r13, rdx                  // hHandle
+  // ; rax carries the accumulator and rsi is scratch the generated code may still need,
+  // ; and r10 and r11 are the cached arguments, the amd64 counterpart of esi in the x32
+  // ; core. Nothing here writes them, but both calls below do : they are caller saved
+  // ; under System V and under the MS ABI alike, so the callee is free to leave anything
+  // ; in them. snop is the only caller and it saves nothing, while being emitted at the
+  // ; top of every loop. Pushed below the frame marker above, so the chain the collector
+  // ; walks keeps its shape
+  push rsi
+  push rax
+  push r10
+  push r11
 
   // ; set lock
   mov  rbx, data : %CORE_GC_TABLE + gc_lock
 labWait:
   mov edx, 1
-  xor eax, eax  
+  xor eax, eax
   lock cmpxchg dword ptr[rbx], edx
   jnz  short labWait
 
   // ; find the current thread entry
+#if _WIN
   mov  rdx, gs:[58h]
   mov  rax, [rdx]
+#elif _LNX
+  mov  rdx, fs:[0]
+  lea  rax, [rdx-tt_size]
+#endif
 
   mov  rsi, [rax+tt_sync_event]   // ; get current thread event
   mov  [rax+tt_stack_frame], rdi  // ; lock stack frame
 
+  // ; snop read gc_signal without the lock, so that collection may have ended by now,
+  // ; or another one may have started. Re-read it here, where the lock is held
+  mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
+  test rdx, rdx
+  jz   short labNoCollect
+
   // ; signal the collecting thread that it is stopped
-  sub  rsp, 30h
+  // ; the pushes above leave rsp 8 off the call boundary, hence 38h and not 30h
+  sub  rsp, 38h
+#if _WIN
   mov  rcx, rsi
-  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+#elif (_LNX || _FREEBSD)
+  mov  rdi, rsi
+#endif
 
-  // ; signal the collecting thread that it is stopped
   call extern "$rt.SignalStopGCLA"
-  add  rsp, 30h
 
-  // ; free lock
-  // ; could we use mov [esi], 0 instead?
+  // ; free lock. The address cannot be loaded before the call the way the x32 core does
+  // ; it : there edi is callee saved, here rdi is an argument register and comes back
+  // ; from the call holding whatever the callee left in it
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
-  // ; stop until GC is ended
-  mov  rcx, r13
-  call extern "$rt.WaitForSignalGCLA"
+  // ; stop until GC is ended, on gc_signal itself, see the note in GC_COLLECT. The
+  // ; shadow space above is still reserved, the callee is free to spill into it
+  call extern "$rt.WaitForCollectionGCLA"
+  add  rsp, 38h
 
-  pop  rbp
-  mov  rbx, r12
+  pop  r11
+  pop  r10
+  pop  rax
+  pop  rsi
+  add  rsp, 8                     // ; the rbp of the frame marker
+  pop  rbx
+
+  ret
+
+labNoCollect:
+  // ; the collection ended before we got the lock, nothing to wait for
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [rdi], ebx
+
+  pop  r11
+  pop  r10
+  pop  rax
+  pop  rsi
+  add  rsp, 8
+  pop  rbx
 
   ret
 
@@ -649,8 +841,13 @@ end
 // ; throw
 inline %0Ah
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rcx, [rcx-tt_size]
+#endif
   mov  rdi, [rcx + et_current]
   jmp  [rdi + es_catch_addr]
 
@@ -660,8 +857,13 @@ end
 inline %0Bh
 
   // ; GCXT: get current thread frame
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rcx, [rcx-tt_size]
+#endif
   mov  rdi, [rcx + et_current]
 
   mov  rax, [rdi + es_prev_struct]
@@ -674,13 +876,44 @@ end
 
 // ; exclude
 inline % 10h
-     
+
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-  mov  dword ptr [rdi + tt_flags], 1
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
+  // ; the store below has to be ordered against the gc_signal load that follows. On a
+  // ; plain mov the two can be reordered, and then the collector reads tt_flags as zero,
+  // ; puts this thread on its wait list, while the thread reads gc_signal as zero and
+  // ; goes on to block inside the foreign call, where no safe point follows. cmpxchg is
+  // ; the only locked store this assembler emits, and it leaves a nested exclude alone
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr [rdi + tt_flags], edx
+
+  mov  rax, [data : %CORE_GC_TABLE + gc_signal]
+  test rax, rax
+  jz   short labNoCollect
+
+  // ; a collection is already counting on this thread to stop. Do it here, where a safe
+  // ; point still exists, rather than inside the call it is about to make
+  call %THREAD_WAIT
+
+#if _WIN
+  mov  rcx, gs:[58h]
+  mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
+labNoCollect:
   mov  rax, [rdi + tt_stack_frame]
   push rax
-  push rbp     
+  push rbp
   mov  [rdi + tt_stack_frame], rsp
 
 end
@@ -689,8 +922,13 @@ end
 inline % 11h
 
   add  rsp, 8
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  dword ptr [rdi + tt_flags], 0
   pop  rax
   mov  [rdi + tt_stack_frame], rax
@@ -701,8 +939,13 @@ end
 inline %17h
 
   // ; COREX
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_root]
 
   xor  ecx, ecx
@@ -738,8 +981,13 @@ end
 // ; peektls
 inline %0BBh
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
   lea  rdi, [rax + __arg32_1]
   mov  rbx, [rdi]
 
@@ -748,8 +996,13 @@ end
 // ; storetls
 inline %0BCh
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
   lea  rdi, [rax + __arg32_1]
   mov  [rdi], rbx
 
@@ -765,8 +1018,13 @@ inline %0CAh
   add  rsp, 16
   pop  rbx
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  [rdi + tt_stack_frame], rbx
 
   pop  rbp
@@ -775,9 +1033,19 @@ inline %0CAh
   pop  r13
   pop  r12
   pop  rbx
+
+#if _WIN
+
   pop  rdi
   pop  rsi
   add  rsp, 8
+
+#elif (_LNX || _FREEBSD)
+
+  // ; rdi, rsi, rdx, rcx and the pushed zero, see extopen
+  add  rsp, 40
+
+#endif
 
 end
 
@@ -790,8 +1058,13 @@ inline %1CAh
   add  rsp, 16
   pop  rbx
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  [rdi + tt_stack_frame], rbx
 
   pop  rbp
@@ -800,9 +1073,19 @@ inline %1CAh
   pop  r13
   pop  r12
   pop  rbx
+
+#if _WIN
+
   pop  rdi
   pop  rsi
   add  rsp, 8
+
+#elif (_LNX || _FREEBSD)
+
+  // ; rdi, rsi, rdx, rcx and the pushed zero, see extopen
+  add  rsp, 40
+
+#endif
   
 end
 
@@ -844,8 +1127,13 @@ end
 // ; system 3 (thread startup)
 inline %3CFh
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
   mov  rdi, data : %CORE_THREAD_TABLE + tt_slots
   shl  rdx, 4 
   mov  [rdi + rdx], rax
@@ -860,8 +1148,34 @@ inline %4CFh
 
   finit
 
+#if _FREEBSD
+
+  push 0
+  mov  rax, rdi
+
+#elif _LNX
+
+  mov  rax, rsp
+
+#endif
+
+#if _WIN
+
   mov  rax, rsp
   call %PREPARE
+
+#elif (_LNX || _FREEBSD)
+
+  call %PREPARE
+
+  // ; the Linux branch was lost when this was translated from the STA core. Without the
+  // ; extra push rsp stays odd for the whole program, and the first runtime call that
+  // ; spills an SSE register faults. tt_stack_root is not set here as it is in the STA
+  // ; core : under MTA it belongs to the thread and system 3 publishes it
+  xor  rbp, rbp
+  push rbp                 // ; note an extra push to simulate the function entry
+
+#endif
 
 end
 
@@ -890,13 +1204,67 @@ inline %7CFh
 
 end
 
+// ; system : safe point for a thread that has just been registered
+// ; The collector only walks the thread table under gc_lock, so a thread that reaches
+// ; system 3 after that walk is invisible to the collection already running, and would
+// ; go on to read its argument out of the heap while the collector compacts. Stop here
+// ; instead, right after the critical section is left.
+// ; THREAD_WAIT publishes the stack as the head of the frame chain, and the root scan
+// ; walks it from there. This thread has run no ELENA code and owns no roots, so build
+// ; a chain that terminates at once and point rbp at it, instead of letting the scan
+// ; read whatever the stack happens to hold. Four slots keep rsp 16 byte aligned
+inline %8CFh
+
+  mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
+  test rdx, rdx                       
+  jz   short labConinue
+
+  push rbp
+  xor  rax, rax
+  push rax
+  push rax
+  push rax
+  mov  rbp, rsp
+
+  call %THREAD_WAIT
+
+  // ; THREAD_WAIT leaves tt_stack_frame pointing at the stack it used, and that stack is
+  // ; gone as soon as this returns. The thread still owns no roots, so clear it while
+  // ; the region is still ours : the root scan skips a null frame, and the first safe
+  // ; point inside the worker publishes a live one. Leaving the dead frame behind hangs
+  // ; the collector, which walks it holding gc_lock
+#if _WIN
+  mov  rax, gs:[58h]
+  mov  rdi, [rax]
+#elif _LNX
+  mov  rax, fs:[0]
+  lea  rdi, [rax-tt_size]
+#endif
+  xor  rax, rax
+  mov  [rdi + tt_stack_frame], rax
+
+  add  rsp, 24
+  pop  rbp
+
+labConinue:
+
+end
+
 // ; xhookdpr
 inline %0E6h
 
   // ; GCXT: get current thread frame
+#if _WIN
   mov  rcx, gs:[58h]
+#elif _LNX
+  mov  rcx, fs:[0]
+#endif
   lea  rdi, [rbp + __arg32_1]
+#if _WIN
   mov  rax, [rcx]
+#elif _LNX
+  lea  rax, [rcx-tt_size]
+#endif
 
   mov  rcx, [rax + et_current]
   mov  [rdi + es_catch_frame], rbp
@@ -912,15 +1280,32 @@ end
 // ; extopenin
 inline %0F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -928,8 +1313,13 @@ inline %0F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -958,15 +1348,32 @@ end
 // ; extopenin 0, n
 inline %1F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -974,8 +1381,13 @@ inline %1F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1000,15 +1412,32 @@ end
 // ; extopenin 1, n
 inline %2F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1016,8 +1445,13 @@ inline %2F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1044,15 +1478,32 @@ end
 // ; extopenin 2, n
 inline %3F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1060,8 +1511,13 @@ inline %3F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1088,15 +1544,32 @@ end
 // ; extopenin 3, n
 inline %4F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1104,8 +1577,13 @@ inline %4F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1134,15 +1612,32 @@ end
 // ; extopenin 4, n
 inline %5F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1150,8 +1645,13 @@ inline %5F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1180,15 +1680,32 @@ end
 // ; extopenin i, 0
 inline %6F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1196,8 +1713,13 @@ inline %6F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1222,15 +1744,32 @@ end
 // ; extopenin 0, 0
 inline %7F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1238,8 +1777,13 @@ inline %7F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1259,15 +1803,32 @@ end
 // ; extopenin 1, 0
 inline %8F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1275,8 +1836,13 @@ inline %8F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1298,15 +1864,32 @@ end
 // ; extopenin 2, 0
 inline %9F2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1314,8 +1897,13 @@ inline %9F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1338,15 +1926,32 @@ end
 // ; extopenin 3, 0
 inline %0AF2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1354,8 +1959,13 @@ inline %0AF2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1380,15 +1990,32 @@ end
 // ; extopenin 4, 0
 inline %0BF2h
 
+#if _WIN
+
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
 
-  push 0 
+  push 0
   push rsi
   push rdi
   push rbx
+
+#elif (_LNX || _FREEBSD)
+
+  // ; the arguments arrive in rdi and rsi here, and there is no home area to spill them
+  // ; into. Pushing them builds the same frame the Windows branch gets from the spill,
+  // ; and the matching extclosen drops five slots instead of three
+  push 0
+  push rcx
+  push rdx
+  push rsi
+  push rdi
+  push rbx
+
+#endif
+
   push r12
   push r13
   push r14
@@ -1396,8 +2023,13 @@ inline %0BF2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1429,6 +2061,19 @@ procedure % VEH_HANDLER
 
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
+  jmp  [rcx]
+
+#elif _LNX
+
+  // ; without this branch the procedure assembles empty, and an empty section here is
+  // ; worse than none : corex60 is an overlay that wins over core60 in the resolution,
+  // ; so it shadows the working handler instead of falling through to it
+  mov  r10, rdx
+  mov  rdx, rax   // ; set exception code
+
+  mov  rcx, fs:[0]
+  lea  rcx, [rcx-tt_size]
+
   jmp  [rcx]
 
 #endif

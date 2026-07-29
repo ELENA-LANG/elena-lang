@@ -33,7 +33,7 @@ define gc_perm_start         002Ch
 define gc_perm_end           0030h 
 define gc_perm_current       0034h 
 define gc_lock               0038h 
-define gc_signal             0040h 
+define gc_signal             003Ch 
 
 // ; THREAD CONTENT
 define et_current            0004h
@@ -162,7 +162,6 @@ labStart:
   // ; otherwise eax contains the collecting thread event
 
   // ; signal the collecting thread that it is stopped
-  push edx
   push esi
   call extern "$rt.SignalStopGCLA"
   add  esp, 4
@@ -173,9 +172,19 @@ labStart:
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
 
-  // ; stop until GC is ended
-  call extern "$rt.WaitForSignalGCLA"
-  add  esp, 4
+  // ; stop until GC is ended. The barrier is gc_signal itself, not the event of the
+  // ; thread that happens to be collecting : that event is reset by the table scan of
+  // ; the next collection, and its owner may never collect again
+#if (_LNX || _FREEBSD)
+  mov  esi, esp
+  and  esp, 0FFFFFFF0h
+#endif
+
+  call extern "$rt.WaitForCollectionGCLA"
+
+#if (_LNX || _FREEBSD)
+  mov  esp, esi
+#endif
 
   // ; restore registers and try again
   pop  ecx
@@ -184,8 +193,22 @@ labStart:
   pop  esi
 
   test ecx, ecx
-  jz   labStart
+  jnz  short labRepeatAlloc
 
+  // ; the lock was released before the wait above, but labStart runs under it :
+  // ; labConinue publishes gc_signal and walks the thread table, then releases a lock
+  // ; this thread no longer owns. Only system 1 and system 2 come through here, they
+  // ; are the ones that call with a zero size
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+labRetakeLock:
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labRetakeLock
+
+  jmp  labStart
+
+labRepeatAlloc:
   // ; repeat the alloc operation if required
   call %GC_ALLOC
   ret
@@ -204,7 +227,12 @@ labConinue:
   mov  edi, [esi - 4]
 labNext:
   mov  edx, [esi]
-  test edx, edx
+
+  // ; advance on both paths, a null slot used to make the loop re-scan the same entry
+  // ; and leave every higher index thread unstopped
+  lea  esi, [esi + 8]
+
+  test edx, edx                       
   jz   short labSkipTT
   cmp  eax, [edx + tt_sync_event]
   setz cl
@@ -220,7 +248,6 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   add  esp, 4
 
-  lea  esi, [esi + 8]
   mov  eax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
   sub  edi, 1
@@ -249,6 +276,17 @@ labSkipWait:
   mov  esp, ebp     
 
   // ==== GCXT end ==============
+
+  // ; take gc_lock again for the root scan and the collection. Every thread that had
+  // ; to stop has signalled by now, so nobody needs the lock to make progress, while a
+  // ; thread in teardown does : without this it can null its slot and let the OS free
+  // ; the TLS holding its ThreadContent while the scan below is walking it
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+labRootLock:
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labRootLock
 
   // ; create set of roots
   mov  ebp, esp
@@ -292,6 +330,13 @@ labYGNextThread:
 
   // ; get the top frame pointer
   mov  eax, [esi + tt_stack_frame]
+
+  // ; a thread that has registered its slot but not yet reached a safe point or an
+  // ; allocation still has a null frame chain, and walking it from zero faults right
+  // ; here, while gc_lock is held : the handler then allocates and spins on that lock
+  test eax, eax
+  jz   short labYGNextThreadSkip
+
   mov  ecx, eax
 
 labYGNextFrame:
@@ -343,20 +388,29 @@ labYGNextThreadSkip:
   mov  edi, eax
   mov  ebp, [esp+12] 
 
-  // ; GCXT: signal the collecting thread that GC is ended
-  // ; should it be placed into critical section?
+  // ; GCXT: release every thread stopped by this collection. Clearing gc_signal is what
+  // ; the barrier waits on, so it has to come first
   xor  ecx, ecx
-  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
-  // ; clear thread signal var
   mov  [data : %CORE_GC_TABLE + gc_signal], ecx
-  push esi
-  call extern "$rt.SignalStopGCLA"
+
+#if (_LNX || _FREEBSD)
+  // ; the four CollectGCLA arguments are still on the stack. esp is restored from ebp
+  // ; further down, so aligning here costs nothing
+  and  esp, 0FFFFFFF0h
+#endif
+
+  call extern "$rt.SignalCollectionEndGCLA"
 
   mov  ebx, edi
 
-  mov  esp, ebp 
-  pop  ecx 
-  pop  edx 
+  // ; release the lock taken for the root scan
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  lock xadd [edi], edx
+
+  mov  esp, ebp     
+  pop  ecx
+  pop  edx
   pop  ebp
   pop  esi
   ret
@@ -432,7 +486,6 @@ labPERMCollect:
   // ; otherwise eax contains the collecting thread event
 
   // ; signal the collecting thread that it is stopped
-  push edx
   push esi
   call extern "$rt.SignalStopGCLA"
   add  esp, 4
@@ -443,9 +496,17 @@ labPERMCollect:
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
 
-  // ; stop until GC is ended
-  call extern "$rt.WaitForSignalGCLA"
-  add  esp, 4
+  // ; stop until GC is ended, on gc_signal itself, see the note in GC_COLLECT
+#if (_LNX || _FREEBSD)
+  mov  esi, esp
+  and  esp, 0FFFFFFF0h
+#endif
+
+  call extern "$rt.WaitForCollectionGCLA"
+
+#if (_LNX || _FREEBSD)
+  mov  esp, esi
+#endif
 
   // ; restore registers and try again
   pop  ecx
@@ -467,7 +528,12 @@ labConinue:
   mov  edi, [esi - 4]
 labNext:
   mov  edx, [esi]
-  test edx, edx
+
+  // ; advance on both paths, a null slot used to make the loop re-scan the same entry
+  // ; and leave every higher index thread unstopped
+  lea  esi, [esi + 8]
+
+  test edx, edx                       
   jz   short labSkipTT
   cmp  eax, [edx + tt_sync_event]
   setz cl
@@ -483,7 +549,6 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   add  esp, 4
 
-  lea  esi, [esi + 8]
   mov  eax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
   sub  edi, 1
@@ -513,21 +578,38 @@ labSkipWait:
 
   // ==== GCXT end ==============
 
+#if (_LNX || _FREEBSD)
+  // ; no caller can align this one, the thread list above pushes 4 bytes per stopped
+  // ; thread and the count is only known at run time. size is still at [ebp]
+  mov  ecx, [ebp]
+  and  esp, 0FFFFFFF0h
+  sub  esp, 12                        // ; 12 + 4 (argument) = 16
+  push ecx
+#endif
+
   call extern "$rt.CollectPermGCLA"
 
   mov  edi, eax
 
-  // ; GCXT: signal the collecting thread that GC is ended
-  // ; should it be placed into critical section?
+  // ; GCXT: release every thread stopped by this collection, see the note in GC_COLLECT
   xor  ecx, ecx
-  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
-  // ; clear thread signal var
   mov  [data : %CORE_GC_TABLE + gc_signal], ecx
-  push esi
-  call extern "$rt.SignalStopGCLA"
+
+#if (_LNX || _FREEBSD)
+  and  esp, 0FFFFFFF0h
+#endif
+
+  call extern "$rt.SignalCollectionEndGCLA"
 
   mov  ebx, edi
-  add  esp, 8
+
+#if (_LNX || _FREEBSD)
+  // ; absolute, the and above moved esp by an amount not known here
+  mov  esp, ebp     
+  add  esp, 4
+#elif _WIN
+  add  esp, 4
+#endif
 
   pop  ebp
   pop  esi
@@ -544,7 +626,16 @@ procedure % THREAD_WAIT
   push ebp
   mov  edi, esp
 
-  push edx                  // hHandle
+  // ; esi is the cached arg0 of the x86 runtime, the mirror of sp:0, and eax and edx
+  // ; are the halves of the long accumulator. snop is the only caller and it saves
+  // ; nothing, while being emitted at the top of every loop, so whatever is clobbered
+  // ; here comes back as corruption in the caller. In STA this routine is empty, and in
+  // ; amd64 the cached argument lives in r10 and r11, which is why the translation
+  // ; missed it. Pushed below the frame marker above, so the chain the collector walks
+  // ; keeps its shape
+  push esi
+  push eax
+  push edx
 
   // ; set lock
   mov  ebx, data : %CORE_GC_TABLE + gc_lock
@@ -566,11 +657,16 @@ labWait:
   mov  esi, [eax+tt_sync_event]   // ; get current thread event
   mov  [eax+tt_stack_frame], edi  // ; lock stack frame
 
+  // ; snop read gc_signal without the lock, so that collection may have ended by now,
+  // ; or another one may have started. Re-read it here, where the lock is held
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  test edx, edx                       
+  jz   short labNoCollect
+
   // ; signal the collecting thread that it is stopped
   push esi
   mov  edi, data : %CORE_GC_TABLE + gc_lock
 
-  // ; signal the collecting thread that it is stopped
   call extern "$rt.SignalStopGCLA"
   add  esp, 4
 
@@ -579,10 +675,36 @@ labWait:
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
 
-  // ; stop until GC is ended
-  call extern "$rt.WaitForSignalGCLA"
+  // ; stop until GC is ended, on gc_signal itself, see the note in GC_COLLECT
+#if (_LNX || _FREEBSD)
+  mov  esi, esp
+  and  esp, 0FFFFFFF0h
+#endif
 
-  add  esp, 8
+  call extern "$rt.WaitForCollectionGCLA"
+
+#if (_LNX || _FREEBSD)
+  mov  esp, esi
+#endif
+
+  pop  edx
+  pop  eax
+  pop  esi
+  add  esp, 4                     // ; the ebp of the frame marker
+  pop  ebx
+
+  ret
+
+labNoCollect:
+  // ; the collection ended before we got the lock, nothing to wait for
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  ebx, 0FFFFFFFFh
+  lock xadd [edi], ebx
+
+  pop  edx
+  pop  eax
+  pop  esi
+  add  esp, 4                     // ; the ebp of the frame marker
   pop  ebx
 
   ret
@@ -649,7 +771,7 @@ end
 
 // ; exclude
 inline % 10h
-     
+
 #if _WIN
   mov  eax, fs:[2Ch]
   mov  edi, [eax]
@@ -657,10 +779,36 @@ inline % 10h
   mov  eax, gs:[0]
   lea  edi, [eax-tt_size]
 #endif
-  mov  [edi + tt_flags], 1
+
+  // ; the store below has to be ordered against the gc_signal load that follows. On a
+  // ; plain mov the two can be reordered, and then the collector reads tt_flags as zero,
+  // ; puts this thread on its wait list, while the thread reads gc_signal as zero and
+  // ; goes on to block inside the foreign call, where no safe point follows. cmpxchg is
+  // ; the only locked store this assembler emits, and it leaves a nested exclude alone
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr [edi + tt_flags], edx
+
+  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+  test eax, eax
+  jz   short labNoCollect
+
+  // ; a collection is already counting on this thread to stop. Do it here, where a safe
+  // ; point still exists, rather than inside the call it is about to make
+  call %THREAD_WAIT
+
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  edi, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax-tt_size]
+#endif
+
+labNoCollect:
   mov  eax, [edi + tt_stack_frame]
   push eax
-  push ebp     
+  push ebp
   mov  [edi + tt_stack_frame], esp
 
 end
@@ -905,6 +1053,52 @@ inline %7CFh
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
   lock xadd [edi], ecx
+
+end
+
+// ; system : safe point for a thread that has just been registered
+// ; The collector only walks the thread table under gc_lock, so a thread that reaches
+// ; system 3 after that walk is invisible to the collection already running, and would
+// ; go on to read its argument out of the heap while the collector compacts. Stop here
+// ; instead, right after the critical section is left.
+// ; THREAD_WAIT publishes the stack as the head of the frame chain, and the root scan
+// ; walks it from there. This thread has run no ELENA code and owns no roots, so build
+// ; a chain that terminates at once and point ebp at it, instead of letting the scan
+// ; read whatever the stack happens to hold. Four slots keep esp 16 byte aligned
+inline %8CFh
+
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  test edx, edx                       
+  jz   short labConinue
+
+  push ebp
+  xor  eax, eax
+  push eax
+  push eax
+  push eax
+  mov  ebp, esp
+
+  call %THREAD_WAIT
+
+  // ; THREAD_WAIT leaves tt_stack_frame pointing at the stack it used, and that stack is
+  // ; gone as soon as this returns. The thread still owns no roots, so clear it while
+  // ; the region is still ours : the root scan skips a null frame, and the first safe
+  // ; point inside the worker publishes a live one. Leaving the dead frame behind hangs
+  // ; the collector, which walks it holding gc_lock
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  edi, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax-tt_size]
+#endif
+  xor  eax, eax
+  mov  [edi + tt_stack_frame], eax
+
+  add  esp, 12
+  pop  ebp
+
+labConinue:
 
 end
 

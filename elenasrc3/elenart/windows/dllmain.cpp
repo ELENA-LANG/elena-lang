@@ -281,6 +281,18 @@ EXTERN_DLL_EXPORT void WaitForSignalsGCLA(size_t count, void* handles)
    SystemRoutineProvider::GCWaitForSignals(count, handles);
 }
 
+// ; the collection barrier, see the comment in engine/windows/winroutines.cpp. No handle
+// ; is passed : the condition is gc_signal itself
+EXTERN_DLL_EXPORT void WaitForCollectionGCLA()
+{
+   SystemRoutineProvider::GCWaitForCollection(systemEnv->gc_table);
+}
+
+EXTERN_DLL_EXPORT void SignalCollectionEndGCLA()
+{
+   SystemRoutineProvider::GCSignalCollectionEnd();
+}
+
 /// <summary>
 /// Inject an interface VMT into a dynamic proxy class
 /// </summary>

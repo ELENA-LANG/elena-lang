@@ -19,3 +19,25 @@
    echo "Failure" >&2
    exit 1
  fi
+
+ ../../bin/elena-cli ../../tests60/mta_tests/mta_tests.prj
+ ret=$?
+ if [ $ret -eq 1 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ # ELENA has no wait with a deadline on Linux, events.l:114-117, so a hung MTA test has
+ # nothing of its own to break it and would pin the job until the runner gives up
+ timeout --signal=KILL 300s ../../tests60/mta_tests/mta_tests
+ ret=$?
+ if [ $ret -eq 0 ]
+ then
+   echo .
+ else
+   echo "Failure" >&2
+   exit 1
+ fi

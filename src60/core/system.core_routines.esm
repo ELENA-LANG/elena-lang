@@ -2312,8 +2312,11 @@ procedure __thread_create(self,arg,flags,stackSize,ptr)
   // ; == enter GC critical section ==
   system      6 
 
+  // ; arg is a pointer, so it has to be read pointer wide : plain *arg emits a 32 bit
+  // ; load, and on 64 bit the thread entry gets the low half sign extended. stackSize
+  // ; and flags really are ints. The $ form is a no op under bc32
   call extern:CreateThreadLA (
-     *arg, 
+     *$arg,
      procedure:"system'core_routines'thread_start",
      *stackSize,
      *flags)
@@ -3039,6 +3042,10 @@ procedure thread_start(index)
 
   system      7  
   // ; === leave GC critical section ===
+
+  // ; a collection may already be past its table scan, and this thread was not in it :
+  // ; stop here rather than read the argument off the heap while the collector moves it
+  system      8
 
   call extern:StartThreadLA (
      *$arg1, 

@@ -69,6 +69,8 @@ extern "C"
    DLL_PUBLIC void WaitForSignalGCLA(void* handle);
    DLL_PUBLIC void SignalClearGCLA(void* handle);
    DLL_PUBLIC void WaitForSignalsGCLA(size_t count, void* handles);
+   DLL_PUBLIC void WaitForCollectionGCLA();
+   DLL_PUBLIC void SignalCollectionEndGCLA();
 }
 
 #endif // ELENART_H_INCLUDED

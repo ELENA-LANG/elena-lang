@@ -6,7 +6,8 @@
 /dat/api2html
 /bin
 /doc
-/tests60
+/tests60/*
+!/tests60/mta_tests/
 /build
 /elenasrc3/packages
 *.exe

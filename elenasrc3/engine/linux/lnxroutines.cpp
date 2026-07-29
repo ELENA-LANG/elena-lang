@@ -57,11 +57,13 @@ public:
 
    void reset()
    {
-      if (_signalled) {
-         pthread_mutex_lock(&_mutex);
+      // ; the guard used to read _signalled outside the mutex. A stale false skipped
+      // ; the reset and left the event signalled, so every thread waiting on the
+      // ; collector returned at once and span in the safe point instead of stopping
+      pthread_mutex_lock(&_mutex);
+      if(_signalled)
          _signalled = false;
-         pthread_mutex_unlock(&_mutex);
-      }
+      pthread_mutex_unlock(&_mutex);
    }
 
    void signal()
@@ -362,9 +364,25 @@ long long SystemRoutineProvider :: GenerateSeed()
    return seed;
 }
 
+// ; the event belongs to the slot, not to the thread that borrows it. Its address is
+// ; published in gc_signal and in the collector wait list, where other threads
+// ; dereference it after gc_lock has been released, so destroying it at thread exit is
+// ; a use after free. Slots are never recycled, so this is bounded by threadcounter,
+// ; and it is where the event has to live once they are
+static EventImpl** ThreadEvents = nullptr;
+
 void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 {
-   EventImpl* event = new EventImpl();
+   // ; serialised by the system 6 / system 7 pair around InitThreadLA
+   if (!ThreadEvents)
+      ThreadEvents = (EventImpl**)::calloc(env->threadCounter, sizeof(EventImpl*));
+
+   EventImpl* event = ThreadEvents[index];
+   if (!event) {
+      event = new EventImpl();
+      ThreadEvents[index] = event;
+   }
+   else event->reset();
 
    env->th_table->slots[index].content->tt_sync_event = (void*)event;
    env->th_table->slots[index].content->tt_flags = 0;
@@ -374,8 +392,14 @@ void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
 {
    EventImpl* event = (EventImpl*)env->th_table->slots[index].content->tt_sync_event;
 
-   delete event;
+   // a collection may have put this thread on its wait list just before it reached the
+   // teardown, and it will never signal again : thread_start checks for a collection
+   // with the snop ahead of system 6, which is not atomic with what follows. Release
+   // the collector here, where gc_lock is held by the system 6 / system 7 pair
+   if (env->gc_table->gc_signal && event)
+      event->signal();
 
+   // ; the event is kept alive for the slot, see InitMTASignals
    env->th_table->slots[index].content->tt_sync_event = nullptr;
    env->th_table->slots[index].content->tt_flags = 0;
 }
@@ -403,4 +427,49 @@ void SystemRoutineProvider::GCWaitForSignal(void* handle)
 void SystemRoutineProvider::GCSignalClear(void* handle)
 {
    ((EventImpl*)handle)->reset();
+}
+
+// ; The stop the world protocol has two halves. Stopping the threads works : the
+// ; collector builds a wait list and only collects once every thread has signalled.
+// ; Releasing them did not. A stopped thread used to wait on the personal event of the
+// ; collector, published in gc_signal, and the table scan of the next collection resets
+// ; every thread event, that one included, while its owner may never collect again.
+// ;
+// ; The barrier below waits on the state, gc_signal, rather than on an object owned by a
+// ; thread, so there is nothing left to reset and nothing to outlive. No reset is needed
+// ; at the start of a collection either, which removes a whole class of lost wakeups
+static pthread_mutex_t CollectionMutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t  CollectionCond = PTHREAD_COND_INITIALIZER;
+
+// ; never reset, and it does not need to be. The comparison below is an equality against
+// ; a value read right before sleeping, and the wait ends on the first increment, so a
+// ; wrap would only matter if the counter went the full 2^32 rounds while one thread sat
+// ; parked. Unsigned overflow is defined behaviour, so the wrap itself is harmless
+static size_t          CollectionGeneration = 0;
+
+void SystemRoutineProvider::GCWaitForCollection(GCTable* table)
+{
+   pthread_mutex_lock(&CollectionMutex);
+
+   // ; the wait ends when the collection that stopped this thread ends, not when no
+   // ; collection is running. Waiting on gc_signal alone deadlocks : the next collector
+   // ; counts this thread in its wait list, and a thread still parked here never
+   // ; signals it. The caller goes back to labStart and stops again if it has to
+   size_t generation = CollectionGeneration;
+   while (CollectionGeneration == generation && table->gc_signal != 0)
+      pthread_cond_wait(&CollectionCond, &CollectionMutex);
+
+   pthread_mutex_unlock(&CollectionMutex);
+}
+
+void SystemRoutineProvider::GCSignalCollectionEnd()
+{
+   // ; the collector clears gc_signal before getting here, outside this mutex. Bumping
+   // ; the generation under it closes the window against a thread that has already read
+   // ; gc_signal and not yet entered the wait
+   pthread_mutex_lock(&CollectionMutex);
+   CollectionGeneration++;
+   pthread_mutex_unlock(&CollectionMutex);
+
+   pthread_cond_broadcast(&CollectionCond);
 }

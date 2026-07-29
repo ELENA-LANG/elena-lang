@@ -46,7 +46,7 @@ define gc_perm_start         002Ch
 define gc_perm_end           0030h 
 define gc_perm_current       0034h 
 define gc_lock               0038h 
-define gc_signal             0040h 
+define gc_signal             003Ch 
 
 define et_current            0004h
 define tt_stack_frame        0008h
@@ -114,7 +114,7 @@ structure %CORE_GC_TABLE
   dd 0 // ; gc_perm_current       : +34h 
 
   dd 0 // ; gc_lock               : +38h 
-  dd 0 // ; gc_signal             : +40h 
+  dd 0 // ; gc_signal             : +3Ch 
 
 end
 

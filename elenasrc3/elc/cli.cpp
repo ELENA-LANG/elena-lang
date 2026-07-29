@@ -130,10 +130,12 @@ JITCompilerBase* CLIHelper :: createJITCompiler(PlatformType platform)
    switch (platform) {
 #if defined(__x86_64__) || defined (_M_X64)
       case PlatformType::Win_x86_64:
+         return new X86_64JITCompiler(true);
       case PlatformType::FreeBSD_x86_64:
       case PlatformType::Linux_x86_64:
       case PlatformType::MacOS_x86_64:
-         return new X86_64JITCompiler();
+         // ; extopen builds a different frame under the System V ABI, see EXT_OFFSET_SYSV
+         return new X86_64JITCompiler(false);
 #endif
 #if defined(__i386__) || defined (_M_IX86)
       case PlatformType::Win_x86:

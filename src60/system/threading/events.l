@@ -89,26 +89,27 @@ internal struct EventHandle
          _signaled := _signaled | 80000000h;
    }
 
+   // every call below blocks in libc, so it has to run inside a safe region : a thread
+   // stopped in pthread_mutex_lock has no safe point ahead of it, and the collector
+   // would add it to the wait list and then wait for a signal that never comes. The
+   // Windows branch above already wraps all four
    wait()
    {
-      extern libc.pthread_mutex_lock(_mutex);
+      excluded
+      {
+         extern libc.pthread_mutex_lock(_mutex);
 
-      if (_signaled < 0) {
-         excluded
-         {
-             extern libc.pthread_cond_wait(_cond, _mutex);
+         if (_signaled < 0) {
+            extern libc.pthread_cond_wait(_cond, _mutex)
          }
-      }
-      else {
-         excluded
-         {
+         else {
             while (_signaled == 0) {
                extern libc.pthread_cond_wait(_cond, _mutex)
             }
-         }
-      };
+         };
 
-      extern libc.pthread_mutex_unlock(_mutex);
+         extern libc.pthread_mutex_unlock(_mutex);
+      }
    }
 
    wait(int timeOut)
@@ -118,22 +119,25 @@ internal struct EventHandle
 
    set()
    {
-      extern libc.pthread_mutex_lock(_mutex);
+      excluded
+      {
+         extern libc.pthread_mutex_lock(_mutex);
 
-      if (_signaled != 1) {
-         if (_signaled == 0)
-            _signaled := 1;
+         if (_signaled != 1) {
+            if (_signaled == 0)
+               _signaled := 1;
 
-         extern libc.pthread_cond_broadcast(_cond);
-      };
+            extern libc.pthread_cond_broadcast(_cond);
+         };
 
-      extern libc.pthread_mutex_unlock(_mutex);
-
+         extern libc.pthread_mutex_unlock(_mutex);
+      }
    }
 
    reset()
    {
-      if (_signaled == 1) {
+      excluded
+      {
          extern libc.pthread_mutex_lock(_mutex);
 
          _signaled := 0;
@@ -214,16 +218,23 @@ public sealed class CountDownEvent
 
    signal()
    {
+      // the counter needs the lock, set does not, and holding an ELENA spin lock across
+      // a blocking libc call makes every other signaller spin on a CPU the holder needs.
+      // Only the thread that reaches zero sets, so this stays single
+      bool release := false;
+
       lock(self)
       {
          if (_counter > 0) {
             _counter--;
 
-            if (_counter == 0)
-              _handle.set() 
+            release := (_counter == 0)
          }
-      }
-   }  
+      };
+
+      if (release)
+         { _handle.set() }
+   }
 
    close()
       => _handle;

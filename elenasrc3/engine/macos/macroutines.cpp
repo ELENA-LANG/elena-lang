@@ -460,3 +460,29 @@ void SystemRoutineProvider::GCSignalClear(void* handle)
 {
    ((EventImpl*)handle)->reset();
 }
+
+// ; see the comment in linux/lnxroutines.cpp : the barrier waits on gc_signal itself
+// ; rather than on the personal event of whichever thread is collecting
+static pthread_mutex_t CollectionMutex = PTHREAD_MUTEX_INITIALIZER;
+static pthread_cond_t  CollectionCond = PTHREAD_COND_INITIALIZER;
+static size_t          CollectionGeneration = 0;
+
+void SystemRoutineProvider::GCWaitForCollection(GCTable* table)
+{
+   pthread_mutex_lock(&CollectionMutex);
+
+   size_t generation = CollectionGeneration;
+   while (CollectionGeneration == generation && table->gc_signal != 0)
+      pthread_cond_wait(&CollectionCond, &CollectionMutex);
+
+   pthread_mutex_unlock(&CollectionMutex);
+}
+
+void SystemRoutineProvider::GCSignalCollectionEnd()
+{
+   pthread_mutex_lock(&CollectionMutex);
+   CollectionGeneration++;
+   pthread_mutex_unlock(&CollectionMutex);
+
+   pthread_cond_broadcast(&CollectionCond);
+}

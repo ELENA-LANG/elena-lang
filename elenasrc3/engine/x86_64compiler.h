@@ -11,15 +11,12 @@
 
 #include "jitcompiler.h"
 
-#if defined(__x86_64__)
-
-constexpr int EXT_OFFSET = 64;
-
-#else
-
-constexpr int EXT_OFFSET = 104;
-
-#endif
+// ; the distance from the frame pointer built by extopen back to the first argument, and
+// ; it is a property of the target ABI, not of the host. On Windows the four register
+// ; arguments are spilled into the home area above the return address, on the System V
+// ; ABI extopen pushes rcx and rdx below it, which puts the first argument 32 bytes lower
+constexpr int EXT_OFFSET_MS = 104;
+constexpr int EXT_OFFSET_SYSV = 72;
 
 namespace elena_lang
 {
@@ -50,7 +47,7 @@ namespace elena_lang
       int calcFrameOffset(int argument, bool extMode) override
       {
          // NOTE : for the external frame we have to store all nonvolatile registers (rsi, rdi, rbx, r12, r13, r14, r15)
-         return (extMode ? EXT_OFFSET : 8) + (argument > 0 ? align(argument + 16, 16) : 0);
+         return (extMode ? _extOffset : 8) + (argument > 0 ? align(argument + 16, 16) : 0);
       }
 
       void writeImm9(MemoryWriter* writer, int value, int type) override;
@@ -68,12 +65,17 @@ namespace elena_lang
       void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase*) override;
 
-      X86_64JITCompiler()
+      X86_64JITCompiler(bool msABI = true)
          : JITCompiler64()
       {
+         _extOffset = msABI ? EXT_OFFSET_MS : EXT_OFFSET_SYSV;
+
          _constants.dataOffset = 0x0C;
          _constants.unframedOffset = 1;
       }
+
+   private:
+      int _extOffset;
    };
 
    void x86_64loadCallOp(JITCompilerScope* scope);

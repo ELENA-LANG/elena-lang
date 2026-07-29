@@ -7,9 +7,11 @@
   - [ADDED] inplace extension method
   - [ADDED] inplace extension template method
      
-- ELC  
+- ELC
   - [FIXED] multi-argument implicit lambda-function
   - [FIXED] critical error : initializing static fields
+  - [FIXED] the external procedure frame offset was chosen by the host architecture instead of the target calling convention (amd64)
+  - [FIXED] the PT_TLS program header was counted but never written, which left the interpreter entry empty (Linux, amd64)
 
 - VM
 
@@ -21,6 +23,30 @@
   - [FIXED] GC_ALLOCPERM did not follow the System V calling convention (amd64)
   - [FIXED] a failed mmap was not detected on 64 bit targets (Linux, macOS)
   - [FIXED] fill 3,0 core routine used wrong field offsets (amd64)
+  - [FIXED] MTA : the thread table scan did not advance past a null slot, so every higher index thread kept running during a collection (amd64, x32)
+  - [FIXED] MTA : the root scan walked a null frame chain and faulted while holding gc_lock (amd64, x32)
+  - [FIXED] MTA : the safe point of GC_COLLECT returned to a path that requires gc_lock without retaking it (amd64, x32)
+  - [FIXED] MTA : the collector did not hold gc_lock during the root scan and the collection (amd64, x32)
+  - [FIXED] MTA : stopped threads waited on the personal event of the collecting thread, which the next collection resets (amd64, x32)
+  - [FIXED] MTA : a newly started thread ran ELENA code while a collection was compacting (amd64, x32)
+  - [FIXED] MTA : exclude did not order the safe region flag against gc_signal, so the collector waited for a thread that had already blocked (amd64, x32)
+  - [FIXED] MTA : THREAD_WAIT clobbered the cached argument registers and acted on a stale gc_signal (amd64, x32)
+  - [FIXED] MTA : the thread sync event was destroyed at thread exit while still published to the collector (Linux, macOS)
+  - [FIXED] MTA : the GC critical section around thread creation and teardown was dropped by the JIT compiler
+  - [FIXED] MTA : gc_signal was defined outside the GC table (x32)
+  - [FIXED] MTA : the thread context was read through the Windows thread environment block on Linux (amd64)
+  - [FIXED] MTA : the runtime calls of the collector passed their arguments in the Microsoft registers on Linux (amd64)
+  - [FIXED] MTA : the program entry left the stack unaligned on Linux, so the first runtime call that spilled an SSE register faulted (amd64)
+  - [FIXED] MTA : THREAD_WAIT signalled the collector with the wrong argument under the System V calling convention (amd64)
+  - [FIXED] MTA : THREAD_WAIT kept the gc_lock address in a caller saved register across a runtime call (amd64)
+  - [FIXED] MTA : THREAD_WAIT saved the object accumulator out of reach of the root scan, so it came back stale after a collection (amd64)
+  - [FIXED] MTA : GC_ALLOCPERM left the stack unbalanced on the collect path and returned to the wrong address (amd64)
+  - [FIXED] MTA : GC_COLLECT and GC_ALLOCPERM saved r12 and r13 inside the stack range handed to the root scan, where a raw heap address was collected as an object reference (amd64)
+  - [FIXED] MTA : VEH_HANDLER assembled empty on Linux and shadowed the working handler of the single threaded core (amd64)
+  - [FIXED] MTA : extopen and extclosen followed the Microsoft calling convention only, and never saved r14 (amd64)
+  - [FIXED] MTA : the thread argument was read as a 32 bit value when creating a thread (amd64)
+  - [FIXED] the object lock flag was never initialised, so a monitor taken on a recycled page never read free (amd64)
+  - [FIXED] i386 shared libraries were compiled without -fPIC (Linux)
 
 - SM
 
@@ -29,14 +55,23 @@
   - [ADDED] system'collections'BinaryHeap<T1>
   - [ADDED] system'collections'Union<T1,T2>
   - [ADDED] extension ClassHashCode (system'runtime)
+  - [FIXED] EventHandle blocked in libc outside a safe region (Linux)
+  - [FIXED] CountDownEvent held the object lock across a blocking call
 
 - Scripts
+  - [ADDED] MTA functional tests to the i386 test runner, with a timeout
+  - [ADDED] the MTA console template and the MTA core to the amd64 package (Linux, amd64)
+  - [FIXED] the MTA console template resolved to Linux_ARM32 on a 64 bit host, and set no thread counter (Linux, x32)
 
 - SAMPLES
 
-- Tools  
+- Tools
+  - [FIXED] assembler : a memory operand based on r13 with no displacement was encoded as RIP relative (amd64)
+  - [FIXED] assembler : xadd with a 32 bit operand was emitted with the 8 bit opcode (amd64, x32)
+  - [FIXED] assembler : the FS segment prefix was not emitted (amd64)
 
 - IDE
 
 - Misc
   - [UPDATED] API Docs
+  - [ADDED] tests60/mta_tests : functional test suite for the multithreaded core

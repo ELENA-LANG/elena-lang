@@ -23,6 +23,13 @@ namespace elena_lang
          return X86OperandType::M32;
       }
 
+      // the operand behind a segment prefix. On x86-64 the thread pointer is read as
+      // mov r64, fs:[0], which needs the same shape gs: already had
+      virtual X86OperandType getSegmentPrefix()
+      {
+         return X86OperandType::M32;
+      }
+
       void setOffsetSize(X86Operand& operand, X86OperandType prefix)
       {
          if (operand.reference) {
@@ -244,6 +251,11 @@ namespace elena_lang
       X86OperandType getDefaultPrefix() override
       {
          return X86OperandType::M64;
+      }
+
+      X86OperandType getSegmentPrefix() override
+      {
+         return X86OperandType::M64disp32;
       }
 
       X86Operand defineRegister(ustr_t token) override;

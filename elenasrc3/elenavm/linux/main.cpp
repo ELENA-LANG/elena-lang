@@ -81,7 +81,8 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
    #if defined(__x86_64__)
       case PlatformType::Linux_x86_64:
       case PlatformType::FreeBSD_x86_64:
-         return new X86_64JITCompiler();
+         // ; extopen builds a different frame under the System V ABI, see EXT_OFFSET_SYSV
+         return new X86_64JITCompiler(false);
    #endif
    #if defined(__PPC64__)
       case PlatformType::Linux_PPC64le:

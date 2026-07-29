@@ -514,6 +514,13 @@ void elena_lang :: loadSysOp(JITCompilerScope* scope)
       case 3:
       case 4:
       case 5:
+      // ; 6 and 7 are the GC critical section pair, dropped here until now, so thread
+      // ; creation and teardown ran unprotected while the collector walked the table.
+      // ; 8 is the safe point a new thread takes before it runs any ELENA code.
+      // ; STA is unaffected, loadInline falls back to the empty %0CFh for all three
+      case 6:
+      case 7:
+      case 8:
          index = scope->command.arg1;
          break;
       default:

@@ -379,3 +379,15 @@ void WaitForSignalsGCLA(size_t count, void* handles)
 {
    SystemRoutineProvider::GCWaitForSignals(count, handles);
 }
+
+// ; the collection barrier, see the comment in engine/linux/lnxroutines.cpp. No handle
+// ; is passed : the condition is gc_signal itself
+void WaitForCollectionGCLA()
+{
+   SystemRoutineProvider::GCWaitForCollection(systemEnv->gc_table);
+}
+
+void SignalCollectionEndGCLA()
+{
+   SystemRoutineProvider::GCSignalCollectionEnd();
+}
