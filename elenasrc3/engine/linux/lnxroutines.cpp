@@ -74,6 +74,11 @@ public:
 
 static uintptr_t CriticalHandler = 0;
 
+// ; the event belongs to the slot, not to the thread that borrows it : its address is
+// ; published in gc_signal and in the collector wait list, and other threads dereference
+// ; it after gc_lock is released, so freeing it at thread exit is a use after free
+static EventImpl** ThreadEvents = nullptr;
+
 void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength)
 {
 #if defined(__APPLE__)
@@ -360,11 +365,6 @@ long long SystemRoutineProvider :: GenerateSeed()
 
    return seed;
 }
-
-// ; the event belongs to the slot, not to the thread that borrows it : its address is
-// ; published in gc_signal and in the collector wait list, and other threads dereference
-// ; it after gc_lock is released, so freeing it at thread exit is a use after free
-static EventImpl** ThreadEvents = nullptr;
 
 void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 {

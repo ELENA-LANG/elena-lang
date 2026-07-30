@@ -55,11 +55,10 @@ public:
 
    void reset()
    {
-      if (_signalled) {
-         pthread_mutex_lock(&_mutex);
+      pthread_mutex_lock(&_mutex);
+      if(_signalled)
          _signalled = false;
-         pthread_mutex_unlock(&_mutex);
-      }
+      pthread_mutex_unlock(&_mutex);
    }
 
    void signal()
@@ -72,6 +71,8 @@ public:
 };
 
 static uintptr_t CriticalHandler = 0;
+
+static EventImpl** ThreadEvents = nullptr;
 
 #if defined(__APPLE__)
 
@@ -420,7 +421,15 @@ long long SystemRoutineProvider :: GenerateSeed()
 
 void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 {
-   EventImpl* event = new EventImpl();
+   if (!ThreadEvents)
+      ThreadEvents = (EventImpl**)::calloc(env->threadCounter, sizeof(EventImpl*));
+
+   EventImpl* event = ThreadEvents[index];
+   if (!event) {
+      event = new EventImpl();
+      ThreadEvents[index] = event;
+   }
+   else event->reset();
 
    env->th_table->slots[index].content->tt_sync_event = (void*)event;
    env->th_table->slots[index].content->tt_flags = 0;
@@ -430,7 +439,8 @@ void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
 {
    EventImpl* event = (EventImpl*)env->th_table->slots[index].content->tt_sync_event;
 
-   delete event;
+   if (env->gc_table->gc_signal && event)
+      event->signal();
 
    env->th_table->slots[index].content->tt_sync_event = nullptr;
    env->th_table->slots[index].content->tt_flags = 0;

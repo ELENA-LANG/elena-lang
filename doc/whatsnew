@@ -31,7 +31,7 @@
   - [FIXED] MTA : a newly started thread ran ELENA code while a collection was compacting (amd64, x32)
   - [FIXED] MTA : exclude did not order the safe region flag against gc_signal, so the collector waited for a thread that had already blocked (amd64, x32)
   - [FIXED] MTA : THREAD_WAIT clobbered the cached argument registers and acted on a stale gc_signal (amd64, x32)
-  - [FIXED] MTA : the thread sync event was destroyed at thread exit while still published to the collector (Linux, macOS)
+  - [FIXED] MTA : the thread sync event was destroyed at thread exit while still published to the collector (Linux, macOS, Windows)
   - [FIXED] MTA : the GC critical section around thread creation and teardown was dropped by the JIT compiler
   - [FIXED] MTA : gc_signal was defined outside the GC table (x32)
   - [FIXED] MTA : the thread context was read through the Windows thread environment block on Linux (amd64)

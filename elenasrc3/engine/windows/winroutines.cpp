@@ -16,6 +16,8 @@ using namespace elena_lang;
 
 static uintptr_t CriticalHandler = 0;
 
+static HANDLE* ThreadEvents = nullptr;
+
 #define CALL_FIRST 1  
 
 void* SystemRoutineProvider::RetrieveMDataPtr(void* imageBase, pos_t imageLength)
@@ -210,13 +212,26 @@ long long SystemRoutineProvider :: GenerateSeed()
 
 void SystemRoutineProvider :: InitMTASignals(SystemEnv* env, size_t index)
 {
-   env->th_table->slots[index].content->tt_sync_event = ::CreateEvent(0, -1, 0, 0);
+   if (!ThreadEvents)
+      ThreadEvents = (HANDLE*)::calloc(env->threadCounter, sizeof(HANDLE));
+
+   HANDLE event = ThreadEvents[index];
+   if (!event) {
+      event = ::CreateEvent(0, -1, 0, 0);
+      ThreadEvents[index] = event;
+   }
+   else ::ResetEvent(event);
+
+   env->th_table->slots[index].content->tt_sync_event = (void*)event;
    env->th_table->slots[index].content->tt_flags = 0;
 }
 
 void SystemRoutineProvider :: ClearMTASignals(SystemEnv* env, size_t index)
 {
-   ::CloseHandle(env->th_table->slots[index].content->tt_sync_event);
+   HANDLE event = (HANDLE)env->th_table->slots[index].content->tt_sync_event;
+
+   if (env->gc_table->gc_signal && event)
+      ::SetEvent(event);
 
    env->th_table->slots[index].content->tt_sync_event = nullptr;
    env->th_table->slots[index].content->tt_flags = 0;
