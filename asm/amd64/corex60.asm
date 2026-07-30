@@ -251,8 +251,13 @@ labRetakeLock:
 
 labRepeatAlloc:
 
-  // ; repeat the alloc operation if required
+  // ; repeat the alloc operation if required. The pad restores the parity of a generated
+  // ; call site : without it a nested collection runs with every call misaligned.
+  // ; it has to be nil, this range is scanned for roots
+  xor  eax, eax
+  push rax
   call %GC_ALLOC
+  pop  rax
   ret
 
 labConinue:
@@ -285,15 +290,19 @@ labNext:
   push [rdx + tt_sync_event]
 labSkipSave:
 
-  // ; reset all signal events
+  // ; reset all signal events. The handle pushes above leave rsp on either parity, so
+  // ; align it explicitly : the callee is free to spill xmm registers on its stack.
+  // ; r12 is dead here and callee saved, it carries the unaligned rsp across the call
+  mov  r12, rsp
   sub  rsp, 30h
+  and  rsp, 0FFFFFFF0h
 #if _WIN
   mov  rcx, [rdx + tt_sync_event]
 #elif (_LNX || _FREEBSD)
   mov  rdi, [rdx + tt_sync_event]
 #endif
   call extern "$rt.SignalClearGCLA"
-  add  rsp, 30h
+  mov  rsp, r12
 
   mov  rax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
@@ -312,9 +321,11 @@ labSkipTT:
   sub  rbx, rsp
   jz   short labSkipWait
 
-  // ; wait until they all stopped
+  // ; wait until they all stopped. One handle was pushed per stopped thread, so rsp can
+  // ; be on either parity here, align it for the call, labSkipWait restores it from rbp
   shr  ebx, 3
   sub  rsp, 30h
+  and  rsp, 0FFFFFFF0h
 #if _WIN
   mov  ecx, ebx
 #elif (_LNX || _FREEBSD)
@@ -323,7 +334,6 @@ labSkipTT:
   mov  rsi, rdx
 #endif
   call extern "$rt.WaitForSignalsGCLA"
-  add  rsp, 30h
 
 labSkipWait:
   // ; remove list
@@ -583,12 +593,9 @@ labPERMCollect:
   pop  r11
   pop  r10
 
-  test rcx, rcx
-  jz   labStart
-
-  // ; repeat the alloc operation if required
-  call %GC_ALLOC
-  ret
+  // ; retry in the same generation, labStart takes the lock again. This used to fall
+  // ; into %GC_ALLOC, which satisfies a permanent allocation from the young generation
+  jmp  labStart
 
 labConinue:
   mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
@@ -598,7 +605,7 @@ labConinue:
 
   // ; create list of threads need to be stopped
   mov  rax, rsi
-  // ; get tls entry address  
+  // ; get tls entry address
   mov  r13, data : %CORE_THREAD_TABLE + tt_slots
   xor  ecx, ecx
   mov  rbx, [r13 - 8]
@@ -620,15 +627,19 @@ labNext:
   push [rdx + tt_sync_event]
 labSkipSave:
 
-  // ; reset all signal events
+  // ; reset all signal events. The handle pushes above leave rsp on either parity, so
+  // ; align it explicitly : the callee is free to spill xmm registers on its stack.
+  // ; r12 is dead here and callee saved, it carries the unaligned rsp across the call
+  mov  r12, rsp
   sub  rsp, 30h
+  and  rsp, 0FFFFFFF0h
 #if _WIN
   mov  rcx, [rdx + tt_sync_event]
 #elif (_LNX || _FREEBSD)
   mov  rdi, [rdx + tt_sync_event]
 #endif
   call extern "$rt.SignalClearGCLA"
-  add  rsp, 30h
+  mov  rsp, r12
 
   mov  rax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
@@ -647,9 +658,11 @@ labSkipTT:
   sub  rbx, rsp
   jz   short labSkipWait
 
-  // ; wait until they all stopped
+  // ; wait until they all stopped. One handle was pushed per stopped thread, so rsp can
+  // ; be on either parity here, align it for the call, labSkipWait restores it from rbp
   shr  ebx, 3
   sub  rsp, 30h
+  and  rsp, 0FFFFFFF0h
 #if _WIN
   mov  ecx, ebx
 #elif (_LNX || _FREEBSD)
@@ -658,7 +671,6 @@ labSkipTT:
   mov  rsi, rdx
 #endif
   call extern "$rt.WaitForSignalsGCLA"
-  add  rsp, 30h
 
 labSkipWait:
   // ; remove list
