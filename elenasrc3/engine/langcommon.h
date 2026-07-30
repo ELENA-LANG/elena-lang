@@ -18,6 +18,7 @@ namespace elena_lang
    constexpr bool DEFAULT_NULLABLE_TYPE_WARNING    = true;
    constexpr bool DEFAULT_CHECK_HIDDEN_DECLARATION = true;
    constexpr bool DEFAULT_METHOD_OUTPUT            = false;
+   constexpr bool DEFAULT_STRICT_MAPPING           = true;
 
    enum MetaHint : int
    {
@@ -399,6 +400,7 @@ namespace elena_lang
    constexpr auto errTLSIsNotAllowed               = 208;
    constexpr auto errInvalidModuleVersion          = 210;
    constexpr auto errEmptyTarget                   = 212;
+   constexpr auto errUnresolvedForward             = 213;
 
    constexpr auto errParserNotInitialized          = 300;
    constexpr auto errProjectAlreadyLoaded          = 301;
@@ -835,6 +837,7 @@ namespace elena_lang
    constexpr auto FILE_EPILOG                   = "project/epilog";
    constexpr auto AUTOEXTENSION_PATH            = "project/autoextension";
    constexpr auto STRICT_TYPE_ENFORCING_PATH    = "project/stricttype";
+   constexpr auto STRICT_MAPPING_PATH           = "project/strictmapping";
    constexpr auto JUMP_ALIGNMENT_PATH           = "project/alignedjump";
    constexpr auto METHOD_OUTPUT_PATH            = "project/outputlist";
 

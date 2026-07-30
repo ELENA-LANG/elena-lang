@@ -8,10 +8,12 @@
   - [ADDED] inplace extension template method
      
 - ELC
+  - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation
   - [FIXED] multi-argument implicit lambda-function
   - [FIXED] critical error : initializing static fields
   - [FIXED] the external procedure frame offset was chosen by the host architecture instead of the target calling convention (amd64)
   - [FIXED] the PT_TLS program header was counted but never written, which left the interpreter entry empty (Linux, amd64)
+  - [FIXED] critical error : an unresolved forward crashed the compiler instead of being reported
 
 - VM
 

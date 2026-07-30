@@ -74,6 +74,7 @@ namespace elena_lang
       ConditionalBoxing,
       EvaluateOp,
       CheckHiddenDeclaration,
+      StrictMapping,
 
       TracingMode,
 

@@ -83,6 +83,7 @@ namespace elena_lang
    constexpr auto errMsgTLSIsNotAllowed            = "\nlinker: error 208: thread variable can be used only for MTA\n";
    constexpr auto errMsgInvalidModuleVersion       = "\nlinker: error 210: Obsolete module file '%s'\n";
    constexpr auto errMsgEmptyTarget                = "\nlinker: error 212: Target is not specified\n";
+   constexpr auto errMsgUnresolvedForward          = "\nerror 213: The forward %s is not declared in the project configuration\n";
 
    constexpr auto errMsgParserNotInitialized    = "\ninternal error 300: a parser cannot be initialized\n";
    constexpr auto errMsgProjectAlreadyLoaded    = "\ninternal error 301: a project cannot be loaded: %s\n";
