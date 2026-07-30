@@ -2258,6 +2258,218 @@ ObjectInfo Compiler::StatemachineClassScope :: mapCurrentField()
    return mapField(fieldName, EAttr::None);
 }
 
+// --- Compiler::Preparator ---
+
+ustr_t Compiler::Preparator :: resolveForward(ustr_t forward)
+{
+   ustr_t resolved = forwardResolver->resolveForward(forward);
+   if (emptystr(resolved) && (compiler->_verbose || compiler->_strictMapping)) {
+      compiler->_errorProcessor->info(errUnresolvedForward, forward);
+
+      if (compiler->_strictMapping)
+         throw AbortError();
+   }
+
+   return resolved;
+}
+
+ref_t Compiler::Preparator :: safeMapReference(ustr_t forward)
+{
+   ustr_t resolved = resolveForward(forward);
+   if (!resolved.empty()) {
+      if (moduleScope->isStandardOne()) {
+         return moduleScope->module->mapReference(resolved + getlength(STANDARD_MODULE));
+      }
+      else return moduleScope->module->mapReference(resolved);
+      //else return ImportHelper::importReference(moduleScope->module, resolved);
+   }
+   else return 0;
+}
+
+ref_t Compiler::Preparator :: mapReference(ustr_t forward)
+{
+   ustr_t resolved = resolveForward(forward);
+   if (!resolved.empty()) {
+      return moduleScope->module->mapReference(resolved);
+   }
+   else return 0;
+}
+
+ref_t Compiler::Preparator :: safeMapWeakReference(ustr_t forward)
+{
+   ustr_t resolved = resolveForward(forward);
+   if (!emptystr(resolved)) {
+      // HOTFIX : for the standard module the references should be mapped forcefully
+      if (moduleScope->isStandardOne()) {
+         return moduleScope->module->mapReference(resolved + getlength(STANDARD_MODULE), false);
+      }
+      else return moduleScope->module->mapReference(resolved, false);
+   }
+   else return 0;
+}
+
+void Compiler::Preparator :: mapBuildinReferences()
+{
+   // cache the frequently used references
+   moduleScope->buildins.superReference = safeMapReference(SUPER_FORWARD);
+   moduleScope->buildins.nilValueReference = safeMapReference(NILVALUE_FORWARD);
+   moduleScope->buildins.intReference = safeMapReference(INTLITERAL_FORWARD);
+   moduleScope->buildins.longReference = safeMapReference(LONGLITERAL_FORWARD);
+   moduleScope->buildins.realReference = safeMapReference(REALLITERAL_FORWARD);
+   moduleScope->buildins.shortReference = safeMapReference(INT16LITERAL_FORWARD);
+   moduleScope->buildins.ushortReference = safeMapReference(UINT16LITERAL_FORWARD);
+   moduleScope->buildins.int8Reference = safeMapReference(INT8LITERAL_FORWARD);
+   moduleScope->buildins.uint8Reference = safeMapReference(UINT8LITERAL_FORWARD);
+   moduleScope->buildins.literalReference = safeMapReference(LITERAL_FORWARD);
+   moduleScope->buildins.wideReference = safeMapReference(WIDELITERAL_FORWARD);
+   moduleScope->buildins.messageReference = safeMapReference(MESSAGE_FORWARD);
+   moduleScope->buildins.messageNameReference = safeMapReference(MESSAGE_NAME_FORWARD);
+   moduleScope->buildins.extMessageReference = safeMapReference(EXT_MESSAGE_FORWARD);
+   moduleScope->buildins.wrapperTemplateReference = safeMapReference(WRAPPER_FORWARD);
+   moduleScope->buildins.arrayTemplateReference = safeMapReference(ARRAY_FORWARD);
+   moduleScope->buildins.constArrayTemplateReference = safeMapReference(CONST_ARRAY_FORWARD);
+   moduleScope->buildins.argArrayTemplateReference = safeMapReference(VARIADIC_ARRAY_FORWARD);
+   moduleScope->buildins.nullableTemplateReference = safeMapReference(NULLABLE_FORWARD);
+
+   moduleScope->buildins.closureTemplateReference = safeMapWeakReference(CLOSURE_FORWARD);
+   moduleScope->buildins.tupleTemplateReference = safeMapWeakReference(TUPLE_FORWARD);
+   moduleScope->buildins.yielditTemplateReference = safeMapWeakReference(YIELDIT_FORWARD);
+   moduleScope->buildins.asyncStatemachineReference = safeMapWeakReference(ASYNCIT_FORWARD);
+   moduleScope->buildins.lazyExpressionReference = safeMapWeakReference(LAZY_FORWARD);
+   moduleScope->buildins.uintReference = safeMapReference(UINT_FORWARD);
+   moduleScope->buildins.pointerReference = safeMapReference(PTR_FORWARD);
+   moduleScope->buildins.taskReference = safeMapReference(TASK_FORWARD);
+   moduleScope->buildins.dispatchNCastReference = mapReference(CAST_DISPATCHER_FUN_FORWARD);
+
+   moduleScope->branchingInfo.typeRef = safeMapReference(BOOL_FORWARD);
+   moduleScope->branchingInfo.trueRef = safeMapReference(TRUE_FORWARD);
+   moduleScope->branchingInfo.falseRef = safeMapReference(FALSE_FORWARD);
+}
+
+void Compiler::Preparator :: mapBuildinMessages()
+{
+   // cache the frequently used messages
+   moduleScope->buildins.dispatch_message = encodeMessage(
+      moduleScope->module->mapAction(DISPATCH_MESSAGE, 0, false), 1, 0);
+   moduleScope->buildins.constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
+         0, FUNCTION_MESSAGE);
+   moduleScope->buildins.cast_dispatch_message = encodeMessage(
+      moduleScope->module->mapAction(CAST_DISPATCH_MESSAGE, 0, false), 2, 0);
+   moduleScope->buildins.protected_constructor_message =
+      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
+         0, FUNCTION_MESSAGE);
+   moduleScope->buildins.init_message =
+      encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
+         1, STATIC_MESSAGE);
+   moduleScope->buildins.static_init_message =
+      encodeMessage(moduleScope->module->mapAction(CLASS_INIT_MESSAGE, 0, false),
+         0, STATIC_MESSAGE | FUNCTION_MESSAGE);
+   moduleScope->buildins.invoke_message = encodeMessage(
+      moduleScope->module->mapAction(INVOKE_MESSAGE, 0, false), 1, FUNCTION_MESSAGE);
+   moduleScope->buildins.add_message =
+      encodeMessage(moduleScope->module->mapAction(ADD_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.sub_message =
+      encodeMessage(moduleScope->module->mapAction(SUB_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.mul_message =
+      encodeMessage(moduleScope->module->mapAction(MUL_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.div_message =
+      encodeMessage(moduleScope->module->mapAction(DIV_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.band_message =
+      encodeMessage(moduleScope->module->mapAction(BAND_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.bor_message =
+      encodeMessage(moduleScope->module->mapAction(BOR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.shl_message =
+      encodeMessage(moduleScope->module->mapAction(SHL_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.shr_message =
+      encodeMessage(moduleScope->module->mapAction(SHR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.bxor_message =
+      encodeMessage(moduleScope->module->mapAction(BXOR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.and_message =
+      encodeMessage(moduleScope->module->mapAction(AND_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.or_message =
+      encodeMessage(moduleScope->module->mapAction(OR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.xor_message =
+      encodeMessage(moduleScope->module->mapAction(XOR_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.refer_message =
+      encodeMessage(moduleScope->module->mapAction(REFER_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.set_refer_message =
+      encodeMessage(moduleScope->module->mapAction(SET_REFER_MESSAGE, 0, false),
+         3, 0);
+   moduleScope->buildins.if_message =
+      encodeMessage(moduleScope->module->mapAction(IF_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.iif_message =
+      encodeMessage(moduleScope->module->mapAction(IIF_MESSAGE, 0, false),
+         3, 0);
+   moduleScope->buildins.equal_message =
+      encodeMessage(moduleScope->module->mapAction(EQUAL_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.not_message =
+      encodeMessage(moduleScope->module->mapAction(NOT_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
+   moduleScope->buildins.negate_message =
+      encodeMessage(moduleScope->module->mapAction(NEGATE_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
+   moduleScope->buildins.value_message =
+      encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
+   moduleScope->buildins.default_message =
+      encodeMessage(moduleScope->module->mapAction(DEFAULT_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
+   moduleScope->buildins.bnot_message =
+      encodeMessage(moduleScope->module->mapAction(BNOT_MESSAGE, 0, false),
+         1, PROPERTY_MESSAGE);
+   moduleScope->buildins.notequal_message =
+      encodeMessage(moduleScope->module->mapAction(NOTEQUAL_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.less_message =
+      encodeMessage(moduleScope->module->mapAction(LESS_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.notless_message =
+      encodeMessage(moduleScope->module->mapAction(NOTLESS_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.greater_message =
+      encodeMessage(moduleScope->module->mapAction(GREATER_MESSAGE, 0, false),
+         2, 0);
+   moduleScope->buildins.notgreater_message =
+      encodeMessage(moduleScope->module->mapAction(NOTGREATER_MESSAGE, 0, false),
+         2, 0);
+}
+
+void Compiler::Preparator :: mapBuildinVariable()
+{
+   // cache self variable
+   auto retriever = [](ref_t reference, ustr_t/* key*/, ref_t current)
+      {
+         return current == reference;
+      };
+
+   moduleScope->selfVar.copy(moduleScope->predefined.retrieve<ref_t>("@self", V_SELF_VAR,
+      retriever));
+   moduleScope->declVar.copy(moduleScope->predefined.retrieve<ref_t>("@decl", V_DECL_VAR,
+      retriever));
+   moduleScope->projectVar.copy(moduleScope->predefined.retrieve<ref_t>("@project_var", V_PROJECT_VAR,
+      retriever));
+   moduleScope->superVar.copy(moduleScope->predefined.retrieve<ref_t>("@super", V_SUPER_VAR,
+      retriever));
+   moduleScope->receivedVar.copy(moduleScope->predefined.retrieve<ref_t>("@received", V_RECEIVED_VAR,
+      retriever));
+}
+
 // --- Compiler ---
 
 Compiler::Compiler(
@@ -11400,54 +11612,6 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
    }
 }
 
-ustr_t Compiler :: resolveForward(ForwardResolverBase* forwardResolver, ustr_t forward)
-{
-   ustr_t resolved = forwardResolver->resolveForward(forward);
-   if (emptystr(resolved) && (_verbose || _strictMapping)) {
-      _errorProcessor->info(errUnresolvedForward, forward);
-
-      if (_strictMapping)
-         throw AbortError();
-   }
-
-   return resolved;
-}
-
-ref_t Compiler :: safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
-{
-   ustr_t resolved = resolveForward(forwardResolver, forward);
-   if (!resolved.empty()) {
-      if (moduleScope->isStandardOne()) {
-         return moduleScope->module->mapReference(resolved + getlength(STANDARD_MODULE));
-      }
-      else return moduleScope->module->mapReference(resolved);
-      //else return ImportHelper::importReference(moduleScope->module, resolved);
-   }
-   else return 0;
-}
-
-static inline ref_t mapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
-{
-   ustr_t resolved = forwardResolver->resolveForward(forward);
-   if (!resolved.empty()) {
-      return moduleScope->module->mapReference(resolved);
-   }
-   else return 0;
-}
-
-static inline ref_t safeMapWeakReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
-{
-   ustr_t resolved = forwardResolver->resolveForward(forward);
-   if (!emptystr(resolved)) {
-      // HOTFIX : for the standard module the references should be mapped forcefully
-      if (moduleScope->isStandardOne()) {
-         return moduleScope->module->mapReference(resolved + getlength(STANDARD_MODULE), false);
-      }
-      else return moduleScope->module->mapReference(resolved, false);
-   }
-   else return 0;
-}
-
 static inline void addPackageItem(SyntaxTreeWriter& writer, /*ModuleBase* module, */ustr_t str)
 {
    writer.newNode(SyntaxKey::Expression);
@@ -11496,158 +11660,10 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
 {
    _trackingUnassigned = (_errorProcessor->getWarningLevel() == WarningLevel::Level3);
 
-   // cache the frequently used references
-   moduleScope->buildins.superReference = safeMapReference(moduleScope, forwardResolver, SUPER_FORWARD);
-   moduleScope->buildins.nilValueReference = safeMapReference(moduleScope, forwardResolver, NILVALUE_FORWARD);
-   moduleScope->buildins.intReference = safeMapReference(moduleScope, forwardResolver, INTLITERAL_FORWARD);
-   moduleScope->buildins.longReference = safeMapReference(moduleScope, forwardResolver, LONGLITERAL_FORWARD);
-   moduleScope->buildins.realReference = safeMapReference(moduleScope, forwardResolver, REALLITERAL_FORWARD);
-   moduleScope->buildins.shortReference = safeMapReference(moduleScope, forwardResolver, INT16LITERAL_FORWARD);
-   moduleScope->buildins.ushortReference = safeMapReference(moduleScope, forwardResolver, UINT16LITERAL_FORWARD);
-   moduleScope->buildins.int8Reference = safeMapReference(moduleScope, forwardResolver, INT8LITERAL_FORWARD);
-   moduleScope->buildins.uint8Reference = safeMapReference(moduleScope, forwardResolver, UINT8LITERAL_FORWARD);
-   moduleScope->buildins.literalReference = safeMapReference(moduleScope, forwardResolver, LITERAL_FORWARD);
-   moduleScope->buildins.wideReference = safeMapReference(moduleScope, forwardResolver, WIDELITERAL_FORWARD);
-   moduleScope->buildins.messageReference = safeMapReference(moduleScope, forwardResolver, MESSAGE_FORWARD);
-   moduleScope->buildins.messageNameReference = safeMapReference(moduleScope, forwardResolver, MESSAGE_NAME_FORWARD);
-   moduleScope->buildins.extMessageReference = safeMapReference(moduleScope, forwardResolver, EXT_MESSAGE_FORWARD);
-   moduleScope->buildins.wrapperTemplateReference = safeMapReference(moduleScope, forwardResolver, WRAPPER_FORWARD);
-   moduleScope->buildins.arrayTemplateReference = safeMapReference(moduleScope, forwardResolver, ARRAY_FORWARD);
-   moduleScope->buildins.constArrayTemplateReference = safeMapReference(moduleScope, forwardResolver, CONST_ARRAY_FORWARD);
-   moduleScope->buildins.argArrayTemplateReference = safeMapReference(moduleScope, forwardResolver, VARIADIC_ARRAY_FORWARD);
-   moduleScope->buildins.nullableTemplateReference = safeMapReference(moduleScope, forwardResolver, NULLABLE_FORWARD);
-
-   moduleScope->buildins.closureTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, CLOSURE_FORWARD);
-   moduleScope->buildins.tupleTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, TUPLE_FORWARD);
-   moduleScope->buildins.yielditTemplateReference = safeMapWeakReference(moduleScope, forwardResolver, YIELDIT_FORWARD);
-   moduleScope->buildins.asyncStatemachineReference = safeMapWeakReference(moduleScope, forwardResolver, ASYNCIT_FORWARD);
-   moduleScope->buildins.lazyExpressionReference = safeMapWeakReference(moduleScope, forwardResolver, LAZY_FORWARD);
-   moduleScope->buildins.uintReference = safeMapReference(moduleScope, forwardResolver, UINT_FORWARD);
-   moduleScope->buildins.pointerReference = safeMapReference(moduleScope, forwardResolver, PTR_FORWARD);
-   moduleScope->buildins.taskReference = safeMapReference(moduleScope, forwardResolver, TASK_FORWARD);
-   moduleScope->buildins.dispatchNCastReference = mapReference(moduleScope, forwardResolver, CAST_DISPATCHER_FUN_FORWARD);
-
-   moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
-   moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);
-   moduleScope->branchingInfo.falseRef = safeMapReference(moduleScope, forwardResolver, FALSE_FORWARD);
-
-   // cache the frequently used messages
-   moduleScope->buildins.dispatch_message = encodeMessage(
-      moduleScope->module->mapAction(DISPATCH_MESSAGE, 0, false), 1, 0);
-   moduleScope->buildins.constructor_message =
-      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
-         0, FUNCTION_MESSAGE);
-   moduleScope->buildins.cast_dispatch_message = encodeMessage(
-      moduleScope->module->mapAction(CAST_DISPATCH_MESSAGE, 0, false), 2, 0);
-   moduleScope->buildins.protected_constructor_message =
-      encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
-         0, FUNCTION_MESSAGE);
-   moduleScope->buildins.init_message =
-      encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
-         1, STATIC_MESSAGE);
-   moduleScope->buildins.static_init_message =
-      encodeMessage(moduleScope->module->mapAction(CLASS_INIT_MESSAGE, 0, false),
-         0, STATIC_MESSAGE | FUNCTION_MESSAGE);
-   moduleScope->buildins.invoke_message = encodeMessage(
-      moduleScope->module->mapAction(INVOKE_MESSAGE, 0, false), 1, FUNCTION_MESSAGE);
-   moduleScope->buildins.add_message =
-      encodeMessage(moduleScope->module->mapAction(ADD_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.sub_message =
-      encodeMessage(moduleScope->module->mapAction(SUB_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.mul_message =
-      encodeMessage(moduleScope->module->mapAction(MUL_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.div_message =
-      encodeMessage(moduleScope->module->mapAction(DIV_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.band_message =
-      encodeMessage(moduleScope->module->mapAction(BAND_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.bor_message =
-      encodeMessage(moduleScope->module->mapAction(BOR_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.shl_message =
-      encodeMessage(moduleScope->module->mapAction(SHL_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.shr_message =
-      encodeMessage(moduleScope->module->mapAction(SHR_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.bxor_message =
-      encodeMessage(moduleScope->module->mapAction(BXOR_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.and_message =
-      encodeMessage(moduleScope->module->mapAction(AND_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.or_message =
-      encodeMessage(moduleScope->module->mapAction(OR_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.xor_message =
-      encodeMessage(moduleScope->module->mapAction(XOR_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.refer_message =
-      encodeMessage(moduleScope->module->mapAction(REFER_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.set_refer_message =
-      encodeMessage(moduleScope->module->mapAction(SET_REFER_MESSAGE, 0, false),
-         3, 0);
-   moduleScope->buildins.if_message =
-      encodeMessage(moduleScope->module->mapAction(IF_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.iif_message =
-      encodeMessage(moduleScope->module->mapAction(IIF_MESSAGE, 0, false),
-         3, 0);
-   moduleScope->buildins.equal_message =
-      encodeMessage(moduleScope->module->mapAction(EQUAL_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.not_message =
-      encodeMessage(moduleScope->module->mapAction(NOT_MESSAGE, 0, false),
-         1, PROPERTY_MESSAGE);
-   moduleScope->buildins.negate_message =
-      encodeMessage(moduleScope->module->mapAction(NEGATE_MESSAGE, 0, false),
-         1, PROPERTY_MESSAGE);
-   moduleScope->buildins.value_message =
-      encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
-         1, PROPERTY_MESSAGE);
-   moduleScope->buildins.default_message =
-      encodeMessage(moduleScope->module->mapAction(DEFAULT_MESSAGE, 0, false),
-         1, PROPERTY_MESSAGE);
-   moduleScope->buildins.bnot_message =
-      encodeMessage(moduleScope->module->mapAction(BNOT_MESSAGE, 0, false),
-         1, PROPERTY_MESSAGE);
-   moduleScope->buildins.notequal_message =
-      encodeMessage(moduleScope->module->mapAction(NOTEQUAL_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.less_message =
-      encodeMessage(moduleScope->module->mapAction(LESS_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.notless_message =
-      encodeMessage(moduleScope->module->mapAction(NOTLESS_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.greater_message =
-      encodeMessage(moduleScope->module->mapAction(GREATER_MESSAGE, 0, false),
-         2, 0);
-   moduleScope->buildins.notgreater_message =
-      encodeMessage(moduleScope->module->mapAction(NOTGREATER_MESSAGE, 0, false),
-         2, 0);
-
-   // cache self variable
-   auto retriever = [](ref_t reference, ustr_t/* key*/, ref_t current)
-      {
-         return current == reference;
-      };
-
-   moduleScope->selfVar.copy(moduleScope->predefined.retrieve<ref_t>("@self", V_SELF_VAR,
-      retriever));
-   moduleScope->declVar.copy(moduleScope->predefined.retrieve<ref_t>("@decl", V_DECL_VAR,
-      retriever));
-   moduleScope->projectVar.copy(moduleScope->predefined.retrieve<ref_t>("@project_var", V_PROJECT_VAR,
-      retriever));
-   moduleScope->superVar.copy(moduleScope->predefined.retrieve<ref_t>("@super", V_SUPER_VAR,
-      retriever));
-   moduleScope->receivedVar.copy(moduleScope->predefined.retrieve<ref_t>("@received", V_RECEIVED_VAR,
-      retriever));
+   Preparator helper(this, moduleScope, forwardResolver);
+   helper.mapBuildinReferences();
+   helper.mapBuildinMessages();
+   helper.mapBuildinVariable();
 
    createPackageInfo(moduleScope, manifestInfo);
 
