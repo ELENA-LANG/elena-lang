@@ -2248,6 +2248,9 @@ Compiler::StatemachineClassScope::StatemachineClassScope(ExprScope* owner, ref_t
 ObjectInfo Compiler::StatemachineClassScope :: mapCurrentField()
 {
    // !! HOTFIX : take the second declared field
+   if (info.fields.count() < 2)
+      return {};
+
    auto it = info.fields.start();
    it++;
    ustr_t fieldName = it.key();
@@ -2280,6 +2283,7 @@ Compiler::Compiler(
    _nullableTypeWarning = false;
    _trackingUnassigned = false;
    _checkHiddenDeclaration = false;
+   _strictMapping = DEFAULT_STRICT_MAPPING;
 
    _lookaheadOptMode = true; // !! temporal
 
@@ -11396,9 +11400,22 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
    }
 }
 
-static inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
+ustr_t Compiler :: resolveForward(ForwardResolverBase* forwardResolver, ustr_t forward)
 {
    ustr_t resolved = forwardResolver->resolveForward(forward);
+   if (emptystr(resolved) && (_verbose || _strictMapping)) {
+      _errorProcessor->info(errUnresolvedForward, forward);
+
+      if (_strictMapping)
+         throw AbortError();
+   }
+
+   return resolved;
+}
+
+ref_t Compiler :: safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
+{
+   ustr_t resolved = resolveForward(forwardResolver, forward);
    if (!resolved.empty()) {
       if (moduleScope->isStandardOne()) {
          return moduleScope->module->mapReference(resolved + getlength(STANDARD_MODULE));
@@ -11513,11 +11530,6 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);
    moduleScope->branchingInfo.falseRef = safeMapReference(moduleScope, forwardResolver, FALSE_FORWARD);
-
-   if (_verbose) {
-      if (!moduleScope->buildins.constArrayTemplateReference)
-         _errorProcessor->info(infoMissingTemplate, CONST_ARRAY_FORWARD);
-   }
 
    // cache the frequently used messages
    moduleScope->buildins.dispatch_message = encodeMessage(

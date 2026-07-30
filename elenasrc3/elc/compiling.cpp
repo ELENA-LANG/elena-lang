@@ -270,11 +270,6 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
          parameters);
    }
    else {
-      auto sectionInfo = moduleScope.getSection(
-         moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
-
-      SyntaxTree syntaxTree;
-
       bool alreadyDeclared = false;
       generatedReference = generateTemplateName(moduleScope, Visibility::Public, templateRef,
          parameters, alreadyDeclared);
@@ -282,6 +277,13 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       if (alreadyDeclared && moduleScope.isDeclared(generatedReference))
          return generatedReference;
 
+      auto sectionInfo = moduleScope.getSection(
+         moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
+
+      if (!sectionInfo.section)
+         return 0;
+
+      SyntaxTree syntaxTree;
       SyntaxTreeWriter writer(syntaxTree);
       writer.newNode(SyntaxKey::Root);
       writer.newNode(SyntaxKey::Namespace);
@@ -788,6 +790,11 @@ void CompilingProcess :: configurate(Project& project)
    _compiler->setHiddenDeclarationMode(hiddenDeclarationMode);
    if (_verbose && hiddenDeclarationMode)
       _presenter->printLine("HiddenDeclaration is on");
+
+   bool strictMapping = project.BoolSetting(ProjectOption::StrictMapping, DEFAULT_STRICT_MAPPING);
+   _compiler->setStrictMappingFlag(strictMapping);
+   if (_verbose && strictMapping)
+      _presenter->printLine("strictMapping is on");
 
    if (_verbose && project.BoolSetting(ProjectOption::WithMethodOutput, DEFAULT_METHOD_OUTPUT))
       _presenter->printLine("WithMethodOutput is on");
