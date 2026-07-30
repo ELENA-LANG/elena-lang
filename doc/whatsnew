@@ -7,9 +7,11 @@
   - [ADDED] inplace extension method
   - [ADDED] inplace extension template method
      
-- ELC  
+- ELC
+  - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation
   - [FIXED] multi-argument implicit lambda-function
   - [FIXED] critical error : initializing static fields
+  - [FIXED] critical error : an unresolved forward crashed the compiler instead of being reported
 
 - VM
 

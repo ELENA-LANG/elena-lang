@@ -1798,6 +1798,7 @@ namespace elena_lang
       bool                   _strictTypeEnforcing;
       bool                   _nullableTypeWarning;
       bool                   _checkHiddenDeclaration;
+      bool                   _strictMapping;
 
       void printErrorWithClassInfo(Scope& scope, SyntaxNode node, ref_t targerRef, ref_t sourceRef, int error);
 
@@ -2220,6 +2221,9 @@ namespace elena_lang
 
       void createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& manifestInfo);
 
+      ustr_t resolveForward(ForwardResolverBase* forwardResolver, ustr_t forward);
+      ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward);
+
    public:
       void setOptimizationMode(int optMode)
       {
@@ -2258,6 +2262,11 @@ namespace elena_lang
       void setNullableTypeFlag(bool flag)
       {
          _nullableTypeWarning = flag;
+      }
+
+      void setStrictMappingFlag(bool flag)
+      {
+         _strictMapping = flag;
       }
 
       void setVerboseOn()
