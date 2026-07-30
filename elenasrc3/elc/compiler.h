@@ -1772,6 +1772,30 @@ namespace elena_lang
          LambdaClosure(Compiler* compiler, Expression& code, ref_t nestedRef, BuildTreeWriter& writer, ref_t parentRef);
       };
 
+      class Preparator : public CommonHelper
+      {
+         friend class Compiler;
+
+         ModuleScopeBase*     moduleScope;
+         ForwardResolverBase* forwardResolver;
+
+         ustr_t resolveForward(ustr_t forward);
+
+         ref_t safeMapReference(ustr_t forward);
+         ref_t mapReference(ustr_t forward);
+         ref_t safeMapWeakReference(ustr_t forward);
+
+      public:
+         void mapBuildinReferences();
+         void mapBuildinMessages();
+         void mapBuildinVariable();
+
+         Preparator(Compiler* compiler, ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver)
+            : CommonHelper(compiler), moduleScope(moduleScope), forwardResolver(forwardResolver)
+         {
+         }
+      };
+
       friend class CommonHelper;
       friend class Namespace;
       friend class Class;
@@ -2220,9 +2244,6 @@ namespace elena_lang
          mssg_t messageRef, MethodHint type) override;
 
       void createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& manifestInfo);
-
-      ustr_t resolveForward(ForwardResolverBase* forwardResolver, ustr_t forward);
-      ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward);
 
    public:
       void setOptimizationMode(int optMode)
