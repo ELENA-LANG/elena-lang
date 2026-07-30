@@ -28,7 +28,6 @@ In development:
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created) 
   - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected   
   - Static decorator (mixin inheritance)
-  - #866 : spread operator
   --------------------------------------
   * dev
   ====================================== 
@@ -74,7 +73,7 @@ In development:
   - implement
   - unit test
 
-  === Iteration 48 (text based adventage; httpget / httpsget reliability; pi optimization) ===
+  === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===
   * new version 7.0.3
   --------------------------------------
   --------------------------------------
@@ -87,7 +86,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 49 (tetris sample; vscode extension) ===
+  === Iteration 49 (tetris sample; vscode extension;  pi optimization) ===
   * new version 7.0.4
   --------------------------------------
   * dev

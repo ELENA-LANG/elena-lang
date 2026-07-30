@@ -13733,6 +13733,11 @@ mssg_t Compiler::Expression :: resolveMessageAtCompileTime(ObjectInfo source, bo
    return resolvedMessage;
 }
 
+static inline void unboxTupleCollection(SyntaxNode& spreadNode, SyntaxNode& tupleNode)
+{
+
+}
+
 bool Compiler::Expression :: checkDynamicSpeadOperationArg(SyntaxNode current)
 {
    if (SyntaxTree::gotoNode(current, SyntaxKey::SpreadOperation) != SyntaxKey::SpreadOperation)
@@ -13743,12 +13748,22 @@ bool Compiler::Expression :: checkDynamicSpeadOperationArg(SyntaxNode current)
 
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::SpreadOperation) {
-         return true;
+         SyntaxNode expr = current.firstChild(SyntaxKey::ScopeMask);
+         while (expr == SyntaxKey::Expression)
+            expr = expr.firstChild();
+
+         switch (expr.key) {
+            case SyntaxKey::TupleCollection:
+               // spread the tuple in compile-time
+               unboxTupleCollection(current, expr);
+               break;
+            default:
+               return true;
+         }
       }
 
       current = current.nextNode(SyntaxKey::ScopeMask);
    }
-
 
    return false;
 }
