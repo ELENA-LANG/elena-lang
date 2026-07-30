@@ -23,9 +23,9 @@ internal struct EventHandle
 
    internal constructor new(bool value, bool autoReset)
    {
-      _handle := extern KERNEL32.CreateEventA(0, 
+      _handle := extern KERNEL32.CreateEventA(0,
+         autoReset ? 0 : 1,
          value ? 1 : 0,
-         autoReset ? 1 : 0,
          0);
    }
 
