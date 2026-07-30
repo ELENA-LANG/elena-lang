@@ -2220,6 +2220,11 @@ namespace elena_lang
 
       void createPackageInfo(ModuleScopeBase* moduleScope, ManifestInfo& manifestInfo);
 
+      ustr_t resolveForward(ForwardResolverBase* forwardResolver, ustr_t forward);
+      ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward);
+      ref_t mapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward);
+      ref_t safeMapWeakReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward);
+
    public:
       void setOptimizationMode(int optMode)
       {

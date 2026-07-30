@@ -399,6 +399,7 @@ namespace elena_lang
    constexpr auto errTLSIsNotAllowed               = 208;
    constexpr auto errInvalidModuleVersion          = 210;
    constexpr auto errEmptyTarget                   = 212;
+   constexpr auto errUnresolvedForward             = 213;
 
    constexpr auto errParserNotInitialized          = 300;
    constexpr auto errProjectAlreadyLoaded          = 301;

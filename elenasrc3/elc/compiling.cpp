@@ -273,6 +273,11 @@ ref_t CompilingProcess::TemplateGenerator :: generateClassTemplate(ModuleScopeBa
       auto sectionInfo = moduleScope.getSection(
          moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
 
+      // the template body can be missing - e.g. when its forward is not declared and the
+      // reference is zero; returning zero, so the caller can handle an unresolved template
+      if (!sectionInfo.section)
+         return 0;
+
       SyntaxTree syntaxTree;
 
       bool alreadyDeclared = false;

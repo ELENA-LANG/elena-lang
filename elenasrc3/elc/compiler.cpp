@@ -2249,7 +2249,14 @@ ObjectInfo Compiler::StatemachineClassScope :: mapCurrentField()
 {
    // !! HOTFIX : take the second declared field
    auto it = info.fields.start();
-   it++;
+   if (!it.eof())
+      it++;
+
+   // the state machine base class must declare both the context and the current field;
+   // returning an unknown object, so the caller can raise a proper error
+   if (it.eof())
+      return {};
+
    ustr_t fieldName = it.key();
 
    return mapField(fieldName, EAttr::None);
@@ -11396,9 +11403,24 @@ void Compiler::compileNamespace(BuildTreeWriter& writer, NamespaceScope& ns, Syn
    }
 }
 
-static inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
+// an unresolved forward silently turns into a zero reference, which only fails much later
+// in whatever code consumes it; raising it here covers every forward at once
+ustr_t Compiler :: resolveForward(ForwardResolverBase* forwardResolver, ustr_t forward)
 {
    ustr_t resolved = forwardResolver->resolveForward(forward);
+   if (emptystr(resolved)) {
+      _errorProcessor->info(errUnresolvedForward, forward);
+
+      // aborting the compilation the same way a terminal error does
+      throw AbortError();
+   }
+
+   return resolved;
+}
+
+ref_t Compiler :: safeMapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
+{
+   ustr_t resolved = resolveForward(forwardResolver, forward);
    if (!resolved.empty()) {
       if (moduleScope->isStandardOne()) {
          return moduleScope->module->mapReference(resolved + getlength(STANDARD_MODULE));
@@ -11409,18 +11431,18 @@ static inline ref_t safeMapReference(ModuleScopeBase* moduleScope, ForwardResolv
    else return 0;
 }
 
-static inline ref_t mapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
+ref_t Compiler :: mapReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
 {
-   ustr_t resolved = forwardResolver->resolveForward(forward);
+   ustr_t resolved = resolveForward(forwardResolver, forward);
    if (!resolved.empty()) {
       return moduleScope->module->mapReference(resolved);
    }
    else return 0;
 }
 
-static inline ref_t safeMapWeakReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
+ref_t Compiler :: safeMapWeakReference(ModuleScopeBase* moduleScope, ForwardResolverBase* forwardResolver, ustr_t forward)
 {
-   ustr_t resolved = forwardResolver->resolveForward(forward);
+   ustr_t resolved = resolveForward(forwardResolver, forward);
    if (!emptystr(resolved)) {
       // HOTFIX : for the standard module the references should be mapped forcefully
       if (moduleScope->isStandardOne()) {
@@ -11513,11 +11535,6 @@ void Compiler :: prepare(ModuleScopeBase* moduleScope, ForwardResolverBase* forw
    moduleScope->branchingInfo.typeRef = safeMapReference(moduleScope, forwardResolver, BOOL_FORWARD);
    moduleScope->branchingInfo.trueRef = safeMapReference(moduleScope, forwardResolver, TRUE_FORWARD);
    moduleScope->branchingInfo.falseRef = safeMapReference(moduleScope, forwardResolver, FALSE_FORWARD);
-
-   if (_verbose) {
-      if (!moduleScope->buildins.constArrayTemplateReference)
-         _errorProcessor->info(infoMissingTemplate, CONST_ARRAY_FORWARD);
-   }
 
    // cache the frequently used messages
    moduleScope->buildins.dispatch_message = encodeMessage(

@@ -7,9 +7,10 @@
   - [ADDED] inplace extension method
   - [ADDED] inplace extension template method
      
-- ELC  
+- ELC
   - [FIXED] multi-argument implicit lambda-function
   - [FIXED] critical error : initializing static fields
+  - [FIXED] critical error : an unresolved forward crashed the compiler instead of being reported
 
 - VM
 
