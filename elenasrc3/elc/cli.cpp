@@ -139,8 +139,11 @@ JITCompilerBase* CLIHelper :: createJITCompiler(PlatformType platform)
 #endif
 #if defined(__i386__) || defined (_M_IX86)
       case PlatformType::Win_x86:
+         return new X86JITCompiler(true);
       case PlatformType::Linux_x86:
-         return new X86JITCompiler();
+         // ; the thread variables sit in front of the thread content, see the note in
+         // ; X86_64JITCompiler::calculateTLSVariableOffset
+         return new X86JITCompiler(false);
 #endif
 #if defined(__PPC64__)
       case PlatformType::Linux_PPC64le:

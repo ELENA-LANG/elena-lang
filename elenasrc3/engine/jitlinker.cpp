@@ -1692,6 +1692,8 @@ addr_t JITLinker :: resolveThreadVariable(ReferenceInfo referenceInfo, ref_t sec
    addr_t offset = calculateVOffset(writer, mskTLSRef);
    _compiler->writeVariable(writer);
 
+   offset = _compiler->calculateTLSVariableOffset(offset);
+
    _mapper->mapReference(referenceInfo, offset, sectionMask);
 
    return offset;

@@ -23,6 +23,7 @@ define ARG_ACTION_MASK        1DFh
 
 // ; --- Object header fields ---
 define elSyncOffset          0008h
+define elSyncForwardOffset   0008h
 define elSizeOffset          0004h
 define elVMTOffset           0010h 
 define elObjectOffset        0010h
@@ -115,6 +116,7 @@ labWait:
   jnz  short labWait
 
   mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
+  xor  edx, edx    // ; edx is empty here, so we can use it in both branches
   mov  r12, [data : %CORE_GC_TABLE + gc_yg_end]
   add  rcx, rax
   cmp  rcx, r12
@@ -125,8 +127,7 @@ labWait:
   // ; whatever the dead object left there and trylock spins on a byte that never reads
   // ; zero. Only shows up once a collection has recycled the YG, a fresh one is zero
   // ; filled by the OS
-  xor  edx, edx
-  mov  dword ptr [rax + 8], edx
+  mov  dword ptr [rax + elSyncForwardOffset], edx
 
   mov  edx, 0FFFFFFFFh
   lea  rbx, [rax + elObjectOffset]
@@ -140,7 +141,6 @@ labWait:
 labYGCollect:
   // ; save registers
   sub  rcx, rax
-  xor  edx, edx
 
   // ; the entry through GC_ALLOC carries one return address more than the one through
   // ; system 1 and system 2, so pad here to make both arrive with the same alignment.
@@ -163,7 +163,7 @@ labStart:
   // ; GCXT: find the current thread entry
 #if _WIN
   mov  rdi, gs:[58h]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rdi, fs:[0]
 #endif
 
@@ -173,7 +173,7 @@ labStart:
   // ; GCXT: find the current thread entry
 #if _WIN
   mov  rax, [rdi]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   lea  rax, [rdi-tt_size]
 #endif
 
@@ -185,13 +185,9 @@ labStart:
   mov  [rax + tt_stack_frame], rsp
 
   // ; the table walk uses r13 as its cursor and rbx as its counter, because rsi and rdi
-  // ; are argument registers on System V and do not survive a call.
-  // ; Saved below the frame marker on purpose : the range the root scan hands to the
-  // ; collector starts at the marker and runs up, and GC_ALLOC leaves gc_yg_end in r12.
-  // ; A heap address in that range is taken for an object reference
-  push r12
-  push r13
-
+  // ; are argument registers on System V and do not survive a call. r12 and r13 are not
+  // ; saved : this is never entered from external code, and a stacked copy inside the
+  // ; range the root scan walks would be taken for an object reference
   push rdx
   push rcx
 
@@ -205,7 +201,7 @@ labStart:
   // ; a thread waiting on the barrier is still listed by the scan of the next collection,
   // ; which then waits for a signal it cannot give until that collection ends. Mark the
   // ; safe region so those scans skip it, the frame stays frozen while it sleeps and the
-  // ; root scan walks it as usual. r13 is dead here and saved by the entry pushes
+  // ; root scan walks it as usual. r13 is scratch here, see the note in GC_COLLECT
   mov  ecx, dword ptr [rax + tt_flags]
   mov  r13, rcx
   mov  dword ptr [rax + tt_flags], 1
@@ -237,7 +233,7 @@ labStart:
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rax, [rcx-tt_size]
 #endif
@@ -246,8 +242,6 @@ labStart:
 
   pop  rcx
   pop  rdx
-  pop  r13
-  pop  r12
   pop  rbp
   pop  r11
   pop  r10
@@ -330,7 +324,7 @@ labSkipSave:
 #if _WIN
   mov  rax, gs:[58h]
   mov  rax, [rax]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rax, fs:[0]
   lea  rax, [rax-tt_size]
 #endif
@@ -369,8 +363,6 @@ labSkipWait:
   // ; remove list
   mov  rsp, rbp
 
-  // ==== GCXT end ==============
-
   // ; take gc_lock again for the root scan and the collection. Every thread that had
   // ; to stop has signalled by now, so nobody needs the lock to make progress, while a
   // ; thread in teardown does : without this it can null its slot and let the OS free
@@ -381,6 +373,8 @@ labRootLock:
   xor  eax, eax
   lock cmpxchg dword ptr[rdi], edx
   jnz  short labRootLock
+
+  // ==== GCXT end ==============
 
   // ; create set of roots
   mov  rbp, rsp
@@ -422,7 +416,9 @@ labYGNextThread:
   test rsi, rsi
   jz   short labYGNextThreadSkip
 
-  // ; get the thread local roots
+  // ; get the thread local roots. The variables sit in front of the thread content on the
+  // ; System V targets, because the block ends at the thread pointer and the content is
+  // ; found as tp - tt_size : anything past it belongs to the C library
   mov  rax, rdata : %SYSTEM_ENV
   mov  rcx, [rax + env_tls_size]
   lea  rax, [rsi + tt_size]
@@ -476,9 +472,8 @@ labYGNextThreadSkip:
 #endif
 
   // ; restore frame to correctly display a call stack
-  // ; 32 and not 16 : r13 and r12 now sit between the saved rcx/rdx and the saved rbp
   mov  rax, rbp
-  mov  rbp, [rax+32]
+  mov  rbp, [rax+16]
 
   // ; call GC routine
   // ; rsp is aligned : both entry paths arrive at rsp % 16 == 8, the entry pushes
@@ -509,8 +504,6 @@ labYGNextThreadSkip:
   mov  rsp, rbp
   pop  rcx
   pop  rdx
-  pop  r13
-  pop  r12
   pop  rbp
   pop  r11
   pop  r10
@@ -534,6 +527,7 @@ labWait:
   jnz  short labWait
 
   mov  rax, [data : %CORE_GC_TABLE + gc_perm_current]
+  xor  edx, edx    // ; edx is empty here, so we can use it in both branches
   mov  r12, [data : %CORE_GC_TABLE + gc_perm_end]
   add  rcx, rax
   cmp  rcx, r12
@@ -541,8 +535,7 @@ labWait:
   mov  [data : %CORE_GC_TABLE + gc_perm_current], rcx
 
   // ; GCXT: clear the lock flag, see the note in GC_ALLOC
-  xor  edx, edx
-  mov  dword ptr [rax + 8], edx
+  mov  dword ptr [rax + elSyncForwardOffset], edx
 
   mov  edx, 0FFFFFFFFh
   lea  rbx, [rax + elObjectOffset]
@@ -559,7 +552,7 @@ labPERMCollect:
   // ; GCXT: find the current thread entry
 #if _WIN
   mov  rdi, gs:[58h]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rdi, fs:[0]
 #endif
 
@@ -569,7 +562,7 @@ labPERMCollect:
   // ; GCXT: find the current thread entry
 #if _WIN
   mov  rax, [rdi]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   lea  rax, [rdi-tt_size]
 #endif
 
@@ -579,10 +572,6 @@ labPERMCollect:
   // ; get current thread event
   mov  rsi, [rax + tt_sync_event]
   mov  [rax + tt_stack_frame], rsp
-
-  // ; saved below the frame marker, see the note in GC_COLLECT
-  push r12
-  push r13
 
   push rdx
   push rcx
@@ -597,7 +586,7 @@ labPERMCollect:
   // ; a thread waiting on the barrier is still listed by the scan of the next collection,
   // ; which then waits for a signal it cannot give until that collection ends. Mark the
   // ; safe region so those scans skip it, the frame stays frozen while it sleeps and the
-  // ; root scan walks it as usual. r13 is dead here and saved by the entry pushes
+  // ; root scan walks it as usual. r13 is scratch here, see the note in GC_COLLECT
   mov  ecx, dword ptr [rax + tt_flags]
   mov  r13, rcx
   mov  dword ptr [rax + tt_flags], 1
@@ -627,7 +616,7 @@ labPERMCollect:
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rax, [rcx-tt_size]
 #endif
@@ -636,8 +625,6 @@ labPERMCollect:
 
   pop  rcx
   pop  rdx
-  pop  r13
-  pop  r12
   pop  rbp
   pop  r11
   pop  r10
@@ -697,7 +684,7 @@ labSkipSave:
 #if _WIN
   mov  rax, gs:[58h]
   mov  rax, [rax]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rax, fs:[0]
   lea  rax, [rax-tt_size]
 #endif
@@ -761,8 +748,6 @@ labSkipWait:
   // ; 40h drops the shadow space plus the rcx and rdx pushed on entry
   add  rsp, 40h
 
-  pop  r13
-  pop  r12
   pop  rbp
   pop  r11
   pop  r10
@@ -775,21 +760,23 @@ end
 
 procedure % THREAD_WAIT
 
-  // ; rbx is the object accumulator and the collection this thread waits for may move
-  // ; that object. Saved above the frame marker, inside the range the root scan walks,
-  // ; so it comes back relocated instead of stale
+  // ; everything that can hold an object goes ABOVE the frame marker, inside the range the
+  // ; root scan walks, so it comes back relocated instead of stale : rbx is the
+  // ; accumulator and r10 / r11 are the cached arguments. GC_COLLECT already saves the
+  // ; same three that way. Below the marker only scratch may live, a raw pointer there
+  // ; would be read as an object reference
   push rbx
+  push r10
+  push r11
   push rbp
   mov  rdi, rsp
 
-  // ; snop is the only caller and it saves nothing, while sitting at the top of every
-  // ; loop. rax is the accumulator, rsi is scratch, r10 and r11 are the cached arguments,
-  // ; and the two calls below are free to clobber all four. Pushed below the frame marker
-  // ; so the chain the collector walks keeps its shape
+  // ; snop is the only caller and it saves nothing, and the two calls below are free to
+  // ; clobber all of these. Measured : dropping rax and rsi here costs runs in the churn
+  // ; tests, so they stay saved together with rdx
+  push rdx
   push rsi
   push rax
-  push r10
-  push r11
 
   // ; set lock
   mov  rbx, data : %CORE_GC_TABLE + gc_lock
@@ -803,7 +790,7 @@ labWait:
 #if _WIN
   mov  rdx, gs:[58h]
   mov  rax, [rdx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rdx, fs:[0]
   lea  rax, [rdx-tt_size]
 #endif
@@ -830,8 +817,8 @@ labWait:
   mov  dword ptr [rax + tt_flags], 1
 
   // ; signal the collecting thread that it is stopped
-  // ; the two extra pushes above leave rsp 8 off the call boundary, hence 38h
-  sub  rsp, 38h
+  // ; nine pushes leave rsp on the call boundary, hence 30h
+  sub  rsp, 30h
 #if _WIN
   mov  rcx, rsi
 #elif (_LNX || _FREEBSD)
@@ -850,14 +837,14 @@ labWait:
   // ; stop until this collection ends, see the note in GC_COLLECT. The
   // ; shadow space above is still reserved, the callee is free to spill into it
   call extern "$rt.WaitForCollectionGCLA"
-  add  rsp, 38h
+  add  rsp, 30h
 
   // ; leave the safe region, see the note in GC_COLLECT
   pop  rdx
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rax, [rcx-tt_size]
 #endif
@@ -867,11 +854,12 @@ labWait:
   pop  rdx
   mov  [rax+tt_stack_frame], rdx
 
-  pop  r11
-  pop  r10
   pop  rax
   pop  rsi
+  pop  rdx
   add  rsp, 8                     // ; the rbp of the frame marker
+  pop  r11
+  pop  r10
   pop  rbx
 
   ret
@@ -887,11 +875,12 @@ labNoCollect:
   pop  rdx
   mov  [rax+tt_stack_frame], rdx
 
-  pop  r11
-  pop  r10
   pop  rax
   pop  rsi
+  pop  rdx
   add  rsp, 8
+  pop  r11
+  pop  r10
   pop  rbx
 
   ret
@@ -924,7 +913,7 @@ inline %0Ah
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rcx, [rcx-tt_size]
 #endif
@@ -940,7 +929,7 @@ inline %0Bh
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rcx, [rcx-tt_size]
 #endif
@@ -960,7 +949,7 @@ inline % 10h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -985,7 +974,7 @@ inline % 10h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1018,7 +1007,7 @@ labWait:
 #if _WIN
   mov  rdi, gs:[58h]
   mov  rdi, [rdi]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rdi, fs:[0]
   lea  rdi, [rdi-tt_size]
 #endif
@@ -1038,7 +1027,7 @@ inline %17h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1080,7 +1069,7 @@ inline %0BBh
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rax, [rcx-tt_size]
 #endif
@@ -1095,7 +1084,7 @@ inline %0BCh
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rax, [rcx-tt_size]
 #endif
@@ -1117,7 +1106,7 @@ inline %0CAh
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1157,7 +1146,7 @@ inline %1CAh
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1226,7 +1215,7 @@ inline %3CFh
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rax, [rcx-tt_size]
 #endif
@@ -1249,7 +1238,7 @@ inline %4CFh
   push 0
   mov  rax, rdi
 
-#elif _LNX
+#elif (_LNX || _FREEBSD)
 
   mov  rax, rsp
 
@@ -1331,7 +1320,7 @@ inline %8CFh
 #if _WIN
   mov  rax, gs:[58h]
   mov  rdi, [rax]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rax, fs:[0]
   lea  rdi, [rax-tt_size]
 #endif
@@ -1351,13 +1340,13 @@ inline %0E6h
   // ; GCXT: get current thread frame
 #if _WIN
   mov  rcx, gs:[58h]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
 #endif
   lea  rdi, [rbp + __arg32_1]
 #if _WIN
   mov  rax, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   lea  rax, [rcx-tt_size]
 #endif
 
@@ -1411,7 +1400,7 @@ inline %0F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1479,7 +1468,7 @@ inline %1F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1543,7 +1532,7 @@ inline %2F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1609,7 +1598,7 @@ inline %3F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1675,7 +1664,7 @@ inline %4F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1743,7 +1732,7 @@ inline %5F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1811,7 +1800,7 @@ inline %6F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1875,7 +1864,7 @@ inline %7F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1934,7 +1923,7 @@ inline %8F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1995,7 +1984,7 @@ inline %9F2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -2057,7 +2046,7 @@ inline %0AF2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -2121,7 +2110,7 @@ inline %0BF2h
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -2158,7 +2147,7 @@ procedure % VEH_HANDLER
   mov  rcx, [rcx]
   jmp  [rcx]
 
-#elif _LNX
+#elif (_LNX || _FREEBSD)
 
   // ; without this branch the procedure assembles empty, and an empty section here is
   // ; worse than none : corex60 is an overlay that wins over core60 in the resolution,

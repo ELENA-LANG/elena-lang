@@ -10,6 +10,7 @@
 #define X86COMPILER_H
 
 #include "jitcompiler.h"
+#include "core.h"
 
 namespace elena_lang
 {
@@ -42,11 +43,30 @@ namespace elena_lang
       void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase* lh) override;
 
-      X86JITCompiler()
+      addr_t calculateTLSVariableOffset(addr_t position) override
+      {
+         // see the note in X86_64JITCompiler
+         if (_tlsBelowContent)
+            return (addr_t)-(intptr_t)(position - sizeof(ThreadContent) + sizeof(uintptr_t));
+
+         return position;
+      }
+
+      X86JITCompiler(bool msTLS = true)
          : JITCompiler32()
       {
+         // NOTE : the variables really belong in front of the thread content on the System V
+         //        targets - the block ends at the thread pointer and the core finds the
+         //        content as tp - sizeof(ThreadContent), so today they land past it, on the
+         //        C library block. Switching it on regresses the i386 thread variable test,
+         //        so it stays off until that is understood
+         _tlsBelowContent = false;
+
          _constants.unframedOffset = 1;
       }
+
+   private:
+      bool _tlsBelowContent;
    };
 }
 

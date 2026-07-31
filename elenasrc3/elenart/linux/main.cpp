@@ -115,69 +115,11 @@ void InitializeMTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
 
 void* CollectGCLA(void* roots, size_t size, bool fullMode)
 {
-   fprintf(stderr, "[collect] roots=%p size=%zx full=%d\n", roots, size, (int)fullMode);
-
-   // ; temporary : every root range must sit inside a mapped region and be sanely sized,
-   // ; a bogus one is what walks the collector off the heap
-   {
-      GCTable* t = systemEnv->gc_table;
-      GCRoot* r = (GCRoot*)roots;
-      int n = 0;
-      while (r->stack_ptr) {
-         uintptr_t lo = r->stack_ptr_addr;
-         uintptr_t hi = lo + r->size;
-         bool sane = r->size < 0x1000000 && lo != 0 && hi > lo;
-         if (!sane) {
-            fprintf(stderr, "[roots] #%d BOGUS ptr=%zx size=%zx\n", n, (size_t)lo, r->size);
-
-            // ; walk the chain by hand from the published frame and print each link, so the
-            // ; shape of the node that produced the range is visible
-            uintptr_t cur = lo;
-            for (int d = 0; d < 12; d++) {
-               uintptr_t link = *(uintptr_t*)cur;
-               uintptr_t prev = *(uintptr_t*)(cur + 8);
-               fprintf(stderr, "[chain]    +%d at %zx : [0]=%zx [8]=%zx\n", d, (size_t)cur,
-                  (size_t)link, (size_t)prev);
-               if (!link)
-                  break;
-               if (link < cur || link - cur > 0x100000) {
-                  fprintf(stderr, "[chain]    link breaks here (delta=%zd)\n",
-                     (long)(link - cur));
-                  break;
-               }
-               cur = link;
-            }
-
-            // ; name the slot whose stack the range starts in, and show its state
-            ThreadTable* tt = systemEnv->th_table;
-            for (size_t k = 0; k < tt->counter; k++) {
-               ThreadContent* c = tt->slots[k].content;
-               if (!c)
-                  continue;
-
-               uintptr_t frame = (uintptr_t)c->tt_stack_frame;
-               uintptr_t root = (uintptr_t)c->tt_stack_root;
-               bool owns = frame && root && lo >= frame && lo <= root;
-               fprintf(stderr, "[roots]    slot=%zu%s frame=%zx root=%zx flags=%zx ev=%p\n",
-                  k, owns ? " <== OWNER" : "", (size_t)frame, (size_t)root,
-                  (size_t)c->tt_flags, c->tt_sync_event);
-            }
-         }
-         n++;
-         if (n > 4096) { fprintf(stderr, "[roots] runaway list\n"); break; }
-         r++;
-      }
-      fprintf(stderr, "[roots] count=%d yg=%zx..%zx mg=%zx..%zx perm=%zx..%zx\n", n,
-         (size_t)t->gc_yg_start, (size_t)t->gc_yg_end, (size_t)t->gc_mg_start,
-         (size_t)t->gc_mg_current, (size_t)t->gc_perm_start, (size_t)t->gc_perm_current);
-   }
-
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, fullMode);
 }
 
 void* CollectPermGCLA(size_t size)
 {
-   fprintf(stderr, "[collect-perm] size=%zx\n", size);
    return __routineProvider.GCRoutinePerm(systemEnv->gc_table, size);
 }
 
@@ -404,7 +346,6 @@ void StartThreadLA(SystemEnv* env, void* entryPoint, int index)
 
 void UninitThreadLA(SystemEnv* env, int index)
 {
-   fprintf(stderr, "[uninit] slot=%d\n", index);
    __routineProvider.ClearMTASignals(env, index);
    machine->clearThreadEntry(env, index);
 }

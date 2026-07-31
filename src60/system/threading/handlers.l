@@ -177,7 +177,10 @@ public sealed struct ThreadHandle
    {
       excluded
       {
-         extern libc.pthread_join(_handle);
+         // the second argument is where the C library stores the thread result : the one
+         // argument form left it holding whatever the previous code did, and the library
+         // writes eight bytes through it on every join
+         extern libc.pthread_join(_handle, 0);
       }
    }
                                                                    

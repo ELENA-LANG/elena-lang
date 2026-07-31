@@ -76,7 +76,7 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
    switch (platform) {
    #if defined(__i386__)
       case PlatformType::Linux_x86:
-         return new X86JITCompiler();
+         return new X86JITCompiler(false);
    #endif
    #if defined(__x86_64__)
       case PlatformType::Linux_x86_64:

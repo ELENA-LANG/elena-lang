@@ -99,25 +99,25 @@ internal struct EventHandle
    // Windows semantics : the waiter that leaves consumes the signal, exactly one leaves
    wait()
    {
-      excluded
-      {
-         extern libc.pthread_mutex_lock(_mutex);
+      // only the blocking libc calls belong in a safe region. A collection skips a thread
+      // that is inside one, so ELENA code must not run there : the field accesses below
+      // would go on through a frozen frame while the collector moves the object
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
-         if (_signaled < 0) {
-            while (_signaled == 80000000h) {
-               extern libc.pthread_cond_wait(_cond, _mutex)
-            };
-
-            _signaled := 80000000h
-         }
-         else {
-            while (_signaled == 0) {
-               extern libc.pthread_cond_wait(_cond, _mutex)
-            }
+      if (_signaled < 0) {
+         while (_signaled == 80000000h) {
+            excluded { extern libc.pthread_cond_wait(_cond, _mutex) }
          };
 
-         extern libc.pthread_mutex_unlock(_mutex);
+         _signaled := 80000000h
       }
+      else {
+         while (_signaled == 0) {
+            excluded { extern libc.pthread_cond_wait(_cond, _mutex) }
+         }
+      };
+
+      excluded { extern libc.pthread_mutex_unlock(_mutex) }
    }
 
    wait(int timeOut)
@@ -127,49 +127,43 @@ internal struct EventHandle
 
    set()
    {
-      excluded
-      {
-         extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
-         if (_signaled < 0) {
-            // one token at most, and one waiter wakes to consume it : signal, not
-            // broadcast, the consume loop in wait covers a spurious extra wakeup
-            if (_signaled == 80000000h) {
-               _signaled := 80000001h;
+      if (_signaled < 0) {
+         // one token at most, and one waiter wakes to consume it : signal, not
+         // broadcast, the consume loop in wait covers a spurious extra wakeup
+         if (_signaled == 80000000h) {
+            _signaled := 80000001h;
 
-               extern libc.pthread_cond_signal(_cond)
-            }
+            excluded { extern libc.pthread_cond_signal(_cond) }
          }
-         else {
-            if (_signaled != 1) {
-               if (_signaled == 0)
-                  _signaled := 1;
-
-               extern libc.pthread_cond_broadcast(_cond);
-            }
-         };
-
-         extern libc.pthread_mutex_unlock(_mutex);
       }
+      else {
+         if (_signaled != 1) {
+            if (_signaled == 0)
+               _signaled := 1;
+
+            excluded { extern libc.pthread_cond_broadcast(_cond) }
+         }
+      };
+
+      excluded { extern libc.pthread_mutex_unlock(_mutex) }
    }
 
    reset()
    {
-      excluded
-      {
-         extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
-         // the old code stored a plain zero, which silently turned an auto reset event
-         // into a manual one
-         if (_signaled < 0) {
-            _signaled := 80000000h
-         }
-         else {
-            _signaled := 0
-         };
-
-         extern libc.pthread_mutex_unlock(_mutex);
+      // the old code stored a plain zero, which silently turned an auto reset event
+      // into a manual one
+      if (_signaled < 0) {
+         _signaled := 80000000h
       }
+      else {
+         _signaled := 0
+      };
+
+      excluded { extern libc.pthread_mutex_unlock(_mutex) }
    }
 
    close()

@@ -34,6 +34,12 @@
   - [FIXED] MTA : exclude did not order the safe region flag against gc_signal, so the collector waited for a thread that had already blocked (amd64, x32)
   - [FIXED] MTA : THREAD_WAIT clobbered the cached argument registers and acted on a stale gc_signal (amd64, x32)
   - [FIXED] MTA : the thread sync event was destroyed at thread exit while still published to the collector (Linux, macOS, Windows)
+  - [FIXED] MTA : THREAD_WAIT published its own frame as the chain head and never restored the caller one, so the collector walked a chain living on dead stack (amd64, x32)
+  - [FIXED] MTA : the table scan recognised the collecting thread through gc_signal instead of its own event, and ended up waiting for its own signal (amd64, x32)
+  - [FIXED] MTA : a thread waiting on the barrier was still listed by the scan of the next collection (amd64, x32)
+  - [FIXED] MTA : leaving a safe region was not serialised against the root scan (amd64, x32)
+  - [FIXED] MTA : the thread frame chain was not initialised at thread registration, so a recycled thread block kept the frame pointer of the previous owner (Linux, macOS, Windows)
+  - [FIXED] MTA : WaitForCollectionGCLA and SignalCollectionEndGCLA were not exported (macOS)
   - [FIXED] MTA : the GC critical section around thread creation and teardown was dropped by the JIT compiler
   - [FIXED] MTA : gc_signal was defined outside the GC table (x32)
   - [FIXED] MTA : the thread context was read through the Windows thread environment block on Linux (amd64)
@@ -58,6 +64,10 @@
   - [ADDED] system'collections'Union<T1,T2>
   - [ADDED] extension ClassHashCode (system'runtime)
   - [FIXED] EventHandle blocked in libc outside a safe region (Linux)
+  - [FIXED] EventHandle kept ELENA code inside the safe region, where the collector may move the object under it (Linux)
+  - [FIXED] AutoResetEvent released every waiter and lost a signal given before the wait (Linux)
+  - [FIXED] the arguments of CreateEventA were swapped, so a manual reset event behaved as an auto reset one and the other way round (Windows)
+  - [FIXED] pthread_join was called with a single argument, and the C library then wrote the thread result through whatever the second register held (Linux, macOS)
   - [FIXED] CountDownEvent held the object lock across a blocking call
 
 - Scripts
@@ -68,6 +78,7 @@
 - SAMPLES
 
 - Tools
+  - [ADDED] a Linux hosted build of the Windows targets : cross elc, the runtime built with mingw and the tests running under Wine
   - [FIXED] assembler : a memory operand based on r13 with no displacement was encoded as RIP relative (amd64)
   - [FIXED] assembler : xadd with a 32 bit operand was emitted with the 8 bit opcode (amd64, x32)
   - [FIXED] assembler : the FS segment prefix was not emitted (amd64)

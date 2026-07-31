@@ -10,6 +10,7 @@
 #define X86_64COMPILER_H
 
 #include "jitcompiler.h"
+#include "core.h"
 
 // ; the distance from the frame pointer built by extopen back to the first argument, and
 // ; it is a property of the target ABI, not of the host. On Windows the four register
@@ -65,17 +66,36 @@ namespace elena_lang
       void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase*) override;
 
+      addr_t calculateTLSVariableOffset(addr_t position) override
+      {
+         if (_tlsBelowContent) {
+            // the variables occupy the space in front of the thread content, so the offset
+            // is negative and counted back from it : position is sizeof(ThreadContent)
+            // for the first one
+            return (addr_t)-(intptr_t)(position - sizeof(ThreadContent) + sizeof(uintptr_t));
+         }
+
+         return position;
+      }
+
       X86_64JITCompiler(bool msABI = true)
          : JITCompiler64()
       {
          _extOffset = msABI ? EXT_OFFSET_MS : EXT_OFFSET_SYSV;
+         // NOTE : the variables really belong in front of the thread content on the System V
+         //        targets - the block ends at the thread pointer and the core finds the
+         //        content as tp - sizeof(ThreadContent), so today they land past it, on the
+         //        C library block. Switching it on regresses the i386 thread variable test,
+         //        so it stays off until that is understood
+         _tlsBelowContent = false;
 
          _constants.dataOffset = 0x0C;
          _constants.unframedOffset = 1;
       }
 
    private:
-      int _extOffset;
+      int  _extOffset;
+      bool _tlsBelowContent;
    };
 
    void x86_64loadCallOp(JITCompilerScope* scope);

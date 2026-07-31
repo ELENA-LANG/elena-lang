@@ -32,7 +32,7 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase*/* loader*/, PlatformType p
 {
    switch (platform) {
       case PlatformType::Win_x86:
-         return new X86JITCompiler();
+         return new X86JITCompiler(true);
       default:
          return nullptr;
    }

@@ -331,7 +331,8 @@ labYGNextThread:
   test esi, esi
   jz   short labYGNextThreadSkip
 
-  // ; get the thread local roots
+  // ; get the thread local roots, see the note in the amd64 core : on Linux the variables
+  // ; sit in front of the thread content
   lea  eax, [esi + tt_size]
   mov  ecx, [rdata : %SYSTEM_ENV + env_tls_size]
   push eax
@@ -640,16 +641,16 @@ end
 
 procedure % THREAD_WAIT
 
+  // ; everything that can hold an object goes ABOVE the frame marker, inside the range the
+  // ; root scan walks, so it comes back relocated instead of stale : ebx is the
+  // ; accumulator and esi is the cached arg0, the mirror of sp:0
   push ebx
+  push esi
   push ebp
   mov  edi, esp
 
-  // ; snop is the only caller and it saves nothing, while sitting at the top of every
-  // ; loop, so whatever is clobbered here comes back as corruption in the caller. esi is
-  // ; the cached arg0, the mirror of sp:0, and eax and edx are the halves of the long
-  // ; accumulator. Pushed below the frame marker so the chain the collector walks keeps
-  // ; its shape
-  push esi
+  // ; snop is the only caller and it saves nothing, and eax / edx are the halves of the
+  // ; long accumulator, scratch for the collector
   push eax
   push edx
 
@@ -671,6 +672,11 @@ labWait:
 #endif
 
   mov  esi, [eax+tt_sync_event]   // ; get current thread event
+
+  // ; the head published here describes the frame of this procedure, and that frame dies
+  // ; on the ret. Every caller is inside a snop, so it has to go back to what it was, see
+  // ; the note in the amd64 core
+  push [eax+tt_stack_frame]
   mov  [eax+tt_stack_frame], edi  // ; lock stack frame
 
   // ; snop read gc_signal without the lock, so that collection may have ended by now,
@@ -678,6 +684,12 @@ labWait:
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
   test edx, edx                       
   jz   short labNoCollect
+
+  // ; a thread waiting on the barrier is still listed by the scan of the next collection,
+  // ; which then waits for a signal it cannot give. Mark the safe region so those scans
+  // ; skip it, see the note in the amd64 core
+  push [eax + tt_flags]
+  mov  dword ptr [eax + tt_flags], 1
 
   // ; signal the collecting thread that it is stopped
   push esi
@@ -703,10 +715,24 @@ labWait:
   mov  esp, esi
 #endif
 
+  // ; leave the safe region and give the caller its head back
+  pop  edx
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  eax, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  eax, [eax-tt_size]
+#endif
+  mov  [eax + tt_flags], edx
+
+  pop  edx
+  mov  [eax+tt_stack_frame], edx
+
   pop  edx
   pop  eax
-  pop  esi
   add  esp, 4                     // ; the ebp of the frame marker
+  pop  esi
   pop  ebx
 
   ret
@@ -717,10 +743,14 @@ labNoCollect:
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
 
+  // ; give the caller its head back, no safe region was declared on this path
+  pop  edx
+  mov  [eax+tt_stack_frame], edx
+
   pop  edx
   pop  eax
-  pop  esi
   add  esp, 4                     // ; the ebp of the frame marker
+  pop  esi
   pop  ebx
 
   ret
@@ -834,6 +864,15 @@ inline % 11h
 
   add  esp, 4
 
+  // ; leaving the safe region has to be serialised against the root scan, see the note in
+  // ; the amd64 core
+  mov  ecx, data : %CORE_GC_TABLE + gc_lock
+labWait:
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[ecx], edx
+  jnz  short labWait
+
 #if _WIN
   mov  eax, fs:[2Ch]
   mov  edi, [eax]
@@ -845,6 +884,9 @@ inline % 11h
   mov  [edi + tt_flags], 0
   pop  eax
   mov  [edi + tt_stack_frame], eax
+
+  mov  edx, 0FFFFFFFFh
+  lock xadd [ecx], edx
 
 end
 

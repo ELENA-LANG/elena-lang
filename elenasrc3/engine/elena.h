@@ -610,6 +610,12 @@ namespace elena_lang
       virtual void writeCollection(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeDump(ReferenceHelperBase* helper, MemoryWriter& writer, SectionInfo* sectionInfo) = 0;
       virtual void writeVariable(MemoryWriter& writer) = 0;
+
+      // NOTE : where a thread variable sits relative to the thread content. On Windows the
+      //        TLS slot points at the start of the block, so the variables follow the
+      //        content; on Linux the block ends at the thread pointer and the core finds
+      //        the content as tp - sizeof(ThreadContent), so they have to precede it
+      virtual addr_t calculateTLSVariableOffset(addr_t position) { return position; }
       virtual void writeMessage(MemoryWriter& writer, mssg_t message) = 0;
       virtual void writeExtMessage(MemoryWriter& writer, Pair<mssg_t, addr_t> extensionInfo, bool virtualMode) = 0;
 
