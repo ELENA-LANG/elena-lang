@@ -211,3 +211,146 @@ public manualResetEventTest() : testCase()
 
    Console.write(".")
 }
+
+// C2, AutoResetEvent
+//
+// The only user of the auto reset mode, nothing else in the suite creates one
+
+class PingPongState
+{
+   AutoResetEvent Req    : prop;
+   AutoResetEvent Rsp    : prop;
+   SharedCounter  Turns  : prop;
+   int            Rounds : prop;
+   Latch          Done   : prop;
+   ErrorBox       Errors : prop;
+}
+
+pingWorker(state)
+{
+   int rounds := state.Rounds;
+   auto req := state.Req;
+   auto rsp := state.Rsp;
+   auto turns := state.Turns;
+
+   try
+   {
+      for (int k := 0; k < rounds; k += 1)
+      {
+         req.wait();
+
+         turns.increment();
+
+         rsp.set()
+      }
+   }
+   catch(Exception e)
+   {
+      state.Errors.record(e)
+   };
+
+   state.Done.done()
+}
+
+class TokenState
+{
+   AutoResetEvent Gate   : prop;
+   AutoResetEvent Ack    : prop;
+   SharedCounter  Woken  : prop;
+   Latch          Done   : prop;
+   ErrorBox       Errors : prop;
+}
+
+tokenWorker(state)
+{
+   try
+   {
+      state.Gate.wait();
+
+      state.Woken.increment();
+
+      state.Ack.set()
+   }
+   catch(Exception e)
+   {
+      state.Errors.record(e)
+   };
+
+   state.Done.done()
+}
+
+// Regression, the CreateEventA argument order and the pthread auto reset mode
+//
+// The ping pong is fully serialised : rsp.wait returning means the worker finished that
+// turn, so the count is exact on every round, not just at the end. An event created
+// signalled by mistake lets the coordinator run ahead and the first assertion sees 0.
+// A lost wakeup, the old pthread branch on a spurious return or a set landing between
+// waits, parks the worker forever and this fails as the runner timeout.
+//
+// The token phase releases n waiters with n tokens, one ack consumed per token. A set
+// that releases more than one waiter shows up as an early count ahead of k + 1
+public autoResetEventTest() : testCase()
+{
+   int rounds := MtaLoad.Repetitions;
+
+   auto state := new PingPongState();
+   state.Req := AutoResetEvent.new();
+   state.Rsp := AutoResetEvent.new();
+   state.Turns := SharedCounter.new();
+   state.Rounds := rounds;
+   state.Done := Latch.new(1);
+   state.Errors := ErrorBox.new();
+
+   auto worker := Thread.assign(&pingWorker);
+   worker.start(state);
+
+   for (int k := 0; k < rounds; k += 1)
+   {
+      state.Req.set();
+      state.Rsp.wait();
+
+      Assert.ifEqual(state.Turns.Value, k + 1)
+   };
+
+   state.Done.await();
+   state.Errors.rethrowIfAny();
+
+   state.Done.close();
+   state.Req.close();
+   state.Rsp.close();
+
+   Console.write(".");
+
+   int t := 4;
+
+   auto tokens := new TokenState();
+   tokens.Gate := AutoResetEvent.new();
+   tokens.Ack := AutoResetEvent.new();
+   tokens.Woken := SharedCounter.new();
+   tokens.Done := Latch.new(t);
+   tokens.Errors := ErrorBox.new();
+
+   for (int i := 0; i < t; i += 1)
+   {
+      auto waiter := Thread.assign(&tokenWorker);
+
+      waiter.start(tokens)
+   };
+
+   for (int k := 0; k < t; k += 1)
+   {
+      tokens.Gate.set();
+      tokens.Ack.wait();
+
+      Assert.ifEqual(tokens.Woken.Value, k + 1)
+   };
+
+   tokens.Done.await();
+   tokens.Errors.rethrowIfAny();
+
+   tokens.Done.close();
+   tokens.Gate.close();
+   tokens.Ack.close();
+
+   Console.write(".")
+}

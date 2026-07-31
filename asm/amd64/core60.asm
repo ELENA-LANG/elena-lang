@@ -111,8 +111,8 @@ structure %CORE_GC_TABLE
   dq 0 // ; gc_perm_end           : +60h 
   dq 0 // ; gc_perm_current       : +68h 
 
-  dq 0 // ; gc_lock               : +70h 
-  dq 0 // ; gc_signal             : +78h 
+  dq 0 // ; reserved              : +70h
+  dq 0 // ; reserved              : +78h
 
 end
 

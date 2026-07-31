@@ -266,11 +266,6 @@ EXTERN_DLL_EXPORT void SignalStopGCLA(void* handle)
    SystemRoutineProvider::GCSignalStop(handle);
 }
 
-EXTERN_DLL_EXPORT void WaitForSignalGCLA(void* handle)
-{
-   SystemRoutineProvider::GCWaitForSignal(handle);
-}
-
 EXTERN_DLL_EXPORT void SignalClearGCLA(void* handle)
 {
    SystemRoutineProvider::GCSignalClear(handle);

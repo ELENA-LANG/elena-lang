@@ -54,12 +54,8 @@ lockWorker(state)
 // A lock that does not exclude loses updates and the total comes up short, never long.
 // Vacuous under STA, where trylock is xor eax,eax, so this must not move to
 // system_tests
-public mtaCriticalSectionTest() : testCase()
+criticalRounds(int t, int rounds, int increments)
 {
-   int t := MtaLoad.WorkerCount;
-   int rounds := MtaLoad.Repetitions;
-   int increments := 1000;
-
    auto counters := Array.allocate(rounds);
    auto completed := Array.allocate(rounds);
 
@@ -106,7 +102,25 @@ public mtaCriticalSectionTest() : testCase()
       auto latch := completed[k];
 
       latch.close()
-   };
+   }
+}
+
+public mtaCriticalSectionTest() : testCase()
+{
+   criticalRounds(MtaLoad.WorkerCount, MtaLoad.Repetitions, 1000);
+
+   Console.write(".")
+}
+
+// Regression, the collector wait list with an odd entry count
+//
+// One handle is pushed per stopped thread, so with an even worker count the misaligned
+// call sites in the table walk stayed hidden : the suite ran everything with 8. Three
+// and five keep the list length odd on most collections
+public mtaCriticalSectionOddTest() : testCase()
+{
+   criticalRounds(3, 8, 400);
+   criticalRounds(5, 8, 400);
 
    Console.write(".")
 }
@@ -264,6 +278,285 @@ public mtaCollectFullOnThreadStartTest() : testCase()
 public mtaCollectMinorOnThreadStartTest() : testCase()
 {
    churnRounds(8, 4, 0);
+
+   Console.write(".")
+}
+
+// A5, collection pressure
+//
+// A dedicated thread runs collections back to back for the whole duration of a case,
+// instead of one collection placed at a chosen position : every window the other
+// threads open is eventually hit. Stopped through a counter because a bool field has
+// no locked accessor here, and the latch closes the shutdown race
+
+class CollectorState
+{
+   SharedCounter Stop : prop;
+   Latch         Done : prop;
+   ErrorBox      Errors : prop;
+}
+
+collectorWorker(state)
+{
+   auto flag := state.Stop;
+
+   try
+   {
+      int n := 0;
+      while (flag.Value == 0)
+      {
+         GCManager.collectMinor();
+
+         n += 1;
+         if (n >= 8)
+         {
+            GCManager.collectFull();
+            n := 0
+         }
+      }
+   }
+   catch(Exception e)
+   {
+      state.Errors.record(e)
+   };
+
+   state.Done.done()
+}
+
+// Regression, the exclude / collector handshake
+//
+// Every reset here is an excluded block around a blocking libc or kernel call, so the
+// workers cross the exclude boundary thousands of times while the collector publishes
+// gc_signal and walks the table. This is the collision the gc_signal fence closes : the
+// collector listing a thread that read gc_signal as zero and went on to block shows up
+// here as the runner timeout. The allocations keep organic collections in the mix and
+// give the compactor something to move
+class StormState
+{
+   int      Laps   : prop;
+   Latch    Done   : prop;
+   ErrorBox Errors : prop;
+}
+
+stormWorker(state)
+{
+   int laps := state.Laps;
+   auto pulse := ManualResetEvent.new(false);
+
+   try
+   {
+      for (int i := 0; i < laps; i += 1)
+      {
+         pulse.reset();
+
+         auto tmp := new ArrayList();
+         tmp.append(i)
+      }
+   }
+   catch(Exception e)
+   {
+      state.Errors.record(e)
+   };
+
+   pulse.close();
+
+   state.Done.done()
+}
+
+public excludeStormTest() : testCase()
+{
+   int t := MtaLoad.WorkerCount;
+
+   auto survivors := new ArrayList();
+   for (int i := 0; i < 200; i += 1)
+      { survivors.append(i * 11) };
+
+   auto errors := ErrorBox.new();
+
+   auto cstate := new CollectorState();
+   cstate.Stop := SharedCounter.new();
+   cstate.Done := Latch.new(1);
+   cstate.Errors := errors;
+
+   auto collector := Thread.assign(&collectorWorker);
+   collector.start(cstate);
+
+   auto state := new StormState();
+   state.Laps := 1200;
+   state.Done := Latch.new(t);
+   state.Errors := errors;
+
+   for (int i := 0; i < t; i += 1)
+   {
+      auto worker := Thread.assign(&stormWorker);
+
+      worker.start(state)
+   };
+
+   state.Done.await();
+   state.Done.close();
+
+   cstate.Stop.increment();
+   cstate.Done.await();
+   cstate.Done.close();
+
+   errors.rethrowIfAny();
+
+   Assert.ifEqual(survivors.Length, 200);
+   for (int i := 0; i < 200; i += 1)
+      { Assert.ifEqual(survivors[i], i * 11) };
+
+   Console.write(".")
+}
+
+// Regression, the monitor under compaction
+//
+// Many objects with per object locks, so the sync flag lives in many headers spread
+// over pages the compactor keeps moving : an object is relocated while its monitor is
+// taken and while other threads spin on it. Covers the sync state travelling with the
+// header, the accumulator relocation in THREAD_WAIT and the lock flag of a recycled
+// page. A lock that stops excluding after a move loses updates and the exact totals
+// below come up short
+class BankState
+{
+   Array    Counters : prop;
+   int      Slots    : prop;
+   int      Laps     : prop;
+   Latch    Done     : prop;
+   ErrorBox Errors   : prop;
+}
+
+bankWorker(state)
+{
+   int laps := state.Laps;
+   int slots := state.Slots;
+   auto counters := state.Counters;
+
+   try
+   {
+      for (int i := 0; i < laps; i += 1)
+      {
+         for (int m := 0; m < slots; m += 1)
+         {
+            auto counter := counters[m];
+
+            counter.increment()
+         };
+
+         auto tmp := new ArrayList();
+         tmp.append(i)
+      }
+   }
+   catch(Exception e)
+   {
+      state.Errors.record(e)
+   };
+
+   state.Done.done()
+}
+
+public monitorCompactionTest() : testCase()
+{
+   int t := MtaLoad.WorkerCount;
+   int slots := 16;
+   int laps := 100;
+
+   auto counters := Array.allocate(slots);
+   for (int m := 0; m < slots; m += 1)
+      { counters[m] := SharedCounter.new() };
+
+   auto errors := ErrorBox.new();
+
+   auto cstate := new CollectorState();
+   cstate.Stop := SharedCounter.new();
+   cstate.Done := Latch.new(1);
+   cstate.Errors := errors;
+
+   auto collector := Thread.assign(&collectorWorker);
+   collector.start(cstate);
+
+   auto state := new BankState();
+   state.Counters := counters;
+   state.Slots := slots;
+   state.Laps := laps;
+   state.Done := Latch.new(t);
+   state.Errors := errors;
+
+   for (int i := 0; i < t; i += 1)
+   {
+      auto worker := Thread.assign(&bankWorker);
+
+      worker.start(state)
+   };
+
+   state.Done.await();
+   state.Done.close();
+
+   cstate.Stop.increment();
+   cstate.Done.await();
+   cstate.Done.close();
+
+   errors.rethrowIfAny();
+
+   for (int m := 0; m < slots; m += 1)
+   {
+      auto counter := counters[m];
+
+      Assert.ifEqual(counter.Value, t * laps)
+   };
+
+   Console.write(".")
+}
+
+// Regression, thread teardown against a running collector
+//
+// churnRounds places one collection at a chosen position, here the collector never
+// stops while waves of threads are born and die : the window where a collection lists
+// a thread that reaches its teardown before signalling, the one ClearMTASignals
+// releases, gets hit sooner or later instead of by luck
+public teardownStormTest() : testCase()
+{
+   auto survivors := new ArrayList();
+   for (int i := 0; i < 200; i += 1)
+      { survivors.append(i * 17) };
+
+   auto errors := ErrorBox.new();
+
+   auto cstate := new CollectorState();
+   cstate.Stop := SharedCounter.new();
+   cstate.Done := Latch.new(1);
+   cstate.Errors := errors;
+
+   auto collector := Thread.assign(&collectorWorker);
+   collector.start(cstate);
+
+   for (int w := 0; w < 6; w += 1)
+   {
+      auto state := new ChurnState();
+      state.Allocations := 800;
+      state.Done := Latch.new(4);
+      state.Errors := errors;
+
+      for (int i := 0; i < 4; i += 1)
+      {
+         auto worker := Thread.assign(&churnWorker);
+
+         worker.start(state)
+      };
+
+      state.Done.await();
+      state.Done.close()
+   };
+
+   cstate.Stop.increment();
+   cstate.Done.await();
+   cstate.Done.close();
+
+   errors.rethrowIfAny();
+
+   Assert.ifEqual(survivors.Length, 200);
+   for (int i := 0; i < 200; i += 1)
+      { Assert.ifEqual(survivors[i], i * 17) };
 
    Console.write(".")
 }

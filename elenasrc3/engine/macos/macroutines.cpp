@@ -433,6 +433,10 @@ void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 
    env->th_table->slots[index].content->tt_sync_event = (void*)event;
    env->th_table->slots[index].content->tt_flags = 0;
+
+   // ; see the note in linux/lnxroutines.cpp : a recycled TLS block carries the frame
+   // ; pointer of the thread that used it before
+   env->th_table->slots[index].content->tt_stack_frame = 0;
 }
 
 void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
@@ -461,11 +465,6 @@ void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
    }
 }
 
-void SystemRoutineProvider::GCWaitForSignal(void* handle)
-{
-   ((EventImpl*)handle)->waitForSignal();
-}
-
 void SystemRoutineProvider::GCSignalClear(void* handle)
 {
    ((EventImpl*)handle)->reset();
@@ -481,6 +480,8 @@ void SystemRoutineProvider::GCWaitForCollection(GCTable* table)
 {
    pthread_mutex_lock(&CollectionMutex);
 
+   // ; see the note in linux/lnxroutines.cpp : wake on every collection end, leaving
+   // ; into a running collection is safe because the resume passes through gc_lock
    size_t generation = CollectionGeneration;
    while (CollectionGeneration == generation && table->gc_signal != 0)
       pthread_cond_wait(&CollectionCond, &CollectionMutex);

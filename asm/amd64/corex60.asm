@@ -202,6 +202,14 @@ labStart:
   jz   short labConinue
   // ; otherwise eax contains the collecting thread event
 
+  // ; a thread waiting on the barrier is still listed by the scan of the next collection,
+  // ; which then waits for a signal it cannot give until that collection ends. Mark the
+  // ; safe region so those scans skip it, the frame stays frozen while it sleeps and the
+  // ; root scan walks it as usual. r13 is dead here and saved by the entry pushes
+  mov  ecx, dword ptr [rax + tt_flags]
+  mov  r13, rcx
+  mov  dword ptr [rax + tt_flags], 1
+
   sub  rsp, 30h
 
   // ; signal the collecting thread that it is stopped
@@ -224,6 +232,17 @@ labStart:
   call extern "$rt.WaitForCollectionGCLA"
   add  rsp, 30h
   // ; restore registers and try again
+
+  // ; leave the safe region, the calls above clobbered rax so find the entry again
+#if _WIN
+  mov  rcx, gs:[58h]
+  mov  rax, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
+  mov  rcx, r13
+  mov  dword ptr [rax + tt_flags], ecx
 
   pop  rcx
   pop  rdx
@@ -304,7 +323,18 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   mov  rsp, r12
 
-  mov  rax, [data : %CORE_GC_TABLE + gc_signal]
+  // ; the own event comes from the thread entry, not from gc_signal : reloading gc_signal
+  // ; here makes the scan fail to recognise the collecting thread whenever that value is
+  // ; not its own event, and it pushes its own handle on the wait list, then waits for a
+  // ; signal only it could give
+#if _WIN
+  mov  rax, gs:[58h]
+  mov  rax, [rax]
+#elif _LNX
+  mov  rax, fs:[0]
+  lea  rax, [rax-tt_size]
+#endif
+  mov  rax, [rax + tt_sync_event]
 labSkipTT:
   sub  rbx, 1
   jnz  short labNext
@@ -564,6 +594,14 @@ labPERMCollect:
   jz   short labConinue
   // ; otherwise eax contains the collecting thread event
 
+  // ; a thread waiting on the barrier is still listed by the scan of the next collection,
+  // ; which then waits for a signal it cannot give until that collection ends. Mark the
+  // ; safe region so those scans skip it, the frame stays frozen while it sleeps and the
+  // ; root scan walks it as usual. r13 is dead here and saved by the entry pushes
+  mov  ecx, dword ptr [rax + tt_flags]
+  mov  r13, rcx
+  mov  dword ptr [rax + tt_flags], 1
+
   sub  rsp, 30h
 
   // ; signal the collecting thread that it is stopped
@@ -584,6 +622,17 @@ labPERMCollect:
   call extern "$rt.WaitForCollectionGCLA"
   add  rsp, 30h
   // ; restore registers and try again
+
+  // ; leave the safe region, the calls above clobbered rax so find the entry again
+#if _WIN
+  mov  rcx, gs:[58h]
+  mov  rax, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
+  mov  rcx, r13
+  mov  dword ptr [rax + tt_flags], ecx
 
   pop  rcx
   pop  rdx
@@ -641,7 +690,18 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   mov  rsp, r12
 
-  mov  rax, [data : %CORE_GC_TABLE + gc_signal]
+  // ; the own event comes from the thread entry, not from gc_signal : reloading gc_signal
+  // ; here makes the scan fail to recognise the collecting thread whenever that value is
+  // ; not its own event, and it pushes its own handle on the wait list, then waits for a
+  // ; signal only it could give
+#if _WIN
+  mov  rax, gs:[58h]
+  mov  rax, [rax]
+#elif _LNX
+  mov  rax, fs:[0]
+  lea  rax, [rax-tt_size]
+#endif
+  mov  rax, [rax + tt_sync_event]
 labSkipTT:
   sub  rbx, 1
   jnz  short labNext
@@ -749,6 +809,12 @@ labWait:
 #endif
 
   mov  rsi, [rax+tt_sync_event]   // ; get current thread event
+
+  // ; the head published here describes the frame of this procedure, and that frame dies
+  // ; on the ret. Every caller is inside a snop, so the head has to go back to what it was
+  // ; or the next collection walks a chain that lives on dead stack : the slot then holds
+  // ; whatever the thread pushed since, and a heap word there is read as a frame link
+  push [rax+tt_stack_frame]
   mov  [rax+tt_stack_frame], rdi  // ; lock stack frame
 
   // ; snop read gc_signal without the lock, so that collection may have ended by now,
@@ -757,8 +823,14 @@ labWait:
   test rdx, rdx
   jz   short labNoCollect
 
+  // ; mark the safe region before parking, see the note in GC_COLLECT. No callee saved
+  // ; register is free here, so the old value goes to a stack slot : through exclude this
+  // ; is entered with tt_flags already one and the restore has to put that back
+  push [rax + tt_flags]
+  mov  dword ptr [rax + tt_flags], 1
+
   // ; signal the collecting thread that it is stopped
-  // ; the pushes above leave rsp 8 off the call boundary, hence 38h and not 30h
+  // ; the two extra pushes above leave rsp 8 off the call boundary, hence 38h
   sub  rsp, 38h
 #if _WIN
   mov  rcx, rsi
@@ -780,6 +852,21 @@ labWait:
   call extern "$rt.WaitForCollectionGCLA"
   add  rsp, 38h
 
+  // ; leave the safe region, see the note in GC_COLLECT
+  pop  rdx
+#if _WIN
+  mov  rcx, gs:[58h]
+  mov  rax, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
+  mov  dword ptr [rax + tt_flags], edx
+
+  // ; give the caller its head back, see the note above
+  pop  rdx
+  mov  [rax+tt_stack_frame], rdx
+
   pop  r11
   pop  r10
   pop  rax
@@ -794,6 +881,11 @@ labNoCollect:
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
+
+  // ; give the caller its head back, see the note above. rax still holds the entry here,
+  // ; this path made no call
+  pop  rdx
+  mov  [rax+tt_stack_frame], rdx
 
   pop  r11
   pop  r10
@@ -910,16 +1002,32 @@ end
 inline % 11h
 
   add  rsp, 8
+
+  // ; leaving the safe region has to be serialised against the root scan. The collector
+  // ; keeps a thread in a safe region out of its wait list, but it still walks the frame
+  // ; chain published at exclude, and that chain dies the moment this thread restores it
+  // ; and runs on. gc_lock is held for the whole scan, so taking it here waits the scan
+  // ; out. Same registers exclude already clobbers
+  mov  rcx, data : %CORE_GC_TABLE + gc_lock
+labWait:
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[rcx], edx
+  jnz  short labWait
+
 #if _WIN
-  mov  rcx, gs:[58h]
-  mov  rdi, [rcx]
+  mov  rdi, gs:[58h]
+  mov  rdi, [rdi]
 #elif _LNX
-  mov  rcx, fs:[0]
-  lea  rdi, [rcx-tt_size]
+  mov  rdi, fs:[0]
+  lea  rdi, [rdi-tt_size]
 #endif
   mov  dword ptr [rdi + tt_flags], 0
   pop  rax
   mov  [rdi + tt_stack_frame], rax
+
+  mov  edx, 0FFFFFFFFh
+  lock xadd [rcx], edx
 
 end
 

@@ -224,6 +224,10 @@ void SystemRoutineProvider :: InitMTASignals(SystemEnv* env, size_t index)
 
    env->th_table->slots[index].content->tt_sync_event = (void*)event;
    env->th_table->slots[index].content->tt_flags = 0;
+
+   // ; see the note in linux/lnxroutines.cpp : a recycled thread block carries the frame
+   // ; pointer of the thread that used it before
+   env->th_table->slots[index].content->tt_stack_frame = 0;
 }
 
 void SystemRoutineProvider :: ClearMTASignals(SystemEnv* env, size_t index)
@@ -248,11 +252,6 @@ void SystemRoutineProvider :: GCWaitForSignals(size_t count, void* handles)
       ::WaitForMultipleObjects((DWORD)count, (HANDLE*)handles, -1, (DWORD)-1);
 }
 
-void SystemRoutineProvider :: GCWaitForSignal(void* handle)
-{
-   ::WaitForSingleObject((HANDLE)handle, (DWORD)-1);
-}
-
 void SystemRoutineProvider :: GCSignalClear(void* handle)
 {
    ::ResetEvent((HANDLE)handle);
@@ -271,8 +270,8 @@ void SystemRoutineProvider :: GCWaitForCollection(GCTable* table)
 {
    ::AcquireSRWLockExclusive(&CollectionLock);
 
-   // ; see the note in linux/lnxroutines.cpp : the wait ends when the collection that
-   // ; stopped this thread ends, not when no collection is running
+   // ; see the note in linux/lnxroutines.cpp : wake on every collection end, leaving
+   // ; into a running collection is safe because the resume passes through gc_lock
    size_t generation = CollectionGeneration;
    while (CollectionGeneration == generation && table->gc_signal != 0)
       ::SleepConditionVariableSRW(&CollectionCond, &CollectionLock, INFINITE, 0);

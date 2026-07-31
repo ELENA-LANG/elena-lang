@@ -22,6 +22,7 @@
 #include <unistd.h>
 
 #include <pthread.h>
+#include <sys/syscall.h>
 
 using namespace elena_lang;
 
@@ -271,6 +272,9 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 
 #else
 
+   fprintf(stderr, "[%ld] !! signal %d at rip=%llx addr=%p\n", (long)syscall(SYS_gettid),
+      sig, (unsigned long long)u->uc_mcontext.gregs[REG_RIP], si ? si->si_addr : nullptr);
+
    switch (sig) {
       case SIGFPE:
          u->uc_mcontext.gregs[REG_RDX] = u->uc_mcontext.gregs[REG_RIP];
@@ -366,6 +370,40 @@ long long SystemRoutineProvider :: GenerateSeed()
    return seed;
 }
 
+// ; ==== temporary deadlock tracing, to be removed ====
+#include <sys/syscall.h>
+#define GC_TRACE(...) fprintf(stderr, __VA_ARGS__)
+static long gcTid() { return (long)syscall(SYS_gettid); }
+
+static size_t ThreadEventCount = 0;
+
+// ; gc_signal must always hold the sync event of the collecting thread. Catch the moment
+// ; it holds anything else and name the field it matches, to find the writer
+static void gcCheckSignal(SystemEnv* env, const char* where)
+{
+   size_t sig = (size_t)env->gc_table->gc_signal;
+   if (!sig || !ThreadEvents)
+      return;
+
+   for (size_t i = 0; i < ThreadEventCount; i++) {
+      if ((size_t)ThreadEvents[i] == sig)
+         return;
+   }
+
+   GCTable* t = env->gc_table;
+   GC_TRACE("[%ld] !! gc_signal=%zx is no event (%s)\n", gcTid(), sig, where);
+   GC_TRACE("     header=%zx start=%zx yg_start=%zx yg_current=%zx yg_end=%zx\n",
+      (size_t)t->gc_header, (size_t)t->gc_start, (size_t)t->gc_yg_start,
+      (size_t)t->gc_yg_current, (size_t)t->gc_yg_end);
+   GC_TRACE("     shadow=%zx shadow_end=%zx mg_start=%zx mg_current=%zx end=%zx wbar=%zx\n",
+      (size_t)t->gc_shadow, (size_t)t->gc_shadow_end, (size_t)t->gc_mg_start,
+      (size_t)t->gc_mg_current, (size_t)t->gc_end, (size_t)t->gc_mg_wbar);
+   GC_TRACE("     perm_start=%zx perm_end=%zx perm_current=%zx lock=%zx\n",
+      (size_t)t->gc_perm_start, (size_t)t->gc_perm_end, (size_t)t->gc_perm_current,
+      (size_t)t->gc_lock);
+}
+// ; ====
+
 void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 {
    // ; serialised by the system 6 / system 7 pair around InitThreadLA
@@ -381,11 +419,27 @@ void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
 
    env->th_table->slots[index].content->tt_sync_event = (void*)event;
    env->th_table->slots[index].content->tt_flags = 0;
+
+   // ; system 3 publishes the slot without touching the frame chain, and the C library
+   // ; hands a recycled stack and TLS block to a new thread : the entry would carry the
+   // ; frame pointer of the dead thread that used the block, and the root scan would walk
+   // ; a chain that no longer exists. The first safe point publishes the real one
+   env->th_table->slots[index].content->tt_stack_frame = 0;
+
+   if (index + 1 > ThreadEventCount)
+      ThreadEventCount = index + 1;
+
+   GC_TRACE("[%ld] init slot=%zu ev=%p\n", gcTid(), index, (void*)event);
+   gcCheckSignal(env, "init");
 }
 
 void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
 {
    EventImpl* event = (EventImpl*)env->th_table->slots[index].content->tt_sync_event;
+
+   GC_TRACE("[%ld] clear slot=%zu ev=%p sig=%zx\n", gcTid(), index, (void*)event,
+      (size_t)env->gc_table->gc_signal);
+   gcCheckSignal(env, "clear");
 
    // ; a collection may have listed this thread just before it reached the teardown, and
    // ; it will never signal again : the snop ahead of system 6 is not atomic with what
@@ -400,6 +454,8 @@ void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
 
 void SystemRoutineProvider::GCSignalStop(void* handle)
 {
+   GC_TRACE("[%ld] stop-signal ev=%p\n", gcTid(), handle);
+
    ((EventImpl*)handle)->signal();
 }
 
@@ -408,18 +464,24 @@ void SystemRoutineProvider::GCWaitForSignals(size_t count, void* handles)
    if (count > 0) {
       EventImpl** events = (EventImpl**)handles;
       for (size_t i = 0; i < count; i++) {
+         GC_TRACE("[%ld] wait-for ev=%p (%zu/%zu)\n", gcTid(), (void*)events[i], i + 1, count);
+         if (ThreadEvents) {
+            bool known = false;
+            for (size_t k = 0; k < ThreadEventCount; k++)
+               if (ThreadEvents[k] == events[i]) known = true;
+            if (!known)
+               GC_TRACE("[%ld] !! waiting on unknown handle %p\n", gcTid(), (void*)events[i]);
+         }
          events[i]->waitForSignal();
       }
+      GC_TRACE("[%ld] wait-for done\n", gcTid());
    }
-}
-
-void SystemRoutineProvider::GCWaitForSignal(void* handle)
-{
-   ((EventImpl*)handle)->waitForSignal();
 }
 
 void SystemRoutineProvider::GCSignalClear(void* handle)
 {
+   GC_TRACE("[%ld] reset ev=%p\n", gcTid(), handle);
+
    ((EventImpl*)handle)->reset();
 }
 
@@ -439,24 +501,29 @@ void SystemRoutineProvider::GCWaitForCollection(GCTable* table)
 {
    pthread_mutex_lock(&CollectionMutex);
 
-   // ; the wait ends when the collection that stopped this thread ends, not when no
-   // ; collection is running. Waiting on gc_signal alone deadlocks : once that collection
-   // ; has finished, the next one lists this thread on its own wait list, and a thread
-   // ; still parked here never signals it. It has to leave and stop again at labStart
+   GC_TRACE("[%ld] park gen=%zu sig=%zx\n", gcTid(), CollectionGeneration, (size_t)table->gc_signal);
+
+   // ; wake on every collection end rather than only when nothing runs : with the storm
+   // ; of back to back collections the gc_signal == 0 window is too short to observe and
+   // ; the sleepers starve. Leaving into a running collection is safe, the thread still
+   // ; carries tt_flags = 1 and its frame stays frozen until the resume passes gc_lock
    size_t generation = CollectionGeneration;
    while (CollectionGeneration == generation && table->gc_signal != 0)
       pthread_cond_wait(&CollectionCond, &CollectionMutex);
+
+   GC_TRACE("[%ld] resume gen=%zu sig=%zx\n", gcTid(), CollectionGeneration, (size_t)table->gc_signal);
 
    pthread_mutex_unlock(&CollectionMutex);
 }
 
 void SystemRoutineProvider::GCSignalCollectionEnd()
 {
-   // ; the collector clears gc_signal before getting here, outside this mutex. Bumping
-   // ; the generation under it closes the window against a thread that has already read
-   // ; gc_signal and not yet entered the wait
+   // ; the collector clears gc_signal before getting here, outside this mutex. Taking the
+   // ; mutex orders that store against the waiters : whoever is inside the wait re-checks
+   // ; gc_signal with the mutex held and either sees the zero or gets the broadcast
    pthread_mutex_lock(&CollectionMutex);
    CollectionGeneration++;
+   GC_TRACE("[%ld] collection-end gen=%zu\n", gcTid(), CollectionGeneration);
    pthread_mutex_unlock(&CollectionMutex);
 
    pthread_cond_broadcast(&CollectionCond);

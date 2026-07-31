@@ -93,6 +93,10 @@ internal struct EventHandle
    // stopped in pthread_mutex_lock has no safe point ahead of it, and the collector
    // would add it to the wait list and then wait for a signal that never comes. The
    // Windows branch above already wraps all four
+   // the negative range is the auto reset mode, 80000000h is armed and 80000001h is
+   // signalled. The old branch waited once with no predicate and no consumption, so a
+   // spurious wakeup released the waiter and a set before the wait was lost entirely.
+   // Windows semantics : the waiter that leaves consumes the signal, exactly one leaves
    wait()
    {
       excluded
@@ -100,7 +104,11 @@ internal struct EventHandle
          extern libc.pthread_mutex_lock(_mutex);
 
          if (_signaled < 0) {
-            extern libc.pthread_cond_wait(_cond, _mutex)
+            while (_signaled == 80000000h) {
+               extern libc.pthread_cond_wait(_cond, _mutex)
+            };
+
+            _signaled := 80000000h
          }
          else {
             while (_signaled == 0) {
@@ -123,11 +131,22 @@ internal struct EventHandle
       {
          extern libc.pthread_mutex_lock(_mutex);
 
-         if (_signaled != 1) {
-            if (_signaled == 0)
-               _signaled := 1;
+         if (_signaled < 0) {
+            // one token at most, and one waiter wakes to consume it : signal, not
+            // broadcast, the consume loop in wait covers a spurious extra wakeup
+            if (_signaled == 80000000h) {
+               _signaled := 80000001h;
 
-            extern libc.pthread_cond_broadcast(_cond);
+               extern libc.pthread_cond_signal(_cond)
+            }
+         }
+         else {
+            if (_signaled != 1) {
+               if (_signaled == 0)
+                  _signaled := 1;
+
+               extern libc.pthread_cond_broadcast(_cond);
+            }
          };
 
          extern libc.pthread_mutex_unlock(_mutex);
@@ -140,7 +159,14 @@ internal struct EventHandle
       {
          extern libc.pthread_mutex_lock(_mutex);
 
-         _signaled := 0;
+         // the old code stored a plain zero, which silently turned an auto reset event
+         // into a manual one
+         if (_signaled < 0) {
+            _signaled := 80000000h
+         }
+         else {
+            _signaled := 0
+         };
 
          extern libc.pthread_mutex_unlock(_mutex);
       }

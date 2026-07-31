@@ -148,7 +148,6 @@ namespace elena_lang
 
       static void GCSignalClear(void* handle);
       static void GCSignalStop(void* handle);
-      static void GCWaitForSignal(void* handle);
       static void GCWaitForSignals(size_t count, void* handles);
 
       // the barrier that releases the stopped threads has to outlive any single

@@ -328,11 +328,6 @@ void SignalStopGCLA(void* handle)
    SystemRoutineProvider::GCSignalStop(handle);
 }
 
-void WaitForSignalGCLA(void* handle)
-{
-   SystemRoutineProvider::GCWaitForSignal(handle);
-}
-
 void SignalClearGCLA(void* handle)
 {
    SystemRoutineProvider::GCSignalClear(handle);

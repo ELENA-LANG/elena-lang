@@ -248,7 +248,16 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   add  esp, 4
 
-  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+  // ; the own event comes from the thread entry, not from gc_signal, see the note in the
+  // ; amd64 core
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  eax, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  eax, [eax-tt_size]
+#endif
+  mov  eax, [eax + tt_sync_event]
 labSkipTT:
   sub  edi, 1
   jnz  short labNext
@@ -549,7 +558,16 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   add  esp, 4
 
-  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
+  // ; the own event comes from the thread entry, not from gc_signal, see the note in the
+  // ; amd64 core
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  eax, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  eax, [eax-tt_size]
+#endif
+  mov  eax, [eax + tt_sync_event]
 labSkipTT:
   sub  edi, 1
   jnz  short labNext
