@@ -52,15 +52,15 @@ static inline bool isUnboxingRequired(TargetMode mode)
       || mode == TargetMode::ConditionalUnboxingRequired;
 }
 
-//inline void testNodes(SyntaxNode node)
-//{
-//   SyntaxNode current = node.firstChild();
-//   while (current != SyntaxKey::None) {
-//      testNodes(current);
-//
-//      current = current.nextNode();
-//   }
-//}
+inline void testNodes(SyntaxNode node)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      testNodes(current);
+
+      current = current.nextNode();
+   }
+}
 
 //inline void testNodes(BuildNode node)
 //{
@@ -13761,12 +13761,65 @@ mssg_t Compiler::Expression :: resolveMessageAtCompileTime(ObjectInfo source, bo
    return resolvedMessage;
 }
 
-static inline void unboxTupleCollection(SyntaxNode& spreadNode, SyntaxNode& tupleNode)
+void Compiler::Expression :: unboxAutoRangeCollection(SyntaxNode& spreadNode, SyntaxNode& tupleNode, ObjectInfo source,
+   ref_t actionRef, bool functionMode)
 {
+   pos_t threshold = (functionMode || source.kind == ObjectKind::Extension) ? 1 : 2;
+   pos_t counter = 0;
 
+   // try to find the weak message with the biggest list of arguments
+   for (pos_t argCount = ARG_COUNT; argCount > 0; argCount--) {
+      mssg_t weakMessage = encodeMessage(actionRef, argCount, 0);
+
+      CheckMethodResult dummy = {};
+      if (compiler->_logic->checkMethod(*scope.moduleScope, compiler->retrieveType(scope, source), weakMessage, dummy)) {
+         counter = argCount;
+         break;
+      }
+   }
+
+   if (counter < threshold)
+      scope.raiseError(errInvalidOperation, spreadNode);
+
+   spreadNode.setKey(SyntaxKey::Expression);
+   tupleNode.setKey(SyntaxKey::Expression);
+
+   SyntaxNode exprNode = tupleNode.firstChild();
+
+   SyntaxTreeWriter writer(spreadNode);
+   writer.setBookmark(spreadNode);
+   while (counter > threshold) {
+      writer.inject(SyntaxKey::Expression);
+      SyntaxTree::copyNodeSafe(writer, exprNode, true);
+
+      counter--;
+   }
+
+   testNodes(spreadNode.parentNode());
 }
 
-bool Compiler::Expression :: checkDynamicSpeadOperationArg(SyntaxNode current)
+static inline void unboxTupleCollection(SyntaxNode& spreadNode, SyntaxNode& tupleNode)
+{
+   // NOTE unboxing tuple collection as a normal argument list
+   SyntaxTreeWriter writer(spreadNode);
+   writer.setBookmark(spreadNode);
+
+   SyntaxNode exprNode = tupleNode.firstChild();
+
+   SyntaxNode current = exprNode.nextNode();
+   while (current != SyntaxKey::None) {
+      writer.inject(SyntaxKey::Expression);
+      SyntaxTree::copyNodeSafe(writer, current);
+      current.setKey(SyntaxKey::Idle);
+
+      current = current.nextNode();
+   }
+
+   spreadNode.setKey(SyntaxKey::Expression);
+   tupleNode.setKey(SyntaxKey::Expression);
+}
+
+bool Compiler::Expression :: checkDynamicSpeadOperationArg(SyntaxNode current, ObjectInfo source)
 {
    if (SyntaxTree::gotoNode(current, SyntaxKey::SpreadOperation) != SyntaxKey::SpreadOperation)
       return false;
@@ -13774,6 +13827,7 @@ bool Compiler::Expression :: checkDynamicSpeadOperationArg(SyntaxNode current)
    IdentifierString messageStr;
    parseMessageAndGoToArguments(current, messageStr);
 
+   bool functionMode = false;
    while (current != SyntaxKey::None) {
       if (current == SyntaxKey::SpreadOperation) {
          SyntaxNode expr = current.firstChild(SyntaxKey::ScopeMask);
@@ -13784,6 +13838,17 @@ bool Compiler::Expression :: checkDynamicSpeadOperationArg(SyntaxNode current)
             case SyntaxKey::TupleCollection:
                // spread the tuple in compile-time
                unboxTupleCollection(current, expr);
+               break;
+            case SyntaxKey::AutoRangeCollection:
+               if (messageStr.empty()) {
+                  functionMode = true;
+                  messageStr.copy(INVOKE_MESSAGE);
+               }
+
+               // spread the auto range in compile-time
+               unboxAutoRangeCollection(current, expr, source, 
+                  scope.module->mapAction(*messageStr, 0, false),
+                  functionMode);
                break;
             default:
                return true;
@@ -13801,7 +13866,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
 {
    ObjectInfo retVal = {};
 
-   if (checkDynamicSpeadOperationArg(messageNode)) {
+   if (!propertyMode && checkDynamicSpeadOperationArg(messageNode, source)) {
       // !! temporal
       scope.raiseError(errInvalidOperation, node);
    }

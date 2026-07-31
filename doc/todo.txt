@@ -56,22 +56,14 @@ In development:
   - design automatic mode
   - post / knowhow
   ---------------------------------------
-  * auto filling
+  * current : auto filling
   ====================================== 
-  - syntax
-      Tester.new(...(A..))
-  - design compile-time auto filling
   - implement
+  - implement resend as well
+  - invalid use - error
   - unit test
   - know-how entry
   ---------------------------------------
-  * current : spreading tuple
-  ====================================== 
-  - syntax:
-        a.test(...(n, m));
-  - design compile-time spreading
-  - implement
-  - unit test
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===
   * new version 7.0.3

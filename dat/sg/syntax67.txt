@@ -119,6 +119,7 @@ __define SWITCH_LAST_OPTION     6354;
 __define SWITCH_CODE 	        6355;
 __define COLLECTION_EXPRESSION  6356;
 __define TUPLE_COLLECTION 	6357;
+__define AUTO_RANGE_COLLECTION  6366;
 __define POSTFIX                4201;
 __define TEMPLATE_POSTFIX       4202;
 __define NOTNIL_ATTR            4343;
@@ -454,12 +455,14 @@ SUB_EXPRESSION ::=
 			| EI_OP SUB_R
 			| I5_OP_MINUS_LESS SUB_R
 			| { DYNAMIC_DIMENSION ^ARRAY_TYPE }+ BRACKET ^OBJECT FUNCTION_R SUB_R
+			| ".." ^OBJECT ^AUTO_RANGE_COLLECTION ")"
 			| "{" NESTED_EXPRESSION ^NESTED ")"
 			| ")" {
 				"{" ^ PARAMETER BLOCK ^CLOSURE ^EXPRESSION
 				| eps ^OBJECT
 			}
 		}
+		| ".." ^OBJECT ^AUTO_RANGE_COLLECTION ")"
 		| I_OP SUB_R
 		| I5_OP ")"
 		| EI_OP ")"

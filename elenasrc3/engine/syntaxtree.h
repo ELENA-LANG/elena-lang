@@ -194,6 +194,7 @@ namespace elena_lang
       NilMessageOperation     = 0x0018DB,
       AltMessageOperation     = 0x0018DC,
       NotNilMessageOperation  = 0x0018DD,
+      AutoRangeCollection     = 0x0018DE,
       ParameterBlock          = 0x0010F0,
       StaticInitializerMethod = 0x0010F1,
       PrimitiveCollection     = 0x0018F2,

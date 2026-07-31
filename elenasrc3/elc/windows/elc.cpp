@@ -170,7 +170,6 @@ int main()
          OutputDebugString(L"-----------_CrtMemDumpAllObjectsSince ---------");
          _CrtMemDumpAllObjectsSince(&sOld);
          OutputDebugString(L"-----------_CrtDumpMemoryLeaks ---------");
-         _CrtDumpMemoryLeaks();
       }
 #endif
 

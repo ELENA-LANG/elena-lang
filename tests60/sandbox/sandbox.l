@@ -65,14 +65,23 @@ public Program()
 }
 */
 
-A;
+//A;
+
+singleton A
+{
+   int cast()
+      = 1;
+      
+   real cast()
+      = 2.0;
+}
 
 class Tester
 {
-   object arg1;
-   object arg2;
+   int  arg1;
+   real arg2;
    
-   constructor new(arg1, arg2)
+   constructor new(int arg1, real arg2)
    {
       this arg1 := arg1;
       this arg2 := arg2;
@@ -86,7 +95,5 @@ class Tester
 
 public Program()
 {             
-   Tester.new(...(2, 3));
-   
-//   Tester.new(...0);
+   Tester.new(...(A..));
 }
