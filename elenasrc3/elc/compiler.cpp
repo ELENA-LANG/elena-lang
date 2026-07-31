@@ -9666,8 +9666,14 @@ ObjectInfo Compiler :: compileResendCode(BuildTreeWriter& writer, CodeScope& cod
          }
       }
 
-      MessageCallContext context = {};
       Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
+
+      if (!propertyMode && expression.checkDynamicSpeadOperationArg(current, source)) {
+         // !! temporal
+         codeScope.raiseError(errInvalidOperation, node);
+      }
+
+      MessageCallContext context = {};
       ArgumentsInfo arguments;
       ArgumentsInfo updatedOuterArgs;
 

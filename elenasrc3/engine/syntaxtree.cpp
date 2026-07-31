@@ -48,6 +48,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("keyvalue_expression", SyntaxKey::KeyValueExpression);
    map.add("closure_op", SyntaxKey::ClosureOperation);
    map.add("spread_op", SyntaxKey::SpreadOperation);
+   map.add("tuple", SyntaxKey::TupleCollection);
 
    map.add("equal_operation", SyntaxKey::EqualOperation);
    map.add("notequal_operation", SyntaxKey::NotEqualOperation);
@@ -66,6 +67,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("if_operation", SyntaxKey::IfOperation);
    map.add("branch_operation", SyntaxKey::BranchOperation);
    map.add("loop_expression", SyntaxKey::LoopOperation);
+   map.add("auto_range", SyntaxKey::AutoRangeCollection);
 
    map.add("nullable", SyntaxKey::NullableType);
 

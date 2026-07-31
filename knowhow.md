@@ -50,6 +50,7 @@ Content
 + [Nested extension template](#nested-extension-template)
 + [Union](#union)
 - [Resolving type ambiguities for a template declaration](#resolving-type-ambiguities-for-a-template-declaration)
+- [Unboxing an auto range collection (used for DI routine)](unboxing-an-auto-range-collection)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1144,5 +1145,46 @@ So we need to explicitly tell the compiler that it is a type declaration. And no
     {   
        DependencyInjector::register<I>(A);
     }
+
+
+## ----------------------------------------------------------------------------
+##  Unboxing an auto range collection
+## ----------------------------------------------------------------------------
+
+It is possible to automatically fill the message argument list providing a special
+object which can be passed as a value for every argument
+
+    singleton A
+    {
+       int cast()
+          = 1;
+    }
+    
+    class Tester
+    {
+       int    arg1;
+       object arg2;
+       
+       constructor new(int arg1, object arg2)
+       {
+          this arg1 := arg1;
+          this arg2 := arg2;
+       }
+       
+       printMe()
+       {
+          Console.printLine("Tester{ arg1=", arg1, ", arg2=", arg2, ")")
+       }
+    }
+    
+    public Program()
+    {             
+       Tester.new(...(A..)).printMe();
+    }
+
+Here we are using a spread operator "..." which in the normal case must unbox a collection.
+But we provide an open range as an operand so the compiler uses this element for every
+argument of the target function. If the argument is a factory, it will provide dynamic
+way to initialize every constructor argument (implementing an dependeny injection)
 
 

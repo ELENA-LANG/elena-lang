@@ -278,6 +278,7 @@ ModuleScopeBase* CompilerEnvironment :: createModuleScope(bool tapeOptMode, bool
       scope->attributes.add("var", V_VARIABLE);
       scope->attributes.add("new", V_NEWOP);
       scope->attributes.add("constructor", V_CONSTRUCTOR);
+      scope->attributes.add("cast", V_CONVERSION);
    }
 
    return scope;
@@ -590,6 +591,8 @@ void ExprTest :: initModuleScope(ModuleScopeBase* moduleScope, bool declareDefau
       moduleScope->buildins.init_message =
          encodeMessage(moduleScope->module->mapAction(INIT_MESSAGE, 0, false),
             1, STATIC_MESSAGE);
+      moduleScope->buildins.cast_dispatch_message = encodeMessage(
+         moduleScope->module->mapAction(CAST_DISPATCH_MESSAGE, 0, false), 2, 0);
    }
 }
 

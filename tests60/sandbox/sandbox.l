@@ -1,4 +1,4 @@
-/*import extensions;
+import extensions;
 import system'collections;
 import system'dynamic;
 import system'runtime;
@@ -43,11 +43,20 @@ public singleton DependencyInjector
    }
 }
 
+/*public inline autoresolve
+{
+   constructor new()
+      <= new(...(DependencyInjector..));
+}*/
+
 class ClassToBeInjected
 {
-   readonly I _i;
+   readonly I _i;   
    
-   constructor new(I i)
+   constructor new()
+      <= new(...(DependencyInjector..));
+
+   constructor new(I i) //: autoresolve()
    {
       _i := i;
    }
@@ -60,40 +69,6 @@ public Program()
 {   
    DependencyInjector::register<I>(A);
 
-   var obj := ClassToBeInjected.new(DependencyInjector);
+   var obj := ClassToBeInjected.new();
    Console.writeLine(obj.WhoAmI());
-}
-*/
-
-//A;
-
-singleton A
-{
-   int cast()
-      = 1;
-      
-   real cast()
-      = 2.0;
-}
-
-class Tester
-{
-   int  arg1;
-   real arg2;
-   
-   constructor new(int arg1, real arg2)
-   {
-      this arg1 := arg1;
-      this arg2 := arg2;
-   }
-   
-//   test(arg1)
-//   {
-//      var o:= arg;
-//   }
-}
-
-public Program()
-{             
-   Tester.new(...(A..));
 }

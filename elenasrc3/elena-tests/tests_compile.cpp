@@ -114,33 +114,37 @@ constexpr auto RetoverloadHandlerInvoker_Scenario1 = "expression (assign_operati
 
 #ifdef _M_IX86
 
-constexpr auto Build_CallingIndexedethod_Scenario1 = "int_literal 2 (value 3 ())saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 4610 (type 4 ()index_table_mode ())";
+constexpr auto Build_CallingIndexedethod_Scenario1 = "int_literal 2 (value 3 ())saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 5122 (type 4 ()index_table_mode ())";
 
-constexpr auto Build_CallingSealedByRefDeclaredInParent_Scenario1 = "byrefmark -8 () local_address -8 () saving_stack 2 () int_literal 2 (value 1 ()) saving_stack 1 () class_reference 5 () saving_stack () argument () direct_call_op 6403 (type 4 () index_table_mode ()) local_address -8 () copying -4 (size 4 ())";
+constexpr auto Build_CallingSealedByRefDeclaredInParent_Scenario1 = "byrefmark -8 () local_address -8 () saving_stack 2 () int_literal 2 (value 1 ()) saving_stack 1 () class_reference 5 () saving_stack () argument () direct_call_op 6915 (type 4 () index_table_mode ()) local_address -8 () copying -4 (size 4 ())";
 
-constexpr auto Build_CallingIndexedethodFromSealed_Scenario1 = "byrefmark -8 () local_address -8 () saving_stack 2() int_literal 2 (value 3 ())saving_stack 1 ()class_reference 5 ()saving_stack ()argument ()direct_call_op 6403 (type 4 ()index_table_mode ())local_address -8 ()copying -4 (size 4 ())";
-constexpr auto Build_DuplicateBoxing_Scenario1 = "int_literal 2 (value 2 ()) copying -4 (size 4 ())local_address -4 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 1 (size 4 ())assigning 1 ()create_class 1 (type 6 ())assign_local_to_stack 1 ()set_imm_field ()assigning 2 ()create_class 1 (type 7 ())assign_local_to_stack 1 ()set_imm_field ()assigning 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 3587 (type 3 ())";
+constexpr auto Build_CallingIndexedethodFromSealed_Scenario1 = "byrefmark -8 () local_address -8 () saving_stack 2() int_literal 2 (value 3 ())saving_stack 1 ()class_reference 5 ()saving_stack ()argument ()direct_call_op 6915 (type 4 ()index_table_mode ())local_address -8 ()copying -4 (size 4 ())";
+constexpr auto Build_DuplicateBoxing_Scenario1 = "int_literal 2 (value 2 ()) copying -4 (size 4 ())local_address -4 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 1 (size 4 ())assigning 1 ()create_class 1 (type 6 ())assign_local_to_stack 1 ()set_imm_field ()assigning 2 ()create_class 1 (type 7 ())assign_local_to_stack 1 ()set_imm_field ()assigning 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 4099 (type 3 ())";
 
 constexpr auto Build_S_ByRefHandlerTest_Class = "class 4 (method 5891 (tape ( open_frame () assigning 1 () local -2 () saving_stack () int_literal 2 (value 1 ())saving_stack 1 ()intop -4 (operator_id 4 ())local_address -4 ()saving_stack ()local -3 ()copying_to_acc -3 (size 4 ()) going_to_eop ()close_frame ()exit ())reserved 3 ()reserved_n 4 ())method 4098 (tape (open_frame ()assigning 1 ()local_address -4 ()saving_stack 2 ()local -2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 5891 (type 4 ()index_table_mode ())local_address -4 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 2 (size 4 ())assigning 2 ()local 2 ()close_frame ()exit ())reserved 5 ()reserved_n 4 ()))";
 
-constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning 3 () local_reference 3 () saving_stack 1 () class_reference 3 () saving_stack () argument () direct_call_op 3586 (type 3 ()) local 3 () assigning 2 () local 2 () assigning 1 ()";
+constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning 3 () local_reference 3 () saving_stack 1 () class_reference 3 () saving_stack () argument () direct_call_op 4098 (type 3 ()) local 3 () assigning 2 () local 2 () assigning 1 ()";
 
 constexpr auto Build_RetOverloadInRetExprTest_Scenario1 = "tape(open_frame ()assigning 1 ()local 2 ()assigning 3 ()local_reference 3 ()saving_stack 1 ()local -2 ()saving_stack ()argument ()call_op 1538 (type 3 ())local 3 ()assigning 2 ()local 2 () going_to_eop() close_frame ()exit ())reserved 5 ())";
 
+constexpr auto Build_AutoRangeSpreading_Scenario1 = "class_reference 3 ()saving_stack ()argument ()direct_call_op 3265 (type 3 ())assigning 1 ()class_reference 3 ()saving_stack 2 ()local 1 ()saving_stack 1 ()class_reference 4 ()saving_stack ()argument ()direct_call_op 4099 (type 7 ())";
+
 #elif _M_X64
 
-constexpr auto Build_CallingIndexedethod_Scenario1 = "int_literal 2 (value 3 ())saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 4610 (type 4 ()index_table_mode ())";
+constexpr auto Build_CallingIndexedethod_Scenario1 = "int_literal 2 (value 3 ())saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 5122 (type 4 ()index_table_mode ())";
 
-constexpr auto Build_CallingSealedByRefDeclaredInParent_Scenario1 = "byrefmark -24 () local_address -24 () saving_stack 2 () int_literal 2 (value 1 ()) saving_stack 1 () class_reference 5 () saving_stack () argument () direct_call_op 6403 (type 4 () index_table_mode ()) local_address -24 () copying -8 (size 4 ())";
+constexpr auto Build_CallingSealedByRefDeclaredInParent_Scenario1 = "byrefmark -24 () local_address -24 () saving_stack 2 () int_literal 2 (value 1 ()) saving_stack 1 () class_reference 5 () saving_stack () argument () direct_call_op 6915 (type 4 () index_table_mode ()) local_address -24 () copying -8 (size 4 ())";
 
-constexpr auto Build_CallingIndexedethodFromSealed_Scenario1 = "byrefmark -24 () local_address -24 () saving_stack 2() int_literal 2 (value 3 ())saving_stack 1 ()class_reference 5 ()saving_stack ()argument ()direct_call_op 6403 (type 4 ()index_table_mode ())local_address -24 ()copying -8 (size 4 ())";
-constexpr auto Build_DuplicateBoxing_Scenario1 = "int_literal 2 (value 2 ()) copying -8 (size 4 ())local_address -8 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 1 (size 4 ())assigning 1 ()create_class 1 (type 6 ())assign_local_to_stack 1 ()set_imm_field ()assigning 2 ()create_class 1 (type 7 ())assign_local_to_stack 1 ()set_imm_field ()assigning 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 3587 (type 3 ())";
+constexpr auto Build_CallingIndexedethodFromSealed_Scenario1 = "byrefmark -24 () local_address -24 () saving_stack 2() int_literal 2 (value 3 ())saving_stack 1 ()class_reference 5 ()saving_stack ()argument ()direct_call_op 6915 (type 4 ()index_table_mode ())local_address -24 ()copying -8 (size 4 ())";
+constexpr auto Build_DuplicateBoxing_Scenario1 = "int_literal 2 (value 2 ()) copying -8 (size 4 ())local_address -8 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 1 (size 4 ())assigning 1 ()create_class 1 (type 6 ())assign_local_to_stack 1 ()set_imm_field ()assigning 2 ()create_class 1 (type 7 ())assign_local_to_stack 1 ()set_imm_field ()assigning 3 ()local 3 ()saving_stack 2 ()local 2 ()saving_stack 1 ()class_reference 3 ()saving_stack ()argument ()direct_call_op 4099 (type 3 ())";
 
 constexpr auto Build_S_ByRefHandlerTest_Class = "class 4 (method 5891 (tape ( open_frame () assigning 1 () local -2 () saving_stack () int_literal 2 (value 1 ())saving_stack 1 ()intop -8 (operator_id 4 ())local_address -8 ()saving_stack ()local -3 ()copying_to_acc -3 (size 4 ()) going_to_eop ()close_frame ()exit ())reserved 4 ()reserved_n 16 ())method 4098 (tape (open_frame ()assigning 1 ()local_address -8 ()saving_stack 2 ()local -2 ()saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 5891 (type 4 ()index_table_mode ())local_address -8 ()saving_stack ()create_struct 4 (type 2 ())copying_to_acc 2 (size 4 ())assigning 2 ()local 2 ()close_frame ()exit ())reserved 6 ()reserved_n 16 ()))";
 
-constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning 3 () local_reference 3 () saving_stack 1 () class_reference 3 () saving_stack () argument () direct_call_op 3586 (type 3 ()) local 3 () assigning 2 () local 2 () assigning 1 ()";
+constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning 3 () local_reference 3 () saving_stack 1 () class_reference 3 () saving_stack () argument () direct_call_op 4098 (type 3 ()) local 3 () assigning 2 () local 2 () assigning 1 ()";
 
 constexpr auto Build_RetOverloadInRetExprTest_Scenario1 = "tape(open_frame ()assigning 1 ()local 2 ()assigning 3 ()local_reference 3 ()saving_stack 1 ()local -2 ()saving_stack ()argument ()call_op 1538 (type 3 ())local 3 ()assigning 2 ()local 2 () going_to_eop() close_frame ()exit ())reserved 6 ())";
+
+constexpr auto Build_AutoRangeSpreading_Scenario1 = "class_reference 3 ()saving_stack ()argument ()direct_call_op 3265 (type 3 ())assigning 1 ()class_reference 3 ()saving_stack 2 ()local 1 ()saving_stack 1 ()class_reference 4 ()saving_stack ()argument ()direct_call_op 4099 (type 7 ())";
 
 #endif
 
@@ -387,4 +391,21 @@ void RetOverloadInRetExprTest::SetUp()
 TEST_F(RetOverloadInRetExprTest, RetOverloadInRetExpr)
 {
    runTest();
+}
+
+// --- AutoRangeSpreading ---
+
+void AutoRangeSpreadingTest::SetUp()
+{
+   ExprTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_2, S_IntNumber, S_IntSingleton, S_ClassWithConstructor);
+   SyntaxTreeSerializer::load(AutoRangeSpreading_Scenario1, exprNode);
+
+   BuildTreeSerializer::load(Build_AutoRangeSpreading_Scenario1, buildNode);
+}
+
+TEST_F(AutoRangeSpreadingTest, AutoRangeSpreading)
+{
+   runBuildTest(true, false);
 }

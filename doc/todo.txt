@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - highlight : constructor new(int arg1/*, real arg2*/) <- comment is not recognized
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - fix httpget (it fails time to time)
   - fix httpsget ()
@@ -51,18 +52,10 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * design dependency injection
-  ====================================== 
-  - design automatic mode
-  - post / knowhow
-  ---------------------------------------
-  * current : auto filling
+  * current : design dependency injection
   ====================================== 
   - implement
-  - implement resend as well
-  - invalid use - error
-  - unit test
-  - know-how entry
+  - post / knowhow
   ---------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===
