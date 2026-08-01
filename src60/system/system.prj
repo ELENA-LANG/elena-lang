@@ -124,6 +124,7 @@
             <include>dynamic\groups.l</include>
             <include>dynamic\closure.l</include>
             <include>dynamic\tape.l</include>
+            <include>dynamic\di_routine.l</include>
             <include>dynamic\expressions\expressions.l</include>
         </module>
         <module name="drawing">

@@ -105,8 +105,8 @@ bool CompilingProcess::TemplateGenerator :: importTemplate(ModuleScopeBase& modu
    return true;
 }
 
-bool CompilingProcess::TemplateGenerator :: importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
-   SyntaxNode target, List<SyntaxNode>& parameters)
+bool CompilingProcess::TemplateGenerator :: importMemberTemplate(ModuleScopeBase& moduleScope, ref_t templateRef,
+   SyntaxNode target, bool propertyMode, List<SyntaxNode>& parameters)
 {
    auto sectionInfo = moduleScope.getSection(
       moduleScope.module->resolveReference(templateRef), mskSyntaxTreeRef, true);
@@ -114,7 +114,7 @@ bool CompilingProcess::TemplateGenerator :: importPropertyTemplate(ModuleScopeBa
    if (!sectionInfo.section)
       return false;
 
-   _processor.importInlinePropertyTemplate(sectionInfo.section, target, parameters);
+   _processor.importInlineMemberTemplate(sectionInfo.section, target, propertyMode, parameters);
 
    return true;
 }

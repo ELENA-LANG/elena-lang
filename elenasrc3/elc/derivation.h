@@ -25,6 +25,7 @@ namespace elena_lang
          InlineTemplate,
          ClassTemplate,
          PropertyTemplate,
+         MethodTemplate,
          ExtensionTemplate,
          ExpressionTemplate,
          Textblock,
@@ -45,7 +46,14 @@ namespace elena_lang
 
          bool isNameIndex(int index)
          {
-            return (index == 1 || index == 3) && type == ScopeType::PropertyTemplate;
+            switch (type) {
+               case ScopeType::PropertyTemplate:
+                  return index == 1 || index == 3;
+               case ScopeType::MethodTemplate:
+                  return index == 1;
+               default:
+                  return false;
+            }
          }
 
          void initTemplateFlags()
@@ -58,6 +66,7 @@ namespace elena_lang
                   withTypeParameters = true;
                   break;
                case ScopeType::PropertyTemplate:
+               case ScopeType::MethodTemplate:
                   withTypeParameters = true;
                   withNameParameters = true;
                   break;
@@ -99,6 +108,7 @@ namespace elena_lang
                   return false;
                }
                case ScopeType::PropertyTemplate:
+               case ScopeType::MethodTemplate:
                {
                   ref_t index = arguments.get(node.identifier());
                   if (isNameIndex(index)) {
@@ -312,6 +322,7 @@ namespace elena_lang
          Class,
          Parameterized,
          InlineProperty,
+         InlineMethod,
          ExpressionTemplate,
          Textblock
       };
@@ -377,7 +388,7 @@ namespace elena_lang
    public:
       void importTemplate(MemoryBase* section, SyntaxNode target, SyntaxNode declarationNode, List<SyntaxNode>& parameters);
       void importInlineTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
-      void importInlinePropertyTemplate(MemoryBase* section, SyntaxNode target, List<SyntaxNode>& parameters);
+      void importInlineMemberTemplate(MemoryBase* section, SyntaxNode target, bool propertyMode , List<SyntaxNode>& parameters);
       void importCodeTemplate(MemoryBase* templateSection,
          SyntaxNode target, List<SyntaxNode>& arguments, List<SyntaxNode>& parameters);
       void importExpressionTemplate(MemoryBase* templateSection,

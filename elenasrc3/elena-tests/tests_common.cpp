@@ -231,8 +231,8 @@ bool TestTemplateProssesor :: importInlineTemplate(ModuleScopeBase& moduleScope,
    return false;
 }
 
-bool TestTemplateProssesor :: importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
-   List<SyntaxNode>& parameters)
+bool TestTemplateProssesor :: importMemberTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+   bool propertyOne, List<SyntaxNode>& parameters)
 {
    return false;
 }

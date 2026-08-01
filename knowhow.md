@@ -49,8 +49,9 @@ Content
 + [Inplace extension method](#inplace-extension-method)
 + [Nested extension template](#nested-extension-template)
 + [Union](#union)
-- [Resolving type ambiguities for a template declaration](#resolving-type-ambiguities-for-a-template-declaration)
-- [Unboxing an auto range collection (used for DI routine)](unboxing-an-auto-range-collection)
++ [Resolving type ambiguities for a template declaration](#resolving-type-ambiguities-for-a-template-declaration)
++ [Unboxing an auto range collection (used for DI routine)](unboxing-an-auto-range-collection)
++ [Dependency injection in a constructor](#dependency-injection-in-a-constructor)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1187,4 +1188,43 @@ But we provide an open range as an operand so the compiler uses this element for
 argument of the target function. If the argument is a factory, it will provide dynamic
 way to initialize every constructor argument (implementing an dependeny injection)
 
+## ----------------------------------------------------------------------------
+##  Dependency injection in a constructor
+## ----------------------------------------------------------------------------
 
+    import extensions;
+    import system'dynamic;
+    
+    interface I
+    {
+       abstract string WhoAmI();
+    }
+    
+    A : interface<I>
+    {
+       constructor new() {}
+       
+       string WhoAmI()
+          = "I'm A";
+    }
+    
+    class ClassToBeInjected
+    {
+       readonly I _i;   
+       
+       constructor new(I i) : injectable_constructor()
+       {
+          _i := i;
+       }
+       
+       string WhoAmI()
+          => _i;   
+    }
+    
+    public Program()
+    {   
+       DependencyInjector::register<I>(A);
+    
+       var obj := ClassToBeInjected.new();
+       Console.writeLine(obj.WhoAmI());
+    }

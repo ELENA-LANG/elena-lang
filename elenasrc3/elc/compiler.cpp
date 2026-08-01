@@ -2851,8 +2851,10 @@ bool Compiler::importInlineTemplate(Scope& scope, SyntaxNode node, ustr_t postfi
    return true;
 }
 
-bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode& target)
+bool Compiler :: importMemberTemplate(Scope& scope, SyntaxNode node, ustr_t postfix, SyntaxNode& target)
 {
+   bool propertyOne = target == SyntaxKey::Field;
+
    List<SyntaxNode> parameters({});
 
    SyntaxTree tree;
@@ -2868,6 +2870,8 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
 
       writer.closeNode();
    }
+   else return false; // NOTE : the declaration must contain at least a name
+
    // add implicit type
    SyntaxNode typeNode = target.findChild(SyntaxKey::Type, SyntaxKey::TemplateType, SyntaxKey::NullableType, SyntaxKey::ArrayType);
    if (typeNode != SyntaxKey::None) {
@@ -2881,11 +2885,11 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
 
    // add extra arguments if available
    SyntaxNode extraNameNode = node.findChild(SyntaxKey::Expression);
-   if (extraNameNode != SyntaxKey::None) {
+   if (propertyOne && extraNameNode != SyntaxKey::None) {
       if (!isSimpleNode(extraNameNode))
-         scope.raiseError(errInvalidSyntax, extraNameNode);
+         return false;
 
-      // the third one is a name as well
+      // the third one is a name as well - only for the property template
       writer.newNode(SyntaxKey::TemplateArg);
       writer.newNode(SyntaxKey::Name);
       SyntaxTree::copyNode(writer, extraNameNode.firstChild(), false);
@@ -2908,8 +2912,8 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
       return false;
 
    // NOTE : for the property template, target is the property field
-   if (!_templateProcessor->importPropertyTemplate(*scope.moduleScope, templateRef,
-      target, parameters))
+   if (!_templateProcessor->importMemberTemplate(*scope.moduleScope, templateRef,
+      target, propertyOne, parameters))
    {
       scope.raiseError(errInvalidOperation, node);
    }
@@ -2918,7 +2922,7 @@ bool Compiler :: importPropertyTemplate(Scope& scope, SyntaxNode node, ustr_t po
    target.setKey(SyntaxKey::Idle);
 
    // try to find a new field and set it as a target
-   SyntaxNode newTarget = SyntaxTree::gotoNode(target, SyntaxKey::Field);
+   SyntaxNode newTarget = SyntaxTree::gotoNode(target, propertyOne ? SyntaxKey::Field : SyntaxKey::Method);
    if (newTarget == SyntaxKey::Field)
       target = newTarget;
 
@@ -4469,6 +4473,12 @@ void Compiler::declareMetaInfo(Scope& scope, SyntaxNode node)
    }
 }
 
+bool Compiler :: declareMemberPostfix(Scope& scope, SyntaxNode current, SyntaxNode& target, ustr_t postfix)
+{
+   return importMemberTemplate(scope, current, postfix, target)
+      || importInlineTemplate(scope, current, INLINE_PREFIX, target);
+}
+
 void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
@@ -4476,19 +4486,13 @@ void Compiler :: declareFieldMetaInfo(FieldScope& scope, SyntaxNode node)
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
             // NOTE : that node variable can be updated inside importPropertyTemplate, pointing to a actual field!
-            if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)) {
-               // NOTE : fall back to a general inline template (e.g. info) if no property-scoped template matches
-               if (!importInlineTemplate(scope, current, INLINE_PROPERTY_PREFIX, node)
-                  && !importInlineTemplate(scope, current, INLINE_PREFIX, node))
-               {
-                  scope.raiseError(errUnknownTemplate, node);
-               }
-            }
+            if (!declareMemberPostfix(scope, current, node, INLINE_PROPERTY_PREFIX))
+               scope.raiseError(errUnknownTemplate, node);
 
             break;
          case SyntaxKey::InlinePropertyTemplate:
             // NOTE : that node variable can be updated inside importPropertyTemplate, pointing to a actual field!
-            if (!importPropertyTemplate(scope, current, INLINE_PROPERTY_PREFIX,
+            if (!importMemberTemplate(scope, current, INLINE_PROPERTY_PREFIX,
                node))
             {
                scope.raiseError(errUnknownTemplate, node);
@@ -4594,7 +4598,7 @@ void Compiler::declareMethodMetaInfo(MethodScope& scope, SyntaxNode node)
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::InlineTemplate:
-            if (!importInlineTemplate(scope, current, INLINE_PREFIX, node))
+            if (!declareMemberPostfix(scope, current, node, INLINE_METHOD_PREFIX))
                scope.raiseError(errUnknownTemplate, node);
 
             break;
@@ -6266,6 +6270,7 @@ void Compiler::declareTemplate(TemplateScope& scope, SyntaxNode& node)
       case TemplateType::Class:
       case TemplateType::VariadicParameterized:
       case TemplateType::InlineProperty:
+      case TemplateType::InlineMethod:
       case TemplateType::ClassBlock:
       {
          // COMPILER MAGIC : inject imported namespaces & source path
@@ -6371,6 +6376,9 @@ void Compiler::declareTemplateClass(TemplateScope& scope, SyntaxNode& node)
    switch (scope.type) {
       case TemplateType::InlineProperty:
          prefix.append(INLINE_PROPERTY_PREFIX);
+         break;
+      case TemplateType::InlineMethod:
+         prefix.append(INLINE_METHOD_PREFIX);
          break;
       case TemplateType::ClassBlock:
          prefix.append(CLASSBLOCK_PREFIX);

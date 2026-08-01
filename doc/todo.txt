@@ -52,11 +52,6 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * current : design dependency injection
-  ====================================== 
-  - implement
-  - post / knowhow
-  ---------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===
   * new version 7.0.3

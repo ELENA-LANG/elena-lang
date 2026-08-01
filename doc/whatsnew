@@ -31,6 +31,7 @@
   - [ADDED] system'collections'BinaryHeap<T1>
   - [ADDED] system'collections'Union<T1,T2>
   - [ADDED] extension ClassHashCode (system'runtime)
+  - [ADDED] system'dynamic : injectable_constructor attribute (to support DI)
 
 - Scripts
 

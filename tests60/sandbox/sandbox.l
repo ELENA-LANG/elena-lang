@@ -1,7 +1,5 @@
 import extensions;
-import system'collections;
 import system'dynamic;
-import system'runtime;
 
 interface I
 {
@@ -24,39 +22,11 @@ B : interface<I>
       = "I'm B";
 }
 
-public singleton DependencyInjector
-{
-   static Map<object, object> _typeFactories := ::Map<object, object>.new((type => (type.ClassHashCode) shl:4));
-   
-   extension register<T>(object factory)
-   {
-      _typeFactories[class T] := factory;
-   }
-   
-   generic cast()
-   {
-      var type := __received.__getFirstSignatureMember();
-
-      var obj := _typeFactories[type].new();
-   
-      ^ __received(obj);
-   }
-}
-
-/*public inline autoresolve
-{
-   constructor new()
-      <= new(...(DependencyInjector..));
-}*/
-
 class ClassToBeInjected
 {
    readonly I _i;   
    
-   constructor new()
-      <= new(...(DependencyInjector..));
-
-   constructor new(I i) //: autoresolve()
+   constructor new(I i) : injectable_constructor()
    {
       _i := i;
    }

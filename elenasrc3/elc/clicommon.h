@@ -144,6 +144,7 @@ enum class TemplateType
    None = 0,
    Inline,
    InlineProperty,
+   InlineMethod,
    Class,
    Statement,
    Expression,
@@ -544,8 +545,8 @@ public:
       List<SyntaxNode>& parameters) = 0;
    virtual bool importInlineTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& parameters) = 0;
-   virtual bool importPropertyTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
-      List<SyntaxNode>& parameters) = 0;
+   virtual bool importMemberTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
+      bool propetyMode, List<SyntaxNode>& parameters) = 0;
    virtual bool importCodeTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,
       List<SyntaxNode>& arguments, List<SyntaxNode>& parameters) = 0;
    virtual bool importExpressionTemplate(ModuleScopeBase& moduleScope, ref_t templateRef, SyntaxNode target,

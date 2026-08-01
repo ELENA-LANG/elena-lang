@@ -77,6 +77,7 @@ namespace elena_lang
    constexpr auto INLINE_PREFIX = "inline$";
    constexpr auto INLINEEXPR_PREFIX = "expr$";
    constexpr auto INLINE_PROPERTY_PREFIX = "prop$";
+   constexpr auto INLINE_METHOD_PREFIX = "method$";
    constexpr auto CLASSBLOCK_PREFIX = "block$";
    constexpr auto AUTO_GENERATED_PREFIX = "generated$";
 
