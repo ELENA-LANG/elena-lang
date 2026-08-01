@@ -158,7 +158,7 @@ labStart:
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
   test edx, edx                       
-  jz   short labConinue
+  jz   labConinue
   // ; otherwise eax contains the collecting thread event
 
   // ; signal the collecting thread that it is stopped
@@ -220,8 +220,15 @@ labConinue:
   // ; === thread synchronization ===
 
   // ; create list of threads need to be stopped
-  mov  eax, esi
-  // ; get tls entry address  
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  eax, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  eax, [eax-tt_size]
+#endif
+  mov  eax, [eax + tt_sync_event]
+  // ; get tls entry address
   mov  esi, data : %CORE_THREAD_TABLE + tt_slots
   xor  ecx, ecx
   mov  edi, [esi - 4]
@@ -492,7 +499,7 @@ labPERMCollect:
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
   test edx, edx                       
-  jz   short labConinue
+  jz   labConinue
   // ; otherwise eax contains the collecting thread event
 
   // ; signal the collecting thread that it is stopped
@@ -532,8 +539,15 @@ labConinue:
   // ; === thread synchronization ===
 
   // ; create list of threads need to be stopped
-  mov  eax, esi
-  // ; get tls entry address  
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  eax, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  eax, [eax-tt_size]
+#endif
+  mov  eax, [eax + tt_sync_event]
+  // ; get tls entry address
   mov  esi, data : %CORE_THREAD_TABLE + tt_slots
   mov  edi, [esi - 4]
 labNext:

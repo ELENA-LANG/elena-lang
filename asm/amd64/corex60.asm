@@ -195,7 +195,7 @@ labStart:
   mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
   test rdx, rdx                       
-  jz   short labConinue
+  jz   labConinue
   // ; otherwise eax contains the collecting thread event
 
   // ; a thread waiting on the barrier is still listed by the scan of the next collection,
@@ -280,8 +280,15 @@ labConinue:
   // ; === thread synchronization ===
 
   // ; create list of threads need to be stopped
-  mov  rax, rsi
-  // ; get tls entry address  
+#if _WIN
+  mov  rax, gs:[58h]
+  mov  rax, [rax]
+#elif (_LNX || _FREEBSD)
+  mov  rax, fs:[0]
+  lea  rax, [rax-tt_size]
+#endif
+  mov  rax, [rax + tt_sync_event]
+  // ; get tls entry address
   mov  r13, data : %CORE_THREAD_TABLE + tt_slots
   xor  ecx, ecx
   mov  rbx, [r13 - 8]
@@ -580,7 +587,7 @@ labPERMCollect:
   mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
   test rdx, rdx                       
-  jz   short labConinue
+  jz   labConinue
   // ; otherwise eax contains the collecting thread event
 
   // ; a thread waiting on the barrier is still listed by the scan of the next collection,
@@ -640,7 +647,14 @@ labConinue:
   // ; === thread synchronization ===
 
   // ; create list of threads need to be stopped
-  mov  rax, rsi
+#if _WIN
+  mov  rax, gs:[58h]
+  mov  rax, [rax]
+#elif (_LNX || _FREEBSD)
+  mov  rax, fs:[0]
+  lea  rax, [rax-tt_size]
+#endif
+  mov  rax, [rax + tt_sync_event]
   // ; get tls entry address
   mov  r13, data : %CORE_THREAD_TABLE + tt_slots
   xor  ecx, ecx
