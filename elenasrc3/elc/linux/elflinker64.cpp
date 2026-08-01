@@ -121,7 +121,8 @@ void Elf64Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
       ph_header.p_vaddr = image.addressMap.imageBase + info.vaddress;
       ph_header.p_paddr = image.addressMap.imageBase + info.vaddress;
       ph_header.p_align = image.sectionAlignment;
-      ph_header.p_memsz = ph_header.p_filesz = info.fileSize;
+      ph_header.p_filesz = info.fileSize;
+      ph_header.p_memsz = info.memorySize;
 
       switch (info.type) {
          case ImageSectionHeader::SectionType::Text:

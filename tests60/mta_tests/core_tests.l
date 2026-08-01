@@ -371,7 +371,7 @@ stormWorker(state)
 // collected under the thread. extopen / extclosen do not touch tt_flags either, so a
 // native callback re-entering ELENA from inside such a region has its new frames left out
 // of the scan as well
-excludeStormTest_disabled()
+public excludeStormTest() : testCase()
 {
    int t := MtaLoad.WorkerCount;
 

@@ -735,7 +735,19 @@ labSkipTT:
 
 labSkipWait:
   // ; remove list
-  mov  rsp, rbp     
+  mov  rsp, rbp
+
+  // ; take gc_lock again for the collection, the way GC_COLLECT does at labRootLock.
+  // ; GCRoutinePerm bumps gc_perm_current and gc_perm_end with plain reads and writes,
+  // ; while the fast path above updates gc_perm_current under this lock : without it the
+  // ; two interleave, an allocation is handed out twice and the pointers walk past the
+  // ; end of the perm mapping
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+labPermRootLock:
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labPermRootLock
 
   // ==== GCXT end ==============
 
@@ -758,6 +770,11 @@ labSkipWait:
   call extern "$rt.SignalCollectionEndGCLA"
 
   mov  rbx, r12
+
+  // ; release the lock taken for the collection
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  lock xadd [rdi], edx
 
   // ; 40h drops the shadow space plus the rcx and rdx pushed on entry
   add  rsp, 40h
@@ -879,15 +896,15 @@ labWait:
   ret
 
 labNoCollect:
-  // ; the collection ended before we got the lock, nothing to wait for
+  // ; the collection ended before we got the lock, nothing to wait for. The head goes
+  // ; back under the lock, so no scan can catch the frame this procedure is about to drop
+  // ; rax still holds the entry here, this path made no call
+  pop  rdx
+  mov  [rax+tt_stack_frame], rdx
+
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
-
-  // ; give the caller its head back, see the note above. rax still holds the entry here,
-  // ; this path made no call
-  pop  rdx
-  mov  [rax+tt_stack_frame], rdx
 
   pop  rax
   pop  rsi
@@ -968,6 +985,16 @@ inline % 10h
   lea  rdi, [rcx-tt_size]
 #endif
 
+  // ; the head has to be published before the flag, and the locked store below is what
+  // ; orders the two. A collector that reads tt_flags as one keeps the thread out of its
+  // ; wait list and never stops it, but it still walks tt_stack_frame : setting the flag
+  // ; first leaves a window where the head is still the previous one, dead or nil, and
+  // ; the frames this thread is about to hold across the foreign call are not scanned
+  mov  rax, [rdi + tt_stack_frame]
+  push rax
+  push rbp
+  mov  [rdi + tt_stack_frame], rsp
+
   // ; the store below has to be ordered against the gc_signal load that follows. On a
   // ; plain mov the two can be reordered, and then the collector reads tt_flags as zero,
   // ; puts this thread on its wait list, while the thread reads gc_signal as zero and
@@ -985,19 +1012,7 @@ inline % 10h
   // ; point still exists, rather than inside the call it is about to make
   call %THREAD_WAIT
 
-#if _WIN
-  mov  rcx, gs:[58h]
-  mov  rdi, [rcx]
-#elif (_LNX || _FREEBSD)
-  mov  rcx, fs:[0]
-  lea  rdi, [rcx-tt_size]
-#endif
-
 labNoCollect:
-  mov  rax, [rdi + tt_stack_frame]
-  push rax
-  push rbp
-  mov  [rdi + tt_stack_frame], rsp
 
 end
 

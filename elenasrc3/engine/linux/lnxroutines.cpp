@@ -21,6 +21,17 @@
 #include <ctime>
 #include <unistd.h>
 
+#if defined(MTA_DIAG) && defined(__x86_64__) && !defined(__FreeBSD__) && !defined(__APPLE__)
+
+#include <cstddef>
+#include <cstdio>
+#include <cstring>
+#include <dlfcn.h>
+#include <fcntl.h>
+#include <sys/uio.h>
+
+#endif
+
 #include <pthread.h>
 
 using namespace elena_lang;
@@ -73,6 +84,276 @@ public:
 };
 
 static uintptr_t CriticalHandler = 0;
+
+#if defined(MTA_DIAG) && defined(__x86_64__) && !defined(__FreeBSD__) && !defined(__APPLE__)
+
+struct MTADiagMapping
+{
+   uintptr_t start;
+   uintptr_t end;
+   char perms[5];
+   char line[384];
+};
+
+static bool MTADiagRead(uintptr_t address, void* target, size_t length)
+{
+   iovec local { target, length };
+   iovec remote { (void*)address, length };
+
+   return process_vm_readv(getpid(), &local, 1, &remote, 1, 0) == (ssize_t)length;
+}
+
+static int MTADiagHex(char ch)
+{
+   if (ch >= '0' && ch <= '9')
+      return ch - '0';
+   if (ch >= 'a' && ch <= 'f')
+      return ch - 'a' + 10;
+   if (ch >= 'A' && ch <= 'F')
+      return ch - 'A' + 10;
+
+   return -1;
+}
+
+static bool MTADiagHexValue(const char*& source, uintptr_t& value)
+{
+   int digit = MTADiagHex(*source);
+   if (digit < 0)
+      return false;
+
+   value = 0;
+   while ((digit = MTADiagHex(*source)) >= 0) {
+      value = (value << 4) | (uintptr_t)digit;
+      source++;
+   }
+
+   return true;
+}
+
+static bool MTADiagParseMapping(const char* line, uintptr_t address, MTADiagMapping& mapping)
+{
+   const char* source = line;
+   uintptr_t start = 0;
+   uintptr_t end = 0;
+   if (!MTADiagHexValue(source, start) || *source != '-')
+      return false;
+
+   source++;
+   if (!MTADiagHexValue(source, end) || address < start || address >= end)
+      return false;
+
+   while (*source == ' ')
+      source++;
+
+   mapping.start = start;
+   mapping.end = end;
+   for (size_t i = 0; i < 4; i++)
+      mapping.perms[i] = source[i];
+   mapping.perms[4] = 0;
+   std::strncpy(mapping.line, line, sizeof(mapping.line) - 1);
+   mapping.line[sizeof(mapping.line) - 1] = 0;
+
+   return true;
+}
+
+static bool MTADiagFindMapping(uintptr_t address, MTADiagMapping& mapping)
+{
+   int file = ::open("/proc/self/maps", O_RDONLY);
+   if (file < 0)
+      return false;
+
+   char buffer[4096];
+   char line[384];
+   size_t lineLength = 0;
+   ssize_t readCount = 0;
+   while ((readCount = ::read(file, buffer, sizeof(buffer))) > 0) {
+      for (ssize_t i = 0; i < readCount; i++) {
+         if (buffer[i] == '\n') {
+            line[lineLength] = 0;
+            if (MTADiagParseMapping(line, address, mapping)) {
+               ::close(file);
+
+               return true;
+            }
+            lineLength = 0;
+         }
+         else if (lineLength + 1 < sizeof(line)) {
+            line[lineLength++] = buffer[i];
+         }
+      }
+   }
+
+   ::close(file);
+
+   return false;
+}
+
+static const char* MTADiagClassify(uintptr_t address, const MTADiagMapping* ownerMapping,
+   MTADiagMapping& mapping)
+{
+   if (!MTADiagFindMapping(address, mapping))
+      return "unmapped";
+
+   if (ownerMapping && mapping.start == ownerMapping->start && mapping.end == ownerMapping->end)
+      return "owner-stack";
+
+   if (mapping.perms[3] == 's')
+      return "elena-heap";
+
+   return "other-map";
+}
+
+static void MTADiagOne(size_t step, const char* field, uintptr_t container, uintptr_t segment,
+   const MTADiagMapping* ownerMapping)
+{
+   MTADiagMapping mapping {};
+   const char* location = MTADiagClassify(container, ownerMapping, mapping);
+   if (mapping.end) {
+      dprintf(STDERR_FILENO,
+         "[mta-one] step=%zu field=%s container=%p segment=%p class=%s map=%s\n",
+         step, field, (void*)container, (void*)segment, location, mapping.line);
+   }
+   else {
+      dprintf(STDERR_FILENO,
+         "[mta-one] step=%zu field=%s container=%p segment=%p class=%s\n",
+         step, field, (void*)container, (void*)segment, location);
+   }
+}
+
+static void MTADiagWalk(ThreadContent* contentAddress, const ThreadContent& content,
+   uintptr_t faultSegment)
+{
+   MTADiagMapping ownerMapping {};
+   MTADiagMapping* owner = nullptr;
+   if (MTADiagFindMapping(content.tt_stack_root, ownerMapping)
+      || MTADiagFindMapping(content.tt_stack_frame, ownerMapping))
+   {
+      owner = &ownerMapping;
+      dprintf(STDERR_FILENO, "[mta-owner] root=%p map=%s\n",
+         (void*)content.tt_stack_root, ownerMapping.line);
+   }
+
+   uintptr_t node = content.tt_stack_frame;
+   uintptr_t segment = node;
+   uintptr_t source = (uintptr_t)contentAddress + offsetof(ThreadContent, tt_stack_frame);
+   const char* sourceField = "head";
+
+   for (size_t step = 0; step < 128 && node; step++) {
+      if (node == 1) {
+         MTADiagOne(step, sourceField, source, segment, owner);
+         break;
+      }
+
+      uintptr_t link = 0;
+      if (!MTADiagRead(node, &link, sizeof(link))) {
+         MTADiagMapping mapping {};
+         const char* location = MTADiagClassify(node, owner, mapping);
+         dprintf(STDERR_FILENO,
+            "[mta-chain] step=%zu segment=%p fault_segment=%d node=%p read=EFAULT class=%s\n",
+            step, (void*)segment, segment == faultSegment, (void*)node, location);
+         break;
+      }
+
+      MTADiagMapping mapping {};
+      const char* location = MTADiagClassify(node, owner, mapping);
+      dprintf(STDERR_FILENO,
+         "[mta-chain] step=%zu segment=%p fault_segment=%d node=%p link=%p class=%s\n",
+         step, (void*)segment, segment == faultSegment, (void*)node, (void*)link, location);
+
+      source = node;
+      sourceField = "link";
+      if (link == 1) {
+         MTADiagOne(step, sourceField, source, segment, owner);
+         break;
+      }
+      if (link) {
+         node = link;
+         continue;
+      }
+
+      uintptr_t continuationAddress = node + sizeof(uintptr_t);
+      uintptr_t continuation = 0;
+      if (!MTADiagRead(continuationAddress, &continuation, sizeof(continuation))) {
+         dprintf(STDERR_FILENO,
+            "[mta-chain] step=%zu terminator=%p continuation_read=EFAULT\n",
+            step, (void*)node);
+         break;
+      }
+
+      dprintf(STDERR_FILENO,
+         "[mta-chain] step=%zu terminator=%p continuation=%p\n",
+         step, (void*)node, (void*)continuation);
+      source = continuationAddress;
+      sourceField = "continuation";
+      if (continuation == 1) {
+         MTADiagOne(step, sourceField, source, segment, owner);
+         break;
+      }
+
+      node = continuation;
+      segment = continuation;
+   }
+}
+
+static void MTADiagFault(int sig, siginfo_t* si, ucontext_t* u)
+{
+   uintptr_t rip = u->uc_mcontext.gregs[REG_RIP];
+   uintptr_t rax = u->uc_mcontext.gregs[REG_RAX];
+   uintptr_t rbx = u->uc_mcontext.gregs[REG_RBX];
+   uintptr_t rcx = u->uc_mcontext.gregs[REG_RCX];
+   uintptr_t rsi = u->uc_mcontext.gregs[REG_RSI];
+   uintptr_t r8 = u->uc_mcontext.gregs[REG_R8];
+   dprintf(STDERR_FILENO,
+      "[mta-signal] sig=%d si_addr=%p si_code=%d rip=%p rax=%p rbx=%zu rsi=%p rcx=%p r8=%p\n",
+      sig, si->si_addr, si->si_code, (void*)rip, (void*)rax, (size_t)rbx,
+      (void*)rsi, (void*)rcx, (void*)r8);
+
+   Dl_info signalInfo {};
+   bool signalResolved = dladdr((void*)rip, &signalInfo) != 0;
+   dprintf(STDERR_FILENO, "[mta-signal-image] image=%s symbol=%s offset=%p\n",
+      signalResolved && signalInfo.dli_fname ? signalInfo.dli_fname : "?",
+      signalResolved && signalInfo.dli_sname ? signalInfo.dli_sname : "?",
+      signalResolved && signalInfo.dli_saddr ? (void*)(rip - (uintptr_t)signalInfo.dli_saddr) : nullptr);
+
+   if (sig != SIGSEGV || rip < 0x40046B || rip > 0x400497 || rbx >= 0x200)
+   {
+      return;
+   }
+
+   Dl_info info {};
+   bool resolved = dladdr((void*)rip, &info) != 0;
+   dprintf(STDERR_FILENO,
+      "[mta-fault] sig=%d si_addr=%p si_code=%d rip=%p image=%s symbol=%s rax=%p rbx=%zu rsi=%p rcx=%p r8=%p\n",
+      sig, si->si_addr, si->si_code, (void*)rip,
+      resolved && info.dli_fname ? info.dli_fname : "?",
+      resolved && info.dli_sname ? info.dli_sname : "?",
+      (void*)rax, (size_t)rbx, (void*)rsi, (void*)rcx, (void*)r8);
+
+   ThreadSlot slot {};
+   if (!MTADiagRead(r8, &slot, sizeof(slot))) {
+      dprintf(STDERR_FILENO, "[mta-slot] address=%p index=%zu read=EFAULT\n",
+         (void*)r8, (size_t)rbx);
+      return;
+   }
+
+   dprintf(STDERR_FILENO, "[mta-slot] address=%p index=%zu content=%p arg=%p\n",
+      (void*)r8, (size_t)rbx, (void*)slot.content, slot.arg);
+
+   ThreadContent content {};
+   if (!MTADiagRead((uintptr_t)slot.content, &content, sizeof(content))) {
+      dprintf(STDERR_FILENO, "[mta-content] address=%p read=EFAULT\n", (void*)slot.content);
+      return;
+   }
+
+   dprintf(STDERR_FILENO,
+      "[mta-content] address=%p critical=%p current=%p head=%p event=%p flags=%zu root=%p\n",
+      (void*)slot.content, (void*)content.eh_critical, (void*)content.eh_current,
+      (void*)content.tt_stack_frame, content.tt_sync_event, content.tt_flags,
+      (void*)content.tt_stack_root);
+   MTADiagWalk(slot.content, content, rcx);
+}
+
+#endif
 
 // ; the event belongs to the slot, not to the thread that borrows it : its address is
 // ; published in gc_signal and in the collector wait list, and other threads dereference
@@ -271,6 +552,12 @@ static void ELENASignalHandler(int sig, siginfo_t* si, void* unused)
 
 #else
 
+
+#if defined(MTA_DIAG)
+
+   MTADiagFault(sig, si, u);
+
+#endif
 
    switch (sig) {
       case SIGFPE:

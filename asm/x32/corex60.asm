@@ -607,7 +607,15 @@ labSkipTT:
 
 labSkipWait:
   // ; remove list
-  mov  esp, ebp     
+  mov  esp, ebp
+
+  // ; take gc_lock again for the collection, see the note in the amd64 core
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+labPermRootLock:
+  mov  edx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labPermRootLock
 
   // ==== GCXT end ==============
 
@@ -636,9 +644,14 @@ labSkipWait:
 
   mov  ebx, edi
 
+  // ; release the lock taken for the collection
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  lock xadd [edi], edx
+
 #if (_LNX || _FREEBSD)
   // ; absolute, the and above moved esp by an amount not known here
-  mov  esp, ebp     
+  mov  esp, ebp
   add  esp, 4
 #elif _WIN
   add  esp, 4
@@ -752,14 +765,14 @@ labWait:
   ret
 
 labNoCollect:
-  // ; the collection ended before we got the lock, nothing to wait for
+  // ; the collection ended before we got the lock, nothing to wait for. The head goes back
+  // ; under the lock, so no scan can catch the frame this procedure is about to drop
+  pop  edx
+  mov  [eax+tt_stack_frame], edx
+
   mov  edi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
-
-  // ; give the caller its head back, no safe region was declared on this path
-  pop  edx
-  mov  [eax+tt_stack_frame], edx
 
   pop  edx
   pop  eax
@@ -840,6 +853,12 @@ inline % 10h
   lea  edi, [eax-tt_size]
 #endif
 
+  // ; the head has to be published before the flag, see the note in the amd64 core
+  mov  eax, [edi + tt_stack_frame]
+  push eax
+  push ebp
+  mov  [edi + tt_stack_frame], esp
+
   // ; the store below has to be ordered against the gc_signal load that follows. On a
   // ; plain mov the two can be reordered, and then the collector reads tt_flags as zero,
   // ; puts this thread on its wait list, while the thread reads gc_signal as zero and
@@ -857,19 +876,7 @@ inline % 10h
   // ; point still exists, rather than inside the call it is about to make
   call %THREAD_WAIT
 
-#if _WIN
-  mov  eax, fs:[2Ch]
-  mov  edi, [eax]
-#elif _LNX
-  mov  eax, gs:[0]
-  lea  edi, [eax-tt_size]
-#endif
-
 labNoCollect:
-  mov  eax, [edi + tt_stack_frame]
-  push eax
-  push ebp
-  mov  [edi + tt_stack_frame], esp
 
 end
 
