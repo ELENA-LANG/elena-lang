@@ -10,6 +10,11 @@ public singleton DependencyInjector
       _typeFactories[class T] := factory;
    }
    
+   extension registerSingleton<T>(object singleton)
+   {
+      _typeFactories[class T] := ::{ new() = singleton; };
+   }
+   
    generic cast()
    {
       var type := __received.__getFirstSignatureMember();

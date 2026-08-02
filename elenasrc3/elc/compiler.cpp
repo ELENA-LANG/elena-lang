@@ -52,15 +52,15 @@ static inline bool isUnboxingRequired(TargetMode mode)
       || mode == TargetMode::ConditionalUnboxingRequired;
 }
 
-inline void testNodes(SyntaxNode node)
-{
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      testNodes(current);
-
-      current = current.nextNode();
-   }
-}
+//inline void testNodes(SyntaxNode node)
+//{
+//   SyntaxNode current = node.firstChild();
+//   while (current != SyntaxKey::None) {
+//      testNodes(current);
+//
+//      current = current.nextNode();
+//   }
+//}
 
 //inline void testNodes(BuildNode node)
 //{
@@ -4016,12 +4016,12 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
 
                ObjectInfo retVal = evalExpression(interpreter, scope, current.findChild(SyntaxKey::ReturnExpression).firstChild(), {}, true);
                switch (retVal.kind) {
-               case ObjectKind::FieldAddress:
-               case ObjectKind::Field:
-                  scope.info.attributes.add({ current.arg.reference, ClassAttribute::FieldGetter }, retVal.argument);
-                  break;
-               default:
-                  break;
+                  case ObjectKind::FieldAddress:
+                  case ObjectKind::Field:
+                     scope.info.attributes.add({ current.arg.reference, ClassAttribute::FieldGetter }, retVal.argument);
+                     break;
+                  default:
+                     break;
                }
             }
          }
@@ -5474,7 +5474,7 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
       case SyntaxKey::NestedBlock:
       {
          MetaExpression metaExpr(this, &scope, &interpreter);
-         retVal = metaExpr.generateNestedConstant(node);
+         retVal = metaExpr.generateNestedConstant(node, ignoreErrors);
          break;
       }
       case SyntaxKey::KeyValueExpression:
@@ -12216,7 +12216,6 @@ void Compiler :: injectNestedTemplateExtension(SyntaxNode extNode)
 
          extensionScope.mergeNodes(extNode);
       }
-
       extNode = next;
    }
 }
@@ -13800,16 +13799,14 @@ void Compiler::Expression :: unboxAutoRangeCollection(SyntaxNode& spreadNode, Sy
 
    SyntaxNode exprNode = tupleNode.firstChild();
 
-   SyntaxTreeWriter writer(spreadNode);
-   writer.setBookmark(spreadNode);
+   SyntaxTreeWriter tempWriter(spreadNode);
+   tempWriter.setBookmark(spreadNode);
    while (counter > threshold) {
-      writer.inject(SyntaxKey::Expression);
-      SyntaxTree::copyNodeSafe(writer, exprNode, true);
+      tempWriter.inject(SyntaxKey::Expression);
+      SyntaxTree::copyNodeSafe(tempWriter, exprNode, true);
 
       counter--;
    }
-
-   testNodes(spreadNode.parentNode());
 }
 
 static inline void unboxTupleCollection(SyntaxNode& spreadNode, SyntaxNode& tupleNode)
@@ -18529,7 +18526,7 @@ Compiler::MetaExpression::MetaExpression(Compiler* compiler, Scope* scope, Inter
 {
 }
 
-void Compiler::MetaExpression::generateObject(SyntaxTreeWriter& writer, SyntaxNode node)
+void Compiler::MetaExpression::generateObject(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed)
 {
    ObjectInfo info = compiler->evalObject(/**interpreter, */*scope, node);
    if (info.kind == ObjectKind::Class) {
@@ -18545,10 +18542,13 @@ void Compiler::MetaExpression::generateObject(SyntaxTreeWriter& writer, SyntaxNo
 
       writer.closeNode();
    }
-   else SyntaxTree::copyNode(writer, node, true);
+   else {
+      failed = true;
+      SyntaxTree::copyNode(writer, node, true);
+   }
 }
 
-void Compiler::MetaExpression::generateNameOperation(SyntaxTreeWriter& writer, SyntaxNode node)
+void Compiler::MetaExpression::generateNameOperation(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed)
 {
    ObjectInfo info = compiler->evalExpression(*interpreter, *scope, node, {}, true, true);
    if (info.kind == ObjectKind::StringLiteral) {
@@ -18560,10 +18560,13 @@ void Compiler::MetaExpression::generateNameOperation(SyntaxTreeWriter& writer, S
 
       writer.closeNode();
    }
-   else SyntaxTree::copyNode(writer, node, true);
+   else {
+      SyntaxTree::copyNode(writer, node, true);
+      failed = true;
+   }
 }
 
-void Compiler::MetaExpression::generateExpression(SyntaxTreeWriter& writer, SyntaxNode node)
+void Compiler::MetaExpression::generateExpression(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed)
 {
    writer.newNode(node.key);
 
@@ -18571,17 +18574,17 @@ void Compiler::MetaExpression::generateExpression(SyntaxTreeWriter& writer, Synt
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Object:
-            generateObject(writer, current);
+            generateObject(writer, current, failed);
             break;
          case SyntaxKey::NameOperation:
-            generateNameOperation(writer, current);
+            generateNameOperation(writer, current, failed);
             break;
          case SyntaxKey::Message:
          case SyntaxKey::EOP:
             SyntaxTree::copyNode(writer, current, true);
             break;
          default:
-            generateExpression(writer, current);
+            generateExpression(writer, current, failed);
             break;
       }
 
@@ -18591,7 +18594,7 @@ void Compiler::MetaExpression::generateExpression(SyntaxTreeWriter& writer, Synt
    writer.closeNode();
 }
 
-void Compiler::MetaExpression::generateMethod(SyntaxTreeWriter& writer, SyntaxNode node)
+void Compiler::MetaExpression::generateMethod(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed)
 {
    writer.newNode(node.key);
 
@@ -18601,7 +18604,7 @@ void Compiler::MetaExpression::generateMethod(SyntaxTreeWriter& writer, SyntaxNo
          case SyntaxKey::CodeBlock:
          case SyntaxKey::ReturnExpression:
          case SyntaxKey::Redirect:
-            generateExpression(writer, current);
+            generateExpression(writer, current, failed);
             break;
          default:
             SyntaxTree::copyNode(writer, current, true);
@@ -18614,7 +18617,7 @@ void Compiler::MetaExpression::generateMethod(SyntaxTreeWriter& writer, SyntaxNo
    writer.closeNode();
 }
 
-ObjectInfo Compiler::MetaExpression::generateNestedConstant(SyntaxNode node)
+ObjectInfo Compiler::MetaExpression :: generateNestedConstant(SyntaxNode node, bool stopOnError)
 {
    ref_t reference = scope->moduleScope->mapAnonymous("const");
 
@@ -18624,11 +18627,12 @@ ObjectInfo Compiler::MetaExpression::generateNestedConstant(SyntaxNode node)
    writer.newNode(SyntaxKey::Class, reference);
    writer.appendNode(SyntaxKey::Attribute, V_SINGLETON);
 
+   bool failed = false;
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
          case SyntaxKey::Method:
-            generateMethod(writer, current);
+            generateMethod(writer, current, failed);
             break;
          default:
             return {};
@@ -18638,6 +18642,9 @@ ObjectInfo Compiler::MetaExpression::generateNestedConstant(SyntaxNode node)
    }
 
    writer.closeNode();
+
+   if (failed && stopOnError)
+      return {};
 
    SyntaxNode nsNode = node.parentNode();
    while (nsNode != SyntaxKey::Namespace)

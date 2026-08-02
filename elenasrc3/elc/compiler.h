@@ -1447,13 +1447,13 @@ namespace elena_lang
          Interpreter*   interpreter;
          Scope*         scope;
 
-         void generateObject(SyntaxTreeWriter& writer, SyntaxNode node);
-         void generateNameOperation(SyntaxTreeWriter& writer, SyntaxNode node);
-         void generateExpression(SyntaxTreeWriter& writer, SyntaxNode node);
-         void generateMethod(SyntaxTreeWriter& writer, SyntaxNode node);
+         void generateObject(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed);
+         void generateNameOperation(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed);
+         void generateExpression(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed);
+         void generateMethod(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed);
 
       public:
-         ObjectInfo generateNestedConstant(SyntaxNode node);
+         ObjectInfo generateNestedConstant(SyntaxNode node, bool stopOnError);
 
          MetaExpression(Compiler* compiler, Scope* scope, Interpreter* interpreter);
       };

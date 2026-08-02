@@ -1,7 +1,14 @@
 //import system'math;
 import forms;
 import system'drawing;
+import system'dynamic;
 import extensions;
+
+registration : preloaded()
+   = true.then(
+   {
+      DependencyInjector::registerSingleton<IFactory>(Factory);
+   });
 
 public sealed Plotter : IPlotter
 {
@@ -87,16 +94,15 @@ public sealed Plotter : IPlotter
    }   
 }
 
-
 public class MainWindow : SDIDialog
 {
    Imagebox       _imagebox;
    IFactory       _factory;
    
-   constructor new()
+   constructor new(IFactory factory) : injectable_constructor()
       <= super new()
    {
-      _factory := Factory;
+      _factory := factory;
       
       _imagebox := Imagebox.new();
       self.appendControl(_imagebox);

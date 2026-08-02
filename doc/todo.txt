@@ -52,6 +52,11 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
+  * current : fix template generation
+  ====================================== 
+  - fix 
+  - make sure template extension methid can be applied only to the extending class / singleton
+  ---------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===
   * new version 7.0.3

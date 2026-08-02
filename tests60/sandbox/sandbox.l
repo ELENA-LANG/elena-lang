@@ -1,44 +1,18 @@
-import extensions;
 import system'dynamic;
+import extensions;
 
-interface I
+I;
+
+singleton A : I
 {
-   abstract string WhoAmI();
+   whoAmI()
+      = "singleton A";
 }
 
-A : interface<I>
-{
-   constructor new() {}
-   
-   string WhoAmI()
-      = "I'm A";
-}
 
-B : interface<I>
-{
-   constructor new() {}
-   
-   string WhoAmI()
-      = "I'm B";
-}
-
-class ClassToBeInjected
-{
-   readonly I _i;   
-   
-   constructor new(I i) : injectable_constructor()
-   {
-      _i := i;
-   }
-   
-   string WhoAmI()
-      => _i;   
-}
 
 public Program()
 {   
-   DependencyInjector::register<I>(A);
-
-   var obj := ClassToBeInjected.new();
-   Console.writeLine(obj.WhoAmI());
+   DependencyInjector::registerSingleton<I>(A);
+   
 }
