@@ -36,6 +36,11 @@ In development:
   * lang
   ====================================== 
   --------------------------------------
+  * api
+  ====================================== 
+  - get rid of indexer interface
+  - introduce iindexer - supporting getAt / setAt / Length 
+  --------------------------------------
   * doc
   ====================================== 
   - documentation retoverload
@@ -44,18 +49,17 @@ In development:
   --------------------------------------
   * graph sample
   ====================================== 
-  - try to use dependency injection
-  - stage 0b : select function - sin / cos / current one function
-  - stage 0c : switch to xforms
+  - fix debugger - point content is not correctly shown (e.g, goTo)
+  - fix debugger - breakpoint doesn't work correctly moveTo
+
+  - make factory dynamic; depending on external function
+  - stage 0b : select function - sin / cos / current one function - from combobox
+  - stage 0b : resize the window
+  - stage 0c : switch to xforms : xgraph
   - stage 1 : compile-time script 
 
   - stage 2 : run-time script 
   - post
-  ---------------------------------------
-  * current : fix template generation
-  ====================================== 
-  - fix 
-  - make sure template extension methid can be applied only to the extending class / singleton
   ---------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===

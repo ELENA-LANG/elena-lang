@@ -12,8 +12,6 @@ public interface IFunctionRange
 
 public interface IFunction
 {
-   get abstract bool IsPolar();
-   
    abstract real y(real x);
 }
 

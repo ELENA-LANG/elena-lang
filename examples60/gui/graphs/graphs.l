@@ -7,7 +7,7 @@ import extensions;
 registration : preloaded()
    = true.then(
    {
-      DependencyInjector::registerSingleton<IFactory>(Factory);
+      DependencyInjector::registerSingleton<IFactory>(FactoryProvider.new());
    });
 
 public sealed Plotter : IPlotter
@@ -78,19 +78,17 @@ public sealed Plotter : IPlotter
    }
    
    goTo(real x, real y)
-   {
-      var zero := new Point(zeroX, zeroY);   
-      Point p := new Point((x * scaleX).RoundedInt, (y * scaleY).RoundedInt);
+   {         
+      Point p := new Point(zeroX + (x * scaleX).RoundedInt, zeroY - (y * scaleY).RoundedInt);
    
-      canvas.setCaret(zero + p);      
+      canvas.setCaret(p);      
    }
    
    moveTo(real x, real y)
    {
-      var zero := new Point(zeroX, zeroY);   
-      Point p := new Point((x * scaleX).RoundedInt, (y * scaleY).RoundedInt);
+      Point p := new Point(zeroX + (x * scaleX).RoundedInt, zeroY - (y * scaleY).RoundedInt);
 
-      canvas.lineCaretTo(zero + p);
+      canvas.lineCaretTo(p);
    }   
 }
 
