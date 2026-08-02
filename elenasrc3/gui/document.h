@@ -208,6 +208,7 @@ namespace elena_lang
          bool unnamed;
          bool included;
          bool overwriteMode;
+         bool pairingMode;
 
          int  rowDifference;
 
@@ -221,6 +222,7 @@ namespace elena_lang
             unnamed = included = false;
             overwriteMode = false;
             oldSelected = oldModified = false;
+            pairingMode = false;
 
             rowDifference = 0;
          }
@@ -353,6 +355,7 @@ namespace elena_lang
       bool isModified() { return status.modifiedMode; }
       bool isIncluded() { return status.included; }
       bool isOverwriteMode() { return status.overwriteMode; }
+      bool isAutoPairing() { return status.pairingMode; }
 
       void markAsUnnamed()
       {
@@ -369,6 +372,10 @@ namespace elena_lang
       void markAsExcluded()
       {
          status.included = false;
+      }
+      void markAutoPairing()
+      {
+         status.pairingMode = true;
       }
 
       text_c getCurrentChar();

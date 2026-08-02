@@ -18,7 +18,6 @@ In development:
   - implement *_length := len - as native operation
   - use *_length := len in BinaryHeap
   - Array<T> must support Enumerable interface as well
-  - ide : create two new lines instead of one when new lined inserted after "}" bracket
   - ide : by debugging - jump for more than 1 line (put the cursor into the middle)
   - comparing with enum type - try to use directly
   - Warn if the implicit conversion is used
@@ -61,6 +60,11 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
+  * current : ide bug fixes
+  ====================================== 
+  - ide : create two new lines instead of one when new lined inserted after "}" bracket
+  - fix debugger - point content is not correctly shown (e.g, goTo)
+  - fix debugger - breakpoint doesn't work correctly moveTo
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===
   * new version 7.0.3

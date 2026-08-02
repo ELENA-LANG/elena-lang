@@ -1,18 +1,7 @@
-import system'dynamic;
 import extensions;
-
-I;
-
-singleton A : I
-{
-   whoAmI()
-      = "singleton A";
-}
-
-
+import system'drawing;
 
 public Program()
 {   
-   DependencyInjector::registerSingleton<I>(A);
-   
+   Point p := new Point(3, 4);
 }

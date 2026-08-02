@@ -40,6 +40,7 @@
 - Tools  
 
 - IDE
+  - [FIXED]an extra line is added when new lined inserted after "}" bracket
 
 - Misc
   - [UPDATED] API Docs

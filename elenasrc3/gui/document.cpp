@@ -868,6 +868,8 @@ void DocumentView :: insertChar(DocumentChangeStatus& changeStatus, text_c ch, s
 
       count--;
    }
+
+   status.pairingMode = false;
 }
 
 text_t DocumentView :: getCurrentLine(disp_t disp, size_t& length)
@@ -957,6 +959,7 @@ void DocumentView :: insertNewLine(DocumentChangeStatus& changeStatus)
    }
 
    status.rowDifference += (_text->getRowCount() - rowCount);
+   status.pairingMode = false;
 }
 
 void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t text, size_t length)
@@ -972,6 +975,7 @@ void DocumentView :: insertLine(DocumentChangeStatus& changeStatus, const_text_t
    setCaret(_caret.getCaret(), false, changeStatus);
 
    status.rowDifference += (_text->getRowCount() - rowCount);
+   status.pairingMode = false;
 }
 
 void DocumentView :: eraseChar(DocumentChangeStatus& changeStatus, bool moveback)
@@ -995,6 +999,7 @@ void DocumentView :: eraseChar(DocumentChangeStatus& changeStatus, bool moveback
    }
 
    status.rowDifference += (_text->getRowCount() - rowCount);
+   status.pairingMode = false;
 }
 
 void DocumentView :: setOverwriteMode(DocumentChangeStatus& changeStatus, bool mode)
@@ -1050,6 +1055,7 @@ void DocumentView :: trim(DocumentChangeStatus& changeStatus)
    changeStatus.textChanged = true;
 
    status.rowDifference += (_text->getRowCount() - rowCount);
+   status.pairingMode = false;
 }
 
 void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
@@ -1069,6 +1075,7 @@ void DocumentView :: eraseLine(DocumentChangeStatus& changeStatus)
    changeStatus.caretChanged = true;
 
    status.rowDifference += (_text->getRowCount() - rowCount);
+   status.pairingMode = false;
 }
 
 void DocumentView :: duplicateLine(DocumentChangeStatus& changeStatus)
@@ -1098,6 +1105,7 @@ void DocumentView :: duplicateLine(DocumentChangeStatus& changeStatus)
    changeStatus.caretChanged = true;
 
    status.rowDifference += (_text->getRowCount() - rowCount);
+   status.pairingMode = false;
 }
 
 void DocumentView :: copyText(text_c* text, disp_t length)

@@ -205,12 +205,12 @@ bool TextViewController :: insertNewLine(TextViewModelBase* model)
    DocumentChangeStatus status = {};
    auto docView = model->DocView();
    if (!docView->isReadOnly()) {
+      bool pairing = docView->isAutoPairing();
       docView->eraseSelection(status);
 
       auto lastPoint = docView->getCaret();
-      text_c currentChar = docView->getCurrentChar();
       docView->insertNewLine(status);
-      if (currentChar == '}') {
+      if (pairing) {
          docView->setCaret(lastPoint, false, status);
          docView->insertNewLine(status);
       }
@@ -233,8 +233,10 @@ bool TextViewController :: insertChar(TextViewModelBase* model, text_c ch)
 
       if (isPairedBracket(ch)) {
          auto caret = docView->getCaret();
-         if (caret.x == docView->getCurrentLineLength())
+         if (caret.x == docView->getCurrentLineLength()) {
             docView->insertChar(status, getClosingBracket(ch), 1, false);
+            docView->markAutoPairing();
+         }            
       }
 
       notifyTextModelChange(model, status);
