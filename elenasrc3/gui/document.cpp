@@ -400,6 +400,16 @@ void DocumentView :: setSize(Point size)
    setCaret(_caret.getCaret(), false, dummy);
 }
 
+void DocumentView :: setFrame(Point& frame, DocumentChangeStatus& changeStatus)
+{
+   if (_frame.getCaret() != frame) {
+      _text->validateBookmark(_frame);
+      _frame.moveTo(frame.x, frame.y);
+
+      changeStatus.frameChanged = true;
+   }
+}
+
 void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChangeStatus& changeStatus)
 {
    if (column < 0) column = 0;
@@ -436,12 +446,7 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
       frame.y = caret.y - _size.y + VerticalScrollOffset;
    }
 
-   if (_frame.getCaret() != frame) {
-      _text->validateBookmark(_frame);
-      _frame.moveTo(frame.x, frame.y);
-
-      changeStatus.frameChanged = true;
-   }
+   setFrame(frame, changeStatus);
    if (selecting) {
       _selection += position - _caret.position();
    }
@@ -451,6 +456,29 @@ void DocumentView :: setCaret(int column, int row, bool selecting, DocumentChang
 
    changeStatus.selelectionChanged = true;
    changeStatus.caretChanged = true;
+}
+
+void DocumentView :: centerFrame(bool forced, DocumentChangeStatus& changeStatus)
+{
+   Point frame = _frame.getCaret();
+   Point caret = _caret.getCaret(false);
+
+   if (!forced && caret.y < frame.y + _size.y - VerticalScrollOffset)
+      return;
+
+   int frame_y = caret.y - (_size.y >> 1);
+
+   int frame_x = 0;
+   if (frame_x + _size.x <= caret.x)
+      frame_x = caret.x - _size.x;
+
+   if (frame_y < 0)
+      frame_y = 0;
+   if (frame_x < 0)
+      frame_x = 0;
+
+   frame = { frame_x, frame_y };
+   setFrame(frame, changeStatus);
 }
 
 void DocumentView :: hscroll(DocumentChangeStatus& changeStatus, int displacement)

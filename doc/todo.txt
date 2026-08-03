@@ -9,7 +9,6 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - highlight : constructor new(int arg1/*, real arg2*/) <- comment is not recognized
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - fix httpget (it fails time to time)
   - fix httpsget ()
@@ -18,7 +17,6 @@ In development:
   - implement *_length := len - as native operation
   - use *_length := len in BinaryHeap
   - Array<T> must support Enumerable interface as well
-  - ide : by debugging - jump for more than 1 line (put the cursor into the middle)
   - comparing with enum type - try to use directly
   - Warn if the implicit conversion is used
 
@@ -62,9 +60,11 @@ In development:
   ---------------------------------------
   * current : ide bug fixes
   ====================================== 
-  - ide : create two new lines instead of one when new lined inserted after "}" bracket
+  - ide : by debugging - jump for more than 1 line (put the cursor into the middle)
   - fix debugger - point content is not correctly shown (e.g, goTo)
   - fix debugger - breakpoint doesn't work correctly moveTo
+  - highlight : constructor new(int arg1/*, real arg2*/) <- comment is not recognized
+  ---------------------------------------
 
   === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===
   * new version 7.0.3

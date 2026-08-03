@@ -20,8 +20,10 @@ void SourceViewModel :: setTraceLine(int row, bool withCursor, DocumentChangeSta
    _currentView->removeMarker(STYLE_TRACE_LINE, status);
 
    _currentView->addMarker(row, STYLE_TRACE_LINE, false, false, status);
-   if (withCursor)
+   if (withCursor) {
       _currentView->setCaret({ 0, row - 1 }, false, status);
+      _currentView->centerFrame(false, status);
+   }
 }
 
 void SourceViewModel :: clearTraceLine(DocumentChangeStatus& status)
@@ -36,8 +38,10 @@ void SourceViewModel :: setErrorLine(int row, int column, bool withCursor, Docum
    _currentView->removeMarker(STYLE_ERROR_LINE, status);
 
    _currentView->addMarker(row, STYLE_ERROR_LINE, true, false, status);
-   if (withCursor)
+   if (withCursor) {
       _currentView->setCaret({ column - 1, row - 1 }, false, status);
+      _currentView->centerFrame(true, status);
+   }      
 }
 
 void SourceViewModel :: clearErrorLine(DocumentChangeStatus& status)

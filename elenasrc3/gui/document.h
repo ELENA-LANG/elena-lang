@@ -270,6 +270,7 @@ namespace elena_lang
       TextBookmark getCaretBookmark() { return _caret; }
 
       void setCaret(int column, int row, bool selecting, DocumentChangeStatus& changeStatus);
+      void setFrame(Point& frame, DocumentChangeStatus& changeStatus);
 
       text_t getCurrentLine(disp_t disp, size_t& length);      
 
@@ -386,6 +387,8 @@ namespace elena_lang
 
       virtual bool canUndo();
       virtual bool canRedo();
+
+      void centerFrame(bool forced, DocumentChangeStatus& changeStatus);
 
       void vscroll(DocumentChangeStatus& changeStatus, int offset);
       void hscroll(DocumentChangeStatus& changeStatus, int offset);

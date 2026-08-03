@@ -40,7 +40,8 @@
 - Tools  
 
 - IDE
-  - [FIXED]an extra line is added when new lined inserted after "}" bracket
+  - [FIXED] an extra line is added when new lined inserted after "}" bracket
+  - [ADDED] put the cursor into the middle of the screen on debugging / showing an error line
 
 - Misc
   - [UPDATED] API Docs
