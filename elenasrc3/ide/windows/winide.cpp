@@ -22,6 +22,23 @@
 
 using namespace elena_lang;
 
+// --- setForegroundWindow() ---
+inline void setForegroundWindow(HWND hwnd)
+{
+   DWORD dwTimeoutMS;
+   // Get the current lock timeout.
+   ::SystemParametersInfo(0x2000, 0, &dwTimeoutMS, 0);
+
+   // Set the lock timeout to zero
+   ::SystemParametersInfo(0x2001, 0, 0, 0);
+
+   // Perform the SetForegroundWindow
+   ::SetForegroundWindow(hwnd);
+
+   // Set the timeout back
+   ::SystemParametersInfo(0x2001, 0, (LPVOID)(size_t)dwTimeoutMS, 0);   //HWND hCurrWnd;
+}
+
 // --- Clipboard ---
 
 Clipboard :: Clipboard(ControlBase* owner)
@@ -754,6 +771,8 @@ void IDEWindow :: onCallstackHighlight(int index)
 
 void IDEWindow :: onDebugStep()
 {
+   setForegroundWindow(_handle);
+
    MenuBase* menu = dynamic_cast<MenuBase*>(_children[_model->ideScheme.menu]);
    menu->enableMenuItemById(IDM_DEBUG_STOP, true);
 

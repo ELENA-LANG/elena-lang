@@ -1323,7 +1323,7 @@ void IDEController :: traceStep(SourceViewModel* sourceModel, bool found, int ro
    if (found) {
       sourceModel->setTraceLine(row, true, docStatus);
 
-      projectStatus |= STATUS_DEBUGGER_STEP;
+      projectStatus |= (STATUS_DEBUGGER_STEP | STATUS_FRAME_ACTIVATE);
    }
    else projectStatus |= STATUS_DEBUGGER_NOSOURCE;
 

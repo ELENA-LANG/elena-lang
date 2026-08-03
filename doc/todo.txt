@@ -60,8 +60,7 @@ In development:
   ---------------------------------------
   * current : ide bug fixes
   ====================================== 
-  - ide : by debugging - jump for more than 1 line (put the cursor into the middle)
-  - fix debugger - point content is not correctly shown (e.g, goTo)
+  - fix auto focus
   - fix debugger - breakpoint doesn't work correctly moveTo
   - highlight : constructor new(int arg1/*, real arg2*/) <- comment is not recognized
   ---------------------------------------

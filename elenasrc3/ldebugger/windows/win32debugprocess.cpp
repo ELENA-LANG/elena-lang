@@ -654,7 +654,11 @@ void Win32DebugProcess :: setStepMode()
 
 void Win32DebugProcess :: resetStepMode()
 {
-   _current->resetTrapFlag();
+   if (_current && _current->resetBreakpoint.mode == Win32TempBreakpoint::Mode::Reset) {
+      _current->setTrapFlag();
+   }
+   else _current->resetTrapFlag();
+   
    _stepMode = false;
 }
 
