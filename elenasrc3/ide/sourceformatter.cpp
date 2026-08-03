@@ -34,37 +34,10 @@ const int CODE_OP_MODE = 0x04;
 const int POSTFIX_MODE = 0x08;
 const int COMPLEX_MODE = 0x10;
 
-/*
-const text_c* lexDFA[] =
-{
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaeqataaaeeeeeeehooooooooooeeeeeeebbbbbbbbbbbbbbbbbbbbbbbbbbeaeebabbbbbbbbbbbbbbbbbbbbbbbbbbeeeab"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaceaaaaaaeeeeeeeabbbbbbbbbbeeeeeeebbbbbbbbbbbbbbbbbbbbbbbbbbeaeebabbbbbbbbbbbbbbbbbbbbbbbbbbeeeab"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaceaaaaaaeeeeeeeaddddddddddeeeeeeeddddddddddddddddddddddddddeaeedaddddddddddddddddddddddddddeeead"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaeeeeeeeaaaaaaaaaaaeeeeeeebbbbbbbbbbbbbbbbbbbbbbbbbbeaeebabbbbbbbbbbbbbbbbbbbbbbbbbbaaaaa"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffaaaaaaaaaaafffffffaaaaaaaaaaaaaaaaaaaaaaaaaafaffaaaaaaaaaaaaaaaaaaaaaaaaaaaafffaa"),
-     _T("gggggggggggggggggggggggggggggggggfggggggfffffffgggggggggggfffffffggggggggggggggggggggggggggfgfgggggggggggggggggggggggggggggfffgg"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaqataaaaaaaaaahooooooooooaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaagaaaaaaaaakaaaaigggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggggg"),
-     _T("jiiiiiiiiijiijiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiiii"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
-     _T("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkklkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"),
-     _T("kkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkmkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkkk"),
-     _T("nnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
-     _T("ppppppppppppppppppppppppppppppppppppppppppppppppoooooooooopppppppoooooopppppppppppppppppppppppppppppppppopppopppppoppppppppppppp"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffaaaaaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaafafaaaaaaaaaaaaaaaaaaaaaaaaaaaaafffaa"),
-     _T("qqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqrqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqqq"),
-     _T("ssssssssssssssssssssssssssssssssssqstsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaaaaafffffffhaaaaaaaaaaffffffaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaafaaa"),
-     _T("uuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuqutuuuuuuuuuuuttttttttttuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuuu"),
-     _T("aaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaaa"),
-};
-*/
-
 const text_c* lexDFA[] =
 {
      _T("AAAAAAAAAaaAAaAAAAAAAAAAAAAAAAAAadhomAdAdddddddfeeeeeeeeeeSCTTddAbbbbbbbbbbbbbbbbbbbbbbbbbbddddbAGGGGGGGGGGGGGGGGGGGGGGGGGGEdFdb"),
-     _T("AAAAAAAAAJJAAJAAAAAAAAAAAAAAAAAAJKAAAAKAIHKKKKKbbbbbbbbbbbSCKKKKAbbbbbbbbbbbbbbbbbbbbbbbbbbKKKKbAbbbbbbbbbbbbbbbbbbbbbbbbbbEKFKb"),
+     _T("AAAAAAAAAJJAAJAAAAAAAAAAAAAAAAAAJKAAAAKAIHKKKKKQbbbbbbbbbbSCKKKKAbbbbbbbbbbbbbbbbbbbbbbbbbbKKKKbAbbbbbbbbbbbbbbbbbbbbbbbbbbEKFKb"),
      _T("AAAAAAAAAccAAAAAAAAAAAAAAAAAAAAAcKAAQAKAIHKKKKKQAAAAAAAAAASAKKKKABBBBBBBBBBBBBBBBBBBBBBBBBBKKKKBABBBBBBBBBBBBBBBBBBBBBBBBBBEKFKB"),
      _T("DDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDdDDDDdDIHdddddDDDDDDDDDDDdCddddDDDDDDDDDDDDDDDDDDDDDDDDDDDddddDDDDDDDDDDDDDDDDDDDDDDDDDDDDEdFdD"),
      _T("LLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLLHKKKKKLeeeeeeeeeeLCLLLLLeeeeeeLLLLLLLLLLLLLLLLLLLLKLKLLLLLLLLLLeLLLeLLLLLeLLLLLLLLELFLL"),
@@ -117,12 +90,6 @@ typedef text_c(*StepMaker)(text_c ch, FormatterInfo& info);
 pos_t defineStyle(text_c state)
 {
    return styleMapping[state - lexStart];
-
-   //pos_t retVal = state == lexOperator ? STYLE_OPERATOR : STYLE_DEFAULT;
-   //retVal = state == lexNamedOperator ? STYLE_OPERATOR : retVal;
-   //retVal = state == lexString ? STYLE_STRING : retVal;
-
-   //return state == lexDigit ? STYLE_NUMBER : retVal;
 }
 
 inline static text_c makeStep(text_c ch, FormatterInfo& info)

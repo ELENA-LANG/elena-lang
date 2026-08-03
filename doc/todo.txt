@@ -33,11 +33,6 @@ In development:
   * lang
   ====================================== 
   --------------------------------------
-  * api
-  ====================================== 
-  - get rid of indexer interface
-  - introduce iindexer - supporting getAt / setAt / Length 
-  --------------------------------------
   * doc
   ====================================== 
   - documentation retoverload
@@ -58,10 +53,14 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
+  * api
+  ====================================== 
+  - get rid of indexer interface
+  - support IList - supporting getAt / setAt / Length 
+  - do we need iterator (similar to C++)
+  --------------------------------------
   * current : ide bug fixes
   ====================================== 
-  - fix auto focus
-  - fix debugger - breakpoint doesn't work correctly moveTo
   - highlight : constructor new(int arg1/*, real arg2*/) <- comment is not recognized
   ---------------------------------------
 
