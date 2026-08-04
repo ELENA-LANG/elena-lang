@@ -11,7 +11,7 @@ public singleton Control
  2 - current UTC date
  3 - current year
  4 - current time
- 7 - exit
+ 5 - exit
 >";
     
     proceed(s)
@@ -23,7 +23,7 @@ public singleton Control
             2 : { ^UtcNow.toString() }
             3 : { ^Now.Year.toString() }
             4 : { ^Now.toShortTimeString() }
-            7 : { forward Program.stop(); ^ EmptyString }
+            5 : { forward Program.stop(); ^ EmptyString }
             ! : { ^"Invalid choice" }
     }
 }

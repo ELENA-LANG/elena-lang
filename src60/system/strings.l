@@ -83,6 +83,20 @@ public sealed Array<T> : interface<Indexable<T>>,
    Enumerable cast() : info("Returns enumerable wrapper around the array")
       = new Enumerable{ Enumerator enumerator() => self; };
 
+   Indexable cast() : info("Returns weak indexamle wrapper around the array")
+      = new Indexable
+         {
+            int Length = self.Length;
+            
+            at(int index)
+               = self.at(index);
+            
+            setAt(int index, object value)
+            {
+               self.setAt(index, value)
+            }
+         };
+
    T at(int n)
       : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
    {

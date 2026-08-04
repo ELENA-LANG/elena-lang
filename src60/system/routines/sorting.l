@@ -89,6 +89,9 @@ public sealed IndexableSortingAgent : SortingAgent
       this a := a
    }
     
+   constructor(a)
+      = a as:Indexable;
+      
    at(int index)
       => a;
     

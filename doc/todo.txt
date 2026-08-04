@@ -54,11 +54,11 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
+  - review gui samples
   - review all samples (related to collections / extensions)
-  --------------------------------------
-  * backlog
-  ====================================== 
-  - fix httpget (it fails time to time)
+  - review all rosetta samples
+  - review all tutorials
+  - review all knowhow examples
   --------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===

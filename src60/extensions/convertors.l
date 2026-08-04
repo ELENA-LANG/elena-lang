@@ -5,6 +5,12 @@ import system'calendar;
 
 singleton StringExConvertor
 {
+    string convert(Array a)
+        = StringExConvertor.convert(a as:Indexable);
+        
+    string convert(ArrayList a)
+        = StringExConvertor.convert(a as:Indexable);
+        
     string convert(IntMatrix a)
         = IntmatrixExConvertor.toString(a);
 
