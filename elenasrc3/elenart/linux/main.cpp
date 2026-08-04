@@ -8,6 +8,7 @@
 #include "elena.h"
 // -------------------------------------------------------------------
 #include <unistd.h>
+#include <sys/uio.h>
 
 #include "elenart.h"
 #include "elenartmachine.h"
@@ -113,8 +114,100 @@ void InitializeMTLA(SystemEnv* env, SymbolList* entryList, void* criricalHandler
    machine->startApp(env, entryList);
 }
 
+// ; TEMPORARY DIAGNOSTIC, remove before the PR.
+// ; audits the frame chain of every thread at the moment the collector receives the roots,
+// ; which is where a corrupt chain becomes a corrupt scan. The fault handler in
+// ; lnxroutines.cpp only sees the thread that faulted, and only after the damage
+static size_t MTAAuditCollection = 0;
+static uintptr_t MTAAuditFrame[0x200] = {};
+static size_t MTAAuditStuck[0x200] = {};
+static uintptr_t MTAAuditLink[0x200] = {};
+
+static bool MTAAuditRead(uintptr_t address, void* target, size_t length)
+{
+   iovec local { target, length };
+   iovec remote { (void*)address, length };
+
+   return process_vm_readv(getpid(), &local, 1, &remote, 1, 0) == (ssize_t)length;
+}
+
+static void MTAAuditChains(SystemEnv* env)
+{
+   ThreadTable* table = env->th_table;
+   if (!table)
+      return;
+
+   size_t collection = ++MTAAuditCollection;
+   size_t counter = table->counter;
+   if (counter > 0x200)
+      counter = 0x200;
+
+   for (size_t i = 0; i < counter; i++) {
+      ThreadContent* content = table->slots[i].content;
+      if (!content)
+         continue;
+
+      uintptr_t frame = content->tt_stack_frame;
+      size_t flags = content->tt_flags;
+
+      // ; a thread that leaves an excluded region through the exception unwind never runs
+      // ; the include, so the flag stays one and the head keeps pointing at a node the
+      // ; unwind has already dropped. A legitimate excluded region is short : it does not
+      // ; survive several consecutive collections with the very same head
+      if (flags == 1 && frame && frame == MTAAuditFrame[i]) {
+         MTAAuditStuck[i]++;
+      }
+      else MTAAuditStuck[i] = 0;
+
+      MTAAuditFrame[i] = frame;
+
+      if (!frame)
+         continue;
+
+      uintptr_t link = 0;
+      bool readable = MTAAuditRead(frame, &link, sizeof(link));
+
+      const char* verdict = nullptr;
+      if (!readable) {
+         verdict = "head-unreadable";
+      }
+      else if (link == 1 || (link & (sizeof(uintptr_t) - 1)) != 0) {
+         verdict = "link-not-a-pointer";
+      }
+      else if (link && link < frame) {
+         // ; a descending link makes rsi - rcx negative, read as a huge size
+         verdict = "link-descends";
+      }
+      else if (link && content->tt_stack_root
+         && (link < frame || link > content->tt_stack_root))
+      {
+         // ; every link of a chain has to sit in this thread own stack, between the head
+         // ; and the root published at startup. A link outside it is not a frame at all
+         verdict = "link-off-stack";
+      }
+      else if (MTAAuditStuck[i] >= 3 && link != MTAAuditLink[i]) {
+         // ; the head did not move but the word it points at did. A thread parked inside a
+         // ; legitimate excluded region holds a frozen frame : this node is being written
+         // ; over, so the head describes stack the thread has already dropped
+         verdict = "head-overwritten";
+      }
+
+      if (MTAAuditStuck[i] == 0)
+         MTAAuditLink[i] = link;
+
+      if (verdict) {
+         dprintf(STDERR_FILENO,
+            "[mta-audit] collect=%zu slot=%zu flags=%zu frame=%p link=%p root=%p stuck=%zu %s\n",
+            collection, i, flags, (void*)frame, (void*)link,
+            (void*)content->tt_stack_root, MTAAuditStuck[i], verdict);
+      }
+   }
+}
+
 void* CollectGCLA(void* roots, size_t size, bool fullMode)
 {
+   MTAAuditChains(systemEnv);
+
    return __routineProvider.GCRoutine(systemEnv->gc_table, (GCRoot*)roots, size, fullMode);
 }
 
