@@ -1,5 +1,68 @@
 import system'routines;
 
+// --- Indexer ---
+sealed class Indexer
+{
+   Indexable      it;
+   Reference<int> index;
+   int            length;
+   
+   constructor(Indexable it)
+   {
+      this it := it;
+      this index := 0;
+      this length := it.Length;
+   }
+   
+   get bool Available()
+   {
+      int n := *index;
+
+      ^ n < length;
+   }
+
+   int Index : info("Index property over the field <b>index</b>")
+   {
+      /// Reads the current i-index into an output parameter
+      get()
+      {
+         ^ *index
+      }
+        
+      /// Sets the i-index by specified value
+      set(value)
+      { 
+         index.Value := value
+      }
+   }    
+    
+   appendIndex(int disp)
+      : info("Increases the field <b>index<b> by a value of **disp**")
+   { 
+      index.append(disp)
+   }
+    
+   int Length
+       : info("Length property over the field <b>length<b>")
+   {
+      get()
+      {
+         ^ length
+      }
+   }   
+   
+   Value
+   {
+      get()
+         = it[*index];      
+         
+      set(value)
+      {
+         it[*index] := value
+      }         
+   }
+}
+
 // --- Strategy ---
 
 interface BaseStrategy
@@ -30,7 +93,7 @@ singleton sequentialNext : BaseStrategy
    {
       if(nil == (indexers.seekEach::(indexer)
          {
-            auto it := cast Indexer(indexer); 
+            Indexer it := indexer; 
                     
             if:not(it.appendIndex(1).Available)
                { it.Index := 0; ^ false };
@@ -72,7 +135,7 @@ singleton parallelNext : BaseStrategy
    {
       if(nil != (indexers.seekEach::(indexer)
                {
-                  auto it := cast Indexer(indexer); 
+                  Indexer it := indexer; 
                     
                   ^ it.appendIndex(1).Available.Inverted
                }))
@@ -188,7 +251,7 @@ public class SequentialEnumerator : BaseRowEnumerator
         
       for (int i := 0; i < _length; i += 1)
       {
-         _indexers[i] := arguments[i].indexer()
+         _indexers[i] := new Indexer(arguments[i]);
       };
         
       self.reset()
@@ -214,9 +277,9 @@ public class ParallelEnumerator : BaseRowEnumerator
         
       for (int i := 0; i < _length; i += 1)
       {
-         Indexer it := arguments[i].indexer();
+         Indexer it := new Indexer(arguments[i]);
             
-         _indexers[i] := /*arguments[i].indexer()*/it
+         _indexers[i] := it
       };
         
       self.reset()        
@@ -245,9 +308,9 @@ public class Combinator : BaseRowEnumerator
         
       for (int i := 0; i < _length; i += 1)
       {
-         Indexer it := arguments[i].indexer();
+         Indexer it := new Indexer(arguments[i]);
             
-         _indexers[i] := /*arguments[i].indexer()*/it
+         _indexers[i] := it
       };
         
       self.reset()

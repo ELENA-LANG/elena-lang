@@ -2793,6 +2793,30 @@ bool Compiler :: importParameterizedTemplate(Scope& scope, SyntaxNode node, Synt
    return true;
 }
 
+static inline void copyTemplateTypes(SyntaxNode node, SyntaxNode target)
+{
+   SyntaxNode current = node.firstChild();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::Type:
+         case SyntaxKey::TemplateArg:
+            copyTemplateTypes(current, target);
+            break;
+         case SyntaxKey::TemplateType:
+         {
+            SyntaxNode typeNode = target.insertNode(SyntaxKey::TemplateType);
+            SyntaxTreeWriter writer(typeNode);
+            SyntaxTree::copyNodeSafe(writer, current);
+            break;
+         }
+         default:
+            break;
+      }
+
+      current = current.nextNode();
+   }
+}
+
 bool Compiler::importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, bool weakOne)
 {
    TypeAttributes attributes = {};
@@ -2801,6 +2825,10 @@ bool Compiler::importTemplate(Scope& scope, SyntaxNode node, SyntaxNode target, 
    declareTemplateAttributes(scope, node, typeList, attributes, true, false);
    if (attributes.isNonempty())
       scope.raiseError(errInvalidOperation, node);
+
+   // HOTFIX : let's copy template types to be resolved in compile pass;
+   //          the proper solution would be probably to inject template type as is
+   copyTemplateTypes(node, target);
 
    // HOTFIX : generate a temporal template to pass the type
    SyntaxTree dummyTree;
@@ -6675,7 +6703,7 @@ ObjectInfo Compiler::defineArrayType(Scope& scope, ObjectInfo info, bool declara
    return info;
 }
 
-TypeInfo Compiler::resolveTypeTemplate(Scope& scope, SyntaxNode node,
+TypeInfo Compiler :: resolveTypeTemplate(Scope& scope, SyntaxNode node,
    TypeAttributes& attributes, bool declarationMode, bool objectMode)
 {
    TemplateTypeList typeList;
@@ -11222,6 +11250,12 @@ void Compiler :: compileVMT(BuildTreeWriter& writer, ClassScope& scope, SyntaxNo
    SyntaxNode current = node.firstChild();
    while (current != SyntaxKey::None) {
       switch (current.key) {
+         case SyntaxKey::TemplateType:
+         {
+            TypeAttributes dummies = {};
+            resolveTypeTemplate(scope, current, dummies, false);
+            break;
+         }
          case SyntaxKey::HasStaticConstructor:
             scope.withStaticConstructor = true;
             break;

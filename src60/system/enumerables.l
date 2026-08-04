@@ -60,83 +60,38 @@ public abstract Enumerable<T>
      : info("Returns the strong-typed enumerator of the class");
 }
 
-// --- Indexer ---
+// --- Indexable ---
 
-public interface Indexer
-   : info("A generic indexer interface<br/>The indexer is a tape interface over a collection, allowing to move along it, setting and getting its elements by an index")
+public interface Indexable
+   : info("An abstract generic indexable class<br/>Must be overridden")
 {
-   get abstract bool Available()
-      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false");
-
-   get abstract Value()
-      : info("Returns an element the given index");
-
-   set abstract Value(value)
-      : info("Set an element at the given index");
-
-   abstract int Index : info("Index property")
-   {
-      get();
-
-      set(value);
-   }
-
-   abstract appendIndex(int index)
-     : info("Increases the current index by parameter **index**");
-
    abstract int Length
      : info("Returns the length of the corresponding collection")
    {
       get();
    }
+   
+   abstract at(int index)
+      : info("Returns an element at the given <b>index</b>");
+
+   abstract setAt(int index, object element)
+      : info("Set an element at the given <b>index</b>");   
 }
 
-public interface Indexer<T>
-   : info("A strong-typed indexer interface<br/>The indexer is a tape interface over a collection, allowing to move along it, setting and getting its elements by an index")
-{
-   get abstract bool Available()
-      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false");
-
-   get abstract T Value()
-      : info("Returns an element the given index");
-
-   set abstract Value(T value)
-      : info("Set an element at the given index");
-
-   abstract int Index : info("Index property")
-   {
-      get();
-
-      set(value);
-   }
-
-   abstract appendIndex(int index)
-      : info("Increases the current index by parameter **index**");
-
-   abstract int Length
-      : info("Returns the length of the corresponding collection")
-   {
-      get();
-   }
-
-   abstract Indexer cast()
-      : info("Converts the object to a generic indexer");
-}
-
-// --- Indexable ---
-
-public abstract Indexable
-   : info("An abstract generic indexable class<br/>Must be overridden")
-{
-   abstract Indexer indexer()
-      : info("Returns the generic indexer of the class");
-}
-
-public abstract Indexable<T>
+public interface Indexable<T>
    : info("An abstract strong-typed indexable class<br/>Must be overridden")
 {
-   abstract Indexer<T> indexer()
-      : info("Returns the strong-typed indexer of the class");
+   abstract int Length
+     : info("Returns the length of the corresponding collection")
+   {
+      get();
+   }
+   
+   abstract T at(int index)
+      : info("Returns an element at the given <b>index</b>");
+
+   abstract setAt(int index, T element)
+      : info("Set an element at the given <b>index</b>");   
 }
 
 // --- BaseEnumerator<type> ---
@@ -159,96 +114,6 @@ public abstract class BaseEnumerator<T> : Enumerator<T>,
     
    Enumerator cast() : info("Returns a wrapper implementing a generic enumerator")
       = new Enumerator { embeddable dispatch() => self; };
-}
-
-public abstract BaseIndexer<T> : Indexer<T>,
-   info("A base indexer template for a collection or an array<br/>Property <b>Value<b> must be implemented")
-{
-   Reference<int> index;
-   int length;
-    
-   /// Returns false if the index out of range
-   bool Available : info("Returns true if the field <b>index</b> is less then the field <b>length</b>; returns false otherwise")
-      = index.Value < length;
-
-   int Index : info("Index property over the field <b>index</b>")
-   {    
-      /// Reads the current i-index into an output parameter
-      get()
-      {
-         ^ *index
-      }    
-        
-      /// Sets the i-index by specified value
-      set(index)
-      {
-         this index.Value := index;
-      }
-   } 
-    
-   appendIndex(int offs)
-      : info("Increases the field <b>index<b> by a value of **disp**")
-   { 
-      index.append(offs);
-   }     
-    
-   int Length
-      : info("Returns a value of the field <b>length<b>")
-   {
-      get()
-      {
-         ^ length;
-      }
-   }
-    
-   Indexer cast() : info("Returns a wrapper implementing a generic indexer")
-      = new Indexer { embeddable dispatch() => self; };
-}
-
-// --- BaseIndexer ---
-
-public abstract class BaseIndexer : Indexer,
-   info("A base generic indexer for a collection or an array<br/>Property <b>Value<b> must be implemented")
-{
-   Reference<int> index;
-   int            length;
-    
-   get bool Available() : info("Returns true if the field <b>index</b> is less then the field <b>length</b>; returns false otherwise")
-   {
-      int n := *index;
-
-      ^ n < length;
-   }
-
-   int Index : info("Index property over the field <b>index</b>")
-   {
-      /// Reads the current i-index into an output parameter
-      get()
-      {
-         ^ *index
-      }
-        
-      /// Sets the i-index by specified value
-      set(value)
-      { 
-         index.Value := value
-      }
-   }    
-    
-   appendIndex(int disp)
-      : info("Increases the field <b>index<b> by a value of **disp**")
-   { 
-      index.append(disp)
-   }
-    
-   int Length
-       : info("Length property over the field <b>length<b>")
-   {
-      get()
-      {
-         ^ length
-      }
-   }
 }
 
 // --- BaseEnumerator ---

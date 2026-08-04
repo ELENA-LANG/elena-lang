@@ -32,6 +32,8 @@
   - [ADDED] system'collections'Union<T1,T2>
   - [ADDED] extension ClassHashCode (system'runtime)
   - [ADDED] system'dynamic : injectable_constructor attribute (to support DI)
+  - [REMOVED] system'Indexer, system'Indexer<T> interfaces are no longer supported
+  - [REDUX] system'Indexable, system'Indexable<T> interfaces are modified
 
 - Scripts
 

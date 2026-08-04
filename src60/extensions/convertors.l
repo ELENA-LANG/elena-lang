@@ -8,15 +8,13 @@ singleton StringExConvertor
     string convert(IntMatrix a)
         = IntmatrixExConvertor.toString(a);
 
-   string convert(Indexer it)
+   string convert(Indexable it)
    {
       auto output := new TextBuilder();
-      while (it.Available)
-      {
-         output.write((*it).toString());
-         output.write(",");
-            
-         it.appendIndex(1)
+      int len := it.Length;
+      for (int i := 0; i < len; i++) {
+         output.write((it[i]).toString());
+         output.write(",");         
       };
         
       int length := output.Length;
@@ -49,9 +47,6 @@ singleton StringExConvertor
    string convert(Enumerable o)
       <= convert(o.enumerator());
 
-   string convert(Indexable o)
-      <= convert(o.indexer());
-
    string convert(o)
       = StringConvertor.convert(o);
 }
@@ -69,13 +64,12 @@ public singleton arrayConvertorEx
              ^ arrayConvertorEx.convert(en);
          };
 
-         var it := o.indexer();
+         Indexable it := o;
          int len := it.Length;
          arr := Array.allocate(len);
          for (int i := 0; i < len; i += 1)
          {
-            arr[i] := *it;
-            it.appendIndex(1)
+            arr[i] := it[i];
          }
       };
         
@@ -91,7 +85,7 @@ public singleton arrayConvertorEx
              ^ arrayConvertorEx.convert(en, capacity);
          };
 
-         var it := o.indexer();
+         Indexable it := o;
          int len := it.Length;
          if (len < capacity)
             len := capacity;
@@ -99,8 +93,7 @@ public singleton arrayConvertorEx
          arr := Array.allocate(len);
          for (int i := 0; i < len; i += 1)
          {
-            arr[i] := *it;
-            it.appendIndex(1)
+            arr[i] := it[i];
          }
       };
         

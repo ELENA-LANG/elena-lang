@@ -10,7 +10,6 @@ In development:
   * backlog
   ====================================== 
   - make sure the preloaded symbols declared in another module is loaded when that module is used
-  - fix httpget (it fails time to time)
   - fix httpsget ()
   - switch with class types
   - simplified syntax - Template<int> t := new auto();
@@ -53,18 +52,16 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * api
+  * samples
   ====================================== 
-  - get rid of indexer interface
-  - support IList - supporting getAt / setAt / Length 
-  - do we need iterator (similar to C++)
+  - review all samples (related to collections / extensions)
   --------------------------------------
-  * current : ide bug fixes
+  * backlog
   ====================================== 
-  - highlight : constructor new(int arg1/*, real arg2*/) <- comment is not recognized
-  ---------------------------------------
+  - fix httpget (it fails time to time)
+  --------------------------------------
 
-  === Iteration 48 (text based adventage; httpget / httpsget reliability; #866) ===
+  === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3
   --------------------------------------
   --------------------------------------

@@ -406,32 +406,22 @@ public extension indexableOp<T>
 {
    populate(Func<int,T> f)
    {
-      Indexer it := self.indexer();
-
-      while (it.Available)
-      {
-         int i := it.Index;
-            
-         it.Value := f(i);
-            
-         it.appendIndex(1)
+      Indexable it := self;
+      int len := it.Length;
+      for (int i := 0; i < len; i++) {
+         it[i] := f(i);
       };
         
       ^ self
    }
 
-   forEvery(Func<int,T> fn)
+   forEvery(Action<int> fn)
    {
-      Indexer it := self.indexer();
-        
-      while (it.Available)
-      {
-         int i := it.Index;
-            
-         fn(i);
-            
-         it.appendIndex(1)
-      }
+      Indexable it := self;
+      int len := it.Length;
+      for (int i := 0; i < len; i++) {
+         fn(it[i])
+      };
    }    
 }
 
@@ -439,37 +429,23 @@ public extension indexableOp
 {
    exchange(int i1, int i2)
    {
-      Indexer indexer := self.indexer();
-        
-      indexer.Index := i1;
-        
-      var o1 := *indexer;
-        
-      indexer.Index := i2;
-      var o2 := *indexer;
-        
-      indexer.Value := o1;
-        
-      indexer.Index := i1;
-      indexer.Value := o2
+      var temp := self[i1];
+      self[i1] := self[i2];
+      self[i2] := temp; 
    }
 
    sort(Func2 compareFunc)
    {
-      QuickSorting.sort(new IndexerSortingAgent(self), compareFunc);
+      QuickSorting.sort(new IndexableSortingAgent(self), compareFunc);
    }
 
    populate(Func1 f)
    {
-      Indexer it := self.indexer();
-
-      while (it.Available)
-      {
-         int i := it.Index;
-            
-         it.Value := f(i);
-            
-         it.appendIndex(1)
+      Indexable it := self;
+      
+      int len := it.Length;
+      for (int i := 0; i < len; i++) {
+         it[i] := f(i);
       };
    }    
 
@@ -481,15 +457,13 @@ public extension indexableOp
 
    deepClone()
    {
+      Indexable it := self;
+      
       var copy := self.clone();
-        
-      Indexer indexer := copy.indexer();
-        
-      while(indexer.Available)
-      {
-         indexer.Value := (*indexer).clone();
-            
-         indexer.appendIndex(1)
+
+      int len := it.Length;
+      for (int i := 0; i < len; i++) {
+         copy[i] := it[i].clone();
       };
         
       ^ copy
@@ -498,21 +472,17 @@ public extension indexableOp
    ascendant()
       = self.clone().sort(ifOrdered);
 
-   bool sequenceEqual(array)
+   bool sequenceEqual(Indexable array)
    {
-      if (self.Length != array.Length)
+      Indexable it := self;
+      
+      if (it.Length != array.Length)
          { ^ false };
-            
-      Indexer a := self.indexer();
-      Indexer b := array.indexer();
-        
-      while (a.Available)
-      {
-         if:not ((*a) == (*b))
-            { ^ false };
-                
-         a.appendIndex(1);
-         b.appendIndex(1)
+
+      int len := it.Length;
+      for (int i := 0; i < len; i++) {
+         if:not (it[i] == array[i])
+            { ^ false };         
       };
           
       ^ true                
@@ -523,7 +493,7 @@ public extension indexableOp
             
    sequenceReverse(int index, int counter)
    {
-      Indexer it := self.indexer();
+      Indexable it := self;
         
       int      i := index;
       int      j := counter;
@@ -532,16 +502,14 @@ public extension indexableOp
         
       while (i < j)
       {
-            it.Index := i;
-            var temp1 := *it;
-            it.Index := j;
-            var temp2 := *it;
-            it.Value := temp1;
-            it.Index := i;
-            it.Value := temp2;
+         var temp1 := it[i];
+         var temp2 := it[j];
+
+         it[j] := temp1;
+         it[i] := temp2;
             
-            i := i + 1;
-            j := j - 1
+         i := i + 1;
+         j := j - 1
       };
         
       ^ self
@@ -549,14 +517,12 @@ public extension indexableOp
 
    int indexOfElement(object element)
    {
-      Indexer it := self.indexer();
+      Indexable it := self;
         
-      while (it.Available)
-      {
-         if (element == (*it))
-            { ^ it.Index };
-            
-         it.appendIndex(1);
+      int len := it.Length;
+      for (int i := 0; i < len; i++) {
+         if (element == it[i])
+            { ^ i };         
       };
         
       ^ -1
@@ -564,21 +530,19 @@ public extension indexableOp
 
    bool isSorted(Func2 compareFunc)
    {
-      auto it := cast Indexer(self.indexer());
-      if (it.Available)
-      {
-         var previous := *it;
-         it.appendIndex(1);
-         while (it.Available)
+      Indexable it := self;
+      int len := it.Length;
+      if (len == 0)
+         { ^ true };
+      
+      var previous := it[0];
+      for (int i := 1; i < len; i++) {
+         if:not (compareFunc(previous, it[i]))
          {
-            if:not (compareFunc(previous, *it))
-            {
-               ^ false
-            };
-                
-            previous := *it;
-            it.appendIndex(1)
-         }
+            ^ false
+         };
+         
+         previous := it[i];
       };
         
       ^ true

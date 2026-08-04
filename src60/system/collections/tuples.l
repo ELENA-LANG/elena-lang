@@ -20,23 +20,6 @@ namespace collections
             ! : { OutOfRangeException.raise() }
       }
 
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 1;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            NotSupportedException.raise();
-         }
-      };
-
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
       = new BaseEnumerator
@@ -82,23 +65,6 @@ namespace collections
       Tuple<object,object> cast()
          = new Tuple<object,object>(Item1, Item2);
 
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 2;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            NotSupportedException.raise();
-         }
-      };
-
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
       = new BaseEnumerator
@@ -118,7 +84,9 @@ namespace collections
       };
    }
 
-   public sealed VarTuple<T1, T2> : info("A variable fixed-size collection of two elemenet")
+   public sealed VarTuple<T1, T2> 
+      : interface<Indexable<object>>, 
+         info("A variable fixed-size collection of two elemenet")
    {
       constructor() : info("Creates a fixed-size collection with default values")
       {
@@ -132,6 +100,8 @@ namespace collections
         
       T1 Item1 : rprop;
       T2 Item2 : prop;
+
+      int Length = 2;
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
@@ -149,23 +119,6 @@ namespace collections
             ! : { OutOfRangeException.raise() }
       }
 
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 2;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            self.setAt(this index, o);
-         }
-      };
-
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
       = new BaseEnumerator
@@ -185,7 +138,9 @@ namespace collections
       };
    }
 
-   public sealed VarTuple<T1, T2, T3> : info("A variable fixed-size collection of three elemenet")
+   public sealed VarTuple<T1, T2, T3>
+      : interface<Indexable<object>>, 
+         info("A variable fixed-size collection of three elemenet")
    {
       constructor() : info("Creates a fixed-size collection with default values")
       {
@@ -201,6 +156,8 @@ namespace collections
       T1 Item1 : prop;
       T2 Item2 : prop;
       T3 Item3 : prop;
+
+      int Length = 3;
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
@@ -219,23 +176,6 @@ namespace collections
             2 : { Item3 := val }
             ! : { OutOfRangeException.raise() }
       }
-
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 3;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            self.setAt(this index, o)
-         }
-      };
 
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
@@ -285,23 +225,6 @@ namespace collections
             ! : { OutOfRangeException.raise() }
       }      
 
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 3;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            NotSupportedException.raise();
-         }
-      };
-
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
       = new BaseEnumerator
@@ -321,7 +244,9 @@ namespace collections
       };
    }
 
-   public sealed VarTuple<T1, T2, T3, T4> : info("A variable fixed-size collection of four elemenet")
+   public sealed VarTuple<T1, T2, T3, T4>
+      : interface<Indexable<object>>,    
+         info("A variable fixed-size collection of four elemenet")
    {
       constructor() : info("Creates a fixed-size collection with default values")
       {
@@ -339,6 +264,8 @@ namespace collections
       T2 Item2 : prop;
       T3 Item3 : prop;
       T4 Item4 : prop;
+
+      int Length = 4;
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
@@ -359,23 +286,6 @@ namespace collections
             3 : { Item4 := val }
             ! : { OutOfRangeException.raise() }
       }
-
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 4;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            self.setAt(this index, o)
-         }
-      };
 
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
@@ -428,23 +338,6 @@ namespace collections
             ! : { OutOfRangeException.raise() }
       }      
 
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 4;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            NotSupportedException.raise();
-         }
-      };
-
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
       = new BaseEnumerator
@@ -464,7 +357,9 @@ namespace collections
       };
    }
 
-   public sealed VarTuple<T1, T2, T3, T4, T5> : info("A variable fixed-size collection of five elemenet")
+   public sealed VarTuple<T1, T2, T3, T4, T5>
+      : interface<Indexable<object>>,    
+         info("A variable fixed-size collection of five elemenet")
    {
       constructor() : info("Creates a fixed-size collection with default values")
       {
@@ -478,6 +373,8 @@ namespace collections
          Item4 := o4;
          Item5 := o5;
       }
+        
+      int Length = 5;
         
       T1 Item1 : prop;
       T2 Item2 : prop;
@@ -496,22 +393,16 @@ namespace collections
             ! : { OutOfRangeException.raise() }
       }      
 
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
+      setAt(int index, object val) : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         this index := 0;
-           
-         this length := 5;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            NotSupportedException.raise();
-         }
-      };
+         index =>
+            0 : { Item1 := val }
+            1 : { Item2 := val }
+            2 : { Item3 := val }
+            3 : { Item4 := val }
+            4 : { Item5 := val }
+            ! : { OutOfRangeException.raise() }
+      }
 
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
@@ -566,34 +457,6 @@ namespace collections
             4 : { ^ Item5 }
             ! : { OutOfRangeException.raise() }
       }      
-
-      setAt(int index, object val) : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
-      {
-         index =>
-            0 : { Item1 := val }
-            1 : { Item2 := val }
-            2 : { Item3 := val }
-            3 : { Item4 := val }
-            4 : { Item5 := val }
-            ! : { OutOfRangeException.raise() }
-      }
-
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 5;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            self.setAt(this index, o)
-         }
-      };
 
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
@@ -652,23 +515,6 @@ namespace collections
             ! : { OutOfRangeException.raise() }
       }      
 
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 6;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            NotSupportedException.raise();
-         }
-      };
-
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 
       = new BaseEnumerator
@@ -688,7 +534,9 @@ namespace collections
       };
    }
 
-   public sealed VarTuple<T1, T2, T3, T4, T5, T6> : info("A variable fixed-size collection of six elemenet")
+   public sealed VarTuple<T1, T2, T3, T4, T5, T6>
+      : interface<Indexable<object>>,    
+         info("A variable fixed-size collection of six elemenet")
    {
       constructor() : info("Creates a fixed-size collection with default values")
       {
@@ -710,6 +558,8 @@ namespace collections
       T4 Item4 : prop;
       T5 Item5 : prop;
       T6 Item6 : prop;
+
+      int Length = 6;
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
@@ -734,23 +584,6 @@ namespace collections
             5 : { Item6 := val }
             ! : { OutOfRangeException.raise() }
       }
-
-      Indexer indexer() 
-         : info("Creates a fixed-sized collection indexer") 
-      = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 6;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            self.setAt(this index, o)
-         }
-      };
 
       Enumerator enumerator()
         : info("Creates a fixed-sized collection enumerator") 

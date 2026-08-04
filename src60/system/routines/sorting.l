@@ -70,9 +70,9 @@ public sealed ArraySortingAgent : SortingAgent
    }    
 }
 
-public sealed IndexerSortingAgent : SortingAgent
+public sealed IndexableSortingAgent : SortingAgent
 {
-   Indexer a;
+   Indexable a;
     
    int Length
    {
@@ -84,49 +84,31 @@ public sealed IndexerSortingAgent : SortingAgent
       }
    }
         
-   constructor(Indexer a)
+   constructor(Indexable a)
    {
       this a := a
    }
     
-   constructor(a)
-      = cast Indexer(a.indexer());
-        //<=();
-    
    at(int index)
-   {
-      a.Index := index;
-        
-      ^ *a
-   }
+      => a;
     
    setAt(int index, object value)
-   {
-      a.Index := index;
-        
-      a.Value := value
-   }
+      => a;
 
    exchange(int i, int j)
    {
-      a.Index := i;
-      var vi := *a;
-
-      a.Index := j;
-      var vj := *a;
-      a.Value := vi;
-        
-      a.Index := i;
-      a.Value := vj
+      var vi := a[i];
+      var vj := a[j];
+      
+      a[j] := vi;
+      a[i] := vj;
    }    
 
    move(int i, int j)
    {
-      a.Index := j;
-      var vj := *a;
-            
-      a.Index := i;
-      a.Value := vj
+      var vj := a[j];
+
+      a[i] := vj
    }       
 }
 

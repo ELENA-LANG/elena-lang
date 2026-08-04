@@ -32,16 +32,14 @@ extension jsonSerializer : TextBuilder
       self.write("]");
    }    
     
-   serialize(Indexer it)
+   serialize(Indexable it)
    {
       self.write("[");
         
-      while (it.Available)
-      {
-         self.serialize(*it);
-         self.write(",");
-            
-         it.appendIndex(1)
+      int len := it.Length;
+      for (int i := 0; i < len; i++) {
+         self.serialize(it[i]);
+         self.write(",");         
       };
         
       int outputLen := self.Length;
@@ -167,7 +165,7 @@ extension jsonSerializer : TextBuilder
       {
          ^ self.serialize(en)
       };
-      if (object.indexer(); is Indexer it)
+      if (object; is Indexable it)
       {
          ^ self.serialize(it)
       };

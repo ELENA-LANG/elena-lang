@@ -126,9 +126,6 @@ namespace collections
 
       Enumerator enumerator() : info("Returns the collection enumerator")
          = new SortedListEnumerator(self);
-
-      Indexer indexer() : info("Returns the collection indexer")
-         = new SortedListIndexer(self);
    }
 
    // --- SortedListEnumerator ---
@@ -165,54 +162,8 @@ namespace collections
       enumerable() : info("returns the enumerating sorted collection")
          = _list;
    }
-   
-   // --- SortedListIndexer ---
-   public class SortedListIndexer : Indexer, info("A sorted collection indexer")
-   {      
-      SortedList     _list;
-      Reference<int> _index;
 
-      constructor(SortedList list) : info("Creates an indexer of <b>list</b> sorted collection")
-      {
-         _list := list;
-         _index := 0
-      }
-
-      bool Available : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
-         = *_index < _list.Length;
-
-      Value : info("The indexed element value getter / setter")
-      {
-         get()
-            = _list[*_index];
-
-         set(value)
-         {
-            _list.setAt(*_index, value);
-         }
-      }
-
-      int Index : info("Index property")
-      {
-         get()
-            = *_index;
-
-         set(value)
-         {
-            _index.Value := value
-         }
-      }
-
-      int Length : info("Returns the length of the indexed sorted collection")
-         = _list.Length;
-
-      appendIndex(int index) : info("Increases the current index by parameter **index**")
-      {
-         _index.Value := *_index + index
-      }
-   }
-
-   public sealed class SortedArrayList : Indexable, info("A sorted weak list of key-value pairs")
+   public sealed class SortedArrayList : interface<Indexable>, info("A sorted weak list of key-value pairs")
    {
       VarTuple<object, object>[] _array;
       Reference<int>             _length;
@@ -372,25 +323,13 @@ namespace collections
             this index.Value := -1
          }
       };
-
-      Indexer indexer() : info("Returns the list indexer") = new BaseIndexer
-      {
-         this index := 0;
-           
-         this length := 1;
-           
-         get Value()
-            = self.at(this index);
-               
-         set Value(o)
-         {
-            self.setAt(this index, o)
-         }
-      };
    }
 
    // --- SortedList<TKey,TValue> ---                                                      
-   public sealed class SortedList<TKey, TValue> : Enumerable<TValue>, info("A sorted strong typed list of key-value pairs")
+   public sealed class SortedList<TKey, TValue> 
+      : Enumerable<TValue>, 
+         interface<Indexable<TValue>>,
+         info("A sorted strong typed list of key-value pairs")
    {
       VarTuple<TKey, TValue>[] _array;
       Reference<int>           _length;
@@ -548,21 +487,6 @@ namespace collections
          reset()
          {
             this index.Value := -1
-         }
-      };
-
-      Indexer<TValue> indexer() : info("Returns the list indexer") = new BaseIndexer<TValue>
-      {
-         this index := 0;
-           
-         this length := 1;
-           
-         get TValue Value()
-            = self.at(this index);
-               
-         set Value(TValue o)
-         {
-            self.setAt(this index, o)
          }
       };
    }

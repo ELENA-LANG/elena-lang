@@ -360,6 +360,11 @@ size_t ELENARTMachine :: allocateThreadEntry(SystemEnv* env)
       return index;
    }
 
+   for (size_t index = 0; index < env->th_table->counter; index++) {
+      if (env->th_table->slots[index].content == nullptr && env->th_table->slots[index].arg == nullptr)
+         return index;
+   }
+
    return INVALID_SIZE;
 }
 

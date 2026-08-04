@@ -1558,21 +1558,15 @@ public extension wideOp : WideString
 
 public extension weakArrayOp
 {
-    Array Subarray(int index, int length) : info("Returns a sub array of the collection starting from <b>index</b> and with the specified <b>length</b><br/>The object must support indexer message")
-    {
-        auto it := self.indexer();
-        it.Index := index;
+   Array Subarray(int index, int length) : info("Returns a sub array of the collection starting from <b>index</b> and with the specified <b>length</b><br/>The object must support indexable interface")
+   {
+      auto a := Array.allocate(length);
+      for (int i := 0; i < length; i++) {
+         a[i] := self[i + index];
+      };
         
-        auto a := Array.allocate(length);
-        for (int i := 0; i < length; i += 1)
-        {
-            a[i] := *it;
-            
-            it.appendIndex(1)
-        };
-        
-        ^ a;
-    }
+      ^ a;
+   }
 }
 
 // --- stringWeakOp ---

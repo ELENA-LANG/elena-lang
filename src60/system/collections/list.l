@@ -1,6 +1,6 @@
 namespace collections
 {
-   public sealed class ArrayList : Indexable, info("A weak indexable collection")
+   public sealed class ArrayList : interface<Indexable>, info("A weak indexable collection")
    {
       Array          _array;
       Reference<int> _length;
@@ -118,13 +118,9 @@ namespace collections
       {
          if (nil != indexable)
          {
-            Indexer it := indexable.indexer();
-
-            while (it.Available)
-            {       
-               self.append(*it);
-
-               it.appendIndex(1)
+            int len := indexable.Length;
+            for (int i := 0; i < len; i++) {
+               self.append(indexable[i]);
             }
          }
       }
@@ -183,8 +179,6 @@ namespace collections
 
       Enumerator enumerator() : info("Returns the collection enumerator") = new ArrayListEnumerator(self);
 
-      Indexer indexer() : info("Returns the collection indexer") = new ArrayListIndexer(self);
-
       ArrayList clone() : info("Returns a shallow copy of the collection")
       {
          int len := *_length;
@@ -236,65 +230,7 @@ namespace collections
         = _list;
    }
 
-    // --- ArrayListIndexer ---
-    
-   public class ArrayListIndexer : Indexer, info("A weak collection indexer")
-   {
-      ArrayList      _list;
-      Reference<int> _index;
-
-      constructor(ArrayList list) : info("Creates an indexer of <b>list</b> weak collection")
-      {
-         _list := list;
-         _index := 0
-      }
-
-      get bool Available() : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
-      {
-         int length := _list.Length;
-            
-         ^ length > *_index
-      }
-    
-      get Value() : info("Returns the indexed element")
-      {
-         ^ _list.at(*_index)
-      }
-        
-      set Value(o) : info("Set the element at the current index")
-      {
-         _list.setAt(*_index, o)
-      }
-        
-      int Index : info("Index property")
-      {
-         get()
-         {
-            ^ *_index
-         }
-            
-         set(n)
-         {
-            _index.Value := n
-         }
-      }
-        
-      appendIndex(int n) : info("Increases the current index by parameter **index**")
-      { 
-         _index.append(n)
-      } 
-        
-      int Length : info("Returns the length of the indexed weak collection")
-      {
-         get()
-         {
-            int retVal := _list.Length;
-                
-            ^ retVal
-         }
-      }
-
-   }
+   // --- Dictionary ---
 
    public sealed  class Dictionary : Enumerable, info("A weak dictionary class")
    {
@@ -483,7 +419,9 @@ namespace collections
       }
    }
 
-   public sealed class List : Enumerable,
+   public sealed class List 
+      : Enumerable,
+         interface<Indexable>,
          info("A list of objects")
    {
       Reference<int> _count;
@@ -621,9 +559,6 @@ namespace collections
       Enumerator enumerator() : info("Returns the list enumerator")
          = new ListEnumerator(self);
     
-      Indexer indexer() : info("Returns the list indexer")
-         = new ListIndexer(self);
-    
       List clone() : info("Creates a shallow copy of the list")
       {
          auto list := new List();
@@ -673,57 +608,9 @@ namespace collections
         
       enumerable() : info("Returns an enumerable list") = _list;
    }
-    
-   // --- ListIndexer ---
-    
-   class ListIndexer : Indexer, info("A list indexer")
-   {
-      List           _list;
-      ListItem?      _current;
-      Reference<int> _index;
-        
-      constructor(List list) : info("Creates a list indexer")
-      {
-         _list := list;
-         _current := list.TopItem;
-         _index := 0;
-      }
-    
-      get bool Available() : info("Returns false if the index out of range") = nil != _current;
-   
-      get Value() : info("Returns the current member") = _current?.get();
-        
-      set Value(o) : info("Sets the current member")
-      {
-         _current!.set(o)
-      }
-        
-      get int Index() : info("Returns the current index")
-      {
-         ^ _index.Value
-      }
-        
-      set Index(int n) : info("Sets the current index")
-      {
-         _index.Value := n
-      }
-        
-      appendIndex(int offs) : info("Increases the current index by parameter **index**")
-      {
-         int i := _index.Value;
-         i := i + offs;
-            
-         self.Index := i
-      }
-        
-      get int Length() : info("Returns the indexed list length")
-      {
-         ^ _list.Length
-      }
-   }
 
    // --- List ---
-   public sealed List<T> : Enumerable<T>, info("A strong-typed list")
+   public sealed List<T> : Enumerable<T>, interface<Indexable<T>>, info("A strong-typed list")
    {
       T[]            _array;
       Reference<int> _length;
@@ -936,21 +823,6 @@ namespace collections
          reset()
          {
             this index.Value := -1
-         }
-      };
-    
-      Indexer<T> indexer() : info("Returns a list indexer") = new BaseIndexer<T>
-      {
-         this index := 0;
-            
-         this length := self.Length;
-            
-         get T Value()
-            = self.at(this index.Value);
-                
-         set Value(T o)
-         {
-            self.setAt(this index.Value, o)
          }
       };
             

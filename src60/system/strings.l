@@ -1,6 +1,6 @@
 // --- Array template ---
 
-public sealed Array<T> : Indexable<T>,
+public sealed Array<T> : interface<Indexable<T>>,
    info("A strong-typed array template")
 {
    embeddable __string T[] array;
@@ -82,23 +82,6 @@ public sealed Array<T> : Indexable<T>,
 
    Enumerable cast() : info("Returns enumerable wrapper around the array")
       = new Enumerable{ Enumerator enumerator() => self; };
-
-   Indexer<T> indexer() 
-      : info("Creates an array indexer") 
-   = new BaseIndexer<T>
-   {
-      this index := 0;
-        
-      this length := self.Length;
-        
-      get T Value()
-         = self.at(this index);
-            
-      set Value(T o)
-      {
-         self.setAt(this index, o)
-      }
-   };   
 
    T at(int n)
       : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
@@ -287,7 +270,7 @@ public sealed const ConstArray<T> : Enumerable<T>,
 
 // --- Variadic Array template ---
 
-public sealed nonstructural VariadicArray<T> : Indexable<T>,
+public sealed nonstructural VariadicArray<T> : interface<Indexable<T>>,
    info("A strong-typed variadic array template<br/>It is used to box the method variadic argument list")
 {
    embeddable __string T[] array;
@@ -332,23 +315,6 @@ public sealed nonstructural VariadicArray<T> : Indexable<T>,
          this index := -1
       }
    };
-
-   Indexer<T> indexer() 
-      : info("Creates a variadic array indexer") 
-   = new BaseIndexer<T>
-   {
-      this index := 0;
-        
-      this length := self.Length;
-        
-      get T Value()
-         = self.at(this index.Value);
-            
-      set Value(T o)
-      {
-         self.setAt(this index.Value, o)
-      }
-   };    
 
    T[] cast()
       : info("Creates a strong typed array of the variadic array elements")
@@ -526,8 +492,9 @@ public sealed Matrix<T>
 
 // --- BitArray ---
 
-public sealed class BitArray
-   : info("An array of Boolean values")
+public sealed class BitArray 
+   : interface<Indexable<bool>>, 
+      info("An array of Boolean values")
 {
    int[] _array;
    int   _length;
@@ -597,16 +564,13 @@ public sealed class BitArray
    Enumerator<bool> enumerator()
        : info("Creates a boolean enumerator")
      = new BitArrayEnumerator(self);
-
-   Indexer<bool> indexer() 
-       : info("Creates a boolean indexer")
-     = new BitArrayIndexer(self);
 }
 
 // --- BitArray32 ---
 
-public sealed class BitArray32
-   : info("An 32-bit integer bit map")
+public sealed class BitArray32 
+   : interface<Indexable<bool>>,
+      info("An 32-bit integer bit map")
 {
    int _value;
     
@@ -657,10 +621,6 @@ public sealed class BitArray32
    Enumerator<bool> enumerator() 
          : info("Creates a bit map enumerator")
       = new BitArray32Enumerator(self);
-
-   Indexer<bool> indexer() 
-         : info("Creates a bit map indexer")
-     = new BitArray32Indexer(self);
 }
 
 // --- IntMatrix ---
@@ -737,22 +697,7 @@ public sealed class IntMatrix
        : info("Returns indexable wrapper around the matrix row at the <b>i</b> position")
    = new Indexable<int>
    {
-      Length = _columns;
-        
-      Indexer<int> indexer() = new BaseIndexer<int>
-      {
-         this index := 0;
-            
-         this length := self.Columns;
-            
-         get int Value()
-            = self.at(i, index);
-                
-         set Value(int o)
-         {
-            self.setAt(i,index,o);
-         }                        
-      }; 
+      int Length = _columns;
         
       int at(int j)
          = self.at(i,j);
@@ -846,22 +791,7 @@ public sealed class RealMatrix
       : info("Returns indexable wrapper around the matrix row at the <b>i</b> position")
    = new Indexable<real>
    {
-      Length = _columns;
-        
-      Indexer<real> indexer() = new BaseIndexer<real>
-      {
-         this index := 0;
-            
-         this length := self.Columns;
-            
-         get real Value()
-            = self.at(i,index);
-                
-         set Value(real o)
-         {
-            self.setAt(i,index,o);
-         }                        
-      }; 
+      int Length = _columns;
         
       real at(int j)
          = self.at(i,j);
@@ -1192,10 +1122,6 @@ public const struct String : BaseValue,
    Enumerator<char> enumerator()
          : info("Returns the string enumerator")
       = new StringEnumerator(self);
-
-   Indexer<char> indexer() 
-         : info("Returns the string indexer")
-      = new StringIndexer(self);
     
    string clone() : info("Clones the value")
      = String.copy(self);
@@ -1267,79 +1193,6 @@ sealed class StringEnumerator : Enumerator<char>,
 
    char Value : info("Returns the current character")
       = char;
-}
-
-// --- StringIndexer ---
-
-sealed class StringIndexer : Indexer<char>,
-   info("A UTF-8 string indexer") 
-{
-   string         literal;
-   Reference<int> index;
-
-   constructor(string s)
-      : info("Creates an indexer to the specified <b>s</b> argument")
-   {
-      literal := s;
-      index := 0;
-   }
-
-   get bool Available()
-      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
-   {
-      int len := literal.Length;
-      int val := *index;
-        
-      ^ val < len
-   }
-   
-   get char Value()
-      : info("Returns the indexed character")
-   {
-      int val := *index;
-      char ch := literal[val];
-
-      ^ ch
-   }
-   
-   set Value(char ch)
-      : info("Not supported. Raises the exeception")
-   {
-      system'NotSupportedException.raise()
-   }
-
-   int Index : info("Index property")
-   {
-      get()
-      {
-         int retVal := *index;
-            
-         ^ retVal
-      }
-        
-      set(val)
-      {
-         index.Value := val
-      }
-   }
-   
-   appendIndex(int val)
-      : info("Increases the current index by parameter **index**")
-   {
-      index.append(val)
-   }
-    
-   int Length : info("Returns the length of the indexed string")
-   {
-      get()
-      {
-         int retVal := literal.Length;
-            
-         ^ retVal
-      }
-   }
-        
-   Indexer cast() : info("Creates a weak indexer") = new Indexer{ embeddable dispatch() => self; };   
 }
 
 // --- WideString ---
@@ -1605,10 +1458,6 @@ public const struct WideString : BaseValue,
    Enumerator<char> enumerator()
          : info("Returns the string enumerator")
       = new WideStringEnumerator(self);
-
-   Indexer<char> indexer() 
-         : info("Returns the string indexer")
-      = new WideStringIndexer(self);
     
    wide clone() : info("Clones the value")
       = WideString.copy(self);
@@ -1690,81 +1539,6 @@ sealed class WideStringEnumerator : Enumerator<char>
 
    char Value : info("Returns the current character")
       = char;
-}
-
-// --- WideStringIndexer ---
-
-sealed class WideStringIndexer : Indexer<char>
-{
-   wide           literal;
-   Reference<int> index;
-
-   constructor(wide s)
-      : info("Creates an indexer to the specified <b>s</b> argument")
-   {
-      literal := s;
-      index := 0;
-   }
-
-   get bool Available()
-      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
-   {
-      int len := literal.Length;
-      int val := *index;
-        
-      ^ val < len
-   }
-   
-   get char Value()
-      : info("Returns the indexed character")
-   {
-      int val := *index;
-      char ch := literal[val];
-
-      ^ ch
-   }
-   
-   set Value(char ch)
-      : info("Not supported. Raises the exeception")
-   {
-      system'NotSupportedException.raise()
-   }
-
-   int Index : info("Index property")
-   {
-      /// Reads the current index and saves it into an output parameter
-      get()
-      {
-         int retVal := *index;
-            
-         ^ retVal
-      }
-        
-      /// Sets the index by specified value
-      set(val)
-      {
-         index.Value := val
-      }
-   }
-   
-   appendIndex(int val)
-      : info("Increases the current index by parameter **index**")
-   {
-      index.append(val)
-   }
-    
-   int Length : info("Returns the length of the indexed string")
-   {
-      /// Reads the length to the output parameter    
-      get()
-      {
-         int retVal := literal.Length;
-            
-         ^ retVal
-      }
-   }
-        
-   Indexer cast() : info("Creates a weak indexer") = new Indexer{ embeddable dispatch() => self; };   
 }
 
 public sealed class Variant
@@ -1860,7 +1634,7 @@ public sealed class Variant
 
 // --- Array ---
 
-public sealed Array : Indexable, info("A generic array")
+public sealed Array : interface<Indexable>, info("A generic array")
 {
    __string object[] array;
     
@@ -1920,9 +1694,6 @@ public sealed Array : Indexable, info("A generic array")
    Enumerator enumerator() : info("Returns the array enumerator")
       = new ArrayEnumerator(self);
 
-   Indexer indexer() : info("Returns the array indexer")
-      = new ArrayIndexer(self);
-
    object[] Value : info("Returns itself")
       = array;
 
@@ -1973,148 +1744,6 @@ public sealed ArrayEnumerator : Enumerator, info("A generic array enumerator")
       = array;
 }
 
-// --- ArrayIndexer ---
-
-public sealed ArrayIndexer : Indexer, info("A generic array indexer")
-{
-   Array          array;
-   Reference<int> index;
-
-   constructor(Array arr)
-      : info("Creates an indexer to the specified <b>arr</b> argument")
-   {
-      array := arr;
-      index := 0;
-   }
-
-   get bool Available()
-      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
-   {
-      int len := array.Length;
-      int val := *index;
-        
-      ^ val < len
-   }
-   
-   get Value()
-      : info("Returns the indexed element")
-   {
-      int val := *index;
-
-      ^ array[val];
-   }
-   
-   set Value(o)
-      : info("Set the element at the current index")
-   {
-      int val := *index;
-
-      array[val] := o;      
-   }
-
-   int Index : info("Index property")
-   {
-      get()
-      {
-         int retVal := *index;
-            
-         ^ retVal
-      }
-        
-      set(val)
-      {
-         index.Value := val
-      }
-   }
-   
-   appendIndex(int val)
-      : info("Increases the current index by parameter **index**")
-   {
-      index.append(val)
-   }
-    
-   int Length : info("Returns the length of the indexed array")
-   {
-      get()
-      {
-         int retVal := array.Length;
-            
-         ^ retVal
-      }
-   }
-}
-
-// --- BitArrayIndexer ---
-
-/// An array indexer
-class BitArrayIndexer : Indexer<bool>
-{
-   BitArray       _array;
-   Reference<int> _index;
-
-   constructor(BitArray array) : info("Returns BitArray indexer")
-   {
-      _array := array;
-      _index := 0
-   }
-    
-   get bool Available()
-      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
-   {
-      int length := _array.Length;
-      int index := _index.Value;
-        
-      ^ index < length
-   }
-
-   get bool Value() : info("Returns the current member")
-   {
-      int index := _index.Value;
-        
-      ^ _array.at(index)
-   }
-    
-   set Value(bool val) : info("Sets the current member")
-   {
-      int index := _index.Value;
-        
-      _array.setAt(_index, val)
-   }
-    
-   int Index : info("Index property")
-   {
-      get()
-      {
-         int retVal := _index.Value;
-            
-         ^ retVal
-      }
-        
-      set(val)
-      {
-         _index.Value := val
-      }
-   }
-    
-   appendIndex(int val)
-      : info("Increases the current index by parameter **index**")
-   {
-      _index.append(val)
-   }
-   
-   int Length : info("Returns the length of the indexed array")
-   {
-      get()
-      {
-         int retVal := _array.Length;
-            
-         ^ retVal
-      }
-   }
-        
-   Indexer cast() = new Indexer { embeddable dispatch() => self; };        
-}
-
 // --- BitArrayEnumerator ---
 
 /// An array enumerator
@@ -2157,75 +1786,6 @@ class BitArrayEnumerator : Enumerator<bool>
    enumerable() : info("Returns the enumerating array") = _array;
     
    Enumerator cast() = new Enumerator { embeddable dispatch() => self; };
-}
-
-// --- BitArray32Indexer ---
-
-/// An array indexer
-class BitArray32Indexer : Indexer<bool>
-{
-   BitArray32     _array;
-   Reference<int> _index;
-
-   /// Returns the parameter indexer
-   constructor(BitArray32 bs) : info("Returns BitArray32 indexer")
-   {
-      _array := bs;
-      _index := 0
-   }
-    
-   get bool Available()
-      : info("Returns true if there is an element with a given index in the corresponding collection<br/>Otherwise returns false")
-   {
-      int index := _index;
-        
-      ^ index < 32
-   }
-
-   get bool Value() : info("Returns the current member")
-   {
-      int index := _index;
-        
-      ^ _array.at(index)
-   }
-    
-   set Value(bool val)
-      : info("Set the element at the current index")
-   {
-      int index := _index;
-        
-      _array.setAt(index, val)
-   }
-
-   int Index : info("Current index")
-   {    
-      get()
-      {
-         int retVal := _index.Value;
-            
-         ^ retVal
-      }
-        
-      set(val)
-      {
-         _index.Value := val
-      }
-   }
-    
-   appendIndex(int val)
-      : info("Increases the current index by parameter **index**")
-   {
-      _index.append(val)
-   }
-    
-   int Length : info("Returns the array length")
-   {
-      get()
-         = _array.Length;
-//         => _array;
-   }
-  
-   Indexer cast() = new Indexer { embeddable dispatch() => self; };        
 }
 
 // --- BitArray32Enumerator ---
