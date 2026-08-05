@@ -187,8 +187,10 @@ namespace elena_lang
       LongIntOp            = 0x0095,
       SetMessage           = 0x0096,
       ProcRedirect         = 0x0097,
+      MarkAsCollectable    = 0x0098,
+      MarkAsNonCollectable = 0x0099,
 
-      MaxOperationalKey    = 0x0097,
+      MaxOperationalKey    = 0x0099,
       
       DeclDictionaryOp     = 0x00A0,
       LoopOp               = 0x00A1,

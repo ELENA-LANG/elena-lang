@@ -541,6 +541,8 @@ ELENA byte codes (or ecodes)
                               n = 5 -> inject the stack (note, should be called ouside the frame)
                               n = 6 -> enter GC critical section
                               n = 7 -> leave GC critical section
+                              n = 8 -> mark thread as non-collectable
+                              n = 9 -> mark thread as collectable
 
    throw                    - raise an exception (acc contains the exception object)
 

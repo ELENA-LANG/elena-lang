@@ -508,17 +508,8 @@ void elena_lang :: loadOp(JITCompilerScope* scope)
 void elena_lang :: loadSysOp(JITCompilerScope* scope)
 {
    int index = 0;
-   switch (scope->command.arg1) {
-      case 1:
-      case 2:
-      case 3:
-      case 4:
-      case 5:
-         index = scope->command.arg1;
-         break;
-      default:
-         break;
-   }
+   if (scope->command.arg1 < NumberOfInlines)
+      index = scope->command.arg1;
 
    loadCode(scope, scope->compiler->_inlines[index][scope->code()], nullptr);
 }

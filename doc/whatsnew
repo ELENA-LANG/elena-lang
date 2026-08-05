@@ -12,6 +12,7 @@
   - [FIXED] multi-argument implicit lambda-function
   - [FIXED] critical error : initializing static fields
   - [FIXED] critical error : an unresolved forward crashed the compiler instead of being reported
+  - [REDUX] redesigning include / exclude, move operation about marking thread as non-collectable to system 8 / system 9
 
 - VM
 

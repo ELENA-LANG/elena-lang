@@ -482,6 +482,16 @@ static inline void redirect_procedure(CommandTape& tape, BuildNode& node, TapeSc
    tape.write(ByteCode::XJump);
 }
 
+static inline void mark_collectable(CommandTape& tape, BuildNode&/* node*/, TapeScope&/* tapeScope*/)
+{
+   tape.write(ByteCode::System, 9);
+}
+
+static inline void mark_noncollectable(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+{
+   tape.write(ByteCode::System, 8);
+}
+
 static inline void set_message(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::MovM, node.arg.reference);
@@ -2356,11 +2366,8 @@ static inline void savingStackDump(CommandTape& tape, BuildNode&/* node*/, TapeS
    tape.write(ByteCode::PeekSI);
 }
 
-static inline void includeFrame(CommandTape& tape, bool withThreadSafeNop)
+static inline void includeFrame(CommandTape& tape)
 {
-   if (withThreadSafeNop)
-      tape.write(ByteCode::SNop);
-
    tape.write(ByteCode::Include);
 }
 
@@ -2400,6 +2407,7 @@ ByteCodeWriter::Saver commands[] =
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
    procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp, set_message, redirect_procedure,
+   mark_collectable, mark_noncollectable,
 };
 
 static inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -3870,11 +3878,15 @@ void ByteCodeWriter :: saveMethodInfo(/*CommandTape& tape, */BuildNode node, Tap
 
 void ByteCodeWriter :: saveExternOp(CommandTape& tape, BuildNode node, TapeScope& tapeScope, ReferenceMap& paths, bool tapeOptMode)
 {
+   // NOTE : we exclude the frame and then mark the thread as non-collecable or wait until the collecting is over
    excludeFrame(tape);
+   mark_noncollectable(tape, node, tapeScope);
 
    saveTape(tape, node, tapeScope, paths, tapeOptMode);
 
-   includeFrame(tape, tapeScope.threadFriendly);
+   // NOTE : mark the thread as non-collectable or wait until the collecting is over and then we include the new frame frame
+   mark_collectable(tape, node, tapeScope);
+   includeFrame(tape);
 }
 
 void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& tapeScope,

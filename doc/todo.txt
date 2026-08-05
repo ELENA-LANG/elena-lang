@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - raise an error if label cannot be resolved
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - fix httpsget ()
   - switch with class types
@@ -55,11 +56,16 @@ In development:
   * samples
   ====================================== 
   - review gui samples
+  - review net samples
   - review all samples (related to collections / extensions)
   - review all rosetta samples
   - review all tutorials
   - review all knowhow examples
-  --------------------------------------
+  - fix httpget / httpsget
+  ---------------------------------------
+  * current : redesign include / exclude
+  ====================================== 
+  - fix the blocking issue
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3

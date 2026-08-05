@@ -10132,6 +10132,7 @@ void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& s
    writer.newNode(BuildKey::Tape);
 
    writer.appendNode(BuildKey::OpenExtFrame);
+   writer.appendNode(BuildKey::MarkAsCollectable);
 
    CodeScope codeScope(&scope);
 
@@ -10177,6 +10178,7 @@ void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& s
       scope.raiseError(errInvalidOperation, node);
    }
 
+   writer.appendNode(BuildKey::MarkAsNonCollectable);
    writer.appendNode(BuildKey::CloseExtFrame);
 
    writer.appendNode(BuildKey::ExtExit);

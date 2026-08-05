@@ -124,7 +124,8 @@ labYGCollect:
 end
 
 // ; --- GC_COLLECT ---
-// ; in: ecx - fullmode (0, 1)
+// ; in: ecx - = 0 - forced collect
+// ;     edx - minor collect 1 / full collect 0
 inline % GC_COLLECT
 
 labStart:
@@ -168,7 +169,6 @@ labStart:
   add  esp, 4
 
   // ; free lock
-  // ; could we use mov [esi], 0 instead?
   mov  edi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
   lock xadd [edi], ebx
@@ -184,8 +184,13 @@ labStart:
   pop  esi
 
   test ecx, ecx
-  jz   labStart
+  jnz  short labAllocAgain
 
+  // ; if it is a forced collection - simply exit the code,
+  // ; the collection was already done - no need to repeat
+  ret
+
+labAllocAgain:
   // ; repeat the alloc operation if required
   call %GC_ALLOC
   ret
@@ -657,7 +662,6 @@ inline % 10h
   mov  eax, gs:[0]
   lea  edi, [eax-tt_size]
 #endif
-  mov  [edi + tt_flags], 1
   mov  eax, [edi + tt_stack_frame]
   push eax
   push ebp     
@@ -678,7 +682,6 @@ inline % 11h
   lea  edi, [eax-tt_size]
 #endif
 
-  mov  [edi + tt_flags], 0
   pop  eax
   mov  [edi + tt_stack_frame], eax
 
@@ -904,6 +907,91 @@ inline %7CFh
   
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
+  lock xadd [edi], ecx
+
+end
+
+// ; system : mark thread as non-collectable
+inline %8CFh
+
+labStart:
+  // ; enter gc crtical section
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov  ecx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], ecx
+  jnz  short labWait
+
+  // ; safe point
+  mov  ecx, [data : %CORE_GC_TABLE + gc_signal]
+  test ecx, ecx                       // ; if it is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  mov  ecx, 0FFFFFFFFh
+  lock xadd [edi], ecx
+  call %THREAD_WAIT                   // ; waits until the GC is stopped
+  jmp  short labStart
+
+labConinue:
+
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  edi, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax-tt_size]
+#endif
+
+  mov  [edi + tt_flags], 1
+
+  // ; leave gc crtical section
+  mov  ecx, 0FFFFFFFFh
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+  lock xadd [edi], ecx
+
+end
+
+// ; system : mark thread as collectable
+inline %9CFh
+
+labStart:
+  // ; enter gc crtical section
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov  ecx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[edi], ecx
+  jnz  short labWait
+
+  // ; safe point
+  mov  ecx, [data : %CORE_GC_TABLE + gc_signal]
+  test ecx, ecx                       // ; if it is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  mov  ecx, 0FFFFFFFFh
+  lock xadd [edi], ecx
+
+  call %THREAD_WAIT                   // ; waits until the GC is stopped
+  jmp  short labStart
+
+labConinue:
+
+#if _WIN
+  mov  eax, fs:[2Ch]
+  mov  edi, [eax]
+#elif _LNX
+  mov  eax, gs:[0]
+  lea  edi, [eax-tt_size]
+#endif
+
+  mov  [edi + tt_flags], 0
+
+  // ; leave gc crtical section
+  mov  ecx, 0FFFFFFFFh
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
   lock xadd [edi], ecx
 
 end

@@ -23,6 +23,7 @@ define ARG_ACTION_MASK        1DFh
 
 // ; --- Object header fields ---
 define elSyncOffset          0008h
+define elSyncForwardOffset   0008h
 define elSizeOffset          0004h
 define elVMTOffset           0010h 
 define elObjectOffset        0010h
@@ -115,11 +116,15 @@ labWait:
   jnz  short labWait
 
   mov  rax, [data : %CORE_GC_TABLE + gc_yg_current]
+  xor  edx, edx
   mov  r12, [data : %CORE_GC_TABLE + gc_yg_end]
   add  rcx, rax
   cmp  rcx, r12
   jae  short labYGCollect
   mov  [data : %CORE_GC_TABLE + gc_yg_current], rcx
+
+  // ; GCXT: clear the lock flag
+  mov  dword ptr [rax + elSyncForwardOffset], edx
 
   // ; GCXT: clear sync field
   mov  edx, 0FFFFFFFFh
@@ -134,7 +139,6 @@ labWait:
 labYGCollect:
   // ; save registers
   sub  rcx, rax
-  xor  edx, edx
 
   // ; system 1 / 2 call GC_COLLECT directly, without the return address this path
   // ; adds, so pad here to make both enter with the same alignment.
@@ -150,7 +154,8 @@ labYGCollect:
 end
 
 // ; --- GC_COLLECT ---
-// ; in: ecx - fullmode (0, 1)
+// ; in: ecx - = 0 - forced collect
+// ;     edx - minor collect 1 / full collect 0
 inline % GC_COLLECT
 
 labStart:
@@ -207,9 +212,16 @@ labStart:
   pop  r10
 
   test rcx, rcx
-  jz   labStart
+  jnz  short labAllocAgain
 
-  // ; repeat the alloc operation if required
+  // ; if it is a forced collection - simply exit the code,
+  // ; the collection was already done - no need to repeat
+  ret
+
+labAllocAgain:
+  // ; repeat the alloc operation if required;
+  // ; dummy push to keep alignment correct
+  push 0 
   call %GC_ALLOC
   ret
 
@@ -223,9 +235,10 @@ labConinue:
   mov  rax, rsi
   // ; get tls entry address  
   mov  rsi, data : %CORE_THREAD_TABLE + tt_slots
-  xor  ecx, ecx
   mov  rdi, [rsi - 8]
+
 labNext:
+  xor  ecx, ecx
   mov  rdx, [rsi]
   test rdx, rdx
   jz   short labSkipTT
@@ -244,28 +257,27 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   add  rsp, 30h
 
-  lea  rsi, [rsi + 16]
   mov  rax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
+  lea  rsi, [rsi + 16]
   sub  edi, 1
   jnz  short labNext
 
   mov  rsi, data : %CORE_GC_TABLE + gc_lock
-  mov  edx, 0FFFFFFFFh
-  mov  rbx, rbp
+  mov  eax, 0FFFFFFFFh
+  mov  rcx, rbp
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
-  lock xadd [rsi], edx
+  lock xadd [rsi], eax
 
   mov  rdx, rsp
-  sub  rbx, rsp
+  sub  rcx, rsp
   jz   short labSkipWait
 
   // ; wait until they all stopped
-  shr  ebx, 3
+  shr  ecx, 3
   sub  rsp, 30h
-  mov  ecx, ebx
   call extern "$rt.WaitForSignalsGCLA"
   add  rsp, 30h
 
@@ -677,7 +689,6 @@ inline % 10h
      
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-  mov  dword ptr [rdi + tt_flags], 1
   mov  rax, [rdi + tt_stack_frame]
   push rax
   push rbp     
@@ -691,7 +702,6 @@ inline % 11h
   add  rsp, 8
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-  mov  dword ptr [rdi + tt_flags], 0
   pop  rax
   mov  [rdi + tt_stack_frame], rax
 
@@ -886,6 +896,92 @@ inline %7CFh
   
   // ; GCXT: free lock
   // ; could we use mov [esi], 0 instead?
+  lock xadd [rdi], ecx
+
+end
+
+// ; system 8 : mark thread as non-collectable
+inline %8CFh
+
+labStart:
+  // ; enter gc crtical section
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov ecx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], ecx
+  jnz  short labWait
+
+  // ; safe point
+  mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
+  test rcx, rcx                       // ; if there is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  mov  ecx, 0FFFFFFFFh
+  lock xadd [rdi], ecx
+
+  call %THREAD_WAIT                   // ; waits until the GC is stopped
+  jmp short labStart 
+
+labConinue:
+
+#if _WIN
+  mov  rcx, gs:[58h]
+  mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
+  mov  dword ptr [rdi + tt_flags], 1
+
+  // ; leave gc crtical section
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  ecx, 0FFFFFFFFh
+  lock xadd [rdi], ecx
+
+end
+
+// ; system : mark thread as collectable
+inline %9CFh
+
+labStart:
+  // ; enter gc crtical section
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+
+labWait:
+  mov  ecx, 1
+  xor  eax, eax
+  lock cmpxchg dword ptr[rdi], ecx
+  jnz  short labWait
+
+  // ; safe point
+  mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
+  test rcx, rcx                       // ; if it is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  mov  ecx, 0FFFFFFFFh
+  lock xadd [rdi], ecx
+
+  call %THREAD_WAIT                   // ; waits until the GC is stopped
+  jmp  short labStart 
+
+labConinue:
+
+#if _WIN
+  mov  rcx, gs:[58h]
+  mov  rdi, [rcx]
+#elif _LNX
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
+  mov  dword ptr [rdi + tt_flags], 0
+
+  // ; leave gc crtical section
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  ecx, 0FFFFFFFFh
   lock xadd [rdi], ecx
 
 end

@@ -174,7 +174,8 @@ labYGCollect:
 end
 
 // ; --- GC_COLLECT ---
-// ; in: ecx - size, edx - 1 - full collect, 0 - normal one
+// ; in: ecx - = 0 - forced collect
+// ;     edx - minor collect 1 / full collect 0
 inline % GC_COLLECT
 
   push esi
