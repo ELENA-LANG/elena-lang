@@ -205,9 +205,9 @@ labConinue:
   mov  eax, esi
   // ; get tls entry address  
   mov  esi, data : %CORE_THREAD_TABLE + tt_slots
-  xor  ecx, ecx
   mov  edi, [esi - 4]
 labNext:
+  xor  ecx, ecx
   mov  edx, [esi]
   test edx, edx
   jz   short labSkipTT
@@ -225,9 +225,9 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   add  esp, 4
 
-  lea  esi, [esi + 8]
   mov  eax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
+  lea  esi, [esi + 8]
   sub  edi, 1
   jnz  short labNext
 

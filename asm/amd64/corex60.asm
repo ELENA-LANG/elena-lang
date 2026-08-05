@@ -426,6 +426,9 @@ labWait:
   jae  short labPERMCollect
   mov  [data : %CORE_GC_TABLE + gc_perm_current], rcx
 
+  xor  edx, edx
+  mov  dword ptr [rax + elSyncForwardOffset], edx
+
   // ; GCXT: clear sync field
   mov  edx, 0FFFFFFFFh
   lea  rbx, [rax + elObjectOffset]
@@ -616,20 +619,20 @@ labWait:
   // ; signal the collecting thread that it is stopped
   sub  rsp, 30h
   mov  rcx, rsi
-  mov  rdi, data : %CORE_GC_TABLE + gc_lock
 
   // ; signal the collecting thread that it is stopped
   call extern "$rt.SignalStopGCLA"
-  add  rsp, 30h
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
   // ; stop until GC is ended
   mov  rcx, r13
   call extern "$rt.WaitForSignalGCLA"
+  add  rsp, 30h
 
   pop  rbp
   mov  rbx, r12
