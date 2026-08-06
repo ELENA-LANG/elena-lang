@@ -548,7 +548,7 @@ ELENA byte codes (or ecodes)
 
    trylock                  - try to lock acc, if already locked COMP.EQ = 0
 
-   xlabel dp:i, r            - set a handler to the specified address / label
+   xlabel dp:i, r           - set a handler to the specified address / label
 
    xnop                     - align the following label to CPU optimized jump alignment
  

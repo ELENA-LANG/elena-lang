@@ -66,6 +66,7 @@ In development:
   * current : MTA
   ====================================== 
   - fix exception handling
+  - UninitThreadLA? do we need to set signlar instead of clearing it?
   - sandbox2 test with two another threads
   - we need slim lock - without snop
 

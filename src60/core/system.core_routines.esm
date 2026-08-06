@@ -2313,7 +2313,7 @@ procedure __thread_create(self,arg,flags,stackSize,ptr)
   system      6 
 
   call extern:CreateThreadLA (
-     *arg, 
+     *$arg, 
      procedure:"system'core_routines'thread_start",
      *stackSize,
      *flags)
@@ -3048,7 +3048,7 @@ procedure thread_start(index)
   unhook
 
   // ; == enter GC critical section ==
-  snop
+  system      8  // ; NOTE : mark the thread as non-collectable, so no one will wait for it
   system      6 
 
   call extern:UninitThreadLA (
