@@ -10,29 +10,20 @@ public Program = PROGRAM;
 
 CONSOLE = Console;
 
-abstract INDEXERCLASS : interface<Indexer>
+abstract INDEXABLE : interface<Indexable>
 { 
-   abstract ISAVAILABLE(); 
-   abstract GETINDEX();
-   abstract SETINDEX(INDEX);
-   abstract NEWINDEX(OFFS);
-   abstract GETVALUE();
-   abstract GETLENGTH();
+   abstract AT(OFFS); 
+   get abstract LENGTH();
    
-   bool Available = ISAVAILABLE();   
-   int Index
+   int Length
+      = self.LENGTH;
+
+   at(int index)
+      = AT(index);
+
+   setAt(int index, object value)
    {
-      get() = GETINDEX();
-         
-      set(int INDEX)
-      {
-         SETINDEX(INDEX);
-      }
-   }      
-   appendIndex(int OFFS) { this self.Index := NEWINDEX(OFFS) }   
-   set Value(o) { NotSupportedException.raise() }
-   get Value() = GETVALUE();
-   get int Length() { ^ GETLENGTH() }
+   }
 }
 
 PARALLELENUMERATOR(N) { ^ ParallelEnumerator.new(N) }
@@ -68,7 +59,7 @@ const string[] DAYNAMES = new []{"MO", "TU", "WE", "TH", "FR", "SA", "SU"};
 
 // --- UPPERCASE CODE --
 
-CALENDARMONTHPRINTER
+CALENDARMONTHPRINTER : INDEXABLE
 {
    _DATE;
    _LINE;
@@ -117,30 +108,19 @@ CALENDARMONTHPRINTER
       _ROW += 1
    }
     
-   indexer() = new INDEXERCLASS
+   LENGTH
+      = 7; 
+
+   AT(INDEX)
    {
-      ISAVAILABLE() = _ROW < 7;
-
-      GETINDEX()= _ROW;
-      
-      SETINDEX(INDEX)
-      {
-         if (INDEX <= _ROW)
-            { WRITETITLE() };
+      if (INDEX <= _ROW)
+         { WRITETITLE() };
                  
-         while (INDEX > _ROW)
-            { WRITECALLINE() }
-      }
+      while (INDEX > _ROW)
+         { WRITECALLINE() };
 
-      NEWINDEX(OFFS)
-      {
-         ^ _ROW + OFFS
-      }
-        
-      GETLENGTH() { ^ 7 }
-
-      GETVALUE() = self;              
-   };
+      ^ self
+   }
     
    PRINTTITLETO(OUTPUT)
    {
