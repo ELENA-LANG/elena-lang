@@ -2,7 +2,7 @@ import extensions;
 
 public Program()
 {   
-   auto arr := new int[]{ 1, 2, 3};
+   var ext := mssgconst toInt<intConvertOp>[0];
    
-   Console.printLine(arr as:Indexable);
+   var n := ext("3");
 }

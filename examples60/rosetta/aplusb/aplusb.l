@@ -21,7 +21,7 @@ public Program()
 {
    Console.printLine(Console.readLine()
                               .split()
-                              .selectBy(mssgconst toInt<intConvertOp>[1])
+                              .selectBy(mssgconst toInt<intConvertOp>[0])
                               .summarize())
 }
 

@@ -56,13 +56,9 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - review local rosetta samples
-  - fix AMB
-  - fix aplusb
-  - fix combinations
-  - fix dynamic_var
   - fix firstclass
   - fix twentyfour
+  - fix combinations
   - fix calendar; update post
   - review all rosetta samples
   - review all tutorials
