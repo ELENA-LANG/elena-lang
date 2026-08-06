@@ -595,10 +595,13 @@ end
 
 procedure % THREAD_WAIT
 
+  mov  [rsp-8], r10
+  mov  [rsp-16], r11
+  push rbx
+  push r10
   push rbp
   mov  rdi, rsp
 
-  mov  r12, rbx
   mov  r13, rdx                  // hHandle
 
   // ; set lock
@@ -632,10 +635,9 @@ labWait:
   // ; stop until GC is ended
   mov  rcx, r13
   call extern "$rt.WaitForSignalGCLA"
-  add  rsp, 30h
 
-  pop  rbp
-  mov  rbx, r12
+  add  rsp, 40h
+  pop  rbx
 
   ret
 

@@ -63,9 +63,11 @@ In development:
   - review all knowhow examples
   - fix httpget / httpsget
   ---------------------------------------
-  * current : redesign include / exclude
+  * current : MTA
   ====================================== 
-  - fix the blocking issue
+  - fix exception handling
+  - sandbox2 test with two another threads
+  - we need slim lock - without snop
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3
