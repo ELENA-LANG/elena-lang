@@ -17,5 +17,6 @@ extension testOp
 
 public Program()
 {
-   Console.loadLineTo(new Integer()).bitwiseTest(Console.loadLineTo(new Integer()))
+   Console.write("Enter the first integer:").loadLineTo(new Integer())
+     .bitwiseTest(Console.write("Enter the second integer:").loadLineTo(new Integer()))
 }

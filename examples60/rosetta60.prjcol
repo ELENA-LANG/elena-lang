@@ -21,7 +21,6 @@
     <project base_path="rosetta\brackets">brackets.l</project>
     <project base_path="rosetta\bullscows">bullscows.l</project>
     <project base_path="rosetta\caesar">caesar.l</project>
-    <project base_path="rosetta\calendar">calendar.l</project>
     <project base_path="rosetta\charmatch">charmatch.l</project>
     <project base_path="rosetta\combinations">combinations.l</project>
     <project base_path="rosetta\complist">complist.l</project>

@@ -8,8 +8,8 @@ import extensions;
 
 public Program()
 {
-    var a := Console.loadLineTo(new Integer());
-    var b := Console.loadLineTo(new Integer());
+    var a := Console.write("Enter the first integer:").loadLineTo(new Integer());
+    var b := Console.write("Enter the second integer:").loadLineTo(new Integer());
     
     Console.printLine(a," + ",b," = ",a + b);
     Console.printLine(a," - ",b," = ",a - b);

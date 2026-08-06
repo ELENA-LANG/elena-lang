@@ -1,13 +1,19 @@
 import system'routines;
 
 // --- Indexer ---
-sealed class Indexer
+public sealed class Indexer
 {
    Indexable      it;
    Reference<int> index;
    int            length;
    
-   constructor(Indexable it)
+   constructor new(o)
+      <= new(o as:Indexable);
+
+   constructor new(Indexer idx)
+      = idx;
+
+   constructor new(Indexable it)
    {
       this it := it;
       this index := 0;
@@ -251,7 +257,7 @@ public class SequentialEnumerator : BaseRowEnumerator
         
       for (int i := 0; i < _length; i += 1)
       {
-         _indexers[i] := new Indexer(arguments[i]);
+         _indexers[i] := Indexer.new(arguments[i]);
       };
         
       self.reset()
@@ -277,7 +283,7 @@ public class ParallelEnumerator : BaseRowEnumerator
         
       for (int i := 0; i < _length; i += 1)
       {
-         Indexer it := new Indexer(arguments[i]);
+         Indexer it := Indexer.new(arguments[i]);
             
          _indexers[i] := it
       };
@@ -308,7 +314,7 @@ public class Combinator : BaseRowEnumerator
         
       for (int i := 0; i < _length; i += 1)
       {
-         Indexer it := new Indexer(arguments[i]);
+         Indexer it := Indexer.new(arguments[i]);
             
          _indexers[i] := it
       };

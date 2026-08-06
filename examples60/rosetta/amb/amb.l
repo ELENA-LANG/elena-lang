@@ -79,7 +79,7 @@ public Program2()
             (a,b){ Console.printLine(a," * ",b," = 8") };
     }
     catch(Exception e)
-    {
+    {       
         Console.printLine("AMB is angry")
     };
         

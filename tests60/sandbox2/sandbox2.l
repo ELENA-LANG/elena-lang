@@ -36,6 +36,28 @@ public Program()
       }
    });
 
+   threadControl.start(
+   {
+      int n := 3000;
+      while (true) {
+         lock(sync) {
+            Console.writeLine("Line from thread 3 : " + n.toPrintable());
+            n++;
+         }         
+      }
+   });
+
+   threadControl.start(
+   {
+      int n := 4000;
+      while (true) {
+         lock(sync) {
+            Console.writeLine("Line from thread 4 : " + n.toPrintable());
+            n++;
+         }         
+      }
+   });
+
    Console.readChar()
 }
 

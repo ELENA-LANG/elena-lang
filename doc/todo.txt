@@ -26,6 +26,7 @@ In development:
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created) 
   - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected   
   - Static decorator (mixin inheritance)
+  - we need slim lock - without snop
   --------------------------------------
   * dev
   ====================================== 
@@ -55,20 +56,25 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - review gui samples
-  - review net samples
-  - review all samples (related to collections / extensions)
+  - review local rosetta samples
+  - fix AMB
+  - fix aplusb
+  - fix combinations
+  - fix dynamic_var
+  - fix firstclass
+  - fix twentyfour
+  - fix calendar; update post
   - review all rosetta samples
   - review all tutorials
   - review all knowhow examples
   - fix httpget / httpsget
+  - fix sampleapi for https
+  - test examples for 64bit
+  - test rosetta for 64bit
   ---------------------------------------
   * current : MTA
   ====================================== 
-  - fix exception handling
-  - UninitThreadLA? do we need to set signlar instead of clearing it?
   - sandbox2 test with two another threads
-  - we need slim lock - without snop
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3
