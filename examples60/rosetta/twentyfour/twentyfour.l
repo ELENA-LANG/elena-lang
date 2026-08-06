@@ -149,7 +149,7 @@ class TwentyFourGame
         var leaves := new ArrayList();
         tree.readLeaves(leaves);
         
-        if:not (leaves.ascendant().sequenceEqual(theNumbers.ascendant()))
+        if:not (leaves.ascendant().sequenceEqual(theNumbers.ascendant().asIndexable()))
             { Console.printLine("Invalid input. Enter an equation using all of those four digits. Try again."); ^ self };
             
         var result := tree.Value;

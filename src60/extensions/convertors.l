@@ -205,6 +205,17 @@ singleton EnumerableConvertor
       = new Enumerable { Enumerator enumerator() = o.enumerator(); };
 }
 
+// --- IndexableConvertor ---
+
+singleton IndexableConvertor
+{
+   Indexable convert(Indexable o)
+      = o;
+    
+   Indexable convert(o)
+      = o as:Indexable;
+}
+
 public singleton IntArrayExConvertor
 {
    int[] convert(Enumerable<int> collection, int length)
@@ -346,6 +357,13 @@ public extension enumerableExOp
 {
     Enumerable asEnumerable()
         = EnumerableConvertor.convert(self);
+}
+
+// --- enumerableExOp ---
+public extension indexableExOp
+{
+    Indexable asIndexable()
+        = IndexableConvertor.convert(self);
 }
 
 // --- arrayConvertOp ---

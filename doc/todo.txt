@@ -56,13 +56,12 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - fix firstclass
   - fix twentyfour
-  - fix combinations
-  - fix calendar; update post
-  - review all rosetta samples
+  - fix calendar
+  - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples
+  - review mta tests
   - fix httpget / httpsget
   - fix sampleapi for https
   - test examples for 64bit
