@@ -56,7 +56,8 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - fix calendar
+  - test mta_tests
+  - review rosetta samples from B
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples

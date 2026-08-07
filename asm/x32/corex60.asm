@@ -545,6 +545,7 @@ end
 
 procedure % THREAD_WAIT
 
+  push esi
   push ebx
   push ebp
   mov  edi, esp
@@ -589,6 +590,7 @@ labWait:
 
   add  esp, 8
   pop  ebx
+  pop  esi
 
   ret
 
