@@ -145,7 +145,7 @@ churnRounds(int waves, int workersPerWave, int whenCollect)
  
 public Program()
 {
-   churnRounds(/*8*/3, 4, 1);
+   churnRounds(8, 4, 1);
 
    Console.write(".")
 }

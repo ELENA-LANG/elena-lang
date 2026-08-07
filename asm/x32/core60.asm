@@ -2200,7 +2200,9 @@ inline %1CFh
 
   xor  ecx, ecx
   xor  edx, edx
+  push ebx
   call %GC_COLLECT
+  pop  ebx
 
 end
 
@@ -2209,7 +2211,9 @@ inline %2CFh
 
   xor  ecx, ecx
   mov  edx, 1
+  push ebx
   call %GC_COLLECT
+  pop  ebx
 
 end
 

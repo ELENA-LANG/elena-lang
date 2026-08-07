@@ -1114,6 +1114,7 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
                         // HOTFIX : ingore declared but not defined constant
                         return defineConstant(symbolInfo);
                      }
+                  default:
                      break;
                }
             }
@@ -12217,7 +12218,6 @@ void Compiler :: injectNestedExtension(SyntaxNode extNode)
 void Compiler :: injectNestedTemplateExtension(SyntaxNode extNode)
 {
    SyntaxNode ownerNode = extNode.parentNode();
-   SyntaxNode lastNode = ownerNode.lastChild();
 
    int index = 0;
 

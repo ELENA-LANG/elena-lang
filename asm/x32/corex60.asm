@@ -839,7 +839,9 @@ labWait:
 
   xor  ecx, ecx
   xor  edx, edx
+  push ebx
   call %GC_COLLECT
+  pop  ebx
 
 end
 
@@ -856,7 +858,9 @@ labWait:
 
   xor  ecx, ecx
   mov  edx, 1
+  push ebx
   call %GC_COLLECT
+  pop  ebx
 
 end
 

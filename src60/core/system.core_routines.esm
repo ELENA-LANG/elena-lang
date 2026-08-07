@@ -3001,6 +3001,7 @@ procedure func_invoker(arg)
 
   extopen    (2),[]
 
+  snop
   peek       fp:arg
 
   get        i:0
