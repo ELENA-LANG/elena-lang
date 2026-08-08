@@ -4,6 +4,138 @@ import system'threading;
 import extensions'threading;
 import system'runtime;
 
+// RoundBarrier
+//
+// Releases every worker at once, which is the only way to force overlap here. Gates are
+// pre-allocated one pair per round rather than reset, since resetting an event while a
+// worker may still be inside wait is the kind of race a harness must not have
+public sealed class RoundBarrier
+{
+   Array _arrivals;
+   Array _gates;
+   int   _rounds;
+
+   constructor new(int count, int rounds)
+   {
+      _rounds := rounds;
+      _arrivals := Array.allocate(rounds);
+      _gates := Array.allocate(rounds);
+
+      for (int i := 0; i < rounds; i += 1)
+      {
+         _arrivals[i] := CountDownEvent.new(count);
+         _gates[i] := ManualResetEvent.new()
+      }
+   }
+
+   // worker side
+   arrive(int round)
+   {
+      auto arrival := _arrivals[round];
+      auto gate := _gates[round];
+
+      arrival.signal();
+      gate.wait()
+   }
+
+   // coordinator side
+   releaseAll(int round)
+   {
+      auto arrival := _arrivals[round];
+      auto gate := _gates[round];
+
+      arrival.wait();
+      gate.set()
+   }
+
+   close()
+   {
+      for (int i := 0; i < _rounds; i += 1)
+      {
+         auto arrival := _arrivals[i];
+         auto gate := _gates[i];
+
+         arrival.close();
+         gate.close()
+      }
+   }
+}
+
+class TlsWorkerState
+{
+   RoundBarrier Barrier   : prop;
+   Array        Matches   : prop;
+   Array        Completed : prop;
+   int          Rounds    : prop;
+   ErrorBox     Errors    : prop;
+}
+
+class TlsWorkerArg
+{
+   int            Index : prop;
+   TlsWorkerState State : prop;
+}
+
+public singleton MtaLoad
+{
+   // more workers than cores, so the scheduler is forced to preempt
+   int WorkerCount
+   {
+      get()
+      {
+         int n := 8;
+
+/*         if (n < 4)
+            { n := 4 };*/
+
+         ^ n
+      }
+   }
+
+   // one run samples one interleaving, so every case repeats its body
+   int Repetitions
+      = 20;
+}
+
+// SharedCounter
+//
+// The increment is a deliberate read-modify-write, so a lock that does not exclude
+// loses updates and the total comes out short
+public sealed class SharedCounter
+{
+   int _n;
+
+   constructor new()
+   {
+      _n := 0
+   }
+
+   increment()
+   {
+      lock(self)
+      {
+         _n := _n + 1
+      }
+   }
+
+   int Value
+   {
+      get()
+      {
+         // the lock template declares an intermediate named v, so a
+         // local of that name here would be shadowed
+         int current := 0;
+
+         lock(self)
+         {
+            current := _n
+         };
+
+         ^ current
+      }
+   }
+}
+
 // Latch, stands in for Thread.join
 public sealed class Latch
 {
@@ -98,54 +230,133 @@ churnWorker(state)
    // other waves are still running
 }
 
-churnRounds(int waves, int workersPerWave, int whenCollect)
+// The only __threadvar in the tree other than Thread._currentThread
+public sealed class TlsProbe
 {
-   // has to come through every wave unchanged
-   auto survivors := new ArrayList();
-   for (int i := 0; i < 200; i += 1)
-      { survivors.append(i * 13) };
+   __threadvar TlsProbe _current;
 
-   auto errors := ErrorBox.new();
+   int _id;
 
-   for (int w := 0; w < waves; w += 1)
+   constructor new(int id)
    {
-      auto state := new ChurnState();
-      state.Allocations := 5000;
-      state.Done := Latch.new(workersPerWave);
-      state.Errors := errors;
+      _id := id
+   }
 
-      for (int i := 0; i < workersPerWave; i += 1)
+   int Id = _id;
+
+   static store(TlsProbe probe)
+   {
+      _current := probe
+   }
+
+   static TlsProbe Current
+   {
+      get()
+         = _current;
+   }
+}
+
+tlsWorker(arg)
+{
+   int index := arg.Index;
+   auto state := arg.State;
+
+   int rounds := state.Rounds;
+   auto barrier := state.Barrier;
+   auto matches := state.Matches;
+   auto completed := state.Completed;
+
+   for (int k := 0; k < rounds; k += 1)
+   {
+      auto counter := matches[k];
+      auto latch := completed[k];
+
+      try
       {
-         auto worker := Thread.assign(&churnWorker);
+         int expected := index * 1000 + k;
 
-         worker.start(state)
+         TlsProbe.store(TlsProbe.new(expected));
+
+         // everyone has written before anyone reads back, which turns a shared slot
+         // from probably wrong into certainly wrong
+         barrier.arrive(k);
+
+         auto seen := TlsProbe.Current;
+
+         if (seen.Id == expected)
+            { counter.increment() }
+      }
+      catch(Exception e)
+      {
+         state.Errors.record(e)
       };
 
-      // collect while the wave finishes, so one lands in the window where some workers
-      // have exited and others have not
-      if (whenCollect == 1)
-         { GCManager.collectFull() }
-      else
-         { GCManager.collectMinor() };
+      latch.done()
+   }
+}
 
-      state.Done.await();
-      state.Done.close();
+public mtaThreadLocalStorageTest()
+{
+   int t := MtaLoad.WorkerCount;
+   int rounds := MtaLoad.Repetitions;
 
-      if (whenCollect == 2)
-         { GCManager.collectFull() }
+   auto matches := Array.allocate(rounds);
+   auto completed := Array.allocate(rounds);
+
+   for (int k := 0; k < rounds; k += 1)
+   {
+      matches[k] := SharedCounter.new();
+      completed[k] := Latch.new(t)
    };
 
-   errors.rethrowIfAny();
+   auto state := new TlsWorkerState();
+   state.Barrier := RoundBarrier.new(t, rounds);
+   state.Matches := matches;
+   state.Completed := completed;
+   state.Rounds := rounds;
+   state.Errors := ErrorBox.new();
 
-   // element by element, a partial relocation leaves the length right
-   Assert.ifEqual(survivors.Length, 200);
-   for (int i := 0; i < 200; i += 1)
-      { Assert.ifEqual(survivors[i], i * 13) }
+   for (int i := 0; i < t; i += 1)
+   {
+      auto arg := new TlsWorkerArg();
+      arg.Index := i;
+      arg.State := state;
+
+      auto worker := Thread.assign(&tlsWorker);
+
+      worker.start(arg)
+   };
+
+   for (int k := 0; k < rounds; k += 1)
+   {
+      auto latch := completed[k];
+      auto counter := matches[k];
+
+      state.Barrier.releaseAll(k);
+
+      latch.await();
+
+      // one shared slot would leave at most one match per round
+      Assert.ifEqual(counter.Value, t)
+   };
+
+   state.Errors.rethrowIfAny();
+
+   state.Barrier.close();
+
+   for (int k := 0; k < rounds; k += 1)
+   {
+      auto latch := completed[k];
+
+      latch.close()
+   };
+
+   Console.write(".")
 }
  
 public Program()
 {
-   churnRounds(8, 4, 1);
+   mtaThreadLocalStorageTest();
 
    Console.write(".")
 }

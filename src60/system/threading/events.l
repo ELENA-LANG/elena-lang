@@ -24,7 +24,7 @@ internal struct EventHandle
    internal constructor new(bool value, bool autoReset)
    {
       _handle := extern KERNEL32.CreateEventA(0, 
-         autoReset ? 1 : 0,
+         autoReset ? 0 : 1,
          value ? 1 : 0,
          0);
    }
@@ -214,15 +214,22 @@ public sealed class CountDownEvent
 
    signal()
    {
+      // the counter needs the lock, set does not, and holding an ELENA spin lock across
+      // a blocking libc call makes every other signaller spin on a CPU the holder needs.
+      // Only the thread that reaches zero sets, so this stays single
+      bool release := false;
+
       lock(self)
       {
          if (_counter > 0) {
             _counter--;
 
-            if (_counter == 0)
-              _handle.set() 
+            release := (_counter == 0)
          }
-      }
+      };
+
+      if (release)
+         _handle.set() 
    }  
 
    close()
