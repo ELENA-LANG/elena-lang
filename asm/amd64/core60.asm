@@ -2193,7 +2193,12 @@ inline %1CFh
 
   xor  ecx, ecx                 // ; size = 0
   xor  edx, edx                 // ; fullMode = 0
+  push rbx 
+  push rcx 
   call %GC_COLLECT
+  add  rsp, 8
+  pop  rbx
+
 
 end
 
@@ -2202,7 +2207,11 @@ inline %2CFh
 
   xor  ecx, ecx                 // ; size = 0
   mov  edx, 1                   // ; fullMode = 1 (edx, not ecx - ecx is the size)
+  push rbx 
+  push rcx 
   call %GC_COLLECT
+  add  rsp, 8
+  pop  rbx
 
 end
 

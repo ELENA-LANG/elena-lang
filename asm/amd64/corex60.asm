@@ -147,8 +147,8 @@ labYGCollect:
   push rax
 
   call %GC_COLLECT
-
-  pop  rax
+  add  rsp, 8
+  
   ret
 
 end
@@ -223,6 +223,7 @@ labAllocAgain:
   // ; dummy push to keep alignment correct
   push 0 
   call %GC_ALLOC
+  add  rsp, 8
   ret
 
 labConinue:
@@ -311,6 +312,14 @@ labSkipWait:
   push rcx
 
   // ; == GCXT: save frames ==
+  // ;          lock CORE_THREAD_TABLE
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+labWaitGC:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labWaitGC
+
   mov  rax, data : %CORE_THREAD_TABLE
   mov  rbx, [rax]
 
@@ -377,10 +386,13 @@ labYGNextThreadSkip:
   mov  [rsp+28h], rax
   call extern "$rt.CollectGCLA"
 
+  // ; GCXT: free CORE_THREAD_TABLE
+  mov  rsi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  lock xadd [rsi], edx
+
   mov  rbp, [rsp+28h] 
   mov  rdi, rax
-
-  mov  rbp, [rsp+28h]
 
   // ; GCXT: signal the collecting thread that GC is ended
   // ; should it be placed into critical section?
@@ -495,10 +507,8 @@ labPERMCollect:
   pop  r10
 
   test rcx, rcx
-  jz   labStart
+  jnz  labStart
 
-  // ; repeat the alloc operation if required
-  call %GC_ALLOC
   ret
 
 labConinue:
@@ -638,6 +648,8 @@ labWait:
 
   add  rsp, 40h
   pop  rbx
+  mov  r10, [rsp-8]
+  mov  r11, [rsp-16]
 
   ret
 
@@ -835,7 +847,11 @@ labWait:
 
   xor  rcx, rcx
   xor  rdx, rdx
+  push rbx 
+  push rcx 
   call %GC_COLLECT
+  add  rsp, 8
+  pop  rbx
 
 end
 
@@ -852,7 +868,11 @@ labWait:
 
   xor  rcx, rcx
   mov  edx, 1
+  push rbx 
+  push rcx 
   call %GC_COLLECT
+  add  rsp, 8
+  pop  rbx
 
 end
 
