@@ -1,0 +1,31 @@
+<configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>mta_tests.exe</executable>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>mta_tests64.exe</executable>
+     </project>
+  </platform>
+  <project>
+     <namespace>mta_tests</namespace>
+     <template>mt_console</template>
+     <outputlist>-1</outputlist>
+  </project>
+    <manifest>
+        <name>ELENA MTA Tests</name>
+        <version>7.1.0</version>
+        <author>Alexandre Bencz</author>
+    </manifest>
+  <files>
+     <module>
+        <include>main.l</include>
+        <include>support.l</include>
+        <include>sync_tests.l</include>
+        <include>core_tests.l</include>
+        <include>tls_tests.l</include>
+     </module>
+  </files>
+</configuration>
