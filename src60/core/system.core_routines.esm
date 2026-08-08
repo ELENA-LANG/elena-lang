@@ -3015,6 +3015,7 @@ end
 
 procedure thread_start(index)
 
+//;  system      10 // ; prolog
   extopen     [arg1],[ptr,envptr,ex_struct:ex_struct_size]
 
   xloadarg    fp:index
@@ -3062,6 +3063,7 @@ procedure thread_start(index)
   call extern:ExitThreadLA (0)
 
   extclose    []
+//;  system      11 // ; epilog
   quit
 
 end

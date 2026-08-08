@@ -277,6 +277,14 @@ labSkipWait:
   push ecx
 
   // ; == GCXT: save frames ==
+  // ;          lock CORE_THREAD_TABLE
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+labWaitGC:
+  mov ecx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], ecx
+  jnz  short labWaitGC
+
   mov  eax, data : %CORE_THREAD_TABLE
   mov  ebx, [eax]
 
@@ -347,6 +355,11 @@ labYGNextThreadSkip:
 
   mov  edi, eax
   mov  ebp, [esp+12] 
+
+  // ; GCXT: free CORE_THREAD_TABLE
+  mov  esi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  lock xadd [esi], edx
 
   // ; GCXT: signal the collecting thread that GC is ended
   // ; should it be placed into critical section?
@@ -879,6 +892,7 @@ inline %3CFh
   mov  [edi + edx * 8], eax
 
   mov  [eax + tt_stack_root], esp
+  mov  [eax + tt_stack_frame], ebp
 
 end
 
