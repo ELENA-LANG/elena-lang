@@ -887,6 +887,7 @@ inline %3CFh
   shr  rdx, 4 
 
   mov  [rax + tt_stack_root], rsp
+  mov  [rax + tt_stack_frame], rbp
 
 end
 
