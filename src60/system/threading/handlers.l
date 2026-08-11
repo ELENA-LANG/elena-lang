@@ -116,7 +116,10 @@ public sealed struct ThreadHandle
    
    bool checkIfAlive()
    {
-      int retVal := extern KERNEL32.WaitForSingleObject(_handle, 0);
+      int retVal := 0;
+      excluded {
+         retVal := extern KERNEL32.WaitForSingleObject(_handle, 0);
+      }; 
 
       ^ retVal == WAIT_TIMEOUT;
    }                                                                

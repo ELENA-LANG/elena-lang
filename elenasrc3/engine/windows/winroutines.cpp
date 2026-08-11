@@ -211,7 +211,7 @@ long long SystemRoutineProvider :: GenerateSeed()
 void SystemRoutineProvider :: InitMTASignals(SystemEnv* env, size_t index)
 {
    env->th_table->slots[index].content->tt_sync_event = ::CreateEvent(0, -1, 0, 0);
-   env->th_table->slots[index].content->tt_flags = 0;
+   env->th_table->slots[index].content->tt_flags = 1;  // NOTE : the thread starts as non-collectable
 }
 
 void SystemRoutineProvider :: ClearMTASignals(SystemEnv* env, size_t index)

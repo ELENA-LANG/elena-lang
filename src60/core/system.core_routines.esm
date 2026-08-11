@@ -2997,9 +2997,11 @@ labNext:
 
 end
 
-procedure func_invoker(arg)
+procedure thread_func_invoker(arg)
 
   extopen    (2),[]
+
+  system      9  // ; NOTE : mark the thread as collectable
 
   snop
   peek       fp:arg
@@ -3044,14 +3046,14 @@ procedure thread_start(index)
 
   call extern:StartThreadLA (
      *$arg1, 
-     procedure:"system'core_routines'func_invoker",
+     procedure:"system'core_routines'thread_func_invoker",
      *$ptr)
 
   unhook
 
   // ; == enter GC critical section ==
   system      8  // ; NOTE : mark the thread as non-collectable, so no one will wait for it
-  system      6 
+  system      6
 
   call extern:UninitThreadLA (
      *$arg1, 

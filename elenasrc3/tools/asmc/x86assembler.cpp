@@ -3191,7 +3191,7 @@ bool X86_64Assembler::compileAdd(X86Operand source, X86Operand target, MemoryWri
    else if (source.isR64_M64() && target.type == X86OperandType::DB) {
       writer.writeByte(0x48);
       writer.writeByte(0x83);
-      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R64 + 0), source);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 0), source);
       X86Helper::writeImm(writer, target);
    }
    else if (source.isR64_M64() && target.isR64()) {

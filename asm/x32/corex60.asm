@@ -33,7 +33,8 @@ define gc_perm_start         002Ch
 define gc_perm_end           0030h 
 define gc_perm_current       0034h 
 define gc_lock               0038h 
-define gc_signal             0040h 
+define gc_signal             003Ch 
+define gc_queue_sem          0040h 
 
 // ; THREAD CONTENT
 define et_current            0004h
@@ -89,7 +90,6 @@ end
 inline % GC_ALLOC
 
   // ; GCXT: set lock
-labStart:
   mov  edi, data : %CORE_GC_TABLE + gc_lock
 
 labWait:
@@ -128,7 +128,6 @@ end
 // ;     edx - minor collect 1 / full collect 0
 inline % GC_COLLECT
 
-labStart:
   // ; GCXT: find the current thread entry
 
 #if _WIN
@@ -155,6 +154,7 @@ labStart:
   push edx
   push ecx
 
+labRepeat:
   // ; === GCXT: safe point ===
   mov  edx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
@@ -162,11 +162,29 @@ labStart:
   jz   short labConinue
   // ; otherwise eax contains the collecting thread event
 
+  cmp  edx, 0FFFFFFFFh
+  jnz  short labWaiting
+
+  // ; GCX : if the collecting thread waits for semaphor to be released
+  // ;       repeat again
+  lock xadd [edi], edx
+labWaitSem2:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labWaitSem2
+  nop
+  jmp  labRepeat
+
+labWaiting:
   // ; signal the collecting thread that it is stopped
   push edx
   push esi
   call extern "$rt.SignalStopGCLA"
   add  esp, 4
+
+  // ; inc semaphore
+  add  [data : %CORE_GC_TABLE + gc_queue_sem], 1
 
   // ; free lock
   mov  edi, data : %CORE_GC_TABLE + gc_lock
@@ -176,6 +194,17 @@ labStart:
   // ; stop until GC is ended
   call extern "$rt.WaitForSignalGCLA"
   add  esp, 4
+
+  // ; GCX : free semaphore
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+labWaitSem:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labWaitSem
+  sub  [data : %CORE_GC_TABLE + gc_queue_sem], 1
+  mov  edx, 0FFFFFFFFh
+  lock xadd [edi], edx
 
   // ; restore registers and try again
   pop  ecx
@@ -197,6 +226,28 @@ labAllocAgain:
 
 labConinue:
   mov  [data : %CORE_GC_TABLE + gc_signal], esi // set the collecting thread signal
+
+  // wait for the semaphore to be released
+  mov  eax, [data : %CORE_GC_TABLE + gc_queue_sem]
+  test eax, eax
+  jz   short labSkipSem
+
+  mov  edx, 0FFFFFFFFh
+  mov  [data : %CORE_GC_TABLE + gc_signal], edx
+  lock xadd [edi], edx
+
+  nop
+  nop
+
+labWaitSemR:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labWaitSemR
+  nop
+  jmp  short labConinue
+
+labSkipSem:
   mov  ebp, esp
 
   // ; === thread synchronization ===
@@ -356,19 +407,19 @@ labYGNextThreadSkip:
   mov  edi, eax
   mov  ebp, [esp+12] 
 
+  // ; GCXT: signal the collecting thread that GC is ended
+  xor  ecx, ecx
+  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
+  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
+
+  push esi
+  // ; clear thread signal var
+  call extern "$rt.SignalStopGCLA"
+
   // ; GCXT: free CORE_THREAD_TABLE
   mov  esi, data : %CORE_GC_TABLE + gc_lock
   mov  edx, 0FFFFFFFFh
   lock xadd [esi], edx
-
-  // ; GCXT: signal the collecting thread that GC is ended
-  // ; should it be placed into critical section?
-  xor  ecx, ecx
-  mov  esi, [data : %CORE_GC_TABLE + gc_signal]
-  // ; clear thread signal var
-  mov  [data : %CORE_GC_TABLE + gc_signal], ecx
-  push esi
-  call extern "$rt.SignalStopGCLA"
 
   mov  ebx, edi
 
@@ -563,8 +614,7 @@ procedure % THREAD_WAIT
   push ebp
   mov  edi, esp
 
-  push edx                  // hHandle
-
+labRepeat:
   // ; set lock
   mov  ebx, data : %CORE_GC_TABLE + gc_lock
 labWait:
@@ -572,6 +622,32 @@ labWait:
   xor eax, eax  
   lock cmpxchg dword ptr[ebx], edx
   jnz  short labWait
+
+  // ; check if gc_signal is still on
+  mov  edx, [data : %CORE_GC_TABLE + gc_signal]
+  test edx, edx
+  jnz  short labContinue
+
+  // ; if not - leave the procedure
+  mov  edx, 0FFFFFFFFh
+  lock xadd [ebx], edx
+
+  add  esp, 4
+  pop  ebx
+  pop  esi
+  ret
+
+labContinue:
+  cmp  edx, 0FFFFFFFFh
+  jnz  short labWaiting
+
+  // ; GCX : if the collecting thread waits for semaphor to be released
+  // ;       repeat again
+  lock xadd [ebx], edx
+  jmp  labRepeat
+
+labWaiting:
+  push edx
 
   // ; find the current thread entry
 #if _WIN
@@ -593,6 +669,9 @@ labWait:
   call extern "$rt.SignalStopGCLA"
   add  esp, 4
 
+  // ; inc semaphore
+  add  [data : %CORE_GC_TABLE + gc_queue_sem], 1
+
   // ; free lock
   // ; could we use mov [esi], 0 instead?
   mov  ebx, 0FFFFFFFFh
@@ -600,6 +679,17 @@ labWait:
 
   // ; stop until GC is ended
   call extern "$rt.WaitForSignalGCLA"
+
+  // ; GCX : free semaphore
+  mov  edi, data : %CORE_GC_TABLE + gc_lock
+labWaitSem:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[edi], edx
+  jnz  short labWaitSem
+  sub  [data : %CORE_GC_TABLE + gc_queue_sem], 1
+  mov  edx, 0FFFFFFFFh
+  lock xadd [edi], edx
 
   add  esp, 8
   pop  ebx

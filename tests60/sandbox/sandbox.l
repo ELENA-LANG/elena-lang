@@ -2,6 +2,7 @@ import system'collections;
 import extensions;
 import system'threading;
 import extensions'threading;
+import extensions'runtime;
 import system'runtime;
 
 // RoundBarrier
@@ -229,134 +230,58 @@ churnWorker(state)
    // and then it returns, which is the point, leaving a null slot behind while the
    // other waves are still running
 }
-
-// The only __threadvar in the tree other than Thread._currentThread
-public sealed class TlsProbe
+ 
+churnRounds(int waves, int workersPerWave, int whenCollect)
 {
-   __threadvar TlsProbe _current;
+   // has to come through every wave unchanged
+   auto survivors := new ArrayList();
+   for (int i := 0; i < 200; i += 1)
+      { survivors.append(i * 13) };
 
-   int _id;
+   auto errors := ErrorBox.new();
 
-   constructor new(int id)
+   for (int w := 0; w < waves; w += 1)
    {
-      _id := id
-   }
+      auto state := new ChurnState();
+      state.Allocations := 5000;
+      state.Done := Latch.new(workersPerWave);
+      state.Errors := errors;
 
-   int Id = _id;
-
-   static store(TlsProbe probe)
-   {
-      _current := probe
-   }
-
-   static TlsProbe Current
-   {
-      get()
-         = _current;
-   }
-}
-
-tlsWorker(arg)
-{
-   int index := arg.Index;
-   auto state := arg.State;
-
-   int rounds := state.Rounds;
-   auto barrier := state.Barrier;
-   auto matches := state.Matches;
-   auto completed := state.Completed;
-
-   for (int k := 0; k < rounds; k += 1)
-   {
-      auto counter := matches[k];
-      auto latch := completed[k];
-
-      try
+      for (int i := 0; i < workersPerWave; i += 1)
       {
-         int expected := index * 1000 + k;
+         auto worker := Thread.assign(&churnWorker);
 
-         TlsProbe.store(TlsProbe.new(expected));
-
-         // everyone has written before anyone reads back, which turns a shared slot
-         // from probably wrong into certainly wrong
-         barrier.arrive(k);
-
-         auto seen := TlsProbe.Current;
-
-         if (seen.Id == expected)
-            { counter.increment() }
-      }
-      catch(Exception e)
-      {
-         state.Errors.record(e)
+         worker.start(state)
       };
 
-      latch.done()
-   }
+      // collect while the wave finishes, so one lands in the window where some workers
+      // have exited and others have not
+      if (whenCollect == 1)
+         { GCManager.collectFull() }
+      else
+         { GCManager.collectMinor() };
+
+      state.Done.await();
+      state.Done.close();
+
+      if (whenCollect == 2)
+         { GCManager.collectFull() }
+   };
+
+   errors.rethrowIfAny();
+
+   // element by element, a partial relocation leaves the length right
+   Assert.ifEqual(survivors.Length, 200);
+   for (int i := 0; i < 200; i += 1)
+      { Assert.ifEqual(survivors[i], i * 13) }
 }
 
-public mtaThreadLocalStorageTest()
-{
-   int t := MtaLoad.WorkerCount;
-   int rounds := MtaLoad.Repetitions;
-
-   auto matches := Array.allocate(rounds);
-   auto completed := Array.allocate(rounds);
-
-   for (int k := 0; k < rounds; k += 1)
-   {
-      matches[k] := SharedCounter.new();
-      completed[k] := Latch.new(t)
-   };
-
-   auto state := new TlsWorkerState();
-   state.Barrier := RoundBarrier.new(t, rounds);
-   state.Matches := matches;
-   state.Completed := completed;
-   state.Rounds := rounds;
-   state.Errors := ErrorBox.new();
-
-   for (int i := 0; i < t; i += 1)
-   {
-      auto arg := new TlsWorkerArg();
-      arg.Index := i;
-      arg.State := state;
-
-      auto worker := Thread.assign(&tlsWorker);
-
-      worker.start(arg)
-   };
-
-   for (int k := 0; k < rounds; k += 1)
-   {
-      auto latch := completed[k];
-      auto counter := matches[k];
-
-      state.Barrier.releaseAll(k);
-
-      latch.await();
-
-      // one shared slot would leave at most one match per round
-      Assert.ifEqual(counter.Value, t)
-   };
-
-   state.Errors.rethrowIfAny();
-
-   state.Barrier.close();
-
-   for (int k := 0; k < rounds; k += 1)
-   {
-      auto latch := completed[k];
-
-      latch.close()
-   };
-
-   Console.write(".")
-}
- 
 public Program()
 {
-   mtaThreadLocalStorageTest();
+ //  churnRounds(50, 15, 1);
+  churnRounds(50, 6, 1);
 
-   Console.write(".")
+   Console.write(".");
+
+   SystemMonitor.printMemoryStatistics();
 }

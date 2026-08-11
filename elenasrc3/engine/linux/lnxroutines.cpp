@@ -367,7 +367,7 @@ void SystemRoutineProvider::InitMTASignals(SystemEnv* env, size_t index)
    EventImpl* event = new EventImpl();
 
    env->th_table->slots[index].content->tt_sync_event = (void*)event;
-   env->th_table->slots[index].content->tt_flags = 0;
+   env->th_table->slots[index].content->tt_flags = 1;  // NOTE : the thread starts as non-collectable
 }
 
 void SystemRoutineProvider::ClearMTASignals(SystemEnv* env, size_t index)
