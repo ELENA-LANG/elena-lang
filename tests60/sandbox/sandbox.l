@@ -279,9 +279,10 @@ churnRounds(int waves, int workersPerWave, int whenCollect)
 public Program()
 {
  //  churnRounds(50, 15, 1);
-  churnRounds(50, 6, 1);
+  churnRounds(50, 9, 1);
 
    Console.write(".");
 
    SystemMonitor.printMemoryStatistics();
 }
+

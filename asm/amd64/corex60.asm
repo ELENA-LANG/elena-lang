@@ -529,9 +529,24 @@ labPERMCollect:
   mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
   test rdx, rdx                       
-  jz   short labConinue
+  jz   labConinue
   // ; otherwise eax contains the collecting thread event
 
+  cmp  edx, 0FFFFFFFFh
+  jnz  short labWaiting
+
+  // ; GCX : if the collecting thread waits for semaphor to be released
+  // ;       repeat again
+  lock xadd [rdi], edx
+labWaitSem2:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labWaitSem2
+  nop
+  jmp  short labRepeat
+
+labWaiting:
   sub  rsp, 30h
 
   // ; signal the collecting thread that it is stopped
@@ -539,6 +554,10 @@ labPERMCollect:
 
   mov  rcx, rsi
   call extern "$rt.SignalStopGCLA"
+
+  // ; inc semaphore
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  add  [rdi + 16], 1  // ; rdi + 16 = gc_queue_sem
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
@@ -551,6 +570,17 @@ labPERMCollect:
   call extern "$rt.WaitForSignalGCLA"
   add  rsp, 30h
   // ; restore registers and try again
+
+  // ; GCX : free semaphore
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+labWaitSem:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labWaitSem
+  sub  [rdi + 16], 1          // ; decrese a semaphor ; rdi + 16 = gc_queue_sem
+  mov  edx, 0FFFFFFFFh
+  lock xadd [rdi], edx
 
   pop  rcx
   pop  rdx
@@ -565,6 +595,28 @@ labPERMCollect:
 
 labConinue:
   mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
+
+  // wait for the semaphore to be released
+  mov  rax, [data : %CORE_GC_TABLE + gc_queue_sem]
+  test eax, eax
+  jz   short labSkipSem
+
+  mov  edx, 0FFFFFFFFh
+  mov  [data : %CORE_GC_TABLE + gc_signal], rdx
+  lock xadd [rdi], edx
+
+  nop
+  nop
+
+labWaitSemR:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labWaitSemR
+  nop
+  jmp  short labConinue
+
+labSkipSem:
   mov  rbp, rsp
 
   // ; === thread synchronization ===
@@ -623,6 +675,14 @@ labSkipWait:
   // ; remove list
   mov  rsp, rbp     
 
+  // ;          lock CORE_THREAD_TABLE
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+labWaitGC:
+  mov edx, 1
+  xor eax, eax
+  lock cmpxchg dword ptr[rdi], edx
+  jnz  short labWaitGC
+
   // ==== GCXT end ==============
 
   // ; rsp is aligned : the generated code calls us aligned, the entry pushes cancel
@@ -641,6 +701,11 @@ labSkipWait:
   // ; clear thread signal var
   mov  [data : %CORE_GC_TABLE + gc_signal], rbx
   call extern "$rt.SignalStopGCLA"
+
+  // ; GCXT: free CORE_THREAD_TABLE
+  mov  rsi, data : %CORE_GC_TABLE + gc_lock
+  mov  edx, 0FFFFFFFFh
+  lock xadd [rsi], edx
 
   mov  rbx, rdi
   add  rsp, 40h

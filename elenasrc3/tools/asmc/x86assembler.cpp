@@ -513,7 +513,7 @@ X86Operand X86Assembler :: compileOperand(ScriptToken& tokenInfo, ustr_t errorMe
    }
    else if (tokenInfo.compare("fs")) {
       read(tokenInfo, ":", ASM_DOUBLECOLON_EXPECTED);
-      operand = readPtrOperand(tokenInfo, X86OperandType::M32, errorMessage);
+      operand = readPtrOperand(tokenInfo, getSegmentPrefix(), errorMessage);
       if (operand.prefix != SegmentPrefix::None) {
          throw SyntaxError(ASM_SYNTAXERROR, tokenInfo.lineInfo);
       }
@@ -2485,7 +2485,10 @@ bool X86Assembler :: compileXadd(X86Operand source, X86Operand target, MemoryWri
 
    if (source.isR32_M32() && target.isR32()) {
       writer.writeByte(0x0F);
-      writer.writeByte(0xC0);
+      // ; C1 is the 32 bit form, C0 is the 8 bit one. Every xadd in the cores came out
+      // ; a byte operation, which happened to work because the lock only ever holds 0
+      // ; or 1 : one release too many would leave FF where the next cmpxchg expects 0
+      writer.writeByte(0xC1);
       X86Helper::writeModRM(writer, target, source);
    }
    else if (source.isR8_M8() && target.isR8()) {
@@ -3059,6 +3062,13 @@ X86Operand X86_64Assembler :: defineRDisp(X86Operand operand)
       operand.type = operand.type | X86OperandType::M64disp8;
       operand.offset = 0;
    }
+   // ; r13 shares the rm field with rbp, so [r13] needs the same explicit zero
+   // ; displacement : without it mod 00 over that field is the RIP relative form and the
+   // ; CPU reads the next instruction as the displacement
+   else if (operand.ebpReg && test(operand.type, X86OperandType::MX64)) {
+      operand.type = operand.type | X86OperandType::MX64disp8;
+      operand.offset = 0;
+   }
    else if (operand.type == X86OperandType::M64 && !operand.accReg) {
       operand.type = X86OperandType::Disp64;
       operand.offset = 0;
@@ -3402,7 +3412,12 @@ bool X86_64Assembler :: compileLea(X86Operand source, X86Operand target, MemoryW
 
 bool X86_64Assembler :: compileMov(X86Operand source, X86Operand target, MemoryWriter& writer)
 {
-   if (target.prefix == SegmentPrefix::GS) {
+   // ; without the FS case a mov r64, fs:[0] assembled silently as mov r64, [0], which
+   // ; is how the thread pointer is read on Linux and FreeBSD
+   if (target.prefix == SegmentPrefix::FS) {
+      writer.writeByte(0x64);
+   }
+   else if (target.prefix == SegmentPrefix::GS) {
       writer.writeByte(0x65);
    }
 
@@ -3693,7 +3708,9 @@ bool X86_64Assembler :: compileXadd(X86Operand source, X86Operand target, Memory
 
    if (source.isM64() && target.isR32()) {
       writer.writeByte(0x0F);
-      writer.writeByte(0xC0);
+      // ; C1, see the note in X86Assembler::compileXadd. No REX.W here on purpose : the
+      // ; operand is a 32 bit register and the lock word is a dword
+      writer.writeByte(0xC1);
       X86Helper::writeModRM(writer, target, source);
    }
    else return X86Assembler::compileXadd(source, target, writer, prefixScope);

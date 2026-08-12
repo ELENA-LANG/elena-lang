@@ -56,14 +56,9 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - fix mtaCollectFullOnThreadStartTest / mtaCollectMinorOnThreadStartTest; they failed sometimes
-  - update allocperm
-  - WaitForSignalGCLA - can it be limited? so no deadend - we just check the flag once again, if the flag is
-    clear - carrying on, otherwise - wait for the new signal?
-  - test anagrams
-  - test mta_tests
-  - test anagrams for x86 and x86-64
-  - review rosetta samples from B
+  - review rosetta samples from C
+  - review sandbox - try to optimize if possible
+  - review rosetta samples from D
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples

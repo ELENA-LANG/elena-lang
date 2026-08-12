@@ -149,7 +149,7 @@ namespace elena_lang
 
       size_t      gc_lock;             // NOTE : used only for MTA 
       size_t      gc_signal;           // NOTE : used only for MTA 
-      size_t      gc_queue_sem;        // NOTE : used only for MTA 
+      size_t      gc_queue_sem;        // NOTE : used only for MTA
    };
 
    // --- GCRoot ---
