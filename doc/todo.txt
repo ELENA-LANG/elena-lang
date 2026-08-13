@@ -55,8 +55,8 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - review sandbox - try to optimize if possible
   - review rosetta samples from E
+  - mta_test64 fails sometime - investigate
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples

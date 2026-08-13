@@ -537,15 +537,13 @@ labPERMCollect:
   ret
 
 labConinue:
-  mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
-
-labWaitSem:
   // wait for the semaphore to be released
   mov  rax, [data : %CORE_GC_TABLE + gc_queue_sem]
   test eax, eax
-  jnz   short labWaitSem
+  jnz   short labConinue
 
   mov  rbp, rsp
+  mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
 
   // ; === thread synchronization ===
 
