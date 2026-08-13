@@ -210,12 +210,8 @@ labConinue:
 labWaitQueue:
   mov  eax, [data : %CORE_GC_TABLE + gc_queue_sem]
   test eax, eax
-  jz   short labSkipSem
-  nop
-  nop
-  jmp  short labWaitQueue
+  jnz   short labWaitQueue
 
-labSkipSem:
   mov  ebp, esp
 
   // ; === thread synchronization ===

@@ -185,23 +185,8 @@ labRepeat:
   // ; if it is a collecting thread, starts the GC
   test rdx, rdx                       
   jz   labConinue
-  // ; otherwise eax contains the collecting thread event
+  // ; otherwise rdx contains the collecting thread event
 
-  cmp  edx, 0FFFFFFFFh
-  jnz  short labWaiting
-
-  // ; GCX : if the collecting thread waits for semaphor to be released
-  // ;       repeat again
-  lock xadd [rdi], edx
-labWaitSem2:
-  mov edx, 1
-  xor eax, eax
-  lock cmpxchg dword ptr[rdi], edx
-  jnz  short labWaitSem2
-  nop
-  jmp  short labRepeat
-
-labWaiting:
   sub  rsp, 30h
 
   // ; signal the collecting thread that it is stopped
@@ -212,7 +197,8 @@ labWaiting:
 
   // ; inc semaphore
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
-  add  [rdi + 16], 1  // ; rdi + 16 = gc_queue_sem
+  mov  ecx, 1
+  lock xadd [rdi + 16], ecx // ; rdi + 16 = gc_queue_sem
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
@@ -227,14 +213,8 @@ labWaiting:
 
   // ; GCX : free semaphore
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
-labWaitSem:
-  mov edx, 1
-  xor eax, eax
-  lock cmpxchg dword ptr[rdi], edx
-  jnz  short labWaitSem
-  sub  [rdi + 16], 1          // ; decrese a semaphor ; rdi + 16 = gc_queue_sem
   mov  edx, 0FFFFFFFFh
-  lock xadd [rdi], edx
+  lock xadd [rdi + 16], edx          // ; decrease a semaphor ; rdi + 16 = gc_queue_sem
 
   pop  rcx
   pop  rdx
@@ -258,29 +238,12 @@ labAllocAgain:
   ret
 
 labConinue:
-  mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
-
   // wait for the semaphore to be released
   mov  rax, [data : %CORE_GC_TABLE + gc_queue_sem]
   test eax, eax
-  jz   short labSkipSem
+  jnz  short labConinue
 
-  mov  edx, 0FFFFFFFFh
-  mov  [data : %CORE_GC_TABLE + gc_signal], rdx
-  lock xadd [rdi], edx
-
-  nop
-  nop
-
-labWaitSemR:
-  mov edx, 1
-  xor eax, eax
-  lock cmpxchg dword ptr[rdi], edx
-  jnz  short labWaitSemR
-  nop
-  jmp  short labConinue
-
-labSkipSem:
+  mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
   mov  rbp, rsp
 
   // ; === thread synchronization ===
@@ -530,23 +493,9 @@ labPERMCollect:
   // ; if it is a collecting thread, starts the GC
   test rdx, rdx                       
   jz   labConinue
-  // ; otherwise eax contains the collecting thread event
 
-  cmp  edx, 0FFFFFFFFh
-  jnz  short labWaiting
+  // ; otherwise rdx contains the collecting thread event
 
-  // ; GCX : if the collecting thread waits for semaphor to be released
-  // ;       repeat again
-  lock xadd [rdi], edx
-labWaitSem2:
-  mov edx, 1
-  xor eax, eax
-  lock cmpxchg dword ptr[rdi], edx
-  jnz  short labWaitSem2
-  nop
-  jmp  short labRepeat
-
-labWaiting:
   sub  rsp, 30h
 
   // ; signal the collecting thread that it is stopped
@@ -557,11 +506,11 @@ labWaiting:
 
   // ; inc semaphore
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
-  add  [rdi + 16], 1  // ; rdi + 16 = gc_queue_sem
+  mov  ebx, 1  // ; rdi + 16 = gc_queue_sem
+  lock xadd [rdi + 16], ebx  // ; rdi + 16 = gc_queue_sem
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
-  mov  rdi, data : %CORE_GC_TABLE + gc_lock
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
@@ -573,14 +522,8 @@ labWaiting:
 
   // ; GCX : free semaphore
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
-labWaitSem:
-  mov edx, 1
-  xor eax, eax
-  lock cmpxchg dword ptr[rdi], edx
-  jnz  short labWaitSem
-  sub  [rdi + 16], 1          // ; decrese a semaphor ; rdi + 16 = gc_queue_sem
   mov  edx, 0FFFFFFFFh
-  lock xadd [rdi], edx
+  lock xadd [rdi + 16], edx        // ; decrease a semaphor ; rdi + 16 = gc_queue_sem
 
   pop  rcx
   pop  rdx
@@ -596,27 +539,12 @@ labWaitSem:
 labConinue:
   mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
 
+labWaitSem:
   // wait for the semaphore to be released
   mov  rax, [data : %CORE_GC_TABLE + gc_queue_sem]
   test eax, eax
-  jz   short labSkipSem
+  jnz   short labWaitSem
 
-  mov  edx, 0FFFFFFFFh
-  mov  [data : %CORE_GC_TABLE + gc_signal], rdx
-  lock xadd [rdi], edx
-
-  nop
-  nop
-
-labWaitSemR:
-  mov edx, 1
-  xor eax, eax
-  lock cmpxchg dword ptr[rdi], edx
-  jnz  short labWaitSemR
-  nop
-  jmp  short labConinue
-
-labSkipSem:
   mov  rbp, rsp
 
   // ; === thread synchronization ===
@@ -756,16 +684,6 @@ labWait:
 labContinue:
   mov  r13, rdx                  // hHandle
 
-  cmp  edx, 0FFFFFFFFh
-  jnz  short labWaiting
-
-  // ; GCX : if the collecting thread waits for semaphor to be released
-  // ;       repeat again
-  lock xadd [rbx], edx
-  jmp  labRepeat
-
-labWaiting:
-
   // ; find the current thread entry
   mov  rdx, gs:[58h]
   mov  rax, [rdx]
@@ -782,10 +700,10 @@ labWaiting:
 
   // ; inc semaphore
   mov  rdi, data : %CORE_GC_TABLE + gc_lock  
-  add  dword ptr[rdi + 16], 1   // ; rdi + 16 = gc_queue_sem
+  mov  ebx, 1
+  lock xadd [rdi + 16], ebx // ; rdi + 16 = gc_queue_sem
 
   // ; free lock
-  // ; could we use mov [esi], 0 instead?
   mov  ebx, 0FFFFFFFFh
   lock xadd [rdi], ebx
 
@@ -795,14 +713,8 @@ labWaiting:
 
   // ; GCX : free semaphore
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
-labWaitSem:
-  mov edx, 1
-  xor eax, eax
-  lock cmpxchg dword ptr[rdi], edx
-  jnz  short labWaitSem
   mov  edx, 0FFFFFFFFh
-  sub  dword ptr [rdi + 16], 1 // ; decrement semaphore; rdi + 16 = gc_queue_sem
-  lock xadd [rdi], edx
+  lock xadd [rdi + 16], edx // ; decreament semaphore; rdi + 16 = gc_queue_sem
 
   add  rsp, 40h
   pop  rbx
