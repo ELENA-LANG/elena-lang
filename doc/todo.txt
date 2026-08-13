@@ -9,7 +9,6 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - raise an error if label cannot be resolved
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - fix httpsget ()
   - switch with class types
@@ -56,9 +55,9 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - review rosetta samples from C
-  - review sandbox - try to optimize if possible
   - review rosetta samples from D
+  - review sandbox - try to optimize if possible
+  - review rosetta samples from E
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples

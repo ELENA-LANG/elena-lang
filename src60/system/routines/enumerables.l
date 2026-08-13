@@ -420,7 +420,7 @@ public extension indexableOp<T>
       Indexable it := self;
       int len := it.Length;
       for (int i := 0; i < len; i++) {
-         fn(it[i])
+         fn(i)
       };
    }    
 }

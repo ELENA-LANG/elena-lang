@@ -33,8 +33,11 @@ int X86LabelHelper :: fixShortLabel(pos_t jumpPos, MemoryWriter& writer)
 {
    int offset = writer.position() - jumpPos - 2;
 
-   // if we are unlucky we must change jump from short to near
-   if (_abs(offset) > 0x80) {
+   // if we are unlucky we must change jump from short to near. The displacement is a
+   // signed byte, so it holds -128 up to 127 : an offset of exactly 128 used to pass this
+   // test and was written back as -128, turning a forward jump into a backward one that
+   // lands in the middle of an instruction
+   if (offset > 0x7F || offset < -0x80) {
       convertShortToNear(jumpPos, offset, writer);
    }
    else *(char*)(&(*writer.Memory())[jumpPos + 1]) = (char)offset;
@@ -117,7 +120,7 @@ void X86LabelHelper :: fixJumps(pos_t position, int size, MemoryWriter& writer)
       else if (offset > 0 && position >= jumpPos && position <= jumpPos + offset/* + size*/) {
          offset += size;
 
-         if (offset < 0x82) {
+         if (offset < 0x80) {
             *(char*)(&(*memory)[jumpPos + 1]) = (char)offset;
          }
          else {

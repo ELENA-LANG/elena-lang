@@ -3,7 +3,8 @@
 //
 //		This file contains CPU native helpers
 //		Supported platforms: x86 / x86-64
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
+//                                             (C)2026, by Alexandre Bencz
 //---------------------------------------------------------------------------
 
 #ifndef X86HELPER_H
@@ -172,7 +173,7 @@ namespace elena_lang
    // --- X86Operand ---
    struct X86Operand
    {
-      bool           ebpReg;     // to resolve conflict between [ebp] and disp32
+      bool           ebpReg;     // to resolve conflict between [ebp] or [r13] and disp32
       bool           factorReg;   // to implement [r*factor] SIB
       bool           accReg;
 
@@ -274,7 +275,8 @@ namespace elena_lang
          this->reference = 0;
          this->offset = 0;
          this->factorReg = false;
-         this->ebpReg = (type == X86OperandType::EBP || this->type == X86OperandType::RBP);
+         this->ebpReg = (type == X86OperandType::EBP || this->type == X86OperandType::RBP
+            || this->type == X86OperandType::RX13);
          this->accReg = (type == X86OperandType::EAX || this->type == X86OperandType::RAX);
          this->prefix = SegmentPrefix::None;
       }
@@ -307,7 +309,9 @@ namespace elena_lang
       {
          unsigned int destType = (unsigned int)dest.type;
 
-         if (test(dest.type, X86OperandType::M64disp32) && dest.prefix == SegmentPrefix::GS) {
+         if (test(dest.type, X86OperandType::M64disp32) && 
+            (dest.prefix == SegmentPrefix::GS || dest.prefix == SegmentPrefix::FS))
+         {
             // HOTFIX : for direct m64 disp mode - use SIB mode
             destType = 0x25000004;
          }
