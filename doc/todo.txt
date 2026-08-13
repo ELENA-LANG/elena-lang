@@ -55,7 +55,6 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - review rosetta samples from D
   - review sandbox - try to optimize if possible
   - review rosetta samples from E
   - review all rosetta samples, fix the corrected
