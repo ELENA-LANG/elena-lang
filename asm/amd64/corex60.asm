@@ -179,7 +179,6 @@ inline % GC_COLLECT
 
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
 
-labRepeat:
   // ; === GCXT: safe point ===
   mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
@@ -238,12 +237,13 @@ labAllocAgain:
   ret
 
 labConinue:
+  mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
+
   // wait for the semaphore to be released
   mov  rax, [data : %CORE_GC_TABLE + gc_queue_sem]
   test eax, eax
   jnz  short labConinue
 
-  mov  [data : %CORE_GC_TABLE + gc_signal], rsi // set the collecting thread signal
   mov  rbp, rsp
 
   // ; === thread synchronization ===
@@ -551,9 +551,10 @@ labConinue:
   mov  rax, rsi
   // ; get tls entry address  
   mov  rsi, data : %CORE_THREAD_TABLE + tt_slots
-  xor  ecx, ecx
   mov  rdi, [rsi - 8]
+
 labNext:
+  xor  ecx, ecx
   mov  rdx, [rsi]
   test rdx, rdx
   jz   short labSkipTT
@@ -572,28 +573,27 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   add  rsp, 30h
 
-  lea  rsi, [rsi + 16]
   mov  rax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
+  lea  rsi, [rsi + 16]
   sub  edi, 1
   jnz  short labNext
 
   mov  rsi, data : %CORE_GC_TABLE + gc_lock
-  mov  edx, 0FFFFFFFFh
-  mov  rbx, rbp
+  mov  eax, 0FFFFFFFFh
+  mov  rcx, rbp
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
-  lock xadd [rsi], edx
+  lock xadd [rsi], eax
 
   mov  rdx, rsp
-  sub  rbx, rsp
+  sub  rcx, rsp
   jz   short labSkipWait
 
   // ; wait until they all stopped
-  shr  ebx, 3
+  shr  ecx, 3
   sub  rsp, 30h
-  mov  ecx, ebx
   call extern "$rt.WaitForSignalsGCLA"
   add  rsp, 30h
 
