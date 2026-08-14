@@ -543,6 +543,8 @@ ELENA byte codes (or ecodes)
                               n = 7 -> leave GC critical section
                               n = 8 -> mark thread as non-collectable
                               n = 9 -> mark thread as collectable
+                              n = 10 -> wait until all waiting threads leaves the waiting queue;
+                                        must be called inside GC critical section
 
    throw                    - raise an exception (acc contains the exception object)
 

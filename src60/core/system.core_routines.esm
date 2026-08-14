@@ -3055,11 +3055,13 @@ procedure thread_start(index)
   system      8  // ; NOTE : mark the thread as non-collectable, so no one will wait for it
   system      6
 
+  system      10
+
   call extern:UninitThreadLA (
      *$arg1, 
      *$ptr)
 
-  system      7  
+  system      7
   // ; === leave GC critical section ===
 
   call extern:ExitThreadLA (0)

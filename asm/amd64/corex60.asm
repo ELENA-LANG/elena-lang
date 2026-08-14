@@ -1080,6 +1080,18 @@ labConinue:
 
 end
 
+// ; system : thread epilog; 
+// ;          make sure all waiting threads are exited the wait,
+// ;          before the thread is terminated
+inline %0ACFh
+
+labRepeat:
+  mov  rax, [data : %CORE_GC_TABLE + gc_queue_sem]
+  test eax, eax
+  jnz  short labRepeat
+
+end
+
 // ; xhookdpr
 inline %0E6h
 
