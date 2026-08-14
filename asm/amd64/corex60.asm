@@ -973,8 +973,8 @@ end
 inline %6CFh
 
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
-  mov  ecx, 1
 labWait:
+  mov  ecx, 1
   xor  eax, eax
   lock cmpxchg dword ptr[rdi], ecx
   jnz  short labWait
@@ -1087,8 +1087,8 @@ inline %0ACFh
 
 labStart:
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
-  mov  ecx, 1
 labWait:
+  mov  ecx, 1
   xor  eax, eax
   lock cmpxchg dword ptr[rdi], ecx
   jnz  short labWait

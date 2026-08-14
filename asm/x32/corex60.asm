@@ -498,14 +498,11 @@ labConinue:
   mov  [data : %CORE_GC_TABLE + gc_signal], esi // set the collecting thread signal
 
   // wait for the semaphore to be released
+labWaitQueue:
   mov  eax, [data : %CORE_GC_TABLE + gc_queue_sem]
   test eax, eax
-  jz   short labSkipSem
-  nop
-  nop
-  jmp  short labConinue
+  jnz   short labWaitQueue
 
-labSkipSem:
   mov  ebp, esp
 
   // ; === thread synchronization ===
@@ -516,6 +513,7 @@ labSkipSem:
   mov  esi, data : %CORE_THREAD_TABLE + tt_slots
   mov  edi, [esi - 4]
 labNext:
+  xor  ecx, ecx
   mov  edx, [esi]
   test edx, edx
   jz   short labSkipTT
@@ -533,9 +531,9 @@ labSkipSave:
   call extern "$rt.SignalClearGCLA"
   add  esp, 4
 
-  lea  esi, [esi + 8]
   mov  eax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
+  lea  esi, [esi + 8]
   sub  edi, 1
   jnz  short labNext
 
@@ -980,8 +978,8 @@ end
 inline %6CFh
 
   mov  edi, data : %CORE_GC_TABLE + gc_lock
-  mov  ecx, 1
 labWait:
+  mov  ecx, 1
   xor  eax, eax
   lock cmpxchg dword ptr[edi], ecx
   jnz  short labWait
@@ -1094,8 +1092,8 @@ inline %0ACFh
 
 labStart:
   mov  edi, data : %CORE_GC_TABLE + gc_lock
-  mov  ecx, 1
 labWait:
+  mov  ecx, 1
   xor  eax, eax
   lock cmpxchg dword ptr[edi], ecx
   jnz  short labWait
