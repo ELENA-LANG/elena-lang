@@ -55,9 +55,9 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - mta_test64 fails sometime - investigate (set breakpoint for EventHandle.wait method)
-  - fix allocperm for x32
   - review rosetta samples from E
+  - mta_test64 fails sometime
+  - review rosetta samples from F
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples

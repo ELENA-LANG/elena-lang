@@ -2859,14 +2859,20 @@ labEnd:
 
 end
 
-procedure __enterCritical
+procedure __enterCritical(self)
 
-  peek        sp:0
+  xflush     sp:0
+  xflush     sp:1
+
+  open       (2),[]
+  peek       fp:self
 
 labWait:
   snop
   trylock
-  jne         labWait  
+  jne        labWait  
+
+  close      []
 
 end
 

@@ -648,10 +648,10 @@ end
 
 procedure % THREAD_WAIT
 
-  mov  [rsp-8], r10
-  mov  [rsp-16], r11
   push rbx
+  push r11
   push r10
+  push 0
   push rbp
   mov  rdi, rsp
 
@@ -674,9 +674,9 @@ labWait:
   lock xadd [rbx], edx
 
   add  rsp, 10h
+  pop  r10
+  pop  r11
   pop  rbx
-  mov  r10, [rsp-8]
-  mov  r11, [rsp-16]
   ret
 
 labContinue:
@@ -715,9 +715,9 @@ labContinue:
   lock xadd [rdi + 16], edx // ; decreament semaphore; rdi + 16 = gc_queue_sem
 
   add  rsp, 40h
+  pop  r10
+  pop  r11
   pop  rbx
-  mov  r10, [rsp-8]
-  mov  r11, [rsp-16]
 
   ret
 
