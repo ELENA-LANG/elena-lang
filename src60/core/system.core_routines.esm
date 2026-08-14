@@ -3051,11 +3051,9 @@ procedure thread_start(index)
 
   unhook
 
-  // ; == enter GC critical section ==
   system      8  // ; NOTE : mark the thread as non-collectable, so no one will wait for it
-  system      6
-
-  system      10
+  // ; == enter GC critical section ==
+  system      10 // ; make sure an active collections is finished before entering the critical section
 
   call extern:UninitThreadLA (
      *$arg1, 

@@ -1085,6 +1085,22 @@ end
 // ;          before the thread is terminated
 inline %0ACFh
 
+labStart:
+  mov  rdi, data : %CORE_GC_TABLE + gc_lock
+  mov  ecx, 1
+labWait:
+  xor  eax, eax
+  lock cmpxchg dword ptr[rdi], ecx
+  jnz  short labWait
+
+  mov  rax, [data : %CORE_GC_TABLE + gc_signal]
+  test eax, eax
+  jz   short labRepeat
+
+  mov  ecx, 0FFFFFFFFh
+  lock xadd [rdi], ecx
+  jmp  short labStart
+
 labRepeat:
   mov  rax, [data : %CORE_GC_TABLE + gc_queue_sem]
   test eax, eax
