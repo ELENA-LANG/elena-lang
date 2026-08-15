@@ -5,6 +5,7 @@ define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
 define PREPARE	            10006h
 define THREAD_WAIT          10007h
+define THREAD_MARK          10008h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -677,6 +678,21 @@ labContinue:
 
 end
 
+// --- THREAD_MARK ---
+// GCXT: it is presumed that gc lock is on, rdi - contains context
+
+procedure %THREAD_MARK
+
+  // ; signal the collecting thread that it is stopped
+  mov  ecx, [edi+tt_sync_event]   // ; get current thread event
+  push ecx
+  call extern "$rt.SignalStopGCLA"
+  add  esp, 4
+
+  ret
+
+end
+
 // ; --- System Core Preloaded Routines --
 
 // ; ==== Command Set ==
@@ -1012,18 +1028,6 @@ labWait:
   lock cmpxchg dword ptr[edi], ecx
   jnz  short labWait
 
-  // ; safe point
-  mov  ecx, [data : %CORE_GC_TABLE + gc_signal]
-  test ecx, ecx                       // ; if it is a collecting thread, waits
-  jz   short labConinue               // ; otherwise goes on
-
-  mov  ecx, 0FFFFFFFFh
-  lock xadd [edi], ecx
-  call %THREAD_WAIT                   // ; waits until the GC is stopped
-  jmp  short labStart
-
-labConinue:
-
 #if _WIN
   mov  eax, fs:[2Ch]
   mov  edi, [eax]
@@ -1031,6 +1035,15 @@ labConinue:
   mov  eax, gs:[0]
   lea  edi, [eax-tt_size]
 #endif
+
+  // ; safe point
+  mov  ecx, [data : %CORE_GC_TABLE + gc_signal]
+  test ecx, ecx                       // ; if it is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  call %THREAD_MARK                   // ; waits until the GC is stopped
+
+labConinue:
 
   mov  [edi + tt_flags], 1
 

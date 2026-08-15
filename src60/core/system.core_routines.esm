@@ -3023,7 +3023,6 @@ end
 
 procedure thread_start(index)
 
-//;  system      10 // ; prolog
   extopen     [arg1],[ptr,envptr,ex_struct:ex_struct_size]
 
   xloadarg    fp:index
@@ -3057,9 +3056,11 @@ procedure thread_start(index)
 
   unhook
 
+  exclude
   system      8  // ; NOTE : mark the thread as non-collectable, so no one will wait for it
+
   // ; == enter GC critical section ==
-  system      10 // ; make sure an active collections is finished before entering the critical section
+  system      6
 
   call extern:UninitThreadLA (
      *$arg1, 

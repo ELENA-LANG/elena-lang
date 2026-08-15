@@ -7,6 +7,7 @@ define GC_COLLECT	    10004h
 define GC_ALLOCPERM	    10005h
 define PREPARE	            10006h
 define THREAD_WAIT          10007h
+define THREAD_MARK          10008h
 
 define CORE_TOC             20001h
 define SYSTEM_ENV           20002h
@@ -723,6 +724,23 @@ labContinue:
 
 end
 
+// --- THREAD_MARK ---
+// GCXT: it is presumed that gc lock is on, rdi - contains context
+
+procedure % THREAD_MARK
+
+  push rbp
+  // ; signal the collecting thread that it is stopped
+  sub  rsp, 30h
+  mov  rcx, [rdi+tt_sync_event]       // ; get current thread event
+  call extern "$rt.SignalStopGCLA"
+  add  rsp, 38h
+
+  ret
+
+end
+
+
 // ; --- System Core Preloaded Routines --
 
 // ; ==== Command Set ==
@@ -997,7 +1015,6 @@ end
 // ; system 8 : mark thread as non-collectable
 inline %8CFh
 
-labStart:
   // ; enter gc crtical section
   mov  rdi, data : %CORE_GC_TABLE + gc_lock
 
@@ -1007,19 +1024,6 @@ labWait:
   lock cmpxchg dword ptr[rdi], ecx
   jnz  short labWait
 
-  // ; safe point
-  mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
-  test rcx, rcx                       // ; if there is a collecting thread, waits
-  jz   short labConinue               // ; otherwise goes on
-
-  mov  ecx, 0FFFFFFFFh
-  lock xadd [rdi], ecx
-
-  call %THREAD_WAIT                   // ; waits until the GC is stopped
-  jmp short labStart 
-
-labConinue:
-
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
@@ -1027,6 +1031,15 @@ labConinue:
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
+
+  // ; safe point
+  mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
+  test rcx, rcx                       // ; if there is a collecting thread, waits
+  jz   short labConinue               // ; otherwise goes on
+
+  call %THREAD_MARK 
+
+labConinue:
 
   mov  dword ptr [rdi + tt_flags], 1
 
