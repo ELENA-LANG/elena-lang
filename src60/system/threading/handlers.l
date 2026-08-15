@@ -180,7 +180,7 @@ public sealed struct ThreadHandle
    {
       excluded
       {
-         extern libc.pthread_join(_handle);
+         extern libc.pthread_join(_handle, 0);
       }
    }
                                                                    
