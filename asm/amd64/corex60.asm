@@ -434,11 +434,12 @@ labYGNextThreadSkip:
 
   mov [rbp-8], rsp      // ; save position for roots
 
-  mov  r8,  [rbp+8]
 #if _WIN
+  mov  r8,  [rbp+8]
   mov  rdx, [rbp]
   mov  rcx, rsp
 #elif (_LNX || _FREEBSD)
+  mov  rdx, [rbp+8]
   mov  rsi, [rbp]
   mov  rdi, rsp
 #endif
@@ -1960,13 +1961,12 @@ procedure % VEH_HANDLER
 
 #elif (_LNX || _FREEBSD)
 
-  mov  rcx, fs:[0]
-  lea  rcx, [rcx-tt_size]
-
   mov  r10, rdx
   mov  rdx, rax   // ; set exception code
-  mov  rax, [rcx]
-  jmp  [rax]
+
+  mov  rcx, fs:[0]
+  lea  rcx, [rcx-tt_size]
+  jmp  [rcx]
 
 #endif
 
