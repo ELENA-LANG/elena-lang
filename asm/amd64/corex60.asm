@@ -186,8 +186,6 @@ inline % GC_COLLECT
   push rdx
   push rcx
 
-  mov  rdi, data : %CORE_GC_TABLE + gc_lock
-
   // ; === GCXT: safe point ===
   mov  rdx, [data : %CORE_GC_TABLE + gc_signal]
   // ; if it is a collecting thread, starts the GC
@@ -200,7 +198,12 @@ inline % GC_COLLECT
   // ; signal the collecting thread that it is stopped
   mov  r12, rdx
 
+#if _WIN
   mov  rcx, rsi
+#elif (_LNX || _FREEBSD)
+  mov  rdi, rsi
+#endif
+
   call extern "$rt.SignalStopGCLA"
 
   // ; inc semaphore
@@ -429,9 +432,12 @@ labYGNextThreadSkip:
   lock xadd [rsi], edx
 
   mov  rbx, rdi
+  test rbx, rbx
+  jz   short skipSyncReset
   // ; GCXT: clear the lock flag
   xor  edx, edx
   mov  dword ptr [rbx - elSyncOffset], edx
+skipSyncReset:
 
   mov  rsp, rbp 
   pop  rcx
