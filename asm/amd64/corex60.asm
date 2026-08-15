@@ -160,13 +160,21 @@ end
 inline % GC_COLLECT
 
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  rdi, gs:[58h]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, fs:[0]
+#endif
 
   push r10
   push r11
 
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  rax, [rdi]
+#elif (_LNX || _FREEBSD)
+  lea  rax, [rdi-tt_size]
+#endif
 
   push rbp
 
@@ -421,6 +429,9 @@ labYGNextThreadSkip:
   lock xadd [rsi], edx
 
   mov  rbx, rdi
+  // ; GCXT: clear the lock flag
+  xor  edx, edx
+  mov  dword ptr [rbx - elSyncOffset], edx
 
   mov  rsp, rbp 
   pop  rcx
@@ -471,13 +482,21 @@ labPERMCollect:
   sub  rcx, rax
 
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  rdi, gs:[58h]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, fs:[0]
+#endif
 
   push r10
   push r11
 
   // ; GCXT: find the current thread entry
+#if _WIN
   mov  rax, [rdi]
+#elif (_LNX || _FREEBSD)
+  lea  rax, [rdi-tt_size]
+#endif
 
   push rbp
 
@@ -684,8 +703,13 @@ labContinue:
   mov  r13, rdx                  // hHandle
 
   // ; find the current thread entry
+#if _WIN
   mov  rdx, gs:[58h]
   mov  rax, [rdx]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, fs:[0]
+  lea  rax, [rdi-tt_size]
+#endif
 
   mov  rsi, [rax+tt_sync_event]   // ; get current thread event
   mov  [rax+tt_stack_frame], rdi  // ; lock stack frame
@@ -764,8 +788,14 @@ end
 // ; throw
 inline %0Ah
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rcx, [rcx-tt_size]
+#endif
+
   mov  rdi, [rcx + et_current]
   jmp  [rdi + es_catch_addr]
 
@@ -775,8 +805,14 @@ end
 inline %0Bh
 
   // ; GCXT: get current thread frame
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rcx, [rcx-tt_size]
+#endif
+
   mov  rdi, [rcx + et_current]
 
   mov  rax, [rdi + es_prev_struct]
@@ -790,8 +826,14 @@ end
 // ; exclude
 inline % 10h
      
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax
   push rbp     
@@ -803,8 +845,15 @@ end
 inline % 11h
 
   add  rsp, 8
+
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   pop  rax
   mov  [rdi + tt_stack_frame], rax
 
@@ -814,8 +863,14 @@ end
 inline %17h
 
   // ; COREX
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_root]
 
   xor  ecx, ecx
@@ -851,8 +906,14 @@ end
 // ; peektls
 inline %0BBh
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
+
   lea  rdi, [rax + __arg32_1]
   mov  rbx, [rdi]
 
@@ -861,8 +922,14 @@ end
 // ; storetls
 inline %0BCh
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
+
   lea  rdi, [rax + __arg32_1]
   mov  [rdi], rbx
 
@@ -878,8 +945,14 @@ inline %0CAh
   add  rsp, 16
   pop  rbx
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  [rdi + tt_stack_frame], rbx
 
   pop  rbp
@@ -903,8 +976,14 @@ inline %1CAh
   add  rsp, 16
   pop  rbx
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  [rdi + tt_stack_frame], rbx
 
   pop  rbp
@@ -965,8 +1044,14 @@ end
 // ; system 3 (thread startup)
 inline %3CFh
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rax, [rcx-tt_size]
+#endif
+
   mov  rdi, data : %CORE_THREAD_TABLE + tt_slots
   shl  rdx, 4 
   mov  [rdi + rdx], rax
@@ -1027,7 +1112,7 @@ labWait:
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
-#elif _LNX
+#elif (_LNX || _FREEBSD)
   mov  rcx, fs:[0]
   lea  rdi, [rcx-tt_size]
 #endif
@@ -1093,41 +1178,23 @@ labConinue:
 
 end
 
-// ; system : thread epilog; 
-// ;          make sure all waiting threads are exited the wait,
-// ;          before the thread is terminated
-inline %0ACFh
-
-labStart:
-  mov  rdi, data : %CORE_GC_TABLE + gc_lock
-labWait:
-  mov  ecx, 1
-  xor  eax, eax
-  lock cmpxchg dword ptr[rdi], ecx
-  jnz  short labWait
-
-  mov  rax, [data : %CORE_GC_TABLE + gc_signal]
-  test eax, eax
-  jz   short labRepeat
-
-  mov  ecx, 0FFFFFFFFh
-  lock xadd [rdi], ecx
-  jmp  short labStart
-
-labRepeat:
-  mov  rax, [data : %CORE_GC_TABLE + gc_queue_sem]
-  test eax, eax
-  jnz  short labRepeat
-
-end
-
 // ; xhookdpr
 inline %0E6h
 
   // ; GCXT: get current thread frame
+#if _WIN
   mov  rcx, gs:[58h]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+#endif
+
   lea  rdi, [rbp + __arg32_1]
+
+#if _WIN
   mov  rax, [rcx]
+#elif (_LNX || _FREEBSD)
+  lea  rax, [rcx-tt_size]
+#endif
 
   mov  rcx, [rax + et_current]
   mov  [rdi + es_catch_frame], rbp
@@ -1159,8 +1226,14 @@ inline %0F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1205,8 +1278,14 @@ inline %1F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1247,8 +1326,14 @@ inline %2F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1291,8 +1376,14 @@ inline %3F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1335,8 +1426,14 @@ inline %4F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1381,8 +1478,14 @@ inline %5F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1427,8 +1530,14 @@ inline %6F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1469,8 +1578,14 @@ inline %7F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1506,8 +1621,14 @@ inline %8F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1545,8 +1666,14 @@ inline %9F2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1585,8 +1712,14 @@ inline %0AF2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
@@ -1627,8 +1760,14 @@ inline %0BF2h
 
   push rbp     
 
+#if _WIN
   mov  rcx, gs:[58h]
   mov  rdi, [rcx]
+#elif (_LNX || _FREEBSD)
+  mov  rcx, fs:[0]
+  lea  rdi, [rcx-tt_size]
+#endif
+
   mov  rax, [rdi + tt_stack_frame]
   push rax 
 
