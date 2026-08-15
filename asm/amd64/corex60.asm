@@ -580,7 +580,11 @@ labPERMCollect:
   // ; signal the collecting thread that it is stopped
   mov  r12, rdx
 
+#if _WIN
   mov  rcx, rsi
+#elif (_LNX || _FREEBSD)
+  mov  rdi, rsi
+#endif
   call extern "$rt.SignalStopGCLA"
 
   // ; inc semaphore
@@ -594,7 +598,11 @@ labPERMCollect:
   lock xadd [rdi], ebx
 
   // ; stop until GC is ended
+#if _WIN
   mov  rcx, r12
+#elif (_LNX || _FREEBSD)
+  mov  rdi, r12
+#endif
   call extern "$rt.WaitForSignalGCLA"
   add  rsp, 30h
   // ; restore registers and try again
@@ -629,12 +637,21 @@ labConinue:
   // ; create list of threads need to be stopped
   mov  rax, rsi
   // ; get tls entry address  
+#if _WIN
   mov  rsi, data : %CORE_THREAD_TABLE + tt_slots
   mov  rdi, [rsi - 8]
+#elif (_LNX || _FREEBSD)
+  mov  r13, data : %CORE_THREAD_TABLE + tt_slots
+  mov  r14, [r13 - 8]
+#endif
 
 labNext:
   xor  ecx, ecx
+#if _WIN
   mov  rdx, [rsi]
+#elif (_LNX || _FREEBSD)
+  mov  rdx, [r13]
+#endif
   test rdx, rdx
   jz   short labSkipTT
   cmp  rax, [rdx + tt_sync_event]
@@ -648,30 +665,52 @@ labSkipSave:
 
   // ; reset all signal events
   sub  rsp, 30h
+#if _WIN
   mov  rcx, [rdx + tt_sync_event]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, [rdx + tt_sync_event]
+#endif
   call extern "$rt.SignalClearGCLA"
   add  rsp, 30h
 
   mov  rax, [data : %CORE_GC_TABLE + gc_signal]
 labSkipTT:
+#if _WIN
   lea  rsi, [rsi + 16]
   sub  edi, 1
+#elif (_LNX || _FREEBSD)
+  lea  r13, [r13 + 16]
+  sub  r14, 1
+#endif
   jnz  short labNext
 
   mov  rsi, data : %CORE_GC_TABLE + gc_lock
   mov  eax, 0FFFFFFFFh
+#if _WIN
   mov  rcx, rbp
+#elif (_LNX || _FREEBSD)
+  mov  rdi, rbp
+#endif
 
   // ; free lock
   // ; could we use mov [esi], 0 instead?
   lock xadd [rsi], eax
 
+#if _WIN
   mov  rdx, rsp
   sub  rcx, rsp
+#elif (_LNX || _FREEBSD)
+  mov  rsi, rsp
+  sub  rdi, rsp
+#endif
   jz   short labSkipWait
 
   // ; wait until they all stopped
+#if _WIN
   shr  ecx, 3
+#elif (_LNX || _FREEBSD)
+  shr  rdi, 3
+#endif
   sub  rsp, 30h
   call extern "$rt.WaitForSignalsGCLA"
   add  rsp, 30h
@@ -694,15 +733,27 @@ labWaitGC:
   // ; the return address, and the thread list was dropped by the mov rsp, rbp above
   sub  rsp, 30h
 
+#if _WIN
   mov  rcx, [rbp]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, [rbp]
+#endif
   call extern "$rt.CollectPermGCLA"
 
+#if _WIN
   mov  rdi, rax
+#elif (_LNX || _FREEBSD)
+  mov  r13, rax
+#endif
 
   // ; GCXT: signal the collecting thread that GC is ended
   // ; should it be placed into critical section?
   xor  ebx, ebx
+#if _WIN
   mov  rcx, [data : %CORE_GC_TABLE + gc_signal]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, [data : %CORE_GC_TABLE + gc_signal]
+#endif
   // ; clear thread signal var
   mov  [data : %CORE_GC_TABLE + gc_signal], rbx
   call extern "$rt.SignalStopGCLA"
@@ -712,7 +763,11 @@ labWaitGC:
   mov  edx, 0FFFFFFFFh
   lock xadd [rsi], edx
 
+#if _WIN
   mov  rbx, rdi
+#elif (_LNX || _FREEBSD)
+  mov  rbx, r13
+#endif
   add  rsp, 40h
 
   pop  rbp
@@ -775,7 +830,11 @@ labContinue:
 
   // ; signal the collecting thread that it is stopped
   sub  rsp, 30h
+#if _WIN
   mov  rcx, rsi
+#elif (_LNX || _FREEBSD)
+  mov  rdi, rsi
+#endif
 
   // ; signal the collecting thread that it is stopped
   call extern "$rt.SignalStopGCLA"
@@ -790,7 +849,11 @@ labContinue:
   lock xadd [rdi], ebx
 
   // ; stop until GC is ended
+#if _WIN
   mov  rcx, r13
+#elif (_LNX || _FREEBSD)
+  mov  rdi, r13
+#endif
   call extern "$rt.WaitForSignalGCLA"
 
   // ; GCX : free semaphore
@@ -815,14 +878,22 @@ procedure % THREAD_MARK
   push rbp
   // ; signal the collecting thread that it is stopped
   sub  rsp, 30h
+#if _WIN
   mov  rcx, [rdi+tt_sync_event]       // ; get current thread event
+#elif (_LNX || _FREEBSD)
+  mov  r13, rdi
+  mov  rdi, [rdi+tt_sync_event]       // ; get current thread event
+#endif
   call extern "$rt.SignalStopGCLA"
   add  rsp, 38h
+
+#if (_LNX || _FREEBSD)
+  mov  rdi, r13
+#endif
 
   ret
 
 end
-
 
 // ; --- System Core Preloaded Routines --
 
@@ -1020,8 +1091,10 @@ inline %0CAh
   pop  r13
   pop  r12
   pop  rbx
+#if _WIN
   pop  rdi
   pop  rsi
+#endif
   add  rsp, 8
 
 end
@@ -1051,12 +1124,13 @@ inline %1CAh
   pop  r13
   pop  r12
   pop  rbx
+#if _WIN
   pop  rdi
   pop  rsi
+#endif
   add  rsp, 8
   
 end
-
 
 // ; system minor collect
 inline %1CFh
@@ -1275,8 +1349,10 @@ inline %0F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1327,8 +1403,10 @@ inline %1F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1375,8 +1453,10 @@ inline %2F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1425,8 +1505,10 @@ inline %3F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1475,8 +1557,10 @@ inline %4F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1527,8 +1611,10 @@ inline %5F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1579,8 +1665,10 @@ inline %6F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1627,8 +1715,10 @@ inline %7F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1670,8 +1760,10 @@ inline %8F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1715,8 +1807,10 @@ inline %9F2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1761,8 +1855,10 @@ inline %0AF2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1809,8 +1905,10 @@ inline %0BF2h
   mov  [rsp+32], r9
 
   push 0 
+#if _WIN
   push rsi
   push rdi
+#endif
   push rbx
   push r12
   push r13
@@ -1858,7 +1956,17 @@ procedure % VEH_HANDLER
 
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
-  jmp  [rcx]
+  jmp  rcx
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rcx, fs:[0]
+  lea  rcx, [rcx-tt_size]
+
+  mov  r10, rdx
+  mov  rdx, rax   // ; set exception code
+  mov  rax, [rcx]
+  jmp  rax
 
 #endif
 
