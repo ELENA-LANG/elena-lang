@@ -1956,7 +1956,7 @@ procedure % VEH_HANDLER
 
   mov  rcx, gs:[58h]
   mov  rcx, [rcx]
-  jmp  rcx
+  jmp  [rcx]
 
 #elif (_LNX || _FREEBSD)
 
@@ -1966,7 +1966,7 @@ procedure % VEH_HANDLER
   mov  r10, rdx
   mov  rdx, rax   // ; set exception code
   mov  rax, [rcx]
-  jmp  rax
+  jmp  [rax]
 
 #endif
 
