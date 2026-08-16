@@ -288,54 +288,15 @@
 
 import extensions;
  
-class U0 : Exception
+extension op : Func1
 {
-   constructor new() 
-      <= super new("U0 exception");
-}
- 
-class U1 : Exception
-{
-   constructor new() 
-      <= super new("U1 exception");
-}
- 
-singleton Exceptions
-{
-   static int i;
- 
-   bar()
-      <= baz();
- 
-   baz()
-   {
-      if (i == 0)
-      {
-         U0.raise()
-      }
-      else
-      {
-         U1.raise()
-      }
-   }
- 
-   foo()
-   {
-      for(i := 0; i < 2; i := i + 1)
-      {
-         try
-         {
-            self.bar()
-         }
-         catch(U0 e)
-         {
-            Console.printLine("U0 Caught")
-         }
-      }
-    }    
+    compose(Func1 f)
+        = (x => self(f(x)));
 }
  
 public Program()
 {
-    Exceptions.foo()
+    var fg := (x => x + 1).compose::(x => x * x);
+ 
+    Console.printLine(fg(3))
 }

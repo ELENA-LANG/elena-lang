@@ -56,8 +56,7 @@ In development:
   * samples
   ====================================== 
   - migrate Linux code
-  - get rid of system 10, if the code works
-  - review rosetta samples from F
+  - review rosetta samples from G
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples

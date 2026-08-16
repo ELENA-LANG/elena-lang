@@ -1097,35 +1097,6 @@ labConinue:
 
 end
 
-
-// ; system : thread epilog; 
-// ;          make sure all waiting threads are exited the wait,
-// ;          before the thread is terminated
-inline %0ACFh
-
-labStart:
-  mov  edi, data : %CORE_GC_TABLE + gc_lock
-labWait:
-  mov  ecx, 1
-  xor  eax, eax
-  lock cmpxchg dword ptr[edi], ecx
-  jnz  short labWait
-
-  mov  eax, [data : %CORE_GC_TABLE + gc_signal]
-  test eax, eax
-  jz   short labRepeat
-
-  mov  ecx, 0FFFFFFFFh
-  lock xadd [edi], ecx
-  jmp  short labStart
-
-labRepeat:
-  mov  eax, [data : %CORE_GC_TABLE + gc_queue_sem]
-  test eax, eax
-  jnz  short labRepeat
-
-end
-
 // ; xhookdpr
 inline %0E6h
 
