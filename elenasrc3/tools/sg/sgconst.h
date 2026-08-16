@@ -12,7 +12,7 @@
 namespace elena_lang
 {
 
-   #define SG_REVISION_NUMBER            0x0001
+   #define SG_REVISION_NUMBER            0x0002
 
    constexpr auto SG_GREETING            = "ELENA command line syntax generator %d.%d.%d (C)2005-2026 by Aleksey Rakov\n";
 
@@ -22,6 +22,7 @@ namespace elena_lang
    constexpr auto SG_FILENOTEXIST        = "error:file not found\n";
    constexpr auto SG_INVALID_RULE        = "error(%d:%d) : invalid rule structure\n";
    constexpr auto SG_AMBIGUOUS           = "error:ambiguous rule %s for '%s' (%d) terminal\n";
+   constexpr auto SG_CANNOT_CREATE       = "error:cannot create %s\n";
 
 }
 

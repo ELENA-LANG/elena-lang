@@ -253,6 +253,14 @@ int parseByteCodeRuleSet(FileEncoding encoding, path_t path)
    outputFile.changeExtension("dat");
 
    FileWriter file(*outputFile, FileEncoding::Raw, false);
+   if (!file.isOpen()) {
+      IdentifierString pathStr(*outputFile);
+
+      printf("\nCannot create a file %s\n", pathStr.str());
+
+      return EXIT_FAILURE;
+   }
+
    trie.save(&file);
 
    printf("\nSuccessfully created\n");

@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Executive Linker class body
 //		Supported platforms: Linux 64
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #include "elflinker64.h"
@@ -150,6 +150,20 @@ void Elf64Linker :: writePHTable(ElfExecutableImage& image, FileWriter* file, un
    ph_header.p_flags = PF_R + PF_W;
    ph_header.p_align = 8;
    file->write((char*)&ph_header, ELF64_PH_SIZE);
+
+   // TLS
+   if (image.withTLS) {
+      pos_t tlsSize = image.addressMap.dictionary.get(elfTLSSize);
+      pos_t tlsOffset = image.addressMap.dictionary.get(elfTLSOffset);
+
+      ph_header.p_type = PT_TLS;
+      ph_header.p_offset = tlsOffset;
+      ph_header.p_paddr = ph_header.p_vaddr = image.addressMap.imageBase + image.addressMap.tls;
+      ph_header.p_memsz = ph_header.p_filesz = tlsSize;
+      ph_header.p_flags = PF_R;
+      ph_header.p_align = 8;
+      file->write((char*)&ph_header, ELF64_PH_SIZE);
+   }
 }
 
 void Elf64Linker :: writeInterpreter(FileWriter* file)

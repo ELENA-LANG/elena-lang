@@ -162,6 +162,8 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    sectionSize += align(data->length(), fileAlignment);
 
    if (tls->length() > 0) {
+      map.dictionary.add(elfTLSOffset, fileOffset + fileSize);
+
       map.tls = map.data + align(data->length(), fileAlignment);
       map.dataSize += align(tls->length(), fileAlignment);
 
@@ -183,7 +185,7 @@ void ElfImageFormatter :: mapImage(ImageProviderBase& provider, AddressSpace& ma
    sections.items.add(sections.headers.count(), { data, true });
 
    if (tls->length() > 0) {
-      map.dictionary.add(elfTLSSize, tls->length());
+      map.dictionary.add(elfTLSSize, tls->length());      
 
       sections.items.add(sections.headers.count(), { tls, true });
    }

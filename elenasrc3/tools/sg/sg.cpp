@@ -319,7 +319,13 @@ int main(int argc, char* argv[])
       path.changeExtension(*ext);
 
       FileWriter file(*path, FileEncoding::Raw, false);
-      table.save(&file);
+      if (!file.isOpen()) {         
+         IdentifierString pathStr(*path);
+
+         printf(SG_CANNOT_CREATE, pathStr.str());
+         return EXIT_FAILURE;
+      }
+      else table.save(&file);
    }
    catch (SyntaxError e)
    {
