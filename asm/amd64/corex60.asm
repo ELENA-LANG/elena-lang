@@ -1201,8 +1201,30 @@ inline %4CFh
 
   finit
 
+#if _FREEBSD
+
+  push 0 
+  mov  rax, rdi
+
+#elif _LNX
+
+  mov  rax, rsp
+
+#endif
+
+#if _WIN
+
   mov  rax, rsp
   call %PREPARE
+
+#elif (_LNX || _FREEBSD)
+
+  call %PREPARE
+
+  xor  rbp, rbp
+  push rbp                 // ; note an extra push to simulate the function entry
+
+#endif
 
 end
 
