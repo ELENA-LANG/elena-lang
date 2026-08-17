@@ -3595,6 +3595,12 @@ bool X86_64Assembler :: compileSub(X86Operand source, X86Operand target, MemoryW
       X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 5), source);
       writer.writeByte(target.offset);
    }
+   else if (source.isRX64_MX64() && target.type == X86OperandType::DB) {
+      writer.writeByte(0x49);
+      writer.writeByte(0x83);
+      X86Helper::writeModRM(writer, X86Operand(X86OperandType::R32 + 5), source);
+      writer.writeByte(target.offset);
+   }
    else if (source.isR64_M64() && target.type == X86OperandType::DD) {
       writer.writeByte(0x48);
       writer.writeByte(0x81);
