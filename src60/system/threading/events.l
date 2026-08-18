@@ -37,12 +37,15 @@ internal struct EventHandle
       }      
    }   
 
-   wait(int timeOut)
+   bool wait(int timeOut)
    {
+      int retVal := 0;
       excluded
       {
-         extern KERNEL32.WaitForSingleObject(_handle, timeOut);
-      }      
+         retVal := extern KERNEL32.WaitForSingleObject(_handle, timeOut);
+      };
+
+      ^ retVal == WAIT_OBJECT_0
    }   
 
    set()
@@ -74,6 +77,7 @@ internal struct EventHandle
    pointer _mutex;
    pointer _cond;
    int     _signaled;
+   int     _autoReset;
 
    internal constructor new(bool value, bool autoReset)
    {
@@ -85,46 +89,82 @@ internal struct EventHandle
       extern libc.pthread_cond_init(_cond, 0);
 
       _signaled := value ? 1 : 0;
-      if (autoReset)
-         _signaled := _signaled | 80000000h;
+      _autoReset := autoReset ? 1 : 0;
    }
 
    wait()
    {
       extern libc.pthread_mutex_lock(_mutex);
 
-      if (_signaled < 0) {
-         excluded
-         {
-             extern libc.pthread_cond_wait(_cond, _mutex);
-         }
-      }
-      else {
-         excluded
-         {
-            while (_signaled == 0) {
-               extern libc.pthread_cond_wait(_cond, _mutex)
-            }
+      excluded
+      {
+         while (_signaled == 0) {
+            extern libc.pthread_cond_wait(_cond, _mutex)
          }
       };
+
+      if (_autoReset != 0)
+         _signaled := 0;
 
       extern libc.pthread_mutex_unlock(_mutex);
    }
 
-   wait(int timeOut)
+   bool wait(int timeOut)
    {
-      NotSupportedException.raise()
+      if (timeOut < 0) {
+         self.wait();
+
+         ^ true
+      };
+
+#if (__project["_Linux32"])
+      int deadline[2];
+#else
+      long deadline[2];
+#endif
+      extern libc.clock_gettime(0, deadline);
+
+      int seconds := timeOut / 1000;
+      int milliseconds := timeOut - seconds * 1000;
+      deadline[0] := deadline[0] + seconds;
+      deadline[1] := deadline[1] + milliseconds * 1000000;
+      if (deadline[1] >= 1000000000) {
+         deadline[0] := deadline[0] + 1;
+         deadline[1] := deadline[1] - 1000000000;
+      };
+
+      extern libc.pthread_mutex_lock(_mutex);
+
+      int result := 0;
+      excluded
+      {
+         while (_signaled == 0 && result == 0) {
+            result := extern libc.pthread_cond_timedwait(_cond, _mutex, deadline)
+         }
+      };
+
+      bool signaled := _signaled != 0;
+      if (signaled && _autoReset != 0)
+         _signaled := 0;
+
+      extern libc.pthread_mutex_unlock(_mutex);
+
+      ^ signaled
    }
 
    set()
    {
       extern libc.pthread_mutex_lock(_mutex);
 
-      if (_signaled != 1) {
-         if (_signaled == 0)
-            _signaled := 1;
+      if (_signaled == 0) {
+         _signaled := 1;
 
-         extern libc.pthread_cond_broadcast(_cond);
+         if (_autoReset != 0) {
+            extern libc.pthread_cond_signal(_cond)
+         }
+         else {
+            extern libc.pthread_cond_broadcast(_cond)
+         };
       };
 
       extern libc.pthread_mutex_unlock(_mutex);
@@ -133,13 +173,12 @@ internal struct EventHandle
 
    reset()
    {
-      if (_signaled == 1) {
-         extern libc.pthread_mutex_lock(_mutex);
+      extern libc.pthread_mutex_lock(_mutex);
 
+      if (_signaled == 1)
          _signaled := 0;
 
-         extern libc.pthread_mutex_unlock(_mutex);
-      }
+      extern libc.pthread_mutex_unlock(_mutex);
    }
 
    close()
@@ -161,8 +200,8 @@ public closed class BaseEvent
    wait()
       => _handle;
 
-   wait(int timeOut)
-      => _handle;
+   bool wait(int timeOut)
+      = _handle.wait(timeOut);
 
    set()
       => _handle;
@@ -202,15 +241,18 @@ public sealed class CountDownEvent
 
    constructor new(int counter)
    {
-      _handle := EventHandle.new(false, false);
+      if (counter < 0)
+         InvalidArgumentException.raise("counter");
+
+      _handle := EventHandle.new(counter == 0, false);
       _counter := counter;
    }
 
    wait()
       => _handle;
 
-   wait(int timeOut)
-      => _handle;
+   bool wait(int timeOut)
+      = _handle.wait(timeOut);
 
    signal()
    {

@@ -52,8 +52,12 @@ class PermVectorChain
    pointer allocate(object)
    {
       int     index := *Current;
-      while (Array[index] != nil)
+      int     len := Array.Length;
+      while (index < len && Array[index] != nil)
          index++;
+
+      if (index >= len)
+         InvalidOperationException.raise("The permanent vector chain is full");
 
       Array[index] := object;
 
@@ -80,7 +84,13 @@ class PermVectorChain
 
    remove(int index)
    {
-      Array.removeAt(index);
+      if (Array[index] != nil) {
+         Array.removeAt(index);
+
+         Free.append(1);
+         if (index < *Current)
+            Current.Value := index;
+      }
    }
 
    bool rearrange()
@@ -111,6 +121,7 @@ class PermVectorChain
 
 public singleton PermVectorTable
 {
+   static object _sync := new object();
    static PermVectorChain? _firstChainItem;
    static PermVectorChain? _chainItem;
 
@@ -126,7 +137,7 @@ public singleton PermVectorTable
       ^  false;
    }
 
-   bool rearrange()
+   private bool rearrangeUnsafe()
    {
       PermVectorChain? previous := nil;
       PermVectorChain? current := _firstChainItem;
@@ -154,29 +165,41 @@ public singleton PermVectorTable
 
    pointer allocate(object obj)
    {
-      if (!self.isAvailable) {
-         if:not (rearrange()) {
-            _chainItem := new PermVectorChain(_chainItem);
-         }
-      };
+      pointer ptr := default;
 
-      pointer ptr := _chainItem!.allocate(obj);
+      lock(_sync) {
+         if (!self.isAvailable) {
+            if:not (rearrangeUnsafe()) {
+               // Keep every chain reachable from _firstChainItem. The previous
+               // implementation only changed _chainItem and leaked every chain
+               // allocated after the first one.
+               auto newItem := new PermVectorChain(_firstChainItem);
+               _firstChainItem := newItem;
+               _chainItem := newItem;
+            }
+         };
+
+         ptr := _chainItem!.allocate(obj);
+      };
 
       ^ ptr;
    }
 
    release(object obj)
    {
-      PermVectorChain? current := _firstChainItem;
-      while (current != nil) {
-         int index := current.indexOf(obj);
-         if (index >= 0) {
-            current.remove(index);
+      lock(_sync) {
+         PermVectorChain? current := _firstChainItem;
+         while (current != nil) {
+            int index := current.indexOf(obj);
+            if (index >= 0) {
+               current.remove(index);
+               _chainItem := current;
 
-            :break;
+               :break;
+            };
+
+            current := current.Next;
          };
-
-         current := current.Next;
-      };
+      }
    }
 }

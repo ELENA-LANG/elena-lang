@@ -69,7 +69,10 @@ public struct Semaphore
    {
       excluded
       {
-         extern libc.sem_wait(_sem);
+         while (extern libc.sem_wait(_sem) != 0) {
+            // sem_wait is interrupted by signals on POSIX. Retry instead of
+            // consuming an item that was never acquired.
+         }
       }      
    }   
 
