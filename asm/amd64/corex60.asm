@@ -822,8 +822,8 @@ labContinue:
   mov  rdx, gs:[58h]
   mov  rax, [rdx]
 #elif (_LNX || _FREEBSD)
-  mov  rdi, fs:[0]
-  lea  rax, [rdi-tt_size]
+  mov  rdx, fs:[0]
+  lea  rax, [rdx-tt_size]
 #endif
 
   mov  rsi, [rax+tt_sync_event]   // ; get current thread event
