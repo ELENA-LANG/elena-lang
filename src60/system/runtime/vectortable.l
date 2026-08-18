@@ -165,6 +165,9 @@ public singleton PermVectorTable
 
    pointer allocate(object obj)
    {
+      if (obj == nil)
+         InvalidArgumentException.raise("obj");
+
       pointer ptr := default;
 
       lock(_sync) {
