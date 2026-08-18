@@ -61,6 +61,30 @@ class AsyncAwaitScenarios
       ^ value
    }
 
+   async Task<int> awaitValueThenReturnAsync(Task<int> blocker)
+   {
+      int result := :await blocker;
+
+      ^ result
+   }
+
+   async Task<int> sumAwaitedValuesAsync(int value)
+   {
+      int result := (:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1));
+
+      ^ result
+   }
+
+   // Multiple awaits work when the result is stored first
+   // Returning the same expression directly leaves the generated task pending...
+   // It looks like the return lowering wraps an expression that already contains suspension points
+   // Somewhere in the final resume the result is not forwarded and the generated promise stays open
+   // Saving it in a local separates the await step from the return step... which is why the version above works...
+   // async Task<int> sumAwaitedValuesAsync(int value)
+   // {
+   //    ^ ((:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1)));
+   // }
+
    async Task<int> chainedAsync(int value)
    {
       int first := :await delayedValueAsync(value);
@@ -100,6 +124,43 @@ public awaitSuspensionAndResultTest() : testCase()
    Assert.ifTrue(pending.IsCompletedSuccessfully);
 
    gate.close();
+
+   Console.write(".")
+}
+
+public awaitValueThenReturnTest() : testCase()
+{
+   ManualResetEvent gate := ManualResetEvent.new();
+   Task<int> blocker := class Task<int>.run(
+      {
+         gate.wait();
+
+         ^ 42
+      });
+   AsyncAwaitScenarios scenarios := new AsyncAwaitScenarios();
+
+   Task<int> pending := scenarios.awaitValueThenReturnAsync(blocker);
+   Assert.ifFalse(pending.IsCompleted);
+
+   gate.set();
+   Assert.ifEqual(pending.Result, 42);
+   Assert.ifTrue(pending.IsCompletedSuccessfully);
+
+   // A completed antecedent follows the synchronous fast path.
+   Task<int> completed := class Task<int>.fromResult(7);
+   Assert.ifEqual(scenarios.awaitValueThenReturnAsync(completed).Result, 7);
+
+   gate.close();
+
+   Console.write(".")
+}
+
+public multipleAwaitsInExpressionTest() : testCase()
+{
+   AsyncAwaitScenarios scenarios := new AsyncAwaitScenarios();
+
+   // The first result must survive while the second await is suspended.
+   Assert.ifEqual(scenarios.sumAwaitedValuesAsync(20).Result, 41);
 
    Console.write(".")
 }
