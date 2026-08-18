@@ -36,7 +36,8 @@ ELENA byte codes (or ecodes)
    extopen i, n              - init the frame header offset ; allocating both
                               unmanaged (n) and managed stack (i * 4 / 8);
                               it should be used only when calling ELENA code from outside; 
-                              mnemonic: open header [a,b,c,...],[$a,$b,$c,...]
+                              mnemonic: open header [a,b,c,...],[$a,$b,$c,...];
+                              note that for System V Abi - the external arguments are kept in r12,r13,r14,r15,r8,r9
 
    open i, n                - save the last frame and open the new frame ; allocating both
                               unmanaged (n) and managed stack (i * 4 / 8);

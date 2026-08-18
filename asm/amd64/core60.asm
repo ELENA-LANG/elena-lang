@@ -2079,10 +2079,9 @@ inline %0CAh
   pop  rsi
   add  rsp, 8
 
-
 #elif (_LNX || _FREEBSD)
 
-  add  rsp, 40
+  add  rsp, 8
 
 #endif
 
@@ -2114,7 +2113,7 @@ inline %1CAh
 
 #elif (_LNX || _FREEBSD)
 
-  add  rsp, 40
+  add  rsp, 8
 
 #endif
   
@@ -2165,7 +2164,106 @@ end
 // ; xloadarg fi
 inline %0CDh
 
+#if _WIN
+
   mov  rdx, qword ptr [rbp + __arg32_1]
+
+#elif (_LNX || _FREEBSD)
+
+  lea  rcx, [__arg32_1 - 48] 
+  mov  rdx, qword ptr [rcx]
+
+#endif
+
+end 
+
+// ; xloadarg -1
+inline %1CDh
+
+#if _WIN
+
+  mov  rdx, qword ptr [rbp + __arg32_1]
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, r12
+
+#endif
+
+end 
+
+// ; xloadarg -2
+inline %2CDh
+
+#if _WIN
+
+  mov  rdx, qword ptr [rbp + __arg32_1]
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, r13
+
+#endif
+
+end 
+
+// ; xloadarg -3
+inline %3CDh
+
+#if _WIN
+
+  mov  rdx, qword ptr [rbp + __arg32_1]
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, r14
+
+#endif
+
+end 
+
+// ; xloadarg -4
+inline %4CDh
+
+#if _WIN
+
+  mov  rdx, qword ptr [rbp + __arg32_1]
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, r15
+
+#endif
+
+end 
+
+// ; xloadarg -5
+inline %5CDh
+
+#if _WIN
+
+  mov  rdx, qword ptr [rbp + __arg32_1]
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, r8
+
+#endif
+
+end 
+
+// ; xloadarg -6
+inline %6CDh
+
+#if _WIN
+
+  mov  rdx, qword ptr [rbp + __arg32_1]
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, r9
+
+#endif
 
 end 
 
@@ -3161,10 +3259,6 @@ inline %0F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3173,6 +3267,13 @@ inline %0F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3218,10 +3319,6 @@ inline %1F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3230,6 +3327,13 @@ inline %1F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3271,10 +3375,6 @@ inline %2F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3283,6 +3383,13 @@ inline %2F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3326,10 +3433,6 @@ inline %3F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3338,6 +3441,13 @@ inline %3F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3381,10 +3491,6 @@ inline %4F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3393,6 +3499,13 @@ inline %4F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3438,10 +3551,6 @@ inline %5F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3450,6 +3559,13 @@ inline %5F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3495,10 +3611,6 @@ inline %6F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3507,6 +3619,13 @@ inline %6F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3548,10 +3667,6 @@ inline %7F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3560,6 +3675,13 @@ inline %7F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3596,10 +3718,6 @@ inline %8F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3608,6 +3726,13 @@ inline %8F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3646,10 +3771,6 @@ inline %9F2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3658,6 +3779,13 @@ inline %9F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3697,10 +3825,6 @@ inline %0AF2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3709,6 +3833,13 @@ inline %0AF2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -3750,10 +3881,6 @@ inline %0BF2h
 #elif (_LNX || _FREEBSD)
 
   push 0 
-  push rcx
-  push rdx
-  push rsi  
-  push rdi
   push rbx
 
 #endif
@@ -3762,6 +3889,13 @@ inline %0BF2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
   mov  rax, [data : %CORE_SINGLE_CONTENT + tt_stack_frame]
@@ -4699,11 +4833,16 @@ inline %0FEh
   mov  rdx, [rsp+16]
   mov  rsi, r11
   mov  rdi, r10
+  add  rsp, 32
 
 #endif
 
   call extern __relptr32_1
   mov  rdx, rax
+
+#if (_LNX || _FREEBSD)
+  sub  rsp, 32   // ; HOTFIX : to keep compatible
+#endif
 
 end
 
@@ -4787,6 +4926,57 @@ inline %5FEh
 
 #elif (_LNX || _FREEBSD)
 
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call extern __relptr32_1
+  mov  rdx, rax
+
+end
+
+// ; callext
+inline %6FEh
+
+#if _WIN
+
+  mov  r9, [rsp+24]
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  r8, [rsp+32]
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call extern __relptr32_1
+  mov  rdx, rax
+
+end
+
+// ; callext
+inline %7FEh
+
+#if _WIN
+
+  mov  r9, [rsp+24]
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  r9, [rsp+40]
+  mov  r8, [rsp+32]
   mov  rcx, [rsp+24]
   mov  rdx, [rsp+16]
   mov  rsi, r11

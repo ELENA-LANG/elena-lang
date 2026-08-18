@@ -55,7 +55,7 @@ CodeGenerator _codeGenerators[256] =
    compileJge, compileJgr, compileJle, loadTLSOp, loadTLSOp, loadFrameDispOp, loadNop, loadNop,
 
    loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadNop,
-   loadFrameIndexOp, loadStackIndexOp, compileClose, loadStackIndexOp, loadStackIndexOp, loadFrameIndexOp, loadROp, loadSysOp,
+   loadFrameIndexOp, loadStackIndexOp, compileClose, loadStackIndexOp, loadStackIndexOp, loadXFrameIndexOp, loadROp, loadSysOp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDispNOp, compileHookDPR, loadRROp,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileXOpen, loadRROp,
@@ -651,6 +651,37 @@ void* elena_lang::retrieveCodeWithNegative(JITCompilerScope* scope)
    return code;
 }
 
+void* elena_lang::retrieveXArg(JITCompilerScope* scope)
+{
+   arg_t arg = scope->command.arg1;
+
+   void* code = nullptr;
+   switch (arg) {
+      case -1:
+         code = scope->compiler->_inlines[1][scope->code()];
+         break;
+      case -2:
+         code = scope->compiler->_inlines[2][scope->code()];
+         break;
+      case -3:
+         code = scope->compiler->_inlines[3][scope->code()];
+         break;
+      case -4:
+         code = scope->compiler->_inlines[4][scope->code()];
+         break;
+      case -5:
+         code = scope->compiler->_inlines[5][scope->code()];
+         break;
+      case -6:
+         code = scope->compiler->_inlines[6][scope->code()];
+         break;
+      default:
+         code = scope->compiler->_inlines[0][scope->code()];
+         break;
+   }
+   return code;
+}
+
 void elena_lang :: loadIndexOp(JITCompilerScope* scope)
 {
    MemoryWriter* writer = scope->codeWriter;
@@ -974,6 +1005,64 @@ void elena_lang::loadFrameIndexOp(JITCompilerScope* scope)
    MemoryWriter* writer = scope->codeWriter;
 
    void* code = retrieveCodeWithNegative(scope);
+   arg_t arg1 = scope->command.arg1;
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case ARG32_1:
+            writer->writeDWord(getFPOffset(
+               scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
+            break;
+         case ARG16_1:
+            writer->writeWord((unsigned short)getFPOffset(
+               scope->command.arg1 << scope->constants->indexPower, scope->frameOffset));
+            break;
+         case NARG_1:
+            writer->writeDWord(scope->command.arg1);
+            break;
+         case ARG12_1:
+            scope->compiler->writeImm12(writer,
+               getFPOffset(arg1 << scope->constants->indexPower, scope->frameOffset),
+               0);
+            break;
+         case INV_ARG12_1:
+            scope->compiler->writeImm12(writer,
+               -getFPOffset(arg1 << scope->constants->indexPower, scope->frameOffset),
+               0);
+            break;
+         case ARG9_1:
+            scope->compiler->writeImm9(writer,
+               getFPOffset(scope->command.arg1 << scope->constants->indexPower, scope->frameOffset),
+               0);
+            break;
+         default:
+            // to make compiler happy
+            //writeCoreReference();
+            break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang::loadXFrameIndexOp(JITCompilerScope* scope)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   void* code = retrieveXArg(scope);
    arg_t arg1 = scope->command.arg1;
 
    pos_t position = writer->position();

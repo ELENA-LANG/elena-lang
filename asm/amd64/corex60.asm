@@ -1366,10 +1366,12 @@ end
 // ; extopenin
 inline %0F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1381,6 +1383,13 @@ inline %0F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1420,10 +1429,12 @@ end
 // ; extopenin 0, n
 inline %1F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1435,6 +1446,13 @@ inline %1F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1470,10 +1488,12 @@ end
 // ; extopenin 1, n
 inline %2F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1485,6 +1505,13 @@ inline %2F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1522,10 +1549,12 @@ end
 // ; extopenin 2, n
 inline %3F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1537,6 +1566,13 @@ inline %3F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1574,10 +1610,12 @@ end
 // ; extopenin 3, n
 inline %4F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1589,6 +1627,13 @@ inline %4F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1628,10 +1673,12 @@ end
 // ; extopenin 4, n
 inline %5F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1643,6 +1690,13 @@ inline %5F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1682,10 +1736,12 @@ end
 // ; extopenin i, 0
 inline %6F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1697,6 +1753,13 @@ inline %6F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1732,10 +1795,12 @@ end
 // ; extopenin 0, 0
 inline %7F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1747,6 +1812,13 @@ inline %7F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1777,10 +1849,12 @@ end
 // ; extopenin 1, 0
 inline %8F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1792,6 +1866,13 @@ inline %8F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1824,10 +1905,12 @@ end
 // ; extopenin 2, 0
 inline %9F2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1839,6 +1922,13 @@ inline %9F2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1872,10 +1962,12 @@ end
 // ; extopenin 3, 0
 inline %0AF2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1887,6 +1979,13 @@ inline %0AF2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 
@@ -1922,10 +2021,12 @@ end
 // ; extopenin 4, 0
 inline %0BF2h
 
+#if _WIN
   mov  [rsp+8], rcx
   mov  [rsp+16], rdx
   mov  [rsp+24], r8
   mov  [rsp+32], r9
+#endif
 
   push 0 
 #if _WIN
@@ -1937,6 +2038,13 @@ inline %0BF2h
   push r13
   push r14
   push r15
+
+#if (_LNX || _FREEBSD)
+  mov  r12, rdi
+  mov  r13, rsi
+  mov  r14, rdx
+  mov  r15, rcx
+#endif
 
   push rbp     
 

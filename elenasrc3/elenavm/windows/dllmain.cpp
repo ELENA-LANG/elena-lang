@@ -48,7 +48,7 @@ JITCompilerBase* createJITCompiler(LibraryLoaderBase* loader, PlatformType platf
 {
    switch (platform) {
       case PlatformType::Win_x86_64:
-         return new X86_64JITCompiler();
+         return new X86_64JITCompiler(true);
       default:
          return nullptr;
    }
