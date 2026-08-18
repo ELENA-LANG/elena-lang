@@ -2906,6 +2906,21 @@ public dictionaryBucketGrowthTest() : testCase()
    Console.write(".");
 }
 
+public permVectorRejectsNilTest() : testCase()
+{
+   bool failed := false;
+   try {
+      weak PermVectorTable.allocate(nil)
+   }
+   catch (InvalidArgumentException e) {
+      failed := true
+   };
+
+   Assert.ifTrue(failed);
+
+   Console.write(".")
+}
+
 // Regression: an explicitly requested collection must actually run, must reclaim the
 // garbage, and must leave every reachable object intact.
 // This is the only test that reaches GC_COLLECT through the system 1 / system 2 commands

@@ -1,5 +1,4 @@
 import extensions;
-import system'runtime;
 import system'threading;
 import ltests;
 
@@ -39,21 +38,6 @@ public awaitExceptionTest() : testCase()
    tester.invokeAsync().Result;
 
    Console.writeLine(".");
-}
-
-public permVectorRejectsNilTest() : testCase()
-{
-   bool failed := false;
-   try {
-      weak PermVectorTable.allocate(nil)
-   }
-   catch (InvalidArgumentException e) {
-      failed := true
-   };
-
-   Assert.ifTrue(failed);
-
-   Console.write(".")
 }
 
 waitForAsyncGate(gate)
