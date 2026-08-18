@@ -91,7 +91,7 @@ internal struct EventHandle
 
    wait()
    {
-      extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
       if (_signaled < 0) {
          excluded
@@ -100,11 +100,8 @@ internal struct EventHandle
          }
       }
       else {
-         excluded
-         {
-            while (_signaled == 0) {
-               extern libc.pthread_cond_wait(_cond, _mutex)
-            }
+         while (_signaled == 0) {
+             excluded { extern libc.pthread_cond_wait(_cond, _mutex) }
          }
       };
 
@@ -118,7 +115,7 @@ internal struct EventHandle
 
    set()
    {
-      extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
       if (_signaled != 1) {
          if (_signaled == 0)
@@ -133,13 +130,16 @@ internal struct EventHandle
 
    reset()
    {
-      if (_signaled == 1) {
-         extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
-         _signaled := 0;
-
-         extern libc.pthread_mutex_unlock(_mutex);
+      if (_signaled < 0) {
+         _signaled := 80000000h
       }
+      else {
+         _signaled := 0
+      };
+
+      extern libc.pthread_mutex_unlock(_mutex);
    }
 
    close()
