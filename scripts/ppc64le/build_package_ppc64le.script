@@ -1,21 +1,15 @@
 #!/bin/bash
 RELEASE=elena-7.0.2.ppc64le-linux
 
-mkdir -p ../lib60_64
-mkdir -p /usr/share/elena
-mkdir -p /etc/elena/
-mkdir -p /etc/elena/templates/
-mkdir -p /usr/lib/elena/core/ppc64le/
-mkdir -p /usr/lib/elena/lib60_64
+if [ "$(id -u)" -ne 0 ]
+then
+  SUDO=sudo
+else
+  SUDO=
+fi
 
-cp ../../bin/libelenart60_64.so /usr/lib/elena/
-cp ../../bin/libelenasm60_64.so /usr/lib/elena/
-# cp ../bin/libelenavm.so /usr/lib/elena/
-cp ../../bin/elena64-cli /usr/bin/
-
-cp ../../bin/elc60.config /etc/elena/
-# cp ../bin/elenavm.config /etc/elena/
-cp ../../bin/templates/*.config /etc/elena/templates/
+mkdir -p ../../lib60_64
+mkdir -p ../../bin/ppc64le
 
 echo compiling data files
 
@@ -69,13 +63,9 @@ else
   exit 1
 fi
 
-cp ../../dat/og/*.dat /usr/share/elena/
-cp ../../dat/sg/syntax60.dat /usr/share/elena
-cp ../../dat/sg/syntax67.dat /usr/share/elena
-
 echo compiling assembly files
 
-../../bin/asm64-cli -ppc64le ../../asm/ppc64le/core60.asm /usr/lib/elena/core/ppc64le
+../../bin/asm64-cli -ppc64le ../../asm/ppc64le/core60.asm ../../bin/ppc64le
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -85,7 +75,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -ppc64le ../../asm/ppc64le/core60_lnx.asm /usr/lib/elena/core/ppc64le
+../../bin/asm64-cli -ppc64le ../../asm/ppc64le/core60_lnx.asm ../../bin/ppc64le
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -95,7 +85,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -ppc64le ../../asm/ppc64le/core60_client.asm /usr/lib/elena/core/ppc64le core60_lnx_client.bin
+../../bin/asm64-cli -linux -ppc64le ../../asm/ppc64le/core60_client.asm ../../bin/ppc64le core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -105,17 +95,30 @@ else
   exit 1
 fi
 
-# ../bin/elena-asm2binx ../asm/x32/coreapi.asm /usr/lib/elena/core/x32
-# ret=$?
-# if [ $ret -eq 0 ]
-# then
-#   echo .
-# else
-#   echo "Failure" >&2
-#   exit 1
-# fi
-#
-# echo compiling lib50 files
+echo installing binaries and configuration
+
+$SUDO mkdir -p /usr/share/elena
+$SUDO mkdir -p /etc/elena/
+$SUDO mkdir -p /etc/elena/templates/
+$SUDO mkdir -p /usr/lib/elena/core/ppc64le/
+$SUDO mkdir -p /usr/lib/elena/lib60_64
+
+$SUDO cp --remove-destination ../../bin/libelenart60_64.so /usr/lib/elena/
+$SUDO cp --remove-destination ../../bin/libelenasm60_64.so /usr/lib/elena/
+# cp ../bin/libelenavm.so /usr/lib/elena/
+$SUDO cp --remove-destination ../../bin/elena64-cli /usr/bin/
+
+$SUDO cp --remove-destination ../../bin/elc60.config /etc/elena/
+# cp ../bin/elenavm.config /etc/elena/
+$SUDO cp --remove-destination ../../bin/templates/*.config /etc/elena/templates/
+
+$SUDO cp --remove-destination ../../dat/og/*.dat /usr/share/elena/
+$SUDO cp --remove-destination ../../dat/sg/syntax60.dat /usr/share/elena
+$SUDO cp --remove-destination ../../dat/sg/syntax67.dat /usr/share/elena
+
+$SUDO cp --remove-destination ../../bin/ppc64le/*.bin /usr/lib/elena/core/ppc64le/
+
+echo compiling lib60 files
 
  ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
  ret=$?
@@ -137,8 +140,8 @@ fi
    echo .
  fi
 
- cp ../../lib60_64/*.nl /usr/lib/elena/lib60_64
- cp ../../lib60_64/*.dnl /usr/lib/elena/lib60_64 
+ $SUDO cp --remove-destination ../../lib60_64/*.nl /usr/lib/elena/lib60_64
+ $SUDO cp --remove-destination ../../lib60_64/*.dnl /usr/lib/elena/lib60_64
 
  elena64-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
@@ -198,11 +201,12 @@ fi
 
  echo compiling core
 
- cp /usr/lib/elena/core/ppc64le/*.bin ./$RELEASE/usr/lib/elena/core/ppc64le/
+ cp ../../bin/ppc64le/*.bin ./$RELEASE/usr/lib/elena/core/ppc64le/
 
  echo compiling lib60
 
- cp /usr/lib/elena/lib60_64/*.* ./$RELEASE/usr/lib/elena/lib60_64/
+ cp ../../lib60_64/*.nl ./$RELEASE/usr/lib/elena/lib60_64/
+ cp ../../lib60_64/*.dnl ./$RELEASE/usr/lib/elena/lib60_64/
 
  cp -r ../../examples60 $RELEASE/usr/elena-lang
  cp -r ../../src60 $RELEASE/usr/elena-lang

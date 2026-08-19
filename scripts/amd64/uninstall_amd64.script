@@ -1,41 +1,48 @@
 #!/bin/bash
 
+if [ "$(id -u)" -ne 0 ]
+then
+  SUDO=sudo
+else
+  SUDO=
+fi
+
 read -p "You are going to uninstall ELENA Language. Are you sure? " -n 1 -r
 echo    # (optional) move to a new line
 if [[ $REPLY =~ ^[Yy]$ ]]
 then
 
   echo removing ELENA shared libraries
-  rm /usr/lib/elena/libelenart60_64.so
-  rm /usr/lib/elena/libelenasm60_64.so
-  rm /usr/lib/elena/libelenavm60_64.so
+  $SUDO rm -f /usr/lib/elena/libelenart60_64.so
+  $SUDO rm -f /usr/lib/elena/libelenasm60_64.so
+  $SUDO rm -f /usr/lib/elena/libelenavm60_64.so
 
   echo removing ELENA compiler executable
-  rm /usr/bin/elena64-cli
+  $SUDO rm -f /usr/bin/elena64-cli
 
   echo removing ELENA configuration files
 
-  rm /etc/elena/templates/*.config
-  rmdir /etc/elena/templates
+  $SUDO rm -f /etc/elena/templates/*.config
+  $SUDO rmdir --ignore-fail-on-non-empty /etc/elena/templates
 
-  rm /etc/elena/*.config
-  rmdir /etc/elena
+  $SUDO rm -f /etc/elena/*.config
+  $SUDO rmdir --ignore-fail-on-non-empty /etc/elena
 
   echo removing ELENA data files
-  rm /usr/share/elena/*.dat
-  rmdir /usr/share/elena
+  $SUDO rm -f /usr/share/elena/*.dat
+  $SUDO rmdir --ignore-fail-on-non-empty /usr/share/elena
 
   echo removing ELENA API compiled modules
 
-  rm /usr/lib/elena/core/amd64/*.bin
-  rmdir /usr/lib/elena/core/amd64
-  rmdir /usr/lib/elena/core
+  $SUDO rm -f /usr/lib/elena/core/amd64/*.bin
+  $SUDO rmdir --ignore-fail-on-non-empty /usr/lib/elena/core/amd64
+  $SUDO rmdir --ignore-fail-on-non-empty /usr/lib/elena/core
 
-  rm /usr/lib/elena/lib60_64/*.nl
-  rm /usr/lib/elena/lib60_64/*.dnl
+  $SUDO rm -f /usr/lib/elena/lib60_64/*.nl
+  $SUDO rm -f /usr/lib/elena/lib60_64/*.dnl
 
-  rmdir /usr/lib/elena/lib60_64
-  rmdir /usr/lib/elena
+  $SUDO rmdir --ignore-fail-on-non-empty /usr/lib/elena/lib60_64
+  $SUDO rmdir --ignore-fail-on-non-empty /usr/lib/elena
 
 fi
 

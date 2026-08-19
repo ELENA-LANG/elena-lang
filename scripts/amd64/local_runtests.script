@@ -30,9 +30,28 @@
    echo .
  fi
 
- # ELENA has no wait with a deadline on Linux, so a hung MTA test has nothing of its own
- # to break it and would pin the job until the runner gives up
- timeout --signal=KILL 300s ../../tests60/mta_tests/mta_tests
+ # Keep an external watchdog for deadlocks involving the whole process.
+ timeout --signal=KILL 300s ../../tests60/mta_tests/mta_tests64
+ ret=$?
+ if [ $ret -eq 0 ]
+ then
+   echo .
+ else
+   echo "Failure" >&2
+   exit 1
+ fi
+
+ ../../bin/elena64-cli ../../tests60/async_tests/async_tests.prj
+ ret=$?
+ if [ $ret -eq 1 ]
+ then
+   echo "Failure" >&2
+   exit 1
+ else
+   echo .
+ fi
+
+ timeout --signal=KILL 300s ../../tests60/async_tests/async_tests
  ret=$?
  if [ $ret -eq 0 ]
  then

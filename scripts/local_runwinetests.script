@@ -1,0 +1,52 @@
+#!/bin/bash
+# stages the cross-built test suites with the mingw runtime and runs them under Wine
+# expects: the *.exe files (elena*-cli -xtwin64/-xtwin32) and
+# bin/elenart60_64.dll / bin/elenart60.dll (make cross_elenart_win64 / _win32)
+
+STAGE=../temp/wine_mta
+ret_total=0
+
+run_one()
+{
+   arch=$1
+   dir=$2
+   exe=$3
+   dll=$4
+
+   if [ ! -f ../tests60/$dir/$exe ] || [ ! -f ../bin/$dll ]
+   then
+      echo "$arch $dir: skipped, $exe or $dll not built"
+      return 0
+   fi
+
+   mkdir -p $STAGE/$arch/$dir
+   cp ../tests60/$dir/$exe $STAGE/$arch/$dir/
+   cp ../bin/$dll $STAGE/$arch/$dir/
+
+   echo "=== $arch $dir ==="
+   ( cd $STAGE/$arch/$dir && WINEDEBUG=-all timeout --signal=KILL 30s wine ./$exe )
+   ret=$?
+   if [ $ret -eq 0 ]
+   then
+      echo "$arch $dir: passed"
+   elif [ $ret -eq 137 ]
+   then
+      echo "$arch $dir: HANG, killed by the watchdog. Attach with:" >&2
+      echo "  (cd $STAGE/$arch/$dir && wine ./$exe &) ; winedbg" >&2
+      ret_total=1
+   else
+      echo "$arch $dir: failed with $ret" >&2
+      ret_total=1
+   fi
+}
+
+run_one x64 system_tests system_tests64.exe elenart60_64.dll
+run_one x86 system_tests system_tests.exe elenart60.dll
+
+run_one x64 mta_tests mta_tests64.exe elenart60_64.dll
+run_one x86 mta_tests mta_tests.exe elenart60.dll
+
+run_one x64 async_tests async_tests64.exe elenart60_64.dll
+run_one x86 async_tests async_tests.exe elenart60.dll
+
+exit $ret_total

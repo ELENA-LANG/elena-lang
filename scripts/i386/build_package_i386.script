@@ -1,28 +1,14 @@
 #!/bin/bash
 
+if [ "$(id -u)" -ne 0 ]
+then
+  SUDO=sudo
+else
+  SUDO=
+fi
+
 mkdir -p ../../lib60
-mkdir -p /usr/share/elena
-mkdir -p /etc/elena/
-mkdir -p /etc/elena/templates/
-mkdir -p /etc/elena/scripts/
-mkdir -p /usr/lib/elena/core/x32/
-mkdir -p /usr/lib/elena/core/amd64/
-mkdir -p /usr/lib/elena/lib60
-
-cp ../../bin/libelenart60.so /usr/lib/elena/
-cp ../../bin/libelenasm60.so /usr/lib/elena/
-cp ../../bin/libelenavm60.so /usr/lib/elena/
-cp ../../bin/elena-cli /usr/bin/
-
-ldconfig /usr/lib/elena
-
-cp ../../bin/elc60.config /etc/elena/
-cp ../../bin/elenart60.config /etc/elena/
-cp ../../bin/elenavm60.config /etc/elena/
-cp ../../bin/elt60.es /etc/elena/
-cp ../../bin/templates/*.config /etc/elena/templates/
-cp ../../bin/scripts/*.es /etc/elena/scripts/
-cp ../../bin/scripts/*.elt /etc/elena/scripts/
+mkdir -p ../../bin/x32
 
 echo compiling data files
 
@@ -76,16 +62,13 @@ else
   exit 1
 fi
 
-cp ../../dat/og/*.dat /usr/share/elena/
 cp ../../dat/og/*.dat ../../bin
-cp ../../dat/sg/syntax60.dat /usr/share/elena
 cp ../../dat/sg/syntax60.dat ../../bin
-cp ../../dat/sg/syntax67.dat /usr/share/elena
 cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm-cli -linux -x86 ../../asm/x32/core60.asm /usr/lib/elena/core/x32 core60_lnx.bin
+../../bin/asm-cli -linux -x86 ../../asm/x32/core60.asm ../../bin/x32 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -95,7 +78,7 @@ else
   exit 1
 fi
 
-../../bin/asm-cli -linux -x86 ../../asm/x32/corex60.asm /usr/lib/elena/core/x32 corex60_lnx.bin
+../../bin/asm-cli -linux -x86 ../../asm/x32/corex60.asm ../../bin/x32 corex60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -105,7 +88,7 @@ else
   exit 1
 fi
 
-../../bin/asm-cli -linux -x86 ../../asm/x32/core60_client.asm /usr/lib/elena/core/x32 core60_lnx_client.bin
+../../bin/asm-cli -linux -x86 ../../asm/x32/core60_client.asm ../../bin/x32 core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -114,6 +97,38 @@ else
   echo "Failure" >&2
   exit 1
 fi
+
+echo installing binaries and configuration
+
+$SUDO mkdir -p /usr/share/elena
+$SUDO mkdir -p /etc/elena/
+$SUDO mkdir -p /etc/elena/templates/
+$SUDO mkdir -p /etc/elena/scripts/
+$SUDO mkdir -p /usr/lib/elena/core/x32/
+$SUDO mkdir -p /usr/lib/elena/lib60
+
+$SUDO cp --remove-destination ../../bin/libelenart60.so /usr/lib/elena/
+$SUDO cp --remove-destination ../../bin/libelenasm60.so /usr/lib/elena/
+$SUDO cp --remove-destination ../../bin/libelenavm60.so /usr/lib/elena/
+$SUDO cp --remove-destination ../../bin/elena-cli /usr/bin/
+
+$SUDO ldconfig /usr/lib/elena
+
+$SUDO cp --remove-destination ../../bin/elc60.config /etc/elena/
+$SUDO cp --remove-destination ../../bin/elenart60.config /etc/elena/
+$SUDO cp --remove-destination ../../bin/elenavm60.config /etc/elena/
+$SUDO cp --remove-destination ../../bin/elt60.es /etc/elena/
+$SUDO cp --remove-destination ../../bin/templates/*.config /etc/elena/templates/
+$SUDO cp --remove-destination ../../bin/scripts/*.es /etc/elena/scripts/
+$SUDO cp --remove-destination ../../bin/scripts/*.elt /etc/elena/scripts/
+
+$SUDO cp --remove-destination ../../dat/og/*.dat /usr/share/elena/
+$SUDO cp --remove-destination ../../dat/sg/syntax60.dat /usr/share/elena
+$SUDO cp --remove-destination ../../dat/sg/syntax67.dat /usr/share/elena
+
+$SUDO cp --remove-destination ../../bin/x32/core60_lnx.bin /usr/lib/elena/core/x32/
+$SUDO cp --remove-destination ../../bin/x32/corex60_lnx.bin /usr/lib/elena/core/x32/
+$SUDO cp --remove-destination ../../bin/x32/core60_lnx_client.bin /usr/lib/elena/core/x32/
 
 echo compiling lib60 files
 
@@ -137,8 +152,8 @@ echo compiling lib60 files
    echo .
  fi
 
- cp ../../lib60/*.nl /usr/lib/elena/lib60
- cp ../../lib60/*.dnl /usr/lib/elena/lib60
+ $SUDO cp --remove-destination ../../lib60/*.nl /usr/lib/elena/lib60
+ $SUDO cp --remove-destination ../../lib60/*.dnl /usr/lib/elena/lib60
 
  elena-cli ../../tests60/system_tests/system_tests.prj
  ret=$?
