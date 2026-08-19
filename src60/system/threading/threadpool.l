@@ -11,8 +11,8 @@ public sealed class ThreadPool
    static int                 _minThreads;
    static int                 _maxThreads;
    static int                 _workerCount;
-   static int                 _idleCount;
-   static int                 _pendingCount;
+   static Reference<int>      _idleCount;
+   static Reference<int>      _pendingCount;
 
    static constructor()
    {
@@ -54,14 +54,14 @@ public sealed class ThreadPool
    {
       while (true) {
          lock(_sync) {
-            _idleCount := _idleCount + 1
+            _idleCount.append(1)
          };
 
          Func action := _actions.pop();
 
          lock(_sync) {
-            _idleCount := _idleCount - 1;
-            _pendingCount := _pendingCount - 1;
+            _idleCount.reduce(1);
+            _pendingCount.reduce(1);
          };
 
          try {
@@ -90,7 +90,7 @@ public sealed class ThreadPool
             // arrives. Further submissions grow toward the bounded maximum.
             startCount := _minThreads;
          }
-         else if (_pendingCount > _idleCount && _workerCount < _maxThreads) {
+         else if (*_pendingCount > *_idleCount && _workerCount < _maxThreads) {
             startCount := 1
          };
 
@@ -124,7 +124,7 @@ public sealed class ThreadPool
          InvalidArgumentException.raise("action");
 
       lock(_sync) {
-         _pendingCount := _pendingCount + 1
+         _pendingCount.append(1)
       };
 
       _actions.push(action);

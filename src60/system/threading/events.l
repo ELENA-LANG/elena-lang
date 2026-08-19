@@ -94,19 +94,22 @@ internal struct EventHandle
 
    wait()
    {
-      excluded { extern libc.pthread_mutex_lock(_mutex) };
+      auto mutexCopy := _mutex;
+      auto condCopy := _cond;
+
+      excluded { extern libc.pthread_mutex_lock(mutexCopy) };
 
       excluded
       {
          while ((_signaled & 1) == 0) {
-            extern libc.pthread_cond_wait(_cond, _mutex)
+            extern libc.pthread_cond_wait(condCopy, mutexCopy)
          }
       };
 
       if (_signaled < 0)
          _signaled := 80000000h;
 
-      extern libc.pthread_mutex_unlock(_mutex);
+      extern libc.pthread_mutex_unlock(mutexCopy);
    }
 
    bool wait(int timeOut)
@@ -133,13 +136,16 @@ internal struct EventHandle
          deadline[1] := deadline[1] - 1000000000;
       };
 
-      excluded { extern libc.pthread_mutex_lock(_mutex) };
+      auto mutexCopy := _mutex;
+      auto condCopy := _cond;
+
+      excluded { extern libc.pthread_mutex_lock(mutexCopy) };
 
       int result := 0;
       excluded
       {
          while ((_signaled & 1) == 0 && result == 0) {
-            result := extern libc.pthread_cond_timedwait(_cond, _mutex, deadline)
+            result := extern libc.pthread_cond_timedwait(condCopy, mutexCopy, deadline)
          }
       };
 
@@ -147,7 +153,7 @@ internal struct EventHandle
       if (signaled && _signaled < 0)
          _signaled := 80000000h;
 
-      extern libc.pthread_mutex_unlock(_mutex);
+      extern libc.pthread_mutex_unlock(mutexCopy);
 
       ^ signaled
    }

@@ -67,9 +67,11 @@ public struct Semaphore
 
    wait()
    {
+      auto semCopy := _sem;
+
       excluded
       {
-         while (extern libc.sem_wait(_sem) != 0) {
+         while (extern libc.sem_wait(semCopy) != 0) {
             // sem_wait is interrupted by signals on POSIX. Retry instead of
             // consuming an item that was never acquired.
          }

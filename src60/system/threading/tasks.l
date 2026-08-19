@@ -4,7 +4,8 @@ public class Task
 {
    TaskStatus          _status;
    Exception?          _exception;
-   List<Action<Task>>  _continuations;
+   Action<Task>?       _continuation;
+   List<Action<Task>>? _continuations;
    Func                _action;
 
    protected constructor()
@@ -15,7 +16,6 @@ public class Task
    protected initialize()
    {
       _status := TaskStatus.Created;
-      _continuations := new List<Action<Task>>();
    }
 
    internal constructor newPromise()
@@ -88,18 +88,7 @@ public class Task
    indexed internal getResultUnsafe()
       = nil;
 
-   indexed internal Exception? Exception
-   {
-      get()
-      {
-         Exception? exception := nil;
-         lock(self) {
-            exception := _exception
-         };
-
-         ^ exception
-      }
-   }
+   indexed internal Exception? Exception = _exception;
 
    private registerContinuation(Action<Task> action)
    {
@@ -109,7 +98,15 @@ public class Task
             scheduleNow := true
          }
          else {
-            _continuations.append(action)
+            if (_continuation == nil) {
+               _continuation := action
+            }
+            else {
+               if (_continuations == nil)
+                  _continuations := new List<Action<Task>>();
+
+               _continuations!.append(action)
+            }
          };
       };
 
@@ -150,7 +147,8 @@ public class Task
 
    private bool complete(TaskStatus finalStatus, Exception? ex)
    {
-      List<Action<Task>> continuations := new List<Action<Task>>();
+      Action<Task>? continuation := nil;
+      List<Action<Task>>? continuations := nil;
 
       lock(self) {
          if (isCompletedUnsafe())
@@ -158,14 +156,21 @@ public class Task
 
          _exception := ex;
          _status := finalStatus;
+         continuation := _continuation;
          continuations := _continuations;
-         _continuations := new List<Action<Task>>();
+         _continuation := nil;
+         _continuations := nil;
       };
 
-      int len := continuations.Length;
-      for (int i := 0; i < len; i += 1) {
-         Action<Task> continuation := continuations[i];
+      if:not:nil(continuation)
          ThreadPool.queueAction(continuation, self);
+
+      if:not:nil(continuations) {
+         int len := continuations.Length;
+         for (int i := 0; i < len; i += 1) {
+            Action<Task> continuationItem := continuations[i];
+            ThreadPool.queueAction(continuationItem, self);
+         }
       };
 
       ^ true

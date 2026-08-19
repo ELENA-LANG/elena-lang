@@ -93,21 +93,6 @@ class PermVectorChain
       }
    }
 
-   bool rearrange()
-   {
-      int len := Array.Length;
-      int free := 0;
-      for (int i := 0; i < len; i++) {
-         if (Array[i] == nil)
-            free++;
-      };
-
-      Current.Value := 0;
-      Free.Value := free;
-
-      ^ self.isAvailable;
-   }
-
    constructor(PermVectorChain next)
    {
       Array   := self.createArray();
@@ -137,12 +122,12 @@ public singleton PermVectorTable
       ^  false;
    }
 
-   private bool rearrangeUnsafe()
+   private bool selectAvailableUnsafe()
    {
       PermVectorChain? previous := nil;
       PermVectorChain? current := _firstChainItem;
       while (current != nil) {
-         if (current.rearrange()) {
+         if (current.isAvailable) {
             _chainItem := current;
 
             ^ true
@@ -172,7 +157,7 @@ public singleton PermVectorTable
 
       lock(_sync) {
          if (!self.isAvailable) {
-            if:not (rearrangeUnsafe()) {
+            if:not (selectAvailableUnsafe()) {
                // Keep every chain reachable from _firstChainItem. The previous
                // implementation only changed _chainItem and leaked every chain
                // allocated after the first one.
