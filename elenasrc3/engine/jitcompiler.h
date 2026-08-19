@@ -3,7 +3,7 @@
 //
 //		This file contains ELENA JIT compiler class.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef JITCOMPILER_H
@@ -37,6 +37,7 @@ namespace elena_lang
       int          extendedForm;
       // for ARM negative offsets should have a special treatment
       bool         noNegative;
+      bool         stackShadowMode;
    };
 
    struct JITCompilerScope
@@ -61,6 +62,11 @@ namespace elena_lang
          altMode = false;
 
          return oriValue;
+      }
+
+      bool withStackShadow()
+      {
+         return constants->stackShadowMode;
       }
 
       unsigned char code() const
@@ -114,6 +120,7 @@ namespace elena_lang
       friend void* retrieveICode(JITCompilerScope* scope, int arg);
       friend void* retrieveRCode(JITCompilerScope* scope, int arg);
       friend void* retrieveIRCode(JITCompilerScope* scope, int arg1, int arg2);
+      friend void* retrieveXArg(JITCompilerScope* scope);
 
       friend void loadOp(JITCompilerScope* scope);
       friend void loadSysOp(JITCompilerScope* scope);
@@ -126,6 +133,7 @@ namespace elena_lang
       friend void loadArgIndexOp(JITCompilerScope* scope);
       friend void loadVMTIndexOp(JITCompilerScope* scope);
       friend void loadFrameIndexOp(JITCompilerScope* scope);
+      friend void loadXFrameIndexOp(JITCompilerScope* scope);
       friend void loadFrameDispOp(JITCompilerScope* scope);
       friend void loadNOp(JITCompilerScope* scope);
       friend void loadLenOp(JITCompilerScope* scope);
@@ -248,6 +256,7 @@ namespace elena_lang
          _constants.unframedOffset = 0;
          _constants.mediumForm = _constants.extendedForm = INT32_MAX;
          _constants.noNegative = false;
+         _constants.stackShadowMode = false;
       }
    };
 
@@ -422,6 +431,7 @@ namespace elena_lang
    inline void* retrieveIndexRCode(JITCompilerScope* scope);
    inline void* retrieveFrameIndexRCode(JITCompilerScope* scope);
    inline void* retrieveCodeWithNegative(JITCompilerScope* scope);
+   inline void* retrieveXArg(JITCompilerScope* scope);
    inline void* retrieveICode(JITCompilerScope* scope, int arg);
    inline void* retrieveRCode(JITCompilerScope* scope, int arg);
    inline void* retrieveIRCode(JITCompilerScope* scope, int arg1, int arg2);
@@ -437,6 +447,7 @@ namespace elena_lang
    void loadFieldIndexOp(JITCompilerScope* scope);
    void loadVMTIndexOp(JITCompilerScope* scope);
    void loadFrameIndexOp(JITCompilerScope* scope);
+   void loadXFrameIndexOp(JITCompilerScope* scope);
    void loadStackIndexOp(JITCompilerScope* scope);
    void loadArgIndexOp(JITCompilerScope* scope);
    void loadFrameDispOp(JITCompilerScope* scope);

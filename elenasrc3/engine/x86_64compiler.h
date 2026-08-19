@@ -68,11 +68,12 @@ namespace elena_lang
       void compileSymbol(ReferenceHelperBase* helper, MemoryReader& bcReader, 
          MemoryWriter& codeWriter, LabelHelperBase*) override;
 
-      X86_64JITCompiler()
+      X86_64JITCompiler(bool withStackShadow)
          : JITCompiler64()
       {
          _constants.dataOffset = 0x0C;
          _constants.unframedOffset = 1;
+         _constants.stackShadowMode = withStackShadow;
       }
    };
 

@@ -77,7 +77,6 @@ internal struct EventHandle
    pointer _mutex;
    pointer _cond;
    int     _signaled;
-   int     _autoReset;
 
    internal constructor new(bool value, bool autoReset)
    {
@@ -89,22 +88,23 @@ internal struct EventHandle
       extern libc.pthread_cond_init(_cond, 0);
 
       _signaled := value ? 1 : 0;
-      _autoReset := autoReset ? 1 : 0;
+      if (autoReset)
+         _signaled := _signaled | 80000000h;
    }
 
    wait()
    {
-      extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
       excluded
       {
-         while (_signaled == 0) {
+         while ((_signaled & 1) == 0) {
             extern libc.pthread_cond_wait(_cond, _mutex)
          }
       };
 
-      if (_autoReset != 0)
-         _signaled := 0;
+      if (_signaled < 0)
+         _signaled := 80000000h;
 
       extern libc.pthread_mutex_unlock(_mutex);
    }
@@ -133,19 +133,19 @@ internal struct EventHandle
          deadline[1] := deadline[1] - 1000000000;
       };
 
-      extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
       int result := 0;
       excluded
       {
-         while (_signaled == 0 && result == 0) {
+         while ((_signaled & 1) == 0 && result == 0) {
             result := extern libc.pthread_cond_timedwait(_cond, _mutex, deadline)
          }
       };
 
-      bool signaled := _signaled != 0;
-      if (signaled && _autoReset != 0)
-         _signaled := 0;
+      bool signaled := (_signaled & 1) != 0;
+      if (signaled && _signaled < 0)
+         _signaled := 80000000h;
 
       extern libc.pthread_mutex_unlock(_mutex);
 
@@ -154,15 +154,15 @@ internal struct EventHandle
 
    set()
    {
-      extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
-      if (_signaled == 0) {
-         _signaled := 1;
-
-         if (_autoReset != 0) {
+      if ((_signaled & 1) == 0) {
+         if (_signaled < 0) {
+            _signaled := _signaled | 1;
             extern libc.pthread_cond_signal(_cond)
          }
          else {
+            _signaled := 1;
             extern libc.pthread_cond_broadcast(_cond)
          };
       };
@@ -173,10 +173,14 @@ internal struct EventHandle
 
    reset()
    {
-      extern libc.pthread_mutex_lock(_mutex);
+      excluded { extern libc.pthread_mutex_lock(_mutex) };
 
-      if (_signaled == 1)
-         _signaled := 0;
+      if (_signaled < 0) {
+         _signaled := 80000000h
+      }
+      else {
+         _signaled := 0
+      };
 
       extern libc.pthread_mutex_unlock(_mutex);
    }

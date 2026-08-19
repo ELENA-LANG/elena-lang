@@ -3005,12 +3005,18 @@ end
 
 procedure thread_func_invoker(arg)
 
-  extopen    (2),[]
+  extopen    (2),[arg_ref]
+
+  // ; copy extenal argument
+  xloadarg    fp:arg
+  $save       sp:0
+  peek        sp:0
+  store       fp:arg_ref
 
   system      9  // ; NOTE : mark the thread as collectable
 
   snop
-  peek       fp:arg
+  peek       fp:arg_ref
 
   get        i:0
   mov        mssg:"function:#invoke[0]" 

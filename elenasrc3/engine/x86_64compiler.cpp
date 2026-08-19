@@ -60,19 +60,21 @@ void elena_lang::x86_64loadCallOp(JITCompilerScope* scope)
    MemoryWriter* writer = scope->codeWriter;
 
    int argsToFree = 0;
-   switch (scope->command.arg2) {
-      case 0:
-         argsToFree = 4;
-         x86_64AllocStack(argsToFree, writer);
-         break;
-      case 1:
-      case 2:
-         argsToFree = 2;
-         x86_64AllocStack(argsToFree, writer);
-         break;
-      default:
-         // to make compiler happy
-         break;
+   if (scope->withStackShadow()) {
+      switch (scope->command.arg2) {
+         case 0:
+            argsToFree = 4;
+            x86_64AllocStack(argsToFree, writer);
+            break;
+         case 1:
+         case 2:
+            argsToFree = 2;
+            x86_64AllocStack(argsToFree, writer);
+            break;
+         default:
+            // to make compiler happy
+            break;
+      }
    }
 
    void* code = nullptr;
@@ -91,6 +93,12 @@ void elena_lang::x86_64loadCallOp(JITCompilerScope* scope)
          break;
       case 4:
          code = ((X86_64JITCompiler*)scope->compiler)->_inlines[5][scope->code()];
+         break;
+      case 5:
+         code = ((X86_64JITCompiler*)scope->compiler)->_inlines[6][scope->code()];
+         break;
+      case 6:
+         code = ((X86_64JITCompiler*)scope->compiler)->_inlines[7][scope->code()];
          break;
       default:
          code = ((X86_64JITCompiler*)scope->compiler)->_inlines[0][scope->code()];

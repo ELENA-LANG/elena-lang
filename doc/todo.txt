@@ -69,6 +69,8 @@ In development:
   ---------------------------------------
   * current : Linux
   ====================================== 
+  - amd64 : implement linux abi  - regisrters are in rdi, rsi, rdx, rcx, r8, r9, rsp+10, rsp+18, ... - no shadow stack
+  - fix xloadarg for amd64
   - amd64 : sandbox2
   - fix TLS information
   - amd64 : mta_tests
