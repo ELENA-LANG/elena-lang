@@ -71,7 +71,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -amd64 ../../asm/amd64/corex60.asm ../../bin/amd64 corex60_lnx.bin
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm ../../bin/amd64  core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -81,7 +81,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm ../../bin/amd64  core60_lnx_client.bin
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/corex60.asm ../../bin/amd64 corex60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -113,11 +113,8 @@ fi
    echo .
  fi
 
- mkdir -p /usr/lib/elena/
- ln -s $(realpath ../../bin/libelenart60_64.so) /usr/lib/elena/libelenart60_64.so
- ln -s $(realpath ../../bin/libelenavm60_64.so) /usr/lib/elena/libelenavm60_64.so
- ln -s $(realpath ../../bin/libelenasm60_64.so) /usr/lib/elena/libelenasm60_64.so
-
- mkdir -p /etc/elena/
- ln -s $(realpath ../../bin/elenart60.config) /etc/elena/elenart60.config
- ln -s $(realpath ../../bin/elenavm60.config) /etc/elena/elenavm60.config
+ if [ ! -e /usr/lib/elena/libelenart60_64.so ] || [ ! -e /etc/elena/elenart60.config ]
+ then
+   echo "local environment is not set up yet, running the one-time setup"
+   . setup_local_env.script
+ fi

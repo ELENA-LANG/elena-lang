@@ -1,10 +1,11 @@
 #!/bin/bash
 
 mkdir -p ../../lib60_win
+mkdir -p ../../bin/x32
 
 echo compiling assembly files
 
-../../bin/asm-cli -windows -x86 ../../asm/x32/core60.asm /usr/lib/elena/core/x32 core60_win.bin
+../../bin/asm-cli -windows -x86 ../../asm/x32/core60.asm ../../bin/x32 core60_win.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -14,7 +15,7 @@ else
   exit 1
 fi
 
-../../bin/asm-cli -windows -x86 ../../asm/x32/corex60.asm /usr/lib/elena/core/x32 corex60_win.bin
+../../bin/asm-cli -windows -x86 ../../asm/x32/corex60.asm ../../bin/x32 corex60_win.bin
 ret=$?
 if [ $ret -eq 0 ]
 then

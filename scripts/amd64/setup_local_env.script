@@ -1,0 +1,17 @@
+#!/bin/bash
+
+if [ "$(id -u)" -ne 0 ]
+then
+  SUDO=sudo
+else
+  SUDO=
+fi
+
+$SUDO mkdir -p /usr/lib/elena/
+$SUDO ln -sf $(realpath ../../bin/libelenart60_64.so) /usr/lib/elena/libelenart60_64.so
+$SUDO ln -sf $(realpath ../../bin/libelenavm60_64.so) /usr/lib/elena/libelenavm60_64.so
+$SUDO ln -sf $(realpath ../../bin/libelenasm60_64.so) /usr/lib/elena/libelenasm60_64.so
+
+$SUDO mkdir -p /etc/elena/
+$SUDO ln -sf $(realpath ../../bin/elenart60.config) /etc/elena/elenart60.config
+$SUDO ln -sf $(realpath ../../bin/elenavm60.config) /etc/elena/elenavm60.config

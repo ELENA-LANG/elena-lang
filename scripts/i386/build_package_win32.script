@@ -1,14 +1,18 @@
 #!/bin/bash
 
-mkdir -p /usr/lib/elena/core/x32/
-mkdir -p ../../lib60_win
-mkdir -p /usr/lib/elena/lib60_win
+if [ "$(id -u)" -ne 0 ]
+then
+  SUDO=sudo
+else
+  SUDO=
+fi
 
-cp ../../bin/elena-cli /usr/bin/
+mkdir -p ../../lib60_win
+mkdir -p ../../bin/x32
 
 echo compiling assembly files
 
-../../bin/asm-cli -windows -x86 ../../asm/x32/core60.asm /usr/lib/elena/core/x32 core60_win.bin
+../../bin/asm-cli -windows -x86 ../../asm/x32/core60.asm ../../bin/x32 core60_win.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -18,7 +22,7 @@ else
   exit 1
 fi
 
-../../bin/asm-cli -windows -x86 ../../asm/x32/corex60.asm /usr/lib/elena/core/x32 corex60_win.bin
+../../bin/asm-cli -windows -x86 ../../asm/x32/corex60.asm ../../bin/x32 corex60_win.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -27,6 +31,16 @@ else
   echo "Failure" >&2
   exit 1
 fi
+
+echo installing binaries
+
+$SUDO mkdir -p /usr/lib/elena/core/x32/
+$SUDO mkdir -p /usr/lib/elena/lib60_win
+
+$SUDO cp --remove-destination ../../bin/elena-cli /usr/bin/
+
+$SUDO cp --remove-destination ../../bin/x32/core60_win.bin /usr/lib/elena/core/x32/
+$SUDO cp --remove-destination ../../bin/x32/corex60_win.bin /usr/lib/elena/core/x32/
 
 echo compiling lib60 files
 
@@ -50,8 +64,7 @@ echo compiling lib60 files
    echo .
  fi
 
- cp ../../lib60_win/*.nl /usr/lib/elena/lib60_win
- cp ../../lib60_win/*.dnl /usr/lib/elena/lib60_win
+ $SUDO cp --remove-destination ../../lib60_win/*.nl /usr/lib/elena/lib60_win
+ $SUDO cp --remove-destination ../../lib60_win/*.dnl /usr/lib/elena/lib60_win
 
- cp ../../bin/winstub.ex_ /usr/share/elena
-
+ $SUDO cp --remove-destination ../../bin/winstub.ex_ /usr/share/elena

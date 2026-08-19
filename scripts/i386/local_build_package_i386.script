@@ -115,11 +115,8 @@ fi
    echo .
  fi
 
- mkdir -p /usr/lib/elena/
- ln -s $(realpath ../../bin/libelenart60.so) /usr/lib/elena/libelenart60.so
- ln -s $(realpath ../../bin/libelenavm60.so) /usr/lib/elena/libelenavm60.so
- ln -s $(realpath ../../bin/libelenasm60.so) /usr/lib/elena/libelenasm60.so
-
- mkdir -p /etc/elena/
- ln -s $(realpath ../../bin/local.elenart60.config) /etc/elena/elenart60.config
- ln -s $(realpath ../../bin/local.elenavm60.config) /etc/elena/elenavm60.config
+ if [ ! -e /usr/lib/elena/libelenart60.so ] || [ ! -e /etc/elena/elenart60.config ]
+ then
+   echo "local environment is not set up yet, running the one-time setup"
+   . setup_local_env.script
+ fi

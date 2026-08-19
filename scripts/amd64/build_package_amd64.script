@@ -1,20 +1,14 @@
 #!/bin/bash
+
+if [ "$(id -u)" -ne 0 ]
+then
+  SUDO=sudo
+else
+  SUDO=
+fi
+
 mkdir -p ../../lib60_64
-mkdir -p /usr/share/elena
-mkdir -p /etc/elena/
-mkdir -p /etc/elena/templates/
-mkdir -p /usr/lib/elena/core/amd64/
-mkdir -p /usr/lib/elena/lib60_64
-
-cp ../../bin/libelenart60_64.so /usr/lib/elena/
-cp ../../bin/libelenasm60_64.so /usr/lib/elena/
-cp ../../bin/libelenavm60_64.so /usr/lib/elena/
-cp ../../bin/elena64-cli /usr/bin/
-
-cp ../../bin/elc60.config /etc/elena/
-cp ../../bin/elenavm60.config /etc/elena/
-cp ../../bin/elenart60.config /etc/elena/
-cp ../../bin/templates/*.config /etc/elena/templates/
+mkdir -p ../../bin/amd64
 
 echo compiling data files
 
@@ -68,16 +62,13 @@ else
   exit 1
 fi
 
-cp ../../dat/og/*.dat /usr/share/elena/
 cp ../../dat/og/*.dat ../../bin
-cp ../../dat/sg/syntax60.dat /usr/share/elena
 cp ../../dat/sg/syntax60.dat ../../bin
-cp ../../dat/sg/syntax67.dat /usr/share/elena
 cp ../../dat/sg/syntax67.dat ../../bin
 
 echo compiling assembly files
 
-../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60.asm /usr/lib/elena/core/amd64 core60_lnx.bin
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60.asm ../../bin/amd64 core60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -87,7 +78,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -amd64 ../../asm/amd64/corex60.asm /usr/lib/elena/core/amd64 corex60_lnx.bin
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm ../../bin/amd64 core60_lnx_client.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -97,7 +88,7 @@ else
   exit 1
 fi
 
-../../bin/asm64-cli -linux -amd64 ../../asm/amd64/core60_client.asm /usr/lib/elena/core/amd64  core60_lnx_client.bin
+../../bin/asm64-cli -linux -amd64 ../../asm/amd64/corex60.asm ../../bin/amd64 corex60_lnx.bin
 ret=$?
 if [ $ret -eq 0 ]
 then
@@ -106,6 +97,34 @@ else
   echo "Failure" >&2
   exit 1
 fi
+
+echo installing binaries and configuration
+
+$SUDO mkdir -p /usr/share/elena
+$SUDO mkdir -p /etc/elena/
+$SUDO mkdir -p /etc/elena/templates/
+$SUDO mkdir -p /usr/lib/elena/core/amd64/
+$SUDO mkdir -p /usr/lib/elena/lib60_64
+
+$SUDO cp --remove-destination ../../bin/libelenart60_64.so /usr/lib/elena/
+$SUDO cp --remove-destination ../../bin/libelenasm60_64.so /usr/lib/elena/
+$SUDO cp --remove-destination ../../bin/libelenavm60_64.so /usr/lib/elena/
+$SUDO cp --remove-destination ../../bin/elena64-cli /usr/bin/
+
+$SUDO cp --remove-destination ../../bin/elc60.config /etc/elena/
+$SUDO cp --remove-destination ../../bin/elenavm60.config /etc/elena/
+$SUDO cp --remove-destination ../../bin/elenart60.config /etc/elena/
+$SUDO cp --remove-destination ../../bin/templates/*.config /etc/elena/templates/
+
+$SUDO cp --remove-destination ../../dat/og/*.dat /usr/share/elena/
+$SUDO cp --remove-destination ../../dat/sg/syntax60.dat /usr/share/elena
+$SUDO cp --remove-destination ../../dat/sg/syntax67.dat /usr/share/elena
+
+$SUDO cp --remove-destination ../../bin/amd64/core60_lnx.bin /usr/lib/elena/core/amd64/
+$SUDO cp --remove-destination ../../bin/amd64/core60_lnx_client.bin /usr/lib/elena/core/amd64/
+$SUDO cp --remove-destination ../../bin/amd64/corex60_lnx.bin /usr/lib/elena/core/amd64/
+
+echo compiling lib60 files
 
  ../../bin/asm64-cli -bc64 ../../src60/core/system.core_routines.esm ../../lib60_64
  ret=$?
@@ -127,5 +146,5 @@ fi
    echo .
  fi
 
- cp ../../lib60_64/*.nl /usr/lib/elena/lib60_64
- cp ../../lib60_64/*.dnl /usr/lib/elena/lib60_64 
+ $SUDO cp --remove-destination ../../lib60_64/*.nl /usr/lib/elena/lib60_64
+ $SUDO cp --remove-destination ../../lib60_64/*.dnl /usr/lib/elena/lib60_64
