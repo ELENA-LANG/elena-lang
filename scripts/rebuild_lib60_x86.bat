@@ -35,11 +35,22 @@ bin\elena-cli tests60\system_tests\system_tests.prj
 if %ERRORLEVEL% EQU 1 GOTO CompilerError
 @echo on
 
+bin\elena-cli tests60\mta_tests\mta_tests.prj
+@echo off 
+if %ERRORLEVEL% EQU 1 GOTO CompilerError
+@echo on
+
 echo system api test for x86
 copy bin\elenart60.dll tests60\system_tests\
 copy bin\elenasm60.dll tests60\system_tests\
+copy bin\elenart60.dll tests60\mta_tests\
 
 tests60\system_tests\system_tests.exe
+@echo off 
+if %ERRORLEVEL% NEQ 0 GOTO TestError
+@echo on
+
+tests60\mta_tests\mta_tests.exe
 @echo off 
 if %ERRORLEVEL% NEQ 0 GOTO TestError
 @echo on

@@ -4,9 +4,19 @@
         <executable>mta_tests.exe</executable>
      </project>
   </platform>
+  <platform key="Linux_I386">
+     <project>
+        <executable>mta_tests</executable>
+     </project>
+  </platform>
   <platform key="Win_x64">
      <project>
         <executable>mta_tests64.exe</executable>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <executable>mta_tests64</executable>
      </project>
   </platform>
   <project>
