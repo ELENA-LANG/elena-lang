@@ -25,6 +25,8 @@
   - [FIXED] GC_ALLOCPERM did not follow the System V calling convention (amd64)
   - [FIXED] a failed mmap was not detected on 64 bit targets (Linux, macOS)
   - [FIXED] fill 3,0 core routine used wrong field offsets (amd64)
+  - [FIXED] permanent vector allocation was not thread-safe and overflow chains were lost
+  - [FIXED] POSIX event auto-reset, timed waits and subsecond thread sleep
 
 - SM
 
@@ -34,6 +36,8 @@
   - [ADDED] system'collections'Union<T1,T2>
   - [ADDED] extension ClassHashCode (system'runtime)
   - [ADDED] system'dynamic : injectable_constructor attribute (to support DI)
+  - [ADDED] Task status, multiple continuations, aggregate whenAll and a lazy configurable thread pool
+  - [FIXED] async / await completion and exception propagation
   - [REMOVED] system'Indexer, system'Indexer<T> interfaces are no longer supported
   - [REDUX] system'Indexable, system'Indexable<T> interfaces are modified
 

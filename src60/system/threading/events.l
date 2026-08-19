@@ -37,12 +37,15 @@ internal struct EventHandle
       }      
    }   
 
-   wait(int timeOut)
+   bool wait(int timeOut)
    {
+      int retVal := 0;
       excluded
       {
-         extern KERNEL32.WaitForSingleObject(_handle, timeOut);
-      }      
+         retVal := extern KERNEL32.WaitForSingleObject(_handle, timeOut);
+      };
+
+      ^ retVal == WAIT_OBJECT_0
    }   
 
    set()
@@ -91,37 +94,83 @@ internal struct EventHandle
 
    wait()
    {
-      excluded { extern libc.pthread_mutex_lock(_mutex) };
+      auto mutexCopy := _mutex;
+      auto condCopy := _cond;
 
-      if (_signaled < 0) {
-         excluded
-         {
-             extern libc.pthread_cond_wait(_cond, _mutex);
-         }
-      }
-      else {
-         while (_signaled == 0) {
-             excluded { extern libc.pthread_cond_wait(_cond, _mutex) }
+      excluded { extern libc.pthread_mutex_lock(mutexCopy) };
+
+      excluded
+      {
+         while ((_signaled & 1) == 0) {
+            extern libc.pthread_cond_wait(condCopy, mutexCopy)
          }
       };
 
-      extern libc.pthread_mutex_unlock(_mutex);
+      if (_signaled < 0)
+         _signaled := 80000000h;
+
+      extern libc.pthread_mutex_unlock(mutexCopy);
    }
 
-   wait(int timeOut)
+   bool wait(int timeOut)
    {
-      NotSupportedException.raise()
+      if (timeOut < 0) {
+         self.wait();
+
+         ^ true
+      };
+
+#if (__project["_Linux32"])
+      int deadline[2];
+#else
+      long deadline[2];
+#endif
+      extern libc.clock_gettime(0, deadline);
+
+      int seconds := timeOut / 1000;
+      int milliseconds := timeOut - seconds * 1000;
+      deadline[0] := deadline[0] + seconds;
+      deadline[1] := deadline[1] + milliseconds * 1000000;
+      if (deadline[1] >= 1000000000) {
+         deadline[0] := deadline[0] + 1;
+         deadline[1] := deadline[1] - 1000000000;
+      };
+
+      auto mutexCopy := _mutex;
+      auto condCopy := _cond;
+
+      excluded { extern libc.pthread_mutex_lock(mutexCopy) };
+
+      int result := 0;
+      excluded
+      {
+         while ((_signaled & 1) == 0 && result == 0) {
+            result := extern libc.pthread_cond_timedwait(condCopy, mutexCopy, deadline)
+         }
+      };
+
+      bool signaled := (_signaled & 1) != 0;
+      if (signaled && _signaled < 0)
+         _signaled := 80000000h;
+
+      extern libc.pthread_mutex_unlock(mutexCopy);
+
+      ^ signaled
    }
 
    set()
    {
       excluded { extern libc.pthread_mutex_lock(_mutex) };
 
-      if (_signaled != 1) {
-         if (_signaled == 0)
+      if ((_signaled & 1) == 0) {
+         if (_signaled < 0) {
+            _signaled := _signaled | 1;
+            extern libc.pthread_cond_signal(_cond)
+         }
+         else {
             _signaled := 1;
-
-         extern libc.pthread_cond_broadcast(_cond);
+            extern libc.pthread_cond_broadcast(_cond)
+         };
       };
 
       extern libc.pthread_mutex_unlock(_mutex);
@@ -161,8 +210,8 @@ public closed class BaseEvent
    wait()
       => _handle;
 
-   wait(int timeOut)
-      => _handle;
+   bool wait(int timeOut)
+      = _handle.wait(timeOut);
 
    set()
       => _handle;
@@ -202,15 +251,18 @@ public sealed class CountDownEvent
 
    constructor new(int counter)
    {
-      _handle := EventHandle.new(false, false);
+      if (counter < 0)
+         InvalidArgumentException.raise("counter");
+
+      _handle := EventHandle.new(counter == 0, false);
       _counter := counter;
    }
 
    wait()
       => _handle;
 
-   wait(int timeOut)
-      => _handle;
+   bool wait(int timeOut)
+      = _handle.wait(timeOut);
 
    signal()
    {

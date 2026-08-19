@@ -211,3 +211,83 @@ public manualResetEventTest() : testCase()
 
    Console.write(".")
 }
+
+// C2, AutoResetEvent
+
+class AutoResetState
+{
+   AutoResetEvent Gate       : prop;
+   CountDownEvent Ready      : prop;
+   CountDownEvent FirstWoken : prop;
+   CountDownEvent Completed  : prop;
+   SharedCounter Woken       : prop;
+   ErrorBox Errors           : prop;
+}
+
+autoResetWorker(state)
+{
+   state.Ready.signal();
+
+   try
+   {
+      state.Gate.wait();
+      state.Woken.increment()
+   }
+   catch(Exception e)
+   {
+      state.Errors.record(e)
+   };
+
+   state.FirstWoken.signal();
+   state.Completed.signal()
+}
+
+// One signal must release one waiter and then be consumed... a second waiter
+// stays blocked until the event is signalled again
+public autoResetEventTest() : testCase()
+{
+   // a signal sent before wait must be kept, but consumed by the first wait
+   auto stored := AutoResetEvent.new();
+   stored.set();
+   Assert.ifTrue(stored.wait(100));
+   Assert.ifFalse(stored.wait(10));
+   stored.close();
+
+   Console.write(".");
+
+   auto state := new AutoResetState();
+   state.Gate := AutoResetEvent.new();
+   state.Ready := CountDownEvent.new(2);
+   state.FirstWoken := CountDownEvent.new(1);
+   state.Completed := CountDownEvent.new(2);
+   state.Woken := SharedCounter.new();
+   state.Errors := ErrorBox.new();
+
+   for (int i := 0; i < 2; i += 1)
+   {
+      auto worker := Thread.assign(&autoResetWorker);
+
+      worker.start(state)
+   };
+
+   state.Ready.wait();
+
+   state.Gate.set();
+   state.FirstWoken.wait();
+
+   Assert.ifEqual(state.Woken.Value, 1);
+   Assert.ifFalse(state.Completed.wait(100));
+
+   state.Gate.set();
+   state.Completed.wait();
+
+   state.Errors.rethrowIfAny();
+   Assert.ifEqual(state.Woken.Value, 2);
+
+   state.Gate.close();
+   state.Ready.close();
+   state.FirstWoken.close();
+   state.Completed.close();
+
+   Console.write(".")
+}

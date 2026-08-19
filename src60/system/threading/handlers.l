@@ -201,9 +201,20 @@ public sealed struct ThreadHandle
 
    static sleep(int interval)
    {
+      if (interval < 0)
+         InvalidArgumentException.raise("interval");
+
       excluded
       {
-         extern libc.sleep(interval / 1000);
+         int seconds := interval / 1000;
+         int milliseconds := interval - seconds * 1000;
+
+         while (seconds > 0) {
+            seconds := extern libc.sleep(seconds)
+         };
+
+         if (milliseconds > 0)
+            extern libc.usleep(milliseconds * 1000);
       }
    }
 

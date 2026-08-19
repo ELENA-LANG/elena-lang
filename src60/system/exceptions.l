@@ -7,6 +7,11 @@ public class Exception
 
    constructor new(string message) : info("Creates an exception with the provide <b>message</b>")
    {
+      initialize(message)
+   }
+
+   protected initialize(string message)
+   {
       this message := message;
       this callStack := new CallStack(3);
    }
@@ -40,6 +45,22 @@ public class Exception
    }
 
    string Message : info("Returns the exception message") = message;
+}
+
+// --- AggregateException ---
+
+public class AggregateException : Exception
+{
+   Exception[] _innerExceptions;
+
+   constructor new(Exception[] exceptions)
+   {
+      initialize("One or more errors occurred");
+      _innerExceptions := exceptions
+   }
+
+   Exception[] InnerExceptions
+      = _innerExceptions;
 }
 
 // --- CriticalException ---
@@ -173,4 +194,3 @@ public class MessageLoaderException : Exception, info("Message cannot be loaded 
    constructor new(string messageName) : info("Creates the exception with the specified <b>messageName</b>")
       <= super new("Message " + messageName + " cannot be loaded");
 }
-
