@@ -1,121 +1,163 @@
-//import system'collections;
-//import extensions;
-//import system'threading;
-//import extensions'threading;
-//import extensions'runtime;
-//import system'runtime;
-//
-//// RoundBarrier
-////
-//// Releases every worker at once, which is the only way to force overlap here. Gates are
-//// pre-allocated one pair per round rather than reset, since resetting an event while a
-//// worker may still be inside wait is the kind of race a harness must not have
-//public sealed class RoundBarrier
+import extensions;
+import system'threading;
+import ltests;
+
+//class MyException : Exception
 //{
-//   Array _arrivals;
-//   Array _gates;
-//   int   _rounds;
+//    constructor new(s)
+//        <= super new(s);
+//}
 //
-//   constructor new(int count, int rounds)
+//class AwaitExceptionTester
+//{
+//   async Task doSomethingAsync()
 //   {
-//      _rounds := rounds;
-//      _arrivals := Array.allocate(rounds);
-//      _gates := Array.allocate(rounds);
+//      MyException.raise("Failed");
+//   }
 //
-//      for (int i := 0; i < rounds; i += 1)
+//   async Task invokeAsync()
+//   {
+//      bool failed := false;
+//      try
 //      {
-//         _arrivals[i] := CountDownEvent.new(count);
-//         _gates[i] := ManualResetEvent.new()
+//         :await doSomethingAsync();
 //      }
-//   }
-//
-//   // worker side
-//   arrive(int round)
-//   {
-//      auto arrival := _arrivals[round];
-//      auto gate := _gates[round];
-//
-//      arrival.signal();
-//      gate.wait()
-//   }
-//
-//   // coordinator side
-//   releaseAll(int round)
-//   {
-//      auto arrival := _arrivals[round];
-//      auto gate := _gates[round];
-//
-//      arrival.wait();
-//      gate.set()
-//   }
-//
-//   close()
-//   {
-//      for (int i := 0; i < _rounds; i += 1)
+//      catch(MyException e)
 //      {
-//         auto arrival := _arrivals[i];
-//         auto gate := _gates[i];
+//         failed := true;
+//      };
 //
-//         arrival.close();
-//         gate.close()
-//      }
+//      Assert.ifTrue(failed);
 //   }
 //}
 //
-//class TlsWorkerState
+//
+//public awaitExceptionTest() : testCase()
 //{
-//   RoundBarrier Barrier   : prop;
-//   Array        Matches   : prop;
-//   Array        Completed : prop;
-//   int          Rounds    : prop;
-//   ErrorBox     Errors    : prop;
+//   auto tester := new AwaitExceptionTester();
+//   tester.invokeAsync().Result;
+//
+//   Console.writeLine(".");
 //}
 //
-//class TlsWorkerArg
+//waitForAsyncGate(gate)
 //{
-//   int            Index : prop;
-//   TlsWorkerState State : prop;
+//   gate.wait()
 //}
-//
-//public singleton MtaLoad
+
+class AsyncAwaitScenarios
+{
+   
+   async Task<int> sumAwaitedValuesAsync(int value)
+   {
+/*      Task<int> v := :await delayedValueAsync(value);
+      Task<int> v2 := :await delayedValueAsync(value + 1);
+      
+      ^ v.Result + v.Result*/
+      
+      ^ (:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1))
+   }
+   
+   
+/*   async Task<int> resumeWithValueAsync(Task blocker, int value)
+   {
+      :await blocker;
+
+      ^ value
+   }
+*/
+   async Task<int> delayedValueAsync(int value)
+   {
+      :await Task.sleep(2);
+
+      ^ value
+   }
+/*
+   async Task<int> awaitValueThenReturnAsync(Task<int> blocker)
+   {
+      int result := :await blocker;
+
+      ^ result
+   }
+
+   async Task<int> returnAwaitedValueAsync(Task<int> blocker)
+   {
+      ^ :await blocker
+   }
+
+   async Task<int> sumAwaitedValuesViaLocalAsync(int value)
+   {
+      int result := (:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1));
+
+      ^ result
+   }
+*/
+/*
+   async Task<int> sumThreeAwaitedValuesAsync(int value)
+   {
+      ^ (:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1)) + (:await delayedValueAsync(value + 2))
+   }
+
+   async Task<int> chainedAsync(int value)
+   {
+      int first := :await delayedValueAsync(value);
+      int second := :await delayedValueAsync(value + 1);
+
+      ^ first + second
+   }
+
+   async Task failAfterAsync(Task blocker)
+   {
+      :await blocker;
+
+      MyException.raise("failed after suspension")
+   }
+
+   async Task incrementAfterSuspensionAsync()
+   {
+      :await Task.sleep(1);
+
+      AsyncTaskCounter.increment()
+   }*/
+}
+
+public Program()
+{
+   AsyncAwaitScenarios scenarios := new AsyncAwaitScenarios();
+
+   // The first result must survive while the second await is suspended.
+//   Assert.ifEqual(scenarios.sumAwaitedValuesViaLocalAsync(20).Result, 41);
+
+   Task<int> direct := scenarios.sumAwaitedValuesAsync(20);
+   
+   int r := direct.Result;
+   
+/*   ManualResetEvent completed := ManualResetEvent.new();
+   direct.continueWith((Task task){ completed.set() });
+
+   Assert.ifTrue(completed.wait(5000));
+   Assert.ifEqual(direct.Result, 41);
+*/
+   Console.write(r)
+}
+
+
+//public singleton AsyncTaskCounter
 //{
-//   // more workers than cores, so the scheduler is forced to preempt
-//   int WorkerCount
+//   static object _sync := new object();
+//   static int _value := 0;
+//
+//   reset()
 //   {
-//      get()
-//      {
-//         int n := 8;
-//
-///*         if (n < 4)
-//            { n := 4 };*/
-//
-//         ^ n
+//      lock(_sync) {
+//         _value := 0
 //      }
-//   }
-//
-//   // one run samples one interleaving, so every case repeats its body
-//   int Repetitions
-//      = 20;
-//}
-//
-//// SharedCounter
-////
-//// The increment is a deliberate read-modify-write, so a lock that does not exclude
-//// loses updates and the total comes out short
-//public sealed class SharedCounter
-//{
-//   int _n;
-//
-//   constructor new()
-//   {
-//      _n := 0
 //   }
 //
 //   increment()
 //   {
-//      lock(self)
-//      {
-//         _n := _n + 1
+//      lock(_sync) {
+//         _value := _value + 1
 //      }
 //   }
 //
@@ -123,180 +165,12 @@
 //   {
 //      get()
 //      {
-//         // the lock template declares an intermediate named v, so a
-//         // local of that name here would be shadowed
 //         int current := 0;
-//
-//         lock(self)
-//         {
-//            current := _n
+//         lock(_sync) {
+//            current := _value
 //         };
 //
 //         ^ current
 //      }
 //   }
 //}
-//
-//// Latch, stands in for Thread.join
-//public sealed class Latch
-//{
-//   CountDownEvent _done;
-//
-//   constructor new(int count)
-//   {
-//      _done := CountDownEvent.new(count)
-//   }
-//
-//   done()
-//   {
-//      _done.signal()
-//   }
-//
-//   await()
-//   {
-//      _done.wait()
-//   }
-//
-//   close()
-//   {
-//      _done.close()
-//   }
-//}
-//
-//class ChurnState
-//{
-//   int      Allocations : prop;
-//   Latch    Done        : prop;
-//   ErrorBox Errors      : prop;
-//}
-//
-//// ErrorBox
-////
-//// An assertion failing inside a worker aborts the process without saying which case
-//// failed. Workers record here and the coordinator re-raises after the latch
-//public sealed class ErrorBox
-//{
-//   bool   _failed;
-//   string _message;
-//
-//   constructor new()
-//   {
-//      _failed := false;
-//      _message := ""
-//   }
-//
-//   record(Exception e)
-//   {
-//      lock(self)
-//      {
-//         if:not (_failed)
-//         {
-//            _failed := true;
-//
-//            // toPrintable carries the call stack
-//            _message := e.toPrintable()
-//         }
-//      }
-//   }
-//
-//   rethrowIfAny()
-//   {
-//      if (_failed)
-//         { AssertException.raise(_message) }
-//   }
-//}
-//
-//churnWorker(state)
-//{
-//   Console.printLineConcurrent("churnWorker");
-//
-//   int n := state.Allocations;
-//
-//   try
-//   {
-//      for (int i := 0; i < n; i += 1)
-//      {
-//         auto tmp := new ArrayList();
-//         tmp.append(i)
-//      }
-//   }
-//   catch(Exception e)
-//   {
-//      state.Errors.record(e)
-//   };
-//
-//   state.Done.done()
-//
-//   // and then it returns, which is the point, leaving a null slot behind while the
-//   // other waves are still running
-//}
-// 
-//churnRounds(int waves, int workersPerWave, int whenCollect)
-//{
-//   // has to come through every wave unchanged
-//   auto survivors := new ArrayList();
-//   for (int i := 0; i < 200; i += 1)
-//      { survivors.append(i * 13) };
-//
-//   auto errors := ErrorBox.new();
-//
-//   for (int w := 0; w < waves; w += 1)
-//   {
-//      auto state := new ChurnState();
-//      state.Allocations := 5000;
-//      state.Done := Latch.new(workersPerWave);
-//      state.Errors := errors;
-//
-//      for (int i := 0; i < workersPerWave; i += 1)
-//      {
-//         auto worker := Thread.assign(&churnWorker);
-//
-//         worker.start(state)
-//      };
-//
-//      // collect while the wave finishes, so one lands in the window where some workers
-//      // have exited and others have not
-//      if (whenCollect == 1)
-//         { GCManager.collectFull() }
-//      else
-//         { GCManager.collectMinor() };
-//
-//      state.Done.await();
-//      state.Done.close();
-//
-//      if (whenCollect == 2)
-//         { GCManager.collectFull() }
-//   };
-//
-//   errors.rethrowIfAny();
-//
-//   // element by element, a partial relocation leaves the length right
-//   Assert.ifEqual(survivors.Length, 200);
-//   for (int i := 0; i < 200; i += 1)
-//      { Assert.ifEqual(survivors[i], i * 13) }
-//}
-//
-//public Program()
-//{
-////   churnRounds(50, 15, 1);
-//  churnRounds(50, 9, 1);
-//
-//   Console.write(".");
-//
-//   SystemMonitor.printMemoryStatistics();
-//}
-
-import extensions;
- 
-extension op : Func1
-{
-    compose(Func1 f)
-        = (x => self(f(x)));
-}
- 
-public Program()
-{
-    var fg := (x => x + 1).compose::(x => x * x);
- 
-    Console.printLine(fg(3))
-}

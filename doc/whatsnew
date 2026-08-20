@@ -14,6 +14,7 @@
   - [FIXED] critical error : an unresolved forward crashed the compiler instead of being reported
   - [REDUX] redesigning include / exclude, move operation about marking thread as non-collectable to system 8 / system 9
   - [ADDED] Supporting System V ABI for x86_64
+  - [CRITICAL] Fixing GC routine, clearing mg_wbar on heap expanding
   - [FIXED] async methods returning expressions with await operations
 
 - VM

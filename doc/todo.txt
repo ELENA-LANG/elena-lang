@@ -55,25 +55,26 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - migrate Linux code
   - review rosetta samples from G
+  - fix httpsget
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples
-  - review mta tests
-  - fix httpget / httpsget
   - fix sampleapi for https
   - test examples for 64bit
   - test rosetta for 64bit
   - can system 9 be simplified?
   ---------------------------------------
-  * current : Linux
+  * httpget
   ====================================== 
-  - amd64 : implement linux abi  - regisrters are in rdi, rsi, rdx, rcx, r8, r9, rsp+10, rsp+18, ... - no shadow stack
-  - fix xloadarg for amd64
-  - amd64 : sandbox2
-  - fix TLS information
-  - amd64 : mta_tests
+  - x86 : fix httpget
+  - amd64 : fix httpget
+  - test for Linux i386
+  - test for Linux amd64
+  ---------------------------------------
+  * current : CollectMG2YGRoots
+  ====================================== 
+  - fix bug in CollectMG2YGRoots httpget
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3

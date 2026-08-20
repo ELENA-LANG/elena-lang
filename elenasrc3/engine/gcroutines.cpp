@@ -415,6 +415,20 @@ inline void FullCollect(GCTable* table, GCRoot* roots)
    memset((void*)table->gc_mg_wbar, 0, size);
 }
 
+inline void expand_heap(GCTable* table, size_t inc)
+{
+   if (SystemRoutineProvider::ExpandHeap((void*)table->gc_end, inc)) {
+      SystemRoutineProvider::ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), heapheader_inc);
+   }
+   else SystemRoutineProvider::RaiseError(ELENA_ERR_OUT_OF_MEMORY);
+
+   table->gc_end += inc;
+
+   // ; clear WBar
+   size_t size = (table->gc_end - table->gc_mg_start) >> page_size_order;
+   memset((void*)table->gc_mg_wbar, 0, size);
+}
+
 void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t size, bool fullMode)
 {
    //printf("GCRoutine %llx,%llx\n", (long long)roots, (long long)size);
@@ -455,10 +469,7 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
          size_t inc = AlignHeapSize(heap_inc);
          //size_t header_inc = AlignHeapSize(heap_inc >> page_size_order_minus2);
 
-         ExpandHeap((void*)table->gc_end, inc);
-         ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), heapheader_inc);
-
-         table->gc_end += inc;
+         expand_heap(table, inc);
       }
 
       FullCollect(table, roots);
@@ -473,12 +484,7 @@ void* SystemRoutineProvider::GCRoutine(GCTable* table, GCRoot* roots, size_t siz
             size_t inc = AlignHeapSize(heap_inc);
             //size_t header_inc = AlignHeapSize(heap_inc >> page_size_order_minus2);
 
-            if (ExpandHeap((void*)table->gc_end, inc)) {
-               ExpandHeap((void*)(table->gc_header + ((table->gc_end - table->gc_start) >> page_size_order_minus2)), heapheader_inc);
-            }
-            else RaiseError(ELENA_ERR_OUT_OF_MEMORY);
-
-            table->gc_end += inc;
+            expand_heap(table, inc);
          }
 
          uintptr_t allocated = getObjectPtr(table->gc_mg_current);
