@@ -23,18 +23,26 @@ public abstract class AsyncStateEnumerator : Enumerator<Task>
       {
          try
          {
-             if (e.next()) {
-                (*e).continueWith(this self);
+            if (e.next()) {
+               (*e).onCompleted(this self);
 
-                ^ this self;
-             };
+               ^ this self;
+            };
 
-             t.setResult(); 
+            t.setResult()
          }
-         catch (Exception e)
+         catch::
          {
-            t.setException(e);
-         };
+            function(OperationCanceledException e)
+            {
+               t.setCanceled(e.Token)
+            }
+
+            function(Exception e)
+            {
+               t.setException(e)
+            }
+         }
       };
 
       proceeding(t);
@@ -68,19 +76,27 @@ public abstract class AsyncStateEnumerator<TResult> : Enumerator<Task>
       {
          try
          {
-             if (e.next()) {
-                (*e).continueWith(this self);
+            if (e.next()) {
+               (*e).onCompleted(this self);
 
-                ^ this self;
-             }
-             else t.setResultValue((*e).getResultUnsafe());
+               ^ this self;
+            }
+            else t.setResultValue((*e).getResultUnsafe());
 
-             t.setResult(); 
+            t.setResult()
          }
-         catch (Exception e)
+         catch::
          {
-            t.setException(e);
-         };
+            function(OperationCanceledException e)
+            {
+               t.setCanceled(e.Token)
+            }
+
+            function(Exception e)
+            {
+               t.setException(e)
+            }
+         }
       };
 
       proceeding(t);

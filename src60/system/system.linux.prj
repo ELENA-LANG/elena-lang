@@ -137,6 +137,7 @@
        <include>threading/events.l</include>
        <include>threading/blockinglists.l</include>
        <include>threading/threadpool.l</include>
+       <include>threading/cancellation.l</include>
        <include>threading/tasks.l</include>
        <include>threading/templates.l</include>
        <include>threading/template_tests.l</include>

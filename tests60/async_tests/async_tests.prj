@@ -18,6 +18,7 @@
      <module>
         <include>main.l</include>
         <include>basic.l</include>
+        <include>cancellation.l</include>
      </module>
   </files>
 </configuration>

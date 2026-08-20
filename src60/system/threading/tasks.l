@@ -7,6 +7,7 @@ public class Task
    Action<Task>?       _continuation;
    List<Action<Task>>? _continuations;
    Func                _action;
+   CancellationToken?  _cancellationToken;
 
    protected constructor()
    {
@@ -36,6 +37,12 @@ public class Task
          InvalidArgumentException.raise("action");
 
       _action := new StartHelper(action, arg);
+   }
+
+   internal constructor assignCancelable(Func action, CancellationToken cancellationToken)
+      <= assign(action)
+   {
+      _cancellationToken := cancellationToken
    }
 
    private bool isCompletedUnsafe()
@@ -89,6 +96,9 @@ public class Task
       = nil;
 
    indexed internal Exception? Exception = _exception;
+
+   indexed internal CancellationToken cancellationToken
+      = _cancellationToken ?? CancellationToken.None;
 
    private registerContinuation(Action<Task> action)
    {
@@ -145,7 +155,7 @@ public class Task
       ^ continuationTask
    }
 
-   private bool complete(TaskStatus finalStatus, Exception? ex)
+   private bool complete(TaskStatus finalStatus, Exception? ex, CancellationToken? cancellationToken)
    {
       Action<Task>? continuation := nil;
       List<Action<Task>>? continuations := nil;
@@ -155,6 +165,7 @@ public class Task
             { ^ false };
 
          _exception := ex;
+         _cancellationToken := cancellationToken;
          _status := finalStatus;
          continuation := _continuation;
          continuations := _continuations;
@@ -178,19 +189,19 @@ public class Task
 
    internal sealed setResult()
    {
-      if:not (complete(TaskStatus.RanToCompletion, nil))
+      if:not (complete(TaskStatus.RanToCompletion, nil, nil))
          InvalidOperationException.raise("The task is already completed")
    }
 
    internal sealed bool trySetResult()
-      = complete(TaskStatus.RanToCompletion, nil);
+      = complete(TaskStatus.RanToCompletion, nil, nil);
 
    internal sealed setException(Exception ex)
    {
       if (ex == nil)
          InvalidArgumentException.raise("ex");
 
-      if:not (complete(TaskStatus.Faulted, ex))
+      if:not (complete(TaskStatus.Faulted, ex, nil))
          InvalidOperationException.raise("The task is already completed")
    }
 
@@ -199,7 +210,24 @@ public class Task
       if (ex == nil)
          InvalidArgumentException.raise("ex");
 
-      ^ complete(TaskStatus.Faulted, ex)
+      ^ complete(TaskStatus.Faulted, ex, nil)
+   }
+
+   internal sealed setCanceled(CancellationToken cancellationToken)
+   {
+      if (cancellationToken == nil)
+         InvalidArgumentException.raise("cancellationToken");
+
+      if:not (complete(TaskStatus.Canceled, nil, cancellationToken))
+         InvalidOperationException.raise("The task is already completed")
+   }
+
+   internal sealed bool trySetCanceled(CancellationToken cancellationToken)
+   {
+      if (cancellationToken == nil)
+         InvalidArgumentException.raise("cancellationToken");
+
+      ^ complete(TaskStatus.Canceled, nil, cancellationToken)
    }
 
    sealed wait()
@@ -215,11 +243,49 @@ public class Task
          }
       };
 
+      if (self.IsCanceled)
+         TaskCanceledException.withToken(self.cancellationToken).raise();
+
       Exception? exception := self.Exception;
       if:not:nil(exception)
          exception.raise();
 
       ^ self
+   }
+
+   private executeAction()
+   {
+      CancellationToken cancellationToken := _cancellationToken ?? CancellationToken.None;
+      bool hasCancellationToken := _cancellationToken != nil;
+
+      if (hasCancellationToken && cancellationToken.IsCancellationRequested) {
+         trySetCanceled(cancellationToken)
+      }
+      else {
+         try
+         {
+            _action();
+            setResult()
+         }
+         catch::
+         {
+            function(OperationCanceledException e)
+            {
+               if (hasCancellationToken
+                  && cancellationToken.IsCancellationRequested
+                  && cancellationToken.equalReference(e.Token))
+               {
+                  trySetCanceled(e.Token)
+               }
+               else trySetException(e)
+            }
+
+            function(Exception e)
+            {
+               trySetException(e)
+            }
+         }
+      }
    }
 
    sealed start()
@@ -237,13 +303,7 @@ public class Task
             _status := TaskStatus.Running
          };
 
-         try {
-            _action();
-            setResult();
-         }
-         catch (Exception e) {
-            trySetException(e);
-         }
+         executeAction()
       });
    }
 
@@ -255,9 +315,16 @@ public class Task
       if (tasks == nil)
          InvalidArgumentException.raise("tasks");
 
+      int length := tasks.Length;
+      int remaining := length;
+      for (int i := 0; i < length; i += 1) {
+         if (tasks[i] == nil)
+            InvalidArgumentException.raise("tasks")
+      };
+
       Task promise := Task.newPromise();
-      int remaining := tasks.Length;
-      List<Exception> exceptions := new List<Exception>();
+      List<Exception>? exceptions := nil;
+      CancellationToken? cancellationToken := nil;
 
       if (remaining == 0) {
          promise.setResult();
@@ -269,17 +336,30 @@ public class Task
       {
          bool last := false;
          lock(promise) {
-            Exception? exception := completed.Exception;
-            if:not:nil(exception)
-               exceptions.append(exception);
+            if (completed.IsCanceled) {
+               if (cancellationToken == nil)
+                  cancellationToken := completed.cancellationToken
+            }
+            else {
+               Exception? exception := completed.Exception;
+               if:not:nil(exception) {
+                  if (exceptions == nil)
+                     exceptions := new List<Exception>();
+
+                  exceptions!.append(exception)
+               }
+            };
 
             remaining := remaining - 1;
             last := remaining == 0;
          };
 
          if (last) {
-            if (exceptions.Length > 0) {
-               promise.setException(AggregateException.new(exceptions.Value))
+            if (exceptions != nil) {
+               promise.setException(AggregateException.new(exceptions!.Value))
+            }
+            else if (cancellationToken != nil) {
+               promise.setCanceled(cancellationToken!)
             }
             else {
                promise.setResult()
@@ -287,14 +367,8 @@ public class Task
          }
       };
 
-      int len := tasks.Length;
-      for (int i := 0; i < len; i += 1) {
-         Task task := tasks[i];
-         if (task == nil)
-            InvalidArgumentException.raise("tasks");
-
-         task.onCompleted(continuation);
-      };
+      for (int i := 0; i < length; i += 1)
+         tasks[i].onCompleted(continuation);
 
       ^ promise
    }
@@ -321,12 +395,58 @@ public class Task
       ^ task
    }
 
+   static Task run(Func action, CancellationToken token)
+   {
+      if (action == nil)
+         InvalidArgumentException.raise("action");
+
+      if (token == nil)
+         InvalidArgumentException.raise("token");
+
+      if:not (token.CanBeCanceled)
+         { ^ Task.run(action) };
+
+      if (token.IsCancellationRequested)
+         { ^ Task.fromCanceled(token) };
+
+      Task task := Task.assignCancelable(action, token);
+      task.start();
+
+      ^ task
+   }
+
    static Task sleep(int msecs)
    {
       if (msecs < 0)
          InvalidArgumentException.raise("msecs");
 
       ^ Task.run({ Thread.sleep(msecs) })
+   }
+
+   static Task sleep(int msecs, CancellationToken token)
+   {
+      if (msecs < 0)
+         InvalidArgumentException.raise("msecs");
+
+      if (token == nil)
+         InvalidArgumentException.raise("token");
+
+      if:not (token.CanBeCanceled)
+         { ^ Task.sleep(msecs) };
+
+      ^ Task.run(
+         {
+            int remaining := msecs;
+            while (remaining > 0) {
+               token.throwIfCancellationRequested();
+
+               int interval := (remaining > 10) ? 10 : remaining;
+               Thread.sleep(interval);
+               remaining := remaining - interval;
+            };
+
+            token.throwIfCancellationRequested()
+         }, token)
    }
 
    static Task completedTask()
@@ -341,6 +461,20 @@ public class Task
    {
       Task task := Task.newPromise();
       task.setException(ex);
+
+      ^ task
+   }
+
+   static Task fromCanceled(CancellationToken cancellationToken)
+   {
+      if (cancellationToken == nil)
+         InvalidArgumentException.raise("cancellationToken");
+
+      if:not (cancellationToken.IsCancellationRequested)
+         InvalidArgumentException.raise("cancellationToken");
+
+      Task task := Task.newPromise();
+      task.setCanceled(cancellationToken);
 
       ^ task
    }
@@ -383,6 +517,12 @@ public sealed class Task<TResult> : Task
       };
    }
 
+   internal constructor assignCancelable(Func<TResult> func, CancellationToken cancellationToken)
+      <= assign(func)
+   {
+      _cancellationToken := cancellationToken
+   }
+
    indexed internal setResultValue(TResult result)
    {
       lock(self) {
@@ -411,6 +551,40 @@ public sealed class Task<TResult> : Task
       ^ task
    }
 
+   static Task<TResult> run(Func<TResult> action, CancellationToken token)
+   {
+      if (action == nil)
+         InvalidArgumentException.raise("action");
+
+      if (token == nil)
+         InvalidArgumentException.raise("token");
+
+      if:not (token.CanBeCanceled)
+         { ^ class Task<TResult>.run(action) };
+
+      if (token.IsCancellationRequested)
+         { ^ class Task<TResult>.fromCanceled(token) };
+
+      Task<TResult> task := class Task<TResult>.assignCancelable(action, token);
+      task.start();
+
+      ^ task
+   }
+
    static Task<TResult> fromResult(TResult result)
       = new Task<TResult>(result);
+
+   static Task<TResult> fromCanceled(CancellationToken cancellationToken)
+   {
+      if (cancellationToken == nil)
+         InvalidArgumentException.raise("cancellationToken");
+
+      if:not (cancellationToken.IsCancellationRequested)
+         InvalidArgumentException.raise("cancellationToken");
+
+      Task<TResult> task := class Task<TResult>.newPromise();
+      task.setCanceled(cancellationToken);
+
+      ^ task
+   }
 }

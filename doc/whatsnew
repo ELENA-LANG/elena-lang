@@ -42,6 +42,7 @@
   - [FIXED] async / await completion and exception propagation
   - [REMOVED] system'Indexer, system'Indexer<T> interfaces are no longer supported
   - [REDUX] system'Indexable, system'Indexable<T> interfaces are modified
+  - [ADDED] cancellation tokens and cooperative task cancellation
 
 - Scripts
 
