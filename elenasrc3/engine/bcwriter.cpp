@@ -487,7 +487,7 @@ static inline void mark_collectable(CommandTape& tape, BuildNode&/* node*/, Tape
    tape.write(ByteCode::System, 9);
 }
 
-static inline void mark_noncollectable(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+static inline void mark_noncollectable(CommandTape& tape, BuildNode&/* node*/, TapeScope&/* tapeScope*/)
 {
    tape.write(ByteCode::System, 8);
 }
