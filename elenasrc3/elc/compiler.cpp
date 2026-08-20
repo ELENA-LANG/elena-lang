@@ -14349,15 +14349,11 @@ ObjectInfo Compiler::Expression :: compileAsyncOperation(SyntaxNode node, ref_t 
    ObjectInfo contextField = smScope->mapContextField();
    ObjectInfo currentField = smScope->mapCurrentField();
 
-   ObjectInfo exprVal = {};
-   if (retMode)
-      exprVal = compile(node.firstChild(), targetRef, EAttr::AsyncOp | EAttr::StackUnsafe);
+   ObjectInfo exprVal = compile(node.firstChild(), retMode ? targetRef : currentField.typeInfo.typeRef,
+      EAttr::AsyncOp | EAttr::StackUnsafe);
 
    writer->newNode(BuildKey::YieldingOp, -scope.moduleScope->ptrSize);
    writer->newNode(BuildKey::Tape);
-
-   if (!retMode)
-      exprVal = compile(node.firstChild(), currentField.typeInfo.typeRef, EAttr::AsyncOp | EAttr::StackUnsafe);
 
    // !! HOTFIX - add the temporal boxed variable whic hrequires unboxing as yield variables (to be resued)
    for (auto it = scope.tempLocals.start(); !it.eof(); ++it) {
