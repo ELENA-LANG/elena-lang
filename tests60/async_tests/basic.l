@@ -68,22 +68,27 @@ class AsyncAwaitScenarios
       ^ result
    }
 
-   async Task<int> sumAwaitedValuesAsync(int value)
+   async Task<int> returnAwaitedValueAsync(Task<int> blocker)
+   {
+      ^ :await blocker
+   }
+
+   async Task<int> sumAwaitedValuesViaLocalAsync(int value)
    {
       int result := (:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1));
 
       ^ result
    }
 
-   // Multiple awaits work when the result is stored first
-   // Returning the same expression directly leaves the generated task pending...
-   // It looks like the return lowering wraps an expression that already contains suspension points
-   // Somewhere in the final resume the result is not forwarded and the generated promise stays open
-   // Saving it in a local separates the await step from the return step... which is why the version above works...
-   // async Task<int> sumAwaitedValuesAsync(int value)
-   // {
-   //    ^ ((:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1)));
-   // }
+   async Task<int> sumAwaitedValuesAsync(int value)
+   {
+      ^ (:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1))
+   }
+
+   async Task<int> sumThreeAwaitedValuesAsync(int value)
+   {
+      ^ (:await delayedValueAsync(value)) + (:await delayedValueAsync(value + 1)) + (:await delayedValueAsync(value + 2))
+   }
 
    async Task<int> chainedAsync(int value)
    {
@@ -140,16 +145,26 @@ public awaitValueThenReturnTest() : testCase()
    AsyncAwaitScenarios scenarios := new AsyncAwaitScenarios();
 
    Task<int> pending := scenarios.awaitValueThenReturnAsync(blocker);
+   Task<int> directPending := scenarios.returnAwaitedValueAsync(blocker);
+   ManualResetEvent directCompleted := ManualResetEvent.new();
+   directPending.continueWith((Task task){ directCompleted.set() });
+
    Assert.ifFalse(pending.IsCompleted);
+   Assert.ifFalse(directPending.IsCompleted);
 
    gate.set();
    Assert.ifEqual(pending.Result, 42);
    Assert.ifTrue(pending.IsCompletedSuccessfully);
+   Assert.ifTrue(directCompleted.wait(5000));
+   Assert.ifEqual(directPending.Result, 42);
+   Assert.ifTrue(directPending.IsCompletedSuccessfully);
 
    // A completed antecedent follows the synchronous fast path.
    Task<int> completed := class Task<int>.fromResult(7);
    Assert.ifEqual(scenarios.awaitValueThenReturnAsync(completed).Result, 7);
+   Assert.ifEqual(scenarios.returnAwaitedValueAsync(completed).Result, 7);
 
+   directCompleted.close();
    gate.close();
 
    Console.write(".")
@@ -160,7 +175,24 @@ public multipleAwaitsInExpressionTest() : testCase()
    AsyncAwaitScenarios scenarios := new AsyncAwaitScenarios();
 
    // The first result must survive while the second await is suspended.
-   Assert.ifEqual(scenarios.sumAwaitedValuesAsync(20).Result, 41);
+   Assert.ifEqual(scenarios.sumAwaitedValuesViaLocalAsync(20).Result, 41);
+
+   Task<int> direct := scenarios.sumAwaitedValuesAsync(20);
+   ManualResetEvent completed := ManualResetEvent.new();
+   direct.continueWith((Task task){ completed.set() });
+
+   Assert.ifTrue(completed.wait(5000));
+   Assert.ifEqual(direct.Result, 41);
+
+   completed.reset();
+
+   Task<int> directThree := scenarios.sumThreeAwaitedValuesAsync(20);
+   directThree.continueWith((Task task){ completed.set() });
+
+   Assert.ifTrue(completed.wait(5000));
+   Assert.ifEqual(directThree.Result, 63);
+
+   completed.close();
 
    Console.write(".")
 }
