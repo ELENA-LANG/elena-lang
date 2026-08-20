@@ -36,6 +36,7 @@
         <include>sync_tests.l</include>
         <include>core_tests.l</include>
         <include>tls_tests.l</include>
+        <include>cancellation_tests.l</include>
      </module>
   </files>
 </configuration>
