@@ -94,6 +94,20 @@ const int _SC_NPROCESSORS_ONLN = 84;
 
 #endif
 
+#if (__project["_Linux"])
+
+const int CLOCK_MONOTONIC = 1;
+
+#elif (__project["_FreeBSD"])
+
+const int CLOCK_MONOTONIC = 4;
+
+#elif (__project["_MacOS"])
+
+const int CLOCK_MONOTONIC = 6;
+
+#endif
+
 internal class SystemInfo
 {
    int           ProcessorCount : rprop;
@@ -105,17 +119,10 @@ internal class SystemInfo
       {
 #if (__project["_Linux32"])
          int stamp[2];
-         extern libc.clock_gettime(1, stamp);
-#elif (__project["_Linux64"] || __project["_LinuxPPC64le"] || __project["_LinuxARM64"])
+#else
          long stamp[2];
-         extern libc.clock_gettime(1, stamp);
-#elif (__project["_FreeBSD"])
-         long stamp[2];
-         extern libc.clock_gettime(4, stamp);
-#elif (__project["_MacOS"])
-         long stamp[2];
-         extern libc.clock_gettime(6, stamp);
 #endif
+         extern libc.clock_gettime(CLOCK_MONOTONIC, stamp);
 
          ^ cast long(stamp[0]) * 1000l + cast long(stamp[1]) / 1000000l
       }
