@@ -33,7 +33,7 @@ BOOL WINAPI debugEventThread(DebugControllerBase* controller)
 // --- Win32DebugProcess ---
 
 Win32DebugAdapter :: Win32DebugAdapter()
-   : _debugProcess(CONSOLE_OUTPUT_TEXT), _threadId(NULL)
+   : _debugProcess(CONSOLE_OUTPUT_TEXT), _threadId(NULL), _exception({})
 {
 }
 

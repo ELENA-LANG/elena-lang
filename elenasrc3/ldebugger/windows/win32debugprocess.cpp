@@ -240,9 +240,9 @@ bool Win32ThreadContext :: readDump(addr_t address, char* dump, size_t length)
 {
    SIZE_T size = 0;
 
-   ReadProcessMemory(hProcess, (void*)(address), dump, length, &size);
+   auto retVal = ReadProcessMemory(hProcess, (void*)(address), dump, length, &size);
 
-   return size != 0;
+   return retVal && (size != 0);
 }
 
 void Win32ThreadContext :: writeDump(addr_t address, char* dump, size_t length)
@@ -465,40 +465,44 @@ void Win32DebugProcess :: processEvent(DWORD timeout)
 
       switch (event.dwDebugEventCode) {
          case CREATE_PROCESS_DEBUG_EVENT:
-            _hProcess = event.u.CreateProcessInfo.hProcess;
-            _current = new Win32ThreadContext(_hProcess, event.u.CreateProcessInfo.hThread);
-            _current->refresh();
-
-            _threads.add(_dwCurrentThreadId, _current);
-
             if (_dwCurrentProcessId == _dwDebugeeProcessId) {
                _baseAddress = (addr_t)event.u.CreateProcessInfo.lpBaseOfImage;
                _breakpoints.setSoftwareBreakpoints(_current);
+
+               _hProcess = event.u.CreateProcessInfo.hProcess;
+               _current = new Win32ThreadContext(_hProcess, event.u.CreateProcessInfo.hThread);
+               _current->refresh();
+
+               _threads.add(_dwCurrentThreadId, _current);
+               _newThread = true;
             }
-
-            _newThread = true;
-
             ::CloseHandle(event.u.CreateProcessInfo.hFile);
             break;
          case EXIT_PROCESS_DEBUG_EVENT:
-            _current = _threads.get(_dwCurrentThreadId);
-            if (_current) {
-               _current->refresh();
+            if (_dwCurrentProcessId == _dwDebugeeProcessId) {
+               _current = _threads.get(_dwCurrentThreadId);
+               if (_current) {
+                  _current->refresh();
+               }
+               processEnd();
             }
-            processEnd();
             break;
          case CREATE_THREAD_DEBUG_EVENT:
-            _current = new Win32ThreadContext(_hProcess, event.u.CreateThread.hThread);
-            _current->refresh();
+            if (_dwCurrentProcessId == _dwDebugeeProcessId) {
+               _current = new Win32ThreadContext(_hProcess, event.u.CreateThread.hThread);
+               _current->refresh();
 
-            _threads.add(_dwCurrentThreadId, _current);
+               _threads.add(_dwCurrentThreadId, _current);
+            }
             break;
          case EXIT_THREAD_DEBUG_EVENT:
-            _threads.erase(event.dwThreadId);
-            if (_threads.count() > 0) {
-               _current = *_threads.start();
+            if (_dwCurrentProcessId == _dwDebugeeProcessId) {
+               _threads.erase(event.dwThreadId);
+               if (_threads.count() > 0) {
+                  _current = *_threads.start();
+               }
+               else _current = nullptr;
             }
-            else _current = nullptr;
             break;
          case LOAD_DLL_DEBUG_EVENT:
             ::CloseHandle(event.u.LoadDll.hFile);

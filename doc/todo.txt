@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - comparison with enum - must be native
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - fix httpsget ()
   - switch with class types
@@ -65,16 +66,13 @@ In development:
   - test rosetta for 64bit
   - can system 9 be simplified?
   ---------------------------------------
-  * httpget
+  * current : httpget
   ====================================== 
-  - x86 : fix httpget
+  - amd64 : fix debugger
   - amd64 : fix httpget
   - test for Linux i386
   - test for Linux amd64
   ---------------------------------------
-  * current : CollectMG2YGRoots
-  ====================================== 
-  - fix bug in CollectMG2YGRoots httpget
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3

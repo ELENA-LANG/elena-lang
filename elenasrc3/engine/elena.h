@@ -30,6 +30,23 @@ namespace elena_lang
       return referenceName[0] == '\'' && referenceName.startsWith(TEMPLATE_PREFIX_NS);
    }
 
+   inline bool isTemplateReference(ustr_t referenceName)
+   {
+      if (isTemplateWeakReference(referenceName)) {
+         return true;
+      }
+
+      size_t index = referenceName.find('#');
+      if (index == NOTFOUND_POS)
+         return false;
+
+      index++;
+      while (referenceName[index] >= '0' && referenceName[index] <= '9')
+         index++;
+
+      return referenceName[index] == '&';
+   }
+
    inline bool isPrimitiveRef(ref_t reference)
    {
       return (int)reference < 0;

@@ -371,8 +371,12 @@ void RTManager :: readCallstack(StreamReader& stack, addr_t startPosition, addr_
 
    do {
       stack.seek(position);
-      stack.read(&position, sizeof(position));
-      stack.read(&ret, sizeof(ret));
+      if(!stack.read(&position, sizeof(position)))
+         break;
+
+      if(!stack.read(&ret, sizeof(ret)))
+         break;
+
       if (position == 0 && ret != 0) {
          position = ret;
       }
