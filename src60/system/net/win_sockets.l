@@ -186,7 +186,7 @@ public sealed struct AddrInfoReader
    next()
    {
       pointer ptr := paddrinfo;
-      ptr := ptr + 28;
+      ptr := ptr + /*28*/ (:sizeof AddrInfo) - (:sizeof pointer);
         
       int r := ptr;        
       paddrinfo := new pointer(r)
@@ -194,7 +194,7 @@ public sealed struct AddrInfoReader
     
    read(AddrInfo info)
    {
-      extern KERNEL32.RtlMoveMemory(info, paddrinfo, 32)
+      extern KERNEL32.RtlMoveMemory(info, paddrinfo, :sizeof info)
    }
     
    close()
@@ -319,6 +319,10 @@ public sealed const struct NativeSocket
 
    bool tryOpen(pointer ptr, int len)
    {
+      if (ptr.isUnassigned()) {
+         ^ false;
+      };
+      
       int retVal := extern WS2_32.connect(_handle, ptr, len);
             
       ^ (SOCKET_ERROR != retVal)

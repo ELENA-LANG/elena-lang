@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - comparison with enum - must be native
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - fix httpsget ()
   - switch with class types
