@@ -892,18 +892,21 @@ void* DebugController :: readFieldValue(ContextBrowserBase* watch, void* parent,
 
 void* DebugController :: readInlineField(ContextBrowserBase* watch, void* parent, addr_t address, int index, int level)
 {
-   // read class VMT address if not provided
-   IdentifierString classNameStr;
+   if (address != 0) {
+      // read class VMT address if not provided
+      IdentifierString classNameStr;
 
-   addr_t vmtAddress = _process->getClassVMT(address);
+      addr_t vmtAddress = _process->getClassVMT(address);
 
-   ref_t flags = 0;
-   DebugLineInfo* info = _provider.seekClassInfo(classNameStr, vmtAddress);
+      ref_t flags = 0;
+      DebugLineInfo* info = _provider.seekClassInfo(classNameStr, vmtAddress);
 
-   ustr_t name = (const char*)info[index].addresses.field.nameRef;
-   addr_t fieldAddress = _process->getField(address, info[index].addresses.field.offset);
+      ustr_t name = (const char*)info[index].addresses.field.nameRef;
+      addr_t fieldAddress = _process->getField(address, info[index].addresses.field.offset);
 
-   return readObject(watch, parent, fieldAddress, name, level - 1);
+      return readObject(watch, parent, fieldAddress, name, level - 1);
+   }
+   else return nullptr; // !! temporal
 }
 
 void DebugController :: readFields(ContextBrowserBase* watch, void* parent, addr_t address, int level, DebugLineInfo* info)

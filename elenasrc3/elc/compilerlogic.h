@@ -300,7 +300,7 @@ namespace elena_lang
          ReferenceProperName templateNs;
          retrieveTemplateNs(scope, reference1, templateNs);
 
-         if (isTemplateWeakReference(scope.module->resolveReference(reference2))) {
+         if (isTemplateReference(scope.module->resolveReference(reference2))) {
             ReferenceProperName templateNs2;
             retrieveTemplateNs(scope, reference2, templateNs2);
 

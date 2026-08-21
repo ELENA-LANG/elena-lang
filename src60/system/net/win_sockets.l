@@ -139,8 +139,11 @@ public packed AddrInfo
    int     ai_flags     : prop;
    int     ai_family    : prop;
    int     ai_socktype  : prop;
-   int     ai_protocol  : prop;
+   int     ai_protocol  : prop;   
    int     ai_addrlen   : prop;
+#if (__project["_Win64"])
+   int     dummy;
+#endif            
    pointer ai_canonname : prop;
    pointer ai_addr      : prop;
    pointer ai_next      : prop;

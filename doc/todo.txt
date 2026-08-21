@@ -67,6 +67,7 @@ In development:
   ---------------------------------------
   * current : httpget
   ====================================== 
+  - amd64 : fix debugger
   - amd64 : fix httpget
   - test for Linux i386
   - test for Linux amd64
