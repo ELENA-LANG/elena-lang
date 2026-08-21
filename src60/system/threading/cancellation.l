@@ -4,40 +4,94 @@ public sealed class CancellationTokenRegistration
 {
    CancellationTokenSource? _source;
    Func?                    _action;
+   bool                     _executing;
+   Handle                   _executingThread;
+   ManualResetEvent?        _completion;
+   int                      _waiterCount;
 
    internal constructor new()
    {
+      _executing := false;
+      _executingThread := default;
+      _waiterCount := 0
    }
 
    internal constructor new(CancellationTokenSource source, Func action)
    {
       _source := source;
-      _action := action
+      _action := action;
+      _executing := false;
+      _executingThread := default;
+      _waiterCount := 0
    }
 
-   internal Func? takeAction()
+   internal Func? takeAction(Handle executingThread)
    {
       Func? action := nil;
       lock(self) {
          action := _action;
-         _action := nil;
-         _source := nil
+         if:not:nil(action) {
+            _action := nil;
+            _source := nil;
+            _executing := true;
+            _executingThread := executingThread
+         }
       };
 
       ^ action
    }
 
+   internal sealed completeAction()
+   {
+      ManualResetEvent? completion := nil;
+      lock(self) {
+         _executing := false;
+         _executingThread := default;
+         completion := _completion
+      };
+
+      if:not:nil(completion)
+         completion!.set()
+   }
+
    close()
    {
       CancellationTokenSource? source := nil;
+      ManualResetEvent? completion := nil;
       lock(self) {
          source := _source;
          _source := nil;
-         _action := nil
+         _action := nil;
+
+         if (_executing) {
+            if:not (ThreadHandle.isCurrent(_executingThread)) {
+               if (_completion == nil)
+                  _completion := ManualResetEvent.new();
+
+               _waiterCount := _waiterCount + 1;
+               completion := _completion
+            }
+         }
       };
 
       if:not:nil(source)
-         source!.unregister(self)
+         source!.unregister(self);
+
+      if:not:nil(completion) {
+         completion!.wait();
+
+         bool closeCompletion := false;
+         lock(self) {
+            _waiterCount := _waiterCount - 1;
+            if (_waiterCount == 0) {
+               _completion := nil;
+               closeCompletion := true
+            }
+         };
+
+         if (closeCompletion)
+            completion!.close()
+      }
    }
 }
 
@@ -114,6 +168,7 @@ public sealed class CancellationTokenSource
    bool                                 _cancellationRequested;
    CancellationToken                    _token;
    List<CancellationTokenRegistration>? _registrations;
+   TimerRegistration?                   _timer;
 
    constructor new()
    {
@@ -185,20 +240,27 @@ public sealed class CancellationTokenSource
    cancel()
    {
       List<CancellationTokenRegistration>? registrations := nil;
+      TimerRegistration? timer := nil;
       lock(self) {
          if:not (_cancellationRequested) {
             _cancellationRequested := true;
             registrations := _registrations;
             _registrations := nil;
+            timer := _timer;
+            _timer := nil;
          }
       };
+
+      if:not:nil(timer)
+         timer!.close();
 
       List<Exception>? exceptions := nil;
       if:not:nil(registrations) {
          List<CancellationTokenRegistration> items := registrations!;
+         Handle executingThread := ThreadHandle.currentId();
          for (int i := items.Length - 1; i >= 0; i -= 1) {
             CancellationTokenRegistration item := items[i];
-            Func? action := item.takeAction();
+            Func? action := item.takeAction(executingThread);
             if:not:nil(action) {
                try {
                   action()
@@ -209,12 +271,45 @@ public sealed class CancellationTokenSource
 
                   exceptions!.append(e)
                }
+               finally {
+                  item.completeAction()
+               }
             }
          }
       };
 
       if:not:nil(exceptions)
          AggregateException.new(exceptions!.Value).raise()
+   }
+
+   cancelAfter(int milliseconds)
+   {
+      if (milliseconds < -1)
+         InvalidArgumentException.raise("milliseconds");
+
+      if:not (self.IsCancellationRequested) {
+         TimerRegistration? replacement := nil;
+         if (milliseconds >= 0)
+            replacement := TimerQueue.schedule(milliseconds, { self.cancel() });
+
+         TimerRegistration? previous := nil;
+         bool discardReplacement := false;
+         lock(self) {
+            if (_cancellationRequested) {
+               discardReplacement := true
+            }
+            else {
+               previous := _timer;
+               _timer := replacement
+            }
+         };
+
+         if:not:nil(previous)
+            previous!.close();
+
+         if (discardReplacement && replacement != nil)
+            replacement!.close()
+      }
    }
 }
 

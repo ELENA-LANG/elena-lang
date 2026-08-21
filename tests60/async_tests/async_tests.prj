@@ -19,6 +19,7 @@
         <include>main.l</include>
         <include>basic.l</include>
         <include>cancellation.l</include>
+        <include>timers.l</include>
      </module>
   </files>
 </configuration>

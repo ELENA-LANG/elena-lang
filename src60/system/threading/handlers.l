@@ -34,6 +34,12 @@ public sealed struct ThreadHandle
 
 #if (__project["_Win"]) // Windows
 
+   internal static Handle currentId()
+      = Handle.loadDirty(extern KERNEL32.GetCurrentThreadId());
+
+   internal static bool isCurrent(Handle threadId)
+      = threadId == currentId();
+
    constructor(object f)
    {
       _actionPtr := PermVectorTable.allocate(f);
@@ -140,6 +146,12 @@ public sealed struct ThreadHandle
 #elif (__project["_Linux"] || __project["_FreeBSD"] || __project["_MacOS"])
 
    int _stackSize;
+
+   internal static Handle currentId()
+      = extern libc.pthread_self();
+
+   internal static bool isCurrent(Handle threadId)
+      = extern libc.pthread_equal(threadId, extern libc.pthread_self()) != 0;
 
    constructor(object f)
    {
