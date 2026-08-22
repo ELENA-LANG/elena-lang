@@ -5,14 +5,14 @@ public sealed class CancellationTokenRegistration
    CancellationTokenSource? _source;
    Func?                    _action;
    bool                     _executing;
-   Handle                   _executingThread;
+   Thread?                  _executingThread;
    ManualResetEvent?        _completion;
    int                      _waiterCount;
 
    internal constructor new()
    {
       _executing := false;
-      _executingThread := default;
+      _executingThread := nil;
       _waiterCount := 0
    }
 
@@ -21,11 +21,11 @@ public sealed class CancellationTokenRegistration
       _source := source;
       _action := action;
       _executing := false;
-      _executingThread := default;
+      _executingThread := nil;
       _waiterCount := 0
    }
 
-   internal Func? takeAction(Handle executingThread)
+   internal Func? takeAction()
    {
       Func? action := nil;
       lock(self) {
@@ -33,8 +33,8 @@ public sealed class CancellationTokenRegistration
          if:not:nil(action) {
             _action := nil;
             _source := nil;
-            _executing := true;
-            _executingThread := executingThread
+            _executingThread := Thread.Current;
+            _executing := true
          }
       };
 
@@ -46,7 +46,7 @@ public sealed class CancellationTokenRegistration
       ManualResetEvent? completion := nil;
       lock(self) {
          _executing := false;
-         _executingThread := default;
+         _executingThread := nil;
          completion := _completion
       };
 
@@ -64,12 +64,17 @@ public sealed class CancellationTokenRegistration
          _action := nil;
 
          if (_executing) {
-            if:not (ThreadHandle.isCurrent(_executingThread)) {
-               if (_completion == nil)
-                  _completion := ManualResetEvent.new();
+            Thread? executingThread := _executingThread;
+            if:nil(executingThread)
+               InvalidOperationException.raise();
+            if:not:nil(executingThread) {
+               if:not (executingThread.equalReference(Thread.Current)) {
+                  if (_completion == nil)
+                     _completion := ManualResetEvent.new();
 
-               _waiterCount := _waiterCount + 1;
-               completion := _completion
+                  _waiterCount := _waiterCount + 1;
+                  completion := _completion
+               }
             }
          }
       };
@@ -257,10 +262,9 @@ public sealed class CancellationTokenSource
       List<Exception>? exceptions := nil;
       if:not:nil(registrations) {
          List<CancellationTokenRegistration> items := registrations!;
-         Handle executingThread := ThreadHandle.currentId();
          for (int i := items.Length - 1; i >= 0; i -= 1) {
             CancellationTokenRegistration item := items[i];
-            Func? action := item.takeAction(executingThread);
+            Func? action := item.takeAction();
             if:not:nil(action) {
                try {
                   action()

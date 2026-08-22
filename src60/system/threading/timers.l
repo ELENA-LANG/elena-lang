@@ -8,7 +8,7 @@ internal sealed class TimerRegistration : interface<Func>
    // Queued work can still be canceled until a pool worker begins it
    bool              _queued;
    bool              _executing;
-   Handle            _executingThread;
+   Thread?           _executingThread;
    ManualResetEvent? _completion;
    int               _waiterCount;
    int               _queueIndex;
@@ -20,7 +20,7 @@ internal sealed class TimerRegistration : interface<Func>
       _active := true;
       _queued := false;
       _executing := false;
-      _executingThread := default;
+      _executingThread := nil;
       _waiterCount := 0;
       _queueIndex := -1
    }
@@ -44,7 +44,7 @@ internal sealed class TimerRegistration : interface<Func>
       ManualResetEvent? completion := nil;
       lock(self) {
          _executing := false;
-         _executingThread := default;
+         _executingThread := nil;
          completion := _completion
       };
 
@@ -59,7 +59,7 @@ internal sealed class TimerRegistration : interface<Func>
          if (_queued) {
             _queued := false;
             _executing := true;
-            _executingThread := ThreadHandle.currentId();
+            _executingThread := Thread.Current;
             action := _action;
             _action := nil
          }
@@ -107,12 +107,17 @@ internal sealed class TimerRegistration : interface<Func>
          };
 
          if (_executing) {
-            if:not (ThreadHandle.isCurrent(_executingThread)) {
-               if (_completion == nil)
-                  _completion := ManualResetEvent.new();
+            Thread? executingThread := _executingThread;
+            if:nil(executingThread)
+               InvalidOperationException.raise();
+            if:not:nil(executingThread) {
+               if:not (executingThread.equalReference(Thread.Current)) {
+                  if (_completion == nil)
+                     _completion := ManualResetEvent.new();
 
-               _waiterCount := _waiterCount + 1;
-               completion := _completion
+                  _waiterCount := _waiterCount + 1;
+                  completion := _completion
+               }
             }
          }
       };

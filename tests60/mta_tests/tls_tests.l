@@ -48,6 +48,88 @@ class TlsWorkerArg
    TlsWorkerState State : prop;
 }
 
+class ThreadCurrentWorkerArg
+{
+   int                Index   : prop;
+   Array              Threads : prop;
+   CountDownEvent     Ready   : prop;
+   ManualResetEvent   Release : prop;
+   Latch              Done    : prop;
+   ErrorBox           Errors  : prop;
+}
+
+threadCurrentWorker(arg)
+{
+   try
+   {
+      Thread current := Thread.Current;
+
+      Assert.ifTrue(current.equalReference(Thread.Current));
+
+      Array threads := arg.Threads;
+      int index := arg.Index;
+      threads[index] := current;
+
+      arg.Ready.signal();
+      arg.Release.wait();
+
+      Assert.ifTrue(current.equalReference(Thread.Current))
+   }
+   catch(Exception e)
+   {
+      arg.Errors.record(e)
+   };
+
+   arg.Done.done()
+}
+
+public threadCurrentTest() : testCase()
+{
+   int count := 4;
+   Array threads := Array.allocate(count);
+   CountDownEvent ready := CountDownEvent.new(count);
+   ManualResetEvent release := ManualResetEvent.new();
+   Latch done := Latch.new(count);
+   ErrorBox errors := ErrorBox.new();
+
+   for (int i := 0; i < count; i += 1)
+   {
+      ThreadCurrentWorkerArg arg := new ThreadCurrentWorkerArg();
+      arg.Index := i;
+      arg.Threads := threads;
+      arg.Ready := ready;
+      arg.Release := release;
+      arg.Done := done;
+      arg.Errors := errors;
+
+      Thread worker := Thread.assign(&threadCurrentWorker);
+      worker.start(arg)
+   };
+
+   ready.wait();
+
+   bool unique := true;
+   for (int i := 0; i < count; i += 1)
+   {
+      for (int j := i + 1; j < count; j += 1) {
+         if (threads[i].equalReference(threads[j]))
+            unique := false
+      }
+   };
+
+   release.set();
+   done.await();
+   errors.rethrowIfAny();
+
+   Assert.ifTrue(unique);
+
+   ready.close();
+   release.close();
+   done.close();
+
+   Console.write(".")
+}
+
 tlsWorker(arg)
 {
    int index := arg.Index;
