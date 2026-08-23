@@ -565,7 +565,7 @@ void Interpreter::copyConstCollection(ref_t sourRef, ref_t destRef, bool byValue
    }
 }
 
-ObjectInfo Interpreter::createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue, int elementSize)
+ObjectInfo Interpreter :: createConstCollection(ref_t arrayRef, ref_t typeRef, ArgumentsInfo& args, bool byValue, int elementSize)
 {
    ref_t mask = byValue ? mskConstant : mskConstArray;
    auto section = _scope->module->mapSection(arrayRef | mask, false);
@@ -578,13 +578,21 @@ ObjectInfo Interpreter::createConstCollection(ref_t arrayRef, ref_t typeRef, Arg
             break;
          case ObjectKind::IntLiteral:
             if (byValue) {
-               switch (elementSize) {
+               int size = elementSize;
+               if (!elementSize)
+                  size = _logic->defineStructSize(*_scope, arg.typeInfo.typeRef).size;
+
+               switch (size) {
                   case 1:
                      addByteArrayItem(arrayRef, arg.extra);
                      break;
                   case 2:
                      addWordArrayItem(arrayRef, arg.extra);
                      break;
+                  case 8:
+                     addLongArrayItem(arrayRef, arg.extra);
+                     break;
+                  case 4:
                   default:
                      addIntArrayItem(arrayRef, arg.extra);
                      break;
@@ -1361,6 +1369,11 @@ ObjectInfo Compiler::MetaScope::mapDecl()
 ObjectInfo Compiler::MetaScope :: mapProject()
 {
    return { ObjectKind::ProjectInfo, { V_PROJECT_VAR }, 0 };
+}
+
+ObjectInfo Compiler::MetaScope :: mapMember(ustr_t identifier)
+{
+   return parent->mapMember(identifier);
 }
 
 ObjectInfo Compiler::MetaScope::mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
@@ -3311,13 +3324,25 @@ void Compiler::checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_t 
    }
 }
 
+inline void saveConstInfo(ModuleBase* module, ref_t constRef, ref_t typeRef)
+{
+   SymbolInfo constantInfo = { SymbolType::Constant, constRef, typeRef, false };
+   MemoryWriter metaWriter(module->mapSection(constRef | mskMetaSymbolInfoRef, false), 0);
+   assert(metaWriter.length() == 0);
+   constantInfo.save(&metaWriter);
+}
+
 ref_t Compiler::generateConstant(Scope& scope, ObjectInfo& retVal, ref_t constRef, bool saveScope)
 {
    // check if the constant can be resolved immediately
    switch (retVal.kind) {
       case ObjectKind::Singleton:
+         return retVal.reference;
       case ObjectKind::Constant:
       case ObjectKind::ConstArray:
+         if (saveScope) {
+            saveConstInfo(scope.module, retVal.reference, retVal.typeInfo.typeRef);
+         }
          return retVal.reference;
       case ObjectKind::StringLiteral:
       case ObjectKind::WideStringLiteral:
@@ -3402,9 +3427,7 @@ ref_t Compiler::generateConstant(Scope& scope, ObjectInfo& retVal, ref_t constRe
 
    // save constant meta info
    if (saveScope) {
-      SymbolInfo constantInfo = { SymbolType::Constant, constRef, typeRef, false };
-      MemoryWriter metaWriter(module->mapSection(constRef | mskMetaSymbolInfoRef, false), 0);
-      constantInfo.save(&metaWriter);
+      saveConstInfo(module, constRef, typeRef);
    }
 
    return constRef;
@@ -5503,7 +5526,8 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
       case SyntaxKey::NestedBlock:
       {
          MetaExpression metaExpr(this, &scope, &interpreter);
-         retVal = metaExpr.generateNestedConstant(node, ignoreErrors);
+         retVal = metaExpr.generateNestedConstant(node, ignoreErrors,
+            scope.moduleScope->mapAnonymous("const"));
          break;
       }
       case SyntaxKey::KeyValueExpression:
@@ -8863,6 +8887,47 @@ static inline SyntaxNode findObjectNode(SyntaxNode node)
    return {};
 }
 
+inline TypeInfo resolveRetOutput(Compiler::CodeScope& codeScope, bool& autoMode)
+{
+   TypeInfo outputInfo = {};
+   if (codeScope.isByRefHandler()) {
+      ObjectInfo byRefTarget = codeScope.mapByRefReturnArg();
+
+      outputInfo = byRefTarget.typeInfo;
+   }
+   else outputInfo = codeScope.getOutputInfo();
+
+   if (outputInfo.typeRef == V_AUTO) {
+      autoMode = true;
+      outputInfo = {};
+   }
+
+   return outputInfo;
+}
+
+//ObjectInfo Compiler :: compileRetConstant(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ExpressionAttribute mode)
+//{
+//   MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
+//   if (methodScope && methodScope->isYieldable())
+//      codeScope.raiseError(errInvalidOperation, node);
+//
+//   bool autoMode = false;
+//   TypeInfo outputInfo = resolveRetOutput(codeScope, autoMode);
+//
+//   Interpreter interpreter(codeScope.moduleScope, _logic);
+//   ObjectInfo retVal = evalExpression(interpreter, codeScope, node.firstChild(SyntaxKey::ScopeMask), outputInfo, true);
+//   if (retVal.kind != ObjectKind::Unknown) {
+//      Expression expression(this, codeScope, writer, !EAttrs::test(mode, EAttr::NoDebugInfo), nullptr);
+//
+//      retVal = expression.handleReturning(node, retVal, mode, codeScope.isByRefHandler(),
+//         codeScope.isNillableOutput(), outputInfo);
+//
+//      return retVal;
+//   }
+//
+//   return compileRetExpression(writer, codeScope, node, mode);
+//}
+
 ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ExpressionAttribute mode)
 {
    ObjectInfo retVal = {};
@@ -8885,18 +8950,7 @@ ObjectInfo Compiler :: compileRetExpression(BuildTreeWriter& writer, CodeScope& 
    }
    else {
       bool autoMode = false;
-      TypeInfo outputInfo = {};
-      if (codeScope.isByRefHandler()) {
-         ObjectInfo byRefTarget = codeScope.mapByRefReturnArg();
-
-         outputInfo = byRefTarget.typeInfo;
-      }
-      else outputInfo = codeScope.getOutputInfo();
-
-      if (outputInfo.typeRef == V_AUTO) {
-         autoMode = true;
-         outputInfo = {};
-      }
+      TypeInfo outputInfo = resolveRetOutput(codeScope, autoMode);
 
       retVal = expression.compileReturning(node, mode, outputInfo);
 
@@ -9390,7 +9444,10 @@ void Compiler :: compileMethodCode(BuildTreeWriter& writer, ClassScope* classSco
          retVal = compileCode(writer, codeScope, bodyNode, scope.closureMode, !withDebugInfo);
          break;
       case SyntaxKey::ReturnExpression:
-         retVal = compileRetExpression(writer, codeScope, bodyNode, withDebugInfo ? EAttr::None : EAttr::NoDebugInfo);
+         /*if (scope.checkHint(MethodHint::Constant)) {
+            retVal = compileRetConstant(writer, codeScope, bodyNode, withDebugInfo ? EAttr::None : EAttr::NoDebugInfo);
+         }
+         else */retVal = compileRetExpression(writer, codeScope, bodyNode, withDebugInfo ? EAttr::None : EAttr::NoDebugInfo);
          break;
       case SyntaxKey::ResendDispatch:
          retVal = compileResendCode(writer, codeScope,
@@ -13271,10 +13328,64 @@ ObjectInfo Compiler::Expression :: compileRoot(SyntaxNode node, ExpressionAttrib
    return retVal;
 }
 
-ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionAttribute mode, TypeInfo outputInfo)
+ObjectInfo Compiler::Expression :: handleReturning(SyntaxNode node, ObjectInfo retVal, ExpressionAttribute mode, bool byRefHandler,
+   bool nillableOutput, TypeInfo outputInfo)
 {
    bool dynamicRequired = EAttrs::testAndExclude(mode, EAttr::DynamicObject);
 
+   if (byRefHandler) {
+      CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
+      assert(codeScope != nullptr);
+
+      ObjectInfo byRefTarget = codeScope->mapByRefReturnArg();
+
+      bool nillableOp = false;
+      if (!compileAssigningOp(byRefTarget, retVal, nillableOp))
+         scope.raiseError(errInvalidOperation, node);
+
+      if (nillableOp)
+         handleNillableReturn(node, retVal);
+
+      retVal = scope.mapSelf();
+   }
+   // NOTE : if the operation will not return control normally no need to typecast the operation
+   else if (retVal.mode != TargetMode::ThrowOp) {
+      // HOTFIX : converting nil value to a structure is not allowed in returning expression
+      if (retVal.kind == ObjectKind::Nil && compiler->_logic->isEmbeddableStruct(*scope.moduleScope, outputInfo)) {
+         scope.raiseError(errInvalidOperation, node);
+      }
+
+      if (retVal.kind == ObjectKind::TempLocal)
+         unboxRetVal(retVal);
+
+      retVal = boxArgument(retVal,
+         !dynamicRequired && retVal.kind == ObjectKind::SelfBoxableLocal, true, false);
+
+      if (retVal.typeInfo.nillable && !nillableOutput) {
+         handleNillableReturn(node, retVal);
+      }
+
+      if (!hasToBePresaved(retVal)) {
+         writeObjectInfo(retVal);
+      }
+      else if (retVal.kind == ObjectKind::Symbol) {
+         writeObjectInfo(retVal);
+
+         retVal = { ObjectKind::Object, retVal.typeInfo, 0 };
+      }
+
+      outputInfo = compiler->resolveStrongTypeInfo(scope, retVal.typeInfo);
+
+      compiler->_logic->validateAutoType(*scope.moduleScope, outputInfo);
+
+      scope.resolveAutoOutput(outputInfo);
+   }
+
+   return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionAttribute mode, TypeInfo outputInfo)
+{
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
    if (codeScope == nullptr) {
       scope.raiseError(errInvalidOperation, node);
@@ -13305,50 +13416,8 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionA
          break;
    }
 
-   if (codeScope->isByRefHandler()) {
-      ObjectInfo byRefTarget = codeScope->mapByRefReturnArg();
-
-      bool nillableOp = false;
-      if (!compileAssigningOp(byRefTarget, retVal, nillableOp))
-         scope.raiseError(errInvalidOperation, node);
-
-      if (nillableOp)
-         handleNillableReturn(node, retVal);
-
-      retVal = scope.mapSelf();
-   }
-   // NOTE : if the operation will not return control normally no need to typecast the operation
-   else if (retVal.mode != TargetMode::ThrowOp) {
-      // HOTFIX : converting nil value to a structure is not allowed in returning expression
-      if (retVal.kind == ObjectKind::Nil && compiler->_logic->isEmbeddableStruct(*scope.moduleScope, outputInfo)) {
-         scope.raiseError(errInvalidOperation, node);
-      }
-
-      if (retVal.kind == ObjectKind::TempLocal)
-         unboxRetVal(retVal);
-
-      retVal = boxArgument(retVal,
-         !dynamicRequired && retVal.kind == ObjectKind::SelfBoxableLocal, true, false);
-
-      if (retVal.typeInfo.nillable && !codeScope->isNillableOutput()) {
-         handleNillableReturn(node, retVal);
-      }
-
-      if (!hasToBePresaved(retVal)) {
-         writeObjectInfo(retVal);
-      }
-      else if (retVal.kind == ObjectKind::Symbol) {
-         writeObjectInfo(retVal);
-
-         retVal = { ObjectKind::Object, retVal.typeInfo, 0 };
-      }
-
-      outputInfo = compiler->resolveStrongTypeInfo(scope, retVal.typeInfo);
-
-      compiler->_logic->validateAutoType(*scope.moduleScope, outputInfo);
-
-      scope.resolveAutoOutput(outputInfo);
-   }
+   retVal = handleReturning(node, retVal, mode, codeScope->isByRefHandler(),
+      codeScope->isNillableOutput(), outputInfo);
 
    if (withDebugInfo) {
       writer->appendNode(BuildKey::EndStatement);
@@ -15070,15 +15139,24 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
 
 ObjectInfo Compiler::Expression :: compileNested(SyntaxNode node, ExpressionAttribute mode)
 {
-   TypeInfo parentInfo = { scope.moduleScope->buildins.superReference };
-   EAttrs nestedMode = { EAttr::NestedDecl };
-   compiler->declareExpressionAttributes(scope, node, parentInfo, nestedMode);
+   ref_t nestedRef = mapNested(mode);
 
+   if (node.existChild(SyntaxKey::AssignOperation)) {
+      // try to implement constant
+      Interpreter interpreter(scope.moduleScope, compiler->_logic);
+      MetaExpression metaExpr(compiler, &scope, &interpreter);
+      ObjectInfo retVal = metaExpr.generateNestedConstant(node, true, nestedRef);
+      if (retVal.kind != ObjectKind::Unknown)
+         return retVal;
+   }
    //// allow only new and type attrobutes
    //if (nestedMode.attrs != EAttr::None && !EAttrs::test(nestedMode.attrs, EAttr::NewOp) && !EAttrs::test(nestedMode.attrs, EAttr::NewVariable))
    //   ownerScope.raiseError(errInvalidOperation, node);
 
-   ref_t nestedRef = mapNested(mode);
+   TypeInfo parentInfo = { scope.moduleScope->buildins.superReference };
+   EAttrs nestedMode = { EAttr::NestedDecl };
+   compiler->declareExpressionAttributes(scope, node, parentInfo, nestedMode);
+
    InlineClassScope classScope(&scope, nestedRef, withDebugInfo);
 
    compiler->compileNestedClass(*writer, classScope, node, parentInfo.typeRef);
@@ -18654,43 +18732,103 @@ void Compiler::MetaExpression::generateMethod(SyntaxTreeWriter& writer, SyntaxNo
    writer.closeNode();
 }
 
-ObjectInfo Compiler::MetaExpression :: generateNestedConstant(SyntaxNode node, bool stopOnError)
+ObjectInfo Compiler::MetaExpression :: generateNestedConstant(SyntaxNode node, bool stopOnError, ref_t reference)
 {
-   ref_t reference = scope->moduleScope->mapAnonymous("const");
+   MetaScope* metaScope = Scope::getScope<MetaScope>(*scope, Scope::ScopeLevel::Meta);
+   if (metaScope) {
+      SyntaxTree dummyTree;
+      SyntaxTreeWriter writer(dummyTree);
 
-   SyntaxTree dummyTree;
-   SyntaxTreeWriter writer(dummyTree);
+      writer.newNode(SyntaxKey::Class, reference);
+      writer.appendNode(SyntaxKey::Attribute, V_SINGLETON);
 
-   writer.newNode(SyntaxKey::Class, reference);
-   writer.appendNode(SyntaxKey::Attribute, V_SINGLETON);
+      bool failed = false;
+      SyntaxNode current = node.firstChild();
+      while (current != SyntaxKey::None) {
+         switch (current.key) {
+            case SyntaxKey::Method:
+               generateMethod(writer, current, failed);
+               break;
+            default:
+               return {};
+         }
 
-   bool failed = false;
-   SyntaxNode current = node.firstChild();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::Method:
-            generateMethod(writer, current, failed);
-            break;
-         default:
-            return {};
+         current = current.nextNode();
       }
 
-      current = current.nextNode();
+      writer.closeNode();
+
+      if (failed && stopOnError)
+         return {};
+
+      SyntaxNode nsNode = node.parentNode();
+      while (nsNode != SyntaxKey::Namespace)
+         nsNode = nsNode.parentNode();
+
+      SyntaxTreeWriter nsWriter(nsNode);
+      SyntaxTree::copyNode(nsWriter, dummyTree.readRoot(), true);
+
+      return { ObjectKind::Singleton, { reference }, reference };
    }
+   else {
+      TypeInfo parentInfo = { scope->moduleScope->buildins.superReference };
+      EAttrs nestedMode = { EAttr::NestedDecl };
+      compiler->declareExpressionAttributes(*scope, node, parentInfo, nestedMode);
 
-   writer.closeNode();
+      ClassScope nestedScope(scope, parentInfo.typeRef, Visibility::Public, true);
+      if (!compiler->_logic->defineClassInfo(*scope->moduleScope, nestedScope.info, parentInfo.typeRef, false, true) ||
+         !test(nestedScope.info.header.flags, elStructureRole | elReadOnlyRole))
+      {
+         return {};
+      }
 
-   if (failed && stopOnError)
-      return {};
+      ArgumentsInfo args;
+      SyntaxNode current = node.firstChild();
+      bool invalid = false;
+      auto field_it = nestedScope.info.fields.start();
+      while (!invalid && current != SyntaxKey::None) {
+         switch (current.key) {
+            case SyntaxKey::Method:
+            case SyntaxKey::Field:
+               invalid = true;
+               break;
+            case SyntaxKey::AssignOperation:
+            {
+               if (field_it.eof())
+                  invalid = true;
 
-   SyntaxNode nsNode = node.parentNode();
-   while (nsNode != SyntaxKey::Namespace)
-      nsNode = nsNode.parentNode();
+               MetaScope assigneeScope(&nestedScope, Scope::ScopeLevel::Method);
 
-   SyntaxTreeWriter nsWriter(nsNode);
-   SyntaxTree::copyNode(nsWriter, dummyTree.readRoot(), true);
+               ObjectInfo field = compiler->evalObject(assigneeScope, current.firstChild());
+               ObjectInfo value = compiler->evalExpression(assigneeScope, current.findChild(SyntaxKey::Expression));
+               if (field.kind == ObjectKind::FieldAddress && field.argument == (*field_it).offset && isConstant(value.kind)) {
+                  invalid |= !compiler->_logic->isCompatible(*scope->moduleScope, value.typeInfo, field.typeInfo, CompatibleMode::IgnoreNils);
 
-   return { ObjectKind::Singleton, { reference }, reference };
+                  // HOTFIX : typecast int constant
+                  if (!invalid && value.kind == ObjectKind::IntLiteral)
+                     value.typeInfo = field.typeInfo;
+
+                  args.add(value);
+               }
+               else scope->raiseError(errInvalidOperation, current); 
+
+               ++field_it;
+               break;
+            }       
+            case SyntaxKey::Idle:
+            case SyntaxKey::Type:
+               break;
+            default:
+               return {};
+         }
+
+         current = current.nextNode();
+      }
+
+      invalid |= !field_it.eof();
+
+      return invalid ? ObjectInfo{} : interpreter->createConstCollection(reference, parentInfo.typeRef, args, true);
+   }
 }
 
 // --- Compiler::NestedClass ---

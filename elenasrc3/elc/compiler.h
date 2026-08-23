@@ -437,7 +437,8 @@ namespace elena_lang
             Field,
             Code,
             Expr,
-            Shortcut
+            Shortcut,
+            Meta
          };
 
          ModuleBase*      module;
@@ -1174,10 +1175,19 @@ namespace elena_lang
       {
          ScopeLevel scopeLevel;
 
+         Scope* getScope(ScopeLevel level) override
+         {
+            if (level == ScopeLevel::Meta) {
+               return this;
+            }
+            else return Scope::getScope(level);
+         }
+
          ObjectInfo mapDecl();
          ObjectInfo mapProject();
 
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
+         ObjectInfo mapMember(ustr_t identifier) override;
 
          MetaScope(Scope* parent, ScopeLevel scopeLevel);
       };
@@ -1453,7 +1463,7 @@ namespace elena_lang
          void generateMethod(SyntaxTreeWriter& writer, SyntaxNode node, bool& failed);
 
       public:
-         ObjectInfo generateNestedConstant(SyntaxNode node, bool stopOnError);
+         ObjectInfo generateNestedConstant(SyntaxNode node, bool stopOnError, ref_t constRef);
 
          MetaExpression(Compiler* compiler, Scope* scope, Interpreter* interpreter);
       };
@@ -1728,6 +1738,8 @@ namespace elena_lang
          ObjectInfo compileSymbolRoot(SyntaxNode bodyNode, ExpressionAttribute mode, ref_t targetRef);
          ObjectInfo compileRoot(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileReturning(SyntaxNode node, ExpressionAttribute mode, TypeInfo outputInfo);
+         ObjectInfo handleReturning(SyntaxNode node, ObjectInfo retVal, ExpressionAttribute mode, bool byRefHandler,
+            bool nillableOutput, TypeInfo outputInfo);
 
          ObjectInfo compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode);
          ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode);
@@ -2120,6 +2132,8 @@ namespace elena_lang
          ExpressionAttribute mode);
       ObjectInfo compileRetExpression(BuildTreeWriter& writer, CodeScope& scope, SyntaxNode node,
          ExpressionAttribute mode);
+      //ObjectInfo compileRetConstant(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node,
+      //   ExpressionAttribute mode);
       //ObjectInfo compileNestedExpression(BuildTreeWriter& writer, InlineClassScope& scope, ExprScope& ownerScope,
       //   ExpressionAttribute mode, ArgumentsInfo* updatedOuterArgs);
 

@@ -9,9 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - comparison with enum - must be native
   - make sure the preloaded symbols declared in another module is loaded when that module is used
-  - fix httpsget ()
   - switch with class types
   - simplified syntax - Template<int> t := new auto();
   - implement *_length := len - as native operation
@@ -27,6 +25,7 @@ In development:
   - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected   
   - Static decorator (mixin inheritance)
   - we need slim lock - without snop
+  - httpget for linux i386 / amd64
   --------------------------------------
   * dev
   ====================================== 
@@ -56,22 +55,24 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - review rosetta samples from G
-  - fix httpsget
+  - comparison with enum - must be native
+  - review rosetta samples from H
   - review all rosetta samples, fix the corrected
   - review all tutorials
-  - review all knowhow examples
+  - review all knowhow examples  
   - fix sampleapi for https
+  - fix httpsget for x86-64
   - test examples for 64bit
   - test rosetta for 64bit
   - can system 9 be simplified?
   ---------------------------------------
-  * current : httpget
+  * current : enum optimization
   ====================================== 
-  - amd64 : fix debugger
-  - amd64 : fix httpget
-  - test for Linux i386
-  - test for Linux amd64
+  - compile-time allocated objects in static method
+  - compile-time allocated objects in static array
+  - enum members must be constants
+  - use native operation with copying
+  - use native operation with comparison
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===

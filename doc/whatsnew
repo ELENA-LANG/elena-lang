@@ -16,6 +16,7 @@
   - [ADDED] Supporting System V ABI for x86_64
   - [CRITICAL] Fixing GC routine, clearing mg_wbar on heap expanding
   - [FIXED] async methods returning expressions with await operations
+  - [ADDED] supporting const methods returning a constant object
 
 - VM
 
