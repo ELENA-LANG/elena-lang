@@ -504,10 +504,10 @@ namespace elena_lang
          {
             return {};
          }
-         virtual ObjectInfo mapType(SyntaxKey type, ustr_t identifier)
+         virtual ObjectInfo mapType(SyntaxKey type, ustr_t identifier, TypeResolveMode mode)
          {
             if (parent) {
-               return parent->mapType(type, identifier);
+               return parent->mapType(type, identifier, mode);
             }
             else return {};
          }
@@ -642,7 +642,7 @@ namespace elena_lang
          ObjectInfo mapGlobal(ustr_t identifier, ExpressionAttribute mode) override;
          ObjectInfo mapWeakReference(ustr_t identifier, bool directResolved);
          ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
-         ObjectInfo mapType(SyntaxKey type, ustr_t identifier) override;
+         ObjectInfo mapType(SyntaxKey type, ustr_t identifier, TypeResolveMode mode) override;
 
          void defineIntConstant(ref_t reference, int value)
          {
@@ -825,7 +825,7 @@ namespace elena_lang
 
          ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
 
-         ObjectInfo mapType(SyntaxKey type, ustr_t identifier) override;
+         ObjectInfo mapType(SyntaxKey type, ustr_t identifier, TypeResolveMode mode) override;
 
          void save();
 
@@ -850,6 +850,7 @@ namespace elena_lang
          ref_t getProperClassRef() const { return classInfoRef; }
 
          ObjectInfo mapField(ustr_t identifier, ExpressionAttribute attr) override;
+         ObjectInfo mapType(SyntaxKey type, ustr_t identifier, TypeResolveMode mode) override;
 
          ClassClassScope(Scope* parent, ref_t reference, Visibility visibility, ClassInfo* classInfo, ref_t classInfoRef, bool debugInfo);
       };
@@ -1897,7 +1898,7 @@ namespace elena_lang
 
       ref_t retrieveType(Scope& scope, ObjectInfo info);
       ref_t resolveTypeIdentifier(Scope& scope, ustr_t identifier, SyntaxKey type,
-         bool declarationMode, bool allowRole, bool allowSingleton);
+         TypeResolveMode mode);
       TypeInfo resolveTypeTemplate(Scope& scope, SyntaxNode node,
          TypeAttributes& attributes, bool declarationMode, bool objectMode = false);
 
@@ -1912,11 +1913,10 @@ namespace elena_lang
 
       int resolveSize(Scope& scope, SyntaxNode node);
       TypeInfo resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
-         bool declarationMode, bool allowRole, bool constAttr, bool allowSingleton);
+         TypeResolveMode mode);
       TypeInfo resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttributes& attributes,
-         bool declarationMode, bool allowRole, bool constAttr, bool allowSingleton);
-      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, bool declarationMode, bool allowRole, bool constAttr,
-         bool allowPrimitive = false, bool allowSingleton = false);
+         TypeResolveMode mode);
+      TypeInfo resolveStrongTypeAttribute(Scope& scope, SyntaxNode node, TypeResolveMode mode);
 
       ref_t retrieveTemplate(NamespaceScope& scope, SyntaxNode node, List<SyntaxNode>& parameters,
          ustr_t prefix, SyntaxKey argKey, ustr_t postFix);

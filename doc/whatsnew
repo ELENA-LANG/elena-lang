@@ -6,6 +6,7 @@
   - [ADDED] Nested extensions template
   - [ADDED] inplace extension method
   - [ADDED] inplace extension template method
+  - [ADDED] supporting pseudo type - __decl_type
      
 - ELC
   - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation
@@ -44,6 +45,7 @@
   - [REMOVED] system'Indexer, system'Indexer<T> interfaces are no longer supported
   - [REDUX] system'Indexable, system'Indexable<T> interfaces are modified
   - [ADDED] cancellation tokens and cooperative task cancellation
+  - [REDUX] enum template - is returning a constant directly
 
 - Scripts
 

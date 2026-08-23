@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - fix warnings for xml
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - switch with class types
   - simplified syntax - Template<int> t := new auto();
@@ -68,11 +69,11 @@ In development:
   ---------------------------------------
   * current : enum optimization
   ====================================== 
-  - compile-time allocated objects in static method
-  - compile-time allocated objects in static array
   - enum members must be constants
+  - Value operator must be implemented directly
   - use native operation with copying
   - use native operation with comparison
+  - use enum of strings
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===

@@ -66,12 +66,12 @@ public sealed struct ThreadHandle
 
    private int fromPriority(ThreadPriority priority)
    {
-      if (priority == THREAD_PRIORITY_HIGHEST)
-         { ^ ThreadPriority.Highest }
-      else if (priority == THREAD_PRIORITY_ABOVE_NORMAL)
-         { ^ ThreadPriority.AboveNormal }
-      else if (priority == THREAD_PRIORITY_NORMAL)
-         { ^ ThreadPriority.Normal }
+      if (priority == ThreadPriority.Highest)
+         { ^ THREAD_PRIORITY_HIGHEST }
+      else if (priority == ThreadPriority.AboveNormal)
+         { ^ THREAD_PRIORITY_ABOVE_NORMAL }
+      else if (priority == ThreadPriority.Normal)
+         { ^ THREAD_PRIORITY_NORMAL }
       else if (priority == ThreadPriority.BelowNormal)
          { ^ THREAD_PRIORITY_BELOW_NORMAL }
       else if (priority == ThreadPriority.Lowest)

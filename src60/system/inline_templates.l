@@ -180,7 +180,7 @@ public weak interface<T>
 
 // --- enum ---
 
-public enum<T>(params member)::
+public const enum<T>(params member)::
 {
    T _value;
 
@@ -196,15 +196,15 @@ public enum<T>(params member)::
    this __enumValues += $value member;
    this __enumNames += $name member;
 
-   get static __typeof member()
-      = self.load($value member);
+   get const static __decl_type member()
+      = __decl_type { this _value := $value member; };
 
 #endfor
 
-   T cast()
+   get T Value()
       = _value;
 
-   private static __typeof getEnumValue(int index)
+   private static __decl_type getEnumValue(int index)
    {
       T value := __enumValues[index];
 
@@ -251,11 +251,18 @@ public enum<T>(params member)::
       ^ string.MinValue
    }
 
-   bool equal(o)
+   bool equal(__decl_type o)
    {
-      if (o; is T n)
+      T argVal := *o;
+
+      ^ _value == argVal
+   }
+
+   bool equal(value)
+   {
+      if (value; is __decl_type en)
       {
-         ^ _value == n
+         ^ _value == *en
       };
 
       ^ false
@@ -292,7 +299,7 @@ public template record(params member)::
 #endfor
    }
 
-   bool equal(__typeof o)
+   bool equal(__decl_type o)
    {
 #for(member) 
       if($value member != $value get mssg member(o)) {
