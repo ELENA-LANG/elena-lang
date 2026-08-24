@@ -61,7 +61,7 @@ In development:
   ---------------------------------------
   * samples
   ====================================== 
-  - review rosetta samples from H
+  - review rosetta samples from I
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples  
