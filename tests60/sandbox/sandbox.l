@@ -1,146 +1,77 @@
-import extensions;
-import system'threading;
+//import extensions;
+//import system'collections;
+//import system'routines;
+// 
+//isHappy(int n)
+//{
+//    auto cache := new List<int>(5);
+//    int sum := 0;
+//    int num := n;
+//    while (num != 1)
+//    {
+//        if (cache.indexOfElement(num) != -1)
+//        {
+//            ^ false
+//        };
+//        cache.append(num);
+//        while (num != 0)
+//        {
+//            int digit := num.mod(10);
+//            sum += (digit*digit);
+//            num /= 10
+//        };
+//        num := sum;
+//        sum := 0
+//    };
+// 
+//    ^ true
+//}
+// 
+//public Program()
+//{
+//    auto happynums  := new List<int>(8);
+//    int num := 1;
+//    while (happynums.Length < 8)
+//    {
+//        if (isHappy(num))
+//        {
+//            happynums.append(num)
+//        };
+// 
+//        num += 1
+//    };
+//    console.printLine("First 8 happy numbers: ", happynums.asEnumerable())
+//}
 
-// ErrorBox
-//
-// An assertion failing inside a worker aborts the process without saying which case
-// failed. Workers record here and the coordinator re-raises after the latch
-public sealed class ErrorBox
+public interface I
 {
-   bool   _failed;
-   string _message;
-
-   constructor new()
-   {
-      _failed := false;
-      _message := ""
-   }
-
-   record(Exception e)
-   {
-      lock(self)
-      {
-         if:not (_failed)
-         {
-            _failed := true;
-
-            // toPrintable carries the call stack
-            _message := e.toPrintable()
-         }
-      }
-   }
-
-   rethrowIfAny()
-   {
-      if (_failed)
-         { AssertException.raise(_message) }
-   }
+   abstract doSomething(arg);
 }
 
-class ThreadCurrentWorkerArg
+public interface I<T>
 {
-   int                Index   : prop;
-   Array              Threads : prop;
-   CountDownEvent     Ready   : prop;
-   ManualResetEvent   Release : prop;
-   Latch              Done    : prop;
-   ErrorBox           Errors  : prop;
+   abstract T doSomething(T arg);
 }
 
-// Latch, stands in for Thread.join
-public sealed class Latch
+public class A : interface<I<int>>, interface<I>
 {
-   CountDownEvent _done;
-
-   constructor new(int count)
-   {
-      _done := CountDownEvent.new(count)
-   }
-
-   done()
-   {
-      _done.signal()
-   }
-
-   await()
-   {
-      _done.wait()
-   }
-
-   close()
-   {
-      _done.close()
-   }
-}
-
-threadCurrentWorker(arg)
-{
-   try
-   {
-      Thread current := Thread.Current;
-
-      Assert.ifTrue(current.equalReference(Thread.Current));
-
-      Array threads := arg.Threads;
-      int index := arg.Index;
-      threads[index] := current;
-
-      arg.Ready.signal();
-      arg.Release.wait();
-
-      Assert.ifTrue(current.equalReference(Thread.Current))
-   }
-   catch(Exception e)
-   {
-      arg.Errors.record(e)
-   };
-
-   arg.Done.done()
+   int doSomething(int arg)
+      = arg + 1;
+/*      
+   I cast()
+      = I {
+         doSomething(arg)
+            => self;
+      };            */
 }
 
 public Program()
 {
-   int count := 4;
-   Array threads := Array.allocate(count);
-   CountDownEvent ready := CountDownEvent.new(count);
-   ManualResetEvent release := ManualResetEvent.new();
-   Latch done := Latch.new(count);
-   ErrorBox errors := ErrorBox.new();
-
-   for (int i := 0; i < count; i += 1)
-   {
-      ThreadCurrentWorkerArg arg := new ThreadCurrentWorkerArg();
-      arg.Index := i;
-      arg.Threads := threads;
-      arg.Ready := ready;
-      arg.Release := release;
-      arg.Done := done;
-      arg.Errors := errors;
-
-      Thread worker := Thread.assign(&threadCurrentWorker);
-      worker.start(arg)
-   };
-
-   ready.wait();
-
-   bool unique := true;
-   for (int i := 0; i < count; i += 1)
-   {
-      for (int j := i + 1; j < count; j += 1) {
-         if (threads[i].equalReference(threads[j]))
-            unique := false
-      }
-   };
-
-   release.set();
-   done.await();
-   errors.rethrowIfAny();
-
-   Assert.ifTrue(unique);
-
-   ready.close();
-   release.close();
-   done.close();
-
-   Console.write(".")
+   A a := new A();
+   
+   I<int> i1 := a;
+   I i2 := a;
+   
+   int r := i1.doSomething(2);
+   int r2 := i2.doSomething(2);
 }

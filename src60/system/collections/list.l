@@ -825,7 +825,21 @@ namespace collections
             this index.Value := -1
          }
       };
-            
+
+      Indexable cast()
+         = Indexable {
+            get int Length()
+               = self.Length;
+               
+            at(int index)
+               => self;
+               
+            setAt(int index, object o)
+            {
+               self.setAt(index, o)
+            }
+         };
+                                    
       get T[] Value() : info("Returns a shallow copy of the list as a strong-typed array")
       {
          int len := *_length;

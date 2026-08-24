@@ -59,7 +59,7 @@ In development:
   - use native operation with comparison
   - use enum of strings
   ---------------------------------------
-  * current : samples
+  * samples
   ====================================== 
   - review rosetta samples from H
   - review all rosetta samples, fix the corrected
@@ -71,6 +71,10 @@ In development:
   - test rosetta for 64bit
   - can system 9 be simplified?
   ---------------------------------------
+  * current : thread local for i386
+  ====================================== 
+  - investigate
+  - fix
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3

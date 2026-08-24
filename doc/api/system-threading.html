@@ -345,7 +345,7 @@ system'threading'BaseEvent</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>wait(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> timeOut)
 </CODE>
@@ -455,6 +455,501 @@ system'threading'BlockingQueue&lt;T1&gt;</LI>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>push(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> value)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="CancellationToken">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="CancellationToken" class="title">CancellationToken</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">CancellationToken</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'CancellationToken</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenSource">CancellationTokenSource</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_source</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenSource">CancellationTokenSource</A></SPAN> source)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>private </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>function:#class_init()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>None()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>CanBeCanceled()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>IsCancellationRequested()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenRegistration">CancellationTokenRegistration</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>register(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>throwIfCancellationRequested()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="CancellationTokenRegistration">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="CancellationTokenRegistration" class="title">CancellationTokenRegistration</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">CancellationTokenRegistration</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'CancellationTokenRegistration</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenSource">CancellationTokenSource</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_source</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_action</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Thread">Thread</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_executingThread</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#ManualResetEvent">ManualResetEvent</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_completion</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Reference&lt;T1&gt;">Reference&lt;system'IntNumber&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_waiterCount</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenRegistration">CancellationTokenRegistration</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenRegistration">CancellationTokenRegistration</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenSource">CancellationTokenSource</A></SPAN> source, <SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>completeAction()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>takeAction()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="CancellationTokenSource">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="CancellationTokenSource" class="title">CancellationTokenSource</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">CancellationTokenSource</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'CancellationTokenSource</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_cancellationRequested</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_token</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'threading'CancellationTokenRegistration&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_registrations</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading-$intern.html#TimerRegistration">TimerRegistration</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_timer</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenSource">CancellationTokenSource</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>IsCancellationRequested()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Token()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>cancel()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>cancelAfter(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> milliseconds)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenRegistration">CancellationTokenRegistration</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>register(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>unregister(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationTokenRegistration">CancellationTokenRegistration</A></SPAN> registration)
 </CODE>
 </TD>
 </TR>
@@ -577,7 +1072,7 @@ system'threading'CountDownEvent</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>wait(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> timeOut)
 </CODE>
@@ -665,6 +1160,120 @@ system'threading'ManualResetEvent</LI>
 <TD CLASS="colLast">
 <CODE>new(<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN> value)
 </CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="OperationCanceledException">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="OperationCanceledException" class="title">OperationCanceledException</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">OperationCanceledException</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">system'Exception</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'OperationCanceledException</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>message</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>callStack</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_cancellationToken</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#OperationCanceledException">OperationCanceledException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#OperationCanceledException">OperationCanceledException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>withToken(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> cancellationToken)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Token()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -827,9 +1436,9 @@ system'threading'Task</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#TaskStatus">TaskStatus</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_completed</CODE>
+<CODE>_status</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -851,9 +1460,25 @@ system'threading'Task</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'Action&lt;system'threading'Task&gt;&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_continuations</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>_action</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_cancellationToken</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -874,6 +1499,24 @@ system'threading'Task</LI>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assign(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> action, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arg)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>assignCancelable(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action, <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> cancellationToken)
 </CODE>
 </TD>
 </TR>
@@ -910,18 +1553,18 @@ system'threading'Task</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>dispatch</i>()
+<CODE>completedTask()
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+<CODE><i>dispatch</i>()
 </CODE>
 </TD>
 </TR>
@@ -930,7 +1573,61 @@ system'threading'Task</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
+<CODE>fromCanceled(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> cancellationToken)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>fromException(<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN> ex)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> action, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arg)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action, <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> token)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
 <CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> msecs)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>sleep(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> msecs, <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> token)
 </CODE>
 </TD>
 </TR>
@@ -985,9 +1682,49 @@ system'threading'Task</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>IsCanceled()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>IsCompleted()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>IsCompletedSuccessfully()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>IsFaulted()</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Result()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#TaskStatus">TaskStatus</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Status()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1005,13 +1742,22 @@ system'threading'Task</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>cancellationToken()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task">Task</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>continueWith(<SPAN CLASS="memberNameLink"><A HREF="system.html#Action&lt;T1&gt;">Action&lt;system'threading'Task&gt;</A></SPAN> action)
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN></CODE></TD>
@@ -1020,7 +1766,7 @@ system'threading'Task</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal private </i>&nbsp;</CODE></TD>
@@ -1029,7 +1775,25 @@ system'threading'Task</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onCompleted(<SPAN CLASS="memberNameLink"><A HREF="system.html#Action&lt;T1&gt;">Action&lt;system'threading'Task&gt;</A></SPAN> action)
+</CODE>
+</TD>
+</TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setCanceled(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> cancellationToken)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
@@ -1038,7 +1802,7 @@ system'threading'Task</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
@@ -1047,7 +1811,7 @@ system'threading'Task</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1056,7 +1820,43 @@ system'threading'Task</LI>
 </CODE>
 </TD>
 </TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>system@threading@Task$$initialize()
+</CODE>
+</TD>
+</TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>trySetCanceled(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> cancellationToken)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>trySetException(<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">Exception</A></SPAN> ex)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>trySetResult()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1114,9 +1914,9 @@ system'threading'Task&lt;T1&gt;</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#TaskStatus">TaskStatus</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_completed</CODE>
+<CODE>_status</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -1138,9 +1938,25 @@ system'threading'Task&lt;T1&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-collections.html#List&lt;T1&gt;">List&lt;system'Action&lt;system'threading'Task&gt;&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_continuations</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>_action</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_cancellationToken</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -1175,9 +1991,9 @@ system'threading'Task&lt;T1&gt;</LI>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> retVal)
+<CODE>assignCancelable(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1&gt;">Func&lt;T1&gt;</A></SPAN> func, <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> cancellationToken)
 </CODE>
 </TD>
 </TR>
@@ -1186,11 +2002,20 @@ system'threading'Task&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE><i>constructor2</i>()
+<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> retVal)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE><i>constructor2</i>()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>internal </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="-system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
@@ -1216,7 +2041,34 @@ system'threading'Task&lt;T1&gt;</LI>
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
+<CODE>fromCanceled(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> cancellationToken)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>fromResult(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> result)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
 <CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1&gt;">Func&lt;T1&gt;</A></SPAN> action)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#Task&lt;T1&gt;">Task&lt;T1&gt;</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>run(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func&lt;T1&gt;">Func&lt;T1&gt;</A></SPAN> action, <SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> token)
 </CODE>
 </TD>
 </TR>
@@ -1286,8 +2138,156 @@ system'threading'Task&lt;T1&gt;</LI>
 <CODE>
 <i>internal private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>setResultValue(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> r)
+<CODE>setResultValue(<SPAN CLASS="memberNameLink"><A HREF="system-threading-$private.html#T1">T1</A></SPAN> result)
 </CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="TaskCanceledException">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="TaskCanceledException" class="title">TaskCanceledException</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">TaskCanceledException</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Exception">system'Exception</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#OperationCanceledException">system'threading'OperationCanceledException</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'TaskCanceledException</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#String">String</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>message</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#CallStack">CallStack</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>callStack</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_cancellationToken</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#TaskCanceledException">TaskCanceledException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#TaskCanceledException">TaskCanceledException</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>withToken(<SPAN CLASS="memberNameLink"><A HREF="system-threading.html#CancellationToken">CancellationToken</A></SPAN> cancellationToken)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="TaskStatus">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="TaskStatus" class="title">TaskStatus</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">TaskStatus</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+system'threading'TaskStatus</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_value</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1812,18 +2812,18 @@ system'threading'ThreadPool</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<i>private </i>&nbsp;</CODE></TD>
+</CODE></TD>
 <TD CLASS="colLast">
-<CODE>function:#class_init()
+<CODE>configure(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> minThreads, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> maxThreads)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-</CODE></TD>
+<i>private </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>queueAction(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> f)
+<CODE>function:#class_init()
 </CODE>
 </TD>
 </TR>
@@ -1832,8 +2832,37 @@ system'threading'ThreadPool</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>queueAction(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> f, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arg)
+<CODE>queueAction(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func">Func</A></SPAN> action)
 </CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>queueAction(<SPAN CLASS="memberNameLink"><A HREF="system.html#Func1">Func1</A></SPAN> action, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> arg)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== STATIC PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Static Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Static Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>WorkerCount()</CODE>
 </TD>
 </TR>
 </TABLE>
@@ -1887,6 +2916,43 @@ system'threading'ThreadPriority</LI>
 </TABLE>
 </LI>
 </UL>
+<HR>
+</DIV>
+<A NAME="CancellationToken#initializer$inline0__sym__">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="CancellationToken#initializer$inline0" class="title">CancellationToken#initializer$inline0</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>CancellationToken#initializer$inline0</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
 <HR>
 </DIV>
 <A NAME="INFINITE__sym__">
@@ -2141,6 +3207,43 @@ system'threading'</DIV>
 <i>public </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>ThreadPool#initializer$inline0</CODE>
+</TD>
+</TABLE>
+</LI>
+</UL>
+</DIV>
+<HR>
+</DIV>
+<A NAME="TimerQueue#initializer$inline0__sym__">
+</A>
+<!-- ======== START OF SYMBOL DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+system'threading'</DIV>
+<H2 title="TimerQueue#initializer$inline0" class="title">TimerQueue#initializer$inline0</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+</PRE>
+<BR>
+</DIV>
+<DIV CLASS="contentContainer">
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Symbol Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Name</TH>
+</TR>
+<TD CLASS="colFirst">
+<CODE>
+<i>public </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>TimerQueue#initializer$inline0</CODE>
 </TD>
 </TABLE>
 </LI>
