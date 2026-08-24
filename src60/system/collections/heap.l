@@ -150,11 +150,18 @@ namespace collections
       private removeAt(int index)
       {
          int len := *_length;
-         _btree[index] := _btree[len - 1];
          len--;
          _length.Value := len;
-         
-         heapify(index);
+
+         if (index < len) {
+            _btree[index] := _btree[len];
+
+            if (index > 0 && _comparator(_btree[index], getParent(index))) {
+               while (index > 0 && shiftUp(index))
+                  index := getParentIndex(index)
+            }
+            else heapify(index)
+         }
       }
       
       bool remove(T item) : info("Removes a first occurrence of <b>item</b> element if found and returns true or false if no element was found")

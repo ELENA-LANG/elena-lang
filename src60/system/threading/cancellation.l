@@ -4,14 +4,12 @@ public sealed class CancellationTokenRegistration
 {
    CancellationTokenSource? _source;
    Func?                    _action;
-   bool                     _executing;
    Thread?                  _executingThread;
    ManualResetEvent?        _completion;
-   int                      _waiterCount;
+   Reference<int>           _waiterCount;
 
    internal constructor new()
    {
-      _executing := false;
       _executingThread := nil;
       _waiterCount := 0
    }
@@ -20,7 +18,6 @@ public sealed class CancellationTokenRegistration
    {
       _source := source;
       _action := action;
-      _executing := false;
       _executingThread := nil;
       _waiterCount := 0
    }
@@ -34,7 +31,6 @@ public sealed class CancellationTokenRegistration
             _action := nil;
             _source := nil;
             _executingThread := Thread.Current;
-            _executing := true
          }
       };
 
@@ -45,7 +41,6 @@ public sealed class CancellationTokenRegistration
    {
       ManualResetEvent? completion := nil;
       lock(self) {
-         _executing := false;
          _executingThread := nil;
          completion := _completion
       };
@@ -63,18 +58,14 @@ public sealed class CancellationTokenRegistration
          _source := nil;
          _action := nil;
 
-         if (_executing) {
-            Thread? executingThread := _executingThread;
-            if:nil(executingThread)
-               InvalidOperationException.raise();
-            if:not:nil(executingThread) {
-               if:not (executingThread.equalReference(Thread.Current)) {
-                  if (_completion == nil)
-                     _completion := ManualResetEvent.new();
+         Thread? executingThread := _executingThread;
+         if:not:nil(executingThread) {
+            if:not (executingThread.equalReference(Thread.Current)) {
+               if (_completion == nil)
+                  _completion := ManualResetEvent.new();
 
-                  _waiterCount := _waiterCount + 1;
-                  completion := _completion
-               }
+               _waiterCount.append(1);
+               completion := _completion
             }
          }
       };
@@ -87,8 +78,8 @@ public sealed class CancellationTokenRegistration
 
          bool closeCompletion := false;
          lock(self) {
-            _waiterCount := _waiterCount - 1;
-            if (_waiterCount == 0) {
+            _waiterCount.reduce(1);
+            if (*_waiterCount == 0) {
                _completion := nil;
                closeCompletion := true
             }

@@ -1,3 +1,4 @@
+import system'collections;
 import system'runtime;
 
 internal sealed class TimerRegistration : interface<Func>
@@ -7,11 +8,9 @@ internal sealed class TimerRegistration : interface<Func>
    bool              _active;
    // Queued work can still be canceled until a pool worker begins it
    bool              _queued;
-   bool              _executing;
    Thread?           _executingThread;
    ManualResetEvent? _completion;
-   int               _waiterCount;
-   int               _queueIndex;
+   Reference<int>    _waiterCount;
 
    internal constructor new(long dueTime, Func action)
    {
@@ -19,31 +18,17 @@ internal sealed class TimerRegistration : interface<Func>
       _action := action;
       _active := true;
       _queued := false;
-      _executing := false;
       _executingThread := nil;
-      _waiterCount := 0;
-      _queueIndex := -1
+      _waiterCount := 0
    }
 
    internal long DueTime
       = _dueTime;
 
-   internal int QueueIndex
-   {
-      get()
-         = _queueIndex;
-
-      set(int index)
-      {
-         _queueIndex := index
-      }
-   }
-
    private completeExecution()
    {
       ManualResetEvent? completion := nil;
       lock(self) {
-         _executing := false;
          _executingThread := nil;
          completion := _completion
       };
@@ -58,7 +43,6 @@ internal sealed class TimerRegistration : interface<Func>
       lock(self) {
          if (_queued) {
             _queued := false;
-            _executing := true;
             _executingThread := Thread.Current;
             action := _action;
             _action := nil
@@ -101,23 +85,19 @@ internal sealed class TimerRegistration : interface<Func>
       lock(self) {
          _active := false;
 
-         if:not (_executing) {
+         Thread? executingThread := _executingThread;
+         if:nil(executingThread) {
             _queued := false;
             _action := nil;
          };
 
-         if (_executing) {
-            Thread? executingThread := _executingThread;
-            if:nil(executingThread)
-               InvalidOperationException.raise();
-            if:not:nil(executingThread) {
-               if:not (executingThread.equalReference(Thread.Current)) {
-                  if (_completion == nil)
-                     _completion := ManualResetEvent.new();
+         if:not:nil(executingThread) {
+            if:not (executingThread.equalReference(Thread.Current)) {
+               if (_completion == nil)
+                  _completion := ManualResetEvent.new();
 
-                  _waiterCount := _waiterCount + 1;
-                  completion := _completion
-               }
+               _waiterCount.append(1);
+               completion := _completion
             }
          }
       };
@@ -129,8 +109,8 @@ internal sealed class TimerRegistration : interface<Func>
 
          bool closeCompletion := false;
          lock(self) {
-            _waiterCount := _waiterCount - 1;
-            if (_waiterCount == 0) {
+            _waiterCount.reduce(1);
+            if (*_waiterCount == 0) {
                _completion := nil;
                closeCompletion := true
             }
@@ -142,146 +122,30 @@ internal sealed class TimerRegistration : interface<Func>
    }
 }
 
-internal sealed class TimerQueue
+internal singleton TimerQueue
 {
-   private constructor() {}
+   static object                         _sync := new object();
+   static BinaryHeap<TimerRegistration>? _items;
+   static AutoResetEvent?                _wake;
+   static bool                           _started := false;
 
-   // Queue indices keep arbitrary timer removal logarithmic
-   static object          _sync := new object();
-   static Array?          _items;
-   static Reference<int>  _count := 0;
-   static AutoResetEvent? _wake;
-   static bool            _started := false;
-
-   private static ensureCapacity()
+   private BinaryHeap<TimerRegistration> ensureQueue()
    {
-      int count := *_count;
-      if (_items == nil) {
-         _items := Array.allocate(32)
-      }
-      else {
-         Array items := _items!;
-         if (count == items.Length) {
-            Array expanded := Array.allocate(count * 2);
-            for (int i := 0; i < count; i += 1)
-               expanded[i] := items[i];
+      if (_items == nil)
+         _items := BinaryHeap<TimerRegistration>.new((TimerRegistration left, TimerRegistration right => left.DueTime < right.DueTime));
 
-            _items := expanded
-         }
-      }
+      ^ _items!
    }
 
-   private static swap(Array items, int leftIndex, int rightIndex)
-   {
-      TimerRegistration left := items[leftIndex];
-      TimerRegistration right := items[rightIndex];
-      items[leftIndex] := right;
-      items[rightIndex] := left;
-      right.QueueIndex := leftIndex;
-      left.QueueIndex := rightIndex
-   }
-
-   private static shiftUp(Array items, int index)
-   {
-      int current := index;
-      while (current > 0) {
-         int parent := (current - 1) / 2;
-         TimerRegistration currentItem := items[current];
-         TimerRegistration parentItem := items[parent];
-         if (parentItem.DueTime <= currentItem.DueTime)
-            { :break };
-
-         swap(items, current, parent);
-         current := parent
-      }
-   }
-
-   private static shiftDown(Array items, int index)
-   {
-      int current := index;
-      int count := *_count;
-      while (true) {
-         int left := current * 2 + 1;
-         if (left >= count)
-            { :break };
-
-         int right := left + 1;
-         int earliest := left;
-         if (right < count) {
-            TimerRegistration leftItem := items[left];
-            TimerRegistration rightItem := items[right];
-            if (rightItem.DueTime < leftItem.DueTime)
-               earliest := right
-         };
-
-         TimerRegistration currentItem := items[current];
-         TimerRegistration earliestItem := items[earliest];
-         if (currentItem.DueTime <= earliestItem.DueTime)
-            { :break };
-
-         swap(items, current, earliest);
-         current := earliest
-      }
-   }
-
-   private static insert(TimerRegistration item)
-   {
-      ensureCapacity();
-
-      Array items := _items!;
-      int index := *_count;
-      items[index] := item;
-      item.QueueIndex := index;
-      _count.append(1);
-      shiftUp(items, index)
-   }
-
-   private static removeAt(int index)
-   {
-      Array items := _items!;
-      int lastIndex := *_count - 1;
-      TimerRegistration removed := items[index];
-      removed.QueueIndex := -1;
-
-      if (index == lastIndex) {
-         items[lastIndex] := default;
-         _count.reduce(1)
-      }
-      else {
-         TimerRegistration replacement := items[lastIndex];
-         items[index] := replacement;
-         items[lastIndex] := default;
-         replacement.QueueIndex := index;
-         _count.reduce(1);
-
-         bool movedUp := false;
-         if (index > 0) {
-            int parent := (index - 1) / 2;
-            TimerRegistration parentItem := items[parent];
-            if (replacement.DueTime < parentItem.DueTime) {
-               shiftUp(items, index);
-               movedUp := true
-            }
-         };
-
-         if:not (movedUp)
-            shiftDown(items, index)
-      }
-   }
-
-   internal static remove(TimerRegistration item)
+   internal remove(TimerRegistration item)
    {
       AutoResetEvent? wake := nil;
       lock(_sync) {
-         Array items := _items!;
-         int count := *_count;
-         int index := item.QueueIndex;
-
-         if (index >= 0 && index < count && items[index].equalReference(item)) {
-            if (index == 0)
-               wake := _wake;
-
-            removeAt(index)
+         if:not:nil(_items) {
+            BinaryHeap<TimerRegistration> items := _items!;
+            bool first := items.Length > 0 && items.peek().equalReference(item);
+            if (items.remove(item) && first)
+               wake := _wake
          }
       };
 
@@ -289,7 +153,7 @@ internal sealed class TimerQueue
          wake!.set()
    }
 
-   private static loop()
+   private loop()
    {
       while (true) {
          TimerRegistration? expired := nil;
@@ -297,16 +161,15 @@ internal sealed class TimerQueue
          int waitTime := -1;
          lock(_sync) {
             wake := _wake;
-            if (*_count > 0) {
-               Array items := _items!;
-               TimerRegistration first := items[0];
+            BinaryHeap<TimerRegistration> items := _items!;
+            if (items.Length > 0) {
+               TimerRegistration first := items.peek();
                long remaining := first.DueTime - Environment.TickCount64;
                if (remaining <= 0l) {
-                  expired := first;
-                  removeAt(0)
+                  expired := items.pop()
                }
                else {
-                  waitTime := cast int(remaining)
+                  waitTime := remaining as:int
                }
             }
          };
@@ -320,7 +183,7 @@ internal sealed class TimerQueue
       }
    }
 
-   internal static TimerRegistration schedule(int milliseconds, Func action)
+   internal TimerRegistration schedule(int milliseconds, Func action)
    {
       if (milliseconds < 0)
          InvalidArgumentException.raise("milliseconds");
@@ -335,7 +198,7 @@ internal sealed class TimerQueue
          if (_wake == nil)
             _wake := AutoResetEvent.new();
 
-         insert(item);
+         ensureQueue().push(item);
          wake := _wake;
          if:not (_started) {
             _started := true;
