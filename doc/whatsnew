@@ -45,6 +45,9 @@
   - [REMOVED] system'Indexer, system'Indexer<T> interfaces are no longer supported
   - [REDUX] system'Indexable, system'Indexable<T> interfaces are modified
   - [ADDED] cancellation tokens and cooperative task cancellation
+  - [ADDED] non-blocking task delays, cancelAfter and a shared timer scheduler
+  - [FIXED] cancellation registration close waits for callbacks already in progress
+  - [FIXED] binary heap ordering after removing an arbitrary item
   - [REDUX] enum template - is returning a constant directly
 
 - Scripts

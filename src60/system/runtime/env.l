@@ -11,6 +11,12 @@ public singleton Environment
       get()
          = systemInfo.ProcessorType;
    }
+
+   long TickCount64
+   {
+      get()
+         = systemInfo.TickCount64;
+   }
 }
 
 #if (__project["_Win"]) // Windows
@@ -40,6 +46,12 @@ internal class SystemInfo
 {
    int           ProcessorCount : rprop;
    ProcessorType ProcessorType : rprop;   
+
+   long TickCount64
+   {
+      get()
+         = extern KERNEL32.GetTickCount64();
+   }
 
    private ProcessorType toProcessorType(int cpuType)
    {
@@ -82,10 +94,39 @@ const int _SC_NPROCESSORS_ONLN = 84;
 
 #endif
 
+#if (__project["_Linux"])
+
+const int CLOCK_MONOTONIC = 1;
+
+#elif (__project["_FreeBSD"])
+
+const int CLOCK_MONOTONIC = 4;
+
+#elif (__project["_MacOS"])
+
+const int CLOCK_MONOTONIC = 6;
+
+#endif
+
 internal class SystemInfo
 {
    int           ProcessorCount : rprop;
    ProcessorType ProcessorType : rprop;   
+
+   long TickCount64
+   {
+      get()
+      {
+#if (__project["_Linux32"])
+         int stamp[2];
+#else
+         long stamp[2];
+#endif
+         extern libc.clock_gettime(CLOCK_MONOTONIC, stamp);
+
+         ^ cast long(stamp[0]) * 1000l + cast long(stamp[1]) / 1000000l
+      }
+   }
 
    constructor()
    {

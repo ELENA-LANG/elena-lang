@@ -37,6 +37,7 @@
         <include>core_tests.l</include>
         <include>tls_tests.l</include>
         <include>cancellation_tests.l</include>
+        <include>timer_tests.l</include>
      </module>
   </files>
 </configuration>

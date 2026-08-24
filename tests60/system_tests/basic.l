@@ -3406,7 +3406,24 @@ public binaryHeapTest() : testCase()
    Assert.ifEqual(maxHeap.pop(), 2);
    Assert.ifEqual(maxHeap.pop(), 1);
    Assert.ifEqual(maxHeap.Length, 0);
-   
+
+   auto removalHeap := new BinaryHeap<int>();
+   removalHeap.push(1);
+   removalHeap.push(10);
+   removalHeap.push(2);
+   removalHeap.push(20);
+   removalHeap.push(11);
+   removalHeap.push(5);
+   removalHeap.push(3);
+   Assert.ifTrue(removalHeap.remove(20));
+
+   Assert.ifEqual(removalHeap.pop(), 1);
+   Assert.ifEqual(removalHeap.pop(), 2);
+   Assert.ifEqual(removalHeap.pop(), 3);
+   Assert.ifEqual(removalHeap.pop(), 5);
+   Assert.ifEqual(removalHeap.pop(), 10);
+   Assert.ifEqual(removalHeap.pop(), 11);
+
    Console.write(".");
 }
 

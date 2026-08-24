@@ -417,15 +417,22 @@ public class Task
 
    static Task sleep(int msecs)
    {
-      if (msecs < 0)
+      if (msecs < -1)
          InvalidArgumentException.raise("msecs");
 
-      ^ Task.run({ Thread.sleep(msecs) })
+      if (msecs == 0)
+         { ^ Task.completedTask() };
+
+      Task promise := Task.newPromise();
+      if (msecs > 0)
+         TimerQueue.schedule(msecs, { promise.trySetResult() });
+
+      ^ promise
    }
 
    static Task sleep(int msecs, CancellationToken token)
    {
-      if (msecs < 0)
+      if (msecs < -1)
          InvalidArgumentException.raise("msecs");
 
       if (token == nil)
@@ -434,19 +441,16 @@ public class Task
       if:not (token.CanBeCanceled)
          { ^ Task.sleep(msecs) };
 
-      ^ Task.run(
-         {
-            int remaining := msecs;
-            while (remaining > 0) {
-               token.throwIfCancellationRequested();
+      if (token.IsCancellationRequested)
+         { ^ Task.fromCanceled(token) };
 
-               int interval := (remaining > 10) ? 10 : remaining;
-               Thread.sleep(interval);
-               remaining := remaining - interval;
-            };
+      if (msecs == 0)
+         { ^ Task.completedTask() };
 
-            token.throwIfCancellationRequested()
-         }, token)
+      DelayPromise delay := DelayPromise.new(token);
+      delay.schedule(msecs);
+
+      ^ delay.Task
    }
 
    static Task completedTask()
@@ -477,6 +481,105 @@ public class Task
       task.setCanceled(cancellationToken);
 
       ^ task
+   }
+}
+
+internal sealed class DelayPromise
+{
+   Task                           _task;
+   CancellationToken              _token;
+   TimerRegistration?             _timer;
+   CancellationTokenRegistration? _cancellationRegistration;
+   bool                           _finished;
+
+   internal constructor new(CancellationToken token)
+   {
+      _task := Task.newPromise();
+      _token := token;
+      _finished := false
+   }
+
+   internal Task Task
+      = _task;
+
+   private finish(bool canceled)
+   {
+      TimerRegistration? timer := nil;
+      CancellationTokenRegistration? cancellationRegistration := nil;
+      bool complete := false;
+      lock(self) {
+         if:not (_finished) {
+            _finished := true;
+            timer := _timer;
+            _timer := nil;
+            cancellationRegistration := _cancellationRegistration;
+            _cancellationRegistration := nil;
+            complete := true
+         }
+      };
+
+      if (complete) {
+         if:not:nil(timer)
+            timer!.close();
+
+         if:not:nil(cancellationRegistration)
+            cancellationRegistration!.close();
+
+         if (canceled) {
+            _task.setCanceled(_token)
+         }
+         else {
+            _task.setResult()
+         }
+      }
+   }
+
+   private attachTimer(TimerRegistration timer)
+   {
+      bool closeTimer := false;
+      lock(self) {
+         if (_finished) {
+            closeTimer := true
+         }
+         else {
+            _timer := timer
+         }
+      };
+
+      if (closeTimer)
+         timer.close()
+   }
+
+   private attachCancellation(CancellationTokenRegistration registration)
+   {
+      bool closeRegistration := false;
+      lock(self) {
+         if (_finished) {
+            closeRegistration := true
+         }
+         else {
+            _cancellationRegistration := registration
+         }
+      };
+
+      if (closeRegistration)
+         registration.close()
+   }
+
+   internal sealed schedule(int milliseconds)
+   {
+      CancellationTokenRegistration cancellationRegistration := _token.register({ finish(true) });
+      attachCancellation(cancellationRegistration);
+
+      bool addTimer := false;
+      lock(self) {
+         addTimer := !_finished
+      };
+
+      if (addTimer && milliseconds > 0) {
+         TimerRegistration timer := TimerQueue.schedule(milliseconds, { finish(false) });
+         attachTimer(timer)
+      }
    }
 }
 
