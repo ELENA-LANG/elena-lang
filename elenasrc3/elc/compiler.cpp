@@ -4101,6 +4101,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
                switch (retVal.kind) {
                   case ObjectKind::FieldAddress:
                   case ObjectKind::Field:
+                  case ObjectKind::ReadOnlyFieldAddress:
+                  case ObjectKind::ReadOnlyField:
                      scope.info.attributes.add({ current.arg.reference, ClassAttribute::FieldGetter }, retVal.argument);
                      break;
                   default:

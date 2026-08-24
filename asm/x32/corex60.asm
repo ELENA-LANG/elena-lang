@@ -836,13 +836,12 @@ inline %0BBh
 #if _WIN
   mov  eax, fs:[2Ch]
   mov  eax, [eax]
-  lea  edi, [eax + __arg32_1]
 #elif _LNX
-  mov  eax, gs:[0]
-  lea  edi, [eax - __arg32_1]
-  lea  edi, [edi-4]
+  mov  ecx, fs:[0]
+  lea  eax, [ecx-tt_size]
 #endif
 
+  lea  edi, [eax + __arg32_1]
   mov  ebx, [edi]
 
 end
@@ -853,13 +852,12 @@ inline %0BCh
 #if _WIN
   mov  eax, fs:[2Ch]
   mov  eax, [eax]
-  lea  edi, [eax + __arg32_1]
 #elif _LNX
-  mov  eax, gs:[0]
-  lea  edi, [eax - __arg32_1]
-  lea  edi, [edi-4]
+  mov  ecx, fs:[0]
+  lea  eax, [ecx-tt_size]
 #endif
 
+  lea  edi, [eax + __arg32_1]
   mov  [edi], ebx
 
 end

@@ -54,9 +54,13 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * samples
+  * current : enum optimization
   ====================================== 
-  - comparison with enum - must be native
+  - use native operation with comparison
+  - use enum of strings
+  ---------------------------------------
+  * current : samples
+  ====================================== 
   - review rosetta samples from H
   - review all rosetta samples, fix the corrected
   - review all tutorials
@@ -66,14 +70,6 @@ In development:
   - test examples for 64bit
   - test rosetta for 64bit
   - can system 9 be simplified?
-  ---------------------------------------
-  * current : enum optimization
-  ====================================== 
-  - enum members must be constants
-  - Value operator must be implemented directly
-  - use native operation with copying
-  - use native operation with comparison
-  - use enum of strings
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===
