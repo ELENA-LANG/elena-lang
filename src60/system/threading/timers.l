@@ -175,7 +175,7 @@ internal singleton TimerQueue
          };
 
          if:not:nil(expired) {
-            expired!.queueCallback()
+            expired.queueCallback()
          }
          else {
             wake!.wait(waitTime)
