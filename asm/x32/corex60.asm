@@ -837,7 +837,7 @@ inline %0BBh
   mov  eax, fs:[2Ch]
   mov  eax, [eax]
 #elif _LNX
-  mov  ecx, fs:[0]
+  mov  ecx, gs:[0]
   lea  eax, [ecx-tt_size]
 #endif
 
@@ -853,7 +853,7 @@ inline %0BCh
   mov  eax, fs:[2Ch]
   mov  eax, [eax]
 #elif _LNX
-  mov  ecx, fs:[0]
+  mov  ecx, gs:[0]
   lea  eax, [ecx-tt_size]
 #endif
 
