@@ -57,7 +57,25 @@ public class NetworkStream : Stream
    }
 
    int read(byte[] dump, int length)
-      = _socket.read(dump, length);
+      = self.read(dump, 0, length);
+
+   int read(byte[] dump, int offset, int length)
+   {
+      if (offset < 0 || length < 0 || offset > dump.Length - length)
+         { OutOfRangeException.raise() };
+
+      if (offset == 0)
+         { ^ _socket.read(dump, length) };
+
+      byte buffer[1024];
+
+      int pageSize := (length < 1024) ? length : 1024;
+      int read := _socket.read(buffer, pageSize);
+
+      Array<byte>.copyTo(dump, buffer, offset, read);
+
+      ^ read
+   }
      
    indexed internal Task<int> readAsync(byte[] dump, int length)
       = _socket.readAsync(dump, length);
@@ -74,10 +92,36 @@ public class NetworkStream : Stream
          });
 
    int write(byte[] dump, int length)
-   {
-      int retVal := _socket.write(dump, length);
+      = self.write(dump, 0, length);
 
-      ^ retVal
+   int write(byte[] dump, int offset, int length)
+   {
+      if (offset < 0 || length < 0 || offset > dump.Length - length)
+         { OutOfRangeException.raise() };
+
+      byte buffer[1024];
+
+      int remaining := length;
+      int index := offset;
+      int totalWritten := 0;
+      while (remaining > 0) {
+         int pageSize := (remaining < 1024) ? remaining : 1024;
+         byte[] page := dump;
+         if (index != 0) {
+            Array<byte>.copy(buffer, dump, index, pageSize);
+            page := buffer
+         };
+
+         int written := _socket.write(page, pageSize);
+         if (written == 0)
+            { :break };
+
+         index += written;
+         remaining -= written;
+         totalWritten += written
+      };
+
+      ^ totalWritten
    }
      
    indexed internal Task<int> writeAsync(byte[] dump, int length)
