@@ -6,6 +6,7 @@
   - [ADDED] Nested extensions template
   - [ADDED] inplace extension method
   - [ADDED] inplace extension template method
+  - [ADDED] supporting pseudo type - __decl_type
      
 - ELC
   - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation
@@ -16,6 +17,7 @@
   - [ADDED] Supporting System V ABI for x86_64
   - [CRITICAL] Fixing GC routine, clearing mg_wbar on heap expanding
   - [FIXED] async methods returning expressions with await operations
+  - [ADDED] supporting const methods returning a constant object
 
 - VM
 
@@ -45,6 +47,7 @@
   - [ADDED] cancellation tokens and cooperative task cancellation
   - [ADDED] non-blocking task delays, cancelAfter and a shared timer scheduler
   - [FIXED] cancellation registration close waits for callbacks already in progress
+  - [REDUX] enum template - is returning a constant directly
 
 - Scripts
 

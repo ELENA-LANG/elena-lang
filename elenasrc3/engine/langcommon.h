@@ -626,6 +626,7 @@ namespace elena_lang
    constexpr auto V_SUPER_VAR             = 0x80000083u;
    constexpr auto V_RECEIVED_VAR          = 0x80000084u;
    constexpr auto V_PROJECT_VAR           = 0x80000085u;
+   constexpr auto V_DECL_TYPE             = 0x80000086u;
 
    // === Operators ===
    constexpr auto OPERATOR_MAKS              = 0x1840;

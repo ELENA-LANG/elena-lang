@@ -303,6 +303,7 @@ public:
    IdentifierString     superVar;
    IdentifierString     receivedVar;
    IdentifierString     projectVar;
+   IdentifierString     declType;
 
    int                  stackAlignment, rawStackAlignment, localAlignment;
    int                  ehTableEntrySize;
@@ -389,6 +390,18 @@ public:
       this->tapeOptMode = tapeOptMode;
       this->btapeOptMode = btapeOptMode;
    }
+};
+
+// --- TypeResolveMode ---
+enum class TypeResolveMode : pos_t
+{
+   None              = 0x0000,
+   LiteralName       = 0x0001,
+   AllowRole         = 0x0002,
+   AllowSingleton    = 0x0004,
+   DeclarationMode   = 0x0008,
+   ConstMode         = 0x0010,
+   AllowPrimitives   = 0x0020,
 };
 
 // --- ExpressionAttributes ---

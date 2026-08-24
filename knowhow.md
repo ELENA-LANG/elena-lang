@@ -52,6 +52,7 @@ Content
 + [Resolving type ambiguities for a template declaration](#resolving-type-ambiguities-for-a-template-declaration)
 + [Unboxing an auto range collection (used for DI routine)](unboxing-an-auto-range-collection)
 + [Dependency injection in a constructor](#dependency-injection-in-a-constructor)
++ [Type shortcut - __decl_type](#Type-shortcut-__decl_type)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1227,4 +1228,42 @@ way to initialize every constructor argument (implementing an dependeny injectio
     
        var obj := ClassToBeInjected.new();
        Console.writeLine(obj.WhoAmI());
+    }
+
+## ----------------------------------------------------------------------------
+##  Type shortcut - __decl_type
+## ----------------------------------------------------------------------------
+
+It is possible to use a special identifier - \_\_decl_type to refer the declarational
+class.
+
+    import extensions;
+
+    class A
+    {
+       static __decl_type create()  // __decl_type refers to the class we are declaring - A
+           = new __decl_type(); 
+    }
+
+    public Program()
+    {
+        Console.printLine("A.create() = ", A.create());
+    }
+
+It is still possible to have a class with such a name. To refer to the class declared outside you
+can use **class** attribute
+
+    import extensions;
+
+    class __decl_type;
+
+    class A
+    {
+       static create()  // __decl_type refers to __decl_type class
+           = new class __decl_type(); 
+    }
+
+    public Program()
+    {
+        Console.printLine("A.create() = ", A.create());
     }

@@ -8,3 +8,4 @@
 #let defaults["super"]       := 80000083h;
 #let defaults["__received"]  := 80000084h;
 #let defaults["__project"]   := 80000085h;
+#let defaults["__decl_type"] := 80000086h;
