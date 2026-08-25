@@ -218,23 +218,24 @@ void VMSession::printHelp()
    _presenter->printLine(_helpPrompt.str());
 }
 
-//bool VMSession::importScript(ustr_t scriptName)
-//{
-//   PathString totalPath(_basePath);
-//   totalPath.combine(scriptName);
-//   totalPath.changeExtension("es");
-//
-//   TextFileReader reader(*totalPath, _encoding, false);
-//   if (!reader.isOpen())
-//      return false;
-//
-//   char buffer[1024];
-//   while (reader.read(buffer, 1024)) {
-//      _body.append(buffer);
-//   }
-//
-//   return true;
-//}
+static inline ustr_t readAssignName(ustr_t script, IdentifierString& name)
+{
+   size_t pos = script.findStr(":=");
+   if (pos != NOTFOUND_POS && pos > 0) {
+      size_t assign_index = pos;
+      while (script[pos - 1] == ' ')
+         pos--;
+
+      name.copy(script, pos);
+
+      return script + assign_index;
+   }
+   else {
+      name.copy(script);
+
+      return nullptr;
+   }
+}
 
 static inline ustr_t readCommand(ustr_t script, IdentifierString& command)
 {
@@ -641,7 +642,7 @@ void VMSession :: executeCommandLine(ustr_t script, Context& context)
 
             return;
          }
-         context.commandLineArgument = readCommand(context.commandLineArgument + 1, context.variableArg);
+         context.commandLineArgument = readAssignName(context.commandLineArgument + 1, context.variableArg);
          if (!context.commandLineArgument.startsWith(":=")) {
             _presenter->print(ELT_INVALID, *commandName);
 

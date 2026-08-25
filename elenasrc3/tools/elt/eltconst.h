@@ -11,7 +11,7 @@
 
 namespace elena_lang
 {
-   #define ELT_REVISION_NUMBER               0x0007
+   #define ELT_REVISION_NUMBER               0x0008
 
    constexpr auto ELT_GREETING               = "ELENA command line VM terminal %d.%d.%d (C)2021-26 by Aleksey Rakov\n";
 
@@ -59,7 +59,7 @@ namespace elena_lang
    constexpr auto ELT_CANNOT_LOAD_TEMPLATE   = "Cannot load %s template\n";
 
    constexpr auto ELT_UNKNOWNCOMMAND         = "Unknown command %s\n";
-   constexpr auto ELT_INVALID                = "Invalid comman %sd\n";
+   constexpr auto ELT_INVALID                = "Invalid command %s\n";
 }
 
 #endif

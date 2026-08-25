@@ -54,14 +54,10 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * current : enum optimization
-  ====================================== 
-  - use native operation with comparison
-  - use enum of strings
-  ---------------------------------------
-  * samples
+  * current : samples
   ====================================== 
   - review rosetta samples from I
+  - review rosetta samples from J
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples  
@@ -71,16 +67,22 @@ In development:
   - test rosetta for 64bit
   - can system 9 be simplified?
   ---------------------------------------
-  * current : mtaThreadLocalStorageTest
+  ---------------------------------------
+  * enum optimization
   ====================================== 
-  - investigate
-  - fix
+  - use native operation with comparison
+  - use enum of strings
   ---------------------------------------
   * current : sandbox
   ====================================== 
-  - investigate error : free() invalid pointer
-  - fix
   - test for I386 with GC
+  ---------------------------------------
+  * current : Interactive programming (repl)
+  ====================================== 
+  - fix "set @f:="2""
+  - reproduce
+  - fix sample
+
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3
