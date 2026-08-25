@@ -71,10 +71,17 @@ In development:
   - test rosetta for 64bit
   - can system 9 be simplified?
   ---------------------------------------
-  * current : thread local for i386
+  * current : mtaThreadLocalStorageTest
   ====================================== 
   - investigate
   - fix
+  ---------------------------------------
+  * current : sandbox
+  ====================================== 
+  - investigate error : free() invalid pointer
+  - fix
+  - test for x86 with GC
+  - test for I386 with GC
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3

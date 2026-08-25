@@ -313,8 +313,15 @@ labYGNextThread:
   jz   short labYGNextThreadSkip
 
   // ; get the thread local roots
-  lea  eax, [esi + tt_size]
   mov  ecx, [rdata : %SYSTEM_ENV + env_tls_size]
+
+#if _WIN
+  lea  eax, [esi + tt_size]
+#elif _LNX
+  lea  eax, [esi - tt_size]
+  sub  eax, ecx
+#endif
+
   push eax
   push ecx
 
@@ -836,13 +843,13 @@ inline %0BBh
 #if _WIN
   mov  eax, fs:[2Ch]
   mov  eax, [eax]
-#elif _LNX
-  mov  ecx, gs:[0]
-  lea  eax, [ecx-tt_size]
-#endif
-
   lea  edi, [eax + __arg32_1]
   mov  ebx, [edi]
+#elif _LNX
+  mov  edi, gs:[0]
+  sub  edi, __arg32_1 
+  mov  ebx, [edi - 4]
+#endif
 
 end
 
@@ -852,13 +859,14 @@ inline %0BCh
 #if _WIN
   mov  eax, fs:[2Ch]
   mov  eax, [eax]
-#elif _LNX
-  mov  ecx, gs:[0]
-  lea  eax, [ecx-tt_size]
-#endif
-
   lea  edi, [eax + __arg32_1]
   mov  [edi], ebx
+#elif _LNX
+  mov  edi, gs:[0]
+  sub  edi, __arg32_1 
+  mov  [edi - 4], ebx
+#endif
+
 
 end
 
