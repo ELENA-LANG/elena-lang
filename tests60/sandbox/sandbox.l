@@ -42,4 +42,6 @@ public Program()
    
    t1.join();
    t2.join();
+
+   system'runtime'GCManager.collectMinor();
 }
