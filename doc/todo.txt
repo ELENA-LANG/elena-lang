@@ -59,9 +59,9 @@ In development:
   - use native operation with comparison
   - use enum of strings
   ---------------------------------------
-  * current : samples
+  * samples
   ====================================== 
-  - review rosetta samples from H
+  - review rosetta samples from I
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples  
@@ -71,6 +71,16 @@ In development:
   - test rosetta for 64bit
   - can system 9 be simplified?
   ---------------------------------------
+  * current : mtaThreadLocalStorageTest
+  ====================================== 
+  - investigate
+  - fix
+  ---------------------------------------
+  * current : sandbox
+  ====================================== 
+  - investigate error : free() invalid pointer
+  - fix
+  - test for I386 with GC
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3
