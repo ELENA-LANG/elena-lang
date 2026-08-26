@@ -50,9 +50,9 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * current : samples
+  * samples
   ====================================== 
-  - review rosetta samples from J
+  - review rosetta samples from K
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples  
@@ -68,7 +68,6 @@ In development:
   ---------------------------------------
   * current : graph sample
   ====================================== 
-  - make window resizable : support dock property
   - make factory dynamic; depending on external function
   ---------------------------------------
 

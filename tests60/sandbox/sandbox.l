@@ -45,16 +45,15 @@
 //   t1.join();
 //   t2.join();
 //}
-
 import extensions;
+import extensions'dynamic;
  
 public Program()
 {
-    var i := 0u;
-    while (true)
-    {
-        Console.printLine(i);
+    var json := "{ ""foo"": 1, ""bar"": [10, ""apples""] }";
  
-        i += 1u
-    }
+    var o := json.fromJson();
+ 
+    Console.printLine("json.foo=",o.foo);
+    Console.printLine("json.bar=",o.bar)
 }

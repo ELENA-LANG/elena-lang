@@ -802,6 +802,20 @@ namespace collections
          _length.Value := 0        
       }
         
+      bool ifExists(T item) : info("Returns true if the list contains an element which is equal to <b>item</b>")
+      {
+         int len := *_length;
+         for(int i := 0; i < len; i += 1)
+         {
+            T current := _array[i];
+            if(item == current) {
+               ^ true
+            }
+         };
+         
+         ^ false
+      }
+        
       trim(int pos) : info("Trims the list at the specified position")
       {
          if (pos > *_length)

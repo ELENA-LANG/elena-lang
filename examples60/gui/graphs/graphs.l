@@ -7,7 +7,7 @@ import extensions;
 registration : preloaded()
    = true.then(
    {
-      DependencyInjector::registerSingleton<IFactory>(FactoryProvider.new());
+      DependencyInjector::registerSingleton<IFactory>(Factory.new());
    });
 
 public sealed Plotter : IPlotter

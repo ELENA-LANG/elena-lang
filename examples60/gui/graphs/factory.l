@@ -168,20 +168,45 @@ public singleton LnFunction : IFactory
 }
 const int Choice = 6;
 
-public singleton FactoryProvider
+public class FactoryProvider
 {
-   IFactory new()
+   Map<string, IFactory> _factories;
+   string _name;
+   
+   constructor()
    {
-      IFactory factory := PolarFactory;
-      
-      Choice =>
-         2: { factory := SinFactory }
-         3: { factory := CosFactory }
-         4: { factory := SqrFactory }
-         5: { factory := CubeFunction }
-         6: { factory := LnFunction }
-         7: { factory := SqrtFactory };
-         
-      ^ factory;
+      _factories := new Map<string, IFactory>();
    }
-}
+   
+   new()
+      = _factories[_name];   
+   
+   string[] Names
+      = _factories.Keys;
+      
+   register(string name, IFactory factory)
+   {
+      _factories[name] := factory
+   }
+   
+   select(string name)
+   {
+      if:not (_factories.containsKey(name))
+         InvalidArgumentException.new("name").raise();
+      
+      _name := name
+   }
+}   
+
+public static Factory
+   = new FactoryProvider()
+      .register("sinus", SinFactory)
+      .register("cosinus", CosFactory)
+      .register("sqr", SqrFactory)
+      .register("cube", CubeFunction)
+      .register("ln", LnFunction)
+      .register("sqrt", SqrtFactory)
+      .register("star", PolarFactory)
+      .select("star");
+
+
