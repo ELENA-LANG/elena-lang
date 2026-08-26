@@ -42,7 +42,7 @@ In development:
   --------------------------------------
   * graph sample
   ====================================== 
-  - stage 0b : select function - sin / cos / current one function - from combobox
+  - stage 0b : select function - sin / cos / current one function - from radio button list
   - stage 0b : resize the window
   - stage 0c : switch to xforms : xgraph
   - stage 1 : compile-time script 
@@ -50,9 +50,9 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * samples
+  * current : samples
   ====================================== 
-  - review rosetta samples from K
+  - review rosetta samples from L
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples  
@@ -65,10 +65,6 @@ In development:
   ====================================== 
   - use native operation with comparison
   - use enum of strings
-  ---------------------------------------
-  * current : graph sample
-  ====================================== 
-  - make factory dynamic; depending on external function
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===
