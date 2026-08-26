@@ -17,12 +17,13 @@
     </project>
     <manifest>
         <name>ELENA GUI Library</name>
-        <version>7.0.0</version>
+        <version>7.0.1</version>
         <author>Aleksey Rakov</author>
     </manifest>
     <files>
         <module>
             <include>controls.l</include>
+            <include>docking.l</include>
             <include>win32_controls.l</include>
             <include>win_forms.l</include>
             <include>win_dialogs.l</include>

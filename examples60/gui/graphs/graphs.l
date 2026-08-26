@@ -92,8 +92,9 @@ public sealed Plotter : IPlotter
    }   
 }
 
-public class MainWindow : SDIDialog
+public class MainWindow : SDIForm
 {
+   DockingBox     _dockingBox;
    Imagebox       _imagebox;
    IFactory       _factory;
    
@@ -102,6 +103,9 @@ public class MainWindow : SDIDialog
    {
       _factory := factory;
       
+      _dockingBox := DockingBox.new();
+      self.appendControl(_dockingBox);
+      
       _imagebox := Imagebox.new();
       self.appendControl(_imagebox);
 
@@ -109,6 +113,9 @@ public class MainWindow : SDIDialog
       self.setRegion(50, 50, 400, 420);
 
       _imagebox.setRegion(0, 0, 400, 420);
+            
+      _dockingBox.Client := _imagebox;
+      
       _imagebox.onPaint := (object sender, Canvas canvas)
       {
          auto range := _factory.Range;
