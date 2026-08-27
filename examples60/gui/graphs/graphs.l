@@ -2,12 +2,13 @@
 import forms;
 import system'drawing;
 import system'dynamic;
+import system'routines;
 import extensions;
 
 registration : preloaded()
    = true.then(
    {
-      DependencyInjector::registerSingleton<IFactory>(FactoryProvider.new());
+      DependencyInjector::registerSingleton<IFunctionSelector>(Provider);
    });
 
 public sealed Plotter : IPlotter
@@ -45,6 +46,8 @@ public sealed Plotter : IPlotter
    
    private drawAxis()
    {
+      canvas.fillRecangle(0, 0, outputSize.Width, outputSize.Height);
+      
       // X axis
       canvas.setCaret(0, zeroY);
       canvas.lineCaretTo(outputSize.Width, zeroY);
@@ -92,23 +95,54 @@ public sealed Plotter : IPlotter
    }   
 }
 
-public class MainWindow : SDIDialog
+public class MainWindow : SDIForm
 {
-   Imagebox       _imagebox;
-   IFactory       _factory;
+   DockingBox        _dockingBox;
+   Imagebox          _imagebox;
+   Panel             _funPanel; 
+   RadioButtonGroup  _selector;
    
-   constructor new(IFactory factory) : injectable_constructor()
+   string[]          _names;
+   IFactory          _factory;
+   
+   constructor new(IFunctionSelector provider) : injectable_constructor()
       <= super new()
    {
-      _factory := factory;
+      _names := provider.Names;
+      
+      _dockingBox := DockingBox.new();
+      self.appendControl(_dockingBox);
       
       _imagebox := Imagebox.new();
       self.appendControl(_imagebox);
 
+      _funPanel := Panel.new();
+      self.appendControl(_funPanel);
+
+      _selector := RadioButtonGroup.new();
+      _funPanel.appendControl(_selector);
+
       self.Caption := "Graph sample";
-      self.setRegion(50, 50, 400, 420);
+      self.setRegion(50, 50, 500, 420);
 
       _imagebox.setRegion(0, 0, 400, 420);
+      
+      _funPanel.Caption := "Function";
+      _funPanel.setRegion(2, 2, 100, 420);
+      
+      _selector.Caption := "select..";
+      _selector.setRegion(5, 20, 90, 355);
+      _names.forEach::(name => _selector.appendItem(name));
+      _selector.onIndexChanged := (args){ 
+         _factory := provider.select(_names[_selector.SelectedIndex]);
+         
+         _imagebox.refresh();
+      };
+      _selector.SelectedIndex := 0;
+                                    
+      _dockingBox.Client := _imagebox;
+      _dockingBox.Right := _funPanel;
+      
       _imagebox.onPaint := (object sender, Canvas canvas)
       {
          auto range := _factory.Range;

@@ -401,7 +401,14 @@ labYGNextThread:
   // ; get the thread local roots
   mov  rax, rdata : %SYSTEM_ENV
   mov  rcx, [rax + env_tls_size]
+
+#if _WIN
   lea  rax, [rsi + tt_size]
+#elif _LNX
+  lea  rax, [rsi - tt_size]
+  sub  rax, rcx
+#endif
+
   push rax
   push rcx
 
@@ -1040,13 +1047,14 @@ inline %0BBh
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
-#elif (_LNX || _FREEBSD)
-  mov  rcx, fs:[0]
-  lea  rax, [rcx-tt_size]
-#endif
-
   lea  rdi, [rax + __arg32_1]
   mov  rbx, [rdi]
+#elif (_LNX || _FREEBSD)
+  mov  rdi, fs:[0]
+  sub  rdi, __arg32_1 
+  mov  rbx, [rdi - 8]
+#endif
+
 
 end
 
@@ -1056,13 +1064,13 @@ inline %0BCh
 #if _WIN
   mov  rcx, gs:[58h]
   mov  rax, [rcx]
-#elif (_LNX || _FREEBSD)
-  mov  rcx, fs:[0]
-  lea  rax, [rcx-tt_size]
-#endif
-
   lea  rdi, [rax + __arg32_1]
   mov  [rdi], rbx
+#elif (_LNX || _FREEBSD)
+  mov  rdi, fs:[0]
+  sub  rdi, __arg32_1 
+  mov  [rdi - 8], rbx
+#endif
 
 end
 

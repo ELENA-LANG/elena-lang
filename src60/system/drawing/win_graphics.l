@@ -173,6 +173,11 @@ public sealed struct Canvas
       _HDC.copy(x, y, width, height, dc, 0, 0, SRCCOPY)
    } 
  
+   fillRecangle(int x, int y, int width, int height)
+   {
+      _HDC.fillRectangle(x, y, width, height);
+   }
+ 
    free()
    {
       if:not (_pen.IsEmpty())

@@ -802,6 +802,20 @@ namespace collections
          _length.Value := 0        
       }
         
+      bool ifExists(T item) : info("Returns true if the list contains an element which is equal to <b>item</b>")
+      {
+         int len := *_length;
+         for(int i := 0; i < len; i += 1)
+         {
+            T current := _array[i];
+            if(item == current) {
+               ^ true
+            }
+         };
+         
+         ^ false
+      }
+        
       trim(int pos) : info("Trims the list at the specified position")
       {
          if (pos > *_length)
@@ -825,7 +839,21 @@ namespace collections
             this index.Value := -1
          }
       };
-            
+
+      Indexable cast()
+         = Indexable {
+            get int Length()
+               = self.Length;
+               
+            at(int index)
+               => self;
+               
+            setAt(int index, object o)
+            {
+               self.setAt(index, o)
+            }
+         };
+                                    
       get T[] Value() : info("Returns a shallow copy of the list as a strong-typed array")
       {
          int len := *_length;

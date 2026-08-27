@@ -1,5 +1,19 @@
 import system'drawing;
 
+// --- BaseNonVisibleControl ---
+
+public abstract class BaseNonVisibleControl
+{
+   object? _parent;
+
+   Parent = _parent;    
+
+   set internal Parent(object o)
+   {
+      _parent := o
+   }
+}
+
 // --- BaseControl ---
 
 public abstract class BaseControl
@@ -76,7 +90,7 @@ public abstract class BaseControl
         
       set(int n)
       {
-         _region.Width := n
+         setRegion(_region.X, _region.Y, n, _region.Height);
       }
    }
 
@@ -91,7 +105,7 @@ public abstract class BaseControl
         
       set(int n)
       {
-         _region.Height := n
+         setRegion(_region.X, _region.Y, _region.Width, n);
       }
    }
 
@@ -106,7 +120,7 @@ public abstract class BaseControl
         
       set(int n)
       {
-         _region.X := n
+         setRegion(n, _region.Y, _region.Width, _region.Height);
       }
    }
 
@@ -121,9 +135,11 @@ public abstract class BaseControl
         
       set(int n)
       {
-         _region.Y := n
+         setRegion(_region.X, n, _region.Width, _region.Height);
       }
    }
+
+   onParentResize(BaseControl parentControl) {}
 
    setRegion(int x, int y, int width, int height)
    {

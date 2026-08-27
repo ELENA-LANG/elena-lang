@@ -108,6 +108,21 @@ namespace collections
       Array<VarTuple<TKey, TValue>> Values : info("Returns an array of a key-value pairs")
          = _list.Value;
     
+      get TKey[] Keys()
+      {
+         List<TKey> keys := new List<TKey>();
+         auto it := _list.enumerator();
+         while (it.next())
+         {
+            TKey key := (*it).Item1;
+            if:not(keys.ifExists(key)) {
+               keys.append(key)
+            }
+         };
+         
+         ^ *keys
+      }
+    
       get TValue[] MapValues() : info("Returns an array of a map values")
       {
          auto list := new List<TValue>();
