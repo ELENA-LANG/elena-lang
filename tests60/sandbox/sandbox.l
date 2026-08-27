@@ -46,55 +46,29 @@
 //   t2.join();
 //}
 
-import system'dynamic;
-import extensions;
-import system'routines;
-import system'collections;
- 
-extension algorithmOp
+public struct A
 {
-    s_of_n()
-    {
-        var counter := new Integer();
-        var n := self;
- 
-        ^ new ArrayList().mixInto(new
-        {
-            eval(i)
-            {
-                counter.append(1);
-
-                if (weak self.Length < n)
-                { 
-                    weak self.append(i) 
-                }
-                else
-                { 
-                    if(Random.nextInt(counter) < n)
-                        { weak self[Random.nextInt(n)] := i }
-                };
-
-                ^ weak self.Value
-            }
-        })
-    }
+   int value;
+   
+   constructor new(int value)
+   {
+      this value := value
+   }
+   
+   get int Value()
+      = value;   
+   
+   bool equal(A value)
+      = *self == *value;
 }
- 
+
 public Program()
 {
-    var bin := Array.allocate(10).populate::(n => new Integer());
-    for(int trial := 0; trial < 10000; trial += 1)
-    {
-        var s_of_n := 3.s_of_n();
- 
-        for(int n := 0; n < 10; n += 1)
-        {
-            var sample := s_of_n.eval(n);
- 
-            if (n == 9)
-                { sample.forEach::(i){ bin[i].append(1) } }
-        }
-    };    
- 
-    Console.printLine(bin).readChar()
+   A a := A.new(2);
+   A b := A.new(3);
+   
+   if (a == b) {
+      Console.writeLine("Does not work")
+   }
+   else Console.writeLine("Do work!");
 }

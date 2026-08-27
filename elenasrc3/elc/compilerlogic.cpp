@@ -2531,7 +2531,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
       result.nillableArgs = methodInfo.nillableArgs;
-      result.checkNillableArgs = test(methodInfo.nillableArgs, EnforcedNillableArgs);
+      result.checkNillableArgs = test(methodInfo.extra_hints, (ref_t)MethodExtraHint::EnforcedNillableArgs);
       result.byRefHandler = methodInfo.byRefHandler;
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
@@ -2546,6 +2546,10 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldGetter });
       }
       else result.retrieveGetter = false;
+
+      if (test(methodInfo.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr)) {
+         result.inlineExprRef = info.attributes.get({ message, ClassAttribute::InlineExprRef });
+      }
 
       return true;
    }

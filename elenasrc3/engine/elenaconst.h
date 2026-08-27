@@ -13,7 +13,7 @@ namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
    #define ENGINE_MAJOR_VERSION              7              // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              1
+   #define ENGINE_MINOR_VERSION              2
 
    constexpr auto LINE_LEN = 0x1000;                     // the maximal source line length
    constexpr auto IDENTIFIER_LEN = 0x0300;               // the maximal identifier length
@@ -331,6 +331,7 @@ namespace elena_lang
       SourceTemplateRef = 0x10D,
       RuntimeDiscovered = 0x00E,
       FieldGetter = 0x80F,
+      InlineExprRef = 0x910,
    };
 
    // === Reference constants ====
@@ -382,6 +383,7 @@ namespace elena_lang
    constexpr ref_t mskTLSVariable = 0x29000000u;
    constexpr ref_t mskMetaInfo = 0x2A000000u;
    constexpr ref_t mskPropNameLiteralRef = 0x2B000000u;
+   constexpr ref_t mskInlineInfo = 0x2C000000u;
 
    // --- Image reference types ---
    constexpr ref_t mskCodeRef = 0x01000000u;

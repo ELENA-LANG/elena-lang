@@ -234,6 +234,7 @@ namespace elena_lang
       NestedNamedClass        = 0x00011A,
       Commented               = 0x00011B,
       MethodArgBlock          = 0x00011C,
+      ExtraHints              = 0x00011D,
 
       Column                  = 0x000201,
       Row                     = 0x000202,

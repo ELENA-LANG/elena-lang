@@ -40,6 +40,7 @@ namespace elena_lang
       int         nillableArgs;
       mssg_t      byRefHandler;
       int         getterFieldOffset;
+      ref_t       inlineExprRef;
 
       CheckMethodResult() = default;
    };

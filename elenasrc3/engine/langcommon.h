@@ -73,13 +73,19 @@ namespace elena_lang
       VisibilityMask       = 0xC0000000,
    };
 
-   // --- MethodInfo ---
-   constexpr int EnforcedNillableArgs = 0x80000000;
+   enum class MethodExtraHint : ref_t
+   {
+      None                 = 0x00000000,
+      EnforcedNillableArgs = 0x00000001,
+      HasInlineExpr        = 0x00000002,
+   };
 
+   // --- MethodInfo ---
    struct MethodInfo
    {
       bool   inherited;
       ref_t  hints;
+      ref_t  extra_hints;
       ref_t  outputRef;
       mssg_t multiMethod;
       mssg_t byRefHandler;
@@ -88,15 +94,16 @@ namespace elena_lang
       MethodInfo()
       {
          inherited = false;
-         hints = 0;
+         hints = extra_hints = 0;
          outputRef = 0;
          multiMethod = 0;
          byRefHandler = 0;
          nillableArgs = 0;
       }
-      MethodInfo(bool inherited, ref_t hints, ref_t outputRef, mssg_t multiMethod, mssg_t byRefHandler, int nillableArgs) :
+      MethodInfo(bool inherited, ref_t hints, ref_t extra_hints, ref_t outputRef, mssg_t multiMethod, mssg_t byRefHandler, int nillableArgs) :
          inherited(inherited),
          hints(hints),
+         extra_hints(extra_hints),
          outputRef(outputRef),
          multiMethod(multiMethod),
          byRefHandler(byRefHandler),
