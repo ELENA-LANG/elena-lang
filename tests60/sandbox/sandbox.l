@@ -46,29 +46,14 @@
 //   t2.join();
 //}
 
-public struct A
-{
-   int value;
-   
-   constructor new(int value)
-   {
-      this value := value
-   }
-   
-   get int Value()
-      = value;   
-   
-   __inlineop bool equal(A value)
-      = *self == *value;
-}
+public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
 
 public Program()
 {
-   A a := A.new(2);
-   A b := A.new(3);
+   Color color := Color.Red;
    
-   if (a == b) {
-      Console.writeLine("Does not work")
+   if (color == Color.Red) {
+      Console.writeLine("Do work!")
    }
-   else Console.writeLine("Do work!");
+   else Console.writeLine("Does not work");
 }

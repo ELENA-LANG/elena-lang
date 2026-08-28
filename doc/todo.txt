@@ -61,13 +61,7 @@ In development:
   ---------------------------------------
   * enum optimization
   ====================================== 
-  - use native operation with comparison
   - use enum of strings
-  ---------------------------------------
-  * inline operations
-  ====================================== 
-  - try to optimize
-  - add to knowhow
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===
