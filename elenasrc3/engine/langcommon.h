@@ -500,6 +500,7 @@ namespace elena_lang
    constexpr auto V_IGNOREDUPLICATE       = 0x80007001u;
    constexpr auto V_SCRIPTSELFMODE        = 0x80007002u;
    constexpr auto V_THROWOP               = 0x80007003u;
+   constexpr auto V_INLINEOP              = 0x80007004u;
 
    /// indexed
    constexpr auto V_INDEXED_ATTR          = 0x80006001u;

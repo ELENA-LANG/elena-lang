@@ -5117,6 +5117,9 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
    if (methodScope.info.hints)
       node.appendChild(SyntaxKey::Hints, methodScope.info.hints);
 
+   if (methodScope.info.extra_hints)
+      node.appendChild(SyntaxKey::ExtraHints, methodScope.info.extra_hints);
+
    if (methodScope.checkHint(MethodHint::Yieldable) && yieldMethodNotAllowed) {
       // raise an error if the method must be static
       methodScope.raiseError(errIllegalMethod, node);
@@ -6079,12 +6082,16 @@ void Compiler::declareMethodAttributes(MethodScope& scope, SyntaxNode node, bool
             ref_t value = current.arg.reference;
 
             ref_t hint = 0;
-            if (_logic->validateMethodAttribute(value, hint, explicitMode)) {
+            ref_t extra_hint = 0;
+            if (_logic->validateMethodAttribute(value, hint, extra_hint, explicitMode)) {
                if (isMethodKind(hint) && isMethodKind(scope.info.hints)) {
                   // a method kind can be set only once
                   scope.raiseError(errInvalidHint, node);
                }
-               else scope.info.hints |= hint;
+               else {
+                  scope.info.hints |= hint;
+                  scope.info.extra_hints |= extra_hint;
+               }
             }
             else {
                current.setArgumentReference(0);
@@ -10463,11 +10470,46 @@ void Compiler :: compileMethodInvoker(BuildTreeWriter& writer, MethodScope& scop
    else assert(false); // should never reach this point
 }
 
+ref_t Compiler :: saveInlineExpression(MethodScope& scope, SyntaxNode node)
+{
+   ref_t exprRef = scope.moduleScope->mapAnonymous("expr");
+
+   SyntaxTree exprTree;
+   SyntaxTreeWriter writer(exprTree);
+   writer.newNode(SyntaxKey::Root);
+
+   // add self
+   writer.appendNode(SyntaxKey::Parameter, *scope.moduleScope->selfVar);
+   for (auto it = scope.parameters.start(); !it.eof(); ++it) {
+      writer.appendNode(SyntaxKey::Parameter, it.key());
+   }
+
+   writer.newNode(SyntaxKey::Expression);
+   SyntaxTree::copyNode(writer, node);
+   writer.closeNode();
+
+   writer.closeNode();
+
+   MemoryBase* target = scope.module->mapSection(exprRef | mskInlineInfo, false);
+   exprTree.save(target);
+
+   return exprRef;
+}
+
 void Compiler::compileMethod(BuildTreeWriter& writer, MethodScope& scope, SyntaxNode node, bool withDebugInfo)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
 
    SyntaxNode current = node.firstChild(SyntaxKey::MemberMask);
+
+   if (test(scope.info.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr)) {
+      if (current.key != SyntaxKey::ReturnExpression)
+         scope.raiseError(errIllegalMethod, node);
+
+      ref_t exprRef = saveInlineExpression(scope, current);
+      classScope->info.attributes.exclude({ scope.message, ClassAttribute::InlineExprRef });
+      classScope->info.attributes.add({ scope.message, ClassAttribute::InlineExprRef }, exprRef);
+   }
 
    CodeScope codeScope(&scope);
 
@@ -13229,14 +13271,20 @@ void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
    compiler->_errorProcessor->info(infoCurrentMethod, *messageName);
 #endif // FULL_OUTOUT_INFO
 
+   bool invalid = false;
+
    // if it is a dispatch handler
    if (scope.message == scope.moduleScope->buildins.dispatch_message) {
+      invalid |= test(scope.info.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr);
+
       compiler->compileDispatcherMethod(writer, scope, current,
          test(classScope->info.header.flags, elWithGenerics),
          test(classScope->info.header.flags, elWithVariadics));
    }
    // if it is a dispatch & cast handler
    else if (scope.message == scope.moduleScope->buildins.cast_dispatch_message) {
+      invalid |= test(scope.info.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr);
+
       compiler->compileDispatchAndCastMethod(writer, scope, current);
    }
    // if it is an abstract one
@@ -13245,19 +13293,31 @@ void Compiler::Method::compile(BuildTreeWriter& writer, SyntaxNode current)
    }
    // if it is an initializer
    else if (scope.checkHint(MethodHint::Initializer)) {
+      invalid |= test(scope.info.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr);
+
       compiler->compileInitializerMethod(writer, scope, current.parentNode());
    }
    else if (scope.checkHint(MethodHint::Yieldable)) {
+      invalid |= test(scope.info.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr);
+
       compiler->compileYieldMethod(writer, scope, current, classScope->withDebugInfo);
    }
    else if (scope.checkHint(MethodHint::Async)) {
+      invalid |= test(scope.info.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr);
+
       compiler->compileAsyncMethod(writer, scope, current, classScope->withDebugInfo);
    }
    else if (isMethodInvoker(current)) {
+      invalid |= test(scope.info.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr);
+
       compiler->compileMethodInvoker(writer, scope, current, classScope->withDebugInfo);
    }
    // if it is a normal method
    else compiler->compileMethod(writer, scope, current, classScope->withDebugInfo);
+
+   if (invalid) {
+      scope.raiseError(errIllegalMethod, current);
+   }
 }
 
 void Compiler::Method::compileConstructor(BuildTreeWriter& writer, SyntaxNode current, ClassScope& classClassScope)
@@ -17318,14 +17378,30 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          return false;
 
       if (exprVal.kind == ObjectKind::EncapseFieldAddress) {
-         if (size > 0) {
-            writeObjectInfo(target);
-            writer->appendNode(BuildKey::SavingInStack, 0);
-            writeObjectInfo(encapseSource);
-            operationType = BuildKey::CopyingAccField;
-            operand = exprVal.argument;
+         switch (size) {
+            case 4:
+               writeObjectInfo(encapseSource);
+               writer->appendNode(BuildKey::LoadingAccToIndex);
+               writeObjectInfo(target);
+               operationType = BuildKey::SavingIndexToAcc;
+               break;
+            case 8:
+               writeObjectInfo(encapseSource);
+               writer->appendNode(BuildKey::LoadingAccToLongIndex);
+               writeObjectInfo(target);
+               operationType = BuildKey::SavingLongIndexToAcc;
+               break;
+            default:
+               if (size > 0) {
+                  writeObjectInfo(target);
+                  writer->appendNode(BuildKey::SavingInStack, 0);
+                  writeObjectInfo(encapseSource);
+                  operationType = BuildKey::CopyingAccField;
+                  operand = exprVal.argument;
+               }
+               else writeObjectInfo(boxArgument(encapseSource, false, true, false));
+               break;
          }
-         else writeObjectInfo(boxArgument(encapseSource, false, true, false));
       }
       else if (size > 0) {
          operationType = BuildKey::CopyingAccField;

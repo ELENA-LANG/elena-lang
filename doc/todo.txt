@@ -66,10 +66,7 @@ In development:
   ---------------------------------------
   * inline operations
   ====================================== 
-  - it must be possible to mark operator method as inline;
-    save an expression as a tree and implement it inline
-  - implement
-  - test
+  - try to optimize
   - add to knowhow
   ---------------------------------------
 

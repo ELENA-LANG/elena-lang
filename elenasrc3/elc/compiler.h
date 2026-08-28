@@ -1909,6 +1909,8 @@ namespace elena_lang
 
       bool checkifSingleObject(Scope& scope, SyntaxNode node);
 
+      ref_t saveInlineExpression(MethodScope& scope, SyntaxNode node);
+
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
       static ObjectInfo defineEncapseSource(ObjectInfo info);

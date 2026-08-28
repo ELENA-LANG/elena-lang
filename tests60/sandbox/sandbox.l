@@ -58,7 +58,7 @@ public struct A
    get int Value()
       = value;   
    
-   bool equal(A value)
+   __inlineop bool equal(A value)
       = *self == *value;
 }
 

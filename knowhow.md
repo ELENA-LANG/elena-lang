@@ -53,6 +53,7 @@ Content
 + [Unboxing an auto range collection (used for DI routine)](unboxing-an-auto-range-collection)
 + [Dependency injection in a constructor](#dependency-injection-in-a-constructor)
 + [Type shortcut - __decl_type](#Type-shortcut-__decl_type)
++ [Inline method attribute : __inlineop](#Inline-method-:-__inlineop)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1267,3 +1268,64 @@ can use **class** attribute
     {
         Console.printLine("A.create() = ", A.create());
     }
+
+
+## ----------------------------------------------------------------------------
+##  Inline method : __inlineop
+## ----------------------------------------------------------------------------
+
+\_\_inlineop attribute is used to indicate that the method call can be replaced
+with a direct expression (if the method body is an expression and the method is sealed). 
+
+For example in the following code:
+
+    public struct A
+    {
+       int value;
+       
+       constructor new(int value)
+       {
+          this value := value
+       }
+       
+       get int Value()
+          = value;   
+       
+       __inlineop bool equal(A value)
+          = *self == *value;
+    }
+    
+    public Program()
+    {
+       A a := A.new(2);
+       A b := A.new(3);
+       
+       if (a == b) {
+          Console.writeLine("Does not work")
+       }
+       else Console.writeLine("Do work!");
+    }
+
+The **equal** operation call will be replaced with a direct operation - \*self == \*value
+
+E.g. the method call:
+
+           set          dp:-8
+           store        sp:1
+           set          dp:-4
+           store        sp:0
+           peek         sp:0
+           mov        mssg:equal<'A>[2]
+           call       mssg:equal<'A>[2], class:sandbox'A
+
+will be inline expression:
+
+           load         dp:-4
+           save         dp:-12
+           load         dp:-8
+           save         dp:-16
+           set          dp:-12
+           store        sp:0
+           set          dp:-16
+           store        sp:1
+           icmp           :4

@@ -123,7 +123,7 @@ namespace elena_lang
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, SymbolKind& symbolKind);
       bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility, bool& externalOp);
       bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
-      bool validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode);
+      bool validateMethodAttribute(ref_t attribute, ref_t& hint, ref_t& extra_hint, bool& explicitMode);
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
       bool validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo, bool& superMode);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);
