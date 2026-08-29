@@ -46,43 +46,9 @@
 //   t2.join();
 //}
 
-//public const struct Color : enum<int>(Red = 1,Green = 2,Blue = 3);
-//
-//public Program()
-//{
-//   Color color := Color.Red;
-//   
-//   if (color != Color.Green) {
-//      Console.writeLine("Do work!")
-//   }
-//   else Console.writeLine("Does not work");
-//}
+A;
 
-    public struct A
-    {
-       IntNumber value;
-/*       
-       constructor new(int value)
-       {
-          this value := value
-       }*/
-       
-       get IntNumber Value()
-          = value;   
-       
-       __inlineop BoolValue equal(A value)
-          = *self == *value;
-    }
-    
-    public Program()
-    {
-       A a /* := A.new(2)*/;
-       A b /* := A.new(3)*/;
-       
-       a.equal(b)
-       
-//       if (a.equal(b)) {
-          //Console.writeLine("Does not work")
-//       }
-//       else Console.writeLine("Do work!");*/
-    }
+public Program()
+{
+   Array<A?> list := class Array<A?>.allocate(3);
+}

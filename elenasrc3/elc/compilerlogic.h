@@ -64,7 +64,24 @@ namespace elena_lang
 
    DISABLE_WARNING_POP
 
-   typedef CachedList<Pair<mssg_t, ref_t>, 10> VirtualMethods;
+   struct VirtualMethodInfo
+   {
+      mssg_t    message;
+      TypeInfo  outputType;
+      int       nillableArgs;
+
+      VirtualMethodInfo()
+         : message(0), outputType({}), nillableArgs(0)
+      {
+      }
+
+      VirtualMethodInfo(mssg_t value1, TypeInfo value2, int nillableArgs)
+         : message(value1), outputType(value2), nillableArgs(nillableArgs)
+      {
+      }
+   }; 
+
+   typedef CachedList<VirtualMethodInfo, 10> VirtualMethods;
 
    inline pos_t OpHashRule(int id)
    {

@@ -2779,6 +2779,11 @@ bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, 
    return true;
 }
 
+static inline TypeInfo defineOutputTypeInfo(MethodInfo& info)
+{
+   return { info.outputRef, 0, test(info.hints, (ref_t)MethodHint::Nillable) };
+}
+
 void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods)
 {
    ClassInfo info;
@@ -2787,7 +2792,7 @@ void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_
       auto mssg = it.key();
 
       if (test((*it).hints, (ref_t)MethodHint::Abstract)) {
-         methods.add({ mssg, (*it).outputRef });
+         methods.add({ mssg, defineOutputTypeInfo(*it), (*it).nillableArgs });
       }
    }
 }

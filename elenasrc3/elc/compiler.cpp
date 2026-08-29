@@ -3233,7 +3233,11 @@ void Compiler :: declareVMT(ClassScope& scope, SyntaxNode node, bool& withConstr
 
                   current.setArgumentReference(methodScope.message);
                }
-               else methodScope.message = current.arg.reference;
+               else {
+                  methodScope.message = current.arg.reference;
+                  if (current.existChild(SyntaxKey::NillableInfo))
+                     methodScope.info.nillableArgs = current.findChild(SyntaxKey::NillableInfo).arg.value;
+               }
 
                declareMethodMetaInfo(methodScope, current);
                declareMethod(methodScope, current, scope.abstractMode, staticNotAllowed, yieldMethodNotAllowed);
@@ -5111,7 +5115,7 @@ void Compiler :: declareMethod(MethodScope& methodScope, SyntaxNode node, bool a
       addTypeInfo(methodScope, node, SyntaxKey::OutputInfo, mapOutputType(methodScope.info));
    }
 
-   if (methodScope.info.nillableArgs)
+   if (methodScope.info.nillableArgs && !node.existChild(SyntaxKey::NillableInfo))
       node.appendChild(SyntaxKey::NillableInfo, methodScope.info.nillableArgs);
 
    if (methodScope.info.hints)
@@ -7017,6 +7021,9 @@ TypeInfo Compiler :: resolveTypeAttribute(Scope& scope, SyntaxNode node, TypeAtt
          break;
       }
       case SyntaxKey::NullableType:
+         if (node.arg.reference)
+            return { node.arg.reference, 0, true };
+
          typeInfo = resolveTypeScope(scope, node, attributes, mode);
          break;
       default:
@@ -11587,7 +11594,7 @@ void Compiler::injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t pare
             for (pos_t i = 0; i < virtualMethods.count_pos(); i++) {
                auto methInfo = virtualMethods.get(i);
 
-               injectVirtualDispatchMethod(scope, node, methInfo.value1, methInfo.value2, terminalNode);
+               injectVirtualDispatchMethod(scope, node, methInfo.message, methInfo.outputType, methInfo.nillableArgs, terminalNode);
             }
 
             // interface class should no have a custom dispatcher
@@ -12476,7 +12483,7 @@ void Compiler :: generateOverloadListMember(ModuleScopeBase& scope, ref_t listRe
    }
 }
 
-static inline void injectParameters(Compiler::Scope& scope, SyntaxNode methodNode, ref_t signRef, mssg_t message)
+static inline void injectParameters(Compiler::Scope& scope, SyntaxNode methodNode, ref_t signRef, mssg_t message, int nillableArgs)
 {
    if (signRef) {
       ref_t signatures[ARG_COUNT];
@@ -12484,11 +12491,14 @@ static inline void injectParameters(Compiler::Scope& scope, SyntaxNode methodNod
 
       String<char, 10> arg;
       for (size_t i = 0; i < len; i++) {
+         bool nillable = (nillableArgs & 1) == 1;
+         nillableArgs >>= 1;
+
          arg.copy("$");
          arg.appendInt((int)i);
 
          SyntaxNode param = methodNode.appendChild(SyntaxKey::Parameter);
-         param.appendChild(SyntaxKey::Type, signatures[i]);
+         param.appendChild(nillable ? SyntaxKey::NullableType : SyntaxKey::Type, signatures[i]);
          SyntaxNode nameParam = param.appendChild(SyntaxKey::Name);
          nameParam.appendChild(SyntaxKey::identifier, arg.str());
       }
@@ -12531,7 +12541,7 @@ void Compiler::injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t me
    ref_t signRef = 0;
    scope.module->resolveAction(actionRef, signRef);
 
-   injectParameters(scope, methodNode, signRef, message);
+   injectParameters(scope, methodNode, signRef, message, 0);
 
    SyntaxNode body = methodNode.appendChild(SyntaxKey::ReturnExpression).appendChild(SyntaxKey::Expression);
    SyntaxNode opNode = body.appendChild(((message & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE) ? SyntaxKey::PropertyOperation : SyntaxKey::MessageOperation);
@@ -12554,20 +12564,24 @@ static inline SyntaxNode findAutigeneratedNode(SyntaxNode& node)
    return {};
 }
 
-void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxNode targetTerminalNode)
+void Compiler :: injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, TypeInfo outputType, int nillableArgs, 
+   SyntaxNode targetTerminalNode)
 {
    SyntaxNode methodNode = classNode.appendChild(SyntaxKey::Method, message);
    // HOTFIX : indicating virtual interface dispatcher, to ignore byref handler optimization
    methodNode.appendChild(SyntaxKey::Attribute, V_INTERFACE_DISPATCHER);
 
-   if (outputRef)
-      methodNode.appendChild(SyntaxKey::Type, outputRef);
+   if (outputType.typeRef)
+      methodNode.appendChild(outputType.nillable ? SyntaxKey::NullableType : SyntaxKey::Type, outputType.typeRef);
+
+   if (nillableArgs)
+      methodNode.appendChild(SyntaxKey::NillableInfo, nillableArgs);
 
    ref_t actionRef = getAction(message);
    ref_t signRef = 0;
    scope.module->resolveAction(actionRef, signRef);
 
-   injectParameters(scope, methodNode, signRef, message);
+   injectParameters(scope, methodNode, signRef, message, nillableArgs);
 
    SyntaxNode body = methodNode.appendChild(SyntaxKey::Redirect);   
    SyntaxNode objNode = body
