@@ -48,9 +48,9 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * current : samples
+  * samples
   ====================================== 
-  - review rosetta samples from M
+  - review rosetta samples from N
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples  
@@ -59,7 +59,7 @@ In development:
   - test examples for 64bit
   - test rosetta for 64bit
   ---------------------------------------
-  * enum optimization
+  * current : enum optimization
   ====================================== 
   - use enum of strings
   ---------------------------------------

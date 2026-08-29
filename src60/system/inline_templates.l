@@ -254,6 +254,9 @@ public const enum<T>(params member)::
    __inlineop bool equal(__decl_type value)
       = *self == *value;
 
+   __inlineop bool notequal(__decl_type value)
+      = *self != *value;
+
    bool equal(value)
    {
       if (value; is __decl_type en)
