@@ -116,18 +116,18 @@ namespace io
          ^ retVal
       }
         
-      read(int index, int length, byte[] array)
-         <= read(index, 0, length, array);
+      read(int sourceIndex, int length, byte[] array)
+         <= read(sourceIndex, 0, length, array);
 
-      read(int index, int offset, int length, byte[] array)
+      read(int sourceIndex, int destIndex, int length, byte[] array)
       {
          int used := _used.Value;
 
-         if (index < 0 || length < 0 || index > used - length || offset < 0 || offset > array.Length - length)
+         if (sourceIndex < 0 || length < 0 || sourceIndex > used - length || destIndex < 0 || destIndex > array.Length - length)
             { OutOfRangeException.raise() };
 
          for (int i := 0; i < length; i += 1) {
-            array[offset + i] := _buffer[index + i]
+            array[destIndex + i] := _buffer[sourceIndex + i]
          }
       }
         
@@ -198,7 +198,7 @@ namespace io
       }
     
       int read(byte[] dump, int len)
-         = self.read(dump, 0, len);
+         = read(dump, 0, len);
 
       int read(byte[] dump, int offset, int len)
       {

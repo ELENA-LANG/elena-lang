@@ -95,7 +95,7 @@ public fileStreamSegmentTest() : testCase()
       };
 
       using(Stream output := FileStream.openForReWrite(path)) {
-         output.write(source, 3, 2048)
+         output.write(source, 3, 2050)
       };
 
       byte[] target := new byte[](2052);
@@ -112,7 +112,11 @@ public fileStreamSegmentTest() : testCase()
          Assert.ifEqual(target[2], 3);
          Assert.ifEqual(target[1025], 2);
          Assert.ifEqual(target[2049], 2);
-         Assert.ifEqual(target[2050], 99)
+         Assert.ifEqual(target[2050], 99);
+
+         byte[] tail := new byte[](1);
+         Assert.ifEqual(input.read(tail, 1), 1);
+         Assert.ifEqual(tail[0], 3)
       }
    }
    finally {

@@ -69,26 +69,6 @@ namespace io
                 0)
       }
 
-      write(byte[] dump, int offset, int length)
-      {
-         if (offset < 0 || length < 0 || offset > dump.Length - length)
-            { OutOfRangeException.raise() };
-
-         byte buffer[1024];
-
-         int remaining := length;
-         int index := offset;
-         while (remaining > 0) {
-            int pageSize := (remaining < 1024) ? remaining : 1024;
-
-            Array<byte>.copy(buffer, dump, index, pageSize);
-            self.write(buffer, pageSize);
-
-            index += pageSize;
-            remaining -= pageSize
-         }
-      }
-    
       int read(byte[] dump, int len)
       {
          extern KERNEL32.ReadFile(
@@ -100,32 +80,6 @@ namespace io
             0);
 
          ^ temp
-      }
-
-      int read(byte[] dump, int offset, int length)
-      {
-         if (offset < 0 || length < 0 || offset > dump.Length - length)
-            { OutOfRangeException.raise() };
-
-         byte buffer[1024];
-
-         int remaining := length;
-         int index := offset;
-         int totalRead := 0;
-         while (remaining > 0) {
-            int pageSize := (remaining < 1024) ? remaining : 1024;
-            int read := self.read(buffer, pageSize);
-            if (read == 0)
-               { :break };
-
-            Array<byte>.copyTo(dump, buffer, index, read);
-
-            index += read;
-            remaining -= read;
-            totalRead += read
-         };
-
-         ^ totalRead
       }
 
       int Index
@@ -328,26 +282,6 @@ namespace io
             _handle)
       }
 
-      write(byte[] dump, int offset, int length)
-      {
-         if (offset < 0 || length < 0 || offset > dump.Length - length)
-            { OutOfRangeException.raise() };
-
-         byte buffer[1024];
-
-         int remaining := length;
-         int index := offset;
-         while (remaining > 0) {
-            int pageSize := (remaining < 1024) ? remaining : 1024;
-
-            Array<byte>.copy(buffer, dump, index, pageSize);
-            self.write(buffer, pageSize);
-
-            index += pageSize;
-            remaining -= pageSize
-         }
-      }
-    
       int read(byte[] dump, int length)
       {
          int n := extern libc.fread(
@@ -357,32 +291,6 @@ namespace io
                      _handle);
 
          ^ n
-      }
-
-      int read(byte[] dump, int offset, int length)
-      {
-         if (offset < 0 || length < 0 || offset > dump.Length - length)
-            { OutOfRangeException.raise() };
-
-         byte buffer[1024];
-
-         int remaining := length;
-         int index := offset;
-         int totalRead := 0;
-         while (remaining > 0) {
-            int pageSize := (remaining < 1024) ? remaining : 1024;
-            int read := self.read(buffer, pageSize);
-            if (read == 0)
-               { :break };
-
-            Array<byte>.copyTo(dump, buffer, index, read);
-
-            index += read;
-            remaining -= read;
-            totalRead += read
-         };
-
-         ^ totalRead
       }
 
       int Index

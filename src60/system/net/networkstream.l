@@ -57,7 +57,7 @@ public class NetworkStream : Stream
    }
 
    int read(byte[] dump, int length)
-      = self.read(dump, 0, length);
+      = _socket.read(dump, length);
 
    int read(byte[] dump, int offset, int length)
    {
@@ -92,7 +92,11 @@ public class NetworkStream : Stream
          });
 
    int write(byte[] dump, int length)
-      = self.write(dump, 0, length);
+   {
+      int retVal := _socket.write(dump, length);
+
+      ^ retVal
+   }
 
    int write(byte[] dump, int offset, int length)
    {
