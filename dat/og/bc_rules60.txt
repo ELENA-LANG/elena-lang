@@ -13,6 +13,7 @@ store fp:$1, peek fp:#1 => store fp, idle;
 set dp:$1, fidiv, set dp:#1 => set dp, fidiv, idle;
 store fp:$1, load dp, save, peek fp:#1 => store fp, load dp, save, idle;
 set dp, load $ => load dp, idle;
+set dp, save $ => save dp, idle;
 set dp, set dp => idle, set dp;
 set dp, nop, set dp => idle, nop, set dp;
 set dp, peek fp => idle, peek fp;

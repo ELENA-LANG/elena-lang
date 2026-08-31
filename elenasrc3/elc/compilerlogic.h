@@ -40,6 +40,7 @@ namespace elena_lang
       int         nillableArgs;
       mssg_t      byRefHandler;
       int         getterFieldOffset;
+      ref_t       inlineExprRef;
 
       CheckMethodResult() = default;
    };
@@ -63,7 +64,24 @@ namespace elena_lang
 
    DISABLE_WARNING_POP
 
-   typedef CachedList<Pair<mssg_t, ref_t>, 10> VirtualMethods;
+   struct VirtualMethodInfo
+   {
+      mssg_t    message;
+      TypeInfo  outputType;
+      int       nillableArgs;
+
+      VirtualMethodInfo()
+         : message(0), outputType({}), nillableArgs(0)
+      {
+      }
+
+      VirtualMethodInfo(mssg_t value1, TypeInfo value2, int nillableArgs)
+         : message(value1), outputType(value2), nillableArgs(nillableArgs)
+      {
+      }
+   }; 
+
+   typedef CachedList<VirtualMethodInfo, 10> VirtualMethods;
 
    inline pos_t OpHashRule(int id)
    {
@@ -122,7 +140,7 @@ namespace elena_lang
       bool validateSymbolAttribute(ref_t attribute, Visibility& visibility, bool& constant, SymbolKind& symbolKind);
       bool validateClassAttribute(ref_t attribute, ref_t& flags, Visibility& visibility, bool& externalOp);
       bool validateFieldAttribute(ref_t attribute, FieldAttributes& attrs);
-      bool validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode);
+      bool validateMethodAttribute(ref_t attribute, ref_t& hint, ref_t& extra_hint, bool& explicitMode);
       bool validateImplicitMethodAttribute(ref_t attribute, ref_t& hint);
       bool validateDictionaryAttribute(ref_t attribute, TypeInfo& dictionaryTypeInfo, bool& superMode);
       bool validateExpressionAttribute(ref_t attrValue, ExpressionAttributes& attrs);

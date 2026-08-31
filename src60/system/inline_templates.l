@@ -251,12 +251,11 @@ public const enum<T>(params member)::
       ^ string.MinValue
    }
 
-   bool equal(__decl_type o)
-   {
-      T argVal := *o;
+   __inlineop bool equal(__decl_type value)
+      = *self == *value;
 
-      ^ _value == argVal
-   }
+   __inlineop bool notequal(__decl_type value)
+      = *self != *value;
 
    bool equal(value)
    {

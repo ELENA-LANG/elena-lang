@@ -485,8 +485,11 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    ModuleScopeBase* moduleScope = env.createModuleScope(true, withAttributes);
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = intNumberRef;
+   moduleScope->branchingInfo.typeRef = boolTypeRef;
    moduleScope->branchingInfo.trueRef = trueRef;
    moduleScope->branchingInfo.falseRef = falseRef;
+
+   moduleScope->selfVar.copy("self");
 
    if (argArrayTemplateRef != INVALID_REF) {
       moduleScope->buildins.argArrayTemplateReference = argArrayTemplateRef;
@@ -503,12 +506,17 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    moduleScope->buildins.constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE, 0, false),
          0, FUNCTION_MESSAGE);
+   if (defineOperatorMessages) {
+      moduleScope->buildins.value_message =
+         encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
+            1, PROPERTY_MESSAGE);
+   }
    if (withProtectedConstructor)
       moduleScope->buildins.protected_constructor_message =
       encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
          0, FUNCTION_MESSAGE);
 
-   Compiler* compiler = env.createCompiler();
+   Compiler* compiler = env.createCompiler(optMode);
 
    BuildTree output;
    BuildTreeWriter writer(output);
@@ -517,6 +525,8 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
 
    // Act
    nsScope.declare(declarationNode.firstChild(), true);
+
+   compileHelper(compiler, nsScope);
 
    Compiler::Class classHelper(nsScope, targetRef, Visibility::Public, false);
    classHelper.load();
@@ -634,4 +644,29 @@ void ExprTest :: runBuildTest(bool declareDefaultMessages, bool declareOperators
 
    freeobj(compiler);
    freeobj(moduleScope);
+}
+
+// --- MethodScenarioExTest ---
+
+SyntaxNode MethodScenarioExTest :: findHelperNode()
+{
+   return SyntaxTree::gotoChild(declarationNode.firstChild(), SyntaxKey::Class, helperRef);
+}
+
+void MethodScenarioExTest :: compileHelper(Compiler* compiler, Compiler::Namespace& nsScope)
+{
+   if (!helperRef)
+      return;
+
+   BuildTree output;
+   BuildTreeWriter writer(output);
+   writer.newNode(BuildKey::Root);
+
+   SyntaxNode node = findHelperNode();
+
+   Compiler::Class classHelper(nsScope, helperRef, Visibility::Public, false);
+   classHelper.load();
+   classHelper.compile(writer, nsScope.scope, node);
+
+   writer.closeNode();
 }

@@ -1270,6 +1270,20 @@ namespace elena_lang
          ExprScope(CodeScope* parent);
       };
 
+      struct InlineScope : Scope
+      {
+         NamespaceScope* ns;
+         ShortcutMap     arguments;
+
+         ObjectInfo mapMember(ustr_t identifier) override;
+         ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
+
+         InlineScope(Scope* parent, NamespaceScope* ns)
+            : Scope(parent), ns(ns), arguments({})
+         {
+         }
+      };
+
       struct InlineClassScope : ClassScope
       {
          struct Outer
@@ -1591,6 +1605,9 @@ namespace elena_lang
          void unboxAutoRangeCollection(SyntaxNode& spreadNode, SyntaxNode& tupleNode, ObjectInfo source,
             ref_t actionRef, bool functionMode);
 
+         BuildKey defineCallOperation(SyntaxNode node, ObjectInfo target, CheckMethodResult& result, ObjectInfo& retVal, ref_t& targetRef,
+            bool withVArgParam, bool checkShortCircle, bool& indexedCallMode);
+
          mssg_t resolveMessageAtCompileTime(ObjectInfo source, bool ignoreVariadics, bool asyncOp, MessageCallContext& callContext,
             ref_t& expectedSignRef, int& resolvedNillableArgs, ExpressionAttribute& paramMode);
 
@@ -1602,6 +1619,12 @@ namespace elena_lang
          ObjectInfo compileNillableMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
          ObjectInfo compileNotNilMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
          ObjectInfo compileAltMessageOperation(SyntaxNode node/*, ref_t expectedRef, ExpressionAttribute attrs*/);
+
+         void compileCallOperation(SyntaxNode node, ObjectInfo& target, bool found, 
+            BuildKey operation, ref_t targetRef, MessageResolution& resolution,
+            int stackSafe, ArgumentsInfo& arguments, bool indexedCallMode, bool targetOverridden, ExpressionAttributes mode);
+
+         ObjectInfo compileInlineOperation(ref_t inlineTreeRef, ArgumentsInfo& arguments, ref_t outputRef);
 
          ObjectInfo compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode);
          ObjectInfo compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode);
@@ -1885,6 +1908,8 @@ namespace elena_lang
       void declareIncludeAttributes(Scope& scope, SyntaxNode node, bool& textBlock);
 
       bool checkifSingleObject(Scope& scope, SyntaxNode node);
+
+      ref_t saveInlineExpression(MethodScope& scope, SyntaxNode node);
 
       static int defineFieldSize(Scope& scope, ObjectInfo info);
 
@@ -2251,7 +2276,8 @@ namespace elena_lang
 
       void injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t parentRef);
 
-      void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, ref_t outputRef, SyntaxNode targetTerminalNode);
+      void injectVirtualDispatchMethod(Scope& scope, SyntaxNode classNode, mssg_t message, TypeInfo outputType, int nillableArgs,
+         SyntaxNode targetTerminalNode);
       void injectMethodInvoker(Scope& scope, SyntaxNode classNode, mssg_t message, SyntaxKey targetKey, ustr_t targetArg);
 
       void injectStrongRedirectMethod(Scope& scope, SyntaxNode node, SyntaxKey methodType, ref_t reference, mssg_t message,

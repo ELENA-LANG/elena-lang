@@ -9,13 +9,11 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - fix warnings for xml
+  - fix last warning for xml
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - switch with class types
   - simplified syntax - Template<int> t := new auto();
   - implement *_length := len - as native operation
-  - use *_length := len in BinaryHeap
-  - Array<T> must support Enumerable interface as well
   - comparing with enum type - try to use directly
   - Warn if the implicit conversion is used
 
@@ -42,17 +40,14 @@ In development:
   --------------------------------------
   * graph sample
   ====================================== 
-  - stage 0b : select function - sin / cos / current one function - from radio button list
-  - stage 0b : resize the window
-  - stage 0c : switch to xforms : xgraph
   - stage 1 : compile-time script 
-
-  - stage 2 : run-time script 
+  - stage 2 : create xgraph sample
+  - stage 3 : run-time script 
   - post
   ---------------------------------------
-  * current : samples
+  * samples
   ====================================== 
-  - review rosetta samples from L
+  - review rosetta samples from P
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples  
@@ -61,10 +56,10 @@ In development:
   - test examples for 64bit
   - test rosetta for 64bit
   ---------------------------------------
-  * enum optimization
+  * current : backlog
   ====================================== 
-  - use native operation with comparison
-  - use enum of strings
+  - use *_length := len in BinaryHeap
+  - Array<T> must support Enumerable interface as well
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===

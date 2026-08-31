@@ -129,6 +129,8 @@ constexpr auto Build_RetOverloadInRetExprTest_Scenario1 = "tape(open_frame ()ass
 
 constexpr auto Build_AutoRangeSpreading_Scenario1 = "class_reference 3 ()saving_stack ()argument ()direct_call_op 3265 (type 3 ())assigning 1 ()class_reference 3 ()saving_stack 2 ()local 1 ()saving_stack 1 ()class_reference 4 ()saving_stack ()argument ()direct_call_op 4099 (type 7 ())";
 
+constexpr auto Build_InlineOpTest_Scenario1 = "tape (open_frame ()assigning 1 ()local_address -4 ()loadingacc_to_index ()local_address -12 ()saving_index_to_acc -12 (size 4 ())local_address -8 ()loadingacc_to_index ()local_address -16 ()saving_index_to_acc -16 (size 4 ())local_address -12 ()saving_stack ()local_address -16 ()saving_stack 1 ()intcondop 10 (operator_id 10 ()true_const 32 ()false_const 33 ())assigning 2 ()local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 16 ())";
+
 #elif _M_X64
 
 constexpr auto Build_CallingIndexedethod_Scenario1 = "int_literal 2 (value 3 ())saving_stack 1 ()local 1 ()saving_stack ()argument ()semi_direct_call_op 5122 (type 4 ()index_table_mode ())";
@@ -145,6 +147,8 @@ constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning
 constexpr auto Build_RetOverloadInRetExprTest_Scenario1 = "tape(open_frame ()assigning 1 ()local 2 ()assigning 3 ()local_reference 3 ()saving_stack 1 ()local -2 ()saving_stack ()argument ()call_op 1538 (type 3 ())local 3 ()assigning 2 ()local 2 () going_to_eop() close_frame ()exit ())reserved 6 ())";
 
 constexpr auto Build_AutoRangeSpreading_Scenario1 = "class_reference 3 ()saving_stack ()argument ()direct_call_op 3265 (type 3 ())assigning 1 ()class_reference 3 ()saving_stack 2 ()local 1 ()saving_stack 1 ()class_reference 4 ()saving_stack ()argument ()direct_call_op 4099 (type 7 ())";
+
+constexpr auto Build_InlineOpTest_Scenario1 = "tape (open_frame ()assigning 1 ()local_address -8 ()loadingacc_to_index ()local_address -40 ()saving_index_to_acc -40 (size 4 ())local_address -24 ()loadingacc_to_index ()local_address -48 ()saving_index_to_acc -48 (size 4 ())local_address -40 ()saving_stack ()local_address -48 ()saving_stack 1 ()intcondop 10 (operator_id 10 ()true_const 32 ()false_const 33 ())assigning 2 ()local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 48 ())";
 
 #endif
 
@@ -408,4 +412,31 @@ void AutoRangeSpreadingTest::SetUp()
 TEST_F(AutoRangeSpreadingTest, AutoRangeSpreading)
 {
    runBuildTest(true, false);
+}
+
+// --- InlineOpTest ---
+
+void InlineOpTest :: SetUp()
+{
+   defineOperatorMessages = true;
+   optMode = 1;
+
+   intNumberRef = 2;
+   boolTypeRef = 3;
+   trueRef = 0x20;
+   falseRef = 0x21;
+
+   helperRef = 4;
+   targetRef = 5;
+
+   MethodScenarioExTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_2, S_IntNumber, S_BoolValue, InlineOp_Scenario1);
+
+   BuildTreeSerializer::load(Build_InlineOpTest_Scenario1, controlOutputNode);
+}
+
+TEST_F(InlineOpTest, InlineOpTest)
+{
+   runTest();
 }

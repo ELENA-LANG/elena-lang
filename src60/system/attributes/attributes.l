@@ -7,6 +7,7 @@
 /// modificator:
 #let attributes["__ignore_duplicates"] := 80007001h;
 #let attributes["__throwop"]           := 80007003h;
+#let attributes["__inlineop"]          := 80007004h;
 
 /// method attributes:
 #let attributes["indexed"]     :=  80006001h;

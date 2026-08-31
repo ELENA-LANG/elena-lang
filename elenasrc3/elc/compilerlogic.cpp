@@ -1002,7 +1002,7 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
    return true;
 }
 
-bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool& explicitMode)
+bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, ref_t& extra_hint, bool& explicitMode)
 {
    switch (attribute) {
       case 0:
@@ -1082,6 +1082,9 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
       case V_THROWOP:
          hint = (ref_t)MethodHint::ThrowOp;
          return true;
+      case V_INLINEOP:
+         extra_hint = (ref_t)MethodExtraHint::HasInlineExpr;
+         return true;
       default:
          return false;
    }
@@ -1092,6 +1095,7 @@ bool CompilerLogic :: validateMethodAttribute(ref_t attribute, ref_t& hint, bool
 bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hint)
 {
    bool dummy = false;
+   ref_t extra_dummy = 0;
    switch (attribute) {
       case V_METHOD:
       case V_DISPATCHER:
@@ -1099,7 +1103,7 @@ bool CompilerLogic :: validateImplicitMethodAttribute(ref_t attribute, ref_t& hi
       case V_FUNCTION:
       case V_CONVERSION:
       case V_GENERIC:
-         return validateMethodAttribute(attribute, hint, dummy);
+         return validateMethodAttribute(attribute, hint, extra_dummy, dummy);
       default:
          return false;
    }
@@ -2531,7 +2535,7 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
 
       result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
       result.nillableArgs = methodInfo.nillableArgs;
-      result.checkNillableArgs = test(methodInfo.nillableArgs, EnforcedNillableArgs);
+      result.checkNillableArgs = test(methodInfo.extra_hints, (ref_t)MethodExtraHint::EnforcedNillableArgs);
       result.byRefHandler = methodInfo.byRefHandler;
 
       if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
@@ -2546,6 +2550,10 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
          result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldGetter });
       }
       else result.retrieveGetter = false;
+
+      if (test(methodInfo.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr)) {
+         result.inlineExprRef = info.attributes.get({ message, ClassAttribute::InlineExprRef });
+      }
 
       return true;
    }
@@ -2771,6 +2779,11 @@ bool CompilerLogic :: isValidType(ModuleScopeBase& scope, ref_t classReference, 
    return true;
 }
 
+static inline TypeInfo defineOutputTypeInfo(MethodInfo& info)
+{
+   return { info.outputRef, 0, test(info.hints, (ref_t)MethodHint::Nillable) };
+}
+
 void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods)
 {
    ClassInfo info;
@@ -2779,7 +2792,7 @@ void CompilerLogic :: generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_
       auto mssg = it.key();
 
       if (test((*it).hints, (ref_t)MethodHint::Abstract)) {
-         methods.add({ mssg, (*it).outputRef });
+         methods.add({ mssg, defineOutputTypeInfo(*it), (*it).nillableArgs });
       }
    }
 }

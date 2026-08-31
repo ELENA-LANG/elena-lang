@@ -2307,6 +2307,11 @@ static inline void savingIndexToAcc(CommandTape& tape, BuildNode&/* node*/, Tape
    tape.write(ByteCode::Save);
 }
 
+static inline void savingLongIndexToAcc(CommandTape& tape, BuildNode&/* node*/, TapeScope&)
+{
+   tape.write(ByteCode::LSave);
+}
+
 static inline void addingInt(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    BuildNode value = node.findChild(BuildKey::Value);
@@ -2407,7 +2412,7 @@ ByteCodeWriter::Saver commands[] =
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
    procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp, set_message, redirect_procedure,
-   mark_collectable, mark_noncollectable,
+   mark_collectable, mark_noncollectable, savingLongIndexToAcc,
 };
 
 static inline bool duplicateBreakpoints(BuildNode lastNode)

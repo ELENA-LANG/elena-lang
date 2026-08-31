@@ -65,6 +65,12 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   class InlineOpTest : public MethodScenarioExTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
    class RetoverloadHandlerTest : public ExprTest
    {
    protected:
