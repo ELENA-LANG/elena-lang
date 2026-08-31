@@ -35,6 +35,8 @@ public interface IControl
    abstract IControl retrieve(Handle handle);
 
    abstract setRegion(int x, int y, int width, int height);
+   
+   abstract onParentResize(BaseControl parentControl);
 
    abstract open();
 
@@ -214,9 +216,14 @@ public abstract class BaseWinContainer : BaseWinControl
       ^ nil
    }        
 
-   internal resize(WindowHandle hwnd, int width, int height)
+   internal resize(Handle hwnd, int width, int height)
    {
       super.resize(hwnd, width, height);
+
+      int len := _controls.Length;
+      for (int i := 0; i < len; i += 1) {
+         _controls[i].onParentResize(self)
+      };
 
       onResize?.(self)
    }
@@ -783,7 +790,7 @@ public abstract class BasePanel : BaseWinContainer
       _controls.append(weak control as:IControl)
    }
 
-   internal appendControlInternal(ImageList control)
+   internal appendControlInternal(BaseNonVisibleControl control)
    {
       control.Parent := self;
 
@@ -880,7 +887,7 @@ public sealed class Panel : BasePanel, interface<IControl>
    {
       self.appendControlInternal(control);
    }
-   appendControl(ImageList control)
+   appendControl(BaseNonVisibleControl control)
    {
       self.appendControlInternal(control);
    }
@@ -1076,10 +1083,9 @@ public sealed class RadioButtonGroup : BasePanel, interface<IControl>
 
 // --- ImageList ---
 
-public sealed class ImageList : Object, interface<IControl>
+public sealed class ImageList : BaseNonVisibleControl, interface<IControl>
 {
    Dimension    _size;
-   object      _parent;
    List<Image> _images;
    int         _index;   
 
@@ -1099,13 +1105,6 @@ public sealed class ImageList : Object, interface<IControl>
 
    get Control() = self;
 
-   Parent = _parent;    
-
-   set internal Parent(object o)
-   {
-      _parent := o
-   }
-
    assign(Paintbox paintbox)
    {
       paintbox.onPaint := (object sender, Canvas canvas)
@@ -1123,6 +1122,8 @@ public sealed class ImageList : Object, interface<IControl>
    {
       ^ nil
    }
+    
+   onParentResize(BaseControl parentControl) {}    
     
    click() {}
    

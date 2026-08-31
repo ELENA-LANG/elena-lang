@@ -42,11 +42,7 @@ In development:
   --------------------------------------
   * graph sample
   ====================================== 
-  - fix debugger - point content is not correctly shown (e.g, goTo)
-  - fix debugger - breakpoint doesn't work correctly moveTo
-
-  - make factory dynamic; depending on external function
-  - stage 0b : select function - sin / cos / current one function - from combobox
+  - stage 0b : select function - sin / cos / current one function - from radio button list
   - stage 0b : resize the window
   - stage 0c : switch to xforms : xgraph
   - stage 1 : compile-time script 
@@ -54,14 +50,9 @@ In development:
   - stage 2 : run-time script 
   - post
   ---------------------------------------
-  * current : enum optimization
+  * current : samples
   ====================================== 
-  - use native operation with comparison
-  - use enum of strings
-  ---------------------------------------
-  * samples
-  ====================================== 
-  - review rosetta samples from I
+  - review rosetta samples from L
   - review all rosetta samples, fix the corrected
   - review all tutorials
   - review all knowhow examples  
@@ -69,18 +60,12 @@ In development:
   - fix httpsget for x86-64
   - test examples for 64bit
   - test rosetta for 64bit
-  - can system 9 be simplified?
   ---------------------------------------
-  * current : mtaThreadLocalStorageTest
+  * enum optimization
   ====================================== 
-  - investigate
-  - fix
+  - use native operation with comparison
+  - use enum of strings
   ---------------------------------------
-  * current : sandbox
-  ====================================== 
-  - investigate error : free() invalid pointer
-  - fix
-  - test for I386 with GC
 
   === Iteration 48 (text based adventage; #866) ===
   * new version 7.0.3

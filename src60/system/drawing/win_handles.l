@@ -161,7 +161,12 @@ public sealed const struct HDC
         
       extern GDI32.TextOutW(_handle, x, y, text, length)
    }
-        
+
+   fillRectangle(int x, int y, int width, int height)
+   {
+      extern GDI32.Rectangle(_handle, x, y, x + width, y + height);
+   }   
+                        
    free()
    {
       extern GDI32.DeleteDC(_handle)

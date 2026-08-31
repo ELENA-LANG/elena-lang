@@ -37,3 +37,10 @@ public interface IFactory
    
    get abstract Union<IFunction, IPolarFunction> Function();
 }
+
+public interface IFunctionSelector
+{
+   get abstract string[] Names();
+   
+   abstract IFactory select(string name);
+}
