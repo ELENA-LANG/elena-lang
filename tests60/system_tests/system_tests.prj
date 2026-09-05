@@ -39,6 +39,7 @@
         <include>main.l</include>
         <include>basic.l</include>
         <include>declarations.l</include>
+        <include>stream_tests.l</include>
      </module>
   </files>
 </configuration>

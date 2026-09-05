@@ -84,6 +84,9 @@ namespace io
         
       write(int index, int length, byte[] array)
       {
+         if (index < 0 || length < 0 || index > array.Length - length)
+            { OutOfRangeException.raise() };
+
          int used := _used.Value;        
          int capacity := _capacity.Value;
             
@@ -113,14 +116,19 @@ namespace io
          ^ retVal
       }
         
-      read(int index, int length, byte[] array)
+      read(int sourceIndex, int length, byte[] array)
+         <= read(sourceIndex, 0, length, array);
+
+      read(int sourceIndex, int destIndex, int length, byte[] array)
       {
          int used := _used.Value;
-            
-         if(index + length > used)
+
+         if (sourceIndex < 0 || length < 0 || sourceIndex > used - length || destIndex < 0 || destIndex > array.Length - length)
             { OutOfRangeException.raise() };
-                
-         Array<byte>.copy(array, _buffer, index, length);
+
+         for (int i := 0; i < length; i += 1) {
+            array[destIndex + i] := _buffer[sourceIndex + i]
+         }
       }
         
       delete(int index, int length)
@@ -182,17 +190,21 @@ namespace io
       }
         
       write(byte[] dump, int length)
+         <= write(dump, 0, length);
+
+      write(byte[] dump, int offset, int length)
       {
-         _buffer.write(0, length, dump)
-      }
-    
-      write(byte[] dump, int index, int length)
-      {
-         _buffer.write(index, length, dump)
+         _buffer.write(offset, length, dump)
       }
     
       int read(byte[] dump, int len)
+         = read(dump, 0, len);
+
+      int read(byte[] dump, int offset, int len)
       {
+         if (offset < 0 || len < 0 || offset > dump.Length - len)
+            { OutOfRangeException.raise() };
+
          int totalLen := _buffer.Length;
          int pos := _position.Value;
             
@@ -200,7 +212,7 @@ namespace io
          if (len > totalLen - pos)
             actualLen := totalLen - pos;
             
-         _buffer.read(pos, actualLen, dump);
+         _buffer.read(pos, offset, actualLen, dump);
     
          _position.append(actualLen);
 
@@ -218,7 +230,7 @@ namespace io
          set(int index)
          {
             int pos := _buffer.Length;
-            if (pos < index)
+            if (index < 0 || pos < index)
                { OutOfRangeException.raise() };
                     
             _position.Value := index

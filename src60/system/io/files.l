@@ -68,7 +68,7 @@ namespace io
                 ref written,
                 0)
       }
-    
+
       int read(byte[] dump, int len)
       {
          extern KERNEL32.ReadFile(
@@ -81,7 +81,7 @@ namespace io
 
          ^ temp
       }
-    
+
       int Index
       {    
          get()
@@ -281,7 +281,7 @@ namespace io
             length,
             _handle)
       }
-    
+
       int read(byte[] dump, int length)
       {
          int n := extern libc.fread(
@@ -289,10 +289,10 @@ namespace io
                      1,
                      length,
                      _handle);
-    
+
          ^ n
       }
-    
+
       int Index
       {    
          get()
