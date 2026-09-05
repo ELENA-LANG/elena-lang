@@ -48,7 +48,25 @@
 
 A;
 
+public B
+{
+   Reference<int> ref;
+   
+   constructor()
+   {
+      ref := 0;
+   }
+   
+   set(int n)
+   {
+      //ref.Value := n
+      *ref := n
+   }
+}
+
 public Program()
 {
-   Array<A?> list := class Array<A?>.allocate(3);
+//   Array<A?> list := class Array<A?>.allocate(3);
+
+
 }

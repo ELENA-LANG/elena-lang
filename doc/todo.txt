@@ -9,7 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - fix last warning for xml
+  - fix : why stream operation Stream.read[4] generates an error for Linux
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - switch with class types
   - simplified syntax - Template<int> t := new auto();
@@ -56,10 +56,16 @@ In development:
   - test examples for 64bit
   - test rosetta for 64bit
   ---------------------------------------
-  * current : backlog
+  * backlog
   ====================================== 
   - use *_length := len in BinaryHeap
+  - fix last warning for xml
   - Array<T> must support Enumerable interface as well
+  ---------------------------------------
+  * current : implementing setter
+  ====================================== 
+  - operation *ref := 3 must be supported
+  - value setter operatuin must be implemented directly when possible
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===
