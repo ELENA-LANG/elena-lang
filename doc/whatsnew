@@ -50,6 +50,7 @@
   - [FIXED] cancellation registration close waits for callbacks already in progress
   - [FIXED] binary heap ordering after removing an arbitrary item
   - [REDUX] enum template - is returning a constant directly
+  - [FIXED] Stream segment reads and writes honor offsets and lengths
   - [ADDED] forms'DockingBox
 
 - Scripts

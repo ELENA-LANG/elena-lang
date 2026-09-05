@@ -36,50 +36,58 @@ namespace io
       abstract int read(byte[] dump, int length);
         
       abstract write(byte[] dump, int length);
-        
+
       int read(byte[] dump, int offset, int length)
-      {
-         int maxLength := length;
-         int actualRead := 0;
-         int actualOffset := offset;
+         = StreamOperations.read(self, dump, offset, length);
 
-         byte tempbuffer[1024];
-         while (maxLength > 0) {
-            int pageSize := (maxLength < 1024) ? maxLength : 1024;
-            pageSize := read(tempbuffer, pageSize);
-            if (pageSize == 0) { 
-               :break
-            };
-
-            class Array<byte>.copy(dump, tempbuffer, actualOffset, pageSize);
-
-            actualRead += pageSize;
-            actualOffset += pageSize;
-
-            maxLength += pageSize;
-         };
-
-         ^ actualRead;
-      }
-        
       write(byte[] dump, int offset, int length)
       {
-         int actualLen := length;
-         int actualOffset := offset;
+         StreamOperations.write(self, dump, offset, length)
+      }
 
-         byte tempbuffer[1024];
-         while (actualLen > 0) {
-            int pageSize := (actualLen < 1024) ? actualLen : 1024;
+      abstract close();
+   }
 
-            class Array<byte>.copy(tempbuffer, dump, actualOffset, pageSize);
+   // Temporary arrays must stay outside the interface implementation
+   internal singleton StreamOperations
+   {
+      int read(Stream stream, byte[] dump, int offset, int length)
+      {
+         if (offset < 0 || length < 0 || offset > dump.Length - length)
+            { OutOfRangeException.raise() };
 
-            write(tempbuffer, pageSize);
+         int remaining := length;
+         int actualRead := 0;
+         int destIndex := offset;
 
-            actualLen -= pageSize;
-            actualOffset += pageSize;
+         byte[] tempBuffer := new byte[](1024);
+         while (remaining > 0) {
+            int pageSize := (remaining < 1024) ? remaining : 1024;
+            int read := stream.read(tempBuffer, pageSize);
+            if (read == 0)
+               { :break };
+
+            Array<byte>.copyTo(dump, tempBuffer, destIndex, read);
+
+            actualRead += read;
+            destIndex += read;
+            remaining -= read
+         };
+
+         ^ actualRead
+      }
+
+      write(Stream stream, byte[] dump, int offset, int length)
+      {
+         if (offset < 0 || length < 0 || offset > dump.Length - length)
+            { OutOfRangeException.raise() };
+
+         if (offset == 0) {
+            stream.write(dump, length)
+         }
+         else {
+            stream.write(class Array<byte>.copy(dump, offset, length), length)
          }
       }
-        
-      abstract close();
    }
 }
