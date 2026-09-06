@@ -26,6 +26,7 @@ namespace elena_lang
    struct CheckMethodResult
    {
       bool        retrieveGetter;
+      bool        retrieveSetter;
 
       mssg_t      message;
       ref_t       kind;

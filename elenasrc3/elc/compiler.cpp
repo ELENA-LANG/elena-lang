@@ -4114,27 +4114,10 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
 
             //ref_t hints = current.findChild(SyntaxKey::Hints).arg.value;
          }
-         // check for possible field getter
-         if (current.arg.reference == scope.moduleScope->buildins.value_message) {
-            scope.info.attributes.exclude({ current.arg.reference, ClassAttribute::FieldGetter });
 
-            if (_optMode) {
-               Interpreter interpreter(scope.moduleScope, _logic);
-
-               ObjectInfo retVal = evalExpression(interpreter, scope, current.findChild(SyntaxKey::ReturnExpression).firstChild(), {}, true);
-               switch (retVal.kind) {
-                  case ObjectKind::FieldAddress:
-                  case ObjectKind::Field:
-                  case ObjectKind::ReadOnlyFieldAddress:
-                  case ObjectKind::ReadOnlyField:
-                     scope.info.attributes.add({ current.arg.reference, ClassAttribute::FieldGetter }, retVal.argument);
-                     break;
-                  default:
-                     break;
-               }
-            }
+         if (_optMode) {
+            defineOptMethodAttributes(scope, current);
          }
-
       }
       current = current.nextNode();
    }
@@ -4175,6 +4158,69 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
 
    if (implicitMultimethods.count() > 0)
       verifyMultimethods(scope, node, methodKey, scope.info, implicitMultimethods);
+}
+
+static bool isValueOperation(Compiler::Scope& scope, mssg_t message)
+{
+   ref_t signRef = 0;
+   ustr_t actionName = scope.module->resolveAction(getAction(message), signRef);
+
+   return actionName.compare(VALUE_MESSAGE);
+}
+
+void Compiler :: defineOptMethodAttributes(ClassScope& scope, SyntaxNode current)
+{
+   mssg_t message = current.arg.reference;
+   bool isProp = (message & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE;
+
+   // check for possible field getter
+   if (message == scope.moduleScope->buildins.value_message) {
+      scope.info.attributes.exclude({ message, ClassAttribute::FieldGetter });
+
+      Interpreter interpreter(scope.moduleScope, _logic);
+
+      ObjectInfo retVal = evalExpression(interpreter, scope, current.findChild(SyntaxKey::ReturnExpression).firstChild(), {}, true);
+      switch (retVal.kind) {
+         case ObjectKind::FieldAddress:
+         case ObjectKind::Field:
+         case ObjectKind::ReadOnlyFieldAddress:
+         case ObjectKind::ReadOnlyField:
+            scope.info.attributes.add({ current.arg.reference, ClassAttribute::FieldGetter }, retVal.argument);
+            break;
+         default:
+            break;
+      }
+   }
+   else if (isProp && getArgCount(message) == 2 && isValueOperation(scope, message)) {
+      scope.info.attributes.exclude({ message, ClassAttribute::FieldSetter });
+
+      SyntaxNode bodyNode = current.firstChild(SyntaxKey::ScopeMask);
+      SyntaxNode exprNode = bodyNode.firstChild();
+      if (bodyNode == SyntaxKey::CodeBlock && exprNode == SyntaxKey::Expression && exprNode.nextNode() == SyntaxKey::EOP
+         && exprNode.firstChild() == SyntaxKey::AssignOperation) 
+      {
+         SyntaxNode objNode = exprNode.firstChild().firstChild();
+         SyntaxNode valNode = objNode.nextNode();
+
+         Interpreter interpreter(scope.moduleScope, _logic);
+
+         MethodScope methodScope(&scope);
+         initializeMethod(scope, methodScope, current);
+
+         ObjectInfo target = evalExpression(interpreter, methodScope, objNode, {}, true);
+         ObjectInfo source = evalExpression(interpreter, methodScope, valNode, {}, true);
+         if ((source.kind == ObjectKind::Param || source.kind == ObjectKind::ParamAddress) && target.typeInfo == source.typeInfo) {
+            switch (target.kind) {
+               case ObjectKind::FieldAddress:
+               case ObjectKind::Field:
+                  scope.info.attributes.add({ message, ClassAttribute::FieldSetter }, target.argument);
+                  break;
+               default:
+                  break;
+            }
+         }
+      }
+   }
 }
 
 void Compiler::generateClassDeclaration(ClassScope& scope, SyntaxNode node, ref_t declaredFlags)
@@ -4954,7 +5000,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
             scope.raiseError(errIllegalConstructor, node);
          }
       }
-      else if (scope.checkHint(MethodHint::Generic)/* && scope.checkHint(MethodHint::Generic)*/) {
+      else if (scope.checkHint(MethodHint::Generic)) {
          if (signatureLen > 0 || !unnamedMessage || scope.checkHint(MethodHint::Function))
             scope.raiseError(errInvalidHint, node);
 
@@ -14466,6 +14512,72 @@ ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t
    return retVal;
 }
 
+ObjectInfo Compiler::Expression :: compileSetValueOperation(SyntaxNode lnode, SyntaxNode rnode, int operatorId)
+{
+   mssg_t message = overwriteArgCount(resolveOperatorMessage(scope.moduleScope, operatorId), 2);
+
+   ObjectInfo loperand = compile(lnode, 0,
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
+   ObjectInfo roperand = compile(rnode, 0, EAttr::Parameter);;
+
+   ref_t roperand_type = compiler->resolveStrongType(scope, roperand.typeInfo);
+   ref_t signRef = scope.module->mapSignature(&roperand_type, 1, false);
+   ref_t actionRef = scope.module->mapAction(VALUE_MESSAGE, signRef, false);
+   message = overwriteAction(message, actionRef);
+
+   CheckMethodResult result = {};
+   result.retrieveSetter = compiler->_optMode;
+   bool found = compiler->_logic->resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
+      loperand.typeInfo), message, result);
+   if (found && result.retrieveSetter) {
+      ObjectInfo fieldInfo = defineEncapseField(loperand, roperand.typeInfo, result.getterFieldOffset);
+
+      bool dummy = false;
+      compileAssigningOp(fieldInfo, roperand, dummy);
+   }
+   else {
+      ArgumentsInfo messageArguments;
+      messageArguments.add(loperand);
+      messageArguments.add(roperand);
+
+      ref_t arguments[2];
+      arguments[0] = compiler->retrieveType(scope, loperand);
+      arguments[1] = compiler->retrieveType(scope, roperand);
+
+      return compileWeakOperation(lnode.parentNode(), arguments, 2, loperand,
+         messageArguments, message, 0);
+   }
+}
+
+ObjectInfo Compiler::Expression :: defineEncapseField(ObjectInfo& loperand, TypeInfo outputInfo, int fieldOffset)
+{
+   if (compiler->_logic->isEmbeddable(*scope.moduleScope, loperand.typeInfo)) {
+      TargetMode targetMode = TargetMode::StackAllocated;
+      switch (loperand.kind) {
+         case ObjectKind::LocalAddress:
+         case ObjectKind::TempLocalAddress:
+            break;
+         case ObjectKind::ReadOnlyFieldAddress:
+         case ObjectKind::FieldAddress:
+            loperand = boxLocally(loperand, true, true);
+            break;
+         default:
+            loperand = saveToTempLocal(loperand);
+            targetMode = TargetMode::None;
+            break;
+      }
+
+      return { ObjectKind::EncapseFieldAddress, outputInfo, fieldOffset, loperand.argument, targetMode };
+   }
+   else {
+      if (loperand.kind != ObjectKind::Local && loperand.kind != ObjectKind::TempLocal) {
+         loperand = saveToTempLocal(loperand);
+      }
+
+      return { ObjectKind::EncapseField, outputInfo, fieldOffset, loperand.argument };
+   }
+}
+
 ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode)
 {
    ObjectInfo loperand = compile(node.firstChild(), 0,
@@ -14483,31 +14595,7 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
    if (found && result.retrieveGetter 
       && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, CompatibleMode::IgnoreNils)) 
    {
-      if (compiler->_logic->isEmbeddable(*scope.moduleScope, loperand.typeInfo)) {
-         TargetMode targetMode = TargetMode::StackAllocated;
-         switch (loperand.kind) {
-            case ObjectKind::LocalAddress:
-            case ObjectKind::TempLocalAddress:
-               break;
-            case ObjectKind::ReadOnlyFieldAddress:
-            case ObjectKind::FieldAddress:
-               loperand = boxLocally(loperand, true, true);
-               break;
-            default:
-               loperand = saveToTempLocal(loperand);
-               targetMode = TargetMode::None;
-               break;
-         }
-
-         return { ObjectKind::EncapseFieldAddress, result.outputInfo, result.getterFieldOffset, loperand.argument, targetMode };
-      }
-      else {
-         if (loperand.kind != ObjectKind::Local && loperand.kind != ObjectKind::TempLocal) {
-            loperand = saveToTempLocal(loperand);
-         }
-
-         return { ObjectKind::EncapseField, result.outputInfo, result.getterFieldOffset, loperand.argument };
-      }
+      return defineEncapseField(loperand, result.outputInfo, result.getterFieldOffset);
    }
    else {
       ArgumentsInfo arguments;
@@ -14517,7 +14605,7 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
    }
 }
 
-ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode)
 {
    SyntaxNode loperand = node.firstChild();
    SyntaxNode roperand = loperand.nextNode();
@@ -14526,6 +14614,9 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, int operatorI
       // assign operation is a special case
       if (loperand == SyntaxKey::IndexerOperation) {
          return compileOperation(loperand, roperand, SET_INDEXER_OPERATOR_ID, expectedRef);
+      }
+      else if (loperand == SyntaxKey::ValueOperation) {
+         return compileSetValueOperation(loperand.firstChild(), roperand, VALUE_OPERATOR_ID);
       }
       else if (loperand == SyntaxKey::Expression) {
          if (!isSimpleNode(loperand))
@@ -17381,6 +17472,23 @@ bool Compiler::Expression::compileAssigningOp(ObjectInfo target, ObjectInfo expr
          operationType = BuildKey::FieldAssigning;
          operand = target.extra;
 
+         break;
+      case ObjectKind::EncapseFieldAddress:
+         accMode = true;
+         if (target.reference) {
+            operationType = BuildKey::CopyingToAccField;
+            operand = target.reference;
+         }
+         else operationType = BuildKey::CopyingToAccExact;
+         size = compiler->_logic->defineStructSize(*scope.moduleScope, target.typeInfo.typeRef).size;
+         target = defineEncapseSource(target);
+         stackSafe = true;
+         break;
+      case ObjectKind::EncapseField:
+         accMode = true;
+         operationType = BuildKey::FieldAssigning;
+         operand = target.reference;
+         target = defineEncapseSource(target);
          break;
       default:
          return false;

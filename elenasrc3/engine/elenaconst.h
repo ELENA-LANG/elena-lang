@@ -332,6 +332,7 @@ namespace elena_lang
       RuntimeDiscovered = 0x00E,
       FieldGetter = 0x80F,
       InlineExprRef = 0x910,
+      FieldSetter = 0x811,
    };
 
    // === Reference constants ====

@@ -46,11 +46,32 @@
 //   t2.join();
 //}
 
-A;
+//A;
 
-public B
+import extensions;
+
+public sealed XReference<T>
 {
-   Reference<int> ref;
+   embeddable T value;
+
+   constructor(T val)
+   {
+      value := val
+   }
+
+   get T Value() : info("Returns the variable value")
+      = value;
+
+   set Value(T val)
+      : info("Set the variable value")
+   {
+      value := val
+   }
+}
+
+/*public B
+{
+   XReference<int> ref;
    
    constructor()
    {
@@ -62,11 +83,41 @@ public B
       //ref.Value := n
       *ref := n
    }
+
+   test()
+   {
+      Console.printLine("ref=", *ref);
+   }
+}*/
+
+public B2
+{
+   XReference<string> ref;
+   
+   constructor()
+   {
+      ref := "abc";
+   }
+   
+   set(string s)
+   {
+      //ref.Value := n
+      *ref := s
+   }
+
+   test()
+   {
+      Console.printLine("ref=", *ref);
+   }
 }
 
 public Program()
 {
+//   B b := new B();
+//   b.set(3).test()
+
+   B2 b := new B2();
+   b.set("abc").test()
+
 //   Array<A?> list := class Array<A?>.allocate(3);
-
-
 }

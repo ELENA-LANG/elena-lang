@@ -10,6 +10,7 @@ In development:
   * backlog
   ====================================== 
   - fix : why stream operation Stream.read[4] generates an error for Linux
+  - review : Stream, MemoryStream, NetworkStream
   - make sure the preloaded symbols declared in another module is loaded when that module is used
   - switch with class types
   - simplified syntax - Template<int> t := new auto();
@@ -58,14 +59,17 @@ In development:
   ---------------------------------------
   * backlog
   ====================================== 
+  - fix an error with an implicit constructor (see sandbox)
   - use *_length := len in BinaryHeap
   - fix last warning for xml
   - Array<T> must support Enumerable interface as well
   ---------------------------------------
   * current : implementing setter
   ====================================== 
-  - operation *ref := 3 must be supported
   - value setter operatuin must be implemented directly when possible
+  - test value setter for struct
+  - test value setter for class
+  - unit test - setter
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===

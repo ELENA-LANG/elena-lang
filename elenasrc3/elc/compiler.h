@@ -1628,6 +1628,7 @@ namespace elena_lang
 
          ObjectInfo compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode);
          ObjectInfo compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode);
+         ObjectInfo compileSetValueOperation(SyntaxNode lnode, SyntaxNode rnode, int operatorId);
          ObjectInfo compileEvalOnlySpecialOperation(SyntaxNode node);
          ObjectInfo compileSpecialOperation(/*SyntaxNode node, */int operatorId/*, ref_t expectedRef*/);
          ObjectInfo compileAssignOperation(SyntaxNode node, int operatorId, ref_t expectedRef);
@@ -1747,6 +1748,8 @@ namespace elena_lang
          void convertIntLiteralForOperation(SyntaxNode node, int operatorId, ArgumentsInfo& messageArguments);
 
          bool isUnboxingRequiredForTempLocal(ObjectInfo tempLocal);
+
+         ObjectInfo defineEncapseField(ObjectInfo& loperand, TypeInfo outputInfo, int fieldOffset);
 
       public:
          bool writeObjectInfo(ObjectInfo info, bool allowMeta = false);
@@ -2033,6 +2036,8 @@ namespace elena_lang
 
       void declareFieldMetaInfo(FieldScope& scope, SyntaxNode node);
       void declareFieldMetaInfos(ClassScope& scope, SyntaxNode node);
+
+      void defineOptMethodAttributes(ClassScope& scope, SyntaxNode current);
 
       void generateClassFlags(ClassScope& scope, ref_t declaredFlags);
       void generateParamNameInfo(ClassScope& scope, SyntaxNode node, mssg_t message);

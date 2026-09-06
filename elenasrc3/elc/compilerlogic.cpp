@@ -2551,6 +2551,11 @@ bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodRe
       }
       else result.retrieveGetter = false;
 
+      if (result.retrieveSetter && info.attributes.exist({ message, ClassAttribute::FieldSetter }) && result.kind == (ref_t)MethodHint::Sealed) {
+         result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldSetter });
+      }
+      else result.retrieveSetter = false;
+
       if (test(methodInfo.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr)) {
          result.inlineExprRef = info.attributes.get({ message, ClassAttribute::InlineExprRef });
       }

@@ -20,6 +20,7 @@
   - [FIXED] async methods returning expressions with await operations
   - [ADDED] supporting const methods returning a constant object
   - [FIXED] implementation of the interface containing nullable arguments
+  - [ADDED] value setter operation is replaced with the direct operation
 
 - VM
 
