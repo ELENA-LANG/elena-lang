@@ -238,6 +238,11 @@ TEST_F(ValueOperator, BuildTest)
    runTest();
 }
 
+TEST_F(ValueSetOperator, BuildTest)
+{
+   runTest();
+}
+
 TEST_F(IntValueOperatorSelf, BuildTest)
 {
    runTest();

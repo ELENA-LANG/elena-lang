@@ -1037,6 +1037,20 @@ void ValueOperator::SetUp()
    targetRef = 4;
 }
 
+// --- ValueSetOperator ---
+
+void ValueSetOperator::SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_ValueSetOperator);
+
+   BuildTreeSerializer::load(B_ValueSetOperator, controlOutputNode);
+
+   targetRef = 4;
+}
+
 // --- IntValueOperatorSelf ---
 
 void IntValueOperatorSelf :: SetUp()

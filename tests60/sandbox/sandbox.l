@@ -122,11 +122,13 @@ import extensions;
 ////   Array<A?> list := class Array<A?>.allocate(3);
 //}
 
-public struct X
+A;
+
+public sealed class X
 {
-   int value;
+   A value;
    
-   set Value(int n)
+   set Value(A n)
    {
       value := n
    }
@@ -134,7 +136,8 @@ public struct X
 
 public Program()
 {
-   X x := default;
-   *x := 4;
+   A a/* := new A()*/;
+   X x/* := new X()*/;
+   *x := a;
 }
 
