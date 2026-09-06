@@ -257,3 +257,8 @@ TEST_F(IntValueSetOperator, BuildTest)
 {
    runTest();
 }
+
+TEST_F(EmbeddableConversion, BuildTest)
+{
+   runTest();
+}

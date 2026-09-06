@@ -69,28 +69,7 @@ import extensions;
    }
 }*/
 
-//public B
-//{
-//   Reference<int> ref;
-//   
-//   constructor()
-//   {
-//      ref := 0;
-//   }
-//   
-//   set(int n)
-//   {
-//      //ref.Value := n
-//      *ref := n
-//   }
-//
-//   test()
-//   {
-//      Console.printLine("ref=", *ref);
-//   }
-//}
-//
-///*public B2
+//public B2
 //{
 //   XReference<string> ref;
 //   
@@ -109,35 +88,62 @@ import extensions;
 //   {
 //      Console.printLine("ref=", *ref);
 //   }
-//}*/
-//
-//public Program()
-//{
-//   B b := new B();
-//   b.set(3).test()
-//
-////   B2 b := new B2();
-////   b.set("abc").test()
-//
-////   Array<A?> list := class Array<A?>.allocate(3);
 //}
 
-A;
+/*public class A;
 
-public sealed class X
+public sealed X
 {
-   A value;
-   
-   set Value(A n)
+   embeddable A value;
+
+   constructor(A val)
    {
-      value := n
+      value := val
    }
+}*/
+
+
+// --- byRefTests ---
+
+singleton ByRefProber
+{
+/*   set(ref int retVal)
+   {
+      retVal := 123;
+   }
+*/
+   set(ref string retVal)
+   {
+      retVal := "hello";
+   }
+}
+
+public byRefTests()
+{
+   string s := "none";
+   ByRefProber.set(ref s);
+
+   Assert.ifTrue(s == "hello");
+   Console.write(".");
+
+   string s2 := "none";
+   o.set(ref s2);
+
+   Assert.ifTrue(s2 == "hello");
+   Console.write(".");
 }
 
 public Program()
 {
-   A a/* := new A()*/;
-   X x/* := new X()*/;
-   *x := a;
-}
+   byRefTests();
 
+//   A a/* := new A()*/;
+//   X x := a;
+
+//   XReference<string> ref := "abc";
+   
+//   B2 b := new B2();
+//   b.set("abc").test()
+
+//   Array<A?> list := class Array<A?>.allocate(3);
+}

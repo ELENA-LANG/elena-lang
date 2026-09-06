@@ -16202,10 +16202,8 @@ ObjectInfo Compiler::Expression::compileNewArrayOp(SyntaxNode node, ObjectInfo s
       auto sizeInfo = compiler->_logic->defineStructSize(*scope.moduleScope, sourceRef);
 
       if (targetRef) {
-         //NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-         auto conversionRoutine = compiler->_logic->retrieveConversionRoutine(compiler, *scope.moduleScope/*, *nsScope->nsName*/,
-            targetRef, source.typeInfo, false);
+         auto conversionRoutine = compiler->_logic->retrieveConversionRoutine(compiler, *scope.moduleScope,
+            targetRef, source.typeInfo, false, false);
          if (conversionRoutine.result == ConversionResult::BoxingRequired) {
             source.typeInfo = { targetRef };
          }
@@ -16278,10 +16276,9 @@ ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo sourc
          // unbox wrapper for the conversion
          source.typeInfo = { source.typeInfo.elementRef };
       }
-      //NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
 
-      auto conversionRoutine = compiler->_logic->retrieveConversionRoutine(compiler, *scope.moduleScope/*, *nsScope->nsName*/,
-         targetRef, source.typeInfo, directConversion);
+      auto conversionRoutine = compiler->_logic->retrieveConversionRoutine(compiler, *scope.moduleScope,
+         targetRef, source.typeInfo, directConversion, source.kind == ObjectKind::RefLocal);
       if (!withoutBoxing && conversionRoutine.result == ConversionResult::BoxingRequired) {
          // if it is implcitily compatible
          switch (source.kind) {

@@ -285,6 +285,9 @@ namespace elena_lang
    class IntOperation : public ScenarioTest
    {
    protected:
+      bool  withAttributes;
+      bool  withProtectedConstructor;
+
       ref_t intReference, intByRefRef;
       ref_t byRefTemplateRef;
       int   expectedError;
@@ -351,6 +354,12 @@ namespace elena_lang
    };
 
    class ValueOperator : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class EmbeddableConversion : public IntOperation
    {
    protected:
       void SetUp() override;

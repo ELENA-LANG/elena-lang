@@ -59,14 +59,13 @@ In development:
   ---------------------------------------
   * backlog
   ====================================== 
-  - fix an error with an implicit constructor (see sandbox)
   - use *_length := len in BinaryHeap
   - fix last warning for xml
   - Array<T> must support Enumerable interface as well
   ---------------------------------------
-  * current : implementing setter
+  * current : fix an error with an implicit constructor (see sandbox)
   ====================================== 
-  - unit test - class field setter (ValueOperator)
+  - fix system tests
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===

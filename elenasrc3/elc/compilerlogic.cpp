@@ -2398,15 +2398,17 @@ mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_
    return 0;
 }
 
-ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope/*, ustr_t ns*/,
-   ref_t targetRef, TypeInfo sourceInfo, bool directConversion)
+ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope,
+   ref_t targetRef, TypeInfo sourceInfo, bool directConversion, bool allowNonStructBoxing)
 {
+   ref_t wrapperFlag = allowNonStructBoxing ? elWrapper : elStructureWrapper;
+
    ClassInfo info;
    if (!defineClassInfo(scope, info, targetRef))
       return { };
 
    // if the target class is wrapper around the source
-   if (test(info.header.flags, elWrapper) && !test(info.header.flags, elDynamicRole)) {
+   if (test(info.header.flags, wrapperFlag) && !test(info.header.flags, elDynamicRole)) {
       auto inner = *info.fields.start();
 
       bool compatible = false;

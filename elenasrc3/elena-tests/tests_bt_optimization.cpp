@@ -851,12 +851,13 @@ void IntOperation :: SetUp()
    optMode = 0;
    byRefTemplateRef = INVALID_REF;
    intByRefRef = 0;
+   withProtectedConstructor = withAttributes = false;
 }
 
 void IntOperation :: runTest(bool exceptionExpected, int scenario)
 {
    // Arrange
-   ModuleScopeBase* moduleScope = env.createModuleScope(true);
+   ModuleScopeBase* moduleScope = env.createModuleScope(true, withAttributes);
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = intReference;
    moduleScope->buildins.constructor_message =
@@ -865,6 +866,10 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
    moduleScope->buildins.value_message = 
       encodeMessage(moduleScope->module->mapAction(VALUE_MESSAGE, 0, false),
          1, PROPERTY_MESSAGE);
+   if (withProtectedConstructor)
+      moduleScope->buildins.protected_constructor_message =
+         encodeMessage(moduleScope->module->mapAction(CONSTRUCTOR_MESSAGE2, 0, false),
+            0, FUNCTION_MESSAGE);
 
    moduleScope->aliases.add("int", intReference);
 
@@ -1034,6 +1039,22 @@ void ValueOperator::SetUp()
    BuildTreeSerializer::load(B_IntValueOperator3, controlOutputNode);
 
    intReference = 2;
+   targetRef = 4;
+}
+
+// --- EmbeddableConversion ---
+
+void EmbeddableConversion :: SetUp()
+{
+   IntOperation::SetUp();
+   optMode = 1;
+   withAttributes = true;
+   withProtectedConstructor = true;
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_EmbeddableConversion);
+
+   BuildTreeSerializer::load(B_EmbeddableConversion, controlOutputNode);
+
    targetRef = 4;
 }
 

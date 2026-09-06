@@ -16,6 +16,8 @@ constexpr auto B_IntValueSetOperator = "tape (open_frame ()assigning 1 ()int_lit
 
 constexpr auto B_ValueSetOperator = "tape (open_frame ()assigning 1 ()local 2 ()saving_stack ()local 3 ()field_assign ()local 1 ()close_frame ()exit ())reserved 4 ()))";
 
+constexpr auto B_EmbeddableConversion = "tape (open_frame ()assigning 1 ()local 2 ()saving_stack ()class_reference 3 ()direct_call_op 2593 (type 7 ())assigning 3 ()local 1 ()close_frame ()exit ())reserved 4 ()))";
+
 #elif _M_X64
 
 constexpr auto B_NillableIntAssigning = "tape (open_frame ()assigning 1 ()nil ()assigning 2 ()int_literal 2 (value 2 ())assigning 3 ()local 1 ()close_frame ()exit ())reserved 6 ())";
@@ -33,5 +35,7 @@ constexpr auto B_IntValueOperator5 = "tape (open_frame ()assigning 1 ()local 1 (
 constexpr auto B_IntValueSetOperator = "tape (open_frame ()assigning 1 ()int_literal 1 (value 4 ())saving_stack ()local_address -8 ()copying_to_acc_exact (size 4 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 16 ()))";
 
 constexpr auto B_ValueSetOperator = "tape (open_frame ()assigning 1 ()local 2 ()saving_stack ()local 3 ()field_assign ()local 1 ()close_frame ()exit ())reserved 6 ()))";
+
+constexpr auto B_EmbeddableConversion = "tape (open_frame ()assigning 1 ()local 2 ()saving_stack ()class_reference 3 ()direct_call_op 2593 (type 7 ())assigning 3 ()local 1 ()close_frame ()exit ())reserved 6 ()))";
 
 #endif
