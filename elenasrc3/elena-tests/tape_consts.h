@@ -12,6 +12,8 @@ constexpr auto B_IntValueOperator3 = "tape (open_frame ()assigning 1 ()class_ref
 constexpr auto B_IntValueOperator4 = "tape (open_frame ()assigning 1 ()local 1 () assigning 2 () local 2 () loadingacc_to_index () local_address -4() saving_index_to_acc -4 (size 4 ()) local 1 ()close_frame ()exit ())reserved 3 ()reserved_n 4 ()))";
 constexpr auto B_IntValueOperator5 = "tape (open_frame ()assigning 1 ()local 1 ()field ()assigning 2 ()local 2 () loadingacc_to_index () local_address -4() saving_index_to_acc -4 (size 4 ()) local 1 ()close_frame ()exit ())reserved 3 ()reserved_n 4 ()))";
 
+constexpr auto B_IntValueSetOperator = "tape (open_frame ()assigning 1 ()int_literal 1 (value 4 ())saving_stack ()local_address -4 ()copying_to_acc_exact (size 4 ())local 1 ()close_frame ()exit ())reserved 2 ()reserved_n 4 ()))";
+
 #elif _M_X64
 
 constexpr auto B_NillableIntAssigning = "tape (open_frame ()assigning 1 ()nil ()assigning 2 ()int_literal 2 (value 2 ())assigning 3 ()local 1 ()close_frame ()exit ())reserved 6 ())";
@@ -25,5 +27,7 @@ constexpr auto B_IntValueOperator2 = "tape (open_frame ()assigning 1 ()class_ref
 constexpr auto B_IntValueOperator3 = "tape (open_frame ()assigning 1 ()class_reference 3 ()direct_call_op 544 (type 7 ())assigning 3 ()local 3 ()assigning 2 ()local 2 ()field ()assigning 3 ()local 1 ()close_frame ()exit ()) reserved 6 ()))";
 constexpr auto B_IntValueOperator4 = "tape (open_frame ()assigning 1 ()local 1 () assigning 2 () local 2 () loadingacc_to_index () local_address -8() saving_index_to_acc -8 (size 4 ()) local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 16 ()))";
 constexpr auto B_IntValueOperator5 = "tape (open_frame ()assigning 1 ()local 1 ()field ()assigning 2 () local 2 () loadingacc_to_index () local_address -8() saving_index_to_acc -8 (size 4 ()) local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 16 ()))";
+
+constexpr auto B_IntValueSetOperator = "tape (open_frame ()assigning 1 ()int_literal 1 (value 4 ())saving_stack ()local_address -8 ()copying_to_acc_exact (size 4 ())local 1 ()close_frame ()exit ())reserved 4 ()reserved_n 16 ()))";
 
 #endif

@@ -50,7 +50,7 @@
 
 import extensions;
 
-public sealed XReference<T>
+/*public sealed XReference<T>
 {
    embeddable T value;
 
@@ -67,57 +67,74 @@ public sealed XReference<T>
    {
       value := val
    }
-}
-
-/*public B
-{
-   XReference<int> ref;
-   
-   constructor()
-   {
-      ref := 0;
-   }
-   
-   set(int n)
-   {
-      //ref.Value := n
-      *ref := n
-   }
-
-   test()
-   {
-      Console.printLine("ref=", *ref);
-   }
 }*/
 
-public B2
-{
-   XReference<string> ref;
-   
-   constructor()
-   {
-      ref := "abc";
-   }
-   
-   set(string s)
-   {
-      //ref.Value := n
-      *ref := s
-   }
+//public B
+//{
+//   Reference<int> ref;
+//   
+//   constructor()
+//   {
+//      ref := 0;
+//   }
+//   
+//   set(int n)
+//   {
+//      //ref.Value := n
+//      *ref := n
+//   }
+//
+//   test()
+//   {
+//      Console.printLine("ref=", *ref);
+//   }
+//}
+//
+///*public B2
+//{
+//   XReference<string> ref;
+//   
+//   constructor()
+//   {
+//      ref := "abc";
+//   }
+//   
+//   set(string s)
+//   {
+//      //ref.Value := n
+//      *ref := s
+//   }
+//
+//   test()
+//   {
+//      Console.printLine("ref=", *ref);
+//   }
+//}*/
+//
+//public Program()
+//{
+//   B b := new B();
+//   b.set(3).test()
+//
+////   B2 b := new B2();
+////   b.set("abc").test()
+//
+////   Array<A?> list := class Array<A?>.allocate(3);
+//}
 
-   test()
+public struct X
+{
+   int value;
+   
+   set Value(int n)
    {
-      Console.printLine("ref=", *ref);
+      value := n
    }
 }
 
 public Program()
 {
-//   B b := new B();
-//   b.set(3).test()
-
-   B2 b := new B2();
-   b.set("abc").test()
-
-//   Array<A?> list := class Array<A?>.allocate(3);
+   X x := default;
+   *x := 4;
 }
+

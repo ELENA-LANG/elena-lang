@@ -247,3 +247,8 @@ TEST_F(IntValueOperatorField, BuildTest)
 {
    runTest();
 }
+
+TEST_F(IntValueSetOperator, BuildTest)
+{
+   runTest();
+}

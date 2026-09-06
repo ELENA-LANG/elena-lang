@@ -4196,7 +4196,7 @@ void Compiler :: defineOptMethodAttributes(ClassScope& scope, SyntaxNode current
 
       SyntaxNode bodyNode = current.firstChild(SyntaxKey::ScopeMask);
       SyntaxNode exprNode = bodyNode.firstChild();
-      if (bodyNode == SyntaxKey::CodeBlock && exprNode == SyntaxKey::Expression && exprNode.nextNode() == SyntaxKey::EOP
+      if (bodyNode == SyntaxKey::CodeBlock && exprNode == SyntaxKey::Expression && exprNode.nextNode().compare(SyntaxKey::EOP, SyntaxKey::None)
          && exprNode.firstChild() == SyntaxKey::AssignOperation) 
       {
          SyntaxNode objNode = exprNode.firstChild().firstChild();
@@ -14533,7 +14533,10 @@ ObjectInfo Compiler::Expression :: compileSetValueOperation(SyntaxNode lnode, Sy
       ObjectInfo fieldInfo = defineEncapseField(loperand, roperand.typeInfo, result.getterFieldOffset);
 
       bool dummy = false;
-      compileAssigningOp(fieldInfo, roperand, dummy);
+      if (!compileAssigningOp(fieldInfo, roperand, dummy))
+         scope.raiseError(errInvalidOperation, lnode.parentNode());
+
+      return {};
    }
    else {
       ArgumentsInfo messageArguments;

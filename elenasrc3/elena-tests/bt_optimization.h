@@ -338,6 +338,12 @@ namespace elena_lang
       void SetUp() override;
    };
 
+   class IntValueSetOperator : public IntOperation
+   {
+   protected:
+      void SetUp() override;
+   };
+
    class IntValueOperatorNoOptimization : public IntOperation
    {
    protected:

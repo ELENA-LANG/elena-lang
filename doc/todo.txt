@@ -66,10 +66,8 @@ In development:
   ---------------------------------------
   * current : implementing setter
   ====================================== 
-  - value setter operatuin must be implemented directly when possible
-  - test value setter for struct
-  - test value setter for class
-  - unit test - setter
+  - unit test - setter (see S_IntValueOperator)
+  - unit test - class field setter (ValueOperator)
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===
