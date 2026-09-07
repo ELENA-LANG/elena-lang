@@ -48,7 +48,7 @@
 
 //A;
 
-import extensions;
+//import extensions;
 
 /*public sealed XReference<T>
 {
@@ -90,60 +90,21 @@ import extensions;
 //   }
 //}
 
-/*public class A;
-
-public sealed X
-{
-   embeddable A value;
-
-   constructor(A val)
-   {
-      value := val
-   }
-}*/
-
-
-// --- byRefTests ---
-
-singleton ByRefProber
-{
-/*   set(ref int retVal)
-   {
-      retVal := 123;
-   }
-*/
-   set(ref string retVal)
-   {
-      retVal := "hello";
-   }
-}
-
-public byRefTests()
-{
-   string s := "none";
-   ByRefProber.set(ref s);
-
-   Assert.ifTrue(s == "hello");
-   Console.write(".");
-
-   string s2 := "none";
-   o.set(ref s2);
-
-   Assert.ifTrue(s2 == "hello");
-   Console.write(".");
-}
-
-public Program()
-{
-   byRefTests();
-
-//   A a/* := new A()*/;
-//   X x := a;
-
+//public Program()
+//{
 //   XReference<string> ref := "abc";
    
 //   B2 b := new B2();
 //   b.set("abc").test()
 
 //   Array<A?> list := class Array<A?>.allocate(3);
+//}
+
+import extensions;
+ 
+public Program()
+{
+    Console.printLine(Program_arguments.asEnumerable());  // the whole command line
+ 
+    Console.printLine(Program_arguments[0]); // the program name
 }

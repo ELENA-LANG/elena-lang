@@ -21,6 +21,7 @@
   - [ADDED] supporting const methods returning a constant object
   - [FIXED] implementation of the interface containing nullable arguments
   - [ADDED] value setter operation is replaced with the direct operation
+  - [FIXED] bug with invalid typecasting to nonstruct wrapper class
 
 - VM
 

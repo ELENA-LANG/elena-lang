@@ -1,6 +1,6 @@
 // --- Array template ---
 
-public sealed Array<T> : interface<Indexable<T>>,
+public sealed Array<T> : interface<Indexable<T>>, //interface<Enumerable<T>>,
    info("A strong-typed array template")
 {
    embeddable __string T[] array;

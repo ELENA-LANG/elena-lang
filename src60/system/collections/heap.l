@@ -204,11 +204,11 @@ namespace collections
             _btree[0] := _btree[len - 1];
 
             len--;
-            _length.Value := len;
+            *_length := len;
                         
             heapify(0);
          }
-         else _length.Value := 0;
+         else { *_length := 0 };
                   
          ^ retVal;
       }
@@ -233,7 +233,7 @@ namespace collections
 
       clear() : info("Removes all elements from the binary heap")
       {
-         _length.Value := 0
+         *_length := 0
       }
    }
 }
