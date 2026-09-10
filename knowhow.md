@@ -54,6 +54,7 @@ Content
 + [Dependency injection in a constructor](#dependency-injection-in-a-constructor)
 + [Type shortcut - __decl_type](#Type-shortcut-__decl_type)
 + [Inline method attribute : __inlineop](#Inline-method-:-__inlineop)
++ [Root namespace alias __rootns](#root_namespace alias___rootns)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1329,3 +1330,27 @@ will be inline expression:
            set          dp:-16
            store        sp:1
            icmp           :4
+
+## ----------------------------------------------------------------------------
+##  Root namespace alias - __rootns
+## ----------------------------------------------------------------------------
+
+It is possible to used predefined namespace __rootns to refer to the current module root namespace
+
+    namespace subns
+    {
+       public class A
+       {
+          whoAmI()
+          {
+             Console.writeLine("I'm the subns'A class");
+          }
+       }
+    }
+    
+    public Program()
+    {
+       var a := new __rootns'subns'A();
+       
+       a.whoAmI()
+    }

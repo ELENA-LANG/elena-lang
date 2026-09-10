@@ -9,8 +9,6 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
-  - fix last warning for xml (the operation a == b, where both is nullable, maybe we need special implementation
-    in that case)
   - fix : why stream operation Stream.read[4] generates an error for Linux
   - review : Stream, MemoryStream, NetworkStream
   - make sure the preloaded symbols declared in another module is loaded when that module is used
@@ -42,16 +40,15 @@ In development:
   - knowhow - foreach statement
   - provide descriptions for all classes (from culture)
   --------------------------------------
-  * graph sample
+  * current : graph sample
   ====================================== 
   - stage 1 : compile-time script 
   - stage 2 : create xgraph sample
   - stage 3 : run-time script 
   - post
   ---------------------------------------
-  * current : samples
+  * samples
   ====================================== 
-  - review rosetta samples from Q
   - review rosetta samples from R
   - review all rosetta samples, fix the corrected
   - review all tutorials
@@ -60,6 +57,19 @@ In development:
   - fix httpsget for x86-64
   - test examples for 64bit
   - test rosetta for 64bit
+  ---------------------------------------
+  * current : script
+  ====================================== 
+  - support __rootns keyword
+  - post in knowhow
+  - new type of script - xlscript60; functions, variables; the main body returns the content;
+    no imports, no references, it will be possible to inject external functions
+  - make sure, no system namespace is imported
+  - an example - where the main program executes the script in the file - can be both run-time / design-time  
+  - extend elt to create a script based solution runtime / design-time
+  - simple program with a function declared in the script file in runtime / design-time
+  - returning a singleton implementing an interface in design-time
+  - returning a singleton implementing an interface in compile-time
   ---------------------------------------
 
   === Iteration 48 (text based adventage; #866) ===

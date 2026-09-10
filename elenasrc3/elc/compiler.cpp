@@ -1264,7 +1264,19 @@ ObjectInfo Compiler::NamespaceScope::mapIdentifier(ustr_t identifier, bool refer
          if (isWeakReference(identifier)) {
             return mapWeakReference(identifier, false);
          }
-         else return mapGlobal(identifier, mode);
+         else {
+            if (identifier.startsWith(*moduleScope->rootNs)) {
+               // COMPILER MAGIC : recognize root namespace
+               pos_t pos = moduleScope->rootNs.length();
+               if (identifier[pos] == '\'') {
+                  ReferenceName fullName(module->name(), identifier + pos + 1);
+
+                  return mapGlobal(*fullName, mode);
+               }
+            }
+
+            return mapGlobal(identifier, mode);
+         }
       }
       else {
          reference = moduleScope->predefined.get(identifier);
@@ -2531,6 +2543,8 @@ void Compiler::Preparator :: mapBuildinVariable()
    moduleScope->receivedVar.copy(moduleScope->predefined.retrieve<ref_t>("@received", V_RECEIVED_VAR,
       retriever));
    moduleScope->declType.copy(moduleScope->predefined.retrieve<ref_t>("@decl_type", V_DECL_TYPE,
+      retriever));
+   moduleScope->rootNs.copy(moduleScope->predefined.retrieve<ref_t>("@root_ns", V_ROOT_NS,
       retriever));
 }
 

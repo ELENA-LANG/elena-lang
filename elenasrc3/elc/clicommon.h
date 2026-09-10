@@ -304,6 +304,7 @@ public:
    IdentifierString     receivedVar;
    IdentifierString     projectVar;
    IdentifierString     declType;
+   IdentifierString     rootNs;
 
    int                  stackAlignment, rawStackAlignment, localAlignment;
    int                  ehTableEntrySize;

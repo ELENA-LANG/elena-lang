@@ -628,13 +628,14 @@ namespace elena_lang
    constexpr auto V_NOTNILLABLE           = 0x80000027u;
    constexpr auto V_UINT64                = 0x80000028u;
 
-   /// built-in variables
+   /// built-in variables / types / namespaces
    constexpr auto V_SELF_VAR              = 0x80000081u;
    constexpr auto V_DECL_VAR              = 0x80000082u;
    constexpr auto V_SUPER_VAR             = 0x80000083u;
    constexpr auto V_RECEIVED_VAR          = 0x80000084u;
    constexpr auto V_PROJECT_VAR           = 0x80000085u;
    constexpr auto V_DECL_TYPE             = 0x80000086u;
+   constexpr auto V_ROOT_NS               = 0x80000087u;
 
    // === Operators ===
    constexpr auto OPERATOR_MAKS              = 0x1840;

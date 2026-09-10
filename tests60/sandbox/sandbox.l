@@ -100,11 +100,21 @@
 //   Array<A?> list := class Array<A?>.allocate(3);
 //}
 
-import extensions;
- 
+namespace subns
+{
+   public class A
+   {
+      whoAmI()
+      {
+         Console.writeLine("I'm the subns'A class");
+      }
+      
+   }
+}
+
 public Program()
 {
-    Console.printLine(Program_arguments.asEnumerable());  // the whole command line
- 
-    Console.printLine(Program_arguments[0]); // the program name
+   var a := new __rootns'subns'A();
+   
+   a.whoAmI()
 }

@@ -9,3 +9,4 @@
 #let defaults["__received"]  := 80000084h;
 #let defaults["__project"]   := 80000085h;
 #let defaults["__decl_type"] := 80000086h;
+#let defaults["__rootns"]    := 80000087h;
