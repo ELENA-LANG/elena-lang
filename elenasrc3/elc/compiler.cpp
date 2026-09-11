@@ -911,11 +911,21 @@ bool Interpreter :: evalProjectInfoOp(ref_t/* operator_id*/, ArgumentsInfo& args
    ObjectInfo roperand = args[1];
 
    if (loperand.kind == ObjectKind::ProjectInfo && roperand.kind == ObjectKind::StringLiteral) {
-      ustr_t variableStr = _scope->module->resolveConstant(roperand.reference);
+      ustr_t variableName = _scope->module->resolveConstant(roperand.reference);
    
-      retVal = { ObjectKind::ProjectVariable, { V_FLAG }, 0, _scope->checkVariable(variableStr) ? -1 : 0 };
+      retVal = { ObjectKind::ProjectVariable, { V_FLAG }, 0, _scope->checkMetaVariable(variableName) ? -1 : 0 };
 
       return true;
+   }
+   else if (loperand.kind == ObjectKind::ProjectConstants && roperand.kind == ObjectKind::StringLiteral) {
+      ustr_t variableName = _scope->module->resolveConstant(roperand.reference);
+      ustr_t value = _scope->getMetaConstant(variableName);
+
+      if (!value.empty()) {
+         retVal = mapStringConstant(value);
+
+         return true;
+      }
    }
    return false;
 }
@@ -978,6 +988,8 @@ bool Interpreter::eval(BuildKey key, ref_t operator_id, ArgumentsInfo& arguments
       case BuildKey::RealOp:
          return evalRealOp(operator_id, arguments, retVal);
       case BuildKey::ProjectInfoOp:
+         return evalProjectInfoOp(operator_id, arguments, retVal);
+      case BuildKey::ProjectConstsOp:
          return evalProjectInfoOp(operator_id, arguments, retVal);
       case BuildKey::IntCondOp:
          return evalIntCondOp(operator_id, arguments, retVal);
@@ -1202,6 +1214,8 @@ ObjectInfo Compiler::NamespaceScope::definePredefined(ref_t reference/*, Express
          return { ObjectKind::Nil, { reference, 0, true }, 0 };
       case V_DEFAULT:
          return { ObjectKind::Default, { reference }, 0 };
+      case V_PROJECT_CONSTS:
+         return MetaScope::mapProjectContants();
       default:
          return {};
    }
@@ -1391,7 +1405,12 @@ ObjectInfo Compiler::MetaScope::mapDecl()
 
 ObjectInfo Compiler::MetaScope :: mapProject()
 {
-   return { ObjectKind::ProjectInfo, { V_PROJECT_VAR }, 0 };
+   return { ObjectKind::ProjectInfo, { V_PROJECT_VARS }, 0 };
+}
+
+ObjectInfo Compiler::MetaScope :: mapProjectContants()
+{
+   return { ObjectKind::ProjectConstants, { V_PROJECT_CONSTS }, 0 };
 }
 
 ObjectInfo Compiler::MetaScope :: mapMember(ustr_t identifier)
@@ -1405,8 +1424,11 @@ ObjectInfo Compiler::MetaScope::mapIdentifier(ustr_t identifier, bool referenceO
       if (moduleScope->declVar.compare(identifier)) {
          return mapDecl();
       }
-      else if (moduleScope->projectVar.compare(identifier)) {
+      else if (moduleScope->projectVars.compare(identifier)) {
          return mapProject();
+      }
+      else if (moduleScope->projectConsts.compare(identifier)) {
+         return mapProjectContants();
       }
       else {
          ObjectInfo retVal = {};
@@ -2536,7 +2558,7 @@ void Compiler::Preparator :: mapBuildinVariable()
       retriever));
    moduleScope->declVar.copy(moduleScope->predefined.retrieve<ref_t>("@decl", V_DECL_VAR,
       retriever));
-   moduleScope->projectVar.copy(moduleScope->predefined.retrieve<ref_t>("@project_var", V_PROJECT_VAR,
+   moduleScope->projectVars.copy(moduleScope->predefined.retrieve<ref_t>("@project_vars", V_PROJECT_VARS,
       retriever));
    moduleScope->superVar.copy(moduleScope->predefined.retrieve<ref_t>("@super", V_SUPER_VAR,
       retriever));
@@ -2545,6 +2567,8 @@ void Compiler::Preparator :: mapBuildinVariable()
    moduleScope->declType.copy(moduleScope->predefined.retrieve<ref_t>("@decl_type", V_DECL_TYPE,
       retriever));
    moduleScope->rootNs.copy(moduleScope->predefined.retrieve<ref_t>("@root_ns", V_ROOT_NS,
+      retriever));
+   moduleScope->projectConsts.copy(moduleScope->predefined.retrieve<ref_t>("@project_consts", V_ROOT_NS,
       retriever));
 }
 

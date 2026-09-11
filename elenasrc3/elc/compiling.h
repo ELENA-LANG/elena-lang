@@ -118,7 +118,7 @@ namespace elena_lang
          ModuleIteratorBase& module_it, 
          SyntaxTree* syntaxTree, 
          ForwardResolverBase* forwardResolver,
-         VariableResolverBase* variableResolver,
+         MetaVariableResolverBase* variableResolver,
          bool debugMode,
          PlatformSettings* platformSettings,
          ManifestInfo* manifestInfo);

@@ -302,9 +302,10 @@ public:
    IdentifierString     declVar;
    IdentifierString     superVar;
    IdentifierString     receivedVar;
-   IdentifierString     projectVar;
+   IdentifierString     projectVars;
    IdentifierString     declType;
    IdentifierString     rootNs;
+   IdentifierString     projectConsts;
 
    int                  stackAlignment, rawStackAlignment, localAlignment;
    int                  ehTableEntrySize;
@@ -362,7 +363,8 @@ public:
    virtual bool declareImport(ustr_t name, ustr_t importName) = 0;
    virtual ustr_t resolveImport(ustr_t) = 0;
 
-   virtual bool checkVariable(ustr_t name) = 0;
+   virtual bool checkMetaVariable(ustr_t name) = 0;
+   virtual ustr_t getMetaConstant(ustr_t name) = 0;
 
    virtual void flush() = 0;
 

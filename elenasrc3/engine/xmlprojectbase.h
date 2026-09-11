@@ -184,15 +184,16 @@ namespace elena_lang
       };
 
    protected:
-      PlatformType   _platform;
+      PlatformType      _platform;
 
-      Paths          _paths;
-      Forwards       _forwards;
-      Variables      _variables;
-      LexicalMap     _lexicals;
+      Paths             _paths;
+      Forwards          _forwards;
+      ProjectFlags      _projectFlags;
+      ProjectConstants  _projectConstants;
+      LexicalMap        _lexicals;
 
-      ProjectTree    _projectTree;
-      ProjectNode    _root;
+      ProjectTree       _projectTree;
+      ProjectNode       _root;
 
       ConfigFile::Node getPlatformRoot(ConfigFile& config, PlatformType platform);
       ConfigFile::Node getProfileRoot(ConfigFile& config, ConfigFile::Node& root, ustr_t profileName);
@@ -211,19 +212,22 @@ namespace elena_lang
 
       void loadForwards(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
       void loadVariables(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
+      void loadConstants(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
       void loadLexicals(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath);
 
       ustr_t resolveKey(ProjectOption category, ProjectOption item, ustr_t key);
 
    public:
       void addForward(ustr_t forward, ustr_t referenceName) override;
-      void addVariable(ustr_t name, bool value);
+      void addProjectFlag(ustr_t name, bool value);
+      void addProjectConstant(ustr_t name, ustr_t value);
 
       ustr_t resolveForward(ustr_t weakReference) override;
       ustr_t resolveWinApi(ustr_t forward) override;
       ustr_t resolveExternal(ustr_t forward) override;
 
-      bool checkVariable(ustr_t name) override;
+      bool checkFlagVariable(ustr_t name) override;
+      ustr_t getConstVariable(ustr_t name) override;
 
       ustr_t StringSetting(ProjectOption option) const override;
 

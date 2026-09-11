@@ -155,9 +155,14 @@ namespace elena_lang
          return alias;
       }
 
-      bool checkVariable(ustr_t) override
+      bool checkMetaVariable(ustr_t) override
       {
          return false;
+      }
+
+      ustr_t getMetaConstant(ustr_t) override
+      {
+         return DEFAULT_STR;
       }
 
       TestModuleScope(bool tapeOptMode, bool btapeOptMode);

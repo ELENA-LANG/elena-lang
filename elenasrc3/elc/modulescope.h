@@ -17,16 +17,16 @@ namespace elena_lang
 // --- ModuleScope ---
 class ModuleScope : public ModuleScopeBase, public LibraryLoaderListenerBase
 {
-   int                   hints;
+   int                        hints;
 
-   LibraryLoaderBase*    loader;
-   ForwardResolverBase*  forwardResolver;
-   VariableResolverBase* variableResolver;
+   LibraryLoaderBase*         loader;
+   ForwardResolverBase*       forwardResolver;
+   MetaVariableResolverBase*  variableResolver;
 
-   Forwards              reusedTemplates;
-   Forwards              declaredImportLibraries;
+   Forwards                   reusedTemplates;
+   Forwards                   declaredImportLibraries;
 
-   DependecyList         dependencies;
+   DependecyList              dependencies;
 
    void saveListMember(ustr_t name, ustr_t memberName);
 
@@ -100,9 +100,14 @@ public:
       return declared.empty() ? alias : declared;
    }
 
-   bool checkVariable(ustr_t name) override
+   bool checkMetaVariable(ustr_t name) override
    {
-      return variableResolver->checkVariable(name);
+      return variableResolver->checkFlagVariable(name);
+   }
+
+   ustr_t getMetaConstant(ustr_t name) override
+   {
+      return variableResolver->getConstVariable(name);
    }
 
    void flush() override;
@@ -111,7 +116,7 @@ public:
 
    ModuleScope(LibraryLoaderBase* loader, 
       ForwardResolverBase* forwardResolver, 
-      VariableResolverBase* variableResolver,
+      MetaVariableResolverBase* variableResolver,
       ModuleBase* module,
       ModuleBase* debugModule,
       PlatformSettings* platformSettings,

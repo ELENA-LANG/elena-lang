@@ -55,6 +55,7 @@ Content
 + [Type shortcut - __decl_type](#Type-shortcut-__decl_type)
 + [Inline method attribute : __inlineop](#Inline-method-:-__inlineop)
 + [Root namespace alias __rootns](#root_namespace alias___rootns)
++ [Project constants](#Project_constants)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1353,4 +1354,40 @@ It is possible to used predefined namespace __rootns to refer to the current mod
        var a := new __rootns'subns'A();
        
        a.whoAmI()
+    }
+
+## ----------------------------------------------------------------------------
+##  Project constants
+## ----------------------------------------------------------------------------
+
+It is possible to declare a constant on the level of the project and use it inside your program:
+
+It must be declared in the project in configuration/constants section:
+
+    <?xml version="1.0" encoding="utf-8"?>
+    <configuration>
+      <project>
+         <executable>sandbox6</executable>
+         <namespace>sandbox6</namespace>
+         <template>console</template>
+      </project>
+      <constants>
+        <constant key="project_constant_name">Hello from project config</constant>
+      </constants>
+      <files>
+         <module>
+            <include>sandbox6.l</include>
+         </module>
+      </files>
+    </configuration>
+
+To refer it inside the code, the pseudo variable **__project_constants** must be used:
+
+    import extensions;
+    
+    const string MessageFromProject = __project_constants["project_constant_name"];
+    
+    public Program()
+    {
+       Console.printLine(MessageFromProject)
     }

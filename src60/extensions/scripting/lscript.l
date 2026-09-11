@@ -1,13 +1,13 @@
 public singleton LScript
 {
    eval(string script)
-      = lscriptEngine.buildScript(script).compile();
+      = LScriptEngine.buildScript(script).compile();
             
    evalPath(string path)
-      = lscriptEngine.buildScriptFile(path).compile();
+      = LScriptEngine.buildScriptFile(path).compile();
         
    load(string path)
-      = lscriptEngine.loadPath(path);
+      = LScriptEngine.loadPath(path);
         
    interpret(string script)
    {

@@ -633,9 +633,10 @@ namespace elena_lang
    constexpr auto V_DECL_VAR              = 0x80000082u;
    constexpr auto V_SUPER_VAR             = 0x80000083u;
    constexpr auto V_RECEIVED_VAR          = 0x80000084u;
-   constexpr auto V_PROJECT_VAR           = 0x80000085u;
+   constexpr auto V_PROJECT_VARS          = 0x80000085u;
    constexpr auto V_DECL_TYPE             = 0x80000086u;
    constexpr auto V_ROOT_NS               = 0x80000087u;
+   constexpr auto V_PROJECT_CONSTS        = 0x80000088u;
 
    // === Operators ===
    constexpr auto OPERATOR_MAKS              = 0x1840;
@@ -828,7 +829,8 @@ namespace elena_lang
    constexpr auto PRIMITIVE_CATEGORY            = "primitives/*";
    constexpr auto LEXICAL_CATEGORY              = "lexicals/*";
    constexpr auto FORWARD_CATEGORY              = "forwards/*";
-   constexpr auto VARIABLE_CATEGORY             = "variables/*";
+   constexpr auto META_VARIABLE_CATEGORY        = "variables/*";
+   constexpr auto META_CONSTANT_CATEGORY        = "constants/*";
    constexpr auto EXTERNAL_CATEGORY             = "externals/*";
    constexpr auto WINAPI_CATEGORY               = "winapi/*";
    constexpr auto REFERENCE_CATEGORY            = "references/*";

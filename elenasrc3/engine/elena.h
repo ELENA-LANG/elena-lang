@@ -145,7 +145,8 @@ namespace elena_lang
    typedef Map<ref_t, ref_t>                                                  ResolvedMap;
    typedef Map<int, addr_t>                                                   FieldAddressMap;
    typedef MemoryMap<ustr_t, ustr_t, Map_StoreUStr, Map_GetUStr, freeUStr>    Forwards;
-   typedef Map<ustr_t, bool, allocUStr, freeUStr>                             Variables;
+   typedef Map<ustr_t, bool, allocUStr, freeUStr>                             ProjectFlags;
+   typedef Map<ustr_t, ustr_t, allocUStr, freeUStr, freeUStr>                 ProjectConstants;
 
    // --- Lists ---
    typedef List<ustr_t, freeUStr>                                             IdentifierList;
@@ -276,11 +277,12 @@ namespace elena_lang
       virtual void forEachForward(void* arg, void(*feedback)(void* arg, ustr_t key, ustr_t value)) = 0;
    };
 
-   // --- VariableResolverBase ---
-   class VariableResolverBase
+   // --- MetaVariableResolverBase ---
+   class MetaVariableResolverBase
    {
    public:
-      virtual bool checkVariable(ustr_t name) = 0;
+      virtual bool checkFlagVariable(ustr_t name) = 0;
+      virtual ustr_t getConstVariable(ustr_t name) = 0;
    };
 
    // --- ModuleLoaderBase ---

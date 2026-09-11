@@ -60,10 +60,12 @@ In development:
   ---------------------------------------
   * current : script
   ====================================== 
-  - support __rootns keyword
-  - post in knowhow
+  - use project constant to refer the path to source file
+  - try to use project variable to define the path to the script
+  - refactor example  
   - new type of script - xlscript60; functions, variables; the main body returns the content;
     no imports, no references, it will be possible to inject external functions
+  - prj file - $namespace variable?
   - make sure, no system namespace is imported
   - an example - where the main program executes the script in the file - can be both run-time / design-time  
   - extend elt to create a script based solution runtime / design-time

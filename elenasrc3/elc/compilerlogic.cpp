@@ -81,8 +81,11 @@ constexpr Op Operations[OperationLength] =
       NAME_OPERATOR_ID, BuildKey::DeclOp, V_GETTER, 0, 0, V_STRING
    },
    {
-      INDEX_OPERATOR_ID, BuildKey::ProjectInfoOp, V_PROJECT_VAR, V_STRING, 0, V_FLAG
+      INDEX_OPERATOR_ID, BuildKey::ProjectInfoOp, V_PROJECT_VARS, V_STRING, 0, V_FLAG
    },   
+   {
+      INDEX_OPERATOR_ID, BuildKey::ProjectConstsOp, V_PROJECT_CONSTS, V_STRING, 0, V_STRING
+   },
    {
       REFERENCE_OPERATOR_ID, BuildKey::DeclOp, V_DECLARATION, 0, 0, V_STRING
    },

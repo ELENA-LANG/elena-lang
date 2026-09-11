@@ -103,6 +103,7 @@ namespace elena_lang
       ConstGetter,  // key = value constant
       InternalCallback,
       ProjectInfo,
+      ProjectConstants,
       ProjectVariable,
       ExternalVar,
       Shortcut,
@@ -1184,9 +1185,10 @@ namespace elena_lang
             else return Scope::getScope(level);
          }
 
-         ObjectInfo mapDecl();
-         ObjectInfo mapProject();
+         static ObjectInfo mapProject();
+         static ObjectInfo mapProjectContants();
 
+         ObjectInfo mapDecl();
          ObjectInfo mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr) override;
          ObjectInfo mapMember(ustr_t identifier) override;
 

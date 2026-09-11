@@ -652,7 +652,7 @@ bool CompilingProcess :: buildModule(ProjectEnvironment& env,
    LexicalMap::Iterator& lexical_it,
    ModuleIteratorBase& module_it, SyntaxTree* syntaxTree,
    ForwardResolverBase* forwardResolver,
-   VariableResolverBase* variableResolver,
+   MetaVariableResolverBase* variableResolver,
    bool debugMode,
    PlatformSettings* platformSettings,
    ManifestInfo* manifestInfo)

@@ -75,7 +75,7 @@ unsigned int XmlProjectBase :: UIntSetting(ProjectOption option, unsigned int de
 }
 
 XmlProjectBase :: XmlProjectBase(PlatformType platform)
-   : _paths(nullptr), _forwards(nullptr), _variables(false), _lexicals(nullptr)
+   : _paths(nullptr), _forwards(nullptr), _projectFlags(false), _projectConstants(DEFAULT_STR), _lexicals(nullptr)
 {
    _platform = platform;
 
@@ -239,7 +239,25 @@ void XmlProjectBase :: loadVariables(ConfigFile& config, ConfigFile::Node& root,
          if (node.readAttribute("key", key)) {
             node.readContent(value);
 
-            addVariable(key.str(), ustr_t(value.str()).compare("-1"));
+            addProjectFlag(key.str(), ustr_t(value.str()).compare("-1"));
+         }
+      }
+   }
+}
+
+void XmlProjectBase :: loadConstants(ConfigFile& config, ConfigFile::Node& root, ustr_t xpath)
+{
+   DynamicString<char> key, value;
+
+   ConfigFile::Collection collection;
+   if (config.select(root, xpath, collection)) {
+      for (auto it = collection.start(); !it.eof(); ++it) {
+         ConfigFile::Node node = *it;
+
+         if (node.readAttribute("key", key)) {
+            node.readContent(value);
+
+            addProjectConstant(key.str(), value.str());
          }
       }
    }
@@ -295,13 +313,24 @@ void XmlProjectBase :: addForward(ustr_t forward, ustr_t referenceName)
    _forwards.add(forward, referenceName.clone());
 }
 
-void XmlProjectBase :: addVariable(ustr_t name, bool value)
+void XmlProjectBase :: addProjectFlag(ustr_t name, bool value)
 {
-   _variables.erase(name);
-   _variables.add(name, value);
+   _projectFlags.erase(name);
+   _projectFlags.add(name, value);
 }
 
-bool XmlProjectBase :: checkVariable(ustr_t name)
+void XmlProjectBase :: addProjectConstant(ustr_t name, ustr_t value)
 {
-   return _variables.get(name);
+   _projectConstants.erase(name);
+   _projectConstants.add(name, value.clone());
+}
+
+bool XmlProjectBase :: checkFlagVariable(ustr_t name)
+{
+   return _projectFlags.get(name);
+}
+
+ustr_t XmlProjectBase :: getConstVariable(ustr_t name)
+{
+   return _projectConstants.get(name);
 }

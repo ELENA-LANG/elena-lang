@@ -20,7 +20,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>7.1.2</version>
+    <version>7.1.3</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -52,6 +52,7 @@
        <include>scripting\interpreter.l</include>
        <include>scripting\win_scripts.l</include>
        <include>scripting\lscript.l</include>
+       <include>scripting\xscript.l</include>
      </module>
      <module name="dynamic">
        <include>dynamic\json.l</include>
