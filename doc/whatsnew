@@ -8,6 +8,7 @@
   - [ADDED] inplace extension template method
   - [ADDED] supporting pseudo type - __decl_type
   - [ADDED] supporting __inlineop attribute
+  - [ADDED] supporting project constants : __project_constants
      
 - ELC
   - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation
@@ -57,6 +58,8 @@
   - [ADDED] forms'DockingBox
 
 - Scripts
+  - [ADDED] new script : xscript
+  - [ADDED] xscript / lscript: supporting outer locals in a singleton
 
 - SAMPLES
   - [FIXED] httpget sample

@@ -9,6 +9,25 @@ namespace expressions
 
    symbol used : preloaded = new const object[]{Expression, CondMessageCallExpression, DynamicSingleton,DynamicExpressionSymbol,SymbolCollection,LazySymbolExpression};
 
+   // --- DynamicVariable --   
+   public class DynamicVariable
+   {
+      BaseExtender variable;
+      
+      constructor()
+      {
+         variable := new BaseExtender();
+      }
+      
+      TapeFunction cast()
+         = ConstantFunction.load(variable);
+      
+      saveTo(List<TapeFunction> list)
+      {
+         list.append(new DynamicExtenderSavingFunction(variable));
+      }
+   }
+
    public class ScopeIdentifier
    {
       string Name : prop;
@@ -1836,12 +1855,58 @@ namespace expressions
 
       saveTo(List<TapeFunction> list, ExpressionScope scope, int index)
       {
-         var tape := singleton.compile(nil, scope);
+         auto outers := new List<Tuple<TapeFunction, DynamicVariable>>();
+         
+         auto nestedScope := ExpressionScope
+         {
+            int Reserved = scope.Reserved;
+
+            int ScopeLevel = scope.ScopeLevel;
+
+            TapeFunction? resolve(ScopeIdentifier variable, bool assignMode)
+            {
+               auto outer := scope.resolve(variable, assignMode);
+               if (outer is:LocalFunction) {
+                  auto dynamicVar := new DynamicVariable();
+                  
+                  outers.append(new Tuple<TapeFunction, DynamicVariable>(outer, dynamicVar));
+                  
+                  ^ dynamicVar
+               }
+               else if (outer is:AssigningFunction) {
+                  // HOTFIX : currently assigning outer local is not supported
+                  ^ nil
+               };
+               
+               ^ outer;
+            }
+
+            reserveStack(int level)
+               => scope;
+
+            TapeFunction resolveExtension(Message message)
+               => scope;
+
+            int allocTempVariable()
+               = scope.allocTempVariable();
+
+            allocVariable(ScopeIdentifier variable)
+               => scope;
+         };
+
+         var tape := singleton.compile(nil, nestedScope);
+         
+         foreach(auto outer; in outers) {
+            list.append(outer.Item1);
+            outer.Item2.saveTo(list);
+         };
 
          list.append(ConstantFunction.load(tape));
          if (index > 0) {
             list.append(new SavingFunction(index));
-         }
+         };
+         
+         scope.reserveStack(1);
       }      
    }
 
@@ -1911,6 +1976,11 @@ namespace expressions
          
          imports := importInfo.declare(imports);
       }
+ 
+      clearImports()
+      {
+         imports := new string[] { };
+      }      
  
       compile()
          <= compile(new DynamicStruct());

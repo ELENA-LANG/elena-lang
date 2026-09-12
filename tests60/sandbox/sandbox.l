@@ -100,21 +100,39 @@
 //   Array<A?> list := class Array<A?>.allocate(3);
 //}
 
-namespace subns
-{
-   public class A
-   {
-      whoAmI()
-      {
-         Console.writeLine("I'm the subns'A class");
-      }
-      
-   }
-}
+import system'dynamic'expressions;
 
 public Program()
 {
-   var a := new __rootns'subns'A();
+       auto c := DynamicSingleton.load(
+                   Expression.Method(
+                      "eval",
+                      Expression.CodeBlock(                   
+                         Expression.DeclareAndAssigning(
+                           "n",
+                           Expression.Constant("Hello")
+                         ),
+                         Expression.DeclareAndAssigning(
+                           "s",
+                           Expression.Nested(
+                              new DynamicSingleton(
+                                 Expression.Method(
+                                    "eval",
+                                    Expression.CodeBlock(
+                                       Expression.Variable("n")
+                                    )
+                                 )
+                              )
+                           )
+                         ),
+                         Expression.MessageCall(
+                           new Message("eval[1]"),
+                           Expression.Variable("s")
+                         )
+                      )
+                   )
+                );
    
-   a.whoAmI()
+       var o := c.compile();
+       Console.writeLine(o.eval());
 }

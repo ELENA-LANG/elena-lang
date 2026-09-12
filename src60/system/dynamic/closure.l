@@ -210,3 +210,17 @@ public struct GoToFunction : TapeFunction
     
    mixin function(params object[] args) : external(system'core_routines'__jump_closure);
 }
+
+// --- DynamicExtenderSavingFunction ---
+
+public class DynamicExtenderSavingFunction : TapeFunction
+{
+   BaseExtender target;
+   
+   constructor(BaseExtender target) 
+   {
+      this target := target
+   }
+   
+   mixin function(params object[] args) : external(system'core_routines'__assign_extender_closure);
+}

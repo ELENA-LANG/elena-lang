@@ -422,9 +422,8 @@ void DebugController :: run()
 
    _process->activate();
 
-   _process->setEvent(DEBUG_RESUME);
    _process->resetStepMode();
-
+   _process->setEvent(DEBUG_RESUME);
 }
 
 void DebugController :: runToCursor(ustr_t ns, ustr_t path, int row)

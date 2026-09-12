@@ -2221,6 +2221,15 @@ procedure __assign_closure
 
 end
 
+procedure __assign_extender_closure
+
+  get        i:0  
+
+  assign     i:0
+  peek       sp:0
+
+end
+
 procedure __dynamicmssg_closure
 
   xflush     sp:0
