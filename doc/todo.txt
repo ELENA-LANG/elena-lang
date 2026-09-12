@@ -61,11 +61,7 @@ In development:
   ---------------------------------------
   * current : script example
   ====================================== 
-  - support singleton with outer fields
   - support lambda function
-  - support if
-  - support while
-  - support rest of terminals
   - new type of script - xlscript60; functions, variables; the main body returns the content;
     no imports, no references, it will be possible to inject external functions
   - prj file - $namespace variable?
