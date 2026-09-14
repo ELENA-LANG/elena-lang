@@ -1,0 +1,105 @@
+import system'io;
+
+public Program() { 
+  var project := "<configuration>
+  <project>
+     <executable>@name</executable>
+  </project>
+  <targets>
+     <target name=""xscript"" type=""2"">
+        <option>[[ #grammar tree ]]</option>
+        <option>~\scripts\xscript60.es</option>
+     </target>
+  </targets>
+  <profile key=""static"">
+     <project>
+        <namespace>@namespace</namespace>
+        <template>console</template>
+     </project>
+     <files>
+        <module name=""script"" target=""xscript"" hints=""4"">
+           <include>@name.ls2</include>
+        </module>
+        <module>
+           <include>@name.l</include>
+        </module>
+     </files>
+     <forwards>
+        <forward key=""ScriptFunction"">@namespace'script'Program</forward>
+     </forwards>
+  </profile>
+  <profile key=""virtual"">
+     <constants>
+        <constant key=""script_file"">@name.ls2</constant>
+     </constants>
+     <project>
+        <namespace>@namespace</namespace>
+        <template>vm_console</template>
+     </project>
+     <files>
+        <module>
+           <include>@name.l</include>
+           <include>script_interpreter.l</include>
+        </module>
+     </files>
+     <forwards>
+        <forward key=""ScriptFunction"">@namespace'ScriptInterpreter</forward>
+     </forwards>
+  </profile>
+  <profile key=""dynamic"">
+     <constants>
+        <constant key=""script_file"">@name.ls2</constant>
+     </constants>
+     <project>
+        <namespace>sandbox5</namespace>
+        <template>console</template>
+     </project>
+     <files>
+        <module>
+           <include>@name.l</include>
+           <include>script_interpreter.l</include>
+        </module>
+     </files>
+     <forwards>
+        <forward key=""ScriptFunction"">@namespace'ScriptInterpreter</forward>
+     </forwards>
+  </profile>
+</configuration>";
+
+  var source := "import extensions'scripting;
+
+public Program()
+{
+   XScript.importBasicTypes();
+
+   Console.writeLine(forward ScriptFunction());
+}";
+
+  var script_interpreter := "import extensions'scripting;
+
+const string ScriptFile = __project_constants[""script_file""];
+
+public singleton ScriptInterpreter
+{
+   function()
+      = XScript.interpretPath(ScriptFile);
+}";
+
+  var script := "let Console := require(""Console"");
+
+var helper := (message) => {
+   Console.writeLine(message);
+};
+
+helper(""Hello!!"");
+
+^ ""Bye"";";
+
+  var path := "@output_path";
+  var name := "@name";
+
+  File.saveContent(PathUtil.combine(path, "script_interpreter", "l"), script_interpreter);
+  File.saveContent(PathUtil.combine(path, name, "l"), source);
+  File.saveContent(PathUtil.combine(path, name, "ls2"), script);
+  File.saveContent(PathUtil.combine(path, name, "prj"), project);
+}

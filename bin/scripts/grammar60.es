@@ -108,6 +108,15 @@
          )
 =>;
 
+  #define action_parameter_block ::=
+<=
+         system'dynamic'expressions'ActionMethodParameterList (
+=>
+                                   param_str param_str*
+<=
+         )
+=>;
+
   #define parameter       ::= 
 <=
          system'dynamic'expressions'ScopeIdentifier (
@@ -368,6 +377,21 @@
                                    "nested" "(" class_member* ")"
 <=     ) 
      )=>;
+
+  #define object_expr   ::= 
+<=
+     system'dynamic'expressions'NestedExpression (
+       system'dynamic'expressions'DynamicSingleton (
+         system'dynamic'expressions'ActionMethodExpression (
+=>
+                                   "closure" "(" action_parameter_block? action_body ")"
+<=       ) 
+       )
+     )
+ =>;
+
+  #define action_body     ::= ret_expression;
+  #define action_body     ::= body;
 
   #define new_object      ::=
 <=

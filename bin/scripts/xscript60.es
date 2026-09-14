@@ -162,8 +162,13 @@
 
    #define singleton      ::= <= nested ( => "{" method* "}" <= ) =>;
 
+   #define closure        ::= <= closure ( => "(" parameters "=>" closure_body <= ) =>;
+   #define closure_body   ::= <= returning ( => expression <= ) =>;
+   #define closure_body   ::= body;
+
    #define object         ::= <= object ( => terminal <= ) =>;
    #define object         ::= singleton;
+   #define object         ::= closure;
    #define object         ::= "(" expression ")";
 
    #define new_variable   ::= <= new_variable ( => identifier <= ) =>;

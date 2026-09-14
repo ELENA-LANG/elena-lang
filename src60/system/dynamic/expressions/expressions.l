@@ -191,7 +191,9 @@ namespace expressions
          = SetPropertyExpression.new(name, t, v);
 
       static Expression Closure(Expression body, params ScopeIdentifier[] variables)
-         = ClosureExpression.load(body, params variables);        
+         = new NestedExpression(
+            new DynamicSingleton(
+              ActionMethodExpression.load(body, params variables)));
 
       static Expression CodeBlock(params Expression[] statements)
          = CodeblockExpression.load(params statements);
@@ -979,6 +981,22 @@ namespace expressions
          = parameters;
    }
 
+   public class ActionMethodParameterList : MethodParameterList
+   {
+      constructor(params string[] variables) 
+      {
+         int len := variables.Length;
+            
+         this parameters := new ScopeIdentifier[](len + 1);
+         parameters[0] := ScopeIdentifier.Variable("$tape");
+
+         for (int i := 0; i < len; i += 1)
+         {
+            parameters[i + 1] := ScopeIdentifier.Variable(variables[i])
+         };
+      }
+   }
+
    public class MethodExpression : Expression
    {
       Message           message;
@@ -1126,6 +1144,20 @@ namespace expressions
 
    public class ActionMethodExpression : MethodExpression
    {
+      constructor load(Expression body, params ScopeIdentifier[] params)
+      {
+         int len := params.Length;
+         this parameters := new ScopeIdentifier[](len + 1);
+         this parameters[0] := ScopeIdentifier.Variable("$tape");
+         for (int i := 0; i < len; i++) {
+            this parameters[i + 1] := params[i];
+         };
+         
+         this message := new Message("function:#invoke[0]");
+
+         this body := body;         
+      }
+      
       constructor(Expression body)
       {
          this parameters := new ScopeIdentifier[]
@@ -1136,6 +1168,20 @@ namespace expressions
          this message := new Message("function:#invoke[0]");
 
          this body := body;
+      }
+
+      constructor(MethodParameterList parameters, Expression body)
+      {
+         // excluding $tape variable
+         int len := parameters.Length - 1;
+            
+         auto text := TextBuilder.load("function:#invoke[");
+         text.append(len);
+         text.append("]");
+            
+         this body := body;
+         this message := new Message(*text);
+         this parameters := *parameters;
       }
 
       constructor(ScopeIdentifier param1, Expression body)
@@ -1214,90 +1260,69 @@ namespace expressions
 
          this body := body;
       }
+
+      constructor(ScopeIdentifier param1, ScopeIdentifier param2, ScopeIdentifier param3, 
+         ScopeIdentifier param4, ScopeIdentifier param5, ScopeIdentifier param6, Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape"), 
+            param1,
+            param2,
+            param3,
+            param4,
+            param5,
+            param6
+         };
+
+         this message := new Message("function:#invoke[6]");
+
+         this body := body;
+      }
+
+      constructor(ScopeIdentifier param1, ScopeIdentifier param2, ScopeIdentifier param3,
+         ScopeIdentifier param4, ScopeIdentifier param5, ScopeIdentifier param6, 
+         ScopeIdentifier param7, Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape"), 
+            param1,
+            param2,
+            param3,
+            param4,
+            param5,
+            param6,
+            param7
+         };
+
+         this message := new Message("function:#invoke[7]");
+
+         this body := body;
+      }
+
+      constructor(ScopeIdentifier param1, ScopeIdentifier param2, ScopeIdentifier param3,
+         ScopeIdentifier param4, ScopeIdentifier param5, ScopeIdentifier param6, 
+         ScopeIdentifier param7, ScopeIdentifier param8, Expression body)
+      {
+         this parameters := new ScopeIdentifier[]
+         { 
+            ScopeIdentifier.Variable("$tape"), 
+            param1,
+            param2,
+            param3,
+            param4,
+            param5,
+            param6,
+            param7,
+            param8
+         };
+
+         this message := new Message("function:#invoke[8]");
+
+         this body := body;
+      }
    }
-
-   public class ClosureExpression : Expression
-   {
-      ScopeIdentifier[] parameters;
-      Expression        body;
-        
-      constructor(Expression body)
-      {
-         this parameters := new ScopeIdentifier[](0);
-            
-         this body := body;
-      } 
-        
-      constructor load(Expression body, params ScopeIdentifier[] params)
-      {
-         // revese the order
-         int len := params.Length;
-         this parameters := new ScopeIdentifier[](len + 1);
-         parameters[0] := new ScopeIdentifier("$tape", 0);
-         for (int i := 0; i < len; i += 1)
-         {
-            parameters[i + 1] := params[i]
-         };
-            
-         this body := body;
-      } 
-
-      bool IsOperation = true;
-     
-      declare(ExpressionScope scope)
-      {
-      }
-
-      saveTo(List<TapeFunction> list, ExpressionScope parentScope, int index)
-      {
-         int level := parameters.Length;
-
-         auto scope := ExpressionScope
-         {
-            int Reserved
-               = parentScope.Reserved;
-
-            int ScopeLevel
-               = parentScope.ScopeLevel + level;
-
-            reserveStack(int level)
-               => parentScope;
-
-            allocVariable(ScopeIdentifier variable)
-               => parentScope;
-
-            int allocTempVariable()
-               = parentScope.allocTempVariable();
-
-            TapeFunction resolve(ScopeIdentifier variable, bool assignMode)
-            {
-               int len := parameters.Length;
-               for(int i := 0; i < len; i+=1) {
-                  if (variable == parameters[i])
-                  {
-                     int index := i + 1;
-                                
-                     if (assignMode) 
-                     {
-                        NotSupportedException.raise()
-                     }
-                     else 
-                     {
-                        ^ new LocalFunction(index)
-                     };                                
-                  }
-               };
-                    
-               ^ parentScope.resolve(variable, assignMode)
-            }
-
-            TapeFunction resolveExtension(Message message)
-               => parentScope;
-         };
-
-         body.saveTo(list, scope, index);
-      }
-   }      
 
    public class CodeblockExpression : Expression
    {

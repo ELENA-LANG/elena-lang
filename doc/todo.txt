@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - prj file - $namespace variable?
   - post about foreach
   - fix : why stream operation Stream.read[4] generates an error for Linux
   - review : Stream, MemoryStream, NetworkStream
@@ -60,15 +61,8 @@ In development:
   - test rosetta for 64bit
   ---------------------------------------
   * current : script example
-  ====================================== 
-  - support lambda function
-  - new type of script - xlscript60; functions, variables; the main body returns the content;
-    no imports, no references, it will be possible to inject external functions
-  - prj file - $namespace variable?
-  - make sure, no system namespace is imported
-  - an example - where the main program executes the script in the file - can be both run-time / design-time  
+  ======================================   
   - extend elt to create a script based solution virtual / runtime / design-time
-  - simple program with a function declared in the script file in runtime / design-time
   - returning a singleton implementing an interface in design-time
   - returning a singleton implementing an interface in compile-time
   ---------------------------------------
