@@ -62,6 +62,9 @@ In development:
   ---------------------------------------
   * current : script example
   ======================================   
+  - compile interface mocking in vm mode
+  - compile interface mocking with expression tree in static / vm mode mode
+  - compile interface mocking with elena script2 in static / vm mode mode
   - returning a singleton implementing an interface in design-time
   - returning a singleton implementing an interface in compile-time
   ---------------------------------------

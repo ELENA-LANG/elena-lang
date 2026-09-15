@@ -100,6 +100,23 @@
 //   Array<A?> list := class Array<A?>.allocate(3);
 //}
 
-public Program() { 
+import system'dynamic;
+import extensions;
 
+public interface I
+{
+   abstract string whoAmI();
+}
+
+singleton A
+{
+   whoAmI()
+      = "I'm a singleton A";
+}
+
+public Program()
+{ 
+   I i := A.mockInterface(I);
+   
+   Console.printLine(i.whoAmI());
 }

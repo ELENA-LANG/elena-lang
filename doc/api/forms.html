@@ -467,7 +467,93 @@ forms'BaseControl</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
+<CODE>onParentResize(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> parentControl)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
 <CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
+<A NAME="BaseNonVisibleControl">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+forms'</DIV>
+<H2 title="BaseNonVisibleControl" class="title">BaseNonVisibleControl</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+abstract public class <SPAN CLASS="typeNameLabel">BaseNonVisibleControl</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+forms'BaseNonVisibleControl</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_parent</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Parent()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>set internal </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Parent(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
 </CODE>
 </TD>
 </TR>
@@ -704,7 +790,7 @@ forms'BasePanel</LI>
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendControlInternal(<SPAN CLASS="memberNameLink"><A HREF="forms.html#ImageList">ImageList</A></SPAN> control)
+<CODE>appendControlInternal(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseNonVisibleControl">BaseNonVisibleControl</A></SPAN> control)
 </CODE>
 </TD>
 </TR>
@@ -906,7 +992,7 @@ forms'BaseWinContainer</LI>
 <CODE>
 <i>internal </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system-winforms.html#WindowHandle">WindowHandle</A></SPAN> hwnd, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+<CODE>resize(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> hwnd, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
 </CODE>
 </TD>
 </TR>
@@ -1410,6 +1496,15 @@ forms'BaseWinForm</LI>
 </TD>
 </TR>
 <TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseNonVisibleControl">BaseNonVisibleControl</A></SPAN> control)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1947,6 +2042,233 @@ forms'Combobox</LI>
 </UL>
 <HR>
 </DIV>
+<A NAME="DockingBox">
+</A>
+<!-- ======== START OF CLASS DATA ======== -->
+<DIV CLASS="header">
+<DIV CLASS="subTitle">
+forms'</DIV>
+<H2 title="DockingBox" class="title">DockingBox</H2>
+</DIV>
+<DIV CLASS="contentContainer">
+<DIV CLASS="description">
+<BR>
+<HR>
+<PRE STYLE="padding-top: 15px;">
+public class <SPAN CLASS="typeNameLabel">DockingBox</SPAN></PRE>
+<BR>
+</DIV>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseNonVisibleControl">forms'BaseNonVisibleControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
+forms'DockingBox</LI>
+</UL>
+</LI>
+</UL>
+</LI>
+</UL>
+<!-- ========== FIELD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Field Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Field</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_parent</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Dimension</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_size</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_left</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_right</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_top</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_bottom</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>_client</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== CONSTRUCTOR SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Constructor Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#DockingBox">DockingBox</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>new()
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== PROPERTY SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Property Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Property</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>get </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>Control()</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<!-- ========== METHOD SUMMARY =========== -->
+<UL CLASS="blockList">
+<LI CLASS="blockList">
+<H3>Method Summary</H3>
+<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
+<TR>
+<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
+<TH CLASS="colLast" scope="col">Method</TH>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>change()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>click()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>close()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>onParentResize(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> parentControl)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>open()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>refresh()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>retrieve(<SPAN CLASS="memberNameLink"><A HREF="system.html#Handle">Handle</A></SPAN> handle)
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>setRegion(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> x, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> y, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> width, <SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> height)
+</CODE>
+</TD>
+</TR>
+</TABLE>
+</LI>
+</UL>
+<HR>
+</DIV>
 <A NAME="Edit">
 </A>
 <!-- ======== START OF CLASS DATA ======== -->
@@ -2348,11 +2670,20 @@ forms'IControl</LI>
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
-<CODE>open()
+<CODE>onParentResize(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> parentControl)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+<i>abstract </i>&nbsp;</CODE></TD>
+<TD CLASS="colLast">
+<CODE>open()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>abstract </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
@@ -2361,7 +2692,7 @@ forms'IControl</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>abstract </i>&nbsp;</CODE></TD>
@@ -2620,7 +2951,13 @@ public class <SPAN CLASS="typeNameLabel">ImageList</SPAN></PRE>
 <LI>
 <UL CLASS="inheritance">
 <LI>
+<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseNonVisibleControl">forms'BaseNonVisibleControl</A></SPAN></LI>
+<LI>
+<UL CLASS="inheritance">
+<LI>
 forms'ImageList</LI>
+</UL>
+</LI>
 </UL>
 </LI>
 </UL>
@@ -2636,17 +2973,17 @@ forms'ImageList</LI>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Dimension</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_size</CODE>
+<CODE>_parent</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN></CODE></TD>
+<SPAN CLASS="memberNameLink"><A HREF="system-drawing.html#Dimension">Dimension</A></SPAN></CODE></TD>
 <TD CLASS="colLast">
-<CODE>_parent</CODE>
+<CODE>_size</CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
@@ -2704,23 +3041,6 @@ forms'ImageList</LI>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Control()</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Parent()</CODE>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>set internal </i>&nbsp;</CODE></TD>
-<TD CLASS="colLast">
-<CODE>Parent(<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> o)
-</CODE>
 </TD>
 </TR>
 <TR CLASS="rowColor">
@@ -2802,11 +3122,20 @@ forms'ImageList</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>open()
+<CODE>onParentResize(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseControl">BaseControl</A></SPAN> parentControl)
 </CODE>
 </TD>
 </TR>
 <TR CLASS="altColor">
+<TD CLASS="colFirst">
+<CODE>
+</CODE></TD>
+<TD CLASS="colLast">
+<CODE>open()
+</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 <SPAN CLASS="memberNameLink"><A HREF="forms.html#IControl">IControl</A></SPAN></CODE></TD>
@@ -2815,7 +3144,7 @@ forms'ImageList</LI>
 </CODE>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -3581,7 +3910,7 @@ forms'Panel</LI>
 <CODE>
 </CODE></TD>
 <TD CLASS="colLast">
-<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#ImageList">ImageList</A></SPAN> control)
+<CODE>appendControl(<SPAN CLASS="memberNameLink"><A HREF="forms.html#BaseNonVisibleControl">BaseNonVisibleControl</A></SPAN> control)
 </CODE>
 </TD>
 </TR>

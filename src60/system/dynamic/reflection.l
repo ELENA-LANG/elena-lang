@@ -116,7 +116,7 @@ extension reflectionOp
 
 public extension proxyTypeOp
 {
-   mockInferface(type)
+   mockInterface(type)
    {
       var proxy := ::{ dispatch() => self; };
 

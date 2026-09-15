@@ -13,7 +13,7 @@ public class Mockup
     {
        var type := __received.__getFirstSignatureMember();
     
-       var proxy := object.mockInferface(type);
+       var proxy := object.mockInterface(type);
        
        ^ __received(proxy);
    }
@@ -30,7 +30,7 @@ public class Mockup<T>
     
     T cast()
     {
-       var proxy := object.mockInferface(class T);
+       var proxy := object.mockInterface(class T);
        
        ^ proxy;
    }

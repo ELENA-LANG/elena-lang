@@ -837,7 +837,7 @@ The code is:
        {
           var type := __received.__getFirstSignatureMember();
     
-          var proxy := object.mockInferface(type);
+          var proxy := object.mockInterface(type);
        
           ^ __received(proxy);
        }

@@ -1450,6 +1450,17 @@ Returns a list enumerator</div>
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<SPAN CLASS="memberNameLink"><A HREF="system.html#BoolValue">BoolValue</A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>ifExists(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> item)
+</CODE>
+<div class="block">
+Returns true if the list contains an element which is equal to <b>item</b></div>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 </CODE></TD>
 <TD CLASS="colLast">
 <CODE>insert(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> object)
@@ -1458,7 +1469,7 @@ Returns a list enumerator</div>
 Inserts the element at the specified index</div>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1469,7 +1480,7 @@ Inserts the element at the specified index</div>
 Inserts the element at the top</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1480,7 +1491,7 @@ Inserts the element at the top</div>
 Removes an object at the specified position</div>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1491,7 +1502,7 @@ Removes an object at the specified position</div>
 Sets the element at the specified position</div>
 </TD>
 </TR>
-<TR CLASS="altColor">
+<TR CLASS="rowColor">
 <TD CLASS="colFirst">
 <CODE>
 </CODE></TD>
@@ -1641,6 +1652,14 @@ Creates a map with a default size (37) and a capacity (32); the custom hash func
 <TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
+<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T1<I>[]</I></A></SPAN></CODE></TD>
+<TD CLASS="colLast">
+<CODE>Keys()</CODE>
+</TD>
+</TR>
+<TR CLASS="rowColor">
+<TD CLASS="colFirst">
+<CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">T2<I>[]</I></A></SPAN></CODE></TD>
 <TD CLASS="colLast">
 <CODE>MapValues()</CODE>
@@ -1648,7 +1667,7 @@ Creates a map with a default size (37) and a capacity (32); the custom hash func
 Returns an array of a map values</div>
 </TD>
 </TR>
-<TR CLASS="rowColor">
+<TR CLASS="altColor">
 <TD CLASS="colFirst">
 <CODE>
 <i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#Array&lt;T1&gt;">system'collections'VarTuple&lt;T1,T2&gt;<I>[]</I></A></SPAN></CODE></TD>
@@ -4702,162 +4721,6 @@ system'collections'Union&lt;T1,T2&gt;</LI>
 <i>get </i>&nbsp;</CODE></TD>
 <TD CLASS="colLast">
 <CODE>Value()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<HR>
-</DIV>
-<A NAME="VarTuple&lt;T1,T2&gt;">
-</A>
-<!-- ======== START OF CLASS DATA ======== -->
-<DIV CLASS="header">
-<DIV CLASS="subTitle">
-system'collections'</DIV>
-<H2 title="VarTuple&lt;T1,T2&gt;" class="title">VarTuple&lt;T1,T2&gt;</H2>
-</DIV>
-<DIV CLASS="contentContainer">
-<DIV CLASS="description">
-<BR>
-<HR>
-<PRE STYLE="padding-top: 15px;">
-public template <SPAN CLASS="typeNameLabel">VarTuple&lt;T1,T2&gt;</SPAN><BR/>
-<I>A variable fixed-size collection of two elemenet</I></PRE>
-<BR>
-</DIV>
-<UL CLASS="inheritance">
-<LI>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Object">system'Object</A></SPAN></LI>
-<LI>
-<UL CLASS="inheritance">
-<LI>
-system'collections'VarTuple&lt;T1,T2&gt;</LI>
-</UL>
-</LI>
-</UL>
-<!-- ========== FIELD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Field Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Field</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Item1</CODE>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Item2</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== CONSTRUCTOR SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Constructor Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Constructor / Static Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2&gt;">VarTuple&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>()
-</CODE>
-<div class="block">
-Creates a fixed-size collection with default values</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="-system-collections.html#VarTuple&lt;T1,T2&gt;">VarTuple&lt;T1,T2&gt;</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE><i>constructor</i>(<SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T1">T1</A></SPAN> o1, <SPAN CLASS="memberNameLink"><A HREF="system-$private-collections.html#T2">T2</A></SPAN> o2)
-</CODE>
-<div class="block">
-Creates a fixed-size collection with specified values</div>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== PROPERTY SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Property Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Property</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-<i>get </i>&nbsp;<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>Length()</CODE>
-</TD>
-</TR>
-</TABLE>
-</LI>
-</UL>
-<!-- ========== METHOD SUMMARY =========== -->
-<UL CLASS="blockList">
-<LI CLASS="blockList">
-<H3>Method Summary</H3>
-<TABLE CLASS="memberSummary" BORDER="0" CELLPADDING="3" CELLSPACING="0">
-<TR>
-<TH CLASS="colFirst" scope="col">Modifier and Type</TH>
-<TH CLASS="colLast" scope="col">Method</TH>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>at(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index)
-</CODE>
-<div class="block">
-Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
-</TD>
-</TR>
-<TR CLASS="rowColor">
-<TD CLASS="colFirst">
-<CODE>
-<SPAN CLASS="memberNameLink"><A HREF="system.html#Enumerator">Enumerator</A></SPAN></CODE></TD>
-<TD CLASS="colLast">
-<CODE>enumerator()
-</CODE>
-<div class="block">
-Creates a fixed-sized collection enumerator</div>
-</TD>
-</TR>
-<TR CLASS="altColor">
-<TD CLASS="colFirst">
-<CODE>
-</CODE></TD>
-<TD CLASS="colLast">
-<CODE>setAt(<SPAN CLASS="memberNameLink"><A HREF="system.html#IntNumber">IntNumber</A></SPAN> index, <SPAN CLASS="memberNameLink"><A HREF="system.html#Object">Object</A></SPAN> val)
-</CODE>
-<div class="block">
-Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.</div>
 </TD>
 </TR>
 </TABLE>
