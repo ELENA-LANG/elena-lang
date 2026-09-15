@@ -100,39 +100,6 @@
 //   Array<A?> list := class Array<A?>.allocate(3);
 //}
 
-import system'dynamic'expressions;
+public Program() { 
 
-public Program()
-{
-       auto c := DynamicSingleton.load(
-                   Expression.Method(
-                      "eval",
-                      Expression.CodeBlock(                   
-                         Expression.DeclareAndAssigning(
-                           "n",
-                           Expression.Constant("Hello")
-                         ),
-                         Expression.DeclareAndAssigning(
-                           "s",
-                           Expression.Nested(
-                              new DynamicSingleton(
-                                 Expression.Method(
-                                    "eval",
-                                    Expression.CodeBlock(
-                                       Expression.Variable("n")
-                                    )
-                                 )
-                              )
-                           )
-                         ),
-                         Expression.MessageCall(
-                           new Message("eval[1]"),
-                           Expression.Variable("s")
-                         )
-                      )
-                   )
-                );
-   
-       var o := c.compile();
-       Console.writeLine(o.eval());
 }

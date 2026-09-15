@@ -3,7 +3,7 @@
 //
 //		This header contains ELENA Script Reader class declaration.
 //
-//                                             (C)2021-2024, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef SCRIPTREADER_H
@@ -19,15 +19,31 @@ namespace elena_lang
       LineInfo         lineInfo;
       IdentifierString token;
       char             state;
+      char*            extraLongStr;
 
       bool compare(ustr_t s) const 
       {
          return (*token).compare(s);
       }
 
+      void saveTo(MemoryWriter& writer)
+      {
+         if (!emptystr(extraLongStr)) {
+            writer.writeString(extraLongStr);
+            freestr(extraLongStr);
+            extraLongStr = nullptr;
+         }
+         else writer.writeString(*token);
+      }
+
       ScriptToken()
       {
          state = 0;
+         extraLongStr = nullptr;
+      }
+      ~ScriptToken()
+      {
+         freestr(extraLongStr);
       }
    };
 
@@ -46,7 +62,10 @@ namespace elena_lang
 
          QuoteString quote(_line + _startPosition, len);
 
-         tokenInfo.token.copy(quote.str());
+         if (!tokenInfo.token.copy(quote.str())) {
+            freestr(tokenInfo.extraLongStr);
+            tokenInfo.extraLongStr = ustr_t(quote.str()).clone();
+         }
       }
 
    public:

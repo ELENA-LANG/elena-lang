@@ -48,6 +48,7 @@ ScriptBookmark ScriptEngineReader :: read()
    }
 
    MemoryWriter writer(&buffer);
+   token.saveTo(writer);
    writer.writeString(*token.token);
 
    return bm;

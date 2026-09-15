@@ -747,25 +747,13 @@ void VMSession :: run()
 
    do {
       try {
-//         if (!_multiLineFlag)
-            _presenter->print("\n>");
+         _presenter->print("\n>");
 
          _presenter->readLine(buffer, MAX_LINE);
 
          trimLine(buffer);
 
-//         if (line[0] == '@') {
-//            if (!executeCommand(*line, running))
-//               _presenter->print("Invalid command, use -h to get the list of the commands\n");
-//         }
-//         else if (_multiLineFlag) {
-//            _body.append(*line);
-//            _body.append("\n");
-//         }
-//         else if (isAssignment(*line)) {
-//            executeCommandLine(false, TemplateType::Multiline, *line);
-//         }
-         /*else */executeCommandLine(/*false, TemplateType::REPL, */buffer, context);
+         executeCommandLine(buffer, context);
       }
       catch (...) {
          _presenter->print("Invalid operation");

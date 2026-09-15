@@ -62,7 +62,6 @@ In development:
   ---------------------------------------
   * current : script example
   ======================================   
-  - extend elt to create a script based solution virtual / runtime / design-time
   - returning a singleton implementing an interface in design-time
   - returning a singleton implementing an interface in compile-time
   ---------------------------------------
