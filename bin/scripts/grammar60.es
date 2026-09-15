@@ -85,7 +85,7 @@
 <=
        system'dynamic'expressions'ActionMethodExpression (
 =>
-                                   "function" "(" parameter* body ")"
+                                   "function" "(" parameter* m_body ")"
 <=
        )
 =>;
@@ -94,10 +94,13 @@
 <=
        system'dynamic'expressions'MethodExpression (
 =>
-                                   "script_method" "(" m_name parameter_block? body ")"
+                                   "script_method" "(" m_name parameter_block? m_body ")"
 <=
        )
 =>;
+
+  #define m_body          ::= body;
+  #define m_body          ::= ret_expression;
 
   #define parameter_block ::=
 <=

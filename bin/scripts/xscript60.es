@@ -16,6 +16,8 @@
      )
 =>;
 
+   #define body           ::= ret_statement ";";
+
    #define ret_statement  ::= <= returning ( => "=" expression <= ) =>;
 
    #define statement      ::= expression ";";

@@ -100,23 +100,50 @@
 //   Array<A?> list := class Array<A?>.allocate(3);
 //}
 
-import system'dynamic;
+//import system'dynamic;
+//import system'dynamic'expressions;
+//import extensions;
+//
+//public interface I
+//{
+//   abstract string whoAmI();
+//}
+//
+//singleton A
+//{
+//   whoAmI()
+//      = "I'm a singleton A";
+//}
+//
+//public Program()
+//{ 
+//   var tree := DynamicSingleton.load(
+//                Expression.Method(
+//                   "whoAmI",
+//                   Expression.CodeBlock(
+//                     Expression.Constant("I'm an expression tree") 
+//                   )
+//                )
+//             );
+//   
+//   var mock := tree.compile();
+//
+//   I i1 := A.mockInterface(I);   
+//   Console.printLine(i1.whoAmI());
+//   
+//   I i2 := mock.mockInterface(I);   
+//   Console.printLine(i2.whoAmI());
+//}
+
 import extensions;
-
-public interface I
-{
-   abstract string whoAmI();
-}
-
-singleton A
-{
-   whoAmI()
-      = "I'm a singleton A";
-}
+import extensions'scripting;
 
 public Program()
-{ 
-   I i := A.mockInterface(I);
-   
-   Console.printLine(i.whoAmI());
+{
+    var text := Program_arguments[1];
+    var arg := Program_arguments[2];
+    
+    var program := LScript.interpretLine(text);
+    Console.printLine(
+        text,",",arg," = ",program.eval(arg.toReal()));
 }

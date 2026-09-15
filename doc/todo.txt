@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 8.0 ###
 
-  === Iteration 47 (ide linux; api refactoring; lang features) ===
+  === Iteration 47 (lang features; #866) ===
   --------------------------------------
   * backlog
   ====================================== 
@@ -26,50 +26,26 @@ In development:
   - optimization (xmlreader - currentOffset := offs; - make sure new object is not created) 
   - auto s := "Привет"; Console.printLine(s[1]); // <-- an exception is expected   
   - Static decorator (mixin inheritance)
-  - we need slim lock - without snop
   - httpget for linux i386 / amd64
   - Array<T> must support Enumerable interface as well
   --------------------------------------
-  * dev
-  ====================================== 
-  --------------------------------------
-  * lang
-  ====================================== 
-  --------------------------------------
   * doc
   ====================================== 
-  - documentation retoverload
-  - knowhow - foreach statement
   - provide descriptions for all classes (from culture)
   --------------------------------------
   * current : graph sample
   ====================================== 
-  - stage 1 : compile-time script 
+  - stage 1a : compile-time script 
+  - stage 1b : run-time script 
   - stage 2 : create xgraph sample
-  - stage 3 : run-time script 
   - post
   ---------------------------------------
   * samples
   ====================================== 
-  - review rosetta samples from R
-  - review all rosetta samples, fix the corrected
-  - review all tutorials
-  - review all knowhow examples  
-  - fix sampleapi for https
-  - fix httpsget for x86-64
-  - test examples for 64bit
-  - test rosetta for 64bit
-  ---------------------------------------
-  * current : script example
-  ======================================   
-  - compile interface mocking in vm mode
-  - compile interface mocking with expression tree in static / vm mode mode
-  - compile interface mocking with elena script2 in static / vm mode mode
-  - returning a singleton implementing an interface in design-time
-  - returning a singleton implementing an interface in compile-time
+  - review rosetta samples from S
   ---------------------------------------
 
-  === Iteration 48 (text based adventage; #866) ===
+  === Iteration 48 (ide linux; text based adventage; api refactoring) ===
   * new version 7.0.3
   --------------------------------------
   --------------------------------------

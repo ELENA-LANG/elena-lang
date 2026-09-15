@@ -9,7 +9,7 @@
 #ifndef VMCOMMON_H
 #define VMCOMMON_H
 
-#define ELENAVM_REVISION_NUMBER        0x0004
+#define ELENAVM_REVISION_NUMBER        0x0005
 
 namespace elena_lang
 {
