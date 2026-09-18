@@ -47,7 +47,7 @@ static inline bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 224;
+constexpr auto OperationLength = 226;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -729,6 +729,12 @@ constexpr Op Operations[OperationLength] =
    {
       SUB_ASSIGN_OPERATOR_ID, BuildKey::LongIntOp, V_INT64, V_INT32, 0, 0
    },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::RefCondOp, V_POINTER, V_POINTER, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::RefCondOp, V_POINTER, V_POINTER, 0, V_FLAG
+   },
 };
 
 bool CompilerLogic :: isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source)
@@ -1212,6 +1218,9 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
          return true;
       case V_CONST:
          attrs |= ExpressionAttribute::ReadOnly;
+         return true;
+      case V_POINTER:
+         attrs |= ExpressionAttribute::ReferenceOp;
          return true;
       default:
          return false;

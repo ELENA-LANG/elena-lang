@@ -395,6 +395,16 @@ void BTOptimization7::SetUp()
    BuildTreeSerializer::load(OptimizedTree_StructFieldAssigning_1, afterOptimization);
 }
 
+// --- BTOptimization7_2 ---
+
+void BTOptimization7_2::SetUp()
+{
+   BTOptimization::SetUp();
+
+   BuildTreeSerializer::load(BuildTree_Ref_Comparison, buildNode);
+   BuildTreeSerializer::load(OptimizedTree_Ref_Comparison, afterOptimization);
+}
+
 // --- BTOptimization8 ---
 
 void BTOptimization8 :: initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages)
@@ -974,6 +984,24 @@ void StructFieldAssigning :: SetUp()
 
    targetRef = 3;
    intNumberRef = 2;
+
+   trueRef = 10;  // !! virtual references
+   falseRef = 11;
+}
+
+// --- ByRefComparison ---
+
+void ByRefComparison::SetUp()
+{
+   MethodScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_3, S_IntNumber, S_BoolValue, S1_Ref_Comparison);
+
+   BuildTreeSerializer::load(BuildTree_Ref_Comparison, controlOutputNode);
+
+   targetRef = 4;
+   intNumberRef = 2;
+   boolTypeRef = 3;
 
    trueRef = 10;  // !! virtual references
    falseRef = 11;

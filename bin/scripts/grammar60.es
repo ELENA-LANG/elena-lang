@@ -168,6 +168,7 @@
   #define expression      ::= "less_operation" "(" less_expression ")";
   #define expression      ::= "greater_operation" "(" greater_expression ")";
   #define expression      ::= "at_operation" "(" at_expression ")";
+  #define expression      ::= "negate_operation" "(" negate_expression ")";
   #define expression      ::= object_expr;
  
   #define branch_op       ::= 
@@ -369,6 +370,18 @@
 
   #define greater_operation ::=
                <= "greater" => expression;
+
+  #define negate_expression ::=
+<=
+               system'dynamic'expressions'GetPropertyExpression (
+=>
+                              expression negate_operation
+<=
+               )
+=>;
+
+  #define negate_operation ::=
+               <= "Negative" => expression;
 
   #define object_expr     ::= "object" "(" object ")";
 

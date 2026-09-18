@@ -119,6 +119,7 @@
    #define importer       ::= "require" "(" import_link ")";
 
    #define expression     ::= <= expression ( => l5 <= ) =>;
+   #define expression     ::= <= negate_operation ( => "-" expression <= ) =>;
 
    #define l2_expression  ::= <= expression ( => l2 <= ) =>;
 

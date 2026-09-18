@@ -136,14 +136,35 @@
 //}
 
 import extensions;
-import extensions'scripting;
+/*import system'dynamic;
+ 
+public interface I
+{
+   abstract string whoAmI();
+}
 
+singleton Mock
+{
+   whoAmI()
+      = "I'm a mockup";
+}*/
+  
 public Program()
 {
-    var text := Program_arguments[1];
-    var arg := Program_arguments[2];
-    
-    var program := LScript.interpretLine(text);
-    Console.printLine(
-        text,",",arg," = ",program.eval(arg.toReal()));
+   var n1 := 1;
+   var n2 := n1;
+   var n3 := n1 + 0;
+   if (__ptr n1 == __ptr n2) {
+      Console.writeLine("Works!")
+   };
+   if (__ptr n1 != __ptr n3) {
+      Console.writeLine("Works Again!")
+   };
+
+//   I i := Mock.mockInterface(I);
+//   Console.printLine(i, " is ", i.whoAmI());
+   
+//   if (i is:I) {
+//      Console.writeLine("Works!")
+//   }
 }

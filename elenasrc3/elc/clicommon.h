@@ -463,6 +463,7 @@ enum class ExpressionAttribute : pos64_t
    HeapAllocated        = 0x1000000000000,
    StackUnsafe          = 0x2000000000000,
    ReadOnly             = 0x4000000000000,
+   ReferenceOp          = 0x8000000000000,
 };
 
 struct ExpressionAttributes

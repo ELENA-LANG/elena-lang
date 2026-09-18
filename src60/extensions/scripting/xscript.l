@@ -5,6 +5,11 @@ public singleton XScript
       Exports["Console"] := Console;
    }
    
+   import(string name, object object) 
+   {
+      Exports[name] := object;
+   }
+   
    interpretPath(string path)
    {
       var script := XScriptEngine.buildScriptFile(path).clearImports().compile();

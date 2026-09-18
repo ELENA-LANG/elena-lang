@@ -7346,28 +7346,28 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             break;
          case V_POINTER:
             switch (attrs.size) {
-            case 4:
-               attrs.typeInfo.typeRef = V_PTR32;
-               attrs.fieldArray = false;
-               break;
-            case 8:
-               attrs.typeInfo.typeRef = V_PTR64;
-               attrs.fieldArray = false;
-               break;
-            case 0:
-               attrs.fieldArray = false;
-               attrs.size = scope.moduleScope->ptrSize;
-               if (attrs.size == 4) {
+               case 4:
                   attrs.typeInfo.typeRef = V_PTR32;
-               }
-               else if (attrs.size == 8) {
+                  attrs.fieldArray = false;
+                  break;
+               case 8:
                   attrs.typeInfo.typeRef = V_PTR64;
-               }
-               else assert(false);
-               break;
-            default:
-               valid = false;
-               break;
+                  attrs.fieldArray = false;
+                  break;
+               case 0:
+                  attrs.fieldArray = false;
+                  attrs.size = scope.moduleScope->ptrSize;
+                  if (attrs.size == 4) {
+                     attrs.typeInfo.typeRef = V_PTR32;
+                  }
+                  else if (attrs.size == 8) {
+                     attrs.typeInfo.typeRef = V_PTR64;
+                  }
+                  else assert(false);
+                  break;
+               default:
+                  valid = false;
+                  break;
             }
             break;
          default:
@@ -8664,6 +8664,10 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
    if (EAttrs::test(attrs, EAttr::Weak)) {
       assert(retVal.mode == TargetMode::None);
       retVal.mode = TargetMode::Weak;
+   }
+   if (EAttrs::test(attrs, EAttr::ReferenceOp)) {
+      assert(retVal.mode == TargetMode::None);
+      retVal.mode = TargetMode::ReferenceOp;
    }
 
    return retVal;
@@ -17995,17 +17999,28 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
    }
 
    bool unwrapTarget = false;
-   if (operatorId == SET_INDEXER_OPERATOR_ID) {
-      if (CompilerLogic::isPrimitiveArrRef(arguments[0])
-         && compiler->_logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, CompatibleMode::None))
-      {
-         // HOTFIX : for the generic binary array, recognize the element type
-         arguments[1] = V_ELEMENT;
-      }
-   }
-   else if (operatorId == LEN_OPERATOR_ID) {
-      if (!isPrimitiveRef(arguments[0]) && compiler->_logic->isDynamic(*scope.moduleScope, arguments[0]))
-         unwrapTarget = true;
+   switch (operatorId) {
+      case SET_INDEXER_OPERATOR_ID:
+         if (CompilerLogic::isPrimitiveArrRef(arguments[0])
+            && compiler->_logic->isCompatible(*scope.moduleScope, { arguments[1] }, { loperand.typeInfo.elementRef }, CompatibleMode::None))
+         {
+            // HOTFIX : for the generic binary array, recognize the element type
+            arguments[1] = V_ELEMENT;
+         }
+         break;
+      case LEN_OPERATOR_ID:
+         if (!isPrimitiveRef(arguments[0]) && compiler->_logic->isDynamic(*scope.moduleScope, arguments[0]))
+            unwrapTarget = true;
+         break;
+      case EQUAL_OPERATOR_ID:
+      case NOTEQUAL_OPERATOR_ID:
+         if (loperand.mode == TargetMode::ReferenceOp && messageArguments[1].mode == TargetMode::ReferenceOp) {
+            // COMPILER MAGIC : treat the operands as references
+            arguments[0] = arguments[1] = V_POINTER;
+         }
+         break;
+      default:
+         break;
    }
 
    ref_t outputRef = 0;
@@ -18088,6 +18103,7 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
          case BuildKey::LongIntCondOp:
          case BuildKey::RealCondOp:
          case BuildKey::NilCondOp:
+         case BuildKey::RefCondOp:
             writer->appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
             writer->appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
             break;

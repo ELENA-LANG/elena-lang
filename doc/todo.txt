@@ -33,16 +33,25 @@ In development:
   ====================================== 
   - provide descriptions for all classes (from culture)
   --------------------------------------
-  * current : graph sample
+  * graph sample
   ====================================== 
   - stage 1a : compile-time script 
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
-  - post
+  - compile tape as executable in vm mode
+  - compile tape as executable in static mode
   ---------------------------------------
   * samples
   ====================================== 
-  - review rosetta samples from S
+  - review rosetta samples from S (Simple windowed application)
+  ---------------------------------------
+  * current : backlog
+  ====================================== 
+  - replace equalReference and make it __inlineop
+  - optimize subsetOf - "==" operator must be direct
+  - optimize subsetOf
+  - fix **is** operator : check the message
+  - check - if:is works correctly as well
   ---------------------------------------
 
   === Iteration 48 (ide linux; text based adventage; api refactoring) ===

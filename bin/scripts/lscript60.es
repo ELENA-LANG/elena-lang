@@ -151,6 +151,7 @@
    #define get_expression ::= <= get_expression ( => l5 <= ) =>;
    #define expression     ::= <= expression ( => l5 <= ) =>;
    #define expression     ::= <= expression ( => new_operation <= ) =>;
+   #define expression     ::= <= negate_operation ( => "-" expression <= ) =>;
 
    #define s_expression     ::= 
 <=

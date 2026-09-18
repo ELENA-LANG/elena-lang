@@ -114,6 +114,11 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+   class BTOptimization7_2 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
 
    // Optimization #8 : "native int branching with constant
    class BTOptimization8 : public BTOptimization
@@ -330,6 +335,12 @@ namespace elena_lang
    };
 
    class StructFieldAssigning : public MethodScenarioTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class ByRefComparison : public MethodScenarioTest
    {
    protected:
       void SetUp() override;

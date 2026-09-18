@@ -2371,6 +2371,36 @@ static inline void savingStackDump(CommandTape& tape, BuildNode&/* node*/, TapeS
    tape.write(ByteCode::PeekSI);
 }
 
+static inline void ref_condop(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+{
+   bool inverted = false;
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   // NOTE : sp[0] - loperand
+   tape.write(ByteCode::PeekSI, 0);
+   tape.write(ByteCode::CmpSI, 1);
+
+   ByteCode opCode = ByteCode::None;
+   switch (node.arg.value) {
+      case EQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         break;
+      case NOTEQUAL_OPERATOR_ID:
+         opCode = ByteCode::SelEqRR;
+         inverted = true;
+         break;
+      default:
+         assert(false);
+         break;
+   }
+
+   if (!inverted) {
+      tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
+   }
+   else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
 static inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -2412,7 +2442,7 @@ ByteCodeWriter::Saver commands[] =
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
    procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp, set_message, redirect_procedure,
-   mark_collectable, mark_noncollectable, savingLongIndexToAcc,
+   mark_collectable, mark_noncollectable, savingLongIndexToAcc, ref_condop,
 };
 
 static inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2802,6 +2832,9 @@ static inline bool nativeBranchingOp(BuildNode lastNode)
          break;
       case BuildKey::NilCondOp:
          branchNode.setKey(BuildKey::NilRefBranchOp);
+         break;
+      case BuildKey::RefCondOp:
+         branchNode.setKey(BuildKey::RefBranchOp);
          break;
       default:
          break;
@@ -3275,6 +3308,11 @@ void ByteCodeWriter :: saveNativeBranching(CommandTape& tape, BuildNode node, Ta
          // NOTE : sp[0] - loperand
          tape.write(ByteCode::PeekSI, 0);
          tape.write(ByteCode::CmpR);
+         break;
+      case BuildKey::RefBranchOp:
+         // NOTE : sp[0] - loperand
+         tape.write(ByteCode::PeekSI, 1);
+         tape.write(ByteCode::CmpSI, 0);
          break;
       default:
          assert(false);
@@ -3927,6 +3965,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::IntConstBranchOp:
          case BuildKey::RealBranchOp:
          case BuildKey::NilRefBranchOp:
+         case BuildKey::RefBranchOp:
             saveNativeBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
             weakLoop = false;
             break;

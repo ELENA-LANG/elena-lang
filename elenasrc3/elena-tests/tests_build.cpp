@@ -223,6 +223,11 @@ TEST_F(StructFieldAssigning, BuildTest)
    runTest();
 }
 
+TEST_F(ByRefComparison, BuildTest)
+{
+   runTest();
+}
+
 TEST_F(IntValueOperator, BuildTest)
 {
    runTest();

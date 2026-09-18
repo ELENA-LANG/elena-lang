@@ -190,8 +190,9 @@ namespace elena_lang
       MarkAsCollectable    = 0x0098,
       MarkAsNonCollectable = 0x0099,
       SavingLongIndexToAcc = 0x009A,
+      RefCondOp            = 0x009B,
 
-      MaxOperationalKey    = 0x009A,
+      MaxOperationalKey    = 0x009B,
       
       DeclDictionaryOp     = 0x00A0,
       LoopOp               = 0x00A1,
@@ -220,30 +221,31 @@ namespace elena_lang
       AttrDictionaryOp     = 0x00B8,
       DeclOp               = 0x00B9,
       ProjectConstsOp      = 0x00BA,
+      RefBranchOp          = 0x00BB,
 
-      VariableInfo         = 0x00BB,
-      Variable             = 0x00BC,
-      VariableAddress      = 0x00BD,
-      IntVariableAddress   = 0x00BE,
-      LongVariableAddress  = 0x00BF,
-      RealVariableAddress  = 0x00C0,
-      ByteArrayAddress     = 0x00C1,
-      ShortArrayAddress    = 0x00C2,
-      IntArrayAddress      = 0x00C3,
-      UIntVariableAddress  = 0x00C4,
+      VariableInfo         = 0x00C0,
+      Variable             = 0x00C1,
+      VariableAddress      = 0x00C2,
+      IntVariableAddress   = 0x00C3,
+      LongVariableAddress  = 0x00C4,
+      RealVariableAddress  = 0x00C5,
+      ByteArrayAddress     = 0x00C6,
+      ShortArrayAddress    = 0x00C7,
+      IntArrayAddress      = 0x00C8,
+      UIntVariableAddress  = 0x00C9,
 
-      ArgumentsInfo        = 0x00C5,
-      Parameter            = 0x00C6,
-      IntParameterAddress  = 0x00C7,
-      LongParameterAddress = 0x00C8,
-      RealParameterAddress = 0x00C9,
-      ParameterAddress     = 0x00CA,
-      MethodName           = 0x00CB,
-      ShortArrayParameter  = 0x00CC,
-      ByteArrayParameter   = 0x00CD,
-      IntArrayParameter    = 0x00CE,
-      RealArrayParameter   = 0x00CF,
-      InlineField          = 0x00D0,
+      ArgumentsInfo        = 0x00CA,
+      Parameter            = 0x00CB,
+      IntParameterAddress  = 0x00CC,
+      LongParameterAddress = 0x00CD,
+      RealParameterAddress = 0x00CE,
+      ParameterAddress     = 0x00CF,
+      MethodName           = 0x00D0,
+      ShortArrayParameter  = 0x00D1,
+      ByteArrayParameter   = 0x00D2,
+      IntArrayParameter    = 0x00D3,
+      RealArrayParameter   = 0x00D4,
+      InlineField          = 0x00D5,
 
       BinaryArray          = 0x00E0,
 
@@ -484,6 +486,8 @@ namespace elena_lang
          map.add("saving_index_to_acc", BuildKey::SavingIndexToAcc);
          map.add("intconst_branchop", BuildKey::IntConstBranchOp);
          map.add("set_message", BuildKey::SetMessage);
+         map.add("ref_condop", BuildKey::RefCondOp);
+         map.add("ref_branchop", BuildKey::RefBranchOp);
       }
    };
 

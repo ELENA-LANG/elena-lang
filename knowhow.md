@@ -50,12 +50,13 @@ Content
 + [Nested extension template](#nested-extension-template)
 + [Union](#union)
 + [Resolving type ambiguities for a template declaration](#resolving-type-ambiguities-for-a-template-declaration)
-+ [Unboxing an auto range collection (used for DI routine)](unboxing-an-auto-range-collection)
++ [Unboxing an auto range collection (used for DI routine)](#unboxing-an-auto-range-collection)
 + [Dependency injection in a constructor](#dependency-injection-in-a-constructor)
-+ [Type shortcut - __decl_type](#Type-shortcut-__decl_type)
-+ [Inline method attribute : __inlineop](#Inline-method-:-__inlineop)
-+ [Root namespace alias __rootns](#root_namespace alias___rootns)
-+ [Project constants](#Project_constants)
++ [Type shortcut - __decl_type](#type-shortcut-__decl_type)
++ [Inline method attribute : __inlineop](#inline-method-__inlineop)
++ [Root namespace alias __rootns](#root-namespace-alias-__rootns)
++ [Project constants](#project-constants)
++ [Native reference comparison](#native-reference-comparison)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1273,7 +1274,7 @@ can use **class** attribute
 
 
 ## ----------------------------------------------------------------------------
-##  Inline method : __inlineop
+##  Inline method __inlineop
 ## ----------------------------------------------------------------------------
 
 \_\_inlineop attribute is used to indicate that the method call can be replaced
@@ -1391,3 +1392,37 @@ To refer it inside the code, the pseudo variable **__project_constants** must be
     {
        Console.printLine(MessageFromProject)
     }
+
+## ----------------------------------------------------------------------------
+##  Native reference comparison
+## ----------------------------------------------------------------------------
+
+It is possible to use **__ptr** attribute to make by reference (instead of by value) comparison
+
+    public Program()
+    {
+       var n1 := 1;
+       var n2 := n1;
+       var n3 := n1 + 0;
+       if (__ptr n1 == __ptr n2) {
+          Console.writeLine("Works!")
+       };
+       if (__ptr n1 != __ptr n3) {
+          Console.writeLine("Works Again!")
+       };
+    }
+
+The variable references are compared directly instead of using **equal[2]** message:
+
+               peek         fp:2
+               store        sp:0
+               peek         fp:3
+               store        sp:1
+               cmp          sp:0
+               jne            Lab00
+               xstore       sp:1, strconst:Works!
+               xstore       sp:0, class:system'Console
+               peek         sp:0
+               mov        mssg:writeLine[2]
+               call       mssg:writeLine[2], class:system'Console
+    Lab00:     nop
