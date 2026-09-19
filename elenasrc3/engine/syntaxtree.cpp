@@ -117,6 +117,9 @@ void SyntaxTree :: loadTokens(TokenMap& map)
 
    map.add("add_assign_operation", SyntaxKey::AddAssignOperation);
    map.add("sub_assign_operation", SyntaxKey::SubAssignOperation);
+
+   map.add("is_operation", SyntaxKey::IsOperation);
+   map.add("is_operand", SyntaxKey::IsOperand);
 }
 
 bool SyntaxTree :: save(MemoryBase* section)

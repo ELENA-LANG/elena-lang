@@ -89,6 +89,7 @@ __define REFER_OPERATION        6251;
 __define INC_OPERATION          6252;
 __define DEC_OPERATION          6253;
 __define SIZE_OPERATION         6254;
+__define IS_OPERATION           6255;
 __define TEMPLATE_EXPR_BLOCK    6304;
 
 __define MESSAGE_OPERATION      6337;
@@ -114,6 +115,7 @@ __define CLOSURE_OPERATION      6306;
 __define INTERPOLATE_EXPR       6307;
 __define LT_EXPRESSION          6308;
 __define SPREAD_OPERATION       6309;
+__define IS_OPERAND             6310;
 __define SWITCH_OPTION 	        6353;
 __define SWITCH_LAST_OPTION     6354;
 __define SWITCH_CODE 	        6355;
@@ -125,8 +127,8 @@ __define TEMPLATE_POSTFIX       4202;
 __define NOTNIL_ATTR            4343;
 __define TYPE_BLOCK             4344;
 
-__define PARAMETERIZED_POSTFIX          4207;
 __define TEMPLATE_ARG                   4208;
+__define PARAMETERIZED_POSTFIX          4210;
 __define DIMENSION                      5233;
 __define RESEND                         7366;
 __define CATCH_OPERATION                7367;
@@ -365,6 +367,10 @@ TYPE_EXPR ::=
 		LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" ^TEMPLATE_TYPE TEMPLATE_R
 	}
 	| "{" NESTED_EXPRESSION ^NESTED;
+
+IS_OPERAND ::=
+	reference ^OBJECT { LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" }?
+	| identifier ^OBJECT { LESS ^OBJECT TEMPLATE_ARG { "," TEMPLATE_ARG }* ">" }?;
 
 NESTED_ROOT_EXPRESSION ::=
 	identifier {
@@ -674,6 +680,7 @@ I8_OP ::=
 I_OP ::=
 	SBRACKET ^OBJECT INDEXER_R { INLINE_F | L0_F | BRACKET FUNCTION_R }
 	| "::" ^OBJECT EXT_R L3_F
+	| IS_OP ^OBJECT IS_OPERAND ^IS_OPERATION
 	| INC ^OBJECT ^INC_OPERATION
 	| DEC ^OBJECT ^DEC_OPERATION
 	| ASSIGN ^OBJECT EXPRESSION ^ASSIGN_OPERATION
@@ -1365,6 +1372,7 @@ FNL        ::= "$fnl";
 DOT        ::= ".";
 SHL        ::= "$shl";
 SHR        ::= "$shr";
+IS_OP      ::= "$is";
 INC        ::= "++";
 DEC        ::= "--";
 MINUS      ::= "-";

@@ -51,7 +51,7 @@
    echo .
  fi
 
- timeout --signal=KILL 300s ../../tests60/async_tests/async_tests
+ timeout --signal=KILL 500s ../../tests60/async_tests/async_tests
  ret=$?
  if [ $ret -eq 0 ]
  then

@@ -149,17 +149,22 @@ singleton Mock
       = "I'm a mockup";
 }*/
   
+A;
+B;
+  
 public Program()
 {
-   var n1 := 1;
-   var n2 := n1;
-   var n3 := n1 + 0;
-   if (__ptr n1 == __ptr n2) {
-      Console.writeLine("Works!")
+   var o := new A();
+   if (o $is A) {
+      Console.writeLine("o is of type A");
    };
-   if (__ptr n1 != __ptr n3) {
+   if:not (o $is B) {
+      Console.writeLine("o is not of type B");
+   }
+   
+/*   if (__ptr n1 != __ptr n3) {
       Console.writeLine("Works Again!")
-   };
+   };*/
 
 //   I i := Mock.mockInterface(I);
 //   Console.printLine(i, " is ", i.whoAmI());

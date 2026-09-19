@@ -10573,8 +10573,10 @@ ref_t Compiler :: saveInlineExpression(MethodScope& scope, SyntaxNode node)
    SyntaxTreeWriter writer(exprTree);
    writer.newNode(SyntaxKey::Root);
 
-   // add self
-   writer.appendNode(SyntaxKey::Parameter, *scope.moduleScope->selfVar);
+   if (!scope.isExtension) {
+      // add self if it is not an extension
+      writer.appendNode(SyntaxKey::Parameter, *scope.moduleScope->selfVar);
+   }
    for (auto it = scope.parameters.start(); !it.eof(); ++it) {
       writer.appendNode(SyntaxKey::Parameter, it.key());
    }
@@ -13736,6 +13738,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
       case SyntaxKey::SizeOperation:
          retVal = compileEvalOnlySpecialOperation(current);
          break;
+      case SyntaxKey::IsOperation:
+         retVal = compileIsOperation(current);
+         break;
       case SyntaxKey::BreakOperation:
       case SyntaxKey::ContinueOperation:
          retVal = compileSpecialOperation(/*current, */(int)current.key - OPERATOR_MAKS/*, targetRef*/);
@@ -16858,7 +16863,7 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
    if (operation != BuildKey::None) {
       bool targetOverridden = (target != arguments[0]);
       // COMPILER MAGIC : if inline operation is available and can be applied
-      if (result.inlineExprRef && operation == BuildKey::DirectCallOp && !targetOverridden && compiler->_optMode) {
+      if (result.inlineExprRef && operation == BuildKey::DirectCallOp && compiler->_optMode) {
          return compileInlineOperation(result.inlineExprRef, arguments, result.outputInfo.typeRef);
       }
 
@@ -16870,6 +16875,31 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
    scope.reserveArgs(arguments.count_pos());
 
    return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileIsOperation(SyntaxNode node)
+{
+   SyntaxNode lnode = node.firstChild();
+   SyntaxNode rnode = lnode.nextNode();
+
+   ObjectInfo loperand = compile(lnode, 0,
+      EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
+
+   assert(rnode == SyntaxKey::IsOperand);
+
+   TypeAttributes attributes = {};
+   TypeInfo typeInfo = compiler->resolveTypeAttribute(scope, rnode.firstChild().firstChild(), attributes, TAttr::AllowRole);
+
+   mssg_t typecastMssg = mapTypecasting(scope.module, compiler->resolveStrongType(scope, typeInfo));
+
+   writeObjectInfo(loperand);
+
+   writer->newNode(BuildKey::IsCondOp, typecastMssg);
+   writer->appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
+   writer->appendNode(BuildKey::FalseConst, scope.moduleScope->branchingInfo.falseRef);
+   writer->closeNode();
+
+   return { ObjectKind::Object, { V_FLAG }, 0 };
 }
 
 ObjectInfo Compiler::Expression::compileEvalOnlySpecialOperation(SyntaxNode node)

@@ -1633,6 +1633,7 @@ namespace elena_lang
          ObjectInfo compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode);
          ObjectInfo compileSetValueOperation(SyntaxNode lnode, SyntaxNode rnode, int operatorId);
          ObjectInfo compileEvalOnlySpecialOperation(SyntaxNode node);
+         ObjectInfo compileIsOperation(SyntaxNode node);
          ObjectInfo compileSpecialOperation(/*SyntaxNode node, */int operatorId/*, ref_t expectedRef*/);
          ObjectInfo compileAssignOperation(SyntaxNode node, int operatorId, ref_t expectedRef);
          ObjectInfo compileIndexAssignOperation(SyntaxNode lnode, SyntaxNode rnode, int operatorId, ref_t expectedRef);

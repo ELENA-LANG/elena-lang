@@ -2401,6 +2401,15 @@ static inline void ref_condop(CommandTape& tape, BuildNode& node, TapeScope&/* t
    else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
+static inline void is_condop(CommandTape& tape, BuildNode& node, TapeScope&/* tapeScope*/)
+{
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   tape.write(ByteCode::TstM, node.arg.reference);
+   tape.write(ByteCode::SelEqRR, trueRef | mskVMTRef, falseRef | mskVMTRef);
+}
+
 static inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -2442,7 +2451,7 @@ ByteCodeWriter::Saver commands[] =
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
    procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp, set_message, redirect_procedure,
-   mark_collectable, mark_noncollectable, savingLongIndexToAcc, ref_condop,
+   mark_collectable, mark_noncollectable, savingLongIndexToAcc, ref_condop, is_condop,
 };
 
 static inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2849,6 +2858,47 @@ static inline bool nativeBranchingOp(BuildNode lastNode)
    return true;
 }
 
+static inline bool nativeBranchingOp2(BuildNode lastNode)
+{
+   BuildNode branchNode = lastNode;
+   BuildNode localNode = getPrevious(branchNode);
+   BuildNode assignNode = getPrevious(localNode);
+   BuildNode nativeOpNode = getPrevious(assignNode);
+
+   if (localNode.arg.value != assignNode.arg.value)
+      return false;
+
+   int op = branchNode.arg.value;
+   mssg_t mssg = nativeOpNode.arg.value;
+
+   switch (nativeOpNode.key) {
+      case BuildKey::IsCondOp:
+         branchNode.setKey(BuildKey::IsBranchOp);
+         break;
+      default:
+         break;
+   }
+
+   switch (op) {
+      case IF_OPERATOR_ID:
+         op = EQUAL_OPERATOR_ID;
+         break;
+      case ELSE_OPERATOR_ID:
+         op = NOTEQUAL_OPERATOR_ID;
+         break;
+      default:
+         break;
+   }
+
+   branchNode.setArgumentValue(op);
+   branchNode.appendChild(BuildKey::Message, mssg);
+   localNode.setKey(BuildKey::Idle);
+   assignNode.setKey(BuildKey::Idle);
+   nativeOpNode.setKey(BuildKey::Idle);
+
+   return true;
+}
+
 static inline bool intConstBranchingOp(BuildNode lastNode)
 {
    BuildNode branchNode = lastNode;
@@ -3073,7 +3123,7 @@ ByteCodeWriter::Transformer transformers[] =
 {
    nullptr, duplicateBreakpoints, doubleAssigningByRefHandler, intCopying, intOpWithConsts, assignIntOpWithConsts,
    boxingInt, nativeBranchingOp, intConstBranchingOp, doubleAssigningConverting, doubleAssigningIntRealOp,
-   doubleCopyingIntOp, inplaceCallOp, intConstAssigning, inplaceCallOp2, optIntOpWithConsts
+   doubleCopyingIntOp, inplaceCallOp, intConstAssigning, inplaceCallOp2, optIntOpWithConsts, nativeBranchingOp2
 };
 
 // --- ByteCodeWriter ---
@@ -3314,6 +3364,13 @@ void ByteCodeWriter :: saveNativeBranching(CommandTape& tape, BuildNode node, Ta
          tape.write(ByteCode::PeekSI, 1);
          tape.write(ByteCode::CmpSI, 0);
          break;
+      case BuildKey::IsBranchOp:
+      {
+         BuildNode mssgNode = node.findChild(BuildKey::Message);
+
+         tape.write(ByteCode::TstM, mssgNode.arg.reference);
+         break;
+      }
       default:
          assert(false);
          break;
@@ -3966,6 +4023,7 @@ void ByteCodeWriter :: saveTape(CommandTape& tape, BuildNode node, TapeScope& ta
          case BuildKey::RealBranchOp:
          case BuildKey::NilRefBranchOp:
          case BuildKey::RefBranchOp:
+         case BuildKey::IsBranchOp:
             saveNativeBranching(tape, current, tapeScope, paths, tapeOptMode, loopMode);
             weakLoop = false;
             break;

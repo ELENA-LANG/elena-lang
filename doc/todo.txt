@@ -47,10 +47,11 @@ In development:
   ---------------------------------------
   * current : backlog
   ====================================== 
-  - replace equalReference and make it __inlineop
-  - optimize subsetOf - "==" operator must be direct
-  - optimize subsetOf
   - fix **is** operator : check the message
+  - optimize if(a is:b)
+  - functional test - if an object is sub class of 
+  - functional test - if an object does implement an interface
+  - functional test - if an object does implement a template
   - check - if:is works correctly as well
   ---------------------------------------
 

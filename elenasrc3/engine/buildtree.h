@@ -191,8 +191,9 @@ namespace elena_lang
       MarkAsNonCollectable = 0x0099,
       SavingLongIndexToAcc = 0x009A,
       RefCondOp            = 0x009B,
+      IsCondOp             = 0x009C,
 
-      MaxOperationalKey    = 0x009B,
+      MaxOperationalKey    = 0x009C,
       
       DeclDictionaryOp     = 0x00A0,
       LoopOp               = 0x00A1,
@@ -222,6 +223,7 @@ namespace elena_lang
       DeclOp               = 0x00B9,
       ProjectConstsOp      = 0x00BA,
       RefBranchOp          = 0x00BB,
+      IsBranchOp           = 0x00BC,
 
       VariableInfo         = 0x00C0,
       Variable             = 0x00C1,
@@ -488,6 +490,8 @@ namespace elena_lang
          map.add("set_message", BuildKey::SetMessage);
          map.add("ref_condop", BuildKey::RefCondOp);
          map.add("ref_branchop", BuildKey::RefBranchOp);
+         map.add("is_condop", BuildKey::IsCondOp);
+         map.add("is_branchop", BuildKey::IsBranchOp);
       }
    };
 

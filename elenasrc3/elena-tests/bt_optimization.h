@@ -114,7 +114,15 @@ namespace elena_lang
    protected:
       void SetUp() override;
    };
+
    class BTOptimization7_2 : public BTOptimization
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   // Optimization #16 : "native branching for is op
+   class BTOptimization16 : public BTOptimization
    {
    protected:
       void SetUp() override;
@@ -341,6 +349,12 @@ namespace elena_lang
    };
 
    class ByRefComparison : public MethodScenarioTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
+   class IsOperationBranching : public MethodScenarioTest
    {
    protected:
       void SetUp() override;

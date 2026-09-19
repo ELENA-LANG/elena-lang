@@ -42,8 +42,8 @@ public extension commonOp
             : info("Returns the parameter")
       = o;
 
-   bool equalReference(o) : external(system'core_routines'__object_equal),
-      info("Returns true if the specified object instances are equal; otherwise, false.");
+   __inlineop bool equalReference(o) : info("Returns true if the specified object instances are equal; otherwise, false.")
+      = __ptr self == __ptr o;
 
    then(Func f)
             : info("Executes the parameter function")

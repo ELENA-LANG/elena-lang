@@ -228,6 +228,11 @@ TEST_F(ByRefComparison, BuildTest)
    runTest();
 }
 
+TEST_F(IsOperationBranching, BuildTest)
+{
+   runTest();
+}
+
 TEST_F(IntValueOperator, BuildTest)
 {
    runTest();

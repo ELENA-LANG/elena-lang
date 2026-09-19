@@ -53,7 +53,7 @@ public extension objectOp
    {
       var class := self.__getClass();
       while (class != nil) {
-         if (class == type) {
+         if (class.equalReference(type)) {
             ^ true
          };
        

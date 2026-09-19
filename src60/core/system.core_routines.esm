@@ -112,14 +112,6 @@ procedure __type_cast
 
 end
 
-procedure __object_equal
-
-  peek        sp:0
-  cmp         sp:1
-  seleq       class:"system'BoolValue#true", class:"system'BoolValue#false"
-
-end
-
 procedure __object_class
 
   peek        sp:0
