@@ -1255,7 +1255,7 @@ public extension charOp : CharValue
 
    bool isWhitespace() : info("Returns true if it is a white space character")
    {
-      self =>
+      self ???
          $9  : { ^ true }
          $32 : { ^ true }
          $10 : { ^ true }

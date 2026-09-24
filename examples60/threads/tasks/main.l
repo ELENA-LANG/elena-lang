@@ -4,7 +4,7 @@ public Program()
 {
    int solution := program_arguments.getAtOrDefault(1, "3").toInt();
 
-   solution =>
+   solution ???
       1 : { sample1() }
       2 : { sample2() }
       3 : { sample3() }

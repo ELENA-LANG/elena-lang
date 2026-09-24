@@ -98,6 +98,7 @@ namespace elena_lang
       ClassStaticConstField,
       Wrapper,
       ContextInfo,
+      ClassPropertyInfo,
       MemberInfo,
       LocalField,
       ConstGetter,  // key = value constant
@@ -371,6 +372,8 @@ namespace elena_lang
       ModuleScopeBase* _scope;
       CompilerLogic*   _logic;
 
+      bool defineClassMetaProperty(ref_t classRef, ref_t& propValue);
+
       void setAttributeMapValue(ref_t dictionaryRef, ustr_t key, int value);
       void setAttributeMapValue(ref_t dictionaryRef, ustr_t key, ustr_t value);
       void setTypeMapValue(ref_t dictionaryRef, ustr_t key, ref_t reference);
@@ -390,8 +393,10 @@ namespace elena_lang
       bool evalDeclOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+      bool evalMetaPropOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalRealOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
       bool evalProjectInfoOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
+      bool evalClassPropCondOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal);
 
    public:
       ObjectInfo mapStringConstant(ustr_t s);
@@ -1645,6 +1650,7 @@ namespace elena_lang
          ObjectInfo compileAltOperation(SyntaxNode node);
          ObjectInfo compileIsNilOperation(SyntaxNode node);
          ObjectInfo compileTupleAssigning(SyntaxNode node);
+         ObjectInfo compileSwitchOperation(SyntaxNode node, ref_t expectedRef, bool retValExpected, bool withoutDebugInfo);
 
          ObjectInfo compileAssigning(SyntaxNode loperand, SyntaxNode roperand, ExpressionAttribute mode);
 
@@ -1734,7 +1740,6 @@ namespace elena_lang
 
          void compileYieldOperation(SyntaxNode node);
          ObjectInfo compileAsyncOperation(SyntaxNode node, ref_t targetRef, bool valueExpected, bool dynamicRequired, bool retMode);
-         void compileSwitchOperation(SyntaxNode node, bool withoutDebugInfo);
 
          bool compileAssigningOp(ObjectInfo target, ObjectInfo source, bool& nillableOp);
 
@@ -2110,6 +2115,8 @@ namespace elena_lang
       void warnOnUnassignedLocal(/*SyntaxNode node, */CodeScope& scope, int level);
       void warnOnUnassignedParameter(SyntaxNode node, Scope& scope, ustr_t paramName);
 
+      ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, ObjectInfo loperand,
+         ObjectInfo roperand, ObjectInfo ioperand, ref_t operator_id, ref_t argCount);
       ObjectInfo evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalBoolOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors = false);
       ObjectInfo evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, TypeInfo targetInfo, bool ignoreErrors = false, bool resolveMode = true);
@@ -2119,6 +2126,8 @@ namespace elena_lang
       ObjectInfo evalExprValueOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors);
       ObjectInfo evalSizeOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, bool ignoreErrors, bool metaMode = false);
       ObjectInfo evalGetter(/*Interpreter& interpreter, */Scope& scope, SyntaxNode node/*, bool ignoreErrors*/);
+
+      SyntaxNode evalSwitch(Interpreter& interpreter, Scope& scope, SyntaxNode current, ObjectInfo loperand);
 
       ObjectInfo evalExpression(MetaScope& scope, SyntaxNode node);
       void evalStatement(MetaScope& scope, SyntaxNode node);

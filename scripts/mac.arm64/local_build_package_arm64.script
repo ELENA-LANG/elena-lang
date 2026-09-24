@@ -38,6 +38,7 @@ echo compiling data files
 
 run_step ../../bin/sg64-cli ../../dat/sg/syntax60.txt
 run_step ../../bin/sg64-cli ../../dat/sg/syntax67.txt
+run_step ../../bin/sg64-cli ../../dat/sg/syntax70.txt
 run_step ../../bin/og64-cli ../../dat/og/bc_rules60.txt
 run_step ../../bin/og64-cli -s ../../dat/og/bt_rules60.txt
 run_step ../../bin/og64-cli -s ../../dat/og/bt_xrules60.txt
@@ -45,6 +46,7 @@ run_step ../../bin/og64-cli -s ../../dat/og/bt_xrules60.txt
 cp ../../dat/og/*.dat ../../bin
 cp ../../dat/sg/syntax60.dat ../../bin
 cp ../../dat/sg/syntax67.dat ../../bin
+cp ../../dat/sg/syntax70.dat ../../bin
 
 echo compiling assembly files
 

@@ -29,7 +29,7 @@ wireWorldRuleSet = new RuleSet
     {
         int cell := s.at(x, y);
  
-        cell =>
+        cell ???
             conductor:
             {
                 int number := s.LiveCell(x, y, electronHead);
@@ -50,7 +50,7 @@ wireWorldRuleSet = new RuleSet
             {
                 ^ conductor
             }
-            !:{
+            :{
                 ^ cell
             }
     }
@@ -74,7 +74,7 @@ sealed class Model
                     var l := strings[x];
                     if (y < l.Length)
                     {
-                        (l[y]) =>
+                        (l[y]) ???
                             conductorLabel : { retVal := conductor }
                             headLabel      : { retVal := electronHead }
                             tailLabel      : { retVal := electronTail }
@@ -116,7 +116,7 @@ sealed class Model
                 var label := emptyLabel;
                 int cell := theSpace.at(i, j);
  
-                cell =>
+                cell ???
                     conductor    : { label := conductorLabel }
                     electronHead : { label := headLabel }
                     electronTail : { label := tailLabel };

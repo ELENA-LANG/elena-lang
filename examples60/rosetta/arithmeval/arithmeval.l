@@ -111,11 +111,11 @@ singleton operatorState
 {
    eval(ch)
    {
-      ch =>
+      ch ???
          $40 : {      // (
             ^ weak self.newBracket().gotoStarting()  
          }
-         ! : {
+         : {
             ^ weak self.newToken().append(ch).gotoToken()
          }
    }
@@ -125,7 +125,7 @@ singleton tokenState
 {
    eval(ch)
    {
-      ch =>
+      ch ???
          $41 : {      // )
             ^ weak self.closeBracket().gotoToken()
          }
@@ -141,7 +141,7 @@ singleton tokenState
          $47 : {      // /
             ^ weak self.newFraction().gotoOperator()
          }
-         ! : {
+         : {
             ^ weak self.append(ch)
          }
    }
@@ -151,14 +151,14 @@ singleton startState
 {
    eval(ch)
    {
-      ch =>
+      ch ???
          $40 : {      // (
             ^ weak self.newBracket().gotoStarting()
          }
          $45 : { // -
             ^ weak self.newToken().append("0").newDifference().gotoOperator()
          }
-         ! : {
+         : {
             ^ weak self.newToken().append(ch).gotoToken()
          }
    }

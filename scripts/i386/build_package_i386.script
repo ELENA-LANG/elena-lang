@@ -22,6 +22,16 @@ else
   exit 1
 fi
 
+../../bin/sg-cli ../../dat/sg/syntax70.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 # ../bin/elena-og ../dat/og/rules.txt
 # ret=$?
 # if [ $ret -eq 0 ]
@@ -63,8 +73,8 @@ else
 fi
 
 cp ../../dat/og/*.dat ../../bin
-cp ../../dat/sg/syntax60.dat ../../bin
 cp ../../dat/sg/syntax67.dat ../../bin
+cp ../../dat/sg/syntax70.dat ../../bin
 
 echo compiling assembly files
 
@@ -123,8 +133,8 @@ $SUDO cp --remove-destination ../../bin/scripts/*.es /etc/elena/scripts/
 $SUDO cp --remove-destination ../../bin/scripts/*.elt /etc/elena/scripts/
 
 $SUDO cp --remove-destination ../../dat/og/*.dat /usr/share/elena/
-$SUDO cp --remove-destination ../../dat/sg/syntax60.dat /usr/share/elena
 $SUDO cp --remove-destination ../../dat/sg/syntax67.dat /usr/share/elena
+$SUDO cp --remove-destination ../../dat/sg/syntax70.dat /usr/share/elena
 
 $SUDO cp --remove-destination ../../bin/x32/core60_lnx.bin /usr/lib/elena/core/x32/
 $SUDO cp --remove-destination ../../bin/x32/corex60_lnx.bin /usr/lib/elena/core/x32/

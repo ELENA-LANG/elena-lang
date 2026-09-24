@@ -19,6 +19,7 @@
  cp ../../dat/og/*.dat ../../build/$RELEASE/bin
  cp ../../dat/sg/syntax60.dat ../../build/$RELEASE/bin
  cp ../../dat/sg/syntax67.dat ../../build/$RELEASE/bin
+ cp ../../dat/sg/syntax70.dat ../../build/$RELEASE/bin
 
  echo copying binaries
 

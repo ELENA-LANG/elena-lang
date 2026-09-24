@@ -243,7 +243,7 @@ public class MainWindow : SDIDialog
       Econta3.Visible := false;
       Econta4.Visible := false;
 
-      index =>
+      index ???
          0 : {
             Econta1.Visible := true;
 
@@ -282,7 +282,7 @@ public class MainWindow : SDIDialog
       valor.Caption := "Res: ";
       info.Caption  := "Info: ";
                 
-      index =>
+      index ???
          0 : {
             valUm.Visible := true;
             valDois.Visible := true;
@@ -436,7 +436,7 @@ public class MainWindow : SDIDialog
     {   
         var result := 0;
                 
-        (_imageList.SelectedIndex) =>
+        (_imageList.SelectedIndex) ???
             0 : {
                 var H := valUm.Value.toReal();
                 var B := valDois.Value.toReal();

@@ -41,7 +41,13 @@ public template operator::as(expr, T)  : __included(statements)
 // --- expr is: T ---
 
 public template is<T>(expr) : __included(statements)
-   = expr.instanceOf(T);
+   = $property T ???
+      __classPropIsInterfaceBased : expr.subsetOf(T),
+      __classPropIsSingleton : expr.equalReference(T),
+      : expr $is T;
 
 public template operator::is(expr, T) : __included(statements)
-   = expr.instanceOf(T);
+   = $property T ???
+      __classPropIsInterfaceBased : expr.subsetOf(T),
+      __classPropIsSingleton : expr.equalReference(T),
+      : expr $is T;

@@ -120,6 +120,7 @@ void SyntaxTree :: loadTokens(TokenMap& map)
 
    map.add("is_operation", SyntaxKey::IsOperation);
    map.add("is_operand", SyntaxKey::IsOperand);
+   map.add("switch_expression", SyntaxKey::SwitchExpression);
 }
 
 bool SyntaxTree :: save(MemoryBase* section)

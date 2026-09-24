@@ -711,11 +711,15 @@ void CompilingProcess :: configurateParser(SyntaxVersion version)
          if (_verbose)
             _presenter->printLine("EL6 Dialect");
          break;
-      default:
       case SyntaxVersion::L7:
          syntaxDialect = SYNTAX67_FILE;
          if (_verbose)
             _presenter->printLine("EL7 Dialect");
+      case SyntaxVersion::L8:
+      default:
+         syntaxDialect = SYNTAX70_FILE;
+         if (_verbose)
+            _presenter->printLine("EL8 Dialect");
          break;
    }   
 

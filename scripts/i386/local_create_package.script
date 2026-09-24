@@ -23,6 +23,7 @@ RELEASE=elena-7.0.2.i386-linux
  cp ../../dat/og/bc_rules60.dat ../../build/$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax60.dat ../../build/$RELEASE/usr/share/elena
  cp ../../dat/sg/syntax67.dat ../../build/$RELEASE/usr/share/elena
+ cp ../../dat/sg/syntax70.dat ../../build/$RELEASE/usr/share/elena
 
  echo copying binaries
 

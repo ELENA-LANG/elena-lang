@@ -56,7 +56,7 @@ Your choice:";
     
     proceed(choice)
     {
-        choice =>
+        choice ???
             "1" : {
                 Console.write("Enter the order of matrix: ");
                 var N := Console.readLine().toInt();

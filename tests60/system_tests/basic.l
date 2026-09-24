@@ -1068,7 +1068,7 @@ public multySelectTest() : testCase()
 {
     var n := 3;
     
-    n =>
+    n ???
         1 : { Assert.ifTrue(n==1); }
         2 : { Assert.ifTrue(n==2); }
         3 : { Assert.ifTrue(n==3); };

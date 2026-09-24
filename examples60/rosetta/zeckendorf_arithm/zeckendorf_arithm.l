@@ -46,7 +46,7 @@ sealed struct ZeckendorfNumber
             };
             
             int v := (dVal shr:(i * 2)) & 3;
-            v =>    
+            v ???
                 0 : { ^ self }
                 1 : { ^ self }
                 2 : {

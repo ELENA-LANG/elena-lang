@@ -359,7 +359,7 @@ public Program()
 
    string path := program_arguments[1];
 
-   solution =>
+   solution ???
       0 : {
          solution0()
       }
@@ -372,7 +372,7 @@ public Program()
       3 : {
          solution3(path)
       }
-      ! : {
+      : {
          solution4(path)
       };
 }

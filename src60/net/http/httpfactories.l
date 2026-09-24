@@ -43,7 +43,7 @@ public class SocketFactory
       INetSocket socket;
       string scheme := uri.Scheme;
       short port := uri.Port;
-      scheme =>
+      scheme ???
          "http" : 
          {
             if (port==0)
@@ -62,7 +62,7 @@ public class SocketFactory
                socket := HttpsFactory.openSocket(uri.Host, port);
             }
          }
-         ! : {
+         : {
             InvalidArgumentException.raise("uri");
          };
       
@@ -72,7 +72,7 @@ public class SocketFactory
    static INetListener openListener(string prefix, short port, bool noDelay)
    {
       INetListener socket;
-      prefix =>
+      prefix ???
          "http" :
          {
             socket := _httpFactory.openListener(port, noDelay);
@@ -81,7 +81,7 @@ public class SocketFactory
          {
             socket := HttpsFactory.openListener(port, noDelay);
          }
-         ! : {
+         : {
             InvalidArgumentException.raise("prefix");
          };
       

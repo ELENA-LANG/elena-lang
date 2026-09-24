@@ -53,3 +53,12 @@ public extension commonOp
             : info("Executes the parameter function and pass itself as a parameter")
       = f(self);
 }
+
+// --- ClassPropertyFlags ---
+public const int __classPropIsClass          = 01h;
+public const int __classPropIsClassClass     = 02h;
+public const int __classPropIsInterface      = 04h;
+public const int __classPropIsInterfaceBased = 08h;
+public const int __classPropIsReadonly       = 10h;
+public const int __classPropIsSingleton      = 20h;
+public const int __classPropIsStruct         = 40h;

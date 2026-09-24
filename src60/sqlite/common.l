@@ -192,7 +192,7 @@ public sealed class DBCommand
    {
       int columnType := extern sqlite3.sqlite3_column_type(_commandHandle, index);
       
-      columnType =>
+      columnType ???
          SQLITE_INTEGER:
              {
                  int val := extern sqlite3.sqlite3_column_int(_commandHandle, index);
@@ -226,7 +226,7 @@ public sealed class DBCommand
              {
                  ^ nil
              }
-         ! :
+         :
              {
                  DBException.new("Unsupported type").raise()
              }

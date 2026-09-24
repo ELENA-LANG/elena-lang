@@ -9,7 +9,9 @@
   - [ADDED] supporting pseudo type - __decl_type
   - [ADDED] supporting __inlineop attribute
   - [ADDED] supporting project constants : __project_constants
-  - [ADDED] $is operator : checking if the object handle cast<T> message
+  - [ADDED] "$is" operator : checking if the object handle cast<T> message
+  - [REMOVED] "=>" switch statement
+  - [ADDED] "???" operator - switch expression / statement;
      
 - ELC
   - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation

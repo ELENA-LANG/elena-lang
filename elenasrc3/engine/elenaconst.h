@@ -210,7 +210,8 @@ namespace elena_lang
    {
       L6 = 0,
       L5 = 1,
-      L7 = 2
+      L7 = 2,
+      L8 = 3,
    };
 
    // --- ELENA Platform type ---

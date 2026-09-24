@@ -52,7 +52,7 @@ public Program()
         
         var counts := bits.zipBy(results, (b,r => b.xor(r).toBit() )).summarize();
 
-        counts =>
+        counts ???
             0 : { Console.printLine("Total hit :",results.printSolution(bits)) }
             1 : { Console.printLine("Near miss :",results.printSolution(bits)) }
             12: { Console.printLine("Total miss:",results.printSolution(bits)) };

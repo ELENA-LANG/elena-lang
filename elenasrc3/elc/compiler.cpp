@@ -769,6 +769,101 @@ bool Interpreter::evalIntOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& 
    return false;
 }
 
+bool Interpreter :: evalClassPropCondOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+   ObjectInfo roperand = args[1];
+
+   bool inverted = false;
+   switch (operator_id) {
+      case NOTEQUAL_OPERATOR_ID:
+         inverted = true;
+      case EQUAL_OPERATOR_ID:
+         if (loperand.kind == ObjectKind::ClassPropertyInfo && roperand.kind == ObjectKind::IntLiteral) {
+            bool value = test(loperand.extra, roperand.extra);
+            if (inverted)
+               value = !inverted;
+
+            retVal = { ObjectKind::Singleton, { V_FLAG }, 0, value ? -1 : 0 };
+
+            return true;
+         }
+         break;
+  
+      default:
+         assert(false);
+         break;
+   }
+
+   return false;
+}
+
+bool Interpreter :: defineClassMetaProperty(ref_t classRef, ref_t& propValue)
+{
+   propValue = 0;
+   ClassInfo classInfo;
+   if (!_logic->defineClassInfo(*_scope, classInfo, classRef, true, true))
+      return false;
+
+   if (test(classInfo.header.flags, elClassClass)) {
+      propValue |= metaClassPropIsClassClass;
+   }
+   else propValue |= metaClassPropIsClass;
+
+   if (test(classInfo.header.flags, elReadOnlyRole)) {
+      propValue |= metaClassPropIsReadonly;
+   }
+   if (test(classInfo.header.flags, elStateless)) {
+      propValue |= metaClassPropIsSingleton;
+   }
+   else if (test(classInfo.header.flags, elStructure)) {
+      propValue |= metaClassPropIsStruct;
+   }
+
+   switch (classInfo.header.flags & elDebugMask) {
+      case elInterface:
+      case elWeakInterface:
+         propValue |= metaClassPropIsInterface;
+         break;
+   }
+
+   if (test(classInfo.header.flags, elClosed) && classInfo.header.parentRef) {
+      ref_t parentPropValue = 0;
+      if (defineClassMetaProperty(classInfo.header.parentRef, parentPropValue)) {
+         if (!test(propValue, metaClassPropIsInterface) && 
+            (test(parentPropValue, metaClassPropIsInterface) || test(parentPropValue, metaClassPropIsInterfaceBased)))
+         {
+            propValue |= metaClassPropIsInterfaceBased;
+         }
+      }
+   }
+
+   return true;
+}
+
+bool Interpreter :: evalMetaPropOp(ref_t, ArgumentsInfo& args, ObjectInfo& retVal)
+{
+   ObjectInfo loperand = args[0];
+
+   ref_t classRef = 0;
+   ref_t extraInfo = 0;
+   if (loperand.kind == ObjectKind::Symbol) {
+      classRef = loperand.reference;
+   }
+
+   if (classRef && !defineClassMetaProperty(classRef, extraInfo)) {
+      classRef = 0;
+   }
+
+   if (classRef) {
+      retVal = { ObjectKind::ClassPropertyInfo, V_CLASSPROPERTY, classRef, extraInfo };
+
+      return true;
+   }
+
+   return false;
+}
+
 bool Interpreter :: evalIntCondOp(ref_t operator_id, ArgumentsInfo& args, ObjectInfo& retVal)
 {
    ObjectInfo loperand = args[0];
@@ -993,6 +1088,10 @@ bool Interpreter::eval(BuildKey key, ref_t operator_id, ArgumentsInfo& arguments
          return evalProjectInfoOp(operator_id, arguments, retVal);
       case BuildKey::IntCondOp:
          return evalIntCondOp(operator_id, arguments, retVal);
+      case BuildKey::MetaPropOp:
+         return evalMetaPropOp(operator_id, arguments, retVal);
+      case BuildKey::ClassPropCondOp:
+         return evalClassPropCondOp(operator_id, arguments, retVal);
       default:
          return false;
    }
@@ -5413,6 +5512,35 @@ ObjectInfo Compiler :: evalBoolOperation(Interpreter& interpreter, Scope& scope,
    return retVal;
 }
 
+ObjectInfo Compiler :: evalOperation(Interpreter& interpreter, Scope& scope,
+   ObjectInfo loperand, ObjectInfo roperand, ObjectInfo ioperand, ref_t operator_id, ref_t argCount)
+{
+   ArgumentsInfo arguments;
+   ref_t         argumentRefs[3] = {};
+   argumentRefs[0] = loperand.typeInfo.typeRef;
+   arguments.add(loperand);
+
+   if (argCount >= 2) {
+      argumentRefs[1] = roperand.typeInfo.typeRef;
+      arguments.add(roperand);
+   }
+
+   if (argCount == 3) {
+      argumentRefs[2] = ioperand.typeInfo.typeRef;
+      arguments.add(ioperand);
+   }
+
+   ref_t outputRef = 0;
+   BuildKey opKey = _logic->resolveOp(*scope.moduleScope, operator_id, false, argumentRefs, argCount, outputRef);
+
+   ObjectInfo retVal = loperand;
+   if (!interpreter.eval(opKey, operator_id, arguments, retVal)) {
+      return {};
+   }
+
+   return retVal;
+}
+
 ObjectInfo Compiler::evalOperation(Interpreter& interpreter, Scope& scope, SyntaxNode node, ref_t operator_id, bool ignoreErrors)
 {
    ObjectInfo loperand = {};
@@ -5448,31 +5576,9 @@ ObjectInfo Compiler::evalOperation(Interpreter& interpreter, Scope& scope, Synta
       }
    }
 
-   ArgumentsInfo arguments;
-   ref_t         argumentRefs[3] = {};
-   argumentRefs[0] = loperand.typeInfo.typeRef;
-   arguments.add(loperand);
-
-   if (argCount >= 2) {
-      argumentRefs[1] = roperand.typeInfo.typeRef;
-      arguments.add(roperand);
-   }
-
-   if (argCount == 3) {
-      argumentRefs[2] = ioperand.typeInfo.typeRef;
-      arguments.add(ioperand);
-   }
-
-   ref_t outputRef = 0;
-   BuildKey opKey = _logic->resolveOp(*scope.moduleScope, operator_id, false, argumentRefs, argCount, outputRef);
-
-   ObjectInfo retVal = loperand;
-   if (!interpreter.eval(opKey, operator_id, arguments, retVal)) {
-      if (!ignoreErrors) {
-         scope.raiseError(errCannotEval, node);
-      }
-      else return {};
-   }
+   ObjectInfo retVal = evalOperation(interpreter, scope, loperand, roperand, ioperand, operator_id, argCount);
+   if (retVal.kind == ObjectKind::Unknown && !ignoreErrors)
+      scope.raiseError(errCannotEval, node);
 
    return retVal;
 }
@@ -5611,6 +5717,42 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
    return interpreter.createConstCollection(nestedRef, collectionTypeRef, arguments, byValue, size);
 }
 
+SyntaxNode Compiler :: evalSwitch(Interpreter& interpreter, Scope& scope, SyntaxNode current, ObjectInfo loperand)
+{
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::SwitchValue:
+         {
+            SyntaxNode optionNode = current.firstChild();
+
+            int operator_id = EQUAL_OPERATOR_ID;
+            ObjectInfo roperand = evalExpression(interpreter, scope, optionNode, {});
+
+            ObjectInfo retVal = evalOperation(interpreter, scope, loperand, roperand, {}, operator_id, 2);
+            if (roperand.kind == ObjectKind::Unknown || retVal.kind == ObjectKind::Unknown)
+               return {};
+
+            if (retVal.kind == ObjectKind::Singleton && retVal.typeInfo.typeRef == V_FLAG && retVal.extra == -1) {
+               return current.nextNode();
+            }
+            current = current.nextNode();
+            break;
+         }
+         case SyntaxKey::SwitchCode:
+            return current;
+         case SyntaxKey::Expression:
+            return current;
+         default:
+            assert(false);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   return {};
+}
+
 ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, SyntaxNode node, TypeInfo targetInfo, bool ignoreErrors, bool resolveMode)
 {
    ObjectInfo retVal = {};
@@ -5645,6 +5787,9 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
       case SyntaxKey::LessOperation:
       case SyntaxKey::NotLessOperation:
          retVal = evalOperation(interpreter, scope, node, (int)node.key - OPERATOR_MAKS, ignoreErrors);
+         break;
+      case SyntaxKey::MetaPropOperation:
+         retVal = evalOperation(interpreter, scope, node, META_PROPERTY_OPERATOR_ID, ignoreErrors);
          break;
       case SyntaxKey::ExprValOperation:
          retVal = evalExprValueOperation(interpreter, scope, node, ignoreErrors);
@@ -13822,9 +13967,6 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
       case SyntaxKey::CodeBlock:
          retVal = compileSubCode(current, mode, true);
          break;
-      case SyntaxKey::SwitchOperation:
-         compileSwitchOperation(current, EAttrs::test(mode, EAttr::NoDebugInfo));
-         break;
       case SyntaxKey::CollectionExpression:
          retVal = compileCollection(current, mode, targetRef);
          break;
@@ -13833,6 +13975,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          break;
       case SyntaxKey::Type:
       case SyntaxKey::ReferOperation:
+      case SyntaxKey::MetaPropOperation:
          scope.raiseError(errInvalidOperation, node);
          break;
       case SyntaxKey::Attribute:
@@ -13855,6 +13998,12 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          break;
       case SyntaxKey::Interpolation:
          retVal = compileInterpolation(current);
+         break;
+      case SyntaxKey::SwitchOperation:
+         compileSwitchOperation(current, 0, false, EAttrs::test(mode, EAttr::NoDebugInfo));
+         break;
+      case SyntaxKey::SwitchExpression:
+         retVal = compileSwitchOperation(current, targetRef, true, EAttrs::test(mode, EAttr::NoDebugInfo));
          break;
       case SyntaxKey::None:
          assert(false);
@@ -15520,65 +15669,6 @@ ObjectInfo Compiler::Expression :: compileSubCode(SyntaxNode node, ExpressionAtt
    return retVal;
 }
 
-void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withoutDebugInfo)
-{
-   Interpreter interpreter(scope.moduleScope, compiler->_logic);
-   ArgumentsInfo arguments;
-
-   SyntaxNode current = node.firstChild();
-
-   ObjectInfo loperand = compileObject(current, EAttr::Parameter);
-
-   if (!withoutDebugInfo) {
-      writer->appendNode(BuildKey::EndStatement);
-      writer->appendNode(BuildKey::VirtualBreakpoint);
-   }      
-
-   writer->newNode(BuildKey::Switching);
-
-   current = current.nextNode();
-   while (current != SyntaxKey::None) {
-      switch (current.key) {
-         case SyntaxKey::SwitchOption:
-         {
-            SyntaxNode optionNode = current.firstChild();
-
-            writer->newNode(BuildKey::SwitchOption);
-
-            int operator_id = EQUAL_OPERATOR_ID;
-            ObjectInfo value = compiler->evalExpression(interpreter, scope, optionNode, {});
-            arguments.clear();
-            arguments.add(loperand);
-            arguments.add(value);
-            ObjectInfo retVal = compileOperation(node, arguments, operator_id, 0);
-
-            compileBranchingOperation(node, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, false, false);
-
-            writer->closeNode();
-
-            break;
-         }
-         case SyntaxKey::SwitchLastOption:
-            writer->newNode(BuildKey::ElseOption);
-
-            compileSubCode(current.firstChild(), EAttr::None);
-
-            writer->closeNode();
-            break;
-         default:
-            assert(false);
-            break;
-      }
-
-      current = current.nextNode();
-   }
-
-   writer->closeNode();
-
-   if (!withoutDebugInfo)
-      writer->appendNode(BuildKey::OpenStatement);
-}
-
 ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef)
 {
    bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
@@ -15677,6 +15767,168 @@ ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, Expression
    }
 
    return { ObjectKind::Object, { collectionTypeRef }, 0 };
+}
+
+/*
+void Compiler::Expression :: compileSwitchOperation(SyntaxNode node, bool withoutDebugInfo)
+{
+   current = current.nextNode();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::SwitchOption:
+         {
+            SyntaxNode optionNode = current.firstChild();
+
+            writer->newNode(BuildKey::SwitchOption);
+
+            int operator_id = EQUAL_OPERATOR_ID;
+            ObjectInfo value = compiler->evalExpression(interpreter, scope, optionNode, {});
+            arguments.clear();
+            arguments.add(loperand);
+            arguments.add(value);
+            ObjectInfo retVal = compileOperation(node, arguments, operator_id, 0);
+
+            compileBranchingOperation(node, retVal, optionNode.nextNode(), {}, IF_OPERATOR_ID, false, false);
+
+            writer->closeNode();
+
+            break;
+         }
+         case SyntaxKey::SwitchLastOption:
+            writer->newNode(BuildKey::ElseOption);
+
+            compileSubCode(current.firstChild(), EAttr::None);
+
+            writer->closeNode();
+            break;
+         default:
+            assert(false);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   writer->closeNode();
+
+   if (!withoutDebugInfo)
+      writer->appendNode(BuildKey::OpenStatement);
+}
+*/
+
+static inline ref_t defineOutputType(ObjectInfo& val, ref_t targetRef)
+{
+   if (!targetRef) {
+      return val.typeInfo.typeRef;
+   }
+   else if (targetRef != val.typeInfo.typeRef) {
+      return 0;
+   }
+
+   return targetRef;
+}
+
+ObjectInfo Compiler::Expression :: compileSwitchOperation(SyntaxNode node, ref_t targetRef, bool retValExpected, bool withoutDebugInfo)
+{
+   ObjectInfo retVal = retValExpected ? ObjectInfo{ ObjectKind::Object } : ObjectInfo{};
+
+   EAttr codeMode = withoutDebugInfo ? EAttr::NoDebugInfo : EAttr::None;
+
+   Interpreter interpreter(scope.moduleScope, compiler->_logic);
+   ArgumentsInfo arguments;
+
+   SyntaxNode current = node.firstChild();
+
+   ObjectInfo loperand = compiler->evalExpression(interpreter, scope, current, {}, true);
+   if (loperand.kind != ObjectKind::Unknown) {
+      SyntaxNode resolvedCode = compiler->evalSwitch(interpreter, scope, current.nextNode(), loperand);
+      switch (resolvedCode.key) {
+         case SyntaxKey::SwitchCode:
+            compileSubCode(resolvedCode.firstChild(), codeMode);
+            return retVal;
+         case SyntaxKey::Expression:
+            return compile(resolvedCode.firstChild(), targetRef, retValExpected ? EAttr::RetValExpected | codeMode : codeMode);
+         default:
+            break;
+      }
+   }
+
+   loperand = compileObject(current, EAttr::Parameter);
+
+   if (!withoutDebugInfo) {
+      writer->appendNode(BuildKey::EndStatement);
+      writer->appendNode(BuildKey::VirtualBreakpoint);
+   }
+
+   writer->newNode(BuildKey::Switching);
+
+   current = current.nextNode();
+   while (current != SyntaxKey::None) {
+      switch (current.key) {
+         case SyntaxKey::SwitchValue:
+         {
+            SyntaxNode optionNode = current.firstChild();
+
+            writer->newNode(BuildKey::SwitchOption);
+            int operator_id = EQUAL_OPERATOR_ID;
+            ObjectInfo value = compiler->evalExpression(interpreter, scope, optionNode, {});
+            arguments.clear();
+            arguments.add(loperand);
+            arguments.add(value);
+            ObjectInfo lvalue = compileOperation(node, arguments, operator_id, 0);
+
+            SyntaxNode codeNode = current.nextNode();
+            if (codeNode == SyntaxKey::SwitchCode) {
+               codeNode = codeNode.firstChild();
+            }
+            else {
+               codeNode.injectNode(SyntaxKey::Expression);
+               codeNode.injectNode(SyntaxKey::CodeBlock);
+               codeNode.setKey(SyntaxKey::ClosureBlock);
+            }
+
+            ObjectInfo bvalue = compileBranchingOperation(node, lvalue, codeNode, {}, IF_OPERATOR_ID, retValExpected, withoutDebugInfo);
+            if (retValExpected)
+               targetRef = defineOutputType(bvalue, targetRef);
+
+            writer->closeNode();
+            current = current.nextNode();
+            break;
+         }
+         case SyntaxKey::SwitchCode:
+            writer->newNode(BuildKey::ElseOption);
+            retVal = compileSubCode(current.firstChild(), codeMode);
+            writer->closeNode();
+            break;
+         case SyntaxKey::Expression:
+         {
+            writer->newNode(BuildKey::ElseOption);
+            if (targetRef && isPrimitiveRef(targetRef))
+               targetRef = compiler->resolveStrongType(scope, { targetRef });
+
+            ObjectInfo bvalue = compile(current.firstChild(), targetRef,
+               retValExpected ? EAttr::RetValExpected | codeMode : codeMode);
+            if (retValExpected)
+               targetRef = defineOutputType(bvalue, targetRef);
+
+            writer->closeNode();
+            break;
+         }
+         default:
+            assert(false);
+            break;
+      }
+
+      current = current.nextNode();
+   }
+
+   writer->closeNode();
+
+   if (!withoutDebugInfo)
+      writer->appendNode(BuildKey::OpenStatement);
+
+   retVal.typeInfo = { targetRef };
+   return retVal;
 }
 
 ObjectInfo Compiler::Expression::compileClosureOperation(SyntaxNode node, ref_t targetRef)
@@ -17664,7 +17916,7 @@ ObjectInfo Compiler::Expression :: compileBranchingOperation(SyntaxNode node, Ob
 
       roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
    }
-   else if (rnode == SyntaxKey::SwitchCode) {
+   else if (rnode == SyntaxKey::ClosureBlock) {
       roperand = { ObjectKind::Closure, { V_CLOSURE }, 0 };
    }
    else roperand = { ObjectKind::Object, { V_OBJECT }, 0 };
@@ -17774,7 +18026,7 @@ ObjectInfo Compiler::Expression::compileBranchingOperands(SyntaxNode rnode, Synt
    ObjectInfo subRetCode = {};
    bool oldWithRet = codeScope->withRetStatement;
    EAttr mode = retValExpected ? EAttr::RetValExpected : EAttr::None;
-   if (rnode == SyntaxKey::ClosureBlock || rnode == SyntaxKey::SwitchCode) {
+   if (rnode == SyntaxKey::ClosureBlock) {
       if (withoutDebugInfo)
          mode = mode | EAttr::NoDebugInfo;
 
@@ -17817,7 +18069,11 @@ ObjectInfo Compiler::Expression::compileBranchingOperands(SyntaxNode rnode, Synt
       }
       writer->closeNode();
    }
-   else codeScope->withRetStatement = oldWithRet;
+   else {
+      codeScope->withRetStatement = oldWithRet;
+      if (retValExpected)
+         retType = subRetCode.typeInfo;
+   }
 
    writer->closeNode();
 

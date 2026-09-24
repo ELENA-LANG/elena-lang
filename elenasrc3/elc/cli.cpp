@@ -249,6 +249,9 @@ void CLIHelper :: handleOption(path_c* arg, IdentifierString& profile, Project& 
          else if (argStr.compare("-el7")) {
             project.setSyntaxVersion(SyntaxVersion::L7);
          }
+         else if (argStr.compare("-el8")) {
+            project.setSyntaxVersion(SyntaxVersion::L8);
+         }
          break;
       }
       case 'f':

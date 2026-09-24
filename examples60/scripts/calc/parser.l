@@ -13,7 +13,7 @@ extension lexicalOp
       if (self >= $97 && self <= $122)
          { ^ mssg letter };
 
-      self =>
+      self ???
          $32 : { ^ mssg whitespace }
          $40 : { ^ mssg opening }
          $41 : { ^ mssg closing }
@@ -23,7 +23,7 @@ extension lexicalOp
          $45 : { ^ mssg minus }
          $46 : { ^ mssg dot }
          $47 : { ^ mssg slash }
-         ! : { ^ mssg unknown }
+         : { ^ mssg unknown }
    }
 }
 
@@ -312,7 +312,7 @@ class StateMachine
    newNode(nodeLevel, operator)
    {
       var function;
-      operator =>
+      operator ???
          "+" : { function := mssgconst add[2]}
          "-" : { function := mssgconst subtract[2]}        
          "*" : { function := mssgconst multiply[2]}

@@ -15,9 +15,9 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }
 
       Enumerator enumerator()
@@ -56,10 +56,10 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       Tuple<object,object> cast()
@@ -105,18 +105,18 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val) : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { Item1 := val }
             1 : { Item2 := val }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }
 
       Enumerator enumerator()
@@ -161,20 +161,20 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
             2 : { ^ Item3 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val) : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { Item1 := val }
             1 : { Item2 := val }
             2 : { Item3 := val }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }
 
       Enumerator enumerator()
@@ -218,11 +218,11 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
             2 : { ^ Item3 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       Enumerator enumerator()
@@ -269,22 +269,22 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
             2 : { ^ Item3 }
             3 : { ^ Item4 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val) : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { Item1 := val }
             1 : { Item2 := val }
             2 : { Item3 := val }
             3 : { Item4 := val }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }
 
       Enumerator enumerator()
@@ -330,12 +330,12 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
             2 : { ^ Item3 }
             3 : { ^ Item4 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       Enumerator enumerator()
@@ -384,24 +384,24 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
             2 : { ^ Item3 }
             3 : { ^ Item4 }
             4 : { ^ Item5 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val) : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { Item1 := val }
             1 : { Item2 := val }
             2 : { Item3 := val }
             3 : { Item4 := val }
             4 : { Item5 := val }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }
 
       Enumerator enumerator()
@@ -449,13 +449,13 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
             2 : { ^ Item3 }
             3 : { ^ Item4 }
             4 : { ^ Item5 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       Enumerator enumerator()
@@ -505,14 +505,14 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
             2 : { ^ Item3 }
             3 : { ^ Item4 }
             4 : { ^ Item5 }
             5 : { ^ Item6 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       Enumerator enumerator()
@@ -563,26 +563,26 @@ namespace collections
 
       at(int index) : info("Returns an element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { ^ Item1 }
             1 : { ^ Item2 }
             2 : { ^ Item3 }
             3 : { ^ Item4 }
             4 : { ^ Item5 }
             5 : { ^ Item6 }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }      
 
       setAt(int index, object val) : info("Assigns <b>item</b> to the element at the position <b>n</b><br/>If an index is out of range, it raises InvalidArgumentException exception.")
       {
-         index =>
+         index ???
             0 : { Item1 := val }
             1 : { Item2 := val }
             2 : { Item3 := val }
             3 : { Item4 := val }
             4 : { Item5 := val }
             5 : { Item6 := val }
-            ! : { OutOfRangeException.raise() }
+            : { OutOfRangeException.raise() }
       }
 
       Enumerator enumerator()

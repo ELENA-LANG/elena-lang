@@ -2881,6 +2881,7 @@ static inline bool nativeBranchingOp2(BuildNode lastNode)
 
    switch (op) {
       case IF_OPERATOR_ID:
+      case IF_ELSE_OPERATOR_ID:
          op = EQUAL_OPERATOR_ID;
          break;
       case ELSE_OPERATOR_ID:

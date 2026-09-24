@@ -148,23 +148,77 @@ singleton Mock
    whoAmI()
       = "I'm a mockup";
 }*/
-  
+
+import system'dynamic;
+                  
 A;
-B;
-  
+
+public interface I
+{
+   abstract string whoAmI();
+}
+
+public class B : I
+{
+   string whoAmI()
+      = "I'm B, instance of I";
+}
+
+//B;
+
+//const int n = 3;
+
 public Program()
 {
-   var o := new A();
-   if (o $is A) {
-      Console.writeLine("o is of type A");
-   };
-   if:not (o $is B) {
-      Console.writeLine("o is not of type B");
-   }
+/*   int n := 3;
    
-/*   if (__ptr n1 != __ptr n3) {
-      Console.writeLine("Works Again!")
-   };*/
+   n ???
+      1 : { Console.writeLine("First") }
+      2 : { Console.writeLine("Second") }
+      : { Console.writeLine("Others") };
+
+   Console.writeLine(n ???
+      1 : "First",
+      2 : "Second",
+      : n.toPrintable() + "th");*/
+
+   TapeFunction f := new LocalFunction(1);
+   if(f is:LocalFunction) {
+      Console.writeLine("It works!")
+   }
+
+//   var b := new B();
+//   Console.printLine("b is B = ", b is:B);
+//   Console.printLine("b is I = ", b is:I);
+//   Console.printLine("b is A = ", b is:A);
+
+/*   $property B ???
+      8 : { Console.writeLine("It works!") }
+      : { Console.writeLine("It doesn't work!") };
+
+   $property A ???
+      8 : { Console.writeLine("It doesn't work!") }
+      : { Console.writeLine("It works!") };
+
+   $property I ???
+      4 : { Console.writeLine("It works!") }
+      : { Console.writeLine("It doesn't work!") };*/
+
+//   var o := new A();
+//   if (o is:A) {
+//      Console.writeLine("o is of type A");
+//   }
+//   else {
+//      Console.writeLine("o is not of type A");
+//   };
+//   
+//   
+//   if:not (o is:B) {
+//      Console.writeLine("o is not of type B");
+//   }
+//   else {
+//      Console.writeLine("o is of type B");
+//   };
 
 //   I i := Mock.mockInterface(I);
 //   Console.printLine(i, " is ", i.whoAmI());

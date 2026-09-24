@@ -200,10 +200,10 @@ singleton helper
          setProp(target, object);
             
          token := helper.readNext(e);
-         token =>
+         token ???
             "," : { token := helper.readNext(e) }
             "}" : { eof := true }
-            ! : { JsonException.new().raise() }
+                : { JsonException.new().raise() }
       };
         
       ^ target
@@ -218,10 +218,10 @@ singleton helper
          target.append(helper.deserializeObject(token, e));
             
          token := helper.readNext(e);
-         token =>
+         token ???
             "," : { token := helper.readNext(e) }
             "]" : { eof := true }
-            ! : { JsonException.new().raise() }
+                : { JsonException.new().raise() }
       };
         
       ^ target

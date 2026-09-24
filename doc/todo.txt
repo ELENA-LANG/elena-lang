@@ -28,6 +28,9 @@ In development:
   - Static decorator (mixin inheritance)
   - httpget for linux i386 / amd64
   - Array<T> must support Enumerable interface as well
+  - support simplify collection - [ 1, 2, 3 ] for array / list<T>
+  - [ 2, 3 ] as a quick way to create an object
+  - modify Ackermann to support switch expression
   --------------------------------------
   * doc
   ====================================== 
@@ -38,16 +41,14 @@ In development:
   - stage 1a : compile-time script 
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
-  - compile tape as executable in vm mode
-  - compile tape as executable in static mode
   ---------------------------------------
   * samples
   ====================================== 
+  - review rosetta samples against switch syntax
   - review rosetta samples from S (Simple windowed application)
   ---------------------------------------
   * current : backlog
   ====================================== 
-  - fix **is** operator : check the message
   - optimize if(a is:b)
   - functional test - if an object is sub class of 
   - functional test - if an object does implement an interface
@@ -55,7 +56,7 @@ In development:
   - check - if:is works correctly as well
   ---------------------------------------
 
-  === Iteration 48 (ide linux; text based adventage; api refactoring) ===
+  === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3
   --------------------------------------
   --------------------------------------
@@ -68,7 +69,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 49 (tetris sample; vscode extension;  pi optimization) ===
+  === Iteration 49 (text based adventage; vscode extension;  pi optimization) ===
   * new version 7.0.4
   --------------------------------------
   * dev
@@ -80,7 +81,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 50 (chat sample) ===
+  === Iteration 50 (tetris sample) ===
   * new version 7.0.5
   --------------------------------------
   * dev
@@ -91,10 +92,21 @@ In development:
   ====================================== 
   * current
   --------------------------------------
+
+  === Iteration 51 (chat sample) ===
+  * new version 7.0.7
+  --------------------------------------
+  * dev
+  ====================================== 
+  * lang
+  ====================================== 
+  * doc
+  ====================================== 
+  * current
   --------------------------------------
 
-  === Iteration 51 (upndown sample) ===
-  * new version 7.0.6
+  === Iteration 52 (upndown sample) ===
+  * new version 7.0.8
   --------------------------------------
   * dev
   ====================================== 

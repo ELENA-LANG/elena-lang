@@ -1334,7 +1334,7 @@ will be inline expression:
            icmp           :4
 
 ## ----------------------------------------------------------------------------
-##  Root namespace alias - __rootns
+##  Root namespace alias __rootns
 ## ----------------------------------------------------------------------------
 
 It is possible to used predefined namespace __rootns to refer to the current module root namespace

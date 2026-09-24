@@ -18,9 +18,9 @@ class SMA
         theList.append(n);
 
         var count := theList.Length;
-        count =>
+        count ???
             0 : { ^0.0r }
-            ! : {
+            : {
                 if (count > thePeriod)
                 {
                     theList.removeAt(0);

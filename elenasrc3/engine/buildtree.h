@@ -195,6 +195,8 @@ namespace elena_lang
 
       MaxOperationalKey    = 0x009C,
       
+      MetaPropOp           = 0x009F,
+
       DeclDictionaryOp     = 0x00A0,
       LoopOp               = 0x00A1,
       CatchOp              = 0x00A2,
@@ -224,6 +226,7 @@ namespace elena_lang
       ProjectConstsOp      = 0x00BA,
       RefBranchOp          = 0x00BB,
       IsBranchOp           = 0x00BC,
+      ClassPropCondOp      = 0x00BD,
 
       VariableInfo         = 0x00C0,
       Variable             = 0x00C1,

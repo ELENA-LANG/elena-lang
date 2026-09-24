@@ -19,12 +19,12 @@ Ackermann(m,n)
       InvalidArgumentException.raise()
    };
     
-   m =>
+   m ???
       0 : { ^n + 1 }
-      ! : {
-         n => 
+      : {
+         n ???
             0 : { ^Ackermann(m - 1,1) }
-            ! : { ^Ackermann(m - 1,Ackermann(m,n-1)) }
+            : { ^Ackermann(m - 1,Ackermann(m,n-1)) }
          }
 }
 

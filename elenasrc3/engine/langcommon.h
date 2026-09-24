@@ -627,6 +627,7 @@ namespace elena_lang
    constexpr auto V_UINT8ARRAY            = 0x80000026u;
    constexpr auto V_NOTNILLABLE           = 0x80000027u;
    constexpr auto V_UINT64                = 0x80000028u;
+   constexpr auto V_CLASSPROPERTY         = 0x80000029u;
 
    /// built-in variables / types / namespaces
    constexpr auto V_SELF_VAR              = 0x80000081u;
@@ -679,8 +680,9 @@ namespace elena_lang
    constexpr auto REFERENCE_OPERATOR_ID      = 0x002B;
    constexpr auto INC_OPERATOR_ID            = 0x002C;
    constexpr auto DEC_OPERATOR_ID            = 0x002D;
+   constexpr auto META_PROPERTY_OPERATOR_ID  = 0x002E;
 
-   constexpr int MAX_OPERATOR_ID             = 0x002D;
+   constexpr int MAX_OPERATOR_ID             = 0x002E;
 
    constexpr auto ISNIL_OPERATOR_ID          = 0x003E;
    constexpr auto CLASS_OPERATOR_ID          = 0x003F;
@@ -866,6 +868,15 @@ namespace elena_lang
    constexpr auto RETVAL_ARG                    = "$retVal";
    constexpr auto PARENT_VAR                    = "$parent";
    constexpr auto OWNER_VAR                     = "$owner";
+
+   // --- class property info ---
+   constexpr ref_t metaClassPropIsClass          = 0x01;
+   constexpr ref_t metaClassPropIsClassClass     = 0x02;
+   constexpr ref_t metaClassPropIsInterface      = 0x04;
+   constexpr ref_t metaClassPropIsInterfaceBased = 0x08;
+   constexpr ref_t metaClassPropIsReadonly       = 0x10;
+   constexpr ref_t metaClassPropIsSingleton      = 0x20;
+   constexpr ref_t metaClassPropIsStruct         = 0x40;
 
    inline ustr_t getPlatformName(PlatformType type)
    {

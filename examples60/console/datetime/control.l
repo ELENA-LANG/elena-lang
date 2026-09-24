@@ -18,12 +18,12 @@ public singleton Control
     {
         auto choice := s.toInt();
         
-        choice =>
+        choice ???
             1 : { ^Now.toString() }
             2 : { ^UtcNow.toString() }
             3 : { ^Now.Year.toString() }
             4 : { ^Now.toShortTimeString() }
             5 : { forward Program.stop(); ^ EmptyString }
-            ! : { ^"Invalid choice" }
+              : { ^"Invalid choice" }
     }
 }

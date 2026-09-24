@@ -243,7 +243,7 @@ public sealed class RegEx
 
    private PatternRule? defineRule(char ch)
    {
-      ch =>             
+      ch ???
          $46: { ^ new AnyRule() };
 
       if (isReserved(ch))
@@ -254,7 +254,7 @@ public sealed class RegEx
 
    private PatternRule defineEscRule(char ch)
    {
-      ch =>
+      ch ???
          $119: { ^ new AnyWordChar() };
 
       ^ CharRule.new(ch)
@@ -326,9 +326,9 @@ public sealed class RegEx
       while (i < len) {
          char ch := pattern[i];
          
-         ch =>
+         ch ???
             $93 : { i++; :break; }
-              ! : {
+                : {
                   PatternRule rule := defineRule(pattern, ref i, ref ch);
                   if (rule != nil) {
                      orList.append(rule)
@@ -370,7 +370,7 @@ public sealed class RegEx
                InvalidArgumentException.raise("pattern");
 
             PatternRule rule;
-            ch =>
+            ch ???
                $63: { rule := OptionalRule.new(list.Last) }
                $42: { rule := RecursiveRule.new(list.Last) }
                $43: {
@@ -385,7 +385,7 @@ public sealed class RegEx
          else {
             bool continueMode := false;
             PatternRule? rule := nil;
-            ch =>
+            ch ???
                $91: {
                   rule := parseGroup(pattern, ref i, len);
                   continueMode := true
@@ -394,7 +394,7 @@ public sealed class RegEx
                   rule := parseBrackets(pattern, ref i, len);
                   continueMode := true
                }
-               !: { rule := defineRule(pattern, ref i, ref ch) };
+               : { rule := defineRule(pattern, ref i, ref ch) };
    
             if:nil(rule) 
                InvalidArgumentException.raise("pattern");

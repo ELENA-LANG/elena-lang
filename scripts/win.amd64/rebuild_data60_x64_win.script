@@ -20,6 +20,16 @@ else
   exit 1
 fi
 
+../../bin/sg64-cli ../../dat/sg/syntax70.txt
+ret=$?
+if [ $ret -eq 0 ]
+then
+  echo .
+else
+  echo "Failure" >&2
+  exit 1
+fi
+
 ../../bin/sg64-cli ../../dat/sg/syntax50.txt
 ret=$?
 if [ $ret -eq 0 ]
