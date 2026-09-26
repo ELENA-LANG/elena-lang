@@ -136,8 +136,8 @@
 //}
 
 import extensions;
-/*import system'dynamic;
- 
+import system'dynamic;
+/* 
 public interface I
 {
    abstract string whoAmI();
@@ -149,61 +149,39 @@ singleton Mock
       = "I'm a mockup";
 }*/
 
-import system'dynamic;
-                  
-A;
-
-public interface I
-{
-   abstract string whoAmI();
-}
-
-public class B : I
-{
-   string whoAmI()
-      = "I'm B, instance of I";
-}
-
 //B;
 
-//const int n = 3;
+/*public interface IFunction
+{
+   abstract real y(real x);
+}
+
+singleton Tester
+{
+   real y(real x)
+      = x * x;
+}*/
+
+class A
+{
+   test()
+   {
+      Console.writeLine(__arg self);
+   }
+   
+}
 
 public Program()
 {
-/*   int n := 3;
+//   var proxy := ::{ dispatch() => /*weak */self; };
+/*
+   var proxy := Tester.mockInterface(IFunction);
    
-   n ???
-      1 : { Console.writeLine("First") }
-      2 : { Console.writeLine("Second") }
-      : { Console.writeLine("Others") };
-
-   Console.writeLine(n ???
-      1 : "First",
-      2 : "Second",
-      : n.toPrintable() + "th");*/
-
-   TapeFunction f := new LocalFunction(1);
-   if(f is:LocalFunction) {
-      Console.writeLine("It works!")
-   }
-
-//   var b := new B();
-//   Console.printLine("b is B = ", b is:B);
-//   Console.printLine("b is I = ", b is:I);
-//   Console.printLine("b is A = ", b is:A);
-
-/*   $property B ???
-      8 : { Console.writeLine("It works!") }
-      : { Console.writeLine("It doesn't work!") };
-
-   $property A ???
-      8 : { Console.writeLine("It doesn't work!") }
-      : { Console.writeLine("It works!") };
-
-   $property I ???
-      4 : { Console.writeLine("It works!") }
-      : { Console.writeLine("It doesn't work!") };*/
-
+   IFunction f := proxy;
+   
+   real r := f.y(2);*/
+   
+   
 //   var o := new A();
 //   if (o is:A) {
 //      Console.writeLine("o is of type A");

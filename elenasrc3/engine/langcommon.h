@@ -570,6 +570,7 @@ namespace elena_lang
    constexpr auto V_THREADVAR             = 0x8000102Du;
    constexpr auto V_SHORTCUT              = 0x8000102Eu;
    constexpr auto V_HEAPALLOCATED         = 0x8000102Fu;
+   constexpr auto V_ARGUMENT              = 0x80001030u;
 
    /// primitive type attribute
    constexpr auto V_STRINGOBJ             = 0x80000801u;

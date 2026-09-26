@@ -42,18 +42,21 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * samples
-  ====================================== 
-  - review rosetta samples against switch syntax
-  - review rosetta samples from S (Simple windowed application)
-  ---------------------------------------
   * current : backlog
   ====================================== 
-  - optimize if(a is:b)
-  - functional test - if an object is sub class of 
-  - functional test - if an object does implement an interface
-  - functional test - if an object does implement a template
-  - check - if:is works correctly as well
+  - knowhow post : self, this self and __arg self
+  - weak operation -> remove object type?
+  - treat method self - as a former weak, weak only for the operation
+  - test embedded2
+  - support weak dispatch : ::{ dispatch() => weakop self; };
+  - fix mocking strong interface with struct returning type
+  - a new opcode - convert strong message to weak one - x86 
+  - a new opcode - convert strong message to weak one - amd64, ppc64le, aarch64
+  - a new mocking method - mockInterfaceWithWeakTarget
+  - fix mocking strong interface with a weak mock
+  - fix mocking strong interface with struct returning type with a weak mock 
+  - implementing strong types interface
+  - test sandbox5
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===

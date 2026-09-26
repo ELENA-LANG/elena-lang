@@ -75,6 +75,7 @@
 #let attributes["__threadvar"]    := 8000102Dh;
 #let attributes["__intermediate"] := 8000102Eh;
 #let attributes["__nonboxable"]   := 8000102Fh;
+#let attributes["__arg"]            := 80001030h;
 
 /// primitive types
 #let attributes["__string"]    := 80000801h;

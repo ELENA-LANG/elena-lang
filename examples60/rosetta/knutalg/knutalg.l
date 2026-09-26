@@ -16,17 +16,17 @@ extension algorithmOp
             {
                 counter.append(1);
 
-                if (weak self.Length < n)
+                if (__arg self.Length < n)
                 { 
-                    weak self.append(i) 
+                    __arg self.append(i) 
                 }
                 else
                 { 
                     if(Random.nextInt(counter) < n)
-                        { weak self[Random.nextInt(n)] := i }
+                        { __arg self[Random.nextInt(n)] := i }
                 };
 
-                ^ weak self.Value
+                ^ __arg self.Value
             }
         })
     }

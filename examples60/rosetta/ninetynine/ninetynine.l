@@ -22,7 +22,7 @@ extension bottleOp
                     
             reset() {}
             
-            enumerable() = weak self;
+            enumerable() = arg self;
         }
     };
 }

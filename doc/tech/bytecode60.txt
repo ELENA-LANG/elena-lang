@@ -67,6 +67,8 @@ ELENA byte codes (or ecodes)
 
    convl                    - index => long:index
 
+   convm                    - index.weakMessage => index; converts a strong typed message to a weak one, or leave it as otherwise
+
    get i                    - acc[i] => acc
 
    lload                    - long:index := long:[acc] 

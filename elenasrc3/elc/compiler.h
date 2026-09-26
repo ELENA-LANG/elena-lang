@@ -503,6 +503,13 @@ namespace elena_lang
             else return {};
          }
 
+         virtual ObjectInfo mapArgument(ustr_t identifier)
+         {
+            if (parent) {
+               return parent->mapArgument(identifier);
+            }
+            else return {};
+         }
          virtual ObjectInfo mapMember(ustr_t)
          {
             return {};
@@ -910,6 +917,7 @@ namespace elena_lang
          ObjectInfo mapParameter(ustr_t identifier, ExpressionAttribute attr);
          ObjectInfo mapSelf(bool memberMode = true, bool ownerClass = false);
          ObjectInfo mapSuper();
+         ObjectInfo mapArgument(ustr_t identifier) override;
 
          void markAsAssigned(ObjectInfo object) override;
 
@@ -1435,10 +1443,11 @@ namespace elena_lang
          bool outRefOp;
          bool mssgOp;
          bool memberMode;
+         bool argMode;
 
          bool isAnySet() const
          {
-            return forwardMode || variableMode || refOp || outRefOp || mssgOp || memberMode;
+            return forwardMode || variableMode || refOp || outRefOp || mssgOp || memberMode || argMode;
          }
       };
 

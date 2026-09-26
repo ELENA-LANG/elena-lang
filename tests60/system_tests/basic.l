@@ -3476,3 +3476,26 @@ public mapKeyTest() : testCase()
    Assert.ifTrue(d[202] == 300);
    Console.write(".");
 }
+
+// --- IsOperatorTest ---
+
+IsOp_A;
+
+public interface IsOp_I
+{
+   abstract string whoAmI();
+}
+
+public class IsOp_B : IsOp_I
+{
+   string whoAmI()
+      = "I'm B, instance of IsOp_I";
+}
+
+public IsOperatorTest() : testCase()
+{
+   var b := new IsOp_B();
+   Assert.ifTrue(b is:IsOp_B);
+   Assert.ifTrue(b is:IsOp_I);
+   Assert.ifFalse(b is:IsOp_A);
+}

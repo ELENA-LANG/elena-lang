@@ -1186,7 +1186,6 @@ ObjectInfo Compiler::NamespaceScope::defineObjectInfo(ref_t reference, Expressio
    ObjectInfo info = {};
 
    bool metaOne = ExpressionAttributes::test(mode, ExpressionAttribute::Meta);
-   //bool weakOne = ExpressionAttributes::test(mode, ExpressionAttribute::Weak);
    bool internOne = ExpressionAttributes::test(mode, ExpressionAttribute::Intern);
 
    if (reference) {
@@ -1414,7 +1413,7 @@ ObjectInfo Compiler::NamespaceScope::mapGlobal(ustr_t identifier, ExpressionAttr
       return defineObjectInfo(reference, mode, true);
    }
    // if it is a forward reference
-   else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), EAttr::Weak, false);
+   else return defineObjectInfo(moduleScope->mapFullReference(identifier, false), EAttr::None, false);
 }
 
 ObjectInfo Compiler::NamespaceScope::mapWeakReference(ustr_t identifier, bool directResolved)
@@ -1894,6 +1893,14 @@ ObjectInfo Compiler::MethodScope::mapParameter(ustr_t identifier, ExpressionAttr
    else return {};
 }
 
+ObjectInfo Compiler::MethodScope :: mapArgument(ustr_t identifier)
+{
+   if (moduleScope->selfVar.compare(identifier)) {
+      return mapSelf(false);
+   }
+   return mapParameter(identifier, EAttr::None);
+}
+
 ObjectInfo Compiler::MethodScope::mapIdentifier(ustr_t identifier, bool referenceOne, ExpressionAttribute attr)
 {
    if (!referenceOne) {
@@ -1902,7 +1909,7 @@ ObjectInfo Compiler::MethodScope::mapIdentifier(ustr_t identifier, bool referenc
          return paramInfo;
       }
       else if (moduleScope->selfVar.compare(identifier)) {
-         if (EAttrs::test(attr, EAttr::Weak) || targetSelfMode) {
+         if (targetSelfMode) {
             return mapSelf(false);
          }
          else if ((functionMode && !constructorMode) || closureMode || nestedMode) {
@@ -8318,7 +8325,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
    }
 
    if (singleDispatchMode && directExtensionRef && !context.implicitSignatureRef) {
-      // HOTFIX : replace weak argument with a stron one
+      // HOTFIX : replace weak argument with a strong one
       directExtensionRef = scope.moduleScope->resolveWeakTemplateReferenceID(directExtensionRef);
 
       // for singleDispatchMode define implicitSignatureRef if not provided
@@ -8726,6 +8733,9 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
          else if (terminalAttrs.memberMode) {
             retVal = scope.mapMember(node.identifier());
          }
+         else if (terminalAttrs.argMode) {
+            retVal = scope.mapArgument(node.identifier());
+         }
          else retVal = scope.mapIdentifier(node.identifier(), node.key == SyntaxKey::reference, attrs);
 
          if (terminalAttrs.refOp || terminalAttrs.outRefOp) {
@@ -8806,7 +8816,7 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
          break;
    }
 
-   if (EAttrs::test(attrs, EAttr::Weak)) {
+   if (EAttrs::test(attrs, EAttr::WeakOp)) {
       assert(retVal.mode == TargetMode::None);
       retVal.mode = TargetMode::Weak;
    }
@@ -8878,6 +8888,7 @@ ObjectInfo Compiler::mapTerminal(Scope& scope, SyntaxNode node, TypeInfo declare
       EAttrs::testAndExclude(attrs, ExpressionAttribute::OutRefOp),
       EAttrs::testAndExclude(attrs, ExpressionAttribute::MssgNameLiteral),
       EAttrs::testAndExclude(attrs, ExpressionAttribute::Member),
+      EAttrs::testAndExclude(attrs, ExpressionAttribute::ArgumentMode),
    };
 
    ObjectInfo retVal;

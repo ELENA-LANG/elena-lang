@@ -60,6 +60,7 @@
   - [FIXED] Stream segment reads and writes honor offsets and lengths
   - [ADDED] forms'DockingBox
   - [FIXED] **is** operator check if an instance is in the inheritance tree
+  - [ADDED] __arg attribute to refer the method parameters
 
 - Scripts
   - [ADDED] elena script 2 : xscript

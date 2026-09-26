@@ -1192,8 +1192,11 @@ bool CompilerLogic :: validateExpressionAttribute(ref_t attrValue, ExpressionAtt
       case V_MEMBER:
          attrs |= ExpressionAttribute::Member;
          return true;
+      case V_ARGUMENT:
+         attrs |= ExpressionAttribute::ArgumentMode;
+         return true;
       case V_WEAK:
-         attrs |= ExpressionAttribute::Weak;
+         attrs |= ExpressionAttribute::WeakOp;
          return true;
       case V_SUPERIOR:
          attrs |= ExpressionAttribute::Superior;
