@@ -151,28 +151,51 @@ singleton Mock
 
 //B;
 
-/*public interface IFunction
+public interface IFunction
 {
-   abstract real y(real x);
+   abstract /*real */y(real x);
 }
-
+/*
 singleton Tester
 {
    real y(real x)
       = x * x;
-}*/
-
-class A
-{
-   test()
-   {
-      Console.writeLine(__arg self);
-   }
-   
 }
 
+public extension MockOp<T>
+{
+   T mockInterface()
+      = new T { embeddable dispatch() => self; };
+}
+*/
+
+public singleton Tester
+{
+   /*real */y(/*real */x)
+     = x * x;
+}
+/*
+public singleton Invoker
+{
+   real y(real x)
+     => Tester;
+}
+*/
 public Program()
 {
+   IFunction f := new IFunction { embeddable dispatch() => /*weak */Tester; };
+   real r := f.y(2);
+
+   Console.printLine("f(2)=",r);
+
+//   real r := Invoker.y(2);
+
+//   IFunction f2 := Tester::mockInterface<IFunction>();   
+//   IFunction f := new IFunction { embeddable dispatch() => /*weak */Tester; };
+   
+//   real r := f.y(2);
+//   real r2 := f2.y(2);
+   
 //   var proxy := ::{ dispatch() => /*weak */self; };
 /*
    var proxy := Tester.mockInterface(IFunction);

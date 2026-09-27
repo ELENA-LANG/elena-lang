@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ====================================== 
+  - weak operation : forced typecasting
   - prj file - $namespace variable?
   - post about foreach
   - fix : why stream operation Stream.read[4] generates an error for Linux
@@ -42,12 +43,12 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * current : backlog
+  * backlog
   ====================================== 
-  - knowhow post : self, this self and __arg self
-  - weak operation -> remove object type?
-  - treat method self - as a former weak, weak only for the operation
-  - test embedded2
+  - test the current solution (check f vs. f2)
+  - support ::mockInterface<T>()
+  - create interface proxy at compile time
+  - create interface weak proxy at compile time
   - support weak dispatch : ::{ dispatch() => weakop self; };
   - fix mocking strong interface with struct returning type
   - a new opcode - convert strong message to weak one - x86 
@@ -57,6 +58,24 @@ In development:
   - fix mocking strong interface with struct returning type with a weak mock 
   - implementing strong types interface
   - test sandbox5
+  ---------------------------------------
+  * passing byref boxed argument 
+  ====================================== 
+  - investigate
+  - fix
+  - unit test
+  ---------------------------------------
+  * implementing a weak interface
+  ====================================== 
+  - investigate
+  - implement
+  - unit test / functional test
+  ---------------------------------------
+  * current : implementing a interface -> the target does not support the operation
+  ====================================== 
+  - implement - strong method : implement weak redirect
+  - implement - byref strong method : implement weak redirect
+  - unit test / functional test
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===

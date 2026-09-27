@@ -10018,6 +10018,18 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
 
    mssg_t messageRef = codeScope.getMessageID();
 
+   ref_t targetRef = resolveStrongType(codeScope, target.typeInfo);
+   CheckMethodResult dummy = {};
+   bool found = expression.resolveAndValidate(target, targetRef, messageRef, dummy, false, false);
+   if (!found) {
+      ref_t dummyRef = 0;
+      // define weak message
+      messageRef = encodeMessage(
+         codeScope.module->mapAction(codeScope.module->resolveAction(getAction(messageRef), dummyRef), 0, false), 
+         getArgCount(messageRef),
+         getFlags(messageRef));
+   }
+
    if (!test(messageRef, FUNCTION_MESSAGE))
       arguments.add(target);
 
