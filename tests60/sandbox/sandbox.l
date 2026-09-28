@@ -153,7 +153,7 @@ singleton Mock
 
 public interface IFunction
 {
-   abstract /*real */y(real x);
+   abstract real y(real x);
 }
 /*
 singleton Tester
@@ -181,8 +181,38 @@ public singleton Invoker
      => Tester;
 }
 */
+
+public interface StrongInterface
+{
+   abstract real y(real x);
+   abstract y2(real x);
+}
+
+public singleton WeakProxy
+{
+   y(x)
+     = x * x;
+     
+   y2(x)
+     = x * x * x;
+}
+
+public weakInterfaceProxyTest()
+{
+   StrongInterface f := new StrongInterface { embeddable dispatch() => WeakProxy; };
+   real r := f.y(2);
+   real r2 := f.y2(3);
+
+   Assert.ifEqual(r, 4);   
+   Assert.ifEqual(r2, 27);   
+}
+
+
+
 public Program()
 {
+   weakInterfaceProxyTest();
+   
    IFunction f := new IFunction { embeddable dispatch() => /*weak */Tester; };
    real r := f.y(2);
 

@@ -1604,6 +1604,17 @@ Compiler::ClassScope :: ClassScope(Scope* ns, ref_t reference, Visibility visibi
    withStaticConstructor = false;
 }
 
+
+mssg_t Compiler::ClassScope :: retrieveByRefHandlerInvoker(mssg_t byRefMessage)
+{
+   for (auto it = info.methods.start(); !it.eof(); ++it) {
+      if ((*it).byRefHandler == byRefMessage)
+         return it.key();
+   }
+
+   return 0;
+}
+
 bool Compiler::ClassScope :: resolveAutoType(ObjectInfo& targetInfo, TypeInfo typeInfo, int size, int extra)
 {
    if (targetInfo.kind == ObjectKind::Field) {
@@ -4068,6 +4079,8 @@ void Compiler :: declareInvoker(ClassInfo& info, mssg_t targetMssg, MethodInfo& 
       handlerInfo.hints |= (ref_t)MethodHint::Abstract;
    }
    else handlerInfo.hints &= ~(ref_t)MethodHint::Abstract;
+
+   handlerInfo.extra_hints |= (ref_t)MethodExtraHint::ByRefHandler;
 
    // HOTFIX : mark it as stacksafe if required
    if (_logic->isEmbeddableStruct(info.header.flags))
@@ -10009,10 +10022,19 @@ void Compiler :: compileMultidispatch(BuildTreeWriter& writer, CodeScope& scope,
    }
 }
 
+static inline mssg_t retrieveWeakMessage(ref_t messageRef, ModuleBase* module)
+{
+   ref_t dummyRef = 0;
+   return encodeMessage(
+      module->mapAction(module->resolveAction(getAction(messageRef), dummyRef), 0, false),
+      getArgCount(messageRef),
+      getFlags(messageRef));
+}
+
 ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeScope, SyntaxNode node, ref_t outputRef, bool withDebugInfo)
 {
+   MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
    Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
-   ArgumentsInfo arguments;
 
    ObjectInfo target = expression.compile(node.firstChild(), 0, EAttr::Parameter);
 
@@ -10020,23 +10042,41 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
 
    ref_t targetRef = resolveStrongType(codeScope, target.typeInfo);
    CheckMethodResult dummy = {};
+   bool byRefCallMode = false;
    bool found = expression.resolveAndValidate(target, targetRef, messageRef, dummy, false, false);
    if (!found) {
-      ref_t dummyRef = 0;
-      // define weak message
-      messageRef = encodeMessage(
-         codeScope.module->mapAction(codeScope.module->resolveAction(getAction(messageRef), dummyRef), 0, false), 
-         getArgCount(messageRef),
-         getFlags(messageRef));
+      if (test(methodScope->info.extra_hints, (ref_t)MethodExtraHint::ByRefHandler)) {
+         // if it is byref handler, call the original message and pass the result to the last argument
+         ClassScope* classScope = Scope::getScope<ClassScope>(codeScope, Scope::ScopeLevel::Class);
+         messageRef = classScope->retrieveByRefHandlerInvoker(messageRef);
+         assert(messageRef != 0);
+
+         byRefCallMode = true;
+      }
+      // try to call a weak message
+      messageRef = retrieveWeakMessage(messageRef, codeScope.module);
    }
+
+   ArgumentsInfo arguments;
 
    if (!test(messageRef, FUNCTION_MESSAGE))
       arguments.add(target);
 
-   MethodScope* methodScope = Scope::getScope<MethodScope>(codeScope, Scope::ScopeLevel::Method);
-
-   for (auto it = methodScope->parameters.start(); !it.eof(); ++it) {
-      arguments.add(methodScope->mapParameter(it.key(), EAttr::None));
+   ObjectInfo outParam = {};
+   if (!byRefCallMode) {
+      for (auto it = methodScope->parameters.start(); !it.eof(); ++it) {
+         arguments.add(methodScope->mapParameter(it.key(), EAttr::None));
+      }
+   }
+   else {
+      int counter = getArgCount(messageRef) - 1;
+      for (auto it = methodScope->parameters.start(); !it.eof(); ++it) {
+         if (counter > 0) {
+            arguments.add(methodScope->mapParameter(it.key(), EAttr::None));
+            counter--;
+         }
+         else outParam = methodScope->mapParameter(it.key(), EAttr::None);
+      }
    }
 
    MessageCallContext context = { messageRef, getSignature(codeScope.module, messageRef) };
@@ -10046,8 +10086,14 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
    ObjectInfo retVal = expression.compileMessageCall(node, target, context, resolution,
       arguments, EAttr::None);
 
+   if (byRefCallMode) {
+      ref_t outputRef = resolveStrongType(codeScope, retVal.typeInfo);
+
+      expression.compileAssigning(node, outParam, retVal);
+   }
+
    if (outputRef) {
-      expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false, false, false);
+      retVal = expression.convertObject(node, expression.saveToTempLocal(retVal), outputRef, true, false, false, false);
    }
 
    expression.scope.syncStack();
@@ -10414,22 +10460,12 @@ void Compiler::compileByRefRedirectHandler(BuildTreeWriter& writer, MethodScope&
    compileMethod(writer, redirectScope, node, classScope->withDebugInfo);
 }
 
-void Compiler::compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& methodScope, CodeScope& codeScope, mssg_t handler, ref_t targetRef, bool withDebugInfo)
+ObjectInfo Compiler::Expression :: compileByRefHandlerCall(ObjectInfo target, ref_t targetRef, mssg_t handler, MethodScope& methodScope)
 {
-   writer.appendNode(BuildKey::OpenFrame);
-
-   // stack should contains current self reference
-   // the original message should be restored if it is a generic method
-   methodScope.selfLocal = codeScope.newLocal();
-   writer.appendNode(BuildKey::Assigning, methodScope.selfLocal);
-
-   // calling the byref handler
-   Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
    ArgumentsInfo arguments;
 
-   ObjectInfo tempRetVal = expression.declareTempLocal(targetRef, false);
+   ObjectInfo tempRetVal = declareTempLocal(targetRef, false);
 
-   ObjectInfo target = methodScope.mapSelf();
    MessageCallContext context = { handler, 0 };
    MessageResolution resolution = { true, handler };
    if (methodScope.isExtension) {
@@ -10440,18 +10476,37 @@ void Compiler::compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& 
    for (auto it = methodScope.parameters.start(); !it.eof(); ++it) {
       arguments.add(methodScope.mapParameter(it.key(), EAttr::None));
    }
+
    addOutRetVal(arguments, tempRetVal);
 
-   context.implicitSignatureRef = getSignature(codeScope.module, handler);
-   _logic->setSignatureStacksafe(*codeScope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
+   context.implicitSignatureRef = getSignature(scope.module, handler);
+   compiler->_logic->setSignatureStacksafe(*scope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
 
-   /*ObjectInfo retVal = */expression.compileMessageCall({}, target, context, resolution,
+   /*ObjectInfo retVal = */compileMessageCall({}, target, context, resolution,
       arguments, EAttr::AllowPrivateCall);
 
    // return temp variable
-   expression.writeObjectInfo(expression.boxArgument(tempRetVal, false, true, false));
+   ObjectInfo retVal = boxArgument(tempRetVal, false, true, false);
 
-   expression.scope.syncStack();
+   scope.syncStack();
+
+   return retVal;
+}
+
+void Compiler :: compileByRefHandlerInvoker(BuildTreeWriter& writer, MethodScope& methodScope, CodeScope& codeScope, mssg_t handler, ref_t targetRef, bool withDebugInfo)
+{
+   writer.appendNode(BuildKey::OpenFrame);
+
+   // stack should contains current self reference
+   // the original message should be restored if it is a generic method
+   methodScope.selfLocal = codeScope.newLocal();
+   writer.appendNode(BuildKey::Assigning, methodScope.selfLocal);
+
+   // calling the byref handler
+   Expression expression(this, codeScope, writer, withDebugInfo, nullptr);
+   ObjectInfo target = methodScope.mapSelf();
+   ObjectInfo retVal = expression.compileByRefHandlerCall(target, targetRef, handler, methodScope);
+   expression.writeObjectInfo(retVal);
 
    writer.appendNode(BuildKey::CloseFrame);
 }

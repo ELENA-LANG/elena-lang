@@ -73,9 +73,7 @@ In development:
   ---------------------------------------
   * current : implementing a interface -> the target does not support the operation
   ====================================== 
-  - implement - strong method : implement weak redirect
-  - implement - byref strong method : implement weak redirect
-  - unit test / functional test
+  - functional test : weak & byref weak redirects
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===

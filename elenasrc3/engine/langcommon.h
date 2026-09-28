@@ -78,6 +78,7 @@ namespace elena_lang
       None                 = 0x00000000,
       EnforcedNillableArgs = 0x00000001,
       HasInlineExpr        = 0x00000002,
+      ByRefHandler         = 0x00000004,
    };
 
    // --- MethodInfo ---

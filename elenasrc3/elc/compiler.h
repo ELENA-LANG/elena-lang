@@ -840,6 +840,8 @@ namespace elena_lang
          ObjectInfo mapDictionary(ustr_t identifier, bool referenceOne, ExpressionAttribute mode) override;
 
          ObjectInfo mapType(SyntaxKey type, ustr_t identifier, TypeResolveMode mode) override;
+         
+         mssg_t retrieveByRefHandlerInvoker(mssg_t byRefMessageRef);
 
          void save();
 
@@ -1696,6 +1698,8 @@ namespace elena_lang
          void handleNillableReturn(SyntaxNode node, ObjectInfo target);
          void handleNillableAssign(SyntaxNode node, ObjectInfo target);
          void handleNillableArguments(SyntaxNode node, ArgumentsInfo& arguments, int nillableArgs);
+
+         ObjectInfo compileByRefHandlerCall(ObjectInfo target, ref_t targetRef, mssg_t handler, MethodScope& methodScope);
 
          ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
             ArgumentsInfo& arguments, ExpressionAttributes mode);
