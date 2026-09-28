@@ -43,37 +43,9 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * backlog
+  * current : backlog
   ====================================== 
-  - test the current solution (check f vs. f2)
-  - support ::mockInterface<T>()
-  - create interface proxy at compile time
-  - create interface weak proxy at compile time
-  - support weak dispatch : ::{ dispatch() => weakop self; };
-  - fix mocking strong interface with struct returning type
-  - a new opcode - convert strong message to weak one - x86 
-  - a new opcode - convert strong message to weak one - amd64, ppc64le, aarch64
-  - a new mocking method - mockInterfaceWithWeakTarget
-  - fix mocking strong interface with a weak mock
-  - fix mocking strong interface with struct returning type with a weak mock 
-  - implementing strong types interface
   - test sandbox5
-  ---------------------------------------
-  * passing byref boxed argument 
-  ====================================== 
-  - investigate
-  - fix
-  - unit test
-  ---------------------------------------
-  * implementing a weak interface
-  ====================================== 
-  - investigate
-  - implement
-  - unit test / functional test
-  ---------------------------------------
-  * current : implementing a interface -> the target does not support the operation
-  ====================================== 
-  - functional test : weak & byref weak redirects
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===

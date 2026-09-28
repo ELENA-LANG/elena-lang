@@ -123,3 +123,9 @@ public extension proxyTypeOp
       ^ proxy.__injectInferface(type);
    }
 }
+
+public extension MockOp<T>
+{
+   T mockInterface()
+      = new T { embeddable dispatch() => self; };
+}

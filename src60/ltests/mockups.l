@@ -30,7 +30,7 @@ public class Mockup<T>
     
     T cast()
     {
-       var proxy := object.mockInterface(class T);
+       var proxy := object::mockInterface<T>();
        
        ^ proxy;
    }

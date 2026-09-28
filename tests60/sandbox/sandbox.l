@@ -135,126 +135,93 @@
 //   Console.printLine(i2.whoAmI());
 //}
 
-import extensions;
-import system'dynamic;
-/* 
-public interface I
-{
-   abstract string whoAmI();
-}
-
-singleton Mock
-{
-   whoAmI()
-      = "I'm a mockup";
-}*/
-
-//B;
-
-public interface IFunction
-{
-   abstract real y(real x);
-}
-/*
-singleton Tester
-{
-   real y(real x)
-      = x * x;
-}
-
-public extension MockOp<T>
-{
-   T mockInterface()
-      = new T { embeddable dispatch() => self; };
-}
-*/
-
-public singleton Tester
-{
-   /*real */y(/*real */x)
-     = x * x;
-}
-/*
-public singleton Invoker
-{
-   real y(real x)
-     => Tester;
-}
-*/
-
-public interface StrongInterface
-{
-   abstract real y(real x);
-   abstract y2(real x);
-}
-
-public singleton WeakProxy
-{
-   y(x)
-     = x * x;
-     
-   y2(x)
-     = x * x * x;
-}
-
-public weakInterfaceProxyTest()
-{
-   StrongInterface f := new StrongInterface { embeddable dispatch() => WeakProxy; };
-   real r := f.y(2);
-   real r2 := f.y2(3);
-
-   Assert.ifEqual(r, 4);   
-   Assert.ifEqual(r2, 27);   
-}
-
-
-
-public Program()
-{
-   weakInterfaceProxyTest();
-   
-   IFunction f := new IFunction { embeddable dispatch() => /*weak */Tester; };
-   real r := f.y(2);
-
-   Console.printLine("f(2)=",r);
-
-//   real r := Invoker.y(2);
-
-//   IFunction f2 := Tester::mockInterface<IFunction>();   
-//   IFunction f := new IFunction { embeddable dispatch() => /*weak */Tester; };
-   
+//import extensions;
+//import system'dynamic;
+///* 
+//public interface I
+//{
+//   abstract string whoAmI();
+//}
+//
+//singleton Mock
+//{
+//   whoAmI()
+//      = "I'm a mockup";
+//}*/
+//
+////B;
+//
+//public interface IFunction
+//{
+//   abstract real y(real x);
+//}
+//
+//public singleton Tester
+//{
+//   real y(real x)
+//     = x * x;
+//}
+//
+//public Program()
+//{
+//   IFunction f := Tester::mockInterface<IFunction>();   
+//   
 //   real r := f.y(2);
-//   real r2 := f2.y(2);
-   
-//   var proxy := ::{ dispatch() => /*weak */self; };
-/*
-   var proxy := Tester.mockInterface(IFunction);
-   
-   IFunction f := proxy;
-   
-   real r := f.y(2);*/
-   
-   
-//   var o := new A();
-//   if (o is:A) {
-//      Console.writeLine("o is of type A");
-//   }
-//   else {
-//      Console.writeLine("o is not of type A");
-//   };
+//   Console.printLine("f(2)=",r);
+//   
+////   var proxy := ::{ dispatch() => /*weak */self; };
+///*
+//   var proxy := Tester.mockInterface(IFunction);
+//   
+//   IFunction f := proxy;
+//   
+//   real r := f.y(2);*/
 //   
 //   
-//   if:not (o is:B) {
-//      Console.writeLine("o is not of type B");
-//   }
-//   else {
-//      Console.writeLine("o is of type B");
-//   };
+////   var o := new A();
+////   if (o is:A) {
+////      Console.writeLine("o is of type A");
+////   }
+////   else {
+////      Console.writeLine("o is not of type A");
+////   };
+////   
+////   
+////   if:not (o is:B) {
+////      Console.writeLine("o is not of type B");
+////   }
+////   else {
+////      Console.writeLine("o is of type B");
+////   };
+//
+////   I i := Mock.mockInterface(I);
+////   Console.printLine(i, " is ", i.whoAmI());
+//   
+////   if (i is:I) {
+////      Console.writeLine("Works!")
+////   }
+//}
 
-//   I i := Mock.mockInterface(I);
-//   Console.printLine(i, " is ", i.whoAmI());
-   
-//   if (i is:I) {
-//      Console.writeLine("Works!")
-//   }
-}
+    import extensions;
+//    import system'dynamic;
+    import ltests;
+    
+    public interface IFunction
+    {
+       abstract real calculate(real arg);
+    }
+    
+    public singleton Actor
+    {
+       invoke(IFunction function)
+       {
+          Console.printLine("Calculating f(2) = ", function.calculate(2));
+       }
+    }
+    
+    public Program()
+    {
+       var mockup2 := new Mockup<IFunction>(::{ real calculate(real x) = x * x; });
+    
+       Actor.invoke(mockup2);
+    }

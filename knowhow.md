@@ -859,6 +859,33 @@ The code is:
        Actor.invoke(mockup);
     }
 
+You can use ltests'Mockup class as well:
+
+    import extensions;
+    import system'dynamic;
+    import ltests;
+    
+    public interface IFunction
+    {
+       abstract real calculate(real arg);
+    }
+    
+    public singleton Actor
+    {
+       invoke(IFunction function)
+       {
+          Console.printLine("Calculating f(2) = ", function.calculate(2));
+       }
+    }
+    
+    public Program()
+    {
+       var mockup2 := new Mockup<IFunction>(::{ real calculate(real x) = x * x; });
+    
+       Actor.invoke(mockup2);
+    }
+
+
 ## ----------------------------------------------------------------------------
 ##  Primitive Value operation
 ## ----------------------------------------------------------------------------
