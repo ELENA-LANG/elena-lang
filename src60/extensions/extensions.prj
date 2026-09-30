@@ -20,7 +20,7 @@
   </project>
   <manifest>
     <name>ELENA Extension Library</name>
-    <version>7.1.4</version>
+    <version>7.1.5</version>
     <author>Alex Rakov</author>
   </manifest>
   <files>
@@ -65,6 +65,10 @@
      <module name="runtime">
        <include>runtime\systemmonitor.l</include>
        <include>runtime\package.l</include>
+     </module>
+     <module name="logging">
+       <include>logging\common.l</include>
+       <include>logging\factory.l</include>
      </module>
   </files>
 </configuration>

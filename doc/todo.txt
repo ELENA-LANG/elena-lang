@@ -32,6 +32,8 @@ In development:
   - support simplify collection - [ 1, 2, 3 ] for array / list<T>
   - [ 2, 3 ] as a quick way to create an object
   - modify Ackermann to support switch expression
+  - elt - new library - name of class
+  - elt - new class
   --------------------------------------
   * doc
   ====================================== 
@@ -43,9 +45,9 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * current : backlog
+  * current : logger
   ====================================== 
-  - test sandbox5
+  - fix compatibility issue
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===

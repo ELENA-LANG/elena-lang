@@ -7,5 +7,6 @@
     <project>cellular/cellular.linux.prj</project>
     <project>xml/xml.linux.prj</project>
     <project>sqlite/sqlite.prj</project>
+    <project>logger/logger.prj</project>
   </collection>
 </configuration>

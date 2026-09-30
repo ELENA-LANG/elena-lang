@@ -523,6 +523,8 @@ namespace io
       static TextReader textreader(string path) 
          = fileControl.newReader(path);         
       
+      static TextWriter textlogger(string path) = fileControl.logger(path);
+
       static BinaryReader binaryreader(string path) 
          = fileControl.newBinaryReader(path);
    }

@@ -19,7 +19,14 @@
         <include>controller.l</include>
         <include>factory.l</include>
         <include>graphs.l</include>
+        <include>script.l</include>
      </module>
   </files>
+  <forwards>
+     <forward key="ScriptFunction">graphs'ScriptInterpreter</forward>
+  </forwards>
+  <constants>
+     <constant key="script_file">factory.ls2</constant>
+  </constants>
 </configuration>
 
