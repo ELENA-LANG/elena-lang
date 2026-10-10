@@ -90,16 +90,19 @@ public Program()
 //
 //
    //auto regEx := new RegEx("(abc|bc)+");
+   auto regEx := new RegEx("(?<group>abc|bc)+");
    //MatchResult result := regEx.match("abc");
    //MatchResult result := regEx.match("bc");
-   //MatchResult result := regEx.match("abcabcabcbc");
+   MatchResult result := regEx.match("abcabcabcbc");
 
-   //printMatchResult(result);
+   printMatchResult(result);
+   
+   auto group := regEx.retrieveGroup(result, "group");
 
 
 
-   auto regex3 := new RegEx("^a*$");
-   Assert.ifFalse(regex3.match("b"));
+//   auto regex3 := new RegEx("^a*$");
+//   Assert.ifFalse(regex3.match("b"));
    
    
    

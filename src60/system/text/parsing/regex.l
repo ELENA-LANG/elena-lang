@@ -16,40 +16,35 @@ public RegExException : Exception
 
 internal sealed ParserContext
 {
-//   Reference<int> _groupCounter;
-
-//   Stack<Tuple<int, int>> _bookmarks;
+   Stack<Tuple<int, int>> _bookmarks;
    
    Stack<PatternRule> Parents: rprop(_parents);
    bool               eorHit: prop(_hit);
    
    constructor()
    {
-      //_bookmarks := new Stack<Tuple<int, int>>();
+      _bookmarks := new Stack<Tuple<int, int>>();
       
       _hit := false;
       _parents := new Stack<PatternRule>();
    }
    
-//   startGroup(int key, int index)
-//   {
-//      _bookmarks.push(new Tuple<int, int>(key, index));
-//   }
-//
-//   stopGroup(int key, int index)
-//   {
-//      _bookmarks.push(new Tuple<int, int>(-key, index));
-//   }
-   
-/*   
-   int newGroup()
+   startGroup(int key, int index)
    {
-      _groupCounter.append(1);
-      
-      ^ *_groupCounter
+      _bookmarks.push(new Tuple<int, int>(key, index));
    }
-*/   
-   
+
+   stopGroup(int key, int index)
+   {
+      _bookmarks.push(new Tuple<int, int>(-key, index));
+   }
+
+   Tuple<int, int> popBookmark()
+      = _bookmarks.pop();   
+      
+   bool emptyBookmarks()
+      =_bookmarks.Length == 0;
+
    push(PatternRule item)
       => _parents;
    
@@ -67,7 +62,7 @@ internal interface PatternRule
 {
    indexed internal abstract setNext(PatternRule rule);
 
-   abstract PatternRule? gotoNext(ParserContext context);   
+   abstract PatternRule? gotoNext(int index, ParserContext context);   
    
    internal abstract bool match(char ch, ParserContext context);
    internal abstract bool matchNext(char ch, ParserContext context);
@@ -76,28 +71,12 @@ internal interface PatternRule
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
    {
       if (match(ch, context)) {
-         ^ gotoNext(context);
+         ^ gotoNext(index, context);
       };
 
       ^ nil;      
    }
 }
-
-/*
-internal singleton VirtualRule : PatternRule
-{
-   indexed internal setNext(PatternRule rule)
-      = NotSupportedException.raise();
-   
-   bool match(char ch)
-      = true;
-   
-   PatternRule? gotoNext(ParserContext context)
-   {
-      ^ context.pop().gotoNext(context);
-   }   
-}
-*/
 
 internal abstract LinkRule : PatternRule
 {
@@ -135,14 +114,14 @@ internal abstract LinkRule : PatternRule
    }
    
 
-   PatternRule? gotoNext(ParserContext context)
+   PatternRule? gotoNext(int index, ParserContext context)
    {
       if:nil(_nextRule) {
          if (context.empty()) {
             ^ nil
          };         
          
-         ^ context.pop().gotoNext(context);
+         ^ context.pop().gotoNext(index, context);
       };
 
       ^ _nextRule;
@@ -296,46 +275,53 @@ internal sealed InvertedRule : NestedRule
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
    {
       if (match(ch, context)) {
-         ^ gotoNext(context);
+         ^ gotoNext(index, context);
       };
 
       ^ nil;      
    }      
 }
 
-/*internal sealed NoCaptureGroup : GroupRule
-{
-   constructor load(PatternRule[] rules)
-   {
-      _rules := rules
-   }
-}*/
-
-internal sealed CaptureGroup : NestedRule
+internal sealed NonCaptureGroup : NestedRule
 {
    constructor new(PatternRule child)
    {
       _child := child
    }
+}
+
+internal sealed CaptureGroup : NestedRule
+{
+   int _key;
    
-//   bool match(string s, int index, char ch)
-//      = _rules[0].match(s, index, ch);
-//      
-//   PatternRule? makeStep(string s, int index, char ch, ParserContext context)
-//   {
-//      if (match(s, index, ch)) {
-//         context.push(self);
-//         
-//         context.startGroup(_key, index);
-//      }
-//   }
-//   
-//   PatternRule? gotoNext(int index, ParserContext context)
-//   {
-//      context.stopGroup(_key, index);
-//      
-//      ^ super.gotoNext(index, context);
-//   }
+   constructor new(int key, PatternRule child)
+   {
+      _key := key;
+      _child := child
+   }
+   
+   PatternRule? makeStep(string s, int index, char ch, ParserContext context)
+   {
+      if (_child.match(ch, context)) {
+         context.startGroup(_key, index);
+         
+         context.push(self);
+         PatternRule? next := _child.makeStep(s, index, ch, context);
+         if:not:nil(next) {
+            ^ next;
+         };
+         context.pop();
+      };
+      
+      ^ nil      
+   }  
+   
+   PatternRule? gotoNext(int index, ParserContext context)
+   {
+      context.stopGroup(_key, index);
+      
+      ^ super.gotoNext(index, context);
+   }
 }
 
 internal abstract OptionalBaseRule : NestedRule
@@ -384,7 +370,7 @@ internal sealed OptionalRule : OptionalBaseRule
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
    {
       if (matchNext(ch, context)) {
-         ^ gotoNext(context)?.makeStep(s, index, ch, context)
+         ^ gotoNext(index, context)?.makeStep(s, index, ch, context)
       };
       
       if (_child.match(ch, context)) {
@@ -393,13 +379,13 @@ internal sealed OptionalRule : OptionalBaseRule
          if:nil(next) {
             context.pop();
             
-            ^ gotoNext(context)?.makeStep(s, index, ch, context);
+            ^ gotoNext(index, context)?.makeStep(s, index, ch, context);
          };
       
          ^ next   
       };
       
-      ^ gotoNext(context)?.makeStep(s, index, ch, context);
+      ^ gotoNext(index, context)?.makeStep(s, index, ch, context);
    }
 }
 
@@ -410,7 +396,7 @@ internal sealed RecursiveRule : OptionalBaseRule
    {
    }
 
-   PatternRule? gotoNext(ParserContext context)
+   PatternRule? gotoNext(int index, ParserContext context)
    {
       ^ self
    }
@@ -418,7 +404,7 @@ internal sealed RecursiveRule : OptionalBaseRule
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
    {
       if (matchNext(ch, context)) {
-         ^ super.gotoNext(context)?.makeStep(s, index, ch, context);
+         ^ super.gotoNext(index, context)?.makeStep(s, index, ch, context);
       };
       
       if (_child.match(ch, context)) {
@@ -428,13 +414,13 @@ internal sealed RecursiveRule : OptionalBaseRule
          if:nil(next) {
             context.pop();
             
-            ^ super.gotoNext(context)?.makeStep(s, index, ch, context);
+            ^ super.gotoNext(index, context)?.makeStep(s, index, ch, context);
          };
    
          ^ next         
       };
       
-      ^ super.gotoNext(context)?.makeStep(s, index, ch, context);
+      ^ super.gotoNext(index, context)?.makeStep(s, index, ch, context);
    }
 }
 
@@ -461,7 +447,7 @@ internal sealed singleton EORRule : PatternRule
    internal PatternRule? peekNext(ParserContext context)
       = nil;
       
-   PatternRule? gotoNext(ParserContext context)
+   PatternRule? gotoNext(int index, ParserContext context)
       = nil;
 }
 
@@ -484,13 +470,16 @@ internal sealed singleton EOLRule : PatternRule
    internal PatternRule? peekNext(ParserContext context)
       = nil;
       
-   PatternRule? gotoNext(ParserContext context)
+   PatternRule? gotoNext(int index, ParserContext context)
       = nil;
 }
 
+public sealed class MatchGroup : record(int GroupKey, int Start, int End);
+
 public sealed class MatchResult
 {
-   Tuple<int, int>[] Matches      : rprop(_matches);
+   Tuple<int, int>[] Matches : rprop(_matches);
+   MatchGroup[] Groups       : rprop(_groups);  
 
    get bool Matched()
       = _matches.Length > 0;
@@ -498,16 +487,20 @@ public sealed class MatchResult
    bool cast()
       = self.Matched;
 
-   internal constructor new(Array<Tuple<int, int>> matches)
+   internal constructor new(Array<Tuple<int, int>> matches, MatchGroup[] groups)
    {
       _matches := matches;
+      _groups := groups
    }
 }
 
 public sealed class RegEx
 {
+   Map<string, int> _groupNames;
+   
    PatternRule _startRule;
    int         _mode;
+   int         _lastKey; 
 
    constructor(string pattern)
       = RegEx.prepare(pattern);
@@ -547,18 +540,63 @@ public sealed class RegEx
          $100: { ^ CharRangeRule.new($48, $57) }
           $68: { ^ InvertedRule.new(CharRangeRule.new($48, $57)) }
          $115: { ^ new WhiteSpaceChar() }
-          $83: { ^ InvertedRule.new(new WhiteSpaceChar()) };
+          $83: { ^ InvertedRule.new(new WhiteSpaceChar()) }
+         $117: { ^ CharRangeRule.new($65, $90) };
          
       ^ nil   
    }
+
+   private registerName(int key, string name)
+   {
+      _groupNames[name] := key;
+   }
+
+   private string readGroupName(string pattern, ref int index)
+   {
+      int i := index + 1;
+      int start := i;
+      while (pattern[i].isLetter()) {
+         i++;
+      };
+      
+      index := i;
+      
+      ^ pattern.Substring(start, i - start);
+   }   
 
    private PatternRule parseBrackets(string pattern, ref int index, int len)
    {
       int i := index + 1;
       
-      PatternRule exprRule := parseExpression(pattern, ref i, len, $41);
+      string? name := nil;
+      bool noncapturing := false;
+      if (pattern[i]== $63) {
+         i++;
+         if (pattern[i]== $58) {
+            noncapturing := true;
+            i++;
+         }
+         else if (pattern[i] == $60) {
+            name := readGroupName(pattern, ref i);
+            if (pattern[i] == $62) {
+               i++;
+            }
+            else RegExException.new(i).raise();
+         }
+         else RegExException.new(i).raise();
+      };
       
-      PatternRule groupRule := CaptureGroup.new(exprRule);
+      PatternRule exprRule := parseExpression(pattern, ref i, len, $41);
+      PatternRule groupRule;
+      if:not(noncapturing) {
+         _lastKey := _lastKey + 1;
+         if:not:nil(name) {
+            registerName(_lastKey, name);
+         };
+         
+         groupRule := CaptureGroup.new(_lastKey, exprRule);
+      }
+      else groupRule := NonCaptureGroup.new(exprRule);
 
 //      if (i == len)
 //         InvalidArgumentException.raise("pattern");
@@ -640,14 +678,6 @@ public sealed class RegEx
       ^ rule
    }
 
-//   private PatternRule parseLine(string pattern, ref int index, int len, char terminator)
-//   {
-//      auto list := new List<PatternRule>();
-//      parseLine(list, pattern, ref index, len, terminator);
-//      
-//      ^ linkRules(list)
-//   }
-
    private parseLine(List<PatternRule> list, string pattern, ref int index, int len, char terminator)
    {
       int i := index;
@@ -675,29 +705,22 @@ public sealed class RegEx
             list[list.Length - 1] := rule;
          }
          else {
-//            bool continueMode := false;
             PatternRule? rule := nil;
             ch ???
                $91: {
                   rule := parseGroup(pattern, ref i, len);
                   ch := pattern[i];
-//                  continueMode := true
                }
                $40: {
                   rule := parseBrackets(pattern, ref i, len);
                   ch := pattern[i];
-//                  continueMode := true
                }
                : { rule := defineRule(pattern, len, ref i, ref ch) };
-//   
+
             if:nil(rule) 
                 RegExException.new(i).raise();
 
             list.append(rule!);
-
-/*            if (continueMode) {
-               :continue
-            }*/
          };
 
          i += ch.Length;
@@ -788,8 +811,65 @@ public sealed class RegEx
 
    constructor prepare(string pattern)
    {
+      _groupNames := new Map<string, int>();
       _mode := 0;
+      _lastKey := 0;
       _startRule := parsePattern(pattern);
+   }
+
+   Union<MatchGroup, MatchGroup[]> retrieveGroup(MatchResult result, string name)
+   {
+      if:not(_groupNames.containsKey(name)) {
+         ^ nil
+      };
+      
+      MatchGroup? group := nil;
+      List<MatchGroup>? list := nil;
+                  
+      auto groups := result.Groups;
+      int key := _groupNames[name];
+      int len := groups.Length;
+      for (int i := 0; i < len; i++) {
+         if (groups[i].GroupKey == key) {
+            if:nil(group) {
+               group := groups[i];
+            }
+            else {
+               if:nil(list) {
+                  list := new List<MatchGroup>();
+                  list!.append(group);
+               };
+               
+               list!.append(groups[i]);
+            };
+         };
+      };
+      
+      ^ (list != nil) ? (*list) : group;
+   }
+
+   private MatchGroup[] createGroups(string s, ParserContext context)
+   {
+      List<MatchGroup> groups := new List<MatchGroup>();
+      Stack<Tuple<int, int>> ends := new Stack<Tuple<int, int>>();
+      while (!context.emptyBookmarks()) {
+         auto pair := context.popBookmark();
+         if (pair.Item1 < 0) {
+            ends.push(pair);
+         }
+         else {
+            auto end := ends.pop();
+            int key := -(end.Item1);
+            if (key == pair.Item1) {
+               int endIndex := end.Item2;
+               char ch := s[endIndex];
+               
+               groups.append(new MatchGroup(pair.Item1, pair.Item2, endIndex + ch.Length));
+            }
+         }
+      };
+      
+      ^ *groups
    }
 
    private MatchResult retrieveResult(string s)
@@ -836,7 +916,7 @@ public sealed class RegEx
       if:not:nil(result)
          matches.append(new Tuple<int,int>(start, index));
       
-      ^ MatchResult.new(*matches);
+      ^ MatchResult.new(*matches, createGroups(s, context));
    }
 
    retoverload MatchResult match(string s)

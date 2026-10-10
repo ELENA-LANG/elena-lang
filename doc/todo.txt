@@ -14,7 +14,6 @@ In development:
   - correctly implement (context.Start, index) (see RegEx)
   - retoverload MatchResult RegEx.match(string s) - failes to be called in the message call - printMatchResult(regEx.match("a"));
   - ReadOnlyList<T> -> returning ConstArray<T>
-  - cannot declare - new(bool matched, Tuple<int, int>[] matches)
   - int |= intconst doesn't work??
   - bool ||=
   - weak operation : forced typecasting
@@ -42,6 +41,16 @@ In development:
   - modify Ackermann to support switch expression
   - elt - new library - name of class
   - elt - new class
+  - functional test: ^.*abc$ -> abc
+                     .*abc -> abc
+                     abc -> __abc__ (with range)
+                     [abc] -> fad->true, f -> false
+                     [a-d]
+                     a|b
+                     ac|bc -> acabc
+                     a ->  dax
+                     a+ -> acaabc xxx
+                     [^abc]
   --------------------------------------
   * doc
   ====================================== 
@@ -58,27 +67,10 @@ In development:
   - define logger in the project
   - post about logger
   ---------------------------------------
-  * current : regex  
+  * current : syntax
   ====================================== 
-  - support here "(abc)"  -> abd  <- clear group
-  - support exclude group
-  - support named groups
-  - support [ab-] - no escape 
-  - support \u
-  - support \x
-  - support \a
-  - support \S
-  - support ""
-  - functional test: ^.*abc$ -> abc
-                     .*abc -> abc
-                     abc -> __abc__ (with range)
-                     [abc] -> fad->true, f -> false
-                     [a-d]
-                     a|b
-                     ac|bc -> acabc
-                     a ->  dax
-                     a+ -> acaabc xxx
-                     [^abc]
+  - cannot declare Union<T1, T2> get()
+  - cannot declare - new(bool matched, Tuple<int, int>[] matches)
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
