@@ -1,5 +1,5 @@
 # =============================================
-# ELENA Programming Language v 7.0
+# ELENA Programming Language v 7.1
 # =============================================
 
 Content
@@ -57,6 +57,7 @@ Content
 + [Root namespace alias __rootns](#root-namespace-alias-__rootns)
 + [Project constants](#project-constants)
 + [Native reference comparison](#native-reference-comparison)
++ [Logging](#Logging)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1453,3 +1454,64 @@ The variable references are compared directly instead of using **equal[2]** mess
                mov        mssg:writeLine[2]
                call       mssg:writeLine[2], class:system'Console
     Lab00:     nop
+
+## ----------------------------------------------------------------------------
+##  Logging
+## ----------------------------------------------------------------------------
+
+You can use logger library to support logging in your project.
+
+Here how you can set it up in your program:
+
+    import system'dynamic;
+    import extensions'logging;
+    import logger;
+    
+    public class MyClassToLog
+    {
+       readonly ILogger _logger;
+       
+       constructor new(ILogger logger) : injectable_constructor()
+       {
+          _logger := logger;
+          _logger.writeEntry(LogLevel.Info, "Creating...");
+       }
+       
+       start()
+       {
+          _logger.writeEntry(LogLevel.Info, "Starting...");
+       }
+       
+       failMe()
+       {
+          Exception.raise("It fails me");
+       }   
+       
+       do()
+       {
+          _logger.writeEntry(LogLevel.Info, "Doing...");
+          
+          try
+          {
+             failMe()
+          }
+          catch(Exception ex)
+          {
+             _logger.writeFormattedEntry(LogLevel.Error, "Failed: {0}", ex);
+          }
+       }
+       
+       stop()
+       {
+          _logger.writeEntry(LogLevel.Info, "Stopping...");
+       }
+    }
+    
+    public Program()
+    {
+       LogSetup.registerConsoleLogger(LogLevel.Info).injectLogger();
+       
+       MyClassToLog.new().start().do().stop();
+    }
+
+It is possible to declare it on the project level as well

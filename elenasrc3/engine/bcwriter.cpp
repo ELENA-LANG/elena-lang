@@ -2862,42 +2862,76 @@ static inline bool nativeBranchingOp2(BuildNode lastNode)
 {
    BuildNode branchNode = lastNode;
    BuildNode localNode = getPrevious(branchNode);
-   BuildNode assignNode = getPrevious(localNode);
-   BuildNode nativeOpNode = getPrevious(assignNode);
+   BuildNode node = getPrevious(localNode);
 
-   if (localNode.arg.value != assignNode.arg.value)
-      return false;
+   int op = 0;
+   mssg_t mssg = 0;
+   if (node.key == BuildKey::Assigning) {
+      BuildNode assignNode = node;
 
-   int op = branchNode.arg.value;
-   mssg_t mssg = nativeOpNode.arg.value;
+      BuildNode nativeOpNode = getPrevious(assignNode);
 
-   switch (nativeOpNode.key) {
-      case BuildKey::IsCondOp:
-         branchNode.setKey(BuildKey::IsBranchOp);
-         break;
-      default:
-         break;
+      if (localNode.arg.value != assignNode.arg.value)
+         return false;
+
+      op = branchNode.arg.value;
+      mssg = nativeOpNode.arg.value;
+
+      switch (nativeOpNode.key) {
+         case BuildKey::IsCondOp:
+            branchNode.setKey(BuildKey::IsBranchOp);
+            break;
+         default:
+            break;
+      }
+
+      assignNode.setKey(BuildKey::Idle);
+      nativeOpNode.setKey(BuildKey::Idle);
+
+      switch (op) {
+         case IF_OPERATOR_ID:
+         case IF_ELSE_OPERATOR_ID:
+            op = EQUAL_OPERATOR_ID;
+            break;
+         case ELSE_OPERATOR_ID:
+            op = NOTEQUAL_OPERATOR_ID;
+            break;
+         default:
+            break;
+      }
    }
+   else if (node.key == BuildKey::NilCondOp && localNode.key == BuildKey::SavingInStack) {
+      op = branchNode.arg.value;
+      mssg = 0;
 
-   switch (op) {
-      case IF_OPERATOR_ID:
-      case IF_ELSE_OPERATOR_ID:
-         op = EQUAL_OPERATOR_ID;
-         break;
-      case ELSE_OPERATOR_ID:
-         op = NOTEQUAL_OPERATOR_ID;
-         break;
-      default:
-         break;
+      branchNode.setKey(BuildKey::NilRefBranchOp);
+      node.setKey(BuildKey::Idle);
+
+      switch (op) {
+         case IF_OPERATOR_ID:
+         case IF_ELSE_OPERATOR_ID:
+            op = NOTEQUAL_OPERATOR_ID;
+            break;
+         case ELSE_OPERATOR_ID:
+            op = EQUAL_OPERATOR_ID;
+            break;
+         default:
+            break;
+      }
    }
+   else return false;
 
    branchNode.setArgumentValue(op);
-   branchNode.appendChild(BuildKey::Message, mssg);
+   if (mssg)
+      branchNode.appendChild(BuildKey::Message, mssg);
    localNode.setKey(BuildKey::Idle);
-   assignNode.setKey(BuildKey::Idle);
-   nativeOpNode.setKey(BuildKey::Idle);
 
    return true;
+}
+
+static inline bool nativeBranchingOp3(BuildNode lastNode)
+{
+   return false;
 }
 
 static inline bool intConstBranchingOp(BuildNode lastNode)

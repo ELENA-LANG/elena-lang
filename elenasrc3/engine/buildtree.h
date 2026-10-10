@@ -495,6 +495,8 @@ namespace elena_lang
          map.add("ref_branchop", BuildKey::RefBranchOp);
          map.add("is_condop", BuildKey::IsCondOp);
          map.add("is_branchop", BuildKey::IsBranchOp);
+         map.add("nil_op", BuildKey::NilOp);
+         map.add("nil_ref_branchop", BuildKey::NilRefBranchOp);
       }
    };
 

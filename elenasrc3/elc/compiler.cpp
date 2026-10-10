@@ -10087,7 +10087,7 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
       arguments, EAttr::None);
 
    if (byRefCallMode) {
-      ref_t outputRef = resolveStrongType(codeScope, retVal.typeInfo);
+      //ref_t outputRef = resolveStrongType(codeScope, retVal.typeInfo);
 
       expression.compileAssigning(node, outParam, retVal);
    }
@@ -11055,12 +11055,12 @@ void Compiler :: compileYieldMethod(BuildTreeWriter& writer, MethodScope& scope,
    endMethod(writer, scope);
 }
 
-bool Compiler::isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives)
+bool Compiler :: isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives, bool imgnoreNil)
 {
    if (source.typeInfo.isPrimitive() && resolvePrimitives)
       source.typeInfo = { resolvePrimitiveType(*scope.moduleScope, source.typeInfo, false) };
 
-   return _logic->isCompatible(*scope.moduleScope, target.typeInfo, source.typeInfo, CompatibleMode::IgnoreNils);
+   return _logic->isCompatible(*scope.moduleScope, target.typeInfo, source.typeInfo, imgnoreNil ? CompatibleMode::IgnoreNils : CompatibleMode::None);
 }
 
 bool Compiler::isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst)
@@ -14084,6 +14084,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          retVal = compileSwitchOperation(current, targetRef, true, EAttrs::test(mode, EAttr::NoDebugInfo));
          break;
       case SyntaxKey::None:
+      case SyntaxKey::Message:
          assert(false);
          break;
       default:
@@ -15567,46 +15568,38 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
    SyntaxNode current = node.firstChild();
 
    if (current == SyntaxKey::MessageOperation || current == SyntaxKey::PropertyOperation) {
-      ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
-
       SyntaxNode objNode = current.firstChild();
-
       loperand = compileObject(objNode, EAttr::Parameter);
 
-      writer->newNode(BuildKey::AltOp, ehLocal.argument);
+      ObjectInfo ehLocal = {};
+      if (loperand.mode == TargetMode::Casting) {
+         ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
 
-      writer->newNode(BuildKey::Tape);
-      compileMessageOperationR(loperand, objNode.nextNode(),
+         writer->newNode(BuildKey::AltOp, ehLocal.argument);
+         writer->newNode(BuildKey::Tape);
+      }
+
+      ObjectInfo retVal = compileMessageOperationR(loperand, objNode.nextNode(),
          current == SyntaxKey::PropertyOperation);
-      writer->closeNode();
 
-      writer->newNode(BuildKey::Tape);
-      writer->appendNode(BuildKey::NilReference, 0);
-      writer->closeNode();
+      if (ehLocal.kind != ObjectKind::Unknown) {
+         writer->closeNode();
 
-      writer->closeNode();
+         writer->newNode(BuildKey::Tape);
+         writer->appendNode(BuildKey::NilReference, 0);
+         writer->closeNode();
 
-      loperand = saveToTempLocal({ ObjectKind::Object });
+         writer->closeNode();
+      }
+
+      loperand = saveToTempLocal(retVal);
    }
    else if (current == SyntaxKey::Object) {
       loperand = compileObject(current, EAttr::Parameter);
    }
    else {
-      ObjectInfo ehLocal = declareTempStructure({ (int)scope.moduleScope->ehTableEntrySize, false });
-
-      writer->newNode(BuildKey::AltOp, ehLocal.argument);
-
-      writer->newNode(BuildKey::Tape);
       loperand = compile(current, 0, EAttr::Parameter | EAttr::RetValExpected);
-      writer->closeNode();
-
-      writer->newNode(BuildKey::Tape);
-      writer->appendNode(BuildKey::NilReference, 0);
-      writer->closeNode();
-
-      writer->closeNode();
-
-      loperand = saveToTempLocal({ ObjectKind::Object });
+      loperand = saveToTempLocal(loperand);
    }
 
    ObjectInfo roperand = {};
@@ -15649,7 +15642,7 @@ ObjectInfo Compiler::Expression::compileIsNilOperation(SyntaxNode node)
 
    // make the expression strong-typed if the both arguments are of the same type
    TypeInfo typeInfo = {};
-   if (compiler->isCompatible(scope, loperand, roperand)) {
+   if (compiler->isCompatible(scope, roperand, loperand, false, false)) {
       typeInfo = loperand.typeInfo;
       typeInfo.nillable = roperand.typeInfo.nillable;
    }

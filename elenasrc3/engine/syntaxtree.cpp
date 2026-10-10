@@ -121,6 +121,8 @@ void SyntaxTree :: loadTokens(TokenMap& map)
    map.add("is_operation", SyntaxKey::IsOperation);
    map.add("is_operand", SyntaxKey::IsOperand);
    map.add("switch_expression", SyntaxKey::SwitchExpression);
+   map.add("isnil_expression", SyntaxKey::IsNilOperation);
+   map.add("nil_message_op", SyntaxKey::NilMessageOperation);
 }
 
 bool SyntaxTree :: save(MemoryBase* section)

@@ -490,6 +490,7 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    moduleScope->branchingInfo.falseRef = falseRef;
 
    moduleScope->selfVar.copy("self");
+   moduleScope->predefined.add("nil", V_NIL);
 
    if (argArrayTemplateRef != INVALID_REF) {
       moduleScope->buildins.argArrayTemplateReference = argArrayTemplateRef;

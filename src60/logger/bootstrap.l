@@ -1,3 +1,4 @@
+import system'dynamic;
 import extensions'logging;
 
 public singleton LogSetup
@@ -34,4 +35,15 @@ public singleton LogSetup
       
       LoggerFactory.register(lazy_factory);
    }
+/*
+   registerFromString(string config)
+   {
+      
+   }
+*/         
+   injectLogger()
+   {
+      DependencyInjector::register<ILogger>(LoggerFactory);
+   }
 }
+

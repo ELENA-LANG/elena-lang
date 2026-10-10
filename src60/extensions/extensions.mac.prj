@@ -49,5 +49,9 @@
        <include>runtime/systemmonitor.l</include>
        <include>runtime/package.l</include>
      </module>
+     <module name="logging">
+       <include>logging/common.l</include>
+       <include>logging/factory.l</include>
+     </module>
   </files>
 </configuration>

@@ -32,5 +32,5 @@ bin\ldoc -i textgen doc\api
 bin\ldoc -i xforms doc\api
 bin\ldoc -i xml doc\api
 bin\ldoc -i webapi doc\api
-bin\ldoc -i logging doc\api
+bin\ldoc -i logger doc\api
 bin\ldoc -g doc\api

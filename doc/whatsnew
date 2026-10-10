@@ -62,7 +62,8 @@
   - [FIXED] **is** operator check if an instance is in the inheritance tree
   - [ADDED] **__arg** attribute to refer the method parameters
   - [ADDED] extensions'logging module
-  - [ADDED] logging module
+  - [ADDED] logger module
+  - [ADDED] regex: groups
  
 - Scripts
   - [ADDED] elena script 2 : xscript

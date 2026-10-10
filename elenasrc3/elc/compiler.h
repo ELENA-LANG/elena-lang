@@ -1975,7 +1975,7 @@ namespace elena_lang
       static mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
       static mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
 
-      bool isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives = true);
+      bool isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives = true, bool imgnoreNil = true);
 
       bool isDefaultOrConversionConstructor(Scope& scope, mssg_t message, bool internalOne, bool& isProtectedDefConst);
 

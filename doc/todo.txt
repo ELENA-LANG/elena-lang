@@ -8,7 +8,15 @@ In development:
   === Iteration 47 (lang features; #866) ===
   --------------------------------------
   * backlog
-  ====================================== 
+  ======================================   
+  - = !_child.match(ch); // doesn't work
+  - if(!context.empty() && context.peek() == self) - why error if context.empty() returns true
+  - correctly implement (context.Start, index) (see RegEx)
+  - retoverload MatchResult RegEx.match(string s) - failes to be called in the message call - printMatchResult(regEx.match("a"));
+  - ReadOnlyList<T> -> returning ConstArray<T>
+  - cannot declare - new(bool matched, Tuple<int, int>[] matches)
+  - int |= intconst doesn't work??
+  - bool ||=
   - weak operation : forced typecasting
   - prj file - $namespace variable?
   - post about foreach
@@ -45,9 +53,32 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * current : logger
+  * logger
   ====================================== 
-  - fix compatibility issue
+  - define logger in the project
+  - post about logger
+  ---------------------------------------
+  * current : regex  
+  ====================================== 
+  - support here "(abc)"  -> abd  <- clear group
+  - support exclude group
+  - support named groups
+  - support [ab-] - no escape 
+  - support \u
+  - support \x
+  - support \a
+  - support \S
+  - support ""
+  - functional test: ^.*abc$ -> abc
+                     .*abc -> abc
+                     abc -> __abc__ (with range)
+                     [abc] -> fad->true, f -> false
+                     [a-d]
+                     a|b
+                     ac|bc -> acabc
+                     a ->  dax
+                     a+ -> acaabc xxx
+                     [^abc]
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===

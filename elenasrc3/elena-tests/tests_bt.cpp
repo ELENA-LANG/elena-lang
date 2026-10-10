@@ -120,3 +120,8 @@ TEST_F(BTOptimization16, BuildTapeTest)
 {
    runBTTest();
 }
+
+TEST_F(BTOptimization16_2, BuildTapeTest)
+{
+   runBTTest();
+}

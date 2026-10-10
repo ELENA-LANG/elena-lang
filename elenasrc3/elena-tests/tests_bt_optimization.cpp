@@ -415,6 +415,16 @@ void BTOptimization16 :: SetUp()
    BuildTreeSerializer::load(OptimizedTree_Is_Branching, afterOptimization);
 }
 
+// --- BTOptimization16_2 ---
+
+void BTOptimization16_2::SetUp()
+{
+   BTOptimization::SetUp();
+
+   BuildTreeSerializer::load(BuildTree_Coalescing_Branching, buildNode);
+   BuildTreeSerializer::load(OptimizedTree_Coalescing_Branching, afterOptimization);
+}
+
 // --- BTOptimization8 ---
 
 void BTOptimization8 :: initModuleScope(ModuleScopeBase* moduleScope, bool declareDefaultMessages)
@@ -1026,6 +1036,24 @@ void IsOperationBranching :: SetUp()
    LoadDeclarationScenario(S_DefaultNamespace_5, S_BoolValue, S1_Is_Branching);
 
    BuildTreeSerializer::load(BuildTree_Is_Branching, controlOutputNode);
+
+   targetRef = 4;
+   intNumberRef = 2;
+   boolTypeRef = 3;
+
+   trueRef = 10;  // !! virtual references
+   falseRef = 11;
+}
+
+// --- CoalescingBranching ---
+
+void CoalescingBranching :: SetUp()
+{
+   MethodScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_5, S1_Coalescing_Branching);
+
+   BuildTreeSerializer::load(BuildTree_Coalescing_Branching, controlOutputNode);
 
    targetRef = 4;
    intNumberRef = 2;

@@ -13,7 +13,7 @@ public abstract class LoggerBase : ILogger
    
    writeEntry(LogLevel level, string message)
    {
-      if (*level <= *_baseLevel) {
+      if (*level >= *_baseLevel) {
          write($"[{level}]:{message}");
       }
    }

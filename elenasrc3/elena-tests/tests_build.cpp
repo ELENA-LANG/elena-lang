@@ -233,6 +233,11 @@ TEST_F(IsOperationBranching, BuildTest)
    runTest();
 }
 
+TEST_F(CoalescingBranching, BuildTest)
+{
+   runTest(false, true);
+}
+
 TEST_F(IntValueOperator, BuildTest)
 {
    runTest();

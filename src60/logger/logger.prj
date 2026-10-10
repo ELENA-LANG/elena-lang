@@ -4,6 +4,21 @@
      <namespace>logger</namespace>
      <template>lib60</template>
   </project>
+  <platform key="Win_x86">
+     <project>
+        <output>..\..\lib60</output>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <output>..\..\lib60_64</output>
+     </project>
+  </platform>
+  <platform key="Linux_AMD64">
+     <project>
+        <output>..\..\lib60_64_lnx</output>
+     </project>
+  </platform>
   <manifest>
      <name>ELENA Logger Library</name>
      <version>7.0.0</version>
