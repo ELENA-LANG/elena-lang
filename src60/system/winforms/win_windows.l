@@ -133,6 +133,7 @@ public class ChildWindowCallback : WindowCallback
 
 // --- SDIWindowClass ---
 
-public static wide SDIWindowClass = windowClassControl.createClass("ELENA.SDIWINDOW.6.0", CurrentInstance, WS_ELENAWINDOW, HBRUSH.COLOR_BACKGROUND);
-public static wide PaintboxClass  = windowClassControl.createClass("ELENA.Paintbox.6.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.Default);
-public static wide PanelClass     = windowClassControl.createClass("ELENA.PANEL.6.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.COLOR_BACKGROUND);
+public static wide SDIWindowClass    = windowClassControl.createClass("ELENA.SDIWINDOW.7.0", CurrentInstance, WS_ELENAWINDOW, HBRUSH.COLOR_BACKGROUND);
+public static wide PaintboxClass     = windowClassControl.createClass("ELENA.Paintbox.7.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.Default);
+public static wide PanelClass        = windowClassControl.createClass("ELENA.PANEL.7.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.COLOR_BACKGROUND);
+public static wide PaintContextClass = windowClassControl.createClass("ELENA.PaintContext.7.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.Default);

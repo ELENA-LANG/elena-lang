@@ -83,11 +83,12 @@ In development:
   ---------------------------------------
   * opengl : #735
   ====================================== 
+  - engine
   - fill the screen the red color
   ---------------------------------------
   * current : xforms
   ====================================== 
-  - elt command - generate simple xforms form 
+  - context control
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3

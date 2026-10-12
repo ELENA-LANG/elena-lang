@@ -39,7 +39,7 @@ root (
 
   #define field_list ::= <= $buffer => $eps;
 
-  #define member ::= { label | button | radiobuttongroup | panel | edit | combobox };
+  #define member ::= { label | button | radiobuttongroup | panel | edit | combobox | context };
 
   #define label ::=
 <=
@@ -227,6 +227,37 @@ root (
 
   #define panel_declaration ::= %<= field ( type ( reference = forms'Panel ) nameattr ( identifier = $current ) ) =>;
 
+  #define context ::=
+<=
+         code (
+           expression (
+             assign_operation (
+               new_variable ( identifier = current )
+               message_operation (
+                 object ( reference = forms'PaintContext )
+                 message ( identifier = new )
+               )
+             )
+           )
+=>
+    "<" "Context" context_name_prop { val_prop | prop }* ">" context_closing_tag
+<=
+           expression (
+             message_operation (
+               object ( super_identifier = current )
+               message ( identifier = appendControl )
+               expression (
+                 object ( identifier = current )
+               )
+             )
+           )
+         )
+=>;
+
+  #define context_name_prop ::= ":" "Name" "=" context_declaration control_assigning;
+
+  #define context_declaration ::= %<= field ( type ( reference = forms'PaintContext ) nameattr ( identifier = $current ) ) =>;
+
   #define item ::=
 <=
            expression (
@@ -404,6 +435,9 @@ root (
 
   #define panel_closing_tag ::=
 	"<" "/" "Panel" ">";
+
+  #define context_closing_tag ::=
+	"<" "/" "Context" ">";
 
   #define combobox_closing_tag ::=
 	"<" "/" "Combobox" ">";
