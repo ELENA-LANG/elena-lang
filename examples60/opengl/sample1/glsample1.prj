@@ -1,0 +1,22 @@
+<?xml version="1.0" encoding="utf-8"?>
+<configuration>
+  <project>
+     <executable>glsample1</executable>
+     <namespace>glsample1</namespace>
+     <template>gui</template>
+  </project>
+  <targets>
+     <target name="gui_scheme" type="2">
+        <option>[[ #grammar tree ]]</option>
+        <option>~\scripts\xforms60.es</option>
+     </target>
+  </targets>
+  <files>
+     <module target="gui_scheme">
+        <include>glsample1.xs</include>
+     </module>
+     <module>
+        <include>glsample1.l</include>
+     </module>
+  </files>
+</configuration>

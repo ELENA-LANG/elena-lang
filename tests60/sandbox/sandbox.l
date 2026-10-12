@@ -45,20 +45,61 @@
 import system'text'parsing;
 import extensions;
 
-printMatchResult(MatchResult result)
+import system'routines;
+
+//import system'collections;
+
+/*
+singleton A
 {
-   if (result.Matched) {
-      Console.writeLine("match:");
-      foreach(auto t; in result.Matches) {
-         Console.printLine("from ", t.Item1, " till ", t.Item2);
+   Union<int, long>? get(bool? f)
+   {
+      if:nil(f) {
+         ^ nil
+      }
+      else if (f) {
+         ^ 12
+      }
+      else {
+         ^ 10000l
       }
    }
-   else Console.writeLine("does not match");
-}
+}*/
 
+//printMatchResult(MatchResult result)
+//{
+//   if (result.Matched) {
+//      Console.writeLine("match:");
+//      foreach(auto t; in result.Matches) {
+//         Console.printLine("from ", t.Item1, " till ", t.Item2);
+//      }
+//   }
+//   else Console.writeLine("does not match");
+//}
+
+singleton A
+{
+   retoverload int? get()
+      = /*nil*/0;   
+      
+   get()
+      = "none";
+   
+}
 
 public Program()
 {
+//   Reference<int?> r := new Reference<int?>(nil);
+   
+//   int n := *r ?? 2;
+   
+//   int/*?*/ n := A.get();
+   
+   //A a := new A();
+   /*int*/int r := /*a*/A.get(/*false*/);
+   //int n := *r ?? 0;
+   //int n := r.Value;
+   
 //   //auto regEx := new RegEx("^abc$");
 //   //MatchResult result := regEx.match("abc");
 //   //MatchResult result := regEx.match("ab");
@@ -90,15 +131,23 @@ public Program()
 //
 //
    //auto regEx := new RegEx("(abc|bc)+");
-   auto regEx := new RegEx("(?<group>abc|bc)+");
+//   auto regEx := new RegEx("(?<group>abc|bc)+");
    //MatchResult result := regEx.match("abc");
    //MatchResult result := regEx.match("bc");
-   MatchResult result := regEx.match("abcabcabcbc");
+//   MatchResult result := regEx.match("abcabcabcbc");
 
-   printMatchResult(result);
+//   printMatchResult(result);
    
-   auto group := regEx.retrieveGroup(result, "group");
-
+/*   auto group := regEx.retrieveGroup(result, "group");
+   if:not:nil (MatchGroup g := *group) {
+      Console.writeLine("1 group");
+   }
+   else if:not:nil (MatchGroup[] matches := *group) {
+      matches.forEach((r => 
+      {
+         Console.printLine("start:", r.First, " end:", r.End);
+      }))
+   };*/
 
 
 //   auto regex3 := new RegEx("^a*$");

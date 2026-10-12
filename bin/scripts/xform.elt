@@ -1,0 +1,56 @@
+import system'io;
+
+public Program() { 
+  var project := "<?xml version=""1.0"" encoding=""utf-8""?>
+<configuration>
+  <project>
+     <executable>@name</executable>
+     <namespace>@namespace</namespace>
+     <template>gui</template>
+  </project>
+  <targets>
+     <target name=""gui_scheme"" type=""2"">
+        <option>[[ #grammar tree ]]</option>
+        <option>~\scripts\xforms60.es</option>
+     </target>
+  </targets>
+  <files>
+     <module target=""gui_scheme"">
+        <include>@name.xs</include>
+     </module>
+     <module>
+        <include>@name.l</include>
+     </module>
+  </files>
+</configuration>";
+
+  var source := "import xforms;
+
+public class MainWindow : XForm, using(MainWindow)
+{
+   constructor new()
+      <= super new()
+   {
+   }
+
+   private onExit(sender)
+   {
+      forward Program.stop()
+   }
+}";
+
+  var gui_scheme := "<Form :Name=""MainWindow"" :Height=""110"" :Width=""200"" Caption=""ELENA 7.0"">
+   <Label :Name=""labCaption"" :X=""40"" :Y=""10"" :Width=""150"" :Height=""30"" Caption=""ELENA"">
+   </Label>
+   <Button :Name=""btnExit"" :X=""20"" :Y=""40"" :Width=""150"" :Height=""30"" Caption=""Close"" :onClick=""&onExit"">
+   </Button>
+</Form>
+";
+
+  var path := "@output_path";
+  var name := "@name";
+
+  File.saveContent(PathUtil.combine(path, name, "l"), source);
+  File.saveContent(PathUtil.combine(path, name, "xs"), gui_scheme);
+  File.saveContent(PathUtil.combine(path, name, "prj"), project);
+}

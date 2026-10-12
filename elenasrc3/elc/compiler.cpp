@@ -4527,7 +4527,7 @@ bool Compiler::generateClassField(ClassScope& scope, FieldAttributes& attrs, ust
       // for primitive types size should be specified
       else sizeInfo.size = sizeHint;
    }
-   else if (typeInfo.typeRef)
+   else if (typeInfo.typeRef && !typeInfo.nillable)
       sizeInfo = _logic->defineStructSize(*scope.moduleScope, typeInfo.typeRef);
 
    if (attrs.fieldArray) {
@@ -4992,13 +4992,13 @@ void Compiler::declareParameter(MethodScope& scope, SyntaxNode current, bool wit
    }
    else signature[signatureLen++] = paramTypeInfo.typeRef;
 
-   if (signature[signatureLen - 1] && !variadicMode)
+   nillable |= paramTypeInfo.nillable;
+
+   if (signature[signatureLen - 1] && !variadicMode && !nillable)
       sizeInfo = _logic->defineStructSize(*scope.moduleScope, signature[signatureLen - 1]);
 
    scope.parameters.add(terminal, Parameter(index, paramTypeInfo, sizeInfo.size,
       paramTypeInfo.typeRef == V_OUTWRAPPER));
-
-   nillable |= paramTypeInfo.nillable;
 }
 
 void Compiler :: declareParameters(MethodScope& scope, SyntaxNode node, bool withoutWeakMessages, bool declarationMode,
@@ -5205,7 +5205,7 @@ void Compiler :: declareVMTMessage(MethodScope& scope, SyntaxNode node, bool wit
 
          // COMPILER MAGIC : if the message is marked as multiret - it turns into outref return handler
          // NOTE : it should contain the specific return type
-         TypeInfo refType = { V_OUTWRAPPER, scope.info.outputRef };
+         TypeInfo refType = { V_OUTWRAPPER, scope.info.outputRef, false, scope.checkHint(MethodHint::Nillable) };
 
          int offset = scope.parameters.count() + 1u;
          scope.parameters.add(RETVAL_ARG, { offset, refType, 0 });
@@ -6092,7 +6092,7 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
          return moduleScope.branchingInfo.typeRef;
       case V_WRAPPER:
       case V_OUTWRAPPER:
-         return resolveWrapperTemplate(moduleScope, typeInfo.elementRef, declarationMode);
+         return resolveWrapperTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode);
       case V_UINT8ARRAY:
       case V_INT8ARRAY:
       case V_INT16ARRAY:
@@ -7138,12 +7138,12 @@ ref_t Compiler::resolveStateMachine(Scope& scope, ref_t templateRef, ref_t eleme
       templateReference, parameters, false, nullptr);
 }
 
-ref_t Compiler::resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool declarationMode)
+ref_t Compiler::resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode)
 {
    if (!elementRef)
       elementRef = moduleScope.buildins.superReference;
 
-   return resolveTemplate(moduleScope, moduleScope.buildins.wrapperTemplateReference, elementRef, false, declarationMode);
+   return resolveTemplate(moduleScope, moduleScope.buildins.wrapperTemplateReference, elementRef, nullableElement, declarationMode);
 }
 
 ref_t Compiler::resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode, bool constAttr)
@@ -11356,7 +11356,7 @@ void Compiler::initializeMethod(ClassScope& scope, MethodScope& methodScope, Syn
    declareVMTMessage(methodScope, current, false, false, false);
 
    if (methodScope.info.outputRef) {
-      SyntaxNode typeNode = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType);
+      SyntaxNode typeNode = current.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType, SyntaxKey::NullableType);
       if (typeNode != SyntaxKey::None) {
          resolveStrongTypeAttribute(scope, typeNode, TAttr::None);
 
@@ -11368,7 +11368,7 @@ void Compiler::initializeMethod(ClassScope& scope, MethodScope& methodScope, Syn
       else validateType(scope, methodScope.info.outputRef, current, false);
 
       if (methodScope.checkHint(MethodHint::VirtualReturn)) {
-         TypeInfo refType = { V_OUTWRAPPER, methodScope.info.outputRef };
+         TypeInfo refType = { V_OUTWRAPPER, methodScope.info.outputRef, false, methodScope.checkHint(MethodHint::Nillable)};
 
          SizeInfo sizeInfo = {};
          // add byref return arg
