@@ -1,23 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
-  <platform key="Win_x86">
-     <project>
-        <output>..\..\lib60</output>
-     </project>
-  </platform>
-  <platform key="Win_x64">
-     <project>
-        <output>..\..\lib60_64</output>
-     </project>
-  </platform>
-  <project>
-     <namespace>opengl</namespace>
-     <template>lib60</template>
-  </project>
-  <files>
-     <module>
-        <include>common.l</include>
-        <include>engine.l</include>
-     </module>
-  </files>
+    <platform key="Win_x86">
+        <project>
+            <output>..\..\lib60</output>
+        </project>
+    </platform>
+    <platform key="Win_x64">
+        <project>
+            <output>..\..\lib60_64</output>
+        </project>
+    </platform>
+    <project>
+        <namespace>opengl</namespace>
+        <template>lib60</template>
+    </project>
+    <manifest>
+        <name>ELENA OpenGL Wrapper</name>
+        <version>7.1.0</version>
+        <author>Aleksey Rakov, ELENA-LANG Org</author>
+    </manifest>
+    <files>
+        <module>
+            <file>forms_intergration.l</file>
+            <include>common.l</include>
+            <include>engine.l</include>
+        </module>
+    </files>
 </configuration>

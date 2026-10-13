@@ -81,14 +81,12 @@ In development:
   - fix
   - unit test
   ---------------------------------------
-  * opengl : #735
+  * current : opengl : #735
   ====================================== 
-  - engine
+  - engine : register in context
   - fill the screen the red color
+  - do the same for x64
   ---------------------------------------
-  * current : xforms
-  ====================================== 
-  - context control
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3

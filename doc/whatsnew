@@ -73,6 +73,7 @@
   - [FIXED] httpget sample
 
 - Tools  
+  - [ADDED] gen xform command to create a simple xform application
 
 - IDE
   - [FIXED] an extra line is added when new lined inserted after "}" bracket

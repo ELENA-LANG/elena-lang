@@ -3,11 +3,35 @@ public const int COLOR_BACKGROUND = 5;
 
 // --- Raster Operation Codes ---
 
-public const int SRCCOPY          = 00CC0020h;
+public const int SRCCOPY                     = 00CC0020h;
 
-public const int IMAGE_BITMAP     = 0;
+public const int IMAGE_BITMAP                = 0;
 
-public const int LR_LOADFROMFILE  = 0010h;
+public const int LR_LOADFROMFILE             = 0010h;
+
+public const int PFD_TYPE_RGBA               = 0;
+public const int PFD_TYPE_COLORINDEX         = 1;
+
+public const int PFD_MAIN_PLANE              = 0;
+public const int PFD_OVERLAY_PLANE           = 1;
+public const int PFD_UNDERLAY_PLANE          = -1;
+
+public const int PFD_DOUBLEBUFFER            = 00000001h;
+public const int PFD_STEREO                  = 00000002h;
+public const int PFD_DRAW_TO_WINDOW          = 00000004h;
+public const int PFD_DRAW_TO_BITMAP          = 00000008h;
+public const int PFD_SUPPORT_GDI             = 00000010h;
+public const int PFD_SUPPORT_OPENGL          = 00000020h;
+public const int PFD_GENERIC_FORMAT          = 00000040h;
+public const int PFD_NEED_PALETTE            = 00000080h;
+public const int PFD_NEED_SYSTEM_PALETTE     = 00000100h;
+public const int PFD_SWAP_EXCHANGE           = 00000200h;
+public const int PFD_SWAP_COPY               = 00000400h;
+public const int PFD_SWAP_LAYER_BUFFERS      = 00000800h;
+public const int PFD_GENERIC_ACCELERATED     = 00001000h;
+public const int PFD_SUPPORT_DIRECTDRAW      = 00002000h;
+public const int PFD_DIRECT3D_ACCELERATED    = 00004000h;
+public const int PFD_SUPPORT_COMPOSITION     = 00008000h;
 
 // --- RECT ---
 
@@ -273,4 +297,48 @@ public sealed const struct HBRUSH
    {
       extern GDI32.DeleteObject(_handle)
    }
+}
+
+// --- PIXELFORMATDESCRIPTOR ---
+
+public sealed struct PIXELFORMATDESCRIPTOR
+{
+  short nSize           : prop;
+  short nVersion        : prop;
+  int   dwFlags         : prop;
+  byte  iPixelType      : prop;
+  byte  cColorBits      : prop;
+  byte  cRedBits        : prop;
+  byte  cRedShift       : prop;
+  byte  cGreenBits      : prop;
+  byte  cGreenShift     : prop;
+  byte  cBlueBits       : prop;
+  byte  cBlueShift      : prop;
+  byte  cAlphaBits      : prop;
+  byte  cAlphaShift     : prop;
+  byte  cAccumBits      : prop;
+  byte  cAccumRedBits   : prop;
+  byte  cAccumGreenBits : prop;
+  byte  cAccumBlueBits  : prop;
+  byte  cAccumAlphaBits : prop;
+  byte  cDepthBits      : prop;
+  byte  cStencilBits    : prop;
+  byte  cAuxBuffers     : prop;
+  byte  iLayerType      : prop;
+  byte  bReserved       : prop;
+  int   dwLayerMask     : prop;
+  int   dwVisibleMask   : prop;
+  int   dwDamageMask    : prop;
+  
+  int choosePixelFormat(HDC dc)
+  {
+     int pixelFormat := extern GDI32.ChoosePixelFormat(dc, self);
+  }
+  
+  int setPixelFormat(HDC dc, int format)
+  {
+     int retVal := extern GDI32.SetPixelFormat(dc, format, self);
+     
+     ^ retVal
+  }
 }
