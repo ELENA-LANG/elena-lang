@@ -77,18 +77,18 @@ singleton A
 //   else Console.writeLine("does not match");
 //}
 
-singleton A
-{
-   retoverload int? get()
-      = /*nil*/0;   
-      
-   get()
-      = "none";
-   
-}
+//singleton A
+//{
+//   retoverload int? get()
+//      = /*nil*/0;   
+//      
+//   get()
+//      = "none";
+//   
+//}
 
-public Program()
-{
+//public Program()
+//{
 //   Reference<int?> r := new Reference<int?>(nil);
    
 //   int n := *r ?? 2;
@@ -96,7 +96,7 @@ public Program()
 //   int/*?*/ n := A.get();
    
    //A a := new A();
-   /*int*/int r := /*a*/A.get(/*false*/);
+//   /*int*/int? r := /*a*/A.get(/*false*/);
    //int n := *r ?? 0;
    //int n := r.Value;
    
@@ -139,7 +139,7 @@ public Program()
 //   printMatchResult(result);
    
 /*   auto group := regEx.retrieveGroup(result, "group");
-   if:not:nil (MatchGroup g := *group) {
+   if:not:nil (MatchGroup? g := *group) {
       Console.writeLine("1 group");
    }
    else if:not:nil (MatchGroup[] matches := *group) {
@@ -215,5 +215,46 @@ public Program()
 //   LogSetup.registerConsoleLogger(LogLevel.Info).injectLogger();
    
 //   MyClassToLog.new().start().do().stop();
+//}
+
+
+//    import extensions;
+//    import system'collections;
+//    
+//    A;
+//    B;
+//    
+//    testUnion(Union<A,B> union)
+//    {
+//       if:not:nil(var A? a := *union) {
+//          Console.writeLine("A is passed");
+//       }
+///*       else if:not:nil(var B? b := union.Value) {
+//          Console.writeLine("B is passed");
+//       };*/
+//    }
+//    
+//    public Program()
+//    {
+////       auto u1 := new Union<A,B>(new A());
+//       auto u2 := new Union<A,B>(new B());
+//       
+////       testUnion(u1);
+//       testUnion(u2);
+//    }
+
+A;
+
+singleton Tester
+{
+   retoverload A? get()
+      = nil;
+      
+   get()
+      = "none";
 }
 
+public Program()
+{
+   A? a := Tester.get();
+}

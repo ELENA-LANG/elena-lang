@@ -8,9 +8,9 @@ public class MainWindow : XForm, using(MainWindow)
    constructor new()
       <= super new()
    {
-      auto ogController := new OpenGLPaintContextController();
+      auto ogController := OpenGLPaintContextController.new(glContext);
       
-      glContext.Controller := ogController;
+      //glContext.Controller := ogController;
       _engine := OpenGLEngine.new(ogController);
    }
 

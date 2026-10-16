@@ -6,17 +6,18 @@ import system'runtime;
 
 public interface IPaintContextController
 {
-   set abstract Parent(PaintContext context);
+   abstract loadGL(HDC dc);
+//   set abstract Parent(PaintContext context);
    
-   abstract initializeDC(HDC dc);
+//   abstract initializeDC(HDC dc);
 }
 
-singleton DummyController : IPaintContextController
-{
-   set Parent(PaintContext context) {}
+//singleton DummyController : IPaintContextController
+//{
+//   set Parent(PaintContext context) {}
    
-   initializeDC(HDC dc) {}
-}
+//   initializeDC(HDC dc) {}
+//}
 
 // --- PaintContext ---
 
@@ -49,21 +50,71 @@ class PaintContextListener : WindowCallback
    }
 }
 
-public closed class PaintContext : BaseWinControl, interface<IControl>
+public sealed class PaintContext : BaseWinControl, interface<IControl>
 {
-   IPaintContextController Controller : rprop(_controller);
-   
+   //IPaintContextController Controller : rprop(_controller);
+/*   
    set Controller(IPaintContextController controller)
    {
       _controller := controller;
       
       _controller.Parent := self;
    }   
-   
+*/   
    constructor new()
       <= super new()
    {
-      _controller := DummyController;
+      //_controller := DummyController;
+   }
+
+   initializeOGL3DDummyWindow(IPaintContextController controller)
+   {
+/*      
+    WNDCLASSEX windowClass = {};
+    windowClass.style = CS_OWNDC;
+    windowClass.lpfnWndProc = DefWindowProcA;
+    windowClass.lpszClassName = L"OGL3DDummyWindow";
+    windowClass.cbSize = sizeof(WNDCLASSEX);
+
+    auto classId = RegisterClassEx(&windowClass);
+
+    HWND dummyWindow = CreateWindowEx(
+        0,
+        MAKEINTATOM(classId),
+        L"OGL3DDummyWindow",
+        0,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        CW_USEDEFAULT,
+        0,
+        0,
+        windowClass.hInstance,
+        0);
+*/
+
+      auto dummyHandle := new WindowHandle(
+                        0,
+                        OGL3DDummyWindow,
+                        EmptyString,
+                        0,
+                        CW_USEDEFAULT, CW_USEDEFAULT,
+                        CW_USEDEFAULT, CW_USEDEFAULT,
+                        nil,
+                        CurrentInstance,
+                        nil);
+        
+      HDC dummyDC := dummyHandle.HDC;
+                              
+/*
+    assert(dummyWindow);
+
+    HDC dummyDC = GetDC(dummyWindow);
+
+*/      
+      controller.loadGL(dummyDC);
+      
+      
    }
 
    internal destroy()
@@ -91,13 +142,11 @@ public closed class PaintContext : BaseWinControl, interface<IControl>
                         parent,
                         CurrentInstance,
                         paramPtr);
-                        
-      _controller.initializeDC(_handle.HDC);
-      
-      int m := 0;
    }
 
    internal paint()
    {
    }   
+
+   
 }

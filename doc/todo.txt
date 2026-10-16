@@ -67,7 +67,7 @@ In development:
   - define logger in the project
   - post about logger
   ---------------------------------------
-  * syntax
+  * current: syntax
   ====================================== 
   - int? get() = nil  <- should not be beref
   - get rid of warnings for Union<int,long>
@@ -81,12 +81,26 @@ In development:
   - fix
   - unit test
   ---------------------------------------
-  * current : opengl : #735
+  * opengl : #735
   ====================================== 
   - engine : register in context
   - fill the screen the red color
   - do the same for x64
   ---------------------------------------
+  * xforms
+  ====================================== 
+  - use logger for api exception, do not use MainWindow in the exception handler
+  - exception in the constructor
+  - use OGL3DDummyWindow to initialize OpenGL
+  ---------------------------------------
+  * current : union
+  ====================================== 
+  - resolve nillable retoverload handler
+  - fix the sample with union
+  - use OutputReference<T> instead of Reference<T> for retoverload
+  - unit test
+  - test the sample with union
+  - add functional test
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3

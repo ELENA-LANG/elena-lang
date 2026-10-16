@@ -1384,59 +1384,6 @@ namespace elena_lang
          StatemachineClassScope(ExprScope* owner, ref_t reference, bool asyncMode, bool withDebugInfo);
       };
 
-      struct MessageResolution
-      {
-         bool   resolved;
-         mssg_t message;
-         ref_t  extensionRef;
-         int    stackSafeAttr;
-         mssg_t byRefHandler;
-
-         MessageResolution()
-         {
-            this->resolved = false;
-            this->message = 0;
-            this->extensionRef = 0;
-            this->stackSafeAttr = 0;
-            this->byRefHandler = 0;
-         }
-         MessageResolution(bool resolved, mssg_t message)
-         {
-            this->resolved = resolved;
-            this->message = message;
-            this->extensionRef = 0;
-            this->stackSafeAttr = 0;
-            this->byRefHandler = 0;
-         }
-         MessageResolution(mssg_t message)
-         {
-            this->resolved = false;
-            this->message = message;
-            this->extensionRef = 0;
-            this->stackSafeAttr = 0;
-            this->byRefHandler = 0;
-         }
-      };
-
-      struct MessageCallContext
-      {
-         mssg_t weakMessage;
-         ref_t  implicitSignatureRef;
-         pos_t  templateArgCount;
-         ref_t* templateArgs;
-
-         MessageCallContext()
-            : weakMessage(0), implicitSignatureRef(0), templateArgCount(0), templateArgs(nullptr)
-         {
-
-         }
-         MessageCallContext(mssg_t weakMessage, ref_t implicitSignatureRef)
-            : weakMessage(weakMessage), implicitSignatureRef(implicitSignatureRef), templateArgCount(0), templateArgs(nullptr)
-         {
-
-         }
-      };
-
       struct TerminalAttributes
       {
          bool variableMode;
@@ -1589,7 +1536,7 @@ namespace elena_lang
          Code(Method& method);
       };
 
-      class Expression : public CommonHelper
+      class Expression : public MessagingOperator, public CommonHelper
       {
          friend class Compiler;
 
@@ -1667,7 +1614,7 @@ namespace elena_lang
 
          ObjectInfo compileMessageOperationR(ObjectInfo target, SyntaxNode node, bool propertyMode);
          ObjectInfo compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
-            ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs);
+            TypeInfo expectedType, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs);
 
          ObjectInfo compileLoop(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileExtern(SyntaxNode node, ExpressionAttribute mode);
@@ -1677,7 +1624,7 @@ namespace elena_lang
          ObjectInfo compileNested(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileClosure(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode);
          ObjectInfo compileWeakOperation(SyntaxNode node, ref_t* arguments, pos_t argLen,
-            ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef);
+            ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, TypeInfo expectedType);
 
          ObjectInfo compileNewOp(SyntaxNode node, ObjectInfo source, ref_t signRef, ArgumentsInfo& arguments);
 
@@ -1715,10 +1662,6 @@ namespace elena_lang
             ArgumentListType& argListType, int nillableArgs);
 
          void resolvedExtensionTemplate(ObjectInfo source, MessageCallContext& messageContext);
-
-         MessageResolution resolveByRefHandler(ObjectInfo source, ref_t expectedRef, MessageCallContext& context, bool noExtensions);
-         MessageResolution resolveMessageAtCompileTime(ObjectInfo target, MessageCallContext& messageContext, bool ignoreExtensions,
-            bool ignoreVariadics, bool checkByRefHandler = false);
 
          ObjectInfo declareTempLocal(ref_t typeRef, bool dynamicOnly = true);
          ObjectInfo declareTempStructure(SizeInfo sizeInfo);
@@ -1773,7 +1716,20 @@ namespace elena_lang
 
          ObjectInfo defineEncapseField(ObjectInfo& loperand, TypeInfo outputInfo, int fieldOffset);
 
+         void loadMessagingScope(ObjectInfo source, bool ignoreVariadics, MessagingScope& callScope);
+
       public:
+         ref_t mapExtension(ref_t targetRef, MessageCallContext& context, mssg_t& message, int& resolvedStackSafeAttr) override;
+         bool getScopeClassInfo(ref_t& flags, ref_t& classRef) override
+         {
+            classRef = scope.getClassFlags();
+            flags = scope.getClassRef();
+
+            return true;
+         }
+
+         ref_t resolveStrongType(TypeInfo typeInfo, bool declarationMode) override;
+
          bool writeObjectInfo(ObjectInfo info, bool allowMeta = false);
          void writeObjectInfo(ObjectInfo info, SyntaxNode node)
          {
@@ -1919,7 +1875,7 @@ namespace elena_lang
       ref_t mapTemplateType(Scope& scope, SyntaxNode terminal, pos_t parameterCount);
 
       ref_t mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCallContext& context,
-         ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr, bool withDebugInfo, bool singleDispatchMode = false);
+         ref_t objectRef, mssg_t& resolvedMessage, int& stackSafeAttr, bool withDebugInfo, bool singleDispatchMode = false);
 
       mssg_t defineMultimethod(Scope& scope, mssg_t messageRef, bool extensionMode);
 
@@ -1973,7 +1929,6 @@ namespace elena_lang
       ref_t retrieveBlock(NamespaceScope& scope, SyntaxNode node);
 
       static mssg_t resolveOperatorMessage(ModuleScopeBase* scope, int operatorId);
-      static mssg_t resolveVariadicMessage(Scope& scope, mssg_t message);
 
       bool isCompatible(Scope& scope, ObjectInfo source, ObjectInfo target, bool resolvePrimitives = true, bool imgnoreNil = true);
 

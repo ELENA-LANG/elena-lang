@@ -5632,7 +5632,7 @@ ObjectInfo Compiler::evalPropertyOperation(Interpreter& interpreter, Scope& scop
       case ObjectKind::Class:
       {
          CheckMethodResult result = {};
-         bool found = _logic->resolveCallType(*scope.moduleScope, resolveStrongType(scope,
+         bool found = MessagingLogic::resolveCallType(*scope.moduleScope, resolveStrongType(scope,
             loperand.typeInfo), message, result);
          if (found && result.constRef) {
             NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
@@ -8301,11 +8301,10 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
 }
 
 ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCallContext& context,
-   ObjectInfo object, mssg_t& resolvedMessage, int& stackSafeAttr, bool withDebugInfo, bool singleDispatchMode)
+   ref_t objectRef, mssg_t& resolvedMessage, int& stackSafeAttr, bool withDebugInfo, bool singleDispatchMode)
 {
    NamespaceScope* nsScope = Scope::getScope<NamespaceScope>(scope, Scope::ScopeLevel::Namespace);
-
-   ref_t objectRef = resolveStrongType(scope, object.typeInfo);
+   
    if (objectRef == 0) {
       objectRef = scope.moduleScope->buildins.superReference;
    }
@@ -8381,7 +8380,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
          ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
 
          int extStackAttr = 0;
-         if (_logic->isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2,
+         if (MessagingLogic::isMessageCompatibleWithSignature(*scope.moduleScope, targetRef, extInfo.value2,
             signatures, signatureLen, extStackAttr))
          {
             if (!resolvedMessage) {
@@ -8389,12 +8388,12 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
                resolvedExtRef = extInfo.value1;
                resolvedStackSafeAttr = extStackAttr;
             }
-            else if (_logic->isSignatureCompatible(*scope.moduleScope, resolvedMessage, extInfo.value2)) {
+            else if (MessagingLogic::isSignatureCompatible(*scope.moduleScope, resolvedMessage, extInfo.value2)) {
                //NOTE : if the extension is more precise than the previous resolved one - use the new one
                resolvedMessage = extInfo.value2;
                resolvedExtRef = extInfo.value1;
             }
-            else if (!_logic->isSignatureCompatible(*scope.moduleScope, extInfo.value2, resolvedMessage)) {
+            else if (!MessagingLogic::isSignatureCompatible(*scope.moduleScope, extInfo.value2, resolvedMessage)) {
                // if they are incompatible - use dynamic resolving
                resolvedMessage = 0;
                break;
@@ -8433,19 +8432,6 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
    }
 
    return 0;
-}
-
-mssg_t Compiler::resolveVariadicMessage(Scope& scope, mssg_t message)
-{
-   pos_t argCount = 0;
-   ref_t actionRef = 0, flags = 0, dummy = 0;
-   decodeMessage(message, actionRef, argCount, flags);
-
-   ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
-
-   int argMultuCount = test(message, FUNCTION_MESSAGE) ? 1 : 2;
-
-   return encodeMessage(scope.module->mapAction(actionName, 0, false), argMultuCount, flags | VARIADIC_MESSAGE);
 }
 
 static inline SyntaxNode findMessageNode(SyntaxNode node)
@@ -10081,7 +10067,7 @@ ObjectInfo Compiler :: compileRedirect(BuildTreeWriter& writer, CodeScope& codeS
 
    MessageCallContext context = { messageRef, getSignature(codeScope.module, messageRef) };
    MessageResolution resolution = { true, messageRef };
-   _logic->setSignatureStacksafe(*codeScope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
+   MessagingLogic::setSignatureStacksafe(*codeScope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
 
    ObjectInfo retVal = expression.compileMessageCall(node, target, context, resolution,
       arguments, EAttr::None);
@@ -10480,7 +10466,7 @@ ObjectInfo Compiler::Expression :: compileByRefHandlerCall(ObjectInfo target, re
    addOutRetVal(arguments, tempRetVal);
 
    context.implicitSignatureRef = getSignature(scope.module, handler);
-   compiler->_logic->setSignatureStacksafe(*scope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
+   MessagingLogic::setSignatureStacksafe(*scope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
 
    /*ObjectInfo retVal = */compileMessageCall({}, target, context, resolution,
       arguments, EAttr::AllowPrivateCall);
@@ -10533,7 +10519,7 @@ void Compiler :: compileAsyncInvoker(BuildTreeWriter& writer, MethodScope& metho
    }
 
    context.implicitSignatureRef = getSignature(codeScope.module, asyncFunction);
-   _logic->setSignatureStacksafe(*codeScope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
+   MessagingLogic::setSignatureStacksafe(*codeScope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
 
    ObjectInfo retVal = expression.compileMessageCall({}, target, context, resolution,
       arguments, EAttr::AllowPrivateCall);
@@ -11113,7 +11099,7 @@ void Compiler::callInitMethod(Expression& expression, SyntaxNode node, ClassInfo
 
       MessageCallContext context = { expression.scope.moduleScope->buildins.init_message, 0 };
       MessageResolution resolution = { true, expression.scope.moduleScope->buildins.init_message };
-      _logic->setSignatureStacksafe(*expression.scope.moduleScope, 0, resolution.stackSafeAttr);
+      MessagingLogic::setSignatureStacksafe(*expression.scope.moduleScope, 0, resolution.stackSafeAttr);
 
       expression.compileMessageCall(node, args[0], context, resolution,
          args, EAttr::None);
@@ -11168,7 +11154,7 @@ void Compiler :: compileInplaceDefConstructorCode(BuildTreeWriter& writer, Synta
 
    MessageCallContext context = { privateHandler, getSignature(scope.module, privateHandler) };
 
-   _logic->setSignatureStacksafe(*scope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
+   MessagingLogic::setSignatureStacksafe(*scope.moduleScope, context.implicitSignatureRef, resolution.stackSafeAttr);
    
    expression.compileMessageCall({}, target, context, resolution,
       arguments, EAttr::AllowPrivateCall);
@@ -13702,6 +13688,11 @@ Compiler::Expression::Expression(Code& code, BuildTreeWriter& writer, bool debug
    withDebugInfo = debugInfo;
 }
 
+ref_t Compiler::Expression :: resolveStrongType(TypeInfo typeInfo, bool declarationMode)
+{
+   return compiler->resolveStrongType(scope, typeInfo, declarationMode);
+}
+
 ObjectInfo Compiler::Expression::compileSymbolRoot(SyntaxNode bodyNode, ExpressionAttribute mode, ref_t targetRef)
 {
    writer->appendNode(BuildKey::OpenStatement);
@@ -14245,7 +14236,7 @@ bool Compiler::Expression :: checkValidity(ObjectInfo target, MessageResolution&
    ref_t targetRef = resolution.extensionRef ? resolution.extensionRef : compiler->resolveStrongType(scope, target.typeInfo);
 
    CheckMethodResult result = {};
-   if (compiler->_logic->checkMethod(*scope.moduleScope, targetRef, resolution.message, result)) {
+   if (MessagingLogic::checkMethod(*scope.moduleScope, targetRef, resolution.message, result)) {
       return checkValidity(target, result, allowPrivateCall);
    }
 
@@ -14289,7 +14280,7 @@ bool Compiler::Expression :: resolveAndValidate(ObjectInfo target, ref_t targetR
    CheckMethodResult& result, bool weakCall, bool allowPrivateCall)
 {
    if (weakCall
-      ? false : compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, message, result))
+      ? false : MessagingLogic::resolveCallType(*scope.moduleScope, targetRef, message, result))
    {
       return checkValidity(target, result, allowPrivateCall);
    }
@@ -14328,14 +14319,14 @@ mssg_t Compiler::Expression :: resolveMessageAtCompileTime(ObjectInfo source, bo
       mssg_t asyncMessage = compiler->overwriteAsAsyncFunction(scope, resolvedMessage);
 
       CheckMethodResult dummy = {};
-      if (compiler->_logic->checkMethod(*scope.moduleScope, functionRef, asyncMessage, dummy)) {
+      if (MessagingLogic::checkMethod(*scope.moduleScope, functionRef, asyncMessage, dummy)) {
          callContext.weakMessage = asyncMessage;
          resolvedMessage = asyncMessage;
       }
    }
 
    if (!resolvedMessage && !ignoreVariadics) {
-      ref_t variadicMssg = resolveVariadicMessage(scope, callContext.weakMessage);
+      ref_t variadicMssg = MessagingLogic::resolveVariadicMessage(*scope.moduleScope, callContext.weakMessage);
 
       resolvedMessage = compiler->_logic->resolveSingleDispatch(*scope.moduleScope,
          compiler->retrieveType(scope, source), variadicMssg, isSelfCall(source), resolvedNillableArgs);
@@ -14363,7 +14354,7 @@ void Compiler::Expression :: unboxAutoRangeCollection(SyntaxNode& spreadNode, Sy
       mssg_t weakMessage = encodeMessage(actionRef, argCount, 0);
 
       CheckMethodResult dummy = {};
-      if (compiler->_logic->checkMethod(*scope.moduleScope, compiler->retrieveType(scope, source), weakMessage, dummy)) {
+      if (MessagingLogic::checkMethod(*scope.moduleScope, compiler->retrieveType(scope, source), weakMessage, dummy)) {
          counter = argCount;
          break;
       }
@@ -14450,8 +14441,18 @@ bool Compiler::Expression :: checkDynamicSpeadOperationArg(SyntaxNode current, O
    return false;
 }
 
+inline void Compiler::Expression :: loadMessagingScope(ObjectInfo source, bool ignoreVariadics, MessagingScope& callScope)
+{
+   callScope.targetRef = compiler->resolveStrongType(scope, source.typeInfo);
+   callScope.weakOp = source.mode == TargetMode::Weak;
+   callScope.isSelfCall = isSelfCall(source);
+   callScope.isSuperCall = source.kind == ObjectKind::SuperLocal;
+   callScope.isClassClassOperation = isClassClassOperation(scope, source);
+   callScope.ignoreVariadics = ignoreVariadics;
+}
+
 ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, SyntaxNode messageNode, ObjectInfo source, ArgumentsInfo& arguments,
-   ref_t expectedRef, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs)
+   TypeInfo expectedType, bool propertyMode, bool probeMode, bool ignoreVariadics, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = {};
 
@@ -14461,23 +14462,24 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    }
 
    ref_t templateArgs[ARG_COUNT] = {};
-   MessageCallContext callContext = {};
-
-   callContext.weakMessage = compiler->mapMessage(scope, messageNode, propertyMode,
+   MessagingScope callScope = {};
+   loadMessagingScope(source, ignoreVariadics, callScope);
+   callScope.ignoreExtensions = EAttrs::test(attrs, EAttr::NoExtension);
+   callScope.context.weakMessage = compiler->mapMessage(scope, messageNode, propertyMode,
       source.kind == ObjectKind::Extension, probeMode);
 
-   if (propertyMode || !test(callContext.weakMessage, FUNCTION_MESSAGE))
+   if (propertyMode || !test(callScope.context.weakMessage, FUNCTION_MESSAGE))
       arguments.add(source);
 
    if (messageNode.nextNode() == SyntaxKey::TemplateArg) {
       messageNode = messageNode.nextNode();
       while (messageNode == SyntaxKey::TemplateArg) {
-         templateArgs[callContext.templateArgCount++] = compiler->resolveStrongTypeAttribute(scope, messageNode, TAttr::None).typeRef;
+         templateArgs[callScope.context.templateArgCount++] = compiler->resolveStrongTypeAttribute(scope, messageNode, TAttr::None).typeRef;
 
          messageNode = messageNode.nextNode();
       }
 
-      callContext.templateArgs = templateArgs;
+      callScope.context.templateArgs = templateArgs;
    }
    
    EAttr paramMode = EAttr::NoPrimitives;
@@ -14485,42 +14487,41 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
    int resolvedNillableArgs = 0;
    mssg_t resolvedMessage = (source.mode != TargetMode::Weak) 
       ? resolveMessageAtCompileTime(source, ignoreVariadics, EAttrs::testAndExclude(attrs, EAttr::AsyncOp), 
-         callContext, expectedSignRef, resolvedNillableArgs, paramMode) : 0;
+         callScope.context, expectedSignRef, resolvedNillableArgs, paramMode) : 0;
 
    ArgumentListType argListType = ArgumentListType::Normal;
-   callContext.implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, paramMode,
+   callScope.context.implicitSignatureRef = compileMessageArguments(messageNode, arguments, expectedSignRef, paramMode,
       argListType, resolvedNillableArgs);
 
-   if (!resolvedMessage && source.kind == ObjectKind::PropertyNameLiteral && isFunctionCall(scope.module, callContext.weakMessage, 1)) {
+   if (!resolvedMessage && source.kind == ObjectKind::PropertyNameLiteral && isFunctionCall(scope.module, callScope.context.weakMessage, 1)) {
       // HOTFIX : recognize a property call and replace it with a direct operation
-      callContext.weakMessage = encodeMessage(source.reference, 1, PROPERTY_MESSAGE);
+      callScope.context.weakMessage = encodeMessage(source.reference, 1, PROPERTY_MESSAGE);
 
       source = arguments[0];
    }
 
    EAttr opMode = EAttrs::testAndExclude(attrs, EAttr::StackUnsafe) ? EAttr::StackUnsafe : EAttr::None;
    if (argListType == ArgumentListType::VariadicArgList || argListType == ArgumentListType::VariadicArgListWithTypecasting) {
-      callContext.weakMessage |= VARIADIC_MESSAGE;
+      callScope.context.weakMessage |= VARIADIC_MESSAGE;
 
       opMode = argListType == Expression::ArgumentListType::VariadicArgList ? EAttr::WithVariadicArg : EAttr::WithVariadicArgCast;
    }
 
-   auto byRefResolution = resolveByRefHandler(source, expectedRef, callContext,
-      EAttrs::test(attrs, EAttr::NoExtension));
+   auto byRefResolution = MessagingLogic::resolveByRefHandler(*this, *scope.moduleScope, callScope, expectedType);
    if (byRefResolution.resolved && checkValidity(source, byRefResolution, false)) {
-      ObjectInfo tempRetVal = declareTempLocal(expectedRef, false);
+      ObjectInfo tempRetVal = declareTempLocal(expectedType.typeRef, false);
 
       addOutRetVal(arguments, tempRetVal);
       // adding mark for optimization routine
       if (tempRetVal.kind == ObjectKind::TempLocalAddress)
          writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
 
-      compileMessageCall(node, source, callContext, byRefResolution,
+      compileMessageCall(node, source, callScope.context, byRefResolution,
          arguments, opMode);
 
       retVal = tempRetVal;
    }
-   else retVal = compileMessageCall(node, source, callContext, callContext.weakMessage,
+   else retVal = compileMessageCall(node, source, callScope.context, callScope.context.weakMessage,
       arguments, opMode);
 
    return retVal;
@@ -14541,14 +14542,14 @@ bool Compiler::Expression :: isDirectMethodCall(SyntaxNode& node, bool isPropert
             return false;
 
          mssg_t weakMessage = encodeMessage(scope.module->mapAction(name, 0, true), argCount + 1, isProperty ? PROPERTY_MESSAGE : 0);
-         if (compiler->_logic->isMessageSupported(classScope->info, weakMessage)) {
+         if (MessagingLogic::isMessageSupported(classScope->info, weakMessage)) {
             node.setKey(SyntaxKey::Message);
             node.setArgumentReference(weakMessage);
 
             return true;
          }
          if (test(classScope->info.header.flags, elWithVariadics)) {
-            if (compiler->_logic->isMessageSupported(classScope->info,
+            if (MessagingLogic::isMessageSupported(classScope->info,
                encodeMessage(scope.module->mapAction(name, 0, true), 2, VARIADIC_MESSAGE)))
             {
                node.setKey(SyntaxKey::Message);
@@ -14802,7 +14803,7 @@ ObjectInfo Compiler::Expression :: compileSetValueOperation(SyntaxNode lnode, Sy
 
    CheckMethodResult result = {};
    result.retrieveSetter = compiler->_optMode;
-   bool found = compiler->_logic->resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
+   bool found = MessagingLogic::resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
       loperand.typeInfo), message, result);
    if (found && result.retrieveSetter) {
       ObjectInfo fieldInfo = defineEncapseField(loperand, roperand.typeInfo, result.getterFieldOffset);
@@ -14867,7 +14868,7 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
 
    CheckMethodResult result = {};
    result.retrieveGetter = compiler->_optMode;
-   bool found = EAttrs::test(mode, EAttr::RetValExpected) && compiler->_logic->resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
+   bool found = EAttrs::test(mode, EAttr::RetValExpected) && MessagingLogic::resolveCallType(*scope.moduleScope, compiler->resolveStrongType(scope,
       loperand.typeInfo), message, result);
 
    if (found && result.retrieveGetter 
@@ -16253,7 +16254,7 @@ ObjectInfo Compiler::Expression::compileNewOp(SyntaxNode node, ObjectInfo source
             scope.module->mapSignature(signature, argCount, false), false), argCount, STATIC_MESSAGE);
 
       CheckMethodResult result = {};
-      if (compiler->_logic->resolveCallType(*scope.moduleScope,
+      if (MessagingLogic::resolveCallType(*scope.moduleScope,
          compiler->resolveStrongType(scope, source.typeInfo), inplaceMessage, result))
       {
          writer->appendNode(BuildKey::InplaceCall, result.message);
@@ -16619,7 +16620,7 @@ ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo sourc
             ArgumentsInfo arguments;
 
             CheckMethodResult dummy = {};
-            if (compiler->_logic->resolveCallType(*scope.moduleScope, classSymbol.typeInfo.typeRef, scope.moduleScope->buildins.constructor_message, dummy)
+            if (MessagingLogic::resolveCallType(*scope.moduleScope, classSymbol.typeInfo.typeRef, scope.moduleScope->buildins.constructor_message, dummy)
                && (dummy.visibility == Visibility::Public || (dummy.visibility == Visibility::Protected && isSelfCall(classSymbol))))
             {
                return compileNewOp(node, classSymbol, 0, arguments);
@@ -16728,103 +16729,6 @@ ObjectInfo Compiler::Expression::convertObject(SyntaxNode node, ObjectInfo sourc
    }
 
    return source;
-}
-
-Compiler::MessageResolution Compiler::Expression :: resolveByRefHandler(ObjectInfo source, ref_t expectedRef,
-   MessageCallContext& context, bool noExtensions)
-{
-   MessageCallContext byRefContext = context;
-
-   if (source.mode == TargetMode::Weak)
-      return {};
-
-   ref_t targetRef = compiler->resolveStrongType(scope, source.typeInfo);
-
-   pos_t argCount = 0;
-   ref_t actionRef = 0, flags = 0;
-   decodeMessage(context.weakMessage, actionRef, argCount, flags);
-
-   // HOTFIX : ignore variadic message
-   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE)
-      return {};
-
-   if (expectedRef != 0 && targetRef != 0) {
-      // try to resolve the weak message
-      MessageResolution resolution = resolveMessageAtCompileTime(source, byRefContext,
-         noExtensions, true, true);
-
-      if (resolution.resolved || argCount == 1) {
-         ref_t resolvedFlags = resolution.resolved ? getFlags(resolution.message) : flags;
-
-         // check if there is a byref handler for the resolved message or the message has no arguments
-         ref_t resolvedSignRef = 0;
-         ustr_t actionName = scope.module->resolveAction(getAction(resolution.message), resolvedSignRef);
-
-         ref_t byRefType = compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef }, true);
-         ref_t byRefSignature = compiler->_logic->defineByRefSignature(*scope.moduleScope, resolvedSignRef, byRefType);
-
-         ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, resolvedFlags);
-
-         if (resolution.byRefHandler && compiler->_logic->isSignatureCompatible(*scope.moduleScope, byRefMessage, resolution.byRefHandler)) {
-            byRefMessage = resolution.byRefHandler;
-            scope.module->resolveAction(getAction(byRefMessage), byRefContext.implicitSignatureRef);
-
-            resolution.resolved = true;
-         }
-         else {
-            ref_t byRefTarget = resolution.extensionRef ? resolution.extensionRef : targetRef;
-            CheckMethodResult dummy = {};
-            if (compiler->_logic->resolveCallType(*scope.moduleScope, byRefTarget, byRefMessage, dummy)) {
-               // NOTE : the original signature is extended with byref handler
-               byRefContext.implicitSignatureRef = compiler->_logic->defineByRefSignature(*scope.moduleScope, byRefContext.implicitSignatureRef, byRefType);;
-
-               resolution.resolved = true;
-            }
-            else resolution.resolved = false;
-         }
-         if (resolution.resolved) {
-            resolution.message = byRefMessage;
-
-            // NOTE : the stack safe attributes are resolved again the target signature
-            // this type we must generate by ref handler to set stacksafe attribute properly
-            compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef }, false);
-            compiler->_logic->setSignatureStacksafe(*scope.moduleScope, byRefSignature, resolution.stackSafeAttr);
-
-            context = byRefContext;
-            return resolution;
-         }
-      }
-      else if (byRefContext.implicitSignatureRef) {
-         // otherwise check if there is a byref handler if at lease a signature exists
-         ref_t dummySignRef = 0;
-         ustr_t actionName = scope.module->resolveAction(actionRef, dummySignRef);
-
-         ref_t byRefType = compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef }, true);
-         ref_t byRefSignature = compiler->_logic->defineByRefSignature(*scope.moduleScope, byRefContext.implicitSignatureRef, byRefType);
-
-         ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, flags);
-
-         CheckMethodResult dummy = {};
-         if (compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, byRefMessage, dummy)) {
-            // NOTE : we need to generate a wrapper to proper use it
-            compiler->resolveStrongType(scope, { V_OUTWRAPPER, expectedRef }, false);
-
-            // NOTE : the original signature is extended with byref handler
-            byRefContext.implicitSignatureRef = compiler->_logic->defineByRefSignature(*scope.moduleScope, byRefContext.implicitSignatureRef, byRefType);
-
-            resolution.resolved = true;
-            resolution.message = byRefMessage;
-
-            // NOTE : the stack safe attributes are resolved again the target signature
-            compiler->_logic->setSignatureStacksafe(*scope.moduleScope, byRefSignature, resolution.stackSafeAttr);
-
-            context = byRefContext;
-            return resolution;
-         }
-      }
-   }
-
-   return {};
 }
 
 ObjectInfo Compiler::Expression::declareTempLocal(ref_t typeRef, bool dynamicOnly)
@@ -17109,8 +17013,12 @@ ObjectInfo Compiler::Expression :: compileMessageCall(SyntaxNode node, ObjectInf
    ObjectInfo retVal(ObjectKind::Object);
    
    if (!resolution.resolved) {
-      resolution = resolveMessageAtCompileTime(target, context,
-         EAttrs::testAndExclude(mode.attrs, EAttr::NoExtension), false);
+      MessagingScope callScope = {};
+      loadMessagingScope(target, false, callScope);
+      callScope.ignoreExtensions = EAttrs::testAndExclude(mode.attrs, EAttr::NoExtension);
+      callScope.context = context;
+
+      resolution = MessagingLogic::resolveMessageAtCompileTime(*this, *scope.moduleScope, callScope, false);
    }
 
    if (resolution.extensionRef) {
@@ -17683,7 +17591,7 @@ ObjectInfo Compiler::Expression :: unboxArguments(ObjectInfo retVal, bool clearI
 }
 
 ObjectInfo Compiler::Expression :: compileWeakOperation(SyntaxNode node, ref_t* arguments, pos_t argLen,
-   ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, ref_t expectedRef)
+   ObjectInfo& loperand, ArgumentsInfo& messageArguments, mssg_t message, TypeInfo expectedType)
 {
    ObjectInfo retVal = {};
 
@@ -17700,23 +17608,26 @@ ObjectInfo Compiler::Expression :: compileWeakOperation(SyntaxNode node, ref_t* 
       else arguments[i - 1] = arguments[i];
    }
 
-   MessageCallContext context = { message, (!weakSignature && argLen > 1) ? scope.module->mapSignature(arguments, argLen - 1, false) : 0 };
+   MessagingScope callScope = {};
+   loadMessagingScope(loperand, false, callScope);
+   callScope.ignoreExtensions = true;
+   callScope.context = { message, (!weakSignature && argLen > 1) ? scope.module->mapSignature(arguments, argLen - 1, false) : 0 };
 
-   auto byRefResolution = resolveByRefHandler(loperand, expectedRef, context, true);
+   auto byRefResolution = MessagingLogic::resolveByRefHandler(*this, *scope.moduleScope, callScope, expectedType);
    if (byRefResolution.resolved && checkValidity(loperand, byRefResolution, false)) {
-      ObjectInfo tempRetVal = declareTempLocal(expectedRef, false);
+      ObjectInfo tempRetVal = declareTempLocal(expectedType.typeRef, false);
 
       addOutRetVal(messageArguments, tempRetVal);
       // adding mark for optimization routine
       if (tempRetVal.kind == ObjectKind::TempLocalAddress)
          writer->appendNode(BuildKey::ByRefOpMark, tempRetVal.argument);
 
-      compileMessageCall(node, loperand, context, byRefResolution,
+      compileMessageCall(node, loperand, callScope.context, byRefResolution,
          messageArguments, EAttr::None);
 
       retVal = tempRetVal;
    }
-   else retVal = compileMessageCall(node, loperand, context, { context.weakMessage },
+   else retVal = compileMessageCall(node, loperand, callScope.context, { callScope.context.weakMessage },
       messageArguments, EAttr::NoExtension | EAttr::CheckShortCircle);
 
    return retVal;
@@ -18664,118 +18575,16 @@ ObjectInfo Compiler::Expression::allocateResult(ref_t resultRef)
 
 void Compiler::Expression :: resolvedExtensionTemplate(ObjectInfo target, MessageCallContext& messageContext)
 {
+   ref_t objectRef = compiler->resolveStrongType(scope, target.typeInfo);
+
    int resolvedStackSafeAttr = 0;
    ref_t resolvedMessage = messageContext.weakMessage;
    ref_t extensionRef = compiler->mapExtension(*writer, scope, messageContext,
-      target, resolvedMessage, resolvedStackSafeAttr, withDebugInfo, true);
+      objectRef, resolvedMessage, resolvedStackSafeAttr, withDebugInfo, true);
 
    if (extensionRef) {
       scope.module->resolveAction(getAction(resolvedMessage), messageContext.implicitSignatureRef);
    }
-}
-
-Compiler::MessageResolution Compiler::Expression :: resolveMessageAtCompileTime(ObjectInfo target, MessageCallContext& messageContext,
-   bool ignoreExtensions, bool ignoreVariadics, bool checkByRefHandler)
-{
-   MessageResolution resolution = {};
-
-   if (target.mode == TargetMode::Weak)
-      return { messageContext.weakMessage };
-
-   ref_t targetRef = compiler->resolveStrongType(scope, target.typeInfo);
-
-   // try to resolve the message as is
-   int resolvedStackSafeAttr = 0;
-   resolution.message = compiler->_logic->resolveMultimethod(*scope.moduleScope, messageContext.weakMessage, targetRef,
-      messageContext.implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
-   if (resolution.message != 0) {
-      resolution.resolved = true;
-      resolution.stackSafeAttr = resolvedStackSafeAttr;
-      if (checkByRefHandler)
-         resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, targetRef, resolution.message);
-
-      // if the object handles the compile-time resolved message - use it
-      return resolution;
-   }
-
-   // check if the object handles the variadic message
-   if (targetRef && !ignoreVariadics) {
-      resolvedStackSafeAttr = 0;
-      resolution.message = compiler->_logic->resolveMultimethod(*scope.moduleScope,
-         resolveVariadicMessage(scope, messageContext.weakMessage),
-         targetRef, messageContext.implicitSignatureRef, resolvedStackSafeAttr, isSelfCall(target));
-
-      if (resolution.message != 0) {
-         resolution.resolved = true;
-         resolution.stackSafeAttr = resolvedStackSafeAttr;
-         if (checkByRefHandler)
-            resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, targetRef, resolution.message);
-
-         // if the object handles the compile-time resolved variadic message - use it
-         return resolution;
-      }
-   }
-
-   if (!ignoreExtensions) {
-      // check the existing extensions if allowed
-      // if the object handles the weak message - do not use extensions
-      CheckMethodResult dummy = {};
-      if (resolveAndValidate(target, targetRef, messageContext.weakMessage, dummy, false, true)) {
-         resolution.message = messageContext.weakMessage;
-         if (checkByRefHandler) {
-            resolution.byRefHandler = dummy.byRefHandler;
-         }
-
-         return resolution;
-      }
-
-      resolvedStackSafeAttr = 0;
-      resolution.message = messageContext.weakMessage;
-      ref_t extensionRef = compiler->mapExtension(*writer, scope, messageContext,
-         target, resolution.message, resolvedStackSafeAttr, withDebugInfo);
-      if (extensionRef != 0) {
-         // if there is an extension to handle the compile-time resolved message - use it
-         resolution.resolved = true;
-         resolution.extensionRef = extensionRef;
-         resolution.stackSafeAttr = resolvedStackSafeAttr;
-         if (checkByRefHandler)
-            resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, extensionRef, resolution.message);
-
-         return resolution;
-      }
-
-      // HOTFIX : do not check variadic message for the properties
-      if ((messageContext.weakMessage & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE)
-         return { messageContext.weakMessage };
-
-      // check if the extension handles the variadic message      
-      MessageCallContext variadicContext = { resolveVariadicMessage(scope, messageContext.weakMessage), messageContext.implicitSignatureRef };
-      resolvedStackSafeAttr = 0;
-      extensionRef = compiler->mapExtension(*writer, scope, variadicContext,
-         target, resolution.message, resolvedStackSafeAttr, withDebugInfo);
-      if (extensionRef != 0) {
-         // if there is an extension to handle the compile-time resolved message - use it
-         resolution.resolved = true;
-         resolution.stackSafeAttr = resolvedStackSafeAttr;
-         resolution.extensionRef = extensionRef;
-         if (checkByRefHandler)
-            resolution.byRefHandler = compiler->_logic->retrieveByRefHandler(*scope.moduleScope, extensionRef, resolution.message);
-
-         return resolution;
-      }
-   }
-   else if (checkByRefHandler) {
-      CheckMethodResult dummy = {};
-      if (compiler->_logic->resolveCallType(*scope.moduleScope, targetRef, messageContext.weakMessage, dummy)) {
-         resolution.message = messageContext.weakMessage;
-         resolution.byRefHandler = dummy.byRefHandler;
-
-         return resolution;
-      }
-   }
-
-   // otherwise - use the weak message
-   return { messageContext.weakMessage };
 }
 
 bool Compiler::Expression::validateShortCircle(mssg_t message, ObjectInfo target)
@@ -19089,6 +18898,13 @@ void Compiler::Expression::unboxArgumentLocaly(ObjectInfo temp, ObjectKey key)
       compileAssigningOp({ key.value1, temp.typeInfo, key.value2, size }, temp, dummy);
    }
    else compileAssigningOp({ key.value1, temp.typeInfo, key.value2 }, temp, dummy);
+}
+
+ref_t Compiler::Expression :: mapExtension(ref_t targetRef, MessageCallContext& messageContext, 
+   mssg_t& message, int& resolvedStackSafeAttr)
+{
+   return compiler->mapExtension(*writer, scope, messageContext,
+      targetRef, message, resolvedStackSafeAttr, withDebugInfo);
 }
 
 void Compiler::Expression::unboxOuterArgs()
@@ -19744,7 +19560,7 @@ void Compiler::LambdaClosure :: declareClosureMessage(MethodScope& methodScope, 
 
          if (resolvedMessage) {
             CheckMethodResult result = {};
-            compiler->_logic->checkMethod(*scope.moduleScope, scope.expectedRef, resolvedMessage, result);
+            MessagingLogic::checkMethod(*scope.moduleScope, scope.expectedRef, resolvedMessage, result);
 
             // if explicit output type is not matching the resolved one, ignore it
             if (outputInfo.typeRef && (outputInfo.typeRef != result.outputInfo.typeRef || outputInfo.nillable != result.outputInfo.nillable))

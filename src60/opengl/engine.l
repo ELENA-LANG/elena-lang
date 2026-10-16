@@ -1,20 +1,20 @@
 public interface IOpenGLDeviceAdapter
 {
-   abstract assign(IOpenGLDeviceTarget target);
+   abstract setup(/*IOpenGLDeviceTarget target*/);
 }
 
-public interface IOpenGLDeviceTarget
+/*public interface IOpenGLDeviceTarget
 {
    
-}
+}*/
 
-public class OpenGLEngine : interface<IOpenGLDeviceTarget>
+public class OpenGLEngine //: interface<IOpenGLDeviceTarget>
 {
    IOpenGLDeviceAdapter _adapter;
    
    constructor new(IOpenGLDeviceAdapter adapter)
    {
       _adapter := adapter;
-      _adapter.assign(self);
+      _adapter.setup(/*self*/);
    }
 }

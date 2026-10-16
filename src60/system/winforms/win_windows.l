@@ -137,3 +137,5 @@ public static wide SDIWindowClass    = windowClassControl.createClass("ELENA.SDI
 public static wide PaintboxClass     = windowClassControl.createClass("ELENA.Paintbox.7.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.Default);
 public static wide PanelClass        = windowClassControl.createClass("ELENA.PANEL.7.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.COLOR_BACKGROUND);
 public static wide PaintContextClass = windowClassControl.createClass("ELENA.PaintContext.7.0", CurrentInstance, CS_VREDRAW | CS_HREDRAW, HBRUSH.Default);
+
+public static wide OGL3DDummyWindow  = windowClassControl.createClass("OGL3DDummyWindow", CurrentInstance, CS_OWNDC, HBRUSH.Default);

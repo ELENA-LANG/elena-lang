@@ -3,20 +3,22 @@ import system'drawing;
 
 public class OpenGLPaintContextController : interface<IPaintContextController>, interface<IOpenGLDeviceAdapter>
 {
-   IOpenGLDeviceTarget _target;
-   PaintContext        _context;
+   //IOpenGLDeviceTarget _target;
+   PaintContext        _paintContext;
    
-   assign(IOpenGLDeviceTarget target)
+   setup(/*IOpenGLDeviceTarget target*/)
    {
-      _target := target
+      //_target := target;
+      
+      initialize();
    }
-   
+/*   
    set Parent(PaintContext context)
    {
       _context := context
    }
-   
-   initializeDC(HDC dc)
+*/   
+   loadGL(HDC dc)
    {
       PIXELFORMATDESCRIPTOR pfd := default;
       pfd.nSize := :sizeof pfd;
@@ -31,6 +33,21 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
 
       int pixelFormat := pfd.choosePixelFormat(dc);
       pfd.setPixelFormat(dc, pixelFormat);
+      
+      HGLRC context := WGLWrapper.createContext(dc);
+      if (context.isEmpty()) {
+         OpenGLException.raise("OpenGLWrapper: failed to create context");
+      };
+      
+   }
+
+   initialize()
+   {
+      _paintContext.initializeOGL3DDummyWindow(self);
+      
+      
+//      
+//      OpenGLWrapper.makeCurrent(dc, context);
       
 /*
     HGLRC dummyContext = wglCreateContext(dummyDC);
@@ -55,8 +72,9 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
 */      
    }
    
-   constructor new()
+   constructor new(PaintContext paintContext)
    {
+      _paintContext := paintContext
    }
 }
 

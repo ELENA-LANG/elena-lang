@@ -1411,16 +1411,6 @@ mssg_t CompilerLogic :: defineTryDispatcher(ModuleScopeBase& scope/*, mssg_t mes
    return encodeMessage(scope.module->mapAction(TRY_INVOKE_MESSAGE, 0, false), 2, FUNCTION_MESSAGE);
 }
 
-ref_t CompilerLogic :: defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef)
-{
-   ref_t targetSignatures[ARG_COUNT];
-
-   size_t len = signRef != 0 ? scope.module->resolveSignature(signRef, targetSignatures) : 0;
-   targetSignatures[len++] = resultRef;
-
-   return scope.module->mapSignature(targetSignatures, len, false);
-}
-
 bool CompilerLogic :: isRole(ref_t flags)
 {
    return test(flags, elRole);
@@ -2171,72 +2161,6 @@ static inline ref_t getSignature(ModuleScopeBase& scope, mssg_t message)
    return signRef;
 }
 
-bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature,
-   ref_t* sourceSignatures, size_t sourceLen)
-{
-   ref_t targetSignatures[ARG_COUNT];
-   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
-
-   if (sourceLen == 0 && len == 0)
-      return true;
-
-   if (len < 1)
-      return false;
-
-   for (size_t i = 0; i < sourceLen; i++) {
-      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
-
-      if (!isCompatible(scope, { ImportHelper::importReference(targetModule, targetSign, scope.module) }, { sourceSignatures[i] }, CompatibleMode::IgnoreNils))
-         return false;
-   }
-
-   return true;
-}
-
-bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature,
-   ref_t* sourceSignatures, size_t sourceLen)
-{
-   ref_t targetSignatures[ARG_COUNT];
-   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-   if (sourceLen == 0 && len == 0)
-      return true;
-
-   if (len < 1)
-      return false;
-
-   for (size_t i = 0; i < sourceLen; i++) {
-      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
-      if (!isCompatible(scope, { targetSign }, { sourceSignatures[i] }, CompatibleMode::IgnoreNils))
-         return false;
-   }
-
-   return true;
-}
-
-bool CompilerLogic :: isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage)
-{
-   ref_t sourceSignatures[ARG_COUNT];
-   size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
-
-   return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
-}
-
-bool CompilerLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef,
-   mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr)
-{
-   ref_t targetSignRef = getSignature(scope, targetMessage);
-
-   if (isSignatureCompatible(scope, targetSignRef, sourceSignature, len)) {
-      if (isStacksafeArg(scope, targetRef))
-         stackSafeAttr |= 1;
-
-      setSignatureStacksafe(scope, targetSignRef, stackSafeAttr);
-
-      return true;
-   }
-   else return false;
-}
-
 ref_t CompilerLogic :: getClassClassRef(ModuleScopeBase& scope, ref_t targetRef)
 {
    ClassInfo info;
@@ -2244,39 +2168,6 @@ ref_t CompilerLogic :: getClassClassRef(ModuleScopeBase& scope, ref_t targetRef)
       return 0;
 
    return info.header.classRef;
-}
-
-void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ref_t targetSignature, int& stackSafeAttr)
-{
-   ref_t targetSignatures[ARG_COUNT];
-   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
-   if (len <= 0)
-      return;
-
-   int flag = 1;
-   for (size_t i = 0; i < len; i++) {
-      flag <<= 1;
-
-      if (isStacksafeArg(scope, targetSignatures[i]))
-         stackSafeAttr |= flag;
-   }
-}
-
-void CompilerLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule,
-   ref_t targetSignature, int& stackSafeAttr)
-{
-   ref_t targetSignatures[ARG_COUNT];
-   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
-   if (len <= 0)
-      return;
-
-   int flag = 1;
-   for (size_t i = 0; i < len; i++) {
-      flag <<= 1;
-
-      if (isStacksafeArg(scope, ImportHelper::importReference(targetModule, targetSignatures[i], scope.module)))
-         stackSafeAttr |= flag;
-   }
 }
 
 static inline mssg_t resolveNonpublic(mssg_t weakMessage, ClassInfo& info, bool selfCall, bool isInternalOp)
@@ -2311,90 +2202,13 @@ static inline ref_t mapWeakSignature(ModuleScopeBase& scope, int counter)
    return scope.module->mapSignature(signatures, signatureLen, false);
 }
 
-mssg_t CompilerLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef,
-   ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall)
-{
-   if (!targetRef)
-      return 0;
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, targetRef)) {
-      if (isStacksafeArg(info.header.flags))
-         stackSafeAttr |= 1;
-
-      // check if it is non public message
-      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, isInternalOp(scope, targetRef));
-      if (nonPublicMultiMessage != 0) {
-         if (!implicitSignatureRef && test(nonPublicMultiMessage, STATIC_MESSAGE) && getArgCount(weakMessage) > 1) {
-            implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage) - 1);
-         }
-
-         mssg_t resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
-         if (!resolved) {
-            return nonPublicMultiMessage;
-         }
-         else return resolved;
-      }
-
-      // allow to check the variadic message without arguments
-      if (!implicitSignatureRef && ((weakMessage & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE))
-         return 0;
-
-      if (!implicitSignatureRef) {
-         implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage));
-      }
-
-      ref_t signatures[ARG_COUNT];
-      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
-
-      ref_t listRef = info.attributes.get({ weakMessage, ClassAttribute::OverloadList });
-      if (listRef) {
-         auto sectionInfo = scope.getSection(scope.module->resolveReference(listRef), mskConstArray, true);
-         if (!sectionInfo.section || sectionInfo.section->length() < 4)
-            return 0;
-
-         MemoryReader reader(sectionInfo.section);
-         pos_t position = sectionInfo.section->length() - 4;
-         mssg_t foundMessage = 0;
-         while (position != 0) {
-            reader.seek(position - 8);
-            mssg_t argMessage = reader.getRef();
-            ref_t argSign = 0;
-            sectionInfo.module->resolveAction(getAction(argMessage), argSign);
-
-            if (sectionInfo.module == scope.module) {
-               if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
-                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
-
-                  foundMessage = argMessage;
-               }
-            }
-            else {
-               if (isSignatureCompatible(scope, sectionInfo.module,
-                  argSign, signatures, signatureLen))
-               {
-                  setSignatureStacksafe(scope, sectionInfo.module, argSign, stackSafeAttr);
-
-                  foundMessage = ImportHelper::importMessage(sectionInfo.module, argMessage, scope.module);
-               }
-            }
-
-            position -= 8;
-         }
-         return foundMessage;
-      }
-   }
-
-   return 0;
-}
-
 mssg_t CompilerLogic :: retrieveDynamicConvertor(ModuleScopeBase& scope, ref_t targetRef)
 {
    ref_t classClassRef = getClassClassRef(scope, targetRef);
    mssg_t messageRef = overwriteArgCount(scope.buildins.constructor_message, 1);
 
    CheckMethodResult dummy = {};
-   if (checkMethod(scope, classClassRef, messageRef, dummy)) {
+   if (MessagingLogic::checkMethod(scope, classClassRef, messageRef, dummy)) {
       return messageRef;
    }
 
@@ -2408,7 +2222,7 @@ mssg_t CompilerLogic :: retrieveImplicitConstructor(ModuleScopeBase& scope, ref_
    mssg_t messageRef = overwriteArgCount(scope.buildins.constructor_message, signLen);
 
    // try to resolve implicit multi-method
-   mssg_t resolvedMessage = resolveMultimethod(scope, messageRef, classClassRef,
+   mssg_t resolvedMessage = MessagingLogic::resolveMultimethod(scope, messageRef, classClassRef,
       signRef, stackSafeAttrs, false);
 
    if (resolvedMessage)
@@ -2518,157 +2332,6 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
    return {};
 }
 
-bool CompilerLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result)
-{
-   bool methodFound = info.methods.exist(message);
-   if (methodFound) {
-      MethodInfo methodInfo = info.methods.get(message);
-
-      result.message = message;
-      result.outputInfo = { methodInfo.outputRef };
-      if (MethodInfo::checkVisibility(methodInfo, MethodHint::Private)) {
-         result.visibility = Visibility::Private;
-      }
-      else if (MethodInfo::checkVisibility(methodInfo, MethodHint::Protected)) {
-         result.visibility = Visibility::Protected;
-      }
-      else if (MethodInfo::checkVisibility(methodInfo, MethodHint::Internal)) {
-         result.visibility = Visibility::Internal;
-      }
-      else result.visibility = Visibility::Public;
-
-      // check nillable attribute
-      result.outputInfo.nillable = test(methodInfo.hints, (ref_t)MethodHint::Nillable);
-
-      result.throwOp = test(methodInfo.hints, (ref_t)MethodHint::ThrowOp);
-
-      result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
-      if (result.kind == (ref_t)MethodHint::Normal) {
-         // check if the normal method can be called directly / semi-directly
-         if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
-            result.kind = (ref_t)MethodHint::ByIndex;
-         }
-         else if (test(info.header.flags, elSealed)) {
-            result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
-         }
-         else if (test(info.header.flags, elClosed)) {
-            result.kind = (ref_t)MethodHint::Fixed; // mark it as fixed - because the class is closed
-         }
-      }
-
-      result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
-      result.nillableArgs = methodInfo.nillableArgs;
-      result.checkNillableArgs = test(methodInfo.extra_hints, (ref_t)MethodExtraHint::EnforcedNillableArgs);
-      result.byRefHandler = methodInfo.byRefHandler;
-
-      if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
-         result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
-      }
-
-      if (test(methodInfo.hints, (ref_t)MethodHint::Initializer)) {
-         result.kind = (ref_t)MethodHint::Sealed;
-      }
-
-      if (result.retrieveGetter && info.attributes.exist({ message, ClassAttribute::FieldGetter }) && result.kind == (ref_t)MethodHint::Sealed) {
-         result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldGetter });
-      }
-      else result.retrieveGetter = false;
-
-      if (result.retrieveSetter && info.attributes.exist({ message, ClassAttribute::FieldSetter }) && result.kind == (ref_t)MethodHint::Sealed) {
-         result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldSetter });
-      }
-      else result.retrieveSetter = false;
-
-      if (test(methodInfo.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr)) {
-         result.inlineExprRef = info.attributes.get({ message, ClassAttribute::InlineExprRef });
-      }
-
-      return true;
-   }
-   else return false;
-}
-
-bool CompilerLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t message, CheckMethodResult& result)
-{
-   ClassInfo info;
-   if (classRef && defineClassInfo(scope, info, classRef)) {
-      if (testany(info.header.flags, elWithVariadics)) {
-         result.withVariadicDispatcher = true;
-      }
-      else if (test(info.header.flags, elWithCustomDispatcher))
-         result.withCustomDispatcher = true;
-
-      return checkMethod(info, message, result);
-   }
-   else return false;
-}
-
-mssg_t CompilerLogic :: retrieveByRefHandler(ModuleScopeBase& scope, ref_t reference, mssg_t message)
-{
-   CheckMethodResult result = {};
-   if (checkMethod(scope, reference, message, result)) {
-      return result.byRefHandler;
-   }
-
-   return 0;
-}
-
-bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message)
-{
-   CheckMethodResult dummy = {};
-
-   return isMessageSupported(info, message, dummy);
-}
-
-bool CompilerLogic :: isMessageSupported(ClassInfo& info, mssg_t message, CheckMethodResult& result)
-{
-   if (!checkMethod(info, message, result)) {
-      if (checkMethod(info, message | STATIC_MESSAGE, result)) {
-         if (result.visibility == Visibility::Private)
-            return true;
-
-         result = {};
-      }
-      mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
-      if (protectedMessage) {
-         if (checkMethod(info, protectedMessage, result)) {
-            result.visibility = Visibility::Protected;
-            return true;
-         }
-      }
-      mssg_t internalMessage = info.attributes.get({ message, ClassAttribute::InternalAlias });
-      if (internalMessage) {
-         if (checkMethod(info, internalMessage, result)) {
-            result.visibility = Visibility::Internal;
-            return true;
-         }
-      }
-   }
-   else return true;
-
-   return false;
-}
-
-bool CompilerLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message,
-   CheckMethodResult& result)
-{
-   if (!classRef)
-      classRef = scope.buildins.superReference;
-
-   ClassInfo info;
-   if (defineClassInfo(scope, info, classRef)) {
-      if (testany(info.header.flags, elWithVariadics)) {
-         result.withVariadicDispatcher = true;
-      }
-      else if (test(info.header.flags, elWithCustomDispatcher))
-         result.withCustomDispatcher = true;
-
-      return isMessageSupported(info, message, result);
-   }
-
-   return false;
-}
-
 bool CompilerLogic :: isNeedVerification(ClassInfo& info, VirtualMethodList& implicitMultimethods)
 {
    // HOTFIX : Make sure the multi-method methods have the same output type as generic one
@@ -2726,7 +2389,7 @@ ref_t CompilerLogic :: generateOverloadList(CompilerBase* compiler, ModuleScopeB
          mssg_t omsg = m_it.key();
          pos_t len = list.count_pos();
          for (pos_t i = 0; i < len; i++) {
-            if (isSignatureCompatible(scope, omsg, list[i])) {
+            if (MessagingLogic::isSignatureCompatible(scope, omsg, list[i])) {
                list.insert(i, omsg);
                added = true;
                break;
@@ -2843,7 +2506,7 @@ mssg_t CompilerLogic :: resolveSingleDispatch(ModuleScopeBase& scope, ref_t refe
 
       if (dispatcher) {
          CheckMethodResult result;
-         if (checkMethod(info, dispatcher, result))
+         if (MessagingLogic::checkMethod(info, dispatcher, result))
             nillableArgs = result.nillableArgs;
       }
 
@@ -3370,4 +3033,603 @@ ref_t CompilerLogic :: resolveStaticMethodOrigin(ModuleScopeBase& scope, ref_t t
    }
 
    return 0;
+}
+
+// --- MessagingLogic ---
+
+void MessagingLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (CompilerLogic::isStacksafeArg(scope, targetSignatures[i]))
+         stackSafeAttr |= flag;
+   }
+}
+
+void MessagingLogic :: setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule,
+   ref_t targetSignature, int& stackSafeAttr)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+   if (len <= 0)
+      return;
+
+   int flag = 1;
+   for (size_t i = 0; i < len; i++) {
+      flag <<= 1;
+
+      if (CompilerLogic::isStacksafeArg(scope, ImportHelper::importReference(targetModule, targetSignatures[i], scope.module)))
+         stackSafeAttr |= flag;
+   }
+}
+
+bool MessagingLogic :: isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature,
+   ref_t* sourceSignatures, size_t sourceLen)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = targetModule->resolveSignature(targetSignature, targetSignatures);
+
+   if (sourceLen == 0 && len == 0)
+      return true;
+
+   if (len < 1)
+      return false;
+
+   for (size_t i = 0; i < sourceLen; i++) {
+      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
+
+      if (!CompilerLogic::isCompatible(scope, { ImportHelper::importReference(targetModule, targetSign, scope.module) }, { sourceSignatures[i] }, CompatibleMode::IgnoreNils))
+         return false;
+   }
+
+   return true;
+}
+
+bool MessagingLogic :: isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature,
+   ref_t* sourceSignatures, size_t sourceLen)
+{
+   ref_t targetSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(targetSignature, targetSignatures);
+   if (sourceLen == 0 && len == 0)
+      return true;
+
+   if (len < 1)
+      return false;
+
+   for (size_t i = 0; i < sourceLen; i++) {
+      ref_t targetSign = i < len ? targetSignatures[i] : targetSignatures[len - 1];
+      if (!CompilerLogic::isCompatible(scope, { targetSign }, { sourceSignatures[i] }, CompatibleMode::IgnoreNils))
+         return false;
+   }
+
+   return true;
+}
+
+bool MessagingLogic :: isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage)
+{
+   ref_t sourceSignatures[ARG_COUNT];
+   size_t len = scope.module->resolveSignature(getSignature(scope, sourceMessage), sourceSignatures);
+
+   return isSignatureCompatible(scope, getSignature(scope, targetMessage), sourceSignatures, len);
+}
+
+
+bool MessagingLogic :: isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef,
+   mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr)
+{
+   ref_t targetSignRef = getSignature(scope, targetMessage);
+
+   if (isSignatureCompatible(scope, targetSignRef, sourceSignature, len)) {
+      if (CompilerLogic::isStacksafeArg(scope, targetRef))
+         stackSafeAttr |= 1;
+
+      setSignatureStacksafe(scope, targetSignRef, stackSafeAttr);
+
+      return true;
+   }
+   else return false;
+}
+
+bool MessagingLogic :: isMessageSupported(ClassInfo& info, mssg_t message)
+{
+   CheckMethodResult dummy = {};
+
+   return isMessageSupported(info, message, dummy);
+}
+
+bool MessagingLogic :: isMessageSupported(ClassInfo& info, mssg_t message, CheckMethodResult& result)
+{
+   if (!checkMethod(info, message, result)) {
+      if (checkMethod(info, message | STATIC_MESSAGE, result)) {
+         if (result.visibility == Visibility::Private)
+            return true;
+
+         result = {};
+      }
+      mssg_t protectedMessage = info.attributes.get({ message, ClassAttribute::ProtectedAlias });
+      if (protectedMessage) {
+         if (checkMethod(info, protectedMessage, result)) {
+            result.visibility = Visibility::Protected;
+            return true;
+         }
+      }
+      mssg_t internalMessage = info.attributes.get({ message, ClassAttribute::InternalAlias });
+      if (internalMessage) {
+         if (checkMethod(info, internalMessage, result)) {
+            result.visibility = Visibility::Internal;
+            return true;
+         }
+      }
+   }
+   else return true;
+
+   return false;
+}
+
+mssg_t MessagingLogic :: resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef,
+   ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall)
+{
+   if (!targetRef)
+      return 0;
+
+   ClassInfo info;
+   if (CompilerLogic::defineClassInfo(scope, info, targetRef)) {
+      if (CompilerLogic::isStacksafeArg(info.header.flags))
+         stackSafeAttr |= 1;
+
+      // check if it is non public message
+      mssg_t nonPublicMultiMessage = resolveNonpublic(weakMessage, info, selfCall, CompilerLogic::isInternalOp(scope, targetRef));
+      if (nonPublicMultiMessage != 0) {
+         if (!implicitSignatureRef && test(nonPublicMultiMessage, STATIC_MESSAGE) && getArgCount(weakMessage) > 1) {
+            implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage) - 1);
+         }
+
+         mssg_t resolved = resolveMultimethod(scope, nonPublicMultiMessage, targetRef, implicitSignatureRef, stackSafeAttr, selfCall);
+         if (!resolved) {
+            return nonPublicMultiMessage;
+         }
+         else return resolved;
+      }
+
+      // allow to check the variadic message without arguments
+      if (!implicitSignatureRef && ((weakMessage & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE))
+         return 0;
+
+      if (!implicitSignatureRef) {
+         implicitSignatureRef = mapWeakSignature(scope, getArgCount(weakMessage));
+      }
+
+      ref_t signatures[ARG_COUNT];
+      size_t signatureLen = scope.module->resolveSignature(implicitSignatureRef, signatures);
+
+      ref_t listRef = info.attributes.get({ weakMessage, ClassAttribute::OverloadList });
+      if (listRef) {
+         auto sectionInfo = scope.getSection(scope.module->resolveReference(listRef), mskConstArray, true);
+         if (!sectionInfo.section || sectionInfo.section->length() < 4)
+            return 0;
+
+         MemoryReader reader(sectionInfo.section);
+         pos_t position = sectionInfo.section->length() - 4;
+         mssg_t foundMessage = 0;
+         while (position != 0) {
+            reader.seek(position - 8);
+            mssg_t argMessage = reader.getRef();
+            ref_t argSign = 0;
+            sectionInfo.module->resolveAction(getAction(argMessage), argSign);
+
+            if (sectionInfo.module == scope.module) {
+               if (isSignatureCompatible(scope, argSign, signatures, signatureLen)) {
+                  setSignatureStacksafe(scope, argSign, stackSafeAttr);
+
+                  foundMessage = argMessage;
+               }
+            }
+            else {
+               if (isSignatureCompatible(scope, sectionInfo.module,
+                  argSign, signatures, signatureLen))
+               {
+                  setSignatureStacksafe(scope, sectionInfo.module, argSign, stackSafeAttr);
+
+                  foundMessage = ImportHelper::importMessage(sectionInfo.module, argMessage, scope.module);
+               }
+            }
+
+            position -= 8;
+         }
+         return foundMessage;
+      }
+   }
+
+   return 0;
+}
+
+mssg_t MessagingLogic :: retrieveByRefHandler(ModuleScopeBase& scope, ref_t reference, mssg_t message)
+{
+   CheckMethodResult result = {};
+   if (checkMethod(scope, reference, message, result)) {
+      return result.byRefHandler;
+   }
+
+   return 0;
+}
+
+MessageResolution MessagingLogic :: resolveMessageAtCompileTime(MessagingOperator& op, ModuleScopeBase& scope,
+   MessagingScope& opScope, bool checkByRefHandler)
+{
+   MessageResolution resolution = {};
+
+   if (opScope.weakOp)
+      return { opScope.context.weakMessage };
+
+   // try to resolve the message as is
+   int resolvedStackSafeAttr = 0;
+   resolution.message = resolveMultimethod(scope, opScope.context.weakMessage, opScope.targetRef,
+      opScope.context.implicitSignatureRef, resolvedStackSafeAttr, opScope.isSelfCall);
+
+   if (resolution.message != 0) {
+      resolution.resolved = true;
+      resolution.stackSafeAttr = resolvedStackSafeAttr;
+      if (checkByRefHandler)
+         resolution.byRefHandler = retrieveByRefHandler(scope, opScope.targetRef, resolution.message);
+
+      // if the object handles the compile-time resolved message - use it
+      return resolution;
+   }
+
+   // check if the object handles the variadic message
+   if (opScope.targetRef && !opScope.ignoreVariadics) {
+      resolvedStackSafeAttr = 0;
+      resolution.message = MessagingLogic::resolveMultimethod(scope,
+         resolveVariadicMessage(scope, opScope.context.weakMessage),
+         opScope.targetRef, opScope.context.implicitSignatureRef, resolvedStackSafeAttr, opScope.isSelfCall);
+
+      if (resolution.message != 0) {
+         resolution.resolved = true;
+         resolution.stackSafeAttr = resolvedStackSafeAttr;
+         if (checkByRefHandler)
+            resolution.byRefHandler = retrieveByRefHandler(scope, opScope.targetRef, resolution.message);
+
+         // if the object handles the compile-time resolved variadic message - use it
+         return resolution;
+      }
+   }
+
+   if (!opScope.ignoreExtensions) {
+      // check the existing extensions if allowed
+      // if the object handles the weak message - do not use extensions
+      CheckMethodResult dummy = {};
+      if (resolveAndValidate(op, scope, opScope, dummy, false, true)) {
+         resolution.message = opScope.context.weakMessage;
+         if (checkByRefHandler) {
+            resolution.byRefHandler = dummy.byRefHandler;
+         }
+
+         return resolution;
+      }
+
+      resolvedStackSafeAttr = 0;
+      resolution.message = opScope.context.weakMessage;
+      ref_t extensionRef = op.mapExtension(opScope.targetRef, opScope.context, 
+         resolution.message, resolvedStackSafeAttr);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the compile-time resolved message - use it
+         resolution.resolved = true;
+         resolution.extensionRef = extensionRef;
+         resolution.stackSafeAttr = resolvedStackSafeAttr;
+         if (checkByRefHandler)
+            resolution.byRefHandler = MessagingLogic::retrieveByRefHandler(scope, extensionRef, resolution.message);
+
+         return resolution;
+      }
+
+      // HOTFIX : do not check variadic message for the properties
+      if ((opScope.context.weakMessage & PREFIX_MESSAGE_MASK) == PROPERTY_MESSAGE)
+         return { opScope.context.weakMessage };
+
+      // check if the extension handles the variadic message      
+      MessageCallContext variadicContext = { resolveVariadicMessage(scope, opScope.context.weakMessage), opScope.context.implicitSignatureRef };
+      resolvedStackSafeAttr = 0;
+      extensionRef = op.mapExtension(opScope.targetRef, variadicContext, resolution.message, resolvedStackSafeAttr);
+      if (extensionRef != 0) {
+         // if there is an extension to handle the compile-time resolved message - use it
+         resolution.resolved = true;
+         resolution.stackSafeAttr = resolvedStackSafeAttr;
+         resolution.extensionRef = extensionRef;
+         if (checkByRefHandler)
+            resolution.byRefHandler = retrieveByRefHandler(scope, extensionRef, resolution.message);
+
+         return resolution;
+      }
+   }
+   else if (checkByRefHandler) {
+      CheckMethodResult dummy = {};
+      if (resolveCallType(scope, opScope.targetRef, opScope.context.weakMessage, dummy)) {
+         resolution.message = opScope.context.weakMessage;
+         resolution.byRefHandler = dummy.byRefHandler;
+
+         return resolution;
+      }
+   }
+
+   // otherwise - use the weak message
+   return { opScope.context.weakMessage };
+}
+
+MessageResolution MessagingLogic :: resolveByRefHandler(MessagingOperator& op, ModuleScopeBase& scope, MessagingScope& opScope,
+   TypeInfo expectedType)
+{
+   MessagingScope byRefScope = opScope;
+   byRefScope.ignoreVariadics = true;
+
+   if (opScope.weakOp)
+      return {};
+
+   ref_t targetRef = opScope.targetRef;
+
+   pos_t argCount = 0;
+   ref_t actionRef = 0, flags = 0;
+   decodeMessage(opScope.context.weakMessage, actionRef, argCount, flags);
+
+   // HOTFIX : ignore variadic message
+   if ((flags & PREFIX_MESSAGE_MASK) == VARIADIC_MESSAGE)
+      return {};
+
+   if (expectedType.typeRef != 0 && targetRef != 0) {
+      // try to resolve the weak message
+      MessageResolution resolution = resolveMessageAtCompileTime(op, scope, byRefScope, true);
+      if (resolution.resolved || argCount == 1) {
+         ref_t resolvedFlags = resolution.resolved ? getFlags(resolution.message) : flags;
+
+         // check if there is a byref handler for the resolved message or the message has no arguments
+         ref_t resolvedSignRef = 0;
+         ustr_t actionName = scope.module->resolveAction(getAction(resolution.message), resolvedSignRef);
+
+         ref_t byRefType = op.resolveStrongType({ V_OUTWRAPPER, expectedType.typeRef }, true);
+         ref_t byRefSignature = defineByRefSignature(scope, resolvedSignRef, byRefType);
+
+         ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, resolvedFlags);
+
+         if (resolution.byRefHandler && MessagingLogic::isSignatureCompatible(scope, byRefMessage, resolution.byRefHandler)) {
+            byRefMessage = resolution.byRefHandler;
+            scope.module->resolveAction(getAction(byRefMessage), byRefScope.context.implicitSignatureRef);
+
+            resolution.resolved = true;
+         }
+         else {
+            ref_t byRefTarget = resolution.extensionRef ? resolution.extensionRef : targetRef;
+            CheckMethodResult dummy = {};
+            if (MessagingLogic::resolveCallType(scope, byRefTarget, byRefMessage, dummy)) {
+               // NOTE : the original signature is extended with byref handler
+               byRefScope.context.implicitSignatureRef = defineByRefSignature(scope, byRefScope.context.implicitSignatureRef, byRefType);
+
+               resolution.resolved = true;
+            }
+            else resolution.resolved = false;
+         }
+         if (resolution.resolved) {
+            resolution.message = byRefMessage;
+
+            // NOTE : the stack safe attributes are resolved again the target signature
+            // this type we must generate by ref handler to set stacksafe attribute properly
+            op.resolveStrongType({ V_OUTWRAPPER, expectedType.typeRef }, false);
+            MessagingLogic::setSignatureStacksafe(scope, byRefSignature, resolution.stackSafeAttr);
+
+            opScope.context = byRefScope.context;
+            return resolution;
+         }
+      }
+      else if (byRefScope.context.implicitSignatureRef) {
+         // otherwise check if there is a byref handler if at lease a signature exists
+         ref_t dummySignRef = 0;
+         ustr_t actionName = scope.module->resolveAction(actionRef, dummySignRef);
+
+         ref_t byRefType = op.resolveStrongType({ V_OUTWRAPPER, expectedType.typeRef }, true);
+         ref_t byRefSignature = defineByRefSignature(scope, byRefScope.context.implicitSignatureRef, byRefType);
+
+         ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, flags);
+
+         CheckMethodResult dummy = {};
+         if (resolveCallType(scope, targetRef, byRefMessage, dummy)) {
+            // NOTE : we need to generate a wrapper to proper use it
+            op.resolveStrongType({ V_OUTWRAPPER, expectedType.typeRef }, false);
+
+            // NOTE : the original signature is extended with byref handler
+            byRefScope.context.implicitSignatureRef = defineByRefSignature(scope, byRefScope.context.implicitSignatureRef, byRefType);
+
+            resolution.resolved = true;
+            resolution.message = byRefMessage;
+
+            // NOTE : the stack safe attributes are resolved again the target signature
+            setSignatureStacksafe(scope, byRefSignature, resolution.stackSafeAttr);
+
+            opScope.context = byRefScope.context;
+            return resolution;
+         }
+      }
+   }
+
+   return {};
+}
+
+bool MessagingLogic :: checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result)
+{
+   bool methodFound = info.methods.exist(message);
+   if (methodFound) {
+      MethodInfo methodInfo = info.methods.get(message);
+
+      result.message = message;
+      result.outputInfo = { methodInfo.outputRef };
+      if (MethodInfo::checkVisibility(methodInfo, MethodHint::Private)) {
+         result.visibility = Visibility::Private;
+      }
+      else if (MethodInfo::checkVisibility(methodInfo, MethodHint::Protected)) {
+         result.visibility = Visibility::Protected;
+      }
+      else if (MethodInfo::checkVisibility(methodInfo, MethodHint::Internal)) {
+         result.visibility = Visibility::Internal;
+      }
+      else result.visibility = Visibility::Public;
+
+      // check nillable attribute
+      result.outputInfo.nillable = test(methodInfo.hints, (ref_t)MethodHint::Nillable);
+
+      result.throwOp = test(methodInfo.hints, (ref_t)MethodHint::ThrowOp);
+
+      result.kind = methodInfo.hints & (ref_t)MethodHint::Mask;
+      if (result.kind == (ref_t)MethodHint::Normal) {
+         // check if the normal method can be called directly / semi-directly
+         if (MethodInfo::checkHint(methodInfo, MethodHint::Indexed)) {
+            result.kind = (ref_t)MethodHint::ByIndex;
+         }
+         else if (test(info.header.flags, elSealed)) {
+            result.kind = (ref_t)MethodHint::Sealed; // mark it as sealed - because the class is sealed
+         }
+         else if (test(info.header.flags, elClosed)) {
+            result.kind = (ref_t)MethodHint::Fixed; // mark it as fixed - because the class is closed
+         }
+      }
+
+      result.stackSafe = test(methodInfo.hints, (ref_t)MethodHint::Stacksafe);
+      result.nillableArgs = methodInfo.nillableArgs;
+      result.checkNillableArgs = test(methodInfo.extra_hints, (ref_t)MethodExtraHint::EnforcedNillableArgs);
+      result.byRefHandler = methodInfo.byRefHandler;
+
+      if (test(methodInfo.hints, (ref_t)MethodHint::Constant)) {
+         result.constRef = info.attributes.get({ message, ClassAttribute::ConstantMethod });
+      }
+
+      if (test(methodInfo.hints, (ref_t)MethodHint::Initializer)) {
+         result.kind = (ref_t)MethodHint::Sealed;
+      }
+
+      if (result.retrieveGetter && info.attributes.exist({ message, ClassAttribute::FieldGetter }) && result.kind == (ref_t)MethodHint::Sealed) {
+         result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldGetter });
+      }
+      else result.retrieveGetter = false;
+
+      if (result.retrieveSetter && info.attributes.exist({ message, ClassAttribute::FieldSetter }) && result.kind == (ref_t)MethodHint::Sealed) {
+         result.getterFieldOffset = info.attributes.get({ message, ClassAttribute::FieldSetter });
+      }
+      else result.retrieveSetter = false;
+
+      if (test(methodInfo.extra_hints, (ref_t)MethodExtraHint::HasInlineExpr)) {
+         result.inlineExprRef = info.attributes.get({ message, ClassAttribute::InlineExprRef });
+      }
+
+      return true;
+   }
+   else return false;
+}
+
+bool MessagingLogic :: checkMethod(ModuleScopeBase& scope, ref_t classRef, mssg_t message, CheckMethodResult& result)
+{
+   ClassInfo info;
+   if (classRef && CompilerLogic::defineClassInfo(scope, info, classRef)) {
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
+      }
+      else if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
+      return checkMethod(info, message, result);
+   }
+   else return false;
+}
+
+
+bool MessagingLogic :: resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message,
+   CheckMethodResult& result)
+{
+   if (!classRef)
+      classRef = scope.buildins.superReference;
+
+   ClassInfo info;
+   if (CompilerLogic::defineClassInfo(scope, info, classRef)) {
+      if (testany(info.header.flags, elWithVariadics)) {
+         result.withVariadicDispatcher = true;
+      }
+      else if (test(info.header.flags, elWithCustomDispatcher))
+         result.withCustomDispatcher = true;
+
+      return MessagingLogic::isMessageSupported(info, message, result);
+   }
+
+   return false;
+}
+
+mssg_t MessagingLogic :: resolveVariadicMessage(ModuleScopeBase& scope, mssg_t message)
+{
+   pos_t argCount = 0;
+   ref_t actionRef = 0, flags = 0, dummy = 0;
+   decodeMessage(message, actionRef, argCount, flags);
+
+   ustr_t actionName = scope.module->resolveAction(actionRef, dummy);
+
+   int argMultuCount = test(message, FUNCTION_MESSAGE) ? 1 : 2;
+
+   return encodeMessage(scope.module->mapAction(actionName, 0, false), argMultuCount, flags | VARIADIC_MESSAGE);
+}
+
+bool MessagingLogic :: checkCallValidity(MessagingOperator& op, ModuleScopeBase& scope, MessagingScope& opScope,
+   CheckMethodResult& result, bool allowPrivateCall)
+{
+   switch (result.visibility) {
+      case Visibility::Private:
+         if (allowPrivateCall || opScope.isSelfCall || opScope.isClassClassOperation) {
+            return true;
+         }
+         break;
+      case Visibility::Protected:
+         if (opScope.isSelfCall || opScope.isSuperCall) {
+            return true;
+         }
+         break;
+      case Visibility::Internal:
+      {
+         if (CompilerLogic::isInternalOp(scope, opScope.targetRef)) {
+            return true;
+         }
+
+         ref_t classFlags, classRef;
+         if (op.getScopeClassInfo(classFlags, classRef)) {
+            return test(classFlags, elTemplatebased) && CompilerLogic::isTemplateInternalOp(scope, classRef, opScope.targetRef);
+         }
+         break;
+      }
+      case Visibility::Public:
+         return true;
+      default:
+         break;
+   }
+
+   return false;
+}
+
+bool MessagingLogic :: resolveAndValidate(MessagingOperator& op, ModuleScopeBase& scope, MessagingScope& opScope,
+   CheckMethodResult& result, bool weakCall, bool allowPrivateCall)
+{
+   if (weakCall
+      ? false : resolveCallType(scope, opScope.targetRef, opScope.context.weakMessage, result))
+   {
+      return checkCallValidity(op, scope, opScope, result, allowPrivateCall);
+   }
+
+   return false;
+}
+
+ref_t MessagingLogic :: defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef)
+{
+   ref_t targetSignatures[ARG_COUNT];
+
+   size_t len = signRef != 0 ? scope.module->resolveSignature(signRef, targetSignatures) : 0;
+   targetSignatures[len++] = resultRef;
+
+   return scope.module->mapSignature(targetSignatures, len, false);
 }

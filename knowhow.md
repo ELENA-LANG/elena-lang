@@ -1113,6 +1113,7 @@ It is possible to declare a simple tuple allowing to pass one of unrelated objec
 as a single parameter
 
     import extensions;
+    import system'collections;
     
     A;
     B;

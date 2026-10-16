@@ -112,26 +112,17 @@ namespace elena_lang
       ref_t generateOverloadList(CompilerBase* compiler, ModuleScopeBase& scope, MethodHint targetType, ClassInfo::MethodMap& methods,
          mssg_t message, void* param, ref_t(*resolve)(void*, ref_t));
 
-      bool isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen);
-      bool isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature, 
-         ref_t* sourceSignatures, size_t sourceLen);
-
-      void setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule,
-         ref_t targetSignature, int& stackSafeAttr);
-
       void loadOperations();
 
-      ref_t getFlags(ModuleScopeBase& scope, ref_t reference);
+      static ref_t getFlags(ModuleScopeBase& scope, ref_t reference);
 
    public:
       BuildKey resolveOp(ModuleScopeBase& scope, int operatorId, bool unwrapTarget, ref_t* arguments, size_t length, ref_t& outputRef);
       BuildKey resolveNewOp(ModuleScopeBase& scope, ref_t loperand, ref_t* arguments, pos_t length);
 
-      bool defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false);
+      static bool defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, ref_t reference, bool headerOnly = false, bool fieldsOnly = false);
 
       ref_t getClassClassRef(ModuleScopeBase& scope, ref_t targetRef);
-
-      void setSignatureStacksafe(ModuleScopeBase& scope, ref_t targetSignature, int& stackSafeAttr);
 
       SizeInfo defineStructSize(ClassInfo& info);
       SizeInfo defineStructSize(ModuleScopeBase& scope, ref_t reference);
@@ -154,12 +145,11 @@ namespace elena_lang
 
       bool isTryDispatchAllowed(ModuleScopeBase& scope, mssg_t message);
       mssg_t defineTryDispatcher(ModuleScopeBase& scope/*, mssg_t message*/);
-      ref_t defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef);
 
-      bool isRole(ref_t flags);
-      bool isAbstract(ref_t flags);
-      bool isReadOnly(ref_t flags);
-      bool withVariadicsMethods(ref_t flags);
+      static bool isRole(ref_t flags);
+      static bool isAbstract(ref_t flags);
+      static bool isReadOnly(ref_t flags);
+      static bool withVariadicsMethods(ref_t flags);
 
       bool isNumericData(ref_t flags);
 
@@ -167,22 +157,22 @@ namespace elena_lang
 
       bool isDynamic(ModuleScopeBase& scope, ref_t reference);
       bool isDynamic(ref_t flags);
-      bool isEmbeddableArray(ref_t flags);
-      bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
+      static bool isEmbeddableArray(ref_t flags);
+      static bool isEmbeddableArray(ModuleScopeBase& scope, ref_t reference);
 
-      bool isEmbeddableStruct(ref_t flags);
-      bool isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo);
+      static bool isEmbeddableStruct(ref_t flags);
+      static bool isEmbeddableStruct(ModuleScopeBase& scope, TypeInfo typeInfo);
 
-      bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo);
-      bool isEmbeddableAndReadOnly(ref_t flags);
-      bool isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo);
-      bool isEmbeddable(ref_t flags);
+      static bool isEmbeddableAndReadOnly(ModuleScopeBase& scope, TypeInfo typeInfo);
+      static bool isEmbeddableAndReadOnly(ref_t flags);
+      static bool isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo);
+      static bool isEmbeddable(ref_t flags);
 
       bool isWrapper(ModuleScopeBase& scope, ref_t reference);
       bool isWrapper(ref_t flags);
 
-      bool isStacksafeArg(ModuleScopeBase& scope, ref_t reference);
-      bool isStacksafeArg(ref_t flags);
+      static bool isStacksafeArg(ModuleScopeBase& scope, ref_t reference);
+      static bool isStacksafeArg(ref_t flags);
 
       bool isClosedClass(ref_t flags);
       bool isClosedClass(ModuleScopeBase& scope, ref_t reference);
@@ -223,13 +213,9 @@ namespace elena_lang
       bool readExtMessageEntry(ModuleBase* module, MemoryBase* section, ExtensionMap& map, 
          ExtensionTemplateMap& extensionTemplates, ModuleScopeBase* scope);
 
-      bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, CompatibleMode mode);
-      bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
+      static bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, CompatibleMode mode);
+      static bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
       bool isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible);
-
-      bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
-      bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef, 
-         mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr);
 
       mssg_t retrieveImplicitConstructor(ModuleScopeBase& scope, ref_t targetRef, ref_t signRef, 
          pos_t signLen, int& stackSafeAttrs);
@@ -238,18 +224,6 @@ namespace elena_lang
 
       ConversionRoutine retrieveConversionRoutine(CompilerBase* compiler, ModuleScopeBase& scope,
          ref_t targetRef, TypeInfo sourceInfo, bool directConversion, bool allowNonStructBoxing);
-
-      bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
-      bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);
-
-      mssg_t retrieveByRefHandler(ModuleScopeBase& scope, ref_t reference, mssg_t message);
-
-      // check if internal / protected / private / public message is declared
-      bool isMessageSupported(ClassInfo& info, mssg_t message, CheckMethodResult& result);
-      bool isMessageSupported(ClassInfo& info, mssg_t message);
-
-      bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message, 
-         CheckMethodResult& result);
 
       mssg_t resolveSingleDispatch(ModuleScopeBase& scope, ref_t reference, ref_t weakMessage, bool selfCall, int& nillableArgs);
       mssg_t resolveFunctionSingleDispatch(ModuleScopeBase& scope, ref_t reference/*, int& nillableArgs*/);
@@ -263,9 +237,6 @@ namespace elena_lang
       bool verifyMultimethod(ModuleScopeBase& scope, ClassInfo& info, mssg_t message);
 
       bool validateDispatcherType(ClassInfo& classInfo);
-
-      mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef, 
-         ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall);
 
       virtual ref_t resolveExtensionTemplate(ModuleScopeBase& scope, CompilerBase* compiler, ustr_t pattern,
          ref_t signatureRef, /*ustr_t ns, */ExtensionMap* outerExtensionList);
@@ -298,7 +269,7 @@ namespace elena_lang
 
       void generateVirtualDispatchMethod(ModuleScopeBase& scope, ref_t parentRef, VirtualMethods& methods);
 
-      void retrieveTemplateNs(ModuleScopeBase& scope, ref_t reference, ReferenceProperName& templateName)
+      static void retrieveTemplateNs(ModuleScopeBase& scope, ref_t reference, ReferenceProperName& templateName)
       {
          templateName.copyName(scope.resolveFullName(reference));
 
@@ -309,7 +280,7 @@ namespace elena_lang
          templateName.replaceAll('@', '\'', 0);
       }
 
-      bool isTemplateInternalOp(ModuleScopeBase& scope, ref_t reference1, ref_t reference2)
+      static bool isTemplateInternalOp(ModuleScopeBase& scope, ref_t reference1, ref_t reference2)
       {
          // if it is the same class - an internal operation is allowed
          if (reference1 == reference2)
@@ -331,7 +302,7 @@ namespace elena_lang
             return (*templateNs).compare(*referenceNs);
          }
       }
-      bool isInternalOp(ModuleScopeBase& scope, ref_t reference)
+      static bool isInternalOp(ModuleScopeBase& scope, ref_t reference)
       {
          ustr_t referenceName = scope.resolveFullName(reference);
          if (isWeakReference(referenceName)) {
@@ -397,6 +368,76 @@ namespace elena_lang
       }
    };
 
+   struct MessagingScope
+   {
+      MessageCallContext context;
+      ref_t              targetRef;
+      bool               weakOp;
+      bool               isSelfCall;
+      bool               isSuperCall;
+      bool               isClassClassOperation;
+
+      bool               ignoreVariadics;
+      bool               ignoreExtensions;
+   };
+
+   class MessagingOperator
+   {
+   public:
+      virtual ref_t resolveStrongType(TypeInfo typeInfo, bool declarationMode) = 0;
+
+      virtual bool getScopeClassInfo(ref_t& flags, ref_t& classRef) = 0;
+
+      virtual ref_t mapExtension(ref_t targetRef, MessageCallContext& context, mssg_t& message, int& resolvedStackSafeAttr) = 0;
+   };
+
+   // --- MessagingLogic ---
+   class MessagingLogic
+   {
+      static void setSignatureStacksafe(ModuleScopeBase& scope, ModuleBase* targetModule,
+         ref_t targetSignature, int& stackSafeAttr);
+
+      static bool isSignatureCompatible(ModuleScopeBase& scope, ref_t targetSignature, ref_t* sourceSignatures, size_t sourceLen);
+      static bool isSignatureCompatible(ModuleScopeBase& scope, ModuleBase* targetModule, ref_t targetSignature,
+         ref_t* sourceSignatures, size_t sourceLen);
+
+   public:
+      static ref_t defineByRefSignature(ModuleScopeBase& scope, ref_t signRef, ref_t resultRef);
+
+      static bool isSignatureCompatible(ModuleScopeBase& scope, mssg_t targetMessage, mssg_t sourceMessage);
+
+      static void setSignatureStacksafe(ModuleScopeBase& scope, ref_t targetSignature, int& stackSafeAttr);
+
+      static bool isMessageCompatibleWithSignature(ModuleScopeBase& scope, ref_t targetRef,
+         mssg_t targetMessage, ref_t* sourceSignature, size_t len, int& stackSafeAttr);
+
+      // check if internal / protected / private / public message is declared
+      static bool isMessageSupported(ClassInfo& info, mssg_t message, CheckMethodResult& result);
+      static bool isMessageSupported(ClassInfo& info, mssg_t message);
+
+      static bool checkMethod(ClassInfo& info, mssg_t message, CheckMethodResult& result);
+      static bool checkMethod(ModuleScopeBase& scope, ref_t reference, mssg_t message, CheckMethodResult& result);
+
+      static mssg_t resolveVariadicMessage(ModuleScopeBase& scope, mssg_t message);
+      static bool resolveCallType(ModuleScopeBase& scope, ref_t classRef, mssg_t message,
+         CheckMethodResult& result);
+
+      static mssg_t retrieveByRefHandler(ModuleScopeBase& scope, ref_t reference, mssg_t message);
+
+      static mssg_t resolveMultimethod(ModuleScopeBase& scope, mssg_t weakMessage, ref_t targetRef,
+         ref_t implicitSignatureRef, int& stackSafeAttr, bool selfCall);
+
+      static bool resolveAndValidate(MessagingOperator& op, ModuleScopeBase& scope, MessagingScope& opScope,
+         CheckMethodResult& result, bool weakCall, bool allowPrivateCall);
+      static bool checkCallValidity(MessagingOperator& op, ModuleScopeBase& scope, MessagingScope& opScope,
+         CheckMethodResult& result, bool allowPrivateCall);
+
+      static MessageResolution resolveMessageAtCompileTime(MessagingOperator& op, ModuleScopeBase& scope, MessagingScope& opScope,
+         bool checkByRefHandler);
+
+      static MessageResolution resolveByRefHandler(MessagingOperator& op, ModuleScopeBase& scope, MessagingScope& opScope,
+         TypeInfo expectedType);
+   };
 }
 
 #endif // COMPILERLOGIC_H

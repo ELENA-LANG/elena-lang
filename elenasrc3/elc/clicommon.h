@@ -532,6 +532,61 @@ struct FieldAttributes
    bool     ignoreDuplicates;
 };
 
+
+// --- MessageResolution ---
+struct MessageResolution
+{
+   bool   resolved;
+   mssg_t message;
+   ref_t  extensionRef;
+   int    stackSafeAttr;
+   mssg_t byRefHandler;
+
+   MessageResolution()
+   {
+      this->resolved = false;
+      this->message = 0;
+      this->extensionRef = 0;
+      this->stackSafeAttr = 0;
+      this->byRefHandler = 0;
+   }
+   MessageResolution(bool resolved, mssg_t message)
+   {
+      this->resolved = resolved;
+      this->message = message;
+      this->extensionRef = 0;
+      this->stackSafeAttr = 0;
+      this->byRefHandler = 0;
+   }
+   MessageResolution(mssg_t message)
+   {
+      this->resolved = false;
+      this->message = message;
+      this->extensionRef = 0;
+      this->stackSafeAttr = 0;
+      this->byRefHandler = 0;
+   }
+};
+
+struct MessageCallContext
+{
+   mssg_t weakMessage;
+   ref_t  implicitSignatureRef;
+   pos_t  templateArgCount;
+   ref_t* templateArgs;
+
+   MessageCallContext()
+      : weakMessage(0), implicitSignatureRef(0), templateArgCount(0), templateArgs(nullptr)
+   {
+
+   }
+   MessageCallContext(mssg_t weakMessage, ref_t implicitSignatureRef)
+      : weakMessage(weakMessage), implicitSignatureRef(implicitSignatureRef), templateArgCount(0), templateArgs(nullptr)
+   {
+
+   }
+};
+
 // --- CompilerBase ---
 typedef Map<ustr_t, ref_t, allocUStr, freeUStr>          ForwardMap;
 

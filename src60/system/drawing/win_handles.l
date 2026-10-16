@@ -333,6 +333,8 @@ public sealed struct PIXELFORMATDESCRIPTOR
   int choosePixelFormat(HDC dc)
   {
      int pixelFormat := extern GDI32.ChoosePixelFormat(dc, self);
+     
+     ^ pixelFormat
   }
   
   int setPixelFormat(HDC dc, int format)

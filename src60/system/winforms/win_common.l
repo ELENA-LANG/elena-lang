@@ -83,6 +83,7 @@ public const int EN_CHANGE        = 0300h;
 public const int WS_ELENAWINDOW   = 0100Bh;
 public const int CS_VREDRAW       = 00001h;
 public const int CS_HREDRAW       = 00002h;
+public const int CS_OWNDC         = 00020h;
 
 public const int HTCLIENT         = 1;
 

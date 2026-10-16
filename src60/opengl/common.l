@@ -1,8 +1,10 @@
 import extensions;
 
-public class MyClass
+public sealed class OpenGLException : Exception
 {
-   constructor()
+   constructor new(string message)
+      <= super new(message)
    {
    }
+   
 }

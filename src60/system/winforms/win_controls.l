@@ -45,7 +45,7 @@ public sealed const struct WindowHandle
             paramPtr)
       };
 
-      int err := extern KERNEL32.GetLastError();
+//      int err := extern KERNEL32.GetLastError();
 
       if (h==0)
          { WinFormsException.raise() };
