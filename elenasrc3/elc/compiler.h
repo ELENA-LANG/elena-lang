@@ -1577,13 +1577,12 @@ namespace elena_lang
          mssg_t resolveMessageAtCompileTime(ObjectInfo source, bool ignoreVariadics, bool asyncOp, MessageCallContext& callContext,
             ref_t& expectedSignRef, int& resolvedNillableArgs, ExpressionAttribute& paramMode);
 
-         ObjectInfo compileLookAhead(SyntaxNode node,
-            ref_t targetRef, ExpressionAttribute attrs);
+         ObjectInfo compileLookAhead(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
 
-         ObjectInfo compileMessageOperation(SyntaxNode node, ref_t targetRef, ExpressionAttribute attrs);
-         ObjectInfo compilePropertyOperation(SyntaxNode node, ref_t targetRef, ExpressionAttribute attrs);
-         ObjectInfo compileNillableMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
-         ObjectInfo compileNotNilMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs);
+         ObjectInfo compileMessageOperation(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
+         ObjectInfo compilePropertyOperation(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
+         ObjectInfo compileNillableMessageOperation(SyntaxNode node, TypeInfo expectedType, ExpressionAttribute attrs);
+         ObjectInfo compileNotNilMessageOperation(SyntaxNode node, TypeInfo expectedType, ExpressionAttribute attrs);
          ObjectInfo compileAltMessageOperation(SyntaxNode node/*, ref_t expectedRef, ExpressionAttribute attrs*/);
 
          void compileCallOperation(SyntaxNode node, ObjectInfo& target, bool found, 
@@ -1633,7 +1632,7 @@ namespace elena_lang
          ObjectInfo validateObject(SyntaxNode node, ObjectInfo retVal,
             ref_t targetRef, bool noPrimitives, bool paramMode, bool dynamicRequired, bool nillable);
 
-         ObjectInfo compileExternalOp(SyntaxNode node, ref_t nameRef, ArgumentsInfo& arguments, ref_t expectedRef);
+         ObjectInfo compileExternalOp(SyntaxNode node, ref_t nameRef, ArgumentsInfo& arguments, TypeInfo expectedType);
 
          ObjectInfo compileNewArrayOp(SyntaxNode node, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
 
@@ -1746,7 +1745,7 @@ namespace elena_lang
          ObjectInfo handleReturning(SyntaxNode node, ObjectInfo retVal, ExpressionAttribute mode, bool byRefHandler,
             bool nillableOutput, TypeInfo outputInfo);
 
-         ObjectInfo compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode);
+         ObjectInfo compile(SyntaxNode node, TypeInfo targetType, ExpressionAttribute mode);
          ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);

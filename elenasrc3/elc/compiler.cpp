@@ -13887,7 +13887,7 @@ ObjectInfo Compiler::Expression :: compileReturning(SyntaxNode node, ExpressionA
    return retVal;
 }
 
-ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression :: compile(SyntaxNode node, TypeInfo targetType, ExpressionAttribute mode)
 {
    bool paramMode = EAttrs::testAndExclude(mode, EAttr::Parameter);
    bool noPrimitives = EAttrs::testAndExclude(mode, EAttr::NoPrimitives);
@@ -13901,21 +13901,21 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
    switch (current.key) {
       case SyntaxKey::MessageOperation:
          if (lookaheadMode) {
-            retVal = compileLookAhead(current, targetRef, mode);
+            retVal = compileLookAhead(current, targetType, mode);
          }
-         else retVal = compileMessageOperation(current, targetRef, mode);
+         else retVal = compileMessageOperation(current, targetType, mode);
          break;
       case SyntaxKey::PropertyOperation:
          if (lookaheadMode) {
-            retVal = compileLookAhead(current, targetRef, mode);
+            retVal = compileLookAhead(current, targetType, mode);
          }
-         else retVal = compilePropertyOperation(current, targetRef, mode);
+         else retVal = compilePropertyOperation(current, targetType, mode);
          break;
       case SyntaxKey::NilMessageOperation:
-         retVal = compileNillableMessageOperation(current, targetRef, mode);
+         retVal = compileNillableMessageOperation(current, targetType, mode);
          break;
       case SyntaxKey::NotNilMessageOperation:
-         retVal = compileNotNilMessageOperation(current, targetRef, mode);
+         retVal = compileNotNilMessageOperation(current, targetType, mode);
          break;
       case SyntaxKey::AltMessageOperation:
          retVal = compileAltMessageOperation(current/*, targetRef, mode*/);
@@ -13943,10 +13943,10 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
       case SyntaxKey::ShrOperation:
       case SyntaxKey::NegateOperation:
       case SyntaxKey::XorOperation:
-         retVal = compileOperation(current, (int)current.key - OPERATOR_MAKS, targetRef, mode);
+         retVal = compileOperation(current, (int)current.key - OPERATOR_MAKS, targetType.typeRef, mode);
          break;
       case SyntaxKey::ValueOperation:
-         retVal = compileValueOperation(current, (int)current.key - OPERATOR_MAKS, targetRef, mode);
+         retVal = compileValueOperation(current, (int)current.key - OPERATOR_MAKS, targetType.typeRef, mode);
          break;
       case SyntaxKey::ExprValOperation:
       case SyntaxKey::SizeOperation:
@@ -13972,17 +13972,17 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
       case SyntaxKey::DivAssignOperation:
       case SyntaxKey::IncOperation:
       case SyntaxKey::DecOperation:
-         retVal = compileAssignOperation(current, (int)current.key - OPERATOR_MAKS, targetRef);
+         retVal = compileAssignOperation(current, (int)current.key - OPERATOR_MAKS, targetType.typeRef);
          break;
       case SyntaxKey::AndOperation:
       case SyntaxKey::OrOperation:
          retVal = compileBoolOperation(current, (int)current.key - OPERATOR_MAKS);
-         if (targetRef)
-            typecastObject(current, retVal, targetRef, EAttrs::test(mode, EAttr::Nillable));
+         if (targetType.typeRef)
+            typecastObject(current, retVal, targetType.typeRef, EAttrs::test(mode, EAttr::Nillable));
 
          break;
       case SyntaxKey::IndexerOperation:
-         retVal = compileIndexerOperation(current, (int)current.key - OPERATOR_MAKS, targetRef);
+         retVal = compileIndexerOperation(current, (int)current.key - OPERATOR_MAKS, targetType.typeRef);
          break;
       case SyntaxKey::IfOperation:
       case SyntaxKey::IfNotOperation:
@@ -14018,8 +14018,8 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          retVal = compile(current.firstChild(), 0, mode);
          break;
       case SyntaxKey::Expression:
-         retVal = compile(current, targetRef, mode);
-         targetRef = 0;
+         retVal = compile(current, targetType, mode);
+         targetType = {};
          break;
       case SyntaxKey::Object:
          retVal = compileObject(current, mode);
@@ -14028,7 +14028,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          retVal = compileNested(current, mode);
          break;
       case SyntaxKey::ClosureBlock:
-         retVal = compileClosure(current, targetRef, mode);
+         retVal = compileClosure(current, targetType.typeRef, mode);
          break;
       case SyntaxKey::LazyOperation:
          retVal = compileClosure(current, 0, mode);
@@ -14037,7 +14037,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          retVal = compileSubCode(current, mode, true);
          break;
       case SyntaxKey::CollectionExpression:
-         retVal = compileCollection(current, mode, targetRef);
+         retVal = compileCollection(current, mode, targetType.typeRef);
          break;
       case SyntaxKey::KeyValueExpression:
          retVal = compileKeyValue(current/*, mode*/);
@@ -14053,17 +14053,17 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          if (!compiler->_logic->validateExpressionAttribute(current.arg.reference, exprAttr))
             scope.raiseError(errInvalidHint, current);;
 
-         return compile(current.nextNode(), targetRef, exprAttr.attrs);
+         return compile(current.nextNode(), targetType, exprAttr.attrs);
          break;
       }
       case SyntaxKey::TupleCollection:
-         retVal = compileTupleCollection(current, targetRef);
+         retVal = compileTupleCollection(current, targetType.typeRef);
          break;
       case SyntaxKey::TupleAssignOperation:
          retVal = compileTupleAssigning(current);
          break;
       case SyntaxKey::ClosureOperation:
-         retVal = compileClosureOperation(current, targetRef);
+         retVal = compileClosureOperation(current, targetType.typeRef);
          break;
       case SyntaxKey::Interpolation:
          retVal = compileInterpolation(current);
@@ -14072,7 +14072,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          compileSwitchOperation(current, 0, false, EAttrs::test(mode, EAttr::NoDebugInfo));
          break;
       case SyntaxKey::SwitchExpression:
-         retVal = compileSwitchOperation(current, targetRef, true, EAttrs::test(mode, EAttr::NoDebugInfo));
+         retVal = compileSwitchOperation(current, targetType.typeRef, true, EAttrs::test(mode, EAttr::NoDebugInfo));
          break;
       case SyntaxKey::None:
       case SyntaxKey::Message:
@@ -14083,7 +14083,7 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, ref_t targetRef, Exp
          break;
    }
 
-   retVal = validateObject(node, retVal, targetRef,
+   retVal = validateObject(node, retVal, targetType.typeRef,
       noPrimitives, paramMode, dynamicRequired, nillableArg);
 
    return retVal;
@@ -14175,7 +14175,7 @@ void Compiler::Expression :: prepareConflictResolution()
    }
 }
 
-ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetRef, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression :: compileLookAhead(SyntaxNode node, TypeInfo targetType, ExpressionAttribute mode)
 {
    BuildNode lastNode = writer->CurrentNode().lastChild();
 
@@ -14183,20 +14183,20 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
 
    switch (node.key) {
       case SyntaxKey::MessageOperation:
-         retVal = compileMessageOperation(node, targetRef, mode);
+         retVal = compileMessageOperation(node, targetType, mode);
          break;
       case SyntaxKey::PropertyOperation:
-         retVal = compilePropertyOperation(node, targetRef, mode);
+         retVal = compilePropertyOperation(node, targetType, mode);
          break;
       default:
          assert(false);
          break;
    }
 
-   bool overrideTarget = !targetRef && compiler->_logic->isEmbeddable(*scope.moduleScope, retVal.typeInfo.typeRef);
+   bool overrideTarget = !targetType.typeRef && compiler->_logic->isEmbeddable(*scope.moduleScope, retVal.typeInfo.typeRef);
    if (overrideTarget || scope.unboxingConflictFound) {
       if (overrideTarget)
-         targetRef = retVal.typeInfo.typeRef;
+         targetType = retVal.typeInfo;
 
       // bad luck, we must rollback the changes and compile again
       if (updatedOuterArgs)
@@ -14217,10 +14217,10 @@ ObjectInfo Compiler::Expression::compileLookAhead(SyntaxNode node, ref_t targetR
 
       switch (node.key) {
          case SyntaxKey::MessageOperation:
-            retVal = compileMessageOperation(node, targetRef, mode);
+            retVal = compileMessageOperation(node, targetType, mode);
             break;
          case SyntaxKey::PropertyOperation:
-            retVal = compilePropertyOperation(node, targetRef, mode);
+            retVal = compilePropertyOperation(node, targetType, mode);
             break;
          default:
             assert(false);
@@ -14596,7 +14596,7 @@ ObjectInfo Compiler::Expression :: compileAltMessageOperation(SyntaxNode node/*,
    return { ObjectKind::Object };
 }
 
-ObjectInfo Compiler::Expression :: compileNotNilMessageOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs)
+ObjectInfo Compiler::Expression :: compileNotNilMessageOperation(SyntaxNode node, TypeInfo expectedType, ExpressionAttribute attrs)
 {
    CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);
 
@@ -14626,7 +14626,7 @@ ObjectInfo Compiler::Expression :: compileNotNilMessageOperation(SyntaxNode node
    current = current.nextNode();
 
    ObjectInfo retVal = compileMessageOperationR(node, current, source, arguments,
-      expectedRef, propMode, false, false, attrs);
+      expectedType, propMode, false, false, attrs);
 
    retVal.typeInfo.nillable = false;
 
@@ -14634,7 +14634,7 @@ ObjectInfo Compiler::Expression :: compileNotNilMessageOperation(SyntaxNode node
 }
 
 ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode node,
-   ref_t expectedRef, ExpressionAttribute attrs)
+   TypeInfo expectedType, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = { };
 
@@ -14681,7 +14681,7 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
    Expression subExpr(compiler, codeScope, *writer, withDebugInfo, updatedOuterArgs);
 
    retVal = subExpr.compileMessageOperationR(node, current, source, arguments,
-      expectedRef, propMode, false, false, attrs);   
+      expectedType, propMode, false, false, attrs);   
 
    retVal.typeInfo.nillable = true;
 
@@ -14697,7 +14697,7 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
 }
 
 ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
-   ref_t expectedRef, ExpressionAttribute attrs)
+   TypeInfo expectedType, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = { };
    ObjectInfo source = {};
@@ -14711,7 +14711,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
       source = scope.mapSelf(true);
 
       return compileMessageOperationR(node, current, source, arguments,
-         expectedRef, false, false, false, attrs);
+         expectedType, false, false, false, attrs);
    }
    else source = compileObject(current, EAttr::Parameter);
 
@@ -14723,7 +14723,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileExternalOp(current, source.reference, arguments, expectedRef);
+         retVal = compileExternalOp(current, source.reference, arguments, expectedType);
          break;
       }
       case TargetMode::CreatingArray:
@@ -14732,7 +14732,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileNewArrayOp(node, source, expectedRef, arguments);
+         retVal = compileNewArrayOp(node, source, expectedType.typeRef, arguments);
          break;
       }
       case TargetMode::Creating:
@@ -14758,7 +14758,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
          current = current.nextNode();
 
          retVal = compileMessageOperationR(node, current, source, arguments,
-            expectedRef, false, probeMode, false, attrs);
+            expectedType, false, probeMode, false, attrs);
 
          break;
       }
@@ -14767,7 +14767,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
 return retVal;
 }
 
-ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t expectedRef, ExpressionAttribute attrs)
+ObjectInfo Compiler::Expression :: compilePropertyOperation(SyntaxNode node, TypeInfo expectedType, ExpressionAttribute attrs)
 {
    ObjectInfo retVal = { };
    ArgumentsInfo arguments;
@@ -14783,7 +14783,7 @@ ObjectInfo Compiler::Expression::compilePropertyOperation(SyntaxNode node, ref_t
    current = current.nextNode();
 
    retVal = compileMessageOperationR(node, current, source, arguments,
-      expectedRef, true, false, true, attrs);
+      expectedType, true, false, true, attrs);
 
    return retVal;
 }
@@ -16186,7 +16186,7 @@ ObjectInfo Compiler::Expression::compileTupleAssigning(SyntaxNode node)
    return exprVal;
 }
 
-ObjectInfo Compiler::Expression::validateObject(SyntaxNode node, ObjectInfo retVal, ref_t targetRef, bool noPrimitives,
+ObjectInfo Compiler::Expression :: validateObject(SyntaxNode node, ObjectInfo retVal, ref_t targetRef, bool noPrimitives,
    bool paramMode, bool dynamicRequired, bool nillable)
 {
    if (!targetRef && retVal.typeInfo.isPrimitive() && noPrimitives) {
@@ -16350,8 +16350,8 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
    return 0;
 }
 
-ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRef,
-   ArgumentsInfo& arguments, ref_t expectedRef)
+ObjectInfo Compiler::Expression :: compileExternalOp(SyntaxNode node, ref_t nameRef,
+   ArgumentsInfo& arguments, TypeInfo expectedType)
 {
    auto externalInfo = compiler->mapExternal(scope, node, nameRef);
    bool stdCall = externalInfo.type == ExternalType::WinApi;
@@ -16429,25 +16429,25 @@ ObjectInfo Compiler::Expression::compileExternalOp(SyntaxNode node, ref_t nameRe
       writer->appendNode(BuildKey::Freeing, align(count,
          scope.moduleScope->stackAlignment));
 
-   if (compiler->_logic->isCompatible(*scope.moduleScope, retType, { expectedRef }, CompatibleMode::IgnoreNils)) {
-      retType = { expectedRef };
+   if (compiler->_logic->isCompatible(*scope.moduleScope, retType, expectedType, CompatibleMode::IgnoreNils)) {
+      retType = expectedType;
    }
    else if (retType.typeRef == V_INT64 &&
-      compiler->_logic->isCompatible(*scope.moduleScope, { V_INT32 }, { expectedRef }, CompatibleMode::IgnoreNils))
+      compiler->_logic->isCompatible(*scope.moduleScope, { V_INT32 }, expectedType, CompatibleMode::IgnoreNils))
    {
       // HOTFIX 64bit : allow to convert the external operation to int32
-      retType = { expectedRef };
+      retType = expectedType;
    }
    else if (retType.typeRef == V_INT32 &&
-      compiler->_logic->isCompatible(*scope.moduleScope, { V_INT64 }, { expectedRef }, CompatibleMode::IgnoreNils))
+      compiler->_logic->isCompatible(*scope.moduleScope, { V_INT64 }, expectedType, CompatibleMode::IgnoreNils))
    {
-      retType = { expectedRef };
+      retType = expectedType;
 
       // HOTFIX : special case - returning long in 32 bit mode
       opNode.appendChild(BuildKey::LongMode);
    }
-   else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_FLOAT64 }, { expectedRef }, CompatibleMode::IgnoreNils)) {
-      retType = { expectedRef };
+   else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_FLOAT64 }, expectedType, CompatibleMode::IgnoreNils)) {
+      retType = expectedType;
 
       return { ObjectKind::FloatExtern, retType, 0 };
    }
@@ -18591,15 +18591,15 @@ bool Compiler::Expression::validateShortCircle(mssg_t message, ObjectInfo target
 {
    ref_t targetRef = 0;
    switch (target.kind) {
-   case ObjectKind::Class:
-      targetRef = target.reference;
-      break;
-   case ObjectKind::ConstructorSelf:
-      targetRef = target.extra;
-      break;
-   default:
-      targetRef = target.typeInfo.typeRef;
-      break;
+      case ObjectKind::Class:
+         targetRef = target.reference;
+         break;
+      case ObjectKind::ConstructorSelf:
+         targetRef = target.extra;
+         break;
+      default:
+         targetRef = target.typeInfo.typeRef;
+         break;
    }
 
    MethodScope* methodScope = Scope::getScope<MethodScope>(scope, Scope::ScopeLevel::Method);
