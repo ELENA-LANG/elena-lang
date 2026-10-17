@@ -424,7 +424,7 @@ public sealed Matrix<T>
       }
    }
 
-   private read(int i, int j, ref T retVal)
+   private read(int i, int j, out T retVal)
    {
       int index := i * _columns + j;
         
@@ -443,7 +443,7 @@ public sealed Matrix<T>
    T at(int i, int j)
      : info("Returns the matrix element at a row <b>i</b> and a column <b>j</b>")
    {
-      self.read(i, j, ref T retVal);
+      self.read(i, j, out T retVal);
       ^ retVal
    }
 
@@ -784,7 +784,7 @@ public sealed class RealMatrix
       _array[index] := v
    }
 
-   read(int i, int j, ref real retVal)
+   read(int i, int j, out real retVal)
      : info("Reads a real value at the specified position and saves it into an output variable")
    {
       int index := i * _columns + j;

@@ -2,7 +2,7 @@ import system'text;
 
 singleton helper
 {
-   readIndex(string s, ref int i, ref int retVal)
+   readIndex(string s, ref int i, out int retVal)
    {
       char ch := $0;
       int  n := 0;
@@ -53,7 +53,7 @@ public extension stringFormatterOp : String
          {
             i := i + 1;
                 
-            helper.readIndex(self, ref i, ref index);
+            helper.readIndex(self, ref i, out index);
                 
             var arg := args[index];
             buffer.write(arg.toString());

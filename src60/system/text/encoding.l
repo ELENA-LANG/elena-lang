@@ -7,7 +7,7 @@ namespace text
    {
       abstract int convertChar(char ch, byte[] byteArray, int index);
 
-      abstract char convertToChar(byte[] byteArray, int index, ref int length);
+      abstract char convertToChar(byte[] byteArray, int index, out int length);
 
       int convertFrom(byte[] byteArray, int index, ref int len, char[] output, int outputIndex, int outputLen)
       {

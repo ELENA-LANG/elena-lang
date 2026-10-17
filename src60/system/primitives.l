@@ -85,25 +85,25 @@ internal singleton PrimitiveArrayOperations
 
 internal singleton PrimitiveRealOperations
 {
-   trunc(real r, ref real retVal) : external(system'core_routines'__realTrunc);
+   trunc(real r, out real retVal) : external(system'core_routines'__realTrunc);
 
-   round(real r, ref real retVal) : external(system'core_routines'__realRound);
+   round(real r, out real retVal) : external(system'core_routines'__realRound);
 
-   abs(real r, ref real retVal) : external(system'core_routines'__realAbs);
+   abs(real r, out real retVal) : external(system'core_routines'__realAbs);
 
-   sqrt(real r, ref real retVal) : external(system'core_routines'__realSqrt);
+   sqrt(real r, out real retVal) : external(system'core_routines'__realSqrt);
 
-   exp(real r, ref real retVal) : external(system'core_routines'__realExp);
+   exp(real r, out real retVal) : external(system'core_routines'__realExp);
 
-   ln(real r, ref real retVal) : external(system'core_routines'__realLn);
+   ln(real r, out real retVal) : external(system'core_routines'__realLn);
 
-   sin(real r, ref real retVal) : external(system'core_routines'__realSin);
+   sin(real r, out real retVal) : external(system'core_routines'__realSin);
 
-   cos(real r, ref real retVal) : external(system'core_routines'__realCos);
+   cos(real r, out real retVal) : external(system'core_routines'__realCos);
 
-   arctan(real r, ref real retVal) : external(system'core_routines'__realArctan);
+   arctan(real r, out real retVal) : external(system'core_routines'__realArctan);
 
-   getPi(ref real retVal) : external(system'core_routines'__realPi);
+   getPi(out real retVal) : external(system'core_routines'__realPi);
 
    real getPi()
    {
@@ -242,7 +242,7 @@ internal singleton PrimitiveRealOperations
       exponent := e;
    }
 
-   private hash(real r, ref int retVal) : external(system'core_routines'__realHash);
+   private hash(real r, out int retVal) : external(system'core_routines'__realHash);
 
    int getHashcode(real r)
    {
@@ -265,7 +265,7 @@ internal singleton PrimitiveRealOperations
       }
    }
 
-   loadFromByteArray(byte[] dest, int index, ref real retVal)
+   loadFromByteArray(byte[] dest, int index, out real retVal)
    {
       PrimitiveLongOperations.loadFromByteArray(dest, index, out long temp);
 
@@ -475,7 +475,7 @@ internal singleton PrimitiveWideStringOperations
       };
    }
 
-   private hash(wide s, ref int retVal) : external(system'core_routines'__wstrHash);
+   private hash(wide s, out int retVal) : external(system'core_routines'__wstrHash);
 
    int getHashcode(wide s)
    {
@@ -525,7 +525,7 @@ internal singleton PrimitiveIntOperations
       dest[index + 3] := b;
    }
 
-   loadFromByteArray(byte[] dest, int index, ref int retVal)
+   loadFromByteArray(byte[] dest, int index, out int retVal)
    {
       int val := dest[index + 3];
       val := val $shl 8;
@@ -607,7 +607,7 @@ internal singleton PrimitiveLongOperations
 
 internal singleton UTFOperations
 {
-   int convertUTF8_2_32(byte[] sour, int index, int length, ref int retVal)
+   int convertUTF8_2_32(byte[] sour, int index, int length, out int retVal)
    {
       int ch := sour[index];
       int mask := ch & 080h;
@@ -670,7 +670,7 @@ internal singleton UTFOperations
       ^ 4
    }
 
-   int convertUTF16_2_32(short[] sour, int index, int length, ref int retVal)
+   int convertUTF16_2_32(short[] sour, int index, int length, out int retVal)
    {
       int ch := sour[index];
       ch := ch & 0FFFFh;               // the code unit is unsigned; avoid sign extension

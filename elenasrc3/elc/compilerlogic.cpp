@@ -3391,7 +3391,7 @@ MessageResolution MessagingLogic :: resolveByRefHandler(MessagingOperator& op, M
          ref_t resolvedSignRef = 0;
          ustr_t actionName = scope.module->resolveAction(getAction(resolution.message), resolvedSignRef);
 
-         ref_t byRefType = op.resolveStrongType({ V_OUTWRAPPER, expectedType.typeRef }, true);
+         ref_t byRefType = op.resolveStrongType({ V_OUTWRAPPER, expectedType.typeRef, false, expectedType.nillable }, true);
          ref_t byRefSignature = defineByRefSignature(scope, resolvedSignRef, byRefType);
 
          ref_t byRefMessage = encodeMessage(scope.module->mapAction(actionName, byRefSignature, false), argCount + 1, resolvedFlags);

@@ -95,9 +95,7 @@ In development:
   ---------------------------------------
   * current : union
   ====================================== 
-  - resolve nillable retoverload handler
   - fix the sample with union
-  - use OutputReference<T> instead of Reference<T> for retoverload
   - unit test
   - test the sample with union
   - add functional test

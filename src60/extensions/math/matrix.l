@@ -39,13 +39,13 @@ namespace math
          for (int j := 0; j < n; j += 1)
          {
             // find largest value in col j
-            a.read(j, j, ref max);
+            a.read(j, j, out max);
             max := abs(max);
                 
             max_col := j;
             for (int i := j + 1; i < n; i += 1)
             {
-               a.read(i, j, ref v);
+               a.read(i, j, out v);
                v := abs(v);
                if(v > max)
                {
@@ -59,8 +59,8 @@ namespace math
             {
                for(int k := 0; k < n; k += 1)
                {
-                  a.read(j, k, ref t);
-                  a.read(max_col, k, ref v);
+                  a.read(j, k, out t);
+                  a.read(max_col, k, out v);
     
                   a.setAt(j, k, v);
                   a.setAt(max_col, k, t);
@@ -75,22 +75,22 @@ namespace math
             if(0.0r == max)
                { MatrixException.new("The matrix is singular!").raise() };
     
-            a.read(j, j, ref t);
+            a.read(j, j, out t);
                 
             for (int i := j + 1; i < n; i += 1)
             {
-               a.read(i, j, ref v);
+               a.read(i, j, out v);
                v := v / t;
                     
                a.setAt(i, j, v);
     
                for (int k := j + 1; k < n; k += 1)
                {
-                  a.read(i, j, ref v);
-                  a.read(j, k, ref real c);
+                  a.read(i, j, out v);
+                  a.read(j, k, out real c);
                   v := v * c;
     
-                  a.read(i, k, ref c);
+                  a.read(i, k, out c);
                   v := c - v;
                         
                   a.setAt(i, k, v)
@@ -113,7 +113,7 @@ namespace math
          {
             for(int j := 0; j < m; j += 1)
             {
-               self.read(i, j, ref real v);
+               self.read(i, j, out real v);
                     
                r.setAt(i, j, v)
             }
@@ -151,8 +151,8 @@ namespace math
          {
             for(int j := 0; j < m; j += 1)
             {
-               self.read(i, j, ref real r1);
-               b.read(i, j, ref real r2);
+               self.read(i, j, out real r1);
+               b.read(i, j, out real r2);
                     
                r.setAt(i, j, r1 + r2)
             }
@@ -177,8 +177,8 @@ namespace math
          {
             for(int j := 0; j < m; j += 1)
             {
-               self.read(i, j, ref real r1);
-               b.read(i, j, ref real r2);
+               self.read(i, j, out real r1);
+               b.read(i, j, out real r2);
                     
                r.setAt(i, j, r1 - r2)
             }
@@ -203,8 +203,8 @@ namespace math
                real v := 0.0r;
                for(int k := 0; k < m; k += 1)
                {
-                  self.read(i, k, ref real r1);
-                  b.read(k, j, ref real r2);
+                  self.read(i, k, out real r1);
+                  b.read(k, j, out real r2);
                         
                   r1 := r1 * r2;
                   v := v + r1;
@@ -230,7 +230,7 @@ namespace math
             
          for (int i := 0; i < n; i += 1)
          {
-            a.read(i, i, ref v);
+            a.read(i, i, out v);
                 
             deter := deter * v
          };

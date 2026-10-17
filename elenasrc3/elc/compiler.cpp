@@ -2539,6 +2539,7 @@ void Compiler::Preparator :: mapBuildinReferences()
    moduleScope->buildins.messageNameReference = safeMapReference(MESSAGE_NAME_FORWARD);
    moduleScope->buildins.extMessageReference = safeMapReference(EXT_MESSAGE_FORWARD);
    moduleScope->buildins.wrapperTemplateReference = safeMapReference(WRAPPER_FORWARD);
+   moduleScope->buildins.outWrapperTemplateReference = safeMapReference(OUT_WRAPPER_FORWARD);
    moduleScope->buildins.arrayTemplateReference = safeMapReference(ARRAY_FORWARD);
    moduleScope->buildins.constArrayTemplateReference = safeMapReference(CONST_ARRAY_FORWARD);
    moduleScope->buildins.argArrayTemplateReference = safeMapReference(VARIADIC_ARRAY_FORWARD);
@@ -6091,8 +6092,9 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
       case V_FLAG:
          return moduleScope.branchingInfo.typeRef;
       case V_WRAPPER:
-      case V_OUTWRAPPER:
          return resolveWrapperTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode);
+      case V_OUTWRAPPER:
+         return resolveOutWrapperTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode);
       case V_UINT8ARRAY:
       case V_INT8ARRAY:
       case V_INT16ARRAY:
@@ -7138,12 +7140,20 @@ ref_t Compiler::resolveStateMachine(Scope& scope, ref_t templateRef, ref_t eleme
       templateReference, parameters, false, nullptr);
 }
 
-ref_t Compiler::resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode)
+ref_t Compiler :: resolveWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode)
 {
    if (!elementRef)
       elementRef = moduleScope.buildins.superReference;
 
    return resolveTemplate(moduleScope, moduleScope.buildins.wrapperTemplateReference, elementRef, nullableElement, declarationMode);
+}
+
+ref_t Compiler :: resolveOutWrapperTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode)
+{
+   if (!elementRef)
+      elementRef = moduleScope.buildins.superReference;
+
+   return resolveTemplate(moduleScope, moduleScope.buildins.outWrapperTemplateReference, elementRef, nullableElement, declarationMode);
 }
 
 ref_t Compiler::resolveArrayTemplate(ModuleScopeBase& moduleScope, ref_t elementRef, bool nullableElement, bool declarationMode, bool constAttr)
@@ -17235,7 +17245,7 @@ ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNod
       }
       else scope.raiseError(errInvalidOperation, roperand.parentNode());
    }
-   else exprVal = compile(roperand, targetRef, exprMode);
+   else exprVal = compile(roperand, { targetRef, 0, target.typeInfo.nillable }, exprMode);
 
    if (target.kind == ObjectKind::Shortcut) {
       CodeScope* codeScope = Scope::getScope<CodeScope>(scope, Scope::ScopeLevel::Code);

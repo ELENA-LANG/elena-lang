@@ -7,6 +7,13 @@ public abstract class BaseVariable
    set abstract Value(o) : info("Set the variable value;<br/>should be overridden");
 }
 
+// --- BaseOutVariable ---
+public abstract class BaseReadOnlyVariable
+   : info("a read-only variable base class")
+{
+   get abstract Value() : info("Returns the variable value;<br/>should be overridden");
+}
+
 public sealed Reference<T> : BaseVariable,
    info("a variable template")
 {
@@ -40,6 +47,35 @@ public sealed Reference<T> : BaseVariable,
       => value;
 
    dispatch() => value;
+}
+
+
+public sealed Output<T> : BaseReadOnlyVariable,
+   info("an output variable template")
+{
+   embeddable T value;
+
+   constructor(T val)
+      : info("Initializes a variable")
+   {
+      value := val
+   }
+
+   get T Value() : info("Returns the variable value")
+      = value;
+
+   T cast()
+            : info("Returns the variable value")
+      = value;
+/*
+   bool equal(o)
+            : info("Returns true if o is equal to the variable value; otherwise, false")
+      => value;
+
+   string toPrintable()
+            : info("Returns the value string representation")
+      => value;
+*/      
 }
 
 public nonstructural Nullable<T>

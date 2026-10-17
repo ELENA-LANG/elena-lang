@@ -500,6 +500,7 @@ void MethodScenarioTest :: runTest(bool withProtectedConstructor, bool withAttri
    }
    if (byRefTemplateRef != INVALID_REF) {
       moduleScope->buildins.wrapperTemplateReference = byRefTemplateRef;
+      moduleScope->buildins.outWrapperTemplateReference = byRefTemplateRef;
 
       env.setUpTemplateMockup(byRefTemplateRef, intNumberRef, intByRefRef);
    }
@@ -589,6 +590,7 @@ void ExprTest :: initModuleScope(ModuleScopeBase* moduleScope, bool declareDefau
    moduleScope->buildins.superReference = 1;
    moduleScope->buildins.intReference = 2;
    moduleScope->buildins.wrapperTemplateReference = 3;
+   moduleScope->buildins.outWrapperTemplateReference = 3;
 
    if (declareDefaultMessages) {
       moduleScope->buildins.dispatch_message = encodeMessage(

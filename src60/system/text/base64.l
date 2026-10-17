@@ -268,7 +268,7 @@ namespace text
          ^ 0
       }
 
-      char convertToChar(byte[] byteArray, int index, ref int sourLen)
+      char convertToChar(byte[] byteArray, int index, out int sourLen)
       {
          NotSupportedException.raise();
          

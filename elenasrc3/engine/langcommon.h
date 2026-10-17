@@ -769,6 +769,7 @@ namespace elena_lang
    constexpr auto TRUE_FORWARD                  = "$true";           // the true boolean value
    constexpr auto FALSE_FORWARD                 = "$false";          // the false boolean value
    constexpr auto WRAPPER_FORWARD               = "$ref";            // the wrapper template
+   constexpr auto OUT_WRAPPER_FORWARD           = "$out";            // the output wrapper template
    constexpr auto ARRAY_FORWARD                 = "$array";          // the array template
    constexpr auto CONST_ARRAY_FORWARD           = "$const_array";    // the constant array template
    constexpr auto VARIADIC_ARRAY_FORWARD        = "$varray";         // the variadic array template

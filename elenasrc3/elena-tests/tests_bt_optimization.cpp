@@ -432,6 +432,7 @@ void BTOptimization8 :: initModuleScope(ModuleScopeBase* moduleScope, bool decla
    ExprTest::initModuleScope(moduleScope, declareDefaultMessages);
 
    moduleScope->buildins.wrapperTemplateReference = 0;
+   moduleScope->buildins.outWrapperTemplateReference = 0;
    moduleScope->branchingInfo.typeRef = 3;
    moduleScope->branchingInfo.trueRef = 0x10;
    moduleScope->branchingInfo.falseRef = 0x11;
@@ -455,6 +456,7 @@ void BTOptimization9 :: initModuleScope(ModuleScopeBase* moduleScope, bool decla
    ExprTest::initModuleScope(moduleScope, declareDefaultMessages);
 
    moduleScope->buildins.wrapperTemplateReference = 0;
+   moduleScope->buildins.outWrapperTemplateReference = 0;
    moduleScope->buildins.uint8Reference = 3;
 }
 
@@ -476,6 +478,7 @@ void BTOptimization10_1::initModuleScope(ModuleScopeBase* moduleScope, bool decl
    ExprTest::initModuleScope(moduleScope, declareDefaultMessages);
 
    moduleScope->buildins.wrapperTemplateReference = 0;
+   moduleScope->buildins.outWrapperTemplateReference = 0;
    moduleScope->buildins.realReference = 3;
 }
 
@@ -909,6 +912,7 @@ void IntOperation :: runTest(bool exceptionExpected, int scenario)
 
    if (byRefTemplateRef != INVALID_REF) {
       moduleScope->buildins.wrapperTemplateReference = byRefTemplateRef;
+      moduleScope->buildins.outWrapperTemplateReference = byRefTemplateRef;
 
       env.setUpTemplateMockup(byRefTemplateRef, intReference, intByRefRef);
    }

@@ -27,7 +27,7 @@ class PermVectorArray
       }
    }
 
-   refer(int index, ref pointer ptr)
+   refer(int index, out pointer ptr)
       : external(system'core_routines'__perm_array_refer);
 }
 

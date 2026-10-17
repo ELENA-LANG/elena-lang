@@ -798,10 +798,10 @@ public extension realOp : RealNumber
         
       retVal := n * n;    
       retVal := 1.0r - retVal;        
-      PrimitiveRealOperations.sqrt(retVal, ref real arg);
+      PrimitiveRealOperations.sqrt(retVal, out real arg);
         
       arg := arg / n;
-      PrimitiveRealOperations.arctan(arg, ref retVal);
+      PrimitiveRealOperations.arctan(arg, out retVal);
         
       ^ retVal
    }
