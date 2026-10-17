@@ -83,6 +83,13 @@ namespace elena_lang
       void SetUp() override;
    };
 
+
+   class RetOverloadNullableRetExprTest : public MethodScenarioTest
+   {
+   protected:
+      void SetUp() override;
+   };
+
    class AutoRangeSpreadingTest : public ExprTest
    {
    protected:

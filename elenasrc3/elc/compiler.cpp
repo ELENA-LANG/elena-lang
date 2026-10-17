@@ -13953,10 +13953,10 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, TypeInfo targetType,
       case SyntaxKey::ShrOperation:
       case SyntaxKey::NegateOperation:
       case SyntaxKey::XorOperation:
-         retVal = compileOperation(current, (int)current.key - OPERATOR_MAKS, targetType.typeRef, mode);
+         retVal = compileOperation(current, (int)current.key - OPERATOR_MAKS, targetType, mode);
          break;
       case SyntaxKey::ValueOperation:
-         retVal = compileValueOperation(current, (int)current.key - OPERATOR_MAKS, targetType.typeRef, mode);
+         retVal = compileValueOperation(current, (int)current.key - OPERATOR_MAKS, targetType, mode);
          break;
       case SyntaxKey::ExprValOperation:
       case SyntaxKey::SizeOperation:
@@ -14867,7 +14867,7 @@ ObjectInfo Compiler::Expression :: defineEncapseField(ObjectInfo& loperand, Type
    }
 }
 
-ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int operatorId, TypeInfo targetType, ExpressionAttribute mode)
 {
    ObjectInfo loperand = compile(node.firstChild(), 0,
       EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode);
@@ -14882,7 +14882,7 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
       loperand.typeInfo), message, result);
 
    if (found && result.retrieveGetter 
-      && compiler->_logic->isCompatible(*scope.moduleScope, { targetRef }, result.outputInfo, CompatibleMode::IgnoreNils)) 
+      && compiler->_logic->isCompatible(*scope.moduleScope, targetType, result.outputInfo, CompatibleMode::IgnoreNils)) 
    {
       return defineEncapseField(loperand, result.outputInfo, result.getterFieldOffset);
    }
@@ -14890,11 +14890,11 @@ ObjectInfo Compiler::Expression :: compileValueOperation(SyntaxNode node, int op
       ArgumentsInfo arguments;
       arguments.add(loperand);
 
-      return compileOperation(node, arguments, operatorId, targetRef);
+      return compileOperation(node, arguments, operatorId, targetType);
    }
 }
 
-ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode)
+ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, int operatorId, TypeInfo expectedType, ExpressionAttribute mode)
 {
    SyntaxNode loperand = node.firstChild();
    SyntaxNode roperand = loperand.nextNode();
@@ -14902,7 +14902,7 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, int operato
    if (operatorId == SET_OPERATOR_ID) {
       // assign operation is a special case
       if (loperand == SyntaxKey::IndexerOperation) {
-         return compileOperation(loperand, roperand, SET_INDEXER_OPERATOR_ID, expectedRef);
+         return compileOperation(loperand, roperand, SET_INDEXER_OPERATOR_ID, expectedType);
       }
       else if (loperand == SyntaxKey::ValueOperation) {
          return compileSetValueOperation(loperand.firstChild(), roperand, VALUE_OPERATOR_ID);
@@ -14915,7 +14915,7 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, int operato
       }
       else return compileAssigning(loperand, roperand, mode);
    }
-   else return compileOperation(loperand, roperand, operatorId, expectedRef);
+   else return compileOperation(loperand, roperand, operatorId, expectedType);
 }
 
 ObjectInfo Compiler::Expression::compileSpecialOperation(/*SyntaxNode node, */int operatorId/*, ref_t expectedRef*/)
@@ -17170,11 +17170,11 @@ ObjectInfo Compiler::Expression::compileEvalOnlySpecialOperation(SyntaxNode node
    return {};
 }
 
-ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rnode, int operatorId, ref_t expectedRef)
+ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rnode, int operatorId, TypeInfo expectedType)
 {
    if (compiler->_evaluateOp) {
       Interpreter interpreter(scope.moduleScope, compiler->_logic);
-      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), { expectedRef }, true);
+      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), expectedType, true);
       if (evalRetVal.kind != ObjectKind::Unknown)
          return evalRetVal;
    }
@@ -17213,7 +17213,7 @@ ObjectInfo Compiler::Expression::compileOperation(SyntaxNode node, SyntaxNode rn
          EAttr::Parameter | EAttr::RetValExpected | EAttr::LookaheadExprMode));
    }
 
-   return compileOperation(node, arguments, operatorId, expectedRef);
+   return compileOperation(node, arguments, operatorId, expectedType);
 }
 
 ObjectInfo Compiler::Expression::compileAssigning(SyntaxNode loperand, SyntaxNode roperand, ExpressionAttribute mode)
@@ -18257,7 +18257,7 @@ ObjectInfo Compiler::Expression :: compileNested(InlineClassScope& classScope, E
 }
 
 ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsInfo& messageArguments,
-   int operatorId, ref_t expectedRef)
+   int operatorId, TypeInfo expectedType)
 {
    if (messageArguments.count() > 1 && messageArguments[1].kind == ObjectKind::IntLiteral) {
       // try to typecast int literal if possible
@@ -18422,7 +18422,7 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
       }
 
       retVal = compileWeakOperation(node, arguments, argLen, loperand,
-         messageArguments, message, expectedRef);
+         messageArguments, message, expectedType);
    }
 
    return retVal;

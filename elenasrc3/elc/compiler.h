@@ -1591,8 +1591,8 @@ namespace elena_lang
 
          ObjectInfo compileInlineOperation(ref_t inlineTreeRef, ArgumentsInfo& arguments, ref_t outputRef);
 
-         ObjectInfo compileOperation(SyntaxNode node, int operatorId, ref_t expectedRef, ExpressionAttribute mode);
-         ObjectInfo compileValueOperation(SyntaxNode node, int operatorId, ref_t targetRef, ExpressionAttribute mode);
+         ObjectInfo compileOperation(SyntaxNode node, int operatorId, TypeInfo expectedType, ExpressionAttribute mode);
+         ObjectInfo compileValueOperation(SyntaxNode node, int operatorId, TypeInfo targetType, ExpressionAttribute mode);
          ObjectInfo compileSetValueOperation(SyntaxNode lnode, SyntaxNode rnode, int operatorId);
          ObjectInfo compileEvalOnlySpecialOperation(SyntaxNode node);
          ObjectInfo compileIsOperation(SyntaxNode node);
@@ -1650,9 +1650,9 @@ namespace elena_lang
          ObjectInfo compileMessageCall(SyntaxNode node, ObjectInfo target, MessageCallContext& context, MessageResolution resolution,
             ArgumentsInfo& arguments, ExpressionAttributes mode);
          ObjectInfo compileOperation(SyntaxNode loperand, SyntaxNode roperand,
-            int operatorId, ref_t expectedRef);
+            int operatorId, TypeInfo expectedType);
          ObjectInfo compileOperation(SyntaxNode node, ArgumentsInfo& messageArguments,
-            int operatorId, ref_t expectedRef);
+            int operatorId, TypeInfo expectedType);
 
          ObjectInfo compileBranchingOperation(SyntaxNode node, ObjectInfo loperand, SyntaxNode rnode,
             SyntaxNode r2node, int operatorId, bool retValExpected, bool withoutDebugInfo);

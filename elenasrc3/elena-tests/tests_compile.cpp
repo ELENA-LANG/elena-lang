@@ -126,6 +126,7 @@ constexpr auto Build_S_ByRefHandlerTest_Class = "class 4 (method 5891 (tape ( op
 constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning 3 () local_reference 3 () saving_stack 1 () class_reference 3 () saving_stack () argument () direct_call_op 4098 (type 3 ()) local 3 () assigning 2 () local 2 () assigning 1 ()";
 
 constexpr auto Build_RetOverloadInRetExprTest_Scenario1 = "tape(open_frame ()assigning 1 ()local 2 ()assigning 3 ()local_reference 3 ()saving_stack 1 ()local -2 ()saving_stack ()argument ()call_op 1538 (type 3 ())local 3 ()assigning 2 ()local 2 () going_to_eop() close_frame ()exit ())reserved 5 ())";
+constexpr auto Build_RetOverloadNillableRetExprTest_Scenario1 = "tape (open_frame ()assigning 1 ()local 3 ()assigning 4 ()local_reference 4 ()saving_stack 1 ()class_reference 4 ()saving_stack ()argument ()direct_call_op 2562 (type 4 ())local 4 ()assigning 3 ()local 3 ()assigning 2 ()local 1 ()close_frame ()exit ())reserved 6 ()))";
 
 constexpr auto Build_AutoRangeSpreading_Scenario1 = "class_reference 3 ()saving_stack ()argument ()direct_call_op 3265 (type 3 ())assigning 1 ()class_reference 3 ()saving_stack 2 ()local 1 ()saving_stack 1 ()class_reference 4 ()saving_stack ()argument ()direct_call_op 4099 (type 7 ())";
 
@@ -145,6 +146,7 @@ constexpr auto Build_S_ByRefHandlerTest_Class = "class 4 (method 5891 (tape ( op
 constexpr auto Build_RetoverloadHandlerInvoker_Scenario1 = "local 2 () assigning 3 () local_reference 3 () saving_stack 1 () class_reference 3 () saving_stack () argument () direct_call_op 4098 (type 3 ()) local 3 () assigning 2 () local 2 () assigning 1 ()";
 
 constexpr auto Build_RetOverloadInRetExprTest_Scenario1 = "tape(open_frame ()assigning 1 ()local 2 ()assigning 3 ()local_reference 3 ()saving_stack 1 ()local -2 ()saving_stack ()argument ()call_op 1538 (type 3 ())local 3 ()assigning 2 ()local 2 () going_to_eop() close_frame ()exit ())reserved 6 ())";
+constexpr auto Build_RetOverloadNillableRetExprTest_Scenario1 = "tape (open_frame ()assigning 1 ()local 3 ()assigning 4 ()local_reference 4 ()saving_stack 1 ()class_reference 4 ()saving_stack ()argument ()direct_call_op 2562 (type 4 ())local 4 ()assigning 3 ()local 3 ()assigning 2 ()local 1 ()close_frame ()exit ())reserved 6 ()))";
 
 constexpr auto Build_AutoRangeSpreading_Scenario1 = "class_reference 3 ()saving_stack ()argument ()direct_call_op 3265 (type 3 ())assigning 1 ()class_reference 3 ()saving_stack 2 ()local 1 ()saving_stack 1 ()class_reference 4 ()saving_stack ()argument ()direct_call_op 4099 (type 7 ())";
 
@@ -393,6 +395,25 @@ void RetOverloadInRetExprTest::SetUp()
 }
 
 TEST_F(RetOverloadInRetExprTest, RetOverloadInRetExpr)
+{
+   runTest();
+}
+
+// --- RetOverloadNullableRetExprTest ---
+
+void RetOverloadNullableRetExprTest::SetUp()
+{
+   MethodScenarioTest::SetUp();
+
+   LoadDeclarationScenario(S_DefaultNamespace_5, S_ARefeference2, RetOverloadNillableRetExprTest_Scenario1);
+
+   BuildTreeSerializer::load(Build_RetOverloadNillableRetExprTest_Scenario1, controlOutputNode);
+
+   targetRef = 5;
+   argArrayTemplateRef = 3;
+}
+
+TEST_F(RetOverloadNullableRetExprTest, RetOverloadNillableRetExpr)
 {
    runTest();
 }

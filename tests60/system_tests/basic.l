@@ -3498,6 +3498,7 @@ public IsOperatorTest() : testCase()
    Assert.ifTrue(b is:IsOp_B);
    Assert.ifTrue(b is:IsOp_I);
    Assert.ifFalse(b is:IsOp_A);
+   Console.write(".");
 }
 
 // --- weakInterfaceProxyTest ---
@@ -3524,5 +3525,37 @@ public weakInterfaceProxyTest() : testCase()
    real r2 := f.y2(3);
 
    Assert.ifEqual(r, 4);   
-   Assert.ifEqual(r2, 27);   
+   Assert.ifEqual(r2, 27);
+   Console.write(".");
+}
+
+// --- unionTest ---
+
+UnionTestA;
+UnionTestB;
+    
+testUnion(Union<UnionTestA,UnionTestB> union, bool expected1, bool expected2)
+{
+   bool passed1 := false;
+   bool passed2 := false;
+   
+    if:not:nil(var UnionTestA? a := *union) {
+       passed1 := true
+    }
+    else if:not:nil(var UnionTestB? b := union.Value) {
+       passed2 := true
+    };
+    
+    Assert.ifEqual(passed1, expected1);
+    Assert.ifEqual(passed2, expected2);
+}
+    
+public unionTest() : testCase()
+{
+   auto u1 := new Union<UnionTestA,UnionTestB>(new UnionTestA());
+   auto u2 := new Union<UnionTestA,UnionTestB>(new UnionTestB());
+   
+   testUnion(u1, true, false);
+   testUnion(u2, false, true);
+   Console.write(".");
 }

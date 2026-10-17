@@ -9,6 +9,9 @@ In development:
   --------------------------------------
   * backlog
   ======================================   
+  - support A a := $();
+  - support A a := $(b,c);
+  - cannot declare - new(bool matched, Tuple<int, int>[] matches)
   - = !_child.match(ch); // doesn't work
   - if(!context.empty() && context.peek() == self) - why error if context.empty() returns true
   - correctly implement (context.Start, index) (see RegEx)
@@ -62,24 +65,10 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * logger
+  * current : logger
   ====================================== 
   - define logger in the project
   - post about logger
-  ---------------------------------------
-  * current: syntax
-  ====================================== 
-  - int? get() = nil  <- should not be beref
-  - get rid of warnings for Union<int,long>
-  - int n := r.Value/* ?? 0*/; -- should warn that r can be nillable
-  - int n := *r ?? 0; - should return 0 
-  - cannot declare - new(bool matched, Tuple<int, int>[] matches)
-  ---------------------------------------
-  * the following code auto r := A.get(); raises an error when get return nullable and has retoverload
-  ====================================== 
-  - investigate
-  - fix
-  - unit test
   ---------------------------------------
   * opengl : #735
   ====================================== 
@@ -93,12 +82,6 @@ In development:
   - exception in the constructor
   - use OGL3DDummyWindow to initialize OpenGL
   ---------------------------------------
-  * current : union
-  ====================================== 
-  - fix the sample with union
-  - unit test
-  - test the sample with union
-  - add functional test
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3
