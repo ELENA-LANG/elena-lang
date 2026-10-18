@@ -78,7 +78,7 @@ internal interface PatternRule
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
    {
       if (match(ch, context)) {
-         ^ gotoNext(index, context);
+         ^  gotoNext(index + ch.Length, context);
       };
 
       ^ nil;      
@@ -879,13 +879,7 @@ public sealed class RegEx
             auto end := ends.pop();
             int key := -(end.Item1);
             if (key == pair.Item1) {
-               int endIndex := end.Item2;
-               if (endIndex < s.Length) {
-                  char ch := s[endIndex];
-                  
-                  groups.append(new MatchGroup(pair.Item1, pair.Item2, endIndex + ch.Length));
-               }
-               else groups.append(new MatchGroup(pair.Item1, pair.Item2, endIndex));
+               groups.append(new MatchGroup(pair.Item1, pair.Item2, end.Item2));
             }
          }
       };

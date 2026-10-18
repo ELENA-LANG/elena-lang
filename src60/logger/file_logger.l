@@ -14,6 +14,6 @@ public class FileLogger : LoggerBase
    
    indexed internal write(string message)
    {
-      
+      _writer.writeLine(message);
    }
 }
