@@ -47,7 +47,7 @@ import extensions;
 
 import system'routines;
 
-//import system'collections;
+import system'collections;
 
 /*
 singleton A
@@ -77,83 +77,87 @@ singleton A
 //   else Console.writeLine("does not match");
 //}
 
-//singleton A
-//{
-//   retoverload int? get()
-//      = /*nil*/0;   
-//      
-//   get()
-//      = "none";
-//   
-//}
-
-//public Program()
-//{
-//   Reference<int?> r := new Reference<int?>(nil);
-   
-//   int n := *r ?? 2;
-   
-//   int/*?*/ n := A.get();
-   
-   //A a := new A();
-//   /*int*/int? r := /*a*/A.get(/*false*/);
-   //int n := *r ?? 0;
-   //int n := r.Value;
-   
-//   //auto regEx := new RegEx("^abc$");
-//   //MatchResult result := regEx.match("abc");
-//   //MatchResult result := regEx.match("ab");
-//   //MatchResult result := regEx.match("abcd");
-//   
-//   //auto regEx := new RegEx("a");
-//   //MatchResult result := regEx.match("a");
-//   //MatchResult result := regEx.match("__aaa__");
-//   //MatchResult result := regEx.match("__xxx__");
-//
-//   //auto regEx := new RegEx("^xa*$");
-//   //MatchResult result := regEx.match("x");
-//            
-//   //auto regEx := new RegEx("a*");
-//   //MatchResult result := regEx.match("a");
-//   //MatchResult result := regEx.match("x");
-//   //MatchResult result := regEx.match("xa");
-//   //MatchResult result := regEx.match("aa");
-//   //MatchResult result := regEx.match("__aaa__");
-//   //MatchResult result := regEx.match("__a_a_a__");
-//   //MatchResult result := regEx.match("__xxx__");
-//
-//   auto regEx := new RegEx("a+");
-//   //MatchResult result := regEx.match("a");
-//   //MatchResult result := regEx.match("aa");
-//   //MatchResult result := regEx.match("__aaa__");
-//   //MatchResult result := regEx.match("__xxx__");
-//
-//
-//
-   //auto regEx := new RegEx("(abc|bc)+");
-//   auto regEx := new RegEx("(?<group>abc|bc)+");
+public Program()
+{
+   //auto regEx := new RegEx("^abc$");
    //MatchResult result := regEx.match("abc");
-   //MatchResult result := regEx.match("bc");
-//   MatchResult result := regEx.match("abcabcabcbc");
+   //MatchResult result := regEx.match("ab");
+   //MatchResult result := regEx.match("abcd");
+   
+   //auto regEx := new RegEx("a");
+   //MatchResult result := regEx.match("a");
+   //MatchResult result := regEx.match("__aaa__");
+   //MatchResult result := regEx.match("__xxx__");
+
+   //auto regEx := new RegEx("^xa*$");
+   //MatchResult result := regEx.match("x");
+            
+   //auto regEx := new RegEx("a*");
+   //MatchResult result := regEx.match("a");
+   //MatchResult result := regEx.match("x");
+   //MatchResult result := regEx.match("xa");
+   //MatchResult result := regEx.match("aa");
+   //MatchResult result := regEx.match("__aaa__");
+   //MatchResult result := regEx.match("__a_a_a__");
+   //MatchResult result := regEx.match("__xxx__");
+
+   //auto regEx := new RegEx("a+");
+   //MatchResult result := regEx.match("a");
+   //MatchResult result := regEx.match("aa");
+   //MatchResult result := regEx.match("__aaa__");
+   //MatchResult result := regEx.match("__xxx__");
+
+
+   auto regEx := new RegEx("(?<file>fi=(?<name>\w+))");
+   MatchResult result := regEx.match("fi=2");
+
+
+   //auto regEx := new RegEx("(?<console>co)|(?<file>fi=(?<name>\w+))");
+   //MatchResult result := regEx.match("fi=2");
+
+
+   //auto regEx := new RegEx("(?<console>console;)|(?<file>file=(?<name>\w+;))");
+   //MatchResult result := regEx.match("console;file=log;");
+   //MatchResult result := regEx.match("console");
+   
+   if (result.Matched){
+      auto consoleGroup := regEx.retrieveGroup(result, "console");
+      if (consoleGroup != nil) {
+         if:not:nil (var MatchGroup? r := *consoleGroup) {
+            Console.printLine("start:", r.Start, " end:", r.End);
+         }
+         else {
+            Console.writeLine("Several values are not allowed")
+         };         
+      };
+
+      auto fileGroup := regEx.retrieveGroup(result, "file");
+      if (fileGroup != nil) {
+         if:not:nil (var MatchGroup? r := *fileGroup) {
+            Console.printLine("start:", r.Start, " end:", r.End);
+         }
+         else {
+            Console.writeLine("Several values are not allowed")
+         };
+      };
+            
+   };
+   
+   
 
 //   printMatchResult(result);
    
-/*   auto group := regEx.retrieveGroup(result, "group");
-   if:not:nil (MatchGroup? g := *group) {
-      Console.writeLine("1 group");
-   }
-   else if:not:nil (MatchGroup[] matches := *group) {
-      matches.forEach((r => 
-      {
-         Console.printLine("start:", r.First, " end:", r.End);
-      }))
-   };*/
+//   auto group := regEx.retrieveGroup(result, "group");
+//   if:not:nil (var MatchGroup? r := *group) {
+//      Console.printLine("start:", r.Start, " end:", r.End);
+//   }
+//   else if:not:nil (MatchGroup[] matches := *group) {
+//      matches.forEach::(r) 
+//      {
+//         Console.printLine("start:", r.Start, " end:", r.End);
+//      }
+//   };
 
-
-//   auto regex3 := new RegEx("^a*$");
-//   Assert.ifFalse(regex3.match("b"));
-   
-   
    
    
    //auto regEx := new RegEx("\D+");
@@ -198,12 +202,12 @@ singleton A
 //   bool b1 := regEx.match("a");
 //   bool b2 := regEx.match("b");
 //   bool b3 := regEx.match("c");
-   
-   
+//   
+//   
 //   auto regEx := new RegEx("abc");
 //   auto regEx := new RegEx(".*abc");
 //   auto regEx := new RegEx("(a)(b)(c)");
-   
+//   
 //   MatchResult r := regEx.match("abc");
 //   MatchResult r := regEx.match("__abc__");
    
@@ -215,30 +219,4 @@ singleton A
 //   LogSetup.registerConsoleLogger(LogLevel.Info).injectLogger();
    
 //   MyClassToLog.new().start().do().stop();
-//}
-
-
-//    import extensions;
-    import system'collections;
-    
-    A;
-    B;
-    
-    testUnion(Union<A,B> union)
-    {
-       if:not:nil(var A? a := *union) {
-          Console.writeLine("A is passed");
-       }
-       else if:not:nil(var B? b := union.Value) {
-          Console.writeLine("B is passed");
-       };
-    }
-    
-    public Program()
-    {
-       auto u1 := new Union<A,B>(new A());
-       auto u2 := new Union<A,B>(new B());
-       
-       testUnion(u1);
-       testUnion(u2);
-    }
+}

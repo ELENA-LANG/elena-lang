@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ======================================   
+  - fix Linux mta_test
   - support A a := $();
   - support A a := $(b,c);
   - cannot declare - new(bool matched, Tuple<int, int>[] matches)
@@ -65,8 +66,10 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * current : logger
+  * current:logger
   ====================================== 
+  - make possible to read log config
+  - separate function - retrieveSingleGroup <- returns a single group or raises an error
   - define logger in the project
   - post about logger
   ---------------------------------------

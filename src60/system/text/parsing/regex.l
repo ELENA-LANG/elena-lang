@@ -1,4 +1,5 @@
 import system'collections;
+import system'routines;
 
 const string Reserved = "$^[]+*?()\";
 const string Postfix = "+*?";
@@ -815,6 +816,13 @@ public sealed class RegEx
       _mode := 0;
       _lastKey := 0;
       _startRule := parsePattern(pattern);
+   }
+
+   bool checkGroup(MatchResult result, string name)
+   {
+      int key := _groupNames[name];
+      
+      ^ result.Groups.ifExists(key, (val, x => x.GroupKey == val))
    }
 
    Union<MatchGroup, MatchGroup[]> retrieveGroup(MatchResult result, string name)

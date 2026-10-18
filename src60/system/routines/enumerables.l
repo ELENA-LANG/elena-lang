@@ -266,6 +266,12 @@ public extension enumerableOp
    seekFor(val)
       = (x => val.equal(x)).retrieve(cast Enumerator(self.enumerator()));
 
+   bool ifExists(Func1 f)
+      = nil != f.retrieve(cast Enumerator(self.enumerator()));
+
+   bool ifExists(object val, Func2 f)
+      = nil != f.retrieve(val, cast Enumerator(self.enumerator()));
+
    bool ifExists(val)
       = nil != self.seekFor(val);
 
