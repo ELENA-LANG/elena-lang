@@ -49,16 +49,31 @@ public sealed class StartUpEvents : info("Application events")
     
    Func1 OnError : event;
     
+   Func1 OnAbort : event;
+    
    internal constructor new() {}
 
    internal stopping()
    {
       OnStop?.();
    }
-    
-   internal handlingError(e)
+
+   internal handlingError(err)
    {
-      OnError?.(e)
+      if:nil(OnError) {
+         Console.writeLine(err);
+      };
+      
+      OnError?.(err)
+   }
+        
+   internal handlingAbort(e)
+   {
+      if:nil(OnAbort) {
+         Console.writeLine("Program was aborted");
+      };
+      
+      OnAbort?.(e)
    }
 }
 
@@ -67,7 +82,9 @@ public static StartUpEvents startUpEvents = StartUpEvents.new();
 ConsoleDefaultHandler(err)
 {
    try {
-     Console.writeLine(err);
+      startUpEvents.handlingError(err);
+
+      Console.writeLine(err);
    }
 }
 
@@ -81,14 +98,12 @@ entry()
    {
       function(AbortException e)
       {
-         Console.writeLine("Program was aborted");
+         startUpEvents.handlingAbort(e);
       }
 
       function(Exception err)
       {
          startUpEvents.handlingError(err);
-
-         Console.writeLine(err);
 
          extern ExitLA(1);
       }
@@ -109,6 +124,7 @@ gui_entry()
    {
       function(AbortException e)
       {
+         startUpEvents.handlingAbort(e);
       }
     
       function(Exception err)

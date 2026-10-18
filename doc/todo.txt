@@ -9,11 +9,10 @@ In development:
   --------------------------------------
   * backlog
   ======================================   
-  - enum : parse string as enum (see logger LogLevel)
+  - fix Linux mta_test
   - f4 on the same line, keep the debugger on the same line, in reality it should go further
   - regex : "console;file=output" raises empty stack error
   - an option to print information about the api version
-  - fix Linux mta_test
   - support A a := $();
   - support A a := $(b,c);
   - cannot declare - new(bool matched, Tuple<int, int>[] matches)
@@ -78,10 +77,16 @@ In development:
   ---------------------------------------
   * xforms
   ====================================== 
-  - use logger for api exception, do not use MainWindow in the exception handler
+  - xforms / forms : use logger for exception handling
+  - do not use MainWindow in the exception handler
   - exception in the constructor
   - use OGL3DDummyWindow to initialize OpenGL
   ---------------------------------------
+  * current : app
+  ====================================== 
+  - it should be possible to initialize startUpEvents before preloading, so the preload error can be seen
+    in logs
+  - support handling of errors by preloading
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3

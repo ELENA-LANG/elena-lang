@@ -14,7 +14,7 @@ internal sealed LoggerFactoryInstance : ILoggerFactory
       
    constructor() 
    {
-      _getter := ([] => ILogger);
+      _getter := ([] => IdleLogger);
    }
    
    register(Func<ILogger> loggerGetter)

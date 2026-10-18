@@ -47,9 +47,12 @@ public class MyClassToLog
 
 public Program()
 {
-   LogSetup.registerFromString("console;file=output;").injectLogger();
+   //LogSetup.registerFromString("console;file=output;").injectLogger();
+   LogSetup.registerFromString("file=output;").injectLogger();
    
    //LogSetup.registerConsoleLogger(LogLevel.Info).injectLogger();
    
    MyClassToLog.new().start().do().stop();
+   
+   2.fail()
 }
