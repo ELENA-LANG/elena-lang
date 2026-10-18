@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ======================================   
+  - an option to print information about the api version
   - fix Linux mta_test
   - support A a := $();
   - support A a := $(b,c);
@@ -66,7 +67,7 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * current:logger
+  * logger
   ====================================== 
   - make possible to read log config
   - separate function - retrieveSingleGroup <- returns a single group or raises an error
@@ -84,6 +85,11 @@ In development:
   - use logger for api exception, do not use MainWindow in the exception handler
   - exception in the constructor
   - use OGL3DDummyWindow to initialize OpenGL
+  ---------------------------------------
+  * current:regex
+  ====================================== 
+  - use peek with a deep level, and increase it when passing to checkNext
+  - add the functional test for the failing case
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===

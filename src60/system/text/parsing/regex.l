@@ -55,6 +55,12 @@ internal sealed ParserContext
    PatternRule peek()
       = _parents.peek();
       
+   PatternRule peek(int level)
+      = _parents.peek(level);
+
+   get int Length()
+      = _parents.Length;
+                  
    bool empty()      
       = _parents.Length == 0;
 }
@@ -66,7 +72,7 @@ internal interface PatternRule
    abstract PatternRule? gotoNext(int index, ParserContext context);   
    
    internal abstract bool match(char ch, ParserContext context);
-   internal abstract bool matchNext(char ch, ParserContext context);
+   internal abstract bool matchNext(char ch, ParserContext context, int level);
    internal abstract PatternRule? peekNext(ParserContext context);   
    
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
@@ -88,14 +94,14 @@ internal abstract LinkRule : PatternRule
       _nextRule := rule
    }
 
-   internal bool matchNext(char ch, ParserContext context)
+   internal bool matchNext(char ch, ParserContext context, int level)
    {
       if:nil(_nextRule) {
-         if (context.empty()) {
+         if (context.Length <= level) {
             ^ false
          };         
          
-         ^ context.peek().matchNext(ch, context);
+         ^ context.peek(level).matchNext(ch, context, level + 1);
       };
       
       ^ _nextRule.match(ch, context);
@@ -353,7 +359,7 @@ internal abstract OptionalBaseRule : NestedRule
 
    internal bool match(char ch, ParserContext context)
    {
-      if (matchNext(ch, context) || _child.match(ch, context)) {
+      if (matchNext(ch, context, 0) || _child.match(ch, context)) {
          ^ true
       };
       
@@ -370,7 +376,7 @@ internal sealed OptionalRule : OptionalBaseRule
 
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
    {
-      if (matchNext(ch, context)) {
+      if (matchNext(ch, context, 0)) {
          ^ gotoNext(index, context)?.makeStep(s, index, ch, context)
       };
       
@@ -404,7 +410,7 @@ internal sealed RecursiveRule : OptionalBaseRule
 
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
    {
-      if (matchNext(ch, context)) {
+      if (matchNext(ch, context, 0)) {
          ^ super.gotoNext(index, context)?.makeStep(s, index, ch, context);
       };
       
@@ -435,7 +441,7 @@ internal sealed singleton EORRule : PatternRule
    internal bool match(char ch, ParserContext context)
       = ch == $0;
       
-   internal bool matchNext(char ch, ParserContext context)
+   internal bool matchNext(char ch, ParserContext context, int level)
       = false;
 
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
@@ -462,7 +468,7 @@ internal sealed singleton EOLRule : PatternRule
    internal bool match(char ch, ParserContext context)
       = ch == $0;
 
-   internal bool matchNext(char ch, ParserContext context)
+   internal bool matchNext(char ch, ParserContext context, int level)
       = false;
 
    PatternRule? makeStep(string s, int index, char ch, ParserContext context)
@@ -853,6 +859,10 @@ public sealed class RegEx
          };
       };
       
+      if:nil (group) {
+         InvalidArgumentException.raise($"a group {name} was not found");
+      };
+      
       ^ (list != nil) ? (*list) : group;
    }
 
@@ -870,9 +880,12 @@ public sealed class RegEx
             int key := -(end.Item1);
             if (key == pair.Item1) {
                int endIndex := end.Item2;
-               char ch := s[endIndex];
-               
-               groups.append(new MatchGroup(pair.Item1, pair.Item2, endIndex + ch.Length));
+               if (endIndex < s.Length) {
+                  char ch := s[endIndex];
+                  
+                  groups.append(new MatchGroup(pair.Item1, pair.Item2, endIndex + ch.Length));
+               }
+               else groups.append(new MatchGroup(pair.Item1, pair.Item2, endIndex));
             }
          }
       };

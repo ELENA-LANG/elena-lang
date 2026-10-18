@@ -2686,6 +2686,25 @@ public regExTest() : testCase()
    Assert.ifTrue(regex7.match("ht"));
    Assert.ifTrue(regex7.match("f"));
    Assert.ifFalse(regex7.match("http"));
+   Console.write(".");   
+   
+   //auto regEx8 := new RegEx("(?<file>fi=(?<name>\w+))");
+   auto regEx8 := new RegEx("(?<console>console)|(?<file>file=(?<name>\w+))");
+   MatchResult result8 := regEx8.match("file=test");
+   
+   Assert.ifTrue(result8.Matched);
+   Assert.ifFalse(regEx8.checkGroup(result8, "console"));
+   Assert.ifNotNil(regEx8.retrieveGroup(result8, "file"));
+   auto g8 := regEx8.retrieveGroup(result8, "file");
+   if:not:nil (var MatchGroup? cg := *g8) {
+      Assert.ifEqual(cg.Start, 0);
+      Assert.ifEqual(cg.End, 9);
+   };
+   auto g8_2 := regEx8.retrieveGroup(result8, "name");
+   if:not:nil (var MatchGroup? cg := *g8_2) {
+      Assert.ifEqual(cg.Start, 5);
+      Assert.ifEqual(cg.End, 9);
+   };
    Console.write(".");
 }
 

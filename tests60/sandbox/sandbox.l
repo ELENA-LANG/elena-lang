@@ -108,12 +108,13 @@ public Program()
    //MatchResult result := regEx.match("__xxx__");
 
 
-   auto regEx := new RegEx("(?<file>fi=(?<name>\w+))");
+//   auto regEx8 := new RegEx("(?<console>console)|(?<file>file=(?<name>\w+))");
+//   MatchResult result8 := regEx8.match("file=test");
+
+
+
+   auto regEx := new RegEx("(?<console>co)|(?<file>fi=(?<name>\w+))");
    MatchResult result := regEx.match("fi=2");
-
-
-   //auto regEx := new RegEx("(?<console>co)|(?<file>fi=(?<name>\w+))");
-   //MatchResult result := regEx.match("fi=2");
 
 
    //auto regEx := new RegEx("(?<console>console;)|(?<file>file=(?<name>\w+;))");
@@ -121,20 +122,32 @@ public Program()
    //MatchResult result := regEx.match("console");
    
    if (result.Matched){
-      auto consoleGroup := regEx.retrieveGroup(result, "console");
-      if (consoleGroup != nil) {
-         if:not:nil (var MatchGroup? r := *consoleGroup) {
-            Console.printLine("start:", r.Start, " end:", r.End);
-         }
-         else {
-            Console.writeLine("Several values are not allowed")
-         };         
+      if(regEx.checkGroup(result, "console")) {
+         auto consoleGroup := regEx.retrieveGroup(result, "console");
+         if (consoleGroup != nil) {
+            if:not:nil (var MatchGroup? r := *consoleGroup) {
+               Console.printLine("start:", r.Start, " end:", r.End);
+            }
+            else {
+               Console.writeLine("Several values are not allowed")
+            };         
+         };
+         
       };
 
       auto fileGroup := regEx.retrieveGroup(result, "file");
       if (fileGroup != nil) {
          if:not:nil (var MatchGroup? r := *fileGroup) {
-            Console.printLine("start:", r.Start, " end:", r.End);
+            Console.printLine("file start:", r.Start, " end:", r.End);
+         }
+         else {
+            Console.writeLine("Several values are not allowed")
+         };
+      };
+      auto nameGroup := regEx.retrieveGroup(result, "name");
+      if (nameGroup != nil) {
+         if:not:nil (var MatchGroup? r := *nameGroup) {
+            Console.printLine("name start:", r.Start, " end:", r.End);
          }
          else {
             Console.writeLine("Several values are not allowed")

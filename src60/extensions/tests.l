@@ -64,6 +64,14 @@ public singleton Assert
       }
    }
 
+   ifNotNil(b)
+   {
+      if:nil(b)
+      {
+         AssertException.raise("Assertion failed")
+      }
+   }
+
    ifInstanceOf(object, class)
    {
       Assert.ifTrue(object.instanceOf(class));

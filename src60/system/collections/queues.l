@@ -434,6 +434,15 @@ namespace collections
          ^ _array.at(*_top - 1)
       }
         
+      T peek(int level) : info("Returns an element at <b>level</b> from the stack top -  without removing it from it<br/>The exception is raised if the level cannot be reached")
+      {
+         int index := *_top - 1 - level;
+         if (index < 0)
+            { InvalidOperationException.new("Stack level cannot be reached").raise() };
+            
+         ^ _array.at(index)
+      }
+        
       T pop() : info("Returns an element at the stack top and removes it from the stack<br/>The exception is raised if the queue is empty")
       {
          if (0 == *_top)
