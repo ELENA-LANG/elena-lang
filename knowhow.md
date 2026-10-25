@@ -58,6 +58,7 @@ Content
 + [Project constants](#project-constants)
 + [Native reference comparison](#native-reference-comparison)
 + [Logging](#Logging)
++ [Initialization](#Initialization)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1528,7 +1529,13 @@ Here how you can set it up in your program:
           _logger.writeEntry(LogLevel.Info, "Stopping...");
        }
     }
-    
+
+    public symbol Initialization =
+       LogSetup
+          .registerFromString("file=output;console;")
+          .injectErrorHandler()
+          .injectLogger();
+        
     public Program()
     {
        LogSetup.registerConsoleLogger(LogLevel.Info).injectLogger();
@@ -1537,3 +1544,32 @@ Here how you can set it up in your program:
     }
 
 It is possible to declare it on the project level as well
+
+## ----------------------------------------------------------------------------
+##  Initialization
+## ----------------------------------------------------------------------------
+
+It is possible to declare Initialization symbol to be called before any preloaded
+or the program symbols
+
+    public symbol Initialization
+       = Console.writeLine("Bootstrapping the program");
+    
+    namespace registration
+    {
+       public symbol registerMe
+          = Console.writeLine("registration was called");
+    }
+    
+    import sandbox'registration : preloaded;
+    
+    public Program()
+    {
+       Console.writeLine("Program starting");
+    }
+    
+The output will be:
+
+    Bootstrapping the program
+    registration was called
+    Program starting

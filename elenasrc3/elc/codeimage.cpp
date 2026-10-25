@@ -84,6 +84,11 @@ TargetImage :: TargetImage(PlatformType systemTarget, ForwardResolverBase* resol
 
       // creating start up symbol
       Module* dummyModule = new Module();
+      if (linker.resolve(INITIALIZATION_ENTRY, mskSymbolRef, true) != INVALID_ADDR) {
+         addLazyReference({ mskAutoSymbolRef, INVALID_POS,
+            dummyModule, dummyModule->mapReference(resolver->resolveForward(INITIALIZATION_ENTRY + getlength(FORWARD_PREFIX_NS))), 0 });
+      }
+
       linker.loadPreloaded(PRELOADED_FORWARD, !imageInfo.autoModuleExtension);
       addLazyReference({ mskAutoSymbolRef, INVALID_POS, 
          dummyModule, dummyModule->mapReference(resolver->resolveForward(START_FORWARD)), 0});

@@ -12,6 +12,7 @@
   - [ADDED] "$is" operator : checking if the object handle cast<T> message
   - [REMOVED] "=>" switch statement
   - [ADDED] "???" operator - switch expression / statement;
+  - [ADDED] the possibility to preload the whole namespace
      
 - ELC
   - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation

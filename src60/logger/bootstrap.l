@@ -84,5 +84,13 @@ public singleton LogSetup
    {
       DependencyInjector::register<ILogger>(LoggerFactory);
    }
+   
+   injectErrorHandler()
+   {
+      ILogger logger := LoggerFactory.new();
+      
+      startUpEvents.OnError := (err) {
+         logger.writeEntry(LogLevel.Error, err.toPrintable());
+      };
+   }
 }
-

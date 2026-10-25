@@ -83,8 +83,6 @@ ConsoleDefaultHandler(err)
 {
    try {
       startUpEvents.handlingError(err);
-
-      Console.writeLine(err);
    }
 }
 
