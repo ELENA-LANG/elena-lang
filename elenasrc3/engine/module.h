@@ -46,6 +46,7 @@ namespace elena_lang
       ustr_t resolveConstant(ref_t reference) override;
 
       void forEachReference(void* arg, void(*lambda)(ModuleBase*, ref_t, void*)) override;
+      void forEachReference(void* arg1, void* arg2, void(*lambda)(ModuleBase*, ref_t, void*, void*)) override;
 
       AbstractModule()
          : _references(0), _actionNames(0),

@@ -126,6 +126,13 @@ void AbstractModule :: forEachReference(void* arg, void(*lambda)(ModuleBase*, re
    }
 }
 
+void AbstractModule :: forEachReference(void* arg1, void* arg2, void(*lambda)(ModuleBase*, ref_t, void*, void*))
+{
+   for (auto it = _references.start(); !it.eof(); ++it) {
+      lambda(this, *it, arg1, arg2);
+   }
+}
+
 // --- Module ---
 
 Module :: Module(ustr_t name)

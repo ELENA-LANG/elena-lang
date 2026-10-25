@@ -142,6 +142,27 @@ Content
        myFunction()
     }
 
+
+It is possible to preload the whole namespace:
+
+    namespace registration
+    {
+       public symbol registerMe
+          = Console.writeLine("registration was called");
+    }
+    
+    import sandbox'registration : preloaded;
+    
+    public Program()
+    {
+       Console.writeLine("Program starting");
+    }
+
+The output will be:
+
+    registration was called
+    Program starting
+
 ## ----------------------------------------------------------------------------
 ##  String interpolation
 ## ----------------------------------------------------------------------------

@@ -37,6 +37,7 @@ namespace elena_lang
       virtual MemoryBase* mapSection(ref_t reference, bool existing) = 0;
 
       virtual void forEachReference(void* arg, void(*lambda)(ModuleBase*, ref_t, void*)) = 0;
+      virtual void forEachReference(void* arg1, void* arg2, void(*lambda)(ModuleBase*, ref_t, void*, void*)) = 0;
 
       virtual ~ModuleBase() = default;
    };

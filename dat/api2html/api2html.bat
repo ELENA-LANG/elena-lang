@@ -6,6 +6,7 @@ bin\ldoc -i system'runtime doc\api
 bin\ldoc -i system'threading doc\api
 bin\ldoc -i system'io'threading doc\api
 bin\ldoc -i system'dynamic doc\api
+bin\ldoc -i system'dynamic'expressions doc\api
 bin\ldoc -i system'drawing doc\api
 bin\ldoc -i system'winforms doc\api
 bin\ldoc -i system'net doc\api

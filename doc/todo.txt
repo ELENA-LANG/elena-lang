@@ -28,7 +28,6 @@ In development:
   - post about foreach
   - fix : why stream operation Stream.read[4] generates an error for Linux
   - review : Stream, MemoryStream, NetworkStream
-  - make sure the preloaded symbols declared in another module is loaded when that module is used
   - switch with class types
   - simplified syntax - Template<int> t := new auto();
   - implement *_length := len - as native operation
@@ -82,11 +81,13 @@ In development:
   - exception in the constructor
   - use OGL3DDummyWindow to initialize OpenGL
   ---------------------------------------
-  * current : app
+  * current : preloaded
   ====================================== 
-  - it should be possible to initialize startUpEvents before preloading, so the preload error can be seen
-    in logs
-  - support handling of errors by preloading
+  - it should be possible to declare Bootstrap symbol in the root namespace, which will be called
+    first, before any preloaded symbols
+
+  - logger must be able to register itself before the other preloaded starts
+  - make an entry about in in knowhow
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3

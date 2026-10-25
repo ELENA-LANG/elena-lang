@@ -2929,7 +2929,7 @@ static inline bool nativeBranchingOp2(BuildNode lastNode)
    return true;
 }
 
-static inline bool nativeBranchingOp3(BuildNode lastNode)
+static inline bool nativeBranchingOp3(BuildNode)
 {
    return false;
 }

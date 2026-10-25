@@ -2026,6 +2026,8 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode&
       switch (type) {
          case DeclarationType::Import:
             writer.CurrentNode().setKey(SyntaxKey::Import);
+
+            flushSymbolPostfixes(writer, scope, node);
             break;
          case DeclarationType::Shortcut:
             writer.CurrentNode().setKey(SyntaxKey::Shortcut);

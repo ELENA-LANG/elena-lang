@@ -4871,6 +4871,52 @@ void Compiler :: declareShortcutMetaInfo(Scope& scope, SyntaxNode node)
    }
 }
 
+void Compiler :: declareImportedMetaInfo(Scope& scope, SyntaxNode node, ustr_t importedNs)
+{
+   SyntaxNode current = node.findChild(SyntaxKey::InlineTemplate);
+   if (current == SyntaxKey::None)
+      return;
+
+   SyntaxNode parentNode = node.parentNode();
+
+   ReferenceName virtualRef(importedNs, NAMESPACE_REF);
+   auto sectionInfo = scope.moduleScope->getSection(*virtualRef, mskMetaExtensionRef, true);
+   if (!sectionInfo.module)
+      return;
+
+   ustr_t subNs = importedNs.str() + sectionInfo.module->name().length();
+
+   TypeList symbols;
+   sectionInfo.module->forEachReference(&symbols, &subNs, [](ModuleBase* module, ref_t reference, void* arg1, void* arg2)
+      {
+         TypeList* list = (TypeList*)arg1;
+         ustr_t* ns = (ustr_t*)arg2;
+
+         auto referenceName = module->resolveReference(reference);
+         if (isWeakReference(referenceName) && NamespaceString::compareNs(referenceName, *ns)) {
+            if (referenceName.findStr(INLINE_CLASSNAME) != NOTFOUND_POS)
+               return;
+
+            if (module->mapSection(reference | mskSymbolRef, true)) {
+               list->add(reference);
+            }
+         }
+      });
+
+   for (auto it = symbols.start(); !it.eof(); ++it) {
+      IdentifierString fullName(sectionInfo.module->name(), sectionInfo.module->resolveReference(*it));
+
+      SyntaxNode symbolNode = parentNode.appendChild(SyntaxKey::Symbol, scope.moduleScope->mapAnonymous());
+      SyntaxTreeWriter symbolWriter(symbolNode);
+      SyntaxTree::copyNodeSafe(symbolWriter, current, true);
+
+      SyntaxNode exprNode = symbolNode.appendChild(SyntaxKey::GetExpression);
+      exprNode.appendChild(SyntaxKey::Object).appendChild(SyntaxKey::globalreference, *fullName);
+   }
+
+   current.setKey(SyntaxKey::Idle);
+}
+
 void Compiler::declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node)
 {
    SyntaxNode current = node.firstChild();
@@ -13063,8 +13109,10 @@ void Compiler::Namespace::declareNamespace(SyntaxNode node, bool ignoreImport, b
                bool duplicateInclusion = false;
                ustr_t name = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
                if (scope.moduleScope->includeNamespace(scope.importedNs, name, duplicateInclusion)) {
-                  if (!ignoreExtensions)
-                     compiler->importExtensions(scope, name);
+                  if (!ignoreExtensions) {
+                     compiler->importExtensions(scope, name);                     
+                  }                     
+                  else compiler->declareImportedMetaInfo(scope, current, name);
                }
                else if (duplicateInclusion) {
                   scope.raiseWarning(WARNING_LEVEL_1, wrnDuplicateInclude, current.findChild(SyntaxKey::Name));

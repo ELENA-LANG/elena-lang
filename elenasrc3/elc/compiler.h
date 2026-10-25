@@ -2053,6 +2053,7 @@ namespace elena_lang
 
       void declareSymbolMetaInfo(SymbolScope& scope, SyntaxNode node);
       void declareShortcutMetaInfo(Scope& scope, SyntaxNode node);
+      void declareImportedMetaInfo(Scope& scope, SyntaxNode node, ustr_t ns);
 
       void declareInvoker(ClassInfo& info, mssg_t targetMssg, MethodInfo& methodInfo, bool abstractOne, ref_t newHints);
       void declareByRefHandler(ClassInfo& info, mssg_t message, bool abstractOne);

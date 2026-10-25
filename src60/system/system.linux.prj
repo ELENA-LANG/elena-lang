@@ -51,7 +51,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>7.1.21</version>
+     <version>7.1.22</version>
      <author>Aleksey Rakov, ELENA-LANG Org</author>
   </manifest>
   <files>
@@ -153,6 +153,8 @@
        <include>dynamic/closure.l</include>
        <include>dynamic/tape.l</include>
        <include>dynamic/di_routine.l</include>
+     </module>
+     <module name="dynamic'expressions">
        <include>dynamic/expressions/expressions.l</include>
      </module>
      <module name="text'parsing">
