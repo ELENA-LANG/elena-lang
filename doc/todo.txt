@@ -70,21 +70,20 @@ In development:
   ---------------------------------------
   * opengl : #735
   ====================================== 
+  - initialize OpenGL
   - engine : register in context
   - fill the screen the red color
   - do the same for x64
   ---------------------------------------
-  * xforms
+  * current - support FunctionPointer & LibraryPointer
   ====================================== 
-  - xforms / forms : use logger for exception handling
-  - do not use MainWindow in the exception handler
-  - exception in the constructor
-  - use OGL3DDummyWindow to initialize OpenGL
+  - it should be possible to call -> OPENGL.wglCreateContext(dc); <- so the compiler will load dc content
+  - OPENGL.wglCreateContext(dc.Handle); <- dc.Handle must be stack allocated
+  - special primitive type __function - reference to the external function
+  - opcode to call external function by pointer
+  - new inline template - e.g.  ExternalFunction<HDC>  - can be called extFunc(dc);
+  - support external function (LoadLibraryW & GetProcAddress)
   ---------------------------------------
-  * current : preloaded
-  ====================================== 
-  - logger must be able to register itself before the other preloaded starts
-  - make an entry about in in knowhow
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3

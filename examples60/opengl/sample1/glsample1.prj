@@ -1,7 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
 <configuration>
+  <platform key="Win_x86">
+     <project>
+        <executable>glsample1</executable>
+     </project>
+  </platform>
+  <platform key="Win_x64">
+     <project>
+        <executable>glsample1_64</executable>
+     </project>
+  </platform>
   <project>
-     <executable>glsample1</executable>
      <namespace>glsample1</namespace>
      <template>gui</template>
   </project>
@@ -19,4 +28,7 @@
         <include>glsample1.l</include>
      </module>
   </files>
+  <constants>
+     <constant key="logger">file=output;</constant>
+  </constants>
 </configuration>

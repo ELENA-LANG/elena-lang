@@ -14,5 +14,6 @@
     <project platform="windows">textgen\textgen.prj</project>
     <project platform="windows">webapi\webapi.prj</project>
     <project>logger\logger.prj</project>
+    <project>opengl\opengl.prj</project>
   </collection>
 </configuration>

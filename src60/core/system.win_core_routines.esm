@@ -58,6 +58,7 @@ labDefault:
 
 labCreate:
   peek        fp:arg4
+
   store       fp:arg
 
   set         dp:hwnd
@@ -67,6 +68,10 @@ labCreate:
   store       sp:2
 
   get         i:0
+
+  cmp         nil
+  jeq         labDefault
+
   get         i:0
 
   vcall       mssg:"onWMCreate<system'Handle,system'winforms'CREATESTRUCT>[3]", class:"system'winforms'WindowCallback"

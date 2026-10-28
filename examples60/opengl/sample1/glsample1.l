@@ -1,5 +1,12 @@
 import xforms;
 import opengl;
+import logger;
+
+public symbol Initialization =
+   LogSetup
+      .registerFromString(__project_constants["logger"])
+      .injectErrorHandler()
+      .injectLogger();
 
 public class MainWindow : XForm, using(MainWindow)
 {

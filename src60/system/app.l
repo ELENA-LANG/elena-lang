@@ -129,8 +129,6 @@ gui_entry()
       {
          startUpEvents.handlingError(err);
 
-         forward Program.error("ELENA", err);
-
          extern ExitLA(1);
       }
    }

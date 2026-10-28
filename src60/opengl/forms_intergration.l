@@ -35,10 +35,24 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
       pfd.setPixelFormat(dc, pixelFormat);
       
       HGLRC context := WGLWrapper.createContext(dc);
-      if (context.isEmpty()) {
+      if (context.isUnassigned()) {
          OpenGLException.raise("OpenGLWrapper: failed to create context");
       };
       
+      context.makeCurrent(dc);
+      
+/*
+    if (!gladLoadWGL(dummyDC))
+        throw std::runtime_error("OGraphicsEngine - gladLoadWGL failed");
+    
+    if (!gladLoadGL())
+        throw std::runtime_error("OGraphicsEngine - gladLoadGL failed");
+    
+
+    wglMakeCurrent(dummyDC, 0);
+    wglDeleteContext(dummyContext);
+
+*/      
    }
 
    initialize()

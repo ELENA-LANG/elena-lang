@@ -650,6 +650,16 @@ void ByteCodeViewer :: printMethodInfo(MethodInfo& info)
       flags.append(" @Extension");
 
    printLine(*flags);
+
+   if (info.byRefHandler) {
+      flags.clear();
+      IdentifierString messageName;
+      ByteCodeUtil::resolveMessageName(messageName, _module, info.byRefHandler);
+      flags.append("          byref handler : ");
+      flags.append(*messageName);
+
+      printLine(*flags);
+   }
 }
 
 void ByteCodeViewer :: printSymbol(ustr_t name)

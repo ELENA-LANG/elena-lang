@@ -4,15 +4,20 @@ use extern OPENGL : importing("OPENGL32");
 
 public const struct HGLRC
 {
-   handle _handle;
+   embeddable handle _handle;
    
-   bool IsEmpty()
+   bool isUnassigned()
       = _handle.isUnassigned();
    
    constructor(handle handle)
    {
       _handle := handle
-   }   
+   }
+   
+   makeCurrent(HDC dc)
+   {
+      int retVal := OPENGL.wglMakeCurrent(dc, _handle);
+   }
 }
 
 internal singleton WGLWrapper
@@ -21,14 +26,6 @@ internal singleton WGLWrapper
    {
       handle h := OPENGL.wglCreateContext(dc);
       
-      //int err := extern KERNEL32.GetLastError();
-      
       ^ h
    }
-/*   
-   makeCurrent(HDC dc, HGLRC glrc)
-   {
-      OPENGL.wglMakeCurrent(dc, glrc)
-   }
-*/   
 }

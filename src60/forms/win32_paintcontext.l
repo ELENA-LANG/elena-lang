@@ -69,51 +69,25 @@ public sealed class PaintContext : BaseWinControl, interface<IControl>
 
    initializeOGL3DDummyWindow(IPaintContextController controller)
    {
-/*      
-    WNDCLASSEX windowClass = {};
-    windowClass.style = CS_OWNDC;
-    windowClass.lpfnWndProc = DefWindowProcA;
-    windowClass.lpszClassName = L"OGL3DDummyWindow";
-    windowClass.cbSize = sizeof(WNDCLASSEX);
-
-    auto classId = RegisterClassEx(&windowClass);
-
-    HWND dummyWindow = CreateWindowEx(
-        0,
-        MAKEINTATOM(classId),
-        L"OGL3DDummyWindow",
-        0,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        CW_USEDEFAULT,
-        0,
-        0,
-        windowClass.hInstance,
-        0);
-*/
-
       auto dummyHandle := new WindowHandle(
                         0,
                         OGL3DDummyWindow,
-                        EmptyString,
+                        EmptyWideString,
                         0,
                         CW_USEDEFAULT, CW_USEDEFAULT,
                         CW_USEDEFAULT, CW_USEDEFAULT,
-                        nil,
+                        WindowHandle.Default,
                         CurrentInstance,
-                        nil);
+                        UnsafePointer.Default);
         
       HDC dummyDC := dummyHandle.HDC;
                               
-/*
-    assert(dummyWindow);
-
-    HDC dummyDC = GetDC(dummyWindow);
-
-*/      
       controller.loadGL(dummyDC);
-      
+
+/*
+    ReleaseDC(dummyWindow, dummyDC);
+    DestroyWindow(dummyWindow);
+*/            
       
    }
 
