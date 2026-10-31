@@ -50,7 +50,7 @@ const char* _fnOpcodes[256] =
    "call", "call vt", "jump", "jeq", "jne", "jump vt", "xredirect mssg", "jlt",
    "jge", "jgr", "jle", "peek tls", "store tls", "xladd dp", OPCODE_UNKNOWN, OPCODE_UNKNOWN,
 
-   "cmp", "fcmp", "icmp", "tst flag", "tst n", "tst mssg", "xcmp sp", OPCODE_UNKNOWN,
+   "cmp", "fcmp", "icmp", "tst flag", "tst n", "tst mssg", "xcmp sp", "xcall extern n",
    "cmp fp", "cmp sp", "extclose", "lload sp", "load sp", "xloadarg fp", "xcreate", "system",
 
    "fadd dp", "fsub dp", "fmul dp", "fdiv dp", "udiv dp", "xsave disp", "xlabel dp", "selgr",

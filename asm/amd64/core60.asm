@@ -2027,6 +2027,180 @@ inline %2C6h
 
 end 
 
+// ; xcallext
+inline %0C7h
+
+#if _WIN
+
+  mov  r9, [rsp+24]
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  r9, [rsp+40]
+  mov  r8,  [rsp+32]
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+  add  rsp, 32
+
+#endif
+
+  call rbx
+  mov  rdx, rax
+
+#if (_LNX || _FREEBSD)
+  sub  rsp, 32   // ; HOTFIX : to keep compatible
+#endif
+
+end
+
+// ; xcallext
+inline %1C7h
+
+  call rbx
+  mov  rdx, rax
+
+end
+
+// ; xcallext
+inline %2C7h
+
+#if _WIN
+
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdi, r10
+
+#endif
+
+  call rbx
+  mov  rdx, rax
+
+end
+
+// ; xcallext
+inline %3C7h
+
+#if _WIN
+
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call rbx
+  mov  rdx, rax
+
+end
+
+// ; xcallext
+inline %4C7h
+
+#if _WIN
+
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call rbx
+  mov  rdx, rax
+
+end
+
+// ; xcallext
+inline %5C7h
+
+#if _WIN
+
+  mov  r9, [rsp+24]
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call rbx
+  mov  rdx, rax
+
+end
+
+// ; xcallext
+inline %6C7h
+
+#if _WIN
+
+  mov  r9, [rsp+24]
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  r8, [rsp+32]
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call rbx
+  mov  rdx, rax
+
+end
+
+// ; xcallext
+inline %7C7h
+
+#if _WIN
+
+  mov  r9, [rsp+24]
+  mov  r8, [rsp+16]
+  mov  rdx, r11
+  mov  rcx, r10
+
+#elif (_LNX || _FREEBSD)
+
+  mov  r9, [rsp+40]
+  mov  r8, [rsp+32]
+  mov  rcx, [rsp+24]
+  mov  rdx, [rsp+16]
+  mov  rsi, r11
+  mov  rdi, r10
+
+#endif
+
+  call rbx
+  mov  rdx, rax
+
+end
+
 // ; cmpfi
 inline %0C8h
 

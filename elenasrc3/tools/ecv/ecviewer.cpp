@@ -345,6 +345,13 @@ void ByteCodeViewer :: addIArg(arg_t arg, IdentifierString& commandStr)
    commandStr.appendInt(arg);
 }
 
+void ByteCodeViewer :: addIArg(arg_t arg, ustr_t prefix, IdentifierString& commandStr)
+{
+   commandStr.append(prefix);
+   commandStr.append("i:");
+   commandStr.appendInt(arg);
+}
+
 void ByteCodeViewer :: addSecondArg(arg_t arg, IdentifierString& commandStr)
 {
    commandStr.append(", ");
@@ -463,6 +470,12 @@ void ByteCodeViewer :: addCommandArguments(ByteCommand& command, IdentifierStrin
                addSecondArg(command.arg2 & 0x7FFFFFFF, "long ", commandStr);
             }
             else addSecondArg(command.arg2, commandStr);
+            break;
+         case ByteCode::XCallExtN:
+            if (test(command.arg2, (int)0x80000000)) {
+               addIArg(command.arg2 & 0x7FFFFFFF, "long ", commandStr);
+            }
+            else addIArg(command.arg2, commandStr);
             break;
          case ByteCode::XStoreSIR:
          case ByteCode::XStoreFIR:
@@ -841,6 +854,15 @@ void ByteCodeViewer :: printFields(ClassInfo& classInfo, int& row, int pageSize)
                break;
             case V_PTR64:
                line.append(" of __ptr[8]");
+               break;
+            case V_FUNC_PTR32:
+               line.append(" of __func_ptr[4]");
+               break;
+            case V_WINAPI_FUNC_PTR32:
+               line.append(" of __win_func_ptr[4]");
+               break;
+            case V_FUNC_PTR64:
+               line.append(" of __func_ptr[8]");
                break;
             case V_INT8:
                line.append(" of __int[1]");

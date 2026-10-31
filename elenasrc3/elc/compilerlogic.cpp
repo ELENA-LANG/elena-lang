@@ -980,6 +980,8 @@ bool CompilerLogic :: validateFieldAttribute(ref_t attribute, FieldAttributes& a
       case V_FLOATBINARY:
       case V_POINTER:
       case V_EXTMESSAGE:
+      case V_FUNCTION_PTR:
+      case V_WINAPI_FUNC_PTR:
          attrs.typeInfo.typeRef = attribute;
          break;
       case V_STRINGOBJ:
@@ -1878,6 +1880,7 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.size = 8;
          break;
       case V_PTR64:
+      case V_FUNC_PTR64:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugULONG | elStructureRole | elReadOnlyRole;
          info.size = 8;
@@ -1895,6 +1898,8 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          break;
       case V_PTR32:
       case V_UINT32:
+      case V_FUNC_PTR32:
+      case V_WINAPI_FUNC_PTR32:
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugUINT | elStructureRole | elReadOnlyRole;
          info.size = 4;

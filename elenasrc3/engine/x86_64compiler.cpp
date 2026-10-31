@@ -14,10 +14,11 @@
 
 using namespace elena_lang;
 
-constexpr auto OverloadsCount = 6;
+constexpr auto OverloadsCount = 7;
 const Pair<ByteCode, CodeGenerator, ByteCode::None, nullptr> Overloads[OverloadsCount] =
 {
    { ByteCode::CallExtR, x86_64loadCallOp},
+   { ByteCode::XCallExtN, x86_64loadCallOp},
    { ByteCode::FreeI, x86_64compileStackOp},
    { ByteCode::AllocI, x86_64compileStackOp},
    { ByteCode::OpenIN, x86_64compileOpenIN},

@@ -184,6 +184,9 @@ ELENA byte codes (or ecodes)
 
    xcall                    - calls the procedure in acc;
  
+   xcall extern n           - call an external routine
+                              mnemonic: call {extern}:acc args
+
    xjump                    - jumps to the procedure in acc;
  
 

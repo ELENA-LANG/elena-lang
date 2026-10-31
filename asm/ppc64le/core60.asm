@@ -2460,6 +2460,17 @@ inline %2C6h
 
 end 
 
+
+
+// xcallext n
+inline %0C7h
+
+  //; !! temporally not implemented
+
+end
+
+
+
 // ; cmpfi
 inline %0C8h
 

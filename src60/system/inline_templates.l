@@ -329,3 +329,56 @@ public abstract class YieldStateEnumerator<T> : Enumerator<T>
 
    enumerable() = self;
 }
+
+// --- extern_winapi_func ---
+
+public template extern_winapi_func(params member)::
+{
+   __winapi_fn_ptr func;
+
+   constructor load(handle lib_ptr, string func_name) 
+   {
+      func := extern KERNEL32.GetProcAddress(lib_ptr, func_name);
+   }
+
+   int function(
+#for(member) 
+      member
+#endfor
+   ) {
+      int retVal := func(
+#for(member) 
+         $value member
+#endfor      
+      );
+      
+      ^ retVal
+   }
+}   
+
+
+// --- extern_winapi_func ---
+
+public template extern_winapi_func<T>(params member)::
+{
+   __winapi_fn_ptr func;
+
+   constructor load(handle lib_ptr, string func_name) 
+   {
+      func := extern KERNEL32.GetProcAddress(lib_ptr, func_name);
+   }
+
+   T function(
+#for(member) 
+      member
+#endfor
+   ) {
+      T retVal := func(
+#for(member) 
+         $value member
+#endfor      
+      );
+      
+      ^ retVal
+   }
+}

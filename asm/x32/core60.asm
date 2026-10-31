@@ -2078,6 +2078,38 @@ inline %1C6h
 
 end 
 
+// ; xcallext n
+inline %0C7h
+
+  mov  [esp], esi
+  call ebx
+  mov  edx, eax
+
+end
+
+// ; xcallext
+inline %1C7h
+
+  call ebx
+  mov  edx, eax
+
+end
+
+// ; xcallext
+inline %6C7h
+
+  mov  [esp], esi
+  call ebx
+
+end
+
+// ; xcallext
+inline %7C7h
+
+  call ebx
+
+end
+
 // ; cmpfi
 inline %0C8h
 

@@ -550,6 +550,18 @@ static inline void extCallOp(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::CallExtR, node.arg.reference | mskExternalRef, arg2);
 }
 
+static inline void ext_var_call_op(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::GetI, 0);
+
+   int arg = node.findChild(BuildKey::Count).arg.value;
+   // HOTFIX : special case - long call
+   if (node.existChild(BuildKey::LongMode))
+      arg |= 0x80000000;
+
+   tape.write(ByteCode::XCallExtN, arg);
+}
+
 static inline void savingIndex(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SaveDP, node.arg.value);
@@ -2451,7 +2463,7 @@ ByteCodeWriter::Saver commands[] =
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
    procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp, set_message, redirect_procedure,
-   mark_collectable, mark_noncollectable, savingLongIndexToAcc, ref_condop, is_condop,
+   mark_collectable, mark_noncollectable, savingLongIndexToAcc, ref_condop, is_condop, ext_var_call_op,
 };
 
 static inline bool duplicateBreakpoints(BuildNode lastNode)

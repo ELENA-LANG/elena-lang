@@ -1,3 +1,4 @@
+import extensions;
 //import system'dynamic;
 //import extensions'logging;
 //import logger;
@@ -82,10 +83,33 @@ public Program()
 
 import system'drawing;
 
+
+/*struct Function
+{
+   __winapi_fn_ptr func;
+   
+   constructor()
+   {
+      handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      func := extern KERNEL32.GetProcAddress(libGL, "wglGetProcAddress");
+   }
+   
+   function(HDC dc)
+   {
+      int retVal := func(dc);
+   }
+}*/
+
+
+public struct wglGetProcAddressPtr : extern_winapi_func(HDC dc);
+
 public Program()
 {
-   HDC dc := default;
-   PIXELFORMATDESCRIPTOR pfd := default;
+   handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
 
-   int pixelFormat := extern GDI32.ChoosePixelFormat(dc, pfd);
+   wglGetProcAddressPtr wglGetProcAddress := wglGetProcAddressPtr.load(libGL, "wglGetProcAddress");
+   
+   HDC dc := default;
+   
+   int retVal := wglGetProcAddress(dc);
 }

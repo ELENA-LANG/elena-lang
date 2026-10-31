@@ -192,8 +192,9 @@ namespace elena_lang
       SavingLongIndexToAcc = 0x009A,
       RefCondOp            = 0x009B,
       IsCondOp             = 0x009C,
+      ExtVarCallOp         = 0x009D,
 
-      MaxOperationalKey    = 0x009C,
+      MaxOperationalKey    = 0x009D,
       
       MetaPropOp           = 0x009F,
 
@@ -497,6 +498,7 @@ namespace elena_lang
          map.add("is_branchop", BuildKey::IsBranchOp);
          map.add("nil_op", BuildKey::NilOp);
          map.add("nil_ref_branchop", BuildKey::NilRefBranchOp);
+         map.add("ext_var_call_op", BuildKey::ExtVarCallOp);
       }
    };
 

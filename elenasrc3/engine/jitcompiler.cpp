@@ -54,7 +54,7 @@ CodeGenerator _codeGenerators[256] =
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
    compileJge, compileJgr, compileJle, loadTLSOp, loadTLSOp, loadFrameDispOp, loadNop, loadNop,
 
-   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadNop,
+   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadXCallNOp,
    loadFrameIndexOp, loadStackIndexOp, compileClose, loadStackIndexOp, loadStackIndexOp, loadXFrameIndexOp, loadROp, loadSysOp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDispNOp, compileHookDPR, loadRROp,
@@ -97,7 +97,7 @@ static inline addr_t resolveMDataOrStatVAddress(JITCompilerScope* scope, ref_t m
 }
 
 // preloaded bc commands
-constexpr size_t bcCommandNumber = 183;
+constexpr size_t bcCommandNumber = 184;
 constexpr ByteCode bcCommands[bcCommandNumber] =
 {
    ByteCode::MovEnv, ByteCode::SetR, ByteCode::SetDP, ByteCode::CloseN, ByteCode::AllocI,
@@ -136,7 +136,7 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::XQuit, ByteCode::ExtCloseN, ByteCode::XCmpSI, ByteCode::LoadSI, ByteCode::XFSave,
    ByteCode::XSaveN, ByteCode::XSaveDispN, ByteCode::XStoreFIR, ByteCode::LNeg, ByteCode::Parent,
    ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS, ByteCode::DFree, ByteCode::XLAddDP,
-   ByteCode::LoadZ, ByteCode::WLoadZ, ByteCode::LFSave,
+   ByteCode::LoadZ, ByteCode::WLoadZ, ByteCode::LFSave, ByteCode::XCallExtN,
 };
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
@@ -1566,43 +1566,60 @@ void elena_lang :: loadMOp(JITCompilerScope* scope)
    writer->seekEOF();
 }
 
-void elena_lang::loadCallOp(JITCompilerScope* scope)
+void* elena_lang::retreiveCallCode(JITCompilerScope* scope, int arg)
 {
-   MemoryWriter* writer = scope->codeWriter;
-
    int prefix = 0;
-   int arg2 = scope->command.arg2;
-   if (test(arg2, (int)0x80000000)) {
-      arg2 &= 0x7FFFFFFF;
+   if (test(arg, (int)0x80000000)) {
+      arg &= 0x7FFFFFFF;
 
       prefix = 6;
       // HOTFIX : only 6 & 7 slot is used
-      if (arg2 > 1)
-         arg2 = 0;
+      if (arg > 1)
+         arg = 0;
    }
 
    void* code = nullptr;
-   switch (arg2) {
-       case 0:
-           code = scope->compiler->_inlines[prefix + 1][scope->code()];
-           break;
-       case 1:
-           code = scope->compiler->_inlines[prefix + 2][scope->code()];
-           break;
-       case 2:
-           code = scope->compiler->_inlines[prefix + 3][scope->code()];
-           break;
-       case 3:
-           code = scope->compiler->_inlines[prefix + 4][scope->code()];
-           break;
-       case 4:
-          code = scope->compiler->_inlines[prefix + 5][scope->code()];
-          break;
-       default:
-           code = scope->compiler->_inlines[prefix + 0][scope->code()];
-           break;
+   switch (arg) {
+      case 0:
+         code = scope->compiler->_inlines[prefix + 1][scope->code()];
+         break;
+      case 1:
+         code = scope->compiler->_inlines[prefix + 2][scope->code()];
+         break;
+      case 2:
+         code = scope->compiler->_inlines[prefix + 3][scope->code()];
+         break;
+      case 3:
+         code = scope->compiler->_inlines[prefix + 4][scope->code()];
+         break;
+      case 4:
+         code = scope->compiler->_inlines[prefix + 5][scope->code()];
+         break;
+      default:
+         code = scope->compiler->_inlines[prefix + 0][scope->code()];
+         break;
    }
 
+   return code;
+}
+
+void elena_lang :: loadXCallNOp(JITCompilerScope* scope)
+{
+   void* code = retreiveCallCode(scope, scope->command.arg1);
+
+   MemoryWriter* writer = scope->codeWriter;
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+}
+
+void elena_lang::loadCallOp(JITCompilerScope* scope)
+{
+   void* code = retreiveCallCode(scope, scope->command.arg2);
+
+   MemoryWriter* writer = scope->codeWriter;
    pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
 

@@ -75,20 +75,21 @@
 #let attributes["__threadvar"]    := 8000102Dh;
 #let attributes["__intermediate"] := 8000102Eh;
 #let attributes["__nonboxable"]   := 8000102Fh;
-#let attributes["__arg"]            := 80001030h;
+#let attributes["__arg"]          := 80001030h;
 
 /// primitive types
-#let attributes["__string"]    := 80000801h;
-#let attributes["__float"]     := 80000802h;
-#let attributes["__int"]       := 80000803h;
-#let attributes["__uint"]      := 80000804h;
-#let attributes["__word"]      := 80000805h;
-#let attributes["mssgconst"]   := 80000806h;
-#let attributes["mssg"]        := 80000806h;
-#let attributes["__subj"]      := 80000807h;
-#let attributes["__symbol"]    := 80000808h;
-#let attributes["__mssg"]      := 80000809h;
-#let attributes["__ptr"]       := 8000080Ah;
-#let attributes["__ext_mssg"]  := 8000080Bh;
-#let attributes["__typeof"]    := 8000080Ch;
-
+#let attributes["__string"]       := 80000801h;
+#let attributes["__float"]        := 80000802h;
+#let attributes["__int"]          := 80000803h;
+#let attributes["__uint"]         := 80000804h;
+#let attributes["__word"]         := 80000805h;
+#let attributes["mssgconst"]      := 80000806h;
+#let attributes["mssg"]           := 80000806h;
+#let attributes["__subj"]         := 80000807h;
+#let attributes["__symbol"]       := 80000808h;
+#let attributes["__mssg"]         := 80000809h;
+#let attributes["__ptr"]          := 8000080Ah;
+#let attributes["__ext_mssg"]     := 8000080Bh;
+#let attributes["__typeof"]       := 8000080Ch;
+#let attributes["__function_ptr"] := 8000080Dh;
+#let attributes["__winapi_fn_ptr"]:= 8000080Eh;

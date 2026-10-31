@@ -1635,6 +1635,26 @@ bool Compiler::ClassScope :: resolveAutoType(ObjectInfo& targetInfo, TypeInfo ty
    return Scope::resolveAutoType(targetInfo, typeInfo, size, extra);
 }
 
+static inline bool isPtr(ref_t typeRef)
+{
+   return typeRef == V_PTR32 || typeRef == V_PTR64;
+}
+
+static inline TargetMode defineTargetMode(TypeInfo typeInfo)
+{
+   if (!typeInfo.isPrimitive())
+      return TargetMode::None;
+
+   switch (typeInfo.typeRef) {
+      case V_FUNC_PTR32:
+      case V_FUNC_PTR64:
+      case V_WINAPI_FUNC_PTR32:
+         return TargetMode::External;
+      default:
+         return TargetMode::None;
+   }
+}
+
 static inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, ExpressionAttribute attr, bool ignoreFields)
 {
    auto fieldInfo = info.fields.get(identifier);
@@ -1644,7 +1664,7 @@ static inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, E
 
       if (test(info.header.flags, elStructureRole)) {
          return { readOnly ? ObjectKind::ReadOnlyFieldAddress : ObjectKind::FieldAddress,
-            fieldInfo.typeInfo, fieldInfo.offset };
+            fieldInfo.typeInfo, fieldInfo.offset, defineTargetMode(fieldInfo.typeInfo) };
       }
       else return { readOnly ? ObjectKind::ReadOnlyField : ObjectKind::Field,
          fieldInfo.typeInfo, fieldInfo.offset };
@@ -1669,7 +1689,7 @@ static inline ObjectInfo mapClassInfoField(ClassInfo& info, ustr_t identifier, E
                ObjectKind::StaticConstField,
                staticFieldInfo.typeInfo,
                staticFieldInfo.offset,
-               (staticFieldInfo.typeInfo.typeRef == V_PTR32 || staticFieldInfo.typeInfo.typeRef == V_PTR64)
+               (isPtr(staticFieldInfo.typeInfo.typeRef))
                   ? TargetMode::BoxingPtr : TargetMode::None
             };
          }
@@ -3534,7 +3554,7 @@ void Compiler::checkMethodDuplicates(ClassScope& scope, SyntaxNode node, mssg_t 
    }
 }
 
-inline void saveConstInfo(ModuleBase* module, ref_t constRef, ref_t typeRef)
+inline static void saveConstInfo(ModuleBase* module, ref_t constRef, ref_t typeRef)
 {
    SymbolInfo constantInfo = { SymbolType::Constant, constRef, typeRef, false };
    MemoryWriter metaWriter(module->mapSection(constRef | mskMetaSymbolInfoRef, false), 0);
@@ -4111,16 +4131,15 @@ void Compiler :: declareAsyncInvoker(ClassInfo& info, mssg_t asyncFunction)
    declareInvoker(info, asyncFunction, methodInfo, false, (ref_t)MethodHint::Async);
 }
 
-mssg_t Compiler :: defineOutRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension)
+mssg_t Compiler :: defineOutRefMethod(ClassScope& scope, mssg_t message, TypeInfo outputTypeInfo, bool isExtensionOrFunction)
 {
-   TypeInfo outputTypeInfo = retrieveTypeInfo(node.findChild(SyntaxKey::OutputInfo));
    // NOTE : the embedable type should be read-only, otherwise it is possible that the changes will be lost
    if (outputTypeInfo.typeRef && _logic->isEmbeddableAndReadOnly(*scope.moduleScope, outputTypeInfo)) {
       ref_t actionRef, flags;
       pos_t argCount;
-      decodeMessage(node.arg.reference, actionRef, argCount, flags);
+      decodeMessage(message, actionRef, argCount, flags);
 
-      size_t argDiff = isExtension ? 0 : 1;
+      size_t argDiff = isExtensionOrFunction ? 0 : 1;
 
       ref_t signRef = 0;
       IdentifierString actionName(scope.module->resolveAction(actionRef, signRef));
@@ -4140,6 +4159,13 @@ mssg_t Compiler :: defineOutRefMethod(ClassScope& scope, SyntaxNode node, bool i
    }
 
    return 0;
+}
+
+mssg_t Compiler :: defineOutRefMethod(ClassScope& scope, SyntaxNode node, bool isExtensionOrFunction)
+{
+   TypeInfo outputTypeInfo = retrieveTypeInfo(node.findChild(SyntaxKey::OutputInfo));
+
+   return defineOutRefMethod(scope, node.arg.reference, outputTypeInfo, isExtensionOrFunction);
 }
 
 void Compiler::verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey methodKey, ClassInfo& info, VirtualMethodList& implicitMultimethods)
@@ -4235,7 +4261,8 @@ void Compiler :: generateMethodDeclarations(ClassScope& scope, SyntaxNode node, 
             // HOTFIX : do not generate byref handler for methods returning constant value & variadic method & yieldable
             if ((current.arg.reference & PREFIX_MESSAGE_MASK) != VARIADIC_MESSAGE && !SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_YIELDABLE)) {
                mssg_t byRefMethod = withRetOverload ?
-                  0 : defineOutRefMethod(scope, current, scope.extensionClassRef != 0);
+                  0 : defineOutRefMethod(scope, current, scope.extensionClassRef != 0
+                     || SyntaxTree::ifChildExists(current, SyntaxKey::Attribute, V_FUNCTION));
 
                if (byRefMethod) {
                   // HOTFIX : ignore the redirect method
@@ -6158,6 +6185,9 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
          return resolveArrayTemplate(moduleScope, typeInfo.elementRef, typeInfo.nillableElement, declarationMode, typeInfo.constant);
       case V_PTR32:
       case V_PTR64:
+      case V_FUNC_PTR32:
+      case V_WINAPI_FUNC_PTR32:
+      case V_FUNC_PTR64:
          return moduleScope.buildins.pointerReference;
       case V_SYMBOL:
          return moduleScope.buildins.superReference;
@@ -7545,24 +7575,24 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
             break;
          case V_SUBJBINARY:
             switch (attrs.size) {
-            case 4:
-               attrs.typeInfo.typeRef = V_MESSAGENAME;
-               attrs.fieldArray = false;
-               break;
-            default:
-               valid = false;
-               break;
+               case 4:
+                  attrs.typeInfo.typeRef = V_MESSAGENAME;
+                  attrs.fieldArray = false;
+                  break;
+               default:
+                  valid = false;
+                  break;
             }
             break;
          case V_FLOATBINARY:
             switch (attrs.size) {
-            case 8:
-               attrs.typeInfo.typeRef = V_FLOAT64;
-               attrs.fieldArray = false;
-               break;
-            default:
-               valid = false;
-               break;
+               case 8:
+                  attrs.typeInfo.typeRef = V_FLOAT64;
+                  attrs.fieldArray = false;
+                  break;
+               default:
+                  valid = false;
+                  break;
             }
             break;
          case V_POINTER:
@@ -7587,9 +7617,31 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   else assert(false);
                   break;
                default:
-                  valid = false;
+                  valid = false; 
                   break;
             }
+            break;
+         case V_FUNCTION_PTR:
+            attrs.fieldArray = false;
+            attrs.size = scope.moduleScope->ptrSize;
+            if (attrs.size == 4) {
+               attrs.typeInfo.typeRef = V_FUNC_PTR32;
+            }
+            else if (attrs.size == 8) {
+               attrs.typeInfo.typeRef = V_FUNC_PTR64;
+            }
+            else assert(false);
+            break;
+         case V_WINAPI_FUNC_PTR:
+            attrs.fieldArray = false;
+            attrs.size = scope.moduleScope->ptrSize;
+            if (attrs.size == 4) {
+               attrs.typeInfo.typeRef = V_WINAPI_FUNC_PTR32;
+            }
+            else if (attrs.size == 8) {
+               attrs.typeInfo.typeRef = V_FUNC_PTR64;
+            }
+            else assert(false);
             break;
          default:
             valid = false;
@@ -8050,19 +8102,32 @@ ObjectInfo Compiler::mapClassSymbol(Scope& scope, ref_t classRef)
    else return {};
 }
 
-ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node, ref_t nameRef)
+ExternalInfo Compiler :: mapExternal(Scope& scope, SyntaxNode node, ObjectInfo& source)
 {
-   ustr_t dllAlias = node.firstChild(SyntaxKey::TerminalMask).identifier();
-   ustr_t functionName = SyntaxTree::gotoNode(node, SyntaxKey::Message).firstChild(SyntaxKey::TerminalMask).identifier();
+   if (source.kind == ObjectKind::ExternLibrary) {
+      ref_t nameRef = source.reference;
 
-   if (functionName.empty()) {
-      functionName = dllAlias;
-      dllAlias = RT_FORWARD;
+      ustr_t dllAlias = node.firstChild(SyntaxKey::TerminalMask).identifier();
+      ustr_t functionName = SyntaxTree::gotoNode(node, SyntaxKey::Message).firstChild(SyntaxKey::TerminalMask).identifier();
+
+      if (functionName.empty()) {
+         functionName = dllAlias;
+         dllAlias = RT_FORWARD;
+      }
+      else if (nameRef)
+         dllAlias = scope.module->resolveConstant(nameRef);
+
+      return scope.moduleScope->mapExternal(dllAlias, functionName);
    }
-   else if (nameRef)
-      dllAlias = scope.module->resolveConstant(nameRef);
+   else if (source.typeInfo.typeRef == V_WINAPI_FUNC_PTR32) {
+      return { ExternalType::WinApi, 0 };
+   }
+   else if (source.typeInfo.typeRef == V_WINAPI_FUNC_PTR32) {
+      return { ExternalType::Standard, 0 };
+   }
 
-   return scope.moduleScope->mapExternal(dllAlias, functionName);
+   assert(false);
+   return {};
 }
 
 ExternalInfo Compiler :: mapExternalVariable(Scope& scope, SyntaxNode node, ref_t nameRef)
@@ -10440,11 +10505,8 @@ mssg_t Compiler::compileInplaceConstructorHandler(BuildTreeWriter& writer, Metho
    return privateScope.message;
 }
 
-void Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, mssg_t byRefHandler)
+void Compiler :: declareByRefHandler(MethodScope& privateScope, MethodScope& invokerScope)
 {
-   ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
-
-   MethodScope privateScope(classScope);
    // copy parameters
    for (auto it = invokerScope.parameters.start(); !it.eof(); ++it) {
       privateScope.parameters.add(it.key(), *it);
@@ -10457,13 +10519,20 @@ void Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& invok
    int offset = invokerScope.parameters.count() + 1u;
    privateScope.parameters.add(RETVAL_ARG, { offset, refType, sizeInfo.size });
 
-   privateScope.message = byRefHandler;
-   privateScope.info = classScope->info.methods.get(byRefHandler);
-
    privateScope.byRefReturnMode = true;
    privateScope.nestedMode = invokerScope.nestedMode;
    privateScope.functionMode = invokerScope.functionMode;
    privateScope.isEmbeddable = invokerScope.isEmbeddable;
+}
+
+void Compiler :: compileByRefHandler(BuildTreeWriter& writer, MethodScope& invokerScope, SyntaxNode node, mssg_t byRefHandler)
+{
+   ClassScope* classScope = Scope::getScope<ClassScope>(invokerScope, Scope::ScopeLevel::Class);
+
+   MethodScope privateScope(classScope);
+   privateScope.message = byRefHandler;
+   privateScope.info = classScope->info.methods.get(byRefHandler);
+   declareByRefHandler(privateScope, invokerScope);   
 
    compileMethod(writer, privateScope, node, classScope->withDebugInfo);
 }
@@ -10513,7 +10582,8 @@ ObjectInfo Compiler::Expression :: compileByRefHandlerCall(ObjectInfo target, re
    if (methodScope.isExtension) {
       resolution.extensionRef = methodScope.getClassRef();
    }
-   else arguments.add(target);
+   else if (!methodScope.functionMode)
+      arguments.add(target);
 
    for (auto it = methodScope.parameters.start(); !it.eof(); ++it) {
       arguments.add(methodScope.mapParameter(it.key(), EAttr::None));
@@ -10598,13 +10668,16 @@ static inline bool isArg32(CompilerLogic* logic, ModuleScopeBase* moduleScope, r
 {
    return logic->isCompatible(*moduleScope, { V_INT32 }, { typeRef }, CompatibleMode::None)
       || logic->isCompatible(*moduleScope, { V_PTR32 }, { typeRef }, CompatibleMode::None)
-      || logic->isCompatible(*moduleScope, { V_UINT32 }, { typeRef }, CompatibleMode::None);
+      || logic->isCompatible(*moduleScope, { V_UINT32 }, { typeRef }, CompatibleMode::None)
+      || logic->isCompatible(*moduleScope, { V_FUNC_PTR32 }, { typeRef }, CompatibleMode::None)
+      || logic->isCompatible(*moduleScope, { V_WINAPI_FUNC_PTR32 }, { typeRef }, CompatibleMode::None);
 }
 
 static inline bool isArg64(CompilerLogic* logic, ModuleScopeBase* moduleScope, ref_t typeRef)
 {
    return logic->isCompatible(*moduleScope, { V_INT64 }, { typeRef }, CompatibleMode::None)
-      || logic->isCompatible(*moduleScope, { V_PTR64 }, { typeRef }, CompatibleMode::None);
+      || logic->isCompatible(*moduleScope, { V_PTR64 }, { typeRef }, CompatibleMode::None)
+      || logic->isCompatible(*moduleScope, { V_FUNC_PTR64 }, { typeRef }, CompatibleMode::None);
 }
 
 void Compiler :: compileExternalCallback(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node)
@@ -14781,7 +14854,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileExternalOp(current, source.reference, arguments, expectedType);
+         retVal = compileExternalOp(current, source, arguments, expectedType);
          break;
       }
       case TargetMode::CreatingArray:
@@ -14820,9 +14893,9 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
 
          break;
       }
-}
+   }
 
-return retVal;
+   return retVal;
 }
 
 ObjectInfo Compiler::Expression :: compilePropertyOperation(SyntaxNode node, TypeInfo expectedType, ExpressionAttribute attrs)
@@ -16408,10 +16481,10 @@ ref_t Compiler::Expression :: compileMessageArguments(SyntaxNode current, Argume
    return 0;
 }
 
-ObjectInfo Compiler::Expression :: compileExternalOp(SyntaxNode node, ref_t nameRef,
+ObjectInfo Compiler::Expression :: compileExternalOp(SyntaxNode node, ObjectInfo& source,
    ArgumentsInfo& arguments, TypeInfo expectedType)
 {
-   auto externalInfo = compiler->mapExternal(scope, node, nameRef);
+   auto externalInfo = compiler->mapExternal(scope, node, source);
    bool stdCall = externalInfo.type == ExternalType::WinApi;
 
    pos_t count = arguments.count_pos();
@@ -16475,7 +16548,13 @@ ObjectInfo Compiler::Expression :: compileExternalOp(SyntaxNode node, ref_t name
       }
    }
 
-   writer->newNode(BuildKey::ExtCallOp, externalInfo.reference);
+   if (!externalInfo.reference) {
+      // if the target is a function pointer
+      source = boxArgumentLocally(source, true, false);
+      writeObjectInfo(source);
+      writer->newNode(BuildKey::ExtVarCallOp);
+   }
+   else writer->newNode(BuildKey::ExtCallOp, externalInfo.reference);
 
    BuildNode opNode = writer->CurrentNode();
 
@@ -19481,6 +19560,16 @@ Compiler::LambdaClosure::LambdaClosure(Compiler* compiler, Expression& expr, ref
    scope.info.header.flags |= elNestedClass;
 }
 
+void Compiler::LambdaClosure :: includeMethod(MethodScope& methodScope)
+{
+   auto m_it = scope.info.methods.getIt(methodScope.message);
+   if (!m_it.eof()) {
+      (*m_it).inherited = true;
+      (*m_it).hints &= ~(ref_t)MethodHint::Abstract;
+   }
+   else scope.info.methods.add(methodScope.message, methodScope.info);
+}
+
 void Compiler::LambdaClosure :: compile(SyntaxNode node)
 {
    ref_t parentRef = scope.expectedRef ? scope.expectedRef : scope.info.header.parentRef;
@@ -19547,12 +19636,13 @@ void Compiler::LambdaClosure :: compile(SyntaxNode node)
       scope.info.header.flags &= ~elAbstract;
    }
 
-   auto m_it = scope.info.methods.getIt(methodScope.message);
-   if (!m_it.eof()) {
-      (*m_it).inherited = true;
-      (*m_it).hints &= ~(ref_t)MethodHint::Abstract;
+   includeMethod(methodScope);
+
+   mssg_t byRefMethod = (!lazyExpression && methodScope.info.outputRef != 0) ?
+      compiler->defineOutRefMethod(scope, methodScope.message, methodScope.info.outputRef, true) : 0;
+   if (byRefMethod) {
+      compileClosureByRefHandler(methodScope, byRefMethod, node);
    }
-   else scope.info.methods.add(methodScope.message, methodScope.info);
 
    // HOTFIX : closed class already has all required multi-method handlers
    if (multiMethod && !test(scope.info.header.flags, elClosed)) {
@@ -19671,6 +19761,24 @@ void Compiler::LambdaClosure::compileExpressionMethod(MethodScope& methodScope, 
    codeScope.syncStack(&methodScope);
 
    compiler->endMethod(*writer, methodScope);
+}
+
+void Compiler::LambdaClosure :: compileClosureByRefHandler(MethodScope& invokerScope, mssg_t byRefHandler, SyntaxNode node)
+{
+   MethodScope privateScope(&scope);
+   privateScope.message = byRefHandler;
+
+   if (!scope.info.methods.exist(byRefHandler)) {
+      privateScope.info.nillableArgs = invokerScope.info.nillableArgs;
+   }
+   else privateScope.info = scope.info.methods.get(byRefHandler);
+
+   privateScope.closureMode = true;
+   compiler->declareByRefHandler(privateScope, invokerScope);
+
+   compileClosureMethod(privateScope, node);
+
+   includeMethod(privateScope);
 }
 
 void Compiler::LambdaClosure :: compileClosureMethod(MethodScope& methodScope, SyntaxNode node)

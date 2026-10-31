@@ -173,6 +173,7 @@ namespace elena_lang
       TstN           = 0xC4,
       TstM           = 0xC5,
       XCmpSI         = 0xC6,
+      XCallExtN      = 0xC7,
       CmpFI          = 0xC8,
       CmpSI          = 0xC9,
       ExtCloseN      = 0xCA,

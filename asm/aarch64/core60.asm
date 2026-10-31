@@ -3079,6 +3079,15 @@ inline %2C6h
 
 end 
 
+
+// xcallext n
+inline %0C7h
+
+  //; !! temporally not implemented
+
+end
+
+
 // ; cmpfi
 // ; NOTE : it is presumed that arg1 < 0 (it is inverted in jitcompiler)
 inline %0C8h

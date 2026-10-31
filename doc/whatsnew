@@ -13,6 +13,7 @@
   - [REMOVED] "=>" switch statement
   - [ADDED] "???" operator - switch expression / statement;
   - [ADDED] the possibility to preload the whole namespace
+  - [ADDED] new primitive type : __function
      
 - ELC
   - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation
@@ -65,6 +66,7 @@
   - [ADDED] extensions'logging module
   - [ADDED] logger module
   - [ADDED] regex: groups
+  - [ADDED] extern_winapi_func template
  
 - Scripts
   - [ADDED] elena script 2 : xscript

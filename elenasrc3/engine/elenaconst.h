@@ -12,8 +12,8 @@
 namespace elena_lang
 {
    // --- Common ELENA Engine constants ---
-   #define ENGINE_MAJOR_VERSION              7              // ELENA Engine version
-   #define ENGINE_MINOR_VERSION              2
+   #define ENGINE_MAJOR_VERSION              7           // ELENA Engine version
+   #define ENGINE_MINOR_VERSION              3
 
    constexpr auto LINE_LEN = 0x1000;                     // the maximal source line length
    constexpr auto IDENTIFIER_LEN = 0x0300;               // the maximal identifier length

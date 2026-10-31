@@ -120,6 +120,7 @@ namespace elena_lang
       friend void* retrieveICode(JITCompilerScope* scope, int arg);
       friend void* retrieveRCode(JITCompilerScope* scope, int arg);
       friend void* retrieveIRCode(JITCompilerScope* scope, int arg1, int arg2);
+      friend void* retreiveCallCode(JITCompilerScope* scope, int arg);
       friend void* retrieveXArg(JITCompilerScope* scope);
 
       friend void loadOp(JITCompilerScope* scope);
@@ -143,6 +144,7 @@ namespace elena_lang
       friend void loadMOp(JITCompilerScope* scope);
       friend void loadCallOp(JITCompilerScope* scope);
       friend void loadCallROp(JITCompilerScope* scope);
+      friend void loadXCallNOp(JITCompilerScope* scope);
       friend void loadStackIndexROp(JITCompilerScope* scope);
       friend void loadFrameIndexROp(JITCompilerScope* scope);
       friend void loadIndexNOp(JITCompilerScope* scope);
@@ -435,6 +437,7 @@ namespace elena_lang
    inline void* retrieveICode(JITCompilerScope* scope, int arg);
    inline void* retrieveRCode(JITCompilerScope* scope, int arg);
    inline void* retrieveIRCode(JITCompilerScope* scope, int arg1, int arg2);
+   inline void* retreiveCallCode(JITCompilerScope* scope, int arg);
 
    void loadNop(JITCompilerScope*);
    void loadXNop(JITCompilerScope*);
@@ -459,6 +462,7 @@ namespace elena_lang
    void loadMOp(JITCompilerScope* scope);
    void loadCallOp(JITCompilerScope* scope);
    void loadCallROp(JITCompilerScope* scope);
+   void loadXCallNOp(JITCompilerScope* scope);
    void loadStackIndexROp(JITCompilerScope* scope);
    void loadFrameIndexROp(JITCompilerScope* scope);
    void loadIndexNOp(JITCompilerScope* scope);

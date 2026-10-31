@@ -812,6 +812,14 @@ void SyntaxTreeBuilder :: flushExpressionMember(SyntaxTreeWriter& writer, Scope&
       case SyntaxKey::interpolate:
          flushNode(writer, scope, current);
          break;
+      case SyntaxKey::CondStatement:
+      case SyntaxKey::ElseIfCondStatement:
+      case SyntaxKey::ElseCondStatement:
+      case SyntaxKey::EndCondStatement:
+      case SyntaxKey::ForStatement:
+      case SyntaxKey::EndForStatement:
+         flushStatement(writer, scope, current);
+         break;
       case SyntaxKey::Idle:
          break;
       default:

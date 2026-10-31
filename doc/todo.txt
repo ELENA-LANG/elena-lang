@@ -68,21 +68,12 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * opengl : #735
+  * current : opengl : #735
   ====================================== 
   - initialize OpenGL
   - engine : register in context
   - fill the screen the red color
   - do the same for x64
-  ---------------------------------------
-  * current - support FunctionPointer & LibraryPointer
-  ====================================== 
-  - it should be possible to call -> OPENGL.wglCreateContext(dc); <- so the compiler will load dc content
-  - OPENGL.wglCreateContext(dc.Handle); <- dc.Handle must be stack allocated
-  - special primitive type __function - reference to the external function
-  - opcode to call external function by pointer
-  - new inline template - e.g.  ExternalFunction<HDC>  - can be called extFunc(dc);
-  - support external function (LoadLibraryW & GetProcAddress)
   ---------------------------------------
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===

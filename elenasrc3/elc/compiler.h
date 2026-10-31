@@ -1632,7 +1632,7 @@ namespace elena_lang
          ObjectInfo validateObject(SyntaxNode node, ObjectInfo retVal,
             ref_t targetRef, bool noPrimitives, bool paramMode, bool dynamicRequired, bool nillable);
 
-         ObjectInfo compileExternalOp(SyntaxNode node, ref_t nameRef, ArgumentsInfo& arguments, TypeInfo expectedType);
+         ObjectInfo compileExternalOp(SyntaxNode node, ObjectInfo& source, ArgumentsInfo& arguments, TypeInfo expectedType);
 
          ObjectInfo compileNewArrayOp(SyntaxNode node, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
 
@@ -1781,10 +1781,13 @@ namespace elena_lang
          ref_t resolveClosure(mssg_t closureMessage, ref_t outputRef);
          ref_t declareClosureParameters(MethodScope& methodScope, SyntaxNode argNode, bool& weakMessage);
 
+         void includeMethod(MethodScope& methodScope);
+
       public:
          void declareClosureMessage(MethodScope& methodScope, SyntaxNode node);
          void compileExpressionMethod(MethodScope& scope, SyntaxNode node);
          void compileClosureMethod(MethodScope& scope, SyntaxNode node);
+         void compileClosureByRefHandler(MethodScope& invokerScope, mssg_t byRefHandler, SyntaxNode node);
 
          void compile(SyntaxNode node);
 
@@ -1864,7 +1867,7 @@ namespace elena_lang
          ref_t flags, ref_t* signature, size_t signatureLen, bool withoutWeakMessages, bool noSignature);
       mssg_t mapMessage(Scope& scope, SyntaxNode node, bool propertyMode, bool extensionMode, bool probeMode);
 
-      ExternalInfo mapExternal(Scope& scope, SyntaxNode node, ref_t nameRef);
+      ExternalInfo mapExternal(Scope& scope, SyntaxNode node, ObjectInfo& source);
       ExternalInfo mapExternalVariable(Scope& scope, SyntaxNode node, ref_t nameRef);
       static ObjectInfo mapClassSymbol(Scope& scope, ref_t classRef);
       ObjectInfo mapConstructorTarget(MethodScope& scope);
@@ -2003,6 +2006,7 @@ namespace elena_lang
       ref_t generateConstant(Scope& scope, ObjectInfo& info, ref_t reference, bool saveScope = true);
 
       mssg_t defineOutRefMethod(ClassScope& scope, SyntaxNode node, bool isExtension);
+      mssg_t defineOutRefMethod(ClassScope& scope, mssg_t message, TypeInfo outputTypeInfo, bool isExtensionOrFunction);
 
       void verifyMultimethods(Scope& scope, SyntaxNode node, SyntaxKey methodKey, ClassInfo& info, VirtualMethodList& implicitMultimethods);
 
@@ -2179,6 +2183,8 @@ namespace elena_lang
          CodeScope& codeScope, ClassScope& classClassScope/*, ref_t classFlags, bool newFrame*/);
       void compileDefConvConstructorCode(BuildTreeWriter& writer, MethodScope& scope,
          /*SyntaxNode node, */bool& newFrame);
+
+      void declareByRefHandler(MethodScope& privateScope, MethodScope& invokerScope);
 
       mssg_t declareInplaceConstructorHandler(mssg_t message, MethodInfo& methodInfo, ClassScope& classScope, ClassScope& classClassScope);
       mssg_t compileInplaceConstructorHandler(BuildTreeWriter& writer, MethodScope& invokerScope,

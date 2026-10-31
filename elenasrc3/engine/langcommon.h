@@ -586,7 +586,8 @@ namespace elena_lang
    constexpr auto V_POINTER               = 0x8000080Au;
    constexpr auto V_EXTMESSAGE            = 0x8000080Bu;
    constexpr auto V_TYPEOF                = 0x8000080Cu;
-   //constexpr auto V_INLINEARG             = 0x8000080Du;
+   constexpr auto V_FUNCTION_PTR          = 0x8000080Du;
+   constexpr auto V_WINAPI_FUNC_PTR       = 0x8000080Eu;  // it is winapi entry for Win x86, otherwise it is the same as V_FUNCTION_PTR
 
    /// primitive types
    constexpr auto V_STRING                = 0x80000001u;
@@ -630,6 +631,9 @@ namespace elena_lang
    constexpr auto V_NOTNILLABLE           = 0x80000027u;
    constexpr auto V_UINT64                = 0x80000028u;
    constexpr auto V_CLASSPROPERTY         = 0x80000029u;
+   constexpr auto V_FUNC_PTR32            = 0x8000002Au;
+   constexpr auto V_FUNC_PTR64            = 0x8000002Bu;
+   constexpr auto V_WINAPI_FUNC_PTR32     = 0x8000002Cu;
 
    /// built-in variables / types / namespaces
    constexpr auto V_SELF_VAR              = 0x80000081u;
