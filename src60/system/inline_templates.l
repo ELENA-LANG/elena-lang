@@ -354,6 +354,12 @@ public template extern_winapi_func(params member)::
       
       ^ retVal
    }
+   
+   bool isUnassigned()
+   {
+      //^ func == default;
+      ^ func == UnsafePointer.Default // !! temporally
+   }   
 }   
 
 
@@ -381,4 +387,10 @@ public template extern_winapi_func<T>(params member)::
       
       ^ retVal
    }
+   
+   bool isUnassigned()
+   {
+      //^ func == default;
+      ^ func == UnsafePointer.Default // !! temporally
+   }   
 }

@@ -84,32 +84,55 @@ public Program()
 import system'drawing;
 
 
-/*struct Function
+struct Function
 {
    __winapi_fn_ptr func;
+   __winapi_fn_ptr func2;
    
    constructor()
    {
       handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
-      func := extern KERNEL32.GetProcAddress(libGL, "wglGetProcAddress");
+      func2 := extern KERNEL32.GetProcAddress(libGL, "wglGetProcAddress");
+      func := func2("wglGetExtensionsStringARB");
+   }
+   
+   bool isUnAssigned()
+   {
+      //^ func == default
+      ^ func2 == UnsafePointer.Default // !! temporally
    }
    
    function(HDC dc)
    {
       int retVal := func(dc);
    }
-}*/
-
-
-public struct wglGetProcAddressPtr : extern_winapi_func(HDC dc);
+   
+}
 
 public Program()
 {
-   handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
-
-   wglGetProcAddressPtr wglGetProcAddress := wglGetProcAddressPtr.load(libGL, "wglGetProcAddress");
+   Function f := new Function();
+   
+   bool err := f.isUnAssigned();
    
    HDC dc := default;
-   
-   int retVal := wglGetProcAddress(dc);
+   pointer ptr := f(dc);
 }
+
+
+
+//struct WGLGetExtensionsStringARBPTR    : extern_winapi_func<pointer>(HDC dc);
+//
+//public Program()
+//{
+//   handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+//
+//   WGLGetExtensionsStringARBPTR wglGetExtensionsStringARB := WGLGetExtensionsStringARBPTR.load(libGL, "wglGetExtensionsStringARB");
+//   bool f := wglGetExtensionsStringARB.isUnassigned();
+//
+//   //bool f := wglGetProcAddress.isUnassigned();
+//         
+//   HDC dc := default;
+//   
+//   pointer retVal := wglGetExtensionsStringARB(dc);
+//}

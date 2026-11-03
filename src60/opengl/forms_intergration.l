@@ -5,6 +5,8 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
 {
    //IOpenGLDeviceTarget _target;
    PaintContext        _paintContext;
+   WGLContext          _wglContext;
+   GLContext           _glContext;
    
    setup(/*IOpenGLDeviceTarget target*/)
    {
@@ -12,12 +14,7 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
       
       initialize();
    }
-/*   
-   set Parent(PaintContext context)
-   {
-      _context := context
-   }
-*/   
+   
    loadGL(HDC dc)
    {
       PIXELFORMATDESCRIPTOR pfd := default;
@@ -41,6 +38,14 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
       
       context.makeCurrent(dc);
       
+      if:not(_wglContext.load(dc)) {
+         OpenGLException.raise("WGLContext: failed to load");
+      };
+      
+      if:not(_glContext.load()) {
+         OpenGLException.raise("GLContext: failed to load");
+      };
+      
 /*
     if (!gladLoadWGL(dummyDC))
         throw std::runtime_error("OGraphicsEngine - gladLoadWGL failed");
@@ -57,12 +62,10 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
 
    initialize()
    {
+      _wglContext := new WGLContext();
+      _glContext := new GLContext();
+      
       _paintContext.initializeOGL3DDummyWindow(self);
-      
-      
-//      
-//      OpenGLWrapper.makeCurrent(dc, context);
-      
 /*
     HGLRC dummyContext = wglCreateContext(dummyDC);
     assert(dummyContext);

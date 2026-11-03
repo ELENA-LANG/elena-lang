@@ -10,12 +10,16 @@ In development:
   * backlog
   ======================================   
   - fix Linux mta_test
+  - support func == default, where func is __winapi_fn_ptr / handle / pointer / int 
+  - ptr == UnsafePointer.Default <- must call byref value
   - f4 on the same line, keep the debugger on the same line, in reality it should go further
   - regex : "console;file=output" raises empty stack error
   - an option to print information about the api version
   - support A a := $();
   - support A a := $(b,c);
+  - fix internal struct WGLQueryPbufferARBPTR                    : wgl_func<HDC>(pointer hPbuffer, int iAttribute, int *piValue); - must be correct error message
   - cannot declare - new(bool matched, Tuple<int, int>[] matches)
+  - support float (4 byte)
   - = !_child.match(ch); // doesn't work
   - if(!context.empty() && context.peek() == self) - why error if context.empty() returns true
   - correctly implement (context.Start, index) (see RegEx)
@@ -58,6 +62,11 @@ In development:
                      a+ -> acaabc xxx
                      [^abc]
   --------------------------------------
+  * ide
+  --------------------------------------
+  - smart spaces
+  - active inserting / cutting - decrease the IDE speed significantly
+  ====================================== 
   * doc
   ====================================== 
   - provide descriptions for all classes (from culture)
