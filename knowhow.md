@@ -58,7 +58,8 @@ Content
 + [Project constants](#project-constants)
 + [Native reference comparison](#native-reference-comparison)
 + [Logging](#Logging)
-+ [Initialization](#Initialization)
++ [Program Initialization](#Initialization)
++ [Object Implicit initialization](#Implicit-initialization)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1573,3 +1574,32 @@ The output will be:
     Bootstrapping the program
     registration was called
     Program starting
+
+## ----------------------------------------------------------------------------
+##  Implicit initialization
+## ----------------------------------------------------------------------------
+
+If the expected type is clear from the syntax, you can skip repeating the target type 
+using an implicit initialization expression:
+
+    A
+    {
+       int r;
+       
+       constructor()
+       {
+          r := 0;
+       }
+       
+       constructor(int n, int m)
+       {
+          r := n + m
+       }
+    }
+    
+    public Program()
+    {
+       A a := $(2, 3);
+       A a2 := $();
+    }
+

@@ -136,6 +136,7 @@ namespace elena_lang
       DecOperation            = 0x00186D,
       SizeOperation           = 0x00186E,
       IsOperation             = 0x00186F,
+      NewOperation            = 0x001870,
       TemplateArg             = 0x001070,
       Dimension               = 0x001471,
       ParameterizedPostfix    = 0x001072,

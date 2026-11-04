@@ -1,3 +1,5 @@
+import system'collections;
+
 import extensions;
 //import system'dynamic;
 //import extensions'logging;
@@ -81,45 +83,17 @@ public Program()
 }
 */
 
-import system'drawing;
-
-
-struct Function
-{
-   __winapi_fn_ptr func;
-   __winapi_fn_ptr func2;
-   
-   constructor()
-   {
-      handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
-      func2 := extern KERNEL32.GetProcAddress(libGL, "wglGetProcAddress");
-      func := func2("wglGetExtensionsStringARB");
-   }
-   
-   bool isUnAssigned()
-   {
-      //^ func == default
-      ^ func2 == UnsafePointer.Default // !! temporally
-   }
-   
-   function(HDC dc)
-   {
-      int retVal := func(dc);
-   }
-   
-}
-
 public Program()
 {
-   Function f := new Function();
+   UnsafePointer ptr := UnsafePointer.Default;
+   if (ptr == UnsafePointer.Default) {
+      Console.writeLine("It's empty");
+   }
    
-   bool err := f.isUnAssigned();
+   //X ptr := X.Default
    
-   HDC dc := default;
-   pointer ptr := f(dc);
+   //X ptr := new X();
 }
-
-
 
 //struct WGLGetExtensionsStringARBPTR    : extern_winapi_func<pointer>(HDC dc);
 //

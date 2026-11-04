@@ -21,6 +21,7 @@
     </manifest>
     <files>
         <module>
+            <file>wgl_externals.l</file>
             <file>externals.l</file>
             <file>forms_intergration.l</file>
             <include>common.l</include>

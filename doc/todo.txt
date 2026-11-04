@@ -11,16 +11,10 @@ In development:
   ======================================   
   - fix Linux mta_test
   - support func == default, where func is __winapi_fn_ptr / handle / pointer / int 
-  - ptr == UnsafePointer.Default <- must call byref value
   - f4 on the same line, keep the debugger on the same line, in reality it should go further
   - regex : "console;file=output" raises empty stack error
   - an option to print information about the api version
-  - support A a := $();
-  - support A a := $(b,c);
-  - fix internal struct WGLQueryPbufferARBPTR                    : wgl_func<HDC>(pointer hPbuffer, int iAttribute, int *piValue); - must be correct error message
-  - cannot declare - new(bool matched, Tuple<int, int>[] matches)
   - support float (4 byte)
-  - = !_child.match(ch); // doesn't work
   - if(!context.empty() && context.peek() == self) - why error if context.empty() returns true
   - correctly implement (context.Start, index) (see RegEx)
   - retoverload MatchResult RegEx.match(string s) - failes to be called in the message call - printMatchResult(regEx.match("a"));
@@ -33,7 +27,6 @@ In development:
   - fix : why stream operation Stream.read[4] generates an error for Linux
   - review : Stream, MemoryStream, NetworkStream
   - switch with class types
-  - simplified syntax - Template<int> t := new auto();
   - implement *_length := len - as native operation
   - comparing with enum type - try to use directly
   - Warn if the implicit conversion is used
@@ -47,7 +40,6 @@ In development:
   - httpget for linux i386 / amd64
   - Array<T> must support Enumerable interface as well
   - support simplify collection - [ 1, 2, 3 ] for array / list<T>
-  - [ 2, 3 ] as a quick way to create an object
   - modify Ackermann to support switch expression
   - elt - new library - name of class
   - elt - new class
@@ -77,7 +69,7 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * current : opengl : #735
+  * current - opengl : #735
   ====================================== 
   - initialize OpenGL
   - engine : register in context

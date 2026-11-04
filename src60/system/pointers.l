@@ -13,8 +13,8 @@ public sealed const struct Handle : info("Handle value")
 
    private clear() : external(system'core_routines'__clearPtr); 
 
-   get constructor Default() : info("Returns an empty handler")
-      = new Handle();   
+   get static Handle Default() : info("Returns an empty handler")
+      = default;
 
    constructor() : info("Creates an empty handler")
    {
@@ -64,8 +64,8 @@ public sealed const struct UnsafePointer : info("Unsafe weak pointer")
       else self.assignPtr(obj);
    }
 
-   get constructor Default() : info("Returns a null-pointer")
-      = new UnsafePointer();   
+   get static UnsafePointer Default() : info("Returns a null-pointer")
+      = default;
 
    bool isUnassigned() : info("Returns true if it is a null-pointer<br/>Otherwise returns false")
    {
@@ -174,6 +174,9 @@ public sealed const struct UnsafePointer<T> : info("A strong-typed unsafe pointe
    {
       self.assignPtr(obj);
    }
+
+   get UnsafePointer<T> Default()
+      = default;
 
    get T Value() : info("Returns an ibstance of T type referred by the pointer<br/>It is unsafe operation")
    {

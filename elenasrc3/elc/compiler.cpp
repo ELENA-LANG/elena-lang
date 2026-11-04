@@ -5043,7 +5043,9 @@ void Compiler::declareParameter(MethodScope& scope, SyntaxNode current, bool wit
    else weakSignature = false;
 
    ustr_t terminal = current.findChild(SyntaxKey::Name).firstChild(SyntaxKey::TerminalMask).identifier();
-   assert(!emptystr(terminal));
+   if (emptystr(terminal))
+      scope.raiseError(errInvalidSyntax, current);
+   
    if (scope.parameters.exist(terminal))
       scope.raiseError(errDuplicatedLocal, current);
 
@@ -14036,6 +14038,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, TypeInfo targetType,
          }
          else retVal = compileMessageOperation(current, targetType, mode);
          break;
+      case SyntaxKey::NewOperation:
+         retVal = compileNewOperation(current.firstChild(), targetType);
+         break;
       case SyntaxKey::PropertyOperation:
          if (lookaheadMode) {
             retVal = compileLookAhead(current, targetType, mode);
@@ -14823,6 +14828,24 @@ ObjectInfo Compiler::Expression :: compileNillableMessageOperation(SyntaxNode no
    writer->closeNode();
 
    writer->closeNode();
+
+   return retVal;
+}
+
+ObjectInfo Compiler::Expression :: compileNewOperation(SyntaxNode node, TypeInfo targetType)
+{
+   ObjectInfo retVal = { };
+
+   ArgumentsInfo arguments;
+   ArgumentListType argListType = ArgumentListType::Normal;
+
+   SyntaxNode current = node.firstChild();
+   ref_t signRef = compileMessageArguments(current, arguments, 0, EAttr::NoPrimitives, argListType, 0);
+   if (argListType != ArgumentListType::Normal)
+      scope.raiseError(errInvalidOperation, current);
+
+   retVal = compileNewOp(node, Compiler::mapClassSymbol(scope,
+      compiler->resolveStrongType(scope, targetType)), signRef, arguments);
 
    return retVal;
 }

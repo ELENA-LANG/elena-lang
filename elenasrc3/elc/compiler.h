@@ -1579,6 +1579,7 @@ namespace elena_lang
 
          ObjectInfo compileLookAhead(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
 
+         ObjectInfo compileNewOperation(SyntaxNode node, TypeInfo targetType);
          ObjectInfo compileMessageOperation(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
          ObjectInfo compilePropertyOperation(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
          ObjectInfo compileNillableMessageOperation(SyntaxNode node, TypeInfo expectedType, ExpressionAttribute attrs);
