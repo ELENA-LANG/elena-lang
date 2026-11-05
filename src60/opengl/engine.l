@@ -1,23 +1,29 @@
-public interface IOpenGLDeviceAdapter
+public interface IOpenGLEngine
 {
-   abstract setup(/*IOpenGLDeviceTarget target*/);
+   abstract setVersion(int major, int minor);
 }
 
-/*public interface IOpenGLDeviceTarget
+public interface IOpenGLDeviceAdapter
 {
-   
-}*/
+   abstract setup(IOpenGLEngine engine);
+}
 
-public class OpenGLEngine //: interface<IOpenGLDeviceTarget>
+public class OpenGLEngine : interface<IOpenGLEngine>
 {
    IOpenGLDeviceAdapter _adapter;
-   WGLContext           _wglContext; 
+   
+   int                  _major; 
+   int                  _minor; 
    
    constructor new(IOpenGLDeviceAdapter adapter)
    {
-      _wglContext := new WGLContext();
-      
       _adapter := adapter;
-      _adapter.setup(/*self*/);
+      _adapter.setup(self);
+   }
+   
+   setVersion(int major, int minor)
+   {
+      _major := major;
+      _minor := minor
    }
 }

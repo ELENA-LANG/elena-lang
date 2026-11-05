@@ -14,6 +14,8 @@
   - [ADDED] "???" operator - switch expression / statement;
   - [ADDED] the possibility to preload the whole namespace
   - [ADDED] new primitive type : __function
+  - [ADDED] implicit initialization - $(...)
+  - [ADDED] implicit array -  - $[...]
      
 - ELC
   - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation

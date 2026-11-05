@@ -139,6 +139,7 @@ namespace elena_lang
       NewOperation            = 0x001870,
       TemplateArg             = 0x001070,
       Dimension               = 0x001471,
+      NewArrayOperation       = 0x001871,
       ParameterizedPostfix    = 0x001072,
       MetaPropOperation       = 0x001873,
       NestedBlock             = 0x001080,

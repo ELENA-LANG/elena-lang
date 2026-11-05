@@ -2,38 +2,6 @@ import system'drawing;
 
 use extern OPENGL : importing("OPENGL32");
 
-// --- extern_winapi_func ---
-
-public template wgl_func<T>(params member)::
-{
-   __winapi_fn_ptr func;
-
-   constructor load(WGLGetProcAddress get_proc, string func_name) 
-   {
-      func := get_proc(func_name);
-   }
-
-   T function(
-#for(member) 
-      member
-#endfor
-   ) {
-      T retVal := func(
-#for(member) 
-         $value member
-#endfor      
-      );
-      
-      ^ retVal
-   }
-   
-   bool isUnassigned()
-   {
-      //^ func == default;
-      ^ func == UnsafePointer.Default // !! temporally
-   }   
-}
-
 internal struct WGLGetExtensionsStringARBPTR    : wgl_func<pointer>(HDC dc);
 internal struct WGLGetExtensionsStringEXTPTR    : wgl_func<pointer>();
 internal struct WGLSetStereoEmitterState3DLPTR           : wgl_func<uint>(uint maxCount, pointer ids);
@@ -183,8 +151,6 @@ internal struct WGLWaitForMscOMLPTR                      : wgl_func<int>(HDC hdc
 internal struct WGLWaitForSbcOMLPTR                      : wgl_func<int>(HDC hdc, long target_sbc, pointer ust, pointer msc, pointer sbc);
 
 // --- WGLContext ---
-
-internal struct WGLGetProcAddress               : extern_winapi_func<pointer>(string name);
 
 public struct WGLContext
 {

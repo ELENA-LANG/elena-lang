@@ -83,30 +83,15 @@ public Program()
 }
 */
 
+const string[] Prefixes = $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
+
 public Program()
 {
-   UnsafePointer ptr := UnsafePointer.Default;
-   if (ptr == UnsafePointer.Default) {
-      Console.writeLine("It's empty");
-   }
+   Console.printLine(Prefixes.asEnumerable());
+   
+//   string[] Prefixes := $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
    
    //X ptr := X.Default
    
    //X ptr := new X();
 }
-
-//struct WGLGetExtensionsStringARBPTR    : extern_winapi_func<pointer>(HDC dc);
-//
-//public Program()
-//{
-//   handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
-//
-//   WGLGetExtensionsStringARBPTR wglGetExtensionsStringARB := WGLGetExtensionsStringARBPTR.load(libGL, "wglGetExtensionsStringARB");
-//   bool f := wglGetExtensionsStringARB.isUnassigned();
-//
-//   //bool f := wglGetProcAddress.isUnassigned();
-//         
-//   HDC dc := default;
-//   
-//   pointer retVal := wglGetExtensionsStringARB(dc);
-//}

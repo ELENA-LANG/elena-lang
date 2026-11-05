@@ -5770,6 +5770,7 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
       elementTypeRef = resolveStrongType(scope, { fieldInfo.typeInfo.elementRef });
       numericOne = _logic->isNumericType(*scope.moduleScope, elementTypeRef);
    }
+   else collectionTypeRef = resolveStrongType(scope, targetInfo);
 
    ArgumentsInfo arguments;
    while (current != SyntaxKey::None) {
@@ -5904,6 +5905,9 @@ ObjectInfo Compiler::evalExpression(Interpreter& interpreter, Scope& scope, Synt
          break;
       case SyntaxKey::CollectionExpression:
          retVal = evalCollection(interpreter, scope, node, targetInfo, false, ignoreErrors);
+         break;
+      case SyntaxKey::NewArrayOperation:
+         retVal = evalCollection(interpreter, scope, node, targetInfo, true, ignoreErrors);
          break;
       case SyntaxKey::PrimitiveCollection:
          retVal = evalCollection(interpreter, scope, node, {}, true, ignoreErrors);
@@ -9488,6 +9492,15 @@ bool Compiler::compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
 void Compiler::compileSymbol(BuildTreeWriter& writer, SymbolScope& scope, SyntaxNode node)
 {
    scope.load();
+
+   if (scope.info.typeRef) {
+      SyntaxNode typeNode = node.findChild(SyntaxKey::Type, SyntaxKey::ArrayType, SyntaxKey::TemplateType, SyntaxKey::NullableType);
+      if (typeNode != SyntaxKey::None) {
+         bool isConst = scope.info.symbolType == SymbolType::ConstantArray || scope.info.symbolType == SymbolType::Constant;
+         resolveStrongTypeAttribute(scope, typeNode, isConst ? TAttr::ConstMode : TAttr::None);
+      }
+      else validateType(scope, scope.info.typeRef, node, false);
+   }
 
    writer.newNode(BuildKey::Symbol, node.arg.reference);
 
@@ -14041,6 +14054,9 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, TypeInfo targetType,
       case SyntaxKey::NewOperation:
          retVal = compileNewOperation(current.firstChild(), targetType);
          break;
+      case SyntaxKey::NewArrayOperation:
+         retVal = compileNewArrayOperation(current, targetType, mode);
+         break;
       case SyntaxKey::PropertyOperation:
          if (lookaheadMode) {
             retVal = compileLookAhead(current, targetType, mode);
@@ -14850,6 +14866,26 @@ ObjectInfo Compiler::Expression :: compileNewOperation(SyntaxNode node, TypeInfo
    return retVal;
 }
 
+ObjectInfo Compiler::Expression :: compileNewArrayOperation(SyntaxNode node, TypeInfo targetType, ExpressionAttribute mode)
+{
+   bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
+
+   // HOTFIX : if the constant array was already declared, no need to create it again
+   if (!constOne || !node.arg.reference) {
+      Interpreter interpreter(scope.moduleScope, compiler->_logic);
+      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), targetType, true);
+      if (evalRetVal.kind == ObjectKind::Constant || evalRetVal.kind == ObjectKind::ConstArray)
+         return evalRetVal;
+   }
+
+   ObjectInfo retVal = { };
+
+   ref_t collectionTypeRef = compiler->resolveStrongType(scope, targetType);
+   retVal = compileCollection(node, node.firstChild(), collectionTypeRef, constOne);
+
+   return retVal;
+}
+
 ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
    TypeInfo expectedType, ExpressionAttribute attrs)
 {
@@ -14886,7 +14922,7 @@ ObjectInfo Compiler::Expression :: compileMessageOperation(SyntaxNode node,
          if (argListType != ArgumentListType::Normal)
             scope.raiseError(errInvalidOperation, current);
 
-         retVal = compileNewArrayOp(node, source, expectedType.typeRef, arguments);
+         retVal = compileNewArrayOp(node, source.typeInfo, expectedType.typeRef, arguments);
          break;
       }
       case TargetMode::Creating:
@@ -15895,29 +15931,8 @@ ObjectInfo Compiler::Expression :: compileSubCode(SyntaxNode node, ExpressionAtt
    return retVal;
 }
 
-ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef)
+ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, SyntaxNode current, ref_t collectionTypeRef, bool constOne)
 {
-   bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
-
-   // HOTFIX : if the constant array was already declared, no need to create it again
-   if (!constOne || !node.arg.reference) {
-      Interpreter interpreter(scope.moduleScope, compiler->_logic);
-      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), { targetRef, 0, false, false, constOne }, true);
-      if (evalRetVal.kind == ObjectKind::Constant || evalRetVal.kind == ObjectKind::ConstArray)
-         return evalRetVal;
-   }
-
-   SyntaxNode current = node.firstChild();
-
-   ObjectInfo objectInfo = compileObject(node.firstChild(), EAttr::NestedDecl | EAttr::ProbeMode);
-   if (objectInfo.typeInfo.typeRef == V_AUTO && targetRef)
-      objectInfo.typeInfo = { targetRef };
-
-   if (objectInfo.kind != ObjectKind::Class || objectInfo.typeInfo.typeRef == V_AUTO)
-      scope.raiseError(errInvalidOperation, node);
-
-   ref_t collectionTypeRef = compiler->resolveStrongType(scope, objectInfo.typeInfo);
-
    ClassInfo collectionInfo;
    compiler->_logic->defineClassInfo(*scope.moduleScope, collectionInfo, collectionTypeRef, false, true);
 
@@ -15993,6 +16008,31 @@ ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, Expression
    }
 
    return { ObjectKind::Object, { collectionTypeRef }, 0 };
+}
+
+ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef)
+{
+   bool constOne = EAttrs::testAndExclude(mode, EAttr::ConstantExpr);
+
+   // HOTFIX : if the constant array was already declared, no need to create it again
+   if (!constOne || !node.arg.reference) {
+      Interpreter interpreter(scope.moduleScope, compiler->_logic);
+      ObjectInfo evalRetVal = compiler->evalExpression(interpreter, scope, node.parentNode(), { targetRef, 0, false, false, constOne }, true);
+      if (evalRetVal.kind == ObjectKind::Constant || evalRetVal.kind == ObjectKind::ConstArray)
+         return evalRetVal;
+   }
+
+   SyntaxNode current = node.firstChild();
+
+   ObjectInfo objectInfo = compileObject(node.firstChild(), EAttr::NestedDecl | EAttr::ProbeMode);
+   if (objectInfo.typeInfo.typeRef == V_AUTO && targetRef)
+      objectInfo.typeInfo = { targetRef };
+
+   if (objectInfo.kind != ObjectKind::Class || objectInfo.typeInfo.typeRef == V_AUTO)
+      scope.raiseError(errInvalidOperation, node);
+
+   ref_t collectionTypeRef = compiler->resolveStrongType(scope, objectInfo.typeInfo);
+   return compileCollection(node, current, collectionTypeRef, constOne);
 }
 
 /*
@@ -16715,9 +16755,9 @@ void Compiler::Expression :: compileNestedInitializing(InlineClassScope& classSc
    }
 }
 
-ObjectInfo Compiler::Expression::compileNewArrayOp(SyntaxNode node, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments)
+ObjectInfo Compiler::Expression :: compileNewArrayOp(SyntaxNode node, TypeInfo typeInfo, ref_t targetRef, ArgumentsInfo& arguments)
 {
-   ref_t sourceRef = compiler->resolveStrongType(scope, source.typeInfo);
+   ref_t sourceRef = compiler->resolveStrongType(scope, typeInfo);
 
    //if (!targetRef)
    //   targetRef = resolvePrimitiveReference(scope, source.type, source.element, false);
@@ -16734,22 +16774,22 @@ ObjectInfo Compiler::Expression::compileNewArrayOp(SyntaxNode node, ObjectInfo s
 
       if (targetRef) {
          auto conversionRoutine = compiler->_logic->retrieveConversionRoutine(compiler, *scope.moduleScope,
-            targetRef, source.typeInfo, false, false);
+            targetRef, typeInfo, false, false);
          if (conversionRoutine.result == ConversionResult::BoxingRequired) {
-            source.typeInfo = { targetRef };
+            typeInfo = { targetRef };
          }
-         else source.typeInfo = { sourceRef };
+         else typeInfo = { sourceRef };
       }
-      else source.typeInfo = { sourceRef };
+      else typeInfo = { sourceRef };
 
       assert(arguments.count() == 1); // !! temporally - only one argument is supported
 
       writeObjectInfo(arguments[0], node);
       writer->appendNode(BuildKey::SavingInStack, 0);
 
-      assert(!source.typeInfo.isPrimitive());
+      assert(!typeInfo.isPrimitive());
 
-      writer->newNode(operationKey, source.typeInfo.typeRef);
+      writer->newNode(operationKey, typeInfo.typeRef);
 
       if (sizeInfo.size < 0)
          writer->appendNode(BuildKey::Size, sizeInfo.size);
@@ -16761,7 +16801,7 @@ ObjectInfo Compiler::Expression::compileNewArrayOp(SyntaxNode node, ObjectInfo s
          writer->appendNode(BuildKey::FillOp);
       }
 
-      return { ObjectKind::Object, source.typeInfo, 0 };
+      return { ObjectKind::Object, typeInfo, 0 };
    }
 
    scope.raiseError(errInvalidOperation, node);

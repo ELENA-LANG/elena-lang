@@ -1580,6 +1580,7 @@ namespace elena_lang
          ObjectInfo compileLookAhead(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
 
          ObjectInfo compileNewOperation(SyntaxNode node, TypeInfo targetType);
+         ObjectInfo compileNewArrayOperation(SyntaxNode node, TypeInfo targetType, ExpressionAttribute mode);
          ObjectInfo compileMessageOperation(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
          ObjectInfo compilePropertyOperation(SyntaxNode node, TypeInfo targetType, ExpressionAttribute attrs);
          ObjectInfo compileNillableMessageOperation(SyntaxNode node, TypeInfo expectedType, ExpressionAttribute attrs);
@@ -1635,7 +1636,7 @@ namespace elena_lang
 
          ObjectInfo compileExternalOp(SyntaxNode node, ObjectInfo& source, ArgumentsInfo& arguments, TypeInfo expectedType);
 
-         ObjectInfo compileNewArrayOp(SyntaxNode node, ObjectInfo source, ref_t targetRef, ArgumentsInfo& arguments);
+         ObjectInfo compileNewArrayOp(SyntaxNode node, TypeInfo typeInfo, ref_t targetRef, ArgumentsInfo& arguments);
 
          ObjectInfo convertObject(SyntaxNode node, ObjectInfo source, ref_t targetRef, bool dynamicRequired,
             bool withoutBoxing, bool nillable, bool directConversion);
@@ -1749,6 +1750,7 @@ namespace elena_lang
          ObjectInfo compile(SyntaxNode node, TypeInfo targetType, ExpressionAttribute mode);
          ObjectInfo compileObject(SyntaxNode node, ExpressionAttribute mode);
          ObjectInfo compileCollection(SyntaxNode node, ExpressionAttribute mode, ref_t targetRef);
+         ObjectInfo compileCollection(SyntaxNode node, SyntaxNode current, ref_t collectionTypeRef, bool constOne);
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node/*, ExpressionAttribute mode*/);
          ObjectInfo compileClosureOperation(SyntaxNode node, ref_t targetRef);

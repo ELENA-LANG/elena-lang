@@ -569,6 +569,13 @@ e.g.
       string[] dirNames := new []{ ".", ".." };
     }
 	
+Alternatively
+
+    public Program()
+    {
+       string[] Prefixes := $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
+    }
+
 ## ----------------------------------------------------------------------------
 ##    syntax for a constant array
 ## ----------------------------------------------------------------------------

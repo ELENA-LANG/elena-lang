@@ -39,7 +39,6 @@ In development:
   - Static decorator (mixin inheritance)
   - httpget for linux i386 / amd64
   - Array<T> must support Enumerable interface as well
-  - support simplify collection - [ 1, 2, 3 ] for array / list<T>
   - modify Ackermann to support switch expression
   - elt - new library - name of class
   - elt - new class

@@ -3,14 +3,14 @@ import system'drawing;
 
 public class OpenGLPaintContextController : interface<IPaintContextController>, interface<IOpenGLDeviceAdapter>
 {
-   //IOpenGLDeviceTarget _target;
-   PaintContext        _paintContext;
-   WGLContext          _wglContext;
-   GLContext           _glContext;
+   IOpenGLEngine _engine;
+   PaintContext  _paintContext;
+   WGLContext    _wglContext;
+   GLContext     _glContext;
    
-   setup(/*IOpenGLDeviceTarget target*/)
+   setup(IOpenGLEngine engine)
    {
-      //_target := target;
+      _engine := engine;
       
       initialize();
    }
@@ -42,7 +42,7 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
          OpenGLException.raise("WGLContext: failed to load");
       };
       
-      if:not(_glContext.load()) {
+      if:not(_glContext.load(_engine)) {
          OpenGLException.raise("GLContext: failed to load");
       };
       
