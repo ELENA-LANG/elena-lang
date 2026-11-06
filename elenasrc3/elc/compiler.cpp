@@ -8960,26 +8960,40 @@ void Compiler :: declareShortcut(NamespaceScope& scope, SyntaxNode node)
    SyntaxNode identNode = nameNode.firstChild(SyntaxKey::TerminalMask);
    SyntaxNode postfix = node.findChild(SyntaxKey::InlineTemplate);
 
-   SyntaxNode current = node.firstChild().nextNode();
-
-   // generate an expected expression
-   SyntaxTree exprTree;
-   SyntaxTreeWriter exprWriter(exprTree);
-   exprWriter.newNode(SyntaxKey::Root);
-   while (current != SyntaxKey::None) {
-      if (current != postfix) {
-         SyntaxTree::copyNode(exprWriter, current, current != SyntaxKey::Name);
-      }
-      else break;
-
-      current = current.nextNode();
-   }
-   exprWriter.closeNode();
-
    ReferenceName name;
-   ReferenceName::copyProperName(name, identNode.identifier());
+   ObjectInfo info = {};
 
-   ObjectInfo info = mapObject(scope, exprTree.readRoot(), EAttr::None);
+   SyntaxNode current = node.findChild(SyntaxKey::GetExpression);
+   if (current == SyntaxKey::GetExpression) {
+      name.copy(nameNode.firstChild().identifier());
+
+      current = current.firstChild().firstChild();
+      if (current == SyntaxKey::Object && current.nextNode() == SyntaxKey::None) {
+         info = mapObject(scope, current, EAttr::None);
+      }
+   }
+   else if (current == SyntaxKey::None) {
+      current = node.firstChild().nextNode();
+
+      // generate an expected expression
+      SyntaxTree exprTree;
+      SyntaxTreeWriter exprWriter(exprTree);
+      exprWriter.newNode(SyntaxKey::Root);
+      while (current != SyntaxKey::None) {
+         if (current != postfix) {
+            SyntaxTree::copyNode(exprWriter, current, current != SyntaxKey::Name);
+         }
+         else break;
+
+         current = current.nextNode();
+      }
+      exprWriter.closeNode();
+
+      ReferenceName::copyProperName(name, identNode.identifier());
+
+      info = mapObject(scope, exprTree.readRoot(), EAttr::None);
+   }
+
    switch (info.kind) {
       case ObjectKind::ExternLibrary:
       case ObjectKind::Class:

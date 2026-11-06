@@ -1983,10 +1983,12 @@ void SyntaxTreeBuilder :: flushDeclaration(SyntaxTreeWriter& writer, SyntaxNode&
 
    bool withComplexName = false;
    if(node.existChild(SyntaxKey::GetExpression)) {
-      writer.CurrentNode().setKey(SyntaxKey::Symbol);
+      if (SyntaxTree::ifChildExists(writer.CurrentNode(), SyntaxKey::Attribute, V_USE)) {
+         writer.CurrentNode().setKey(SyntaxKey::Shortcut);
+      }
+      else writer.CurrentNode().setKey(SyntaxKey::Symbol);
 
       flushSymbolPostfixes(writer, scope, node);
-
       SyntaxNode exprNode = node.findChild(SyntaxKey::GetExpression);
       flushStatement(writer, scope, exprNode);
    }

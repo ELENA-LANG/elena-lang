@@ -9,6 +9,7 @@ In development:
   --------------------------------------
   * backlog
   ======================================   
+  - why warning - internal struct GLStencilOpPTR         : extern_winapi_func(int func);
   - fix Linux mta_test
   - support func == default, where func is __winapi_fn_ptr / handle / pointer / int 
   - f4 on the same line, keep the debugger on the same line, in reality it should go further
@@ -54,7 +55,8 @@ In development:
                      [^abc]
   --------------------------------------
   * ide
-  --------------------------------------
+  -------------------------------------- 
+  - ide does not free GPU handlers (look at painting, probably we need to free them)
   - smart spaces
   - active inserting / cutting - decrease the IDE speed significantly
   ====================================== 

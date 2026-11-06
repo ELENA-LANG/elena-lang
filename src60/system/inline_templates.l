@@ -341,18 +341,16 @@ public template extern_winapi_func(params member)::
       func := extern KERNEL32.GetProcAddress(lib_ptr, func_name);
    }
 
-   int function(
+   function(
 #for(member) 
       member
 #endfor
    ) {
-      int retVal := func(
+      func(
 #for(member) 
          $value member
 #endfor      
       );
-      
-      ^ retVal
    }
    
    bool isUnassigned()

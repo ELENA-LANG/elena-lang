@@ -83,11 +83,15 @@ public Program()
 }
 */
 
-const string[] Prefixes = $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
+use extern OPENGL : importing("OPENGL32");
+
+use xint = system'IntNumber;
+
+use system'IntNumber;
 
 public Program()
 {
-   Console.printLine(Prefixes.asEnumerable());
+   xint n := 2;
    
 //   string[] Prefixes := $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
    

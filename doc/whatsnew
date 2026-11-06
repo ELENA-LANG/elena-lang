@@ -16,6 +16,7 @@
   - [ADDED] new primitive type : __function
   - [ADDED] implicit initialization - $(...)
   - [ADDED] implicit array -  - $[...]
+  - [ADDED] type shortcut - use x = y'z;
      
 - ELC
   - [ADDED] a strict forward mapping mode (-xf), on by default : an unresolved forward aborts the compilation
