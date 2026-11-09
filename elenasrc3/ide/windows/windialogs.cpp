@@ -132,6 +132,7 @@ FontDialog :: FontDialog(HINSTANCE instance, WindowBase* owner)
 
 bool FontDialog :: selectFont(FontInfo& fontInfo)
 {
+   bool retVal = false;
    HDC hdc = ::GetDC(_owner->handle());
 
    _lf.lfHeight = Font::fromSize(hdc, fontInfo.size);
@@ -142,9 +143,12 @@ bool FontDialog :: selectFont(FontInfo& fontInfo)
       fontInfo.size = Font::toSize(hdc, _lf.lfHeight);
       fontInfo.name.copy(_lf.lfFaceName);
 
-      return true;
+      retVal = true;
    }
-   return false;
+
+   ::ReleaseDC(_owner->handle(), hdc);
+
+   return retVal;
 }
 
 // --- MessageDialog ---

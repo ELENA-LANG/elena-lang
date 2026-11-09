@@ -233,10 +233,12 @@ void Canvas :: drawRectangle(Rectangle rect, Color foreground, Color background)
 void Canvas :: drawTransparentRectangle(Rectangle rect, Color foreground)
 {
    setPenColor(foreground);
-   ::SelectObject(_handler, GetStockObject(NULL_BRUSH));
+   HBRUSH currentBrush = (HBRUSH)::SelectObject(_handler, GetStockObject(NULL_BRUSH));
 
    ::Rectangle(_handler, rect.topLeft.x, rect.topLeft.y,
       rect.bottomRight.x, rect.bottomRight.y);
+
+   ::SelectObject(_handler, currentBrush);
 }
 
 void Canvas :: fillRectangle(Rectangle rect, Color background)
