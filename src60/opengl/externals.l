@@ -736,7 +736,6 @@ internal struct GLGetSamplerParameterivPTR    : extern_winapi_func(GLuint sample
 internal struct GLGetSamplerParameterIivPTR   : extern_winapi_func(GLuint sampler, GLenum pname, /*GLint * */pointer params);
 internal struct GLGetSamplerParameterfvPTR    : extern_winapi_func(GLuint sampler, GLenum pname, /*GLfloat * */pointer params);
 internal struct GLGetSamplerParameterIuivPTR  : extern_winapi_func(GLuint sampler, GLenum pname, /*GLuint * */pointer params);
-
 internal struct GLQueryCounterPTR             : extern_winapi_func(GLuint id, GLenum target);
 internal struct GLGetQueryObjecti64vPTR       : extern_winapi_func(GLuint id, GLenum pname, /*GLint64 * */pointer params);
 internal struct GLGetQueryObjectui64vPTR      : extern_winapi_func(GLuint id, GLenum pname, /*GLuint64 * */pointer params);
@@ -755,6 +754,31 @@ internal struct GLVertexP3uiPTR               : extern_winapi_func(GLenum type, 
 internal struct GLVertexP3uivPTR              : extern_winapi_func(GLenum type, /*const GLuint * */pointer value);
 internal struct GLVertexP4uiPTR               : extern_winapi_func(GLenum type, GLuint value);
 internal struct GLVertexP4uivPTR              : extern_winapi_func(GLenum type, /*const GLuint * */pointer value);
+
+internal struct GLTexCoordP1uiPTR             : extern_winapi_func(GLenum type, GLuint coords);
+internal struct GLTexCoordP1uivPTR            : extern_winapi_func(GLenum type, /*const GLuint * */pointer coords);
+internal struct GLTexCoordP2uiPTR             : extern_winapi_func(GLenum type, GLuint coords);
+internal struct GLTexCoordP2uivPTR            : extern_winapi_func(GLenum type, /*const GLuint * */pointer coords);
+internal struct GLTexCoordP3uiPTR             : extern_winapi_func(GLenum type, GLuint coords);
+internal struct GLTexCoordP3uivPTR            : extern_winapi_func(GLenum type, /*const GLuint * */pointer coords);
+internal struct GLTexCoordP4uiPTR             : extern_winapi_func(GLenum type, GLuint coords);
+internal struct GLTexCoordP4uivPTR            : extern_winapi_func(GLenum type, /*const GLuint * */pointer coords);
+internal struct GLMultiTexCoordP1uiPTR        : extern_winapi_func(GLenum texture, GLenum type, GLuint coords);
+internal struct GLMultiTexCoordP1uivPTR       : extern_winapi_func(GLenum texture, GLenum type, /*const GLuint * */pointer coords);
+internal struct GLMultiTexCoordP2uiPTR        : extern_winapi_func(GLenum texture, GLenum type, GLuint coords);
+internal struct GLMultiTexCoordP2uivPTR       : extern_winapi_func(GLenum texture, GLenum type, /*const GLuint * */pointer coords);
+internal struct GLMultiTexCoordP3uiPTR        : extern_winapi_func(GLenum texture, GLenum type, GLuint coords);
+internal struct GLMultiTexCoordP3uivPTR       : extern_winapi_func(GLenum texture, GLenum type, /*const GLuint * */pointer coords);
+internal struct GLMultiTexCoordP4uiPTR        : extern_winapi_func(GLenum texture, GLenum type, GLuint coords);
+internal struct GLMultiTexCoordP4uivPTR       : extern_winapi_func(GLenum texture, GLenum type, /*const GLuint * */pointer coords);
+internal struct GLNormalP3uiPTR               : extern_winapi_func(GLenum type, GLuint coords);
+internal struct GLNormalP3uivPTR              : extern_winapi_func(GLenum type, /*const GLuint * */pointer coords);
+internal struct GLColorP3uiPTR                : extern_winapi_func(GLenum type, GLuint color);
+internal struct GLColorP3uivPTR               : extern_winapi_func(GLenum type, /*const GLuint * */pointer color);
+internal struct GLColorP4uiPTR                : extern_winapi_func(GLenum type, GLuint color);
+internal struct GLColorP4uivPTR               : extern_winapi_func(GLenum type, /*const GLuint * */pointer color);
+internal struct GLSecondaryColorP3uiPTR       : extern_winapi_func(GLenum type, GLuint color);
+internal struct GLSecondaryColorP3uivPTR      : extern_winapi_func(GLenum type, /*const GLuint * */pointer color);
 
 const string[] Prefixes = $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
 
@@ -1480,7 +1504,6 @@ public struct GLContext
    GLGetSamplerParameterIivPTR   glGetSamplerParameterIiv;
    GLGetSamplerParameterfvPTR    glGetSamplerParameterfv;
    GLGetSamplerParameterIuivPTR  glGetSamplerParameterIuiv;
-      
    GLQueryCounterPTR             glQueryCounter;
    GLGetQueryObjecti64vPTR       glGetQueryObjecti64v;
    GLGetQueryObjectui64vPTR      glGetQueryObjectui64v;
@@ -1499,6 +1522,31 @@ public struct GLContext
    GLVertexP3uivPTR              glVertexP3uiv;
    GLVertexP4uiPTR               glVertexP4ui;
    GLVertexP4uivPTR              glVertexP4uiv;
+
+   GLTexCoordP1uiPTR             glTexCoordP1ui;
+   GLTexCoordP1uivPTR            glTexCoordP1uiv;
+   GLTexCoordP2uiPTR             glTexCoordP2ui;
+   GLTexCoordP2uivPTR            glTexCoordP2uiv;
+   GLTexCoordP3uiPTR             glTexCoordP3ui;
+   GLTexCoordP3uivPTR            glTexCoordP3uiv;
+   GLTexCoordP4uiPTR             glTexCoordP4ui;
+   GLTexCoordP4uivPTR            glTexCoordP4uiv;
+   GLMultiTexCoordP1uiPTR        glMultiTexCoordP1ui;
+   GLMultiTexCoordP1uivPTR       glMultiTexCoordP1uiv;
+   GLMultiTexCoordP2uiPTR        glMultiTexCoordP2ui;
+   GLMultiTexCoordP2uivPTR       glMultiTexCoordP2uiv;
+   GLMultiTexCoordP3uiPTR        glMultiTexCoordP3ui;
+   GLMultiTexCoordP3uivPTR       glMultiTexCoordP3uiv;
+   GLMultiTexCoordP4uiPTR        glMultiTexCoordP4ui;
+   GLMultiTexCoordP4uivPTR       glMultiTexCoordP4uiv;
+   GLNormalP3uiPTR               glNormalP3ui;
+   GLNormalP3uivPTR              glNormalP3uiv;
+   GLColorP3uiPTR                glColorP3ui;
+   GLColorP3uivPTR               glColorP3uiv;
+   GLColorP4uiPTR                glColorP4ui;
+   GLColorP4uivPTR               glColorP4uiv;
+   GLSecondaryColorP3uiPTR       glSecondaryColorP3ui;
+   GLSecondaryColorP3uivPTR      glSecondaryColorP3uiv;
 
    constructor()
    {
@@ -2331,7 +2379,6 @@ public struct GLContext
       glGetSamplerParameterIiv := GLGetSamplerParameterIivPTR.load(libGL, "glGetSamplerParameterIiv");
       glGetSamplerParameterfv := GLGetSamplerParameterfvPTR.load(libGL, "glGetSamplerParameterfv");
       glGetSamplerParameterIuiv := GLGetSamplerParameterIuivPTR.load(libGL, "glGetSamplerParameterIuiv");
-
       glQueryCounter := GLQueryCounterPTR.load(libGL, "glQueryCounter");
       glGetQueryObjecti64v := GLGetQueryObjecti64vPTR.load(libGL, "glGetQueryObjecti64v");
       glGetQueryObjectui64v := GLGetQueryObjectui64vPTR.load(libGL, "glGetQueryObjectui64v");
@@ -2350,33 +2397,31 @@ public struct GLContext
       glVertexP3uiv := GLVertexP3uivPTR.load(libGL, "glVertexP3uiv");
       glVertexP4ui := GLVertexP4uiPTR.load(libGL, "glVertexP4ui");
       glVertexP4uiv := GLVertexP4uivPTR.load(libGL, "glVertexP4uiv");
-/*      
-      glTexCoordP1ui = (PFNGLTEXCOORDP1UIPROC)load("glTexCoordP1ui");
-      glTexCoordP1uiv = (PFNGLTEXCOORDP1UIVPROC)load("glTexCoordP1uiv");
-      glTexCoordP2ui = (PFNGLTEXCOORDP2UIPROC)load("glTexCoordP2ui");
-      glTexCoordP2uiv = (PFNGLTEXCOORDP2UIVPROC)load("glTexCoordP2uiv");
-      glTexCoordP3ui = (PFNGLTEXCOORDP3UIPROC)load("glTexCoordP3ui");
-      glTexCoordP3uiv = (PFNGLTEXCOORDP3UIVPROC)load("glTexCoordP3uiv");
-      glTexCoordP4ui = (PFNGLTEXCOORDP4UIPROC)load("glTexCoordP4ui");
-      glTexCoordP4uiv = (PFNGLTEXCOORDP4UIVPROC)load("glTexCoordP4uiv");
-      glMultiTexCoordP1ui = (PFNGLMULTITEXCOORDP1UIPROC)load("glMultiTexCoordP1ui");
-      glMultiTexCoordP1uiv = (PFNGLMULTITEXCOORDP1UIVPROC)load("glMultiTexCoordP1uiv");
-      glMultiTexCoordP2ui = (PFNGLMULTITEXCOORDP2UIPROC)load("glMultiTexCoordP2ui");
-      glMultiTexCoordP2uiv = (PFNGLMULTITEXCOORDP2UIVPROC)load("glMultiTexCoordP2uiv");
-      glMultiTexCoordP3ui = (PFNGLMULTITEXCOORDP3UIPROC)load("glMultiTexCoordP3ui");
-      glMultiTexCoordP3uiv = (PFNGLMULTITEXCOORDP3UIVPROC)load("glMultiTexCoordP3uiv");
-      glMultiTexCoordP4ui = (PFNGLMULTITEXCOORDP4UIPROC)load("glMultiTexCoordP4ui");
-      glMultiTexCoordP4uiv = (PFNGLMULTITEXCOORDP4UIVPROC)load("glMultiTexCoordP4uiv");
-      glNormalP3ui = (PFNGLNORMALP3UIPROC)load("glNormalP3ui");
-      glNormalP3uiv = (PFNGLNORMALP3UIVPROC)load("glNormalP3uiv");
-      glColorP3ui = (PFNGLCOLORP3UIPROC)load("glColorP3ui");
-      glColorP3uiv = (PFNGLCOLORP3UIVPROC)load("glColorP3uiv");
-      glColorP4ui = (PFNGLCOLORP4UIPROC)load("glColorP4ui");
-      glColorP4uiv = (PFNGLCOLORP4UIVPROC)load("glColorP4uiv");
-      glSecondaryColorP3ui = (PFNGLSECONDARYCOLORP3UIPROC)load("glSecondaryColorP3ui");
-      glSecondaryColorP3uiv = (PFNGLSECONDARYCOLORP3UIVPROC)load("glSecondaryColorP3uiv");
 
-*/      
+      glTexCoordP1ui := GLTexCoordP1uiPTR.load(libGL, "glTexCoordP1ui");
+      glTexCoordP1uiv := GLTexCoordP1uivPTR.load(libGL, "glTexCoordP1uiv");
+      glTexCoordP2ui := GLTexCoordP2uiPTR.load(libGL, "glTexCoordP2ui");
+      glTexCoordP2uiv := GLTexCoordP2uivPTR.load(libGL, "glTexCoordP2uiv");
+      glTexCoordP3ui := GLTexCoordP3uiPTR.load(libGL, "glTexCoordP3ui");
+      glTexCoordP3uiv := GLTexCoordP3uivPTR.load(libGL, "glTexCoordP3uiv");
+      glTexCoordP4ui := GLTexCoordP4uiPTR.load(libGL, "glTexCoordP4ui");
+      glTexCoordP4uiv := GLTexCoordP4uivPTR.load(libGL, "glTexCoordP4uiv");
+      glMultiTexCoordP1ui := GLMultiTexCoordP1uiPTR.load(libGL, "glMultiTexCoordP1ui");
+      glMultiTexCoordP1uiv := GLMultiTexCoordP1uivPTR.load(libGL, "glMultiTexCoordP1uiv");
+      glMultiTexCoordP2ui := GLMultiTexCoordP2uiPTR.load(libGL, "glMultiTexCoordP2ui");
+      glMultiTexCoordP2uiv := GLMultiTexCoordP2uivPTR.load(libGL, "glMultiTexCoordP2uiv");
+      glMultiTexCoordP3ui := GLMultiTexCoordP3uiPTR.load(libGL, "glMultiTexCoordP3ui");
+      glMultiTexCoordP3uiv := GLMultiTexCoordP3uivPTR.load(libGL, "glMultiTexCoordP3uiv");
+      glMultiTexCoordP4ui := GLMultiTexCoordP4uiPTR.load(libGL, "glMultiTexCoordP4ui");
+      glMultiTexCoordP4uiv := GLMultiTexCoordP4uivPTR.load(libGL, "glMultiTexCoordP4uiv");
+      glNormalP3ui := GLNormalP3uiPTR.load(libGL, "glNormalP3ui");
+      glNormalP3uiv := GLNormalP3uivPTR.load(libGL, "glNormalP3uiv");
+      glColorP3ui := GLColorP3uiPTR.load(libGL, "glColorP3ui");
+      glColorP3uiv := GLColorP3uivPTR.load(libGL, "glColorP3uiv");
+      glColorP4ui := GLColorP4uiPTR.load(libGL, "glColorP4ui");
+      glColorP4uiv := GLColorP4uivPTR.load(libGL, "glColorP4uiv");
+      glSecondaryColorP3ui := GLSecondaryColorP3uiPTR.load(libGL, "glSecondaryColorP3ui");
+      glSecondaryColorP3uiv := GLSecondaryColorP3uivPTR.load(libGL, "glSecondaryColorP3uiv");
    }
             
    bool load(IOpenGLEngine engine)
