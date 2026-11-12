@@ -3,6 +3,67 @@ import extensions;
 
 use extern OPENGL : importing("OPENGL32");
 
+// --- wgl_func ---
+
+public template wgl_func<T>(params member)::
+{
+   __winapi_fn_ptr func;
+
+   constructor load(WGLGetProcAddress get_proc, string func_name) 
+   {
+      func := get_proc(func_name);
+   }
+
+   T function(
+#for(member) 
+      member
+#endfor
+   ) {
+      T retVal := func(
+#for(member) 
+         $value member
+#endfor      
+      );
+      
+      ^ retVal
+   }
+   
+   bool isUnassigned()
+   {
+      //^ func == default;
+      ^ func == UnsafePointer.Default // !! temporally
+   }   
+}
+
+
+public template wgl_func(params member)::
+{
+   __winapi_fn_ptr func;
+
+   constructor load(WGLGetProcAddress get_proc, string func_name) 
+   {
+      func := get_proc(func_name);
+   }
+
+   function(
+#for(member) 
+      member
+#endfor
+   ) {
+      func(
+#for(member) 
+         $value member
+#endfor      
+      );
+   }
+   
+   bool isUnassigned()
+   {
+      //^ func == default;
+      ^ func == UnsafePointer.Default // !! temporally
+   }   
+}
+
 public const struct HGLRC
 {
    embeddable handle _handle;
@@ -754,7 +815,6 @@ internal struct GLVertexP3uiPTR               : extern_winapi_func(GLenum type, 
 internal struct GLVertexP3uivPTR              : extern_winapi_func(GLenum type, /*const GLuint * */pointer value);
 internal struct GLVertexP4uiPTR               : extern_winapi_func(GLenum type, GLuint value);
 internal struct GLVertexP4uivPTR              : extern_winapi_func(GLenum type, /*const GLuint * */pointer value);
-
 internal struct GLTexCoordP1uiPTR             : extern_winapi_func(GLenum type, GLuint coords);
 internal struct GLTexCoordP1uivPTR            : extern_winapi_func(GLenum type, /*const GLuint * */pointer coords);
 internal struct GLTexCoordP2uiPTR             : extern_winapi_func(GLenum type, GLuint coords);
@@ -779,6 +839,58 @@ internal struct GLColorP4uiPTR                : extern_winapi_func(GLenum type, 
 internal struct GLColorP4uivPTR               : extern_winapi_func(GLenum type, /*const GLuint * */pointer color);
 internal struct GLSecondaryColorP3uiPTR       : extern_winapi_func(GLenum type, GLuint color);
 internal struct GLSecondaryColorP3uivPTR      : extern_winapi_func(GLenum type, /*const GLuint * */pointer color);
+// 4.0
+internal struct GLMinSampleShadingPTR         : extern_winapi_func(GLfloat value);
+internal struct GLBlendEquationiPTR           : extern_winapi_func(GLuint buf, GLenum mode);
+internal struct GLBlendEquationSeparateiPTR   : extern_winapi_func(GLuint buf, GLenum modeRGB, GLenum modeAlpha);
+internal struct GLBlendFunciPTR               : extern_winapi_func(GLuint buf, GLenum src, GLenum dst);
+internal struct GLBlendFuncSeparateiPTR       : extern_winapi_func(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
+internal struct GLDrawArraysIndirectPTR       : extern_winapi_func(GLenum mode, /*const void * */pointer indirect);
+internal struct GLDrawElementsIndirectPTR     : extern_winapi_func(GLenum mode, GLenum type, /*const void * */pointer indirect);
+internal struct GLUniform1dPTR                : extern_winapi_func(GLint location, GLdouble x);
+internal struct GLUniform2dPTR                : extern_winapi_func(GLint location, GLdouble x, GLdouble y);
+internal struct GLUniform3dPTR                : extern_winapi_func(GLint location, GLdouble x, GLdouble y, GLdouble z);
+internal struct GLUniform4dPTR                : extern_winapi_func(GLint location, GLdouble x, GLdouble y, GLdouble z, GLdouble w);
+internal struct GLUniform1dvPTR               : extern_winapi_func(GLint location, GLsizei count, /*const GLdouble * */pointer value);
+internal struct GLUniform2dvPTR               : extern_winapi_func(GLint location, GLsizei count, /*const GLdouble * */pointer value);
+internal struct GLUniform3dvPTR               : extern_winapi_func(GLint location, GLsizei count, /*const GLdouble * */pointer value);
+internal struct GLUniform4dvPTR               : extern_winapi_func(GLint location, GLsizei count, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix2dvPTR         : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix3dvPTR         : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix4dvPTR         : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix2x3dvPTR       : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix2x4dvPTR       : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix3x2dvPTR       : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix3x4dvPTR       : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix4x2dvPTR       : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+internal struct GLUniformMatrix4x3dvPTR       : extern_winapi_func(GLint location, GLsizei count, GLboolean transpose, /*const GLdouble * */pointer value);
+
+internal struct GLGetUniformdvPTR             : extern_winapi_func(GLuint program, GLint location, /*GLdouble * */pointer params);
+internal struct GLGetSubroutineUniformLocationPTR : extern_winapi_func<GLint>(GLuint program, GLenum shadertype, /*const GLchar * */string name);
+internal struct GLGetSubroutineIndexPTR       : extern_winapi_func<GLuint>(GLuint program, GLenum shadertype, /*const GLchar * */string name);
+internal struct GLGetActiveSubroutineUniformivPTR   : extern_winapi_func(GLuint program, GLenum shadertype, GLuint index, GLenum pname, /*GLint * */pointer values);
+internal struct GLGetActiveSubroutineUniformNamePTR : extern_winapi_func(GLuint buf, GLenum srcRGB, GLenum dstRGB, GLenum srcAlpha, GLenum dstAlpha);
+internal struct GLGetActiveSubroutineNamePTR        : extern_winapi_func(GLuint program, GLenum shadertype, GLuint index, GLsizei bufSize, /*GLsizei * */pointer length, /*GLchar * */pointer name);
+internal struct GLUniformSubroutinesuivPTR    : extern_winapi_func(GLenum shadertype, GLsizei count, /*const GLuint * */pointer indices);
+internal struct GLGetUniformSubroutineuivPTR  : extern_winapi_func(GLenum shadertype, GLint location, /*GLuint * */pointer params);
+internal struct GLGetProgramStageivPTR        : extern_winapi_func(GLuint program, GLenum shadertype, GLenum pname, /*GLint * */pointer values);
+internal struct GLPatchParameteriPTR          : extern_winapi_func(GLenum pname, GLint value);
+internal struct GLPatchParameterfvPTR         : extern_winapi_func(GLenum pname, /*const GLfloat * */pointer values);
+internal struct GLBindTransformFeedbackPTR    : extern_winapi_func(GLenum target, GLuint id);
+internal struct GLDeleteTransformFeedbacksPTR : extern_winapi_func(GLsizei n, /*const GLuint * */pointer ids);
+internal struct GLGenTransformFeedbacksPTR    : extern_winapi_func(GLsizei n, /*GLuint * */pointer ids);
+internal struct GLIsTransformFeedbackPTR      : extern_winapi_func<GLboolean>(GLuint id);
+internal struct GLPauseTransformFeedbackPTR   : extern_winapi_func();
+internal struct GLResumeTransformFeedbackPTR  : extern_winapi_func();
+internal struct GLDrawTransformFeedbackPTR    : extern_winapi_func(GLenum mode, GLuint id);
+internal struct GLDrawTransformFeedbackStreamPTR : extern_winapi_func(GLenum mode, GLuint id, GLuint stream);
+internal struct GLBeginQueryIndexedPTR        : extern_winapi_func(GLenum target, GLuint index, GLuint id);
+internal struct GLEndQueryIndexedPTR          : extern_winapi_func(GLenum target, GLuint index);
+internal struct GLGetQueryIndexedivPTR        : extern_winapi_func(GLenum target, GLuint index, GLenum pname, /*GLint * */pointer params);
+// ext
+internal struct GLMultiDrawArraysIndirectAMDPTR     : wgl_func(GLenum mode, /*const void * */pointer indirect, GLsizei primcount, GLsizei stride);
+internal struct GLMultiDrawElementsIndirectAMDPTR   : wgl_func(GLenum mode, GLenum type, /*const void * */pointer indirect, GLsizei primcount, GLsizei stride);
+
 
 const string[] Prefixes = $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
 
@@ -789,7 +901,7 @@ public struct GLContext
    handle libGL;
    
    // opengl functions
-//   WGLGetProcAddress    get_proc;
+   WGLGetProcAddress    get_proc;
    
    GLGetStringPTR       glGetString;
    
@@ -806,6 +918,8 @@ public struct GLContext
    int                  GLAD_GL_VERSION_3_2;
    int                  GLAD_GL_VERSION_3_3;
    int                  GLAD_GL_VERSION_4_0;
+   
+   int                  GLAD_GL_AMD_multi_draw_indirect;
    
    // 1_0
    GLCullFacePTR        glCullFace;
@@ -1522,7 +1636,6 @@ public struct GLContext
    GLVertexP3uivPTR              glVertexP3uiv;
    GLVertexP4uiPTR               glVertexP4ui;
    GLVertexP4uivPTR              glVertexP4uiv;
-
    GLTexCoordP1uiPTR             glTexCoordP1ui;
    GLTexCoordP1uivPTR            glTexCoordP1uiv;
    GLTexCoordP2uiPTR             glTexCoordP2ui;
@@ -1547,12 +1660,62 @@ public struct GLContext
    GLColorP4uivPTR               glColorP4uiv;
    GLSecondaryColorP3uiPTR       glSecondaryColorP3ui;
    GLSecondaryColorP3uivPTR      glSecondaryColorP3uiv;
-
+   // 4.0
+   GLMinSampleShadingPTR         glMinSampleShading;
+   GLBlendEquationiPTR           glBlendEquationi;
+   GLBlendEquationSeparateiPTR   glBlendEquationSeparatei;
+   GLBlendFunciPTR               glBlendFunci;
+   GLBlendFuncSeparateiPTR       glBlendFuncSeparatei;
+   GLDrawArraysIndirectPTR       glDrawArraysIndirect;
+   GLDrawElementsIndirectPTR     glDrawElementsIndirect;
+   GLUniform1dPTR                glUniform1d;
+   GLUniform2dPTR                glUniform2d;
+   GLUniform3dPTR                glUniform3d;
+   GLUniform4dPTR                glUniform4d;
+   GLUniform1dvPTR               glUniform1dv;
+   GLUniform2dvPTR               glUniform2dv;
+   GLUniform3dvPTR               glUniform3dv;
+   GLUniform4dvPTR               glUniform4dv;
+   GLUniformMatrix2dvPTR         glUniformMatrix2dv;
+   GLUniformMatrix3dvPTR         glUniformMatrix3dv;
+   GLUniformMatrix4dvPTR         glUniformMatrix4dv;
+   GLUniformMatrix2x3dvPTR       glUniformMatrix2x3dv;
+   GLUniformMatrix2x4dvPTR       glUniformMatrix2x4dv;
+   GLUniformMatrix3x2dvPTR       glUniformMatrix3x2dv;
+   GLUniformMatrix3x4dvPTR       glUniformMatrix3x4dv;
+   GLUniformMatrix4x2dvPTR       glUniformMatrix4x2dv;
+   GLUniformMatrix4x3dvPTR       glUniformMatrix4x3dv;
+   GLGetUniformdvPTR             glGetUniformdv;
+   GLGetSubroutineUniformLocationPTR glGetSubroutineUniformLocation;
+   GLGetSubroutineIndexPTR       glGetSubroutineIndex;
+   GLGetActiveSubroutineUniformivPTR   glGetActiveSubroutineUniformiv;
+   GLGetActiveSubroutineUniformNamePTR glGetActiveSubroutineUniformName;
+   GLGetActiveSubroutineNamePTR        glGetActiveSubroutineName;
+   GLUniformSubroutinesuivPTR    glUniformSubroutinesuiv;
+   GLGetUniformSubroutineuivPTR  glGetUniformSubroutineuiv;
+   GLGetProgramStageivPTR        glGetProgramStageiv;
+   GLPatchParameteriPTR          glPatchParameteri;
+   GLPatchParameterfvPTR         glPatchParameterfv;
+   GLBindTransformFeedbackPTR    glBindTransformFeedback;
+   GLDeleteTransformFeedbacksPTR glDeleteTransformFeedbacks;
+   GLGenTransformFeedbacksPTR    glGenTransformFeedbacks;
+   GLIsTransformFeedbackPTR      glIsTransformFeedback;
+   GLPauseTransformFeedbackPTR   glPauseTransformFeedback;
+   GLResumeTransformFeedbackPTR  glResumeTransformFeedback;
+   GLDrawTransformFeedbackPTR    glDrawTransformFeedback;
+   GLDrawTransformFeedbackStreamPTR glDrawTransformFeedbackStream;
+   GLBeginQueryIndexedPTR        glBeginQueryIndexed;
+   GLEndQueryIndexedPTR          glEndQueryIndexed;
+   GLGetQueryIndexedivPTR        glGetQueryIndexediv;
+   // ext
+   GLMultiDrawArraysIndirectAMDPTR     glMultiDrawArraysIndirectAMD;
+   GLMultiDrawElementsIndirectAMDPTR   glMultiDrawElementsIndirectAMD;
+      
    constructor()
    {
       libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
       
-//      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
       glGetString := GLGetStringPTR.load(libGL, "glGetString");
    }
 
@@ -2423,6 +2586,98 @@ public struct GLContext
       glSecondaryColorP3ui := GLSecondaryColorP3uiPTR.load(libGL, "glSecondaryColorP3ui");
       glSecondaryColorP3uiv := GLSecondaryColorP3uivPTR.load(libGL, "glSecondaryColorP3uiv");
    }
+
+   private load_GL_VERSION_4_0()
+   {
+      if (GLAD_GL_VERSION_4_0 == 0) {
+         ^ self
+      };
+      glMinSampleShading := GLMinSampleShadingPTR.load(libGL, "glMinSampleShading");
+      glBlendEquationi := GLBlendEquationiPTR.load(libGL, "glBlendEquationi");
+      glBlendEquationSeparatei := GLBlendEquationSeparateiPTR.load(libGL, "glBlendEquationSeparatei");
+      glBlendFunci := GLBlendFunciPTR.load(libGL, "glBlendFunci");
+      glBlendFuncSeparatei := GLBlendFuncSeparateiPTR.load(libGL, "glBlendFuncSeparatei");
+      glDrawArraysIndirect := GLDrawArraysIndirectPTR.load(libGL, "glDrawArraysIndirect");
+      glDrawElementsIndirect := GLDrawElementsIndirectPTR.load(libGL, "glDrawElementsIndirect");
+      glUniform1d := GLUniform1dPTR.load(libGL, "glUniform1d");
+      glUniform2d := GLUniform2dPTR.load(libGL, "glUniform2d");
+      glUniform3d := GLUniform3dPTR.load(libGL, "glUniform3d");
+      glUniform4d := GLUniform4dPTR.load(libGL, "glUniform4d");
+      glUniform1dv := GLUniform1dvPTR.load(libGL, "glUniform1dv");
+      glUniform2dv := GLUniform2dvPTR.load(libGL, "glUniform2dv");
+      glUniform3dv := GLUniform3dvPTR.load(libGL, "glUniform3dv");
+      glUniform4dv := GLUniform4dvPTR.load(libGL, "glUniform4dv");
+      glUniformMatrix2dv := GLUniformMatrix2dvPTR.load(libGL, "glUniformMatrix2dv");
+      glUniformMatrix3dv := GLUniformMatrix3dvPTR.load(libGL, "glUniformMatrix3dv");
+      glUniformMatrix4dv := GLUniformMatrix4dvPTR.load(libGL, "glUniformMatrix4dv");
+      glUniformMatrix2x3dv := GLUniformMatrix2x3dvPTR.load(libGL, "glUniformMatrix2x3dv");
+      glUniformMatrix2x4dv := GLUniformMatrix2x4dvPTR.load(libGL, "glUniformMatrix2x4dv");
+      glUniformMatrix3x2dv := GLUniformMatrix3x2dvPTR.load(libGL, "glUniformMatrix3x2dv");
+      glUniformMatrix3x4dv := GLUniformMatrix3x4dvPTR.load(libGL, "glUniformMatrix3x4dv");
+      glUniformMatrix4x2dv := GLUniformMatrix4x2dvPTR.load(libGL, "glUniformMatrix4x2dv");
+      glUniformMatrix4x3dv := GLUniformMatrix4x3dvPTR.load(libGL, "glUniformMatrix4x3dv");
+      
+      glGetUniformdv := GLGetUniformdvPTR.load(libGL, "glGetUniformdv");
+      glGetSubroutineUniformLocation := GLGetSubroutineUniformLocationPTR.load(libGL, "glGetSubroutineUniformLocation");
+      glGetSubroutineIndex := GLGetSubroutineIndexPTR.load(libGL, "glGetSubroutineIndex");
+      glGetActiveSubroutineUniformiv := GLGetActiveSubroutineUniformivPTR.load(libGL, "glGetActiveSubroutineUniformiv");
+      glGetActiveSubroutineUniformName := GLGetActiveSubroutineUniformNamePTR.load(libGL, "glGetActiveSubroutineUniformName");
+      glGetActiveSubroutineName := GLGetActiveSubroutineNamePTR.load(libGL, "glGetActiveSubroutineName");
+      glUniformSubroutinesuiv := GLUniformSubroutinesuivPTR.load(libGL, "glUniformSubroutinesuiv");
+      glGetUniformSubroutineuiv := GLGetUniformSubroutineuivPTR.load(libGL, "glGetUniformSubroutineuiv");
+      glGetProgramStageiv := GLGetProgramStageivPTR.load(libGL, "glGetProgramStageiv");
+      glPatchParameteri := GLPatchParameteriPTR.load(libGL, "glPatchParameteri");
+      glPatchParameterfv := GLPatchParameterfvPTR.load(libGL, "glPatchParameterfv");
+      glBindTransformFeedback := GLBindTransformFeedbackPTR.load(libGL, "glBindTransformFeedback");
+      glDeleteTransformFeedbacks := GLDeleteTransformFeedbacksPTR.load(libGL, "glDeleteTransformFeedbacks");
+      glGenTransformFeedbacks := GLGenTransformFeedbacksPTR.load(libGL, "glGenTransformFeedbacks");
+      glIsTransformFeedback := GLIsTransformFeedbackPTR.load(libGL, "glIsTransformFeedback");
+      glPauseTransformFeedback := GLPauseTransformFeedbackPTR.load(libGL, "glPauseTransformFeedback");
+      glResumeTransformFeedback := GLResumeTransformFeedbackPTR.load(libGL, "glResumeTransformFeedback");
+      glDrawTransformFeedback := GLDrawTransformFeedbackPTR.load(libGL, "glDrawTransformFeedback");
+      glDrawTransformFeedbackStream := GLDrawTransformFeedbackStreamPTR.load(libGL, "glDrawTransformFeedbackStream");
+      glBeginQueryIndexed := GLBeginQueryIndexedPTR.load(libGL, "glBeginQueryIndexed");
+      glEndQueryIndexed := GLEndQueryIndexedPTR.load(libGL, "glEndQueryIndexed");
+      glGetQueryIndexediv := GLGetQueryIndexedivPTR.load(libGL, "glGetQueryIndexediv");
+   }
+
+   private load_GL_AMD_multi_draw_indirect()
+   {
+      if (GLAD_GL_AMD_multi_draw_indirect == 0) {
+         ^ self
+      };
+      glMultiDrawArraysIndirectAMD := GLMultiDrawArraysIndirectAMDPTR.load(get_proc, "glMultiDrawArraysIndirectAMD");
+      glMultiDrawElementsIndirectAMD := GLMultiDrawElementsIndirectAMDPTR.load(get_proc, "glMultiDrawElementsIndirectAMD");
+      
+   }   
+
+   private string? loadExtensionsStr()
+   {
+      pointer ptr := glGetString(GL_NUM_EXTENSIONS);
+      if (ptr.isUnassigned()) {
+         ^ nil
+      };
+      
+      ^ ptr.getStringUnsafe();
+   }
+                        
+   private int has_ext(string extensions, string ext)
+   {
+      int index := extensions.indexOf(0, ext);
+      if (index >= 0) {
+         int endIndex := index + ext.Length;
+         if (endIndex == extensions.Length || extensions[endIndex] == $32) {
+            ^ 1
+         };
+      };
+      
+      ^ 0
+   }
+            
+   private load_extensionsGL(string extensions)
+   {
+      GLAD_GL_AMD_multi_draw_indirect := has_ext(extensions, "GL_AMD_multi_draw_indirect");
+   }
             
    bool load(IOpenGLEngine engine)
    {
@@ -2446,8 +2701,322 @@ public struct GLContext
       load_GL_VERSION_3_1();
       load_GL_VERSION_3_2();
       load_GL_VERSION_3_3();
-      /*load_GL_VERSION_4_0(load);*/
+      load_GL_VERSION_4_0();
       
+      string? extensions := loadExtensionsStr();
+      if:not:nil(extensions) {
+         load_extensionsGL(extensions);
+      };      
+/*
+   	load_GL_3DFX_tbuffer(load);
+   	load_GL_AMD_debug_output(load);
+   	load_GL_AMD_draw_buffers_blend(load);
+   	load_GL_AMD_framebuffer_multisample_advanced(load);
+   	load_GL_AMD_framebuffer_sample_positions(load);
+   	load_GL_AMD_gpu_shader_int64(load);
+   	load_GL_AMD_interleaved_elements(load);
+ */
+      load_GL_AMD_multi_draw_indirect();
+/*	   load_GL_AMD_name_gen_delete(load);
+   	load_GL_AMD_occlusion_query_event(load);
+   	load_GL_AMD_performance_monitor(load);
+   	load_GL_AMD_sample_positions(load);
+   	load_GL_AMD_sparse_texture(load);
+   	load_GL_AMD_stencil_operation_extended(load);
+   	load_GL_AMD_vertex_shader_tessellator(load);
+   	load_GL_APPLE_element_array(load);
+   	load_GL_APPLE_fence(load);
+   	load_GL_APPLE_flush_buffer_range(load);
+   	load_GL_APPLE_object_purgeable(load);
+   	load_GL_APPLE_texture_range(load);
+   	load_GL_APPLE_vertex_array_object(load);
+   	load_GL_APPLE_vertex_array_range(load);
+   	load_GL_APPLE_vertex_program_evaluators(load);
+   	load_GL_ARB_ES2_compatibility(load);
+   	load_GL_ARB_ES3_1_compatibility(load);
+   	load_GL_ARB_ES3_2_compatibility(load);
+   	load_GL_ARB_base_instance(load);
+   	load_GL_ARB_bindless_texture(load);
+   	load_GL_ARB_blend_func_extended(load);
+   	load_GL_ARB_buffer_storage(load);
+   	load_GL_ARB_cl_event(load);
+   	load_GL_ARB_clear_buffer_object(load);
+   	load_GL_ARB_clear_texture(load);
+   	load_GL_ARB_clip_control(load);
+   	load_GL_ARB_color_buffer_float(load);
+   	load_GL_ARB_compute_shader(load);
+   	load_GL_ARB_compute_variable_group_size(load);
+   	load_GL_ARB_copy_buffer(load);
+   	load_GL_ARB_copy_image(load);
+   	load_GL_ARB_debug_output(load);
+   	load_GL_ARB_direct_state_access(load);
+   	load_GL_ARB_draw_buffers(load);
+   	load_GL_ARB_draw_buffers_blend(load);
+   	load_GL_ARB_draw_elements_base_vertex(load);
+   	load_GL_ARB_draw_indirect(load);
+   	load_GL_ARB_draw_instanced(load);
+   	load_GL_ARB_fragment_program(load);
+   	load_GL_ARB_framebuffer_no_attachments(load);
+   	load_GL_ARB_framebuffer_object(load);
+   	load_GL_ARB_geometry_shader4(load);
+   	load_GL_ARB_get_program_binary(load);
+   	load_GL_ARB_get_texture_sub_image(load);
+   	load_GL_ARB_gl_spirv(load);
+   	load_GL_ARB_gpu_shader_fp64(load);
+   	load_GL_ARB_gpu_shader_int64(load);
+   	load_GL_ARB_imaging(load);
+   	load_GL_ARB_indirect_parameters(load);
+   	load_GL_ARB_instanced_arrays(load);
+   	load_GL_ARB_internalformat_query(load);
+   	load_GL_ARB_internalformat_query2(load);
+   	load_GL_ARB_invalidate_subdata(load);
+   	load_GL_ARB_map_buffer_range(load);
+   	load_GL_ARB_matrix_palette(load);
+   	load_GL_ARB_multi_bind(load);
+   	load_GL_ARB_multi_draw_indirect(load);
+   	load_GL_ARB_multisample(load);
+   	load_GL_ARB_multitexture(load);
+   	load_GL_ARB_occlusion_query(load);
+   	load_GL_ARB_parallel_shader_compile(load);
+   	load_GL_ARB_point_parameters(load);
+   	load_GL_ARB_polygon_offset_clamp(load);
+   	load_GL_ARB_program_interface_query(load);
+   	load_GL_ARB_provoking_vertex(load);
+   	load_GL_ARB_robustness(load);
+   	load_GL_ARB_sample_locations(load);
+   	load_GL_ARB_sample_shading(load);
+   	load_GL_ARB_sampler_objects(load);
+   	load_GL_ARB_separate_shader_objects(load);
+   	load_GL_ARB_shader_atomic_counters(load);
+   	load_GL_ARB_shader_image_load_store(load);
+   	load_GL_ARB_shader_objects(load);
+   	load_GL_ARB_shader_storage_buffer_object(load);
+   	load_GL_ARB_shader_subroutine(load);
+   	load_GL_ARB_shading_language_include(load);
+   	load_GL_ARB_sparse_buffer(load);
+   	load_GL_ARB_sparse_texture(load);
+   	load_GL_ARB_sync(load);
+   	load_GL_ARB_tessellation_shader(load);
+   	load_GL_ARB_texture_barrier(load);
+   	load_GL_ARB_texture_buffer_object(load);
+   	load_GL_ARB_texture_buffer_range(load);
+   	load_GL_ARB_texture_compression(load);
+   	load_GL_ARB_texture_multisample(load);
+   	load_GL_ARB_texture_storage(load);
+   	load_GL_ARB_texture_storage_multisample(load);
+   	load_GL_ARB_texture_view(load);
+   	load_GL_ARB_timer_query(load);
+   	load_GL_ARB_transform_feedback2(load);
+   	load_GL_ARB_transform_feedback3(load);
+   	load_GL_ARB_transform_feedback_instanced(load);
+   	load_GL_ARB_transpose_matrix(load);
+   	load_GL_ARB_uniform_buffer_object(load);
+   	load_GL_ARB_vertex_array_object(load);
+   	load_GL_ARB_vertex_attrib_64bit(load);
+   	load_GL_ARB_vertex_attrib_binding(load);
+   	load_GL_ARB_vertex_blend(load);
+   	load_GL_ARB_vertex_buffer_object(load);
+   	load_GL_ARB_vertex_program(load);
+   	load_GL_ARB_vertex_shader(load);
+   	load_GL_ARB_vertex_type_2_10_10_10_rev(load);
+   	load_GL_ARB_viewport_array(load);
+   	load_GL_ARB_window_pos(load);
+   	load_GL_ATI_draw_buffers(load);
+   	load_GL_ATI_element_array(load);
+   	load_GL_ATI_envmap_bumpmap(load);
+   	load_GL_ATI_fragment_shader(load);
+   	load_GL_ATI_map_object_buffer(load);
+   	load_GL_ATI_pn_triangles(load);
+   	load_GL_ATI_separate_stencil(load);
+   	load_GL_ATI_vertex_array_object(load);
+   	load_GL_ATI_vertex_attrib_array_object(load);
+   	load_GL_ATI_vertex_streams(load);
+   	load_GL_EXT_EGL_image_storage(load);
+   	load_GL_EXT_bindable_uniform(load);
+   	load_GL_EXT_blend_color(load);
+   	load_GL_EXT_blend_equation_separate(load);
+   	load_GL_EXT_blend_func_separate(load);
+   	load_GL_EXT_blend_minmax(load);
+   	load_GL_EXT_color_subtable(load);
+   	load_GL_EXT_compiled_vertex_array(load);
+   	load_GL_EXT_convolution(load);
+   	load_GL_EXT_coordinate_frame(load);
+   	load_GL_EXT_copy_texture(load);
+   	load_GL_EXT_cull_vertex(load);
+   	load_GL_EXT_debug_label(load);
+   	load_GL_EXT_debug_marker(load);
+   	load_GL_EXT_depth_bounds_test(load);
+   	load_GL_EXT_direct_state_access(load);
+   	load_GL_EXT_draw_buffers2(load);
+   	load_GL_EXT_draw_instanced(load);
+   	load_GL_EXT_draw_range_elements(load);
+   	load_GL_EXT_external_buffer(load);
+   	load_GL_EXT_fog_coord(load);
+   	load_GL_EXT_framebuffer_blit(load);
+   	load_GL_EXT_framebuffer_multisample(load);
+   	load_GL_EXT_framebuffer_object(load);
+   	load_GL_EXT_geometry_shader4(load);
+   	load_GL_EXT_gpu_program_parameters(load);
+   	load_GL_EXT_gpu_shader4(load);
+   	load_GL_EXT_histogram(load);
+   	load_GL_EXT_index_func(load);
+   	load_GL_EXT_index_material(load);
+   	load_GL_EXT_light_texture(load);
+   	load_GL_EXT_memory_object(load);
+   	load_GL_EXT_memory_object_fd(load);
+   	load_GL_EXT_memory_object_win32(load);
+   	load_GL_EXT_multi_draw_arrays(load);
+   	load_GL_EXT_multisample(load);
+   	load_GL_EXT_paletted_texture(load);
+   	load_GL_EXT_pixel_transform(load);
+   	load_GL_EXT_point_parameters(load);
+   	load_GL_EXT_polygon_offset(load);
+   	load_GL_EXT_polygon_offset_clamp(load);
+   	load_GL_EXT_provoking_vertex(load);
+   	load_GL_EXT_raster_multisample(load);
+   	load_GL_EXT_secondary_color(load);
+   	load_GL_EXT_semaphore(load);
+   	load_GL_EXT_semaphore_fd(load);
+   	load_GL_EXT_semaphore_win32(load);
+   	load_GL_EXT_separate_shader_objects(load);
+   	load_GL_EXT_shader_framebuffer_fetch_non_coherent(load);
+   	load_GL_EXT_shader_image_load_store(load);
+   	load_GL_EXT_stencil_clear_tag(load);
+   	load_GL_EXT_stencil_two_side(load);
+   	load_GL_EXT_subtexture(load);
+   	load_GL_EXT_texture3D(load);
+   	load_GL_EXT_texture_array(load);
+   	load_GL_EXT_texture_buffer_object(load);
+   	load_GL_EXT_texture_integer(load);
+   	load_GL_EXT_texture_object(load);
+   	load_GL_EXT_texture_perturb_normal(load);
+   	load_GL_EXT_timer_query(load);
+   	load_GL_EXT_transform_feedback(load);
+   	load_GL_EXT_vertex_array(load);
+   	load_GL_EXT_vertex_attrib_64bit(load);
+   	load_GL_EXT_vertex_shader(load);
+   	load_GL_EXT_vertex_weighting(load);
+   	load_GL_EXT_win32_keyed_mutex(load);
+   	load_GL_EXT_window_rectangles(load);
+   	load_GL_EXT_x11_sync_object(load);
+   	load_GL_GREMEDY_frame_terminator(load);
+   	load_GL_GREMEDY_string_marker(load);
+   	load_GL_HP_image_transform(load);
+   	load_GL_IBM_multimode_draw_arrays(load);
+   	load_GL_IBM_static_data(load);
+   	load_GL_IBM_vertex_array_lists(load);
+   	load_GL_INGR_blend_func_separate(load);
+   	load_GL_INTEL_framebuffer_CMAA(load);
+   	load_GL_INTEL_map_texture(load);
+   	load_GL_INTEL_parallel_arrays(load);
+   	load_GL_INTEL_performance_query(load);
+   	load_GL_KHR_blend_equation_advanced(load);
+   	load_GL_KHR_debug(load);
+   	load_GL_KHR_parallel_shader_compile(load);
+   	load_GL_KHR_robustness(load);
+   	load_GL_MESA_framebuffer_flip_y(load);
+   	load_GL_MESA_resize_buffers(load);
+   	load_GL_MESA_window_pos(load);
+   	load_GL_NVX_conditional_render(load);
+   	load_GL_NVX_gpu_multicast2(load);
+   	load_GL_NVX_linked_gpu_multicast(load);
+   	load_GL_NVX_progress_fence(load);
+   	load_GL_NV_alpha_to_coverage_dither_control(load);
+   	load_GL_NV_bindless_multi_draw_indirect(load);
+   	load_GL_NV_bindless_multi_draw_indirect_count(load);
+   	load_GL_NV_bindless_texture(load);
+   	load_GL_NV_blend_equation_advanced(load);
+   	load_GL_NV_clip_space_w_scaling(load);
+   	load_GL_NV_command_list(load);
+   	load_GL_NV_conditional_render(load);
+   	load_GL_NV_conservative_raster(load);
+   	load_GL_NV_conservative_raster_dilate(load);
+   	load_GL_NV_conservative_raster_pre_snap_triangles(load);
+   	load_GL_NV_copy_image(load);
+   	load_GL_NV_depth_buffer_float(load);
+   	load_GL_NV_draw_texture(load);
+   	load_GL_NV_draw_vulkan_image(load);
+   	load_GL_NV_evaluators(load);
+   	load_GL_NV_explicit_multisample(load);
+   	load_GL_NV_fence(load);
+   	load_GL_NV_fragment_coverage_to_color(load);
+   	load_GL_NV_fragment_program(load);
+   	load_GL_NV_framebuffer_mixed_samples(load);
+   	load_GL_NV_framebuffer_multisample_coverage(load);
+   	load_GL_NV_geometry_program4(load);
+   	load_GL_NV_gpu_multicast(load);
+   	load_GL_NV_gpu_program4(load);
+   	load_GL_NV_gpu_program5(load);
+   	load_GL_NV_gpu_shader5(load);
+   	load_GL_NV_half_float(load);
+   	load_GL_NV_internalformat_sample_query(load);
+   	load_GL_NV_memory_attachment(load);
+   	load_GL_NV_memory_object_sparse(load);
+   	load_GL_NV_mesh_shader(load);
+   	load_GL_NV_occlusion_query(load);
+   	load_GL_NV_parameter_buffer_object(load);
+   	load_GL_NV_path_rendering(load);
+   	load_GL_NV_pixel_data_range(load);
+   	load_GL_NV_point_sprite(load);
+   	load_GL_NV_present_video(load);
+   	load_GL_NV_primitive_restart(load);
+   	load_GL_NV_query_resource(load);
+   	load_GL_NV_query_resource_tag(load);
+   	load_GL_NV_register_combiners(load);
+   	load_GL_NV_register_combiners2(load);
+   	load_GL_NV_sample_locations(load);
+   	load_GL_NV_scissor_exclusive(load);
+   	load_GL_NV_shader_buffer_load(load);
+   	load_GL_NV_shading_rate_image(load);
+   	load_GL_NV_texture_barrier(load);
+   	load_GL_NV_texture_multisample(load);
+   	load_GL_NV_timeline_semaphore(load);
+   	load_GL_NV_transform_feedback(load);
+   	load_GL_NV_transform_feedback2(load);
+   	load_GL_NV_vdpau_interop(load);
+   	load_GL_NV_vdpau_interop2(load);
+   	load_GL_NV_vertex_array_range(load);
+   	load_GL_NV_vertex_attrib_integer_64bit(load);
+   	load_GL_NV_vertex_buffer_unified_memory(load);
+   	load_GL_NV_vertex_program(load);
+   	load_GL_NV_vertex_program4(load);
+   	load_GL_NV_video_capture(load);
+   	load_GL_NV_viewport_swizzle(load);
+   	load_GL_OES_byte_coordinates(load);
+   	load_GL_OES_fixed_point(load);
+   	load_GL_OES_query_matrix(load);
+   	load_GL_OES_single_precision(load);
+   	load_GL_OVR_multiview(load);
+   	load_GL_PGI_misc_hints(load);
+   	load_GL_SGIS_detail_texture(load);
+   	load_GL_SGIS_fog_function(load);
+   	load_GL_SGIS_multisample(load);
+   	load_GL_SGIS_pixel_texture(load);
+   	load_GL_SGIS_point_parameters(load);
+   	load_GL_SGIS_sharpen_texture(load);
+   	load_GL_SGIS_texture4D(load);
+   	load_GL_SGIS_texture_color_mask(load);
+   	load_GL_SGIS_texture_filter4(load);
+   	load_GL_SGIX_async(load);
+   	load_GL_SGIX_flush_raster(load);
+   	load_GL_SGIX_fragment_lighting(load);
+   	load_GL_SGIX_framezoom(load);
+   	load_GL_SGIX_igloo_interface(load);
+   	load_GL_SGIX_instruments(load);
+   	load_GL_SGIX_list_priority(load);
+   	load_GL_SGIX_pixel_texture(load);
+   	load_GL_SGIX_polynomial_ffd(load);
+   	load_GL_SGIX_reference_plane(load);
+   	load_GL_SGIX_sprite(load);
+   	load_GL_SGIX_tag_sample_buffer(load);
+   	load_GL_SGI_color_table(load);
+   	load_GL_SUNX_constant_data(load);
+   	load_GL_SUN_global_alpha(load);
+   	load_GL_SUN_mesh_array(load);
+   	load_GL_SUN_triangle_list(load);
+   	load_GL_SUN_vertex(load);
+         
+*/      
       ^ true
    }
 }
