@@ -74,6 +74,7 @@ In development:
   ---------------------------------------
   * current - opengl : #735
   ====================================== 
+  - refactor
   - ext: GLAD_GL_SUN_slice_accum, GLAD_GL_SGIX_shadow, GLAD_GL_SGIX_depth_texture, GLAD_GL_SGIS_texture_lod, GLAD_GL_SGIS_generate_mipmap,
          GLAD_GL_S3_s3tc, GLAD_GL_NV_vertex_program3, GLAD_GL_NV_vertex_program2_option, GLAD_GL_NV_vertex_program2,  
          GLAD_GL_NV_vertex_program1_1, GLAD_GL_NV_vertex_program, GLAD_GL_NV_vertex_buffer_unified_memory, GLAD_GL_NV_vertex_attrib_integer_64bit,
@@ -127,7 +128,7 @@ In development:
          GLAD_GL_ARB_texture_mirror_clamp_to_edge, GLAD_GL_ARB_texture_gather, GLAD_GL_ARB_texture_float,
          GLAD_GL_ARB_texture_filter_anisotropic, GLAD_GL_ARB_texture_env_dot3, GLAD_GL_ARB_texture_env_crossbar,
          GLAD_GL_ARB_texture_env_combine, GLAD_GL_ARB_texture_env_add, GLAD_GL_ARB_texture_cube_map_array, GLAD_GL_ARB_texture_cube_map,
-         GLAD_GL_ARB_texture_compression_rgtc, GLAD_GL_ARB_texture_compression_bptc, GLAD_GL_ARB_texture_compression,
+         GLAD_GL_ARB_texture_compression,
          GLAD_GL_ARB_texture_buffer_range, GLAD_GL_ARB_texture_buffer_object_rgb32, GLAD_GL_ARB_texture_buffer_object,
          GLAD_GL_ARB_texture_border_clamp , GLAD_GL_ARB_texture_barrier, GLAD_GL_ARB_tessellation_shader,
          GLAD_GL_ARB_sync, GLAD_GL_ARB_stencil_texturing, GLAD_GL_ARB_spirv_extensions, GLAD_GL_ARB_sparse_texture, 
@@ -140,26 +141,21 @@ In development:
          GLAD_GL_ARB_shader_atomic_counter_ops, GLAD_GL_ARB_separate_shader_objects, GLAD_GL_ARB_seamless_cube_map,
          GLAD_GL_ARB_sampler_objects, GLAD_GL_ARB_sample_shading, GLAD_GL_ARB_robustness, GLAD_GL_ARB_robust_buffer_access_behavior,
          GLAD_GL_ARB_query_buffer_object, GLAD_GL_ARB_provoking_vertex, GLAD_GL_ARB_program_interface_query,
-         GLAD_GL_ARB_polygon_offset_clamp, GLAD_GL_ARB_point_sprite, GLAD_GL_ARB_point_parameters, GLAD_GL_ARB_pixel_buffer_object,
-         GLAD_GL_ARB_pipeline_statistics_query, GLAD_GL_ARB_parallel_shader_compile, GLAD_GL_ARB_occlusion_query2, GLAD_GL_ARB_occlusion_query,
-         GLAD_GL_ARB_multitexture, GLAD_GL_ARB_multisample, GLAD_GL_ARB_multi_draw_indirect, GLAD_GL_ARB_map_buffer_alignment,
+         GLAD_GL_ARB_polygon_offset_clamp,  GLAD_GL_ARB_point_parameters, 
+         GLAD_GL_ARB_parallel_shader_compile, GLAD_GL_ARB_occlusion_query,
+         GLAD_GL_ARB_multitexture, GLAD_GL_ARB_multisample, GLAD_GL_ARB_multi_draw_indirect, 
          GLAD_GL_ARB_invalidate_subdata, GLAD_GL_ARB_internalformat_query2, GLAD_GL_ARB_internalformat_query, GLAD_GL_ARB_instanced_arrays,
-         GLAD_GL_ARB_indirect_parameters, GLAD_GL_ARB_imaging, GLAD_GL_ARB_half_float_vertex, GLAD_GL_ARB_half_float_pixel, 
-         GLAD_GL_ARB_gpu_shader_int64, GLAD_GL_ARB_gpu_shader_fp64, GLAD_GL_ARB_gpu_shader5, GLAD_GL_ARB_gl_spirv,
-         GLAD_GL_ARB_get_texture_sub_image, GLAD_GL_ARB_get_program_binary, GLAD_GL_ARB_geometry_shader4, GLAD_GL_ARB_framebuffer_sRGB,
+         GLAD_GL_ARB_indirect_parameters, GLAD_GL_ARB_imaging,   
+         GLAD_GL_ARB_gpu_shader_int64, GLAD_GL_ARB_gpu_shader_fp64, GLAD_GL_ARB_gl_spirv,
+         GLAD_GL_ARB_get_texture_sub_image, GLAD_GL_ARB_get_program_binary, GLAD_GL_ARB_geometry_shader4, 
          GLAD_GL_ARB_framebuffer_object, GLAD_GL_ARB_framebuffer_no_attachments, GLAD_GL_ARB_fragment_shader,
-         GLAD_GL_ARB_fragment_program_shadow, GLAD_GL_ARB_fragment_program, GLAD_GL_ARB_fragment_layer_viewport,
-         GLAD_GL_ARB_fragment_coord_conventions, GLAD_GL_ARB_explicit_uniform_location, GLAD_GL_ARB_explicit_attrib_location,
-         GLAD_GL_ARB_enhanced_layouts, GLAD_GL_ARB_draw_instanced, GLAD_GL_ARB_draw_indirect, GLAD_GL_ARB_draw_elements_base_vertex,
-         GLAD_GL_ARB_draw_buffers_blend, GLAD_GL_ARB_draw_buffers, GLAD_GL_ARB_direct_state_access,  
-         GLAD_GL_ARB_derivative_control, GLAD_GL_ARB_depth_texture, GLAD_GL_ARB_depth_clamp, GLAD_GL_ARB_depth_buffer_float,
-         GLAD_GL_ARB_debug_output, GLAD_GL_ARB_cull_distance, GLAD_GL_ARB_copy_image, GLAD_GL_ARB_copy_buffer, 
-         GLAD_GL_ARB_conservative_depth, GLAD_GL_ARB_conditional_render_inverted, GLAD_GL_ARB_compute_variable_group_size,
-         GLAD_GL_ARB_compute_shader, GLAD_GL_ARB_compressed_texture_pixel_storage, GLAD_GL_ARB_compatibility, 
-         GLAD_GL_ARB_color_buffer_float, GLAD_GL_ARB_clip_control, GLAD_GL_ARB_clear_texture, GLAD_GL_ARB_clear_buffer_object,
-         GLAD_GL_ARB_buffer_storage, GLAD_GL_ARB_blend_func_extended, GLAD_GL_ARB_base_instance,
-         GLAD_GL_ARB_arrays_of_arrays, GLAD_GL_ARB_ES3_compatibility, GLAD_GL_ARB_ES3_2_compatibility,
-         GLAD_GL_ARB_ES3_1_compatibility, GLAD_GL_ARB_ES2_compatibility
+         GLAD_GL_ARB_fragment_program, 
+         GLAD_GL_ARB_draw_instanced, GLAD_GL_ARB_draw_indirect, GLAD_GL_ARB_draw_elements_base_vertex,
+         GLAD_GL_ARB_draw_buffers_blend, GLAD_GL_ARB_draw_buffers,   
+          
+          
+          
+         
         
 
   - initialize OpenGL
