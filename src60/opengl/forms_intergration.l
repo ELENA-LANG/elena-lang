@@ -5,8 +5,8 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
 {
    IOpenGLEngine _engine;
    PaintContext  _paintContext;
-   WGLContext    _wglContext;
-   GLContext     _glContext;
+//   WGLContext    _wglContext;
+//   GLContext     _glContext;
    
    setup(IOpenGLEngine engine)
    {
@@ -17,34 +17,34 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
    
    loadGL(HDC dc)
    {
-      PIXELFORMATDESCRIPTOR pfd := default;
-      pfd.nSize := :sizeof pfd;
-      pfd.nVersion := 1;
-      pfd.iPixelType := PFD_TYPE_RGBA;
-      pfd.dwFlags := PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
-      pfd.cColorBits := 32;
-      pfd.cAlphaBits := 8;
-      pfd.iLayerType := PFD_MAIN_PLANE;
-      pfd.cDepthBits := 24;
-      pfd.cStencilBits := 8;
-
-      int pixelFormat := pfd.choosePixelFormat(dc);
-      pfd.setPixelFormat(dc, pixelFormat);
-      
-      HGLRC context := WGLWrapper.createContext(dc);
-      if (context.isUnassigned()) {
-         OpenGLException.raise("OpenGLWrapper: failed to create context");
-      };
-      
-      context.makeCurrent(dc);
-      
-      if:not(_wglContext.load(dc)) {
-         OpenGLException.raise("WGLContext: failed to load");
-      };
-      
-      if:not(_glContext.load(_engine)) {
-         OpenGLException.raise("GLContext: failed to load");
-      };
+//      PIXELFORMATDESCRIPTOR pfd := default;
+//      pfd.nSize := :sizeof pfd;
+//      pfd.nVersion := 1;
+//      pfd.iPixelType := PFD_TYPE_RGBA;
+//      pfd.dwFlags := PFD_DRAW_TO_WINDOW | PFD_SUPPORT_OPENGL | PFD_DOUBLEBUFFER;
+//      pfd.cColorBits := 32;
+//      pfd.cAlphaBits := 8;
+//      pfd.iLayerType := PFD_MAIN_PLANE;
+//      pfd.cDepthBits := 24;
+//      pfd.cStencilBits := 8;
+//
+//      int pixelFormat := pfd.choosePixelFormat(dc);
+//      pfd.setPixelFormat(dc, pixelFormat);
+//      
+//      HGLRC context := WGLWrapper.createContext(dc);
+//      if (context.isUnassigned()) {
+//         OpenGLException.raise("OpenGLWrapper: failed to create context");
+//      };
+//      
+//      context.makeCurrent(dc);
+//      
+//      if:not(_wglContext.load(dc)) {
+//         OpenGLException.raise("WGLContext: failed to load");
+//      };
+//      
+//      if:not(_glContext.load(_engine)) {
+//         OpenGLException.raise("GLContext: failed to load");
+//      };
       
 /*
     if (!gladLoadWGL(dummyDC))
@@ -62,8 +62,8 @@ public class OpenGLPaintContextController : interface<IPaintContextController>, 
 
    initialize()
    {
-      _wglContext := new WGLContext();
-      _glContext := new GLContext();
+//      _wglContext := new WGLContext();
+//      _glContext := new GLContext();
       
       _paintContext.initializeOGL3DDummyWindow(self);
 /*

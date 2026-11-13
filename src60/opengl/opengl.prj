@@ -16,10 +16,19 @@
     </project>
     <manifest>
         <name>ELENA OpenGL Wrapper</name>
-        <version>7.3.3</version>
+        <version>7.3.4</version>
         <author>Aleksey Rakov, ELENA-LANG Org</author>
     </manifest>
     <files>
+        <module name="exports'primitives">
+            <include>exports\primitives\templates.l</include>
+            <include>exports\primitives\func_declarations.l</include>
+        </module>
+        <module name="exports">
+            <include>exports\common.l</include>
+            <include>exports\datatypes.l</include>
+            <include>exports\glad.l</include>
+        </module>
         <module>
             <file>externals.l</file>
             <file>forms_intergration.l</file>

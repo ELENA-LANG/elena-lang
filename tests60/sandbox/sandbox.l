@@ -87,6 +87,8 @@ use extern OPENGL : importing("OPENGL32");
 
 use xint = system'IntNumber;
 
+use my_int = xint;
+
 use system'IntNumber;
 
 public Program()
