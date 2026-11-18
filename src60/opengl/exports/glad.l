@@ -13,13 +13,18 @@ use GLFUNC_GLenum                                                             = 
 use GLFUNC_GLsync                                                             = GLFUNC_ptr;
 use GLFUNC_GLuint                                                             = GLFUNC_uint;
 use GLFUNC_GLint                                                              = GLFUNC_int;
+use GLFUNC_GLsizei                                                            = GLFUNC_int;
 use GLFUNC_ubyte                                                              = GLFUNC_ubyte;
+use GLFUNC_GLbyte                                                             = GLFUNC_byte;
+use GLFUNC_GLshort                                                            = GLFUNC_short;
+use GLFUNC_GLboolean                                                          = GLFUNC_int;
 use GLboolean__GLuint                                                         = GLFUNC_int__uint;
 use GLFUNC_GLboolean__GLsync                                                  = GLFUNC_int__ptr;
 use GLFUNC_GLboolean__GLuint                                                  = GLFUNC_int__uint;
 use GLFUNC_GLboolean__GLenum                                                  = GLFUNC_int__int;
 use GLFUNC_GLenum__GLenum                                                     = GLFUNC_int__int;
 use GLFUNC_GLuint__GLenum                                                     = GLFUNC_uint__int;
+use GLFUNC_GLint__GLenum                                                      = GLFUNC_int__int;
 
 use GLsizei_ptr                                                               = GLint_ptr;
 use GLuint_GLenum                                                             = GLuint_int;
@@ -47,6 +52,8 @@ use GLenum_GLfloat                                                            = 
 use GLenum_GLshort                                                            = GLint_short;
 use GLenum_GLdouble                                                           = GLint_double;
 use GLfloat_GLboolean                                                         = GLint_int;
+use GLint_GLushort                                                            = GLint_ushort;
+use GLuint_GLsizei                                                            = GLuint_int;
 use GLenum__GLuint_GLenum                                                     = int__GLuint_int;
 use pointer__GLuint_GLenum                                                    = ptr__GLuint_int;
 use GLint__GLuint_string                                                      = int__GLuint_string;
@@ -94,6 +101,11 @@ use GLenum_GLint_GLint                                                        = 
 use GLenum_GLshort_GLshort                                                    = GLint_short_short;
 use GLsizei_ptr_ptr                                                           = GLint_ptr_ptr;
 use GLenum_GLint_GLsizei                                                      = GLint_int_int;
+use GLsizei_GLenum_ptr                                                        = GLint_int_ptr;
+use GLenum_GLenum_GLfloat                                                     = GLint_int_int;
+use GLenum_GLenum_GLint                                                       = GLint_int_int;
+use GLenum_GLenum_GLdouble                                                    = GLint_int_double;
+use GLint_GLint_GLfloat                                                       = GLint_int_int;
 use GLuint__GLuint_GLenum_string                                              = uint__GLuint_int_string;
 use GLint__GLuint_GLenum_string                                               = int__GLuint_int_string;
 use GLenum__GLsync_GLbitfield_GLuint64                                        = int__GLptr_int_ulong;
@@ -103,6 +115,7 @@ use GLuint_GLenum_GLenum_ptr                                                  = 
 use GLuint_GLenum_GLint_ptr                                                   = GLuint_int_int_ptr;
 use GLuint_GLsizei_GLenum_GLsizei                                             = GLuint_int_int_int;
 use GLuint_GLenum_GLsizei_GLsizei                                             = GLuint_int_int_int;
+use GLenum_GLint_GLenum_ptr                                                   = GLint_int_int_ptr;
 use GLuint_GLenum_GLuint_GLint                                                = GLuint_int_uint_int;
 use GLuint_GLenum_GLenum_GLuint                                               = GLuint_int_int_uint;
 use GLuint_GLintptr_GLsizeiptr_ptr                                            = GLuint_intptr_intptr_ptr;
@@ -148,6 +161,11 @@ use GLenum_GLint_GLint_GLint                                                  = 
 use GLenum_GLshort_GLshort_GLshort                                            = GLint_short_short_short;
 use GLenum_GLsizei_GLenum_ptr                                                 = GLint_int_int_ptr;
 use GLdouble_GLdouble_GLdouble_GLdouble                                       = GLdouble_double_double_double;
+use GLshort_GLshort_GLshort_GLshort                                           = GLshort_short_short_short;
+use GLubyte_GLubyte_GLubyte_GLubyte                                           = GLubyte_ubyte_ubyte_ubyte;
+use GLbyte_GLbyte_GLbyte_GLbyte                                               = GLbyte_byte_byte_byte;
+use GLushort_GLushort_GLushort_GLushort                                       = GLushort_ushort_ushort_ushort;
+use GLint_GLint_GLsizei_GLsizei                                               = GLint_int_int_int;
 use ptr__GLuint_GLintptr_GLsizeiptr_GLbitfield                                = ptr__GLuint_intptr_intptr_int;
 use GLboolean__GLsizei_ptr_ptr                                                = int__int_ptr_ptr;
 
@@ -161,6 +179,7 @@ use GLuint_GLuint_GLintptr_GLintptr_GLsizeiptr                                = 
 use GLuint_GLuint_GLuint_GLintptr_GLsizeiptr                                  = GLuint_uint_uint_intptr_intptr;
 use GLenum_GLenum_GLenum_GLenum_ptr                                           = GLint_int_int_int_ptr;
 use GLenum_GLint_GLsizei_GLsizei_GLuint                                       = Gint_int_int_int_uint;
+use GLenum_GLint_GLenum_GLenum_ptr                                            = GLint_int_int_int_ptr;
 use GLsizei_ptr_GLenum_ptr_GLsizei                                            = GLint_ptr_int_ptr_int;
 use GLenum_GLenum_ptr_GLsizei_GLsizei                                         = GLint_int_ptr_int_int;
 use GLint_GLint_GLint_GLint_GLint                                             = GLint_GLint_GLint_GLint;
@@ -191,6 +210,8 @@ use GLenum_ptr_GLenum_ptr_GLsizei                                             = 
 use GLenum_GLint_GLint_GLint_GLint                                            = GLint_int_int_int_int;
 use GLenum_GLdouble_GLdouble_GLdouble_GLdouble                                = GLint_double_double_double_double;
 use GLenum_GLfloat_GLfloat_GLfloat_GLfloat                                    = GLint_int_int_int_int;
+use GLsizei_GLsizei_GLenum_GLenum_ptr                                         = GLint_int_int_int_ptr;
+use GLint_GLint_GLsizei_GLsizei_GLenum                                        = GLint_int_int_int_int;
 use ptr__GLenum_GLintptr_GLsizeiptr_GLbitfield                                = ptr__GLint_intptr_intptr_int;
 
 use GLuint_GLint_GLint_GLint_GLint_GLsizei                                    = GLuint_int_int_int_int_int;
@@ -210,7 +231,13 @@ use GLuint_GLint_GLenum_GLboolean_GLsizei_ptr                                 = 
 use GLenum_GLint_GLint_GLsizei_GLenum_GLsizei_ptr                             = GLint_int_int_int_int_int_ptr;
 use GLenum_GLuint_GLuint_GLsizei_GLenum_ptr                                   = GLint_uint_uint_int_int_ptr;
 use GLenum_GLint_GLint_GLint_GLint_GLsizei                                    = GLint_int_int_int_int_int;
+use GLdouble_GLdouble_GLdouble_GLdouble_GLdouble_GLdouble                     = GLdouble_double_double_double_double_double;
+use GLint_GLdouble_GLdouble_GLint_GLdouble_GLdouble                           = GLint_double_double_int_double_double;
+use GLint_GLfloat_GLfloat_GLint_GLfloat_GLfloat                               = GLint_int_int_int_int_int;
+use GLenum_GLdouble_GLdouble_GLint_GLint_ptr                                  = GLint_double_double_int_int_ptr;
+use GLenum_GLfloat_GLfloat_GLint_GLint_ptr                                    = GLint_int_int_int_int_ptr;
 
+use GLint_GLint_GLsizei_GLsizei_GLenum_GLenum_ptr                             = GLint_int_int_int_int_int_ptr;
 use GLuint_GLint_GLint_GLsizei_GLenum_GLsizei_ptr                             = GLuint_int_int_int_int_int_ptr;
 use GLuint_GLint_GLint_GLsizei_GLenum_GLenum_ptr                              = GLuint_int_int_int_int_int_ptr;
 use GLuint_GLuint_GLsizei_ptr_ptr_ptr_ptr                                     = GLuint_uint_int_ptr_ptr_ptr_ptr;
@@ -225,6 +252,7 @@ use GLenum_GLint_GLenum_GLsizei_GLsizei_GLint_GLsizei_ptr                     = 
 use GLenum_GLint_GLenum_GLsizei_GLint_GLsizei_ptr                             = GLint_int_int_int_int_int_ptr;
 use GLenum_GLint_GLenum_GLint_GLint_GLsizei_GLint                             = GLint_int_int_int_int_int_int;
 use GLenum_GLint_GLint_GLsizei_GLenum_GLenum_ptr                              = GLint_int_int_int_int_int_ptr;
+use GLsizei_GLsizei_GLfloat_GLfloat_GLfloat_GLfloat_ptr                       = GLint_int_int_int_int_int_ptr;
 
 use GLuint_GLint_GLint_GLint_GLint_GLint_GLsizei_GLsizei                      = GLuint_int_int_int_int_int_int_int;
 use GLuint_GLsizei_ptr_ptr_ptr_ptr_ptr_ptr                                    = GLuint_int_ptr_ptr_ptr_ptr_ptr_ptr;
@@ -244,6 +272,8 @@ use GLenum_GLint_GLint_GLint_GLsizei_GLsizei_GLenum_GLenum_ptr                = 
 
 use GLint_GLint_GLint_GLint_GLint_GLint_GLint_GLint_GLbitfield_GLenum         = GLint_int_int_int_int_int_int_int_int_int;
 use GLenum_GLint_GLint_GLsizei_GLsizei_GLsizei_GLint_GLenum_GLenum_ptr        = GLint_int_int_int_int_int_int_int_int_ptr;
+use GLenum_GLfloat_GLfloat_GLint_GLint_GLfloat_GLfloat_GLint_GLint_ptr        = GLint_int_int_int_int_int_int_int_int_ptr;
+use GLenum_GLdouble_GLdouble_GLint_GLint_GLdouble_GLdouble_GLint_GLint_ptr    = GLint_double_double_int_int_double_double_int_int_ptr;
 
 use GLenum_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei_GLenum_GLsizei_ptr = GLint_int_int_int_int_int_int_int_int_int_ptr;
 use GLenum_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei_GLenum_GLenum_ptr  = GLint_int_int_int_int_int_int_int_int_int_ptr;
@@ -270,306 +300,307 @@ use GLuint_GLenum_GLint_GLint_GLint_GLint_GLuint_GLenum_GLint_GLint_GLint_GLint_
 //use GLsync = system'UnsafePointer;
 //
 //internal struct GLGetStringPTR         : extern_winapi_func<pointer>(int name);
-//
-//internal struct GLCullFacePTR          : extern_winapi_func(int mode);
-//internal struct GLFrontFacePTR         : extern_winapi_func(int mode);
-//internal struct GLHintPTR              : extern_winapi_func(int target, int mode);
-//internal struct GLLineWidthPTR         : extern_winapi_func(/*GLfloat*/int width);
-//internal struct GLPointSizePTR         : extern_winapi_func(/*GLfloat*/int width);
-//internal struct GLPolygonModePTR       : extern_winapi_func(int face, int mode);
-//internal struct GLScissorPTR           : extern_winapi_func(int x, int y, int width, int height);
-//internal struct GLTexParameterfPTR     : extern_winapi_func(int target, int pname, /*GLfloat*/int param);
-//internal struct GLTexParameterfvPTR    : extern_winapi_func(int target, int pname, pointer params);
-//internal struct GLTexParameteriPTR     : extern_winapi_func(int target, int pname, int param);
-//internal struct GLTexParameterivPTR    : extern_winapi_func(int target, int pname, pointer params);
-//internal struct GLTexImage1DPTR        : extern_winapi_func(int target, int level, int internalformat, int width, int border, int format, int type, pointer pixels);
-//internal struct GLTexImage2DPTR        : extern_winapi_func(int target, int level, int internalformat, int width, int height, int border, int format, int type, pointer pixels);
-//internal struct GLDrawBufferPTR        : extern_winapi_func(int buf);
-//internal struct GLClearPTR             : extern_winapi_func(int mask);
-//internal struct GLClearColorPTR        : extern_winapi_func(/*GLfloat*/int red, /*GLfloat*/int green, /*GLfloat*/int blue, /*GLfloat*/int alpha);
-//internal struct GLClearStencilPTR      : extern_winapi_func(real depth);
-//internal struct GLClearDepthPTR        : extern_winapi_func(uint mask);
-//internal struct GLStencilMaskPTR       : extern_winapi_func(byte red, byte green, byte blue, byte alpha);
-//internal struct GLColorMaskPTR         : extern_winapi_func(byte flag);
-//internal struct GLDepthMaskPTR         : extern_winapi_func(int cap);
-//internal struct GLDisablePTR           : extern_winapi_func(int cap);
-//internal struct GLEnablePTR            : extern_winapi_func(int cap);
-//internal struct GLFinishPTR            : extern_winapi_func();
-//internal struct GLFlushPTR             : extern_winapi_func();
-//internal struct GLBlendFuncPTR         : extern_winapi_func(int opcode);
-//internal struct GLLogicOpPTR           : extern_winapi_func(int /*func*/fnc, int ref, uint mask);
-//internal struct GLStencilFuncPTR       : extern_winapi_func(int fail, int zfail, int zpass);
-//internal struct GLStencilOpPTR         : extern_winapi_func(int /*func*/fnc);
-//internal struct GLDepthFuncPTR         : extern_winapi_func(int pname, /*GLfloat*/int param);
-//internal struct GLPixelStorefPTR       : extern_winapi_func(GLenum pname, GLfloat param);
-//internal struct GLPixelStoreiPTR       : extern_winapi_func(GLenum pname, GLint param);
-//internal struct GLReadBufferPTR        : extern_winapi_func(GLenum src);
-//internal struct GLReadPixelsPTR        : extern_winapi_func(GLint x, GLint y, GLsizei width, GLsizei height, GLenum format, GLenum type, pointer pixels);
-//internal struct GLGetBooleanvPTR       : extern_winapi_func(GLenum pname, /*GLboolean * */pointer data);
-//internal struct GLGetDoublevPTR        : extern_winapi_func(GLenum pname, /*GLdouble * */pointer data);
-//internal struct GLGetErrorPTR          : extern_winapi_func();
-//internal struct GLGetFloatvPTR         : extern_winapi_func(GLenum pname, /*GLfloat * */pointer data);
-//internal struct GLGetIntegervPTR       : extern_winapi_func(GLenum pname, /*GLint * */ pointer data);
-////internal struct GLGetStringPTR         : extern_winapi_func<pointer>(GLenum name);
-//internal struct GLGetTexImagePTR       : extern_winapi_func(GLenum target, GLint level, GLenum format, GLenum type, /*void * */pointer pixels);
-//internal struct GLGetTexParameterfvPTR        : extern_winapi_func(GLenum target, GLenum pname, /*GLfloat * */ pointer params);
-//internal struct GLGetTexParameterivPTR        : extern_winapi_func(GLenum target, GLenum pname, /*GLint * */ pointer params);
-//internal struct GLGetTexLevelParameterfvPTR   : extern_winapi_func(GLenum target, GLint level, GLenum pname, /*GLfloat * */pointer params);
-//internal struct GLGetTexLevelParameterivPTR   : extern_winapi_func(GLenum target, GLint level, GLenum pname, /*GLint * */ pointer params);
-//internal struct GLIsEnabledPTR         : extern_winapi_func<GLboolean>(GLenum cap);
-//internal struct GLDepthRangePTR        : extern_winapi_func(GLdouble n, GLdouble f);
-//internal struct GLViewportPTR          : extern_winapi_func(GLint x, GLint y, GLsizei width, GLsizei height);
-//internal struct GLNewListPTR           : extern_winapi_func(GLuint list, GLenum mode);
-//internal struct GLEndListPTR           : extern_winapi_func();
-//internal struct GLCallListPTR          : extern_winapi_func(GLuint list);
-//internal struct GLCallListsPTR         : extern_winapi_func(GLsizei n, GLenum type, /*const void * */pointer lists);
-//internal struct GLDeleteListsPTR       : extern_winapi_func(GLuint list, GLsizei range);
-//internal struct GLGenListsPTR          : extern_winapi_func(GLsizei range);
-//internal struct GLListBasePTR          : extern_winapi_func(GLuint base);
-//internal struct GLBeginPTR             : extern_winapi_func(GLenum mode);
-//internal struct GLBitmapPTR            : extern_winapi_func(GLsizei width, GLsizei height, GLfloat xorig, GLfloat yorig, GLfloat xmove, GLfloat ymove, /*const GLubyte * */pointer bitmap);
-//internal struct GLColor3bPTR           : extern_winapi_func(GLbyte red, GLbyte green, GLbyte blue);
-//internal struct GLColor3bvPTR          : extern_winapi_func(/*const GLbyte * */pointer v);
-//internal struct GLColor3dPTR           : extern_winapi_func(GLdouble red, GLdouble green, GLdouble blue);
-//internal struct GLColor3dvPTR          : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLColor3fPTR           : extern_winapi_func(GLfloat red, GLfloat green, GLfloat blue);
-//internal struct GLColor3fvPTR          : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLColor3iPTR           : extern_winapi_func(GLint red, GLint green, GLint blue);
-//internal struct GLColor3ivPTR          : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLColor3sPTR           : extern_winapi_func(GLshort red, GLshort green, GLshort blue);
-//internal struct GLColor3svPTR        : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLColor3ubPTR        : extern_winapi_func(GLubyte red, GLubyte green, GLubyte blue);
-//internal struct GLColor3ubvPTR       : extern_winapi_func(/*const GLubyte * */pointer v);
-//internal struct GLColor3uiPTR        : extern_winapi_func(GLuint red, GLuint green, GLuint blue);
-//internal struct GLColor3uivPTR       : extern_winapi_func(/*const GLuint * */pointer v);
-//internal struct GLColor3usPTR        : extern_winapi_func(GLushort red, GLushort green, GLushort blue);
-//internal struct GLColor3usvPTR       : extern_winapi_func(/*const GLushort * */pointer v);
-//internal struct GLColor4bPTR           : extern_winapi_func(GLbyte red, GLbyte green, GLbyte blue, GLbyte alpha);
-//internal struct GLColor4bvPTR          : extern_winapi_func(/*const GLbyte * */pointer v);
-//internal struct GLColor4dPTR           : extern_winapi_func(GLdouble red, GLdouble green, GLdouble blue, GLdouble alpha);
-//internal struct GLColor4dvPTR          : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLColor4fPTR           : extern_winapi_func(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-//internal struct GLColor4fvPTR          : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLColor4iPTR           : extern_winapi_func(GLint red, GLint green, GLint blue, GLint alpha);
-//internal struct GLColor4ivPTR          : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLColor4sPTR           : extern_winapi_func(GLshort red, GLshort green, GLshort blue, GLshort alpha);
-//internal struct GLColor4svPTR        : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLColor4ubPTR        : extern_winapi_func(GLubyte red, GLubyte green, GLubyte blue, GLubyte alpha);
-//internal struct GLColor4ubvPTR       : extern_winapi_func(/*const GLubyte * */pointer v);
-//internal struct GLColor4uiPTR        : extern_winapi_func(GLuint red, GLuint green, GLuint blue, GLuint alpha);
-//internal struct GLColor4uivPTR       : extern_winapi_func(/*const GLuint * */pointer v);
-//internal struct GLColor4usPTR        : extern_winapi_func(GLushort red, GLushort green, GLushort blue, GLushort alpha);
-//internal struct GLColor4usvPTR       : extern_winapi_func(/*const GLushort * */pointer v);
-//internal struct GLEdgeFlagPTR        : extern_winapi_func(GLboolean flag);
-//internal struct GLEdgeFlagvPTR       : extern_winapi_func(/*const GLboolean * */pointer flag);
-//internal struct GLEndPTR             : extern_winapi_func();
-//internal struct GLIndexdPTR          : extern_winapi_func(GLdouble c);
-//internal struct GLIndexdvPTR         : extern_winapi_func(/*const GLdouble * */pointer c);
-//internal struct GLIndexfPTR          : extern_winapi_func(GLfloat c);
-//internal struct GLIndexfvPTR         : extern_winapi_func(/*const GLfloat * */pointer c);
-//internal struct GLIndexiPTR          : extern_winapi_func(GLint c);
-//internal struct GLIndexivPTR         : extern_winapi_func(/*const GLint * */pointer c);
-//internal struct GLIndexsPTR          : extern_winapi_func(GLshort c);
-//internal struct GLIndexsvPTR         : extern_winapi_func(/*const GLshort * */pointer c);
-//internal struct GLNormal3bPTR        : extern_winapi_func(GLbyte nx, GLbyte ny, GLbyte nz);
-//internal struct GLNormal3bvPTR       : extern_winapi_func(/*const GLbyte * */pointer v);
-//internal struct GLNormal3dPTR        : extern_winapi_func(GLdouble nx, GLdouble ny, GLdouble nz);
-//internal struct GLNormal3dvPTR       : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLNormal3fPTR        : extern_winapi_func(GLfloat nx, GLfloat ny, GLfloat nz);
-//internal struct GLNormal3fvPTR       : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLNormal3iPTR        : extern_winapi_func(GLint nx, GLint ny, GLint nz);
-//internal struct GLNormal3ivPTR       : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLNormal3sPTR        : extern_winapi_func(GLshort nx, GLshort ny, GLshort nz);
-//internal struct GLNormal3svPTR       : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLRasterPos2dPTR     : extern_winapi_func(GLdouble x, GLdouble y);
-//internal struct GLRasterPos2dvPTR    : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLRasterPos2fPTR     : extern_winapi_func(GLfloat x, GLfloat y);
-//internal struct GLRasterPos2fvPTR    : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLRasterPos2iPTR     : extern_winapi_func(GLint x, GLint y);
-//internal struct GLRasterPos2ivPTR    : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLRasterPos2sPTR     : extern_winapi_func(GLshort x, GLshort y);
-//internal struct GLRasterPos2svPTR    : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLRasterPos3dPTR     : extern_winapi_func(GLdouble x, GLdouble y, GLdouble z);
-//internal struct GLRasterPos3dvPTR    : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLRasterPos3fPTR     : extern_winapi_func(GLfloat x, GLfloat y, GLfloat z);
-//internal struct GLRasterPos3fvPTR    : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLRasterPos3iPTR     : extern_winapi_func(GLint x, GLint y, GLint z);
-//internal struct GLRasterPos3ivPTR    : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLRasterPos3sPTR     : extern_winapi_func(GLshort x, GLshort y, GLshort z);
-//internal struct GLRasterPos3svPTR    : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLRasterPos4dPTR     : extern_winapi_func(GLdouble x, GLdouble y, GLdouble z, GLdouble w);
-//internal struct GLRasterPos4dvPTR    : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLRasterPos4fPTR     : extern_winapi_func(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-//internal struct GLRasterPos4fvPTR    : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLRasterPos4iPTR     : extern_winapi_func(GLint x, GLint y, GLint z, GLint w);
-//internal struct GLRasterPos4ivPTR    : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLRasterPos4sPTR     : extern_winapi_func(GLshort x, GLshort y, GLshort z, GLshort w);
-//internal struct GLRasterPos4svPTR    : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLRectdPTR           : extern_winapi_func(GLdouble x1, GLdouble y1, GLdouble x2, GLdouble y2);
-//internal struct GLRectdvPTR          : extern_winapi_func(/*const GLdouble * */pointer v1, /*const GLdouble * */pointer v2);
-//internal struct GLRectfPTR           : extern_winapi_func(GLfloat x1, GLfloat y1, GLfloat x2, GLfloat y2);
-//internal struct GLRectfvPTR          : extern_winapi_func(/*const GLfloat * */pointer v1, /*const GLfloat * */pointer v2);
-//internal struct GLRectiPTR           : extern_winapi_func(GLint x1, GLint y1, GLint x2, GLint y2);
-//internal struct GLRectivPTR          : extern_winapi_func(/*const GLint * */pointer v1, /*const GLint * */pointer v2);
-//internal struct GLRectsPTR           : extern_winapi_func(GLshort x1, GLshort y1, GLshort x2, GLshort y2);
-//internal struct GLRectsvPTR          : extern_winapi_func(/*const GLshort * */pointer v1, /*const GLshort * */pointer v2);
-//internal struct GLTexCoord1dPTR      : extern_winapi_func(GLdouble s);
-//internal struct GLTexCoord1dvPTR     : extern_winapi_func(/*const GLdouble * */pointer sv);
-//internal struct GLTexCoord1fPTR      : extern_winapi_func(GLfloat s);
-//internal struct GLTexCoord1fvPTR     : extern_winapi_func(/*const GLfloat * */pointer sv);
-//internal struct GLTexCoord1iPTR      : extern_winapi_func(GLint s);
-//internal struct GLTexCoord1ivPTR     : extern_winapi_func(/*const GLint * */pointer sv);
-//internal struct GLTexCoord1sPTR      : extern_winapi_func(GLshort s);
-//internal struct GLTexCoord1svPTR     : extern_winapi_func(/*const GLshort * */pointer sv);
-//internal struct GLTexCoord2dPTR      : extern_winapi_func(GLdouble s, GLdouble t);
-//internal struct GLTexCoord2dvPTR     : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLTexCoord2fPTR      : extern_winapi_func(GLfloat s, GLfloat t);
-//internal struct GLTexCoord2fvPTR     : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLTexCoord2iPTR      : extern_winapi_func(GLint s, GLint t);
-//internal struct GLTexCoord2ivPTR     : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLTexCoord2sPTR      : extern_winapi_func(GLshort s, GLshort t);
-//internal struct GLTexCoord2svPTR     : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLTexCoord3dPTR      : extern_winapi_func(GLdouble s, GLdouble t, GLdouble r);
-//internal struct GLTexCoord3dvPTR     : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLTexCoord3fPTR      : extern_winapi_func(GLfloat s, GLfloat t, GLfloat r);
-//internal struct GLTexCoord3fvPTR     : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLTexCoord3iPTR      : extern_winapi_func(GLint s, GLint t, GLint r);
-//internal struct GLTexCoord3ivPTR     : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLTexCoord3sPTR      : extern_winapi_func(GLshort s, GLshort t, GLshort r);
-//internal struct GLTexCoord3svPTR     : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLTexCoord4dPTR      : extern_winapi_func(GLdouble s, GLdouble t, GLdouble r, GLdouble q);
-//internal struct GLTexCoord4dvPTR     : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLTexCoord4fPTR      : extern_winapi_func(GLfloat s, GLfloat t, GLfloat r, GLfloat q);
-//internal struct GLTexCoord4fvPTR     : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLTexCoord4iPTR      : extern_winapi_func(GLint s, GLint t, GLint r, GLint q);
-//internal struct GLTexCoord4ivPTR     : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLTexCoord4sPTR      : extern_winapi_func(GLshort s, GLshort t, GLshort r, GLshort q);
-//internal struct GLTexCoord4svPTR     : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLVertex2dPTR      : extern_winapi_func(GLdouble x, GLdouble y);
-//internal struct GLVertex2dvPTR     : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLVertex2fPTR      : extern_winapi_func(GLfloat x, GLfloat y);
-//internal struct GLVertex2fvPTR     : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLVertex2iPTR      : extern_winapi_func(GLint x, GLint y);
-//internal struct GLVertex2ivPTR     : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLVertex2sPTR      : extern_winapi_func(GLshort x, GLshort y);
-//internal struct GLVertex2svPTR     : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLVertex3dPTR      : extern_winapi_func(GLdouble x, GLdouble y, GLdouble z);
-//internal struct GLVertex3dvPTR     : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLVertex3fPTR      : extern_winapi_func(GLfloat x, GLfloat y, GLfloat z);
-//internal struct GLVertex3fvPTR     : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLVertex3iPTR      : extern_winapi_func(GLint x, GLint y, GLint z);
-//internal struct GLVertex3ivPTR     : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLVertex3sPTR      : extern_winapi_func(GLshort x, GLshort y, GLshort z);
-//internal struct GLVertex3svPTR     : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLVertex4dPTR      : extern_winapi_func(GLdouble x, GLdouble y, GLdouble z, GLdouble w);
-//internal struct GLVertex4dvPTR     : extern_winapi_func(/*const GLdouble * */pointer v);
-//internal struct GLVertex4fPTR      : extern_winapi_func(GLfloat x, GLfloat y, GLfloat z, GLfloat w);
-//internal struct GLVertex4fvPTR     : extern_winapi_func(/*const GLfloat * */pointer v);
-//internal struct GLVertex4iPTR      : extern_winapi_func(GLint x, GLint y, GLint z, GLint w);
-//internal struct GLVertex4ivPTR     : extern_winapi_func(/*const GLint * */pointer v);
-//internal struct GLVertex4sPTR      : extern_winapi_func(GLshort x, GLshort y, GLshort z, GLshort w);
-//internal struct GLVertex4svPTR     : extern_winapi_func(/*const GLshort * */pointer v);
-//internal struct GLClipPlanePTR     : extern_winapi_func(GLenum plane, /*const GLdouble * */pointer equation);
-//internal struct GLColorMaterialPTR : extern_winapi_func(GLenum face, GLenum mode);
-//internal struct GLFogfPTR          : extern_winapi_func(GLenum pname, GLfloat param);
-//internal struct GLFogfvPTR         : extern_winapi_func(GLenum pname, /*const GLfloat* */ pointer params);
-//internal struct GLFogiPTR          : extern_winapi_func(GLenum pname, GLint param);
-//internal struct GLFogivPTR         : extern_winapi_func(GLenum pname, /*const GLint * */pointer params);
-//internal struct GLLightfPTR        : extern_winapi_func(GLenum light, GLenum pname, GLfloat param);
-//internal struct GLLightfvPTR       : extern_winapi_func(GLenum light, GLenum pname, /*const GLfloat* */ pointer params);
-//internal struct GLLightiPTR        : extern_winapi_func(GLenum light, GLenum pname, GLint param);
-//internal struct GLLightivPTR       : extern_winapi_func(GLenum light, GLenum pname, /*const GLint * */pointer params);
-//internal struct GLLightModelfPTR   : extern_winapi_func(GLenum pname, GLfloat param);
-//internal struct GLLightModelfvPTR  : extern_winapi_func(GLenum pname, /*const GLfloat* */ pointer params);
-//internal struct GLLightModeliPTR   : extern_winapi_func(GLenum pname, GLint param);
-//internal struct GLLightModelivPTR  : extern_winapi_func(GLenum pname, /*const GLint * */pointer params);
-//internal struct GLLineStipplePTR   : extern_winapi_func(GLint factor, GLushort pattern);
-//internal struct GLMaterialfPTR     : extern_winapi_func(GLenum face, GLenum pname, GLfloat param);
-//internal struct GLMaterialfvPTR    : extern_winapi_func(GLenum face, GLenum pname, /*const GLfloat* */ pointer params);
-//internal struct GLMaterialiPTR     : extern_winapi_func(GLenum face, GLenum pname, GLint param);
-//internal struct GLMaterialivPTR    : extern_winapi_func(GLenum face, GLenum pname, /*const GLint * */pointer params);
-//internal struct GLPolygonStipplePTR: extern_winapi_func(/*const GLubyte* */ pointer mask);
-//internal struct GLShadeModelPTR    : extern_winapi_func(GLenum mode);
-//internal struct GLTexEnvfPTR     : extern_winapi_func(GLenum target, GLenum pname, GLfloat param);
-//internal struct GLTexEnvfvPTR    : extern_winapi_func(GLenum target, GLenum pname, /*const GLfloat* */ pointer params);
-//internal struct GLTexEnviPTR     : extern_winapi_func(GLenum target, GLenum pname, GLint param);
-//internal struct GLTexEnvivPTR    : extern_winapi_func(GLenum target, GLenum pname, /*const GLint * */pointer params);
-//internal struct GLTexGendPTR      : extern_winapi_func(GLenum coord, GLenum pname, GLdouble param);
-//internal struct GLTexGendvPTR     : extern_winapi_func(GLenum coord, GLenum pname, /*const GLdouble * */pointer v);
-//internal struct GLTexGenfPTR      : extern_winapi_func(GLenum coord, GLenum pname, GLfloat param);
-//internal struct GLTexGenfvPTR     : extern_winapi_func(GLenum coord, GLenum pname, /*const GLfloat * */pointer v);
-//internal struct GLTexGeniPTR      : extern_winapi_func(GLenum coord, GLenum pname, GLint param);
-//internal struct GLTexGenivPTR     : extern_winapi_func(GLenum coord, GLenum pname, /*const GLint * */pointer v);
-//internal struct GLFeedbackBufferPTR  : extern_winapi_func(GLsizei size, GLenum type, /*GLfloat * */pointer buffer);
-//internal struct GLSelectBufferPTR    : extern_winapi_func(GLsizei size, /*GLuint * */pointer buffer);
-//internal struct GLRenderModePTR      : extern_winapi_func<GLint>(GLenum mode);
-//internal struct GLInitNamesPTR       : extern_winapi_func();
-//internal struct GLLoadNamePTR        : extern_winapi_func(GLuint name);
-//internal struct GLPassThroughPTR     : extern_winapi_func(GLfloat token );
-//internal struct GLPopNamePTR         : extern_winapi_func();
-//internal struct GLPushNamePTR        : extern_winapi_func(GLuint name);
-//internal struct GLClearAccumPTR      : extern_winapi_func(GLfloat red, GLfloat green, GLfloat blue, GLfloat alpha);
-//internal struct GLClearIndexPTR      : extern_winapi_func(GLfloat c);
-//internal struct GLIndexMaskPTR       : extern_winapi_func(GLuint mask);
-//internal struct GLAccumPTR           : extern_winapi_func(GLenum op, GLfloat value);
-//internal struct GLPopAttribPTR       : extern_winapi_func();
-//internal struct GLPushAttribPTR      : extern_winapi_func(GLbitfield mask);
-//internal struct GLMap1dPTR           : extern_winapi_func(GLenum target, GLdouble u1, GLdouble u2, GLint stride, GLint order, /*const GLdouble * */pointer points);
-//internal struct GLMap1fPTR           : extern_winapi_func(GLenum target, GLfloat u1, GLfloat u2, GLint stride, GLint order, /*const GLfloat * */pointer points);
-//internal struct GLMap2dPTR           : extern_winapi_func(GLenum target, GLdouble u1, GLdouble u2, GLint ustride, GLint uorder, GLdouble v1, GLdouble v2, GLint vstride, GLint vorder, /*const GLdouble * */pointer points);
-//internal struct GLMap2fPTR           : extern_winapi_func(GLenum target, GLfloat u1, GLfloat u2, GLint ustride, GLint uorder, GLfloat v1, GLfloat v2, GLint vstride, GLint vorder, /*const GLfloat * */pointer points);
-//internal struct GLMapGrid1dPTR       : extern_winapi_func(GLint un, GLdouble u1, GLdouble u2);
-//internal struct GLMapGrid1fPTR       : extern_winapi_func(GLint un, GLfloat u1, GLfloat u2);
-//internal struct GLMapGrid2dPTR       : extern_winapi_func(GLint un, GLdouble u1, GLdouble u2, GLint vn, GLdouble v1, GLdouble v2);
-//internal struct GLMapGrid2fPTR       : extern_winapi_func(GLint un, GLfloat u1, GLfloat u2, GLint vn, GLfloat v1, GLfloat v2);
-//internal struct GLEvalCoord1dPTR      : extern_winapi_func(GLdouble u);
-//internal struct GLEvalCoord1dvPTR     : extern_winapi_func(/*const GLdouble * */pointer u);
-//internal struct GLEvalCoord1fPTR      : extern_winapi_func(GLfloat u);
-//internal struct GLEvalCoord1fvPTR     : extern_winapi_func(/*const GLfloat * */pointer u);
-//internal struct GLEvalCoord2dPTR      : extern_winapi_func(GLdouble u, GLdouble v);
-//internal struct GLEvalCoord2dvPTR     : extern_winapi_func(/*const GLdouble * */pointer u);
-//internal struct GLEvalCoord2fPTR      : extern_winapi_func(GLfloat u, GLfloat v);
-//internal struct GLEvalCoord2fvPTR     : extern_winapi_func(/*const GLfloat * */pointer u);
-//internal struct GLEvalMesh1PTR       : extern_winapi_func(GLenum mode, GLint i1, GLint i2);
-//internal struct GLEvalPoint1PTR      : extern_winapi_func(GLint i);
-//internal struct GLEvalMesh2PTR       : extern_winapi_func(GLenum mode, GLint i1, GLint i2, GLint j1, GLint j2);
-//internal struct GLEvalPoint2PTR      : extern_winapi_func(GLint i, GLint j);
-//internal struct GLAlphaFuncPTR       : extern_winapi_func(GLenum /*func*/fnc, GLfloat ref);
-//internal struct GLPixelZoomPTR       : extern_winapi_func(GLfloat xfactor, GLfloat yfactor);
-//internal struct GLPixelTransferfPTR  : extern_winapi_func(GLenum pname, GLfloat param);
-//internal struct GLPixelTransferiPTR  : extern_winapi_func(GLenum pname, GLint param);
-//internal struct GLPixelMapfvPTR      : extern_winapi_func(GLenum map, GLsizei mapsize, /*const GLfloat * */pointer values);
-//internal struct GLPixelMapuivPTR     : extern_winapi_func(GLenum map, GLsizei mapsize, /*const GLuint * */pointer values);
-//internal struct GLPixelMapusvPTR     : extern_winapi_func(GLenum map, GLsizei mapsize, /*const GLushort * */pointer values);
-//internal struct GLCopyPixelsPTR      : extern_winapi_func(GLint x, GLint y, GLsizei width, GLsizei height, GLenum type);
-//internal struct GLDrawPixelsPTR      : extern_winapi_func(GLsizei width, GLsizei height, GLenum format, GLenum type, /*const void * */ pointer pixels);
-//internal struct GLGetClipPlanePTR    : extern_winapi_func(GLenum plane, /*GLdouble * */pointer equation);
-//internal struct GLGetLightfvPTR      : extern_winapi_func(GLenum light, GLenum pname, /*GLfloat * */pointer params);
-//internal struct GLGetLightivPTR      : extern_winapi_func(GLenum light, GLenum pname, /*GLint * */pointer params);
-//internal struct GLGetMapdvPTR        : extern_winapi_func(GLenum target, GLenum query, /*GLdouble * */pointer v);
-//internal struct GLGetMapfvPTR        : extern_winapi_func(GLenum target, GLenum query, /*GLfloat * */pointer v);
-//internal struct GLGetMapivPTR        : extern_winapi_func(GLenum target, GLenum query, /*GLint * */pointer v);
-//internal struct GLGetMaterialfvPTR   : extern_winapi_func(GLenum face, GLenum pname, /*GLfloat * */pointer params);
-//internal struct GLGetMaterialivPTR   : extern_winapi_func(GLenum face, GLenum pname, /*GLint * */pointer params);
-//internal struct GLGetPixelMapfvPTR   : extern_winapi_func(GLenum map, /*GLfloat * */pointer values);
-//internal struct GLGetPixelMapuivPTR  : extern_winapi_func(GLenum map, /*GLuint * */pointer values);
-//internal struct GLGetPixelMapusvPTR  : extern_winapi_func(GLenum map, /*GLushort * */pointer values);
-//internal struct GLGetPolygonStipplePTR : extern_winapi_func(/*GLubyte * */pointer mask);
-//internal struct GLGetTexEnvfvPTR     : extern_winapi_func(GLenum target, GLenum pname, /*GLfloat * */pointer params);
-//internal struct GLGetTexEnvivPTR     : extern_winapi_func(GLenum target, GLenum pname, /*GLint * */pointer params);
-//internal struct GLGetTexGendvPTR     : extern_winapi_func(GLenum coord, GLenum pname, /*GLdouble * */pointer params);
-//internal struct GLGetTexGenfvPTR     : extern_winapi_func(GLenum coord, GLenum pname, /*GLfloat * */pointer params);
-//internal struct GLGetTexGenivPTR     : extern_winapi_func(GLenum coord, GLenum pname, /*GLint * */pointer params);
-//internal struct GLIsListPTR          : extern_winapi_func<GLboolean>(GLuint list);
-//internal struct GLFrustumPTR         : extern_winapi_func(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
-//internal struct GLLoadIdentityPTR    : extern_winapi_func();
-//internal struct GLLoadMatrixfPTR     : extern_winapi_func(/*const GLfloat * */pointer m);
-//internal struct GLLoadMatrixdPTR     : extern_winapi_func(/*const GLdouble * */pointer m);
-//internal struct GLMatrixModePTR      : extern_winapi_func(GLenum mode);
-//internal struct GLMultMatrixfPTR     : extern_winapi_func(/*const GLfloat * */pointer m);
-//internal struct GLMultMatrixdPTR     : extern_winapi_func(/*const GLdouble * */pointer m);
-//internal struct GLOrthoPTR           : extern_winapi_func(GLdouble left, GLdouble right, GLdouble bottom, GLdouble top, GLdouble zNear, GLdouble zFar);
 
+use GLCullFacePTR          = GLFUNC_int;
+use GLFrontFacePTR         = GLFUNC_int;
+use GLHintPTR              = GLint_int;
+use GLLineWidthPTR         = GLFUNC_GLfloat;
+use GLPointSizePTR         = GLFUNC_GLfloat;
+use GLPolygonModePTR       = GLint_int;
+use GLScissorPTR           = GLint_int_int_int;
+use GLTexParameterfPTR     = GLint_GLint_GLfloat;
+use GLTexParameterfvPTR    = GLint_int_ptr;
+use GLTexParameteriPTR     = GLint_int_int;
+use GLTexParameterivPTR    = GLint_int_ptr;
+use GLTexImage1DPTR        = GLint_int_int_int_int_int_int_ptr;
+use GLTexImage2DPTR        = GLint_int_int_int_int_int_int_int_ptr;
+use GLDrawBufferPTR        = GLFUNC_int;
+use GLClearPTR             = GLFUNC_int;
+use GLClearColorPTR        = GLfloat_GLfloat_GLfloat_GLfloat;
+use GLClearStencilPTR      = GLFUNC_double;
+use GLClearDepthPTR        = GLFUNC_uint;
+use GLStencilMaskPTR       = GLbyte_byte_byte_byte;
+use GLColorMaskPTR         = GLFUNC_GLbyte;
+use GLDepthMaskPTR         = GLFUNC_int;
+use GLDisablePTR           = GLFUNC_int;
+use GLEnablePTR            = GLFUNC_int;
+
+use GLFinishPTR            = GLFUNC_VOID;
+use GLFlushPTR             = GLFUNC_VOID;
+use GLBlendFuncPTR         = GLFUNC_int;
+use GLLogicOpPTR           = GLint_int_uint;
+use GLStencilFuncPTR       = GLint_int_int;
+use GLStencilOpPTR         = GLenum_GLint;
+use GLDepthFuncPTR         = GLint_GLfloat;
+use GLPixelStorefPTR       = GLenum_GLfloat;
+use GLPixelStoreiPTR       = GLenum_GLint;
+use GLReadBufferPTR        = GLFUNC_GLenum;
+use GLReadPixelsPTR        = GLint_GLint_GLsizei_GLsizei_GLenum_GLenum_ptr;
+use GLGetBooleanvPTR       = GLenum_ptr;
+use GLGetDoublevPTR        = GLenum_ptr;
+use GLGetErrorPTR          = GLFUNC_VOID;
+use GLGetFloatvPTR         = GLenum_ptr;
+use GLGetIntegervPTR       = GLenum_ptr;
+//internal struct GLGetStringPTR         : extern_winapi_func<pointer>(GLenum name);
+use GLGetTexImagePTR       = GLenum_GLint_GLenum_GLenum_ptr;
+use GLGetTexParameterfvPTR        = GLenum_GLenum_ptr;
+use GLGetTexParameterivPTR        = GLenum_GLenum_ptr;
+use GLGetTexLevelParameterfvPTR   = GLenum_GLint_GLenum_ptr;
+use GLGetTexLevelParameterivPTR   = GLenum_GLint_GLenum_ptr;
+use GLIsEnabledPTR         = GLFUNC_GLboolean__GLenum;
+use GLDepthRangePTR        = GLdouble_GLdouble;
+use GLViewportPTR          = GLint_GLint_GLsizei_GLsizei;
+use GLNewListPTR           = GLuint_GLenum;
+use GLEndListPTR           = GLFUNC_VOID;
+use GLCallListPTR          = GLFUNC_GLuint;
+use GLCallListsPTR         = GLsizei_GLenum_ptr;
+use GLDeleteListsPTR       = GLuint_GLsizei;
+use GLGenListsPTR          = GLFUNC_GLsizei;
+use GLListBasePTR          = GLFUNC_GLuint;
+use GLBeginPTR             = GLFUNC_GLenum;
+use GLBitmapPTR            = GLsizei_GLsizei_GLfloat_GLfloat_GLfloat_GLfloat_ptr;
+use GLColor3bPTR           = GLbyte_GLbyte_GLbyte;
+use GLColor3bvPTR          = GLFUNC_ptr;
+use GLColor3dPTR           = GLdouble_GLdouble_GLdouble;
+use GLColor3dvPTR          = GLFUNC_ptr;
+use GLColor3fPTR           = GLfloat_GLfloat_GLfloat;
+use GLColor3fvPTR          = GLFUNC_ptr;
+use GLColor3iPTR           = GLint_GLint_GLint;
+use GLColor3ivPTR          = GLFUNC_ptr;
+use GLColor3sPTR           = GLshort_GLshort_GLshort;
+use GLColor3svPTR        = GLFUNC_ptr;
+use GLColor3ubPTR        = GLubyte_GLubyte_GLubyte;
+use GLColor3ubvPTR       = GLFUNC_ptr;
+use GLColor3uiPTR        = GLuint_GLuint_GLuint;
+use GLColor3uivPTR       = GLFUNC_ptr;
+use GLColor3usPTR        = GLushort_GLushort_GLushort;
+use GLColor3usvPTR       = GLFUNC_ptr;
+use GLColor4bPTR           = GLbyte_GLbyte_GLbyte_GLbyte;
+use GLColor4bvPTR          = GLFUNC_ptr;
+use GLColor4dPTR           = GLdouble_GLdouble_GLdouble_GLdouble;
+use GLColor4dvPTR          = GLFUNC_ptr;
+use GLColor4fPTR           = GLfloat_GLfloat_GLfloat_GLfloat;
+use GLColor4fvPTR          = GLFUNC_ptr;
+use GLColor4iPTR           = GLint_GLint_GLint_GLint;
+use GLColor4ivPTR          = GLFUNC_ptr;
+use GLColor4sPTR           = GLshort_GLshort_GLshort_GLshort;
+use GLColor4svPTR        = GLFUNC_ptr;
+use GLColor4ubPTR        = GLubyte_GLubyte_GLubyte_GLubyte;
+use GLColor4ubvPTR       = GLFUNC_ptr;
+use GLColor4uiPTR        = GLuint_GLuint_GLuint_GLuint;
+use GLColor4uivPTR       = GLFUNC_ptr;
+use GLColor4usPTR        = GLushort_GLushort_GLushort_GLushort;
+use GLColor4usvPTR       = GLFUNC_ptr;
+use GLEdgeFlagPTR        = GLFUNC_GLboolean;
+use GLEdgeFlagvPTR       = GLFUNC_ptr;
+use GLEndPTR             = GLFUNC_VOID;
+use GLIndexdPTR          = GLFUNC_GLdouble;
+use GLIndexdvPTR         = GLFUNC_ptr;
+use GLIndexfPTR          = GLFUNC_GLfloat;
+use GLIndexfvPTR         = GLFUNC_ptr;
+use GLIndexiPTR          = GLFUNC_GLint;
+use GLIndexivPTR         = GLFUNC_ptr;
+use GLIndexsPTR          = GLFUNC_GLshort;
+use GLIndexsvPTR         = GLFUNC_ptr;
+use GLNormal3bPTR        = GLbyte_GLbyte_GLbyte;
+use GLNormal3bvPTR       = GLFUNC_ptr;
+use GLNormal3dPTR        = GLdouble_GLdouble_GLdouble;
+use GLNormal3dvPTR       = GLFUNC_ptr;
+use GLNormal3fPTR        = GLfloat_GLfloat_GLfloat;
+use GLNormal3fvPTR       = GLFUNC_ptr;
+use GLNormal3iPTR        = GLint_GLint_GLint;
+use GLNormal3ivPTR       = GLFUNC_ptr;
+use GLNormal3sPTR        = GLshort_GLshort_GLshort;
+use GLNormal3svPTR       = GLFUNC_ptr;
+use GLRasterPos2dPTR     = GLdouble_GLdouble;
+use GLRasterPos2dvPTR    = GLFUNC_ptr;
+use GLRasterPos2fPTR     = GLfloat_GLfloat;
+use GLRasterPos2fvPTR    = GLFUNC_ptr;
+use GLRasterPos2iPTR     = GLint_GLint;
+use GLRasterPos2ivPTR    = GLFUNC_ptr;
+use GLRasterPos2sPTR     = GLshort_GLshort;
+use GLRasterPos2svPTR    = GLFUNC_ptr;
+use GLRasterPos3dPTR     = GLdouble_GLdouble_GLdouble;
+use GLRasterPos3dvPTR    = GLFUNC_ptr;
+use GLRasterPos3fPTR     = GLfloat_GLfloat_GLfloat;
+use GLRasterPos3fvPTR    = GLFUNC_ptr;
+use GLRasterPos3iPTR     = GLint_GLint_GLint;
+use GLRasterPos3ivPTR    = GLFUNC_ptr;
+use GLRasterPos3sPTR     = GLshort_GLshort_GLshort;
+use GLRasterPos3svPTR    = GLFUNC_ptr;
+use GLRasterPos4dPTR     = GLdouble_GLdouble_GLdouble_GLdouble;
+use GLRasterPos4dvPTR    = GLFUNC_ptr;
+use GLRasterPos4fPTR     = GLfloat_GLfloat_GLfloat_GLfloat;
+use GLRasterPos4fvPTR    = GLFUNC_ptr;
+use GLRasterPos4iPTR     = GLint_GLint_GLint_GLint;
+use GLRasterPos4ivPTR    = GLFUNC_ptr;
+use GLRasterPos4sPTR     = GLshort_GLshort_GLshort_GLshort;
+use GLRasterPos4svPTR    = GLFUNC_ptr;
+use GLRectdPTR           = GLdouble_GLdouble_GLdouble_GLdouble;
+use GLRectdvPTR          = GLFUNC_ptr_ptr;
+use GLRectfPTR           = GLfloat_GLfloat_GLfloat_GLfloat;
+use GLRectfvPTR          = GLFUNC_ptr_ptr;
+use GLRectiPTR           = GLint_GLint_GLint_GLint;
+use GLRectivPTR          = GLFUNC_ptr_ptr;
+use GLRectsPTR           = GLshort_GLshort_GLshort_GLshort;
+use GLRectsvPTR          = GLFUNC_ptr_ptr;
+use GLTexCoord1dPTR      = GLFUNC_GLdouble;
+use GLTexCoord1dvPTR     = GLFUNC_ptr;
+use GLTexCoord1fPTR      = GLFUNC_GLfloat;
+use GLTexCoord1fvPTR     = GLFUNC_ptr;
+use GLTexCoord1iPTR      = GLFUNC_GLint;
+use GLTexCoord1ivPTR     = GLFUNC_ptr;
+use GLTexCoord1sPTR      = GLFUNC_GLshort;
+use GLTexCoord1svPTR     = GLFUNC_ptr;
+use GLTexCoord2dPTR      = GLdouble_GLdouble;
+use GLTexCoord2dvPTR     = GLFUNC_ptr;
+use GLTexCoord2fPTR      = GLfloat_GLfloat;
+use GLTexCoord2fvPTR     = GLFUNC_ptr;
+use GLTexCoord2iPTR      = GLint_GLint;
+use GLTexCoord2ivPTR     = GLFUNC_ptr;
+use GLTexCoord2sPTR      = GLshort_GLshort;
+use GLTexCoord2svPTR     = GLFUNC_ptr;
+use GLTexCoord3dPTR      = GLdouble_GLdouble_GLdouble;
+use GLTexCoord3dvPTR     = GLFUNC_ptr;
+use GLTexCoord3fPTR      = GLfloat_GLfloat_GLfloat;
+use GLTexCoord3fvPTR     = GLFUNC_ptr;
+use GLTexCoord3iPTR      = GLint_GLint_GLint;
+use GLTexCoord3ivPTR     = GLFUNC_ptr;
+use GLTexCoord3sPTR      = GLshort_GLshort_GLshort;
+use GLTexCoord3svPTR     = GLFUNC_ptr;
+use GLTexCoord4dPTR      = GLdouble_GLdouble_GLdouble_GLdouble;
+use GLTexCoord4dvPTR     = GLFUNC_ptr;
+use GLTexCoord4fPTR      = GLfloat_GLfloat_GLfloat_GLfloat;
+use GLTexCoord4fvPTR     = GLFUNC_ptr;
+use GLTexCoord4iPTR      = GLint_GLint_GLint_GLint;
+use GLTexCoord4ivPTR     = GLFUNC_ptr;
+use GLTexCoord4sPTR      = GLshort_GLshort_GLshort_GLshort;
+use GLTexCoord4svPTR     = GLFUNC_ptr;
+use GLVertex2dPTR      = GLdouble_GLdouble;
+use GLVertex2dvPTR     = GLFUNC_ptr;
+use GLVertex2fPTR      = GLfloat_GLfloat;
+use GLVertex2fvPTR     = GLFUNC_ptr;
+use GLVertex2iPTR      = GLint_GLint;
+use GLVertex2ivPTR     = GLFUNC_ptr;
+use GLVertex2sPTR      = GLshort_GLshort;
+use GLVertex2svPTR     = GLFUNC_ptr;
+use GLVertex3dPTR      = GLdouble_GLdouble_GLdouble;
+use GLVertex3dvPTR     = GLFUNC_ptr;
+use GLVertex3fPTR      = GLfloat_GLfloat_GLfloat;
+use GLVertex3fvPTR     = GLFUNC_ptr;
+use GLVertex3iPTR      = GLint_GLint_GLint;
+use GLVertex3ivPTR     = GLFUNC_ptr;
+use GLVertex3sPTR      = GLshort_GLshort_GLshort;
+use GLVertex3svPTR     = GLFUNC_ptr;
+use GLVertex4dPTR      = GLdouble_GLdouble_GLdouble_GLdouble;
+use GLVertex4dvPTR     = GLFUNC_ptr;
+use GLVertex4fPTR      = GLfloat_GLfloat_GLfloat_GLfloat;
+use GLVertex4fvPTR     = GLFUNC_ptr;
+use GLVertex4iPTR      = GLint_GLint_GLint_GLint;
+use GLVertex4ivPTR     = GLFUNC_ptr;
+use GLVertex4sPTR      = GLshort_GLshort_GLshort_GLshort;
+use GLVertex4svPTR     = GLFUNC_ptr;
+use GLClipPlanePTR     = GLenum_ptr;
+use GLColorMaterialPTR = GLenum_GLenum;
+use GLFogfPTR          = GLenum_GLfloat;
+use GLFogfvPTR         = GLenum_ptr;
+use GLFogiPTR          = GLenum_GLint;
+use GLFogivPTR         = GLenum_ptr;
+use GLLightfPTR        = GLenum_GLenum_GLfloat;
+use GLLightfvPTR       = GLenum_GLenum_ptr;
+use GLLightiPTR        = GLenum_GLenum_GLint;
+use GLLightivPTR       = GLenum_GLenum_ptr;
+use GLLightModelfPTR   = GLenum_GLfloat;
+use GLLightModelfvPTR  = GLenum_ptr;
+use GLLightModeliPTR   = GLenum_GLint;
+use GLLightModelivPTR  = GLenum_ptr;
+use GLLineStipplePTR   = GLint_GLushort;
+use GLMaterialfPTR     = GLenum_GLenum_GLfloat;
+use GLMaterialfvPTR    = GLenum_GLenum_ptr;
+use GLMaterialiPTR     = GLenum_GLenum_GLint;
+use GLMaterialivPTR    = GLenum_GLenum_ptr;
+use GLPolygonStipplePTR = GLFUNC_ptr;
+use GLShadeModelPTR   = GLFUNC_GLenum;
+use GLTexEnvfPTR     = GLenum_GLenum_GLfloat;
+use GLTexEnvfvPTR    = GLenum_GLenum_ptr;
+use GLTexEnviPTR     = GLenum_GLenum_GLint;
+use GLTexEnvivPTR    = GLenum_GLenum_ptr;
+use GLTexGendPTR     = GLenum_GLenum_GLdouble;
+use GLTexGendvPTR    = GLenum_GLenum_ptr;
+use GLTexGenfPTR     = GLenum_GLenum_GLfloat;
+use GLTexGenfvPTR    = GLenum_GLenum_ptr;
+use GLTexGeniPTR     = GLenum_GLenum_GLint;
+use GLTexGenivPTR    = GLenum_GLenum_ptr;
+use GLFeedbackBufferPTR  = GLsizei_GLenum_ptr;
+use GLSelectBufferPTR    = GLsizei_ptr;
+use GLRenderModePTR      = GLFUNC_GLint__GLenum;
+use GLInitNamesPTR       = GLFUNC_VOID;
+use GLLoadNamePTR        = GLFUNC_GLuint;
+use GLPassThroughPTR     = GLFUNC_GLfloat;
+use GLPopNamePTR         = GLFUNC_VOID;
+use GLPushNamePTR        = GLFUNC_GLuint;
+use GLClearAccumPTR      = GLfloat_GLfloat_GLfloat_GLfloat;
+use GLClearIndexPTR      = GLFUNC_GLfloat;
+use GLIndexMaskPTR       = GLFUNC_GLuint;
+use GLAccumPTR           = GLenum_GLfloat;
+use GLPopAttribPTR       = GLFUNC_VOID;
+use GLPushAttribPTR      = GLFUNC_GLbitfield;
+use GLMap1dPTR           = GLenum_GLdouble_GLdouble_GLint_GLint_ptr;
+use GLMap1fPTR           = GLenum_GLfloat_GLfloat_GLint_GLint_ptr;
+use GLMap2dPTR           = GLenum_GLdouble_GLdouble_GLint_GLint_GLdouble_GLdouble_GLint_GLint_ptr;
+use GLMap2fPTR           = GLenum_GLfloat_GLfloat_GLint_GLint_GLfloat_GLfloat_GLint_GLint_ptr;
+use GLMapGrid1dPTR       = GLint_GLdouble_GLdouble;
+use GLMapGrid1fPTR       = GLint_GLfloat_GLfloat;
+use GLMapGrid2dPTR       = GLint_GLdouble_GLdouble_GLint_GLdouble_GLdouble;
+use GLMapGrid2fPTR       = GLint_GLfloat_GLfloat_GLint_GLfloat_GLfloat;
+use GLEvalCoord1dPTR      = GLFUNC_GLdouble;
+use GLEvalCoord1dvPTR     = GLFUNC_ptr;
+use GLEvalCoord1fPTR      = GLFUNC_GLfloat;
+use GLEvalCoord1fvPTR     = GLFUNC_ptr;
+use GLEvalCoord2dPTR      = GLdouble_GLdouble;
+use GLEvalCoord2dvPTR     = GLFUNC_ptr;
+use GLEvalCoord2fPTR      = GLfloat_GLfloat;
+use GLEvalCoord2fvPTR     = GLFUNC_ptr;
+use GLEvalMesh1PTR        = GLenum_GLint_GLint;
+use GLEvalPoint1PTR      = GLFUNC_GLint;
+use GLEvalMesh2PTR       = GLenum_GLint_GLint_GLint_GLint;
+use GLEvalPoint2PTR      = GLint_GLint;
+use GLAlphaFuncPTR       = GLenum_GLfloat;
+use GLPixelZoomPTR       = GLfloat_GLfloat;
+use GLPixelTransferfPTR  = GLenum_GLfloat;
+use GLPixelTransferiPTR  = GLenum_GLint;
+use GLPixelMapfvPTR      = GLenum_GLsizei_ptr;
+use GLPixelMapuivPTR     = GLenum_GLsizei_ptr;
+use GLPixelMapusvPTR     = GLenum_GLsizei_ptr;
+use GLCopyPixelsPTR      = GLint_GLint_GLsizei_GLsizei_GLenum;
+use GLDrawPixelsPTR      = GLsizei_GLsizei_GLenum_GLenum_ptr;
+use GLGetClipPlanePTR    = GLenum_ptr;
+use GLGetLightfvPTR      = GLenum_GLenum_ptr;
+use GLGetLightivPTR      = GLenum_GLenum_ptr;
+use GLGetMapdvPTR        = GLenum_GLenum_ptr;
+use GLGetMapfvPTR        = GLenum_GLenum_ptr;
+use GLGetMapivPTR        = GLenum_GLenum_ptr;
+use GLGetMaterialfvPTR   = GLenum_GLenum_ptr;
+use GLGetMaterialivPTR   = GLenum_GLenum_ptr;
+use GLGetPixelMapfvPTR   = GLenum_GLenum_ptr;
+use GLGetPixelMapuivPTR  = GLenum_GLenum_ptr;
+use GLGetPixelMapusvPTR  = GLenum_GLenum_ptr;
+use GLGetPolygonStipplePTR = GLFUNC_ptr;
+use GLGetTexEnvfvPTR     = GLenum_GLenum_ptr;
+use GLGetTexEnvivPTR     = GLenum_GLenum_ptr;
+use GLGetTexGendvPTR     = GLenum_GLenum_ptr;
+use GLGetTexGenfvPTR     = GLenum_GLenum_ptr;
+use GLGetTexGenivPTR     = GLenum_GLenum_ptr;
+use GLIsListPTR          = GLFUNC_GLboolean__GLuint;
+use GLFrustumPTR         = GLdouble_GLdouble_GLdouble_GLdouble_GLdouble_GLdouble;
+use GLLoadIdentityPTR    = GLFUNC_VOID;
+use GLLoadMatrixfPTR     = GLFUNC_ptr;
+use GLLoadMatrixdPTR     = GLFUNC_ptr;
+use GLMatrixModePTR      = GLFUNC_GLenum;
+use GLMultMatrixfPTR     = GLFUNC_ptr;
+use GLMultMatrixdPTR     = GLFUNC_ptr;
+
+use GLOrthoPTR           = GLdouble_GLdouble_GLdouble_GLdouble_GLdouble_GLdouble;
 use GLPopMatrixPTR       = GLFUNC_VOID;
 use GLPushMatrixPTR      = GLFUNC_VOID;
 use GLRotatedPTR         = GLdouble_GLdouble_GLdouble_GLdouble;
@@ -1146,6 +1177,117 @@ use GLCopyTextureSubImage3DPTR = GLuint_GLint_GLint_GLint_GLint_GLint_GLint_GLsi
 
 const string[] Prefixes = $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
 
+public struct GLAD_Config
+{
+   int                  Major : rprop(major); 
+   int                  Minor : rprop(minor); 
+   
+   int                  GLAD_GL_VERSION_1_0 : rprop;
+   int                  GLAD_GL_VERSION_1_1 : rprop;
+   int                  GLAD_GL_VERSION_1_2 : rprop;
+   int                  GLAD_GL_VERSION_1_3 : rprop;
+   int                  GLAD_GL_VERSION_1_4 : rprop;
+   int                  GLAD_GL_VERSION_1_5 : rprop;
+   int                  GLAD_GL_VERSION_2_0 : rprop;
+   int                  GLAD_GL_VERSION_2_1 : rprop;
+   int                  GLAD_GL_VERSION_3_0 : rprop;
+   int                  GLAD_GL_VERSION_3_1 : rprop;
+   int                  GLAD_GL_VERSION_3_2 : rprop;
+   int                  GLAD_GL_VERSION_3_3 : rprop;
+   int                  GLAD_GL_VERSION_4_0 : rprop;
+   
+   int                  GLAD_GL_AMD_multi_draw_indirect : rprop;
+   int                  GLAD_GL_ARB_ES2_compatibility : rprop;
+   int                  GLAD_GL_ARB_ES3_1_compatibility : rprop;
+   int                  GLAD_GL_ARB_ES3_2_compatibility : rprop;
+   int                  GLAD_GL_ARB_base_instance : rprop;
+   int                  GLAD_GL_ARB_blend_func_extended : rprop;
+   int                  GLAD_GL_ARB_buffer_storage : rprop;
+   int                  GLAD_GL_ARB_clear_buffer_object : rprop;
+   int                  GLAD_GL_ARB_clear_texture : rprop;
+   int                  GLAD_GL_ARB_clip_control : rprop;
+   int                  GLAD_GL_ARB_color_buffer_float : rprop;
+   int                  GLAD_GL_ARB_compute_shader : rprop;
+   int                  GLAD_GL_ARB_copy_buffer : rprop;
+   int                  GLAD_GL_ARB_compute_variable_group_size : rprop;
+   int                  GLAD_GL_ARB_copy_image : rprop;
+   int                  GLAD_GL_ARB_debug_output : rprop;
+   int                  GLAD_GL_ARB_direct_state_access : rprop;
+
+   private int has_ext(string extensions, string ext)
+   {
+      int index := extensions.indexOf(0, ext);
+      if (index >= 0) {
+         int endIndex := index + ext.Length;
+         if (endIndex == extensions.Length || extensions[endIndex] == $32) {
+            ^ 1
+         };
+      };
+      
+      ^ 0
+   }
+      
+   private init(string versions)
+   {
+      int prefixLen := Prefixes.Length;
+      int start := 0;
+      for (int i := 0; i < prefixLen; i++) {
+         if (versions.startingWith(Prefixes[i])) {
+            start := Prefixes[i].Length;
+            
+            :break;
+         }
+      };
+      
+      int dotPos := versions.indexOf(start, $46);
+      major := versions.Substring(start, dotPos - start).toInt();
+      start:= dotPos + 1;
+      dotPos := versions.indexOf(start, $46);
+      minor := versions.Substring(start, dotPos - start).toInt();
+      
+      GLAD_GL_VERSION_1_0 := ((major == 1 && minor >= 0) || major > 1) ? 1 : 0;
+      GLAD_GL_VERSION_1_1 := ((major == 1 && minor >= 1) || major > 1) ? 1 : 0;
+      GLAD_GL_VERSION_1_2 := ((major == 1 && minor >= 2) || major > 1) ? 1 : 0;
+      GLAD_GL_VERSION_1_3 := ((major == 1 && minor >= 3) || major > 1) ? 1 : 0;
+      GLAD_GL_VERSION_1_4 := ((major == 1 && minor >= 4) || major > 1) ? 1 : 0;
+      GLAD_GL_VERSION_1_5 := ((major == 1 && minor >= 5) || major > 1) ? 1 : 0;
+      GLAD_GL_VERSION_2_0 := ((major == 2 && minor >= 0) || major > 2) ? 1 : 0;
+      GLAD_GL_VERSION_2_1 := ((major == 2 && minor >= 1) || major > 2) ? 1 : 0;
+      GLAD_GL_VERSION_3_0 := ((major == 3 && minor >= 0) || major > 3) ? 1 : 0;
+      GLAD_GL_VERSION_3_1 := ((major == 3 && minor >= 1) || major > 3) ? 1 : 0;
+      GLAD_GL_VERSION_3_2 := ((major == 3 && minor >= 2) || major > 3) ? 1 : 0;
+      GLAD_GL_VERSION_3_3 := ((major == 3 && minor >= 3) || major > 3) ? 1 : 0;
+      GLAD_GL_VERSION_4_0 := ((major == 4 && minor >= 0) || major > 4) ? 1 : 0;      
+   }
+   
+   private init_ext(string extensions)
+   {
+      GLAD_GL_AMD_multi_draw_indirect := has_ext(extensions, "GL_AMD_multi_draw_indirect");
+      GLAD_GL_ARB_ES2_compatibility := has_ext(extensions, "GL_ARB_ES2_compatibility");
+      GLAD_GL_ARB_ES3_1_compatibility := has_ext(extensions, "GL_ARB_ES3_1_compatibility");
+      GLAD_GL_ARB_ES3_2_compatibility := has_ext(extensions, "GL_ARB_ES3_2_compatibility");
+      GLAD_GL_ARB_base_instance := has_ext(extensions, "GL_ARB_base_instance");
+      GLAD_GL_ARB_blend_func_extended := has_ext(extensions, "GL_ARB_blend_func_extended");
+      GLAD_GL_ARB_buffer_storage := has_ext(extensions, "GL_ARB_buffer_storage");
+      GLAD_GL_ARB_clear_buffer_object := has_ext(extensions, "GL_ARB_clear_buffer_object");
+      GLAD_GL_ARB_clear_texture := has_ext(extensions, "GL_ARB_clear_texture");
+      GLAD_GL_ARB_clip_control := has_ext(extensions, "GL_ARB_clip_control");
+      GLAD_GL_ARB_color_buffer_float := has_ext(extensions, "GL_ARB_color_buffer_float");
+      GLAD_GL_ARB_compute_shader := has_ext(extensions, "GL_ARB_compute_shader");
+      GLAD_GL_ARB_compute_variable_group_size := has_ext(extensions, "GL_ARB_compute_variable_group_size");
+      GLAD_GL_ARB_copy_buffer := has_ext(extensions, "GL_ARB_copy_buffer");
+      GLAD_GL_ARB_copy_image := has_ext(extensions, "GL_ARB_copy_image");
+      GLAD_GL_ARB_debug_output := has_ext(extensions, "GL_ARB_debug_output");
+      GLAD_GL_ARB_direct_state_access := has_ext(extensions, "GL_ARB_direct_state_access");      
+   }
+   
+   constructor load(string versions, string extensions)
+   {
+      init(versions);
+      init_ext(extensions);
+   }
+}
+
 public struct GLAD_Wrapper
 {
    handle libGL;
@@ -1154,338 +1296,321 @@ public struct GLAD_Wrapper
    WGLGetProcAddress    get_proc;   
    
    GLGetStringPTR       glGetString;
-   
-   int                  GLAD_GL_VERSION_1_0;
-   int                  GLAD_GL_VERSION_1_1;
-   int                  GLAD_GL_VERSION_1_2;
-   int                  GLAD_GL_VERSION_1_3;
-   int                  GLAD_GL_VERSION_1_4;
-   int                  GLAD_GL_VERSION_1_5;
-   int                  GLAD_GL_VERSION_2_0;
-   int                  GLAD_GL_VERSION_2_1;
-   int                  GLAD_GL_VERSION_3_0;
-   int                  GLAD_GL_VERSION_3_1;
-   int                  GLAD_GL_VERSION_3_2;
-   int                  GLAD_GL_VERSION_3_3;
-   int                  GLAD_GL_VERSION_4_0;
-   
-   int                  GLAD_GL_AMD_multi_draw_indirect;
-   int                  GLAD_GL_ARB_ES2_compatibility;
-   int                  GLAD_GL_ARB_ES3_1_compatibility;
-   int                  GLAD_GL_ARB_ES3_2_compatibility;
-   int                  GLAD_GL_ARB_base_instance;
-   int                  GLAD_GL_ARB_blend_func_extended;
-   int                  GLAD_GL_ARB_buffer_storage;
-   int                  GLAD_GL_ARB_clear_buffer_object;
-   int                  GLAD_GL_ARB_clear_texture;
-   int                  GLAD_GL_ARB_clip_control;
-   int                  GLAD_GL_ARB_color_buffer_float;
-   int                  GLAD_GL_ARB_compute_shader;
-   int                  GLAD_GL_ARB_copy_buffer;
-   int                  GLAD_GL_ARB_compute_variable_group_size;
-   int                  GLAD_GL_ARB_copy_image;
-   int                  GLAD_GL_ARB_debug_output;
-   int                  GLAD_GL_ARB_direct_state_access;
       
 //   // 1_0
-//   GLCullFacePTR        glCullFace;
-//	GLFrontFacePTR       glFrontFace;
-//	GLHintPTR            glHint;
-//	GLLineWidthPTR       glLineWidth;
-//   GLPointSizePTR       glPointSize;
-//   GLPolygonModePTR     glPolygonMode;
-//   GLScissorPTR         glScissor;
-//   GLTexParameterfPTR   glTexParameterf;
-//   GLTexParameterfvPTR  glTexParameterfv;
-//   GLTexParameteriPTR   glTexParameteri;
-//   GLTexParameterivPTR  glTexParameteriv;
-//   GLTexImage1DPTR      glTexImage1D;
-//   GLTexImage2DPTR      glTexImage2D;
-//   GLDrawBufferPTR      glDrawBuffer;
-//   GLClearPTR           glClear;
-//   GLClearColorPTR      glClearColor;
-//   GLClearStencilPTR    glClearStencil;
-//   GLClearDepthPTR      glClearDepth;
-//   GLStencilMaskPTR     glStencilMask;
-//   GLColorMaskPTR       glColorMask;
-//   GLDepthMaskPTR       glDepthMask;
-//   GLDisablePTR         glDisable;
-//   GLEnablePTR          glEnable;
-//   GLFinishPTR          glFinish;
-//   GLFlushPTR           glFlush;
-//   GLBlendFuncPTR       glBlendFunc;
-//   GLLogicOpPTR         glLogicOp;
-//   GLStencilFuncPTR     glStencilFunc;
-//   GLStencilOpPTR       glStencilOp;
-//   GLDepthFuncPTR       glDepthFunc;
-//   GLPixelStorefPTR     glPixelStoref;
-//   GLPixelStoreiPTR     glPixelStorei;
-//   GLReadBufferPTR      glReadBuffer;
-//   GLReadPixelsPTR      glReadPixels;
-//   GLGetBooleanvPTR     glGetBooleanv;
-//   GLGetDoublevPTR      glGetDoublev;
-//   GLGetErrorPTR        glGetError;
-//   GLGetFloatvPTR       glGetFloatv;
-//   GLGetIntegervPTR     glGetIntegerv;
-////   GLGetStringPTR       glGetString;
-//   GLGetTexImagePTR     glGetTexImage;
-//   GLGetTexParameterfvPTR        glGetTexParameterfv;
-//   GLGetTexParameterivPTR        glGetTexParameteriv;
-//   GLGetTexLevelParameterfvPTR   glGetTexLevelParameterfv;
-//   GLGetTexLevelParameterivPTR   glGetTexLevelParameteriv;
-//   GLIsEnabledPTR       glIsEnabled;
-//   GLDepthRangePTR      glDepthRange;
-//   GLViewportPTR        glViewport;
-//   GLNewListPTR         glNewList;
-//   GLEndListPTR         glEndList;
-//   GLCallListPTR        glCallList;
-//   GLCallListsPTR       glCallLists;
-//   GLDeleteListsPTR     glDeleteLists;
-//   GLGenListsPTR        glGenLists;
-//   GLListBasePTR        glListBase;
-//   GLBeginPTR           glBegin;
-//   GLBitmapPTR          glBitmap;
-//   GLColor3bPTR         glColor3b;
-//   GLColor3bvPTR        glColor3bv;
-//   GLColor3dPTR         glColor3d;
-//   GLColor3dvPTR        glColor3dv;
-//   GLColor3fPTR         glColor3f;
-//   GLColor3fvPTR        glColor3fv;
-//   GLColor3iPTR         glColor3i;
-//   GLColor3ivPTR        glColor3iv;
-//   GLColor3sPTR         glColor3s;
-//   GLColor3svPTR        glColor3sv;
-//   GLColor3ubPTR        glColor3ub;
-//   GLColor3ubvPTR       glColor3ubv;
-//   GLColor3uiPTR        glColor3ui;
-//   GLColor3uivPTR       glColor3uiv;
-//   GLColor3usPTR        glColor3us;
-//   GLColor3usvPTR       glColor3usv;
-//   GLColor4bPTR         glColor4b;
-//   GLColor4bvPTR        glColor4bv;
-//   GLColor4dPTR         glColor4d;
-//   GLColor4dvPTR        glColor4dv;
-//   GLColor4fPTR         glColor4f;
-//   GLColor4fvPTR        glColor4fv;
-//   GLColor4iPTR         glColor4i;
-//   GLColor4ivPTR        glColor4iv;
-//   GLColor4sPTR         glColor4s;
-//   GLColor4svPTR        glColor4sv;
-//   GLColor4ubPTR        glColor4ub;
-//   GLColor4ubvPTR       glColor4ubv;
-//   GLColor4uiPTR        glColor4ui;
-//   GLColor4uivPTR       glColor4uiv;
-//   GLColor4usPTR        glColor4us;
-//   GLColor4usvPTR       glColor4usv;
-//   GLEdgeFlagPTR        glEdgeFlag;
-//   GLEdgeFlagvPTR       glEdgeFlagv;
-//   GLEndPTR             glEnd;
-//   GLIndexdPTR          glIndexd;
-//   GLIndexdvPTR         glIndexdv;
-//   GLIndexfPTR          glIndexf;
-//   GLIndexfvPTR         glIndexfv;
-//   GLIndexiPTR          glIndexi;
-//   GLIndexivPTR         glIndexiv;
-//   GLIndexsPTR          glIndexs;
-//   GLIndexsvPTR         glIndexsv;      
-//   GLNormal3bPTR        glNormal3b;
-//   GLNormal3bvPTR       glNormal3bv;
-//   GLNormal3dPTR        glNormal3d;
-//   GLNormal3dvPTR       glNormal3dv;
-//   GLNormal3fPTR        glNormal3f;
-//   GLNormal3fvPTR       glNormal3fv;
-//   GLNormal3iPTR        glNormal3i;
-//   GLNormal3ivPTR       glNormal3iv;
-//   GLNormal3sPTR        glNormal3s;
-//   GLNormal3svPTR       glNormal3sv;
-//   GLRasterPos2dPTR     glRasterPos2d;
-//   GLRasterPos2dvPTR    glRasterPos2dv;
-//   GLRasterPos2fPTR     glRasterPos2f;
-//   GLRasterPos2fvPTR    glRasterPos2fv;
-//   GLRasterPos2iPTR     glRasterPos2i;
-//   GLRasterPos2ivPTR    glRasterPos2iv;
-//   GLRasterPos2sPTR     glRasterPos2s;
-//   GLRasterPos2svPTR    glRasterPos2sv;
-//   GLRasterPos3dPTR     glRasterPos3d;
-//   GLRasterPos3dvPTR    glRasterPos3dv;
-//   GLRasterPos3fPTR     glRasterPos3f;
-//   GLRasterPos3fvPTR    glRasterPos3fv;
-//   GLRasterPos3iPTR     glRasterPos3i;
-//   GLRasterPos3ivPTR    glRasterPos3iv;
-//   GLRasterPos3sPTR     glRasterPos3s;
-//   GLRasterPos3svPTR    glRasterPos3sv;   
-//   GLRasterPos4dPTR     glRasterPos4d;
-//   GLRasterPos4dvPTR    glRasterPos4dv;
-//   GLRasterPos4fPTR     glRasterPos4f;
-//   GLRasterPos4fvPTR    glRasterPos4fv;
-//   GLRasterPos4iPTR     glRasterPos4i;
-//   GLRasterPos4ivPTR    glRasterPos4iv;
-//   GLRasterPos4sPTR     glRasterPos4s;
-//   GLRasterPos4svPTR    glRasterPos4sv;
-//   GLRectdPTR           glRectd;
-//   GLRectdvPTR          glRectdv;
-//   GLRectfPTR           glRectf;
-//   GLRectfvPTR          glRectfv;
-//   GLRectiPTR           glRecti;
-//   GLRectivPTR          glRectiv;
-//   GLRectsPTR           glRects;
-//   GLRectsvPTR          glRectsv;
-//   GLTexCoord1dPTR      glTexCoord1d;
-//   GLTexCoord1dvPTR     glTexCoord1dv;
-//   GLTexCoord1fPTR      glTexCoord1f;
-//   GLTexCoord1fvPTR     glTexCoord1fv;
-//   GLTexCoord1iPTR      glTexCoord1i;
-//   GLTexCoord1ivPTR     glTexCoord1iv;
-//   GLTexCoord1sPTR      glTexCoord1s;
-//   GLTexCoord1svPTR     glTexCoord1sv;
-//   GLTexCoord2dPTR      glTexCoord2d;
-//   GLTexCoord2dvPTR     glTexCoord2dv;
-//   GLTexCoord2fPTR      glTexCoord2f;
-//   GLTexCoord2fvPTR     glTexCoord2fv;
-//   GLTexCoord2iPTR      glTexCoord2i;
-//   GLTexCoord2ivPTR     glTexCoord2iv;
-//   GLTexCoord2sPTR      glTexCoord2s;
-//   GLTexCoord2svPTR     glTexCoord2sv;
-//   GLTexCoord3dPTR      glTexCoord3d;
-//   GLTexCoord3dvPTR     glTexCoord3dv;
-//   GLTexCoord3fPTR      glTexCoord3f;
-//   GLTexCoord3fvPTR     glTexCoord3fv;
-//   GLTexCoord3iPTR      glTexCoord3i;
-//   GLTexCoord3ivPTR     glTexCoord3iv;
-//   GLTexCoord3sPTR      glTexCoord3s;
-//   GLTexCoord3svPTR     glTexCoord3sv;
-//   GLTexCoord4dPTR      glTexCoord4d;
-//   GLTexCoord4dvPTR     glTexCoord4dv;
-//   GLTexCoord4fPTR      glTexCoord4f;
-//   GLTexCoord4fvPTR     glTexCoord4fv;
-//   GLTexCoord4iPTR      glTexCoord4i;
-//   GLTexCoord4ivPTR     glTexCoord4iv;
-//   GLTexCoord4sPTR      glTexCoord4s;
-//   GLTexCoord4svPTR     glTexCoord4sv;
-//   GLVertex2dPTR        glVertex2d;
-//   GLVertex2dvPTR       glVertex2dv;
-//   GLVertex2fPTR        glVertex2f;
-//   GLVertex2fvPTR       glVertex2fv;
-//   GLVertex2iPTR        glVertex2i;
-//   GLVertex2ivPTR       glVertex2iv;
-//   GLVertex2sPTR        glVertex2s;
-//   GLVertex2svPTR       glVertex2sv;
-//   GLVertex3dPTR        glVertex3d;
-//   GLVertex3dvPTR       glVertex3dv;
-//   GLVertex3fPTR        glVertex3f;
-//   GLVertex3fvPTR       glVertex3fv;
-//   GLVertex3iPTR        glVertex3i;
-//   GLVertex3ivPTR       glVertex3iv;
-//   GLVertex3sPTR        glVertex3s;
-//   GLVertex3svPTR       glVertex3sv;
-//   GLVertex4dPTR        glVertex4d;
-//   GLVertex4dvPTR       glVertex4dv;
-//   GLVertex4fPTR        glVertex4f;
-//   GLVertex4fvPTR       glVertex4fv;
-//   GLVertex4iPTR        glVertex4i;
-//   GLVertex4ivPTR       glVertex4iv;
-//   GLVertex4sPTR        glVertex4s;
-//   GLVertex4svPTR       glVertex4sv;
-//   GLClipPlanePTR       glClipPlane;
-//   GLColorMaterialPTR   glColorMaterial;
-//   GLFogfPTR            glFogf;
-//   GLFogfvPTR           glFogfv;
-//   GLFogiPTR            glFogi;
-//   GLFogivPTR           glFogiv;
-//   GLLightfPTR          glLightf;
-//   GLLightfvPTR         glLightfv;
-//   GLLightiPTR          glLighti;
-//   GLLightivPTR         glLightiv;
-//   GLLightModelfPTR     glLightModelf;
-//   GLLightModelfvPTR    glLightModelfv;
-//   GLLightModeliPTR     glLightModeli;
-//   GLLightModelivPTR    glLightModeliv;   
-//   GLLineStipplePTR     glLineStipple;
-//   GLMaterialfPTR       glMaterialf;
-//   GLMaterialfvPTR      glMaterialfv;
-//   GLMaterialiPTR       glMateriali;
-//   GLMaterialivPTR      glMaterialiv;
-//   GLPolygonStipplePTR  glPolygonStipple;
-//   GLShadeModelPTR      glShadeModel;
-//   GLTexEnvfPTR         glTexEnvf;
-//   GLTexEnvfvPTR        glTexEnvfv;
-//   GLTexEnviPTR         glTexEnvi;
-//   GLTexEnvivPTR        glTexEnviv;
-//   GLTexGendPTR         glTexGend;
-//   GLTexGendvPTR        glTexGendv;
-//   GLTexGenfPTR         glTexGenf;
-//   GLTexGenfvPTR        glTexGenfv;
-//   GLTexGeniPTR         glTexGeni;
-//   GLTexGenivPTR        glTexGeniv;
-//   GLFeedbackBufferPTR  glFeedbackBuffer;
-//   GLSelectBufferPTR    glSelectBuffer;
-//   GLRenderModePTR      glRenderMode;
-//   GLInitNamesPTR       glInitNames;
-//   GLLoadNamePTR        glLoadName;
-//   GLPassThroughPTR     glPassThrough;
-//   GLPopNamePTR         glPopName;
-//   GLPushNamePTR        glPushName;
-//   GLClearAccumPTR      glClearAccum;
-//   GLClearIndexPTR      glClearIndex;
-//   GLIndexMaskPTR       glIndexMask;
-//   GLAccumPTR           glAccum;
-//   GLPopAttribPTR       glPopAttrib;
-//   GLPushAttribPTR      glPushAttrib;
-//   GLMap1dPTR           glMap1d;
-//   GLMap1fPTR           glMap1f;
-//   GLMap2dPTR           glMap2d;
-//   GLMap2fPTR           glMap2f;
-//   GLMapGrid1dPTR       glMapGrid1d;
-//   GLMapGrid1fPTR       glMapGrid1f;
-//   GLMapGrid2dPTR       glMapGrid2d;
-//   GLMapGrid2fPTR       glMapGrid2f;
-//   GLEvalCoord1dPTR     glEvalCoord1d;
-//   GLEvalCoord1dvPTR    glEvalCoord1dv;
-//   GLEvalCoord1fPTR     glEvalCoord1f;
-//   GLEvalCoord1fvPTR    glEvalCoord1fv;
-//   GLEvalCoord2dPTR     glEvalCoord2d;
-//   GLEvalCoord2dvPTR    glEvalCoord2dv;
-//   GLEvalCoord2fPTR     glEvalCoord2f;
-//   GLEvalCoord2fvPTR    glEvalCoord2fv;
-//   GLEvalMesh1PTR       glEvalMesh1;
-//   GLEvalPoint1PTR      glEvalPoint1;
-//   GLEvalMesh2PTR       glEvalMesh2;
-//   GLEvalPoint2PTR      glEvalPoint2;
-//   GLAlphaFuncPTR       glAlphaFunc;
-//   GLPixelZoomPTR       glPixelZoom;
-//   GLPixelTransferfPTR  glPixelTransferf;
-//   GLPixelTransferiPTR  glPixelTransferi;
-//   GLPixelMapfvPTR      glPixelMapfv;
-//   GLPixelMapuivPTR     glPixelMapuiv;
-//   GLPixelMapusvPTR     glPixelMapusv;
-//   GLCopyPixelsPTR      glCopyPixels;
-//   GLDrawPixelsPTR      glDrawPixels;
-//   GLGetClipPlanePTR    glGetClipPlane;
-//   GLGetLightfvPTR      glGetLightfv;
-//   GLGetLightivPTR      glGetLightiv;
-//   GLGetMapdvPTR        glGetMapdv;
-//   GLGetMapfvPTR        glGetMapfv;
-//   GLGetMapivPTR        glGetMapiv;
-//   GLGetMaterialfvPTR   glGetMaterialfv;
-//   GLGetMaterialivPTR   glGetMaterialiv;
-//   GLGetPixelMapfvPTR   glGetPixelMapfv;
-//   GLGetPixelMapuivPTR  glGetPixelMapuiv;
-//   GLGetPixelMapusvPTR  glGetPixelMapusv;
-//   GLGetPolygonStipplePTR glGetPolygonStipple;
-//   GLGetTexEnvfvPTR     glGetTexEnvfv;
-//   GLGetTexEnvivPTR     glGetTexEnviv;
-//   GLGetTexGendvPTR     glGetTexGendv;
-//   GLGetTexGenfvPTR     glGetTexGenfv;
-//   GLGetTexGenivPTR     glGetTexGeniv;
-//   GLIsListPTR          glIsList;
-//   GLFrustumPTR         glFrustum;
-//   GLLoadIdentityPTR    glLoadIdentity;
-//   GLLoadMatrixfPTR     glLoadMatrixf;
-//   GLLoadMatrixdPTR     glLoadMatrixd;
-//   GLMatrixModePTR      glMatrixMode;
-//   GLMultMatrixfPTR     glMultMatrixf;
-//   GLMultMatrixdPTR     glMultMatrixd;
-//   GLOrthoPTR           glOrtho;
+   GLCullFacePTR        glCullFace;
+	GLFrontFacePTR       glFrontFace;
+	GLHintPTR            glHint;
+	GLLineWidthPTR       glLineWidth;
+   GLPointSizePTR       glPointSize;
+   GLPolygonModePTR     glPolygonMode;
+   GLScissorPTR         glScissor;
+   // =
+   GLTexParameterfPTR   glTexParameterf;
+   GLTexParameterfvPTR  glTexParameterfv;
+   GLTexParameteriPTR   glTexParameteri;
+   GLTexParameterivPTR  glTexParameteriv;
+   
+   GLTexImage1DPTR      glTexImage1D;
+   GLTexImage2DPTR      glTexImage2D;
+   GLDrawBufferPTR      glDrawBuffer;
+   GLClearPTR           glClear;
+   GLClearColorPTR      glClearColor;
+   GLClearStencilPTR    glClearStencil;
+   GLClearDepthPTR      glClearDepth;
+   GLStencilMaskPTR     glStencilMask;
+   GLColorMaskPTR       glColorMask;
+   GLDepthMaskPTR       glDepthMask;
+   GLDisablePTR         glDisable;
+   GLEnablePTR          glEnable;
+   GLFinishPTR          glFinish;
+   GLFlushPTR           glFlush;
+   GLBlendFuncPTR       glBlendFunc;
+   GLLogicOpPTR         glLogicOp;
+   GLStencilFuncPTR     glStencilFunc;
+   GLStencilOpPTR       glStencilOp;
+   GLDepthFuncPTR       glDepthFunc;
+   // =
+   GLPixelStorefPTR     glPixelStoref;
+   GLPixelStoreiPTR     glPixelStorei;
+   
+   GLReadBufferPTR      glReadBuffer;
+   GLReadPixelsPTR      glReadPixels;
+   GLGetBooleanvPTR     glGetBooleanv;
+   GLGetDoublevPTR      glGetDoublev;
+   GLGetErrorPTR        glGetError;
+   GLGetFloatvPTR       glGetFloatv;
+   GLGetIntegervPTR     glGetIntegerv;
+//   GLGetStringPTR       glGetString;
+   GLGetTexImagePTR     glGetTexImage;
+   // =
+   GLGetTexParameterfvPTR        glGetTexParameterfv;
+   GLGetTexParameterivPTR        glGetTexParameteriv;
+   // =
+   GLGetTexLevelParameterfvPTR   glGetTexLevelParameterfv;
+   GLGetTexLevelParameterivPTR   glGetTexLevelParameteriv;
+   
+   GLIsEnabledPTR       glIsEnabled;
+   GLDepthRangePTR      glDepthRange;
+   GLViewportPTR        glViewport;
+   GLNewListPTR         glNewList;
+   GLEndListPTR         glEndList;
+   GLCallListPTR        glCallList;
+   GLCallListsPTR       glCallLists;
+   GLDeleteListsPTR     glDeleteLists;
+   GLGenListsPTR        glGenLists;
+   GLListBasePTR        glListBase;
+   GLBeginPTR           glBegin;
+   GLBitmapPTR          glBitmap;
+   
+   // =
+   GLColor3bPTR         glColor3b;
+   GLColor3bvPTR        glColor3bv;
+   GLColor3dPTR         glColor3d;
+   GLColor3dvPTR        glColor3dv;
+   GLColor3fPTR         glColor3f;
+   GLColor3fvPTR        glColor3fv;
+   GLColor3iPTR         glColor3i;
+   GLColor3ivPTR        glColor3iv;
+   GLColor3sPTR         glColor3s;
+   GLColor3svPTR        glColor3sv;
+   GLColor3ubPTR        glColor3ub;
+   GLColor3ubvPTR       glColor3ubv;
+   GLColor3uiPTR        glColor3ui;
+   GLColor3uivPTR       glColor3uiv;
+   GLColor3usPTR        glColor3us;
+   GLColor3usvPTR       glColor3usv;
+   
+   // =
+   GLColor4bPTR         glColor4b;
+   GLColor4bvPTR        glColor4bv;
+   GLColor4dPTR         glColor4d;
+   GLColor4dvPTR        glColor4dv;
+   GLColor4fPTR         glColor4f;
+   GLColor4fvPTR        glColor4fv;
+   GLColor4iPTR         glColor4i;
+   GLColor4ivPTR        glColor4iv;
+   GLColor4sPTR         glColor4s;
+   GLColor4svPTR        glColor4sv;
+   GLColor4ubPTR        glColor4ub;
+   GLColor4ubvPTR       glColor4ubv;
+   GLColor4uiPTR        glColor4ui;
+   GLColor4uivPTR       glColor4uiv;
+   GLColor4usPTR        glColor4us;
+   GLColor4usvPTR       glColor4usv;
+   
+   GLEdgeFlagPTR        glEdgeFlag;
+   GLEdgeFlagvPTR       glEdgeFlagv;
+   GLEndPTR             glEnd;
+   
+   // =
+   GLIndexdPTR          glIndexd;
+   GLIndexdvPTR         glIndexdv;
+   GLIndexfPTR          glIndexf;
+   GLIndexfvPTR         glIndexfv;
+   GLIndexiPTR          glIndexi;
+   GLIndexivPTR         glIndexiv;
+   GLIndexsPTR          glIndexs;
+   GLIndexsvPTR         glIndexsv;
+   
+   GLNormal3bPTR        glNormal3b;
+   GLNormal3bvPTR       glNormal3bv;
+   GLNormal3dPTR        glNormal3d;
+   GLNormal3dvPTR       glNormal3dv;
+   GLNormal3fPTR        glNormal3f;
+   GLNormal3fvPTR       glNormal3fv;
+   GLNormal3iPTR        glNormal3i;
+   GLNormal3ivPTR       glNormal3iv;
+   GLNormal3sPTR        glNormal3s;
+   GLNormal3svPTR       glNormal3sv;
+   GLRasterPos2dPTR     glRasterPos2d;
+   GLRasterPos2dvPTR    glRasterPos2dv;
+   GLRasterPos2fPTR     glRasterPos2f;
+   GLRasterPos2fvPTR    glRasterPos2fv;
+   GLRasterPos2iPTR     glRasterPos2i;
+   GLRasterPos2ivPTR    glRasterPos2iv;
+   GLRasterPos2sPTR     glRasterPos2s;
+   GLRasterPos2svPTR    glRasterPos2sv;
+   GLRasterPos3dPTR     glRasterPos3d;
+   GLRasterPos3dvPTR    glRasterPos3dv;
+   GLRasterPos3fPTR     glRasterPos3f;
+   GLRasterPos3fvPTR    glRasterPos3fv;
+   GLRasterPos3iPTR     glRasterPos3i;
+   GLRasterPos3ivPTR    glRasterPos3iv;
+   GLRasterPos3sPTR     glRasterPos3s;
+   GLRasterPos3svPTR    glRasterPos3sv;   
+   GLRasterPos4dPTR     glRasterPos4d;
+   GLRasterPos4dvPTR    glRasterPos4dv;
+   GLRasterPos4fPTR     glRasterPos4f;
+   GLRasterPos4fvPTR    glRasterPos4fv;
+   GLRasterPos4iPTR     glRasterPos4i;
+   GLRasterPos4ivPTR    glRasterPos4iv;
+   GLRasterPos4sPTR     glRasterPos4s;
+   GLRasterPos4svPTR    glRasterPos4sv;
+   GLRectdPTR           glRectd;
+   GLRectdvPTR          glRectdv;
+   GLRectfPTR           glRectf;
+   GLRectfvPTR          glRectfv;
+   GLRectiPTR           glRecti;
+   GLRectivPTR          glRectiv;
+   GLRectsPTR           glRects;
+   GLRectsvPTR          glRectsv;
+   GLTexCoord1dPTR      glTexCoord1d;
+   GLTexCoord1dvPTR     glTexCoord1dv;
+   GLTexCoord1fPTR      glTexCoord1f;
+   GLTexCoord1fvPTR     glTexCoord1fv;
+   GLTexCoord1iPTR      glTexCoord1i;
+   GLTexCoord1ivPTR     glTexCoord1iv;
+   GLTexCoord1sPTR      glTexCoord1s;
+   GLTexCoord1svPTR     glTexCoord1sv;
+   GLTexCoord2dPTR      glTexCoord2d;
+   GLTexCoord2dvPTR     glTexCoord2dv;
+   GLTexCoord2fPTR      glTexCoord2f;
+   GLTexCoord2fvPTR     glTexCoord2fv;
+   GLTexCoord2iPTR      glTexCoord2i;
+   GLTexCoord2ivPTR     glTexCoord2iv;
+   GLTexCoord2sPTR      glTexCoord2s;
+   GLTexCoord2svPTR     glTexCoord2sv;
+   GLTexCoord3dPTR      glTexCoord3d;
+   GLTexCoord3dvPTR     glTexCoord3dv;
+   GLTexCoord3fPTR      glTexCoord3f;
+   GLTexCoord3fvPTR     glTexCoord3fv;
+   GLTexCoord3iPTR      glTexCoord3i;
+   GLTexCoord3ivPTR     glTexCoord3iv;
+   GLTexCoord3sPTR      glTexCoord3s;
+   GLTexCoord3svPTR     glTexCoord3sv;
+   GLTexCoord4dPTR      glTexCoord4d;
+   GLTexCoord4dvPTR     glTexCoord4dv;
+   GLTexCoord4fPTR      glTexCoord4f;
+   GLTexCoord4fvPTR     glTexCoord4fv;
+   GLTexCoord4iPTR      glTexCoord4i;
+   GLTexCoord4ivPTR     glTexCoord4iv;
+   GLTexCoord4sPTR      glTexCoord4s;
+   GLTexCoord4svPTR     glTexCoord4sv;
+   GLVertex2dPTR        glVertex2d;
+   GLVertex2dvPTR       glVertex2dv;
+   GLVertex2fPTR        glVertex2f;
+   GLVertex2fvPTR       glVertex2fv;
+   GLVertex2iPTR        glVertex2i;
+   GLVertex2ivPTR       glVertex2iv;
+   GLVertex2sPTR        glVertex2s;
+   GLVertex2svPTR       glVertex2sv;
+   GLVertex3dPTR        glVertex3d;
+   GLVertex3dvPTR       glVertex3dv;
+   GLVertex3fPTR        glVertex3f;
+   GLVertex3fvPTR       glVertex3fv;
+   GLVertex3iPTR        glVertex3i;
+   GLVertex3ivPTR       glVertex3iv;
+   GLVertex3sPTR        glVertex3s;
+   GLVertex3svPTR       glVertex3sv;
+   GLVertex4dPTR        glVertex4d;
+   GLVertex4dvPTR       glVertex4dv;
+   GLVertex4fPTR        glVertex4f;
+   GLVertex4fvPTR       glVertex4fv;
+   GLVertex4iPTR        glVertex4i;
+   GLVertex4ivPTR       glVertex4iv;
+   GLVertex4sPTR        glVertex4s;
+   GLVertex4svPTR       glVertex4sv;
+   GLClipPlanePTR       glClipPlane;
+   GLColorMaterialPTR   glColorMaterial;
+   GLFogfPTR            glFogf;
+   GLFogfvPTR           glFogfv;
+   GLFogiPTR            glFogi;
+   GLFogivPTR           glFogiv;
+   GLLightfPTR          glLightf;
+   GLLightfvPTR         glLightfv;
+   GLLightiPTR          glLighti;
+   GLLightivPTR         glLightiv;
+   GLLightModelfPTR     glLightModelf;
+   GLLightModelfvPTR    glLightModelfv;
+   GLLightModeliPTR     glLightModeli;
+   GLLightModelivPTR    glLightModeliv;   
+   GLLineStipplePTR     glLineStipple;
+   GLMaterialfPTR       glMaterialf;
+   GLMaterialfvPTR      glMaterialfv;
+   GLMaterialiPTR       glMateriali;
+   GLMaterialivPTR      glMaterialiv;
+   GLPolygonStipplePTR  glPolygonStipple;
+   GLShadeModelPTR      glShadeModel;
+   GLTexEnvfPTR         glTexEnvf;
+   GLTexEnvfvPTR        glTexEnvfv;
+   GLTexEnviPTR         glTexEnvi;
+   GLTexEnvivPTR        glTexEnviv;
+   GLTexGendPTR         glTexGend;
+   GLTexGendvPTR        glTexGendv;
+   GLTexGenfPTR         glTexGenf;
+   GLTexGenfvPTR        glTexGenfv;
+   GLTexGeniPTR         glTexGeni;
+   GLTexGenivPTR        glTexGeniv;
+   GLFeedbackBufferPTR  glFeedbackBuffer;
+   GLSelectBufferPTR    glSelectBuffer;
+   GLRenderModePTR      glRenderMode;
+   GLInitNamesPTR       glInitNames;
+   GLLoadNamePTR        glLoadName;
+   GLPassThroughPTR     glPassThrough;
+   GLPopNamePTR         glPopName;
+   GLPushNamePTR        glPushName;
+   GLClearAccumPTR      glClearAccum;
+   GLClearIndexPTR      glClearIndex;
+   GLIndexMaskPTR       glIndexMask;
+   GLAccumPTR           glAccum;
+   GLPopAttribPTR       glPopAttrib;
+   GLPushAttribPTR      glPushAttrib;
+   GLMap1dPTR           glMap1d;
+   GLMap1fPTR           glMap1f;
+   GLMap2dPTR           glMap2d;
+   GLMap2fPTR           glMap2f;
+   GLMapGrid1dPTR       glMapGrid1d;
+   GLMapGrid1fPTR       glMapGrid1f;
+   GLMapGrid2dPTR       glMapGrid2d;
+   GLMapGrid2fPTR       glMapGrid2f;
+   GLEvalCoord1dPTR     glEvalCoord1d;
+   GLEvalCoord1dvPTR    glEvalCoord1dv;
+   GLEvalCoord1fPTR     glEvalCoord1f;
+   GLEvalCoord1fvPTR    glEvalCoord1fv;
+   GLEvalCoord2dPTR     glEvalCoord2d;
+   GLEvalCoord2dvPTR    glEvalCoord2dv;
+   GLEvalCoord2fPTR     glEvalCoord2f;
+   GLEvalCoord2fvPTR    glEvalCoord2fv;
+   GLEvalMesh1PTR       glEvalMesh1;
+   GLEvalPoint1PTR      glEvalPoint1;
+   GLEvalMesh2PTR       glEvalMesh2;
+   GLEvalPoint2PTR      glEvalPoint2;
+   GLAlphaFuncPTR       glAlphaFunc;
+   GLPixelZoomPTR       glPixelZoom;
+   GLPixelTransferfPTR  glPixelTransferf;
+   GLPixelTransferiPTR  glPixelTransferi;
+   GLPixelMapfvPTR      glPixelMapfv;
+   GLPixelMapuivPTR     glPixelMapuiv;
+   GLPixelMapusvPTR     glPixelMapusv;
+   GLCopyPixelsPTR      glCopyPixels;
+   GLDrawPixelsPTR      glDrawPixels;
+   GLGetClipPlanePTR    glGetClipPlane;
+   GLGetLightfvPTR      glGetLightfv;
+   GLGetLightivPTR      glGetLightiv;
+   GLGetMapdvPTR        glGetMapdv;
+   GLGetMapfvPTR        glGetMapfv;
+   GLGetMapivPTR        glGetMapiv;
+   GLGetMaterialfvPTR   glGetMaterialfv;
+   GLGetMaterialivPTR   glGetMaterialiv;
+   GLGetPixelMapfvPTR   glGetPixelMapfv;
+   GLGetPixelMapuivPTR  glGetPixelMapuiv;
+   GLGetPixelMapusvPTR  glGetPixelMapusv;
+   GLGetPolygonStipplePTR glGetPolygonStipple;
+   GLGetTexEnvfvPTR     glGetTexEnvfv;
+   GLGetTexEnvivPTR     glGetTexEnviv;
+   GLGetTexGendvPTR     glGetTexGendv;
+   GLGetTexGenfvPTR     glGetTexGenfv;
+   GLGetTexGenivPTR     glGetTexGeniv;
+   GLIsListPTR          glIsList;
+   GLFrustumPTR         glFrustum;
+   GLLoadIdentityPTR    glLoadIdentity;
+   GLLoadMatrixfPTR     glLoadMatrixf;
+   GLLoadMatrixdPTR     glLoadMatrixd;
+   GLMatrixModePTR      glMatrixMode;
+   GLMultMatrixfPTR     glMultMatrixf;
+   GLMultMatrixdPTR     glMultMatrixd;
+   GLOrthoPTR           glOrtho;
    GLPopMatrixPTR       glPopMatrix;
    GLPushMatrixPTR      glPushMatrix;
    GLRotatedPTR         glRotated;
@@ -2079,65 +2204,10 @@ public struct GLAD_Wrapper
       
       ^ ptr.getStringUnsafe();
    }
-                        
-   private int has_ext(string extensions, string ext)
-   {
-      int index := extensions.indexOf(0, ext);
-      if (index >= 0) {
-         int endIndex := index + ext.Length;
-         if (endIndex == extensions.Length || extensions[endIndex] == $32) {
-            ^ 1
-         };
-      };
-      
-      ^ 0
-   }
-
-   private find_coreGL(/*IOpenGLEngine engine*/)
-   {
-      pointer verPtr := glGetString(GL_VERSION);
-      string versions := *verPtr;
-      
-      int prefixLen := Prefixes.Length;
-      int start := 0;
-      for (int i := 0; i < prefixLen; i++) {
-         if (versions.startingWith(Prefixes[i])) {
-            start := Prefixes[i].Length;
-            
-            :break;
-         }
-      };
-      
-      int dotPos := versions.indexOf(start, $46);
-      int major := versions.Substring(start, dotPos - start).toInt();
-      start:= dotPos + 1;
-      dotPos := versions.indexOf(start, $46);
-      int minor := versions.Substring(start, dotPos - start).toInt();
-      
-      GLAD_GL_VERSION_1_0 := ((major == 1 && minor >= 0) || major > 1) ? 1 : 0;
-      GLAD_GL_VERSION_1_1 := ((major == 1 && minor >= 1) || major > 1) ? 1 : 0;
-      GLAD_GL_VERSION_1_2 := ((major == 1 && minor >= 2) || major > 1) ? 1 : 0;
-      GLAD_GL_VERSION_1_3 := ((major == 1 && minor >= 3) || major > 1) ? 1 : 0;
-      GLAD_GL_VERSION_1_4 := ((major == 1 && minor >= 4) || major > 1) ? 1 : 0;
-      GLAD_GL_VERSION_1_5 := ((major == 1 && minor >= 5) || major > 1) ? 1 : 0;
-      GLAD_GL_VERSION_2_0 := ((major == 2 && minor >= 0) || major > 2) ? 1 : 0;
-      GLAD_GL_VERSION_2_1 := ((major == 2 && minor >= 1) || major > 2) ? 1 : 0;
-      GLAD_GL_VERSION_3_0 := ((major == 3 && minor >= 0) || major > 3) ? 1 : 0;
-      GLAD_GL_VERSION_3_1 := ((major == 3 && minor >= 1) || major > 3) ? 1 : 0;
-      GLAD_GL_VERSION_3_2 := ((major == 3 && minor >= 2) || major > 3) ? 1 : 0;
-      GLAD_GL_VERSION_3_3 := ((major == 3 && minor >= 3) || major > 3) ? 1 : 0;
-      GLAD_GL_VERSION_4_0 := ((major == 4 && minor >= 0) || major > 4) ? 1 : 0;
-/*      if (GLVersion.major > 4 || (GLVersion.major >= 4 && GLVersion.minor >= 0)) {
-      	max_loaded_major = 4;
-      	max_loaded_minor = 0;
-      }*/
-      
-      //engine.setVersion(major, minor);
-   }
    
-   private load_GL_ARB_direct_state_access()
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_direct_state_access == 0) {
+      if (config.GLAD_GL_ARB_direct_state_access == 0) {
          ^ self
       };
       glCreateTransformFeedbacks := GLCreateTransformFeedbacksPTR.load(get_proc, "glCreateTransformFeedbacks");
@@ -2242,311 +2312,311 @@ public struct GLAD_Wrapper
 */      
    }   
 
-   private load_GL_VERSION_1_0()
+   private load_GL_VERSION_1_0(GLAD_Config config)
    {
-//      if (GLAD_GL_VERSION_1_0 == 0) {
-//         ^ self
-//      };
-//      
-//      glCullFace := GLCullFacePTR.loadDirectly(libGL, "glCullFace");
-//      glFrontFace := GLFrontFacePTR.loadDirectly(libGL, "glFrontFace");
-//      glHint := GLHintPTR.loadDirectly(libGL, "glHint");
-//      glLineWidth := GLLineWidthPTR.loadDirectly(libGL, "glLineWidth");
-//      
-//      glPointSize := GLPointSizePTR.loadDirectly(libGL, "glPointSize");
-//      glPolygonMode := GLPolygonModePTR.loadDirectly(libGL, "glPolygonMode");
-//      glScissor := GLScissorPTR.loadDirectly(libGL, "glScissor");
-//      glTexParameterf := GLTexParameterfPTR.loadDirectly(libGL, "glTexParameterf");
-//      glTexParameterfv := GLTexParameterfvPTR.loadDirectly(libGL, "glTexParameterfv");
-//      glTexParameteri := GLTexParameteriPTR.loadDirectly(libGL, "glTexParameteri");
-//      glTexParameteriv := GLTexParameterivPTR.loadDirectly(libGL, "glTexParameteriv");
-//      glTexImage1D := GLTexImage1DPTR.loadDirectly(libGL, "glTexImage1D");
-//      glTexImage2D := GLTexImage2DPTR.loadDirectly(libGL, "glTexImage2D");
-//      glDrawBuffer := GLDrawBufferPTR.loadDirectly(libGL, "glDrawBuffer");
-//      glClear := GLClearPTR.loadDirectly(libGL, "glClear");
-//      glClearColor := GLClearColorPTR.loadDirectly(libGL, "glClearColor");
-//      glClearStencil := GLClearStencilPTR.loadDirectly(libGL, "glClearStencil");
-//      glClearDepth := GLClearDepthPTR.loadDirectly(libGL, "glClearDepth");
-//      glStencilMask := GLStencilMaskPTR.loadDirectly(libGL, "glStencilMask");
-//      glColorMask := GLColorMaskPTR.loadDirectly(libGL, "glColorMask");
-//      glDepthMask := GLDepthMaskPTR.loadDirectly(libGL, "glDepthMask");
-//      glDisable := GLDisablePTR.loadDirectly(libGL, "glDisable");
-//      glEnable := GLEnablePTR.loadDirectly(libGL, "glEnable");
-//      glFinish := GLFinishPTR.loadDirectly(libGL, "glFinish");
-//      glFlush := GLFlushPTR.loadDirectly(libGL, "glFlush");
-//      glBlendFunc := GLBlendFuncPTR.loadDirectly(libGL, "glBlendFunc");
-//      glLogicOp := GLLogicOpPTR.loadDirectly(libGL, "glLogicOp");
-//      glStencilFunc := GLStencilFuncPTR.loadDirectly(libGL, "glStencilFunc");
-//      glStencilOp := GLStencilOpPTR.loadDirectly(libGL, "glStencilOp");
-//      glDepthFunc := GLDepthFuncPTR.loadDirectly(libGL, "glDepthFunc");
-//      glPixelStoref := GLPixelStorefPTR.loadDirectly(libGL, "glPixelStoref");
-//      glPixelStorei := GLPixelStoreiPTR.loadDirectly(libGL, "glPixelStorei");
-//      glReadBuffer := GLReadBufferPTR.loadDirectly(libGL, "glReadBuffer");
-//      glReadPixels := GLReadPixelsPTR.loadDirectly(libGL, "glReadPixels");
-//      glGetBooleanv := GLGetBooleanvPTR.loadDirectly(libGL, "glGetBooleanv");
-//      glGetDoublev := GLGetDoublevPTR.loadDirectly(libGL, "glGetDoublev");
-//      glGetError := GLGetErrorPTR.loadDirectly(libGL, "glGetError"); 
-//      glGetFloatv := GLGetFloatvPTR.loadDirectly(libGL, "glGetFloatv");
-//      glGetIntegerv := GLGetIntegervPTR.loadDirectly(libGL, "glGetIntegerv");
-////   glGetString := GLGetStringPTR.loadDirectly(libGL, "glGetString");
-//      glGetTexImage := GLGetTexImagePTR.loadDirectly(libGL, "glGetTexImage");
-//      glGetTexParameterfv := GLGetTexParameterfvPTR.loadDirectly(libGL, "glGetTexParameterfv");
-//      glGetTexParameteriv := GLGetTexParameterivPTR.loadDirectly(libGL, "glGetTexParameteriv");
-//      glGetTexLevelParameterfv := GLGetTexLevelParameterfvPTR.loadDirectly(libGL, "glGetTexLevelParameterfv");
-//      glGetTexLevelParameteriv := GLGetTexLevelParameterivPTR.loadDirectly(libGL, "glGetTexLevelParameteriv");
-//      glIsEnabled := GLIsEnabledPTR.loadDirectly(libGL, "glIsEnabled");
-//      glDepthRange := GLDepthRangePTR.loadDirectly(libGL, "glDepthRange");
-//      glViewport := GLViewportPTR.loadDirectly(libGL, "glViewport");
-//      glNewList := GLNewListPTR.loadDirectly(libGL, "glNewList");
-//      glEndList := GLEndListPTR.loadDirectly(libGL, "glEndList");
-//      glCallList := GLCallListPTR.loadDirectly(libGL, "glCallList");
-//      glCallLists := GLCallListsPTR.loadDirectly(libGL, "glCallLists");
-//      glDeleteLists := GLDeleteListsPTR.loadDirectly(libGL, "glDeleteLists");
-//      glGenLists := GLGenListsPTR.loadDirectly(libGL, "glGenLists");
-//      glListBase := GLListBasePTR.loadDirectly(libGL, "glListBase");
-//      glBegin := GLBeginPTR.loadDirectly(libGL, "glBegin");
-//      glBitmap := GLBitmapPTR.loadDirectly(libGL, "glBitmap");
-//      glColor3b := GLColor3bPTR.loadDirectly(libGL, "glColor3b");
-//      glColor3bv := GLColor3bvPTR.loadDirectly(libGL, "glColor3bv");
-//      glColor3d := GLColor3dPTR.loadDirectly(libGL, "glColor3d");
-//      glColor3dv := GLColor3dvPTR.loadDirectly(libGL, "glColor3dv");
-//      glColor3f := GLColor3fPTR.loadDirectly(libGL, "glColor3f");
-//      glColor3fv := GLColor3fvPTR.loadDirectly(libGL, "glColor3fv");
-//      glColor3i := GLColor3iPTR.loadDirectly(libGL, "glColor3i");
-//      glColor3iv := GLColor3ivPTR.loadDirectly(libGL, "glColor3iv");
-//      glColor3s := GLColor3sPTR.loadDirectly(libGL, "glColor3s"); 
-//      glColor3sv := GLColor3svPTR.loadDirectly(libGL, "glColor3sv");
-//      glColor3ub := GLColor3ubPTR.loadDirectly(libGL, "glColor3ub");
-//      glColor3ubv := GLColor3ubvPTR.loadDirectly(libGL, "glColor3ubv");
-//      glColor3ui := GLColor3uiPTR.loadDirectly(libGL, "glColor3ui");
-//      glColor3uiv := GLColor3uivPTR.loadDirectly(libGL, "glColor3uiv");
-//      glColor3us := GLColor3usPTR.loadDirectly(libGL, "glColor3us");
-//      glColor3usv := GLColor3usvPTR.loadDirectly(libGL, "glColor3usv");   
-//      glColor4b := GLColor4bPTR.loadDirectly(libGL, "glColor4b");
-//      glColor4bv := GLColor4bvPTR.loadDirectly(libGL, "glColor4bv");
-//      glColor4d := GLColor4dPTR.loadDirectly(libGL, "glColor4d");
-//      glColor4dv := GLColor4dvPTR.loadDirectly(libGL, "glColor4dv");
-//      glColor4f := GLColor4fPTR.loadDirectly(libGL, "glColor4f");
-//      glColor4fv := GLColor4fvPTR.loadDirectly(libGL, "glColor4fv");
-//      glColor4i := GLColor4iPTR.loadDirectly(libGL, "glColor4i");
-//      glColor4iv := GLColor4ivPTR.loadDirectly(libGL, "glColor4iv");
-//      glColor4s := GLColor4sPTR.loadDirectly(libGL, "glColor4s");
-//      glColor4sv := GLColor4svPTR.loadDirectly(libGL, "glColor4sv");
-//      glColor4ub := GLColor4ubPTR.loadDirectly(libGL, "glColor4ub");
-//      glColor4ubv := GLColor4ubvPTR.loadDirectly(libGL, "glColor4ubv");
-//      glColor4ui := GLColor4uiPTR.loadDirectly(libGL, "glColor4ui");
-//      glColor4uiv := GLColor4uivPTR.loadDirectly(libGL, "glColor4uiv");
-//      glColor4us := GLColor4usPTR.loadDirectly(libGL, "glColor4us");
-//      glColor4usv := GLColor4usvPTR.loadDirectly(libGL, "glColor4usv");
-//      glEdgeFlag := GLEdgeFlagPTR.loadDirectly(libGL, "glEdgeFlag");
-//      glEdgeFlagv := GLEdgeFlagvPTR.loadDirectly(libGL, "glEdgeFlagv");
-//      glEnd := GLEndPTR.loadDirectly(libGL, "glEnd");
-//      glIndexd := GLIndexdPTR.loadDirectly(libGL, "glIndexd");
-//      glIndexdv := GLIndexdvPTR.loadDirectly(libGL, "glIndexdv");
-//      glIndexf := GLIndexfPTR.loadDirectly(libGL, "glIndexf");
-//      glIndexfv := GLIndexfvPTR.loadDirectly(libGL, "glIndexfv");
-//      glIndexi := GLIndexiPTR.loadDirectly(libGL, "glIndexi");
-//      glIndexiv := GLIndexivPTR.loadDirectly(libGL, "glIndexiv");
-//      glIndexs := GLIndexsPTR.loadDirectly(libGL, "glIndexs");
-//      glIndexsv := GLIndexsvPTR.loadDirectly(libGL, "glIndexsv");
-//      glNormal3b := GLNormal3bPTR.loadDirectly(libGL, "glNormal3b");
-//      glNormal3bv := GLNormal3bvPTR.loadDirectly(libGL, "glNormal3bv");
-//      glNormal3d := GLNormal3dPTR.loadDirectly(libGL, "glNormal3d");
-//      glNormal3dv := GLNormal3dvPTR.loadDirectly(libGL, "glNormal3dv");
-//      glNormal3f := GLNormal3fPTR.loadDirectly(libGL, "glNormal3f");
-//      glNormal3fv := GLNormal3fvPTR.loadDirectly(libGL, "glNormal3fv");
-//      glNormal3i := GLNormal3iPTR.loadDirectly(libGL, "glNormal3i");
-//      glNormal3iv := GLNormal3ivPTR.loadDirectly(libGL, "glNormal3iv");
-//      glNormal3s := GLNormal3sPTR.loadDirectly(libGL, "glNormal3s");
-//      glNormal3sv := GLNormal3svPTR.loadDirectly(libGL, "glNormal3sv");
-//      glRasterPos2d := GLRasterPos2dPTR.loadDirectly(libGL, "glRasterPos2d");
-//      glRasterPos2dv := GLRasterPos2dvPTR.loadDirectly(libGL, "glRasterPos2dv");
-//      glRasterPos2f := GLRasterPos2fPTR.loadDirectly(libGL, "glRasterPos2f");
-//      glRasterPos2fv := GLRasterPos2fvPTR.loadDirectly(libGL, "glRasterPos2fv");
-//      glRasterPos2i := GLRasterPos2iPTR.loadDirectly(libGL, "glRasterPos2i");
-//      glRasterPos2iv := GLRasterPos2ivPTR.loadDirectly(libGL, "glRasterPos2iv");
-//      glRasterPos2s := GLRasterPos2sPTR.loadDirectly(libGL, "glRasterPos2s");
-//      glRasterPos2sv := GLRasterPos2svPTR.loadDirectly(libGL, "glRasterPos2sv"); 
-//      glRasterPos3d := GLRasterPos3dPTR.loadDirectly(libGL, "glRasterPos3d");
-//      glRasterPos3dv := GLRasterPos3dvPTR.loadDirectly(libGL, "glRasterPos3dv");
-//      glRasterPos3f := GLRasterPos3fPTR.loadDirectly(libGL, "glRasterPos3f");
-//      glRasterPos3fv := GLRasterPos3fvPTR.loadDirectly(libGL, "glRasterPos3fv");
-//      glRasterPos3i := GLRasterPos3iPTR.loadDirectly(libGL, "glRasterPos3i");
-//      glRasterPos3iv := GLRasterPos3ivPTR.loadDirectly(libGL, "glRasterPos3iv");
-//      glRasterPos3s := GLRasterPos3sPTR.loadDirectly(libGL, "glRasterPos3s");
-//      glRasterPos3sv := GLRasterPos3svPTR.loadDirectly(libGL, "glRasterPos3sv");
-//      glRasterPos4d := GLRasterPos4dPTR.loadDirectly(libGL, "glRasterPos4d");
-//      glRasterPos4dv := GLRasterPos4dvPTR.loadDirectly(libGL, "glRasterPos4dv");
-//      glRasterPos4f := GLRasterPos4fPTR.loadDirectly(libGL, "glRasterPos4f");
-//      glRasterPos4fv := GLRasterPos4fvPTR.loadDirectly(libGL, "glRasterPos4fv");
-//      glRasterPos4i := GLRasterPos4iPTR.loadDirectly(libGL, "glRasterPos4i");
-//      glRasterPos4iv := GLRasterPos4ivPTR.loadDirectly(libGL, "glRasterPos4iv");
-//      glRasterPos4s := GLRasterPos4sPTR.loadDirectly(libGL, "glRasterPos4s");
-//      glRasterPos4sv := GLRasterPos4svPTR.loadDirectly(libGL, "glRasterPos4sv"); 
-//      glRectd := GLRectdPTR.loadDirectly(libGL, "glRectd");
-//      glRectdv := GLRectdvPTR.loadDirectly(libGL, "glRectdv");
-//      glRectf := GLRectfPTR.loadDirectly(libGL, "glRectf");
-//      glRectfv := GLRectfvPTR.loadDirectly(libGL, "glRectfv");
-//      glRecti := GLRectiPTR.loadDirectly(libGL, "glRecti");
-//      glRectiv := GLRectivPTR.loadDirectly(libGL, "glRectiv");
-//      glRects := GLRectsPTR.loadDirectly(libGL, "glRects");
-//      glRectsv := GLRectsvPTR.loadDirectly(libGL, "glRectsv"); 
-//      glTexCoord1d := GLTexCoord1dPTR.loadDirectly(libGL, "glTexCoord1d");
-//      glTexCoord1dv := GLTexCoord1dvPTR.loadDirectly(libGL, "glTexCoord1dv");
-//      glTexCoord1f := GLTexCoord1fPTR.loadDirectly(libGL, "glTexCoord1f");
-//      glTexCoord1fv := GLTexCoord1fvPTR.loadDirectly(libGL, "glTexCoord1fv");
-//      glTexCoord1i := GLTexCoord1iPTR.loadDirectly(libGL, "glTexCoord1i");
-//      glTexCoord1iv := GLTexCoord1ivPTR.loadDirectly(libGL, "glTexCoord1iv");
-//      glTexCoord1s := GLTexCoord1sPTR.loadDirectly(libGL, "glTexCoord1s");
-//      glTexCoord1sv := GLTexCoord1svPTR.loadDirectly(libGL, "glTexCoord1sv");
-//      glTexCoord2d := GLTexCoord2dPTR.loadDirectly(libGL, "glTexCoord2d");
-//      glTexCoord2dv := GLTexCoord2dvPTR.loadDirectly(libGL, "glTexCoord2dv");
-//      glTexCoord2f := GLTexCoord2fPTR.loadDirectly(libGL, "glTexCoord2f");
-//      glTexCoord2fv := GLTexCoord2fvPTR.loadDirectly(libGL, "glTexCoord2fv");
-//      glTexCoord2i := GLTexCoord2iPTR.loadDirectly(libGL, "glTexCoord2i");
-//      glTexCoord2iv := GLTexCoord2ivPTR.loadDirectly(libGL, "glTexCoord2iv");
-//      glTexCoord2s := GLTexCoord2sPTR.loadDirectly(libGL, "glTexCoord2s");
-//      glTexCoord2sv := GLTexCoord2svPTR.loadDirectly(libGL, "glTexCoord2sv"); 
-//      glTexCoord3d := GLTexCoord3dPTR.loadDirectly(libGL, "glTexCoord3d");
-//      glTexCoord3dv := GLTexCoord3dvPTR.loadDirectly(libGL, "glTexCoord3dv");
-//      glTexCoord3f := GLTexCoord3fPTR.loadDirectly(libGL, "glTexCoord3f");
-//      glTexCoord3fv := GLTexCoord3fvPTR.loadDirectly(libGL, "glTexCoord3fv");
-//      glTexCoord3i := GLTexCoord3iPTR.loadDirectly(libGL, "glTexCoord3i");
-//      glTexCoord3iv := GLTexCoord3ivPTR.loadDirectly(libGL, "glTexCoord3iv");
-//      glTexCoord3s := GLTexCoord3sPTR.loadDirectly(libGL, "glTexCoord3s");
-//      glTexCoord3sv := GLTexCoord3svPTR.loadDirectly(libGL, "glTexCoord3sv"); 
-//      glTexCoord4d := GLTexCoord4dPTR.loadDirectly(libGL, "glTexCoord4d");
-//      glTexCoord4dv := GLTexCoord4dvPTR.loadDirectly(libGL, "glTexCoord4dv");
-//      glTexCoord4f := GLTexCoord4fPTR.loadDirectly(libGL, "glTexCoord4f");
-//      glTexCoord4fv := GLTexCoord4fvPTR.loadDirectly(libGL, "glTexCoord4fv");
-//      glTexCoord4i := GLTexCoord4iPTR.loadDirectly(libGL, "glTexCoord4i");
-//      glTexCoord4iv := GLTexCoord4ivPTR.loadDirectly(libGL, "glTexCoord4iv");
-//      glTexCoord4s := GLTexCoord4sPTR.loadDirectly(libGL, "glTexCoord4s");
-//      glTexCoord4sv := GLTexCoord4svPTR.loadDirectly(libGL, "glTexCoord4sv");
-//      glVertex2d := GLVertex2dPTR.loadDirectly(libGL, "glVertex2d");
-//      glVertex2dv := GLVertex2dvPTR.loadDirectly(libGL, "glVertex2dv");
-//      glVertex2f := GLVertex2fPTR.loadDirectly(libGL, "glVertex2f");
-//      glVertex2fv := GLVertex2fvPTR.loadDirectly(libGL, "glVertex2fv");
-//      glVertex2i := GLVertex2iPTR.loadDirectly(libGL, "glVertex2i");
-//      glVertex2iv := GLVertex2ivPTR.loadDirectly(libGL, "glVertex2iv");
-//      glVertex2s := GLVertex2sPTR.loadDirectly(libGL, "glVertex2s");
-//      glVertex2sv := GLVertex2svPTR.loadDirectly(libGL, "glVertex2sv");
-//      glVertex3d := GLVertex3dPTR.loadDirectly(libGL, "glVertex3d");
-//      glVertex3dv := GLVertex3dvPTR.loadDirectly(libGL, "glVertex3dv");
-//      glVertex3f := GLVertex3fPTR.loadDirectly(libGL, "glVertex3f");
-//      glVertex3fv := GLVertex3fvPTR.loadDirectly(libGL, "glVertex3fv");
-//      glVertex3i := GLVertex3iPTR.loadDirectly(libGL, "glVertex3i");
-//      glVertex3iv := GLVertex3ivPTR.loadDirectly(libGL, "glVertex3iv");
-//      glVertex3s := GLVertex3sPTR.loadDirectly(libGL, "glVertex3s");
-//      glVertex3sv := GLVertex3svPTR.loadDirectly(libGL, "glVertex3sv");
-//      glVertex4d := GLVertex4dPTR.loadDirectly(libGL, "glVertex4d");
-//      glVertex4dv := GLVertex4dvPTR.loadDirectly(libGL, "glVertex4dv");
-//      glVertex4f := GLVertex4fPTR.loadDirectly(libGL, "glVertex4f");
-//      glVertex4fv := GLVertex4fvPTR.loadDirectly(libGL, "glVertex4fv");
-//      glVertex4i := GLVertex4iPTR.loadDirectly(libGL, "glVertex4i");
-//      glVertex4iv := GLVertex4ivPTR.loadDirectly(libGL, "glVertex4iv");
-//      glVertex4s := GLVertex4sPTR.loadDirectly(libGL, "glVertex4s");
-//      glVertex4sv := GLVertex4svPTR.loadDirectly(libGL, "glVertex4sv");
-//      glClipPlane := GLClipPlanePTR.loadDirectly(libGL, "glClipPlane");
-//      glColorMaterial := GLColorMaterialPTR.loadDirectly(libGL, "glColorMaterial");   
-//      glFogf := GLFogfPTR.loadDirectly(libGL, "glFogf");
-//      glFogfv := GLFogfvPTR.loadDirectly(libGL, "glFogfv");
-//      glFogi := GLFogiPTR.loadDirectly(libGL, "glFogi");
-//      glFogiv := GLFogivPTR.loadDirectly(libGL, "glFogiv"); 
-//      glLightf := GLLightfPTR.loadDirectly(libGL, "glLightf");
-//      glLightfv := GLLightfvPTR.loadDirectly(libGL, "glLightfv");
-//      glLighti := GLLightiPTR.loadDirectly(libGL, "glLighti");
-//      glLightiv := GLLightivPTR.loadDirectly(libGL, "glLightiv");   
-//      glLightModelf := GLLightModelfPTR.loadDirectly(libGL, "glLightModelf");
-//      glLightModelfv := GLLightModelfvPTR.loadDirectly(libGL, "glLightModelfv");
-//      glLightModeli := GLLightModeliPTR.loadDirectly(libGL, "glLightModeli");
-//      glLightModeliv := GLLightModelivPTR.loadDirectly(libGL, "glLightModeliv"); 
-//      glLineStipple := GLLineStipplePTR.loadDirectly(libGL, "glLineStipple"); 
-//      glMaterialf := GLMaterialfPTR.loadDirectly(libGL, "glMaterialf");
-//      glMaterialfv := GLMaterialfvPTR.loadDirectly(libGL, "glMaterialfv");
-//      glMateriali := GLMaterialiPTR.loadDirectly(libGL, "glMateriali");
-//      glMaterialiv := GLMaterialivPTR.loadDirectly(libGL, "glMaterialiv");
-//      glPolygonStipple := GLPolygonStipplePTR.loadDirectly(libGL, "glPolygonStipple");
-//      glShadeModel := GLShadeModelPTR.loadDirectly(libGL, "glShadeModel");
-//      glTexEnvf := GLTexEnvfPTR.loadDirectly(libGL, "glTexEnvf");
-//      glTexEnvfv := GLTexEnvfvPTR.loadDirectly(libGL, "glTexEnvfv");
-//      glTexEnvi := GLTexEnviPTR.loadDirectly(libGL, "glTexEnvi");
-//      glTexEnviv := GLTexEnvivPTR.loadDirectly(libGL, "glTexEnviv"); 
-//      glTexGend := GLTexGendPTR.loadDirectly(libGL, "glTexGend");
-//      glTexGendv := GLTexGendvPTR.loadDirectly(libGL, "glTexGendv");
-//      glTexGenf := GLTexGenfPTR.loadDirectly(libGL, "glTexGenf");
-//      glTexGenfv := GLTexGenfvPTR.loadDirectly(libGL, "glTexGenfv");
-//      glTexGeni := GLTexGeniPTR.loadDirectly(libGL, "glTexGeni");
-//      glTexGeniv := GLTexGenivPTR.loadDirectly(libGL, "glTexGeniv");
-//      glFeedbackBuffer := GLFeedbackBufferPTR.loadDirectly(libGL, "glFeedbackBuffer");
-//      glSelectBuffer := GLSelectBufferPTR.loadDirectly(libGL, "glSelectBuffer");
-//      glRenderMode := GLRenderModePTR.loadDirectly(libGL, "glRenderMode");
-//      glInitNames := GLInitNamesPTR.loadDirectly(libGL, "glInitNames");
-//      glLoadName := GLLoadNamePTR.loadDirectly(libGL, "glLoadName");
-//      glPassThrough := GLPassThroughPTR.loadDirectly(libGL, "glPassThrough");
-//      glPopName := GLPopNamePTR.loadDirectly(libGL, "glPopName");
-//      glPushName := GLPushNamePTR.loadDirectly(libGL, "glPushName"); 
-//      glClearAccum := GLClearAccumPTR.loadDirectly(libGL, "glClearAccum");
-//      glClearIndex := GLClearIndexPTR.loadDirectly(libGL, "glClearIndex");
-//      glIndexMask := GLIndexMaskPTR.loadDirectly(libGL, "glIndexMask");
-//      glAccum := GLAccumPTR.loadDirectly(libGL, "glAccum");
-//      glPopAttrib := GLPopAttribPTR.loadDirectly(libGL, "glPopAttrib");
-//      glPushAttrib := GLPushAttribPTR.loadDirectly(libGL, "glPushAttrib");
-//      glMap1d := GLMap1dPTR.loadDirectly(libGL, "glMap1d");
-//      glMap1f := GLMap1fPTR.loadDirectly(libGL, "glMap1f");
-//      glMap2d := GLMap2dPTR.loadDirectly(libGL, "glMap2d");
-//      glMap2f := GLMap2fPTR.loadDirectly(libGL, "glMap2f");
-//      glMapGrid1d := GLMapGrid1dPTR.loadDirectly(libGL, "glMapGrid1d");
-//      glMapGrid1f := GLMapGrid1fPTR.loadDirectly(libGL, "glMapGrid1f");
-//      glMapGrid2d := GLMapGrid2dPTR.loadDirectly(libGL, "glMapGrid2d");
-//      glMapGrid2f := GLMapGrid2fPTR.loadDirectly(libGL, "glMapGrid2f"); 
-//      glEvalCoord1d := GLEvalCoord1dPTR.loadDirectly(libGL, "glEvalCoord1d");
-//      glEvalCoord1dv := GLEvalCoord1dvPTR.loadDirectly(libGL, "glEvalCoord1dv");
-//      glEvalCoord1f := GLEvalCoord1fPTR.loadDirectly(libGL, "glEvalCoord1f");
-//      glEvalCoord1fv := GLEvalCoord1fvPTR.loadDirectly(libGL, "glEvalCoord1fv");
-//      glEvalCoord2d := GLEvalCoord2dPTR.loadDirectly(libGL, "glEvalCoord2d");
-//      glEvalCoord2dv := GLEvalCoord2dvPTR.loadDirectly(libGL, "glEvalCoord2dv");
-//      glEvalCoord2f := GLEvalCoord2fPTR.loadDirectly(libGL, "glEvalCoord2f");
-//      glEvalCoord2fv := GLEvalCoord2fvPTR.loadDirectly(libGL, "glEvalCoord2fv");
-//      glEvalMesh1 := GLEvalMesh1PTR.loadDirectly(libGL, "glEvalMesh1");
-//      glEvalPoint1 := GLEvalPoint1PTR.loadDirectly(libGL, "glEvalPoint1");
-//      glEvalMesh2 := GLEvalMesh2PTR.loadDirectly(libGL, "glEvalMesh2");
-//      glEvalPoint2 := GLEvalPoint2PTR.loadDirectly(libGL, "glEvalPoint2");
-//      glAlphaFunc := GLAlphaFuncPTR.loadDirectly(libGL, "glAlphaFunc");
-//      glPixelZoom := GLPixelZoomPTR.loadDirectly(libGL, "glPixelZoom"); 
-//      glPixelTransferf := GLPixelTransferfPTR.loadDirectly(libGL, "glPixelTransferf");
-//      glPixelTransferi := GLPixelTransferiPTR.loadDirectly(libGL, "glPixelTransferi");
-//      glPixelMapfv := GLPixelMapfvPTR.loadDirectly(libGL, "glPixelMapfv");
-//      glPixelMapuiv := GLPixelMapuivPTR.loadDirectly(libGL, "glPixelMapuiv");
-//      glPixelMapusv := GLPixelMapusvPTR.loadDirectly(libGL, "glPixelMapusv");
-//      glCopyPixels := GLCopyPixelsPTR.loadDirectly(libGL, "glCopyPixels");
-//      glDrawPixels := GLDrawPixelsPTR.loadDirectly(libGL, "glDrawPixels");
-//      glGetClipPlane := GLGetClipPlanePTR.loadDirectly(libGL, "glGetClipPlane"); 
-//      glGetLightfv := GLGetLightfvPTR.loadDirectly(libGL, "glGetLightfv");
-//      glGetLightiv := GLGetLightivPTR.loadDirectly(libGL, "glGetLightiv");
-//      glGetMapdv := GLGetMapdvPTR.loadDirectly(libGL, "glGetMapdv");
-//      glGetMapfv := GLGetMapfvPTR.loadDirectly(libGL, "glGetMapfv");
-//      glGetMapiv := GLGetMapivPTR.loadDirectly(libGL, "glGetMapiv");
-//      glGetMaterialfv := GLGetMaterialfvPTR.loadDirectly(libGL, "glGetMaterialfv");
-//      glGetMaterialiv := GLGetMaterialivPTR.loadDirectly(libGL, "glGetMaterialiv");
-//      glGetPixelMapfv := GLGetPixelMapfvPTR.loadDirectly(libGL, "glGetPixelMapfv");
-//      glGetPixelMapuiv := GLGetPixelMapuivPTR.loadDirectly(libGL, "glGetPixelMapuiv");
-//      glGetPixelMapusv := GLGetPixelMapusvPTR.loadDirectly(libGL, "glGetPixelMapusv");
-//      glGetPolygonStipple := GLGetPolygonStipplePTR.loadDirectly(libGL, "glGetPolygonStipple");
-//      glGetTexEnvfv := GLGetTexEnvfvPTR.loadDirectly(libGL, "glGetTexEnvfv");
-//      glGetTexEnviv := GLGetTexEnvivPTR.loadDirectly(libGL, "glGetTexEnviv");
-//      glGetTexGendv := GLGetTexGendvPTR.loadDirectly(libGL, "glGetTexGendv");
-//      glGetTexGenfv := GLGetTexGenfvPTR.loadDirectly(libGL, "glGetTexGenfv");
-//      glGetTexGeniv := GLGetTexGenivPTR.loadDirectly(libGL, "glGetTexGeniv");
-//      glIsList := GLIsListPTR.loadDirectly(libGL, "glIsList");
-//      glFrustum := GLFrustumPTR.loadDirectly(libGL, "glFrustum");
-//      glLoadIdentity := GLLoadIdentityPTR.loadDirectly(libGL, "glLoadIdentity");
-//      glLoadMatrixf := GLLoadMatrixfPTR.loadDirectly(libGL, "glLoadMatrixf");
-//      glLoadMatrixd := GLLoadMatrixdPTR.loadDirectly(libGL, "glLoadMatrixd");
-//      glMatrixMode := GLMatrixModePTR.loadDirectly(libGL, "glMatrixMode");
-//      glMultMatrixf := GLMultMatrixfPTR.loadDirectly(libGL, "glMultMatrixf");
-//      glMultMatrixd := GLMultMatrixdPTR.loadDirectly(libGL, "glMultMatrixd");
-//      glOrtho := GLOrthoPTR.loadDirectly(libGL, "glOrtho");
+      if (config.GLAD_GL_VERSION_1_0 == 0) {
+         ^ self
+      };
+      
+      glCullFace := GLCullFacePTR.loadDirectly(libGL, "glCullFace");
+      glFrontFace := GLFrontFacePTR.loadDirectly(libGL, "glFrontFace");
+      glHint := GLHintPTR.loadDirectly(libGL, "glHint");
+      glLineWidth := GLLineWidthPTR.loadDirectly(libGL, "glLineWidth");
+      
+      glPointSize := GLPointSizePTR.loadDirectly(libGL, "glPointSize");
+      glPolygonMode := GLPolygonModePTR.loadDirectly(libGL, "glPolygonMode");
+      glScissor := GLScissorPTR.loadDirectly(libGL, "glScissor");
+      glTexParameterf := GLTexParameterfPTR.loadDirectly(libGL, "glTexParameterf");
+      glTexParameterfv := GLTexParameterfvPTR.loadDirectly(libGL, "glTexParameterfv");
+      glTexParameteri := GLTexParameteriPTR.loadDirectly(libGL, "glTexParameteri");
+      glTexParameteriv := GLTexParameterivPTR.loadDirectly(libGL, "glTexParameteriv");
+      glTexImage1D := GLTexImage1DPTR.loadDirectly(libGL, "glTexImage1D");
+      glTexImage2D := GLTexImage2DPTR.loadDirectly(libGL, "glTexImage2D");
+      glDrawBuffer := GLDrawBufferPTR.loadDirectly(libGL, "glDrawBuffer");
+      glClear := GLClearPTR.loadDirectly(libGL, "glClear");
+      glClearColor := GLClearColorPTR.loadDirectly(libGL, "glClearColor");
+      glClearStencil := GLClearStencilPTR.loadDirectly(libGL, "glClearStencil");
+      glClearDepth := GLClearDepthPTR.loadDirectly(libGL, "glClearDepth");
+      glStencilMask := GLStencilMaskPTR.loadDirectly(libGL, "glStencilMask");
+      glColorMask := GLColorMaskPTR.loadDirectly(libGL, "glColorMask");
+      glDepthMask := GLDepthMaskPTR.loadDirectly(libGL, "glDepthMask");
+      glDisable := GLDisablePTR.loadDirectly(libGL, "glDisable");
+      glEnable := GLEnablePTR.loadDirectly(libGL, "glEnable");
+      glFinish := GLFinishPTR.loadDirectly(libGL, "glFinish");
+      glFlush := GLFlushPTR.loadDirectly(libGL, "glFlush");
+      glBlendFunc := GLBlendFuncPTR.loadDirectly(libGL, "glBlendFunc");
+      glLogicOp := GLLogicOpPTR.loadDirectly(libGL, "glLogicOp");
+      glStencilFunc := GLStencilFuncPTR.loadDirectly(libGL, "glStencilFunc");
+      glStencilOp := GLStencilOpPTR.loadDirectly(libGL, "glStencilOp");
+      glDepthFunc := GLDepthFuncPTR.loadDirectly(libGL, "glDepthFunc");
+      glPixelStoref := GLPixelStorefPTR.loadDirectly(libGL, "glPixelStoref");
+      glPixelStorei := GLPixelStoreiPTR.loadDirectly(libGL, "glPixelStorei");
+      glReadBuffer := GLReadBufferPTR.loadDirectly(libGL, "glReadBuffer");
+      glReadPixels := GLReadPixelsPTR.loadDirectly(libGL, "glReadPixels");
+      glGetBooleanv := GLGetBooleanvPTR.loadDirectly(libGL, "glGetBooleanv");
+      glGetDoublev := GLGetDoublevPTR.loadDirectly(libGL, "glGetDoublev");
+      glGetError := GLGetErrorPTR.loadDirectly(libGL, "glGetError"); 
+      glGetFloatv := GLGetFloatvPTR.loadDirectly(libGL, "glGetFloatv");
+      glGetIntegerv := GLGetIntegervPTR.loadDirectly(libGL, "glGetIntegerv");
+//   glGetString := GLGetStringPTR.loadDirectly(libGL, "glGetString");
+      glGetTexImage := GLGetTexImagePTR.loadDirectly(libGL, "glGetTexImage");
+      glGetTexParameterfv := GLGetTexParameterfvPTR.loadDirectly(libGL, "glGetTexParameterfv");
+      glGetTexParameteriv := GLGetTexParameterivPTR.loadDirectly(libGL, "glGetTexParameteriv");
+      glGetTexLevelParameterfv := GLGetTexLevelParameterfvPTR.loadDirectly(libGL, "glGetTexLevelParameterfv");
+      glGetTexLevelParameteriv := GLGetTexLevelParameterivPTR.loadDirectly(libGL, "glGetTexLevelParameteriv");
+      glIsEnabled := GLIsEnabledPTR.loadDirectly(libGL, "glIsEnabled");
+      glDepthRange := GLDepthRangePTR.loadDirectly(libGL, "glDepthRange");
+      glViewport := GLViewportPTR.loadDirectly(libGL, "glViewport");
+      glNewList := GLNewListPTR.loadDirectly(libGL, "glNewList");
+      glEndList := GLEndListPTR.loadDirectly(libGL, "glEndList");
+      glCallList := GLCallListPTR.loadDirectly(libGL, "glCallList");
+      glCallLists := GLCallListsPTR.loadDirectly(libGL, "glCallLists");
+      glDeleteLists := GLDeleteListsPTR.loadDirectly(libGL, "glDeleteLists");
+      glGenLists := GLGenListsPTR.loadDirectly(libGL, "glGenLists");
+      glListBase := GLListBasePTR.loadDirectly(libGL, "glListBase");
+      glBegin := GLBeginPTR.loadDirectly(libGL, "glBegin");
+      glBitmap := GLBitmapPTR.loadDirectly(libGL, "glBitmap");
+      glColor3b := GLColor3bPTR.loadDirectly(libGL, "glColor3b");
+      glColor3bv := GLColor3bvPTR.loadDirectly(libGL, "glColor3bv");
+      glColor3d := GLColor3dPTR.loadDirectly(libGL, "glColor3d");
+      glColor3dv := GLColor3dvPTR.loadDirectly(libGL, "glColor3dv");
+      glColor3f := GLColor3fPTR.loadDirectly(libGL, "glColor3f");
+      glColor3fv := GLColor3fvPTR.loadDirectly(libGL, "glColor3fv");
+      glColor3i := GLColor3iPTR.loadDirectly(libGL, "glColor3i");
+      glColor3iv := GLColor3ivPTR.loadDirectly(libGL, "glColor3iv");
+      glColor3s := GLColor3sPTR.loadDirectly(libGL, "glColor3s"); 
+      glColor3sv := GLColor3svPTR.loadDirectly(libGL, "glColor3sv");
+      glColor3ub := GLColor3ubPTR.loadDirectly(libGL, "glColor3ub");
+      glColor3ubv := GLColor3ubvPTR.loadDirectly(libGL, "glColor3ubv");
+      glColor3ui := GLColor3uiPTR.loadDirectly(libGL, "glColor3ui");
+      glColor3uiv := GLColor3uivPTR.loadDirectly(libGL, "glColor3uiv");
+      glColor3us := GLColor3usPTR.loadDirectly(libGL, "glColor3us");
+      glColor3usv := GLColor3usvPTR.loadDirectly(libGL, "glColor3usv");   
+      glColor4b := GLColor4bPTR.loadDirectly(libGL, "glColor4b");
+      glColor4bv := GLColor4bvPTR.loadDirectly(libGL, "glColor4bv");
+      glColor4d := GLColor4dPTR.loadDirectly(libGL, "glColor4d");
+      glColor4dv := GLColor4dvPTR.loadDirectly(libGL, "glColor4dv");
+      glColor4f := GLColor4fPTR.loadDirectly(libGL, "glColor4f");
+      glColor4fv := GLColor4fvPTR.loadDirectly(libGL, "glColor4fv");
+      glColor4i := GLColor4iPTR.loadDirectly(libGL, "glColor4i");
+      glColor4iv := GLColor4ivPTR.loadDirectly(libGL, "glColor4iv");
+      glColor4s := GLColor4sPTR.loadDirectly(libGL, "glColor4s");
+      glColor4sv := GLColor4svPTR.loadDirectly(libGL, "glColor4sv");
+      glColor4ub := GLColor4ubPTR.loadDirectly(libGL, "glColor4ub");
+      glColor4ubv := GLColor4ubvPTR.loadDirectly(libGL, "glColor4ubv");
+      glColor4ui := GLColor4uiPTR.loadDirectly(libGL, "glColor4ui");
+      glColor4uiv := GLColor4uivPTR.loadDirectly(libGL, "glColor4uiv");
+      glColor4us := GLColor4usPTR.loadDirectly(libGL, "glColor4us");
+      glColor4usv := GLColor4usvPTR.loadDirectly(libGL, "glColor4usv");
+      glEdgeFlag := GLEdgeFlagPTR.loadDirectly(libGL, "glEdgeFlag");
+      glEdgeFlagv := GLEdgeFlagvPTR.loadDirectly(libGL, "glEdgeFlagv");
+      glEnd := GLEndPTR.loadDirectly(libGL, "glEnd");
+      glIndexd := GLIndexdPTR.loadDirectly(libGL, "glIndexd");
+      glIndexdv := GLIndexdvPTR.loadDirectly(libGL, "glIndexdv");
+      glIndexf := GLIndexfPTR.loadDirectly(libGL, "glIndexf");
+      glIndexfv := GLIndexfvPTR.loadDirectly(libGL, "glIndexfv");
+      glIndexi := GLIndexiPTR.loadDirectly(libGL, "glIndexi");
+      glIndexiv := GLIndexivPTR.loadDirectly(libGL, "glIndexiv");
+      glIndexs := GLIndexsPTR.loadDirectly(libGL, "glIndexs");
+      glIndexsv := GLIndexsvPTR.loadDirectly(libGL, "glIndexsv");
+      glNormal3b := GLNormal3bPTR.loadDirectly(libGL, "glNormal3b");
+      glNormal3bv := GLNormal3bvPTR.loadDirectly(libGL, "glNormal3bv");
+      glNormal3d := GLNormal3dPTR.loadDirectly(libGL, "glNormal3d");
+      glNormal3dv := GLNormal3dvPTR.loadDirectly(libGL, "glNormal3dv");
+      glNormal3f := GLNormal3fPTR.loadDirectly(libGL, "glNormal3f");
+      glNormal3fv := GLNormal3fvPTR.loadDirectly(libGL, "glNormal3fv");
+      glNormal3i := GLNormal3iPTR.loadDirectly(libGL, "glNormal3i");
+      glNormal3iv := GLNormal3ivPTR.loadDirectly(libGL, "glNormal3iv");
+      glNormal3s := GLNormal3sPTR.loadDirectly(libGL, "glNormal3s");
+      glNormal3sv := GLNormal3svPTR.loadDirectly(libGL, "glNormal3sv");
+      glRasterPos2d := GLRasterPos2dPTR.loadDirectly(libGL, "glRasterPos2d");
+      glRasterPos2dv := GLRasterPos2dvPTR.loadDirectly(libGL, "glRasterPos2dv");
+      glRasterPos2f := GLRasterPos2fPTR.loadDirectly(libGL, "glRasterPos2f");
+      glRasterPos2fv := GLRasterPos2fvPTR.loadDirectly(libGL, "glRasterPos2fv");
+      glRasterPos2i := GLRasterPos2iPTR.loadDirectly(libGL, "glRasterPos2i");
+      glRasterPos2iv := GLRasterPos2ivPTR.loadDirectly(libGL, "glRasterPos2iv");
+      glRasterPos2s := GLRasterPos2sPTR.loadDirectly(libGL, "glRasterPos2s");
+      glRasterPos2sv := GLRasterPos2svPTR.loadDirectly(libGL, "glRasterPos2sv"); 
+      glRasterPos3d := GLRasterPos3dPTR.loadDirectly(libGL, "glRasterPos3d");
+      glRasterPos3dv := GLRasterPos3dvPTR.loadDirectly(libGL, "glRasterPos3dv");
+      glRasterPos3f := GLRasterPos3fPTR.loadDirectly(libGL, "glRasterPos3f");
+      glRasterPos3fv := GLRasterPos3fvPTR.loadDirectly(libGL, "glRasterPos3fv");
+      glRasterPos3i := GLRasterPos3iPTR.loadDirectly(libGL, "glRasterPos3i");
+      glRasterPos3iv := GLRasterPos3ivPTR.loadDirectly(libGL, "glRasterPos3iv");
+      glRasterPos3s := GLRasterPos3sPTR.loadDirectly(libGL, "glRasterPos3s");
+      glRasterPos3sv := GLRasterPos3svPTR.loadDirectly(libGL, "glRasterPos3sv");
+      glRasterPos4d := GLRasterPos4dPTR.loadDirectly(libGL, "glRasterPos4d");
+      glRasterPos4dv := GLRasterPos4dvPTR.loadDirectly(libGL, "glRasterPos4dv");
+      glRasterPos4f := GLRasterPos4fPTR.loadDirectly(libGL, "glRasterPos4f");
+      glRasterPos4fv := GLRasterPos4fvPTR.loadDirectly(libGL, "glRasterPos4fv");
+      glRasterPos4i := GLRasterPos4iPTR.loadDirectly(libGL, "glRasterPos4i");
+      glRasterPos4iv := GLRasterPos4ivPTR.loadDirectly(libGL, "glRasterPos4iv");
+      glRasterPos4s := GLRasterPos4sPTR.loadDirectly(libGL, "glRasterPos4s");
+      glRasterPos4sv := GLRasterPos4svPTR.loadDirectly(libGL, "glRasterPos4sv"); 
+      glRectd := GLRectdPTR.loadDirectly(libGL, "glRectd");
+      glRectdv := GLRectdvPTR.loadDirectly(libGL, "glRectdv");
+      glRectf := GLRectfPTR.loadDirectly(libGL, "glRectf");
+      glRectfv := GLRectfvPTR.loadDirectly(libGL, "glRectfv");
+      glRecti := GLRectiPTR.loadDirectly(libGL, "glRecti");
+      glRectiv := GLRectivPTR.loadDirectly(libGL, "glRectiv");
+      glRects := GLRectsPTR.loadDirectly(libGL, "glRects");
+      glRectsv := GLRectsvPTR.loadDirectly(libGL, "glRectsv"); 
+      glTexCoord1d := GLTexCoord1dPTR.loadDirectly(libGL, "glTexCoord1d");
+      glTexCoord1dv := GLTexCoord1dvPTR.loadDirectly(libGL, "glTexCoord1dv");
+      glTexCoord1f := GLTexCoord1fPTR.loadDirectly(libGL, "glTexCoord1f");
+      glTexCoord1fv := GLTexCoord1fvPTR.loadDirectly(libGL, "glTexCoord1fv");
+      glTexCoord1i := GLTexCoord1iPTR.loadDirectly(libGL, "glTexCoord1i");
+      glTexCoord1iv := GLTexCoord1ivPTR.loadDirectly(libGL, "glTexCoord1iv");
+      glTexCoord1s := GLTexCoord1sPTR.loadDirectly(libGL, "glTexCoord1s");
+      glTexCoord1sv := GLTexCoord1svPTR.loadDirectly(libGL, "glTexCoord1sv");
+      glTexCoord2d := GLTexCoord2dPTR.loadDirectly(libGL, "glTexCoord2d");
+      glTexCoord2dv := GLTexCoord2dvPTR.loadDirectly(libGL, "glTexCoord2dv");
+      glTexCoord2f := GLTexCoord2fPTR.loadDirectly(libGL, "glTexCoord2f");
+      glTexCoord2fv := GLTexCoord2fvPTR.loadDirectly(libGL, "glTexCoord2fv");
+      glTexCoord2i := GLTexCoord2iPTR.loadDirectly(libGL, "glTexCoord2i");
+      glTexCoord2iv := GLTexCoord2ivPTR.loadDirectly(libGL, "glTexCoord2iv");
+      glTexCoord2s := GLTexCoord2sPTR.loadDirectly(libGL, "glTexCoord2s");
+      glTexCoord2sv := GLTexCoord2svPTR.loadDirectly(libGL, "glTexCoord2sv"); 
+      glTexCoord3d := GLTexCoord3dPTR.loadDirectly(libGL, "glTexCoord3d");
+      glTexCoord3dv := GLTexCoord3dvPTR.loadDirectly(libGL, "glTexCoord3dv");
+      glTexCoord3f := GLTexCoord3fPTR.loadDirectly(libGL, "glTexCoord3f");
+      glTexCoord3fv := GLTexCoord3fvPTR.loadDirectly(libGL, "glTexCoord3fv");
+      glTexCoord3i := GLTexCoord3iPTR.loadDirectly(libGL, "glTexCoord3i");
+      glTexCoord3iv := GLTexCoord3ivPTR.loadDirectly(libGL, "glTexCoord3iv");
+      glTexCoord3s := GLTexCoord3sPTR.loadDirectly(libGL, "glTexCoord3s");
+      glTexCoord3sv := GLTexCoord3svPTR.loadDirectly(libGL, "glTexCoord3sv"); 
+      glTexCoord4d := GLTexCoord4dPTR.loadDirectly(libGL, "glTexCoord4d");
+      glTexCoord4dv := GLTexCoord4dvPTR.loadDirectly(libGL, "glTexCoord4dv");
+      glTexCoord4f := GLTexCoord4fPTR.loadDirectly(libGL, "glTexCoord4f");
+      glTexCoord4fv := GLTexCoord4fvPTR.loadDirectly(libGL, "glTexCoord4fv");
+      glTexCoord4i := GLTexCoord4iPTR.loadDirectly(libGL, "glTexCoord4i");
+      glTexCoord4iv := GLTexCoord4ivPTR.loadDirectly(libGL, "glTexCoord4iv");
+      glTexCoord4s := GLTexCoord4sPTR.loadDirectly(libGL, "glTexCoord4s");
+      glTexCoord4sv := GLTexCoord4svPTR.loadDirectly(libGL, "glTexCoord4sv");
+      glVertex2d := GLVertex2dPTR.loadDirectly(libGL, "glVertex2d");
+      glVertex2dv := GLVertex2dvPTR.loadDirectly(libGL, "glVertex2dv");
+      glVertex2f := GLVertex2fPTR.loadDirectly(libGL, "glVertex2f");
+      glVertex2fv := GLVertex2fvPTR.loadDirectly(libGL, "glVertex2fv");
+      glVertex2i := GLVertex2iPTR.loadDirectly(libGL, "glVertex2i");
+      glVertex2iv := GLVertex2ivPTR.loadDirectly(libGL, "glVertex2iv");
+      glVertex2s := GLVertex2sPTR.loadDirectly(libGL, "glVertex2s");
+      glVertex2sv := GLVertex2svPTR.loadDirectly(libGL, "glVertex2sv");
+      glVertex3d := GLVertex3dPTR.loadDirectly(libGL, "glVertex3d");
+      glVertex3dv := GLVertex3dvPTR.loadDirectly(libGL, "glVertex3dv");
+      glVertex3f := GLVertex3fPTR.loadDirectly(libGL, "glVertex3f");
+      glVertex3fv := GLVertex3fvPTR.loadDirectly(libGL, "glVertex3fv");
+      glVertex3i := GLVertex3iPTR.loadDirectly(libGL, "glVertex3i");
+      glVertex3iv := GLVertex3ivPTR.loadDirectly(libGL, "glVertex3iv");
+      glVertex3s := GLVertex3sPTR.loadDirectly(libGL, "glVertex3s");
+      glVertex3sv := GLVertex3svPTR.loadDirectly(libGL, "glVertex3sv");
+      glVertex4d := GLVertex4dPTR.loadDirectly(libGL, "glVertex4d");
+      glVertex4dv := GLVertex4dvPTR.loadDirectly(libGL, "glVertex4dv");
+      glVertex4f := GLVertex4fPTR.loadDirectly(libGL, "glVertex4f");
+      glVertex4fv := GLVertex4fvPTR.loadDirectly(libGL, "glVertex4fv");
+      glVertex4i := GLVertex4iPTR.loadDirectly(libGL, "glVertex4i");
+      glVertex4iv := GLVertex4ivPTR.loadDirectly(libGL, "glVertex4iv");
+      glVertex4s := GLVertex4sPTR.loadDirectly(libGL, "glVertex4s");
+      glVertex4sv := GLVertex4svPTR.loadDirectly(libGL, "glVertex4sv");
+      glClipPlane := GLClipPlanePTR.loadDirectly(libGL, "glClipPlane");
+      glColorMaterial := GLColorMaterialPTR.loadDirectly(libGL, "glColorMaterial");   
+      glFogf := GLFogfPTR.loadDirectly(libGL, "glFogf");
+      glFogfv := GLFogfvPTR.loadDirectly(libGL, "glFogfv");
+      glFogi := GLFogiPTR.loadDirectly(libGL, "glFogi");
+      glFogiv := GLFogivPTR.loadDirectly(libGL, "glFogiv"); 
+      glLightf := GLLightfPTR.loadDirectly(libGL, "glLightf");
+      glLightfv := GLLightfvPTR.loadDirectly(libGL, "glLightfv");
+      glLighti := GLLightiPTR.loadDirectly(libGL, "glLighti");
+      glLightiv := GLLightivPTR.loadDirectly(libGL, "glLightiv");
+      glLightModelf := GLLightModelfPTR.loadDirectly(libGL, "glLightModelf");
+      glLightModelfv := GLLightModelfvPTR.loadDirectly(libGL, "glLightModelfv");
+      glLightModeli := GLLightModeliPTR.loadDirectly(libGL, "glLightModeli");
+      glLightModeliv := GLLightModelivPTR.loadDirectly(libGL, "glLightModeliv"); 
+      glLineStipple := GLLineStipplePTR.loadDirectly(libGL, "glLineStipple"); 
+      glMaterialf := GLMaterialfPTR.loadDirectly(libGL, "glMaterialf");
+      glMaterialfv := GLMaterialfvPTR.loadDirectly(libGL, "glMaterialfv");
+      glMateriali := GLMaterialiPTR.loadDirectly(libGL, "glMateriali");
+      glMaterialiv := GLMaterialivPTR.loadDirectly(libGL, "glMaterialiv");
+      glPolygonStipple := GLPolygonStipplePTR.loadDirectly(libGL, "glPolygonStipple");
+      glShadeModel := GLShadeModelPTR.loadDirectly(libGL, "glShadeModel");
+      glTexEnvf := GLTexEnvfPTR.loadDirectly(libGL, "glTexEnvf");
+      glTexEnvfv := GLTexEnvfvPTR.loadDirectly(libGL, "glTexEnvfv");
+      glTexEnvi := GLTexEnviPTR.loadDirectly(libGL, "glTexEnvi");
+      glTexEnviv := GLTexEnvivPTR.loadDirectly(libGL, "glTexEnviv"); 
+      glTexGend := GLTexGendPTR.loadDirectly(libGL, "glTexGend");
+      glTexGendv := GLTexGendvPTR.loadDirectly(libGL, "glTexGendv");
+      glTexGenf := GLTexGenfPTR.loadDirectly(libGL, "glTexGenf");
+      glTexGenfv := GLTexGenfvPTR.loadDirectly(libGL, "glTexGenfv");
+      glTexGeni := GLTexGeniPTR.loadDirectly(libGL, "glTexGeni");
+      glTexGeniv := GLTexGenivPTR.loadDirectly(libGL, "glTexGeniv");
+      glFeedbackBuffer := GLFeedbackBufferPTR.loadDirectly(libGL, "glFeedbackBuffer");
+      glSelectBuffer := GLSelectBufferPTR.loadDirectly(libGL, "glSelectBuffer");
+      glRenderMode := GLRenderModePTR.loadDirectly(libGL, "glRenderMode");
+      glInitNames := GLInitNamesPTR.loadDirectly(libGL, "glInitNames");
+      glLoadName := GLLoadNamePTR.loadDirectly(libGL, "glLoadName");
+      glPassThrough := GLPassThroughPTR.loadDirectly(libGL, "glPassThrough");
+      glPopName := GLPopNamePTR.loadDirectly(libGL, "glPopName");
+      glPushName := GLPushNamePTR.loadDirectly(libGL, "glPushName"); 
+      glClearAccum := GLClearAccumPTR.loadDirectly(libGL, "glClearAccum");
+      glClearIndex := GLClearIndexPTR.loadDirectly(libGL, "glClearIndex");
+      glIndexMask := GLIndexMaskPTR.loadDirectly(libGL, "glIndexMask");
+      glAccum := GLAccumPTR.loadDirectly(libGL, "glAccum");
+      glPopAttrib := GLPopAttribPTR.loadDirectly(libGL, "glPopAttrib");
+      glPushAttrib := GLPushAttribPTR.loadDirectly(libGL, "glPushAttrib");
+      glMap1d := GLMap1dPTR.loadDirectly(libGL, "glMap1d");
+      glMap1f := GLMap1fPTR.loadDirectly(libGL, "glMap1f");
+      glMap2d := GLMap2dPTR.loadDirectly(libGL, "glMap2d");
+      glMap2f := GLMap2fPTR.loadDirectly(libGL, "glMap2f");
+      glMapGrid1d := GLMapGrid1dPTR.loadDirectly(libGL, "glMapGrid1d");
+      glMapGrid1f := GLMapGrid1fPTR.loadDirectly(libGL, "glMapGrid1f");
+      glMapGrid2d := GLMapGrid2dPTR.loadDirectly(libGL, "glMapGrid2d");
+      glMapGrid2f := GLMapGrid2fPTR.loadDirectly(libGL, "glMapGrid2f"); 
+      glEvalCoord1d := GLEvalCoord1dPTR.loadDirectly(libGL, "glEvalCoord1d");
+      glEvalCoord1dv := GLEvalCoord1dvPTR.loadDirectly(libGL, "glEvalCoord1dv");
+      glEvalCoord1f := GLEvalCoord1fPTR.loadDirectly(libGL, "glEvalCoord1f");
+      glEvalCoord1fv := GLEvalCoord1fvPTR.loadDirectly(libGL, "glEvalCoord1fv");
+      glEvalCoord2d := GLEvalCoord2dPTR.loadDirectly(libGL, "glEvalCoord2d");
+      glEvalCoord2dv := GLEvalCoord2dvPTR.loadDirectly(libGL, "glEvalCoord2dv");
+      glEvalCoord2f := GLEvalCoord2fPTR.loadDirectly(libGL, "glEvalCoord2f");
+      glEvalCoord2fv := GLEvalCoord2fvPTR.loadDirectly(libGL, "glEvalCoord2fv");
+      glEvalMesh1 := GLEvalMesh1PTR.loadDirectly(libGL, "glEvalMesh1");
+      glEvalPoint1 := GLEvalPoint1PTR.loadDirectly(libGL, "glEvalPoint1");
+      glEvalMesh2 := GLEvalMesh2PTR.loadDirectly(libGL, "glEvalMesh2");
+      glEvalPoint2 := GLEvalPoint2PTR.loadDirectly(libGL, "glEvalPoint2");
+      glAlphaFunc := GLAlphaFuncPTR.loadDirectly(libGL, "glAlphaFunc");
+      glPixelZoom := GLPixelZoomPTR.loadDirectly(libGL, "glPixelZoom"); 
+      glPixelTransferf := GLPixelTransferfPTR.loadDirectly(libGL, "glPixelTransferf");
+      glPixelTransferi := GLPixelTransferiPTR.loadDirectly(libGL, "glPixelTransferi");
+      glPixelMapfv := GLPixelMapfvPTR.loadDirectly(libGL, "glPixelMapfv");
+      glPixelMapuiv := GLPixelMapuivPTR.loadDirectly(libGL, "glPixelMapuiv");
+      glPixelMapusv := GLPixelMapusvPTR.loadDirectly(libGL, "glPixelMapusv");
+      glCopyPixels := GLCopyPixelsPTR.loadDirectly(libGL, "glCopyPixels");
+      glDrawPixels := GLDrawPixelsPTR.loadDirectly(libGL, "glDrawPixels");
+      glGetClipPlane := GLGetClipPlanePTR.loadDirectly(libGL, "glGetClipPlane"); 
+      glGetLightfv := GLGetLightfvPTR.loadDirectly(libGL, "glGetLightfv");
+      glGetLightiv := GLGetLightivPTR.loadDirectly(libGL, "glGetLightiv");
+      glGetMapdv := GLGetMapdvPTR.loadDirectly(libGL, "glGetMapdv");
+      glGetMapfv := GLGetMapfvPTR.loadDirectly(libGL, "glGetMapfv");
+      glGetMapiv := GLGetMapivPTR.loadDirectly(libGL, "glGetMapiv");
+      glGetMaterialfv := GLGetMaterialfvPTR.loadDirectly(libGL, "glGetMaterialfv");
+      glGetMaterialiv := GLGetMaterialivPTR.loadDirectly(libGL, "glGetMaterialiv");
+      glGetPixelMapfv := GLGetPixelMapfvPTR.loadDirectly(libGL, "glGetPixelMapfv");
+      glGetPixelMapuiv := GLGetPixelMapuivPTR.loadDirectly(libGL, "glGetPixelMapuiv");
+      glGetPixelMapusv := GLGetPixelMapusvPTR.loadDirectly(libGL, "glGetPixelMapusv");
+      glGetPolygonStipple := GLGetPolygonStipplePTR.loadDirectly(libGL, "glGetPolygonStipple");
+      glGetTexEnvfv := GLGetTexEnvfvPTR.loadDirectly(libGL, "glGetTexEnvfv");
+      glGetTexEnviv := GLGetTexEnvivPTR.loadDirectly(libGL, "glGetTexEnviv");
+      glGetTexGendv := GLGetTexGendvPTR.loadDirectly(libGL, "glGetTexGendv");
+      glGetTexGenfv := GLGetTexGenfvPTR.loadDirectly(libGL, "glGetTexGenfv");
+      glGetTexGeniv := GLGetTexGenivPTR.loadDirectly(libGL, "glGetTexGeniv");
+      glIsList := GLIsListPTR.loadDirectly(libGL, "glIsList");
+      glFrustum := GLFrustumPTR.loadDirectly(libGL, "glFrustum");
+      glLoadIdentity := GLLoadIdentityPTR.loadDirectly(libGL, "glLoadIdentity");
+      glLoadMatrixf := GLLoadMatrixfPTR.loadDirectly(libGL, "glLoadMatrixf");
+      glLoadMatrixd := GLLoadMatrixdPTR.loadDirectly(libGL, "glLoadMatrixd");
+      glMatrixMode := GLMatrixModePTR.loadDirectly(libGL, "glMatrixMode");
+      glMultMatrixf := GLMultMatrixfPTR.loadDirectly(libGL, "glMultMatrixf");
+      glMultMatrixd := GLMultMatrixdPTR.loadDirectly(libGL, "glMultMatrixd");
+      glOrtho := GLOrthoPTR.loadDirectly(libGL, "glOrtho");
       glPopMatrix := GLPopMatrixPTR.loadDirectly(libGL, "glPopMatrix");
       glPushMatrix := GLPushMatrixPTR.loadDirectly(libGL, "glPushMatrix");
       glRotated := GLRotatedPTR.loadDirectly(libGL, "glRotated");
@@ -2557,9 +2627,9 @@ public struct GLAD_Wrapper
       glTranslatef := GLTranslatefPTR.loadDirectly(libGL, "glTranslatef");
    }
 
-   private load_GL_VERSION_1_1()
+   private load_GL_VERSION_1_1(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_1_1 == 0) {
+      if (config.GLAD_GL_VERSION_1_1 == 0) {
          ^ self
       };
       
@@ -2595,9 +2665,9 @@ public struct GLAD_Wrapper
       glPushClientAttrib := GLPushClientAttribPTR.loadDirectly(libGL, "glPushClientAttrib");
    }
 
-   private load_GL_VERSION_1_2()
+   private load_GL_VERSION_1_2(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_1_2 == 0) {
+      if (config.GLAD_GL_VERSION_1_2 == 0) {
          ^ self
       };
       
@@ -2607,9 +2677,9 @@ public struct GLAD_Wrapper
       glCopyTexSubImage3D := GLCopyTexSubImage3DPTR.loadDirectly(libGL, "glCopyTexSubImage3D");
    }
       
-   private load_GL_VERSION_1_3()
+   private load_GL_VERSION_1_3(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_1_3 == 0) {
+      if (config.GLAD_GL_VERSION_1_3 == 0) {
          ^ self
       };
       
@@ -2661,9 +2731,9 @@ public struct GLAD_Wrapper
       glMultTransposeMatrixd := GLMultTransposeMatrixdPTR.loadDirectly(libGL, "glMultTransposeMatrixd");
    }      
 
-   private load_GL_VERSION_1_4()
+   private load_GL_VERSION_1_4(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_1_4 == 0) {
+      if (config.GLAD_GL_VERSION_1_4 == 0) {
          ^ self
       };
 
@@ -2716,9 +2786,9 @@ public struct GLAD_Wrapper
       glBlendEquation := GLBlendEquationPTR.loadDirectly(libGL, "glBlendEquation");
    }            
 
-   private load_GL_VERSION_1_5()
+   private load_GL_VERSION_1_5(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_1_5 == 0) {
+      if (config.GLAD_GL_VERSION_1_5 == 0) {
          ^ self
       };
       
@@ -2743,9 +2813,9 @@ public struct GLAD_Wrapper
       glGetBufferPointerv := GLGetBufferPointervPTR.loadDirectly(libGL, "glGetBufferPointerv");
    }
 
-   private load_GL_VERSION_2_0()
+   private load_GL_VERSION_2_0(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_2_0 == 0) {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
          ^ self
       };
 
@@ -2844,9 +2914,9 @@ public struct GLAD_Wrapper
       glVertexAttribPointer := GLVertexAttribPointerPTR.loadDirectly(libGL, "glVertexAttribPointer");
    }
 
-   private load_GL_VERSION_2_1()
+   private load_GL_VERSION_2_1(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_2_1 == 0) {
+      if (config.GLAD_GL_VERSION_2_1 == 0) {
          ^ self
       };
       
@@ -2858,9 +2928,9 @@ public struct GLAD_Wrapper
       glUniformMatrix4x3fv := GLUniformMatrix4x3fvPTR.loadDirectly(libGL, "glUniformMatrix4x3fv");
    }
 
-   private load_GL_VERSION_3_0()
+   private load_GL_VERSION_3_0(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_3_0 == 0) {
+      if (config.GLAD_GL_VERSION_3_0 == 0) {
          ^ self
       };
       
@@ -2950,9 +3020,9 @@ public struct GLAD_Wrapper
       glIsVertexArray := GLIsVertexArrayPTR.loadDirectly(libGL, "glIsVertexArray");
    }
 
-   private load_GL_VERSION_3_1()
+   private load_GL_VERSION_3_1(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_3_1 == 0) {
+      if (config.GLAD_GL_VERSION_3_1 == 0) {
          ^ self
       };
       
@@ -2973,9 +3043,9 @@ public struct GLAD_Wrapper
       glGetIntegeri_v := GLGetIntegeri_vPTR.loadDirectly(libGL, "glGetIntegeri_v");*/      
    }
 
-   private load_GL_VERSION_3_2()
+   private load_GL_VERSION_3_2(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_3_2 == 0) {
+      if (config.GLAD_GL_VERSION_3_2 == 0) {
          ^ self
       };
       glDrawElementsBaseVertex := GLDrawElementsBaseVertexPTR.loadDirectly(libGL, "glDrawElementsBaseVertex");
@@ -2999,9 +3069,9 @@ public struct GLAD_Wrapper
       glSampleMaski := GLSampleMaskiPTR.loadDirectly(libGL, "glSampleMaski");
    }
 
-   private load_GL_VERSION_3_3()
+   private load_GL_VERSION_3_3(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_3_3 == 0) {
+      if (config.GLAD_GL_VERSION_3_3 == 0) {
          ^ self
       };
       
@@ -3065,9 +3135,9 @@ public struct GLAD_Wrapper
       glSecondaryColorP3uiv := GLSecondaryColorP3uivPTR.loadDirectly(libGL, "glSecondaryColorP3uiv");
    }
 
-   private load_GL_VERSION_4_0()
+   private load_GL_VERSION_4_0(GLAD_Config config)
    {
-      if (GLAD_GL_VERSION_4_0 == 0) {
+      if (config.GLAD_GL_VERSION_4_0 == 0) {
          ^ self
       };
       glMinSampleShading := GLMinSampleShadingPTR.loadDirectly(libGL, "glMinSampleShading");
@@ -3118,18 +3188,18 @@ public struct GLAD_Wrapper
       glGetQueryIndexediv := GLGetQueryIndexedivPTR.loadDirectly(libGL, "glGetQueryIndexediv");
    }
 
-   private load_GL_AMD_multi_draw_indirect()
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
    {
-      if (GLAD_GL_AMD_multi_draw_indirect == 0) {
+      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
          ^ self
       };
       glMultiDrawArraysIndirectAMD := GLMultiDrawArraysIndirectAMDPTR.load(get_proc, "glMultiDrawArraysIndirectAMD");
       glMultiDrawElementsIndirectAMD := GLMultiDrawElementsIndirectAMDPTR.load(get_proc, "glMultiDrawElementsIndirectAMD");
    }   
 
-   private load_GL_ARB_ES2_compatibility()
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_ES2_compatibility == 0) {
+      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
          ^ self
       };
       glReleaseShaderCompiler := GLReleaseShaderCompilerPTR.load(get_proc, "glReleaseShaderCompiler");
@@ -3139,25 +3209,25 @@ public struct GLAD_Wrapper
       glClearDepthf := GLClearDepthfPTR.load(get_proc, "glClearDepthf");
    }   
 
-   private load_GL_ARB_ES3_1_compatibility()
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_ES3_1_compatibility == 0) {
+      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
          ^ self
       };
       glMemoryBarrierByRegion := GLMemoryBarrierByRegionPTR.load(get_proc, "glMemoryBarrierByRegion");
    }
    
-   private load_GL_ARB_ES3_2_compatibility()
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_ES3_2_compatibility == 0) {
+      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
          ^ self
       };
       glPrimitiveBoundingBoxARB := GLPrimitiveBoundingBoxARBPTR.load(get_proc, "glPrimitiveBoundingBoxARB");
    }
 
-   private load_GL_ARB_base_instance()
+   private load_GL_ARB_base_instance(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_base_instance == 0) {
+      if (config.GLAD_GL_ARB_base_instance == 0) {
          ^ self
       };
       glDrawArraysInstancedBaseInstance := GLDrawArraysInstancedBaseInstancePTR.load(get_proc, "glDrawArraysInstancedBaseInstance");
@@ -3165,7 +3235,7 @@ public struct GLAD_Wrapper
       glDrawElementsInstancedBaseVertexBaseInstance := GLDrawElementsInstancedBaseVertexBaseInstancePTR.load(get_proc, "glDrawElementsInstancedBaseVertexBaseInstance");
    }
    
-   private load_GL_ARB_blend_func_extended()
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
    {
 //      if (GLAD_GL_ARB_blend_func_extended == 0) {
 //         ^ self
@@ -3174,66 +3244,66 @@ public struct GLAD_Wrapper
 //      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
    }
    
-   private load_GL_ARB_buffer_storage()
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_blend_func_extended == 0) {
+      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
          ^ self
       };
       glBufferStorage := GLBufferStoragePTR.load(get_proc, "glBufferStorage");
    }   
 
-   private load_GL_ARB_clear_buffer_object()
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_clear_buffer_object == 0) {
+      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
          ^ self
       };
       glClearBufferData := GLClearBufferDataPTR.load(get_proc, "glClearBufferData");
       glClearBufferSubData := GLClearBufferSubDataPTR.load(get_proc, "glClearBufferSubData");      
    }
    
-   private load_GL_ARB_clear_texture()
+   private load_GL_ARB_clear_texture(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_clear_texture == 0) {
+      if (config.GLAD_GL_ARB_clear_texture == 0) {
          ^ self
       };
       glClearTexImage := GLClearTexImagePTR.load(get_proc, "glClearTexImage");
       glClearTexSubImage := GLClearTexSubImagePTR.load(get_proc, "glClearTexSubImage");      
    }
    
-   private load_GL_ARB_clip_control()
+   private load_GL_ARB_clip_control(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_clip_control == 0) {
+      if (config.GLAD_GL_ARB_clip_control == 0) {
          ^ self
       };
       glClipControl := GLClipControlPTR.load(get_proc, "glClipControl");
    }
    
-   private load_GL_ARB_color_buffer_float()
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_color_buffer_float == 0) {
+      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
          ^ self
       };
       glClampColorARB := GLClampColorARBPTR.load(get_proc, "glClampColorARB");
    }
    
-   private load_GL_ARB_compute_shader()   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
    {
-      if (GLAD_GL_ARB_compute_shader == 0) {
+      if (config.GLAD_GL_ARB_compute_shader == 0) {
          ^ self
       };
       glDispatchCompute := GLDispatchComputePTR.load(get_proc, "glDispatchCompute");
       glDispatchComputeIndirect := GLDispatchComputeIndirectPTR.load(get_proc, "glDispatchComputeIndirect");
    }
 
-   private load_GL_ARB_compute_variable_group_size()
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_compute_variable_group_size == 0) {
+      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
          ^ self
       };
       glDispatchComputeGroupSizeARB := GLDispatchComputeGroupSizeARBPTR.load(get_proc, "glDispatchComputeGroupSizeARB");
    }
 
-   private load_GL_ARB_copy_buffer()
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
    {
 //      if (GLAD_GL_ARB_copy_buffer == 0) {
 //         ^ self
@@ -3241,17 +3311,17 @@ public struct GLAD_Wrapper
 //      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
    }
    
-   private load_GL_ARB_copy_image()
+   private load_GL_ARB_copy_image(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_copy_image == 0) {
+      if (config.GLAD_GL_ARB_copy_image == 0) {
          ^ self
       };
       glCopyImageSubData := GLCopyImageSubDataPTR.load(get_proc, "glCopyImageSubData");
    }
 
-   private load_GL_ARB_debug_output()
+   private load_GL_ARB_debug_output(GLAD_Config config)
    {
-      if (GLAD_GL_ARB_debug_output == 0) {
+      if (config.GLAD_GL_ARB_debug_output == 0) {
          ^ self
       };
       glDebugMessageControlARB := GLDebugMessageControlARBPTR.load(get_proc, "glDebugMessageControlARB");
@@ -3260,28 +3330,7 @@ public struct GLAD_Wrapper
       glGetDebugMessageLogARB := GLGetDebugMessageLogARBPTR.load(get_proc, "glGetDebugMessageLogARB");
    }
 
-   private load_extensionsGL(string extensions)
-   {
-      GLAD_GL_AMD_multi_draw_indirect := has_ext(extensions, "GL_AMD_multi_draw_indirect");
-      GLAD_GL_ARB_ES2_compatibility := has_ext(extensions, "GL_ARB_ES2_compatibility");
-      GLAD_GL_ARB_ES3_1_compatibility := has_ext(extensions, "GL_ARB_ES3_1_compatibility");
-      GLAD_GL_ARB_ES3_2_compatibility := has_ext(extensions, "GL_ARB_ES3_2_compatibility");
-      GLAD_GL_ARB_base_instance := has_ext(extensions, "GL_ARB_base_instance");
-      GLAD_GL_ARB_blend_func_extended := has_ext(extensions, "GL_ARB_blend_func_extended");
-      GLAD_GL_ARB_buffer_storage := has_ext(extensions, "GL_ARB_buffer_storage");
-      GLAD_GL_ARB_clear_buffer_object := has_ext(extensions, "GL_ARB_clear_buffer_object");
-      GLAD_GL_ARB_clear_texture := has_ext(extensions, "GL_ARB_clear_texture");
-      GLAD_GL_ARB_clip_control := has_ext(extensions, "GL_ARB_clip_control");
-      GLAD_GL_ARB_color_buffer_float := has_ext(extensions, "GL_ARB_color_buffer_float");
-      GLAD_GL_ARB_compute_shader := has_ext(extensions, "GL_ARB_compute_shader");
-      GLAD_GL_ARB_compute_variable_group_size := has_ext(extensions, "GL_ARB_compute_variable_group_size");
-      GLAD_GL_ARB_copy_buffer := has_ext(extensions, "GL_ARB_copy_buffer");
-      GLAD_GL_ARB_copy_image := has_ext(extensions, "GL_ARB_copy_image");
-      GLAD_GL_ARB_debug_output := has_ext(extensions, "GL_ARB_debug_output");
-      GLAD_GL_ARB_direct_state_access := has_ext(extensions, "GL_ARB_direct_state_access");
-   }
-
-   bool load(/*IOpenGLEngine engine*/)
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
    {
       if (glGetString.isUnassigned()) {
          ^ false
@@ -3290,25 +3339,20 @@ public struct GLAD_Wrapper
          ^ false
       };
       
-      find_coreGL(/*engine*/);
-   	load_GL_VERSION_1_0();
-      load_GL_VERSION_1_1();
-      load_GL_VERSION_1_2();
-      load_GL_VERSION_1_3();
-      load_GL_VERSION_1_4();
-      load_GL_VERSION_1_5();
-      load_GL_VERSION_2_0();
-      load_GL_VERSION_2_1();
-      load_GL_VERSION_3_0();
-      load_GL_VERSION_3_1();
-      load_GL_VERSION_3_2();
-      load_GL_VERSION_3_3();
-      load_GL_VERSION_4_0();
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
       
-      string? extensions := loadExtensionsStr();
-      if:not:nil(extensions) {
-         load_extensionsGL(extensions);
-      };      
 /*
    	load_GL_3DFX_tbuffer(load);
    	load_GL_AMD_debug_output(load);
@@ -3318,7 +3362,7 @@ public struct GLAD_Wrapper
    	load_GL_AMD_gpu_shader_int64(load);
    	load_GL_AMD_interleaved_elements(load);
  */
-      load_GL_AMD_multi_draw_indirect();
+      load_GL_AMD_multi_draw_indirect(config);
 /*	   load_GL_AMD_name_gen_delete(load);
    	load_GL_AMD_occlusion_query_event(load);
    	load_GL_AMD_performance_monitor(load);
@@ -3334,24 +3378,24 @@ public struct GLAD_Wrapper
    	load_GL_APPLE_vertex_array_object(load);
    	load_GL_APPLE_vertex_array_range(load);
    	load_GL_APPLE_vertex_program_evaluators(load);*/
-      load_GL_ARB_ES2_compatibility();
-      load_GL_ARB_ES3_1_compatibility();
-      load_GL_ARB_ES3_2_compatibility();
-      load_GL_ARB_base_instance();
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
 /*      load_GL_ARB_bindless_texture(load);*/
-      load_GL_ARB_blend_func_extended();
-      load_GL_ARB_buffer_storage();
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
 /*      load_GL_ARB_cl_event(load);*/
-      load_GL_ARB_clear_buffer_object();
-      load_GL_ARB_clear_texture();
-      load_GL_ARB_clip_control();
-      load_GL_ARB_color_buffer_float();
-      load_GL_ARB_compute_shader();
-      load_GL_ARB_compute_variable_group_size();
-      load_GL_ARB_copy_buffer();
-      load_GL_ARB_copy_image();
-      load_GL_ARB_debug_output();
-      load_GL_ARB_direct_state_access();
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
 /*      load_GL_ARB_draw_buffers(load);
       load_GL_ARB_draw_buffers_blend(load);
       load_GL_ARB_draw_elements_base_vertex(load);
@@ -3621,4 +3665,18 @@ public struct GLAD_Wrapper
 */      
       ^ true
    }   
+}
+
+public sealed class GLADLibrary
+{
+   private init()
+   {
+//      pointer verPtr := glGetString(GL_VERSION);
+//      string versions := *verPtr;
+//      
+//      string? extensions := loadExtensionsStr();
+//
+//      GLAD_Config config := GLAD_Config.load(versions, extensions);
+   }
+   
 }

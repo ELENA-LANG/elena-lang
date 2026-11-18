@@ -74,7 +74,8 @@ In development:
   ---------------------------------------
   * current - opengl : #735
   ====================================== 
-  - refactor
+  - refactor Glad : group the function by the argument types
+  - refactor WGLad
   - initialize OpenGL
   - engine : register in context
   - fill the screen the red color

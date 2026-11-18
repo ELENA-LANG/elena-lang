@@ -16,6 +16,7 @@ public struct GLint_int_int_int_int_int_int_int_int_int_ptr       : wgl_func(int
 
 public struct GLint_int_int_int_int_int_int_int_int_int           : wgl_func(int arg1,int arg2,int arg3,int arg4,int arg5,int arg6,int arg7,int arg8,int arg9,int arg10);
 public struct GLint_int_int_int_int_int_int_int_int_ptr           : wgl_func(int arg1,int arg2,int arg3,int arg4,int arg5,int arg6,int arg7,int arg8,int arg9,pointer arg10);
+public struct GLint_double_double_int_int_double_double_int_int_ptr: wgl_func(int arg1,double arg2,double arg3,int arg4,int arg5,double arg6,double arg7,int arg8,int arg9,pointer arg10);
 
 public struct GLuint_int_int_int_int_int_int_int_int              : wgl_func(uint arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, int arg9);
 public struct GLuint_int_int_int_int_int_int_int_ptr              : wgl_func(uint arg1, int arg2, int arg3, int arg4, int arg5, int arg6, int arg7, int arg8, pointer arg9);
@@ -50,6 +51,10 @@ public struct GLint_int_int_ptr_int_int                           : wgl_func(int
 public struct GLint_int_int_uint_int_int                          : wgl_func(int arg1,int arg2,int arg3,uint arg4,int arg5,int arg6);
 public struct GLuint_int_int_int_int_ptr                          : wgl_func(uint arg1,int arg2,int arg3,int arg4,int arg5,pointer arg6);
 public struct GLint_uint_uint_int_int_ptr                         : wgl_func(int arg1,uint arg2,uint arg3,int arg4,int arg5,pointer arg6);
+public struct GLdouble_double_double_double_double_double         : wgl_func(double arg1,double arg2,double arg3,double arg4,double arg5,double arg6);
+public struct GLint_double_double_int_double_double               : wgl_func(int arg1,double arg2,double arg3,int arg4,double arg5,double arg6);
+public struct GLint_double_double_int_int_ptr                     : wgl_func(int arg1,double arg2,double arg3,int arg4,int arg5,pointer arg6);
+public struct GLint_int_int_int_int_ptr                           : wgl_func(int arg1,int arg2,int arg3,int arg4,int arg5,pointer arg6);
 
 public struct GLuint_int_int_int_int                              : wgl_func(uint arg1, int arg2, int arg3, int arg4, int arg5);
 public struct GLuint_int_uint_intptr_intptr                       : wgl_func(uint arg1, int arg2, uint arg3, intptr arg4, intptr arg5);
@@ -107,6 +112,10 @@ public struct GLuint_short_short_short                            : wgl_func(uin
 public struct GLuint_double_double_double                         : wgl_func(uint arg1,double arg2,double arg3,double arg4);
 public struct GLint_ptr_ptr_int                                   : wgl_func(int arg1,pointer arg2,pointer arg3,int arg4);
 public struct GLint_short_short_short                             : wgl_func(int arg1,short arg2,short arg3,short arg4);
+public struct GLshort_short_short_short                           : wgl_func(short arg1,short arg2,short arg3,short arg4);
+public struct GLubyte_ubyte_ubyte_ubyte                           : wgl_func(ubyte arg1,ubyte arg2,ubyte arg3,ubyte arg4);
+public struct GLushort_ushort_ushort_ushort                       : wgl_func(ushort arg1,ushort arg2,ushort arg3,ushort arg4);
+public struct GLbyte_byte_byte_byte                               : wgl_func(byte arg1,byte arg2,byte arg3,byte arg4);
 public struct ptr__GLuint_intptr_intptr_int                       : wgl_func<pointer>(uint arg1,intptr arg2,intptr arg3,int arg4);
 public struct ptr__GLint_intptr_intptr_int                        : wgl_func<pointer>(int arg1,intptr arg2,intptr arg3,int arg4);
 
@@ -133,11 +142,13 @@ public struct GLubyte_ubyte_ubyte                                 : wgl_func(uby
 public struct GLbyte_byte_byte                                    : wgl_func(byte arg1,byte arg2,byte arg3);
 public struct GLint_short_short                                   : wgl_func(int arg1,short arg2,short arg3);
 public struct GLint_ptr_ptr                                       : wgl_func(int arg1,pointer arg2,pointer arg3);
+public struct GLint_int_double                                    : wgl_func(int arg1,int arg2,double arg3);
 public struct uint__GLuint_int_string                             : wgl_func<uint>(uint arg1,int arg2,string arg3);
 public struct int__GLuint_int_string                              : wgl_func<int>(uint arg1,int arg2,string arg3);
 public struct int__GLptr_int_ulong                                : wgl_func<int>(pointer arg1,int arg2,ulong arg3);
 public struct int__int_ptr_ptr                                    : wgl_func<int>(int arg1,pointer arg2,pointer arg3);
 
+public struct GLFUNC_ptr_ptr                                      : wgl_func(pointer arg1, pointer arg2);
 public struct GLint_ptr                                           : wgl_func(int arg1, pointer arg2);
 public struct GLuint_int                                          : wgl_func(uint arg1,int arg2);
 public struct GLint_int                                           : wgl_func(int arg1,int arg2);
@@ -152,6 +163,7 @@ public struct GLuint_double                                       : wgl_func(uin
 public struct GLshort_short                                       : wgl_func(short arg1,short arg2);
 public struct GLdouble_double                                     : wgl_func(double arg1,double arg2);
 public struct GLint_short                                         : wgl_func(int arg1,short arg2);
+public struct GLint_ushort                                        : wgl_func(int arg1,ushort arg2);
 public struct int__GLuint_string                                  : wgl_func<int>(uint arg1,string arg2);
 public struct int__GLuint_int                                     : wgl_func<int>(uint arg1, int arg2);
 public struct int__GLint_uint                                     : wgl_func<int>(uint arg1, uint arg2);
@@ -167,6 +179,8 @@ public struct GLFUNC_uint                                         : wgl_func(uin
 public struct GLFUNC_ptr                                          : wgl_func(pointer arg1);
 public struct GLFUNC_double                                       : wgl_func(double arg1);
 public struct GLFUNC_ubyte                                        : wgl_func(ubyte arg1);
+public struct GLFUNC_byte                                         : wgl_func(byte arg1);
+public struct GLFUNC_short                                        : wgl_func(short arg1);
 public struct GLFUNC_int__uint                                    : wgl_func<int>(uint arg1);
 public struct GLFUNC_int__int                                     : wgl_func<int>(int arg1);
 public struct GLFUNC_uint__int                                    : wgl_func<uint>(int arg1);
