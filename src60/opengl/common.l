@@ -1,5 +1,3 @@
-import extensions;
-
 public sealed class OpenGLException : Exception
 {
    constructor new(string message)

@@ -45,6 +45,7 @@ In development:
   - modify Ackermann to support switch expression
   - elt - new library - name of class
   - elt - new class
+  - two build mode - full build / build only if the source is outaged
   - functional test: ^.*abc$ -> abc
                      .*abc -> abc
                      abc -> __abc__ (with range)
@@ -74,7 +75,7 @@ In development:
   ---------------------------------------
   * current - opengl : #735
   ====================================== 
-  - refactor OpenGL
+  - refactor OpenGL general architecture
   - initialize OpenGL
   - engine : register in context
   - fill the screen the red color

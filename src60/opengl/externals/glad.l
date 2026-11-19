@@ -1743,16 +1743,6 @@ public struct GLAD_Wrapper
       glGetString := GLGetStringPTR.load(libGL, "glGetString");
    }
    
-   private string? loadExtensionsStr()
-   {
-      pointer ptr := glGetString(GL_NUM_EXTENSIONS);
-      if (ptr.isUnassigned()) {
-         ^ nil
-      };
-      
-      ^ ptr.getStringUnsafe();
-   }
-   
    private load_GL_ARB_direct_state_access(GLAD_Config config)
    {
       if (config.GLAD_GL_ARB_direct_state_access == 0) {
@@ -2767,6 +2757,9 @@ public struct GLAD_Wrapper
 */      
       ^ true
    }   
+   
+   GLGetStringPTR GLGetString
+      = glGetString;
 }
 
 public struct GLAD_WrapperD
@@ -6552,14 +6545,54 @@ public struct GLAD_WrapperUI64
 
 public sealed class GLADLibrary
 {
-   private init()
+   GLAD_Wrapper _core;
+   
+   constructor()
    {
-//      pointer verPtr := glGetString(GL_VERSION);
-//      string versions := *verPtr;
-//      
-//      string? extensions := loadExtensionsStr();
-//
-//      GLAD_Config config := GLAD_Config.load(versions, extensions);
+      _core := $();
+   }
+
+   private string? loadVersionStr()
+   {
+      auto glGetString := _core.GLGetString;
+
+      pointer verPtr := glGetString(GL_VERSION);
+      string versions := *verPtr;
+
+      ^ versions;
+   }
+      
+   private string? loadExtensionsStr()
+   {
+      auto glGetString := _core.GLGetString;
+
+      pointer ptr := glGetString(GL_NUM_EXTENSIONS);
+      if (ptr.isUnassigned()) {
+         ^ nil
+      };
+      
+      ^ ptr.getStringUnsafe();
+   }
+      
+   bool load()
+   {
+      string? versions := loadVersionStr();
+      if:nil(versions) {
+         ^ false
+      };
+      
+      string? extensions := loadExtensionsStr();
+      if:nil(extensions) {
+         ^ false
+      };
+
+      GLAD_Config config := GLAD_Config.load(versions!, extensions!);
+
+      if:not(_core.load(config)) {
+         ^ false
+      };
+
+      ^ true
    }
    
 }

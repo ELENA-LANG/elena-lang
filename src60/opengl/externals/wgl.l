@@ -1,13 +1,10 @@
-//import opengl'exports;
-//
-//import system'drawing;
-//
-//use extern OPENGL : importing("OPENGL32");
-//
-//internal struct WGLGetExtensionsStringARBPTR    : wgl_func<pointer>(HDC dc);
-//internal struct WGLGetExtensionsStringEXTPTR    : wgl_func<pointer>();
-//internal struct WGLSetStereoEmitterState3DLPTR           : wgl_func<uint>(uint maxCount, pointer ids);
-//
+import opengl'exports'primitives;
+import system'drawing;
+
+use extern OPENGL : importing("OPENGL32");
+
+internal struct WGLSetStereoEmitterState3DLPTR           : wgl_func<uint>(uint maxCount, pointer ids);
+
 //internal struct WGLGetGPUIDsAMDPTR                       : wgl_func<uint>(uint id, pointer ids);
 //internal struct WGLGetGPUInfoAMDPTR                      : wgl_func<int>(uint id, int property, uint dataType, uint size, pointer data);
 //internal struct WGLGetContextGPUIDAMDPTR                 : wgl_func<uint>(HGLRC hglrc);
@@ -17,30 +14,30 @@
 //internal struct WGLMakeAssociatedContextCurrentAMDPTR    : wgl_func<int>(HGLRC hglrc);
 //internal struct WGLGetCurrentAssociatedContextAMDPTR     : wgl_func<HGLRC>();
 //internal struct WGLBlitContextFramebufferAMDPTR          : wgl_func<int>(HGLRC dstCtx, int srcX0, int srcY0, int srcX1, int srcY1, int dstX0, int dstY0, int dstX1, int dstY1, int mask, int filter);
-//
-//internal struct WGLCreateBufferRegionARBPTR              : wgl_func<handle>(HDC hDC, int iLayerPlane, uint uType);
-//internal struct WGLDeleteBufferRegionARBPTR              : wgl_func<int>(handle hRegion);
-//internal struct WGLSaveBufferRegionARBPTR                : wgl_func<int>(handle hRegion, int x, int y, int width, int height);
-//internal struct WGLRestoreBufferRegionARBPTR             : wgl_func<int>(handle hRegion, int x, int y, int width, int height, int xSrc, int ySrc);
-//
-//internal struct WGLCreateContextAttribsARBPTR            : wgl_func<int>(HDC hDC, HGLRC hShareContext, pointer attribList);
-//
-//internal struct WGLMakeContextCurrentARBPTR              : wgl_func<int>(HDC hDrawDC, HDC hReadDC, HGLRC hglrc);
-//internal struct WGLGetCurrentReadDCARBPTR                : wgl_func<HDC>();
-//
-//internal struct WGLCreatePbufferARBPTR                   : wgl_func<pointer>(HDC hDC, int iPixelFormat, int iWidth, int iHeight, pointer piAttribList);
-//internal struct WGLGetPbufferDCARBPTR                    : wgl_func<HDC>(pointer hPbuffer);
-//internal struct WGLReleasePbufferDCARBPTR                : wgl_func<int>(pointer hPbuffer, HDC hDC);
-//internal struct WGLDestroyPbufferARBPTR                  : wgl_func<int>(pointer hPbuffer);
-//internal struct WGLQueryPbufferARBPTR                    : wgl_func<HDC>(pointer hPbuffer, int iAttribute, pointer piValue);
-//
-//internal struct WGLGetPixelFormatAttribivARBPTR          : wgl_func<int>(HDC hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, pointer piAttributes, pointer piValues);
-//internal struct WGLGetPixelFormatAttribfvARBPTR          : wgl_func<int>(HDC hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, pointer piAttributes, pointer pfValues);
-//internal struct WGLChoosePixelFormatARBPTR               : wgl_func<int>(HDC hdc, pointer piAttribIList, pointer pfAttribFList, uint nMaxFormats, pointer piFormats, pointer nNumFormats);
-//
-//internal struct WGLBindTexImageARBPTR                    : wgl_func<int>(pointer hPbuffer, int iBuffer);
-//internal struct WGLReleaseTexImageARBPTR                 : wgl_func<int>(pointer hPbuffer, int iBuffer);
-//internal struct WGLSetPbufferAttribARBPTR                : wgl_func<int>(pointer hPbuffer, pointer piAttribList);
+
+internal struct WGLCreateBufferRegionARBPTR              : wgl_func<handle>(HDC hDC, int iLayerPlane, uint uType);
+internal struct WGLDeleteBufferRegionARBPTR              : wgl_func<int>(handle hRegion);
+internal struct WGLSaveBufferRegionARBPTR                : wgl_func<int>(handle hRegion, int x, int y, int width, int height);
+internal struct WGLRestoreBufferRegionARBPTR             : wgl_func<int>(handle hRegion, int x, int y, int width, int height, int xSrc, int ySrc);
+
+internal struct WGLCreateContextAttribsARBPTR            : wgl_func<int>(HDC hDC, HGLRC hShareContext, pointer attribList);
+
+internal struct WGLMakeContextCurrentARBPTR              : wgl_func<int>(HDC hDrawDC, HDC hReadDC, HGLRC hglrc);
+internal struct WGLGetCurrentReadDCARBPTR                : wgl_func<HDC>();
+
+internal struct WGLCreatePbufferARBPTR                   : wgl_func<pointer>(HDC hDC, int iPixelFormat, int iWidth, int iHeight, pointer piAttribList);
+internal struct WGLGetPbufferDCARBPTR                    : wgl_func<HDC>(pointer hPbuffer);
+internal struct WGLReleasePbufferDCARBPTR                : wgl_func<int>(pointer hPbuffer, HDC hDC);
+internal struct WGLDestroyPbufferARBPTR                  : wgl_func<int>(pointer hPbuffer);
+internal struct WGLQueryPbufferARBPTR                    : wgl_func<HDC>(pointer hPbuffer, int iAttribute, pointer piValue);
+
+internal struct WGLGetPixelFormatAttribivARBPTR          : wgl_func<int>(HDC hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, pointer piAttributes, pointer piValues);
+internal struct WGLGetPixelFormatAttribfvARBPTR          : wgl_func<int>(HDC hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, pointer piAttributes, pointer pfValues);
+internal struct WGLChoosePixelFormatARBPTR               : wgl_func<int>(HDC hdc, pointer piAttribIList, pointer pfAttribFList, uint nMaxFormats, pointer piFormats, pointer nNumFormats);
+
+internal struct WGLBindTexImageARBPTR                    : wgl_func<int>(pointer hPbuffer, int iBuffer);
+internal struct WGLReleaseTexImageARBPTR                 : wgl_func<int>(pointer hPbuffer, int iBuffer);
+internal struct WGLSetPbufferAttribARBPTR                : wgl_func<int>(pointer hPbuffer, pointer piAttribList);
 //
 //internal struct WGLCreateDisplayColorTableEXTPTR         : wgl_func<byte>(short id);
 //internal struct WGLLoadDisplayColorTableEXTPTR           : wgl_func<byte>(pointer table, int length);
@@ -59,9 +56,9 @@
 //internal struct WGLGetPixelFormatAttribivEXTPTR          : wgl_func<int>(HDC hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, pointer piAttributes, pointer piValues);
 //internal struct WGLGetPixelFormatAttribfvEXTPTR          : wgl_func<int>(HDC hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, pointer piAttributes, pointer pfValues);
 //internal struct WGLChoosePixelFormatEXTPTR               : wgl_func<int>(HDC hdc, pointer piAttribIList, pointer pfAttribFList, uint nMaxFormats, pointer piFormats, pointer nNumFormats);
-//
-//internal struct WGLSwapIntervalEXTPTR                    : wgl_func<int>(int interval);
-//internal struct WGLGetSwapIntervalEXTPTR                 : wgl_func<int>();
+
+internal struct WGLSwapIntervalEXTPTR                    : wgl_func<int>(int interval);
+internal struct WGLGetSwapIntervalEXTPTR                 : wgl_func<int>();
 //
 //internal struct WGLGetDigitalVideoParametersI3DPTR       : wgl_func<int>(HDC hDC, int iAttribute, pointer piValue);
 //internal struct WGLSetDigitalVideoParametersI3DPTR       : wgl_func<int>(HDC hDC, int iAttribute, pointer piValue);
@@ -98,20 +95,20 @@
 //internal struct WGLBeginFrameTrackingI3DPTR              : wgl_func<int>();
 //internal struct WGLEndFrameTrackingI3DPTR                : wgl_func<int>();
 //internal struct WGLQueryFrameTrackingI3DPTR              : wgl_func<int>(pointer pFrameCount, pointer pMissedFrames, pointer pLastMissedUsage);
-//
-//internal struct WGLDXSetResourceShareHandleNVPTR         : wgl_func<int>(pointer dxObject, handle shareHandle);
-//internal struct WGLDXOpenDeviceNVPTR                     : wgl_func<handle>(pointer dxDevice);
-//internal struct WGLDXCloseDeviceNVPTR                    : wgl_func<int>(handle hDevice);
-//internal struct WGLDXRegisterObjectNVPTR                 : wgl_func<handle>(handle hDevice, pointer dxObject, uint name, int type, int access);
-//internal struct WGLDXUnregisterObjectNVPTR               : wgl_func<int>(handle hDevice, handle hObject);
-//internal struct WGLDXObjectAccessNVPTR                   : wgl_func<int>(handle hObject, int access);
-//internal struct WGLDXLockObjectsNVPTR                    : wgl_func<int>(handle hDevice, int count, pointer hObjects);
-//internal struct WGLDXUnlockObjectsNVPTR                  : wgl_func<int>(handle hDevice, int count, pointer hObjects);
-//
-//internal struct WGLCopyImageSubDataNVPTR                 : wgl_func<int>(HGLRC hSrcRC, uint srcName, int srcTarget, int srcLevel, int srcX, int srcY, int srcZ, HGLRC hDstRC, uint dstName, int dstTarget, int dstLevel, int dstX, int dstY, int dstZ, int width, int height, int depth);
-//
-//internal struct WGLDelayBeforeSwapNVPTR                  : wgl_func<int>(HDC hDC, /*float*/int seconds);
-//
+
+internal struct WGLDXSetResourceShareHandleNVPTR         : wgl_func<int>(pointer dxObject, handle shareHandle);
+internal struct WGLDXOpenDeviceNVPTR                     : wgl_func<handle>(pointer dxDevice);
+internal struct WGLDXCloseDeviceNVPTR                    : wgl_func<int>(handle hDevice);
+internal struct WGLDXRegisterObjectNVPTR                 : wgl_func<handle>(handle hDevice, pointer dxObject, uint name, int type, int access);
+internal struct WGLDXUnregisterObjectNVPTR               : wgl_func<int>(handle hDevice, handle hObject);
+internal struct WGLDXObjectAccessNVPTR                   : wgl_func<int>(handle hObject, int access);
+internal struct WGLDXLockObjectsNVPTR                    : wgl_func<int>(handle hDevice, int count, pointer hObjects);
+internal struct WGLDXUnlockObjectsNVPTR                  : wgl_func<int>(handle hDevice, int count, pointer hObjects);
+
+internal struct WGLCopyImageSubDataNVPTR                 : wgl_func<int>(HGLRC hSrcRC, uint srcName, int srcTarget, int srcLevel, int srcX, int srcY, int srcZ, HGLRC hDstRC, uint dstName, int dstTarget, int dstLevel, int dstX, int dstY, int dstZ, int width, int height, int depth);
+
+internal struct WGLDelayBeforeSwapNVPTR                  : wgl_func<int>(HDC hDC, /*float*/int seconds);
+
 //internal struct WGLEnumGpusNVPTR                         : wgl_func<int>(uint iGpuIndex, pointer phGpu);
 //internal struct WGLEnumGpuDevicesNVPTR                   : wgl_func<int>(pointer hGpu, uint iDeviceIndex, pointer lpGpuDevice);
 //internal struct WGLCreateAffinityDCNVPTR                 : wgl_func<HDC>(pointer phGpuList);
@@ -152,45 +149,46 @@
 //internal struct WGLWaitForMscOMLPTR                      : wgl_func<int>(HDC hdc, long target_msc, long divisor, long remainder, pointer ust, pointer msc, pointer sbc);
 //internal struct WGLWaitForSbcOMLPTR                      : wgl_func<int>(HDC hdc, long target_sbc, pointer ust, pointer msc, pointer sbc);
 //
-//// --- WGLContext ---
-//
-//public struct WGLContext
-//{
+
+// --- WGLLibrary ---
+
+public struct WGLLibrary
+{
 //   HDC    wglDC; 
-//   // opengl functions
-//   WGLGetProcAddress                         get_proc;
-//   // opengl extensions
-//   WGLGetExtensionsStringARBPTR              wglGetExtensionsStringARB;
+   // opengl functions
+   WGLGetProcAddress                         get_proc;
+   // opengl extensions
+   WGLGetExtensionsStringARBPTR              wglGetExtensionsStringARB;
 //   WGLGetExtensionsStringEXTPTR              wglGetExtensionsStringEXT; 
-//   WGLSetStereoEmitterState3DLPTR            wglSetStereoEmitterState3DL;
-//
-//	WGLGetGPUIDsAMDPTR                        wglGetGPUIDsAMD;
-//	WGLGetGPUInfoAMDPTR                       wglGetGPUInfoAMD; 
-//	WGLGetContextGPUIDAMDPTR                  wglGetContextGPUIDAMD; 
-//	WGLCreateAssociatedContextAMDPTR          wglCreateAssociatedContextAMD;
-//	WGLCreateAssociatedContextAttribsAMDPTR   wglCreateAssociatedContextAttribsAMD;
-//	WGLDeleteAssociatedContextAMDPTR          wglDeleteAssociatedContextAMD; 
-//	WGLMakeAssociatedContextCurrentAMDPTR     wglMakeAssociatedContextCurrentAMD;
+   WGLSetStereoEmitterState3DLPTR            wglSetStereoEmitterState3DL;
+
+//   WGLGetGPUIDsAMDPTR                        wglGetGPUIDsAMD;
+//   WGLGetGPUInfoAMDPTR                       wglGetGPUInfoAMD; 
+//   WGLGetContextGPUIDAMDPTR                  wglGetContextGPUIDAMD; 
+//   WGLCreateAssociatedContextAMDPTR          wglCreateAssociatedContextAMD;
+//   WGLCreateAssociatedContextAttribsAMDPTR   wglCreateAssociatedContextAttribsAMD;
+//   WGLDeleteAssociatedContextAMDPTR          wglDeleteAssociatedContextAMD; 
+//   WGLMakeAssociatedContextCurrentAMDPTR     wglMakeAssociatedContextCurrentAMD;
 //   WGLGetCurrentAssociatedContextAMDPTR      wglGetCurrentAssociatedContextAMD;
-//	WGLBlitContextFramebufferAMDPTR           wglBlitContextFramebufferAMD;
-//   WGLCreateBufferRegionARBPTR               wglCreateBufferRegionARB;
-//   WGLDeleteBufferRegionARBPTR               wglDeleteBufferRegionARB;
-//   WGLSaveBufferRegionARBPTR                 wglSaveBufferRegionARB;
-//   WGLRestoreBufferRegionARBPTR              wglRestoreBufferRegionARB;
-//   WGLCreateContextAttribsARBPTR             wglCreateContextAttribsARB;   
-//   WGLMakeContextCurrentARBPTR               wglMakeContextCurrentARB;
-//   WGLGetCurrentReadDCARBPTR                 wglGetCurrentReadDCARB;      
-//   WGLCreatePbufferARBPTR                    wglCreatePbufferARB;
-//   WGLGetPbufferDCARBPTR                     wglGetPbufferDCARB;
-//   WGLReleasePbufferDCARBPTR                 wglReleasePbufferDCARB;
-//   WGLDestroyPbufferARBPTR                   wglDestroyPbufferARB;
-//   WGLQueryPbufferARBPTR                     wglQueryPbufferARB;             
-//	WGLGetPixelFormatAttribivARBPTR           wglGetPixelFormatAttribivARB;
-//	WGLGetPixelFormatAttribfvARBPTR           wglGetPixelFormatAttribfvARB;
-//	WGLChoosePixelFormatARBPTR                wglChoosePixelFormatARB;       
-//	WGLBindTexImageARBPTR                     wglBindTexImageARB;
-// 	WGLReleaseTexImageARBPTR                  wglReleaseTexImageARB;
-//	WGLSetPbufferAttribARBPTR                 wglSetPbufferAttribARB;
+//   WGLBlitContextFramebufferAMDPTR           wglBlitContextFramebufferAMD;
+   WGLCreateBufferRegionARBPTR               wglCreateBufferRegionARB;
+   WGLDeleteBufferRegionARBPTR               wglDeleteBufferRegionARB;
+   WGLSaveBufferRegionARBPTR                 wglSaveBufferRegionARB;
+   WGLRestoreBufferRegionARBPTR              wglRestoreBufferRegionARB;
+   WGLCreateContextAttribsARBPTR             wglCreateContextAttribsARB;   
+   WGLMakeContextCurrentARBPTR               wglMakeContextCurrentARB;
+   WGLGetCurrentReadDCARBPTR                 wglGetCurrentReadDCARB;
+   WGLCreatePbufferARBPTR                    wglCreatePbufferARB;
+   WGLGetPbufferDCARBPTR                     wglGetPbufferDCARB;
+   WGLReleasePbufferDCARBPTR                 wglReleasePbufferDCARB;
+   WGLDestroyPbufferARBPTR                   wglDestroyPbufferARB;
+   WGLQueryPbufferARBPTR                     wglQueryPbufferARB;
+	WGLGetPixelFormatAttribivARBPTR           wglGetPixelFormatAttribivARB;
+	WGLGetPixelFormatAttribfvARBPTR           wglGetPixelFormatAttribfvARB;
+	WGLChoosePixelFormatARBPTR                wglChoosePixelFormatARB;
+   WGLBindTexImageARBPTR                     wglBindTexImageARB;
+ 	WGLReleaseTexImageARBPTR                  wglReleaseTexImageARB;
+   WGLSetPbufferAttribARBPTR                 wglSetPbufferAttribARB;
 //	WGLCreateDisplayColorTableEXTPTR          wglCreateDisplayColorTableEXT;
 //	WGLLoadDisplayColorTableEXTPTR            wglLoadDisplayColorTableEXT;
 //	WGLBindDisplayColorTableEXTPTR            wglBindDisplayColorTableEXT;
@@ -205,8 +203,8 @@
 //	WGLGetPixelFormatAttribivEXTPTR           wglGetPixelFormatAttribivEXT;
 //	WGLGetPixelFormatAttribfvEXTPTR           wglGetPixelFormatAttribfvEXT;
 //	WGLChoosePixelFormatEXTPTR                wglChoosePixelFormatEXT;
-//	WGLSwapIntervalEXTPTR                     wglSwapIntervalEXT;
-//	WGLGetSwapIntervalEXTPTR                  wglGetSwapIntervalEXT;
+   WGLSwapIntervalEXTPTR                     wglSwapIntervalEXT;
+   WGLGetSwapIntervalEXTPTR                  wglGetSwapIntervalEXT;
 //	WGLGetDigitalVideoParametersI3DPTR        wglGetDigitalVideoParametersI3D;
 //	WGLSetDigitalVideoParametersI3DPTR        wglSetDigitalVideoParametersI3D;
 //	WGLGetGammaTableParametersI3DPTR          wglGetGammaTableParametersI3D;
@@ -237,21 +235,21 @@
 //	WGLBeginFrameTrackingI3DPTR               wglBeginFrameTrackingI3D;
 //	WGLEndFrameTrackingI3DPTR                 wglEndFrameTrackingI3D;
 //	WGLQueryFrameTrackingI3DPTR               wglQueryFrameTrackingI3D;
-//	WGLDXSetResourceShareHandleNVPTR          wglDXSetResourceShareHandleNV;
-//	WGLDXOpenDeviceNVPTR                      wglDXOpenDeviceNV;
-//	WGLDXCloseDeviceNVPTR                     wglDXCloseDeviceNV;
-//	WGLDXRegisterObjectNVPTR                  wglDXRegisterObjectNV;
-//	WGLDXUnregisterObjectNVPTR                wglDXUnregisterObjectNV;
-//	WGLDXObjectAccessNVPTR                    wglDXObjectAccessNV;
-//	WGLDXLockObjectsNVPTR                     wglDXLockObjectsNV;
-//	WGLDXUnlockObjectsNVPTR                   wglDXUnlockObjectsNV; 
-//    WGLCopyImageSubDataNVPTR                  wglCopyImageSubDataNV;
+   WGLDXSetResourceShareHandleNVPTR          wglDXSetResourceShareHandleNV;
+   WGLDXOpenDeviceNVPTR                      wglDXOpenDeviceNV;
+   WGLDXCloseDeviceNVPTR                     wglDXCloseDeviceNV;
+   WGLDXRegisterObjectNVPTR                  wglDXRegisterObjectNV;
+   WGLDXUnregisterObjectNVPTR                wglDXUnregisterObjectNV;
+   WGLDXObjectAccessNVPTR                    wglDXObjectAccessNV;
+   WGLDXLockObjectsNVPTR                     wglDXLockObjectsNV;
+   WGLDXUnlockObjectsNVPTR                   wglDXUnlockObjectsNV; 
+   WGLCopyImageSubDataNVPTR                  wglCopyImageSubDataNV;
 //	WGLEnumGpusNVPTR                          wglEnumGpusNV;
 //	WGLEnumGpuDevicesNVPTR                    wglEnumGpuDevicesNV;
 //	WGLCreateAffinityDCNVPTR                  wglCreateAffinityDCNV;
 //	WGLEnumGpusFromAffinityDCNVPTR            wglEnumGpusFromAffinityDCNV;
 //	WGLDeleteDCNVPTR                          wglDeleteDCNV; 
-//    WGLDelayBeforeSwapNVPTR                   wglDelayBeforeSwapNV;
+   WGLDelayBeforeSwapNVPTR                   wglDelayBeforeSwapNV;
 //	WGLEnumerateVideoDevicesNVPTR             wglEnumerateVideoDevicesNV;
 //	WGLBindVideoDeviceNVPTR                   wglBindVideoDeviceNV;
 //	WGLQueryCurrentContextNVPTR               wglQueryCurrentContextNV;
@@ -280,25 +278,25 @@
 //	WGLSwapLayerBuffersMscOMLPTR              wglSwapLayerBuffersMscOML;
 //	WGLWaitForMscOMLPTR                       wglWaitForMscOML;
 //	WGLWaitForSbcOMLPTR                       wglWaitForSbcOML;
-//
-//   // flags
+
+   // flags
 //   int WGL_3DFX_multisample;
-//   int WGL_3DL_stereo_control;
-//   int WGL_AMD_gpu_association;
-//   int WGL_ARB_buffer_region;
+   int WGL_3DL_stereo_control;
+   int WGL_AMD_gpu_association;
+   int WGL_ARB_buffer_region;
 //   int WGL_ARB_context_flush_control;
-//   int WGL_ARB_create_context;
+   int WGL_ARB_create_context;
 //   int WGL_ARB_create_context_no_error;
 //   int WGL_ARB_create_context_profile;
 //   int WGL_ARB_create_context_robustness;
 ////   int WGL_ARB_extensions_string;
 //   int WGL_ARB_framebuffer_sRGB;
-//   int WGL_ARB_make_current_read;
+   int WGL_ARB_make_current_read;
 //   int WGL_ARB_multisample;
-//   int WGL_ARB_pbuffer;
-//   int WGL_ARB_pixel_format;
+   int WGL_ARB_pbuffer;
+   int WGL_ARB_pixel_format;
 //   int WGL_ARB_pixel_format_float;
-//   int WGL_ARB_render_texture;
+   int WGL_ARB_render_texture;
 //   int WGL_ARB_robustness_application_isolation;
 //   int WGL_ARB_robustness_share_group_isolation;
 //   int WGL_ATI_pixel_format_float;
@@ -308,14 +306,14 @@
 //   int WGL_EXT_create_context_es_profile;
 //   int WGL_EXT_depth_float;
 //   int WGL_EXT_display_color_table;
-//   int WGL_EXT_extensions_string;
+   int WGL_EXT_extensions_string;
 //   int WGL_EXT_framebuffer_sRGB;
 //   int WGL_EXT_make_current_read;
 //   int WGL_EXT_multisample;
 //   int WGL_EXT_pbuffer;
 //   int WGL_EXT_pixel_format;
 //   int WGL_EXT_pixel_format_packed_float;
-//   int WGL_EXT_swap_control;
+   int WGL_EXT_swap_control;
 //   int WGL_EXT_swap_control_tear;
 //   int WGL_I3D_digital_video_control;
 //   int WGL_I3D_gamma;
@@ -323,10 +321,10 @@
 //   int WGL_I3D_image_buffer;
 //   int WGL_I3D_swap_frame_lock;
 //   int WGL_I3D_swap_frame_usage;
-//   int WGL_NV_DX_interop;
+   int WGL_NV_DX_interop;
 //   int WGL_NV_DX_interop2;
-//   int WGL_NV_copy_image;
-//   int WGL_NV_delay_before_swap;
+   int WGL_NV_copy_image;
+   int WGL_NV_delay_before_swap;
 //   int WGL_NV_float_buffer;
 //   int WGL_NV_gpu_affinity;
 //   int WGL_NV_multigpu_context;
@@ -339,56 +337,55 @@
 //   int WGL_NV_video_capture;
 //   int WGL_NV_video_output;
 //   int WGL_OML_sync_control;
-//   
-//   constructor()
-//   {
-//      handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
-//      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
-//   }
-//   
-//   private int has_ext(string extensions, string ext)
-//   {
-//      int index := extensions.indexOf(0, ext);
-//      if (index >= 0) {
-//         int endIndex := index + ext.Length;
-//         if (endIndex == extensions.Length || extensions[endIndex] == $32) {
-//            ^ 1
-//         };
-//      };
-//      
-//      ^ 0
-//   }
-//   
-//   private string? loadExtensionsStr()
-//   {
-//      pointer ptr := wglGetExtensionsStringARB(wglDC);
-//      if (ptr.isUnassigned()) {
-//         ^ nil
-//      };
-//      
-//      ^ ptr.getStringUnsafe();
-//   }
-//   
-//   private checkExtensions(string extensions)
-//   {
+
+   constructor()
+   {
+      handle libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+   }
+
+   private int has_ext(string extensions, string ext)
+   {
+      int index := extensions.indexOf(0, ext);
+      if (index >= 0) {
+         int endIndex := index + ext.Length;
+         if (endIndex == extensions.Length || extensions[endIndex] == $32) {
+            ^ 1
+         };
+      };
+      
+      ^ 0
+   }
+
+   private string? loadExtensionsStr(HDC wglDC)
+   {
+      pointer ptr := wglGetExtensionsStringARB(wglDC);
+      if (ptr.isUnassigned()) {
+         ^ nil
+      };
+
+      ^ ptr.getStringUnsafe();
+   }
+
+   private checkExtensions(string extensions)
+   {
 //      WGL_3DFX_multisample := has_ext(extensions, "WGL_3DFX_multisample");
-//      WGL_3DL_stereo_control := has_ext(extensions, "WGL_3DL_stereo_control");      
-//      
-//      WGL_AMD_gpu_association := has_ext(extensions, "WGL_AMD_gpu_association");
-//      WGL_ARB_buffer_region := has_ext(extensions, "WGL_ARB_buffer_region");
+      WGL_3DL_stereo_control := has_ext(extensions, "WGL_3DL_stereo_control");      
+      WGL_AMD_gpu_association := has_ext(extensions, "WGL_AMD_gpu_association");
+      WGL_ARB_buffer_region := has_ext(extensions, "WGL_ARB_buffer_region");
 //      WGL_ARB_context_flush_control := has_ext(extensions, "WGL_ARB_context_flush_control");
-//      WGL_ARB_create_context := has_ext(extensions, "WGL_ARB_create_context");
+      WGL_ARB_create_context := has_ext(extensions, "WGL_ARB_create_context");
 //      WGL_ARB_create_context_no_error := has_ext(extensions, "WGL_ARB_create_context_no_error");
 //      WGL_ARB_create_context_profile := has_ext(extensions, "WGL_ARB_create_context_profile");
 //      WGL_ARB_create_context_robustness := has_ext(extensions, "WGL_ARB_create_context_robustness");
 ////      WGL_ARB_extensions_string := has_ext(extensions, "WGL_ARB_extensions_string");
 //      WGL_ARB_framebuffer_sRGB := has_ext(extensions, "WGL_ARB_framebuffer_sRGB");
-//      WGL_ARB_make_current_read := has_ext(extensions, "WGL_ARB_make_current_read");
+      WGL_ARB_make_current_read := has_ext(extensions, "WGL_ARB_make_current_read");
 //      WGL_ARB_multisample := has_ext(extensions, "WGL_ARB_multisample");
-//      WGL_ARB_pbuffer := has_ext(extensions, "WGL_ARB_pbuffer");
-//      WGL_ARB_pixel_format := has_ext(extensions, "WGL_ARB_pixel_format");
+      WGL_ARB_pbuffer := has_ext(extensions, "WGL_ARB_pbuffer");
+      WGL_ARB_pixel_format := has_ext(extensions, "WGL_ARB_pixel_format");
 //      WGL_ARB_pixel_format_float := has_ext(extensions, "WGL_ARB_pixel_format_float");
-//      WGL_ARB_render_texture := has_ext(extensions, "WGL_ARB_render_texture");
+      WGL_ARB_render_texture := has_ext(extensions, "WGL_ARB_render_texture");
 //      WGL_ARB_robustness_application_isolation := has_ext(extensions, "WGL_ARB_robustness_application_isolation");
 //      WGL_ARB_robustness_share_group_isolation := has_ext(extensions, "WGL_ARB_robustness_share_group_isolation");
 //      WGL_ATI_pixel_format_float := has_ext(extensions, "WGL_ATI_pixel_format_float");
@@ -398,14 +395,14 @@
 //      WGL_EXT_create_context_es_profile := has_ext(extensions, "WGL_EXT_create_context_es_profile");
 //      WGL_EXT_depth_float := has_ext(extensions, "WGL_EXT_depth_float");
 //      WGL_EXT_display_color_table := has_ext(extensions, "WGL_EXT_display_color_table");
-//      WGL_EXT_extensions_string := has_ext(extensions, "WGL_EXT_extensions_string");
+      WGL_EXT_extensions_string := has_ext(extensions, "WGL_EXT_extensions_string");
 //      WGL_EXT_framebuffer_sRGB := has_ext(extensions, "WGL_EXT_framebuffer_sRGB");
 //      WGL_EXT_make_current_read := has_ext(extensions, "WGL_EXT_make_current_read");
 //      WGL_EXT_multisample := has_ext(extensions, "WGL_EXT_multisample");
 //      WGL_EXT_pbuffer := has_ext(extensions, "WGL_EXT_pbuffer");
 //      WGL_EXT_pixel_format := has_ext(extensions, "WGL_EXT_pixel_format");
 //      WGL_EXT_pixel_format_packed_float := has_ext(extensions, "WGL_EXT_pixel_format_packed_float");
-//      WGL_EXT_swap_control := has_ext(extensions, "WGL_EXT_swap_control");
+      WGL_EXT_swap_control := has_ext(extensions, "WGL_EXT_swap_control");
 //      WGL_EXT_swap_control_tear := has_ext(extensions, "WGL_EXT_swap_control_tear");
 //      WGL_I3D_digital_video_control := has_ext(extensions, "WGL_I3D_digital_video_control");
 //      WGL_I3D_gamma := has_ext(extensions, "WGL_I3D_gamma");
@@ -413,10 +410,10 @@
 //      WGL_I3D_image_buffer := has_ext(extensions, "WGL_I3D_image_buffer");
 //      WGL_I3D_swap_frame_lock := has_ext(extensions, "WGL_I3D_swap_frame_lock");
 //      WGL_I3D_swap_frame_usage := has_ext(extensions, "WGL_I3D_swap_frame_usage");
-//      WGL_NV_DX_interop := has_ext(extensions, "WGL_NV_DX_interop");
+      WGL_NV_DX_interop := has_ext(extensions, "WGL_NV_DX_interop");
 //      WGL_NV_DX_interop2 := has_ext(extensions, "WGL_NV_DX_interop2");
-//      WGL_NV_copy_image := has_ext(extensions, "WGL_NV_copy_image");
-//      WGL_NV_delay_before_swap := has_ext(extensions, "WGL_NV_delay_before_swap");
+      WGL_NV_copy_image := has_ext(extensions, "WGL_NV_copy_image");
+      WGL_NV_delay_before_swap := has_ext(extensions, "WGL_NV_delay_before_swap");
 //      WGL_NV_float_buffer := has_ext(extensions, "WGL_NV_float_buffer");
 //      WGL_NV_gpu_affinity := has_ext(extensions, "WGL_NV_gpu_affinity");
 //      WGL_NV_multigpu_context := has_ext(extensions, "WGL_NV_multigpu_context");
@@ -429,16 +426,16 @@
 //      WGL_NV_video_capture := has_ext(extensions, "WGL_NV_video_capture");
 //      WGL_NV_video_output := has_ext(extensions, "WGL_NV_video_output");
 //      WGL_OML_sync_control := has_ext(extensions, "WGL_OML_sync_control");      
-//   }
-//   
-//   private loadExtensions(string extensions)
-//   {
-//      checkExtensions(extensions);
-//      
-//      if (WGL_3DL_stereo_control == 1) {
-//         wglSetStereoEmitterState3DL := WGLSetStereoEmitterState3DLPTR.load(get_proc, "wglSetStereoEmitterState3DL");
-//      };
-//   	if (WGL_AMD_gpu_association == 1) {
+   }
+   
+   private loadExtensions(string extensions)
+   {
+      checkExtensions(extensions);
+      
+      if (WGL_3DL_stereo_control == 1) {
+         wglSetStereoEmitterState3DL := WGLSetStereoEmitterState3DLPTR.load(get_proc, "wglSetStereoEmitterState3DL");
+      };
+   	if (WGL_AMD_gpu_association == 1) {
 //      	wglGetGPUIDsAMD := WGLGetGPUIDsAMDPTR.load(get_proc, "wglGetGPUIDsAMD");
 //      	wglGetGPUInfoAMD := WGLGetGPUInfoAMDPTR.load(get_proc, "wglGetGPUInfoAMD");
 //      	wglGetContextGPUIDAMD := WGLGetContextGPUIDAMDPTR.load(get_proc, "wglGetContextGPUIDAMD");
@@ -448,47 +445,44 @@
 //      	wglMakeAssociatedContextCurrentAMD := WGLMakeAssociatedContextCurrentAMDPTR.load(get_proc, "wglMakeAssociatedContextCurrentAMD");
 //      	wglGetCurrentAssociatedContextAMD := WGLGetCurrentAssociatedContextAMDPTR.load(get_proc, "wglGetCurrentAssociatedContextAMD");
 //      	wglBlitContextFramebufferAMD := WGLBlitContextFramebufferAMDPTR.load(get_proc, "wglBlitContextFramebufferAMD");       
-//      };
-//   	if (WGL_ARB_buffer_region == 1) {
-//      	wglCreateBufferRegionARB := WGLCreateBufferRegionARBPTR.load(get_proc, "wglCreateBufferRegionARB");
-//      	wglDeleteBufferRegionARB := WGLDeleteBufferRegionARBPTR.load(get_proc, "wglDeleteBufferRegionARB");
-//      	wglSaveBufferRegionARB := WGLSaveBufferRegionARBPTR.load(get_proc, "wglSaveBufferRegionARB");
-//      	wglRestoreBufferRegionARB := WGLRestoreBufferRegionARBPTR.load(get_proc, "wglRestoreBufferRegionARB");       
-//      };
-//   	if (WGL_ARB_create_context == 1) {
-//         wglCreateContextAttribsARB := WGLCreateContextAttribsARBPTR.load(get_proc, "wglCreateContextAttribsARB");
-//      };
-///*   	if (WGL_ARB_extensions_string == 1) {
-//         glad_wglGetExtensionsStringARB := WGLCreateContextAttribsARBPTR.load(get_proc, "wglGetExtensionsStringARB");
-//      };*/
-//   	if (WGL_ARB_make_current_read == 1) {
-//         wglMakeContextCurrentARB := WGLMakeContextCurrentARBPTR.load(get_proc, "wglMakeContextCurrentARB");
-//         wglGetCurrentReadDCARB := WGLGetCurrentReadDCARBPTR.load(get_proc, "wglGetCurrentReadDCARB");       
-//      };
-//   	if (WGL_ARB_pbuffer == 1) {
-//         wglCreatePbufferARB := WGLCreatePbufferARBPTR.load(get_proc, "wglCreatePbufferARB");
-//         wglGetPbufferDCARB := WGLGetPbufferDCARBPTR.load(get_proc, "wglGetPbufferDCARB");
-//         wglReleasePbufferDCARB := WGLReleasePbufferDCARBPTR.load(get_proc, "wglReleasePbufferDCARB");
-//         wglDestroyPbufferARB := WGLDestroyPbufferARBPTR.load(get_proc, "wglDestroyPbufferARB");
-//         wglQueryPbufferARB := WGLQueryPbufferARBPTR.load(get_proc, "wglQueryPbufferARB");       
-//      };
-//   	if (WGL_ARB_pixel_format == 1) {
-//      	wglGetPixelFormatAttribivARB := WGLGetPixelFormatAttribivARBPTR.load(get_proc, "wglGetPixelFormatAttribivARB");
-//      	wglGetPixelFormatAttribfvARB := WGLGetPixelFormatAttribfvARBPTR.load(get_proc, "wglGetPixelFormatAttribfvARB");
-//      	wglChoosePixelFormatARB := WGLChoosePixelFormatARBPTR.load(get_proc, "wglChoosePixelFormatARB");       
-//      };
-//   	if (WGL_ARB_render_texture == 1) {
-//         wglBindTexImageARB := WGLBindTexImageARBPTR.load(get_proc, "wglBindTexImageARB");
-//         wglReleaseTexImageARB := WGLReleaseTexImageARBPTR.load(get_proc, "wglReleaseTexImageARB");
-//         wglSetPbufferAttribARB := WGLSetPbufferAttribARBPTR.load(get_proc, "wglSetPbufferAttribARB");       
-//      };
+      };
+   	if (WGL_ARB_buffer_region == 1) {
+      	wglCreateBufferRegionARB := WGLCreateBufferRegionARBPTR.load(get_proc, "wglCreateBufferRegionARB");
+      	wglDeleteBufferRegionARB := WGLDeleteBufferRegionARBPTR.load(get_proc, "wglDeleteBufferRegionARB");
+      	wglSaveBufferRegionARB := WGLSaveBufferRegionARBPTR.load(get_proc, "wglSaveBufferRegionARB");
+      	wglRestoreBufferRegionARB := WGLRestoreBufferRegionARBPTR.load(get_proc, "wglRestoreBufferRegionARB");       
+      };
+   	if (WGL_ARB_create_context == 1) {
+         wglCreateContextAttribsARB := WGLCreateContextAttribsARBPTR.load(get_proc, "wglCreateContextAttribsARB");
+      };
+      if (WGL_ARB_make_current_read == 1) {
+         wglMakeContextCurrentARB := WGLMakeContextCurrentARBPTR.load(get_proc, "wglMakeContextCurrentARB");
+         wglGetCurrentReadDCARB := WGLGetCurrentReadDCARBPTR.load(get_proc, "wglGetCurrentReadDCARB");       
+      };
+      if (WGL_ARB_pbuffer == 1) {
+         wglCreatePbufferARB := WGLCreatePbufferARBPTR.load(get_proc, "wglCreatePbufferARB");
+         wglGetPbufferDCARB := WGLGetPbufferDCARBPTR.load(get_proc, "wglGetPbufferDCARB");
+         wglReleasePbufferDCARB := WGLReleasePbufferDCARBPTR.load(get_proc, "wglReleasePbufferDCARB");
+         wglDestroyPbufferARB := WGLDestroyPbufferARBPTR.load(get_proc, "wglDestroyPbufferARB");
+         wglQueryPbufferARB := WGLQueryPbufferARBPTR.load(get_proc, "wglQueryPbufferARB");       
+      };
+      if (WGL_ARB_pixel_format == 1) {
+      	wglGetPixelFormatAttribivARB := WGLGetPixelFormatAttribivARBPTR.load(get_proc, "wglGetPixelFormatAttribivARB");
+      	wglGetPixelFormatAttribfvARB := WGLGetPixelFormatAttribfvARBPTR.load(get_proc, "wglGetPixelFormatAttribfvARB");
+      	wglChoosePixelFormatARB := WGLChoosePixelFormatARBPTR.load(get_proc, "wglChoosePixelFormatARB");       
+      };
+      if (WGL_ARB_render_texture == 1) {
+         wglBindTexImageARB := WGLBindTexImageARBPTR.load(get_proc, "wglBindTexImageARB");
+         wglReleaseTexImageARB := WGLReleaseTexImageARBPTR.load(get_proc, "wglReleaseTexImageARB");
+         wglSetPbufferAttribARB := WGLSetPbufferAttribARBPTR.load(get_proc, "wglSetPbufferAttribARB");       
+      };
 //   	if (WGL_EXT_display_color_table == 1) {
 //	      wglCreateDisplayColorTableEXT := WGLCreateDisplayColorTableEXTPTR.load(get_proc, "wglCreateDisplayColorTableEXT");
 //	      wglLoadDisplayColorTableEXT := WGLLoadDisplayColorTableEXTPTR.load(get_proc, "wglLoadDisplayColorTableEXT");
 //	      wglBindDisplayColorTableEXT := WGLBindDisplayColorTableEXTPTR.load(get_proc, "wglBindDisplayColorTableEXT");
 //	      wglDestroyDisplayColorTableEXT := WGLDestroyDisplayColorTableEXTPTR.load(get_proc, "wglDestroyDisplayColorTableEXT");
 //      };
-//   	if (WGL_EXT_extensions_string == 1) {
+//      if (WGL_EXT_extensions_string == 1) {
 //         wglGetExtensionsStringEXT := WGLGetExtensionsStringEXTPTR.load(get_proc, "wglGetExtensionsStringEXT");       
 //      };
 //   	if (WGL_EXT_make_current_read == 1) {
@@ -507,10 +501,10 @@
 //      	wglGetPixelFormatAttribfvEXT := WGLGetPixelFormatAttribfvEXTPTR.load(get_proc, "wglGetPixelFormatAttribfvEXT");
 //      	wglChoosePixelFormatEXT := WGLChoosePixelFormatEXTPTR.load(get_proc, "wglChoosePixelFormatEXT");       
 //      };
-//   	if (WGL_EXT_swap_control == 1) {
-//      	wglSwapIntervalEXT := WGLSwapIntervalEXTPTR.load(get_proc, "wglSwapIntervalEXT");
-//      	wglGetSwapIntervalEXT := WGLGetSwapIntervalEXTPTR.load(get_proc, "wglGetSwapIntervalEXT");       
-//      };
+      if (WGL_EXT_swap_control == 1) {
+      	wglSwapIntervalEXT := WGLSwapIntervalEXTPTR.load(get_proc, "wglSwapIntervalEXT");
+      	wglGetSwapIntervalEXT := WGLGetSwapIntervalEXTPTR.load(get_proc, "wglGetSwapIntervalEXT");       
+      };
 //   	if (WGL_I3D_digital_video_control == 1) {
 //      	wglGetDigitalVideoParametersI3D := WGLGetDigitalVideoParametersI3DPTR.load(get_proc, "wglGetDigitalVideoParametersI3D");
 //      	wglSetDigitalVideoParametersI3D := WGLSetDigitalVideoParametersI3DPTR.load(get_proc, "wglSetDigitalVideoParametersI3D");       
@@ -553,22 +547,22 @@
 //	      wglEndFrameTrackingI3D := WGLEndFrameTrackingI3DPTR.load(get_proc, "wglEndFrameTrackingI3D");
 //	      wglQueryFrameTrackingI3D := WGLQueryFrameTrackingI3DPTR.load(get_proc, "wglQueryFrameTrackingI3D");      
 //      };
-//   	if (WGL_NV_DX_interop == 1) {
-//      	wglDXSetResourceShareHandleNV := WGLDXSetResourceShareHandleNVPTR.load(get_proc, "wglDXSetResourceShareHandleNV");
-//      	wglDXOpenDeviceNV := WGLDXOpenDeviceNVPTR.load(get_proc, "wglDXOpenDeviceNV");
-//      	wglDXCloseDeviceNV := WGLDXCloseDeviceNVPTR.load(get_proc, "wglDXCloseDeviceNV");
-//      	wglDXRegisterObjectNV := WGLDXRegisterObjectNVPTR.load(get_proc, "wglDXRegisterObjectNV");
-//      	wglDXUnregisterObjectNV := WGLDXUnregisterObjectNVPTR.load(get_proc, "wglDXUnregisterObjectNV");
-//      	wglDXObjectAccessNV := WGLDXObjectAccessNVPTR.load(get_proc, "wglDXObjectAccessNV");
-//      	wglDXLockObjectsNV := WGLDXLockObjectsNVPTR.load(get_proc, "wglDXLockObjectsNV");
-//      	wglDXUnlockObjectsNV := WGLDXUnlockObjectsNVPTR.load(get_proc, "wglDXUnlockObjectsNV");
-//      };
-//   	if (WGL_NV_copy_image == 1) {
-//         wglCopyImageSubDataNV := WGLCopyImageSubDataNVPTR.load(get_proc, "wglCopyImageSubDataNV");
-//      };
-//   	if (WGL_NV_delay_before_swap == 1) {
-//         wglDelayBeforeSwapNV := WGLDelayBeforeSwapNVPTR.load(get_proc, "wglDelayBeforeSwapNV");      
-//      };
+      if (WGL_NV_DX_interop == 1) {
+      	wglDXSetResourceShareHandleNV := WGLDXSetResourceShareHandleNVPTR.load(get_proc, "wglDXSetResourceShareHandleNV");
+      	wglDXOpenDeviceNV := WGLDXOpenDeviceNVPTR.load(get_proc, "wglDXOpenDeviceNV");
+      	wglDXCloseDeviceNV := WGLDXCloseDeviceNVPTR.load(get_proc, "wglDXCloseDeviceNV");
+      	wglDXRegisterObjectNV := WGLDXRegisterObjectNVPTR.load(get_proc, "wglDXRegisterObjectNV");
+      	wglDXUnregisterObjectNV := WGLDXUnregisterObjectNVPTR.load(get_proc, "wglDXUnregisterObjectNV");
+      	wglDXObjectAccessNV := WGLDXObjectAccessNVPTR.load(get_proc, "wglDXObjectAccessNV");
+      	wglDXLockObjectsNV := WGLDXLockObjectsNVPTR.load(get_proc, "wglDXLockObjectsNV");
+      	wglDXUnlockObjectsNV := WGLDXUnlockObjectsNVPTR.load(get_proc, "wglDXUnlockObjectsNV");
+      };
+      if (WGL_NV_copy_image == 1) {
+         wglCopyImageSubDataNV := WGLCopyImageSubDataNVPTR.load(get_proc, "wglCopyImageSubDataNV");
+      };
+      if (WGL_NV_delay_before_swap == 1) {
+         wglDelayBeforeSwapNV := WGLDelayBeforeSwapNVPTR.load(get_proc, "wglDelayBeforeSwapNV");      
+      };
 //   	if (WGL_NV_gpu_affinity == 1) {
 //      	wglEnumGpusNV := WGLEnumGpusNVPTR.load(get_proc, "wglEnumGpusNV");
 //      	wglEnumGpuDevicesNV := WGLEnumGpuDevicesNVPTR.load(get_proc, "wglEnumGpuDevicesNV");
@@ -616,38 +610,31 @@
 //	   wglWaitForMscOML := WGLWaitForMscOMLPTR.load(get_proc, "wglWaitForMscOML");
 //	   wglWaitForSbcOML := WGLWaitForSbcOMLPTR.load(get_proc, "wglWaitForSbcOML");       
 //      };
-//   }
-//   
-//   bool load(HDC dc)
-//   {
-//      if (get_proc.isUnassigned()) {
-//         ^ false
-//      };
-//      
-//      wglGetExtensionsStringARB := WGLGetExtensionsStringARBPTR.load(get_proc, "wglGetExtensionsStringARB");      
-//      if (wglGetExtensionsStringARB.isUnassigned()) {
-//         ^ false
-//      };
-//      
-//      wglDC := dc;
-//      
-//      string? extensions := loadExtensionsStr();
-//      if:not:nil(extensions) {
-//         loadExtensions(extensions);
-//      };
-//      
-//      ^ true
-//   }
-//}
-//
-//// --- WGLWrapper ---
-//
-//internal singleton WGLWrapper
-//{
-//   HGLRC createContext(HDC dc)
-//   {
-//      handle h := OPENGL.wglCreateContext(dc);
-//      
-//      ^ h
-//   }
-//}
+   }
+   
+   bool load(HDC dc)
+   {
+      if (get_proc.isUnassigned()) {
+         ^ false
+      };
+
+      wglGetExtensionsStringARB := WGLGetExtensionsStringARBPTR.load(get_proc, "wglGetExtensionsStringARB");      
+      if (wglGetExtensionsStringARB.isUnassigned()) {
+         ^ false
+      };
+
+      string? extensions := loadExtensionsStr(dc);
+      if:not:nil(extensions) {
+         loadExtensions(extensions);
+      };
+
+      ^ true
+   }
+   
+   static HGLRC createContext(HDC dc)
+   {
+      handle h := OPENGL.wglCreateContext(dc);
+      
+      ^ h
+   }
+}

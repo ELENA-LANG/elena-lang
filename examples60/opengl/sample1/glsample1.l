@@ -15,10 +15,11 @@ public class MainWindow : XForm, using(MainWindow)
    constructor new()
       <= super new()
    {
-      auto ogController := OpenGLPaintContextController.new(glContext);
+      _engine := OpenGLEngine.new($());
+      
+      auto ogController := OpenGLPaintContextController.new(glContext, _engine);
       
       //glContext.Controller := ogController;
-      _engine := OpenGLEngine.new(ogController);
    }
 
    private onExit(sender)

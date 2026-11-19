@@ -20,22 +20,20 @@
         <author>Aleksey Rakov, ELENA-LANG Org</author>
     </manifest>
     <files>
-        <module name="exports'primitives">
-            <include>exports\primitives\templates.l</include>
-            <include>exports\primitives\func_declarations.l</include>
+        <module name="externals'primitives">
+            <include>externals\primitives\templates.l</include>
+            <include>externals\primitives\func_declarations.l</include>
         </module>
-        <module name="exports">
-            <include>exports\common.l</include>
-            <include>exports\datatypes.l</include>
-            <include>exports\glad.l</include>
-            <include>exports\wgl.l</include>
+        <module name="externals">
+            <include>externals\common.l</include>
+            <include>externals\datatypes.l</include>
+            <include>externals\glad.l</include>
+            <include>externals\wgl.l</include>
         </module>
         <module>
-            <file>externals.l</file>
             <file>forms_intergration.l</file>
             <include>common.l</include>
             <include>engine.l</include>
-            <file>wgl_externals.l</file>
         </module>
     </files>
 </configuration>

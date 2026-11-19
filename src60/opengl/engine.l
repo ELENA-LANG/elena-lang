@@ -1,29 +1,42 @@
+import opengl'externals;
+
 public interface IOpenGLEngine
 {
-   abstract setVersion(int major, int minor);
+   get abstract WGLLibrary WGL();
+   get abstract GLADLibrary GL();
 }
 
-public interface IOpenGLDeviceAdapter
+//public interface IOpenGLDeviceAdapter
+//{
+//   abstract setup(IOpenGLEngine engine);
+//}
+
+public class OpenGLConfig
 {
-   abstract setup(IOpenGLEngine engine);
+   
 }
 
 public class OpenGLEngine : interface<IOpenGLEngine>
 {
-   IOpenGLDeviceAdapter _adapter;
+//   int                  _major; 
+//   int                  _minor; 
    
-   int                  _major; 
-   int                  _minor; 
+   GLADLibrary GL:rprop(_gladLibrary);
    
-   constructor new(IOpenGLDeviceAdapter adapter)
+   WGLLibrary  WGL:rprop(_wglLibrary);
+   
+   constructor new(OpenGLConfig config)
    {
-      _adapter := adapter;
-      _adapter.setup(self);
+      _gladLibrary := $();
+      _wglLibrary := $();
+      
+//      _adapter := adapter;
+//      _adapter.setup(self);
    }
    
-   setVersion(int major, int minor)
-   {
-      _major := major;
-      _minor := minor
-   }
+//   setVersion(int major, int minor)
+//   {
+//      _major := major;
+//      _minor := minor
+//   }
 }
