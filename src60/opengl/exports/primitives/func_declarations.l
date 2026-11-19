@@ -1,3 +1,7 @@
+import system'drawing;
+
+public struct WGLGetExtensionsStringARBPTR    : wgl_func<pointer>(HDC dc);
+
 public struct WGLGetProcAddress      : extern_winapi_func<pointer>(string name);
 public struct GLGetStringPTR         : extern_winapi_func<pointer>(int name);
 

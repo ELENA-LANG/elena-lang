@@ -28,6 +28,7 @@
             <include>exports\common.l</include>
             <include>exports\datatypes.l</include>
             <include>exports\glad.l</include>
+            <include>exports\wgl.l</include>
         </module>
         <module>
             <file>externals.l</file>
