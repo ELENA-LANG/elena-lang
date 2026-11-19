@@ -909,9 +909,9 @@ use GLUniform2uiPTR            = GLint_GLuint_GLuint;
 use GLUniform3uiPTR            = GLint_GLuint_GLuint_GLuint;
 use GLUniform4uiPTR            = GLint_GLuint_GLuint_GLuint_GLuint;
 use GLUniform1uivPTR           = GLint_GLsizei_ptr;
-use struct GLUniform2uivPTR    = GLint_GLsizei_ptr;
-use struct GLUniform3uivPTR    = GLint_GLsizei_ptr;
-use struct GLUniform4uivPTR    = GLint_GLsizei_ptr;
+use GLUniform2uivPTR           = GLint_GLsizei_ptr;
+use GLUniform3uivPTR           = GLint_GLsizei_ptr;
+use GLUniform4uivPTR           = GLint_GLsizei_ptr;
 use GLTexParameterIivPTR       = GLenum_GLenum_ptr;
 use GLTexParameterIuivPTR      = GLenum_GLenum_ptr;
 use GLGetTexParameterIivPTR    = GLenum_GLenum_ptr; 
@@ -1452,8 +1452,6 @@ public struct GLAD_Wrapper
    GLBeginQueryPTR            glBeginQuery;
    GLEndQueryPTR              glEndQuery;
    GLGetQueryivPTR            glGetQueryiv;
-   GLGetQueryObjectivPTR      glGetQueryObjectiv;
-   GLGetQueryObjectuivPTR     glGetQueryObjectuiv;
    GLBindBufferPTR            glBindBuffer; 
    GLDeleteBuffersPTR         glDeleteBuffers;
    GLGenBuffersPTR            glGenBuffers;
@@ -1498,7 +1496,15 @@ public struct GLAD_Wrapper
    GLShaderSourcePTR          glShaderSource;
    GLUseProgramPTR            glUseProgram;
    GLValidateProgramPTR       glValidateProgram;   
-   GLVertexAttribPointerPTR   glVertexAttribPointer;
+   GLVertexAttribPointerPTR   glVertexAttribPointer;   
+   GLVertexAttribP1uiPTR      glVertexAttribP1ui;
+   GLVertexAttribP1uivPTR     glVertexAttribP1uiv;
+   GLVertexAttribP2uiPTR      glVertexAttribP2ui;
+   GLVertexAttribP2uivPTR     glVertexAttribP2uiv;
+   GLVertexAttribP3uiPTR      glVertexAttribP3ui;
+   GLVertexAttribP3uivPTR     glVertexAttribP3uiv;
+   GLVertexAttribP4uiPTR      glVertexAttribP4ui;
+   GLVertexAttribP4uivPTR     glVertexAttribP4uiv;
    // 2.1   
    // 3.0
    GLColorMaskiPTR            glColorMaski;
@@ -1549,6 +1555,14 @@ public struct GLAD_Wrapper
    GLDeleteVertexArraysPTR       glDeleteVertexArrays;
    GLGenVertexArraysPTR          glGenVertexArrays;
    GLIsVertexArrayPTR            glIsVertexArray;
+   GLTexCoordP1uiPTR             glTexCoordP1ui;
+   GLTexCoordP1uivPTR            glTexCoordP1uiv;
+   GLTexCoordP2uiPTR             glTexCoordP2ui;
+   GLTexCoordP2uivPTR            glTexCoordP2uiv;
+   GLTexCoordP3uiPTR             glTexCoordP3ui;
+   GLTexCoordP3uivPTR            glTexCoordP3uiv;
+   GLTexCoordP4uiPTR             glTexCoordP4ui;
+   GLTexCoordP4uivPTR            glTexCoordP4uiv;   
    // 3.1
    GLDrawArraysInstancedPTR      glDrawArraysInstanced;
    GLDrawElementsInstancedPTR    glDrawElementsInstanced;
@@ -1593,6 +1607,28 @@ public struct GLAD_Wrapper
    GLBindSamplerPTR              glBindSampler;   
    GLQueryCounterPTR             glQueryCounter;   
    GLVertexAttribDivisorPTR      glVertexAttribDivisor;   
+   GLVertexP2uiPTR               glVertexP2ui;
+   GLVertexP2uivPTR              glVertexP2uiv;
+   GLVertexP3uiPTR               glVertexP3ui;
+   GLVertexP3uivPTR              glVertexP3uiv;
+   GLVertexP4uiPTR               glVertexP4ui;
+   GLVertexP4uivPTR              glVertexP4uiv;
+   GLMultiTexCoordP1uiPTR        glMultiTexCoordP1ui;
+   GLMultiTexCoordP1uivPTR       glMultiTexCoordP1uiv;
+   GLMultiTexCoordP2uiPTR        glMultiTexCoordP2ui;
+   GLMultiTexCoordP2uivPTR       glMultiTexCoordP2uiv;
+   GLMultiTexCoordP3uiPTR        glMultiTexCoordP3ui;
+   GLMultiTexCoordP3uivPTR       glMultiTexCoordP3uiv;
+   GLMultiTexCoordP4uiPTR        glMultiTexCoordP4ui;
+   GLMultiTexCoordP4uivPTR       glMultiTexCoordP4uiv;   
+   GLNormalP3uiPTR               glNormalP3ui;
+   GLNormalP3uivPTR              glNormalP3uiv;
+   GLColorP3uiPTR                glColorP3ui;
+   GLColorP3uivPTR               glColorP3uiv;
+   GLColorP4uiPTR                glColorP4ui;
+   GLColorP4uivPTR               glColorP4uiv;
+   GLSecondaryColorP3uiPTR       glSecondaryColorP3ui;
+   GLSecondaryColorP3uivPTR      glSecondaryColorP3uiv;   
    // 4.0
    GLMinSampleShadingPTR         glMinSampleShading;
    GLBlendEquationiPTR           glBlendEquationi;
@@ -2005,8 +2041,6 @@ public struct GLAD_Wrapper
       glBeginQuery := GLBeginQueryPTR.loadDirectly(libGL, "glBeginQuery");
       glEndQuery := GLEndQueryPTR.loadDirectly(libGL, "glEndQuery");
       glGetQueryiv := GLGetQueryivPTR.loadDirectly(libGL, "glGetQueryiv");
-      glGetQueryObjectiv := GLGetQueryObjectivPTR.loadDirectly(libGL, "glGetQueryObjectiv");
-      glGetQueryObjectuiv := GLGetQueryObjectuivPTR.loadDirectly(libGL, "glGetQueryObjectuiv");
       glBindBuffer := GLBindBufferPTR.loadDirectly(libGL, "glBindBuffer");      
       glDeleteBuffers := GLDeleteBuffersPTR.loadDirectly(libGL, "glDeleteBuffers");
       glGenBuffers := GLGenBuffersPTR.loadDirectly(libGL, "glGenBuffers");
@@ -2063,9 +2097,9 @@ public struct GLAD_Wrapper
 
    private load_GL_VERSION_2_1(GLAD_Config config)
    {
-      if (config.GLAD_GL_VERSION_2_1 == 0) {
-         ^ self
-      };
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
    }
 
    private load_GL_VERSION_3_0(GLAD_Config config)
@@ -2122,6 +2156,14 @@ public struct GLAD_Wrapper
       glDeleteVertexArrays := GLDeleteVertexArraysPTR.loadDirectly(libGL, "glDeleteVertexArrays");
       glGenVertexArrays := GLGenVertexArraysPTR.loadDirectly(libGL, "glGenVertexArrays");
       glIsVertexArray := GLIsVertexArrayPTR.loadDirectly(libGL, "glIsVertexArray");
+      glTexCoordP1ui := GLTexCoordP1uiPTR.loadDirectly(libGL, "glTexCoordP1ui");
+      glTexCoordP1uiv := GLTexCoordP1uivPTR.loadDirectly(libGL, "glTexCoordP1uiv");
+      glTexCoordP2ui := GLTexCoordP2uiPTR.loadDirectly(libGL, "glTexCoordP2ui");
+      glTexCoordP2uiv := GLTexCoordP2uivPTR.loadDirectly(libGL, "glTexCoordP2uiv");
+      glTexCoordP3ui := GLTexCoordP3uiPTR.loadDirectly(libGL, "glTexCoordP3ui");
+      glTexCoordP3uiv := GLTexCoordP3uivPTR.loadDirectly(libGL, "glTexCoordP3uiv");
+      glTexCoordP4ui := GLTexCoordP4uiPTR.loadDirectly(libGL, "glTexCoordP4ui");
+      glTexCoordP4uiv := GLTexCoordP4uivPTR.loadDirectly(libGL, "glTexCoordP4uiv");      
    }
 
    private load_GL_VERSION_3_1(GLAD_Config config)
@@ -2187,6 +2229,36 @@ public struct GLAD_Wrapper
       glBindSampler := GLBindSamplerPTR.loadDirectly(libGL, "glBindSampler");
       glQueryCounter := GLQueryCounterPTR.loadDirectly(libGL, "glQueryCounter");
       glVertexAttribDivisor := GLVertexAttribDivisorPTR.loadDirectly(libGL, "glVertexAttribDivisor");
+      glVertexAttribP1ui := GLVertexAttribP1uiPTR.loadDirectly(libGL, "glVertexAttribP1ui");
+      glVertexAttribP1uiv := GLVertexAttribP1uivPTR.loadDirectly(libGL, "glVertexAttribP1uiv");
+      glVertexAttribP2ui := GLVertexAttribP2uiPTR.loadDirectly(libGL, "glVertexAttribP2ui");
+      glVertexAttribP2uiv := GLVertexAttribP2uivPTR.loadDirectly(libGL, "glVertexAttribP2uiv");
+      glVertexAttribP3ui := GLVertexAttribP3uiPTR.loadDirectly(libGL, "glVertexAttribP3ui");
+      glVertexAttribP3uiv := GLVertexAttribP3uivPTR.loadDirectly(libGL, "glVertexAttribP3uiv");
+      glVertexAttribP4ui := GLVertexAttribP4uiPTR.loadDirectly(libGL, "glVertexAttribP4ui");
+      glVertexAttribP4uiv := GLVertexAttribP4uivPTR.loadDirectly(libGL, "glVertexAttribP4uiv");      
+      glVertexP2ui := GLVertexP2uiPTR.loadDirectly(libGL, "glVertexP2ui");
+      glVertexP2uiv := GLVertexP2uivPTR.loadDirectly(libGL, "glVertexP2uiv");
+      glVertexP3ui := GLVertexP3uiPTR.loadDirectly(libGL, "glVertexP3ui");
+      glVertexP3uiv := GLVertexP3uivPTR.loadDirectly(libGL, "glVertexP3uiv");
+      glVertexP4ui := GLVertexP4uiPTR.loadDirectly(libGL, "glVertexP4ui");
+      glVertexP4uiv := GLVertexP4uivPTR.loadDirectly(libGL, "glVertexP4uiv");
+      glMultiTexCoordP1ui := GLMultiTexCoordP1uiPTR.loadDirectly(libGL, "glMultiTexCoordP1ui");
+      glMultiTexCoordP1uiv := GLMultiTexCoordP1uivPTR.loadDirectly(libGL, "glMultiTexCoordP1uiv");
+      glMultiTexCoordP2ui := GLMultiTexCoordP2uiPTR.loadDirectly(libGL, "glMultiTexCoordP2ui");
+      glMultiTexCoordP2uiv := GLMultiTexCoordP2uivPTR.loadDirectly(libGL, "glMultiTexCoordP2uiv");
+      glMultiTexCoordP3ui := GLMultiTexCoordP3uiPTR.loadDirectly(libGL, "glMultiTexCoordP3ui");
+      glMultiTexCoordP3uiv := GLMultiTexCoordP3uivPTR.loadDirectly(libGL, "glMultiTexCoordP3uiv");
+      glMultiTexCoordP4ui := GLMultiTexCoordP4uiPTR.loadDirectly(libGL, "glMultiTexCoordP4ui");
+      glMultiTexCoordP4uiv := GLMultiTexCoordP4uivPTR.loadDirectly(libGL, "glMultiTexCoordP4uiv");
+      glNormalP3ui := GLNormalP3uiPTR.loadDirectly(libGL, "glNormalP3ui");
+      glNormalP3uiv := GLNormalP3uivPTR.loadDirectly(libGL, "glNormalP3uiv");
+      glColorP3ui := GLColorP3uiPTR.loadDirectly(libGL, "glColorP3ui");
+      glColorP3uiv := GLColorP3uivPTR.loadDirectly(libGL, "glColorP3uiv");
+      glColorP4ui := GLColorP4uiPTR.loadDirectly(libGL, "glColorP4ui");
+      glColorP4uiv := GLColorP4uivPTR.loadDirectly(libGL, "glColorP4uiv");
+      glSecondaryColorP3ui := GLSecondaryColorP3uiPTR.loadDirectly(libGL, "glSecondaryColorP3ui");
+      glSecondaryColorP3uiv := GLSecondaryColorP3uivPTR.loadDirectly(libGL, "glSecondaryColorP3uiv");      
    }
 
    private load_GL_VERSION_4_0(GLAD_Config config)
@@ -2707,619 +2779,86 @@ public struct GLAD_WrapperD
    GLGetStringPTR       glGetString;
       
    // 1_0
-   GLTexParameterfPTR   glTexParameterf;
-   GLTexParameterfvPTR  glTexParameterfv;
-   GLTexParameteriPTR   glTexParameteri;
-   GLTexParameterivPTR  glTexParameteriv;
-   
-   GLPixelStorefPTR     glPixelStoref;
-   GLPixelStoreiPTR     glPixelStorei;
-   
-   // =
-   GLGetTexParameterfvPTR        glGetTexParameterfv;
-   GLGetTexParameterivPTR        glGetTexParameteriv;
-   // =
-   GLGetTexLevelParameterfvPTR   glGetTexLevelParameterfv;
-   GLGetTexLevelParameterivPTR   glGetTexLevelParameteriv;
-
-   // =
-   GLColor3bPTR         glColor3b;
-   GLColor3bvPTR        glColor3bv;
    GLColor3dPTR         glColor3d;
    GLColor3dvPTR        glColor3dv;
-   GLColor3fPTR         glColor3f;
-   GLColor3fvPTR        glColor3fv;
-   GLColor3iPTR         glColor3i;
-   GLColor3ivPTR        glColor3iv;
-   GLColor3sPTR         glColor3s;
-   GLColor3svPTR        glColor3sv;
-   GLColor3ubPTR        glColor3ub;
-   GLColor3ubvPTR       glColor3ubv;
-   GLColor3uiPTR        glColor3ui;
-   GLColor3uivPTR       glColor3uiv;
-   GLColor3usPTR        glColor3us;
-   GLColor3usvPTR       glColor3usv;
-   
-   // =
-   GLColor4bPTR         glColor4b;
-   GLColor4bvPTR        glColor4bv;
    GLColor4dPTR         glColor4d;
    GLColor4dvPTR        glColor4dv;
-   GLColor4fPTR         glColor4f;
-   GLColor4fvPTR        glColor4fv;
-   GLColor4iPTR         glColor4i;
-   GLColor4ivPTR        glColor4iv;
-   GLColor4sPTR         glColor4s;
-   GLColor4svPTR        glColor4sv;
-   GLColor4ubPTR        glColor4ub;
-   GLColor4ubvPTR       glColor4ubv;
-   GLColor4uiPTR        glColor4ui;
-   GLColor4uivPTR       glColor4uiv;
-   GLColor4usPTR        glColor4us;
-   GLColor4usvPTR       glColor4usv;
-   
-   // =
    GLIndexdPTR          glIndexd;
    GLIndexdvPTR         glIndexdv;
-   GLIndexfPTR          glIndexf;
-   GLIndexfvPTR         glIndexfv;
-   GLIndexiPTR          glIndexi;
-   GLIndexivPTR         glIndexiv;
-   GLIndexsPTR          glIndexs;
-   GLIndexsvPTR         glIndexsv;
-   
-   // =
-   GLNormal3bPTR        glNormal3b;
-   GLNormal3bvPTR       glNormal3bv;
    GLNormal3dPTR        glNormal3d;
    GLNormal3dvPTR       glNormal3dv;
-   GLNormal3fPTR        glNormal3f;
-   GLNormal3fvPTR       glNormal3fv;
-   GLNormal3iPTR        glNormal3i;
-   GLNormal3ivPTR       glNormal3iv;
-   GLNormal3sPTR        glNormal3s;
-   GLNormal3svPTR       glNormal3sv;
-   
-   // =
    GLRasterPos2dPTR     glRasterPos2d;
    GLRasterPos2dvPTR    glRasterPos2dv;
-   GLRasterPos2fPTR     glRasterPos2f;
-   GLRasterPos2fvPTR    glRasterPos2fv;
-   GLRasterPos2iPTR     glRasterPos2i;
-   GLRasterPos2ivPTR    glRasterPos2iv;
-   GLRasterPos2sPTR     glRasterPos2s;
-   GLRasterPos2svPTR    glRasterPos2sv;
-   
-   // =
    GLRasterPos3dPTR     glRasterPos3d;
    GLRasterPos3dvPTR    glRasterPos3dv;
-   GLRasterPos3fPTR     glRasterPos3f;
-   GLRasterPos3fvPTR    glRasterPos3fv;
-   GLRasterPos3iPTR     glRasterPos3i;
-   GLRasterPos3ivPTR    glRasterPos3iv;
-   GLRasterPos3sPTR     glRasterPos3s;
-   GLRasterPos3svPTR    glRasterPos3sv;   
-   
-   // =
    GLRasterPos4dPTR     glRasterPos4d;
    GLRasterPos4dvPTR    glRasterPos4dv;
-   GLRasterPos4fPTR     glRasterPos4f;
-   GLRasterPos4fvPTR    glRasterPos4fv;
-   GLRasterPos4iPTR     glRasterPos4i;
-   GLRasterPos4ivPTR    glRasterPos4iv;
-   GLRasterPos4sPTR     glRasterPos4s;
-   GLRasterPos4svPTR    glRasterPos4sv;
-   
-   // =
    GLRectdPTR           glRectd;
    GLRectdvPTR          glRectdv;
-   GLRectfPTR           glRectf;
-   GLRectfvPTR          glRectfv;
-   GLRectiPTR           glRecti;
-   GLRectivPTR          glRectiv;
-   GLRectsPTR           glRects;
-   GLRectsvPTR          glRectsv;
-   
-   // =
    GLTexCoord1dPTR      glTexCoord1d;
    GLTexCoord1dvPTR     glTexCoord1dv;
-   GLTexCoord1fPTR      glTexCoord1f;
-   GLTexCoord1fvPTR     glTexCoord1fv;
-   GLTexCoord1iPTR      glTexCoord1i;
-   GLTexCoord1ivPTR     glTexCoord1iv;
-   GLTexCoord1sPTR      glTexCoord1s;
-   GLTexCoord1svPTR     glTexCoord1sv;
-   
-   // =
    GLTexCoord2dPTR      glTexCoord2d;
    GLTexCoord2dvPTR     glTexCoord2dv;
-   GLTexCoord2fPTR      glTexCoord2f;
-   GLTexCoord2fvPTR     glTexCoord2fv;
-   GLTexCoord2iPTR      glTexCoord2i;
-   GLTexCoord2ivPTR     glTexCoord2iv;
-   GLTexCoord2sPTR      glTexCoord2s;
-   GLTexCoord2svPTR     glTexCoord2sv;
-   
-   // =
    GLTexCoord3dPTR      glTexCoord3d;
    GLTexCoord3dvPTR     glTexCoord3dv;
-   GLTexCoord3fPTR      glTexCoord3f;
-   GLTexCoord3fvPTR     glTexCoord3fv;
-   GLTexCoord3iPTR      glTexCoord3i;
-   GLTexCoord3ivPTR     glTexCoord3iv;
-   GLTexCoord3sPTR      glTexCoord3s;
-   GLTexCoord3svPTR     glTexCoord3sv;
-   
-   // =
    GLTexCoord4dPTR      glTexCoord4d;
    GLTexCoord4dvPTR     glTexCoord4dv;
-   GLTexCoord4fPTR      glTexCoord4f;
-   GLTexCoord4fvPTR     glTexCoord4fv;
-   GLTexCoord4iPTR      glTexCoord4i;
-   GLTexCoord4ivPTR     glTexCoord4iv;
-   GLTexCoord4sPTR      glTexCoord4s;
-   GLTexCoord4svPTR     glTexCoord4sv;
-   
-   // =
    GLVertex2dPTR        glVertex2d;
    GLVertex2dvPTR       glVertex2dv;
-   GLVertex2fPTR        glVertex2f;
-   GLVertex2fvPTR       glVertex2fv;
-   GLVertex2iPTR        glVertex2i;
-   GLVertex2ivPTR       glVertex2iv;
-   GLVertex2sPTR        glVertex2s;
-   GLVertex2svPTR       glVertex2sv;
-   
-   // =
    GLVertex3dPTR        glVertex3d;
    GLVertex3dvPTR       glVertex3dv;
-   GLVertex3fPTR        glVertex3f;
-   GLVertex3fvPTR       glVertex3fv;
-   GLVertex3iPTR        glVertex3i;
-   GLVertex3ivPTR       glVertex3iv;
-   GLVertex3sPTR        glVertex3s;
-   GLVertex3svPTR       glVertex3sv;
-   
-   // =
    GLVertex4dPTR        glVertex4d;
    GLVertex4dvPTR       glVertex4dv;
-   GLVertex4fPTR        glVertex4f;
-   GLVertex4fvPTR       glVertex4fv;
-   GLVertex4iPTR        glVertex4i;
-   GLVertex4ivPTR       glVertex4iv;
-   GLVertex4sPTR        glVertex4s;
-   GLVertex4svPTR       glVertex4sv;
-   
-   // =
-   GLFogfPTR            glFogf;
-   GLFogfvPTR           glFogfv;
-   GLFogiPTR            glFogi;
-   GLFogivPTR           glFogiv;
-   
-   // =
-   GLLightfPTR          glLightf;
-   GLLightfvPTR         glLightfv;
-   GLLightiPTR          glLighti;
-   GLLightivPTR         glLightiv;
-   
-   // =
-   GLLightModelfPTR     glLightModelf;
-   GLLightModelfvPTR    glLightModelfv;
-   GLLightModeliPTR     glLightModeli;
-   GLLightModelivPTR    glLightModeliv;   
-         
-   // =
-   GLMaterialfPTR       glMaterialf;
-   GLMaterialfvPTR      glMaterialfv;   
-   GLMaterialiPTR       glMateriali;
-   GLMaterialivPTR      glMaterialiv;
-   
-   // =
-   GLTexEnvfPTR         glTexEnvf;
-   GLTexEnvfvPTR        glTexEnvfv;
-   GLTexEnviPTR         glTexEnvi;
-   GLTexEnvivPTR        glTexEnviv;
    GLTexGendPTR         glTexGend;
    GLTexGendvPTR        glTexGendv;
-   GLTexGenfPTR         glTexGenf;
-   GLTexGenfvPTR        glTexGenfv;
-   GLTexGeniPTR         glTexGeni;
-   GLTexGenivPTR        glTexGeniv;
-      
-   // =
    GLMap1dPTR           glMap1d;
-   GLMap1fPTR           glMap1f;
    GLMap2dPTR           glMap2d;
-   GLMap2fPTR           glMap2f;
-   
-   // =
    GLMapGrid1dPTR       glMapGrid1d;
-   GLMapGrid1fPTR       glMapGrid1f;
    GLMapGrid2dPTR       glMapGrid2d;
-   GLMapGrid2fPTR       glMapGrid2f;
-   
-   // =
    GLEvalCoord1dPTR     glEvalCoord1d;
    GLEvalCoord1dvPTR    glEvalCoord1dv;
-   GLEvalCoord1fPTR     glEvalCoord1f;
-   GLEvalCoord1fvPTR    glEvalCoord1fv;
-   
-   // =
    GLEvalCoord2dPTR     glEvalCoord2d;
    GLEvalCoord2dvPTR    glEvalCoord2dv;
-   GLEvalCoord2fPTR     glEvalCoord2f;
-   GLEvalCoord2fvPTR    glEvalCoord2fv;
-   
-   // =
-   GLPixelTransferfPTR  glPixelTransferf;
-   GLPixelTransferiPTR  glPixelTransferi;
-   
-   // =
-   GLPixelMapfvPTR      glPixelMapfv;
-   GLPixelMapuivPTR     glPixelMapuiv;
-   GLPixelMapusvPTR     glPixelMapusv;
-      
-   // =
-   GLGetLightfvPTR      glGetLightfv;
-   GLGetLightivPTR      glGetLightiv;
-   
-   // =
    GLGetMapdvPTR        glGetMapdv;
-   GLGetMapfvPTR        glGetMapfv;
-   GLGetMapivPTR        glGetMapiv;
-   
-   // =
-   GLGetMaterialfvPTR   glGetMaterialfv;
-   GLGetMaterialivPTR   glGetMaterialiv;
-   
-   // =
-   GLGetPixelMapfvPTR   glGetPixelMapfv;
-   GLGetPixelMapuivPTR  glGetPixelMapuiv;
-   GLGetPixelMapusvPTR  glGetPixelMapusv;
-      
-   GLGetPolygonStipplePTR glGetPolygonStipple;
-   
-   // =
-   GLGetTexEnvfvPTR     glGetTexEnvfv;
-   GLGetTexEnvivPTR     glGetTexEnviv;
    GLGetTexGendvPTR     glGetTexGendv;
-   GLGetTexGenfvPTR     glGetTexGenfv;
-   GLGetTexGenivPTR     glGetTexGeniv;
-   
-   // =
-   GLLoadMatrixfPTR     glLoadMatrixf;
    GLLoadMatrixdPTR     glLoadMatrixd;
-   
-   // =
-   GLMultMatrixfPTR     glMultMatrixf;
    GLMultMatrixdPTR     glMultMatrixd;
-   
-   // =
    GLRotatedPTR         glRotated;
-   GLRotatefPTR         glRotatef;
-   
-   // =
    GLScaledPTR          glScaled;
-   GLScalefPTR          glScalef;
-   
-   // =
    GLTranslatedPTR      glTranslated;
-   GLTranslatefPTR      glTranslatef;
-   
    // 1.3
-   
-   // =
    GLMultiTexCoord1dPTR       glMultiTexCoord1d;
    GLMultiTexCoord1dvPTR      glMultiTexCoord1dv;
-   GLMultiTexCoord1fPTR       glMultiTexCoord1f;
-   GLMultiTexCoord1fvPTR      glMultiTexCoord1fv;
-   GLMultiTexCoord1iPTR       glMultiTexCoord1i;
-   GLMultiTexCoord1ivPTR      glMultiTexCoord1iv;
-   GLMultiTexCoord1sPTR       glMultiTexCoord1s;
-   GLMultiTexCoord1svPTR      glMultiTexCoord1sv;
-   
-   // =
    GLMultiTexCoord2dPTR       glMultiTexCoord2d;
    GLMultiTexCoord2dvPTR      glMultiTexCoord2dv;
-   GLMultiTexCoord2fPTR       glMultiTexCoord2f;
-   GLMultiTexCoord2fvPTR      glMultiTexCoord2fv;
-   GLMultiTexCoord2iPTR       glMultiTexCoord2i;
-   GLMultiTexCoord2ivPTR      glMultiTexCoord2iv;
-   GLMultiTexCoord2sPTR       glMultiTexCoord2s;
-   GLMultiTexCoord2svPTR      glMultiTexCoord2sv;
-   
-   // =
    GLMultiTexCoord3dPTR       glMultiTexCoord3d;
    GLMultiTexCoord3dvPTR      glMultiTexCoord3dv;
-   GLMultiTexCoord3fPTR       glMultiTexCoord3f;
-   GLMultiTexCoord3fvPTR      glMultiTexCoord3fv;
-   GLMultiTexCoord3iPTR       glMultiTexCoord3i;
-   GLMultiTexCoord3ivPTR      glMultiTexCoord3iv;
-   GLMultiTexCoord3sPTR       glMultiTexCoord3s;
-   GLMultiTexCoord3svPTR      glMultiTexCoord3sv;
-   
-   // =
    GLMultiTexCoord4dPTR       glMultiTexCoord4d;
    GLMultiTexCoord4dvPTR      glMultiTexCoord4dv;
-   GLMultiTexCoord4fPTR       glMultiTexCoord4f;
-   GLMultiTexCoord4fvPTR      glMultiTexCoord4fv;
-   GLMultiTexCoord4iPTR       glMultiTexCoord4i;
-   GLMultiTexCoord4ivPTR      glMultiTexCoord4iv;
-   GLMultiTexCoord4sPTR       glMultiTexCoord4s;
-   GLMultiTexCoord4svPTR      glMultiTexCoord4sv;
-   
-   // =
-   GLLoadTransposeMatrixfPTR  glLoadTransposeMatrixf;
    GLLoadTransposeMatrixdPTR  glLoadTransposeMatrixd;
-   GLMultTransposeMatrixfPTR  glMultTransposeMatrixf;
    GLMultTransposeMatrixdPTR  glMultTransposeMatrixd;
-   
    // 1.4
-   // =
-   GLPointParameterfPTR       glPointParameterf;
-   GLPointParameterfvPTR      glPointParameterfv;
-   GLPointParameteriPTR       glPointParameteri;
-   GLPointParameterivPTR      glPointParameteriv;
-   
-   // =
-   GLFogCoordfPTR             glFogCoordf;
-   GLFogCoordfvPTR            glFogCoordfv;
    GLFogCoorddPTR             glFogCoordd;
    GLFogCoorddvPTR            glFogCoorddv;
-   
-   // =
-   GLSecondaryColor3bPTR      glSecondaryColor3b;
-   GLSecondaryColor3bvPTR     glSecondaryColor3bv;
    GLSecondaryColor3dPTR      glSecondaryColor3d;
    GLSecondaryColor3dvPTR     glSecondaryColor3dv;
-   GLSecondaryColor3fPTR      glSecondaryColor3f;
-   GLSecondaryColor3fvPTR     glSecondaryColor3fv;
-   GLSecondaryColor3iPTR      glSecondaryColor3i;
-   GLSecondaryColor3ivPTR     glSecondaryColor3iv;
-   GLSecondaryColor3sPTR      glSecondaryColor3s;
-   GLSecondaryColor3svPTR     glSecondaryColor3sv;
-   GLSecondaryColor3ubPTR     glSecondaryColor3ub;
-   GLSecondaryColor3ubvPTR    glSecondaryColor3ubv;
-   GLSecondaryColor3uiPTR     glSecondaryColor3ui;
-   GLSecondaryColor3uivPTR    glSecondaryColor3uiv;
-   GLSecondaryColor3usPTR     glSecondaryColor3us;
-   GLSecondaryColor3usvPTR    glSecondaryColor3usv;
-   
-   // =
    GLWindowPos2dPTR           glWindowPos2d;
    GLWindowPos2dvPTR          glWindowPos2dv;
-   GLWindowPos2fPTR           glWindowPos2f;
-   GLWindowPos2fvPTR          glWindowPos2fv;
-   GLWindowPos2iPTR           glWindowPos2i;
-   GLWindowPos2ivPTR          glWindowPos2iv;
-   GLWindowPos2sPTR           glWindowPos2s;
-   GLWindowPos2svPTR          glWindowPos2sv;
-   
-   // =
    GLWindowPos3dPTR           glWindowPos3d;
    GLWindowPos3dvPTR          glWindowPos3dv;
-   GLWindowPos3fPTR           glWindowPos3f;
-   GLWindowPos3fvPTR          glWindowPos3fv;
-   GLWindowPos3iPTR           glWindowPos3i;
-   GLWindowPos3ivPTR          glWindowPos3iv;
-   GLWindowPos3sPTR           glWindowPos3s;
-   GLWindowPos3svPTR          glWindowPos3sv;
-      
    // 2.0
-   // =
-   GLGetUniformfvPTR          glGetUniformfv;
-   GLGetUniformivPTR          glGetUniformiv;
-   
-   // =
    GLGetVertexAttribdvPTR     glGetVertexAttribdv;
-   GLGetVertexAttribfvPTR     glGetVertexAttribfv;
-   GLGetVertexAttribivPTR     glGetVertexAttribiv;
-   
-   // =   
-   GLUniform1fPTR             glUniform1f;
-   GLUniform2fPTR             glUniform2f;
-   GLUniform3fPTR             glUniform3f;
-   GLUniform4fPTR             glUniform4f;
-   GLUniform1iPTR             glUniform1i;
-   GLUniform2iPTR             glUniform2i;
-   GLUniform3iPTR             glUniform3i;
-   GLUniform4iPTR             glUniform4i;
-   GLUniform1fvPTR            glUniform1fv;
-   GLUniform2fvPTR            glUniform2fv;
-   GLUniform3fvPTR            glUniform3fv;
-   GLUniform4fvPTR            glUniform4fv;
-   GLUniform1ivPTR            glUniform1iv;
-   GLUniform2ivPTR            glUniform2iv;
-   GLUniform3ivPTR            glUniform3iv;
-   GLUniform4ivPTR            glUniform4iv;
-   
-   // =
-   GLUniformMatrix2fvPTR      glUniformMatrix2fv;
-   GLUniformMatrix3fvPTR      glUniformMatrix3fv;
-   GLUniformMatrix4fvPTR      glUniformMatrix4fv;
-   
-   // =
    GLVertexAttrib1dPTR        glVertexAttrib1d;
    GLVertexAttrib1dvPTR       glVertexAttrib1dv;
-   GLVertexAttrib1fPTR        glVertexAttrib1f;
-   GLVertexAttrib1fvPTR       glVertexAttrib1fv;
-   GLVertexAttrib1sPTR        glVertexAttrib1s;
-   GLVertexAttrib1svPTR       glVertexAttrib1sv;
-   
-   // =
    GLVertexAttrib2dPTR        glVertexAttrib2d;
    GLVertexAttrib2dvPTR       glVertexAttrib2dv;
-   GLVertexAttrib2fPTR        glVertexAttrib2f;
-   GLVertexAttrib2fvPTR       glVertexAttrib2fv;
-   GLVertexAttrib2sPTR        glVertexAttrib2s;
-   GLVertexAttrib2svPTR       glVertexAttrib2sv;
-   
-   // =
    GLVertexAttrib3dPTR        glVertexAttrib3d;
    GLVertexAttrib3dvPTR       glVertexAttrib3dv;
-   GLVertexAttrib3fPTR        glVertexAttrib3f;
-   GLVertexAttrib3fvPTR       glVertexAttrib3fv;
-   GLVertexAttrib3sPTR        glVertexAttrib3s;
-   GLVertexAttrib3svPTR       glVertexAttrib3sv;
-   
-   // =
-   GLVertexAttrib4NbvPTR      glVertexAttrib4Nbv;
-   GLVertexAttrib4NivPTR      glVertexAttrib4Niv;
-   GLVertexAttrib4NsvPTR      glVertexAttrib4Nsv;
-   GLVertexAttrib4NubPTR      glVertexAttrib4Nub;
-   GLVertexAttrib4NubvPTR     glVertexAttrib4Nubv;
-   GLVertexAttrib4NuivPTR     glVertexAttrib4Nuiv;
-   GLVertexAttrib4NusvPTR     glVertexAttrib4Nusv;
-   
-   // =
-   GLVertexAttrib4bvPTR       glVertexAttrib4bv;
    GLVertexAttrib4dPTR        glVertexAttrib4d;
    GLVertexAttrib4dvPTR       glVertexAttrib4dv;
-   GLVertexAttrib4fPTR        glVertexAttrib4f;
-   GLVertexAttrib4fvPTR       glVertexAttrib4fv;
-   GLVertexAttrib4ivPTR       glVertexAttrib4iv;
-   GLVertexAttrib4sPTR        glVertexAttrib4s;
-   GLVertexAttrib4svPTR       glVertexAttrib4sv;
-   GLVertexAttrib4ubvPTR      glVertexAttrib4ubv;
-   GLVertexAttrib4uivPTR      glVertexAttrib4uiv;
-   GLVertexAttrib4usvPTR      glVertexAttrib4usv;
-      
-   // 2.1
-   // =?
-   GLUniformMatrix2x3fvPTR    glUniformMatrix2x3fv;
-   GLUniformMatrix3x2fvPTR    glUniformMatrix3x2fv;
-   GLUniformMatrix2x4fvPTR    glUniformMatrix2x4fv;
-   GLUniformMatrix4x2fvPTR    glUniformMatrix4x2fv;
-   GLUniformMatrix3x4fvPTR    glUniformMatrix3x4fv;
-   GLUniformMatrix4x3fvPTR    glUniformMatrix4x3fv; 
-   
    // 3.0
-   // =
-   GLVertexAttribI1iPTR       glVertexAttribI1i;
-   GLVertexAttribI2iPTR       glVertexAttribI2i;
-   GLVertexAttribI3iPTR       glVertexAttribI3i;
-   GLVertexAttribI4iPTR       glVertexAttribI4i;
-   GLVertexAttribI1uiPTR      glVertexAttribI1ui;
-   GLVertexAttribI2uiPTR      glVertexAttribI2ui;
-   GLVertexAttribI3uiPTR      glVertexAttribI3ui;
-   GLVertexAttribI4uiPTR      glVertexAttribI4ui;
-   
-   // =
-   GLVertexAttribI1ivPTR      glVertexAttribI1iv;
-   GLVertexAttribI2ivPTR      glVertexAttribI2iv;
-   GLVertexAttribI3ivPTR      glVertexAttribI3iv;
-   GLVertexAttribI4ivPTR      glVertexAttribI4iv;
-   GLVertexAttribI1uivPTR     glVertexAttribI1uiv;
-   GLVertexAttribI2uivPTR     glVertexAttribI2uiv;
-   GLVertexAttribI3uivPTR     glVertexAttribI3uiv;
-   GLVertexAttribI4uivPTR     glVertexAttribI4uiv;
-   
-   // =
-   GLVertexAttribI4bvPTR      glVertexAttribI4bv;
-   GLVertexAttribI4svPTR      glVertexAttribI4sv;
-   GLVertexAttribI4ubvPTR     glVertexAttribI4ubv;
-   GLVertexAttribI4usvPTR     glVertexAttribI4usv;
-   
-   // =
-   GLUniform1uiPTR            glUniform1ui;
-   GLUniform2uiPTR            glUniform2ui;
-   GLUniform3uiPTR            glUniform3ui;
-   GLUniform4uiPTR            glUniform4ui;
-   
-   // =
-   GLUniform1uivPTR           glUniform1uiv;
-   GLUniform2uivPTR           glUniform2uiv;
-   GLUniform3uivPTR           glUniform3uiv;
-   GLUniform4uivPTR           glUniform4uiv;
-   
-   // =
-   GLTexParameterIivPTR       glTexParameterIiv;
-   GLTexParameterIuivPTR      glTexParameterIuiv;
-   
-   // =
-   GLGetTexParameterIivPTR    glGetTexParameterIiv;
-   GLGetTexParameterIuivPTR   glGetTexParameterIuiv;
-   
-   // =
-   GLClearBufferivPTR         glClearBufferiv;
-   GLClearBufferuivPTR        glClearBufferuiv;
-   GLClearBufferfvPTR         glClearBufferfv;
-   GLClearBufferfiPTR         glClearBufferfi;
-   
    // 3.3
-   // =
-   GLSamplerParameteriPTR        glSamplerParameteri;
-   GLSamplerParameterivPTR       glSamplerParameteriv;
-   GLSamplerParameterfPTR        glSamplerParameterf;
-   GLSamplerParameterfvPTR       glSamplerParameterfv;
-   GLSamplerParameterIivPTR      glSamplerParameterIiv;
-   GLSamplerParameterIuivPTR     glSamplerParameterIuiv;
-   
-   // =
-   GLGetSamplerParameterivPTR    glGetSamplerParameteriv;
-   GLGetSamplerParameterIivPTR   glGetSamplerParameterIiv;
-   GLGetSamplerParameterfvPTR    glGetSamplerParameterfv;
-   GLGetSamplerParameterIuivPTR  glGetSamplerParameterIuiv;
-   
-   // =
-   GLGetQueryObjecti64vPTR       glGetQueryObjecti64v;
-   GLGetQueryObjectui64vPTR      glGetQueryObjectui64v;
-   
-   // =?
-   GLVertexAttribP1uiPTR         glVertexAttribP1ui;
-   GLVertexAttribP1uivPTR        glVertexAttribP1uiv;
-   GLVertexAttribP2uiPTR         glVertexAttribP2ui;
-   GLVertexAttribP2uivPTR        glVertexAttribP2uiv;
-   GLVertexAttribP3uiPTR         glVertexAttribP3ui;
-   GLVertexAttribP3uivPTR        glVertexAttribP3uiv;
-   GLVertexAttribP4uiPTR         glVertexAttribP4ui;
-   GLVertexAttribP4uivPTR        glVertexAttribP4uiv;
-   
-   // =?
-   GLVertexP2uiPTR               glVertexP2ui;
-   GLVertexP2uivPTR              glVertexP2uiv;
-   GLVertexP3uiPTR               glVertexP3ui;
-   GLVertexP3uivPTR              glVertexP3uiv;
-   GLVertexP4uiPTR               glVertexP4ui;
-   GLVertexP4uivPTR              glVertexP4uiv;
-   
-   // =?
-   GLTexCoordP1uiPTR             glTexCoordP1ui;
-   GLTexCoordP1uivPTR            glTexCoordP1uiv;
-   GLTexCoordP2uiPTR             glTexCoordP2ui;
-   GLTexCoordP2uivPTR            glTexCoordP2uiv;
-   GLTexCoordP3uiPTR             glTexCoordP3ui;
-   GLTexCoordP3uivPTR            glTexCoordP3uiv;
-   GLTexCoordP4uiPTR             glTexCoordP4ui;
-   GLTexCoordP4uivPTR            glTexCoordP4uiv;
-   
-   // =?
-   GLMultiTexCoordP1uiPTR        glMultiTexCoordP1ui;
-   GLMultiTexCoordP1uivPTR       glMultiTexCoordP1uiv;
-   GLMultiTexCoordP2uiPTR        glMultiTexCoordP2ui;
-   GLMultiTexCoordP2uivPTR       glMultiTexCoordP2uiv;
-   GLMultiTexCoordP3uiPTR        glMultiTexCoordP3ui;
-   GLMultiTexCoordP3uivPTR       glMultiTexCoordP3uiv;
-   GLMultiTexCoordP4uiPTR        glMultiTexCoordP4ui;
-   GLMultiTexCoordP4uivPTR       glMultiTexCoordP4uiv;
-   
-   // =?
-   GLNormalP3uiPTR               glNormalP3ui;
-   GLNormalP3uivPTR              glNormalP3uiv;
-   
-   // =?
-   GLColorP3uiPTR                glColorP3ui;
-   GLColorP3uivPTR               glColorP3uiv;
-   
-   // =?
-   GLColorP4uiPTR                glColorP4ui;
-   GLColorP4uivPTR               glColorP4uiv;
-   
-   // =?
-   GLSecondaryColorP3uiPTR       glSecondaryColorP3ui;
-   GLSecondaryColorP3uivPTR      glSecondaryColorP3uiv;
    // 4.0
-   // =?
    GLUniform1dPTR                glUniform1d;
    GLUniform2dPTR                glUniform2d;
    GLUniform3dPTR                glUniform3d;
@@ -3328,49 +2867,16 @@ public struct GLAD_WrapperD
    GLUniform2dvPTR               glUniform2dv;
    GLUniform3dvPTR               glUniform3dv;
    GLUniform4dvPTR               glUniform4dv;
-   
-   // =?
    GLUniformMatrix2dvPTR         glUniformMatrix2dv;
    GLUniformMatrix3dvPTR         glUniformMatrix3dv;
    GLUniformMatrix4dvPTR         glUniformMatrix4dv;
-   
-   // =?
    GLUniformMatrix2x3dvPTR       glUniformMatrix2x3dv;
    GLUniformMatrix2x4dvPTR       glUniformMatrix2x4dv;
    GLUniformMatrix3x2dvPTR       glUniformMatrix3x2dv;
    GLUniformMatrix3x4dvPTR       glUniformMatrix3x4dv;
    GLUniformMatrix4x2dvPTR       glUniformMatrix4x2dv;
-   GLUniformMatrix4x3dvPTR       glUniformMatrix4x3dv;
-   
-   // =?
-   GLUniformSubroutinesuivPTR    glUniformSubroutinesuiv;
-   GLGetUniformSubroutineuivPTR  glGetUniformSubroutineuiv;
-   GLGetProgramStageivPTR        glGetProgramStageiv;
-   
-   // =
-   GLPatchParameteriPTR          glPatchParameteri;
-   GLPatchParameterfvPTR         glPatchParameterfv;
-   
-   // =?
-   GLEndQueryIndexedPTR          glEndQueryIndexed;
-   GLGetQueryIndexedivPTR        glGetQueryIndexediv;
-   
+   GLUniformMatrix4x3dvPTR       glUniformMatrix4x3dv;   
    // ext
-   
-   // =?
-   GLGetTransformFeedbackivPTR         glGetTransformFeedbackiv;
-   GLGetTransformFeedbacki_vPTR        glGetTransformFeedbacki_v;   
-   GLGetTransformFeedbacki64_vPTR      glGetTransformFeedbacki64_v;
-   
-   // =?
-   GLGetNamedBufferParameterivPTR      glGetNamedBufferParameteriv;
-   GLGetNamedBufferParameteri64vPTR    glGetNamedBufferParameteri64v;
-   
-   // =
-   GLClearNamedFramebufferivPTR        glClearNamedFramebufferiv;
-   GLClearNamedFramebufferuivPTR       glClearNamedFramebufferuiv;
-   GLClearNamedFramebufferfvPTR        glClearNamedFramebufferfv;
-   GLClearNamedFramebufferfiPTR        glClearNamedFramebufferfi;
    
    constructor()
    {
@@ -3380,30 +2886,11 @@ public struct GLAD_WrapperD
       glGetString := GLGetStringPTR.load(libGL, "glGetString");
    }
    
-   private string? loadExtensionsStr()
-   {
-      pointer ptr := glGetString(GL_NUM_EXTENSIONS);
-      if (ptr.isUnassigned()) {
-         ^ nil
-      };
-      
-      ^ ptr.getStringUnsafe();
-   }
-   
    private load_GL_ARB_direct_state_access(GLAD_Config config)
    {
-      if (config.GLAD_GL_ARB_direct_state_access == 0) {
-         ^ self
-      };
-      glGetTransformFeedbackiv := GLGetTransformFeedbackivPTR.load(get_proc, "glGetTransformFeedbackiv");
-      glGetTransformFeedbacki_v := GLGetTransformFeedbacki_vPTR.load(get_proc, "glGetTransformFeedbacki_v");
-      glGetTransformFeedbacki64_v := GLGetTransformFeedbacki64_vPTR.load(get_proc, "glGetTransformFeedbacki64_v");
-      glGetNamedBufferParameteriv := GLGetNamedBufferParameterivPTR.load(get_proc, "glGetNamedBufferParameteriv");
-      glGetNamedBufferParameteri64v := GLGetNamedBufferParameteri64vPTR.load(get_proc, "glGetNamedBufferParameteri64v");
-      glClearNamedFramebufferiv := GLClearNamedFramebufferivPTR.load(get_proc, "glClearNamedFramebufferiv");
-      glClearNamedFramebufferuiv := GLClearNamedFramebufferuivPTR.load(get_proc, "glClearNamedFramebufferuiv");
-      glClearNamedFramebufferfv := GLClearNamedFramebufferfvPTR.load(get_proc, "glClearNamedFramebufferfv");
-      glClearNamedFramebufferfi := GLClearNamedFramebufferfiPTR.load(get_proc, "glClearNamedFramebufferfi");
+//      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+//         ^ self
+//      };
    }   
 
    private load_GL_VERSION_1_0(GLAD_Config config)
@@ -3412,227 +2899,53 @@ public struct GLAD_WrapperD
          ^ self
       };
       
-      glTexParameterf := GLTexParameterfPTR.loadDirectly(libGL, "glTexParameterf");
-      glTexParameterfv := GLTexParameterfvPTR.loadDirectly(libGL, "glTexParameterfv");
-      glTexParameteri := GLTexParameteriPTR.loadDirectly(libGL, "glTexParameteri");
-      glTexParameteriv := GLTexParameterivPTR.loadDirectly(libGL, "glTexParameteriv");
-      glPixelStoref := GLPixelStorefPTR.loadDirectly(libGL, "glPixelStoref");
-      glPixelStorei := GLPixelStoreiPTR.loadDirectly(libGL, "glPixelStorei");
-      glGetTexParameterfv := GLGetTexParameterfvPTR.loadDirectly(libGL, "glGetTexParameterfv");
-      glGetTexParameteriv := GLGetTexParameterivPTR.loadDirectly(libGL, "glGetTexParameteriv");
-      glGetTexLevelParameterfv := GLGetTexLevelParameterfvPTR.loadDirectly(libGL, "glGetTexLevelParameterfv");
-      glGetTexLevelParameteriv := GLGetTexLevelParameterivPTR.loadDirectly(libGL, "glGetTexLevelParameteriv");
-      glColor3b := GLColor3bPTR.loadDirectly(libGL, "glColor3b");
-      glColor3bv := GLColor3bvPTR.loadDirectly(libGL, "glColor3bv");
       glColor3d := GLColor3dPTR.loadDirectly(libGL, "glColor3d");
       glColor3dv := GLColor3dvPTR.loadDirectly(libGL, "glColor3dv");
-      glColor3f := GLColor3fPTR.loadDirectly(libGL, "glColor3f");
-      glColor3fv := GLColor3fvPTR.loadDirectly(libGL, "glColor3fv");
-      glColor3i := GLColor3iPTR.loadDirectly(libGL, "glColor3i");
-      glColor3iv := GLColor3ivPTR.loadDirectly(libGL, "glColor3iv");
-      glColor3s := GLColor3sPTR.loadDirectly(libGL, "glColor3s"); 
-      glColor3sv := GLColor3svPTR.loadDirectly(libGL, "glColor3sv");
-      glColor3ub := GLColor3ubPTR.loadDirectly(libGL, "glColor3ub");
-      glColor3ubv := GLColor3ubvPTR.loadDirectly(libGL, "glColor3ubv");
-      glColor3ui := GLColor3uiPTR.loadDirectly(libGL, "glColor3ui");
-      glColor3uiv := GLColor3uivPTR.loadDirectly(libGL, "glColor3uiv");
-      glColor3us := GLColor3usPTR.loadDirectly(libGL, "glColor3us");
-      glColor3usv := GLColor3usvPTR.loadDirectly(libGL, "glColor3usv");   
-      glColor4b := GLColor4bPTR.loadDirectly(libGL, "glColor4b");
-      glColor4bv := GLColor4bvPTR.loadDirectly(libGL, "glColor4bv");
       glColor4d := GLColor4dPTR.loadDirectly(libGL, "glColor4d");
       glColor4dv := GLColor4dvPTR.loadDirectly(libGL, "glColor4dv");
-      glColor4f := GLColor4fPTR.loadDirectly(libGL, "glColor4f");
-      glColor4fv := GLColor4fvPTR.loadDirectly(libGL, "glColor4fv");
-      glColor4i := GLColor4iPTR.loadDirectly(libGL, "glColor4i");
-      glColor4iv := GLColor4ivPTR.loadDirectly(libGL, "glColor4iv");
-      glColor4s := GLColor4sPTR.loadDirectly(libGL, "glColor4s");
-      glColor4sv := GLColor4svPTR.loadDirectly(libGL, "glColor4sv");
-      glColor4ub := GLColor4ubPTR.loadDirectly(libGL, "glColor4ub");
-      glColor4ubv := GLColor4ubvPTR.loadDirectly(libGL, "glColor4ubv");
-      glColor4ui := GLColor4uiPTR.loadDirectly(libGL, "glColor4ui");
-      glColor4uiv := GLColor4uivPTR.loadDirectly(libGL, "glColor4uiv");
-      glColor4us := GLColor4usPTR.loadDirectly(libGL, "glColor4us");
-      glColor4usv := GLColor4usvPTR.loadDirectly(libGL, "glColor4usv");
       glIndexd := GLIndexdPTR.loadDirectly(libGL, "glIndexd");
       glIndexdv := GLIndexdvPTR.loadDirectly(libGL, "glIndexdv");
-      glIndexf := GLIndexfPTR.loadDirectly(libGL, "glIndexf");
-      glIndexfv := GLIndexfvPTR.loadDirectly(libGL, "glIndexfv");
-      glIndexi := GLIndexiPTR.loadDirectly(libGL, "glIndexi");
-      glIndexiv := GLIndexivPTR.loadDirectly(libGL, "glIndexiv");
-      glIndexs := GLIndexsPTR.loadDirectly(libGL, "glIndexs");
-      glIndexsv := GLIndexsvPTR.loadDirectly(libGL, "glIndexsv");
-      glNormal3b := GLNormal3bPTR.loadDirectly(libGL, "glNormal3b");
-      glNormal3bv := GLNormal3bvPTR.loadDirectly(libGL, "glNormal3bv");
       glNormal3d := GLNormal3dPTR.loadDirectly(libGL, "glNormal3d");
       glNormal3dv := GLNormal3dvPTR.loadDirectly(libGL, "glNormal3dv");
-      glNormal3f := GLNormal3fPTR.loadDirectly(libGL, "glNormal3f");
-      glNormal3fv := GLNormal3fvPTR.loadDirectly(libGL, "glNormal3fv");
-      glNormal3i := GLNormal3iPTR.loadDirectly(libGL, "glNormal3i");
-      glNormal3iv := GLNormal3ivPTR.loadDirectly(libGL, "glNormal3iv");
-      glNormal3s := GLNormal3sPTR.loadDirectly(libGL, "glNormal3s");
-      glNormal3sv := GLNormal3svPTR.loadDirectly(libGL, "glNormal3sv");
       glRasterPos2d := GLRasterPos2dPTR.loadDirectly(libGL, "glRasterPos2d");
       glRasterPos2dv := GLRasterPos2dvPTR.loadDirectly(libGL, "glRasterPos2dv");
-      glRasterPos2f := GLRasterPos2fPTR.loadDirectly(libGL, "glRasterPos2f");
-      glRasterPos2fv := GLRasterPos2fvPTR.loadDirectly(libGL, "glRasterPos2fv");
-      glRasterPos2i := GLRasterPos2iPTR.loadDirectly(libGL, "glRasterPos2i");
-      glRasterPos2iv := GLRasterPos2ivPTR.loadDirectly(libGL, "glRasterPos2iv");
-      glRasterPos2s := GLRasterPos2sPTR.loadDirectly(libGL, "glRasterPos2s");
-      glRasterPos2sv := GLRasterPos2svPTR.loadDirectly(libGL, "glRasterPos2sv"); 
       glRasterPos3d := GLRasterPos3dPTR.loadDirectly(libGL, "glRasterPos3d");
       glRasterPos3dv := GLRasterPos3dvPTR.loadDirectly(libGL, "glRasterPos3dv");
-      glRasterPos3f := GLRasterPos3fPTR.loadDirectly(libGL, "glRasterPos3f");
-      glRasterPos3fv := GLRasterPos3fvPTR.loadDirectly(libGL, "glRasterPos3fv");
-      glRasterPos3i := GLRasterPos3iPTR.loadDirectly(libGL, "glRasterPos3i");
-      glRasterPos3iv := GLRasterPos3ivPTR.loadDirectly(libGL, "glRasterPos3iv");
-      glRasterPos3s := GLRasterPos3sPTR.loadDirectly(libGL, "glRasterPos3s");
-      glRasterPos3sv := GLRasterPos3svPTR.loadDirectly(libGL, "glRasterPos3sv");
       glRasterPos4d := GLRasterPos4dPTR.loadDirectly(libGL, "glRasterPos4d");
       glRasterPos4dv := GLRasterPos4dvPTR.loadDirectly(libGL, "glRasterPos4dv");
-      glRasterPos4f := GLRasterPos4fPTR.loadDirectly(libGL, "glRasterPos4f");
-      glRasterPos4fv := GLRasterPos4fvPTR.loadDirectly(libGL, "glRasterPos4fv");
-      glRasterPos4i := GLRasterPos4iPTR.loadDirectly(libGL, "glRasterPos4i");
-      glRasterPos4iv := GLRasterPos4ivPTR.loadDirectly(libGL, "glRasterPos4iv");
-      glRasterPos4s := GLRasterPos4sPTR.loadDirectly(libGL, "glRasterPos4s");
-      glRasterPos4sv := GLRasterPos4svPTR.loadDirectly(libGL, "glRasterPos4sv"); 
       glRectd := GLRectdPTR.loadDirectly(libGL, "glRectd");
       glRectdv := GLRectdvPTR.loadDirectly(libGL, "glRectdv");
-      glRectf := GLRectfPTR.loadDirectly(libGL, "glRectf");
-      glRectfv := GLRectfvPTR.loadDirectly(libGL, "glRectfv");
-      glRecti := GLRectiPTR.loadDirectly(libGL, "glRecti");
-      glRectiv := GLRectivPTR.loadDirectly(libGL, "glRectiv");
-      glRects := GLRectsPTR.loadDirectly(libGL, "glRects");
-      glRectsv := GLRectsvPTR.loadDirectly(libGL, "glRectsv"); 
       glTexCoord1d := GLTexCoord1dPTR.loadDirectly(libGL, "glTexCoord1d");
       glTexCoord1dv := GLTexCoord1dvPTR.loadDirectly(libGL, "glTexCoord1dv");
-      glTexCoord1f := GLTexCoord1fPTR.loadDirectly(libGL, "glTexCoord1f");
-      glTexCoord1fv := GLTexCoord1fvPTR.loadDirectly(libGL, "glTexCoord1fv");
-      glTexCoord1i := GLTexCoord1iPTR.loadDirectly(libGL, "glTexCoord1i");
-      glTexCoord1iv := GLTexCoord1ivPTR.loadDirectly(libGL, "glTexCoord1iv");
-      glTexCoord1s := GLTexCoord1sPTR.loadDirectly(libGL, "glTexCoord1s");
-      glTexCoord1sv := GLTexCoord1svPTR.loadDirectly(libGL, "glTexCoord1sv");
       glTexCoord2d := GLTexCoord2dPTR.loadDirectly(libGL, "glTexCoord2d");
       glTexCoord2dv := GLTexCoord2dvPTR.loadDirectly(libGL, "glTexCoord2dv");
-      glTexCoord2f := GLTexCoord2fPTR.loadDirectly(libGL, "glTexCoord2f");
-      glTexCoord2fv := GLTexCoord2fvPTR.loadDirectly(libGL, "glTexCoord2fv");
-      glTexCoord2i := GLTexCoord2iPTR.loadDirectly(libGL, "glTexCoord2i");
-      glTexCoord2iv := GLTexCoord2ivPTR.loadDirectly(libGL, "glTexCoord2iv");
-      glTexCoord2s := GLTexCoord2sPTR.loadDirectly(libGL, "glTexCoord2s");
-      glTexCoord2sv := GLTexCoord2svPTR.loadDirectly(libGL, "glTexCoord2sv"); 
       glTexCoord3d := GLTexCoord3dPTR.loadDirectly(libGL, "glTexCoord3d");
       glTexCoord3dv := GLTexCoord3dvPTR.loadDirectly(libGL, "glTexCoord3dv");
-      glTexCoord3f := GLTexCoord3fPTR.loadDirectly(libGL, "glTexCoord3f");
-      glTexCoord3fv := GLTexCoord3fvPTR.loadDirectly(libGL, "glTexCoord3fv");
-      glTexCoord3i := GLTexCoord3iPTR.loadDirectly(libGL, "glTexCoord3i");
-      glTexCoord3iv := GLTexCoord3ivPTR.loadDirectly(libGL, "glTexCoord3iv");
-      glTexCoord3s := GLTexCoord3sPTR.loadDirectly(libGL, "glTexCoord3s");
-      glTexCoord3sv := GLTexCoord3svPTR.loadDirectly(libGL, "glTexCoord3sv"); 
       glTexCoord4d := GLTexCoord4dPTR.loadDirectly(libGL, "glTexCoord4d");
       glTexCoord4dv := GLTexCoord4dvPTR.loadDirectly(libGL, "glTexCoord4dv");
-      glTexCoord4f := GLTexCoord4fPTR.loadDirectly(libGL, "glTexCoord4f");
-      glTexCoord4fv := GLTexCoord4fvPTR.loadDirectly(libGL, "glTexCoord4fv");
-      glTexCoord4i := GLTexCoord4iPTR.loadDirectly(libGL, "glTexCoord4i");
-      glTexCoord4iv := GLTexCoord4ivPTR.loadDirectly(libGL, "glTexCoord4iv");
-      glTexCoord4s := GLTexCoord4sPTR.loadDirectly(libGL, "glTexCoord4s");
-      glTexCoord4sv := GLTexCoord4svPTR.loadDirectly(libGL, "glTexCoord4sv");
       glVertex2d := GLVertex2dPTR.loadDirectly(libGL, "glVertex2d");
       glVertex2dv := GLVertex2dvPTR.loadDirectly(libGL, "glVertex2dv");
-      glVertex2f := GLVertex2fPTR.loadDirectly(libGL, "glVertex2f");
-      glVertex2fv := GLVertex2fvPTR.loadDirectly(libGL, "glVertex2fv");
-      glVertex2i := GLVertex2iPTR.loadDirectly(libGL, "glVertex2i");
-      glVertex2iv := GLVertex2ivPTR.loadDirectly(libGL, "glVertex2iv");
-      glVertex2s := GLVertex2sPTR.loadDirectly(libGL, "glVertex2s");
-      glVertex2sv := GLVertex2svPTR.loadDirectly(libGL, "glVertex2sv");
       glVertex3d := GLVertex3dPTR.loadDirectly(libGL, "glVertex3d");
       glVertex3dv := GLVertex3dvPTR.loadDirectly(libGL, "glVertex3dv");
-      glVertex3f := GLVertex3fPTR.loadDirectly(libGL, "glVertex3f");
-      glVertex3fv := GLVertex3fvPTR.loadDirectly(libGL, "glVertex3fv");
-      glVertex3i := GLVertex3iPTR.loadDirectly(libGL, "glVertex3i");
-      glVertex3iv := GLVertex3ivPTR.loadDirectly(libGL, "glVertex3iv");
-      glVertex3s := GLVertex3sPTR.loadDirectly(libGL, "glVertex3s");
-      glVertex3sv := GLVertex3svPTR.loadDirectly(libGL, "glVertex3sv");
       glVertex4d := GLVertex4dPTR.loadDirectly(libGL, "glVertex4d");
       glVertex4dv := GLVertex4dvPTR.loadDirectly(libGL, "glVertex4dv");
-      glVertex4f := GLVertex4fPTR.loadDirectly(libGL, "glVertex4f");
-      glVertex4fv := GLVertex4fvPTR.loadDirectly(libGL, "glVertex4fv");
-      glVertex4i := GLVertex4iPTR.loadDirectly(libGL, "glVertex4i");
-      glVertex4iv := GLVertex4ivPTR.loadDirectly(libGL, "glVertex4iv");
-      glVertex4s := GLVertex4sPTR.loadDirectly(libGL, "glVertex4s");
-      glVertex4sv := GLVertex4svPTR.loadDirectly(libGL, "glVertex4sv");
-      glFogf := GLFogfPTR.loadDirectly(libGL, "glFogf");
-      glFogfv := GLFogfvPTR.loadDirectly(libGL, "glFogfv");
-      glFogi := GLFogiPTR.loadDirectly(libGL, "glFogi");
-      glFogiv := GLFogivPTR.loadDirectly(libGL, "glFogiv"); 
-      glLightf := GLLightfPTR.loadDirectly(libGL, "glLightf");
-      glLightfv := GLLightfvPTR.loadDirectly(libGL, "glLightfv");
-      glLighti := GLLightiPTR.loadDirectly(libGL, "glLighti");
-      glLightiv := GLLightivPTR.loadDirectly(libGL, "glLightiv");
-      glLightModelf := GLLightModelfPTR.loadDirectly(libGL, "glLightModelf");
-      glLightModelfv := GLLightModelfvPTR.loadDirectly(libGL, "glLightModelfv");
-      glLightModeli := GLLightModeliPTR.loadDirectly(libGL, "glLightModeli");
-      glLightModeliv := GLLightModelivPTR.loadDirectly(libGL, "glLightModeliv"); 
-      glMaterialf := GLMaterialfPTR.loadDirectly(libGL, "glMaterialf");
-      glMaterialfv := GLMaterialfvPTR.loadDirectly(libGL, "glMaterialfv");
-      glMateriali := GLMaterialiPTR.loadDirectly(libGL, "glMateriali");
-      glMaterialiv := GLMaterialivPTR.loadDirectly(libGL, "glMaterialiv");
-      glTexEnvf := GLTexEnvfPTR.loadDirectly(libGL, "glTexEnvf");
-      glTexEnvfv := GLTexEnvfvPTR.loadDirectly(libGL, "glTexEnvfv");
-      glTexEnvi := GLTexEnviPTR.loadDirectly(libGL, "glTexEnvi");
-      glTexEnviv := GLTexEnvivPTR.loadDirectly(libGL, "glTexEnviv"); 
       glTexGend := GLTexGendPTR.loadDirectly(libGL, "glTexGend");
       glTexGendv := GLTexGendvPTR.loadDirectly(libGL, "glTexGendv");
-      glTexGenf := GLTexGenfPTR.loadDirectly(libGL, "glTexGenf");
-      glTexGenfv := GLTexGenfvPTR.loadDirectly(libGL, "glTexGenfv");
-      glTexGeni := GLTexGeniPTR.loadDirectly(libGL, "glTexGeni");
-      glTexGeniv := GLTexGenivPTR.loadDirectly(libGL, "glTexGeniv");
       glMap1d := GLMap1dPTR.loadDirectly(libGL, "glMap1d");
-      glMap1f := GLMap1fPTR.loadDirectly(libGL, "glMap1f");
       glMap2d := GLMap2dPTR.loadDirectly(libGL, "glMap2d");
-      glMap2f := GLMap2fPTR.loadDirectly(libGL, "glMap2f");
       glMapGrid1d := GLMapGrid1dPTR.loadDirectly(libGL, "glMapGrid1d");
-      glMapGrid1f := GLMapGrid1fPTR.loadDirectly(libGL, "glMapGrid1f");
       glMapGrid2d := GLMapGrid2dPTR.loadDirectly(libGL, "glMapGrid2d");
-      glMapGrid2f := GLMapGrid2fPTR.loadDirectly(libGL, "glMapGrid2f"); 
       glEvalCoord1d := GLEvalCoord1dPTR.loadDirectly(libGL, "glEvalCoord1d");
       glEvalCoord1dv := GLEvalCoord1dvPTR.loadDirectly(libGL, "glEvalCoord1dv");
-      glEvalCoord1f := GLEvalCoord1fPTR.loadDirectly(libGL, "glEvalCoord1f");
-      glEvalCoord1fv := GLEvalCoord1fvPTR.loadDirectly(libGL, "glEvalCoord1fv");
       glEvalCoord2d := GLEvalCoord2dPTR.loadDirectly(libGL, "glEvalCoord2d");
       glEvalCoord2dv := GLEvalCoord2dvPTR.loadDirectly(libGL, "glEvalCoord2dv");
-      glEvalCoord2f := GLEvalCoord2fPTR.loadDirectly(libGL, "glEvalCoord2f");
-      glEvalCoord2fv := GLEvalCoord2fvPTR.loadDirectly(libGL, "glEvalCoord2fv");
-      glPixelTransferf := GLPixelTransferfPTR.loadDirectly(libGL, "glPixelTransferf");
-      glPixelTransferi := GLPixelTransferiPTR.loadDirectly(libGL, "glPixelTransferi");
-      glPixelMapfv := GLPixelMapfvPTR.loadDirectly(libGL, "glPixelMapfv");
-      glPixelMapuiv := GLPixelMapuivPTR.loadDirectly(libGL, "glPixelMapuiv");
-      glPixelMapusv := GLPixelMapusvPTR.loadDirectly(libGL, "glPixelMapusv");
-      glGetLightfv := GLGetLightfvPTR.loadDirectly(libGL, "glGetLightfv");
-      glGetLightiv := GLGetLightivPTR.loadDirectly(libGL, "glGetLightiv");
       glGetMapdv := GLGetMapdvPTR.loadDirectly(libGL, "glGetMapdv");
-      glGetMapfv := GLGetMapfvPTR.loadDirectly(libGL, "glGetMapfv");
-      glGetMapiv := GLGetMapivPTR.loadDirectly(libGL, "glGetMapiv");
-      glGetMaterialfv := GLGetMaterialfvPTR.loadDirectly(libGL, "glGetMaterialfv");
-      glGetMaterialiv := GLGetMaterialivPTR.loadDirectly(libGL, "glGetMaterialiv");
-      glGetPixelMapfv := GLGetPixelMapfvPTR.loadDirectly(libGL, "glGetPixelMapfv");
-      glGetPixelMapuiv := GLGetPixelMapuivPTR.loadDirectly(libGL, "glGetPixelMapuiv");
-      glGetPixelMapusv := GLGetPixelMapusvPTR.loadDirectly(libGL, "glGetPixelMapusv");
-      glGetPolygonStipple := GLGetPolygonStipplePTR.loadDirectly(libGL, "glGetPolygonStipple");
-      glGetTexEnvfv := GLGetTexEnvfvPTR.loadDirectly(libGL, "glGetTexEnvfv");
-      glGetTexEnviv := GLGetTexEnvivPTR.loadDirectly(libGL, "glGetTexEnviv");
       glGetTexGendv := GLGetTexGendvPTR.loadDirectly(libGL, "glGetTexGendv");
-      glGetTexGenfv := GLGetTexGenfvPTR.loadDirectly(libGL, "glGetTexGenfv");
-      glGetTexGeniv := GLGetTexGenivPTR.loadDirectly(libGL, "glGetTexGeniv");
-      glLoadMatrixf := GLLoadMatrixfPTR.loadDirectly(libGL, "glLoadMatrixf");
       glLoadMatrixd := GLLoadMatrixdPTR.loadDirectly(libGL, "glLoadMatrixd");
-      glMultMatrixf := GLMultMatrixfPTR.loadDirectly(libGL, "glMultMatrixf");
       glMultMatrixd := GLMultMatrixdPTR.loadDirectly(libGL, "glMultMatrixd");
       glRotated := GLRotatedPTR.loadDirectly(libGL, "glRotated");
-      glRotatef := GLRotatefPTR.loadDirectly(libGL, "glRotatef");
       glScaled := GLScaledPTR.loadDirectly(libGL, "glScaled");
-      glScalef := GLScalefPTR.loadDirectly(libGL, "glScalef");
       glTranslated := GLTranslatedPTR.loadDirectly(libGL, "glTranslated");
-      glTranslatef := GLTranslatefPTR.loadDirectly(libGL, "glTranslatef");
    }
 
    private load_GL_VERSION_1_1(GLAD_Config config)
@@ -3657,39 +2970,13 @@ public struct GLAD_WrapperD
       
       glMultiTexCoord1d := GLMultiTexCoord1dPTR.loadDirectly(libGL, "glMultiTexCoord1d");
       glMultiTexCoord1dv := GLMultiTexCoord1dvPTR.loadDirectly(libGL, "glMultiTexCoord1dv");
-      glMultiTexCoord1f := GLMultiTexCoord1fPTR.loadDirectly(libGL, "glMultiTexCoord1f");
-      glMultiTexCoord1fv := GLMultiTexCoord1fvPTR.loadDirectly(libGL, "glMultiTexCoord1fv");
-      glMultiTexCoord1i := GLMultiTexCoord1iPTR.loadDirectly(libGL, "glMultiTexCoord1i");
-      glMultiTexCoord1iv := GLMultiTexCoord1ivPTR.loadDirectly(libGL, "glMultiTexCoord1iv");
-      glMultiTexCoord1s := GLMultiTexCoord1sPTR.loadDirectly(libGL, "glMultiTexCoord1s");
-      glMultiTexCoord1sv := GLMultiTexCoord1svPTR.loadDirectly(libGL, "glMultiTexCoord1sv");
       glMultiTexCoord2d := GLMultiTexCoord2dPTR.loadDirectly(libGL, "glMultiTexCoord2d");
       glMultiTexCoord2dv := GLMultiTexCoord2dvPTR.loadDirectly(libGL, "glMultiTexCoord2dv");
-      glMultiTexCoord2f := GLMultiTexCoord2fPTR.loadDirectly(libGL, "glMultiTexCoord2f");
-      glMultiTexCoord2fv := GLMultiTexCoord2fvPTR.loadDirectly(libGL, "glMultiTexCoord2fv");
-      glMultiTexCoord2i := GLMultiTexCoord2iPTR.loadDirectly(libGL, "glMultiTexCoord2i");
-      glMultiTexCoord2iv := GLMultiTexCoord2ivPTR.loadDirectly(libGL, "glMultiTexCoord2iv");
-      glMultiTexCoord2s := GLMultiTexCoord2sPTR.loadDirectly(libGL, "glMultiTexCoord2s");
-      glMultiTexCoord2sv := GLMultiTexCoord2svPTR.loadDirectly(libGL, "glMultiTexCoord2sv");
       glMultiTexCoord3d := GLMultiTexCoord3dPTR.loadDirectly(libGL, "glMultiTexCoord3d");
       glMultiTexCoord3dv := GLMultiTexCoord3dvPTR.loadDirectly(libGL, "glMultiTexCoord3dv");
-      glMultiTexCoord3f := GLMultiTexCoord3fPTR.loadDirectly(libGL, "glMultiTexCoord3f");
-      glMultiTexCoord3fv := GLMultiTexCoord3fvPTR.loadDirectly(libGL, "glMultiTexCoord3fv");
-      glMultiTexCoord3i := GLMultiTexCoord3iPTR.loadDirectly(libGL, "glMultiTexCoord3i");
-      glMultiTexCoord3iv := GLMultiTexCoord3ivPTR.loadDirectly(libGL, "glMultiTexCoord3iv");
-      glMultiTexCoord3s := GLMultiTexCoord3sPTR.loadDirectly(libGL, "glMultiTexCoord3s");
-      glMultiTexCoord3sv := GLMultiTexCoord3svPTR.loadDirectly(libGL, "glMultiTexCoord3sv");
       glMultiTexCoord4d := GLMultiTexCoord4dPTR.loadDirectly(libGL, "glMultiTexCoord4d");
       glMultiTexCoord4dv := GLMultiTexCoord4dvPTR.loadDirectly(libGL, "glMultiTexCoord4dv");
-      glMultiTexCoord4f := GLMultiTexCoord4fPTR.loadDirectly(libGL, "glMultiTexCoord4f");
-      glMultiTexCoord4fv := GLMultiTexCoord4fvPTR.loadDirectly(libGL, "glMultiTexCoord4fv");
-      glMultiTexCoord4i := GLMultiTexCoord4iPTR.loadDirectly(libGL, "glMultiTexCoord4i");
-      glMultiTexCoord4iv := GLMultiTexCoord4ivPTR.loadDirectly(libGL, "glMultiTexCoord4iv");
-      glMultiTexCoord4s := GLMultiTexCoord4sPTR.loadDirectly(libGL, "glMultiTexCoord4s");
-      glMultiTexCoord4sv := GLMultiTexCoord4svPTR.loadDirectly(libGL, "glMultiTexCoord4sv");
-      glLoadTransposeMatrixf := GLLoadTransposeMatrixfPTR.loadDirectly(libGL, "glLoadTransposeMatrixf");
       glLoadTransposeMatrixd := GLLoadTransposeMatrixdPTR.loadDirectly(libGL, "glLoadTransposeMatrixd");
-      glMultTransposeMatrixf := GLMultTransposeMatrixfPTR.loadDirectly(libGL, "glMultTransposeMatrixf");
       glMultTransposeMatrixd := GLMultTransposeMatrixdPTR.loadDirectly(libGL, "glMultTransposeMatrixd");
    }      
 
@@ -3699,46 +2986,14 @@ public struct GLAD_WrapperD
          ^ self
       };
 
-      glPointParameterf := GLPointParameterfPTR.loadDirectly(libGL, "glPointParameterf");
-      glPointParameterfv := GLPointParameterfvPTR.loadDirectly(libGL, "glPointParameterfv");
-      glPointParameteri := GLPointParameteriPTR.loadDirectly(libGL, "glPointParameteri");
-      glPointParameteriv := GLPointParameterivPTR.loadDirectly(libGL, "glPointParameteriv");      
-      glFogCoordf := GLFogCoordfPTR.loadDirectly(libGL, "glFogCoordf");
-      glFogCoordfv := GLFogCoordfvPTR.loadDirectly(libGL, "glFogCoordfv");
       glFogCoordd := GLFogCoorddPTR.loadDirectly(libGL, "glFogCoordd");
       glFogCoorddv := GLFogCoorddvPTR.loadDirectly(libGL, "glFogCoorddv");
-      glSecondaryColor3b := GLSecondaryColor3bPTR.loadDirectly(libGL, "glSecondaryColor3b");
-      glSecondaryColor3bv := GLSecondaryColor3bvPTR.loadDirectly(libGL, "glSecondaryColor3bv");
       glSecondaryColor3d := GLSecondaryColor3dPTR.loadDirectly(libGL, "glSecondaryColor3d");
       glSecondaryColor3dv := GLSecondaryColor3dvPTR.loadDirectly(libGL, "glSecondaryColor3dv");
-      glSecondaryColor3f := GLSecondaryColor3fPTR.loadDirectly(libGL, "glSecondaryColor3f");
-      glSecondaryColor3fv := GLSecondaryColor3fvPTR.loadDirectly(libGL, "glSecondaryColor3fv");
-      glSecondaryColor3i := GLSecondaryColor3iPTR.loadDirectly(libGL, "glSecondaryColor3i");
-      glSecondaryColor3iv := GLSecondaryColor3ivPTR.loadDirectly(libGL, "glSecondaryColor3iv");
-      glSecondaryColor3s := GLSecondaryColor3sPTR.loadDirectly(libGL, "glSecondaryColor3s");
-      glSecondaryColor3sv := GLSecondaryColor3svPTR.loadDirectly(libGL, "glSecondaryColor3sv");
-      glSecondaryColor3ub := GLSecondaryColor3ubPTR.loadDirectly(libGL, "glSecondaryColor3ub");
-      glSecondaryColor3ubv := GLSecondaryColor3ubvPTR.loadDirectly(libGL, "glSecondaryColor3ubv");
-      glSecondaryColor3ui := GLSecondaryColor3uiPTR.loadDirectly(libGL, "glSecondaryColor3ui");
-      glSecondaryColor3uiv := GLSecondaryColor3uivPTR.loadDirectly(libGL, "glSecondaryColor3uiv");
-      glSecondaryColor3us := GLSecondaryColor3usPTR.loadDirectly(libGL, "glSecondaryColor3us");
-      glSecondaryColor3usv := GLSecondaryColor3usvPTR.loadDirectly(libGL, "glSecondaryColor3usv");
       glWindowPos2d := GLWindowPos2dPTR.loadDirectly(libGL, "glWindowPos2d");
       glWindowPos2dv := GLWindowPos2dvPTR.loadDirectly(libGL, "glWindowPos2dv");
-      glWindowPos2f := GLWindowPos2fPTR.loadDirectly(libGL, "glWindowPos2f");
-      glWindowPos2fv := GLWindowPos2fvPTR.loadDirectly(libGL, "glWindowPos2fv");
-      glWindowPos2i := GLWindowPos2iPTR.loadDirectly(libGL, "glWindowPos2i");
-      glWindowPos2iv := GLWindowPos2ivPTR.loadDirectly(libGL, "glWindowPos2iv");
-      glWindowPos2s := GLWindowPos2sPTR.loadDirectly(libGL, "glWindowPos2s");
-      glWindowPos2sv := GLWindowPos2svPTR.loadDirectly(libGL, "glWindowPos2sv");
       glWindowPos3d := GLWindowPos3dPTR.loadDirectly(libGL, "glWindowPos3d");
       glWindowPos3dv := GLWindowPos3dvPTR.loadDirectly(libGL, "glWindowPos3dv");
-      glWindowPos3f := GLWindowPos3fPTR.loadDirectly(libGL, "glWindowPos3f");
-      glWindowPos3fv := GLWindowPos3fvPTR.loadDirectly(libGL, "glWindowPos3fv");
-      glWindowPos3i := GLWindowPos3iPTR.loadDirectly(libGL, "glWindowPos3i");
-      glWindowPos3iv := GLWindowPos3ivPTR.loadDirectly(libGL, "glWindowPos3iv");
-      glWindowPos3s := GLWindowPos3sPTR.loadDirectly(libGL, "glWindowPos3s");
-      glWindowPos3sv := GLWindowPos3svPTR.loadDirectly(libGL, "glWindowPos3sv");
    }            
 
    private load_GL_VERSION_1_5(GLAD_Config config)
@@ -3754,124 +3009,29 @@ public struct GLAD_WrapperD
          ^ self
       };
 
-      glGetUniformfv := GLGetUniformfvPTR.loadDirectly(libGL, "glGetUniformfv");
-      glGetUniformiv := GLGetUniformivPTR.loadDirectly(libGL, "glGetUniformiv");
       glGetVertexAttribdv := GLGetVertexAttribdvPTR.loadDirectly(libGL, "glGetVertexAttribdv");
-      glGetVertexAttribfv := GLGetVertexAttribfvPTR.loadDirectly(libGL, "glGetVertexAttribfv");
-      glGetVertexAttribiv := GLGetVertexAttribivPTR.loadDirectly(libGL, "glGetVertexAttribiv");
-      glUniform1f := GLUniform1fPTR.loadDirectly(libGL, "glUniform1f");
-      glUniform2f := GLUniform2fPTR.loadDirectly(libGL, "glUniform2f");
-      glUniform3f := GLUniform3fPTR.loadDirectly(libGL, "glUniform3f");
-      glUniform4f := GLUniform4fPTR.loadDirectly(libGL, "glUniform4f");
-      glUniform1i := GLUniform1iPTR.loadDirectly(libGL, "glUniform1i");
-      glUniform2i := GLUniform2iPTR.loadDirectly(libGL, "glUniform2i");
-      glUniform3i := GLUniform3iPTR.loadDirectly(libGL, "glUniform3i");
-      glUniform4i := GLUniform4iPTR.loadDirectly(libGL, "glUniform4i");
-      glUniform1fv := GLUniform1fvPTR.loadDirectly(libGL, "glUniform1fv");
-      glUniform2fv := GLUniform2fvPTR.loadDirectly(libGL, "glUniform2fv");
-      glUniform3fv := GLUniform3fvPTR.loadDirectly(libGL, "glUniform3fv");
-      glUniform4fv := GLUniform4fvPTR.loadDirectly(libGL, "glUniform4fv");
-      glUniform1iv := GLUniform1ivPTR.loadDirectly(libGL, "glUniform1iv");
-      glUniform2iv := GLUniform2ivPTR.loadDirectly(libGL, "glUniform2iv");
-      glUniform3iv := GLUniform3ivPTR.loadDirectly(libGL, "glUniform3iv");
-      glUniform4iv := GLUniform4ivPTR.loadDirectly(libGL, "glUniform4iv");
-      glUniformMatrix2fv := GLUniformMatrix2fvPTR.loadDirectly(libGL, "glUniformMatrix2fv");
-      glUniformMatrix3fv := GLUniformMatrix3fvPTR.loadDirectly(libGL, "glUniformMatrix3fv");
-      glUniformMatrix4fv := GLUniformMatrix4fvPTR.loadDirectly(libGL, "glUniformMatrix4fv");
       glVertexAttrib1d := GLVertexAttrib1dPTR.loadDirectly(libGL, "glVertexAttrib1d");
       glVertexAttrib1dv := GLVertexAttrib1dvPTR.loadDirectly(libGL, "glVertexAttrib1dv");
-      glVertexAttrib1f := GLVertexAttrib1fPTR.loadDirectly(libGL, "glVertexAttrib1f");
-      glVertexAttrib1fv := GLVertexAttrib1fvPTR.loadDirectly(libGL, "glVertexAttrib1fv");
-      glVertexAttrib1s := GLVertexAttrib1sPTR.loadDirectly(libGL, "glVertexAttrib1s");
-      glVertexAttrib1sv := GLVertexAttrib1svPTR.loadDirectly(libGL, "glVertexAttrib1sv");
       glVertexAttrib2d := GLVertexAttrib2dPTR.loadDirectly(libGL, "glVertexAttrib2d");
       glVertexAttrib2dv := GLVertexAttrib2dvPTR.loadDirectly(libGL, "glVertexAttrib2dv");
-      glVertexAttrib2f := GLVertexAttrib2fPTR.loadDirectly(libGL, "glVertexAttrib2f");
-      glVertexAttrib2fv := GLVertexAttrib2fvPTR.loadDirectly(libGL, "glVertexAttrib2fv");
-      glVertexAttrib2s := GLVertexAttrib2sPTR.loadDirectly(libGL, "glVertexAttrib2s");
-      glVertexAttrib2sv := GLVertexAttrib2svPTR.loadDirectly(libGL, "glVertexAttrib2sv");
       glVertexAttrib3d := GLVertexAttrib3dPTR.loadDirectly(libGL, "glVertexAttrib3d");
       glVertexAttrib3dv := GLVertexAttrib3dvPTR.loadDirectly(libGL, "glVertexAttrib3dv");
-      glVertexAttrib3f := GLVertexAttrib3fPTR.loadDirectly(libGL, "glVertexAttrib3f");
-      glVertexAttrib3fv := GLVertexAttrib3fvPTR.loadDirectly(libGL, "glVertexAttrib3fv");
-      glVertexAttrib3s := GLVertexAttrib3sPTR.loadDirectly(libGL, "glVertexAttrib3s");
-      glVertexAttrib3sv := GLVertexAttrib3svPTR.loadDirectly(libGL, "glVertexAttrib3sv");
-      glVertexAttrib4Nbv := GLVertexAttrib4NbvPTR.loadDirectly(libGL, "glVertexAttrib4Nbv");
-      glVertexAttrib4Niv := GLVertexAttrib4NivPTR.loadDirectly(libGL, "glVertexAttrib4Niv");
-      glVertexAttrib4Nsv := GLVertexAttrib4NsvPTR.loadDirectly(libGL, "glVertexAttrib4Nsv");
-      glVertexAttrib4Nub := GLVertexAttrib4NubPTR.loadDirectly(libGL, "glVertexAttrib4Nub");
-      glVertexAttrib4Nubv := GLVertexAttrib4NubvPTR.loadDirectly(libGL, "glVertexAttrib4Nubv");
-      glVertexAttrib4Nuiv := GLVertexAttrib4NuivPTR.loadDirectly(libGL, "glVertexAttrib4Nuiv");
-      glVertexAttrib4Nusv := GLVertexAttrib4NusvPTR.loadDirectly(libGL, "glVertexAttrib4Nusv");
-      glVertexAttrib4bv := GLVertexAttrib4bvPTR.loadDirectly(libGL, "glVertexAttrib4bv");
       glVertexAttrib4d := GLVertexAttrib4dPTR.loadDirectly(libGL, "glVertexAttrib4d");
       glVertexAttrib4dv := GLVertexAttrib4dvPTR.loadDirectly(libGL, "glVertexAttrib4dv");
-      glVertexAttrib4f := GLVertexAttrib4fPTR.loadDirectly(libGL, "glVertexAttrib4f");
-      glVertexAttrib4fv := GLVertexAttrib4fvPTR.loadDirectly(libGL, "glVertexAttrib4fv");
-      glVertexAttrib4iv := GLVertexAttrib4ivPTR.loadDirectly(libGL, "glVertexAttrib4iv");
-      glVertexAttrib4s := GLVertexAttrib4sPTR.loadDirectly(libGL, "glVertexAttrib4s");
-      glVertexAttrib4sv := GLVertexAttrib4svPTR.loadDirectly(libGL, "glVertexAttrib4sv");
-      glVertexAttrib4ubv := GLVertexAttrib4ubvPTR.loadDirectly(libGL, "glVertexAttrib4ubv");
-      glVertexAttrib4uiv := GLVertexAttrib4uivPTR.loadDirectly(libGL, "glVertexAttrib4uiv");
-      glVertexAttrib4usv := GLVertexAttrib4usvPTR.loadDirectly(libGL, "glVertexAttrib4usv");
    }
 
    private load_GL_VERSION_2_1(GLAD_Config config)
    {
-      if (config.GLAD_GL_VERSION_2_1 == 0) {
-         ^ self
-      };
-      
-      glUniformMatrix2x3fv := GLUniformMatrix2x3fvPTR.loadDirectly(libGL, "glUniformMatrix2x3fv");
-      glUniformMatrix3x2fv := GLUniformMatrix3x2fvPTR.loadDirectly(libGL, "glUniformMatrix3x2fv");
-      glUniformMatrix2x4fv := GLUniformMatrix2x4fvPTR.loadDirectly(libGL, "glUniformMatrix2x4fv");
-      glUniformMatrix4x2fv := GLUniformMatrix4x2fvPTR.loadDirectly(libGL, "glUniformMatrix4x2fv");
-      glUniformMatrix3x4fv := GLUniformMatrix3x4fvPTR.loadDirectly(libGL, "glUniformMatrix3x4fv");
-      glUniformMatrix4x3fv := GLUniformMatrix4x3fvPTR.loadDirectly(libGL, "glUniformMatrix4x3fv");
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
    }
 
    private load_GL_VERSION_3_0(GLAD_Config config)
    {
-      if (config.GLAD_GL_VERSION_3_0 == 0) {
-         ^ self
-      };
-      
-      glVertexAttribI1i := GLVertexAttribI1iPTR.loadDirectly(libGL, "glVertexAttribI1i");
-      glVertexAttribI2i := GLVertexAttribI2iPTR.loadDirectly(libGL, "glVertexAttribI2i");
-      glVertexAttribI3i := GLVertexAttribI3iPTR.loadDirectly(libGL, "glVertexAttribI3i");
-      glVertexAttribI4i := GLVertexAttribI4iPTR.loadDirectly(libGL, "glVertexAttribI4i");
-      glVertexAttribI1ui := GLVertexAttribI1uiPTR.loadDirectly(libGL, "glVertexAttribI1ui");
-      glVertexAttribI2ui := GLVertexAttribI2uiPTR.loadDirectly(libGL, "glVertexAttribI2ui");
-//      glVertexAttribI3ui := GLVertexAttribI3uiPTR.loadDirectly(libGL, "glVertexAttribI3ui");
-      glVertexAttribI4ui := GLVertexAttribI4uiPTR.loadDirectly(libGL, "glVertexAttribI4ui");
-      glVertexAttribI1iv := GLVertexAttribI1ivPTR.loadDirectly(libGL, "glVertexAttribI1iv");
-      glVertexAttribI2iv := GLVertexAttribI2ivPTR.loadDirectly(libGL, "glVertexAttribI2iv");
-      glVertexAttribI3iv := GLVertexAttribI3ivPTR.loadDirectly(libGL, "glVertexAttribI3iv");
-      glVertexAttribI4iv := GLVertexAttribI4ivPTR.loadDirectly(libGL, "glVertexAttribI4iv");
-      glVertexAttribI1uiv := GLVertexAttribI1uivPTR.loadDirectly(libGL, "glVertexAttribI1uiv");
-      glVertexAttribI2uiv := GLVertexAttribI2uivPTR.loadDirectly(libGL, "glVertexAttribI2uiv");
-      glVertexAttribI3uiv := GLVertexAttribI3uivPTR.loadDirectly(libGL, "glVertexAttribI3uiv");
-      glVertexAttribI4uiv := GLVertexAttribI4uivPTR.loadDirectly(libGL, "glVertexAttribI4uiv");
-      glVertexAttribI4bv := GLVertexAttribI4bvPTR.loadDirectly(libGL, "glVertexAttribI4bv");
-      glVertexAttribI4sv := GLVertexAttribI4svPTR.loadDirectly(libGL, "glVertexAttribI4sv");
-      glVertexAttribI4ubv := GLVertexAttribI4ubvPTR.loadDirectly(libGL, "glVertexAttribI4ubv");
-      glVertexAttribI4usv := GLVertexAttribI4usvPTR.loadDirectly(libGL, "glVertexAttribI4usv");      
-      glUniform1ui := GLUniform1uiPTR.loadDirectly(libGL, "glUniform1ui");
-      glUniform2ui := GLUniform2uiPTR.loadDirectly(libGL, "glUniform2ui");
-      glUniform3ui := GLUniform3uiPTR.loadDirectly(libGL, "glUniform3ui");
-      glUniform4ui := GLUniform4uiPTR.loadDirectly(libGL, "glUniform4ui");
-      glUniform1uiv := GLUniform1uivPTR.loadDirectly(libGL, "glUniform1uiv");
-      glUniform2uiv := GLUniform2uivPTR.loadDirectly(libGL, "glUniform2uiv");
-      glUniform3uiv := GLUniform3uivPTR.loadDirectly(libGL, "glUniform3uiv");
-      glUniform4uiv := GLUniform4uivPTR.loadDirectly(libGL, "glUniform4uiv");      
-      glTexParameterIiv := GLTexParameterIivPTR.loadDirectly(libGL, "glTexParameterIiv");
-      glTexParameterIuiv := GLTexParameterIuivPTR.loadDirectly(libGL, "glTexParameterIuiv");
-      glGetTexParameterIiv := GLGetTexParameterIivPTR.loadDirectly(libGL, "glGetTexParameterIiv");
-      glGetTexParameterIuiv := GLGetTexParameterIuivPTR.loadDirectly(libGL, "glGetTexParameterIuiv");
-      glClearBufferiv := GLClearBufferivPTR.loadDirectly(libGL, "glClearBufferiv");
-      glClearBufferuiv := GLClearBufferuivPTR.loadDirectly(libGL, "glClearBufferuiv");
-      glClearBufferfv := GLClearBufferfvPTR.loadDirectly(libGL, "glClearBufferfv");
-      glClearBufferfi := GLClearBufferfiPTR.loadDirectly(libGL, "glClearBufferfi");
+//      if (config.GLAD_GL_VERSION_3_0 == 0) {
+//         ^ self
+//      };
    }
 
    private load_GL_VERSION_3_1(GLAD_Config config)
@@ -3890,60 +3050,9 @@ public struct GLAD_WrapperD
 
    private load_GL_VERSION_3_3(GLAD_Config config)
    {
-      if (config.GLAD_GL_VERSION_3_3 == 0) {
-         ^ self
-      };
-      
-      glSamplerParameteri := GLSamplerParameteriPTR.loadDirectly(libGL, "glSamplerParameteri");
-      glSamplerParameteriv := GLSamplerParameterivPTR.loadDirectly(libGL, "glSamplerParameteriv");
-      glSamplerParameterf := GLSamplerParameterfPTR.loadDirectly(libGL, "glSamplerParameterf");
-      glSamplerParameterfv := GLSamplerParameterfvPTR.loadDirectly(libGL, "glSamplerParameterfv");
-      glSamplerParameterIiv := GLSamplerParameterIivPTR.loadDirectly(libGL, "glSamplerParameterIiv");
-      glSamplerParameterIuiv := GLSamplerParameterIuivPTR.loadDirectly(libGL, "glSamplerParameterIuiv");
-      glGetSamplerParameteriv := GLGetSamplerParameterivPTR.loadDirectly(libGL, "glGetSamplerParameteriv");
-      glGetSamplerParameterIiv := GLGetSamplerParameterIivPTR.loadDirectly(libGL, "glGetSamplerParameterIiv");
-      glGetSamplerParameterfv := GLGetSamplerParameterfvPTR.loadDirectly(libGL, "glGetSamplerParameterfv");
-      glGetSamplerParameterIuiv := GLGetSamplerParameterIuivPTR.loadDirectly(libGL, "glGetSamplerParameterIuiv");
-      glGetQueryObjecti64v := GLGetQueryObjecti64vPTR.loadDirectly(libGL, "glGetQueryObjecti64v");
-      glGetQueryObjectui64v := GLGetQueryObjectui64vPTR.loadDirectly(libGL, "glGetQueryObjectui64v");
-      glVertexAttribP1ui := GLVertexAttribP1uiPTR.loadDirectly(libGL, "glVertexAttribP1ui");
-      glVertexAttribP1uiv := GLVertexAttribP1uivPTR.loadDirectly(libGL, "glVertexAttribP1uiv");
-      glVertexAttribP2ui := GLVertexAttribP2uiPTR.loadDirectly(libGL, "glVertexAttribP2ui");
-      glVertexAttribP2uiv := GLVertexAttribP2uivPTR.loadDirectly(libGL, "glVertexAttribP2uiv");
-      glVertexAttribP3ui := GLVertexAttribP3uiPTR.loadDirectly(libGL, "glVertexAttribP3ui");
-      glVertexAttribP3uiv := GLVertexAttribP3uivPTR.loadDirectly(libGL, "glVertexAttribP3uiv");
-      glVertexAttribP4ui := GLVertexAttribP4uiPTR.loadDirectly(libGL, "glVertexAttribP4ui");
-      glVertexAttribP4uiv := GLVertexAttribP4uivPTR.loadDirectly(libGL, "glVertexAttribP4uiv");
-      glVertexP2ui := GLVertexP2uiPTR.loadDirectly(libGL, "glVertexP2ui");
-      glVertexP2uiv := GLVertexP2uivPTR.loadDirectly(libGL, "glVertexP2uiv");
-      glVertexP3ui := GLVertexP3uiPTR.loadDirectly(libGL, "glVertexP3ui");
-      glVertexP3uiv := GLVertexP3uivPTR.loadDirectly(libGL, "glVertexP3uiv");
-      glVertexP4ui := GLVertexP4uiPTR.loadDirectly(libGL, "glVertexP4ui");
-      glVertexP4uiv := GLVertexP4uivPTR.loadDirectly(libGL, "glVertexP4uiv");
-      glTexCoordP1ui := GLTexCoordP1uiPTR.loadDirectly(libGL, "glTexCoordP1ui");
-      glTexCoordP1uiv := GLTexCoordP1uivPTR.loadDirectly(libGL, "glTexCoordP1uiv");
-      glTexCoordP2ui := GLTexCoordP2uiPTR.loadDirectly(libGL, "glTexCoordP2ui");
-      glTexCoordP2uiv := GLTexCoordP2uivPTR.loadDirectly(libGL, "glTexCoordP2uiv");
-      glTexCoordP3ui := GLTexCoordP3uiPTR.loadDirectly(libGL, "glTexCoordP3ui");
-      glTexCoordP3uiv := GLTexCoordP3uivPTR.loadDirectly(libGL, "glTexCoordP3uiv");
-      glTexCoordP4ui := GLTexCoordP4uiPTR.loadDirectly(libGL, "glTexCoordP4ui");
-      glTexCoordP4uiv := GLTexCoordP4uivPTR.loadDirectly(libGL, "glTexCoordP4uiv");
-      glMultiTexCoordP1ui := GLMultiTexCoordP1uiPTR.loadDirectly(libGL, "glMultiTexCoordP1ui");
-      glMultiTexCoordP1uiv := GLMultiTexCoordP1uivPTR.loadDirectly(libGL, "glMultiTexCoordP1uiv");
-      glMultiTexCoordP2ui := GLMultiTexCoordP2uiPTR.loadDirectly(libGL, "glMultiTexCoordP2ui");
-      glMultiTexCoordP2uiv := GLMultiTexCoordP2uivPTR.loadDirectly(libGL, "glMultiTexCoordP2uiv");
-      glMultiTexCoordP3ui := GLMultiTexCoordP3uiPTR.loadDirectly(libGL, "glMultiTexCoordP3ui");
-      glMultiTexCoordP3uiv := GLMultiTexCoordP3uivPTR.loadDirectly(libGL, "glMultiTexCoordP3uiv");
-      glMultiTexCoordP4ui := GLMultiTexCoordP4uiPTR.loadDirectly(libGL, "glMultiTexCoordP4ui");
-      glMultiTexCoordP4uiv := GLMultiTexCoordP4uivPTR.loadDirectly(libGL, "glMultiTexCoordP4uiv");
-      glNormalP3ui := GLNormalP3uiPTR.loadDirectly(libGL, "glNormalP3ui");
-      glNormalP3uiv := GLNormalP3uivPTR.loadDirectly(libGL, "glNormalP3uiv");
-      glColorP3ui := GLColorP3uiPTR.loadDirectly(libGL, "glColorP3ui");
-      glColorP3uiv := GLColorP3uivPTR.loadDirectly(libGL, "glColorP3uiv");
-      glColorP4ui := GLColorP4uiPTR.loadDirectly(libGL, "glColorP4ui");
-      glColorP4uiv := GLColorP4uivPTR.loadDirectly(libGL, "glColorP4uiv");
-      glSecondaryColorP3ui := GLSecondaryColorP3uiPTR.loadDirectly(libGL, "glSecondaryColorP3ui");
-      glSecondaryColorP3uiv := GLSecondaryColorP3uivPTR.loadDirectly(libGL, "glSecondaryColorP3uiv");
+//      if (config.GLAD_GL_VERSION_3_3 == 0) {
+//         ^ self
+//      };      
    }
 
    private load_GL_VERSION_4_0(GLAD_Config config)
@@ -3968,10 +3077,1047 @@ public struct GLAD_WrapperD
       glUniformMatrix3x4dv := GLUniformMatrix3x4dvPTR.loadDirectly(libGL, "glUniformMatrix3x4dv");
       glUniformMatrix4x2dv := GLUniformMatrix4x2dvPTR.loadDirectly(libGL, "glUniformMatrix4x2dv");
       glUniformMatrix4x3dv := GLUniformMatrix4x3dvPTR.loadDirectly(libGL, "glUniformMatrix4x3dv");
-      glGetUniformSubroutineuiv := GLGetUniformSubroutineuivPTR.loadDirectly(libGL, "glGetUniformSubroutineuiv");
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+public struct GLAD_WrapperF
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   GLTexParameterfPTR   glTexParameterf;
+   GLTexParameterfvPTR  glTexParameterfv;
+   GLPixelStorefPTR     glPixelStoref;
+   GLGetTexParameterfvPTR        glGetTexParameterfv;
+   GLGetTexLevelParameterfvPTR   glGetTexLevelParameterfv;
+   GLColor3fPTR         glColor3f;
+   GLColor3fvPTR        glColor3fv;
+   GLColor4fPTR         glColor4f;
+   GLColor4fvPTR        glColor4fv;
+   GLIndexfPTR          glIndexf;
+   GLIndexfvPTR         glIndexfv;
+   GLNormal3fPTR        glNormal3f;
+   GLNormal3fvPTR       glNormal3fv;
+   GLRasterPos2fPTR     glRasterPos2f;
+   GLRasterPos2fvPTR    glRasterPos2fv;
+   GLRasterPos3fPTR     glRasterPos3f;
+   GLRasterPos3fvPTR    glRasterPos3fv;
+   GLRasterPos4fPTR     glRasterPos4f;
+   GLRasterPos4fvPTR    glRasterPos4fv;
+   GLRectfPTR           glRectf;
+   GLRectfvPTR          glRectfv;
+   GLTexCoord1fPTR      glTexCoord1f;
+   GLTexCoord1fvPTR     glTexCoord1fv;
+   GLTexCoord2fPTR      glTexCoord2f;
+   GLTexCoord2fvPTR     glTexCoord2fv;
+   GLTexCoord3fPTR      glTexCoord3f;
+   GLTexCoord3fvPTR     glTexCoord3fv;
+   GLTexCoord4fPTR      glTexCoord4f;
+   GLTexCoord4fvPTR     glTexCoord4fv;
+   GLVertex2fPTR        glVertex2f;
+   GLVertex2fvPTR       glVertex2fv;
+   GLVertex3fPTR        glVertex3f;
+   GLVertex3fvPTR       glVertex3fv;
+   GLVertex4fPTR        glVertex4f;
+   GLVertex4fvPTR       glVertex4fv;
+   GLFogfPTR            glFogf;
+   GLFogfvPTR           glFogfv;
+   GLLightfPTR          glLightf;
+   GLLightfvPTR         glLightfv;
+   GLLightModelfPTR     glLightModelf;
+   GLLightModelfvPTR    glLightModelfv;
+   GLMaterialfPTR       glMaterialf;
+   GLMaterialfvPTR      glMaterialfv;   
+   GLTexEnvfPTR         glTexEnvf;
+   GLTexEnvfvPTR        glTexEnvfv;
+   GLTexGenfPTR         glTexGenf;
+   GLTexGenfvPTR        glTexGenfv;
+   GLMap1fPTR           glMap1f;
+   GLMap2fPTR           glMap2f;
+   GLMapGrid1fPTR       glMapGrid1f;
+   GLMapGrid2fPTR       glMapGrid2f;
+   GLEvalCoord1fPTR     glEvalCoord1f;
+   GLEvalCoord1fvPTR    glEvalCoord1fv;
+   GLEvalCoord2fPTR     glEvalCoord2f;
+   GLEvalCoord2fvPTR    glEvalCoord2fv;
+   GLPixelTransferfPTR  glPixelTransferf;
+   GLPixelMapfvPTR      glPixelMapfv;
+   GLGetLightfvPTR      glGetLightfv;
+   GLGetMapfvPTR        glGetMapfv;
+   GLGetMaterialfvPTR   glGetMaterialfv;
+   GLGetPixelMapfvPTR   glGetPixelMapfv;
+   GLGetTexEnvfvPTR     glGetTexEnvfv;
+   GLGetTexGenfvPTR     glGetTexGenfv;
+   GLLoadMatrixfPTR     glLoadMatrixf;
+   GLMultMatrixfPTR     glMultMatrixf;
+   GLRotatefPTR         glRotatef;
+   GLScalefPTR          glScalef;
+   GLTranslatefPTR      glTranslatef;
+   // 1.3
+   GLMultiTexCoord1fPTR       glMultiTexCoord1f;
+   GLMultiTexCoord1fvPTR      glMultiTexCoord1fv;
+   GLMultiTexCoord2fPTR       glMultiTexCoord2f;
+   GLMultiTexCoord2fvPTR      glMultiTexCoord2fv;
+   GLMultiTexCoord3fPTR       glMultiTexCoord3f;
+   GLMultiTexCoord3fvPTR      glMultiTexCoord3fv;
+   GLMultiTexCoord4fPTR       glMultiTexCoord4f;
+   GLMultiTexCoord4fvPTR      glMultiTexCoord4fv;
+   GLLoadTransposeMatrixfPTR  glLoadTransposeMatrixf;
+   GLMultTransposeMatrixfPTR  glMultTransposeMatrixf;   
+   // 1.4
+   GLPointParameterfPTR       glPointParameterf;
+   GLPointParameterfvPTR      glPointParameterfv;
+   GLFogCoordfPTR             glFogCoordf;
+   GLFogCoordfvPTR            glFogCoordfv;
+   GLSecondaryColor3fPTR      glSecondaryColor3f;
+   GLSecondaryColor3fvPTR     glSecondaryColor3fv;
+   GLWindowPos2fPTR           glWindowPos2f;
+   GLWindowPos2fvPTR          glWindowPos2fv;
+   GLWindowPos3fPTR           glWindowPos3f;
+   GLWindowPos3fvPTR          glWindowPos3fv;   
+   // 2.0
+   GLGetUniformfvPTR          glGetUniformfv;
+   GLGetVertexAttribfvPTR     glGetVertexAttribfv;
+   GLUniform1fPTR             glUniform1f;
+   GLUniform2fPTR             glUniform2f;
+   GLUniform3fPTR             glUniform3f;
+   GLUniform4fPTR             glUniform4f;
+   GLUniform1fvPTR            glUniform1fv;
+   GLUniform2fvPTR            glUniform2fv;
+   GLUniform3fvPTR            glUniform3fv;
+   GLUniform4fvPTR            glUniform4fv;
+   GLVertexAttrib1fPTR        glVertexAttrib1f;
+   GLVertexAttrib1fvPTR       glVertexAttrib1fv;
+   GLVertexAttrib2fPTR        glVertexAttrib2f;
+   GLVertexAttrib2fvPTR       glVertexAttrib2fv;
+   GLVertexAttrib3fPTR        glVertexAttrib3f;
+   GLVertexAttrib3fvPTR       glVertexAttrib3fv;
+   GLVertexAttrib4fPTR        glVertexAttrib4f;
+   GLVertexAttrib4fvPTR       glVertexAttrib4fv;
+   GLUniformMatrix2fvPTR      glUniformMatrix2fv;
+   GLUniformMatrix3fvPTR      glUniformMatrix3fv;
+   GLUniformMatrix4fvPTR      glUniformMatrix4fv;         
+   // 2.1
+   GLUniformMatrix2x3fvPTR    glUniformMatrix2x3fv;
+   GLUniformMatrix3x2fvPTR    glUniformMatrix3x2fv;
+   GLUniformMatrix2x4fvPTR    glUniformMatrix2x4fv;
+   GLUniformMatrix4x2fvPTR    glUniformMatrix4x2fv;
+   GLUniformMatrix3x4fvPTR    glUniformMatrix3x4fv;
+   GLUniformMatrix4x3fvPTR    glUniformMatrix4x3fv;             
+   // 3.0
+   GLClearBufferfvPTR         glClearBufferfv;
+   GLClearBufferfiPTR         glClearBufferfi;
+   // 3.3
+   GLSamplerParameterfPTR        glSamplerParameterf;
+   GLSamplerParameterfvPTR       glSamplerParameterfv;
+   GLGetSamplerParameterfvPTR    glGetSamplerParameterfv;
+   GLGetSamplerParameterIuivPTR  glGetSamplerParameterIuiv;
+   // 4.0
+   GLPatchParameterfvPTR         glPatchParameterfv;
+   // ext
+   GLClearNamedFramebufferfvPTR        glClearNamedFramebufferfv;
+   GLClearNamedFramebufferfiPTR        glClearNamedFramebufferfi;
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+         ^ self
+      };
+      glClearNamedFramebufferfv := GLClearNamedFramebufferfvPTR.load(get_proc, "glClearNamedFramebufferfv");
+      glClearNamedFramebufferfi := GLClearNamedFramebufferfiPTR.load(get_proc, "glClearNamedFramebufferfi");
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_0 == 0) {
+         ^ self
+      };
+      
+      glTexParameterf := GLTexParameterfPTR.loadDirectly(libGL, "glTexParameterf");
+      glTexParameterfv := GLTexParameterfvPTR.loadDirectly(libGL, "glTexParameterfv");
+      glPixelStoref := GLPixelStorefPTR.loadDirectly(libGL, "glPixelStoref");
+      glGetTexParameterfv := GLGetTexParameterfvPTR.loadDirectly(libGL, "glGetTexParameterfv");
+      glGetTexLevelParameterfv := GLGetTexLevelParameterfvPTR.loadDirectly(libGL, "glGetTexLevelParameterfv");
+      glColor3f := GLColor3fPTR.loadDirectly(libGL, "glColor3f");
+      glColor3fv := GLColor3fvPTR.loadDirectly(libGL, "glColor3fv");
+      glColor4f := GLColor4fPTR.loadDirectly(libGL, "glColor4f");
+      glColor4fv := GLColor4fvPTR.loadDirectly(libGL, "glColor4fv");
+      glIndexf := GLIndexfPTR.loadDirectly(libGL, "glIndexf");
+      glIndexfv := GLIndexfvPTR.loadDirectly(libGL, "glIndexfv");
+      glNormal3f := GLNormal3fPTR.loadDirectly(libGL, "glNormal3f");
+      glNormal3fv := GLNormal3fvPTR.loadDirectly(libGL, "glNormal3fv");
+      glRasterPos2f := GLRasterPos2fPTR.loadDirectly(libGL, "glRasterPos2f");
+      glRasterPos2fv := GLRasterPos2fvPTR.loadDirectly(libGL, "glRasterPos2fv");
+      glRasterPos3f := GLRasterPos3fPTR.loadDirectly(libGL, "glRasterPos3f");
+      glRasterPos3fv := GLRasterPos3fvPTR.loadDirectly(libGL, "glRasterPos3fv");
+      glRasterPos4f := GLRasterPos4fPTR.loadDirectly(libGL, "glRasterPos4f");
+      glRasterPos4fv := GLRasterPos4fvPTR.loadDirectly(libGL, "glRasterPos4fv");
+      glRectf := GLRectfPTR.loadDirectly(libGL, "glRectf");
+      glRectfv := GLRectfvPTR.loadDirectly(libGL, "glRectfv");
+      glTexCoord1f := GLTexCoord1fPTR.loadDirectly(libGL, "glTexCoord1f");
+      glTexCoord1fv := GLTexCoord1fvPTR.loadDirectly(libGL, "glTexCoord1fv");
+      glTexCoord2f := GLTexCoord2fPTR.loadDirectly(libGL, "glTexCoord2f");
+      glTexCoord2fv := GLTexCoord2fvPTR.loadDirectly(libGL, "glTexCoord2fv");
+      glTexCoord3f := GLTexCoord3fPTR.loadDirectly(libGL, "glTexCoord3f");
+      glTexCoord3fv := GLTexCoord3fvPTR.loadDirectly(libGL, "glTexCoord3fv");
+      glTexCoord4f := GLTexCoord4fPTR.loadDirectly(libGL, "glTexCoord4f");
+      glTexCoord4fv := GLTexCoord4fvPTR.loadDirectly(libGL, "glTexCoord4fv");
+      glVertex2f := GLVertex2fPTR.loadDirectly(libGL, "glVertex2f");
+      glVertex2fv := GLVertex2fvPTR.loadDirectly(libGL, "glVertex2fv");
+      glVertex3f := GLVertex3fPTR.loadDirectly(libGL, "glVertex3f");
+      glVertex3fv := GLVertex3fvPTR.loadDirectly(libGL, "glVertex3fv");
+      glVertex4f := GLVertex4fPTR.loadDirectly(libGL, "glVertex4f");
+      glVertex4fv := GLVertex4fvPTR.loadDirectly(libGL, "glVertex4fv");
+      glFogf := GLFogfPTR.loadDirectly(libGL, "glFogf");
+      glFogfv := GLFogfvPTR.loadDirectly(libGL, "glFogfv");
+      glLightf := GLLightfPTR.loadDirectly(libGL, "glLightf");
+      glLightfv := GLLightfvPTR.loadDirectly(libGL, "glLightfv");
+      glLightModelf := GLLightModelfPTR.loadDirectly(libGL, "glLightModelf");
+      glLightModelfv := GLLightModelfvPTR.loadDirectly(libGL, "glLightModelfv");
+      glMaterialf := GLMaterialfPTR.loadDirectly(libGL, "glMaterialf");
+      glMaterialfv := GLMaterialfvPTR.loadDirectly(libGL, "glMaterialfv");
+      glTexEnvf := GLTexEnvfPTR.loadDirectly(libGL, "glTexEnvf");
+      glTexEnvfv := GLTexEnvfvPTR.loadDirectly(libGL, "glTexEnvfv");
+      glTexGenf := GLTexGenfPTR.loadDirectly(libGL, "glTexGenf");
+      glTexGenfv := GLTexGenfvPTR.loadDirectly(libGL, "glTexGenfv");
+      glMap1f := GLMap1fPTR.loadDirectly(libGL, "glMap1f");
+      glMap2f := GLMap2fPTR.loadDirectly(libGL, "glMap2f");
+      glMapGrid1f := GLMapGrid1fPTR.loadDirectly(libGL, "glMapGrid1f");
+      glMapGrid2f := GLMapGrid2fPTR.loadDirectly(libGL, "glMapGrid2f"); 
+      glEvalCoord1f := GLEvalCoord1fPTR.loadDirectly(libGL, "glEvalCoord1f");
+      glEvalCoord1fv := GLEvalCoord1fvPTR.loadDirectly(libGL, "glEvalCoord1fv");
+      glEvalCoord2f := GLEvalCoord2fPTR.loadDirectly(libGL, "glEvalCoord2f");
+      glEvalCoord2fv := GLEvalCoord2fvPTR.loadDirectly(libGL, "glEvalCoord2fv");
+      glPixelTransferf := GLPixelTransferfPTR.loadDirectly(libGL, "glPixelTransferf");
+      glPixelMapfv := GLPixelMapfvPTR.loadDirectly(libGL, "glPixelMapfv");
+      glGetLightfv := GLGetLightfvPTR.loadDirectly(libGL, "glGetLightfv");
+      glGetMapfv := GLGetMapfvPTR.loadDirectly(libGL, "glGetMapfv");
+      glGetMaterialfv := GLGetMaterialfvPTR.loadDirectly(libGL, "glGetMaterialfv");
+      glGetPixelMapfv := GLGetPixelMapfvPTR.loadDirectly(libGL, "glGetPixelMapfv");
+      glGetTexEnvfv := GLGetTexEnvfvPTR.loadDirectly(libGL, "glGetTexEnvfv");
+      glGetTexGenfv := GLGetTexGenfvPTR.loadDirectly(libGL, "glGetTexGenfv");
+      glLoadMatrixf := GLLoadMatrixfPTR.loadDirectly(libGL, "glLoadMatrixf");
+      glMultMatrixf := GLMultMatrixfPTR.loadDirectly(libGL, "glMultMatrixf");
+      glRotatef := GLRotatefPTR.loadDirectly(libGL, "glRotatef");
+      glScalef := GLScalefPTR.loadDirectly(libGL, "glScalef");
+      glTranslatef := GLTranslatefPTR.loadDirectly(libGL, "glTranslatef");
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_3 == 0) {
+         ^ self
+      };
+      
+      glMultiTexCoord1f := GLMultiTexCoord1fPTR.loadDirectly(libGL, "glMultiTexCoord1f");
+      glMultiTexCoord1fv := GLMultiTexCoord1fvPTR.loadDirectly(libGL, "glMultiTexCoord1fv");
+      glMultiTexCoord2f := GLMultiTexCoord2fPTR.loadDirectly(libGL, "glMultiTexCoord2f");
+      glMultiTexCoord2fv := GLMultiTexCoord2fvPTR.loadDirectly(libGL, "glMultiTexCoord2fv");
+      glMultiTexCoord3f := GLMultiTexCoord3fPTR.loadDirectly(libGL, "glMultiTexCoord3f");
+      glMultiTexCoord3fv := GLMultiTexCoord3fvPTR.loadDirectly(libGL, "glMultiTexCoord3fv");
+      glMultiTexCoord4f := GLMultiTexCoord4fPTR.loadDirectly(libGL, "glMultiTexCoord4f");
+      glMultiTexCoord4fv := GLMultiTexCoord4fvPTR.loadDirectly(libGL, "glMultiTexCoord4fv");
+      glLoadTransposeMatrixf := GLLoadTransposeMatrixfPTR.loadDirectly(libGL, "glLoadTransposeMatrixf");
+      glMultTransposeMatrixf := GLMultTransposeMatrixfPTR.loadDirectly(libGL, "glMultTransposeMatrixf");
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_4 == 0) {
+         ^ self
+      };
+
+      glPointParameterf := GLPointParameterfPTR.loadDirectly(libGL, "glPointParameterf");
+      glPointParameterfv := GLPointParameterfvPTR.loadDirectly(libGL, "glPointParameterfv");
+      glFogCoordf := GLFogCoordfPTR.loadDirectly(libGL, "glFogCoordf");
+      glFogCoordfv := GLFogCoordfvPTR.loadDirectly(libGL, "glFogCoordfv");
+      glSecondaryColor3f := GLSecondaryColor3fPTR.loadDirectly(libGL, "glSecondaryColor3f");
+      glSecondaryColor3fv := GLSecondaryColor3fvPTR.loadDirectly(libGL, "glSecondaryColor3fv");
+      glWindowPos2f := GLWindowPos2fPTR.loadDirectly(libGL, "glWindowPos2f");
+      glWindowPos2fv := GLWindowPos2fvPTR.loadDirectly(libGL, "glWindowPos2fv");
+      glWindowPos3f := GLWindowPos3fPTR.loadDirectly(libGL, "glWindowPos3f");
+      glWindowPos3fv := GLWindowPos3fvPTR.loadDirectly(libGL, "glWindowPos3fv");
+   }            
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_5 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
+         ^ self
+      };
+
+      glGetUniformfv := GLGetUniformfvPTR.loadDirectly(libGL, "glGetUniformfv");
+      glGetVertexAttribfv := GLGetVertexAttribfvPTR.loadDirectly(libGL, "glGetVertexAttribfv");
+      glUniform1f := GLUniform1fPTR.loadDirectly(libGL, "glUniform1f");
+      glUniform2f := GLUniform2fPTR.loadDirectly(libGL, "glUniform2f");
+      glUniform3f := GLUniform3fPTR.loadDirectly(libGL, "glUniform3f");
+      glUniform4f := GLUniform4fPTR.loadDirectly(libGL, "glUniform4f");
+      glUniform1fv := GLUniform1fvPTR.loadDirectly(libGL, "glUniform1fv");
+      glUniform2fv := GLUniform2fvPTR.loadDirectly(libGL, "glUniform2fv");
+      glUniform3fv := GLUniform3fvPTR.loadDirectly(libGL, "glUniform3fv");
+      glUniform4fv := GLUniform4fvPTR.loadDirectly(libGL, "glUniform4fv");
+      glVertexAttrib1f := GLVertexAttrib1fPTR.loadDirectly(libGL, "glVertexAttrib1f");
+      glVertexAttrib1fv := GLVertexAttrib1fvPTR.loadDirectly(libGL, "glVertexAttrib1fv");
+      glVertexAttrib2f := GLVertexAttrib2fPTR.loadDirectly(libGL, "glVertexAttrib2f");
+      glVertexAttrib2fv := GLVertexAttrib2fvPTR.loadDirectly(libGL, "glVertexAttrib2fv");
+      glVertexAttrib3f := GLVertexAttrib3fPTR.loadDirectly(libGL, "glVertexAttrib3f");
+      glVertexAttrib3fv := GLVertexAttrib3fvPTR.loadDirectly(libGL, "glVertexAttrib3fv");
+      glVertexAttrib4f := GLVertexAttrib4fPTR.loadDirectly(libGL, "glVertexAttrib4f");
+      glVertexAttrib4fv := GLVertexAttrib4fvPTR.loadDirectly(libGL, "glVertexAttrib4fv");
+      glUniformMatrix2fv := GLUniformMatrix2fvPTR.loadDirectly(libGL, "glUniformMatrix2fv");
+      glUniformMatrix3fv := GLUniformMatrix3fvPTR.loadDirectly(libGL, "glUniformMatrix3fv");
+      glUniformMatrix4fv := GLUniformMatrix4fvPTR.loadDirectly(libGL, "glUniformMatrix4fv");      
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_1 == 0) {
+         ^ self
+      };
+      glUniformMatrix2x3fv := GLUniformMatrix2x3fvPTR.loadDirectly(libGL, "glUniformMatrix2x3fv");
+      glUniformMatrix3x2fv := GLUniformMatrix3x2fvPTR.loadDirectly(libGL, "glUniformMatrix3x2fv");
+      glUniformMatrix2x4fv := GLUniformMatrix2x4fvPTR.loadDirectly(libGL, "glUniformMatrix2x4fv");
+      glUniformMatrix4x2fv := GLUniformMatrix4x2fvPTR.loadDirectly(libGL, "glUniformMatrix4x2fv");
+      glUniformMatrix3x4fv := GLUniformMatrix3x4fvPTR.loadDirectly(libGL, "glUniformMatrix3x4fv");
+      glUniformMatrix4x3fv := GLUniformMatrix4x3fvPTR.loadDirectly(libGL, "glUniformMatrix4x3fv");      
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_0 == 0) {
+         ^ self
+      };
+      
+      glClearBufferfv := GLClearBufferfvPTR.loadDirectly(libGL, "glClearBufferfv");
+      glClearBufferfi := GLClearBufferfiPTR.loadDirectly(libGL, "glClearBufferfi");
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_3 == 0) {
+         ^ self
+      };
+      
+      glSamplerParameterf := GLSamplerParameterfPTR.loadDirectly(libGL, "glSamplerParameterf");
+      glSamplerParameterfv := GLSamplerParameterfvPTR.loadDirectly(libGL, "glSamplerParameterfv");
+      glGetSamplerParameterfv := GLGetSamplerParameterfvPTR.loadDirectly(libGL, "glGetSamplerParameterfv");
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_4_0 == 0) {
+         ^ self
+      };
+      glPatchParameterfv := GLPatchParameterfvPTR.loadDirectly(libGL, "glPatchParameterfv");
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+public struct GLAD_WrapperI
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   GLTexParameteriPTR   glTexParameteri;
+   GLTexParameterivPTR  glTexParameteriv;
+   GLPixelStoreiPTR     glPixelStorei;
+   GLGetTexParameterivPTR        glGetTexParameteriv;
+   GLGetTexLevelParameterivPTR   glGetTexLevelParameteriv;
+   GLColor3iPTR         glColor3i;
+   GLColor3ivPTR        glColor3iv;
+   GLColor4iPTR         glColor4i;
+   GLColor4ivPTR        glColor4iv;
+   GLIndexiPTR          glIndexi;
+   GLIndexivPTR         glIndexiv;
+   GLNormal3iPTR        glNormal3i;
+   GLNormal3ivPTR       glNormal3iv;
+   GLRasterPos2iPTR     glRasterPos2i;
+   GLRasterPos2ivPTR    glRasterPos2iv;
+   GLRasterPos3iPTR     glRasterPos3i;
+   GLRasterPos3ivPTR    glRasterPos3iv;
+   GLRasterPos4iPTR     glRasterPos4i;
+   GLRasterPos4ivPTR    glRasterPos4iv;
+   GLRectiPTR           glRecti;
+   GLRectivPTR          glRectiv;
+   GLTexCoord1iPTR      glTexCoord1i;
+   GLTexCoord1ivPTR     glTexCoord1iv;
+   GLTexCoord2iPTR      glTexCoord2i;
+   GLTexCoord2ivPTR     glTexCoord2iv;
+   GLTexCoord3iPTR      glTexCoord3i;
+   GLTexCoord3ivPTR     glTexCoord3iv;
+   GLTexCoord4iPTR      glTexCoord4i;
+   GLTexCoord4ivPTR     glTexCoord4iv;
+   GLVertex2iPTR        glVertex2i;
+   GLVertex2ivPTR       glVertex2iv;
+   GLVertex3iPTR        glVertex3i;
+   GLVertex3ivPTR       glVertex3iv;
+   GLVertex4iPTR        glVertex4i;
+   GLVertex4ivPTR       glVertex4iv;
+   GLFogiPTR            glFogi;
+   GLFogivPTR           glFogiv;
+   GLLightiPTR          glLighti;
+   GLLightivPTR         glLightiv;
+   GLLightModeliPTR     glLightModeli;
+   GLLightModelivPTR    glLightModeliv;   
+   GLMaterialiPTR       glMateriali;
+   GLMaterialivPTR      glMaterialiv;
+   GLTexEnviPTR         glTexEnvi;
+   GLTexEnvivPTR        glTexEnviv;
+   GLTexGeniPTR         glTexGeni;
+   GLTexGenivPTR        glTexGeniv;
+   GLPixelTransferiPTR  glPixelTransferi;
+   GLGetLightivPTR      glGetLightiv;
+   GLGetMapivPTR        glGetMapiv;
+   GLGetMaterialivPTR   glGetMaterialiv;
+   GLGetTexEnvivPTR     glGetTexEnviv;
+   GLGetTexGenivPTR     glGetTexGeniv;
+   // 1.3
+   GLMultiTexCoord1iPTR       glMultiTexCoord1i;
+   GLMultiTexCoord1ivPTR      glMultiTexCoord1iv;
+   GLMultiTexCoord2iPTR       glMultiTexCoord2i;
+   GLMultiTexCoord2ivPTR      glMultiTexCoord2iv;
+   GLMultiTexCoord3iPTR       glMultiTexCoord3i;
+   GLMultiTexCoord3ivPTR      glMultiTexCoord3iv;
+   GLMultiTexCoord4iPTR       glMultiTexCoord4i;
+   GLMultiTexCoord4ivPTR      glMultiTexCoord4iv;
+   // 1.4
+   GLPointParameteriPTR       glPointParameteri;
+   GLPointParameterivPTR      glPointParameteriv;
+   GLSecondaryColor3iPTR      glSecondaryColor3i;
+   GLSecondaryColor3ivPTR     glSecondaryColor3iv;
+   GLWindowPos2iPTR           glWindowPos2i;
+   GLWindowPos2ivPTR          glWindowPos2iv;
+   GLWindowPos3iPTR           glWindowPos3i;
+   GLWindowPos3ivPTR          glWindowPos3iv;   
+   // 2.0
+   GLGetUniformivPTR          glGetUniformiv;
+   GLGetVertexAttribivPTR     glGetVertexAttribiv;
+   GLUniform1iPTR             glUniform1i;
+   GLUniform2iPTR             glUniform2i;
+   GLUniform3iPTR             glUniform3i;
+   GLUniform4iPTR             glUniform4i;
+   GLUniform1ivPTR            glUniform1iv;
+   GLUniform2ivPTR            glUniform2iv;
+   GLUniform3ivPTR            glUniform3iv;
+   GLUniform4ivPTR            glUniform4iv;
+   GLVertexAttrib4NivPTR      glVertexAttrib4Niv;
+   GLVertexAttrib4ivPTR       glVertexAttrib4iv;
+   // 2.1
+   // 3.0
+   GLVertexAttribI1iPTR       glVertexAttribI1i;
+   GLVertexAttribI2iPTR       glVertexAttribI2i;
+   GLVertexAttribI3iPTR       glVertexAttribI3i;
+   GLVertexAttribI4iPTR       glVertexAttribI4i;
+   GLVertexAttribI1ivPTR      glVertexAttribI1iv;
+   GLVertexAttribI2ivPTR      glVertexAttribI2iv;
+   GLVertexAttribI3ivPTR      glVertexAttribI3iv;
+   GLVertexAttribI4ivPTR      glVertexAttribI4iv;
+   GLTexParameterIivPTR       glTexParameterIiv;
+   GLGetTexParameterIivPTR    glGetTexParameterIiv;
+   GLClearBufferivPTR         glClearBufferiv;
+   // 3.3
+   GLSamplerParameteriPTR        glSamplerParameteri;
+   GLSamplerParameterivPTR       glSamplerParameteriv;
+   GLSamplerParameterIivPTR      glSamplerParameterIiv;
+   GLGetSamplerParameterivPTR    glGetSamplerParameteriv;
+   GLGetSamplerParameterIivPTR   glGetSamplerParameterIiv;
+   GLGetQueryObjectivPTR         glGetQueryObjectiv;
+   // 4.0
+   GLGetProgramStageivPTR        glGetProgramStageiv;
+   GLPatchParameteriPTR          glPatchParameteri;
+   GLEndQueryIndexedPTR          glEndQueryIndexed;
+   GLGetQueryIndexedivPTR        glGetQueryIndexediv;
+   // ext
+   GLGetTransformFeedbackivPTR         glGetTransformFeedbackiv;
+   GLGetNamedBufferParameterivPTR      glGetNamedBufferParameteriv;
+   GLGetTransformFeedbacki_vPTR        glGetTransformFeedbacki_v;
+   GLClearNamedFramebufferivPTR        glClearNamedFramebufferiv;
+   GLClearNamedFramebufferfiPTR        glClearNamedFramebufferfi;
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+         ^ self
+      };
+      glGetTransformFeedbackiv := GLGetTransformFeedbackivPTR.load(get_proc, "glGetTransformFeedbackiv");
+      glGetTransformFeedbacki_v := GLGetTransformFeedbacki_vPTR.load(get_proc, "glGetTransformFeedbacki_v");
+      glGetNamedBufferParameteriv := GLGetNamedBufferParameterivPTR.load(get_proc, "glGetNamedBufferParameteriv");
+      glClearNamedFramebufferiv := GLClearNamedFramebufferivPTR.load(get_proc, "glClearNamedFramebufferiv");
+      glClearNamedFramebufferfi := GLClearNamedFramebufferfiPTR.load(get_proc, "glClearNamedFramebufferfi");
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_0 == 0) {
+         ^ self
+      };
+      
+      glTexParameteri := GLTexParameteriPTR.loadDirectly(libGL, "glTexParameteri");
+      glTexParameteriv := GLTexParameterivPTR.loadDirectly(libGL, "glTexParameteriv");
+      glPixelStorei := GLPixelStoreiPTR.loadDirectly(libGL, "glPixelStorei");
+      glGetTexParameteriv := GLGetTexParameterivPTR.loadDirectly(libGL, "glGetTexParameteriv");
+      glGetTexLevelParameteriv := GLGetTexLevelParameterivPTR.loadDirectly(libGL, "glGetTexLevelParameteriv");
+      glColor3i := GLColor3iPTR.loadDirectly(libGL, "glColor3i");
+      glColor3iv := GLColor3ivPTR.loadDirectly(libGL, "glColor3iv");
+      glColor4i := GLColor4iPTR.loadDirectly(libGL, "glColor4i");
+      glColor4iv := GLColor4ivPTR.loadDirectly(libGL, "glColor4iv");
+      glIndexi := GLIndexiPTR.loadDirectly(libGL, "glIndexi");
+      glIndexiv := GLIndexivPTR.loadDirectly(libGL, "glIndexiv");
+      glNormal3i := GLNormal3iPTR.loadDirectly(libGL, "glNormal3i");
+      glNormal3iv := GLNormal3ivPTR.loadDirectly(libGL, "glNormal3iv");
+      glRasterPos2i := GLRasterPos2iPTR.loadDirectly(libGL, "glRasterPos2i");
+      glRasterPos2iv := GLRasterPos2ivPTR.loadDirectly(libGL, "glRasterPos2iv");
+      glRasterPos3i := GLRasterPos3iPTR.loadDirectly(libGL, "glRasterPos3i");
+      glRasterPos3iv := GLRasterPos3ivPTR.loadDirectly(libGL, "glRasterPos3iv");
+      glRasterPos4i := GLRasterPos4iPTR.loadDirectly(libGL, "glRasterPos4i");
+      glRasterPos4iv := GLRasterPos4ivPTR.loadDirectly(libGL, "glRasterPos4iv");
+      glRecti := GLRectiPTR.loadDirectly(libGL, "glRecti");
+      glRectiv := GLRectivPTR.loadDirectly(libGL, "glRectiv");
+      glTexCoord1i := GLTexCoord1iPTR.loadDirectly(libGL, "glTexCoord1i");
+      glTexCoord1iv := GLTexCoord1ivPTR.loadDirectly(libGL, "glTexCoord1iv");
+      glTexCoord2i := GLTexCoord2iPTR.loadDirectly(libGL, "glTexCoord2i");
+      glTexCoord2iv := GLTexCoord2ivPTR.loadDirectly(libGL, "glTexCoord2iv");
+      glTexCoord3i := GLTexCoord3iPTR.loadDirectly(libGL, "glTexCoord3i");
+      glTexCoord3iv := GLTexCoord3ivPTR.loadDirectly(libGL, "glTexCoord3iv");
+      glTexCoord4i := GLTexCoord4iPTR.loadDirectly(libGL, "glTexCoord4i");
+      glTexCoord4iv := GLTexCoord4ivPTR.loadDirectly(libGL, "glTexCoord4iv");
+      glVertex2i := GLVertex2iPTR.loadDirectly(libGL, "glVertex2i");
+      glVertex2iv := GLVertex2ivPTR.loadDirectly(libGL, "glVertex2iv");
+      glVertex3i := GLVertex3iPTR.loadDirectly(libGL, "glVertex3i");
+      glVertex3iv := GLVertex3ivPTR.loadDirectly(libGL, "glVertex3iv");
+      glVertex4i := GLVertex4iPTR.loadDirectly(libGL, "glVertex4i");
+      glVertex4iv := GLVertex4ivPTR.loadDirectly(libGL, "glVertex4iv");
+      glFogi := GLFogiPTR.loadDirectly(libGL, "glFogi");
+      glFogiv := GLFogivPTR.loadDirectly(libGL, "glFogiv"); 
+      glLighti := GLLightiPTR.loadDirectly(libGL, "glLighti");
+      glLightiv := GLLightivPTR.loadDirectly(libGL, "glLightiv");
+      glLightModeli := GLLightModeliPTR.loadDirectly(libGL, "glLightModeli");
+      glLightModeliv := GLLightModelivPTR.loadDirectly(libGL, "glLightModeliv"); 
+      glMateriali := GLMaterialiPTR.loadDirectly(libGL, "glMateriali");
+      glMaterialiv := GLMaterialivPTR.loadDirectly(libGL, "glMaterialiv");
+      glTexEnvi := GLTexEnviPTR.loadDirectly(libGL, "glTexEnvi");
+      glTexEnviv := GLTexEnvivPTR.loadDirectly(libGL, "glTexEnviv"); 
+      glTexGeni := GLTexGeniPTR.loadDirectly(libGL, "glTexGeni");
+      glTexGeniv := GLTexGenivPTR.loadDirectly(libGL, "glTexGeniv");
+      glPixelTransferi := GLPixelTransferiPTR.loadDirectly(libGL, "glPixelTransferi");
+      glGetLightiv := GLGetLightivPTR.loadDirectly(libGL, "glGetLightiv");
+      glGetMapiv := GLGetMapivPTR.loadDirectly(libGL, "glGetMapiv");
+      glGetMaterialiv := GLGetMaterialivPTR.loadDirectly(libGL, "glGetMaterialiv");
+      glGetTexEnviv := GLGetTexEnvivPTR.loadDirectly(libGL, "glGetTexEnviv");
+      glGetTexGeniv := GLGetTexGenivPTR.loadDirectly(libGL, "glGetTexGeniv");
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_3 == 0) {
+         ^ self
+      };
+      
+      glMultiTexCoord1i := GLMultiTexCoord1iPTR.loadDirectly(libGL, "glMultiTexCoord1i");
+      glMultiTexCoord1iv := GLMultiTexCoord1ivPTR.loadDirectly(libGL, "glMultiTexCoord1iv");
+      glMultiTexCoord2i := GLMultiTexCoord2iPTR.loadDirectly(libGL, "glMultiTexCoord2i");
+      glMultiTexCoord2iv := GLMultiTexCoord2ivPTR.loadDirectly(libGL, "glMultiTexCoord2iv");
+      glMultiTexCoord3i := GLMultiTexCoord3iPTR.loadDirectly(libGL, "glMultiTexCoord3i");
+      glMultiTexCoord3iv := GLMultiTexCoord3ivPTR.loadDirectly(libGL, "glMultiTexCoord3iv");
+      glMultiTexCoord4i := GLMultiTexCoord4iPTR.loadDirectly(libGL, "glMultiTexCoord4i");
+      glMultiTexCoord4iv := GLMultiTexCoord4ivPTR.loadDirectly(libGL, "glMultiTexCoord4iv");
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_4 == 0) {
+         ^ self
+      };
+
+      glPointParameteri := GLPointParameteriPTR.loadDirectly(libGL, "glPointParameteri");
+      glPointParameteriv := GLPointParameterivPTR.loadDirectly(libGL, "glPointParameteriv");      
+      glSecondaryColor3i := GLSecondaryColor3iPTR.loadDirectly(libGL, "glSecondaryColor3i");
+      glSecondaryColor3iv := GLSecondaryColor3ivPTR.loadDirectly(libGL, "glSecondaryColor3iv");
+      glWindowPos2i := GLWindowPos2iPTR.loadDirectly(libGL, "glWindowPos2i");
+      glWindowPos2iv := GLWindowPos2ivPTR.loadDirectly(libGL, "glWindowPos2iv");
+      glWindowPos3i := GLWindowPos3iPTR.loadDirectly(libGL, "glWindowPos3i");
+      glWindowPos3iv := GLWindowPos3ivPTR.loadDirectly(libGL, "glWindowPos3iv");
+   }            
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_5 == 0) {
+         ^ self
+      };
+      glGetQueryObjectiv := GLGetQueryObjectivPTR.loadDirectly(libGL, "glGetQueryObjectiv");
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
+         ^ self
+      };
+
+      glGetUniformiv := GLGetUniformivPTR.loadDirectly(libGL, "glGetUniformiv");
+      glGetVertexAttribiv := GLGetVertexAttribivPTR.loadDirectly(libGL, "glGetVertexAttribiv");
+      glUniform1i := GLUniform1iPTR.loadDirectly(libGL, "glUniform1i");
+      glUniform2i := GLUniform2iPTR.loadDirectly(libGL, "glUniform2i");
+      glUniform3i := GLUniform3iPTR.loadDirectly(libGL, "glUniform3i");
+      glUniform4i := GLUniform4iPTR.loadDirectly(libGL, "glUniform4i");
+      glUniform1iv := GLUniform1ivPTR.loadDirectly(libGL, "glUniform1iv");
+      glUniform2iv := GLUniform2ivPTR.loadDirectly(libGL, "glUniform2iv");
+      glUniform3iv := GLUniform3ivPTR.loadDirectly(libGL, "glUniform3iv");
+      glUniform4iv := GLUniform4ivPTR.loadDirectly(libGL, "glUniform4iv");
+      glVertexAttrib4Niv := GLVertexAttrib4NivPTR.loadDirectly(libGL, "glVertexAttrib4Niv");
+      glVertexAttrib4iv := GLVertexAttrib4ivPTR.loadDirectly(libGL, "glVertexAttrib4iv");
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_0 == 0) {
+         ^ self
+      };
+      
+      glVertexAttribI1i := GLVertexAttribI1iPTR.loadDirectly(libGL, "glVertexAttribI1i");
+      glVertexAttribI2i := GLVertexAttribI2iPTR.loadDirectly(libGL, "glVertexAttribI2i");
+      glVertexAttribI3i := GLVertexAttribI3iPTR.loadDirectly(libGL, "glVertexAttribI3i");
+      glVertexAttribI4i := GLVertexAttribI4iPTR.loadDirectly(libGL, "glVertexAttribI4i");
+      glVertexAttribI1iv := GLVertexAttribI1ivPTR.loadDirectly(libGL, "glVertexAttribI1iv");
+      glVertexAttribI2iv := GLVertexAttribI2ivPTR.loadDirectly(libGL, "glVertexAttribI2iv");
+      glVertexAttribI3iv := GLVertexAttribI3ivPTR.loadDirectly(libGL, "glVertexAttribI3iv");
+      glVertexAttribI4iv := GLVertexAttribI4ivPTR.loadDirectly(libGL, "glVertexAttribI4iv");
+      glTexParameterIiv := GLTexParameterIivPTR.loadDirectly(libGL, "glTexParameterIiv");
+      glGetTexParameterIiv := GLGetTexParameterIivPTR.loadDirectly(libGL, "glGetTexParameterIiv");
+      glClearBufferiv := GLClearBufferivPTR.loadDirectly(libGL, "glClearBufferiv");
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_3 == 0) {
+         ^ self
+      };
+      
+      glSamplerParameteri := GLSamplerParameteriPTR.loadDirectly(libGL, "glSamplerParameteri");
+      glSamplerParameteriv := GLSamplerParameterivPTR.loadDirectly(libGL, "glSamplerParameteriv");
+      glSamplerParameterIiv := GLSamplerParameterIivPTR.loadDirectly(libGL, "glSamplerParameterIiv");
+      glGetSamplerParameteriv := GLGetSamplerParameterivPTR.loadDirectly(libGL, "glGetSamplerParameteriv");
+      glGetSamplerParameterIiv := GLGetSamplerParameterIivPTR.loadDirectly(libGL, "glGetSamplerParameterIiv");
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_4_0 == 0) {
+         ^ self
+      };
       glGetProgramStageiv := GLGetProgramStageivPTR.loadDirectly(libGL, "glGetProgramStageiv");
       glPatchParameteri := GLPatchParameteriPTR.loadDirectly(libGL, "glPatchParameteri");
-      glPatchParameterfv := GLPatchParameterfvPTR.loadDirectly(libGL, "glPatchParameterfv");
       glEndQueryIndexed := GLEndQueryIndexedPTR.loadDirectly(libGL, "glEndQueryIndexed");
       glGetQueryIndexediv := GLGetQueryIndexedivPTR.loadDirectly(libGL, "glGetQueryIndexediv");
    }
@@ -4114,39 +4260,2281 @@ public struct GLAD_WrapperD
       load_GL_VERSION_3_3(config);
       load_GL_VERSION_4_0(config);
       
-/*
-   	load_GL_3DFX_tbuffer(load);
-   	load_GL_AMD_debug_output(load);
-   	load_GL_AMD_draw_buffers_blend(load);
-   	load_GL_AMD_framebuffer_multisample_advanced(load);
-   	load_GL_AMD_framebuffer_sample_positions(load);
-   	load_GL_AMD_gpu_shader_int64(load);
-   	load_GL_AMD_interleaved_elements(load);
- */
       load_GL_AMD_multi_draw_indirect(config);
-/*	   load_GL_AMD_name_gen_delete(load);
-   	load_GL_AMD_occlusion_query_event(load);
-   	load_GL_AMD_performance_monitor(load);
-   	load_GL_AMD_sample_positions(load);
-   	load_GL_AMD_sparse_texture(load);
-   	load_GL_AMD_stencil_operation_extended(load);
-   	load_GL_AMD_vertex_shader_tessellator(load);
-   	load_GL_APPLE_element_array(load);
-   	load_GL_APPLE_fence(load);
-   	load_GL_APPLE_flush_buffer_range(load);
-   	load_GL_APPLE_object_purgeable(load);
-   	load_GL_APPLE_texture_range(load);
-   	load_GL_APPLE_vertex_array_object(load);
-   	load_GL_APPLE_vertex_array_range(load);
-   	load_GL_APPLE_vertex_program_evaluators(load);*/
       load_GL_ARB_ES2_compatibility(config);
       load_GL_ARB_ES3_1_compatibility(config);
       load_GL_ARB_ES3_2_compatibility(config);
       load_GL_ARB_base_instance(config);
-/*      load_GL_ARB_bindless_texture(load);*/
       load_GL_ARB_blend_func_extended(config);
       load_GL_ARB_buffer_storage(config);
-/*      load_GL_ARB_cl_event(load);*/
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+public struct GLAD_WrapperUI
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   GLColor3uiPTR        glColor3ui;
+   GLColor3uivPTR       glColor3uiv;
+   GLColor4uiPTR        glColor4ui;
+   GLColor4uivPTR       glColor4uiv;
+   GLPixelMapuivPTR     glPixelMapuiv;
+   GLGetPixelMapuivPTR  glGetPixelMapuiv;
+   // 1.3
+   // 1.4
+   GLSecondaryColor3uiPTR     glSecondaryColor3ui;
+   GLSecondaryColor3uivPTR    glSecondaryColor3uiv;
+   // 2.0
+   GLUniform1uiPTR            glUniform1ui;
+   GLUniform2uiPTR            glUniform2ui;
+   GLUniform3uiPTR            glUniform3ui;
+   GLUniform4uiPTR            glUniform4ui;
+   GLVertexAttrib4NuivPTR     glVertexAttrib4Nuiv;
+   GLVertexAttrib4uivPTR      glVertexAttrib4uiv;
+   // 2.1
+   // 3.0
+   GLVertexAttribI1uiPTR      glVertexAttribI1ui;
+   GLVertexAttribI2uiPTR      glVertexAttribI2ui;
+   GLVertexAttribI3uiPTR      glVertexAttribI3ui;
+   GLVertexAttribI4uiPTR      glVertexAttribI4ui;
+   GLVertexAttribI1uivPTR     glVertexAttribI1uiv;
+   GLVertexAttribI2uivPTR     glVertexAttribI2uiv;
+   GLVertexAttribI3uivPTR     glVertexAttribI3uiv;
+   GLVertexAttribI4uivPTR     glVertexAttribI4uiv;
+   GLUniform1uivPTR              glUniform1uiv;
+   GLUniform2uivPTR              glUniform2uiv;
+   GLUniform3uivPTR              glUniform3uiv;
+   GLUniform4uivPTR              glUniform4uiv;
+   GLTexParameterIuivPTR      glTexParameterIuiv;
+   GLGetTexParameterIuivPTR   glGetTexParameterIuiv;
+   GLClearBufferuivPTR        glClearBufferuiv;
+   // 3.3
+   GLSamplerParameterIuivPTR     glSamplerParameterIuiv;
+   GLGetSamplerParameterIuivPTR  glGetSamplerParameterIuiv;
+   GLGetQueryObjectuivPTR        glGetQueryObjectuiv;   
+   // 4.0
+   GLUniformSubroutinesuivPTR    glUniformSubroutinesuiv;
+   GLGetUniformSubroutineuivPTR  glGetUniformSubroutineuiv;
+   // ext
+   GLClearNamedFramebufferuivPTR       glClearNamedFramebufferuiv;
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+         ^ self
+      };
+      glClearNamedFramebufferuiv := GLClearNamedFramebufferuivPTR.load(get_proc, "glClearNamedFramebufferuiv");
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_0 == 0) {
+         ^ self
+      };
+      
+      glColor3ui := GLColor3uiPTR.loadDirectly(libGL, "glColor3ui");
+      glColor3uiv := GLColor3uivPTR.loadDirectly(libGL, "glColor3uiv");
+      glColor4ui := GLColor4uiPTR.loadDirectly(libGL, "glColor4ui");
+      glColor4uiv := GLColor4uivPTR.loadDirectly(libGL, "glColor4uiv");
+      glPixelMapuiv := GLPixelMapuivPTR.loadDirectly(libGL, "glPixelMapuiv");
+      glGetPixelMapuiv := GLGetPixelMapuivPTR.loadDirectly(libGL, "glGetPixelMapuiv");
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_3 == 0) {
+//         ^ self
+//      };
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_4 == 0) {
+         ^ self
+      };
+
+      glSecondaryColor3ui := GLSecondaryColor3uiPTR.loadDirectly(libGL, "glSecondaryColor3ui");
+      glSecondaryColor3uiv := GLSecondaryColor3uivPTR.loadDirectly(libGL, "glSecondaryColor3uiv");
+   }            
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_5 == 0) {
+         ^ self
+      };
+      glGetQueryObjectuiv := GLGetQueryObjectuivPTR.loadDirectly(libGL, "glGetQueryObjectuiv");      
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
+         ^ self
+      };
+
+      glVertexAttrib4Nuiv := GLVertexAttrib4NuivPTR.loadDirectly(libGL, "glVertexAttrib4Nuiv");
+      glVertexAttrib4uiv := GLVertexAttrib4uivPTR.loadDirectly(libGL, "glVertexAttrib4uiv");
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_0 == 0) {
+         ^ self
+      };
+      
+      glVertexAttribI1ui := GLVertexAttribI1uiPTR.loadDirectly(libGL, "glVertexAttribI1ui");
+      glVertexAttribI2ui := GLVertexAttribI2uiPTR.loadDirectly(libGL, "glVertexAttribI2ui");
+      glVertexAttribI3ui := GLVertexAttribI3uiPTR.loadDirectly(libGL, "glVertexAttribI3ui");
+      glVertexAttribI4ui := GLVertexAttribI4uiPTR.loadDirectly(libGL, "glVertexAttribI4ui");
+      glVertexAttribI1uiv := GLVertexAttribI1uivPTR.loadDirectly(libGL, "glVertexAttribI1uiv");
+      glVertexAttribI2uiv := GLVertexAttribI2uivPTR.loadDirectly(libGL, "glVertexAttribI2uiv");
+      glVertexAttribI3uiv := GLVertexAttribI3uivPTR.loadDirectly(libGL, "glVertexAttribI3uiv");
+      glVertexAttribI4uiv := GLVertexAttribI4uivPTR.loadDirectly(libGL, "glVertexAttribI4uiv");
+      glTexParameterIuiv := GLTexParameterIuivPTR.loadDirectly(libGL, "glTexParameterIuiv");
+      glGetTexParameterIuiv := GLGetTexParameterIuivPTR.loadDirectly(libGL, "glGetTexParameterIuiv");
+      glClearBufferuiv := GLClearBufferuivPTR.loadDirectly(libGL, "glClearBufferuiv");
+      glUniform1ui := GLUniform1uiPTR.loadDirectly(libGL, "glUniform1ui");
+      glUniform2ui := GLUniform2uiPTR.loadDirectly(libGL, "glUniform2ui");
+      glUniform3ui := GLUniform3uiPTR.loadDirectly(libGL, "glUniform3ui");
+      glUniform4ui := GLUniform4uiPTR.loadDirectly(libGL, "glUniform4ui");
+      glUniform1uiv := GLUniform1uivPTR.loadDirectly(libGL, "glUniform1uiv");
+      glUniform2uiv := GLUniform2uivPTR.loadDirectly(libGL, "glUniform2uiv");
+      glUniform3uiv := GLUniform3uivPTR.loadDirectly(libGL, "glUniform3uiv");
+      glUniform4uiv := GLUniform4uivPTR.loadDirectly(libGL, "glUniform4uiv");
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_3 == 0) {
+         ^ self
+      };
+      
+      glSamplerParameterIuiv := GLSamplerParameterIuivPTR.loadDirectly(libGL, "glSamplerParameterIuiv");
+      glGetSamplerParameterIuiv := GLGetSamplerParameterIuivPTR.loadDirectly(libGL, "glGetSamplerParameterIuiv");
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_4_0 == 0) {
+         ^ self
+      };
+      glGetUniformSubroutineuiv := GLGetUniformSubroutineuivPTR.loadDirectly(libGL, "glGetUniformSubroutineuiv");
+      glUniformSubroutinesuiv := GLUniformSubroutinesuivPTR.loadDirectly(libGL, "glUniformSubroutinesuiv");
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+public struct GLAD_WrapperS
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   GLColor3sPTR         glColor3s;
+   GLColor3svPTR        glColor3sv;
+   GLColor4sPTR         glColor4s;
+   GLColor4svPTR        glColor4sv;
+   GLIndexsPTR          glIndexs;
+   GLIndexsvPTR         glIndexsv;
+   GLNormal3sPTR        glNormal3s;
+   GLNormal3svPTR       glNormal3sv;
+   GLRasterPos2sPTR     glRasterPos2s;
+   GLRasterPos2svPTR    glRasterPos2sv;
+   GLRasterPos3sPTR     glRasterPos3s;
+   GLRasterPos3svPTR    glRasterPos3sv;   
+   GLRasterPos4sPTR     glRasterPos4s;
+   GLRasterPos4svPTR    glRasterPos4sv;
+   GLRectsPTR           glRects;
+   GLRectsvPTR          glRectsv;
+   GLTexCoord1sPTR      glTexCoord1s;
+   GLTexCoord1svPTR     glTexCoord1sv;
+   GLTexCoord2sPTR      glTexCoord2s;
+   GLTexCoord2svPTR     glTexCoord2sv;
+   GLTexCoord3sPTR      glTexCoord3s;
+   GLTexCoord3svPTR     glTexCoord3sv;
+   GLTexCoord4sPTR      glTexCoord4s;
+   GLTexCoord4svPTR     glTexCoord4sv;
+   GLVertex2sPTR        glVertex2s;
+   GLVertex2svPTR       glVertex2sv;
+   GLVertex3sPTR        glVertex3s;
+   GLVertex3svPTR       glVertex3sv;
+   GLVertex4sPTR        glVertex4s;
+   GLVertex4svPTR       glVertex4sv;
+   // 1.3
+   GLMultiTexCoord1sPTR       glMultiTexCoord1s;
+   GLMultiTexCoord1svPTR      glMultiTexCoord1sv;
+   GLMultiTexCoord2sPTR       glMultiTexCoord2s;
+   GLMultiTexCoord2svPTR      glMultiTexCoord2sv;
+   GLMultiTexCoord3sPTR       glMultiTexCoord3s;
+   GLMultiTexCoord3svPTR      glMultiTexCoord3sv;
+   GLMultiTexCoord4sPTR       glMultiTexCoord4s;
+   GLMultiTexCoord4svPTR      glMultiTexCoord4sv;
+   // 1.4
+   GLSecondaryColor3sPTR      glSecondaryColor3s;
+   GLSecondaryColor3svPTR     glSecondaryColor3sv;
+   GLWindowPos2sPTR           glWindowPos2s;
+   GLWindowPos2svPTR          glWindowPos2sv;
+   GLWindowPos3sPTR           glWindowPos3s;
+   GLWindowPos3svPTR          glWindowPos3sv;
+   // 2.0
+   GLVertexAttrib1sPTR        glVertexAttrib1s;
+   GLVertexAttrib1svPTR       glVertexAttrib1sv;
+   GLVertexAttrib2sPTR        glVertexAttrib2s;
+   GLVertexAttrib2svPTR       glVertexAttrib2sv;
+   GLVertexAttrib3sPTR        glVertexAttrib3s;
+   GLVertexAttrib3svPTR       glVertexAttrib3sv;
+   GLVertexAttrib4NsvPTR      glVertexAttrib4Nsv;
+   GLVertexAttrib4sPTR        glVertexAttrib4s;
+   GLVertexAttrib4svPTR       glVertexAttrib4sv;
+   // 2.1
+   // 3.0
+   GLVertexAttribI4svPTR      glVertexAttribI4sv;
+   // 3.3
+   // 4.0
+   // ext
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_0 == 0) {
+         ^ self
+      };
+      
+      glColor3s := GLColor3sPTR.loadDirectly(libGL, "glColor3s"); 
+      glColor3sv := GLColor3svPTR.loadDirectly(libGL, "glColor3sv");
+      glColor4s := GLColor4sPTR.loadDirectly(libGL, "glColor4s");
+      glColor4sv := GLColor4svPTR.loadDirectly(libGL, "glColor4sv");
+      glIndexs := GLIndexsPTR.loadDirectly(libGL, "glIndexs");
+      glIndexsv := GLIndexsvPTR.loadDirectly(libGL, "glIndexsv");
+      glNormal3s := GLNormal3sPTR.loadDirectly(libGL, "glNormal3s");
+      glNormal3sv := GLNormal3svPTR.loadDirectly(libGL, "glNormal3sv");
+      glRasterPos2s := GLRasterPos2sPTR.loadDirectly(libGL, "glRasterPos2s");
+      glRasterPos2sv := GLRasterPos2svPTR.loadDirectly(libGL, "glRasterPos2sv"); 
+      glRasterPos3s := GLRasterPos3sPTR.loadDirectly(libGL, "glRasterPos3s");
+      glRasterPos3sv := GLRasterPos3svPTR.loadDirectly(libGL, "glRasterPos3sv");
+      glRasterPos4s := GLRasterPos4sPTR.loadDirectly(libGL, "glRasterPos4s");
+      glRasterPos4sv := GLRasterPos4svPTR.loadDirectly(libGL, "glRasterPos4sv"); 
+      glRects := GLRectsPTR.loadDirectly(libGL, "glRects");
+      glRectsv := GLRectsvPTR.loadDirectly(libGL, "glRectsv"); 
+      glTexCoord1s := GLTexCoord1sPTR.loadDirectly(libGL, "glTexCoord1s");
+      glTexCoord1sv := GLTexCoord1svPTR.loadDirectly(libGL, "glTexCoord1sv");
+      glTexCoord2s := GLTexCoord2sPTR.loadDirectly(libGL, "glTexCoord2s");
+      glTexCoord2sv := GLTexCoord2svPTR.loadDirectly(libGL, "glTexCoord2sv"); 
+      glTexCoord3s := GLTexCoord3sPTR.loadDirectly(libGL, "glTexCoord3s");
+      glTexCoord3sv := GLTexCoord3svPTR.loadDirectly(libGL, "glTexCoord3sv"); 
+      glTexCoord4s := GLTexCoord4sPTR.loadDirectly(libGL, "glTexCoord4s");
+      glTexCoord4sv := GLTexCoord4svPTR.loadDirectly(libGL, "glTexCoord4sv");
+      glVertex2s := GLVertex2sPTR.loadDirectly(libGL, "glVertex2s");
+      glVertex2sv := GLVertex2svPTR.loadDirectly(libGL, "glVertex2sv");
+      glVertex3s := GLVertex3sPTR.loadDirectly(libGL, "glVertex3s");
+      glVertex3sv := GLVertex3svPTR.loadDirectly(libGL, "glVertex3sv");
+      glVertex4s := GLVertex4sPTR.loadDirectly(libGL, "glVertex4s");
+      glVertex4sv := GLVertex4svPTR.loadDirectly(libGL, "glVertex4sv");
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_3 == 0) {
+         ^ self
+      };
+      
+      glMultiTexCoord1s := GLMultiTexCoord1sPTR.loadDirectly(libGL, "glMultiTexCoord1s");
+      glMultiTexCoord1sv := GLMultiTexCoord1svPTR.loadDirectly(libGL, "glMultiTexCoord1sv");
+      glMultiTexCoord2s := GLMultiTexCoord2sPTR.loadDirectly(libGL, "glMultiTexCoord2s");
+      glMultiTexCoord2sv := GLMultiTexCoord2svPTR.loadDirectly(libGL, "glMultiTexCoord2sv");
+      glMultiTexCoord3s := GLMultiTexCoord3sPTR.loadDirectly(libGL, "glMultiTexCoord3s");
+      glMultiTexCoord3sv := GLMultiTexCoord3svPTR.loadDirectly(libGL, "glMultiTexCoord3sv");
+      glMultiTexCoord4s := GLMultiTexCoord4sPTR.loadDirectly(libGL, "glMultiTexCoord4s");
+      glMultiTexCoord4sv := GLMultiTexCoord4svPTR.loadDirectly(libGL, "glMultiTexCoord4sv");
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_4 == 0) {
+         ^ self
+      };
+
+      glSecondaryColor3s := GLSecondaryColor3sPTR.loadDirectly(libGL, "glSecondaryColor3s");
+      glSecondaryColor3sv := GLSecondaryColor3svPTR.loadDirectly(libGL, "glSecondaryColor3sv");
+      glWindowPos2s := GLWindowPos2sPTR.loadDirectly(libGL, "glWindowPos2s");
+      glWindowPos2sv := GLWindowPos2svPTR.loadDirectly(libGL, "glWindowPos2sv");
+      glWindowPos3s := GLWindowPos3sPTR.loadDirectly(libGL, "glWindowPos3s");
+      glWindowPos3sv := GLWindowPos3svPTR.loadDirectly(libGL, "glWindowPos3sv");
+   }            
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_5 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
+         ^ self
+      };
+
+      glVertexAttrib1s := GLVertexAttrib1sPTR.loadDirectly(libGL, "glVertexAttrib1s");
+      glVertexAttrib1sv := GLVertexAttrib1svPTR.loadDirectly(libGL, "glVertexAttrib1sv");
+      glVertexAttrib2s := GLVertexAttrib2sPTR.loadDirectly(libGL, "glVertexAttrib2s");
+      glVertexAttrib2sv := GLVertexAttrib2svPTR.loadDirectly(libGL, "glVertexAttrib2sv");
+      glVertexAttrib3s := GLVertexAttrib3sPTR.loadDirectly(libGL, "glVertexAttrib3s");
+      glVertexAttrib3sv := GLVertexAttrib3svPTR.loadDirectly(libGL, "glVertexAttrib3sv");
+      glVertexAttrib4s := GLVertexAttrib4sPTR.loadDirectly(libGL, "glVertexAttrib4s");
+      glVertexAttrib4sv := GLVertexAttrib4svPTR.loadDirectly(libGL, "glVertexAttrib4sv");
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_0 == 0) {
+         ^ self
+      };
+      
+      glVertexAttribI4sv := GLVertexAttribI4svPTR.loadDirectly(libGL, "glVertexAttribI4sv");
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_3 == 0) {
+//         ^ self
+//      };      
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_4_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+public struct GLAD_WrapperUS
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   GLColor3usPTR        glColor3us;
+   GLColor3usvPTR       glColor3usv;
+   GLColor4usPTR        glColor4us;
+   GLColor4usvPTR       glColor4usv;
+   GLPixelMapusvPTR     glPixelMapusv;
+   GLGetPixelMapusvPTR  glGetPixelMapusv;
+   // 1.3
+   // 1.4
+   GLSecondaryColor3usPTR     glSecondaryColor3us;
+   GLSecondaryColor3usvPTR    glSecondaryColor3usv;
+   // 2.0
+   GLVertexAttrib4NusvPTR     glVertexAttrib4Nusv;
+   GLVertexAttrib4usvPTR      glVertexAttrib4usv;
+   // 2.1
+   // 3.0
+   GLVertexAttribI4usvPTR     glVertexAttribI4usv;
+   // 3.3
+   // 4.0
+   // ext
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_0 == 0) {
+         ^ self
+      };
+      
+      glColor3us := GLColor3usPTR.loadDirectly(libGL, "glColor3us");
+      glColor3usv := GLColor3usvPTR.loadDirectly(libGL, "glColor3usv");   
+      glColor4us := GLColor4usPTR.loadDirectly(libGL, "glColor4us");
+      glColor4usv := GLColor4usvPTR.loadDirectly(libGL, "glColor4usv");
+      glPixelMapusv := GLPixelMapusvPTR.loadDirectly(libGL, "glPixelMapusv");
+      glGetPixelMapusv := GLGetPixelMapusvPTR.loadDirectly(libGL, "glGetPixelMapusv");
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_3 == 0) {
+//         ^ self
+//      };
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_4 == 0) {
+         ^ self
+      };
+
+      glSecondaryColor3us := GLSecondaryColor3usPTR.loadDirectly(libGL, "glSecondaryColor3us");
+      glSecondaryColor3usv := GLSecondaryColor3usvPTR.loadDirectly(libGL, "glSecondaryColor3usv");
+   }            
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_5 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
+         ^ self
+      };
+
+      glVertexAttrib4Nusv := GLVertexAttrib4NusvPTR.loadDirectly(libGL, "glVertexAttrib4Nusv");
+      glVertexAttrib4usv := GLVertexAttrib4usvPTR.loadDirectly(libGL, "glVertexAttrib4usv");
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_0 == 0) {
+         ^ self
+      };
+      
+      glVertexAttribI4usv := GLVertexAttribI4usvPTR.loadDirectly(libGL, "glVertexAttribI4usv");      
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_3 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_4_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+public struct GLAD_WrapperB
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   GLColor3bPTR         glColor3b;
+   GLColor3bvPTR        glColor3bv;
+   GLColor4bPTR         glColor4b;
+   GLColor4bvPTR        glColor4bv;
+   GLNormal3bPTR        glNormal3b;
+   GLNormal3bvPTR       glNormal3bv;
+   // 1.3
+   // 1.4
+   GLSecondaryColor3bPTR      glSecondaryColor3b;
+   GLSecondaryColor3bvPTR     glSecondaryColor3bv;
+   // 2.0
+   GLVertexAttrib4NbvPTR      glVertexAttrib4Nbv;
+   GLVertexAttrib4bvPTR       glVertexAttrib4bv;
+   // 2.1
+   // 3.0
+   GLVertexAttribI4bvPTR      glVertexAttribI4bv;
+   // 3.3
+   // 4.0
+   // ext
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_0 == 0) {
+         ^ self
+      };
+      
+      glColor3b := GLColor3bPTR.loadDirectly(libGL, "glColor3b");
+      glColor3bv := GLColor3bvPTR.loadDirectly(libGL, "glColor3bv");
+      glColor4b := GLColor4bPTR.loadDirectly(libGL, "glColor4b");
+      glColor4bv := GLColor4bvPTR.loadDirectly(libGL, "glColor4bv");
+      glNormal3b := GLNormal3bPTR.loadDirectly(libGL, "glNormal3b");
+      glNormal3bv := GLNormal3bvPTR.loadDirectly(libGL, "glNormal3bv");
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_3 == 0) {
+//         ^ self
+//      };
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_4 == 0) {
+         ^ self
+      };
+
+      glSecondaryColor3b := GLSecondaryColor3bPTR.loadDirectly(libGL, "glSecondaryColor3b");
+      glSecondaryColor3bv := GLSecondaryColor3bvPTR.loadDirectly(libGL, "glSecondaryColor3bv");
+   }            
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_5 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
+         ^ self
+      };
+
+      glVertexAttrib4Nbv := GLVertexAttrib4NbvPTR.loadDirectly(libGL, "glVertexAttrib4Nbv");
+      glVertexAttrib4bv := GLVertexAttrib4bvPTR.loadDirectly(libGL, "glVertexAttrib4bv");
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_0 == 0) {
+         ^ self
+      };
+      
+      glVertexAttribI4bv := GLVertexAttribI4bvPTR.loadDirectly(libGL, "glVertexAttribI4bv");
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_3 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_4_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+public struct GLAD_WrapperUB
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   GLColor3ubPTR        glColor3ub;
+   GLColor3ubvPTR       glColor3ubv;
+   GLColor4ubPTR        glColor4ub;
+   GLColor4ubvPTR       glColor4ubv;
+   // 1.3
+   // 1.4
+   GLSecondaryColor3ubPTR     glSecondaryColor3ub;
+   GLSecondaryColor3ubvPTR    glSecondaryColor3ubv;
+   // 2.0
+   GLVertexAttrib4NubPTR      glVertexAttrib4Nub;
+   GLVertexAttrib4NubvPTR     glVertexAttrib4Nubv;
+   GLVertexAttrib4ubvPTR      glVertexAttrib4ubv;
+   // 2.1
+   // 3.0
+   GLVertexAttribI4ubvPTR     glVertexAttribI4ubv;
+   // 3.3
+   // 4.0
+   // ext
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_0 == 0) {
+         ^ self
+      };
+      
+      glColor3ub := GLColor3ubPTR.loadDirectly(libGL, "glColor3ub");
+      glColor3ubv := GLColor3ubvPTR.loadDirectly(libGL, "glColor3ubv");
+      glColor4ub := GLColor4ubPTR.loadDirectly(libGL, "glColor4ub");
+      glColor4ubv := GLColor4ubvPTR.loadDirectly(libGL, "glColor4ubv");
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_3 == 0) {
+//         ^ self
+//      };
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_1_4 == 0) {
+         ^ self
+      };
+
+      glSecondaryColor3ub := GLSecondaryColor3ubPTR.loadDirectly(libGL, "glSecondaryColor3ub");
+      glSecondaryColor3ubv := GLSecondaryColor3ubvPTR.loadDirectly(libGL, "glSecondaryColor3ubv");
+   }            
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_5 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
+         ^ self
+      };
+
+      glVertexAttrib4Nub := GLVertexAttrib4NubPTR.loadDirectly(libGL, "glVertexAttrib4Nub");
+      glVertexAttrib4Nubv := GLVertexAttrib4NubvPTR.loadDirectly(libGL, "glVertexAttrib4Nubv");
+      glVertexAttrib4ubv := GLVertexAttrib4ubvPTR.loadDirectly(libGL, "glVertexAttrib4ubv");
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_0 == 0) {
+         ^ self
+      };
+      
+      glVertexAttribI4ubv := GLVertexAttribI4ubvPTR.loadDirectly(libGL, "glVertexAttribI4ubv");
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_3 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_4_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+
+public struct GLAD_WrapperI64
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   // 1.3
+   // 1.4
+   // 2.0
+   // 3.0
+   // 3.3
+   GLGetQueryObjecti64vPTR       glGetQueryObjecti64v;
+   // 4.0
+   // ext
+   GLGetTransformFeedbacki64_vPTR      glGetTransformFeedbacki64_v;
+   GLGetNamedBufferParameteri64vPTR    glGetNamedBufferParameteri64v;
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+         ^ self
+      };
+      glGetTransformFeedbacki64_v := GLGetTransformFeedbacki64_vPTR.load(get_proc, "glGetTransformFeedbacki64_v");
+      glGetNamedBufferParameteri64v := GLGetNamedBufferParameteri64vPTR.load(get_proc, "glGetNamedBufferParameteri64v");
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_3 == 0) {
+//         ^ self
+//      };
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_4 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_5 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_2_0 == 0) {
+         ^ self
+      };
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_3 == 0) {
+         ^ self
+      };
+      
+      glGetQueryObjecti64v := GLGetQueryObjecti64vPTR.loadDirectly(libGL, "glGetQueryObjecti64v");
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_4_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
+      load_GL_ARB_clear_buffer_object(config);
+      load_GL_ARB_clear_texture(config);
+      load_GL_ARB_clip_control(config);
+      load_GL_ARB_color_buffer_float(config);
+      load_GL_ARB_compute_shader(config);
+      load_GL_ARB_compute_variable_group_size(config);
+      load_GL_ARB_copy_buffer(config);
+      load_GL_ARB_copy_image(config);
+      load_GL_ARB_debug_output(config);
+      load_GL_ARB_direct_state_access(config);
+ 
+      ^ true
+   }      
+}
+
+public struct GLAD_WrapperUI64
+{
+   handle libGL;
+   
+   // opengl functions
+   WGLGetProcAddress    get_proc;   
+   
+   GLGetStringPTR       glGetString;
+      
+   // 1_0
+   // 1.3
+   // 1.4
+   // 2.0
+   // 2.1
+   // 3.0
+   // 3.3
+   GLGetQueryObjectui64vPTR      glGetQueryObjectui64v;
+   // 4.0
+   // ext
+   
+   constructor()
+   {
+      libGL := extern KERNEL32.LoadLibraryW("opengl32.dll"w);
+      
+      get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
+      glGetString := GLGetStringPTR.load(libGL, "glGetString");
+   }
+   
+   private load_GL_ARB_direct_state_access(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_direct_state_access == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_VERSION_1_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_1_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_2 == 0) {
+//         ^ self
+//      };
+   }
+      
+   private load_GL_VERSION_1_3(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_3 == 0) {
+//         ^ self
+//      };
+   }      
+
+   private load_GL_VERSION_1_4(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_4 == 0) {
+//         ^ self
+//      };
+   }            
+
+   private load_GL_VERSION_1_5(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_1_5 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_2_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_2_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_2_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_1(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_1 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_2(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_3_2 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_VERSION_3_3(GLAD_Config config)
+   {
+      if (config.GLAD_GL_VERSION_3_3 == 0) {
+         ^ self
+      };
+      
+      glGetQueryObjectui64v := GLGetQueryObjectui64vPTR.loadDirectly(libGL, "glGetQueryObjectui64v");
+   }
+
+   private load_GL_VERSION_4_0(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_VERSION_4_0 == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_AMD_multi_draw_indirect(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_AMD_multi_draw_indirect == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES2_compatibility == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_ES3_1_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_1_compatibility == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_ES3_2_compatibility(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_ES3_2_compatibility == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_base_instance(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_base_instance == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_blend_func_extended(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+//      glBindFragDataLocationIndexed := GLBindFragDataLocationIndexedPTR.load(get_proc, "glBindFragDataLocationIndexed");
+//      glGetFragDataIndex := GLGetFragDataIndexPTR.load(get_proc, "glGetFragDataIndex");      
+   }
+   
+   private load_GL_ARB_buffer_storage(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_blend_func_extended == 0) {
+//         ^ self
+//      };
+   }   
+
+   private load_GL_ARB_clear_buffer_object(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_buffer_object == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clear_texture(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clear_texture == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_clip_control(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_clip_control == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_color_buffer_float(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_color_buffer_float == 0) {
+//         ^ self
+//      };
+   }
+   
+   private load_GL_ARB_compute_shader(GLAD_Config config)   
+   {
+//      if (config.GLAD_GL_ARB_compute_shader == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_compute_variable_group_size(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_compute_variable_group_size == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_copy_buffer(GLAD_Config config)
+   {
+//      if (GLAD_GL_ARB_copy_buffer == 0) {
+//         ^ self
+//      };
+//      glCopyBufferSubData := GLCopyBufferSubDataPTR.load(get_proc, "glCopyBufferSubData");
+   }
+   
+   private load_GL_ARB_copy_image(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_copy_image == 0) {
+//         ^ self
+//      };
+   }
+
+   private load_GL_ARB_debug_output(GLAD_Config config)
+   {
+//      if (config.GLAD_GL_ARB_debug_output == 0) {
+//         ^ self
+//      };
+   }
+
+   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   {
+      if (glGetString.isUnassigned()) {
+         ^ false
+      };
+      if (glGetString(GL_VERSION).isUnassigned()) {
+         ^ false
+      };
+      
+   	load_GL_VERSION_1_0(config);
+      load_GL_VERSION_1_1(config);
+      load_GL_VERSION_1_2(config);
+      load_GL_VERSION_1_3(config);
+      load_GL_VERSION_1_4(config);
+      load_GL_VERSION_1_5(config);
+      load_GL_VERSION_2_0(config);
+      load_GL_VERSION_2_1(config);
+      load_GL_VERSION_3_0(config);
+      load_GL_VERSION_3_1(config);
+      load_GL_VERSION_3_2(config);
+      load_GL_VERSION_3_3(config);
+      load_GL_VERSION_4_0(config);
+      
+      load_GL_AMD_multi_draw_indirect(config);
+      load_GL_ARB_ES2_compatibility(config);
+      load_GL_ARB_ES3_1_compatibility(config);
+      load_GL_ARB_ES3_2_compatibility(config);
+      load_GL_ARB_base_instance(config);
+      load_GL_ARB_blend_func_extended(config);
+      load_GL_ARB_buffer_storage(config);
       load_GL_ARB_clear_buffer_object(config);
       load_GL_ARB_clear_texture(config);
       load_GL_ARB_clip_control(config);

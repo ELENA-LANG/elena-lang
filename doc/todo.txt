@@ -76,6 +76,7 @@ In development:
   ====================================== 
   - refactor Glad : group the function by the argument types
   - refactor WGLad
+  - refactor OpenGL
   - initialize OpenGL
   - engine : register in context
   - fill the screen the red color
