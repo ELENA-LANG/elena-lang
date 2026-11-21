@@ -73,7 +73,7 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * opengl : #735
+  * current : opengl : #735
   ====================================== 
   - refactor OpenGL general architecture
   - initialize OpenGL
@@ -82,9 +82,6 @@ In development:
   - do the same for x64
   - include opengl in elena_api.prjcol 
   ---------------------------------------
-  * current API : float
-  ====================================== 
-  - debugger : support float
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3
