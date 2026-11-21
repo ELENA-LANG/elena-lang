@@ -83,21 +83,7 @@ public Program()
 }
 */
 
-use extern OPENGL : importing("OPENGL32");
-
-use xint = system'IntNumber;
-
-use my_int = xint;
-
-use system'IntNumber;
-
 public Program()
 {
-   xint n := 2;
-   
-//   string[] Prefixes := $[ "OpenGL ES-CM ", "OpenGL ES-CL ", "OpenGL ES " ];
-   
-   //X ptr := X.Default
-   
-   //X ptr := new X();
+   float f2 := 2.3f;
 }

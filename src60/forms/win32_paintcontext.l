@@ -83,12 +83,9 @@ public sealed class PaintContext : BaseWinControl, interface<IControl>
       HDC dummyDC := dummyHandle.HDC;
                               
       controller.loadGL(dummyDC);
-
-/*
-    ReleaseDC(dummyWindow, dummyDC);
-    DestroyWindow(dummyWindow);
-*/            
       
+      dummyDC.release(dummyHandle.Handle);
+      dummyHandle.free();
    }
 
    internal destroy()
@@ -120,7 +117,5 @@ public sealed class PaintContext : BaseWinControl, interface<IControl>
 
    internal paint()
    {
-   }   
-
-   
+   }
 }

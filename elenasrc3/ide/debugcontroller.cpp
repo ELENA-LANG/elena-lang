@@ -612,6 +612,9 @@ void DebugController :: readObjectContent(ContextBrowserBase* watch, void* item,
       case elDebugFLOAT64:
          watch->populateFLOAT64(&context, _process->getFLOAT64(address));
          break;
+      case elDebugFLOAT32:
+         watch->populateFLOAT32(&context, _process->getFLOAT32(address));
+         break;
       case elDebugLiteral:
       {
          char value[DEBUG_MAX_STR_LENGTH + 1];

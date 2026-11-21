@@ -18,4 +18,9 @@ public const struct HGLRC
    {
       int retVal := OPENGL.wglMakeCurrent(dc, _handle);
    }
+   
+   clearCurrent(HDC dc)
+   {
+      int retVal := OPENGL.wglMakeCurrent(dc, 0);
+   }
 }

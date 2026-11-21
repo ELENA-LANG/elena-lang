@@ -421,6 +421,11 @@ static inline void realLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
    tape.write(ByteCode::SetR, node.arg.reference | mskRealLiteralRef);
 }
 
+static inline void float_literal(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   tape.write(ByteCode::SetR, node.arg.reference | mskFloatLiteralRef);
+}
+
 static inline void mssgLiteral(CommandTape& tape, BuildNode& node, TapeScope&)
 {
    tape.write(ByteCode::SetR, node.arg.reference | mskMssgLiteralRef);
@@ -792,37 +797,52 @@ static inline void real_int_op(CommandTape& tape, BuildNode& node, TapeScope& sc
    real_int_xop(tape, node, scope);
 }
 
-static inline void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void writeFDPNOp(CommandTape& tape, int operatorId, int targetOffset, int n)
 {
-   // NOTE : sp[0] - loperand, sp[1] - roperand
-   int targetOffset = node.arg.value;
-   int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
-
    if (!isAssignOp(operatorId)) {
-      tape.write(ByteCode::CopyDPN, targetOffset, 8);
+      tape.write(ByteCode::CopyDPN, targetOffset, n);
       tape.write(ByteCode::XMovSISI, 0, 1);
    }
 
    switch (operatorId) {
       case ADD_OPERATOR_ID:
       case ADD_ASSIGN_OPERATOR_ID:
-         tape.write(ByteCode::FAddDPN, targetOffset, 8);
+         tape.write(ByteCode::FAddDPN, targetOffset, n);
          break;
       case SUB_OPERATOR_ID:
       case SUB_ASSIGN_OPERATOR_ID:
-         tape.write(ByteCode::FSubDPN, targetOffset, 8);
+         tape.write(ByteCode::FSubDPN, targetOffset, n);
          break;
       case MUL_OPERATOR_ID:
       case MUL_ASSIGN_OPERATOR_ID:
-         tape.write(ByteCode::FMulDPN, targetOffset, 8);
+         tape.write(ByteCode::FMulDPN, targetOffset, n);
          break;
       case DIV_OPERATOR_ID:
       case DIV_ASSIGN_OPERATOR_ID:
-         tape.write(ByteCode::FDivDPN, targetOffset, 8);
+         tape.write(ByteCode::FDivDPN, targetOffset, n);
          break;
       default:
          throw InternalError(errFatalError);
    }
+
+}
+
+static inline void float_op(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.arg.value;
+   int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
+
+   writeFDPNOp(tape, operatorId, targetOffset, 4);
+}
+
+static inline void realOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   // NOTE : sp[0] - loperand, sp[1] - roperand
+   int targetOffset = node.arg.value;
+   int operatorId = node.findChild(BuildKey::OperatorId).arg.value;
+
+   writeFDPNOp(tape, operatorId, targetOffset, 8);
 }
 
 static inline void intOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -1187,18 +1207,16 @@ static inline void nilCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
    else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
 }
 
-static inline void realCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+static inline void writeFCmpNOp(CommandTape& tape, int operatorId, int n, ref_t trueRef, ref_t falseRef)
 {
    bool inverted = false;
-   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
-   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
 
    // NOTE : sp[0] - loperand, sp[1] - roperand
    tape.write(ByteCode::PeekSI, 1);
-   tape.write(ByteCode::FCmpN, 4);
+   tape.write(ByteCode::FCmpN, n);
 
    ByteCode opCode = ByteCode::None;
-   switch (node.arg.value) {
+   switch (operatorId) {
       case LESS_OPERATOR_ID:
          opCode = ByteCode::SelLtRR;
          break;
@@ -1218,6 +1236,22 @@ static inline void realCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
       tape.write(opCode, trueRef | mskVMTRef, falseRef | mskVMTRef);
    }
    else tape.write(opCode, falseRef | mskVMTRef, trueRef | mskVMTRef);
+}
+
+static inline void realCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   writeFCmpNOp(tape, node.arg.value, 8, trueRef, falseRef);
+}
+
+static inline void float_cond_op(CommandTape& tape, BuildNode& node, TapeScope&)
+{
+   ref_t trueRef = node.findChild(BuildKey::TrueConst).arg.reference;
+   ref_t falseRef = node.findChild(BuildKey::FalseConst).arg.reference;
+
+   writeFCmpNOp(tape, node.arg.value, 8, trueRef, falseRef);
 }
 
 static inline void intCondOp(CommandTape& tape, BuildNode& node, TapeScope&)
@@ -2023,6 +2057,12 @@ static inline void conversionOp(CommandTape& tape, BuildNode& node, TapeScope&)
          tape.write(ByteCode::PeekSI, 0);
          tape.write(ByteCode::FSave);
          break;
+      case INT32_FLOAT32_CONVERSION:
+         tape.write(ByteCode::Load);
+         tape.write(ByteCode::PeekSI, 0);
+         tape.write(ByteCode::AltMode);
+         tape.write(ByteCode::FSave);
+         break;
       case INT16_64_CONVERSION:
          tape.write(ByteCode::WLoad);
          tape.write(ByteCode::ConvL);
@@ -2463,7 +2503,9 @@ ByteCodeWriter::Saver commands[] =
    threadVarEnd, load_long_index, save_long_index, real_int_xop, extOpenFrame, load_ext_arg, close_ext_frame, ext_exit,
 
    procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp, set_message, redirect_procedure,
-   mark_collectable, mark_noncollectable, savingLongIndexToAcc, ref_condop, is_condop, ext_var_call_op,
+   mark_collectable, mark_noncollectable, savingLongIndexToAcc, ref_condop, is_condop, ext_var_call_op, float_op, float_cond_op,
+
+   float_literal,
 };
 
 static inline bool duplicateBreakpoints(BuildNode lastNode)
@@ -2983,6 +3025,7 @@ static inline bool doubleAssigningConverting(BuildNode lastNode)
    switch (conversionOp.arg.value) {
       case INT16_32_CONVERSION:
       case INT8_32_CONVERSION:
+      case INT32_FLOAT32_CONVERSION:
          size = 4;
          break;
       case INT32_64_CONVERSION:
@@ -4363,7 +4406,7 @@ void ByteCodeWriter :: saveClass(BuildNode node, SectionScopeBase* moduleScope, 
    info.header.count = 0;
    info.header.indexCount = 0;
    for (auto m_it = info.methods.start(); !m_it.eof(); ++m_it) {
-      auto m_info = *m_it;
+      decltype(auto) m_info = *m_it;
 
       //NOTE : ingnore statically linked and predefined methods
       if (!test(m_it.key(), STATIC_MESSAGE) && !test(m_info.hints, (ref_t)MethodHint::Predefined))

@@ -559,6 +559,7 @@ JITLinker :: JITLinker(ReferenceMapperBase* mapper,
    _constantSettings.intLiteralClass = forwardResolver->resolveForward(INTLITERAL_FORWARD);
    _constantSettings.longLiteralClass = forwardResolver->resolveForward(LONGLITERAL_FORWARD);
    _constantSettings.realLiteralClass = forwardResolver->resolveForward(REALLITERAL_FORWARD);
+   _constantSettings.floatLiteralClass = forwardResolver->resolveForward(FLOATLITERAL_FORWARD);
    _constantSettings.literalClass = forwardResolver->resolveForward(LITERAL_FORWARD);
    _constantSettings.wideLiteralClass = forwardResolver->resolveForward(WIDELITERAL_FORWARD);
    _constantSettings.characterClass = forwardResolver->resolveForward(CHAR_FORWARD);
@@ -924,7 +925,7 @@ void JITLinker :: resolveStaticFields(ReferenceInfo& referenceInfo, MemoryReader
    ClassInfo::loadStaticFields(&vmtReader, statics);
 
    for (auto it = statics.start(); !it.eof(); ++it) {
-      auto fieldInfo = *it;
+      decltype(auto) fieldInfo = *it;
       ref_t mask = fieldInfo.valueRef & mskAnyRef;
 
       if (fieldInfo.valueRef && fieldInfo.offset < 0) {
@@ -1556,6 +1557,11 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          size = 8;
          structMode = true;
          break;
+      case mskFloatLiteralRef:
+         vmtReferenceInfo.referenceName = _constantSettings.floatLiteralClass;
+         size = 4;
+         structMode = true;
+         break;
       case mskLiteralRef:
          vmtReferenceInfo.referenceName = _constantSettings.literalClass;
          size = value.length_pos() + 1;
@@ -1627,6 +1633,9 @@ addr_t JITLinker :: resolveConstant(ReferenceInfo referenceInfo, ref_t sectionMa
          break;
       case mskRealLiteralRef:
          _compiler->writeFloat64(writer, StrConvertor::toDouble(value));
+         break;
+      case mskFloatLiteralRef:
+         _compiler->writeFloat32(writer, StrConvertor::toFloat(value));
          break;
       case mskCharacterRef:
          _compiler->writeChar32(writer, value);
@@ -1893,6 +1902,7 @@ addr_t JITLinker :: resolve(ustr_t referenceName, ref_t sectionMask, bool silent
       case mskMssgLiteralRef:
       case mskLongLiteralRef:
       case mskRealLiteralRef:
+      case mskFloatLiteralRef:
          return resolve({ nullptr, referenceName }, sectionMask, silentMode);
       default:
       {
@@ -1933,6 +1943,7 @@ addr_t JITLinker :: resolve(ReferenceInfo referenceInfo, ref_t sectionMask, bool
          case mskIntLiteralRef:
          case mskLongLiteralRef:
          case mskRealLiteralRef:
+         case mskFloatLiteralRef:
          case mskLiteralRef:
          case mskWideLiteralRef:
          case mskCharacterRef:
@@ -2058,7 +2069,7 @@ void JITLinker :: loadPreloaded(ustr_t preloadedSection, bool ignoreAutoLoadExte
 
    // save preloaded symbols as auto symbols
    for (auto it = symbolList.start(); !it.eof(); ++it) {
-      auto info = *it;
+      decltype(auto) info = *it;
 
       _mapper->addLazyReference({ mskAutoSymbolRef, INVALID_POS, info.module, info.reference, 0 });
    }

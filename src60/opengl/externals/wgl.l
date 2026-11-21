@@ -637,4 +637,10 @@ public struct WGLLibrary
       
       ^ h
    }
+   
+   static freeContext(HGLRC glrc)
+   {
+      OPENGL.wglDeleteContext(glrc);
+   }
+   
 }

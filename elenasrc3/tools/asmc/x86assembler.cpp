@@ -1698,6 +1698,10 @@ bool X86Assembler :: compileFadd(X86Operand source, MemoryWriter& writer)
       writer.writeByte(0xDC);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
    }
+   else if (source.isM32()) {
+      writer.writeByte(0xD8);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
+   }
    else return false;
 
    return true;
@@ -1734,6 +1738,10 @@ bool X86Assembler :: compileFdiv(X86Operand source, MemoryWriter& writer)
 {
    if (source.isM64()) {
       writer.writeByte(0xDC);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 6 }, source);
+   }
+   else if (source.isM32()) {
+      writer.writeByte(0xD8);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 6 }, source);
    }
    else return false;
@@ -1803,6 +1811,10 @@ bool X86Assembler :: compileFld(X86Operand source, MemoryWriter& writer)
       writer.writeByte(0xDD);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
    }
+   else if (source.isM32()) {
+      writer.writeByte(0xD9);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 0 }, source);
+   }
    else return false;
 
    return true;
@@ -1823,6 +1835,10 @@ bool X86Assembler :: compileFmul(X86Operand source, MemoryWriter& writer)
 {
    if (source.isM64()) {
       writer.writeByte(0xDC);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 1 }, source);
+   }
+   else if (source.isM32()) {
+      writer.writeByte(0xD8);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 1 }, source);
    }
    else return false;
@@ -1852,6 +1868,10 @@ bool X86Assembler :: compileFstp(X86Operand source, MemoryWriter& writer)
       writer.writeByte(0xDD);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 3 }, source);
    }
+   else if (source.isM32()) {
+      writer.writeByte(0xD9);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 3 }, source);
+   }
    else return false;
 
    return true;
@@ -1872,6 +1892,10 @@ bool X86Assembler :: compileFsub(X86Operand source, MemoryWriter& writer)
 {
    if (source.isM64()) {
       writer.writeByte(0xDC);
+      X86Helper::writeModRM(writer, { X86OperandType::R32 + 4 }, source);
+   }
+   else if (source.isM32()) {
+      writer.writeByte(0xD8);
       X86Helper::writeModRM(writer, { X86OperandType::R32 + 4 }, source);
    }
    else return false;

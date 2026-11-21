@@ -195,6 +195,11 @@ public sealed const struct HDC
    {
       extern GDI32.DeleteDC(_handle)
    }
+   
+   release(handle hwnd)
+   {
+      extern USER32.ReleaseDC(hwnd, _handle)
+   }
 }
 
 // --- HBITMAP ---

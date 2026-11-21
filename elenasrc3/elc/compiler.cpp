@@ -245,6 +245,7 @@ static inline bool isConstant(ObjectKind kind)
    switch (kind) {
       case ObjectKind::IntLiteral:
       case ObjectKind::Float64Literal:
+      case ObjectKind::Float32Literal:
       case ObjectKind::LongLiteral:
       case ObjectKind::StringLiteral:
       case ObjectKind::WideStringLiteral:
@@ -355,6 +356,16 @@ static inline ref_t mapFloat64Const(ModuleBase* module, double val)
 
    // convert back to string as a decimal integer
    s.appendDouble(val);
+
+   return module->mapConstant(s.str());
+}
+
+static inline ref_t mapFloat32Const(ModuleBase* module, float val)
+{
+   String<char, 30> s;
+
+   // convert back to string as a decimal integer
+   s.appendFloat(val);
 
    return module->mapConstant(s.str());
 }
@@ -1379,7 +1390,7 @@ ObjectInfo Compiler::NamespaceScope::mapIdentifier(ustr_t identifier, bool refer
          else {
             if (identifier.startsWith(*moduleScope->rootNs)) {
                // COMPILER MAGIC : recognize root namespace
-               pos_t pos = moduleScope->rootNs.length();
+               pos_t pos = moduleScope->rootNs.length_pos();
                if (identifier[pos] == '\'') {
                   ReferenceName fullName(module->name(), identifier + pos + 1);
 
@@ -2549,6 +2560,7 @@ void Compiler::Preparator :: mapBuildinReferences()
    moduleScope->buildins.intReference = safeMapReference(INTLITERAL_FORWARD);
    moduleScope->buildins.longReference = safeMapReference(LONGLITERAL_FORWARD);
    moduleScope->buildins.realReference = safeMapReference(REALLITERAL_FORWARD);
+   moduleScope->buildins.floatReference = safeMapReference(FLOATLITERAL_FORWARD);
    moduleScope->buildins.shortReference = safeMapReference(INT16LITERAL_FORWARD);
    moduleScope->buildins.ushortReference = safeMapReference(UINT16LITERAL_FORWARD);
    moduleScope->buildins.int8Reference = safeMapReference(INT8LITERAL_FORWARD);
@@ -3635,6 +3647,16 @@ ref_t Compiler::generateConstant(Scope& scope, ObjectInfo& retVal, ref_t constRe
          retVal.typeInfo = { scope.moduleScope->buildins.realReference };
          break;
       }
+      case ObjectKind::Float32Literal:
+      {
+         ustr_t valueStr = module->resolveConstant(retVal.reference);
+         double value = StrConvertor::toFloat(valueStr);
+
+         dataWriter.write(&value, sizeof(double));
+
+         retVal.typeInfo = { scope.moduleScope->buildins.floatReference };
+         break;
+      }
       case ObjectKind::LongLiteral:
       {
          ustr_t valueStr = module->resolveConstant(retVal.reference);
@@ -4036,7 +4058,7 @@ void Compiler :: injectVirtualMethods(SyntaxNode classNode, SyntaxKey methodType
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.eof(); ++it) {
-      auto methodInfo = *it;
+      decltype(auto) methodInfo = *it;
       switch (methodInfo.type) {
          case VirtualType::Multimethod:
             injectVirtualMultimethod(classNode, methodType, scope, targetRef, info, methodInfo.message, methodInfo.nillableArgs);
@@ -4052,7 +4074,7 @@ void Compiler :: declareVirtualMethods(/*SyntaxNode classNode, SyntaxKey methodT
 {
    // generate implicit mutli methods
    for (auto it = implicitMultimethods.start(); !it.eof(); ++it) {
-      auto methodInfo = *it;
+      decltype(auto) methodInfo = *it;
       switch (methodInfo.type) {
          case VirtualType::ByRefHandler:
             declareByRefHandler(info, methodInfo.message, false);
@@ -5424,7 +5446,7 @@ void Compiler::inheritStaticMethods(ClassScope& scope, SyntaxNode classNode)
 
    // save the newly declared static methods
    for (auto it = scope.info.methods.start(); !it.eof(); ++it) {
-      auto methodInfo = *it;
+      decltype(auto) methodInfo = *it;
       mssg_t key = it.key();
 
       if (!methodInfo.inherited && MethodInfo::checkType(methodInfo, MethodHint::Sealed) &&
@@ -5519,7 +5541,7 @@ void Compiler::loadExtensions(NamespaceScope& ns, bool internalOne)
 void Compiler::copyParentNamespaceExtensions(NamespaceScope& source, NamespaceScope& target)
 {
    for (auto it = source.extensions.start(); !it.eof(); it++) {
-      auto ext = *it;
+      decltype(auto) ext = *it;
 
       target.extensions.add(it.key(), { ext.value1, ext.value2 });
    }
@@ -5766,7 +5788,7 @@ ObjectInfo Compiler::evalCollection(Interpreter& interpreter, Scope& scope, Synt
       if (node.arg.reference)
          return { ObjectKind::ConstArray, { collectionTypeRef }, node.arg.reference };
 
-      auto fieldInfo = *(collectionInfo.fields.start());
+      decltype(auto) fieldInfo = *(collectionInfo.fields.start());
       elementTypeRef = resolveStrongType(scope, { fieldInfo.typeInfo.elementRef });
       numericOne = _logic->isNumericType(*scope.moduleScope, elementTypeRef);
    }
@@ -6090,7 +6112,7 @@ int Compiler::defineFieldSize(Scope& scope, ObjectInfo info)
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
    auto f_it = classScope->info.fields.start();
    while (!f_it.eof()) {
-      auto fieldInfo = *f_it;
+      decltype(auto) fieldInfo = *f_it;
       if (fieldInfo.offset == (int)info.reference)
          break;
 
@@ -6099,7 +6121,7 @@ int Compiler::defineFieldSize(Scope& scope, ObjectInfo info)
 
    ++f_it;
    if (!f_it.eof()) {
-      auto nextFieldInfo = *f_it;
+      decltype(auto) nextFieldInfo = *f_it;
       size = nextFieldInfo.offset - info.reference;
    }
    else size = classScope->info.size - info.reference;
@@ -6155,6 +6177,8 @@ ref_t Compiler :: resolvePrimitiveType(ModuleScopeBase& moduleScope, TypeInfo ty
          return moduleScope.buildins.longReference;
       case V_FLOAT64:
          return moduleScope.buildins.realReference;
+      case V_FLOAT32:
+         return moduleScope.buildins.floatReference;
       case V_UINT32:
          return moduleScope.buildins.uintReference;
       case V_STRING:
@@ -7596,6 +7620,10 @@ void Compiler :: declareFieldAttributes(ClassScope& scope, SyntaxNode node, Fiel
                   attrs.typeInfo.typeRef = V_FLOAT64;
                   attrs.fieldArray = false;
                   break;
+               case 4:
+                  attrs.typeInfo.typeRef = V_FLOAT32;
+                  attrs.fieldArray = false;
+                  break;
                default:
                   valid = false;
                   break;
@@ -7919,7 +7947,7 @@ bool Compiler::evalAccumClassConstant(ustr_t constName, ClassScope& scope, Synta
    }
    else constInfo.reference = mapClassConst(scope.moduleScope, scope.reference);
 
-   auto fieldInfo = *(collectionInfo.fields.start());
+   decltype(auto) fieldInfo = *(collectionInfo.fields.start());
    /*ref_t elementTypeRef = */resolveStrongType(scope, { fieldInfo.typeInfo.elementRef });
 
    ObjectInfo value = evalExpression(interpreter, scope, node, {});
@@ -7968,6 +7996,7 @@ bool Compiler::evalClassConstant(ustr_t constName, ClassScope& scope, SyntaxNode
    case ObjectKind::WideStringLiteral:
    case ObjectKind::IntLiteral:
    case ObjectKind::Float64Literal:
+   case ObjectKind::Float32Literal:
       constInfo.typeInfo = retVal.typeInfo;
       constInfo.reference = generateConstant(scope, retVal, 0);
       break;
@@ -8363,7 +8392,7 @@ static inline ref_t targetResolver(void* param, mssg_t mssg)
 static void mergeExtensionLists(ExtensionMap* target, ExtensionMap* source)
 {
    for (auto it = source->start(); !it.eof(); ++it) {
-      auto pair = *it;
+      decltype(auto) pair = *it;
 
       if (!target->exist(it.key(), pair)) {
          target->add(it.key(), pair);
@@ -8387,8 +8416,8 @@ ref_t Compiler :: compileExtensionDispatcher(BuildTreeWriter& writer, NamespaceS
    // create a new overload list
    ClassInfo::MethodMap methods({});
    ResolvedMap targets(0);
-   for (auto it = scope.extensions.getIt(genericMessage); !it.eof(); it = scope.extensions.nextIt(genericMessage, it)) {
-      auto extInfo = *it;
+   for (decltype(auto) it = scope.extensions.getIt(genericMessage); !it.eof(); it = scope.extensions.nextIt(genericMessage, it)) {
+      decltype(auto) extInfo = *it;
 
       methods.add(extInfo.value2, { false, 0, 0, 0, genericMessage | FUNCTION_MESSAGE, 0, 0 });
       targets.add(extInfo.value2, extInfo.value1);
@@ -8470,7 +8499,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
       // for singleDispatchMode define implicitSignatureRef if not provided
       auto it = nsScope->extensions.getIt(context.weakMessage);
       while (!it.eof()) {
-         auto extInfo = *it;
+         decltype(auto) extInfo = *it;
          if (extInfo.value1 == directExtensionRef) {
             context.implicitSignatureRef = getArgumentSignature(scope.module, getSignature(scope.module, extInfo.value2));
          }
@@ -8503,7 +8532,7 @@ ref_t Compiler :: mapExtension(BuildTreeWriter& writer, Scope& scope, MessageCal
       int resolvedStackSafeAttr = 0;
       int counter = 0;
       while (!it.eof()) {
-         auto extInfo = *it;
+         decltype(auto) extInfo = *it;
          ref_t targetRef = nsScope->resolveExtensionTarget(extInfo.value1);
 
          int extStackAttr = 0;
@@ -8709,10 +8738,30 @@ static inline bool defineFloat64Constant(ustr_t val, ModuleBase* module, ObjectI
    return true;
 }
 
-ObjectInfo Compiler::mapFloat64Constant(Scope& scope, SyntaxNode node)
+static inline bool defineFloat32Constant(ustr_t val, ModuleBase* module, ObjectInfo& retVal)
+{
+   float real = 0;
+
+   if (val.endsWith("f")) {
+      String<char, 50> tmp(val);
+      tmp.truncate(tmp.length() - 1);
+
+      real = StrConvertor::toFloat(tmp.str());
+   }
+   else return false;
+
+   retVal = { ObjectKind::Float32Literal, { V_FLOAT32 }, ::mapFloat32Const(module, real) };
+
+   return true;
+}
+
+ObjectInfo Compiler :: mapFloat64Or32Constant(Scope& scope, SyntaxNode node)
 {
    ObjectInfo retVal = {};
 
+   if (defineFloat32Constant(node.identifier(), scope.module, retVal)) {
+      return retVal;
+   }
    if (!defineFloat64Constant(node.identifier(), scope.module, retVal)) {
       scope.raiseError(errInvalidIntNumber, node);
    }
@@ -8929,7 +8978,7 @@ ObjectInfo Compiler::defineTerminalInfo(Scope& scope, SyntaxNode node, TypeInfo 
       case SyntaxKey::real:
          invalid = invalidForNonIdentifier;
 
-         retVal = mapFloat64Constant(scope, node);
+         retVal = mapFloat64Or32Constant(scope, node);
          break;
       case SyntaxKey::constant:
          invalid = invalidForNonIdentifier;
@@ -9360,7 +9409,7 @@ static inline SyntaxNode findObjectNode(SyntaxNode node)
    return {};
 }
 
-inline TypeInfo resolveRetOutput(Compiler::CodeScope& codeScope, bool& autoMode)
+static inline TypeInfo resolveRetOutput(Compiler::CodeScope& codeScope, bool& autoMode)
 {
    TypeInfo outputInfo = {};
    if (codeScope.isByRefHandler()) {
@@ -9476,6 +9525,7 @@ bool Compiler::compileSymbolConstant(SymbolScope& scope, ObjectInfo retVal)
          case ObjectKind::StringLiteral:
          case ObjectKind::WideStringLiteral:
          case ObjectKind::Float64Literal:
+         case ObjectKind::Float32Literal:
          case ObjectKind::LongLiteral:
             scope.info.symbolType = SymbolType::Constant;
             scope.info.valueRef = constRef;
@@ -9750,7 +9800,7 @@ void Compiler :: addVariableInfo(BuildNode node, Scope& scope, ustr_t name, Para
 void Compiler :: injectVariablesInfo(BuildNode node, CodeScope& codeScope)
 {
    for (auto it = codeScope.locals.start(); !it.eof(); ++it) {
-      auto localInfo = *it;
+      decltype(auto) localInfo = *it;
       addVariableInfo(node, codeScope, it.key(), localInfo);
    }
 }
@@ -10884,7 +10934,7 @@ void Compiler::writeMethodDebugInfo(BuildTreeWriter& writer, MethodScope& scope,
 
    int prefix = scope.functionMode ? 0 : -1;
    for (auto it = scope.parameters.start(); !it.eof(); ++it) {
-      auto paramInfo = *it;
+      decltype(auto) paramInfo = *it;
 
       writeParameterDebugInfo(writer, scope, paramInfo.size, paramInfo.typeInfo,
          it.key(), prefix - paramInfo.offset);
@@ -12049,7 +12099,7 @@ void Compiler::injectInterfaceDispatch(Scope& scope, SyntaxNode node, ref_t pare
             _logic->generateVirtualDispatchMethod(*scope.moduleScope, parentRef, virtualMethods);
 
             for (pos_t i = 0; i < virtualMethods.count_pos(); i++) {
-               auto methInfo = virtualMethods.get(i);
+               decltype(auto) methInfo = virtualMethods.get(i);
 
                injectVirtualDispatchMethod(scope, node, methInfo.message, methInfo.outputType, methInfo.nillableArgs, terminalNode);
             }
@@ -13109,7 +13159,7 @@ void Compiler::declareModuleExtensionDispatcher(NamespaceScope& scope, SyntaxNod
 
    auto it = scope.declaredExtensions.start();
    while (!it.eof()) {
-      auto extInfo = *it;
+      decltype(auto) extInfo = *it;
       mssg_t genericMessage = it.key();
 
       ustr_t refName = scope.module->resolveReference(extInfo.value1);
@@ -15023,7 +15073,7 @@ ObjectInfo Compiler::Expression :: compileSetValueOperation(SyntaxNode lnode, Sy
       messageArguments.add(loperand);
       messageArguments.add(roperand);
 
-      ref_t arguments[2];
+      ref_t arguments[2] = {};
       arguments[0] = compiler->retrieveType(scope, loperand);
       arguments[1] = compiler->retrieveType(scope, roperand);
 
@@ -15959,7 +16009,7 @@ ObjectInfo Compiler::Expression :: compileCollection(SyntaxNode node, SyntaxNode
       return { byValue ? ObjectKind::Constant : ObjectKind::ConstArray, { collectionTypeRef }, node.arg.reference };
    }
 
-   auto fieldInfo = *(collectionInfo.fields.start());
+   decltype(auto) fieldInfo = *(collectionInfo.fields.start());
    ref_t elementTypeRef = compiler->resolveStrongType(scope, { fieldInfo.typeInfo.elementRef });
 
    auto sizeInfo = compiler->_logic->defineStructSize(collectionInfo);
@@ -16981,7 +17031,7 @@ void Compiler::Expression :: handleNillableArguments(SyntaxNode node, ArgumentsI
    int argMask = 1;
    unsigned int argCount = arguments.count_pos();
    for (unsigned int i = 1; i < argCount; i++) {
-      auto arg = arguments[i];
+      decltype(auto) arg = arguments[i];
       if (isNillable(arg) && !test(nillableArgs, argMask)) {
          if (codeScope && codeScope->verifiedObjects.exist(arg)) {
             // validate if the target was checked as not nil - no need to warn
@@ -17512,6 +17562,9 @@ bool Compiler::Expression::writeObjectInfo(ObjectInfo info, bool allowMeta)
          break;
       case ObjectKind::Float64Literal:
          writer->appendNode(BuildKey::RealLiteral, info.reference);
+         break;
+      case ObjectKind::Float32Literal:
+         writer->appendNode(BuildKey::FloatLiteral, info.reference);
          break;
       case ObjectKind::LongLiteral:
          writer->appendNode(BuildKey::LongLiteral, info.reference);
@@ -18584,6 +18637,7 @@ ObjectInfo Compiler::Expression :: compileOperation(SyntaxNode node, ArgumentsIn
          case BuildKey::LongCondOp:
          case BuildKey::LongIntCondOp:
          case BuildKey::RealCondOp:
+         case BuildKey::FloatCondOp:
          case BuildKey::NilCondOp:
          case BuildKey::RefCondOp:
             writer->appendNode(BuildKey::TrueConst, scope.moduleScope->branchingInfo.trueRef);
@@ -18716,7 +18770,8 @@ ObjectInfo Compiler::Expression::compileNativeConversion(SyntaxNode node, Object
          writer->appendNode(BuildKey::ConversionOp, operationKey);
          break;
       case INT32_FLOAT64_CONVERSION:
-         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { V_FLOAT64 }, false));
+      case INT32_FLOAT32_CONVERSION:
+         retVal = allocateResult(compiler->resolvePrimitiveType(*scope.moduleScope, { operationKey == INT32_FLOAT32_CONVERSION ? V_FLOAT32 : V_FLOAT64 }, false));
 
          writeObjectInfo(retVal);
          writer->appendNode(BuildKey::SavingInStack, 0);

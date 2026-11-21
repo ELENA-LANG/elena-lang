@@ -110,6 +110,8 @@ namespace elena_lang
          pos_t disp, void* code, ModuleBase* module);
       friend void writeStatDataReference(JITCompilerScope* scope, ref_t reference,
          pos_t disp, void* code, ModuleBase* module);
+      friend void writeDPNCode(JITCompilerScope* scope, void* code, int arg1, int arg2);
+      friend void writeICode(JITCompilerScope* scope, void* code, int arg1);
       friend void allocateCode(JITCompilerScope* scope, void* code);
       friend void loadCode(JITCompilerScope* scope, void* code, ModuleBase* module);
 
@@ -124,6 +126,7 @@ namespace elena_lang
       friend void* retrieveXArg(JITCompilerScope* scope);
 
       friend void loadOp(JITCompilerScope* scope);
+      friend void loadXOp(JITCompilerScope* scope);
       friend void loadSysOp(JITCompilerScope* scope);
       friend void loadLOp(JITCompilerScope* scope);
       friend void loadIndexOp(JITCompilerScope* scope);
@@ -155,12 +158,14 @@ namespace elena_lang
       friend void loadCreateNOp(JITCompilerScope* scope);
       friend void loadMROp(JITCompilerScope* scope);
       friend void loadVMTROp(JITCompilerScope* scope);
+      friend void loadDPNFOp(JITCompilerScope* scope);
       friend void loadDPNOp(JITCompilerScope* scope);
       friend void loadDPNOp2(JITCompilerScope* scope);
       friend void loadDispNOp(JITCompilerScope* scope);
       friend void loadDPROp(JITCompilerScope* scope);
       friend void loadDPLabelOp(JITCompilerScope* scope);
       friend void loadIOp(JITCompilerScope* scope);
+      friend void loadFNOp(JITCompilerScope* scope);
       friend void loadIROp(JITCompilerScope* scope);
 
       friend void compileAlloc(JITCompilerScope* scope);
@@ -321,6 +326,7 @@ namespace elena_lang
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeInt64(MemoryWriter& writer, unsigned long long value) override;
       void writeFloat64(MemoryWriter& writer, double value) override;
+      void writeFloat32(MemoryWriter& writer, float value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
       void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
@@ -401,6 +407,7 @@ namespace elena_lang
       void writeInt32(MemoryWriter& writer, unsigned value) override;
       void writeInt64(MemoryWriter& writer, unsigned long long value) override;
       void writeFloat64(MemoryWriter& writer, double value) override;
+      void writeFloat32(MemoryWriter& writer, float value) override;
       void writeLiteral(MemoryWriter& writer, ustr_t value) override;
       void writeWideLiteral(MemoryWriter& writer, wstr_t value) override;
       void writeChar32(MemoryWriter& writer, ustr_t value) override;
@@ -426,6 +433,8 @@ namespace elena_lang
    void writeCoreReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
    void writeMDataReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
    void writeStatDataReference(JITCompilerScope* scope, ref_t reference, pos_t disp, void* code, ModuleBase* module = nullptr);
+   void writeDPNCode(JITCompilerScope* scope, void* code, int arg1, int arg2);
+   void writeICode(JITCompilerScope* scope, void* code, int arg1);
    void loadCode(JITCompilerScope* scope, void* code, ModuleBase* module);
    void allocateCode(JITCompilerScope* scope, void* code);
 
@@ -442,6 +451,7 @@ namespace elena_lang
    void loadNop(JITCompilerScope*);
    void loadXNop(JITCompilerScope*);
    void loadOp(JITCompilerScope* scope);
+   void loadXOp(JITCompilerScope* scope);
    void loadSysOp(JITCompilerScope* scope);
    void loadLOp(JITCompilerScope* scope);
    void loadIndexOp(JITCompilerScope* scope);
@@ -473,12 +483,14 @@ namespace elena_lang
    void loadCreateNOp(JITCompilerScope* scope);
    void loadMROp(JITCompilerScope* scope);
    void loadVMTROp(JITCompilerScope* scope);
+   void loadDPNFOp(JITCompilerScope* scope);
    void loadDPNOp(JITCompilerScope* scope);
    void loadDPNOp2(JITCompilerScope* scope);
    void loadDispNOp(JITCompilerScope* scope);
    void loadDPROp(JITCompilerScope* scope);
    void loadDPLabelOp(JITCompilerScope* scope);
    void loadIOp(JITCompilerScope* scope);
+   void loadFNOp(JITCompilerScope* scope);
    void loadIROp(JITCompilerScope* scope);
 
    void compileAlloc(JITCompilerScope* scope);

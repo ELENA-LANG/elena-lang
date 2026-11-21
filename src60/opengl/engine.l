@@ -6,11 +6,6 @@ public interface IOpenGLEngine
    get abstract GLADLibrary GL();
 }
 
-//public interface IOpenGLDeviceAdapter
-//{
-//   abstract setup(IOpenGLEngine engine);
-//}
-
 public class OpenGLConfig
 {
    
@@ -29,10 +24,12 @@ public class OpenGLEngine : interface<IOpenGLEngine>
    {
       _gladLibrary := $();
       _wglLibrary := $();
-      
-//      _adapter := adapter;
-//      _adapter.setup(self);
    }
+   
+/*   clear()
+   {
+      
+   }*/
    
 //   setVersion(int major, int minor)
 //   {

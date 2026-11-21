@@ -3,7 +3,7 @@
 //
 //		This file contains common ELENA byte code classes and constants
 //
-//                                                (C)2021-2025, by Aleksey Rakov
+//                                                (C)2021-2026, by Aleksey Rakov
 //------------------------------------------------------------------------------
 
 #ifndef BYTECODE_H

@@ -2,19 +2,10 @@ import forms;
 import system'drawing;
 import opengl'externals;
 
-public class OpenGLPaintContextController : interface<IPaintContextController>//, interface<IOpenGLDeviceAdapter>
+public class OpenGLPaintContextController : interface<IPaintContextController>
 {
    IOpenGLEngine _engine;
    PaintContext  _paintContext;
-////   WGLContext    _wglContext;
-////   GLContext     _glContext;
-//   
-//   setup(IOpenGLEngine engine)
-//   {
-//      _engine := engine;
-//      
-//      initialize();
-//   }
    
    loadGL(HDC dc)
    {
@@ -47,49 +38,10 @@ public class OpenGLPaintContextController : interface<IPaintContextController>//
          OpenGLException.raise("GLContext: failed to load");
       };
       
-///*
-//    if (!gladLoadWGL(dummyDC))
-//        throw std::runtime_error("OGraphicsEngine - gladLoadWGL failed");
-//    
-//    if (!gladLoadGL())
-//        throw std::runtime_error("OGraphicsEngine - gladLoadGL failed");
-//    
-//
-//    wglMakeCurrent(dummyDC, 0);
-//    wglDeleteContext(dummyContext);
-//
-//*/      
+      context.clearCurrent(dc);
+      WGLLibrary.freeContext(context);
    }
 
-//   initialize()
-//   {
-////      _wglContext := new WGLContext();
-////      _glContext := new GLContext();
-//      
-//      _paintContext.initializeOGL3DDummyWindow(self);
-///*
-//    HGLRC dummyContext = wglCreateContext(dummyDC);
-//    assert(dummyContext);
-//
-//    bool res = wglMakeCurrent(dummyDC, dummyContext);
-//    assert(res);
-//
-//
-//    if (!gladLoadWGL(dummyDC))
-//        throw std::runtime_error("OGraphicsEngine - gladLoadWGL failed");
-//    
-//    if (!gladLoadGL())
-//        throw std::runtime_error("OGraphicsEngine - gladLoadGL failed");
-//    
-//
-//    wglMakeCurrent(dummyDC, 0);
-//    wglDeleteContext(dummyContext);
-//    ReleaseDC(dummyWindow, dummyDC);
-//    DestroyWindow(dummyWindow);
-//
-//*/      
-//   }
-   
    constructor new(PaintContext paintContext, IOpenGLEngine engine)
    {
       _paintContext := paintContext;

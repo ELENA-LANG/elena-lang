@@ -687,6 +687,16 @@ inline %25h
 
 end
 
+// ; alt fsave
+inline %825h
+
+  push rdx
+  fild dword ptr [rsp]
+  fstp dword ptr [rbx]
+  add  rsp, 8
+
+end
+
 // ; wread
 inline %26h
 
@@ -1925,6 +1935,22 @@ inline %0C1h
 
 end
 
+// ; fcmpn 4
+inline %8C1h
+
+  mov    rsi, r10
+  xor    eax, eax
+  fld    dword ptr [rbx]
+  mov    ecx, 1
+  fld    dword ptr [rsi]
+  fcomip st, st(1)
+  sete   al
+  seta   ah
+  fstp   st(0)
+  cmp    eax, ecx
+
+end
+
 // ; icmpn 4
 inline %0C2h
 
@@ -2559,6 +2585,18 @@ inline %0D0h
 
 end
 
+// ; faddndp 4, dp
+inline %8D0h
+
+  mov  rsi, r10
+  lea  rdi, [rbp + __arg32_1]
+
+  fld   dword ptr [rdi]
+  fadd  dword ptr [rsi] 
+  fstp  dword ptr [rdi]
+
+end
+
 // ; fsubndp
 inline %0D1h
 
@@ -2568,6 +2606,18 @@ inline %0D1h
   fld   qword ptr [rdi]
   fsub  qword ptr [rsi] 
   fstp  qword ptr [rdi]
+
+end
+
+// ; fsubndp 4, dp
+inline %8D1h
+
+  mov  rsi, r10
+  lea  rdi, [rbp + __arg32_1]
+
+  fld   dword ptr [rdi]
+  fsub  dword ptr [rsi] 
+  fstp  dword ptr [rdi]
 
 end
 
@@ -2583,6 +2633,18 @@ inline %0D2h
 
 end
 
+// ; fmulndp 4, dp
+inline %8D2h
+
+  mov  rsi, r10
+  lea  rdi, [rbp + __arg32_1]
+
+  fld   dword ptr [rdi]
+  fmul  dword ptr [rsi] 
+  fstp  dword ptr [rdi]
+
+end
+
 // ; fdivndp
 inline %0D3h
 
@@ -2592,6 +2654,18 @@ inline %0D3h
   fld   qword ptr [rdi]
   fdiv  qword ptr [rsi] 
   fstp  qword ptr [rdi]
+
+end
+
+// ; fdivndp 4, dp
+inline %8D3h
+
+  mov  rsi, r10
+  lea  rdi, [rbp + __arg32_1]
+
+  fld   dword ptr [rdi]
+  fdiv  dword ptr [rsi] 
+  fstp  dword ptr [rdi]
 
 end
 

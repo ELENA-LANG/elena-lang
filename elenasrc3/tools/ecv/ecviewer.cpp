@@ -270,6 +270,10 @@ void ByteCodeViewer :: addRArg(arg_t arg, IdentifierString& commandStr, bool wit
          appendPrefix(commandStr, "realconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
          break;
+      case mskFloatLiteralRef:
+         appendPrefix(commandStr, "floatconst:", withTabbing);
+         referenceName = _module->resolveConstant(arg & ~mskAnyRef);
+         break;
       case mskIntLiteralRef:
          appendPrefix(commandStr, "intconst:", withTabbing);
          referenceName = _module->resolveConstant(arg & ~mskAnyRef);
@@ -790,6 +794,9 @@ void ByteCodeViewer :: printFlags(ref_t flags, int& row, int pageSize)
          break;
       case elDebugFLOAT64:
          printLineAndCount("@flag ", "elDebugFLOAT64", row, pageSize);
+         break;
+      case elDebugFLOAT32:
+         printLineAndCount("@flag ", "elDebugFLOAT32", row, pageSize);
          break;
       case elDebugLONG:
          printLineAndCount("@flag ", "elDebugLONG", row, pageSize);

@@ -58,6 +58,7 @@ namespace elena_lang
          ustr_t intLiteralClass;
          ustr_t longLiteralClass;
          ustr_t realLiteralClass;
+         ustr_t floatLiteralClass;
          ustr_t literalClass;
          ustr_t wideLiteralClass;
          ustr_t characterClass;

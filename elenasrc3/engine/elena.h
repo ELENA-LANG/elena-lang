@@ -623,6 +623,7 @@ namespace elena_lang
       virtual void writeInt32(MemoryWriter& writer, unsigned int value) = 0;
       virtual void writeInt64(MemoryWriter& writer, unsigned long long value) = 0;
       virtual void writeFloat64(MemoryWriter& writer, double value) = 0;
+      virtual void writeFloat32(MemoryWriter& writer, float value) = 0;
       virtual void writeLiteral(MemoryWriter& writer, ustr_t value) = 0;
       virtual void writeWideLiteral(MemoryWriter& writer, wstr_t value) = 0;
       virtual void writeChar32(MemoryWriter& writer, ustr_t value) = 0;

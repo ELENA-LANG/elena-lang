@@ -185,7 +185,7 @@ struct BuiltinReferences
 {
    ref_t   superReference, nilValueReference;
    ref_t   intReference, shortReference, uint8Reference;
-   ref_t   longReference, realReference;
+   ref_t   longReference, realReference, floatReference;
    ref_t   uintReference, int8Reference, ushortReference;
    ref_t   literalReference;
    ref_t   wideReference;
@@ -228,7 +228,7 @@ struct BuiltinReferences
       shortReference = uint8Reference = 0;
       uintReference = 0;
       int8Reference = ushortReference = 0;
-      longReference = realReference = 0;
+      longReference = realReference = floatReference = 0;
       literalReference = wideReference = 0;
       messageReference = extMessageReference = 0;
       messageNameReference = 0;

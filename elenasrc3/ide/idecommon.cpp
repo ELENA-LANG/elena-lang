@@ -204,6 +204,15 @@ void ContextBrowserBase :: populateFLOAT64(WatchContext* context, double value)
    populateNode(context->root, number.str());
 }
 
+void ContextBrowserBase :: populateFLOAT32(WatchContext* context, float value)
+{
+   String<char, 40> number;
+   number.appendFloat(value);
+
+   clearNode(context->root);
+   populateNode(context->root, number.str());
+}
+
 // --- SelectionEvent ---
 
 SelectionEvent :: SelectionEvent(int id, int index)

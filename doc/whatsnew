@@ -70,6 +70,7 @@
   - [ADDED] logger module
   - [ADDED] regex: groups
   - [ADDED] extern_winapi_func template
+  - [ADDED] new numeric type FloatNumber (float)
  
 - Scripts
   - [ADDED] elena script 2 : xscript

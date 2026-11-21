@@ -785,6 +785,16 @@ double Win32DebugProcess :: getFLOAT64(addr_t address)
    else return 0;
 }
 
+float Win32DebugProcess :: getFLOAT32(addr_t address)
+{
+   float number = 0;
+
+   if (_current->readDump(address, (char*)&number, 4)) {
+      return number;
+   }
+   else return 0;
+}
+
 ref_t Win32DebugProcess :: getClassFlags(addr_t vmtAddress)
 {
    ref_t flags = 0;

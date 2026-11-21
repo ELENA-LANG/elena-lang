@@ -5,3 +5,17 @@ public sealed class OpenGLException : Exception
    {
    }   
 }
+
+// --- OVec4 ---
+
+//public struct OVec4
+//{
+//   constructor()
+//   {
+//      
+//   }
+//   constructor()
+//   {
+//      
+//   }   
+//}

@@ -448,6 +448,7 @@ ReferenceInfo LibraryProvider :: retrieveReferenceInfo(ModuleBase* module, ref_t
       case mskIntLiteralRef:
       case mskLongLiteralRef:
       case mskRealLiteralRef:
+      case mskFloatLiteralRef:
       case mskLiteralRef:
       case mskWideLiteralRef:
       case mskCharacterRef:

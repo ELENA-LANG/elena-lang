@@ -693,6 +693,16 @@ inline %25h
 
 end
 
+// ; alt fsave
+inline %825h
+
+  push edx
+  fild [esp]
+  fstp dword ptr [ebx]
+  add  esp, 4
+
+end
+
 // ; wread
 inline %26h
 
@@ -1974,6 +1984,21 @@ inline %0C1h
 
 end
 
+// ; fcmpn 4
+inline %8C1h
+
+  xor    eax, eax
+  fld    dword ptr [ebx]
+  mov    ecx, 1
+  fld    dword ptr [esi]
+  fcomip st, st(1)
+  sete   al
+  seta   ah
+  fstp   st(0)
+  cmp    eax, ecx
+
+end
+
 // ; icmpn 4
 inline %0C2h
 
@@ -2291,6 +2316,17 @@ inline %0D0h
   fld   qword ptr [edi]
   fadd  qword ptr [esi] 
   fstp  qword ptr [edi]
+
+end
+
+// ; faddndp
+inline %8D0h
+
+  lea  edi, [ebp + __arg32_1]
+
+  fld   dword ptr [edi]
+  fadd  dword ptr [esi] 
+  fstp  dword ptr [edi]
 
 end
 

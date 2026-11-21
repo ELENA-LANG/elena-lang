@@ -234,6 +234,7 @@ namespace elena_lang
       virtual void populateLONG(WatchContext* root, long long value);
       virtual void populateULONG(WatchContext* root, unsigned long long value);
       virtual void populateFLOAT64(WatchContext* root, double value);
+      virtual void populateFLOAT32(WatchContext* root, float value);
       virtual void populateString(WatchContext* root, const char* value);
       virtual void populateWideString(WatchContext* root, const wide_c* value);
 
@@ -378,6 +379,7 @@ namespace elena_lang
       virtual unsigned int getDWORD(addr_t address) = 0;
       virtual unsigned long long getQWORD(addr_t address) = 0;
       virtual double getFLOAT64(addr_t address) = 0;
+      virtual float getFLOAT32(addr_t address) = 0;
 
       virtual void addBreakpoint(addr_t address) = 0;
       virtual void removeBreakpoint(addr_t address) = 0;

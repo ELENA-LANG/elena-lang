@@ -204,6 +204,11 @@ double Win32DebugAdapter :: getFLOAT64(addr_t address)
    return _debugProcess.getFLOAT64(address);
 }
 
+float Win32DebugAdapter::getFLOAT32(addr_t address)
+{
+   return _debugProcess.getFLOAT32(address);
+}
+
 ref_t Win32DebugAdapter :: getClassFlags(addr_t vmtAddress)
 {
    return _debugProcess.getClassFlags(vmtAddress);

@@ -247,6 +247,7 @@ namespace elena_lang
       unsigned char getBYTE(addr_t address);
       unsigned long long getQWORD(addr_t address);
       double getFLOAT64(addr_t address);
+      float getFLOAT32(addr_t address);
       ref_t getClassFlags(addr_t vmtAddress);
       size_t getArrayLength(addr_t address);
 

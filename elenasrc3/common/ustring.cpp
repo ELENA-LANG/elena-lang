@@ -653,6 +653,31 @@ double StrConvertor::toDouble(const wide_c* s)
    return toDouble(temp);
 }
 
+float StrConvertor::toFloat(const char* s)
+{
+   // !!HOTFIX : to recognize nan
+   if (strcmp(s, "nan") == 0) {
+      return NAN;
+   }
+   else if (strcmp(s, "-inf") == 0) {
+      return -INFINITY;
+   }
+   else if (strcmp(s, "+inf") == 0) {
+      return INFINITY;
+   }
+   else return strtof(s, nullptr);
+}
+
+float StrConvertor :: toFloat(const wide_c* s)
+{
+   size_t destLen = 30;
+   char temp[30];
+   StrConvertor::copy(temp, s, getlength(s), destLen);
+   temp[destLen] = 0;
+
+   return toFloat(temp);
+}
+
 char* StrConvertor :: toString(double value, int precision, char* s, size_t destLength)
 {
    // !!HOTFIX : to recognize nan

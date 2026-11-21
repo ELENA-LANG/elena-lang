@@ -12,6 +12,7 @@
 #let aliases["uint"]    := system'UIntNumber;
 #let aliases["long"]    := system'LongNumber;
 #let aliases["real"]    := system'RealNumber;
+#let aliases["float"]   := system'FloatNumber;
 #let aliases["char"]    := system'CharValue;
 #let aliases["string"]  := system'String;
 #let aliases["wide"]    := system'WideString;

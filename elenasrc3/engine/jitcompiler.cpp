@@ -24,7 +24,7 @@ CodeGenerator _codeGenerators[256] =
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
-   loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
+   loadOp, loadOp, loadOp, loadOp, loadOp, loadXOp, loadOp, loadOp,
    loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp, loadOp,
 
    loadOp, compileAltMode, loadXNop, loadOp, loadOp, loadOp, loadOp, loadOp,
@@ -54,10 +54,10 @@ CodeGenerator _codeGenerators[256] =
    loadCallROp, loadVMTIndexOp, compileJump, compileJeq, compileJne, loadVMTIndexOp, loadMOp, compileJlt,
    compileJge, compileJgr, compileJle, loadTLSOp, loadTLSOp, loadFrameDispOp, loadNop, loadNop,
 
-   loadROp, loadIOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadXCallNOp,
+   loadROp, loadFNOp, loadIOp, loadNOp, loadNOp, loadMOp, loadStackIndexOp, loadXCallNOp,
    loadFrameIndexOp, loadStackIndexOp, compileClose, loadStackIndexOp, loadStackIndexOp, loadXFrameIndexOp, loadROp, loadSysOp,
 
-   loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDispNOp, compileHookDPR, loadRROp,
+   loadDPNFOp, loadDPNFOp, loadDPNFOp, loadDPNFOp, loadDPNOp, loadDispNOp, compileHookDPR, loadRROp,
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, compileXOpen, loadRROp,
 
    loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp, loadDPNOp2, compileHookDPR, loadNewOp,
@@ -138,6 +138,11 @@ constexpr ByteCode bcCommands[bcCommandNumber] =
    ByteCode::LLoadSI, ByteCode::PeekTLS, ByteCode::StoreTLS, ByteCode::DFree, ByteCode::XLAddDP,
    ByteCode::LoadZ, ByteCode::WLoadZ, ByteCode::LFSave, ByteCode::XCallExtN,
 };
+
+static inline int getFPOffset(int argument, int argOffset)
+{
+   return -(argument - (argument < 0 ? argOffset : 0));
+}
 
 void elena_lang :: writeCoreReference(JITCompilerScope* scope, ref_t reference,
    pos_t disp, void* code, ModuleBase* module)
@@ -432,9 +437,100 @@ void elena_lang :: writeStatDataReference(JITCompilerScope* scope, ref_t mask,
    }
 }
 
-static inline int getFPOffset(int argument, int argOffset)
+void elena_lang::writeDPNCode(JITCompilerScope* scope, void* code, int arg1, int arg2)
 {
-   return -(argument - (argument < 0 ? argOffset : 0));
+   MemoryWriter* writer = scope->codeWriter;
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+      case ARG32_1:
+         writer->writeDWord(getFPOffset(arg1, scope->constants->dataOffset));
+         break;
+      case ARG16_1:
+         writer->writeWord(getFPOffset(arg1, scope->constants->dataOffset));
+         break;
+      case ARG12_1:
+         scope->compiler->writeImm12(writer, getFPOffset(arg1,
+            scope->constants->dataOffset), 0);
+         break;
+      case ARG9_1:
+         scope->compiler->writeImm9(writer, getFPOffset(arg1,
+            scope->constants->dataOffset), 0);
+         break;
+      case NARG_2:
+         scope->compiler->writeImm32(writer, arg2);
+         break;
+      case NARG16_2:
+         scope->compiler->writeImm16(writer, arg2, 0);
+         break;
+      case NARG16HI_2:
+         scope->compiler->writeImm16Hi(writer, arg2, 0);
+         break;
+      case NARG12_2:
+         scope->compiler->writeImm12(writer, arg2, 0);
+         break;
+      case INV_NARG16_2:
+         scope->compiler->writeImm16(writer, arg2, INV_ARG);
+         break;
+      default:
+         // to make compiler happy
+         break;
+      }
+      //else writeCoreReference();
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
+}
+
+void elena_lang::writeICode(JITCompilerScope* scope, void* code, int arg1)
+{
+   MemoryWriter* writer = scope->codeWriter;
+
+   pos_t position = writer->position();
+   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+
+   // simply copy correspondent inline code
+   writer->write(code, length);
+
+   // resolve section references
+   pos_t count = *(pos_t*)((char*)code + length);
+   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
+   while (count > 0) {
+      // locate relocation position
+      writer->seek(position + entries->offset);
+      switch (entries->reference) {
+         case NARG_1:
+            writer->writeDWord(arg1);
+            break;
+         case NARG16_1:
+         case ARG16_1:
+            scope->compiler->writeImm16(writer, (short)arg1, 0);
+            break;
+         case NARG12_1:
+            scope->compiler->writeImm12(writer, (short)arg1, 0);
+            break;
+         default:
+            //writeCoreReference();
+            break;
+      }
+
+      entries++;
+      count--;
+   }
+   writer->seekEOF();
 }
 
 void elena_lang :: loadNop(JITCompilerScope* scope)
@@ -503,6 +599,12 @@ void elena_lang :: loadCode(JITCompilerScope* scope, void* code, ModuleBase* mod
 void elena_lang :: loadOp(JITCompilerScope* scope)
 {
    loadCode(scope, scope->compiler->_inlines[0][scope->code()], nullptr);
+}
+
+void elena_lang :: loadXOp(JITCompilerScope* scope)
+{
+   int baseIndex = scope->altMode ? 8 : 0;
+   loadCode(scope, scope->compiler->_inlines[baseIndex][scope->code()], nullptr);
 }
 
 void elena_lang :: loadSysOp(JITCompilerScope* scope)
@@ -1162,42 +1264,17 @@ void elena_lang::loadFrameDispOp(JITCompilerScope* scope)
 
 void elena_lang :: loadIOp(JITCompilerScope* scope)
 {
-   MemoryWriter* writer = scope->codeWriter;
-
    void* code = retrieveICode(scope, scope->command.arg1);
 
-   pos_t position = writer->position();
-   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
+   writeICode(scope, code, scope->command.arg1);
+}
 
-   // simply copy correspondent inline code
-   writer->write(code, length);
+void elena_lang :: loadFNOp(JITCompilerScope* scope)
+{
+   int baseIndex = scope->command.arg1 == 4 ? 8 : 0;
 
-   // resolve section references
-   pos_t count = *(pos_t*)((char*)code + length);
-   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
-   while (count > 0) {
-      // locate relocation position
-      writer->seek(position + entries->offset);
-      switch (entries->reference) {
-         case NARG_1:
-            writer->writeDWord(scope->command.arg1);
-            break;
-         case NARG16_1:
-         case ARG16_1:
-            scope->compiler->writeImm16(writer, (short)scope->command.arg1, 0);
-            break;
-         case NARG12_1:
-            scope->compiler->writeImm12(writer, (short)scope->command.arg1, 0);
-            break;
-         default:
-            //writeCoreReference();
-            break;
-      }
-
-      entries++;
-      count--;
-   }
-   writer->seekEOF();
+   void* code = scope->compiler->_inlines[baseIndex][scope->code()];
+   writeICode(scope, code, scope->command.arg1);
 }
 
 void elena_lang::loadIROp(JITCompilerScope* scope)
@@ -1608,7 +1685,6 @@ void elena_lang :: loadXCallNOp(JITCompilerScope* scope)
    void* code = retreiveCallCode(scope, scope->command.arg1);
 
    MemoryWriter* writer = scope->codeWriter;
-   pos_t position = writer->position();
    pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
 
    // simply copy correspondent inline code
@@ -2561,123 +2637,26 @@ static inline int retrieveNOpIndex(int arg, unsigned extendedForm, int baseIndex
    return (unsigned)abs(arg) > extendedForm ? baseIndex + 1 : baseIndex;
 }
 
+void elena_lang::loadDPNFOp(JITCompilerScope* scope)
+{
+   int baseIndex = scope->command.arg2 == 4 ? 8 : 0;
+
+   void* code = scope->compiler->_inlines[baseIndex][scope->code()];;
+   writeDPNCode(scope, code, scope->command.arg1, scope->command.arg2);
+}
+
 void elena_lang::loadDPNOp(JITCompilerScope* scope)
 {
-   MemoryWriter* writer = scope->codeWriter;
-
    void* code = retrieveICode(scope, scope->command.arg2);
-
-   pos_t position = writer->position();
-   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
-
-   // simply copy correspondent inline code
-   writer->write(code, length);
-
-   // resolve section references
-   pos_t count = *(pos_t*)((char*)code + length);
-   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
-   while (count > 0) {
-      // locate relocation position
-      writer->seek(position + entries->offset);
-      switch (entries->reference) {
-         case ARG32_1:
-            writer->writeDWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
-            break;
-         case ARG16_1:
-            writer->writeWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
-            break;
-         case ARG12_1:
-            scope->compiler->writeImm12(writer, getFPOffset(scope->command.arg1,
-               scope->constants->dataOffset), 0);
-            break;
-         case ARG9_1:
-            scope->compiler->writeImm9(writer, getFPOffset(scope->command.arg1,
-               scope->constants->dataOffset), 0);
-            break;
-         case NARG_2:
-            scope->compiler->writeImm32(writer, scope->command.arg2);
-            break;
-         case NARG16_2:
-            scope->compiler->writeImm16(writer, scope->command.arg2, 0);
-            break;
-         case NARG16HI_2:
-            scope->compiler->writeImm16Hi(writer, scope->command.arg2, 0);
-            break;
-         case NARG12_2:
-            scope->compiler->writeImm12(writer, scope->command.arg2, 0);
-            break;
-         case INV_NARG16_2:
-            scope->compiler->writeImm16(writer, scope->command.arg2, INV_ARG);
-            break;
-         default:
-            // to make compiler happy
-            break;
-      }
-      //else writeCoreReference();
-
-      entries++;
-      count--;
-   }
-   writer->seekEOF();
+   writeDPNCode(scope, code, scope->command.arg1, scope->command.arg2);
 }
 
 void elena_lang::loadDPNOp2(JITCompilerScope* scope)
 {
-   MemoryWriter* writer = scope->codeWriter;
-
    int index = retrieveNOpIndex(scope->command.arg2, scope->constants->extendedForm, 0);
 
    void* code = scope->compiler->_inlines[index][scope->code()];
-
-   pos_t position = writer->position();
-   pos_t length = *(pos_t*)((char*)code - sizeof(pos_t));
-
-   // simply copy correspondent inline code
-   writer->write(code, length);
-
-   // resolve section references
-   pos_t count = *(pos_t*)((char*)code + length);
-   RelocationEntry* entries = (RelocationEntry*)((char*)code + length + sizeof(pos_t));
-   while (count > 0) {
-      // locate relocation position
-      writer->seek(position + entries->offset);
-      switch (entries->reference) {
-         case ARG32_1:
-            writer->writeDWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
-            break;
-         case ARG16_1:
-            writer->writeWord(getFPOffset(scope->command.arg1, scope->constants->dataOffset));
-            break;
-         case ARG12_1:
-            scope->compiler->writeImm12(writer, getFPOffset(scope->command.arg1,
-               scope->constants->dataOffset), 0);
-            break;
-         case ARG9_1:
-            scope->compiler->writeImm9(writer, getFPOffset(scope->command.arg1,
-               scope->constants->dataOffset), 0);
-            break;
-         case NARG_2:
-            scope->compiler->writeImm32(writer, scope->command.arg2);
-            break;
-         case NARG16_2:
-            scope->compiler->writeImm16(writer, scope->command.arg2, 0);
-            break;
-         case NARG16HI_2:
-            scope->compiler->writeImm16Hi(writer, scope->command.arg2, 0);
-            break;
-         case NARG12_2:
-            scope->compiler->writeImm12(writer, scope->command.arg2, 0);
-            break;
-         default:
-            // to make compiler happy
-            break;
-      }
-      //else writeCoreReference();
-
-      entries++;
-      count--;
-   }
-   writer->seekEOF();
+   writeDPNCode(scope, code, scope->command.arg1, scope->command.arg2);
 }
 
 void elena_lang :: loadDispNOp(JITCompilerScope* scope)
@@ -3577,7 +3556,7 @@ void JITCompiler32 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 
    writer.writeDWord(len);
    for (pos_t i = 0; i < len; i++) {
-      auto info = outputTypeList.get(i);
+      decltype(auto) info = outputTypeList.get(i);
 
       writer.writeDWord(info.value1);
       writer.writeDWord(0);
@@ -3971,6 +3950,11 @@ void JITCompiler32 :: writeFloat64(MemoryWriter& writer, double number)
    writer.write(&number, 8);
 }
 
+void JITCompiler32 :: writeFloat32(MemoryWriter& writer, float number)
+{
+   writer.write(&number, 4);
+}
+
 void JITCompiler32 :: writeLiteral(MemoryWriter& writer, ustr_t value)
 {
    if (emptystr(value)) {
@@ -4137,7 +4121,7 @@ void JITCompiler64 :: compileOutputTypeList(ReferenceHelperBase* helper, MemoryW
 
    writer.writeQWord((unsigned long long)len);
    for (size_t i = 0; i < len; i++) {
-      auto info = outputTypeList.get(i);
+      decltype(auto) info = outputTypeList.get(i);
 
       writer.writeQWord(info.value1);
       writer.writeQWord(0);
@@ -4521,6 +4505,11 @@ void JITCompiler64 :: writeInt64(MemoryWriter& writer, unsigned long long value)
 void JITCompiler64 :: writeFloat64(MemoryWriter& writer, double number)
 {
    writer.write(&number, 8);
+}
+
+void JITCompiler64 :: writeFloat32(MemoryWriter& writer, float number)
+{
+   writer.write(&number, 4);
 }
 
 void JITCompiler64 :: writeLiteral(MemoryWriter& writer, ustr_t value)

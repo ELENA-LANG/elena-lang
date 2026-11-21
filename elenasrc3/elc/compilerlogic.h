@@ -104,6 +104,13 @@ namespace elena_lang
          ref_t    output;
       };
 
+      struct ConversionOp
+      {
+         ref_t targetTypeRef;
+         ref_t sourceTypeRef;
+         ref_t op;
+      };
+
       typedef HashTable<int, Op, OpHashRule, MAX_OPERATOR_ID> OperationMap;
 
    private:

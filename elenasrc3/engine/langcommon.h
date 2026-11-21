@@ -634,6 +634,7 @@ namespace elena_lang
    constexpr auto V_FUNC_PTR32            = 0x8000002Au;
    constexpr auto V_FUNC_PTR64            = 0x8000002Bu;
    constexpr auto V_WINAPI_FUNC_PTR32     = 0x8000002Cu;
+   constexpr auto V_FLOAT32               = 0x8000002Du;
 
    /// built-in variables / types / namespaces
    constexpr auto V_SELF_VAR              = 0x80000081u;
@@ -706,6 +707,7 @@ namespace elena_lang
    constexpr auto UINT16_64_CONVERSION       = 0x009;
    constexpr auto UINT32_FLOAT64_CONVERSION  = 0x00A;
    constexpr auto UINT16_FLOAT64_CONVERSION  = 0x00B;
+   constexpr auto INT32_FLOAT32_CONVERSION   = 0x00C;
 
    // === Global Attributes ===
    constexpr auto GA_SYMBOL_NAME             = 0x0001;
@@ -762,7 +764,8 @@ namespace elena_lang
    constexpr auto NILVALUE_FORWARD              = "$nil";            // the nil value
    constexpr auto INTLITERAL_FORWARD            = "$int";            // the int literal
    constexpr auto LONGLITERAL_FORWARD           = "$long";           // the long literal
-   constexpr auto REALLITERAL_FORWARD           = "$real";           // the real literal
+   constexpr auto REALLITERAL_FORWARD           = "$real";           // the real 64bit literal
+   constexpr auto FLOATLITERAL_FORWARD          = "$float";          // the real 32bit literal
    constexpr auto INT8LITERAL_FORWARD           = "$int8";           // the int literal
    constexpr auto UINT8LITERAL_FORWARD          = "$uint8";          // the int literal
    constexpr auto INT16LITERAL_FORWARD          = "$short";          // the int literal

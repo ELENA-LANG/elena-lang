@@ -51,7 +51,7 @@
   </project>
   <manifest>
      <name>ELENA Standard Library</name>
-     <version>7.3.26</version>
+     <version>7.3.27</version>
      <author>Aleksey Rakov, ELENA-LANG Org</author>
   </manifest>
   <files>
@@ -73,6 +73,7 @@
         <include>inline_templates.l</include>
         <include>object.l</include>
         <include>basic.l</include>
+        <include>float.l</include>
         <include>variables.l</include>
         <include>primitives.l</include>
         <include>enumerables.l</include>

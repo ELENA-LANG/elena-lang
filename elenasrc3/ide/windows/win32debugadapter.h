@@ -127,6 +127,7 @@ namespace elena_lang
       unsigned getDWORD(addr_t address) override;
       unsigned long long getQWORD(addr_t address) override;
       double getFLOAT64(addr_t address) override;
+      float getFLOAT32(addr_t address) override;
 
       size_t getArrayLength(addr_t address) override;
 

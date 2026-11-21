@@ -47,7 +47,7 @@ static inline bool testMethodHint(ref_t hint, MethodHint mask)
 
 typedef CompilerLogic::Op Op;
 
-constexpr auto OperationLength = 232;
+constexpr auto OperationLength = 239;
 constexpr Op Operations[OperationLength] =
 {
    {
@@ -602,6 +602,28 @@ constexpr Op Operations[OperationLength] =
    {
       NOT_OPERATOR_ID, BuildKey::BoolSOp, V_FLAG, 0, 0, V_FLAG
    },
+   // float32
+   {
+      ADD_OPERATOR_ID, BuildKey::FloatOp, V_FLOAT32, V_FLOAT32, 0, V_FLOAT32
+   },
+   {
+      SUB_OPERATOR_ID, BuildKey::FloatOp, V_FLOAT32, V_FLOAT32, 0, V_FLOAT32
+   },
+   {
+      MUL_OPERATOR_ID, BuildKey::FloatOp, V_FLOAT32, V_FLOAT32, 0, V_FLOAT32
+   },
+   {
+      DIV_OPERATOR_ID, BuildKey::FloatOp, V_FLOAT32, V_FLOAT32, 0, V_FLOAT32
+   },
+   {
+      EQUAL_OPERATOR_ID, BuildKey::FloatCondOp, V_FLOAT32, V_FLOAT32, 0, V_FLAG
+   },
+   {
+      LESS_OPERATOR_ID, BuildKey::FloatCondOp, V_FLOAT32, V_FLOAT32, 0, V_FLAG
+   },
+   {
+      NOTEQUAL_OPERATOR_ID, BuildKey::FloatCondOp, V_FLOAT32, V_FLOAT32, 0, V_FLAG
+   },
    {
       // NOTE : the output should be in the stack, aligned to the 4 / 8 bytes
       INDEX_OPERATOR_ID, BuildKey::ByteArrayOp, V_INT8ARRAY, V_INT32, 0, V_ELEMENT
@@ -752,6 +774,55 @@ constexpr Op Operations[OperationLength] =
    },
    {
       EQUAL_OPERATOR_ID, BuildKey::ClassPropCondOp, V_CLASSPROPERTY, V_INT32, 0, V_FLAG
+   },
+};
+
+typedef CompilerLogic::ConversionOp ConvOp;
+
+constexpr auto ConversionLength = 14;
+constexpr ConvOp Conversions[OperationLength] =
+{
+   {
+      V_INT32, V_UINT8, INT8_32_CONVERSION
+   },
+   {
+      V_INT32, V_INT8, INT8_32_CONVERSION
+   },
+   {
+      V_INT32, V_INT16, INT16_32_CONVERSION
+   },
+   {
+      V_INT64, V_INT32, INT32_64_CONVERSION
+   },
+   {
+      V_FLOAT64, V_INT32, INT32_FLOAT64_CONVERSION
+   },
+   {
+      V_FLOAT32, V_INT32, INT32_FLOAT32_CONVERSION
+   },
+   {
+      V_INT64, V_UINT8, INT8_64_CONVERSION
+   },
+   {
+      V_INT64, V_INT8, INT8_64_CONVERSION
+   },
+   {
+      V_INT64, V_INT16, INT16_64_CONVERSION
+   },
+   {
+      V_FLOAT64, V_INT16, INT16_FLOAT64_CONVERSION
+   },
+   {
+      V_INT64, V_UINT32, UINT32_64_CONVERSION
+   },
+   {
+      V_INT64, V_UINT16, UINT16_64_CONVERSION
+   },
+   {
+      V_FLOAT64, V_UINT32, UINT32_FLOAT64_CONVERSION
+   },
+   {
+      V_FLOAT64, V_UINT16, UINT16_FLOAT64_CONVERSION
    },
 };
 
@@ -1475,11 +1546,18 @@ bool CompilerLogic :: isEmbeddableStruct(ref_t flags)
    return test(flags, elStructureRole) && !test(flags, elDynamicRole);
 }
 
+constexpr int NumericFlagLength = 6;
+static int NumericFlags[] = { elDebugINT, elDebugLONG, elDebugFLOAT64, elDebugUINT, elDebugULONG, elDebugFLOAT32 };
+
 bool CompilerLogic :: isNumericData(ref_t flags)
 {
    int dataMask = flags & elDebugMask;
+   for (size_t i = 0; i < NumericFlagLength; i++) {
+      if (dataMask == NumericFlags[i])
+         return true;
+   }
 
-   return dataMask == elDebugINT || dataMask == elDebugLONG || dataMask == elDebugFLOAT64 || dataMask == elDebugUINT || dataMask == elDebugULONG;
+   return false;
 }
 
 bool CompilerLogic :: isEmbeddable(ModuleScopeBase& scope, TypeInfo typeInfo)
@@ -1665,6 +1743,9 @@ void CompilerLogic :: tweakClassFlags(ModuleScopeBase& scope, ref_t classRef, Cl
             break;
          case V_FLOAT64:
             info.header.flags |= elDebugFLOAT64;
+            break;
+         case V_FLOAT32:
+            info.header.flags |= elDebugFLOAT32;
             break;
          case V_MESSAGE:
             info.header.flags |= elMessage;
@@ -1901,6 +1982,11 @@ bool CompilerLogic :: defineClassInfo(ModuleScopeBase& scope, ClassInfo& info, r
          info.header.parentRef = scope.buildins.superReference;
          info.header.flags = elDebugFLOAT64 | elStructureRole | elReadOnlyRole;
          info.size = 8;
+         break;
+      case V_FLOAT32:
+         info.header.parentRef = scope.buildins.superReference;
+         info.header.flags = elDebugFLOAT32 | elStructureRole | elReadOnlyRole;
+         info.size = 4;
          break;
       case V_INT32:
       case V_WORD32:
@@ -2269,44 +2355,11 @@ ConversionRoutine CompilerLogic :: retrieveConversionRoutine(CompilerBase* compi
       if (compatible)
          return { ConversionResult::BoxingRequired };
 
-      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_UINT8 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT8_32_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT8 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT8_32_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_INT32 && isCompatible(scope, { V_INT16 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT16_32_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT32 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT32_64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT32 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT32_FLOAT64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT8 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT8 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT8_64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_INT16 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT16_64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_INT16 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, INT16_FLOAT64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT32 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, UINT32_64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_INT64 && isCompatible(scope, { V_UINT16 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, UINT16_64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_UINT32 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, UINT32_FLOAT64_CONVERSION, 1 };
-      }
-      if (inner.typeInfo.typeRef == V_FLOAT64 && isCompatible(scope, { V_UINT16 }, sourceInfo, CompatibleMode::None)) {
-         return { ConversionResult::NativeConversion, UINT16_FLOAT64_CONVERSION, 1 };
+      for (size_t i = 0; i < ConversionLength; i++) {
+         ConvOp conv = Conversions[i];
+         if (inner.typeInfo.typeRef == conv.targetTypeRef && isCompatible(scope, { conv.sourceTypeRef }, sourceInfo, CompatibleMode::None)) {
+            return { ConversionResult::NativeConversion, conv.op, 1 };
+         }
       }
    }
 
@@ -2744,33 +2797,22 @@ ref_t CompilerLogic :: resolveExtensionTemplateByTemplateArgs(ModuleScopeBase& s
    return compiler->generateExtensionTemplate(scope, templateRef, argumentLen, arguments, /*ns, */outerExtensionList);
 }
 
+constexpr size_t NumericTypeLength = 6;
+static ref_t NumericTypes[] = { V_INT8, V_UINT8, V_INT16, V_INT64, V_FLOAT64, V_FLOAT32 };
+
 bool CompilerLogic :: isNumericType(ModuleScopeBase& scope, ref_t& reference)
 {
-   if (isCompatible(scope, { V_INT8 }, { reference }, CompatibleMode::None)) {
-      reference = V_INT8;
+   for (size_t i = 0; i < NumericTypeLength; i++) {
+      if (isCompatible(scope, { NumericTypes[i] }, {reference}, CompatibleMode::None)) {
+         if (NumericTypes[i] == V_INT64) {
+            // HOTFIX : ignore pointer
+            if (isCompatible(scope, { V_PTR64 }, { reference }, CompatibleMode::None))
+               return false;
+         }
 
-      return true;
-   }
-   if (isCompatible(scope, { V_UINT8 }, { reference }, CompatibleMode::None)) {
-      reference = V_UINT8;
-
-      return true;
-   }
-   if (isCompatible(scope, { V_INT16 }, { reference }, CompatibleMode::None)) {
-      reference = V_INT16;
-
-      return true;
-   }
-   if (isCompatible(scope, { V_INT64 }, { reference }, CompatibleMode::None) && !isCompatible(scope, { V_PTR64 }, { reference }, CompatibleMode::None)) {
-      // HOTFIX : ignore pointer
-      reference = V_INT64;
-
-      return true;
-   }
-   if (isCompatible(scope, { V_FLOAT64 }, { reference }, CompatibleMode::None)) {
-      reference = V_FLOAT64;
-
-      return true;
+         reference = NumericTypes[i];
+         return true;
+      }
    }
 
    return false;

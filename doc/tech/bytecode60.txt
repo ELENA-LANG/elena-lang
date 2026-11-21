@@ -86,6 +86,8 @@ ELENA byte codes (or ecodes)
 
    fsave                    - double:[acc] := index
 
+   alt fsave                - float:[acc] := index
+
    lfsave                   - double:[acc] := long:index ; signed 64-bit integer to double
 
    mov env                  - %SYSTEM_ENV => index 
@@ -391,11 +393,11 @@ ELENA byte codes (or ecodes)
 
    fadd dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] += temp;
-                              n = 8 
+                              n = 8, 4 
  
    fdiv dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] /= temp;
-                              n = 8  
+                              n = 8, 4
 
    fexp dp:disp             -  double:tmp << sp[0];
                               double:dp[disp] := exp(tmp)
@@ -418,7 +420,7 @@ ELENA byte codes (or ecodes)
  
    fmul dp:disp, n          - temp : n << sp[0];
                               [dp[disp]] *= temp;
-                              n = 8  
+                              n = 8, 4  
 
    fround dp:disp           - double:tmp << sp[0];
                               double:dp[disp] := trunc(tmp)
@@ -508,7 +510,7 @@ ELENA byte codes (or ecodes)
                               temp2 : n << sp[0];
                               COMP.EQ := (temp2 == temp1);
                               COMP.LT := (temp2 < temp1);
-                              n = 8 
+                              n = 4,8
 
    icmp n                   - temp1 : n << acc;
                               temp2 : n << sp[0];

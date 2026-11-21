@@ -33,3 +33,7 @@ Push to your fork and [submit a pull request](https://github.com/ELENA-LANG/elen
 
 You may try to implementing some of [Rosetta code tasks](http://rosettacode.org/wiki/Category:Programming_Tasks) 
 which are not yet implemented
+
+## AI policy
+
+AI generated code is strongly discouraged

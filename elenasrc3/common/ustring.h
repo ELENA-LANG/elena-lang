@@ -3,7 +3,7 @@
 //
 //		This header contains UTF8 String classes declarations
 //
-//                                             (C)2021-2025, by Aleksey Rakov
+//                                             (C)2021-2026, by Aleksey Rakov
 //---------------------------------------------------------------------------
 
 #ifndef USTRING_H
@@ -40,6 +40,8 @@ namespace elena_lang
       static long long toLong(const wide_c* s, int radix);
       static double toDouble(const char* s);
       static double toDouble(const wide_c* s);
+      static float toFloat(const char* s);
+      static float toFloat(const wide_c* s);
 
       static unsigned int toUInt(const char* s, int radix);
 
@@ -495,6 +497,13 @@ namespace elena_lang
       }
 
       void appendDouble(double value)
+      {
+         size_t pos = getlength(_string);
+
+         StrConvertor::toString(value, 10, _string + pos, size - pos);
+      }
+
+      void appendFloat(float value)
       {
          size_t pos = getlength(_string);
 

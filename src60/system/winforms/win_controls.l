@@ -144,6 +144,11 @@ public sealed const struct WindowHandle
       }
    }
 
+   free()
+   {
+      extern USER32.DestroyWindow(_handle);
+   }
+   
 }
 
 WindowHandle defaultHandle
