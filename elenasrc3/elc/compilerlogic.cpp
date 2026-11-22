@@ -1335,6 +1335,9 @@ bool CompilerLogic :: validateArgumentAttribute(ref_t attrValue, TypeAttributes&
          return true;
       case V_VARIABLE:
          return true;
+      case V_CONST:
+         attributes.constOne = true;
+         return true;
       default:
          return false;
    }

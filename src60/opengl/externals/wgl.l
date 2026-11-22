@@ -1,4 +1,4 @@
-import opengl'exports'primitives;
+import opengl'externals'primitives;
 import system'drawing;
 
 use extern OPENGL : importing("OPENGL32");
@@ -20,7 +20,7 @@ internal struct WGLDeleteBufferRegionARBPTR              : wgl_func<int>(handle 
 internal struct WGLSaveBufferRegionARBPTR                : wgl_func<int>(handle hRegion, int x, int y, int width, int height);
 internal struct WGLRestoreBufferRegionARBPTR             : wgl_func<int>(handle hRegion, int x, int y, int width, int height, int xSrc, int ySrc);
 
-internal struct WGLCreateContextAttribsARBPTR            : wgl_func<int>(HDC hDC, HGLRC hShareContext, pointer attribList);
+internal struct WGLCreateContextAttribsARBPTR            : wgl_func<handle>(HDC hDC, HGLRC hShareContext, pointer attribList);
 
 internal struct WGLMakeContextCurrentARBPTR              : wgl_func<int>(HDC hDrawDC, HDC hReadDC, HGLRC hglrc);
 internal struct WGLGetCurrentReadDCARBPTR                : wgl_func<HDC>();
@@ -33,7 +33,7 @@ internal struct WGLQueryPbufferARBPTR                    : wgl_func<HDC>(pointer
 
 internal struct WGLGetPixelFormatAttribivARBPTR          : wgl_func<int>(HDC hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, pointer piAttributes, pointer piValues);
 internal struct WGLGetPixelFormatAttribfvARBPTR          : wgl_func<int>(HDC hdc, int iPixelFormat, int iLayerPlane, uint nAttributes, pointer piAttributes, pointer pfValues);
-internal struct WGLChoosePixelFormatARBPTR               : wgl_func<int>(HDC hdc, pointer piAttribIList, pointer pfAttribFList, uint nMaxFormats, pointer piFormats, pointer nNumFormats);
+internal struct WGLChoosePixelFormatARBPTR               : wgl_func<int>(HDC hdc, /*int[]*/pointer piAttribIList, pointer pfAttribFList, uint nMaxFormats, UnsafePointer<int> piFormats, UnsafePointer<uint> nNumFormats);
 
 internal struct WGLBindTexImageARBPTR                    : wgl_func<int>(pointer hPbuffer, int iBuffer);
 internal struct WGLReleaseTexImageARBPTR                 : wgl_func<int>(pointer hPbuffer, int iBuffer);
@@ -637,10 +637,38 @@ public struct WGLLibrary
       
       ^ h
    }
-   
+         
+   HGLRC createContext(HDC dc, const int[] attributes)
+   {
+      handle h := wglCreateContextAttribsARB(dc, HGLRC.Default, attributes);
+      
+      ^ h
+   }
+      
    static freeContext(HGLRC glrc)
    {
       OPENGL.wglDeleteContext(glrc);
+   }
+
+   setPixelFormat(HDC dc, const int[] pixelFormatAttributes)
+   {
+   	int pixelFormat := 0;
+   	uint numFormats := 0;
+      
+      UnsafePointer<int> pixelFormatPtr := pixelFormat;
+      UnsafePointer<uint> numFormatsPtr := numFormats;
+      int retVal := wglChoosePixelFormatARB(dc, pixelFormatAttributes, pointer.Default, 1, pixelFormatPtr, numFormatsPtr);
+
+      PIXELFORMATDESCRIPTOR pixelFormatDesc := default;
+      
+      pixelFormatDesc.describePixelFormat(dc, pixelFormat);
+      pixelFormatDesc.setPixelFormat(dc, pixelFormat);
+   }
+   
+   present(HDC dc, bool vsync)
+   {
+   	wglSwapIntervalEXT(vsync ? 1 : 0);
+   	OPENGL.wglSwapLayerBuffers(dc, WGL_SWAP_MAIN_PLANE);
    }
    
 }

@@ -1,9 +1,14 @@
+import opengl'common;
 import opengl'externals;
 
 public interface IOpenGLEngine
 {
+   get abstract bool IsInitialized();
+   
    get abstract WGLLibrary WGL();
    get abstract GLADLibrary GL();
+   
+   abstract init(int major, int minor);
 }
 
 public class OpenGLConfig
@@ -13,8 +18,11 @@ public class OpenGLConfig
 
 public class OpenGLEngine : interface<IOpenGLEngine>
 {
-//   int                  _major; 
-//   int                  _minor; 
+   bool        _initialized;   
+   int         _major; 
+   int         _minor; 
+   
+   IGLCanvas   _canvas;
    
    GLADLibrary GL:rprop(_gladLibrary);
    
@@ -22,18 +30,23 @@ public class OpenGLEngine : interface<IOpenGLEngine>
    
    constructor new(OpenGLConfig config)
    {
+      _initialized := false;
+      
       _gladLibrary := $();
       _wglLibrary := $();
    }
    
-/*   clear()
-   {
-      
-   }*/
+   IGLCanvas Canvas
+      = _canvas ?? _canvas := _gladLibrary.newCanvas();
    
-//   setVersion(int major, int minor)
-//   {
-//      _major := major;
-//      _minor := minor
-//   }
+   bool IsInitialized
+      = _initialized;
+   
+   init(int major, int minor)
+   {
+      _initialized := true;
+      
+      _major := major;
+      _minor := minor
+   }
 }

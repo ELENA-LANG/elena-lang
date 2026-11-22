@@ -342,6 +342,11 @@ public sealed struct PIXELFORMATDESCRIPTOR
      ^ pixelFormat
   }
   
+  describePixelFormat(HDC dc, int format)
+  {
+     extern GDI32.DescribePixelFormat(dc, format, :sizeof PIXELFORMATDESCRIPTOR, self);
+  }
+  
   int setPixelFormat(HDC dc, int format)
   {
      int retVal := extern GDI32.SetPixelFormat(dc, format, self);

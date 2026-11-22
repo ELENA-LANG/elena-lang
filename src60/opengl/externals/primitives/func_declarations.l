@@ -120,6 +120,7 @@ public struct GLshort_short_short_short                           : wgl_func(sho
 public struct GLubyte_ubyte_ubyte_ubyte                           : wgl_func(ubyte arg1,ubyte arg2,ubyte arg3,ubyte arg4);
 public struct GLushort_ushort_ushort_ushort                       : wgl_func(ushort arg1,ushort arg2,ushort arg3,ushort arg4);
 public struct GLbyte_byte_byte_byte                               : wgl_func(byte arg1,byte arg2,byte arg3,byte arg4);
+public struct GLfloat_float_float_float                           : wgl_func(float arg1,float arg2,float arg3,float arg4);
 public struct ptr__GLuint_intptr_intptr_int                       : wgl_func<pointer>(uint arg1,intptr arg2,intptr arg3,int arg4);
 public struct ptr__GLint_intptr_intptr_int                        : wgl_func<pointer>(int arg1,intptr arg2,intptr arg3,int arg4);
 

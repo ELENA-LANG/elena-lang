@@ -6,6 +6,9 @@ public const struct HGLRC
 {
    embeddable handle _handle;
    
+   static HGLRC Default
+      = default;
+   
    bool isUnassigned()
       = _handle.isUnassigned();
    

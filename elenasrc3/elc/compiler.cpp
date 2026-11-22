@@ -7282,7 +7282,7 @@ TypeInfo Compiler :: resolveTypeScope(Scope& scope, SyntaxNode node, TypeAttribu
    TAttr mode)
 {
    bool declarationMode = (mode & TAttr::DeclarationMode) == TAttr::DeclarationMode;
-   bool constAttr = (mode & TAttr::ConstMode) == TAttr::ConstMode;
+   bool constAttr = (mode & TAttr::ConstMode) == TAttr::ConstMode || attributes.constOne;
    bool nullable = false;
    ref_t elementRef = 0;
 

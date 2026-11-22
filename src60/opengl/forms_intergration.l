@@ -1,13 +1,34 @@
+import system'winforms;
 import forms;
 import system'drawing;
 import opengl'externals;
 
-public class OpenGLPaintContextController : interface<IPaintContextController>
+const int[] pixelFormatAttributes = $[ 
+		WGL_DRAW_TO_WINDOW_ARB, GL_TRUE,
+		WGL_SUPPORT_OPENGL_ARB, GL_TRUE,
+		WGL_DOUBLE_BUFFER_ARB, GL_TRUE,
+		WGL_ACCELERATION_ARB, WGL_FULL_ACCELERATION_ARB,
+		WGL_PIXEL_TYPE_ARB, WGL_TYPE_RGBA_ARB,
+		WGL_COLOR_BITS_ARB, 32,
+		WGL_DEPTH_BITS_ARB, 24,
+		WGL_STENCIL_BITS_ARB, 8,
+		0
+];
+
+const int[] openGLAttributes = $[ 
+		WGL_CONTEXT_MAJOR_VERSION_ARB, 4,
+		WGL_CONTEXT_MINOR_VERSION_ARB, 6,
+		WGL_CONTEXT_PROFILE_MASK_ARB, WGL_CONTEXT_CORE_PROFILE_BIT_ARB,
+		0
+];
+
+public sealed class OpenGLDisplay : interface<IPaintContextController>
 {
    IOpenGLEngine _engine;
    PaintContext  _paintContext;
+   HGLRC         _context;  
    
-   loadGL(HDC dc)
+   private initGL(HDC dc)
    {
       PIXELFORMATDESCRIPTOR pfd := default;
       pfd.nSize := :sizeof pfd;
@@ -40,6 +61,59 @@ public class OpenGLPaintContextController : interface<IPaintContextController>
       
       context.clearCurrent(dc);
       WGLLibrary.freeContext(context);
+      
+      (int major, int minor) := _engine.GL.getVersion();
+      
+      _engine.init(major, minor);
+   }
+
+   private initializeOGL()
+   {
+      auto dummyHandle := new WindowHandle(
+                        0,
+                        OGL3DDummyWindow,
+                        EmptyWideString,
+                        0,
+                        CW_USEDEFAULT, CW_USEDEFAULT,
+                        CW_USEDEFAULT, CW_USEDEFAULT,
+                        WindowHandle.Default,
+                        CurrentInstance,
+                        UnsafePointer.Default);
+        
+      HDC dummyDC := dummyHandle.HDC;
+                              
+      initGL(dummyDC);
+      
+      dummyDC.release(dummyHandle.Handle);
+      dummyHandle.free();
+   }
+
+   private makeCurrent(HDC dc)
+   {
+      _context.makeCurrent(dc);
+   }
+
+   load(HDC dc)
+   {
+      if:not(_engine.IsInitialized) {
+         initializeOGL();
+      };
+      
+      _engine.WGL.setPixelFormat(dc, pixelFormatAttributes);
+      _context := _engine.WGL.createContext(dc, openGLAttributes);
+      
+      makeCurrent(dc);
+   }
+
+   paint(HDC dc)
+   {
+      _engine.WGL.present(dc, false);
+   }
+
+   present(bool vsync)
+   {
+      HDC dc := _paintContext.HDC;
+      _engine.WGL.present(dc, vsync);
    }
 
    constructor new(PaintContext paintContext, IOpenGLEngine engine)

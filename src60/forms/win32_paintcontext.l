@@ -6,18 +6,17 @@ import system'runtime;
 
 public interface IPaintContextController
 {
-   abstract loadGL(HDC dc);
-//   set abstract Parent(PaintContext context);
-   
-//   abstract initializeDC(HDC dc);
+   abstract load(HDC dc);
+
+   abstract paint(HDC dc);
 }
 
-//singleton DummyController : IPaintContextController
-//{
-//   set Parent(PaintContext context) {}
+singleton DummyController : IPaintContextController
+{
+   load(HDC dc) {}
    
-//   initializeDC(HDC dc) {}
-//}
+   paint(HDC dc) {}
+}
 
 // --- PaintContext ---
 
@@ -52,40 +51,18 @@ class PaintContextListener : WindowCallback
 
 public sealed class PaintContext : BaseWinControl, interface<IControl>
 {
-   //IPaintContextController Controller : rprop(_controller);
-/*   
+   IPaintContextController _controller;
+  
    set Controller(IPaintContextController controller)
    {
-      _controller := controller;
-      
-      _controller.Parent := self;
+      _controller := controller;      
+      //_controller.Parent := self;
    }   
-*/   
+
    constructor new()
       <= super new()
    {
-      //_controller := DummyController;
-   }
-
-   initializeOGL3DDummyWindow(IPaintContextController controller)
-   {
-      auto dummyHandle := new WindowHandle(
-                        0,
-                        OGL3DDummyWindow,
-                        EmptyWideString,
-                        0,
-                        CW_USEDEFAULT, CW_USEDEFAULT,
-                        CW_USEDEFAULT, CW_USEDEFAULT,
-                        WindowHandle.Default,
-                        CurrentInstance,
-                        UnsafePointer.Default);
-        
-      HDC dummyDC := dummyHandle.HDC;
-                              
-      controller.loadGL(dummyDC);
-      
-      dummyDC.release(dummyHandle.Handle);
-      dummyHandle.free();
+      _controller := DummyController;
    }
 
    internal destroy()
@@ -113,9 +90,15 @@ public sealed class PaintContext : BaseWinControl, interface<IControl>
                         parent,
                         CurrentInstance,
                         paramPtr);
+                        
+      _controller.load(_handle.HDC);
    }
-
+   
+   HDC HDC
+      = _handle.HDC;
+   
    internal paint()
    {
+      _controller.paint(_handle.HDC);
    }
 }

@@ -16,10 +16,14 @@
     </project>
     <manifest>
         <name>ELENA OpenGL Wrapper</name>
-        <version>7.3.4</version>
+        <version>7.3.5</version>
         <author>Aleksey Rakov, ELENA-LANG Org</author>
     </manifest>
     <files>
+        <module name="common">
+            <include>common\datatypes.l</include>
+            <include>common\interfaces.l</include>
+        </module>
         <module name="externals'primitives">
             <include>externals\primitives\templates.l</include>
             <include>externals\primitives\func_declarations.l</include>
@@ -34,6 +38,7 @@
             <file>forms_intergration.l</file>
             <include>common.l</include>
             <include>engine.l</include>
+            <include>win_app.l</include>
         </module>
     </files>
 </configuration>

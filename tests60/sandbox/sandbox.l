@@ -83,7 +83,14 @@ public Program()
 }
 */
 
+const int[] Args = $[1, 2, 3];
+
+printMe(const int[] args)
+{
+   Console.printLine(args.asEnumerable());
+}
+
 public Program()
 {
-   float f2 := 2.3f;
+   printMe(Args);
 }

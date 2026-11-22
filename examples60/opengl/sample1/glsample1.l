@@ -1,4 +1,5 @@
 import xforms;
+import forms;
 import opengl;
 import logger;
 
@@ -8,18 +9,39 @@ public symbol Initialization =
       .injectErrorHandler()
       .injectLogger();
 
+public class Game
+{
+   OpenGLEngine Engine:rprop(_engine);
+
+   OpenGLDisplay _display;
+
+   constructor(PaintContext painContext)
+   {
+      _engine := OpenGLEngine.new($());
+      
+      _display := OpenGLDisplay.new(painContext, _engine);
+      
+      painContext.Controller := _display;
+   }
+   
+   onUpdate()
+   {
+      _engine.Canvas.clear($(1.0f, 0.0f, 0.0f, 1.0f));
+      _display.present(false);
+   }
+}
+
 public class MainWindow : XForm, using(MainWindow)
 {
-   OpenGLEngine _engine;
+   Game          _game;
+   OpenGLDisplay _display;
    
    constructor new()
       <= super new()
    {
-      _engine := OpenGLEngine.new($());
+      _game := $(glContext);
       
-      auto ogController := OpenGLPaintContextController.new(glContext, _engine);
-      
-      //glContext.Controller := ogController;
+      self.onOpen := (self){ forward Program.OnUpdate := (){ _game.onUpdate() } };
    }
 
    private onExit(sender)

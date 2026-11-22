@@ -10,6 +10,7 @@ In development:
   * backlog
   ======================================   
   - switch to 7.3.x
+  - field getter -> direct for sealed method (MSG.Code)
   - why warning - internal struct GLStencilOpPTR         : extern_winapi_func(int func);
   - support float / uint64
   - fix Linux mta_test
@@ -75,9 +76,6 @@ In development:
   ---------------------------------------
   * current : opengl : #735
   ====================================== 
-  - refactor OpenGL general architecture
-  - initialize OpenGL
-  - engine : register in context
   - fill the screen the red color
   - do the same for x64
   - include opengl in elena_api.prjcol 

@@ -34,7 +34,10 @@ public sealed packed MSG
    int    _lparam;
    int    _time;
    int    _x;
-   int    _y;    
+   int    _y;
+   
+   int Code
+      = _message;
 }
 
 // --- CREATESTRUCT ---

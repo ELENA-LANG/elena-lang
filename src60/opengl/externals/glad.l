@@ -1,7 +1,8 @@
 // -----------------------------
 import extensions;
 // -----------------------------
-import opengl'exports'primitives;
+import opengl'common;
+import opengl'externals'primitives;
 
 use GLFUNC_GLuint__VOID                                                       = GLFUNC_uint_VOID;
 
@@ -153,7 +154,7 @@ use GLint_GLfloat_GLfloat_GLfloat                                             = 
 use GLenum_GLenum_GLint_GLuint                                                = GLint_int_int_uint;
 use GLenum_GLenum_GLenum_GLenum                                               = GLint_int_int_int;
 use GLenum_GLsizeiptr_ptr_GLenum                                              = GLint_intptr_ptr_int;
-use GLfloat_GLfloat_GLfloat_GLfloat                                           = GLuint_int_int_int;
+use GLfloat_GLfloat_GLfloat_GLfloat                                           = GLfloat_float_float_float;
 use GLint_GLenum_GLsizei_ptr                                                  = GLint_int_int_ptr;
 use GLenum_GLdouble_GLdouble_GLdouble                                         = GLint_double_double_double;
 use GLenum_GLfloat_GLfloat_GLfloat                                            = GLint_int_int_int;
@@ -2758,6 +2759,11 @@ public struct GLAD_Wrapper
       ^ true
    }   
    
+   initCanvas(GLADCanvas canvas)
+   {
+      canvas.initColorFns(glClearColor, glClear);
+   }
+      
    GLGetStringPTR GLGetString
       = glGetString;
 }
@@ -6543,13 +6549,42 @@ public struct GLAD_WrapperUI64
    }      
 }
 
+public struct GLADCanvas : IGLCanvas
+{
+   GLClearColorPTR      glClearColor;
+   GLClearPTR           glClear;
+   
+   indexed internal initColorFns(GLClearColorPTR glClearColor, GLClearPTR glClear)
+   {
+      this glClearColor := glClearColor;
+      this glClear := glClear;
+   }
+   
+   clear(OVec4 color)
+   {
+      glClearColor(color.x, color.y, color.z, color.w);
+      glClear(GL_COLOR_BUFFER_BIT);
+   }
+}
+
 public sealed class GLADLibrary
 {
+   int          _major; 
+   int          _minor;
    GLAD_Wrapper _core;
    
    constructor()
    {
       _core := $();
+   }
+
+   IGLCanvas newCanvas()
+   {
+      GLADCanvas canvas := $();
+      
+      _core.initCanvas(canvas);
+      
+      ^ canvas
    }
 
    private string? loadVersionStr()
@@ -6574,6 +6609,11 @@ public sealed class GLADLibrary
       ^ ptr.getStringUnsafe();
    }
       
+   (int, int) getVersion()
+   {
+      ^ (_major, _minor)
+   }
+      
    bool load()
    {
       string? versions := loadVersionStr();
@@ -6591,6 +6631,9 @@ public sealed class GLADLibrary
       if:not(_core.load(config)) {
          ^ false
       };
+
+      _major := config.Major;
+      _minor := config.Minor;
 
       ^ true
    }

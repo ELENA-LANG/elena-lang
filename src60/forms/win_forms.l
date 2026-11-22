@@ -5,6 +5,8 @@ import system'runtime;
 
 public abstract class BaseWinForm : BaseWinContainer
 {
+   Func1         onOpen : event;
+   
    protected constructor new()
       <= super new()
    {
@@ -83,7 +85,9 @@ public closed class SDIForm : BaseWinForm
                             x, y, width, height,
                             WindowHandle.Default, 
                             CurrentInstance,
-                            paramPtr)
+                            paramPtr);
+
+      onOpen?.(self);
    }
 }
 
@@ -115,8 +119,9 @@ public class SDIDialog : SDIForm
                             WindowHandle.Default,
                             CurrentInstance,
                             paramPtr);
-   }
 
+      onOpen?.(self);
+   }
 }
 
 // --- Child ---

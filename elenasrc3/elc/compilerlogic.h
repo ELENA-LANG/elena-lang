@@ -56,10 +56,11 @@ namespace elena_lang
       bool newOp;
       bool classOne;
       bool typecastOne;
+      bool constOne;
 
       bool isNonempty() const
       {
-         return variableOne || variadicOne || byRefOne || outRefOne || mssgNameLiteral || newOp || typecastOne;
+         return variableOne || variadicOne || byRefOne || outRefOne || mssgNameLiteral || newOp || typecastOne || constOne;
       }
    };
 

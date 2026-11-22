@@ -106,3 +106,5 @@ public const int OFN_LONGNAMES     = 00200000h;
 public const int OFN_HIDEREADONLY  = 00000004h;
 
 public const int DS_CENTER         = 0800h;
+
+public const int WM_QUIT           = 0012h;

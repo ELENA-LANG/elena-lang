@@ -31,4 +31,7 @@
   <constants>
      <constant key="logger">file=output;</constant>
   </constants>
+  <forwards>
+     <forward key="Program">opengl'OpenGLProgram</forward>
+  </forwards>
 </configuration>
