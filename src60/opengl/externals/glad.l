@@ -1,10 +1,12 @@
 // -----------------------------
 import extensions;
+import system'collections;
+import system'routines;
 // -----------------------------
 import opengl'common;
 import opengl'externals'primitives;
 
-use GLFUNC_GLuint__VOID                                                       = GLFUNC_uint_VOID;
+use GLFUNC_GLuint__VOID                                                       = GLFUNC_int_VOID;
 
 use GLFUNC_GLintptr                                                           = GLFUNC_intptr;
 use GLFUNC_GLbitfield                                                         = GLFUNC_int;
@@ -12,41 +14,42 @@ use GLFUNC_GLfloat                                                            = 
 use GLFUNC_GLdouble                                                           = GLFUNC_double;
 use GLFUNC_GLenum                                                             = GLFUNC_int;
 use GLFUNC_GLsync                                                             = GLFUNC_ptr;
-use GLFUNC_GLuint                                                             = GLFUNC_uint;
+use GLFUNC_GLuint                                                             = GLFUNC_int;
 use GLFUNC_GLint                                                              = GLFUNC_int;
 use GLFUNC_GLsizei                                                            = GLFUNC_int;
 use GLFUNC_ubyte                                                              = GLFUNC_ubyte;
 use GLFUNC_GLbyte                                                             = GLFUNC_byte;
 use GLFUNC_GLshort                                                            = GLFUNC_short;
 use GLFUNC_GLboolean                                                          = GLFUNC_int;
-use GLboolean__GLuint                                                         = GLFUNC_int__uint;
+use GLboolean__GLuint                                                         = GLFUNC_int__int;
 use GLFUNC_GLboolean__GLsync                                                  = GLFUNC_int__ptr;
-use GLFUNC_GLboolean__GLuint                                                  = GLFUNC_int__uint;
+use GLFUNC_GLboolean__GLuint                                                  = GLFUNC_int__int;
 use GLFUNC_GLboolean__GLenum                                                  = GLFUNC_int__int;
 use GLFUNC_GLenum__GLenum                                                     = GLFUNC_int__int;
-use GLFUNC_GLuint__GLenum                                                     = GLFUNC_uint__int;
+use GLFUNC_GLuint__GLenum                                                     = GLFUNC_int__int;
 use GLFUNC_GLint__GLenum                                                      = GLFUNC_int__int;
 
 use GLsizei_ptr                                                               = GLint_ptr;
-use GLuint_GLenum                                                             = GLuint_int;
+use GLenum_intptr                                                             = GLint_intptr;
+use GLuint_GLenum                                                             = GLint_int;
 use GLfloat_GLfloat                                                           = GLint_int;
 use GLenum_GLenum                                                             = GLint_int;
-use GLenum_GLuint                                                             = GLint_uint;
+use GLenum_GLuint                                                             = GLint_int;
 use GLenum_GLint                                                              = GLint_int;
 use GLenum_ptr                                                                = GLint_ptr;
 use ptr_ptr                                                                   = GLptr_ptr;
 use GLint_GLdouble                                                            = GLint_double;
-use GLuint_GLuint                                                             = GLuint_uint;
-use GLuint_GLbitfield                                                         = GLuint_int;
-use GLuint_ptr                                                                = GLuint_ptr;
-use GLint_GLuint                                                              = GLint_uint;
+use GLuint_GLuint                                                             = GLint_int;
+use GLuint_GLbitfield                                                         = GLint_int;
+use GLuint_ptr                                                                = GLint_ptr;
+use GLint_GLuint                                                              = GLint_int;
 use GLint_GLint                                                               = GLint_int;
-use GLuint_GLint                                                              = GLuint_int;
-use GLuint_string                                                             = GLuint_string;
-use GLuint_GLshort                                                            = GLuint_short;
-use GLuint_GLfloat                                                            = GLuint_int;
+use GLuint_GLint                                                              = GLint_int;
+use GLuint_string                                                             = GLint_string;
+use GLuint_GLshort                                                            = GLint_short;
+use GLuint_GLfloat                                                            = GLint_int;
 use GLint_GLfloat                                                             = GLint_int;
-use GLuint_GLdouble                                                           = GLuint_double;
+use GLuint_GLdouble                                                           = GLint_double;
 use GLshort_GLshort                                                           = GLshort_short;
 use GLdouble_GLdouble                                                         = GLdouble_double;
 use GLenum_GLfloat                                                            = GLint_int;
@@ -54,41 +57,43 @@ use GLenum_GLshort                                                            = 
 use GLenum_GLdouble                                                           = GLint_double;
 use GLfloat_GLboolean                                                         = GLint_int;
 use GLint_GLushort                                                            = GLint_ushort;
-use GLuint_GLsizei                                                            = GLuint_int;
-use GLenum__GLuint_GLenum                                                     = int__GLuint_int;
-use pointer__GLuint_GLenum                                                    = ptr__GLuint_int;
-use GLint__GLuint_string                                                      = int__GLuint_string;
+use GLuint_GLsizei                                                            = GLint_int;
+use GLenum__GLuint_GLenum                                                     = int__GLint_int;
+use pointer__GLuint_GLenum                                                    = ptr__GLint_int;
+use GLint__GLuint_string                                                      = int__GLint_string;
 use GLsync__GLenum_GLbitfield                                                 = ptr__GLint_int;
-use ptr__GLenum_GLuint                                                        = ptr__GLint_uint;
+use ptr__GLenum_GLuint                                                        = ptr__GLint_int;
 use ptr__GLenum_GLenum                                                        = ptr__int_int;
-use GLboolean__GLenum_GLuint                                                  = int__GLint_uint;
+use ptr__GLenum_GLint                                                         = ptr__int_int;
+use GLboolean__GLenum_GLuint                                                  = int__GLint_int;
+use GLint__GLuint_ptr                                                         = int__GLint_ptr;
 
 use GLenum_GLsizei_ptr                                                        = GLint_int_ptr;
-use GLenum_GLuint_ptr                                                         = GLint_uint_ptr;
-use GLuint_GLenum_ptr                                                         = GLuint_int_ptr;
-use GLuint_GLsizei_ptr                                                        = GLuint_int_ptr;
-use GLuint_GLenum_GLuint                                                      = GLuint_int_uint;
-use GLuint_GLenum_GLint                                                       = GLuint_int_int;
-use GLuint_GLintptr_GLsizeiptr                                                = GLuint_intptr_intptr;
-use GLuint_GLuint_GLuint                                                      = GLuint_uint_uint;
-use GLenum_GLuint_GLuint                                                      = GLint_uint_uint;
+use GLenum_GLuint_ptr                                                         = GLint_int_ptr;
+use GLuint_GLenum_ptr                                                         = GLint_int_ptr;
+use GLuint_GLsizei_ptr                                                        = GLint_int_ptr;
+use GLuint_GLenum_GLuint                                                      = GLint_int_int;
+use GLuint_GLenum_GLint                                                       = GLint_int_int;
+use GLuint_GLintptr_GLsizeiptr                                                = GLint_intptr_intptr;
+use GLuint_GLuint_GLuint                                                      = GLint_int_int;
+use GLenum_GLuint_GLuint                                                      = GLint_int_int;
 use GLenum_GLint_ptr                                                          = GLint_int_ptr;
-use GLuint_GLint_ptr                                                          = GLuint_int_ptr;
+use GLuint_GLint_ptr                                                          = GLint_int_ptr;
 use GLint_GLsizei_ptr                                                         = GLint_int_ptr;
 use GLint_GLdouble_GLdouble                                                   = GLint_double_double;
 use GLenum_GLenum_ptr                                                         = GLint_int_ptr;
-use GLuint_GLenum_GLenum                                                      = GLuint_int_int;
-use GLenum_GLenum_GLuint                                                      = GLint_int_uint;
+use GLuint_GLenum_GLenum                                                      = GLint_int_int;
+use GLenum_GLenum_GLuint                                                      = GLint_int_int;
 use GLint_GLint_GLint                                                         = GLint_int_int;
-use GLuint_GLenum_GLfloat                                                     = GLuint_int_int;
+use GLuint_GLenum_GLfloat                                                     = GLint_int_int;
 use GLsync_GLbitfield_GLuint64                                                = GLptr_int_long;
 use GLenum_GLintptr_GLsizeiptr                                                = GLint_intptr_intptr;
-use GLint_GLuint_GLuint                                                       = GLint_uint_uint;
-use GLuint_GLuint_string                                                      = GLuint_uint_string;
-use GLuint_GLint_GLint                                                        = GLuint_int_int;
-use GLuint_GLshort_GLshort                                                    = GLuint_short_short;
-use GLuint_GLfloat_GLfloat                                                    = GLuint_int_int;
-use GLuint_GLdouble_GLdouble                                                  = GLuint_double_double;
+use GLint_GLuint_GLuint                                                       = GLint_int_int;
+use GLuint_GLuint_string                                                      = GLint_int_string;
+use GLuint_GLint_GLint                                                        = GLint_int_int;
+use GLuint_GLshort_GLshort                                                    = GLint_short_short;
+use GLuint_GLfloat_GLfloat                                                    = GLint_int_int;
+use GLuint_GLdouble_GLdouble                                                  = GLint_double_double;
 use GLint_GLfloat_GLfloat                                                     = GLint_int_int;
 use GLenum_GLfloat_GLfloat                                                    = GLint_int_int;
 use GLshort_GLshort_GLshort                                                   = GLshort_short_short;
@@ -107,51 +112,50 @@ use GLenum_GLenum_GLfloat                                                     = 
 use GLenum_GLenum_GLint                                                       = GLint_int_int;
 use GLenum_GLenum_GLdouble                                                    = GLint_int_double;
 use GLint_GLint_GLfloat                                                       = GLint_int_int;
-use GLuint__GLuint_GLenum_string                                              = uint__GLuint_int_string;
-use GLint__GLuint_GLenum_string                                               = int__GLuint_int_string;
+use GLuint__GLuint_GLenum_string                                              = int__GLint_int_string;
+use GLint__GLuint_GLenum_string                                               = int__GLint_int_string;
 use GLenum__GLsync_GLbitfield_GLuint64                                        = int__GLptr_int_ulong;
-use GLint__GLuint_ptr                                                         = int__GLuint_ptr;
 
-use GLuint_GLenum_GLenum_ptr                                                  = GLuint_int_int_ptr;
-use GLuint_GLenum_GLint_ptr                                                   = GLuint_int_int_ptr;
-use GLuint_GLsizei_GLenum_GLsizei                                             = GLuint_int_int_int;
-use GLuint_GLenum_GLsizei_GLsizei                                             = GLuint_int_int_int;
+use GLuint_GLenum_GLenum_ptr                                                  = GLint_int_int_ptr;
+use GLuint_GLenum_GLint_ptr                                                   = GLint_int_int_ptr;
+use GLuint_GLsizei_GLenum_GLsizei                                             = GLint_int_int_int;
+use GLuint_GLenum_GLsizei_GLsizei                                             = GLint_int_int_int;
 use GLenum_GLint_GLenum_ptr                                                   = GLint_int_int_ptr;
-use GLuint_GLenum_GLuint_GLint                                                = GLuint_int_uint_int;
-use GLuint_GLenum_GLenum_GLuint                                               = GLuint_int_int_uint;
-use GLuint_GLintptr_GLsizeiptr_ptr                                            = GLuint_intptr_intptr_ptr;
+use GLuint_GLenum_GLuint_GLint                                                = GLint_int_int_int;
+use GLuint_GLenum_GLenum_GLuint                                               = GLint_int_int_int;
+use GLuint_GLintptr_GLsizeiptr_ptr                                            = GLint_intptr_intptr_ptr;
 use GLenum_GLintptr_GLsizeiptr_ptr                                            = GLint_intptr_intptr_ptr;
-use GLuint_GLsizeiptr_ptr_GLenum                                              = GLuint_intptr_ptr_int;
-use GLuint_GLsizeiptr_ptr_GLbitfield                                          = GLuint_intptr_ptr_int;
-use GLuint_GLenum_GLuint_ptr                                                  = GLuint_int_uint_ptr;
+use GLuint_GLsizeiptr_ptr_GLenum                                              = GLint_intptr_ptr_int;
+use GLuint_GLsizeiptr_ptr_GLbitfield                                          = GLint_intptr_ptr_int;
+use GLuint_GLenum_GLuint_ptr                                                  = GLint_int_int_ptr;
 use GLenum_GLsizeiptr_ptr_GLbitfield                                          = GLint_intptr_ptr_int;
 use GLenum_GLenum_ptr_ptr                                                     = GLint_int_ptr_ptr;
 use GLenum_ptr_GLsizei_GLsizei                                                = GLint_ptr_int_int;
-use GLenum_GLuint_GLenum_ptr                                                  = GLint_uint_int_ptr;
+use GLenum_GLuint_GLenum_ptr                                                  = GLint_int_int_ptr;
 use GLint_GLsizei_GLboolean_ptr                                               = GLint_int_int_ptr;
 use GLenum_GLenum_GLenum_ptr                                                  = GLint_int_int_ptr;
 use GLint_GLdouble_GLdouble_GLdouble                                          = GLint_double_double_double;
-use GLuint_GLenum_GLboolean_GLuint                                            = GLuint_int_int_uint;
-use GLuint_GLenum_GLboolean_ptr                                               = GLuint_int_int_ptr;
-use GLuint_GLuint_GLuint_string                                               = GLuint_uint_uint_string;
-use GLenum_GLenum_GLuint_GLint                                                = GLint_int_uint_int;
-use GLenum_GLenum_GLenum_GLuint                                               = GLint_int_int_uint;
-use GLuint_GLuint_GLenum_ptr                                                  = GLuint_uint_int_ptr;
-use GLuint_GLsizei_ptr_ptr                                                    = GLuint_int_ptr_ptr;
+use GLuint_GLenum_GLboolean_GLuint                                            = GLint_int_int_int;
+use GLuint_GLenum_GLboolean_ptr                                               = GLint_int_int_ptr;
+use GLuint_GLuint_GLuint_string                                               = GLint_int_int_string;
+use GLenum_GLenum_GLuint_GLint                                                = GLint_int_int_int;
+use GLenum_GLenum_GLenum_GLuint                                               = GLint_int_int_int;
+use GLuint_GLuint_GLenum_ptr                                                  = GLint_int_int_ptr;
+use GLuint_GLsizei_ptr_ptr                                                    = GLint_int_ptr_ptr;
 use GLenum_ptr_ptr_GLsizei                                                    = GLint_ptr_ptr_int;
 use GLenum_GLint_GLsizei_GLsizei                                              = GLint_int_int_int;
 use GLenum_GLenum_GLsizei_GLsizei                                             = GLint_int_int_int;
 use GLenum_GLint_GLfloat_GLint                                                = GLint_int_int_int;
 use GLint_GLint_GLint_GLint                                                   = GLint_int_int_int;
-use GLint_GLuint_GLuint_GLuint                                                = GLint_uint_uint_uint;
-use GLuint_GLuint_GLuint_GLuint                                               = GLuint_uint_uint_uint;
-use GLuint_GLint_GLint_GLint                                                  = GLuint_int_int_int;
-use GLuint_GLsizei_ptr_GLenum                                                 = GLuint_int_ptr_int;
-use GLuint_GLshort_GLshort_GLshort                                            = GLuint_short_short_short;
-use GLuint_GLfloat_GLfloat_GLfloat                                            = GLuint_int_int_int;
-use GLuint_GLdouble_GLdouble_GLdouble                                         = GLuint_double_double_double;
+use GLint_GLuint_GLuint_GLuint                                                = GLint_int_int_int;
+use GLuint_GLuint_GLuint_GLuint                                               = GLint_int_int_int;
+use GLuint_GLint_GLint_GLint                                                  = GLint_int_int_int;
+use GLuint_GLsizei_ptr_GLenum                                                 = GLint_int_ptr_int;
+use GLuint_GLshort_GLshort_GLshort                                            = GLint_short_short_short;
+use GLuint_GLfloat_GLfloat_GLfloat                                            = GLint_int_int_int;
+use GLuint_GLdouble_GLdouble_GLdouble                                         = GLint_double_double_double;
 use GLint_GLfloat_GLfloat_GLfloat                                             = GLint_int_int_int;
-use GLenum_GLenum_GLint_GLuint                                                = GLint_int_int_uint;
+use GLenum_GLenum_GLint_GLuint                                                = GLint_int_int_int;
 use GLenum_GLenum_GLenum_GLenum                                               = GLint_int_int_int;
 use GLenum_GLsizeiptr_ptr_GLenum                                              = GLint_intptr_ptr_int;
 use GLfloat_GLfloat_GLfloat_GLfloat                                           = GLfloat_float_float_float;
@@ -167,46 +171,46 @@ use GLubyte_GLubyte_GLubyte_GLubyte                                           = 
 use GLbyte_GLbyte_GLbyte_GLbyte                                               = GLbyte_byte_byte_byte;
 use GLushort_GLushort_GLushort_GLushort                                       = GLushort_ushort_ushort_ushort;
 use GLint_GLint_GLsizei_GLsizei                                               = GLint_int_int_int;
-use ptr__GLuint_GLintptr_GLsizeiptr_GLbitfield                                = ptr__GLuint_intptr_intptr_int;
+use ptr__GLuint_GLintptr_GLsizeiptr_GLbitfield                                = ptr__GLint_intptr_intptr_int;
 use GLboolean__GLsizei_ptr_ptr                                                = int__int_ptr_ptr;
 
-use GLuint_GLsizei_GLenum_GLsizei_GLsizei                                     = GLuint_int_int_int_int;
-use GLuint_GLenum_GLint_GLfloat_GLint                                         = GLuint_int_int_int_int;
-use GLuint_GLenum_GLuint_GLint_GLint                                          = GLuint_int_uint_int_int;
-use GLuint_GLenum_GLenum_GLenum_ptr                                           = GLuint_int_int_int_ptr;
-use GLuint_GLint_GLenum_GLenum_ptr                                            = GLuint_int_int_int_ptr;
-use GLuint_GLuint_GLsizei_ptr_ptr                                             = GLuint_uint_int_ptr_ptr;
-use GLuint_GLuint_GLintptr_GLintptr_GLsizeiptr                                = GLuint_uint_intptr_intptr_intptr;
-use GLuint_GLuint_GLuint_GLintptr_GLsizeiptr                                  = GLuint_uint_uint_intptr_intptr;
+use GLuint_GLsizei_GLenum_GLsizei_GLsizei                                     = GLint_int_int_int_int;
+use GLuint_GLenum_GLint_GLfloat_GLint                                         = GLint_int_int_int_int;
+use GLuint_GLenum_GLuint_GLint_GLint                                          = GLint_int_int_int_int;
+use GLuint_GLenum_GLenum_GLenum_ptr                                           = GLint_int_int_int_ptr;
+use GLuint_GLint_GLenum_GLenum_ptr                                            = GLint_int_int_int_ptr;
+use GLuint_GLuint_GLsizei_ptr_ptr                                             = GLint_int_int_ptr_ptr;
+use GLuint_GLuint_GLintptr_GLintptr_GLsizeiptr                                = GLint_int_intptr_intptr_intptr;
+use GLuint_GLuint_GLuint_GLintptr_GLsizeiptr                                  = GLint_int_int_intptr_intptr;
 use GLenum_GLenum_GLenum_GLenum_ptr                                           = GLint_int_int_int_ptr;
-use GLenum_GLint_GLsizei_GLsizei_GLuint                                       = Gint_int_int_int_uint;
+use GLenum_GLint_GLsizei_GLsizei_GLuint                                       = Gint_int_int_int_int;
 use GLenum_GLint_GLenum_GLenum_ptr                                            = GLint_int_int_int_ptr;
 use GLsizei_ptr_GLenum_ptr_GLsizei                                            = GLint_ptr_int_ptr_int;
 use GLenum_GLenum_ptr_GLsizei_GLsizei                                         = GLint_int_ptr_int_int;
-use GLint_GLint_GLint_GLint_GLint                                             = GLint_GLint_GLint_GLint;
-use GLuint_GLenum_GLenum_GLenum_GLenum                                        = GLuint_int_int_int_int;
-use GLuint_GLenum_GLuint_GLenum_ptr                                           = GLuint_int_uint_int_ptr;
+use GLint_GLint_GLint_GLint_GLint                                             = GLint_int_int_int;
+use GLuint_GLenum_GLenum_GLenum_GLenum                                        = GLint_int_int_int_int;
+use GLuint_GLenum_GLuint_GLenum_ptr                                           = GLint_int_int_int_ptr;
 use GLsync_GLenum_GLsizei_ptr_ptr                                             = GLptr_int_int_ptr_ptr;
-use GLuint_GLsizei_ptr_GLenum_ptr                                             = GLuint_int_ptr_int_ptr;
+use GLuint_GLsizei_ptr_GLenum_ptr                                             = GLint_int_ptr_int_ptr;
 use GLint_GLdouble_GLdouble_GLdouble_GLdouble                                 = GLint_double_double_double_double;
-use GLuint_GLdouble_GLdouble_GLdouble_GLdouble                                = GLuint_double_double_double_double;
-use GLuint_GLubyte_GLubyte_GLubyte_GLubyte                                    = GLuint_ubyte_ubyte_ubyte_ubyte;
-use GLuint_GLfloat_GLfloat_GLfloat_GLfloat                                    = GLuint_int_int_int_int;
+use GLuint_GLdouble_GLdouble_GLdouble_GLdouble                                = GLint_double_double_double_double;
+use GLuint_GLubyte_GLubyte_GLubyte_GLubyte                                    = GLint_ubyte_ubyte_ubyte_ubyte;
+use GLuint_GLfloat_GLfloat_GLfloat_GLfloat                                    = GLint_int_int_int_int;
 use GLint_GLfloat_GLfloat_GLfloat_GLfloat                                     = GLint_int_int_int_int;
 use GLenum_GLsizei_GLenum_ptr_GLint                                           = GLint_int_int_ptr_int;
 use GLenum_GLenum_GLintptr_GLintptr_GLsizeiptr                                = GLint_int_intptr_intptr_intptr;
 use GLenum_GLsizei_GLenum_ptr_GLsizei                                         = GLint_int_int_ptr_int;
-use GLenum_GLenum_GLuint_GLint_GLint                                          = GLint_int_uint_int_int;
+use GLenum_GLenum_GLuint_GLint_GLint                                          = GLint_int_int_int_int;
 use GLenum_GLsizei_GLenum_GLsizei_GLsizei                                     = GLint_int_int_int_int;
-use GLenum_GLenum_GLenum_GLuint_GLint                                         = GLint_int_int_uint_int;
-use GLint_GLuint_GLuint_GLuint_GLuint                                         = GLint_uint_uint_uint_uint;
-use GLuint_GLuint_GLuint_GLuint_GLuint                                        = GLuint_uint_uint_uint_uint;
-use GLuint_GLint_GLint_GLint_GLint                                            = GLuint_int_int_int_int;
-use GLuint_GLint_GLenum_GLsizei_ptr                                           = GLuint_int_int_int_ptr;
-use GLenum_GLuint_GLuint_GLintptr_GLsizeiptr                                  = GLint_uint_uint_intptr_intptr;
-use GLuint_GLboolean_GLboolean_GLboolean_GLboolean                            = GLuint_int_int_int_int;
+use GLenum_GLenum_GLenum_GLuint_GLint                                         = GLint_int_int_int_int;
+use GLint_GLuint_GLuint_GLuint_GLuint                                         = GLint_int_int_int_int;
+use GLuint_GLuint_GLuint_GLuint_GLuint                                        = GLint_int_int_int_int;
+use GLuint_GLint_GLint_GLint_GLint                                            = GLint_int_int_int_int;
+use GLuint_GLint_GLenum_GLsizei_ptr                                           = GLint_int_int_int_ptr;
+use GLenum_GLuint_GLuint_GLintptr_GLsizeiptr                                  = GLint_int_int_intptr_intptr;
+use GLuint_GLboolean_GLboolean_GLboolean_GLboolean                            = GLint_int_int_int_int;
 use GLenum_GLshort_GLshort_GLshort_GLshort                                    = GLint_short_short_short_short;
-use GLuint_GLshort_GLshort_GLshort_GLshort                                    = GLuint_short_short_short_short;
+use GLuint_GLshort_GLshort_GLshort_GLshort                                    = GLint_short_short_short_short;
 use GLenum_ptr_GLenum_ptr_GLsizei                                             = GLint_ptr_int_ptr_int;
 use GLenum_GLint_GLint_GLint_GLint                                            = GLint_int_int_int_int;
 use GLenum_GLdouble_GLdouble_GLdouble_GLdouble                                = GLint_double_double_double_double;
@@ -215,22 +219,22 @@ use GLsizei_GLsizei_GLenum_GLenum_ptr                                         = 
 use GLint_GLint_GLsizei_GLsizei_GLenum                                        = GLint_int_int_int_int;
 use ptr__GLenum_GLintptr_GLsizeiptr_GLbitfield                                = ptr__GLint_intptr_intptr_int;
 
-use GLuint_GLint_GLint_GLint_GLint_GLsizei                                    = GLuint_int_int_int_int_int;
-use GLuint_GLsizei_GLenum_GLsizei_GLsizei_GLboolean                           = GLuint_int_int_int_int_int;
-use GLuint_GLenum_GLuint_GLintptr_GLsizeiptr                                  = GLuint_int_uint_intptr_intptr;
-use GLuint_GLsizei_GLenum_GLsizei_GLsizei_GLsizei                             = GLuint_int_int_int_int_int;
-use GLenum_GLenum_GLuint_GLenum_GLsizei_ptr                                   = GLint_int_uint_int_int_ptr;
+use GLuint_GLint_GLint_GLint_GLint_GLsizei                                    = GLint_int_int_int_int_int;
+use GLuint_GLsizei_GLenum_GLsizei_GLsizei_GLboolean                           = GLint_int_int_int_int_int;
+use GLuint_GLenum_GLuint_GLintptr_GLsizeiptr                                  = GLint_int_int_intptr_intptr;
+use GLuint_GLsizei_GLenum_GLsizei_GLsizei_GLsizei                             = GLint_int_int_int_int_int;
+use GLenum_GLenum_GLuint_GLenum_GLsizei_ptr                                   = GLint_int_int_int_int_ptr;
 use GLenum_GLenum_GLenum_GLsizei_ptr_GLboolean                                = GLint_int_int_int_ptr_int;
-use GLuint_GLuint_GLuint_GLuint_GLuint_GLuint                                 = GLuint_uint_uint_uint_uint_uint;
-use GLenum_GLsizei_GLenum_ptr_GLsizei_GLuint                                  = GLint_int_int_ptr_int_uint;
-use GLuint_GLenum_GLuint_GLsizei_ptr_ptr                                      = GLuint_int_uint_int_ptr_ptr;
+use GLuint_GLuint_GLuint_GLuint_GLuint_GLuint                                 = GLint_int_int_int_int_int;
+use GLenum_GLsizei_GLenum_ptr_GLsizei_GLuint                                  = GLint_int_int_ptr_int_int;
+use GLuint_GLenum_GLuint_GLsizei_ptr_ptr                                      = GLint_int_int_int_ptr_ptr;
 use GLenum_GLsizei_GLenum_GLsizei_GLsizei_GLboolean                           = GLint_int_int_int_int_int;
 use GLenum_ptr_GLenum_ptr_GLsizei_ptr                                         = GLint_ptr_int_ptr_int_ptr;
 use GLenum_GLsizei_GLenum_ptr_GLsizei_GLint                                   = GLint_int_int_ptr_int_int;
-use GLenum_GLenum_GLenum_GLuint_GLint_GLint                                   = GLint_int_int_uint_int_int;
-use GLuint_GLint_GLenum_GLboolean_GLsizei_ptr                                 = GLuint_int_int_int_int_ptr;
+use GLenum_GLenum_GLenum_GLuint_GLint_GLint                                   = GLint_int_int_int_int_int;
+use GLuint_GLint_GLenum_GLboolean_GLsizei_ptr                                 = GLint_int_int_int_int_ptr;
 use GLenum_GLint_GLint_GLsizei_GLenum_GLsizei_ptr                             = GLint_int_int_int_int_int_ptr;
-use GLenum_GLuint_GLuint_GLsizei_GLenum_ptr                                   = GLint_uint_uint_int_int_ptr;
+use GLenum_GLuint_GLuint_GLsizei_GLenum_ptr                                   = GLint_int_int_int_int_ptr;
 use GLenum_GLint_GLint_GLint_GLint_GLsizei                                    = GLint_int_int_int_int_int;
 use GLdouble_GLdouble_GLdouble_GLdouble_GLdouble_GLdouble                     = GLdouble_double_double_double_double_double;
 use GLint_GLdouble_GLdouble_GLint_GLdouble_GLdouble                           = GLint_double_double_int_double_double;
@@ -239,33 +243,33 @@ use GLenum_GLdouble_GLdouble_GLint_GLint_ptr                                  = 
 use GLenum_GLfloat_GLfloat_GLint_GLint_ptr                                    = GLint_int_int_int_int_ptr;
 
 use GLint_GLint_GLsizei_GLsizei_GLenum_GLenum_ptr                             = GLint_int_int_int_int_int_ptr;
-use GLuint_GLint_GLint_GLsizei_GLenum_GLsizei_ptr                             = GLuint_int_int_int_int_int_ptr;
-use GLuint_GLint_GLint_GLsizei_GLenum_GLenum_ptr                              = GLuint_int_int_int_int_int_ptr;
-use GLuint_GLuint_GLsizei_ptr_ptr_ptr_ptr                                     = GLuint_uint_int_ptr_ptr_ptr_ptr;
-use GLuint_GLsizei_GLenum_GLsizei_GLsizei_GLsizei_GLboolean                   = GLuint_int_int_int_int_int_int;
-use GLuint_GLenum_GLintptr_GLsizeiptr_GLenum_GLenum_ptr                       = GLuint_int_intptr_intptr_int_int_ptr;
-use GLuint_GLsizei_ptr_GLint_GLint_GLsizei_GLsizei                            = GLuint_int_ptr_int_int_int_int;
+use GLuint_GLint_GLint_GLsizei_GLenum_GLsizei_ptr                             = GLint_int_int_int_int_int_ptr;
+use GLuint_GLint_GLint_GLsizei_GLenum_GLenum_ptr                              = GLint_int_int_int_int_int_ptr;
+use GLuint_GLuint_GLsizei_ptr_ptr_ptr_ptr                                     = GLint_int_int_ptr_ptr_ptr_ptr;
+use GLuint_GLsizei_GLenum_GLsizei_GLsizei_GLsizei_GLboolean                   = GLint_int_int_int_int_int_int;
+use GLuint_GLenum_GLintptr_GLsizeiptr_GLenum_GLenum_ptr                       = GLint_int_intptr_intptr_int_int_ptr;
+use GLuint_GLsizei_ptr_GLint_GLint_GLsizei_GLsizei                            = GLint_int_ptr_int_int_int_int;
 use GLenum_GLenum_GLintptr_GLsizeiptr_GLenum_GLenum_ptr                       = GLint_int_intptr_intptr_int_int_ptr;
-use GLenum_GLsizei_GLenum_ptr_GLsizei_GLint_GLuint                            = GLint_int_int_ptr_int_int_uint;
+use GLenum_GLsizei_GLenum_ptr_GLsizei_GLint_GLuint                            = GLint_int_int_ptr_int_int_int;
 use GLenum_GLsizei_GLenum_GLsizei_GLsizei_GLsizei_GLboolean                   = GLint_int_int_int_int_int_int;
-use GLenum_GLuint_GLuint_GLsizei_GLenum_ptr_GLint                             = GLint_uint_uint_int_int_ptr_int;
+use GLenum_GLuint_GLuint_GLsizei_GLenum_ptr_GLint                             = GLint_int_int_int_int_ptr_int;
 use GLenum_GLint_GLenum_GLsizei_GLsizei_GLint_GLsizei_ptr                     = GLint_int_int_int_int_int_int_ptr;
 use GLenum_GLint_GLenum_GLsizei_GLint_GLsizei_ptr                             = GLint_int_int_int_int_int_ptr;
 use GLenum_GLint_GLenum_GLint_GLint_GLsizei_GLint                             = GLint_int_int_int_int_int_int;
 use GLenum_GLint_GLint_GLsizei_GLenum_GLenum_ptr                              = GLint_int_int_int_int_int_ptr;
 use GLsizei_GLsizei_GLfloat_GLfloat_GLfloat_GLfloat_ptr                       = GLint_int_int_int_int_int_ptr;
 
-use GLuint_GLint_GLint_GLint_GLint_GLint_GLsizei_GLsizei                      = GLuint_int_int_int_int_int_int_int;
-use GLuint_GLsizei_ptr_ptr_ptr_ptr_ptr_ptr                                    = GLuint_int_ptr_ptr_ptr_ptr_ptr_ptr;
+use GLuint_GLint_GLint_GLint_GLint_GLint_GLsizei_GLsizei                      = GLint_int_int_int_int_int_int_int;
+use GLuint_GLsizei_ptr_ptr_ptr_ptr_ptr_ptr                                    = GLint_int_ptr_ptr_ptr_ptr_ptr_ptr;
 use GLfloat_GLfloat_GLfloat_GLfloat_GLfloat_GLfloat_GLfloat_GLfloat           = GLint_int_int_int_int_int_int_int;
 use GLenum_GLint_GLenum_GLint_GLint_GLsizei_GLsizei_GLint                     = GLint_int_int_int_int_int_int_int;
 use GLenum_GLint_GLint_GLint_GLint_GLint_GLsizei_GLsizei                      = GLint_int_int_int_int_int_int_int;
 
-use GLuint_GLint_GLint_GLint_GLint_GLint_GLint_GLsizei_GLsizei                = GLuint_int_int_int_int_int_int_int_int;
-use GLuint_GLint_GLint_GLint_GLsizei_GLsizei_GLenum_GLsizei_ptr               = GLuint_int_int_int_int_int_int_int_ptr;
-use GLuint_GLint_GLint_GLint_GLsizei_GLsizei_GLenum_GLenum_ptr                = GLuint_int_int_int_int_int_int_int_ptr;
-use GLuint_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei_GLenum_GLenum_ptr  = GLuint_int_int_int_int_int_int_int_int_int_ptr;
-use GLuint_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei_GLenum_GLsizei_ptr = GLuint_int_int_int_int_int_int_int_int_int_ptr;
+use GLuint_GLint_GLint_GLint_GLint_GLint_GLint_GLsizei_GLsizei                = GLint_int_int_int_int_int_int_int_int;
+use GLuint_GLint_GLint_GLint_GLsizei_GLsizei_GLenum_GLsizei_ptr               = GLint_int_int_int_int_int_int_int_ptr;
+use GLuint_GLint_GLint_GLint_GLsizei_GLsizei_GLenum_GLenum_ptr                = GLint_int_int_int_int_int_int_int_ptr;
+use GLuint_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei_GLenum_GLenum_ptr  = GLint_int_int_int_int_int_int_int_int_int_ptr;
+use GLuint_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei_GLenum_GLsizei_ptr = GLint_int_int_int_int_int_int_int_int_int_ptr;
 use GLenum_GLint_GLenum_GLsizei_GLsizei_GLsizei_GLint_GLsizei_ptr             = GLint_int_int_int_int_int_int_int_ptr;
 use GLenum_GLint_GLint_GLint_GLsizei_GLsizei_GLenum_GLsizei_ptr               = GLint_int_int_int_int_int_int_int_ptr;
 use GLenum_GLint_GLint_GLint_GLint_GLint_GLint_GLsizei_GLsizei                = GLint_int_int_int_int_int_int_int_int;
@@ -279,9 +283,9 @@ use GLenum_GLdouble_GLdouble_GLint_GLint_GLdouble_GLdouble_GLint_GLint_ptr    = 
 use GLenum_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei_GLenum_GLsizei_ptr = GLint_int_int_int_int_int_int_int_int_int_ptr;
 use GLenum_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei_GLenum_GLenum_ptr  = GLint_int_int_int_int_int_int_int_int_int_ptr;
 
-use GLuint_GLuint_GLint_GLint_GLint_GLint_GLint_GLint_GLint_GLint_GLbitfield_GLenum = GLuint_uint_int_int_int_int_int_int_int_int_int_int;
+use GLuint_GLuint_GLint_GLint_GLint_GLint_GLint_GLint_GLint_GLint_GLbitfield_GLenum = GLint_int_int_int_int_int_int_int_int_int_int_int;
 
-use GLuint_GLenum_GLint_GLint_GLint_GLint_GLuint_GLenum_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei = GLuint_int_int_int_int_int_uint_int_int_int_int_int_int_int_int;
+use GLuint_GLenum_GLint_GLint_GLint_GLint_GLuint_GLenum_GLint_GLint_GLint_GLint_GLsizei_GLsizei_GLsizei = GLint_int_int_int_int_int_int_int_int_int_int_int_int_int_int;
 
 //use GLenum = system'IntNumber;
 //use GLint = system'IntNumber;
@@ -319,7 +323,7 @@ use GLDrawBufferPTR        = GLFUNC_int;
 use GLClearPTR             = GLFUNC_int;
 use GLClearColorPTR        = GLfloat_GLfloat_GLfloat_GLfloat;
 use GLClearStencilPTR      = GLFUNC_double;
-use GLClearDepthPTR        = GLFUNC_uint;
+use GLClearDepthPTR        = GLFUNC_int;
 use GLStencilMaskPTR       = GLbyte_byte_byte_byte;
 use GLColorMaskPTR         = GLFUNC_GLbyte;
 use GLDepthMaskPTR         = GLFUNC_int;
@@ -329,7 +333,7 @@ use GLEnablePTR            = GLFUNC_int;
 use GLFinishPTR            = GLFUNC_VOID;
 use GLFlushPTR             = GLFUNC_VOID;
 use GLBlendFuncPTR         = GLFUNC_int;
-use GLLogicOpPTR           = GLint_int_uint;
+use GLLogicOpPTR           = GLint_int_int;
 use GLStencilFuncPTR       = GLint_int_int;
 use GLStencilOpPTR         = GLenum_GLint;
 use GLDepthFuncPTR         = GLint_GLfloat;
@@ -341,7 +345,7 @@ use GLGetBooleanvPTR       = GLenum_ptr;
 use GLGetDoublevPTR        = GLenum_ptr;
 use GLGetErrorPTR          = GLFUNC_VOID;
 use GLGetFloatvPTR         = GLenum_ptr;
-use GLGetIntegervPTR       = GLenum_ptr;
+use GLGetIntegervPTR       = GLenum_intptr;
 //internal struct GLGetStringPTR         : extern_winapi_func<pointer>(GLenum name);
 use GLGetTexImagePTR       = GLenum_GLint_GLenum_GLenum_ptr;
 use GLGetTexParameterfvPTR        = GLenum_GLenum_ptr;
@@ -921,7 +925,7 @@ use GLClearBufferivPTR         = GLenum_GLint_ptr;
 use GLClearBufferuivPTR        = GLenum_GLint_ptr;
 use GLClearBufferfvPTR         = GLenum_GLint_ptr;
 use GLClearBufferfiPTR         = GLenum_GLint_GLfloat_GLint;
-use GLGetStringiPTR            = ptr__GLenum_GLuint;
+use GLGetStringiPTR            = ptr__GLenum_GLint;
 use GLIsRenderbufferPTR        = GLFUNC_GLboolean__GLuint;
 use GLBindRenderbufferPTR      = GLenum_GLuint;
 use GLDeleteRenderbuffersPTR   = GLsizei_ptr;
@@ -1215,14 +1219,13 @@ public struct GLAD_Config
    int                  GLAD_GL_ARB_debug_output : rprop;
    int                  GLAD_GL_ARB_direct_state_access : rprop;
 
-   private int has_ext(string extensions, string ext)
+   private int has_ext(string[] extensions, string ext)
    {
-      int index := extensions.indexOf(0, ext);
-      if (index >= 0) {
-         int endIndex := index + ext.Length;
-         if (endIndex == extensions.Length || extensions[endIndex] == $32) {
+      int len := extensions.Length;
+      for (int i := 0; i < len; i++) {
+         if (extensions[i] == ext) {
             ^ 1
-         };
+         }
       };
       
       ^ 0
@@ -1261,7 +1264,7 @@ public struct GLAD_Config
       GLAD_GL_VERSION_4_0 := ((major == 4 && minor >= 0) || major > 4) ? 1 : 0;      
    }
    
-   private init_ext(string extensions)
+   private init_ext(string[] extensions)
    {
       GLAD_GL_AMD_multi_draw_indirect := has_ext(extensions, "GL_AMD_multi_draw_indirect");
       GLAD_GL_ARB_ES2_compatibility := has_ext(extensions, "GL_ARB_ES2_compatibility");
@@ -1282,10 +1285,14 @@ public struct GLAD_Config
       GLAD_GL_ARB_direct_state_access := has_ext(extensions, "GL_ARB_direct_state_access");      
    }
    
-   constructor load(string versions, string extensions)
+   internal loadExtensions(string[] extensions)
+   {
+      init_ext(extensions);
+   }
+   
+   constructor load(string versions)
    {
       init(versions);
-      init_ext(extensions);
    }
 }
 
@@ -1742,6 +1749,8 @@ public struct GLAD_Wrapper
       
       get_proc := WGLGetProcAddress.load(libGL, "wglGetProcAddress");
       glGetString := GLGetStringPTR.load(libGL, "glGetString");
+      
+      glGetIntegerv := GLGetIntegervPTR.loadDirectly(libGL, "glGetIntegerv");
    }
    
    private load_GL_ARB_direct_state_access(GLAD_Config config)
@@ -1881,7 +1890,7 @@ public struct GLAD_Wrapper
       glGetDoublev := GLGetDoublevPTR.loadDirectly(libGL, "glGetDoublev");
       glGetError := GLGetErrorPTR.loadDirectly(libGL, "glGetError"); 
       glGetFloatv := GLGetFloatvPTR.loadDirectly(libGL, "glGetFloatv");
-      glGetIntegerv := GLGetIntegervPTR.loadDirectly(libGL, "glGetIntegerv");
+//      glGetIntegerv := GLGetIntegervPTR.loadDirectly(libGL, "glGetIntegerv");
 //   glGetString := GLGetStringPTR.loadDirectly(libGL, "glGetString");
       glGetTexImage := GLGetTexImagePTR.loadDirectly(libGL, "glGetTexImage");
       glIsEnabled := GLIsEnabledPTR.loadDirectly(libGL, "glIsEnabled");
@@ -2120,7 +2129,7 @@ public struct GLAD_Wrapper
       glGetUniformuiv := GLGetUniformuivPTR.loadDirectly(libGL, "glGetUniformuiv");
       glBindFragDataLocation := GLBindFragDataLocationPTR.loadDirectly(libGL, "glBindFragDataLocation");
       glGetFragDataLocation := GLGetFragDataLocationPTR.loadDirectly(libGL, "glGetFragDataLocation");
-      glGetStringi := GLGetStringiPTR.loadDirectly(libGL, "glGetStringi");
+      glGetStringi := GLGetStringiPTR.load(get_proc, "glGetStringi");
       glIsRenderbuffer := GLIsRenderbufferPTR.loadDirectly(libGL, "glIsRenderbuffer");
       glBindRenderbuffer := GLBindRenderbufferPTR.loadDirectly(libGL, "glBindRenderbuffer");      
       glDeleteRenderbuffers := GLDeleteRenderbuffersPTR.loadDirectly(libGL, "glDeleteRenderbuffers");
@@ -2423,7 +2432,7 @@ public struct GLAD_Wrapper
       glGetDebugMessageLogARB := GLGetDebugMessageLogARBPTR.load(get_proc, "glGetDebugMessageLogARB");
    }
 
-   bool load(GLAD_Config config/*, IOpenGLEngine engine*/)
+   bool load(GLAD_Config config)
    {
       if (glGetString.isUnassigned()) {
          ^ false
@@ -2446,6 +2455,11 @@ public struct GLAD_Wrapper
       load_GL_VERSION_3_3(config);
       load_GL_VERSION_4_0(config);
       
+      ^ true
+   }      
+      
+   bool loadExtensions(GLAD_Config config)
+   {
 /*
    	load_GL_3DFX_tbuffer(load);
    	load_GL_AMD_debug_output(load);
@@ -2766,6 +2780,12 @@ public struct GLAD_Wrapper
       
    GLGetStringPTR GLGetString
       = glGetString;
+      
+   GLGetStringiPTR GLGetStringi
+      = glGetStringi;
+      
+   GLGetIntegervPTR GLGetIntegerv
+      = glGetIntegerv;
 }
 
 public struct GLAD_WrapperD
@@ -6597,16 +6617,34 @@ public sealed class GLADLibrary
       ^ versions;
    }
       
-   private string? loadExtensionsStr()
+   private string[]? loadExtensionsStr()
    {
-      auto glGetString := _core.GLGetString;
-
-      pointer ptr := glGetString(GL_NUM_EXTENSIONS);
-      if (ptr.isUnassigned()) {
-         ^ nil
-      };
+      if (_major < 3) {
+         auto glGetString := _core.GLGetString;
+   
+         pointer ptr := glGetString(GL_EXTENSIONS);
+         if (ptr.isUnassigned()) {
+            ^ nil
+         };
+         
+         ^ ptr.getStringUnsafe().split();
+      }
+      else {
+         auto glGetStringi := _core.GLGetStringi;
+         auto glGetIntegerv := _core.GLGetIntegerv;
+         
+         int num_exts_i := 0;
+         glGetIntegerv(GL_NUM_EXTENSIONS, &num_exts_i);
+         List<string> list := $();
+         for (int i := 0; i < num_exts_i; i++) {
+            pointer ptr := glGetStringi(GL_EXTENSIONS, i);
+            var str := ptr.getStringUnsafe();
+            list.append(ptr.getStringUnsafe());
+         };
+         
+         ^ *list
+      }
       
-      ^ ptr.getStringUnsafe();
    }
       
    (int, int) getVersion()
@@ -6616,24 +6654,30 @@ public sealed class GLADLibrary
       
    bool load()
    {
+      // load GL
       string? versions := loadVersionStr();
       if:nil(versions) {
          ^ false
       };
       
-      string? extensions := loadExtensionsStr();
+      GLAD_Config config := GLAD_Config.load(versions!);
+      _major := config.Major;
+      _minor := config.Minor;
+            
+      if:not(_core.load(config)) {
+         ^ false
+      };            
+            
+      // load extensions            
+      string[]? extensions := loadExtensionsStr();
       if:nil(extensions) {
          ^ false
       };
 
-      GLAD_Config config := GLAD_Config.load(versions!, extensions!);
-
-      if:not(_core.load(config)) {
+      config.loadExtensions(extensions!);
+      if:not(_core.loadExtensions(config)) {
          ^ false
       };
-
-      _major := config.Major;
-      _minor := config.Minor;
 
       ^ true
    }

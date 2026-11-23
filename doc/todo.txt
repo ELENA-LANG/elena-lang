@@ -12,7 +12,7 @@ In development:
   - switch to 7.3.x
   - field getter -> direct for sealed method (MSG.Code)
   - why warning - internal struct GLStencilOpPTR         : extern_winapi_func(int func);
-  - support float / uint64
+  - support uint64
   - fix Linux mta_test
   - support func == default, where func is __winapi_fn_ptr / handle / pointer / int 
   - f4 on the same line, keep the debugger on the same line, in reality it should go further
@@ -74,12 +74,16 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * current : opengl : #735
+  * opengl : #735
   ====================================== 
+  - fix opengl sample
   - fill the screen the red color
   - do the same for x64
   - include opengl in elena_api.prjcol 
   ---------------------------------------
+  * current : IDE
+  ====================================== 
+  - the debug watch variable is not refreshed 
 
   === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
   * new version 7.0.3

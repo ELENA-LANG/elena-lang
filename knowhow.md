@@ -60,6 +60,7 @@ Content
 + [Logging](#Logging)
 + [Program Initialization](#Initialization)
 + [Object Implicit initialization](#Implicit-initialization)
++ [Unsafe pointer to the local variable](#Unsafe-pointer-to-the-local-variable)
 
 ## ----------------------------------------------------------------------------
 ## A class method invoke closure
@@ -1610,3 +1611,12 @@ using an implicit initialization expression:
        A a2 := $();
     }
 
+## ----------------------------------------------------------------------------
+##  Unsafe pointer to the local variable
+## ----------------------------------------------------------------------------
+
+    public Program()
+    {
+       int n := 3;   
+       UnsafePointer<int> pn := &n;
+    }

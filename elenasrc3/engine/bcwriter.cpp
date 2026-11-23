@@ -2462,6 +2462,18 @@ static inline void is_condop(CommandTape& tape, BuildNode& node, TapeScope&/* ta
    tape.write(ByteCode::SelEqRR, trueRef | mskVMTRef, falseRef | mskVMTRef);
 }
 
+static inline void load_address_to_index(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+{
+   // store sp:0
+   // $load  sp:0
+   tape.write(ByteCode::StoreSI);
+   if (tapeScope.scope->ptrSize == 8) {
+      tape.write(ByteCode::LLoadSI);
+   }
+   else tape.write(ByteCode::LoadSI);
+
+}
+
 static inline void includeFrame(CommandTape& tape)
 {
    tape.write(ByteCode::Include);
@@ -2505,7 +2517,7 @@ ByteCodeWriter::Saver commands[] =
    procedure_ref, loadingAccToLongIndex, externalvar_ref, byteOpWithConst, propNameLiteral, longIntOp, set_message, redirect_procedure,
    mark_collectable, mark_noncollectable, savingLongIndexToAcc, ref_condop, is_condop, ext_var_call_op, float_op, float_cond_op,
 
-   float_literal,
+   float_literal, load_address_to_index,
 };
 
 static inline bool duplicateBreakpoints(BuildNode lastNode)

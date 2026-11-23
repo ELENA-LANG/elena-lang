@@ -196,8 +196,9 @@ namespace elena_lang
       FloatOp              = 0x009E,
       FloatCondOp          = 0x009F,
       FloatLiteral         = 0x00A0,
+      LoadAddressToIndex   = 0x00A1,
 
-      MaxOperationalKey    = 0x00A0,
+      MaxOperationalKey    = 0x00A1,
       
       MetaPropOp           = 0x00A8,
 
@@ -505,6 +506,7 @@ namespace elena_lang
          map.add("ext_var_call_op", BuildKey::ExtVarCallOp);
          map.add("float_op", BuildKey::FloatOp);
          map.add("float_cond_op", BuildKey::FloatCondOp);
+         map.add("load_address_to_index", BuildKey::LoadAddressToIndex);
       }
    };
 

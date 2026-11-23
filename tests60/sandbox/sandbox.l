@@ -83,14 +83,8 @@ public Program()
 }
 */
 
-const int[] Args = $[1, 2, 3];
-
-printMe(const int[] args)
-{
-   Console.printLine(args.asEnumerable());
-}
-
 public Program()
 {
-   printMe(Args);
+   int n := 3;   
+   UnsafePointer<int> ptr := &n;
 }

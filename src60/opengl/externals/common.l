@@ -1,5 +1,6 @@
 // constants
 public const int GL_VERSION             = 1F02h;
+public const int GL_EXTENSIONS          = 1F03h;
 public const int GL_NUM_EXTENSIONS      = 821Dh;
 public const int GL_COLOR_BUFFER_BIT    = 00004000h;
 

@@ -110,7 +110,7 @@ namespace elena_lang
       ExternalVar,
       Shortcut,
       EncapseField,  // the internal field, used for direct access to the field
-      EncapseFieldAddress
+      EncapseFieldAddress,
    };
 
    enum TargetMode
@@ -1558,6 +1558,7 @@ namespace elena_lang
          bool                 withDebugInfo;
 
          bool isDirectMethodCall(SyntaxNode& node, bool isProperty);
+         bool isLocalVariable(SyntaxNode node);
 
          bool resolveAndValidate(ObjectInfo target, ref_t targetRef, mssg_t message,
             CheckMethodResult& result, bool weakCall, bool allowPrivateCall);
@@ -1686,6 +1687,7 @@ namespace elena_lang
          void unboxOuterArgs();
 
          ObjectInfo saveToTempLocal(ObjectInfo object);
+         ObjectInfo saveAddressToTemplocal(ObjectInfo object);
 
          ObjectInfo compileBranchingOperands(SyntaxNode rnode, SyntaxNode r2node, bool retValExpected, bool withoutDebugInfo);
          ObjectInfo compileTernaryOperands(SyntaxNode rnode, SyntaxNode r2node, BuildNode& opNode, bool withoutDebugInfo);
@@ -1755,6 +1757,7 @@ namespace elena_lang
          ObjectInfo compileTupleCollection(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileKeyValue(SyntaxNode node/*, ExpressionAttribute mode*/);
          ObjectInfo compileClosureOperation(SyntaxNode node, ref_t targetRef);
+         ObjectInfo compileAddressOperation(SyntaxNode node, ref_t targetRef);
          ObjectInfo compileInterpolation(SyntaxNode node);
 
          ObjectInfo compileSubCode(SyntaxNode node, ExpressionAttribute mode, bool withoutNewScope = false, VerifiedMap* verified = nullptr);

@@ -14279,7 +14279,10 @@ ObjectInfo Compiler::Expression :: compile(SyntaxNode node, TypeInfo targetType,
          retVal = compileTupleAssigning(current);
          break;
       case SyntaxKey::ClosureOperation:
-         retVal = compileClosureOperation(current, targetType.typeRef);
+         if (isLocalVariable(current.firstChild())) {
+            retVal = compileAddressOperation(current.firstChild(), targetType.typeRef);
+         }
+         else retVal = compileClosureOperation(current, targetType.typeRef);
          break;
       case SyntaxKey::Interpolation:
          retVal = compileInterpolation(current);
@@ -14741,6 +14744,17 @@ ObjectInfo Compiler::Expression :: compileMessageOperationR(SyntaxNode node, Syn
       arguments, opMode);
 
    return retVal;
+}
+
+bool Compiler::Expression :: isLocalVariable(SyntaxNode node)
+{
+   if (isSimpleNode(node)) {
+      ObjectInfo obj = compiler->mapObject(scope, node.firstChild(), EAttr::None);
+
+      return obj.kind == ObjectKind::LocalAddress;
+   }
+
+   return false;
 }
 
 bool Compiler::Expression :: isDirectMethodCall(SyntaxNode& node, bool isProperty)
@@ -16261,7 +16275,14 @@ ObjectInfo Compiler::Expression :: compileSwitchOperation(SyntaxNode node, ref_t
    return retVal;
 }
 
-ObjectInfo Compiler::Expression::compileClosureOperation(SyntaxNode node, ref_t targetRef)
+ObjectInfo Compiler::Expression :: compileAddressOperation(SyntaxNode node, ref_t targetRef)
+{
+   ObjectInfo info = compile(node, {}, EAttr::None);
+
+   return saveAddressToTemplocal(info);
+}
+
+ObjectInfo Compiler::Expression :: compileClosureOperation(SyntaxNode node, ref_t targetRef)
 {
    ClassScope* classScope = Scope::getScope<ClassScope>(scope, Scope::ScopeLevel::Class);
    if (!classScope) {
@@ -18418,7 +18439,22 @@ ObjectInfo Compiler::Expression::declareTempStructure(SizeInfo sizeInfo)
    return retVal;
 }
 
-ObjectInfo Compiler::Expression::saveToTempLocal(ObjectInfo object)
+ObjectInfo Compiler::Expression :: saveAddressToTemplocal(ObjectInfo object)
+{
+   SizeInfo sizeInfo = { scope.moduleScope->ptrSize };
+   int tempLocal = allocateLocalAddress(scope, sizeInfo.size, false);
+
+   writeObjectInfo(object);
+   writer->appendNode(BuildKey::LoadAddressToIndex);
+   if (sizeInfo.size == 8) {
+      writer->appendNode(BuildKey::SavingLongIndex, tempLocal);
+   }
+   else writer->appendNode(BuildKey::SavingIndex, tempLocal);
+
+   return { ObjectKind::TempLocalAddress, scope.moduleScope->ptrSize == 8 ? V_PTR64 : V_PTR32, (ref_t)tempLocal };
+}
+
+ObjectInfo Compiler::Expression :: saveToTempLocal(ObjectInfo object)
 {
    if (object.kind == ObjectKind::Extern) {
       auto sizeInfo = compiler->_logic->defineStructSize(*scope.moduleScope, object.typeInfo.typeRef);
