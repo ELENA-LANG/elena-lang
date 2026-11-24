@@ -5,7 +5,7 @@ In development:
 [development]
   ### EPIC: elena 8.0 ###
 
-  === Iteration 47 (lang features; #866) ===
+  === Iteration 47 (#866; #879) ===
   --------------------------------------
   * backlog
   ======================================   
@@ -74,18 +74,18 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * opengl : #735
+  * current : opengl : #735
   ====================================== 
-  - fix opengl sample
-  - fill the screen the red color
+  - fix opengl sample, it should fill the screen the red color
   - do the same for x64
   - include opengl in elena_api.prjcol 
   ---------------------------------------
-  * current : IDE
+  * critical bug
   ====================================== 
-  - the debug watch variable is not refreshed 
+  - fix   
+  - byte code optimization
 
-  === Iteration 48 (compile in run-time; ide linux; api refactoring) ===
+  === Iteration 48 (lang features; compile in run-time; api refactoring) ===
   * new version 7.0.3
   --------------------------------------
   --------------------------------------
@@ -98,7 +98,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 49 (text based adventage; vscode extension;  pi optimization) ===
+  === Iteration 49 (text based adventage; vscode extension; ide linux) ===
   * new version 7.0.4
   --------------------------------------
   * dev
@@ -110,7 +110,7 @@ In development:
   * current
   ====================================== 
 
-  === Iteration 50 (tetris sample) ===
+  === Iteration 50 (tetris sample; pi optimization) ===
   * new version 7.0.5
   --------------------------------------
   * dev

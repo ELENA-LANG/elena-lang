@@ -222,6 +222,7 @@ namespace elena_lang
          ExtensionTemplateMap& extensionTemplates, ModuleScopeBase* scope);
 
       static bool isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, TypeInfo sourceInfo, CompatibleMode mode);
+      static bool isPrimitiveExternalArg(ModuleScopeBase& scope, TypeInfo argTypeInfo);
       static bool isPrimitiveCompatible(ModuleScopeBase& scope, TypeInfo target, TypeInfo source);
       bool isTemplateCompatible(ModuleScopeBase& scope, ref_t targetRef, ref_t sourceRef, bool weakCompatible);
 

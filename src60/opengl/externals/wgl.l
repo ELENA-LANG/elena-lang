@@ -654,10 +654,7 @@ public struct WGLLibrary
    {
    	int pixelFormat := 0;
    	uint numFormats := 0;
-      
-      UnsafePointer<int> pixelFormatPtr := pixelFormat;
-      UnsafePointer<uint> numFormatsPtr := numFormats;
-      int retVal := wglChoosePixelFormatARB(dc, pixelFormatAttributes, pointer.Default, 1, pixelFormatPtr, numFormatsPtr);
+      int retVal := wglChoosePixelFormatARB(dc, pixelFormatAttributes, pointer.Default, 1, &pixelFormat, &numFormats);
 
       PIXELFORMATDESCRIPTOR pixelFormatDesc := default;
       

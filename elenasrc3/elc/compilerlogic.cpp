@@ -2258,6 +2258,22 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
    return false;
 }
 
+static size_t PrimtiveTypeLength = 6;
+static ref_t PrimtiveTypes[] = { V_INT32, V_UINT32, V_INT16, V_UINT16, V_INT8, V_UINT8 };
+
+bool CompilerLogic :: isPrimitiveExternalArg(ModuleScopeBase& moduleScope, TypeInfo argTypeInfo)
+{
+   for (size_t index = 0; index < PrimtiveTypeLength; index++) {
+      if (isCompatible(moduleScope, { PrimtiveTypes[index] },
+         argTypeInfo, CompatibleMode::IgnoreNils))
+      {
+         return true;
+      }
+   }
+
+   return false;
+}
+
 static inline ref_t getSignature(ModuleScopeBase& scope, mssg_t message)
 {
    ref_t actionRef = getAction(message);

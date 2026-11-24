@@ -83,8 +83,32 @@ public Program()
 }
 */
 
+import system'winforms;
+
 public Program()
 {
-   int n := 3;   
-   UnsafePointer<int> ptr := &n;
+      MSG          msg := new MSG();
+//      int          proceeded := 0;
+      int          result := 0;
+      bool         running := true;    
+      
+//      WindowHandle handleCopy := /*_mainWindow;*/default;
+
+      while (running) {
+         result := extern USER32.PeekMessageW(msg, 0, 0, 0);
+         if (result == 0)
+         {
+            int cmd := msg.Code;
+            if (cmd == WM_QUIT) {
+               running := false;
+            };
+            
+/*            excluded {
+               extern USER32.TranslateMessage(msg);
+               extern USER32.DispatchMessageW(msg)               
+            }*/
+         };
+//         _onUpdate();
+      };
+
 }

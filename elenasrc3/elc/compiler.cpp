@@ -16675,20 +16675,7 @@ ObjectInfo Compiler::Expression :: compileExternalOp(SyntaxNode node, ObjectInfo
             {
                writer->appendNode(intArgOp, i - 1);
             }
-            // NOTE : it is a duplicate for 32 bit target, but is required for 64 bit one
-            else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_INT32 },
-               arg.typeInfo, CompatibleMode::IgnoreNils))
-            {
-               writer->appendNode(BuildKey::SavingNInStack, i - 1);
-            }
-            else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_INT16 },
-               arg.typeInfo, CompatibleMode::IgnoreNils))
-            {
-               writer->appendNode(BuildKey::SavingNInStack, i - 1);
-            }
-            else if (compiler->_logic->isCompatible(*scope.moduleScope, { V_INT8 },
-               arg.typeInfo, CompatibleMode::IgnoreNils))
-            {
+            else if (CompilerLogic::isPrimitiveExternalArg(*scope.moduleScope, arg.typeInfo)) {
                writer->appendNode(BuildKey::SavingNInStack, i - 1);
             }
             else writer->appendNode(BuildKey::SavingInStack, i - 1); // !! temporally - passing dynamic references to the exteranl routines should not be allowed

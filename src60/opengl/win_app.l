@@ -26,7 +26,7 @@ public sealed class OpenGLApplication
       WindowHandle handleCopy := _mainWindow;
 
       while (running) {
-         result := extern USER32.PeekMessageW(msg, 0, 0, 0);
+         result := extern USER32.PeekMessageW(msg, 0, 0, 0, PM_REMOVE);
          if (result != 0)
          {
             int cmd := msg.Code;
