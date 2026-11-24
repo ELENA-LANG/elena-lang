@@ -4,27 +4,23 @@ import system'runtime;
 
 // --- IPaintContextController ---
 
-public interface IPaintContextController
+public interface IOGLController
 {
    abstract load(HDC dc);
-
-   abstract paint(HDC dc);
 }
 
-singleton DummyController : IPaintContextController
+singleton DummyController : IOGLController
 {
    load(HDC dc) {}
-   
-   paint(HDC dc) {}
 }
 
 // --- PaintContext ---
 
-class PaintContextListener : WindowCallback
+class OGLContextListener : WindowCallback
 {
-   PaintContext _owner;
+   OGLContext _owner;
     
-   constructor(PaintContext owner)
+   constructor(OGLContext owner)
    {
       _owner := owner
    }
@@ -32,11 +28,6 @@ class PaintContextListener : WindowCallback
    onSize(Handle control, int width, int height)
    {
       _owner.resize(control, width, height);
-   }
-
-   onWMPaint(Handle hwnd)
-   {
-      _owner.paint();
    }
 
    onWMDestoy(Handle hwnd)
@@ -49,14 +40,13 @@ class PaintContextListener : WindowCallback
    }
 }
 
-public sealed class PaintContext : BaseWinControl, interface<IControl>
+public sealed class OGLContext : BaseWinControl, interface<IControl>
 {
-   IPaintContextController _controller;
+   IOGLController _controller;
   
-   set Controller(IPaintContextController controller)
+   set Controller(IOGLController controller)
    {
       _controller := controller;      
-      //_controller.Parent := self;
    }   
 
    constructor new()
@@ -79,11 +69,11 @@ public sealed class PaintContext : BaseWinControl, interface<IControl>
                         
       _region.read(out int x, out int y, out int width, out int height);
        
-      pointer paramPtr := PermVectorTable.allocate(new PaintContextListener(self)); 
+      pointer paramPtr := PermVectorTable.allocate(new OGLContextListener(self)); 
 
       _handle := new WindowHandle(
                         WS_EX_TRANSPARENT,
-                        PaintContextClass,
+                        OGLContextClass,
                         cast wide(_caption),
                         styles,
                         x, y, width, height,
@@ -92,13 +82,5 @@ public sealed class PaintContext : BaseWinControl, interface<IControl>
                         paramPtr);
                         
       _controller.load(_handle.HDC);
-   }
-   
-   HDC HDC
-      = _handle.HDC;
-   
-   internal paint()
-   {
-      _controller.paint(_handle.HDC);
    }
 }

@@ -2462,7 +2462,7 @@ static inline void is_condop(CommandTape& tape, BuildNode& node, TapeScope&/* ta
    tape.write(ByteCode::SelEqRR, trueRef | mskVMTRef, falseRef | mskVMTRef);
 }
 
-static inline void load_address_to_index(CommandTape& tape, BuildNode& node, TapeScope& tapeScope)
+static inline void load_address_to_index(CommandTape& tape, BuildNode&, TapeScope& tapeScope)
 {
    // store sp:0
    // $load  sp:0

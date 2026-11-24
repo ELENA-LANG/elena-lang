@@ -22,11 +22,12 @@ const int[] openGLAttributes = $[
 		0
 ];
 
-public sealed class OpenGLDisplay : interface<IPaintContextController>
+public sealed class OpenGLDisplay : interface<IOGLController>
 {
    IOpenGLEngine _engine;
-   PaintContext  _paintContext;
-   HGLRC         _context;  
+   OGLContext    _paintContext;
+   HDC           _dc;
+   HGLRC         _context;
    
    private initGL(HDC dc)
    {
@@ -95,30 +96,30 @@ public sealed class OpenGLDisplay : interface<IPaintContextController>
 
    load(HDC dc)
    {
-      if:not(_engine.IsInitialized) {
-         initializeOGL();
-      };
-      
+      _dc := dc;
       _engine.WGL.setPixelFormat(dc, pixelFormatAttributes);
       _context := _engine.WGL.createContext(dc, openGLAttributes);
       
       makeCurrent(dc);
    }
 
-   paint(HDC dc)
+   free()
    {
-      _engine.WGL.present(dc, false);
+      WGLLibrary.freeContext(_context);
    }
 
    present(bool vsync)
    {
-      HDC dc := _paintContext.HDC;
-      _engine.WGL.present(dc, vsync);
+      _engine.WGL.present(_dc, vsync);
    }
 
-   constructor new(PaintContext paintContext, IOpenGLEngine engine)
+   constructor new(OGLContext paintContext, IOpenGLEngine engine)
    {
       _paintContext := paintContext;
-      _engine := engine
+      _engine := engine;
+      
+      if:not(_engine.IsInitialized) {
+         initializeOGL();
+      };
    }
 }

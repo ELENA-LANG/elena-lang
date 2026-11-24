@@ -234,7 +234,7 @@ root (
              assign_operation (
                new_variable ( identifier = current )
                message_operation (
-                 object ( reference = forms'PaintContext )
+                 object ( reference = forms'OGLContext )
                  message ( identifier = new )
                )
              )
@@ -256,7 +256,7 @@ root (
 
   #define context_name_prop ::= ":" "Name" "=" context_declaration control_assigning;
 
-  #define context_declaration ::= %<= field ( type ( reference = forms'PaintContext ) nameattr ( identifier = $current ) ) =>;
+  #define context_declaration ::= %<= field ( type ( reference = forms'OGLContext ) nameattr ( identifier = $current ) ) =>;
 
   #define item ::=
 <=

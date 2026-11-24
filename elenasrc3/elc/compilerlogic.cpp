@@ -2258,8 +2258,8 @@ bool CompilerLogic :: isCompatible(ModuleScopeBase& scope, TypeInfo targetInfo, 
    return false;
 }
 
-static size_t PrimtiveTypeLength = 6;
-static ref_t PrimtiveTypes[] = { V_INT32, V_UINT32, V_INT16, V_UINT16, V_INT8, V_UINT8 };
+static size_t PrimtiveTypeLength = 7;
+static ref_t PrimtiveTypes[] = { V_INT32, V_UINT32, V_INT16, V_UINT16, V_INT8, V_UINT8, V_FLOAT32 };
 
 bool CompilerLogic :: isPrimitiveExternalArg(ModuleScopeBase& moduleScope, TypeInfo argTypeInfo)
 {

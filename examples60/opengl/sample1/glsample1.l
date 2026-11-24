@@ -15,13 +15,13 @@ public class Game
 
    OpenGLDisplay _display;
 
-   constructor(PaintContext painContext)
+   constructor(OGLContext paintContext)
    {
       _engine := OpenGLEngine.new($());
       
-      _display := OpenGLDisplay.new(painContext, _engine);
+      _display := OpenGLDisplay.new(paintContext, _engine);
       
-      painContext.Controller := _display;
+      paintContext.Controller := _display;
    }
    
    onUpdate()

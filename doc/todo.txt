@@ -25,6 +25,7 @@ In development:
   - ReadOnlyList<T> -> returning ConstArray<T>
   - int |= intconst doesn't work??
   - bool ||=
+  - caching the result of compatibility check
   - weak operation : forced typecasting
   - prj file - $namespace variable?
   - post about foreach
@@ -74,16 +75,9 @@ In development:
   - stage 1b : run-time script 
   - stage 2 : create xgraph sample
   ---------------------------------------
-  * current : opengl : #735
+  * opengl : #735
   ====================================== 
-  - fix opengl sample, it should fill the screen the red color
-  - do the same for x64
-  - include opengl in elena_api.prjcol 
-  ---------------------------------------
-  * critical bug
-  ====================================== 
-  - fix   
-  - byte code optimization
+  - second stage
 
   === Iteration 48 (lang features; compile in run-time; api refactoring) ===
   * new version 7.0.3
@@ -103,6 +97,11 @@ In development:
   --------------------------------------
   * dev
   ====================================== 
+  * opengl
+  ====================================== 
+  - migrate to x86-64
+  - include opengl in elena_api.prjcol 
+  --------------------------------------
   * lang
   ====================================== 
   * doc

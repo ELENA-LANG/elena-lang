@@ -665,7 +665,7 @@ public struct WGLLibrary
    present(HDC dc, bool vsync)
    {
    	wglSwapIntervalEXT(vsync ? 1 : 0);
-   	OPENGL.wglSwapLayerBuffers(dc, WGL_SWAP_MAIN_PLANE);
+   	int ret := OPENGL.wglSwapLayerBuffers(dc, WGL_SWAP_MAIN_PLANE);
    }
    
 }
